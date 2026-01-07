@@ -39,7 +39,17 @@ export const createProjectPermissionsSlice: StateCreator<
     // This will delegate to a permission checking service
     const state = get() as any;
     const project = state.getProject?.(id);
-    if (!project || !project.fsaHandle) {
+    if (!project) {
+      return 'denied';
+    }
+
+    // For IndexedDB storage type, permission is auto-granted (no FSA handle needed)
+    if (project.storageType === 'indexeddb') {
+      return 'granted';
+    }
+
+    // For FSA storage type, check the handle permission
+    if (!project.fsaHandle) {
       return 'denied';
     }
 

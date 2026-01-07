@@ -50,7 +50,8 @@ export function fromRecord(record: any): Project {
     id: record.id,
     name: record.name,
     folderPath: record.folderPath || record.path,
-    fsaHandle: null as any,  // Not stored in Dexie (requires user permission)
+    storageType: record.storageType || 'fsa',  // Default to 'fsa' for legacy records
+    fsaHandle: null,  // Not stored in Dexie (requires user permission)
     lastOpened: new Date(record.lastOpened),
     createdAt: new Date(record.createdAt),
     autoSync: true,  // Default value
@@ -74,12 +75,14 @@ export const createProjectCrudSlice: StateCreator<
   createProject: (input: CreateProjectInput) => {
     const projectId = generateProjectId();
     const now = new Date();
+    const storageType = input.storageType ?? 'fsa';  // Default to 'fsa' for backward compatibility
 
     const project: Project = {
       id: projectId,
       name: input.name,
       folderPath: input.folderPath,
-      fsaHandle: input.fsaHandle,
+      storageType,
+      fsaHandle: input.fsaHandle ?? null,
       lastOpened: now,
       createdAt: now,
       autoSync: input.autoSync ?? true,
@@ -93,7 +96,7 @@ export const createProjectCrudSlice: StateCreator<
       tags: input.tags ?? [],
     };
 
-    console.log('[ProjectStore] Creating project:', projectId);
+    console.log('[ProjectStore] Creating project:', projectId, 'storageType:', storageType);
 
     // Update Zustand store
     set((state) => ({
@@ -106,10 +109,12 @@ export const createProjectCrudSlice: StateCreator<
       console.error('[ProjectStore] Failed to persist project to Dexie:', error);
     });
 
-    // Persist FSA handle to fsaHandles table for restoration on reload
-    fsaHandleManager.persistHandle(input.fsaHandle, projectId, 'ide').catch((error) => {
-      console.error('[ProjectStore] Failed to persist FSA handle:', error);
-    });
+    // Persist FSA handle only for 'fsa' storage type (indexeddb projects don't need handles)
+    if (storageType === 'fsa' && input.fsaHandle) {
+      fsaHandleManager.persistHandle(input.fsaHandle, projectId, 'ide').catch((error) => {
+        console.error('[ProjectStore] Failed to persist FSA handle:', error);
+      });
+    }
 
     return projectId;
   },

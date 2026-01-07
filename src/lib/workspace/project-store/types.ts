@@ -23,8 +23,10 @@ export interface ProjectMetadata {
   name: string;
   /** Display path for UI (not actual path due to FSA security) */
   folderPath: string;
-  /** FSA handle for directory access restoration */
-  fsaHandle: FileSystemDirectoryHandle;
+  /** Storage type: FSA folder mount or IndexedDB local storage */
+  storageType: 'indexeddb' | 'fsa';
+  /** FSA handle for directory access restoration (only for fsa storage type) */
+  fsaHandle?: FileSystemDirectoryHandle | null;
   /** Last time project was opened */
   lastOpened: Date;
   autoSync?: boolean;

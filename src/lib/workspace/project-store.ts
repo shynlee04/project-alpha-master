@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Project Store - Facade (Major Architecture Migration)
  * @module lib/workspace/project-store

@@ -96,20 +96,6 @@ export function useRecentProjects(limit = 5) {
 }
 
 /**
- * Project CRUD methods
- */
-interface ProjectMethods {
-  createProject: (input: CreateProjectInput) => string;
-  updateProject: (projectId: string, updates: UpdateProjectInput) => void;
-  deleteProject: (projectId: string) => void;
-  setActiveProject: (projectId: string | null) => void;
-  getProject: (projectId: string) => Project | undefined;
-  getAllProjects: () => Project[];
-  getActiveProject: () => Project | null;
-  restoreProjectHandle: (projectId: string) => Promise<FileSystemDirectoryHandle | null>;
-}
-
-/**
  * Hook for hydration status
  */
 export function useProjectStoreHydration() {

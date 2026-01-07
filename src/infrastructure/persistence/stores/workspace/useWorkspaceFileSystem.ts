@@ -50,7 +50,8 @@ interface ProjectMetadata {
   id: string;
   name: string;
   folderPath: string;
-  fsaHandle: FileSystemDirectoryHandle | null;
+  storageType: 'indexeddb' | 'fsa';
+  fsaHandle?: FileSystemDirectoryHandle | null;
   lastOpened: Date;
   autoSync: boolean;
   exclusionPatterns?: string[];
@@ -116,11 +117,14 @@ export function useWorkspaceFileSystem({
         if (project) {
           console.log('[WorkspaceProvider] Hydrated project:', project.name);
           setProjectMetadata(project as ProjectMetadata);
-          setDirectoryHandle(project.fsaHandle);
+          setDirectoryHandle(project.fsaHandle || null);
 
           // FIX-2026-01-06: Check actual permission state instead of always setting 'prompt'
           // This prevents the "No Folder Selected" overlay from showing incorrectly
-          if (project.fsaHandle) {
+          if (project.storageType === 'indexeddb') {
+            // Dexie-stored projects have no FSA handle - auto-grant permission
+            setPermissionState('granted');
+          } else if (project.fsaHandle) {
             const actualState = await getPermissionState(project.fsaHandle, 'readwrite');
             console.log('[WorkspaceProvider] Actual permission state:', actualState);
             setPermissionState(actualState);
@@ -352,6 +356,7 @@ export function useWorkspaceFileSystem({
         id: projectId,
         name: handle.name,
         folderPath: handle.name,
+        storageType: 'fsa',  // FSA-based project for IDE workspace
         fsaHandle: handle,
         lastOpened: new Date(),
         autoSync,
@@ -411,6 +416,7 @@ export function useWorkspaceFileSystem({
         id: newProjectId,
         name: handle.name,
         folderPath: handle.name,
+        storageType: 'fsa',  // FSA-based project for IDE workspace
         fsaHandle: handle,
         lastOpened: new Date(),
         autoSync: true,

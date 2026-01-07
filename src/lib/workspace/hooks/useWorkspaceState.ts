@@ -17,6 +17,9 @@ export function useWorkspaceState(initialProject: ProjectMetadata | null = null)
         initialProject?.fsaHandle ?? null
     );
     const [permissionState, setPermissionState] = useState<FsaPermissionState>(
+        // IndexedDB projects have auto-granted permission (no FSA handle needed)
+        initialProject?.storageType === 'indexeddb' ? 'granted' :
+        // FSA projects start with 'prompt' state (needs permission check)
         initialProject?.fsaHandle ? 'prompt' : 'unknown'
     );
     const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');

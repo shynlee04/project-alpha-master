@@ -31,6 +31,7 @@ export interface ProjectRecord {
     name: string;
     path: string;
     workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
+    storageType?: 'indexeddb' | 'fsa'; // Storage backend type for project
     lastOpened: Date;
     createdAt: Date;
     bindings?: WorkspaceBindings | Record<string, string>;  // Union type for backwards compatibility

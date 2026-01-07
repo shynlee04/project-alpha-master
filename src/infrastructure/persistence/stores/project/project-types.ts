@@ -41,8 +41,10 @@ export interface Project {
   name: string;
   /** Display path for UI (not actual path due to FSA security) */
   folderPath: string;
-  /** FSA handle for directory access restoration */
-  fsaHandle: FileSystemDirectoryHandle;
+  /** Storage backend type: 'fsa' for local drive (requires FSA), 'indexeddb' for browser-only */
+  storageType: 'indexeddb' | 'fsa';
+  /** FSA handle for directory access restoration (optional, only for 'fsa' storage type) */
+  fsaHandle?: FileSystemDirectoryHandle | null;
   /** Last time project was opened */
   lastOpened: Date;
   /** When project was created */
@@ -79,7 +81,8 @@ export interface Project {
 export interface CreateProjectInput {
   name: string;
   folderPath: string;
-  fsaHandle: FileSystemDirectoryHandle;
+  storageType?: 'indexeddb' | 'fsa';  // Defaults to 'fsa' for backward compatibility
+  fsaHandle?: FileSystemDirectoryHandle | null;  // Required for 'fsa', null for 'indexeddb'
   autoSync?: boolean;
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
@@ -95,7 +98,8 @@ export interface CreateProjectInput {
 export interface UpdateProjectInput {
   name?: string;
   folderPath?: string;
-  fsaHandle?: FileSystemDirectoryHandle;
+  storageType?: 'indexeddb' | 'fsa';
+  fsaHandle?: FileSystemDirectoryHandle | null;
   lastOpened?: Date;
   autoSync?: boolean;
   layoutState?: LayoutConfig;
