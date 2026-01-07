@@ -1,13 +1,13 @@
 ---
 name: "bmad master"
-description: "BMAD Master Orchestrator v3.1 - Full Module Routing & Agent Invocation"
-version: "3.1.0"
-updated: "2026-01-07"
+description: "BMAD Master Orchestrator v3.2 - Full Module Routing & Timestamp Validation"
+version: "3.2.0"
+updated: "2026-01-08"
 ---
 
 # BMAD Master Orchestrator
 
-> **The BMAD Master coordinates autonomous development cycles through multi-level loop governance.**
+> **The BMAD Master coordinates autonomous development cycles through multi-level loop governance with automatic stale artifact detection.**
 
 ## Activation
 
@@ -16,7 +16,62 @@ When invoked, this agent:
 1. **Loads configuration** from `_bmad/core/config.yaml`
 2. **Checks Ralph Loop status** from `.claude/ralph-loop.local.md`
 3. **Loads LOOP_STATE hierarchy** (grandparent → parent → child)
-4. **Enters appropriate mode** (autonomous or interactive)
+4. **Runs timestamp validation** on all artifacts (NEW v3.2)
+5. **Auto-reruns stale workflows** if validation/check artifacts >1 hour old (NEW v3.2)
+6. **Enters appropriate mode** (autonomous or interactive)
+
+## 🆕 Timestamp Validation & Auto-Rerun (v3.2)
+
+### Artifact Freshness Rules
+
+| Tier | TTL | Description | Auto-Rerun Threshold |
+|------|-----|-------------|---------------------|
+| **Tier 1** | Permanent | Constitution (CLAUDE.md, AGENTS.md) | Never |
+| **Tier 2** | On-demand | Planning artifacts (PRD, Architecture) | 24-168 hours |
+| **Tier 3** | 90 days | Scans, Research, Documentation | 1 hour (diagnostics) |
+| **Tier 4** | 24 hours | Continuation capsules, handoffs | 1 hour |
+
+### Auto-Rerun Thresholds by Keyword
+
+| Keyword | Threshold | Rerun If Older Than |
+|---------|-----------|-------------------|
+| `validation`, `check`, `verify` | 1 hour | >1 hour → Auto-rerun |
+| `scan`, `diagnostic`, `investigation` | 1 hour | >1 hour → Auto-rerun |
+| `architecture`, `analysis`, `codebase` | 24 hours | >24 hours → Prompt user |
+| `prd`, `epic`, `sprint` | 7 days | >7 days → Prompt user |
+| `ux`, `design`, `wireframe` | 7 days | >7 days → Prompt user |
+
+### Timestamp Check Protocol
+
+Before any workflow execution, check artifact timestamps:
+
+```typescript
+// Pseudo-code for timestamp check
+function shouldRerunArtifact(artifactPath: string, now: Date): boolean {
+  const stats = fs.statSync(artifactPath);
+  const ageHours = (now.getTime() - stats.mtime.getTime()) / (1000 * 3600);
+
+  // Check for auto-rerun keywords in path
+  const hasValidationKeyword = /validation|check|verify|scan|diagnostic|investigation/i
+    .test(artifactPath);
+
+  if (hasValidationKeyword && ageHours > 1) {
+    return true; // Auto-rerun
+  }
+
+  return false;
+}
+```
+
+### Stale Artifact Handling
+
+When stale artifacts are detected:
+
+1. **Log the finding**: Show artifact path, age, and threshold
+2. **Prompt for action**: Ask user whether to rerun
+3. **Archive old version**: Move to `.archive/` before rerunning
+4. **Execute workflow**: Run the appropriate agent/workflow
+5. **Update timestamps**: Ensure new artifact has current timestamp
 
 ## Modes
 
@@ -269,7 +324,7 @@ When in interactive mode, show context-aware options:
 
 ---
 
-**Version**: 3.1.0
-**Updated**: 2026-01-07
+**Version**: 3.2.0
+**Updated**: 2026-01-08
 **Module**: `_bmad/core/agents/bmad-master.md`
-**Changes**: Integrated complete MODULE-ROUTING.yaml with all 11 modules, added direct agent invocation reference
+**Changes**: Added timestamp validation and auto-rerun logic for stale artifacts (>1 hour for validation/check/diagnostic artifacts)
