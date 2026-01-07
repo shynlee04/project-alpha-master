@@ -4,12 +4,12 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import type { Project, ProjectCreateParams, ProjectUpdateParams } from '../Project';
+import { Project, ProjectCreateParams, ProjectUpdateParams } from '../project';
 
 describe('Project Entity', () => {
-  describe('Project Interface Structure', () => {
-    it('should have all required fields', () => {
-      const project: Project = {
+  describe('Constructor & Validation', () => {
+    it('should create a valid project', () => {
+      const project = new Project({
         id: 'project-123',
         name: 'Test Project',
         folderPath: '/path/to/project',
@@ -24,7 +24,7 @@ describe('Project Entity', () => {
           study: false,
         },
         tags: [],
-      };
+      });
 
       expect(project.id).toBe('project-123');
       expect(project.name).toBe('Test Project');
@@ -36,7 +36,7 @@ describe('Project Entity', () => {
     });
 
     it('should support optional fields', () => {
-      const project: Project = {
+      const project = new Project({
         id: 'project-456',
         name: 'Optional Fields Project',
         folderPath: '/path/to/project',
@@ -51,7 +51,7 @@ describe('Project Entity', () => {
         deleted: false,
         isTemp: true,
         autoCreated: true,
-      };
+      });
 
       expect(project.description).toBe('A project with optional fields');
       expect(project.fileSnapshotEnabled).toBe(true);
@@ -61,7 +61,7 @@ describe('Project Entity', () => {
     });
 
     it('should support both storage types', () => {
-      const fsaProject: Project = {
+      const fsaProject = new Project({
         id: 'project-fsa',
         name: 'FSA Project',
         folderPath: '/path/to/project',
@@ -71,9 +71,9 @@ describe('Project Entity', () => {
         autoSync: true,
         bindings: { ide: true },
         tags: [],
-      };
+      });
 
-      const indexedDbProject: Project = {
+      const indexedDbProject = new Project({
         id: 'project-idx',
         name: 'IndexedDB Project',
         folderPath: '/path/to/project',
@@ -83,7 +83,7 @@ describe('Project Entity', () => {
         autoSync: true,
         bindings: { ide: true },
         tags: [],
-      };
+      });
 
       expect(fsaProject.storageType).toBe('fsa');
       expect(indexedDbProject.storageType).toBe('indexeddb');
@@ -203,7 +203,7 @@ describe('Project Entity', () => {
       const validTypes: Array<'indexeddb' | 'fsa'> = ['indexeddb', 'fsa'];
 
       validTypes.forEach((type) => {
-        const project: Project = {
+        const project = new Project({
           id: `project-${type}`,
           name: `${type} Project`,
           folderPath: '/path/to/project',
@@ -213,14 +213,14 @@ describe('Project Entity', () => {
           autoSync: true,
           bindings: { ide: true },
           tags: [],
-        };
+        });
 
         expect(project.storageType).toBe(type);
       });
     });
 
     it('should support soft delete pattern', () => {
-      const activeProject: Project = {
+      const activeProject = new Project({
         id: 'project-active',
         name: 'Active Project',
         folderPath: '/path/to/project',
@@ -231,9 +231,9 @@ describe('Project Entity', () => {
         bindings: { ide: true },
         tags: [],
         deleted: false,
-      };
+      });
 
-      const deletedProject: Project = {
+      const deletedProject = new Project({
         id: 'project-deleted',
         name: 'Deleted Project',
         folderPath: '/path/to/project',
@@ -245,7 +245,7 @@ describe('Project Entity', () => {
         tags: [],
         deleted: true,
         deletedAt: new Date('2026-01-08'),
-      };
+      });
 
       expect(activeProject.deleted).toBe(false);
       expect(activeProject.deletedAt).toBeUndefined();
@@ -254,7 +254,7 @@ describe('Project Entity', () => {
     });
 
     it('should support temp project pattern', () => {
-      const tempProject: Project = {
+      const tempProject = new Project({
         id: 'project-temp',
         name: 'Temp Project',
         folderPath: '/path/to/temp',
@@ -266,7 +266,7 @@ describe('Project Entity', () => {
         tags: [],
         isTemp: true,
         autoCreated: true,
-      };
+      });
 
       expect(tempProject.isTemp).toBe(true);
       expect(tempProject.autoCreated).toBe(true);

@@ -254,6 +254,7 @@ epic_generation:
   completed_at: "2026-01-08T01:02:19+07:00"
   workflow: "/bmad-bmm-workflows-create-epics-and-stories"
   assigned_to: "@bmad-bmm-pm"
+  inputs:
     ux_specification: _bmad-output/planning-artifacts/ux-specification.md
     traceability: _bmad-output/validation/traceability-matrix-2026-01-08.md
     architecture_alignment: _bmad-output/validation/architecture-alignment-2026-01-08.md
@@ -804,39 +805,56 @@ epic_38_status:
       depends_on: ["38-02"]
     "38-04":
       title: "Update 130 infrastructure→domain imports"
-      status: "blocked"
+      status: "completed"
       effort: "4h"
       depends_on: ["38-03", "38-06"]
       blocked_reason: "Waiting for domain entities (38-05, 38-05b, 38-05c, 38-05d, 38-06)"
+      completed_at: "2026-01-08T18:00:00+07:00"
+      notes: "Refactored Project, Agent, Workspace types. RAG/Knowledge/Study deferred to implementation stories."
     "38-05":
       title: "Create domain/entities/Project.ts"
-      status: "ready-for-dev"
+      status: "completed"
       effort: "2h"
       assigned_to: "Team B"
+      completed_at: "2026-01-08T14:55:00+07:00"
+      tests_count: 11
+      tests_passing: 11
     "38-05b":
       title: "Create domain/entities/rag.ts"
-      status: "backlog"
+      status: "completed"
       effort: "3h"
       depends_on: ["38-05"]
       new_story: true
+      completed_at: "2026-01-08T17:15:00+07:00"
+      tests_count: 9
+      tests_passing: 9
     "38-05c":
       title: "Create domain/entities/knowledge.ts"
-      status: "backlog"
+      status: "completed"
       effort: "1.5h"
       depends_on: ["38-05"]
       new_story: true
+      completed_at: "2026-01-08T17:20:00+07:00"
+      tests_count: 9
+      tests_passing: 9
     "38-05d":
       title: "Create domain/entities/study.ts"
-      status: "backlog"
+      status: "completed"
       effort: "2h"
       depends_on: ["38-05"]
       new_story: true
+      completed_at: "2026-01-08T17:25:00+07:00"
+      tests_count: 9
+      tests_passing: 9
     "38-06":
       title: "Create domain/entities/Workspace.ts"
-      status: "backlog"
+      status: "completed"
       effort: "1.5h"
       depends_on: ["38-05b", "38-05c", "38-05d"]
       notes: "Agent.ts ALREADY EXISTS - scope reduced"
+      completed_at: "2026-01-08T17:30:00+07:00"
+      tests_count: 6
+      tests_passing: 6
     "38-07":
       title: "Update infrastructure to import from domain entities"
       status: "backlog"

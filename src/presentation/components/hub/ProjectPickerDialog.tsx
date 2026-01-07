@@ -131,7 +131,7 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
     if (!allProjectsFromDexie) return [];
     return allProjectsFromDexie.filter((project) => {
       // Handle both legacy bindings (Record<string, string>) and typed bindings (WorkspaceBindings)
-      const binding = (project.bindings as Record<string, string>)?.[targetWorkspace];
+      const binding = (project.bindings as Record<string, string | boolean>)?.[targetWorkspace];
       return binding === true || binding === 'true';
     });
   }, [allProjectsFromDexie, targetWorkspace]);

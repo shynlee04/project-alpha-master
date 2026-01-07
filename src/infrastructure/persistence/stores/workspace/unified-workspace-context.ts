@@ -28,7 +28,7 @@
  */
 
 import { createContext, useContext, type RefObject } from 'react';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { WorkspaceType } from '@/domain/entities/workspace';
 
 // Import types from canonical sources for internal use
 import type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
@@ -37,7 +37,7 @@ import type { ProjectMetadata } from '@/lib/workspace/project-store';
 
 // Import file system infrastructure types for refs
 import type { LocalFSAdapter } from '@/infrastructure/filesystem';
-import type { SyncManager } from '@/lib/filesystem/sync-manager';
+import type { SyncManager } from '@/infrastructure/sync';
 
 // Import canonical event bus type
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';

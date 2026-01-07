@@ -11,6 +11,7 @@
 import { useEffect, useCallback } from 'react';
 import { MonacoEditor } from '@/presentation/components/ide/MonacoEditor/MonacoEditor';
 import type { OpenFile } from '@/presentation/components/ide/MonacoEditor/EditorTabBar';
+import type { UserPresence } from '@/presentation/components/collaboration/UserPresenceIndicator';
 import { useFileWatcher } from '@/hooks/useFileWatcher';
 import { FileChangeDialog } from './FileChangeDialog';
 import { useStopWatchingAllFiles } from '@/hooks/useFileWatcher';
@@ -34,8 +35,8 @@ export interface MonacoEditorWithWatcherProps {
   initialScrollTop?: number;
   /** Scroll position change callback */
   onScrollTopChange?: (path: string, scrollTop: number) => void;
-  /** Current file users */
-  currentFileUsers?: Array<{ userId: string; userName: string; cursorLine?: number }>;
+  /** Current file users (collaboration presence) */
+  currentFileUsers?: UserPresence[];
   /** Diff mode */
   diffMode?: boolean;
   /** Original content for diff */

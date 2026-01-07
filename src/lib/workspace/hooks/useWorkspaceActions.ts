@@ -108,6 +108,9 @@ export function useWorkspaceActions(
                 fsaHandle: handle,
                 lastOpened: new Date(),
                 autoSync,
+                createdAt: new Date(),
+                bindings: { ide: true },
+                tags: [],
             };
             await saveProject(project);
             setProjectMetadata(project);
@@ -173,6 +176,9 @@ export function useWorkspaceActions(
                 fsaHandle: handle,
                 lastOpened: new Date(),
                 autoSync: true,
+                createdAt: new Date(),
+                bindings: { ide: true },
+                tags: [],
             };
             await saveProject(project);
             setProjectMetadata(project);

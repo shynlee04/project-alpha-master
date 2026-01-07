@@ -271,7 +271,8 @@ export function migrateTabData(): void {
         };
 
         // Save in new format
-        saveProjectTabs(defaultProjectId, newData.tabs, newData.activeTabPath);
+        // Cast old tab format to any[] since migration data has incomplete properties
+        saveProjectTabs(defaultProjectId, newData.tabs as any[], newData.activeTabPath);
 
         // Remove old data
         localStorage.removeItem(oldKey);

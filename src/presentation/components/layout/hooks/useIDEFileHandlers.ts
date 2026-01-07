@@ -7,7 +7,7 @@
  */
 
 import { useCallback } from 'react';
-import type { SyncManager } from '@/lib/filesystem/sync-manager';
+import type { SyncManager } from '@/infrastructure/sync';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 import type { OpenFile } from '../../ide/MonacoEditor';
 import { useDeviceType } from '@/hooks/useMediaQuery';

@@ -11,6 +11,7 @@
  */
 
 import type { Table } from 'dexie';
+import type { WorkspaceBindings } from '@/domain/entities/project';
 
 // ============================================================================
 // Shared Types
@@ -114,15 +115,9 @@ export interface FileContentCacheRecord {
 }
 
 /**
- * Workspace binding configuration for project association.
- * Story WB-1: Multi-workspace project support.
+ * Re-export WorkspaceBindings from domain entity
  */
-export interface WorkspaceBindings {
-    ide?: boolean;
-    notes?: boolean;
-    knowledge?: boolean;
-    study?: boolean;
-}
+export type { WorkspaceBindings } from '@/domain/entities/project';
 
 // ============================================================================
 // Table Type Exports

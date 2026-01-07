@@ -18,7 +18,7 @@ import { BatchOperationError } from './file-tools';
 import { validatePath, normalizePath, PathValidationError } from './file-tools';
 import { FileLock, fileLock as defaultFileLock } from './file-lock';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
-import type { SyncManager } from '@/lib/filesystem/sync-manager';
+import type { SyncManager } from '@/infrastructure/sync';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 import { ToolPermissionManager, PermissionCheckResult } from '../tool-permission-manager';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';

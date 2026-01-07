@@ -18,8 +18,8 @@ import type {
     FileSyncConfig
 } from './file-sync-service';
 import type { LocalFSAdapter } from '@/infrastructure/filesystem';
-import type { SyncManager } from '@/lib/filesystem/sync-manager/sync-manager';
-import { createSyncManager } from '@/lib/filesystem/sync-manager';
+import type { SyncManager } from '@/infrastructure/sync';
+import { createSyncManager } from '@/infrastructure/sync';
 import { SyncError } from '@/infrastructure/sync/types';
 
 /**

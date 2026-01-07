@@ -7,7 +7,7 @@
  * @story S-037 - Plugin System for extensibility with marketplace
  */
 
-import type { PluginMain, PluginContext } from '@/lib/plugins/types';
+import type { PluginMain, PluginContext, PluginPermission } from '@/lib/plugins/types';
 
 const manifest = {
   name: 'github-integration',
@@ -17,7 +17,7 @@ const manifest = {
   license: 'MIT',
   homepage: 'https://github.com',
   main: '',
-  permissions: ['network', 'storage'],
+  permissions: ['network', 'storage'] as PluginPermission[],
 };
 
 const plugin: PluginMain = {

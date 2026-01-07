@@ -18,9 +18,7 @@ import { useNavigate } from '@tanstack/react-router';
 import {
   LocalFSAdapter,
 } from '@/infrastructure/filesystem';
-import {
-  SyncManager,
-} from '@/lib/filesystem/sync-manager';
+import { SyncManager } from '@/infrastructure/sync';
 import type {
   SyncStatus,
   SyncProgress,
@@ -29,7 +27,7 @@ import type {
 import { createWorkspaceEventBus } from '@/lib/events/workspace-events';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-import type { ProjectMetadata as LibProjectMetadata } from '@/lib/workspace/project-store';
+import type { ProjectMetadata } from '@/lib/workspace/project-store';
 import {
   getProject,
   saveProject,
@@ -44,21 +42,6 @@ import {
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 import { noteFolderBridge } from '@/infrastructure/sync/bridges/note-folder-bridge';
-
-/**
- * Local ProjectMetadata with nullable fsaHandle for internal state
- */
-interface ProjectMetadata {
-  id: string;
-  name: string;
-  folderPath: string;
-  storageType: 'indexeddb' | 'fsa';
-  fsaHandle?: FileSystemDirectoryHandle | null;
-  lastOpened: Date;
-  autoSync: boolean;
-  exclusionPatterns?: string[];
-  lastKnownPermissionState?: FsaPermissionState;
-}
 
 /**
  * File system hook configuration
@@ -118,7 +101,7 @@ export function useWorkspaceFileSystem({
 
         if (project) {
           console.log('[WorkspaceProvider] Hydrated project:', project.name);
-          setProjectMetadata(project as ProjectMetadata);
+          setProjectMetadata(project);
           setDirectoryHandle(project.fsaHandle || null);
 
           // FIX-2026-01-06: Check actual permission state instead of always setting 'prompt'
@@ -362,8 +345,11 @@ export function useWorkspaceFileSystem({
         fsaHandle: handle,
         lastOpened: new Date(),
         autoSync,
+        createdAt: new Date(), // Required by Project entity
+        bindings: { ide: true }, // Default binding
+        tags: [], // Required by Project entity
       };
-      await saveProject(project as LibProjectMetadata);
+      await saveProject(project);
       setProjectMetadata(project);
       setCurrentProject(projectId);
 
@@ -422,8 +408,11 @@ export function useWorkspaceFileSystem({
         fsaHandle: handle,
         lastOpened: new Date(),
         autoSync: true,
+        createdAt: new Date(), // Required by Project entity
+        bindings: { ide: true }, // Default binding
+        tags: [], // Required by Project entity
       };
-      await saveProject(project as LibProjectMetadata);
+      await saveProject(project);
       setProjectMetadata(project);
       setCurrentProject(newProjectId);
 
@@ -458,7 +447,7 @@ export function useWorkspaceFileSystem({
       };
 
       if (updatedProject.fsaHandle) {
-        const saved = await saveProject(updatedProject as LibProjectMetadata);
+        const saved = await saveProject(updatedProject);
         if (saved) {
           setProjectMetadata(updatedProject);
         }
@@ -485,7 +474,7 @@ export function useWorkspaceFileSystem({
       };
 
       if (updatedProject.fsaHandle) {
-        const saved = await saveProject(updatedProject as LibProjectMetadata);
+        const saved = await saveProject(updatedProject);
         if (saved) {
           setProjectMetadata(updatedProject);
         }
@@ -517,7 +506,7 @@ export function useWorkspaceFileSystem({
         lastKnownPermissionState: result,
       };
       if (updatedProject.fsaHandle) {
-        await saveProject(updatedProject as LibProjectMetadata);
+        await saveProject(updatedProject);
       }
       setProjectMetadata(updatedProject);
     }
@@ -529,7 +518,7 @@ export function useWorkspaceFileSystem({
 
   return {
     // State
-    projectMetadata: projectMetadata as LibProjectMetadata | null,
+    projectMetadata: projectMetadata,
     directoryHandle,
     permissionState,
     syncStatus,

@@ -283,12 +283,12 @@ export function ContextMenu({
                         transition-colors focus-visible:outline-none focus-visible:bg-accent/50
                         ${item.advanced ? 'text-muted-foreground' : ''}
                     `}
-                    onClick={() => handleAction(item.action)}
+                    onClick={() => item.action && handleAction(item.action)}
                     title={item.labelDefault}
                 >
                     <span className="flex items-center gap-2">
                         {item.icon}
-                        <span>{t(item.labelKey, { defaultValue: item.labelDefault })}</span>
+                        <span>{t(item.labelKey || 'common.action', { defaultValue: item.labelDefault || 'Action' })}</span>
                     </span>
                     {item.shortcut && (
                         <span className="text-xs text-muted-foreground ml-auto">

@@ -573,6 +573,7 @@ export function MonacoEditor({
 
         // Calculate indentation
         const model = editor.getModel();
+        if (!model) return;
         const lineContent = model.getLineContent(position.lineNumber);
         const indentation = lineContent.match(/^\s*/)?.[0] || '';
 

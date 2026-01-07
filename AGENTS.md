@@ -217,6 +217,9 @@ Each module has comprehensive documentation in `MANIFEST.md`:
 | `src/lib/state/ide-store.ts` | → Merging with infrastructure/stores/ide | ✅ Story 53-4 DONE |
 | `src/lib/state/quiz-store.ts` | → infrastructure/stores/study | ✅ Story 53-5 DONE (kept as facade) |
 | `src/lib/state/dexie-storage.ts` | → infrastructure/persistence | ✅ Story 53-6 DONE |
+| `@/lib/filesystem/sync-manager` | → `@/infrastructure/sync` | ✅ Story 38-02 DONE (2026-01-08) |
+
+**Note**: SyncManager migration (Story 38-02) added re-exports in `infrastructure/sync/index.ts` for backward compatibility. Use new path `@/infrastructure/sync` for all new imports.
 
 ### Import Pattern (Migration)
 

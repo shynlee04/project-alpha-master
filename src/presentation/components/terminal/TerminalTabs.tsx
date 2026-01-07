@@ -9,7 +9,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, X, Minus, DivideHorizontal, Maximize2 } from 'lucide-react';
+import { Plus, X, Minus, MoveHorizontal, Maximize2 } from 'lucide-react';
 import { useTerminalStore } from '@/infrastructure/persistence/stores/terminal-store';
 import { TerminalPanel } from './TerminalPanel';
 import { cn } from '@/lib/utils';
@@ -211,7 +211,7 @@ export function TerminalTabs({
             onClick={() => handleToggleSplit('horizontal')}
             title={t('terminal.splitHorizontal')}
           >
-            <DivideHorizontal className="h-4 w-4" />
+            <MoveHorizontal className="h-4 w-4" />
           </button>
 
           {/* Split Vertical */}

@@ -175,3 +175,26 @@ export type {
   UserPromptResult,
   ConflictPromptCallback,
 } from './strategies/conflict-resolution';
+
+// ============================================================================
+// Legacy SyncManager (being migrated)
+// ============================================================================
+// TODO: Move implementation from src/lib/filesystem/sync-manager to here
+// For now, re-exporting from old location for backward compatibility
+
+export type {
+  SyncConfig,
+  SyncProgress,
+  SyncResult as LegacySyncResult,
+  SyncStatus,
+} from '@/lib/filesystem/sync-manager/sync-manager-types';
+export { SyncError } from '@/lib/filesystem/sync-manager/sync-manager-types';
+export { SyncManager } from '@/lib/filesystem/sync-manager/sync-manager';
+export { createSyncManager } from '@/lib/filesystem/sync-manager/sync-manager-factory';
+export { syncToWebContainer, incrementalSyncToWebContainer } from '@/lib/filesystem/sync-manager/sync-batch-sync';
+export {
+  writeFile,
+  deleteFile,
+  createDirectory,
+  deleteDirectory,
+} from '@/lib/filesystem/sync-manager/sync-file-ops';

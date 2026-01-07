@@ -23,6 +23,7 @@ import {
 
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
+import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-core-types';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { ProjectCreationWizard } from './ProjectCreationWizard';
 import { ProjectCard } from '@/presentation/components/hub/ProjectCard';
@@ -42,6 +43,27 @@ interface FilterState {
   search: string;
   sortField: SortField;
   sortOrder: SortOrder;
+}
+
+/**
+ * Convert ProjectRecord (Dexie) to Project (store type)
+ * Adds default values for properties not in the database schema
+ */
+function toProject(record: ProjectRecord): Project {
+  return {
+    id: record.id,
+    name: record.name,
+    folderPath: record.path,
+    storageType: record.storageType || 'indexeddb',
+    lastOpened: record.lastOpened,
+    createdAt: record.createdAt,
+    bindings: record.bindings as Project['bindings'] || {},
+    autoSync: true, // Default value not stored in DB
+    tags: [], // Default value not stored in DB
+    fileSnapshotEnabled: record.fileSnapshotEnabled,
+    isTemp: record.isTemp,
+    autoCreated: record.autoCreated,
+  };
 }
 
 // ============================================================================
@@ -81,14 +103,13 @@ export const ProjectsPage: React.FC = () => {
   const filteredProjects = useMemo(() => {
     if (!projects) return [];
 
-    let filtered = [...projects] as Project[];
+    let filtered = [...projects] as ProjectRecord[];
 
     // Search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(searchLower) ||
-        p.description?.toLowerCase().includes(searchLower)
+        p.name.toLowerCase().includes(searchLower)
       );
     }
 
@@ -115,7 +136,7 @@ export const ProjectsPage: React.FC = () => {
       return filters.sortOrder === 'asc' ? comparison : -comparison;
     });
 
-    return filtered;
+    return filtered.map(toProject);
   }, [projects, filters]);
 
   // Handlers
@@ -138,7 +159,7 @@ export const ProjectsPage: React.FC = () => {
     const project = (projects || []).find(p => p.id === projectId);
     if (!project) return;
 
-    setSelectedProject(project);
+    setSelectedProject(toProject(project));
     setBindingDialogOpen(true);
   };
 

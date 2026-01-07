@@ -13,6 +13,10 @@ import type { ChatMessage, Citation } from '@/lib/rag/types';
 import type { ConnectionState } from '@/lib/rag/live-api-types';
 import type { VoiceModeState as VoiceModeStateEnum } from '@/lib/rag/live-api-types';
 
+import type { WorkspaceType } from '@/domain/entities/workspace';
+
+export type { WorkspaceType };
+
 // ============================================================================
 // Enums
 // ============================================================================
@@ -160,8 +164,3 @@ export interface CachedSearchResult {
   results: SearchResult[];
   timestamp: number;
 }
-
-/**
- * Workspace type for multi-workspace architecture
- */
-export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'canvas';

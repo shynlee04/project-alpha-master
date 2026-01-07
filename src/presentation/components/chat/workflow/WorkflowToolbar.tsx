@@ -8,15 +8,16 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import { Save, Play, Square, FolderOpen } from 'lucide-react';
+import { Save, Play, Square, FolderOpen, Rocket } from 'lucide-react';
 import { useWorkflowBuilderStore } from '@/lib/workflow/builder/workflow-builder-store';
 
 interface WorkflowToolbarProps {
     onSave?: () => void;
+    onExecute?: () => void;
     onLoadTemplate: () => void;
 }
 
-export function WorkflowToolbar({ onSave, onLoadTemplate }: WorkflowToolbarProps) {
+export function WorkflowToolbar({ onSave, onExecute, onLoadTemplate }: WorkflowToolbarProps) {
     const { t } = useTranslation();
     const { workflow, isValid, isPreview, togglePreview } = useWorkflowBuilderStore();
 
@@ -48,10 +49,20 @@ export function WorkflowToolbar({ onSave, onLoadTemplate }: WorkflowToolbarProps
                         >
                             <Save className="w-4 h-4" />
                         </button>
+                        {onExecute && (
+                            <button
+                                onClick={onExecute}
+                                disabled={!isValid}
+                                className="p-2 rounded hover:bg-primary/10 text-primary transition-colors disabled:opacity-50"
+                                title={t('chat.workflow.execute')}
+                            >
+                                <Rocket className="w-4 h-4" />
+                            </button>
+                        )}
                         <button
                             onClick={togglePreview}
                             disabled={!isValid}
-                            className="p-2 rounded hover:bg-primary/10 text-primary transition-colors disabled:opacity-50"
+                            className="p-2 rounded hover:bg-muted transition-colors disabled:opacity-50"
                             title={t('chat.workflow.preview')}
                         >
                             <Play className="w-4 h-4" />

@@ -77,7 +77,7 @@ export interface TerminalSession {
 /**
  * Terminal emulator options
  */
-export interface TerminalEmulatorOptions extends Partial<ITerminalOptions> {
+export interface TerminalEmulatorOptions extends Omit<Partial<ITerminalOptions>, 'theme'> {
   /** Container element for terminal */
   container: HTMLElement;
   /** Initial working directory (default: project root) */
@@ -88,7 +88,7 @@ export interface TerminalEmulatorOptions extends Partial<ITerminalOptions> {
   fontSize?: number;
   /** Font family (default: JetBrains Mono) */
   fontFamily?: string;
-  /** Theme (light/dark) */
+  /** Theme (light/dark) - overrides ITerminalOptions.theme */
   theme?: 'light' | 'dark';
   /** Enable web links (default: true) */
   enableWebLinks?: boolean;

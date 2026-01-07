@@ -3,51 +3,18 @@
  * @module workspace/project-store/types
  */
 
-import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 
 /**
- * Layout configuration stored per project.
- * Optional - used for restoring IDE state.
+ * Re-export Project as ProjectMetadata for backward compatibility
  */
-export interface LayoutConfig {
-  panelSizes?: number[];
-  openFiles?: string[];
-  activeFile?: string | null;
-}
+export type ProjectMetadata = Project;
 
 /**
- * Core project metadata stored in IndexedDB.
+ * Re-export LayoutConfig from project-types
  */
-export interface ProjectMetadata {
-  /** UUID v4 or generated ID */
-  id: string;
-  /** Display name (typically folder name) */
-  name: string;
-  /** Display path for UI (not actual path due to FSA security) */
-  folderPath: string;
-  /** Storage type: FSA folder mount or IndexedDB local storage */
-  storageType: 'indexeddb' | 'fsa';
-  /** FSA handle for directory access restoration (only for fsa storage type) */
-  fsaHandle?: FileSystemDirectoryHandle | null;
-  /** Last time project was opened */
-  lastOpened: Date;
-  autoSync?: boolean;
-  /** Optional layout state for IDE restoration */
-  layoutState?: LayoutConfig;
-  /** Custom exclusion patterns for sync (glob syntax) */
-  exclusionPatterns?: string[];
-  /** Story 13-5: Last known permission state for faster dashboard load */
-  lastKnownPermissionState?: FsaPermissionState;
-  /** Story WB-1: Workspace binding configuration */
-  workspaceBindings?: WorkspaceBindings;  // FIXED: Use proper type, not Record<string, boolean>
-  /** Story WB-1: File snapshot feature flag */
-  fileSnapshotEnabled?: boolean;
-  /** Soft delete flag (true = marked as deleted, recoverable for 30 days) */
-  deleted?: boolean;
-  /** Timestamp when project was soft deleted */
-  deletedAt?: Date;
-}
+export type { LayoutConfig } from '@/infrastructure/persistence/stores/project/project-types';
 
 // Re-export FsaPermissionState for convenience
 export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';

@@ -27,6 +27,9 @@ export interface NoteRecord {
     /** Foreign key to project */
     projectId: string;
 
+    /** PERSIST-S002: Workspace isolation */
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
+
     /** Note title (extracted from first heading or user-defined) */
     title: string;
 

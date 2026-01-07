@@ -16,9 +16,13 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import { useWorkflowBuilderStore } from '@/lib/workflow/builder/workflow-builder-store';
+import type { PaletteItem } from '@/lib/workflow/builder/types';
 
 export function useWorkflowDragDrop() {
-    const { palette, setDragging, addStep } = useWorkflowBuilderStore();
+    const { setDragging, addStep, getPalette } = useWorkflowBuilderStore();
+
+    // Get palette items from store
+    const palette = getPalette();
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -40,7 +44,7 @@ export function useWorkflowDragDrop() {
 
         // Handle palette item drop
         if (active.id.toString().startsWith('palette-')) {
-            const paletteItem = palette.find((p) => `palette-${p.type}` === active.id);
+            const paletteItem = palette.find((p: PaletteItem) => `palette-${p.type}` === active.id);
             if (paletteItem) {
                 const newStep = {
                     type: paletteItem.type,

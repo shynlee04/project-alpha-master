@@ -8,9 +8,9 @@
  * @story AC-1.3 - Split agents-store.ts god store into 5 slices
  */
 
-import type { Agent } from '@/core/entities/Agent';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { WorkspaceBinding } from '@/core/entities/Agent';
+import type { Agent } from '@/domain/entities/agent';
+import type { WorkspaceType } from '@/domain/entities/workspace';
+import type { WorkspaceBinding } from '@/domain/entities/agent';
 
 // ============================================================================
 // SLICE 1: CRUD

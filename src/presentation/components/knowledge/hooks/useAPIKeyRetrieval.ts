@@ -22,7 +22,7 @@ import { credentialVault } from '@/lib/agent/providers/credential-vault';
  */
 export type EmbeddingProvider = 'gemini' | 'openai' | 'anthropic';
 
-interface UseAPIKeyRetrievalProps {
+export interface UseAPIKeyRetrievalProps {
     /**
      * Provider ID to fetch API key for
      * @default 'gemini'
@@ -30,7 +30,7 @@ interface UseAPIKeyRetrievalProps {
     providerId?: EmbeddingProvider;
 }
 
-interface APIKeyRetrievalResult {
+export interface APIKeyRetrievalResult {
     /**
      * Retrieved API key (null if not found or loading)
      */

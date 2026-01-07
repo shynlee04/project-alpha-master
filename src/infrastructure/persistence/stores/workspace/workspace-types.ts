@@ -6,16 +6,12 @@
  * Workspace type enumeration for the four workspaces.
  */
 
+import type { WorkspaceType } from '@/domain/entities/workspace';
+
 /**
- * Workspace Type Enumeration
- *
- * Represents the four workspace types in the application:
- * - ide: Code development workspace
- * - knowledge: Knowledge synthesis workspace
- * - study: Study and flashcard workspace
- * - notes: Note-taking workspace
+ * Re-export WorkspaceType
  */
-export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
+export type { WorkspaceType };
 
 /**
  * Workspace metadata

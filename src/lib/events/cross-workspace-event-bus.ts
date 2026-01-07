@@ -27,6 +27,7 @@
  */
 
 import EventEmitter3 from 'eventemitter3';
+import type { WorkspaceType } from '@/core/entities/Workspace';
 
 // ============================================================================
 // Types
@@ -35,7 +36,7 @@ import EventEmitter3 from 'eventemitter3';
 /**
  * Workspace identifiers
  */
-export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
+export type WorkspaceId = WorkspaceType;
 
 /**
  * File change event payload

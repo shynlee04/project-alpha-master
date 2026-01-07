@@ -7,8 +7,8 @@
  * Based on ProjectMetadata from lib/workspace/project-store.ts.
  */
 
-import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
-import type { WorkspaceType } from '@/infrastructure/persistence/stores/rag/rag-types';
+import type { WorkspaceBindings, Project as DomainProject, LayoutConfig } from '@/domain/entities/project';
+import type { WorkspaceType } from '@/domain/entities/workspace';
 import type { FsaPermissionState } from '@/infrastructure/filesystem';
 
 // ============================================================================
@@ -16,64 +16,22 @@ import type { FsaPermissionState } from '@/infrastructure/filesystem';
 // ============================================================================
 
 /**
- * Layout configuration stored per project.
- * Optional - used for restoring IDE state.
+ * Re-export LayoutConfig
  */
-export interface LayoutConfig {
-  panelSizes?: number[];
-  openFiles?: string[];
-  activeFile?: string | null;
-}
+export type { LayoutConfig };
 
 /**
- * Core project metadata (migrated from ProjectMetadata in lib/workspace/project-store.ts)
+ * Core project metadata (Infrastructure Layer)
  *
- * Represents a local folder project with:
- * - FSA handle for browser-native file system access
- * - Workspace bindings (IDE, Knowledge, Notes, Study)
- * - Permission state for dashboard display
- * - Soft delete support (recoverable for 30 days)
- * - NS-2026-01-07: Temp project support for standalone Notes access
+ * Extends Domain Project entity with infrastructure-specific fields:
+ * - fsaHandle (FileSystemDirectoryHandle)
+ * - lastKnownPermissionState (FsaPermissionState)
  */
-export interface Project {
-  /** UUID v4 or generated ID */
-  id: string;
-  /** Display name (typically folder name) */
-  name: string;
-  /** Display path for UI (not actual path due to FSA security) */
-  folderPath: string;
-  /** Storage backend type: 'fsa' for local drive (requires FSA), 'indexeddb' for browser-only */
-  storageType: 'indexeddb' | 'fsa';
+export interface Project extends DomainProject {
   /** FSA handle for directory access restoration (optional, only for 'fsa' storage type) */
   fsaHandle?: FileSystemDirectoryHandle | null;
-  /** Last time project was opened */
-  lastOpened: Date;
-  /** When project was created */
-  createdAt: Date;
-  /** Auto-sync flag (default: true) */
-  autoSync: boolean;
-  /** Optional layout state for IDE restoration */
-  layoutState?: LayoutConfig;
-  /** Custom exclusion patterns for sync (glob syntax) */
-  exclusionPatterns?: string[];
   /** Last known permission state for faster dashboard load */
   lastKnownPermissionState?: FsaPermissionState;
-  /** Workspace binding configuration (IDE, Knowledge, Notes, Study) */
-  bindings: WorkspaceBindings;
-  /** File snapshot feature flag */
-  fileSnapshotEnabled?: boolean;
-  /** Project description (optional) */
-  description?: string;
-  /** Project tags (optional) */
-  tags: string[];
-  /** Soft delete flag (true = marked as deleted, recoverable for 30 days) */
-  deleted?: boolean;
-  /** Timestamp when project was soft deleted */
-  deletedAt?: Date;
-  /** NS-2026-01-07: Temp project flag (auto-created for standalone Notes access) */
-  isTemp?: boolean;
-  /** NS-2026-01-07: Auto-created flag (system-generated vs user-created) */
-  autoCreated?: boolean;
 }
 
 // ============================================================================
@@ -227,15 +185,15 @@ export interface ProjectStats {
 
 /**
  * Re-export WorkspaceBindings for convenience
- * WorkspaceBindings is defined in dexie-db-core-types.ts
+ * WorkspaceBindings is defined in core/entities/Project.ts
  */
-export type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+export type { WorkspaceBindings } from '@/domain/entities/project';
 
 /**
  * Re-export WorkspaceType for convenience
- * WorkspaceType is defined in rag-types.ts
+ * WorkspaceType is defined in core/entities/Workspace.ts
  */
-export type { WorkspaceType } from '@/infrastructure/persistence/stores/rag/rag-types';
+export type { WorkspaceType } from '@/domain/entities/workspace';
 
 /**
  * Re-export FsaPermissionState for convenience

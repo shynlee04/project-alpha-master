@@ -8,7 +8,16 @@
  * @module core/entities
  */
 
-import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+/**
+ * Workspace binding configuration for project association.
+ * Defines which workspaces (IDE, Knowledge, Notes, Study) can access this project.
+ */
+export interface WorkspaceBindings {
+  ide?: boolean;
+  notes?: boolean;
+  knowledge?: boolean;
+  study?: boolean;
+}
 
 /**
  * Layout configuration stored per project.

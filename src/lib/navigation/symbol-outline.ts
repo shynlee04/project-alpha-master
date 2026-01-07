@@ -103,7 +103,7 @@ export function generateOutline(
  * @returns Outline tree grouped by kind
  */
 function groupByKind(symbols: Symbol[], _options: OutlineOptions): OutlineNode[] {
-  const groups: Record<SymbolKind, OutlineNode> = {};
+  const groups: Partial<Record<SymbolKind, OutlineNode>> = {};
 
   // Create category nodes
   const categories: Array<{ kind: SymbolKind; label: string; icon: string }> = [

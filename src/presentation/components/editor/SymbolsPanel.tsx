@@ -123,6 +123,7 @@ export function SymbolsPanel({
       constructor: 'text-blue-400',
       property: 'text-orange-400',
       enumMember: 'text-pink-400',
+      struct: 'text-purple-400',
     };
     return colors[kind] || 'text-slate-400';
   };
@@ -323,6 +324,7 @@ function getIconPathForKind(kind: SymbolKind): React.JSX.Element {
       return <polyline points="4 17 10 11 4 5" />;
     case 'class':
     case 'interface':
+    case 'struct':
       return <rect x="3" y="3" width="18" height="18" rx="2" />;
     case 'type':
       return (
