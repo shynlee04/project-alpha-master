@@ -7,7 +7,7 @@
  */
 
 // Vitest globals available
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { StudyFileSyncService } from '../study-file-sync-service';
 
 // Mock LocalFSAdapter

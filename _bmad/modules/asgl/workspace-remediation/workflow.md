@@ -161,7 +161,7 @@ storage-remediation:
 - ✅ `_bmad-output/workspace-remediation/issues-registry.yaml` (10 issues identified)
 - ✅ `_bmad/modules/asgl/workspace-remediation/workflow.md` (execution workflow)
 - ✅ `_bmad/modules/asgl/workspace-remediation/MANIFEST.yaml` (module manifest)
-- ✅ `_bmad-output/sprint-artifacts/storage-sprint-status.yaml` (sprint tracking)
+- ✅ `_bmad-output/sprint-artifacts/archive/storage-sprint-status.yaml` (sprint tracking - ARCHIVED)
 - ✅ `_bmad-output/sprint-artifacts/STORAGE-2-1-*.md` (story files for Phase 2)
 - ✅ `.claude/AGENT-STATE.yaml` (updated with new session)
 
@@ -176,7 +176,7 @@ storage-remediation:
 
 ### Before Starting Phase
 - [ ] Previous phase 100% complete
-- [ ] All stories created in sprint-status.yaml
+- [ ] All stories created in sprint-status.yaml (canonical: _bmad-output/sprint-artifacts/sprint-status.yaml)
 - [ ] Context XML generated for each story
 
 ### During Phase

@@ -15,7 +15,7 @@ import type {
     FileChangeEvent,
     SyncResult
 } from '../file-sync-service';
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 import type { Block } from '@blocknote/core';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import { SyncError } from '@/infrastructure/sync/types';

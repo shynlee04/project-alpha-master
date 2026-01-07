@@ -17,8 +17,10 @@ import {
 import { useNavigate } from '@tanstack/react-router';
 import {
   LocalFSAdapter,
+} from '@/infrastructure/filesystem';
+import {
   SyncManager,
-} from '@/lib/filesystem';
+} from '@/lib/filesystem/sync-manager';
 import type {
   SyncStatus,
   SyncProgress,

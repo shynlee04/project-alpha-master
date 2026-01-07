@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NoteFolderBridge } from '../note-folder-bridge';
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 import type { NoteSyncStore } from '../notes-file-sync-core';
 
 // Mock dependencies

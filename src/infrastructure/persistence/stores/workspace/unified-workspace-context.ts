@@ -36,7 +36,8 @@ import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 import type { ProjectMetadata } from '@/lib/workspace/project-store';
 
 // Import file system infrastructure types for refs
-import type { LocalFSAdapter, SyncManager } from '@/lib/filesystem';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
+import type { SyncManager } from '@/lib/filesystem/sync-manager';
 
 // Import canonical event bus type
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';

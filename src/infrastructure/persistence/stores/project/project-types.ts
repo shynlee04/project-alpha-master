@@ -9,7 +9,7 @@
 
 import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/rag/rag-types';
-import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+import type { FsaPermissionState } from '@/infrastructure/filesystem';
 
 // ============================================================================
 // PROJECT ENTITY TYPES
@@ -241,4 +241,4 @@ export type { WorkspaceType } from '@/infrastructure/persistence/stores/rag/rag-
  * Re-export FsaPermissionState for convenience
  * FsaPermissionState is defined in permission-lifecycle.ts
  */
-export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+export type { FsaPermissionState } from '@/infrastructure/filesystem';

@@ -16,7 +16,7 @@ import type {
     SyncOptions
 } from '../file-sync-service';
 import type { StudyFileSyncConfig, ImportResult } from './study-sync-types';
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 import type { Quiz } from '@/lib/study/quiz-types';
 import { StudyImportUtils } from './study-import-utils';
 

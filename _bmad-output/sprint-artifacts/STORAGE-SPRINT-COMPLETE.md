@@ -148,4 +148,4 @@
 - Plan: `_bmad-output/governance/storage-remediation-plan-2026-01-07.md`
 - Issues: `_bmad-output/workspace-remediation/issues-registry.yaml`
 - Workflow: `_bmad/modules/asgl/workspace-remediation/workflow.md`
-- Sprint Status: `_bmad-output/sprint-artifacts/storage-sprint-status.yaml`
+- Sprint Status (archived): `_bmad-output/sprint-artifacts/archive/storage-sprint-status.yaml`

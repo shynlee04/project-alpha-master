@@ -8,7 +8,7 @@
  */
 
 import type { FileSyncConfig } from '../file-sync-service';
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 
 /**
  * Configuration for Study file sync service

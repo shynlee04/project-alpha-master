@@ -14,7 +14,7 @@
  * - Structured error collection for partial failures
  */
 
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 import type { NoteSyncStore } from './notes-file-sync-core';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import { importFileAsNote } from './note-crud-operations';

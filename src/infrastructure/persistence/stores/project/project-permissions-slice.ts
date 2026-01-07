@@ -12,8 +12,8 @@ import type {
   ProjectState,
   ProjectPermissionsMethods,
 } from './project-types';
-import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-import { getPermissionState } from '@/lib/filesystem/permission-lifecycle';
+import type { FsaPermissionState } from '@/infrastructure/filesystem';
+import { getPermissionState } from '@/infrastructure/filesystem';
 
 export const createProjectPermissionsSlice: StateCreator<
   ProjectState,

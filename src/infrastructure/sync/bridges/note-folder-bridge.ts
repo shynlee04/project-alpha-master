@@ -11,7 +11,7 @@
 
 import { getDb } from '@/infrastructure/persistence/dexie-db';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db-knowledge-types';
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { walkDirectory } from '@/lib/filesystem/directory-walker';
 
 export class NoteFolderBridge {
