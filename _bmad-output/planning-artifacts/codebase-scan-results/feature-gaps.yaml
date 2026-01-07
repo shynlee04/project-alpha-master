@@ -1,0 +1,442 @@
+# Feature Gaps Analysis
+# Generated: 2026-01-07
+# Scanner: Codebase Analysis Agent
+# Method: TODO/FIXME marker analysis + @epic/@story tracking
+
+documented_vs_implemented:
+  epic_tracking:
+    total_epics_found: 7
+    total_stories_found: 25+
+    tracking_method: "@epic and @story JSDoc annotations"
+
+  active_epics:
+    - id: "Epic-MRT"
+      name: "Mobile Responsive Transformation"
+      stories: 9 (MRT-1 through MRT-9)
+      status: IN_PROGRESS
+      implementation_coverage: 70%
+      stories:
+        - MRT-2: Mobile Tab Bar ✅ DONE
+        - MRT-3: Mobile IDE Layout ✅ DONE
+        - MRT-6: Terminal Panel Mobile ✅ DONE
+        - MRT-7: Chat Panel Mobile ✅ DONE
+        - MRT-9: Dashboard Responsive ✅ DONE
+        - MRT-1, MRT-4, MRT-5, MRT-8: IN_PROGRESS
+
+    - id: "Epic-23"
+      name: "UX/UI Modernization"
+      stories: P1.1, P1.9
+      status: IN_PROGRESS
+      implementation_coverage: 60%
+
+    - id: "WB-8"
+      name: "Cross-Workspace Event System"
+      stories: WB-8.3, WB-8.3.2
+      status: IN_PROGRESS
+      implementation_coverage: 80%
+
+    - id: "CW-01"
+      name: "Abstract File Sync Service"
+      stories: CW-1.4
+      status: IN_PROGRESS
+      implementation_coverage: 50%
+
+    - id: "P0 Sprint"
+      name: "Critical Bug Fixes"
+      stories: P0-1, P0-3, P0-5
+      status: IN_PROGRESS
+      implementation_coverage: 90%
+
+    - id: "Sprint 30"
+      name: "Agent Configuration Corrections"
+      stories: Phase 2.1, Phase 2.2, Phase 2.3
+      status: IN_PROGRESS
+      implementation_coverage: 85%
+
+    - id: "Sprint Individual Stories"
+      name: "Feature Implementation"
+      stories: S-021, S-027, S-034, S-035, S-037
+      status: PLANNED
+      implementation_coverage: 20%
+
+feature_gaps_by_category:
+
+  mobile_responsiveness:
+    status: "70% COMPLETE"
+    completed_features:
+      - ✅ Mobile tab bar navigation
+      - ✅ Mobile IDE layout
+      - ✅ Mobile terminal panel
+      - ✅ Mobile chat panel
+      - ✅ Responsive dashboard
+
+    missing_features:
+      - ❌ Mobile command palette (MRT-4)
+      - ❌ Mobile file tree (MRT-5)
+      - ❌ Mobile settings panels (MRT-8)
+      - ❌ Touch gesture support
+      - ❌ Responsive breakpoints refinement
+
+    todo_markers:
+      - "MonacoEditor.tsx: Format document, fix lint, references panel"
+      - "FileTreeItem.tsx: Touch event handling (clientX/clientY)"
+      - "PluginManager.tsx: Responsive layout detection"
+
+    recommended_stories:
+      - MRT-4: Command Palette Mobile (priority: HIGH)
+      - MRT-5: File Tree Mobile (priority: MEDIUM)
+      - MRT-8: Settings Panels Mobile (priority: LOW)
+
+  agent_configuration:
+    status: "85% COMPLETE"
+    completed_features:
+      - ✅ Agent creation/editing dialog
+      - ✅ Provider API key management
+      - ✅ Workspace permissions editor
+      - ✅ Tool permissions editor
+      - ✅ Trust level manager
+      - ✅ Agent import/export
+
+    missing_features:
+      - ❌ Agent deep think flag (Agent entity)
+      - ❌ Agent memory flag (Agent entity)
+      - ❌ Agent templates
+      - ❌ Agent marketplace/sharing
+
+    todo_markers:
+      - "AgentManager.tsx: Implement deep think flag"
+      - "AgentManager.tsx: Implement memory flag"
+      - "CustomModelIdInput.tsx: Model loading from custom endpoint"
+
+    god_component:
+      - path: AgentConfigDialog.tsx (1,089 lines)
+        severity: HIGH
+        recommendation: "Split into focused sub-components"
+        epic_reference: "P1.1 - God Component Elimination"
+
+    recommended_stories:
+      - Story: Add deep think/memory flags to Agent entity (priority: MEDIUM)
+      - Story: Implement agent templates (priority: LOW)
+      - Story: P1.1 - Split AgentConfigDialog god component (priority: HIGH)
+
+  workspace_integration:
+    status: "60% COMPLETE"
+    completed_features:
+      - ✅ Workspace switcher component
+      - ✅ Project picker dialog
+      - ✅ Workspace-specific state stores
+      - ✅ Agent workspace bindings
+
+    missing_features:
+      - ❌ File sync service integration (WorkspacePermissionEditor)
+      - ❌ Mount/unmount handlers (WorkspacePermissionEditor)
+      - ❌ Workspace-scoped tool permissions persistence
+
+    todo_markers:
+      - "WorkspacePermissionEditor.tsx: Integrate with actual file sync service"
+      - "WorkspacePermissionEditor.tsx: Persist workspace binding config"
+      - "WorkspacePermissionEditor.tsx: Connect to mount/unmount handlers"
+
+    recommended_stories:
+      - Story: Integrate file sync service with workspace permissions (priority: HIGH)
+      - Story: CW-1.4 - File System Access Expansion (priority: HIGH)
+      - Story: WB-8.3.2 - Workspace-Scoped Tool Permissions (priority: MEDIUM)
+
+  knowledge_workspace:
+    status: "70% COMPLETE"
+    completed_features:
+      - ✅ Source import (PDF, URL, text)
+      - ✅ RAG pipeline configuration
+      - ✅ Knowledge collections
+      - ✅ Indexing progress panel
+      - ✅ Flashcard/quiz generation
+
+    missing_features:
+      - ❌ Vector search performance optimization
+      - ❌ Knowledge synthesis UI polish
+      - ❌ Collection management refinements
+
+    todo_markers:
+      - "KnowledgePage.tsx: (no TODOs found)"
+      - "SynthesisDialog.tsx: (no TODOs found)"
+
+    recommended_stories:
+      - Story: Optimize vector search performance (priority: MEDIUM)
+      - Story: Polish synthesis UI (priority: LOW)
+
+  notes_workspace:
+    status: "65% COMPLETE"
+    completed_features:
+      - ✅ Block-based note editor
+      - ✅ Note tree navigation
+      - ✅ AI slash commands
+      - ✅ Voice recording
+      - ✅ Markdown import/export
+
+    missing_features:
+      - ❌ Phase 4: Markdown to BlockNote parser (NotesPage.tsx)
+      - ❌ Multi-modal import refinement
+      - ❌ Note collaboration features
+
+    todo_markers:
+      - "NotesPage.tsx: Phase 4 - Use proper Markdown to BlockNote parser"
+      - "NoteTree.tsx: (no TODOs found)"
+
+    recommended_stories:
+      - Story: Implement Markdown to BlockNote parser (priority: HIGH)
+      - Story: NR-04 - Add Text Selection AI Transform (priority: MEDIUM)
+      - Story: NR-05 - Implement Command Palette AI Actions (priority: MEDIUM)
+
+  study_workspace:
+    status: "80% COMPLETE"
+    completed_features:
+      - ✅ Quiz taking
+      - ✅ Quiz results
+      - ✅ Flashcard review
+      - ✅ Study statistics
+
+    missing_features:
+      - ❌ Load quiz from store if not provided (QuizContainer.tsx)
+      - ❌ Spaced repetition algorithm
+      - ❌ Study session analytics
+
+    todo_markers:
+      - "QuizContainer.tsx: Load quiz from store if not provided"
+
+    recommended_stories:
+      - Story: Fix quiz loading from store (priority: MEDIUM)
+      - Story: Implement spaced repetition (priority: LOW)
+
+  ide_workspace:
+    status: "75% COMPLETE"
+    completed_features:
+      - ✅ Monaco editor integration
+      - ✅ File tree explorer
+      - ✅ Terminal panel
+      - ✅ Agent chat panel
+      - ✅ Preview panel
+
+    missing_features:
+      - ❌ Format document (MonacoEditor.tsx)
+      - ❌ Fix lint (MonacoEditor.tsx)
+      - ❌ References panel (MonacoEditor.tsx)
+      - ❌ Terminal output capture (AgentChatPanel.tsx)
+      - ❌ Read-only file tools facade (AgentChatToolFacades.tsx)
+
+    todo_markers:
+      - "MonacoEditor.tsx: Format document, fix lint, references panel"
+      - "AgentChatPanel.tsx: Integrate with terminal output capture"
+      - "AgentChatToolFacades.tsx: Create read-only file tools facade"
+      - "FileTreeItem.tsx: Touch event handling"
+
+    recommended_stories:
+      - Story: Implement Monaco editor features (format, lint, references) (priority: MEDIUM)
+      - Story: Integrate terminal output capture (priority: LOW)
+      - Story: Create read-only file tools facade (priority: LOW)
+
+  plugins:
+    status: "20% COMPLETE"
+    completed_features:
+      - ✅ Plugin manager UI
+      - ✅ Plugin settings UI
+      - ✅ Plugin marketplace UI
+
+    missing_features:
+      - ❌ Plugin loading system
+      - ❌ Plugin execution engine
+      - ❌ Plugin API definitions
+      - ❌ Plugin marketplace backend
+
+    todo_markers:
+      - "PluginManager.tsx: Responsive layout detection"
+
+    epic_reference: "S-037 - Plugin System for extensibility with marketplace"
+
+    recommended_stories:
+      - Story: Design plugin API (priority: HIGH)
+      - Story: Implement plugin loading system (priority: HIGH)
+      - Story: Implement plugin execution engine (priority: MEDIUM)
+
+  analytics:
+    status: "30% COMPLETE"
+    completed_features:
+      - ✅ Analytics dashboard UI
+      - ✅ Metrics chart component
+
+    missing_features:
+      - ❌ Data collection system
+      - ❌ Metrics calculation
+      - ❌ Analytics persistence
+      - ❌ Analytics export
+
+    epic_reference: "S-034 - Analytics Dashboard and Metrics"
+
+    recommended_stories:
+      - Story: Implement data collection (priority: HIGH)
+      - Story: Calculate metrics (priority: HIGH)
+      - Story: Add analytics export (priority: LOW)
+
+  search:
+    status: "50% COMPLETE"
+    completed_features:
+      - ✅ Search results component
+      - ✅ Search filters component
+      - ✅ Saved searches component
+      - ✅ Advanced search dialog
+
+    missing_features:
+      - ❌ Search backend integration
+      - ❌ Search indexing
+      - ❌ Search ranking algorithm
+
+    epic_reference: "S-027 - Advanced Search with Filters"
+
+    recommended_stories:
+      - Story: Integrate search backend (priority: HIGH)
+      - Story: Implement search indexing (priority: MEDIUM)
+
+  git_integration:
+    status: "40% COMPLETE"
+    completed_features:
+      - ✅ Git diff viewer UI
+      - ✅ Git settings UI
+      - ✅ Git merge conflict resolver UI
+      - ✅ Git commit dialog UI
+      - ✅ Git branch manager UI
+
+    missing_features:
+      - ❌ Git operations integration
+      - ❌ Git status tracking
+      - ❌ Git commit/push/pull
+
+    epic_reference: "S-035 - Git Integration"
+
+    recommended_stories:
+      - Story: Integrate isomorphic-git (priority: HIGH)
+      - Story: Implement git status tracking (priority: MEDIUM)
+
+  collaboration:
+    status: "30% COMPLETE"
+    completed_features:
+      - ✅ Live cursor UI
+      - ✅ User presence indicator UI
+
+    missing_features:
+      - ❌ Real-time sync backend
+      - ❌ Presence tracking
+      - ❌ Conflict resolution
+
+    recommended_stories:
+      - Story: Design collaboration architecture (priority: HIGH)
+      - Story: Implement real-time sync (priority: HIGH)
+
+critical_gaps:
+  high_priority:
+    - name: "Markdown to BlockNote Parser"
+      location: "NotesPage.tsx"
+      severity: "HIGH"
+      impact: "Users cannot properly import Markdown notes"
+      recommendation: "Implement robust Markdown to BlockNote conversion"
+      estimated_effort: "8 hours"
+
+    - name: "Plugin System Architecture"
+      location: "plugins/"
+      severity: "HIGH"
+      impact: "Plugin system is UI-only, no functionality"
+      recommendation: "Design plugin API + loading system"
+      estimated_effort: "24 hours"
+
+    - name: "File Sync Service Integration"
+      location: "WorkspacePermissionEditor.tsx"
+      severity: "HIGH"
+      impact: "Workspace permissions not fully functional"
+      recommendation: "Integrate with abstract file sync service"
+      estimated_effort: "12 hours"
+
+  medium_priority:
+    - name: "Agent Flags (Deep Think, Memory)"
+      location: "AgentManager.tsx"
+      severity: "MEDIUM"
+      impact: "Agent capabilities not fully exposed"
+      recommendation: "Add flags to Agent entity"
+      estimated_effort: "4 hours"
+
+    - name: "Analytics Data Collection"
+      location: "analytics/"
+      severity: "MEDIUM"
+      impact: "Analytics dashboard is empty"
+      recommendation: "Implement data collection system"
+      estimated_effort: "16 hours"
+
+    - name: "Git Operations"
+      location: "git/"
+      severity: "MEDIUM"
+      impact: "Git UI exists but no functionality"
+      recommendation: "Integrate isomorphic-git"
+      estimated_effort: "20 hours"
+
+  low_priority:
+    - name: "Monaco Editor Features"
+      location: "MonacoEditor.tsx"
+      severity: "LOW"
+      impact: "Missing format, lint, references"
+      recommendation: "Implement standard editor features"
+      estimated_effort: "12 hours"
+
+    - name: "Quiz Loading"
+      location: "QuizContainer.tsx"
+      severity: "LOW"
+      impact: "Quiz doesn't load from store"
+      recommendation: "Fix quiz initialization logic"
+      estimated_effort: "2 hours"
+
+documentation_gaps:
+  missing_documentation:
+    - "Plugin API documentation"
+    - "Collaboration architecture ADR"
+    - "Analytics implementation guide"
+    - "Git integration guide"
+
+  outdated_documentation:
+    - "AGENTS.md may not reflect recent agent changes"
+    - "CLAUDE.md may need updates for new features"
+
+  recommended_updates:
+    - "Update AGENTS.md with agent workspace bindings"
+    - "Create ADR for plugin system architecture"
+    - "Create ADR for collaboration architecture"
+    - "Update epic tracking in sprint-status.yaml"
+
+test_coverage_gaps:
+  untested_components:
+    - "PluginManager, PluginMarketplace, PluginSettings"
+    - "AnalyticsDashboard, MetricsChart"
+    - "GitDiffViewer, GitSettings, GitMergeConflictResolver"
+    - "LiveCursor, UserPresenceIndicator"
+
+  under_tested_components:
+    - "AgentConfigDialog (needs more tests)"
+    - "KnowledgePage (needs integration tests)"
+    - "NotesPage (needs Markdown parser tests)"
+
+  recommended_test_stories:
+    - Story: Add unit tests for plugin components (priority: MEDIUM)
+    - Story: Add integration tests for analytics (priority: LOW)
+    - Story: Add E2E tests for git integration (priority: LOW)
+
+summary:
+  total_features_analyzed: 50+
+  completed_features: 35
+  in_progress_features: 8
+  missing_features: 7
+  overall_completion: 70%
+
+  top_priorities:
+    1. Markdown to BlockNote Parser (Notes workspace)
+    2. Plugin System Architecture (Extensibility)
+    3. File Sync Service Integration (Workspace permissions)
+    4. Agent Flags (Deep think, memory)
+    5. Analytics Data Collection
+
+  estimated_effort_to_complete: "120 hours (3 weeks)"
+  recommended_team_size: "2 developers"

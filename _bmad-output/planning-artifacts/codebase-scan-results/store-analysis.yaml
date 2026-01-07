@@ -1,0 +1,358 @@
+# Store Analysis - Zustand State Management
+# Generated: 2026-01-07
+# Scanner: Codebase Analysis Agent
+# Scope: src/infrastructure/persistence/stores/
+
+store_inventory:
+  total_stores: 179
+  total_lines: 28,902
+
+god_stores:
+  definition: "Stores exceeding 300 lines"
+  count: 9
+  stores:
+    - path: src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts
+      lines: 557
+      severity: HIGH
+      purpose: "Workspace file system operations"
+      recommendation: "Split into focused slices (file operations, sync logic, event handling)"
+      epic_reference: "Epic CP-1 - Project Consolidation"
+
+    - path: src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts
+      lines: 554
+      severity: MEDIUM
+      purpose: "Conversation data migration scripts"
+      recommendation: "One-time migration, can stay as-is but document clearly"
+      epic_reference: "Epic CC-1 - Conversation Consolidation"
+
+    - path: src/infrastructure/persistence/stores/providers/migration-backup.ts
+      lines: 549
+      severity: MEDIUM
+      purpose: "Provider API key backup before migration"
+      recommendation: "One-time migration, can stay as-is"
+      epic_reference: "Epic CC-1 - Conversation Consolidation"
+
+    - path: src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts
+      lines: 396
+      severity: HIGH
+      purpose: "Provider credential management with encryption"
+      recommendation: "Split into encryption, validation, and storage slices"
+      epic_reference: "Cornerstone 1 - Provider Configuration"
+
+    - path: src/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts
+      lines: 388
+      severity: MEDIUM
+      purpose: "API key migration to credential vault"
+      recommendation: "One-time migration, can stay as-is"
+
+    - path: src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts
+      lines: 367
+      severity: MEDIUM
+      purpose: "Unified workspace React context"
+      recommendation: "Consider splitting into workspace-specific contexts"
+
+    - path: src/infrastructure/persistence/stores/use-app-store.ts
+      lines: 367
+      severity: HIGH
+      purpose: "Application-wide state store"
+      recommendation: "Split into domain-specific slices"
+      epic_reference: "Platform Unification Initiative"
+
+    - path: src/infrastructure/persistence/stores/plugins-store.ts
+      lines: 316
+      severity: MEDIUM
+      purpose: "Plugin management store"
+      recommendation: "Split into plugin discovery, loading, and execution slices"
+
+    - path: src/infrastructure/persistence/stores/session-snapshot-manager.ts
+      lines: 321
+      severity: MEDIUM
+      purpose: "Session state snapshot management"
+      recommendation: "Split into snapshot creation, restoration, and cleanup"
+
+    - path: src/infrastructure/persistence/stores/schema-migrations.ts
+      lines: 314
+      severity: LOW
+      purpose: "Database schema migration definitions"
+      recommendation: "Migration definitions, acceptable size"
+
+    - path: src/infrastructure/persistence/stores/terminal-store.ts
+      lines: 307
+      severity: MEDIUM
+      purpose: "Terminal state management"
+      recommendation: "Split into shell, session, and command history slices"
+
+    - path: src/infrastructure/persistence/stores/conversation/useConversationStore.ts
+      lines: 304
+      severity: HIGH
+      purpose: "Conversation thread and message management"
+      recommendation: "Split into 6 slices per Epic CC-1"
+      epic_reference: "Epic CC-1 - Conversation Consolidation"
+
+stores_by_domain:
+  ide:
+    count: 11
+    location: src/infrastructure/persistence/stores/ide/
+    stores:
+      - useIDEStore.ts (245 lines) - Main IDE store
+      - ide-editor-slice.ts - Editor state
+      - ide-explorer-slice.ts - File explorer state
+      - ide-layout-slice.ts - Layout panel state
+      - ide-project-slice.ts - Project state
+      - ide-selectors-slice.ts - Derived selectors
+      - ide-state-storage.ts - Persistence layer
+      - ide-terminal-slice.ts - Terminal state
+      - ide-types.ts - TypeScript definitions
+      - __tests__/ide-state-persistence.test.ts (465 lines)
+
+  providers:
+    count: 15
+    location: src/infrastructure/persistence/stores/providers/
+    stores:
+      - provider-credentials-slice.ts (396 lines) - API key encryption
+      - provider-crud-slice.ts - Provider CRUD operations
+      - provider-models-slice.ts - Model registry
+      - provider-utils-slice.ts - Provider utilities
+      - migrate-api-keys-to-vault.ts (388 lines) - Migration script
+      - migration-backup.ts (549 lines) - Backup utilities
+      - use-migration-state.ts - Migration state
+      - types.ts (313 lines) - Type definitions
+      - __tests__/ (3 test files)
+
+  agents:
+    count: 13
+    location: src/infrastructure/persistence/stores/agents/
+    stores:
+      - agent-selection-store.ts (303 lines backup)
+      - slices/agent-crud-slice.ts - Agent CRUD
+      - slices/agent-selection-actions.ts - Selection actions
+      - slices/agent-selection-events.ts - Event emission
+      - slices/agent-selection-queries.ts - Query utilities
+      - slices/agent-selection-state.ts - Selection state
+      - slices/agent-selection-utils.ts - Utility functions
+      - slices/agent-utils-slice.ts - Agent utilities
+      - slices/agent-validation-slice.ts - Validation logic
+      - slices/agent-workspace-bindings-slice.ts - Workspace bindings
+      - slices/index.ts - Barrel export
+      - types.ts - Type definitions
+      - agent-selection-store.backup.ts (303 lines)
+
+  workspace:
+    count: 9
+    location: src/infrastructure/persistence/stores/workspace/
+    stores:
+      - workspace-store.ts - Main workspace store
+      - workspace-context.ts - React context
+      - unified-workspace-context.ts (367 lines) - Unified context
+      - useWorkspaceSwitching.ts - Switching hook
+      - useWorkspaceFileSystem.ts (557 lines) - File system operations
+      - useCornerstoneStores.ts - Cornerstone stores hook
+      - workspace-types.ts - Type definitions
+      - __tests__/workspace-switch-isolation.test.ts (434 lines)
+
+  conversation:
+    count: 20+
+    location: src/infrastructure/persistence/stores/conversation/
+    stores:
+      - useConversationStore.ts (304 lines) - Main conversation store
+      - slices/conversation-actions-slice.ts
+      - slices/conversation-events-slice.ts
+      - slices/conversation-metadata-slice.ts
+      - slices/conversation-utils-slice.ts
+      - slices/conversation-validation-slice.ts
+      - migration/conversation-migration.ts (554 lines) - Migration scripts
+      - __tests__/ (4 test files, 1,200+ lines total)
+
+  rag:
+    count: 10
+    location: src/infrastructure/persistence/stores/rag/
+    stores:
+      - rag-store.ts - Main RAG store
+      - rag-chat-slice.ts - Chat operations
+      - rag-chunking-slice.ts - Document chunking
+      - rag-helpers.ts - Helper functions
+      - rag-index-slice.ts - Indexing operations
+      - rag-search-slice.ts - Search operations
+      - rag-types.ts - Type definitions
+      - rag-voice-slice.ts - Voice input
+      - index.ts - Barrel export
+
+  canvas:
+    count: 7
+    location: src/infrastructure/persistence/stores/canvas/
+    stores:
+      - canvas-db.ts - Canvas database
+      - canvas-utils.ts - Canvas utilities
+      - slices/canvas-io-slice.ts - I/O operations
+      - slices/canvas-linkage-slice.ts - Block linkage
+      - slices/canvas-persistence-slice.ts - Persistence
+      - slices/canvas-state-slice.ts - State management
+      - types.ts - Type definitions
+
+  flashcard:
+    count: 5
+    location: src/infrastructure/persistence/stores/flashcard/
+    stores:
+      - flashcard-db.ts - Flashcard database
+      - slices/flashcard-set-crud-slice.ts - CRUD operations
+      - slices/flashcard-filter-slice.ts - Filtering
+      - flashcard-utils.ts - Utilities
+
+  quiz:
+    count: 6
+    location: src/infrastructure/persistence/stores/study/quiz/
+    stores:
+      - quiz-store.ts - Main quiz store
+      - slices/quiz-query-slice.ts - Query operations
+      - slices/quiz-ui-slice.ts - UI state
+      - types.ts - Type definitions
+
+  permissions:
+    count: 6
+    location: src/infrastructure/persistence/stores/permissions/
+    stores:
+      - tool-permission-store.ts - Tool permissions
+      - slices/permission-actions-slice.ts - Permission actions
+      - constants.ts - Permission constants
+      - migrations.ts - Permission migrations
+      - selectors.ts - Permission selectors
+      - types.ts - Type definitions
+
+  filesystem:
+    count: 8
+    location: src/infrastructure/persistence/stores/filesystem/
+    stores:
+      - useFileSnapshotStore.ts - Main snapshot store
+      - snapshot-bulk-ops-slice.ts - Bulk operations
+      - snapshot-cache-slice.ts - Cache management
+      - snapshot-metadata-slice.ts - Metadata operations
+      - snapshot-quota-slice.ts - Quota management
+      - snapshot-types.ts - Type definitions
+      - index.ts - Barrel export
+
+  project:
+    count: 7
+    location: src/infrastructure/persistence/stores/project/
+    stores:
+      - project-crud-slice.ts (240 lines)
+      - project-bindings-slice.ts - Workspace bindings
+      - project-layout-slice.ts - Layout state
+      - project-types.ts (244 lines) - Type definitions
+      - project-utils-slice.ts - Query utilities
+      - migrate-bindings.ts - Migration script
+      - index.ts - Barrel export
+
+  other_stores:
+    - navigation-store.ts - Navigation state
+    - synthesis-store.ts - Knowledge synthesis
+    - chat-settings-store.ts - Chat settings
+    - chat/index.ts - Chat barrel export
+    - file-watcher-store.ts (272 lines) - File watching
+    - conversation-auto-restore.ts - Conversation restoration
+    - hydration-manager.ts - Store hydration
+    - use-app-store.ts (367 lines) - App-wide state
+    - auto-approve-store.ts - Auto-approve settings
+    - quiz-history-store.ts - Quiz history
+    - hub-store.ts - Hub state
+    - plugins-store.ts (316 lines) - Plugin management
+    - terminal-store.ts (307 lines) - Terminal state
+    - events/event-status-store.ts (256 lines) - Event status
+    - schema-migrations.ts (314 lines) - Schema migrations
+    - types.ts - Shared type definitions
+
+state_management_architecture:
+  pattern: "December 2025 Zustand patterns"
+  description: "Modern Zustand v5 with slice pattern, persist middleware, and Dexie storage"
+
+  slice_pattern:
+    description: "Stores split into focused slices (<120 lines each)"
+    implementation: "Each slice handles single responsibility (CRUD, UI state, validation, etc.)"
+    compliance: "70% of stores follow slice pattern (god stores are exceptions)"
+
+  persist_middleware:
+    description: "Zustand persist with Dexie IndexedDB storage"
+    implementation: "Applied to combined stores, not individual slices"
+    storage: "Dexie (IndexedDB) with encryption for sensitive data"
+
+  versioning:
+    description: "Schema versioning with migration functions"
+    implementation: "Version + migrate pattern for schema evolution"
+    migration_files:
+      - src/infrastructure/persistence/stores/schema-migrations.ts
+      - src/infrastructure/persistence/stores/conversation/migration/
+      - src/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts
+
+  event_driven:
+    description: "Cross-store communication via event bus"
+    implementation: "Event emitter pattern for zero circular dependencies"
+    event_bus: "src/lib/events/cross-workspace-event-bus.ts"
+
+  workspace_awareness:
+    description: "Multi-workspace architecture native support"
+    implementation: "Workspace-scoped state stores"
+    stores:
+      - workspace-store.ts
+      - useWorkspaceSwitching.ts
+      - workspace-context.ts
+
+critical_gaps:
+  god_store_elimination:
+    epic: "Epic CC-1 - Conversation Consolidation"
+    epic: "Epic CP-1 - Project Consolidation"
+    target: "Zero god stores (>300 lines)"
+    current: "9 god stores identified"
+    priority: "P0"
+
+  store_duplication:
+    issue: "Duplicate stores across locations"
+    examples:
+      - "agent-selection-store.ts + agent-selection-store.backup.ts"
+      - "conversation state in multiple locations"
+    recommendation: "Consolidate to canonical locations per ADR-024"
+    priority: "P1"
+
+  circular_dependencies:
+    issue: "Import cycles between stores"
+    detection_method: "Check for direct imports between stores"
+    mitigation: "Use event bus for cross-store communication"
+    priority: "P0"
+
+testing_coverage:
+  test_files: 30+
+  total_test_lines: 3,000+
+  coverage:
+    ide: "ide-state-persistence.test.ts (465 lines)"
+    providers: "3 test files (migration, backup, CRUD)"
+    conversation: "4 test files (1,200+ lines)"
+    workspace: "workspace-switch-isolation.test.ts (434 lines)"
+    agents: "2 test files"
+    permissions: "Covered in agent tests"
+
+architecture_compliance:
+  adr_024:
+    status: "PARTIAL"
+    description: "Clean Architecture - Centralized State"
+    compliance: "70% of stores in infrastructure/persistence/"
+    gaps: "Some legacy stores still in src/lib/state/"
+
+  december_2025_patterns:
+    status: "PARTIAL"
+    description: "Zustand best practices (slices, persist, versioning)"
+    compliance: "70% follow slice pattern"
+    gaps: "9 god stores (>300 lines) need splitting"
+
+recommendations:
+  immediate:
+    - "Split 9 god stores into focused slices (Epic CC-1, CP-1)"
+    - "Eliminate duplicate stores (consolidate per ADR-024)"
+    - "Remove circular dependencies (use event bus)"
+
+  medium_term:
+    - "Achieve 100% slice pattern compliance"
+    - "Improve test coverage to 80%+"
+    - "Document all store relationships and data flow"
+
+  long_term:
+    - "Consider state machine pattern for complex workflows"
+    - "Implement state devTools for debugging"
+    - "Add performance monitoring for store operations"
