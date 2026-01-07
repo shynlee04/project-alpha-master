@@ -37,10 +37,10 @@ interface ContextMenuProps {
 }
 
 interface MenuItem {
-    action: ContextMenuAction;
-    labelKey: string;
-    labelDefault: string;
-    icon: React.ReactNode;
+    action?: ContextMenuAction;
+    labelKey?: string;
+    labelDefault?: string;
+    icon?: React.ReactNode;
     destructive?: boolean;
     shortcut?: string;
     requiresDirectory?: boolean;

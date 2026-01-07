@@ -138,7 +138,7 @@ export const ProjectsPage: React.FC = () => {
     const project = (projects || []).find(p => p.id === projectId);
     if (!project) return;
 
-    setSelectedProject(project as Project);
+    setSelectedProject(project);
     setBindingDialogOpen(true);
   };
 

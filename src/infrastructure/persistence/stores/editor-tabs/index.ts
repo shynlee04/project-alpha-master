@@ -11,13 +11,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
-import type { EditorTab } from '../editor-tabs-store';
+import type { EditorTab } from '../ide/ide-types';
 import { createEditorTabsCrudSlice, EditorTabsCrudState, EditorTabsCrudActions } from './editor-tabs-crud-slice';
 import { createEditorTabsContentSlice, EditorTabsContentState, EditorTabsContentActions } from './editor-tabs-state-slice';
 import { createEditorTabsPositionSlice, EditorTabsPositionState, EditorTabsPositionActions } from './editor-tabs-position-slice';
-
-// Re-export types for backward compatibility
-export type { EditorTab };
 
 /**
  * Combined Editor Tabs Store State
@@ -59,7 +56,7 @@ export const useEditorTabsStore = create<EditorTabsStore>()(
     }),
     {
       name: 'editor-tabs-storage',
-      storage: createJSONStorage(() => createDexieStorage('editor-tabs')),
+      storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
 
       // Partialize to only persist essential data
       partialize: (state) => ({
@@ -127,4 +124,7 @@ export const useEditorTabsStoreFacade = useEditorTabsStore;
 /**
  * @deprecated Re-export of EditorTab type for backward compatibility.
  */
-export type { EditorTab as EditorTabInterface } from '../editor-tabs-store';
+export type { EditorTab as EditorTabInterface } from '../ide/ide-types';
+
+// Re-export EditorTab directly for backward compatibility
+export type { EditorTab } from '../ide/ide-types';

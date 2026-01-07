@@ -13,7 +13,7 @@ import type { PluginExtension } from './types';
 /**
  * Extension point registry
  */
-class ExtensionRegistry {
+class PluginExtensionRegistry {
   private commands = new Map<string, PluginExtension>();
   private themes = new Map<string, PluginExtension>();
   private languages = new Map<string, PluginExtension>();
@@ -311,9 +311,9 @@ class ExtensionRegistry {
       }
     }
 
-    console.log(`[ExtensionRegistry] Unregistered all extensions for ${pluginId}`);
+    console.log(`[PluginExtensionRegistry] Unregistered all extensions for ${pluginId}`);
   }
 }
 
-// Export singleton instance
-export const ExtensionRegistry = new ExtensionRegistry();
+// Export singleton instance with a consistent name
+export const ExtensionRegistry = new PluginExtensionRegistry();

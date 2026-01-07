@@ -17,7 +17,6 @@
  * @see aggregation: canvas/index.ts (unified store)
  */
 
-import type { StateCreator } from 'zustand';
 import { getSafeCanvasDb } from '../canvas-db';
 import type { CanvasStoreApi } from '../canvas-types';
 
@@ -32,12 +31,7 @@ export interface CanvasMultiSlice {
 /**
  * Multi-canvas slice creator
  */
-export const createCanvasMultiSlice: StateCreator<
-  { activeCanvasId: string | null; loadCanvasList?: () => Promise<void> },
-  [],
-  [],
-  CanvasMultiSlice
-> = (set, get) => ({
+export const createCanvasMultiSlice = (set: any, get: any, _api?: any) => ({
   activeCanvasId: null,
 
   setActiveCanvas: async (canvasId: string, canvasStore: CanvasStoreApi) => {

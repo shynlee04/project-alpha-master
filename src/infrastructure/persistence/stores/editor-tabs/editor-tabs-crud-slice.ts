@@ -9,7 +9,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { EditorTab } from '../editor-tabs-store';
+import type { EditorTab } from '../ide/ide-types';
 
 /**
  * Editor Tabs CRUD State
@@ -84,8 +84,11 @@ export const createEditorTabsCrudSlice: StateCreator<
     // Add new tab at the end
     const newTab: EditorTab = {
       path,
+      title: path.split('/').pop() || path,
       content,
+      dirty: false,
       isDirty: false,
+      active: false,
       order: get().tabs.length,
       isPinned: false,
     };

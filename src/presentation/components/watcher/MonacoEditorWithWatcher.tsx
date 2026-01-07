@@ -101,7 +101,7 @@ export function MonacoEditorWithWatcher({
     if (!event.path) return;
 
     // If auto-reload is enabled and no unsaved changes
-    if (!activeFile?.dirty) {
+    if (!activeFile?.isDirty) {
       await handleReload(event.path);
     } else {
       // Show dialog for conflict resolution
@@ -171,9 +171,9 @@ export function MonacoEditorWithWatcher({
    */
   useEffect(() => {
     if (activeFile) {
-      markUnsavedChanges(activeFile.dirty);
+      markUnsavedChanges(activeFile.isDirty);
     }
-  }, [activeFile?.dirty, markUnsavedChanges]);
+  }, [activeFile?.isDirty, markUnsavedChanges]);
 
   /**
    * Cleanup on unmount

@@ -5,6 +5,8 @@
 
 import { StateCreator } from 'zustand';
 
+export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
+
 export interface SnapshotCacheSliceState {
   /** Cache TTL in milliseconds */
   cacheTTL: number;
@@ -27,7 +29,7 @@ export interface SnapshotCacheSliceActions {
     content: string,
     hash: string,
     size?: number,
-    workspaceId?: string
+    workspaceId?: WorkspaceType
   ) => Promise<void>;
 
   /** Get file tree metadata */
@@ -61,7 +63,7 @@ export const createSnapshotCacheSlice: StateCreator<
   [],
   [],
   SnapshotCacheSlice
-> = (get) => {
+> = (_set, get, _api) => {
   // Default configuration
   const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
   const SNAPSHOT_VERSION = 1;
@@ -72,7 +74,7 @@ export const createSnapshotCacheSlice: StateCreator<
     contentCount: 0,
     totalSize: 0,
 
-    saveSnapshot: async (projectId, path, content, hash, size = content.length, workspaceId = 'ide') => {
+    saveSnapshot: async (projectId, path, content, hash, size = content.length, workspaceId: WorkspaceType = 'ide') => {
       // This will delegate to Dexie operations
       const { db } = await import('@/infrastructure/persistence/dexie-db');
       const now = Date.now();

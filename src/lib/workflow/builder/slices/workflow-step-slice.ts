@@ -68,7 +68,7 @@ export const createStepManagementSlice = (
                 steps,
                 updatedAt: Date.now(),
             },
-        } as unknown as Partial<StepManagementState>);
+        });
         get().validateWorkflow();
     },
 
@@ -78,7 +78,7 @@ export const createStepManagementSlice = (
 
         // Don't allow removing if it's the start step
         if (stepId === workflow.startStepId) {
-            set({ errors: { [stepId]: 'Cannot remove start step' } } as unknown as Partial<StepManagementState>);
+            set({ errors: { [stepId]: 'Cannot remove start step' } });
             return;
         }
 
@@ -96,12 +96,12 @@ export const createStepManagementSlice = (
                 updatedAt: Date.now(),
             },
             selectedStepId: selectedStepId === stepId ? null : selectedStepId,
-        } as unknown as Partial<StepManagementState>);
+        });
         get().validateWorkflow();
     },
 
     selectStep: (stepId) => {
-        set({ selectedStepId: stepId } as unknown as Partial<StepManagementState>);
+        set({ selectedStepId: stepId });
     },
 
     moveStep: (stepId, newIndex) => {
@@ -121,7 +121,7 @@ export const createStepManagementSlice = (
                 steps,
                 updatedAt: Date.now(),
             },
-        } as unknown as Partial<StepManagementState>);
+        });
     },
 
     setDragging: (isDragging, stepId) => {

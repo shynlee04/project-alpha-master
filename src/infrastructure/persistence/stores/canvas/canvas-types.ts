@@ -23,8 +23,12 @@ export interface CanvasState<T = unknown> {
 /**
  * Canvas store state and actions interface
  * Made generic to accept any linkage proposal type
+ *
+ * Fixed: setState accepts zustand's StoreApi setState signature
  */
 export interface CanvasStoreApi<T = unknown> {
   getState: () => CanvasState<T>;
-  setState: (partial: Partial<CanvasState<T>>) => void;
+  setState: (
+    partial: Partial<CanvasState<T>> | ((state: CanvasState<T>) => Partial<CanvasState<T>>)
+  ) => void;
 }

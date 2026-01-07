@@ -11,6 +11,7 @@
 import type { StateCreator } from 'zustand';
 import type { GitCommit, GitDiff, GitClient } from '@/lib/git/git-client';
 import type { GitClientState } from './git-client-slice';
+import type { GitStatusActions } from './git-status-slice';
 
 /**
  * Git Operations State
@@ -107,7 +108,7 @@ export const createGitOperationsSlice: StateCreator<
 
     try {
       await client.commit({ message, ...options });
-      await (get() as { refreshStatus: () => Promise<void> }).refreshStatus();
+      await (get() as unknown as GitStatusActions).refreshStatus();
       set({ isCommitting: false });
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Failed to commit');

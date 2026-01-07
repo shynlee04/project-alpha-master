@@ -41,7 +41,7 @@ export function MobileFormatButton({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
+          size="sm"
           disabled={disabled || isFormatting}
           className="h-12 w-12"
         >

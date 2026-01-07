@@ -36,7 +36,7 @@ export const createProjectWorkspaceBindingsSlice: StateCreator<
   [],
   [],
   ProjectWorkspaceBindingsSlice
-> = (get) => ({
+> = (_set, get) => ({
   updateProjectBindings: async (id, bindings) => {
     // This will delegate to CRUD slice's update method
     const state = get() as any;

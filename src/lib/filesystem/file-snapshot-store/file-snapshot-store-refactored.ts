@@ -38,6 +38,7 @@ import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import {
   createSnapshotCacheSlice,
   SnapshotCacheSlice,
+  WorkspaceType,
 } from './snapshot-cache-slice';
 import {
   createSnapshotLookupSlice,
@@ -77,18 +78,18 @@ export interface FileSnapshotStore
  */
 export const useFileSnapshotStore = create<FileSnapshotStore>()(
   persist(
-    subscribeWithSelector((set, get) => ({
+    subscribeWithSelector((set, get, api) => ({
       // Snapshot Cache Slice
-      ...createSnapshotCacheSlice(set, get),
+      ...createSnapshotCacheSlice(set, get, api),
 
       // Snapshot Lookup Slice
-      ...createSnapshotLookupSlice(set, get),
+      ...createSnapshotLookupSlice(set, get, api),
 
       // Snapshot Invalidation Slice
-      ...createSnapshotInvalidationSlice(set, get),
+      ...createSnapshotInvalidationSlice(set, get, api),
 
       // Snapshot Bulk Slice
-      ...createSnapshotBulkSlice(set, get),
+      ...createSnapshotBulkSlice(set, get, api),
     })),
     {
       name: 'via-gent-file-snapshots',
@@ -142,7 +143,7 @@ export async function saveSnapshot(
   content: string,
   hash: string,
   size?: number,
-  workspaceId?: string
+  workspaceId?: WorkspaceType
 ): Promise<void> {
   await useFileSnapshotStore.getState().saveSnapshot(
     projectId,
@@ -267,7 +268,7 @@ export async function saveBulkSnapshots(
     content: string;
     hash: string;
     size?: number;
-    workspaceId?: string;
+    workspaceId?: WorkspaceType;
   }>
 ): Promise<SnapshotSaveResult> {
   return await useFileSnapshotStore.getState().saveBulkSnapshots(

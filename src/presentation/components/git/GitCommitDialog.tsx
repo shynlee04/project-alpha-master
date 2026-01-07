@@ -36,7 +36,7 @@ import { Label } from '@/presentation/components/ui/label';
  */
 interface FileStatusCardProps {
   filepath: string;
-  status: 'staged' | 'modified' | 'untracked';
+  status: 'staged' | 'modified' | 'untracked' | 'conflicted' | 'deleted';
   onStage: () => void;
   onUnstage: () => void;
 }
@@ -69,6 +69,10 @@ function FileStatusCard({ filepath, status, onStage, onUnstage }: FileStatusCard
         return t('git.status.modified');
       case 'untracked':
         return t('git.status.untracked');
+      case 'conflicted':
+        return t('git.status.conflicted', 'Conflicted');
+      case 'deleted':
+        return t('git.status.deleted', 'Deleted');
       default:
         return '';
     }

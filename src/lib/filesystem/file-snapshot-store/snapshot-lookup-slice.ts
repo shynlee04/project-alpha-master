@@ -5,6 +5,7 @@
 
 import { StateCreator } from 'zustand';
 import type { CacheLookupResult } from './types';
+import type { WorkspaceType } from './snapshot-cache-slice';
 
 export interface SnapshotLookupSliceState {
   /** Last lookup results for debugging */
@@ -32,7 +33,7 @@ export interface SnapshotLookupSliceActions {
   loadSnapshotContent: (
     projectId: string,
     path: string,
-    workspaceId?: string
+    workspaceId?: WorkspaceType
   ) => Promise<string | undefined>;
 }
 
@@ -43,7 +44,7 @@ export const createSnapshotLookupSlice: StateCreator<
   [],
   [],
   SnapshotLookupSlice
-> = (set) => ({
+> = (set, _get, _api) => ({
   getSnapshot: async (projectId, path, loadContent = false) => {
     const { db } = await import('@/infrastructure/persistence/dexie-db');
     const now = Date.now();
@@ -112,7 +113,7 @@ export const createSnapshotLookupSlice: StateCreator<
     return snapshot;
   },
 
-  loadSnapshotContent: async (projectId, path, workspaceId = 'ide') => {
+  loadSnapshotContent: async (projectId, path, workspaceId: WorkspaceType = 'ide') => {
     const { db } = await import('@/infrastructure/persistence/dexie-db');
 
     const contentEntry = await db.fileContentCache.get({

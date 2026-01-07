@@ -94,7 +94,7 @@ export function FormatDialog({
             </div>
             <Slider
               value={[localOptions.tabSize || 2]}
-              onValueChange={([value]) =>
+              onValueChange={([value]: number[]) =>
                 setLocalOptions((prev) => ({ ...prev, tabSize: value }))
               }
               min={2}
@@ -212,7 +212,7 @@ export function FormatDialog({
             </div>
             <Slider
               value={[localOptions.printWidth || 80]}
-              onValueChange={([value]) =>
+              onValueChange={([value]: number[]) =>
                 setLocalOptions((prev) => ({ ...prev, printWidth: value }))
               }
               min={60}

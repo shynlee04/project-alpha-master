@@ -134,19 +134,20 @@ async function clearAllDatabases(): Promise<string[]> {
 
     const cleared: string[] = [];
     for (const database of appDatabases) {
-        if (!database.name) continue;
+        const dbName = database.name;
+        if (!dbName) continue;
 
         try {
             await new Promise<void>((resolve, reject) => {
-                const request = indexedDB.deleteDatabase(database.name);
+                const request = indexedDB.deleteDatabase(dbName);
                 request.onsuccess = () => {
-                    cleared.push(database.name);
+                    cleared.push(dbName);
                     resolve();
                 };
                 request.onerror = () => reject(request.error);
             });
         } catch (error) {
-            console.error(`[Database Recovery] Failed to delete ${database.name}:`, error);
+            console.error(`[Database Recovery] Failed to delete ${dbName}:`, error);
         }
     }
 

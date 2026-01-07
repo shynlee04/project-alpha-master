@@ -30,7 +30,7 @@ export type { Workflow, WorkflowStep, StepConnection, WorkflowTemplate, PaletteI
 // Combined Store Interface
 // ============================================================================
 
-interface WorkflowBuilderStore
+export interface WorkflowBuilderStore
     extends WorkflowCrudState,
         WorkflowCrudActions,
         StepManagementState,
@@ -69,8 +69,11 @@ export const useWorkflowBuilderStore = create<WorkflowBuilderStore>((set, get) =
     // Step management slice
     ...createStepManagementSlice(set, get as never),
 
-    // Connection management slice
-    ...createConnectionManagementSlice(set, get as never),
+    // Connection management slice - pass compatible set function
+    ...createConnectionManagementSlice(
+        set as (partial: unknown) => void,
+        get as never
+    ),
 
     // Validation slice
     ...createValidationSlice(set, get as never),
@@ -92,7 +95,8 @@ export const useWorkflowBuilderStore = create<WorkflowBuilderStore>((set, get) =
     },
 
     togglePreview: () => {
-        set((state) => ({ isPreview: !state.isPreview }));
+        const currentState = get();
+        set({ isPreview: !currentState.isPreview });
     },
 }));
 

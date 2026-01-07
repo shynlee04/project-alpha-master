@@ -87,7 +87,7 @@ export function AgentChatHeader({
     };
 
     // E1-11: Get current workspace config
-    const currentWorkspaceConfig = WORKSPACE_CONFIG[currentWorkspace];
+    const currentWorkspaceConfig = WORKSPACE_CONFIG[currentWorkspace as WorkspaceType];
 
     return (
         <div className="h-10 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
@@ -141,7 +141,7 @@ export function AgentChatHeader({
                                 align="end"
                             >
                                 {enabledWorkspaces.map((workspace) => {
-                                    const config = WORKSPACE_CONFIG[workspace];
+                                    const config = WORKSPACE_CONFIG[workspace as WorkspaceType];
                                     const isActive = workspace === currentWorkspace;
 
                                     return (

@@ -23,12 +23,26 @@ export type TerminalTab = 'terminal' | 'output' | 'problems';
 /**
  * File tab in Monaco editor
  * Used for managing editor tabs in the tab bar
+ *
+ * Properties:
+ * - path: File path
+ * - title: Tab title (filename)
+ * - content: File content for persistence
+ * - dirty: Whether file has unsaved changes
+ * - isDirty: Alias for dirty (preferred naming convention)
+ * - active: Whether this is the active tab
+ * - isPinned: Whether tab is pinned from closing
+ * - order: Tab order in the tab bar
  */
 export interface EditorTab {
   path: string;
   title: string;
+  content: string;
   dirty: boolean;
+  isDirty: boolean;
   active: boolean;
+  isPinned: boolean;
+  order: number;
 }
 
 /**

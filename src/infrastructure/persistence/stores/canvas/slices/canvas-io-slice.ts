@@ -17,9 +17,7 @@
  * @see aggregation: canvas/index.ts (unified store)
  */
 
-import type { StateCreator } from 'zustand';
 import type { CanvasMetadata, CanvasExport } from '@/lib/canvas/types';
-import type { Node, Edge, Viewport } from '@xyflow/react';
 import { getSafeCanvasDb } from '../canvas-db';
 import { generateCanvasId } from '../canvas-utils';
 
@@ -43,18 +41,7 @@ export interface CanvasIOSlice {
 /**
  * Canvas IO slice creator
  */
-export const createCanvasIOSlice: StateCreator<
-  {
-    canvasList: CanvasMetadata[];
-    nodes: Node<any>[];
-    edges: Edge<any>[];
-    viewport: Viewport;
-    loadCanvasList: () => Promise<void>;
-  },
-  [],
-  [],
-  CanvasIOSlice
-> = (set, get) => ({
+export const createCanvasIOSlice = (set: any, get: any, _api?: any) => ({
   canvasList: [],
 
   createCanvas: async (name?: string) => {

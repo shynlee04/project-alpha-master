@@ -5,6 +5,7 @@
 
 import { StateCreator } from 'zustand';
 import type { SnapshotSaveResult } from './types';
+import type { WorkspaceType } from './snapshot-cache-slice';
 
 export interface SnapshotBulkSliceState {
   /** Bulk operation statistics */
@@ -24,7 +25,7 @@ export interface SnapshotBulkSliceActions {
       content: string;
       hash: string;
       size?: number;
-      workspaceId?: string;
+      workspaceId?: WorkspaceType;
     }>
   ) => Promise<SnapshotSaveResult>;
 
@@ -54,7 +55,7 @@ export const createSnapshotBulkSlice: StateCreator<
   [],
   [],
   SnapshotBulkSlice
-> = (set, get) => {
+> = (set, get, _api) => {
   const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
   const SNAPSHOT_VERSION = 1;
 
@@ -69,13 +70,13 @@ export const createSnapshotBulkSlice: StateCreator<
       const { db } = await import('@/infrastructure/persistence/dexie-db');
       const startTime = Date.now();
       const now = Date.now();
-      const expiresAt = now + get().cacheTTL;
+      const expiresAt = now + (get() as any).cacheTTL;
 
       let metadataCount = 0;
       let contentCount = 0;
 
       await db.transaction('rw', db.fileSnapshots, db.fileContentCache, async () => {
-        for (const { path, content, hash, size = content.length, workspaceId = 'ide' } of snapshots) {
+        for (const { path, content, hash, size = content.length, workspaceId = 'ide' as WorkspaceType } of snapshots) {
           // Save metadata
           await db.fileSnapshots.put({
             projectId,

@@ -28,7 +28,7 @@ import {
   useHideChangeDialog
   // useWatchedFileState
 } from '@/infrastructure/persistence/stores/file-watcher-store';
-import { cn } from '@/lib/utils/tailwind-utils';
+import { cn } from '@/lib/utils';
 
 export interface FileChangeDialogProps {
   /** Callback when user chooses to reload from disk */
@@ -216,13 +216,13 @@ export function FileChangeDialog({
           {/* Reload button */}
           <Button
             type="button"
-            variant={hasConflict ? 'default' : 'default'}
+            variant={hasConflict ? 'outline' : 'primary'}
             size="sm"
             onClick={handleReload}
             disabled={isProcessing}
             className={cn(
               'flex-1',
-              hasConflict && 'bg-yellow-600 hover:bg-yellow-700 text-white'
+              hasConflict && 'bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-600'
             )}
           >
             <RefreshCw className={cn('h-4 w-4 mr-1', isProcessing && 'animate-spin')} />

@@ -4,7 +4,7 @@
  */
 
 import { StateCreator } from 'zustand';
-import { SyncStatusType } from './types';
+import { SyncStatusType, SyncProgress } from './types';
 
 export interface SyncLifecycleSliceState {
   /** Overall sync status type */
@@ -33,6 +33,9 @@ export interface SyncLifecycleSliceState {
 
   /** Recovery action suggestion */
   recoveryAction: string;
+
+  /** Runtime sync progress (not persisted) */
+  syncProgress: SyncProgress;
 }
 
 export interface SyncLifecycleSliceActions {
@@ -66,6 +69,12 @@ export const createSyncLifecycleSlice: StateCreator<
   progressPercent: 0,
   userMessage: '',
   recoveryAction: '',
+  syncProgress: {
+    isRunning: false,
+    current: 0,
+    total: 0,
+    progress: 0,
+  },
 
   startSync: () => {
     const startTime = Date.now();

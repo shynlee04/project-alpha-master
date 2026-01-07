@@ -82,21 +82,21 @@ export interface ProjectStore
  */
 export const useProjectStore = create<ProjectStore>()(
   persist(
-    subscribeWithSelector((set, get) => ({
+    subscribeWithSelector((set, get, api) => ({
       // Project CRUD Slice
-      ...createProjectCrudSlice(set, get),
+      ...createProjectCrudSlice(set, get, api),
 
       // Workspace Bindings Slice
-      ...createProjectWorkspaceBindingsSlice(set, get),
+      ...createProjectWorkspaceBindingsSlice(set, get, api),
 
       // Permissions Slice
-      ...createProjectPermissionsSlice(set, get),
+      ...createProjectPermissionsSlice(set, get, api),
 
       // Layout Slice
-      ...createProjectLayoutSlice(set, get),
+      ...createProjectLayoutSlice(set, get, api),
 
       // Utils Slice
-      ...createProjectUtilsSlice(set, get),
+      ...createProjectUtilsSlice(set, get, api),
     })),
     {
       name: 'via-gent-projects',

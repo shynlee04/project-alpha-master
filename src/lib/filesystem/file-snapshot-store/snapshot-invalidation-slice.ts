@@ -46,7 +46,7 @@ export const createSnapshotInvalidationSlice: StateCreator<
   [],
   [],
   SnapshotInvalidationSlice
-> = (set) => ({
+> = (set, _get, _api) => ({
   invalidationStats: {
     totalInvalidated: 0,
     hashMismatches: 0,

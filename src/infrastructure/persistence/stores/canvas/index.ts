@@ -55,10 +55,10 @@ type CombinedCanvasState = CanvasStateSlice & CanvasLinkageSlice & CanvasIOSlice
  */
 export const useCanvasStore = create<CombinedCanvasState>()(
   persist(
-    (...a) => ({
-      ...createCanvasStateSlice(...a),
-      ...createCanvasLinkageSlice(...a),
-      ...createCanvasIOSlice(...a),
+    (set, get, api) => ({
+      ...createCanvasStateSlice(set, get, api),
+      ...createCanvasLinkageSlice(set, get, api),
+      ...createCanvasIOSlice(set, get, api),
     }),
     {
       name: 'canvas-storage',
@@ -78,9 +78,12 @@ export const useCanvasStore = create<CombinedCanvasState>()(
  *
  * Wraps setActiveCanvas to inject canvasStore, breaking circular dependency.
  */
-export const useMultiCanvasStore = create<MultiCanvasState>((set, get, api) => {
-  const multiSlice = createCanvasMultiSlice(set, get, api);
-  const ioSlice = createCanvasIOSlice(set, get, api);
+export const useMultiCanvasStore = create<MultiCanvasState>((set, get, _api) => {
+  // Create multi slice directly
+  const multiSlice = createCanvasMultiSlice(set, get);
+
+  // Create IO slice directly
+  const ioSlice = createCanvasIOSlice(set, get);
 
   return {
     ...multiSlice,
@@ -89,7 +92,7 @@ export const useMultiCanvasStore = create<MultiCanvasState>((set, get, api) => {
     setActiveCanvas: (canvasId: string) => {
       return multiSlice.setActiveCanvas(canvasId, {
         getState: useCanvasStore.getState,
-        setState: useCanvasStore.setState,
+        setState: useCanvasStore.setState as any, // Cast to fix type mismatch
       });
     },
   };

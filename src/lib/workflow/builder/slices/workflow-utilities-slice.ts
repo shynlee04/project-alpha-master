@@ -7,6 +7,9 @@
  * Helper functions and ID generators for workflow builder.
  */
 
+import type { Workflow, WorkflowStep } from '../types';
+import { StepType } from '../types';
+
 /**
  * Generate unique step ID
  * @returns Unique step identifier
@@ -27,22 +30,22 @@ export function generateWorkflowId(): string {
  * Create empty workflow with start and end steps
  * @returns New workflow object
  */
-export function createEmptyWorkflow() {
+export function createEmptyWorkflow(): Workflow {
     const generateStepId = () => `step-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const generateWorkflowId = () => `workflow-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
-    const startStep = {
+    const startStep: WorkflowStep = {
         id: generateStepId(),
-        type: 'send_message' as const,
+        type: StepType.SEND_MESSAGE,
         name: 'Start',
         description: 'Start of workflow',
         config: { temperature: 0.7 },
         nextSteps: [],
     };
 
-    const endStep = {
+    const endStep: WorkflowStep = {
         id: generateStepId(),
-        type: 'end' as const,
+        type: StepType.END,
         name: 'End',
         description: 'End of workflow',
         config: {},

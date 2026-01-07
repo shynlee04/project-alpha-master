@@ -11,6 +11,7 @@
 import type { StateCreator } from 'zustand';
 import type { GitBranch, GitClient } from '@/lib/git/git-client';
 import type { GitClientState } from './git-client-slice';
+import type { GitStatusActions } from './git-status-slice';
 
 /**
  * Git Branch State
@@ -88,7 +89,7 @@ export const createGitBranchSlice: StateCreator<
     try {
       await client.createBranch(name, checkout);
       await (get() as GitBranchActions).loadBranches();
-      await (get() as { refreshStatus: () => Promise<void> }).refreshStatus();
+      await (get() as unknown as GitStatusActions).refreshStatus();
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Failed to create branch');
       set({ error: err });
@@ -107,7 +108,7 @@ export const createGitBranchSlice: StateCreator<
     try {
       await client.switchBranch(name);
       await (get() as GitBranchActions).loadBranches();
-      await (get() as { refreshStatus: () => Promise<void> }).refreshStatus();
+      await (get() as unknown as GitStatusActions).refreshStatus();
       set({ isBranchSwitching: false });
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Failed to switch branch');
@@ -140,7 +141,7 @@ export const createGitBranchSlice: StateCreator<
 
     try {
       await client.mergeBranch(name);
-      await (get() as { refreshStatus: () => Promise<void> }).refreshStatus();
+      await (get() as unknown as GitStatusActions).refreshStatus();
     } catch (error) {
       const err = error instanceof Error ? error : new Error('Failed to merge branch');
       set({ error: err });

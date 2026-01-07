@@ -60,8 +60,8 @@ export async function computeContentHash(content: string): Promise<string> {
 export function detectEncoding(content: Uint8Array): 'utf-8' | 'utf-16' | 'ascii' | 'binary' {
   // Check for UTF-16 BOM
   if (content.length >= 2) {
-    if (content[0] === 0xFE && content[1] === 0xFF) return 'utf-16be';
-    if (content[0] === 0xFF && content[1] === 0xFE) return 'utf-16le';
+    if (content[0] === 0xFE && content[1] === 0xFF) return 'utf-16';
+    if (content[0] === 0xFF && content[1] === 0xFE) return 'utf-16';
   }
 
   // Check for UTF-8 BOM

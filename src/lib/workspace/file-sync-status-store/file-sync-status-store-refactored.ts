@@ -59,18 +59,18 @@ export interface FileSyncStatusStore
  */
 export const useFileSyncStatusStore = create<FileSyncStatusStore>()(
   persist(
-    subscribeWithSelector((set, get) => ({
+    subscribeWithSelector((set, get, api) => ({
       // File Status Slice
-      ...createFileStatusSlice(set, get),
+      ...createFileStatusSlice(set, get, api),
 
       // Sync Progress Slice
-      ...createSyncProgressSlice(set, get),
+      ...createSyncProgressSlice(set, get, api),
 
       // Sync Lifecycle Slice
-      ...createSyncLifecycleSlice(set, get),
+      ...createSyncLifecycleSlice(set, get, api),
 
       // Hydration Slice
-      ...createHydrationSlice(set, get),
+      ...createHydrationSlice(set, get, api),
     })),
     {
       name: 'via-gent-file-sync-status',

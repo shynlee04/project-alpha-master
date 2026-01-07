@@ -302,7 +302,7 @@ export function getMonacoOutline(
 export function countSymbolsByKind(
   nodes: OutlineNode[]
 ): Record<SymbolKind, number> {
-  const counts: Record<string, number> = {};
+  const counts: Partial<Record<SymbolKind, number>> = {};
 
   function count(node: OutlineNode) {
     counts[node.kind] = (counts[node.kind] || 0) + 1;
@@ -392,7 +392,7 @@ export function getOutlineStatistics(nodes: OutlineNode[]): {
   maxDepth: number;
 } {
   let totalSymbols = 0;
-  const byKind: Record<string, number> = {};
+  const byKind: Partial<Record<SymbolKind, number>> = {};
   let maxDepth = 0;
 
   function traverse(node: OutlineNode, depth: number = 0) {

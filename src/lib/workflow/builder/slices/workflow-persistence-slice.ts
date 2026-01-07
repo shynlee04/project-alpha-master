@@ -45,6 +45,7 @@ export const createPersistenceSlice = (
         workflow: Workflow | null;
         savedWorkflowsCache: Workflow[];
         loadWorkflow: (workflow: Workflow) => void;
+        refreshSavedWorkflows: () => Promise<void>;
     }
 ): PersistenceActions => ({
     setSavedWorkflowsCache: (workflows) => {

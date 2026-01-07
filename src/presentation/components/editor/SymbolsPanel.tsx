@@ -10,7 +10,8 @@
 
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { OutlineNode, SymbolKind } from '@/lib/navigation/symbol-outline';
+import type { OutlineNode } from '@/lib/navigation/symbol-outline';
+import { SymbolKind } from '@/lib/navigation/symbol-parser';
 import { ChevronRight, ChevronDown, Search, Package } from 'lucide-react';
 
 export interface SymbolsPanelProps {
