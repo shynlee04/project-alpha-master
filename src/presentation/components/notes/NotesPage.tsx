@@ -39,6 +39,7 @@ import { ProjectSelector } from '@/presentation/components/project/ProjectSelect
 import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
 // P0-3: File Sync Service Initialization
 import { useFileSyncService } from '@/lib/filesync/hooks';
+import type { NotesFileSyncService } from '@/infrastructure/sync/workspace-services/notes/notes-file-sync-service';
 
 // P2-7: Import Knowledge → Notes event types
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
@@ -161,8 +162,9 @@ export function NotesPage() {
                     console.log('[NotesPage] Auto-importing project files...');
 
                     // Trigger import via the folder bridge
-                    // NotesFileSyncService now exposes importDirectory as public method
-                    const result = await notesSyncService.importDirectory(
+                    // NotesFileSyncService exposes importDirectory as public method
+                    // Cast to NotesFileSyncService since importDirectory is workspace-specific
+                    const result = await (notesSyncService as NotesFileSyncService).importDirectory(
                         '', // Root directory
                         (current: number, total: number, currentFile: string) => {
                             setImportProgress({ current, total, currentFile });

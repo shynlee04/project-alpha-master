@@ -26,8 +26,13 @@ import { useRAGStore } from '@/infrastructure/persistence/stores/rag/rag-store';
 import { useNoteStore } from '@/lib/notes/note-store';
 import { metadataExtractor } from '@/lib/knowledge/metadata-extractor';
 import { useResponsive } from '@/hooks/useResponsive';
+import { useNavigate } from '@tanstack/react-router';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent/AgentManager';
+// STORAGE-3-4: Project Selector
+import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
+import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
+import { useProjectContext } from '@/lib/workspace/ProjectContext';
 // WB-8.3: Cross-workspace event subscriptions for state synchronization
 import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 
@@ -51,9 +56,21 @@ import type { ArtifactType } from '@/lib/knowledge/synthesis-types';
 
 export function KnowledgePage() {
     const { t } = useTranslation();
-    // Get current project ID, default to 'default' if not set
-    const projectId = useIDEStore((state) => state.projectId) || 'default';
     const { isMobile } = useResponsive();
+    const navigate = useNavigate();
+
+    // Get projectId from ProjectContext (set by route)
+    const { project } = useProjectContext();
+    const projectId = project?.id || 'default';
+
+    // STORAGE-3-4: Project Selector Logic
+    const { projects, activeProject } = useWorkspaceProjects({
+        workspaceType: 'knowledge'
+    });
+
+    const handleProjectSelect = (newProjectId: string) => {
+        navigate({ to: `/knowledge/${newProjectId}` });
+    };
 
     // P0-2: Get RAG store state for Canvas integration
     const indexMetadata = useRAGStore((s) => s.indexMetadata);
