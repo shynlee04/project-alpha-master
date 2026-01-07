@@ -23,6 +23,7 @@ import type { Agent } from '@/core/entities/Agent';
 import type { ThreadMessage } from '@/infrastructure/persistence/stores/conversation/types';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
+import { useProviderApiKey } from '@/lib/agent/hooks/use-provider-api-key';
 
 interface ChatPanelProps {
     projectId: string;
@@ -71,6 +72,10 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
         () => agents.find((a) => a.id === activeAgentId) || agents[0] || null,
         [agents, activeAgentId]
     );
+
+    // B-1: Retrieve API key from vault for selected agent's provider
+    const providerId = selectedAgent?.providerId || 'openrouter';
+    const { apiKey } = useProviderApiKey(providerId);
 
     // Ensure an agent is selected if we have agents
     useEffect(() => {
@@ -161,6 +166,12 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
 
         if (!activeThreadId || !selectedAgent) return;
 
+        // B-1: Check if API key exists for provider
+        if (!apiKey) {
+            setError(t('chat.apiKeyRequired') || 'API key required. Configure in Settings.');
+            return;
+        }
+
         setError(null);
         setIsStreaming(true);
         setStreamingContent('');
@@ -184,6 +195,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
                     ],
                     provider: selectedAgent.providerId.toLowerCase(),
                     model: selectedAgent.modelId,
+                    apiKey, // B-1: Include API key from vault
                 }),
             });
 
@@ -238,7 +250,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
             setIsStreaming(false);
             setStreamingContent('');
         }
-    }, [activeThreadId, selectedAgent, addMessage]);
+    }, [activeThreadId, selectedAgent, addMessage, apiKey, t]);
 
     // Render threads list or active conversation
     return (

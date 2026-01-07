@@ -10,7 +10,7 @@ import { ModelLoadingSpinner } from '@/presentation/components/ui';
 import { ProviderStatusBadge, type ProviderStatus } from './ProviderStatusBadge';
 import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 import { toast } from 'sonner';
-import { Lock, Key, Globe, Server } from 'lucide-react';
+import { Lock, Key, Globe, Server, Zap } from 'lucide-react';
 
 interface ProviderConfigDialogProps {
     open: boolean;
@@ -64,6 +64,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [keyStatus, setKeyStatus] = useState<ProviderStatus>('missing');
     const [isValidatingKey, setIsValidatingKey] = useState(false);
+    const [testResult, setTestResult] = useState<{ valid: boolean; latencyMs?: number; error?: string } | null>(null);
+    const [isTestingConnection, setIsTestingConnection] = useState(false);
 
     useEffect(() => {
         if (open) {
@@ -86,8 +88,56 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
             }
             setErrors({});
             setFetchError(undefined);
+            setTestResult(null); // Reset test result when dialog opens
         }
     }, [open, provider]);
+
+    /**
+     * Test API key connection before saving
+     * Calls /api/provider/test endpoint for server-side validation
+     */
+    const handleTestConnection = async () => {
+        if (!apiKey.trim()) {
+            toast.error('Please enter an API key first');
+            return;
+        }
+
+        const providerId = provider?.id || 'openai-compatible';
+        setIsTestingConnection(true);
+        setTestResult(null);
+
+        try {
+            const response = await fetch('/api/provider/test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    providerId,
+                    apiKey: apiKey.trim(),
+                    baseURL: baseURL || undefined,
+                }),
+            });
+
+            const data = await response.json() as { valid: boolean; error?: string; latencyMs?: number };
+
+            setTestResult(data);
+
+            if (data.valid) {
+                const latencyMsg = data.latencyMs ? ` (${data.latencyMs}ms)` : '';
+                toast.success(`✓ Connection successful${latencyMsg}`);
+                setKeyStatus('configured');
+            } else {
+                toast.error(`✗ Connection failed: ${data.error || 'Unknown error'}`);
+                setKeyStatus('error');
+            }
+        } catch (error) {
+            const errorMsg = error instanceof Error ? error.message : 'Network error';
+            setTestResult({ valid: false, error: errorMsg });
+            toast.error(`✗ Test failed: ${errorMsg}`);
+            setKeyStatus('error');
+        } finally {
+            setIsTestingConnection(false);
+        }
+    };
 
     const handleSubmit = async () => {
         const newErrors: Record<string, string> = {};
@@ -326,9 +376,31 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                                 : 'sk-...'
                             }
                         />
-                        <span className="text-xs text-muted-foreground">
-                            {t('providers.key_hint', 'Key is encrypted and stored locally. Models will load automatically after saving.')}
-                        </span>
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">
+                                {t('providers.key_hint', 'Key is encrypted and stored locally. Models will load automatically after saving.')}
+                            </span>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleTestConnection}
+                                disabled={!apiKey || isTestingConnection}
+                                className="h-7 text-xs"
+                            >
+                                <Zap className={`h-3 w-3 mr-1 ${isTestingConnection ? 'animate-pulse' : ''}`} />
+                                {isTestingConnection ? 'Testing...' : 'Test Connection'}
+                            </Button>
+                        </div>
+                        {/* Test result feedback */}
+                        {testResult && (
+                            <div className={`text-xs p-2 rounded ${testResult.valid ? 'bg-green-500/10 text-green-600' : 'bg-destructive/10 text-destructive'}`}>
+                                {testResult.valid
+                                    ? `✓ Valid connection${testResult.latencyMs ? ` (${testResult.latencyMs}ms latency)` : ''}`
+                                    : `✗ ${testResult.error || 'Invalid API key'}`
+                                }
+                            </div>
+                        )}
                     </div>
                 </div>
 

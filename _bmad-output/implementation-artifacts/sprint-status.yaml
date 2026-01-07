@@ -1,0 +1,394 @@
+# Stability Sprint - Notes + IDE + BYOK
+# Generated: 2026-01-07T20:10:00+07:00
+# Project: project-alpha-master
+# Focus: Core User Journey Stabilization
+# Methodology: Skeptical Product Manager Approach
+
+# ============================================================================
+# SPRINT CONTEXT
+# ============================================================================
+
+sprint_metadata:
+  name: "Stability Sprint - Core Journeys"
+  created: "2026-01-07T20:10:00+07:00"
+  updated: "2026-01-07T14:00:00+07:00"
+  focus_areas:
+    - "Notes Workspace - All 4 Cases"
+    - "IDE Workspace - Core File Operations"
+    - "BYOK Vault - Cross-Workspace Persistence"
+    - "Project Concept - Hub → Project → Workspace Flow"
+  explicitly_deferred:
+    - "Knowledge Workspace (placeholder OK)"
+    - "Study Workspace (placeholder OK)"
+    - "Canvas/Git/Plugin features"
+    - "TypeScript strict compliance (22+ errors OK)"
+    - "Flashcard/Quiz stores refactoring"
+  methodology: "Depth-First User Journey Mapping"
+
+# ============================================================================
+# ROOT CAUSE ANALYSIS (From Routing Analysis Workflow)
+# ============================================================================
+
+root_causes:
+  rc1_project_concept:
+    name: "Project Concept Ambiguity"
+    description: |
+      The "Project" is intended to be the central hub for pro/serious users 
+      to store, manage, and regulate assets/resources across workspaces.
+      However, its boundaries are undefined.
+    sub_issues:
+      - storage_duality: "FSA vs IndexedDB unclear UX"
+      - workspace_binding: "Complexity in bindings management"
+      - temp_project_confusion: "Multiple creation pathways"
+      - lifecycle_unclear: "Missing project lifecycle management"
+    status: "NEEDS_ANALYSIS"
+    
+  rc2_byok_vault:
+    name: "BYOK & Vault Persistence"
+    description: |
+      BYOK (MVP support for OpenRouter and Gemini) integration within
+      the client-side vault must be reliable with keys persistent and
+      seamlessly accessible across all workspaces.
+    sub_issues:
+      - vault_created: "provider-credentials-slice.ts created"
+      - cross_workspace_sync: "Keys not synced on mount"
+      - key_validation: "✅ Server-side validation endpoint created (B-3 DONE)"
+      - fallback_missing: "No graceful degradation"
+    status: "MOSTLY_ADDRESSED"
+
+# ============================================================================
+# USER JOURNEY SPECIFICATIONS - NOTES WORKSPACE
+# ============================================================================
+
+notes_workspace_journeys:
+  case_1_desktop_no_sync:
+    name: "Case 1: Desktop - No Sync"
+    description: "User accesses Note space without local file system synchronization"
+    entry_points:
+      - "/notes (direct)"
+      - "/hub → Notes bento card"
+      - "/hub → Recent project → Notes"
+    expected_behavior: |
+      1. Check for existing projects with notes binding
+      2. If exists → Show project picker or redirect to most recent
+      3. If none → Offer to create temp project (IndexedDB)
+      4. Load NotesPage with BlockNote editor
+    status: "NEEDS_TRACE"
+    blockers: []
+    
+  case_2_desktop_sync:
+    name: "Case 2: Desktop - With Sync"
+    description: "User syncs a local folder to Note space"
+    entry_points:
+      - "/hub → Mount Folder → Enable Notes"
+      - "/ide/$projectId → Switch to Notes"
+    expected_behavior: |
+      1. FSA project already has folder handle
+      2. User enables notes binding
+      3. Navigate to /notes/$projectId
+      4. Load files from FSA for display in BlockNote
+      5. Support md, doc, docx, png, jpg, pdf, etc.
+    status: "NEEDS_TRACE"
+    blockers:
+      - "File type rendering not verified"
+      - "FSA → Notes bridge unclear"
+    
+  case_3_mobile:
+    name: "Case 3: Mobile IndexedDB"
+    description: "User accesses Note space via mobile device"
+    entry_points:
+      - "/notes (direct on mobile)"
+    expected_behavior: |
+      1. Detect mobile (no FSA support)
+      2. Use IndexedDB storage only
+      3. Behave like Case 1
+      4. Graceful messaging if user expects FSA
+    status: "NEEDS_TRACE"
+    blockers:
+      - "Mobile detection not verified"
+      - "FSA fallback messaging"
+    
+  case_4_ai_integration:
+    name: "Case 4: AI Integration - All Cases"
+    description: "When user initiates AI-centric features"
+    entry_points:
+      - "Slash command in BlockNote"
+      - "AI toolbar trigger"
+      - "Agentic coding request"
+    expected_behavior: |
+      1. Project persisted and hotload reactive
+      2. App functions as Notion-like block-style tool
+      3. On AI trigger → Verify Key Vault settings
+      4. If keys missing → Direct to Key Vault settings
+      5. MUST NOT block, throw errors, or loop infinitely
+    status: "NEEDS_TRACE"
+    blockers:
+      - "AI trigger → vault check not wired"
+      - "Fallback UX for missing keys"
+      - "Settings navigation from error state"
+
+# ============================================================================
+# USER JOURNEY SPECIFICATIONS - IDE WORKSPACE
+# ============================================================================
+
+ide_workspace_journeys:
+  case_ide_new_project:
+    name: "IDE: New FSA Project"
+    description: "User mounts folder from hub and opens in IDE"
+    entry_points:
+      - "/hub → Mount Folder"
+    expected_behavior: |
+      1. Directory picker opens
+      2. Project created with FSA handle
+      3. Navigate to /ide/$projectId
+      4. File tree loads from FSA
+      5. Editor functional
+    status: "NEEDS_TRACE"
+    
+  case_ide_existing_project:
+    name: "IDE: Existing Project"
+    description: "User opens existing project in IDE"
+    entry_points:
+      - "/hub → Recent Projects → IDE"
+      - "/ide/$projectId (direct)"
+    expected_behavior: |
+      1. Project loaded from store
+      2. If FSA → Reconnect handle (may prompt)
+      3. File tree renders
+      4. Last open file restored
+    status: "NEEDS_TRACE"
+    
+  case_ide_cross_workspace:
+    name: "IDE: Cross-Workspace Switch"
+    description: "User switches from IDE to Notes/Knowledge"
+    entry_points:
+      - "Workspace switcher in IDE header"
+    expected_behavior: |
+      1. Same project context maintained
+      2. Navigate to /notes/$projectId
+      3. Project binding must include target workspace
+      4. If not bound → Prompt to enable
+    status: "NEEDS_TRACE"
+
+# ============================================================================
+# BYOK VAULT JOURNEY
+# ============================================================================
+
+byok_journeys:
+  case_set_key:
+    name: "BYOK: Set API Key"
+    description: "User configures API key in settings"
+    entry_points:
+      - "/settings → Providers"
+    expected_behavior: |
+      1. User enters API key
+      2. Key encrypted and stored in vault
+      3. hasApiKey flag synced
+      4. Key available in all workspaces
+    status: "DONE"
+    notes: "provider-credentials-slice.ts created + Test Connection endpoint (B-3)"
+    
+  case_use_key:
+    name: "BYOK: Use API Key"
+    description: "AI feature attempts to use stored key"
+    entry_points:
+      - "ChatPanel (/api/chat)"
+      - "Notes AI (note-ai-service)"
+      - "Voice Recording (Gemini)"
+    expected_behavior: |
+      1. Check vault for provider key
+      2. If exists → Use for API call
+      3. If missing → Fallback guidance
+      4. If invalid → Clear error + guide to settings
+    status: "done"
+    notes: "B-1: ChatPanel wired, N-3: Notes AI verified wired"
+
+  case_workspace_sync:
+    name: "BYOK: Cross-Workspace Access"
+    description: "Key set in settings used in Notes workspace"
+    entry_points:
+      - "Notes AI feature after setting key"
+    expected_behavior: |
+      1. Key stored once in vault
+      2. Accessible from any workspace
+      3. No re-entry required
+    status: "verified"
+    notes: "N-3: All Notes AI features use credentialVault.getCredentials()"
+
+# ============================================================================
+# SPRINT STORIES (PRIORITIZED)
+# ============================================================================
+
+development_status:
+  # ============================================================================
+  # EPIC: NOTES WORKSPACE STABILIZATION
+  # ============================================================================
+  epic-notes-stability: "in-progress"
+  
+  # Story: Map all Notes entry paths
+  N-1-map-notes-entry-paths:
+    status: "done"
+    priority: "P0"
+    description: "Trace all entry points to Notes workspace and document flows"
+    acceptance_criteria:
+      - "All 4 cases mapped with code evidence"
+      - "Failure points identified"
+      - "Edge cases documented"
+    estimated: "1h"
+    actual: "30m"
+    completed_at: "2026-01-07T20:20:00+07:00"
+    completion_notes: |
+      Traced 4 entry points: /notes, /notes/$projectId, Hub→Notes, Hub→Recent→Notes
+      Added ErrorBoundary to /notes route to match $projectId protection
+      Identified: Case 4 AI integration not wired (Story N-3)
+      Identified: Invalid projectId handling needed (deferred)
+    
+  # Story: Verify temp project creation
+  N-2-verify-temp-project-creation:
+    status: "done"
+    priority: "P0"
+    description: "Ensure temp project creation works for no-project users"
+    depends_on: ["N-1"]
+    estimated: "2h"
+    actual: "1h"
+    completed_at: "2026-01-07T22:00:00+07:00"
+    completion_notes: |
+      Verified temp project creation via workspace-access-helper.tsx
+      createTempProject() function creates projects with:
+      - ID: temp_{workspace} (e.g., temp_notes, temp_ide)
+      - Auto-created flag for identification
+      - IndexedDB storage type
+      - All workspace bindings enabled
+      Auto-creation triggered by useWorkspaceAccess hook when status='no_projects'
+      Navigation to /{workspace}/$projectId after creation
+      All workspace types (ide, knowledge, study, notes) supported
+
+  # Story: Wire AI trigger to vault check
+  N-3-wire-ai-vault-check:
+    status: "done"
+    priority: "P1"
+    description: "Ensure AI features check vault before execution"
+    depends_on: ["N-2"]
+    estimated: "3h"
+    actual: "1h"
+    completed_at: "2026-01-07T22:00:00+07:00"
+    completion_notes: |
+      NOTES AI FEATURES ALREADY WIRED TO VAULT:
+      1. note-ai-service.ts (line 88):
+         - await credentialVault.getCredentials(agent.providerId)
+         - Throws NoteAIError('NO_API_KEY') if key missing
+      2. VoiceRecordButton.tsx (lines 51-54):
+         - await credentialVault.getCredentials('gemini')
+         - Sets apiKey state for voice recording
+      3. AITransformMenu.tsx:
+         - Uses generateNoteContent() which calls note-ai-service
+         - Handles NO_API_KEY error with toast message
+      All Notes AI entry points properly check vault before API calls
+      No code changes required - verification complete
+    
+  # Story: Create fallback UX for missing keys
+  N-4-fallback-ux-missing-keys:
+    status: "backlog"
+    priority: "P1"
+    description: "Graceful UI when user triggers AI without keys"
+    depends_on: ["N-3"]
+    estimated: "2h"
+    
+  epic-notes-stability-retrospective: "optional"
+  
+  # ============================================================================
+  # EPIC: IDE WORKSPACE STABILIZATION
+  # ============================================================================
+  epic-ide-stability: "backlog"
+  
+  # Story: Verify FSA project loading
+  I-1-verify-fsa-project-loading:
+    status: "backlog"
+    priority: "P0"
+    description: "Ensure FSA projects load correctly in IDE"
+    estimated: "2h"
+    
+  # Story: Verify cross-workspace navigation
+  I-2-verify-cross-workspace-nav:
+    status: "backlog"
+    priority: "P1"
+    description: "Test workspace switcher from IDE"
+    depends_on: ["I-1"]
+    estimated: "2h"
+    
+  epic-ide-stability-retrospective: "optional"
+  
+  # ============================================================================
+  # EPIC: BYOK VAULT WIRING
+  # ============================================================================
+  epic-byok-wiring: "backlog"
+
+  # Story: Wire vault to AI provider calls
+  B-1-wire-vault-to-providers:
+    status: "done"
+    priority: "P0"
+    description: "Connect credential vault to actual AI API calls"
+    estimated: "3h"
+    actual: "1.5h"
+    completed_at: "2026-01-07T21:00:00+07:00"
+    completion_notes: |
+      Created useProviderApiKey hook for vault retrieval
+      Created MissingApiKeyWarning component for user-friendly UX
+      Fixed ChatPanel.tsx to retrieve apiKey from vault before /api/chat calls
+      apiKey now included in request body to /api/chat
+      Updated barrel exports for hooks and UI components
+      TypeScript validation passed (no new errors)
+      Files created/modified:
+      - src/lib/agent/hooks/use-provider-api-key.ts (96 lines)
+      - src/presentation/components/ui/MissingApiKeyWarning.tsx (116 lines)
+      - src/presentation/components/chat/ChatPanel.tsx (added vault integration)
+      - src/lib/agent/hooks/index.ts (export added)
+      - src/presentation/components/ui/index.ts (export added)
+
+  # Story: Add sync on mount
+  B-2-sync-keys-on-mount:
+    status: "backlog"
+    priority: "P1"
+    description: "Call syncKeyFlags() on app initialization"
+    depends_on: ["B-1"]
+    estimated: "1h"
+    
+  # Story: Add key validation
+  B-3-key-validation:
+    status: "done"
+    priority: "P2"
+    description: "Validate key format before storing"
+    depends_on: ["B-2"]
+    estimated: "2h"
+    actual: "2h"
+    completed_at: "2026-01-07T14:00:00+07:00"
+    completion_notes: |
+      Created POST /api/provider/test endpoint for server-side validation
+      OpenAI-compatible providers: test via /models endpoint
+      Anthropic: test via minimal /messages request
+      ProviderConfigDialog: Added "Test Connection" button with visual feedback
+      Returns { valid, error?, latencyMs } for user confirmation before saving
+    
+  epic-byok-wiring-retrospective: "optional"
+
+# ============================================================================
+# STATUS DEFINITIONS
+# ============================================================================
+
+# Story Status:
+#   - backlog: Story defined but not started
+#   - ready-for-dev: Story ready for implementation
+#   - in-progress: Developer actively working
+#   - review: Ready for code review
+#   - done: Completed and verified
+
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+
+# WORKFLOW NOTES:
+# - Complete horizontal analysis (all cases) before vertical (fixes)
+# - Document everything with code evidence
+# - Test on both desktop and mobile where applicable
+# - Zero crashes is the minimum bar

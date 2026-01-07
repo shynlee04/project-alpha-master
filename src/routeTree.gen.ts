@@ -25,6 +25,7 @@ import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
+import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
 import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
@@ -144,6 +145,11 @@ const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
   path: '/$projectId',
   getParentRoute: () => IdeRoute,
 } as any)
+const ApiProviderTestRoute = ApiProviderTestRouteImport.update({
+  id: '/api/provider-test',
+  path: '/api/provider-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/api/provider-test': typeof ApiProviderTestRoute
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/api/provider-test': typeof ApiProviderTestRoute
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -226,6 +234,7 @@ export interface FileRoutesById {
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
   '/api/chat': typeof ApiChatRoute
+  '/api/provider-test': typeof ApiProviderTestRoute
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/api/chat'
+    | '/api/provider-test'
     | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -278,6 +288,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/api/chat'
+    | '/api/provider-test'
     | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -303,6 +314,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/api/chat'
+    | '/api/provider-test'
     | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -329,6 +341,7 @@ export interface RootRouteChildren {
   NotesLazyRoute: typeof NotesLazyRouteWithChildren
   StudyLazyRoute: typeof StudyLazyRouteWithChildren
   ApiChatRoute: typeof ApiChatRoute
+  ApiProviderTestRoute: typeof ApiProviderTestRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
   WorkspaceIndexRoute: typeof WorkspaceIndexRoute
@@ -478,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IdeProjectIdRouteImport
       parentRoute: typeof IdeRoute
     }
+    '/api/provider-test': {
+      id: '/api/provider-test'
+      path: '/api/provider-test'
+      fullPath: '/api/provider-test'
+      preLoaderRoute: typeof ApiProviderTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -563,6 +583,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotesLazyRoute: NotesLazyRouteWithChildren,
   StudyLazyRoute: StudyLazyRouteWithChildren,
   ApiChatRoute: ApiChatRoute,
+  ApiProviderTestRoute: ApiProviderTestRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
   WorkspaceIndexRoute: WorkspaceIndexRoute,

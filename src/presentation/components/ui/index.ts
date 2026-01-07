@@ -34,6 +34,10 @@ export { LoadingState } from './LoadingState';
 export { ProgressIndicator } from './progress-indicator';
 export * from './progress';
 
+// BYOK Vault Components (B-1: Wire Vault to AI Providers)
+export { MissingApiKeyWarning } from './MissingApiKeyWarning';
+export type { MissingApiKeyWarningProps } from './MissingApiKeyWarning';
+
 // Ralph Loop Cycle 17: Event Activity Indicators (P1: User Journey Gap)
 export * from './activity-indicators';
 

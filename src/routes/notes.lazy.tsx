@@ -23,9 +23,19 @@ import {
   useWorkspaceAccess,
   WorkspaceAccessEmptyState,
 } from '@/lib/workspace/workspace-access-helper.tsx';
+import { ErrorBoundary } from '@/presentation/components/error';
 
+/**
+ * Route definition with ErrorBoundary protection
+ * @stabilityFix Story N-1 - Add ErrorBoundary to /notes route
+ * @added 2026-01-07
+ */
 export const Route = createLazyFileRoute('/notes')({
-  component: NotesWorkspace,
+  component: () => (
+    <ErrorBoundary>
+      <NotesWorkspace />
+    </ErrorBoundary>
+  ),
 });
 
 /**
