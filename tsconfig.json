@@ -33,8 +33,8 @@
     "types": [
       "vite/client"
     ],
-    /* Bundler mode */
-    "moduleResolution": "bundler",
+    /* Node mode for better path resolution */
+    "moduleResolution": "node",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false,
     "noEmit": true,
@@ -48,11 +48,18 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    /* Module resolution options */
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/core/entities/Agent": ["./src/core/entities/Agent.ts"],
+      "@/core/entities/Conversation": ["./src/core/entities/Conversation.ts"],
+      "@/core/entities/Provider": ["./src/core/entities/Provider.ts"],
+      "@/core/entities/Project": ["./src/core/entities/Project.ts"],
+      "@/core/entities/Workspace": ["./src/core/entities/Workspace.ts"]
     }
   }
 }

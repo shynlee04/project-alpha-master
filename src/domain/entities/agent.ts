@@ -12,7 +12,17 @@ import { AgentToolBinding } from '../value-objects/tool-permission';
 import { WorkspaceType } from '../value-objects/workspace-type';
 
 /**
- * Agent entity properties
+ * Helper type for workspace bindings (can be class instance or plain object)
+ */
+export type WorkspaceBindingInput = WorkspaceBinding | WorkspaceBindingProps;
+
+/**
+ * Helper type for tool bindings (can be class instance or plain object)
+ */
+export type AgentToolBindingInput = AgentToolBinding | AgentToolBindingProps;
+
+/**
+ * Agent entity properties - accepts both class instances and plain objects
  */
 export interface AgentProps {
   id: string;
@@ -22,8 +32,8 @@ export interface AgentProps {
   systemPrompt: string;
   temperature?: number;
   maxTokens?: number;
-  workspaceBindings: WorkspaceBinding[];
-  tools: AgentToolBinding[];
+  workspaceBindings: WorkspaceBindingInput[];
+  tools: AgentToolBindingInput[];
   createdAt: number;
   updatedAt: number;
 }
@@ -36,8 +46,13 @@ export interface AgentProps {
  * - Agent must have at least one enabled tool
  * - Agent cannot be deleted if active in any conversation
  *
+ * NOTE: This class accepts both class instances and plain objects for
+ * workspaceBindings and tools. Plain objects are automatically converted
+ * to class instances in the constructor.
+ *
  * @example
  * ```ts
+ * // With class instances
  * const agent = new Agent({
  *   id: 'agent-1',
  *   name: 'Code Assistant',
@@ -49,6 +64,23 @@ export interface AgentProps {
  *   ],
  *   tools: [
  *     new AgentToolBinding({ toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true } })
+ *   ],
+ *   createdAt: Date.now(),
+ *   updatedAt: Date.now()
+ * });
+ *
+ * // With plain objects (automatically converted to class instances)
+ * const agent = new Agent({
+ *   id: 'agent-1',
+ *   name: 'Code Assistant',
+ *   providerId: 'anthropic',
+ *   model: 'claude-sonnet-4-5',
+ *   systemPrompt: 'You are a helpful coding assistant.',
+ *   workspaceBindings: [
+ *     { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true }
+ *   ],
+ *   tools: [
+ *     { toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true } }
  *   ],
  *   createdAt: Date.now(),
  *   updatedAt: Date.now()
@@ -69,7 +101,22 @@ export class Agent {
   readonly updatedAt: number;
 
   constructor(props: AgentProps) {
-    this.validateAgentProps(props);
+    // Convert plain objects to class instances
+    const workspaceBindings = props.workspaceBindings.map((wb) =>
+      wb instanceof WorkspaceBinding ? wb : new WorkspaceBinding(wb)
+    );
+    const tools = props.tools.map((tool) =>
+      tool instanceof AgentToolBinding ? tool : new AgentToolBinding(tool)
+    );
+
+    // Create validated props with converted instances
+    const validatedProps: AgentProps = {
+      ...props,
+      workspaceBindings,
+      tools,
+    };
+
+    this.validateAgentProps(validatedProps);
     this.id = props.id;
     this.name = props.name;
     this.providerId = props.providerId;
@@ -77,8 +124,8 @@ export class Agent {
     this.systemPrompt = props.systemPrompt;
     this.temperature = props.temperature ?? 0.7;
     this.maxTokens = props.maxTokens ?? 4096;
-    this.workspaceBindings = props.workspaceBindings;
-    this.tools = props.tools;
+    this.workspaceBindings = workspaceBindings;
+    this.tools = tools;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }

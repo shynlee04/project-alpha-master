@@ -109,13 +109,15 @@ import type { ConversationEvent, ConversationEventType } from './event-types';
 
 // Extend ConversationMetadata with store-specific properties
 export interface ConversationMetadataExtended extends ConversationMetadata {
-  id: string;
-  projectId: string | null;  // Project association (null = no project)
   status: 'active' | 'archived' | 'deleted';
-  workspaceType: WorkspaceType;
-  updatedAt: string;  // ISO string for storage
-  createdAt: string;  // ISO string for storage
-  agentId: string;
+  updatedAt: string;  // ISO string for storage (overrides number from base)
+  createdAt: string;  // ISO string for storage (overrides number from base)
+  agentId: string; // Required (overrides nullable from base)
+
+  // Additional properties used throughout the codebase
+  pinned?: boolean;  // Whether conversation is pinned to top
+  tags?: string[];  // User-defined tags for organization
+  // Note: scrollPosition, title, and other base properties are inherited from ConversationMetadata
 }
 
 // Extend ConversationThread with store-specific properties
