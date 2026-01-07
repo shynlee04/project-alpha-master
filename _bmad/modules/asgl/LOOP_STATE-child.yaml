@@ -46,12 +46,12 @@ session:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_story:
-  id: "P0-LLM-002"
-  title: "Fix Notes Workspace Agent Chat"
-  type: "BUG_FIX"
+  id: "P0-LLM-003"
+  title: "Add API Key Validation Endpoint"
+  type: "FEATURE"
   status: "IN_PROGRESS"
   priority: "P0"
-  estimated_hours: "0.5"
+  estimated_hours: "2-3"
 
   # Sprint context
   sprint: "CRITICAL-PATH-CORRECTION-2026-01-07"
@@ -61,30 +61,36 @@ current_story:
   # Routing (new)
   routed_to:
     module: "architecture-remediation"
-    workflow: "fix-critical-bug"
+    workflow: "add-validation-endpoint"
     agent: "dev"
 
   # Acceptance criteria
   acceptance_criteria:
-    - "NoteSidebarChat.tsx passes valid API key from useAgentChatAPIKeyManager"
-    - "Remove FALSE comment about credential-vault handling"
-    - "Notes workspace agent chat returns actual LLM responses"
-    - "User journey J3 (Notes AI Chat) passes"
+    - "POST /api/provider/test validates API key before saving"
+    - "Returns { valid: boolean, error: string } response"
+    - "ProviderConfigDialog uses endpoint for connection testing"
+    - "User journey J1 (Add key → Test connection) passes"
 
   # Progress tracking
   progress:
     steps_completed: 0
-    steps_total: 3
-    current_step: "Fix NoteSidebarChat.tsx to retrieve and pass API key"
-    started_at: "2026-01-07T09:00:00+07:00"
+    steps_total: 4
+    current_step: "Create /api/provider/test endpoint"
+    started_at: "2026-01-07T10:00:00+07:00"
 
-# Previous story completed
-previous_story:
-  id: "P0-LLM-001"
-  title: "Fix Embedding Service API Key Injection"
-  status: "COMPLETED"
-  completed_at: "2026-01-07T08:00:00+07:00"
-  steps_completed: 5
+# Previous stories completed
+previous_stories:
+  - id: "P0-LLM-001"
+    title: "Fix Embedding Service API Key Injection"
+    status: "COMPLETED"
+    completed_at: "2026-01-07T08:00:00+07:00"
+    steps_completed: 5
+
+  - id: "P0-LLM-002"
+    title: "Fix Notes Workspace Agent Chat"
+    status: "COMPLETED"
+    completed_at: "2026-01-07T09:30:00+07:00"
+    steps_completed: 3
 
 # ═══════════════════════════════════════════════════════════════════════════
 # IMMEDIATE QUEUE (next 3 stories - EPIC 1 P0 Crisis)
@@ -99,36 +105,36 @@ immediate_queue:
 
   - id: "P0-LLM-002"
     title: "Fix Notes Workspace Agent Chat"
-    status: "IN_PROGRESS"
+    status: "COMPLETED"
     priority: "P0"
     estimated_hours: "0.5"
     depends_on: []
 
   - id: "P0-LLM-003"
     title: "Add API Key Validation Endpoint"
-    status: "PENDING"
+    status: "IN_PROGRESS"
     priority: "P0"
     estimated_hours: "2-3"
     depends_on: []
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT ACTION (P0-LLM-002: Fix Notes Workspace Agent Chat)
+# CURRENT ACTION (P0-LLM-003: Add API Key Validation Endpoint)
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_action:
   step: 1
-  description: "Fix NoteSidebarChat.tsx API key injection"
-  command: "Remove FALSE comment, import useAgentChatAPIKeyManager, pass valid apiKey"
+  description: "Create /api/provider/test endpoint"
+  command: "Create API route file src/routes/api/provider-test.ts"
 
-  files_to_modify:
-    - "src/presentation/components/notes/NoteSidebarChat.tsx"
+  files_to_create:
+    - "src/routes/api/provider-test.ts"
 
   validation:
-    - "Import useAgentChatAPIKeyManager from AgentChatPanel"
-    - "Wrap useAgentChatWithTools with API key manager"
-    - "Remove FALSE comment about credential-vault handling"
+    - "Endpoint accepts POST with { providerId, apiKey }"
+    - "Validates API key by making test request to provider"
+    - "Returns { valid: boolean, error?: string }"
     - "TypeScript compilation passes"
-    - "Notes agent chat returns actual responses (not placeholders)"
+    - "Integration test validates endpoint works"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ARTIFACTS TRACKING
@@ -139,16 +145,10 @@ artifacts:
     - "_bmad-output/sprint-artifacts/critical-path-correction-sprint-2026-01-07.yaml"
     - "_bmad-output/sprint-artifacts/api-key-flow-verification-report-2026-01-07.md"
     - "_bmad-output/sprint-artifacts/user-journey-failure-matrix-verified-2026-01-07.md"
+    - "src/presentation/components/knowledge/hooks/useAPIKeyRetrieval.ts"
+    - "src/presentation/components/knowledge/hooks/index.ts"
 
-  to_create:
-    - path: "src/presentation/components/knowledge/hooks/useAPIKeyRetrieval.ts"
-      purpose: "Reusable hook for API key retrieval from credential vault"
-
-    - path: "src/presentation/components/knowledge/hooks/index.ts"
-      purpose: "Barrel export for knowledge hooks"
-
-    - path: "src/lib/rag/embedding-service-key-manager.ts"
-      purpose: "Centralized API key management for embedding service"
+  to_create: []
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERROR TRACKING
@@ -163,18 +163,20 @@ errors:
 # ═══════════════════════════════════════════════════════════════════════════
 
 continuation:
-  next_action: "Execute P0-LLM-001 Step 1: Create useAPIKeyRetrieval hook"
+  next_action: "Execute P0-LLM-002: Fix NoteSidebarChat.tsx API key injection"
   auto_execute: true
   report_on_completion: "parent"
 
   resume_prompt: |
-    CHILD LEVEL: Operational execution for P0-LLM-001
-    Current: Creating useAPIKeyRetrieval hook pattern
+    CHILD LEVEL: Operational execution for P0-LLM-002
+    Current: Fixing Notes Workspace Agent Chat API key injection
     Parent: Critical Path Correction Sprint
     Epic: EPIC-1 - API Key Flow Crisis (P0-BLOCKER)
-    Story: P0-LLM-001 - Fix Embedding Service API Key Injection
+    Story: P0-LLM-002 - Fix Notes Workspace Agent Chat
 
-    User Journey Impact: J1, J3, J4, J6 FAIL (20% pass rate)
-    Evidence: api-key-flow-verification-report-2026-01-07.md
+    Previous: P0-LLM-001 COMPLETED (5/5 steps) - All 4 embedding service locations now retrieve API key
 
-    Continue with: Create useAPIKeyRetrieval hook based on useAgentChatAPIKeyManager pattern
+    User Journey Impact: J3 (Notes AI Chat) FAILS due to apiKey: undefined
+    Evidence: NoteSidebarChat.tsx:83 passes apiKey: undefined with FALSE comment
+
+    Continue with: Import useAgentChatAPIKeyManager, remove FALSE comment, pass valid apiKey

@@ -139,7 +139,7 @@ function NotesEmptyState() {
         <div className="flex flex-col sm:flex-row gap-3 mt-4">
           {/* Create Project Button */}
           <button
-            onClick={() => navigate({ to: '/hub' })}
+            onClick={() => navigate({ to: '/hub', search: { action: 'create-project' } })}
             className="inline-flex items-center gap-2 px-4 py-2 border-2 border-border bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
           >
             <Plus className="w-4 h-4" />

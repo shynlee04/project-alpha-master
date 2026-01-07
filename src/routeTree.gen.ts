@@ -14,6 +14,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as TestErrorBoundaryRouteImport } from './routes/test-error-boundary'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as IdeRouteImport } from './routes/ide'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as DebugRouteImport } from './routes/debug'
@@ -65,6 +66,11 @@ const TestErrorBoundaryRoute = TestErrorBoundaryRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IdeRoute = IdeRouteImport.update({
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
+  '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
+  '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
   '/ide': typeof IdeRouteWithChildren
+  '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/debug'
     | '/hub'
     | '/ide'
+    | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/debug'
     | '/hub'
     | '/ide'
+    | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/debug'
     | '/hub'
     | '/ide'
+    | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
@@ -309,6 +321,7 @@ export interface RootRouteChildren {
   DebugRoute: typeof DebugRoute
   HubRoute: typeof HubRoute
   IdeRoute: typeof IdeRouteWithChildren
+  ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
   TestErrorBoundaryRoute: typeof TestErrorBoundaryRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
@@ -365,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ide': {
@@ -535,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   DebugRoute: DebugRoute,
   HubRoute: HubRoute,
   IdeRoute: IdeRouteWithChildren,
+  ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
   TestErrorBoundaryRoute: TestErrorBoundaryRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,

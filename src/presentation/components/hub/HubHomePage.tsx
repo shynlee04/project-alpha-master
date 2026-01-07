@@ -84,11 +84,14 @@ export const HubHomePage: React.FC = () => {
       // User clicked workspace from sidebar without project - show picker
       setProjectPickerWorkspace(workspace);
       setProjectPickerOpen(true);
-    } else if (action === 'create-project' && message) {
-      // Redirected because no projects or action needed
-      toast.info(message || 'Create or mount a project to continue', {
-        duration: 6000,
-      });
+    } else if (action === 'create-project') {
+      // User clicked "Create Project" button - open wizard directly
+      setProjectCreationWizardOpen(true);
+      if (message) {
+        toast.info(message, {
+          duration: 6000,
+        });
+      }
     }
   }, [workspace, action, message]);
 

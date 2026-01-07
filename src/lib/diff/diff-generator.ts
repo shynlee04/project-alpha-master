@@ -172,7 +172,7 @@ function traceDown(V: Map<number, number>, k: number, d: number): number {
     x = (V.get(k + 1) ?? 0) - 1;
   }
 
-  const y = x - k;
+  let y = x - k;
   // TODO: Implement proper line comparison logic
   // Currently using simplified bounds checking
   while (x < MAX && y < MAX && x >= 0 && y >= 0) {

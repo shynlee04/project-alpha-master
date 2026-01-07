@@ -18,6 +18,7 @@ import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/ag
 import { useAgents } from '@/hooks/useAgents';
 import { getNotesAgentSystemPrompt } from '@/lib/agent/system-prompt';
 import { useAgentChatToolFacades } from '../ide/AgentChatPanel/index';
+import { useAgentChatAPIKeyManager } from '../ide/AgentChatPanel/AgentChatAPIKeyManager';
 import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { toast } from 'sonner';
 
@@ -49,9 +50,10 @@ export function NoteSidebarChat({
     const { agents } = useAgents();
     const activeAgent = agents.find(a => a.id === activeAgentId);
 
-    // API key management - providerId is sufficient for useAgentChatWithTools
-    // The hook handles API key lookup internally via credential-vault
-    const providerId = activeAgent?.providerId;
+    // API key management - retrieve from credential vault
+    const { apiKey, apiKeyError, providerId } = useAgentChatAPIKeyManager({
+        agentProviderId: activeAgent?.providerId
+    });
 
     // Get workspace context for tool facades (Notes workspace only gets file read tools)
     const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspaceSync();
@@ -80,7 +82,7 @@ export function NoteSidebarChat({
         systemMessage: systemPrompt,
         providerId,
         modelId: activeAgent?.modelId ?? undefined,
-        apiKey: undefined, // Credential-vault handles API key lookup
+        apiKey: apiKey ?? undefined,
         enableTools: true,
     });
 
@@ -96,6 +98,15 @@ export function NoteSidebarChat({
             setMessages(newMessages);
         }
     }, [hookMessages]);
+
+    // Show error toast when API key is missing
+    useEffect(() => {
+        if (apiKeyError) {
+            toast.error('Agent API Key Missing', {
+                description: apiKeyError,
+            });
+        }
+    }, [apiKeyError]);
 
     // Auto-scroll to bottom on new messages
     useEffect(() => {
