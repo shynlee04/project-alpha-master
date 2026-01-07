@@ -8,11 +8,11 @@
 import type { LocalFSAdapter } from '../local-fs-adapter';
 import { boot, mount, getFileSystem, isBooted } from '../../webcontainer';
 import type { WorkspaceEventEmitter } from '../../events';
-import type { SyncConfig, SyncResult } from '../sync-types';
+import type { SyncConfig, SyncResult } from '@/infrastructure/sync/types';
 import { countFilesToSync, buildFileSystemTree } from '../sync-operations';
 import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
 import { fileMetadataCache } from '../../sync/file-metadata-cache';
-import { SyncError } from '../sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 
 /**
  * Full sync from Local FS to WebContainer

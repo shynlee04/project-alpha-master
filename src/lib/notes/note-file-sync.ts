@@ -12,7 +12,7 @@
 
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import type { FileSyncService, SyncResult } from '@/lib/filesync/file-sync-service';
-import { SyncError } from '@/lib/filesystem/sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 import type { FileSavedPayload } from '@/lib/events/store-events';
 

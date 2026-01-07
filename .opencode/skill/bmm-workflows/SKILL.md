@@ -121,6 +121,39 @@ workflows:
 | **sprint-planning** | 4-implementation/sprint-planning | Sprint boundary | Sprint plan |
 | **create-story** | 4-implementation/create-story | New story needed | Story artifact |
 | **retrospective** | 4-implementation/retrospective | Epic complete | Lessons learned |
+| **story-cycle** | bmb/workflows/story-cycle | Full story development | Complete story |
+
+## Story Development Cycle v2.0
+
+**Path**: `_bmad/bmb/workflows/story-cycle/`
+
+**9-Step Modular Workflow:**
+1. Create Story → 2. Validate Story → 3. Create Context → 4. Validate Context
+2. **5. Pre-Planning** (NEW v2.0) → 6. Dev Story → 7. Code Review → 8. Story Done
+3. **9. Retrospective** (epic completion)
+
+**Usage**:
+```markdown
+@story-cycle
+
+Story ID: S-001
+Epic: 21
+Type: IMPLEMENTATION
+Hours: 4
+```
+
+**OpenCode Integration**: `.opencode/skill/story-cycle/`
+
+```bash
+story-cycle              # Full cycle
+story-cycle step=N story=X  # Jump to step
+create-story epic=21 story=1  # Individual step
+dev-story story=21-1
+code-review story=21-1
+correct-course story=21-1
+```
+
+**Master Documentation**: `_bmad/bmb/workflows/story-cycle/README.md`
 
 ## Integration with ASGL
 
@@ -151,6 +184,7 @@ This skill uses **minimal references**. Full workflow definitions are in `_bmad/
 
 | Skill | Purpose |
 |-------|---------|
+| `story-cycle` | Complete 9-step story development workflow |
 | `bmad-core-integration` | Agent access and routing |
 | `asgl` | Autonomous loop orchestration |
 | `architecture-remediation` | God store/component fixes |
@@ -163,6 +197,63 @@ This skill uses **minimal references**. Full workflow definitions are in `_bmad/
 | `@code-review` | code-review workflow |
 | `@correct-course` | correct-course workflow |
 | `@sprint-plan` | sprint-planning workflow |
+
+---
+
+## Story Development Cycle Commands
+
+The following commands are available via OpenCode configuration:
+
+### Core Commands
+
+| Command | Description | Agent |
+|---------|-------------|-------|
+| `story-cycle` | Full 9-step story development cycle | bmad-bmm-dev |
+| `create-story` | Create story from epic | bmad-bmm-pm |
+| `dev-story` | TDD implementation | bmad-bmm-dev |
+| `code-review` | Multi-agent review | bmad-bmm-dev |
+| `correct-course` | Recovery workflow | bmad-bmm-pm |
+
+### Usage Examples
+
+```bash
+# Full story cycle
+story-cycle                    # Interactive (prompts for epic/story)
+story-cycle continue S-001     # Resume existing story
+
+# Individual steps
+create-story epic=21 story=1
+dev-story story=21-1-fix-auth
+code-review story=21-1-fix-auth
+correct-course story=21-1-fix-auth
+
+# With OpenCode agent syntax
+@story-cycle story=S-001
+@dev-story story=S-001
+@code-review story=S-001
+@correct-course story=S-001
+```
+
+### Command Configuration
+
+Commands are registered in `.opencode/opencode.jsonc`:
+
+```jsonc
+{
+  "command": {
+    "story-cycle": {
+      "description": "Execute complete story development cycle v2.0",
+      "template": "Execute story development cycle:\n\n$ARGUMENTS\n\n9-Step Workflow...",
+      "agent": "bmad-bmm-dev"
+    },
+    "dev-story": {
+      "description": "Implement story with TDD methodology",
+      "template": "Implement story with TDD:\n\n$ARGUMENTS\n\nRequired: story={story_key}",
+      "agent": "bmad-bmm-dev"
+    }
+  }
+}
+```
 
 ---
 

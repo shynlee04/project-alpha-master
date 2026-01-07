@@ -1,9 +1,11 @@
 /**
- * Sync Manager Types
- * @module lib/filesystem/sync-types
- * 
+ * @fileoverview Sync Manager Types
+ * @module infrastructure/sync/types/sync-types
+ *
  * Type definitions for the SyncManager that keeps Local FS and WebContainers in sync.
- * 
+ * This file has been moved from lib/filesystem to infrastructure/sync/types
+ * as part of Clean Architecture compliance.
+ *
  * @see {@link ../sync-manager.ts} for the main SyncManager implementation
  */
 

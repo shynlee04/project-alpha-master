@@ -40,7 +40,7 @@
 import type { LocalFSAdapter } from '../local-fs-adapter';
 import type { WorkspaceEventEmitter } from '../../events';
 import type { SyncConfig, SyncResult, SyncStatus } from './sync-manager-types';
-import { DEFAULT_SYNC_CONFIG } from '../sync-types';
+import { DEFAULT_SYNC_CONFIG } from '@/infrastructure/sync/types';
 import { syncToWebContainer, incrementalSyncToWebContainer } from './sync-batch-sync';
 import { writeFile, deleteFile, createDirectory, deleteDirectory } from './sync-file-ops';
 

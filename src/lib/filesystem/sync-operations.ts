@@ -12,7 +12,7 @@ import {
     SyncError,
     type SyncResult,
     type SyncConfig,
-} from './sync-types';
+} from '@/infrastructure/sync/types';
 import { isExcluded, readFileContent } from './sync-utils';
 import { walkDirectory } from './directory-walker';
 

@@ -58,7 +58,7 @@ development_status:
   epic-38: backlog
   
   # Chain 1: Import Direction Fixes (sequential: 38-01 → 38-02 → 38-03 → 38-04)
-  38-01-move-sync-types-to-infrastructure: backlog
+  38-01-move-sync-types-to-infrastructure: in-progress
   38-02-move-file-system-adapters: backlog
   38-03-create-facade-exports: backlog
   38-04-update-32-infrastructure-imports: backlog

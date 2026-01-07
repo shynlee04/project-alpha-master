@@ -30,9 +30,38 @@ import {
   useWorkspaceAccess,
   WorkspaceAccessEmptyState,
 } from '@/lib/workspace/workspace-access-helper.tsx';
+import { ErrorBoundary } from '@/presentation/components/error';
 
+/**
+ * Route definition with ErrorBoundary protection
+ * @stabilityFix Story 30-01 - Add ErrorBoundary to /study route
+ * @added 2026-01-08
+ */
 export const Route = createLazyFileRoute('/study')({
-  component: StudyWorkspace,
+  component: () => (
+    <ErrorBoundary
+      fallback={
+        <div className="p-6 text-center">
+          <h2 className="text-lg font-bold mb-2">Study Workspace Failed</h2>
+          <p className="text-muted-foreground mb-4">
+            An unexpected error occurred. Please retry or contact support.
+          </p>
+          <button
+            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </button>
+        </div>
+      }
+      onError={(error, errorInfo) => {
+        console.error('[Study Workspace] Error:', error, errorInfo);
+        // TODO: Send to monitoring service (Sentry)
+      }}
+    >
+      <StudyWorkspace />
+    </ErrorBoundary>
+  ),
 });
 
 /**

@@ -6,5 +6,5 @@
  */
 
 // Re-export types from sync-types for convenience
-export { SyncError } from '../sync-types';
-export type { SyncConfig, SyncProgress, SyncResult, SyncStatus } from '../sync-types';
+export { SyncError } from '@/infrastructure/sync/types';
+export type { SyncConfig, SyncProgress, SyncResult, SyncStatus } from '@/infrastructure/sync/types';

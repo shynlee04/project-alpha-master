@@ -18,7 +18,7 @@ import type {
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { Block } from '@blocknote/core';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
-import { SyncError } from '@/lib/filesystem/sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 import type { FileChangeTracker } from './note-file-watcher';
 
 /**

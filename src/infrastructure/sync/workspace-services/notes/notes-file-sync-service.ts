@@ -18,7 +18,7 @@ import type {
     FileSyncConfig
 } from '../file-sync-service';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
-import { SyncError } from '@/lib/filesystem/sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 import {
     createFileSyncServiceImplementation,
     checkDisposed,

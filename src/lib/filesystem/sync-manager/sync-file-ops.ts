@@ -8,8 +8,8 @@
 import type { LocalFSAdapter } from '../local-fs-adapter';
 import { getFileSystem, isBooted } from '../../webcontainer';
 import type { WorkspaceEventEmitter } from '../../events';
-import type { SyncConfig } from '../sync-types';
-import { SyncError } from '../sync-types';
+import type { SyncConfig } from '@/infrastructure/sync/types';
+import { SyncError } from '@/infrastructure/sync/types';
 import { validateFileSize, shouldWarnFileSize, formatFileSize } from '../validation';
 import { showErrorToast } from '../../utils/error-handling';
 import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';

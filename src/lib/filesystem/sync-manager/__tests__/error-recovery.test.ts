@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { SyncError, SyncErrorCode } from '@/lib/filesystem/sync-types';
+import { SyncError, SyncErrorCode } from '@/infrastructure/sync/types';
 
 // Mock file system
 const mockFileSystem = {

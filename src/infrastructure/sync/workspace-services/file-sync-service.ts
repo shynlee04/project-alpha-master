@@ -7,7 +7,7 @@
  * @epic CW-01 - Abstract File Sync Service
  */
 
-import type { SyncError } from '@/lib/filesystem/sync-types';
+import type { SyncError } from '@/infrastructure/sync/types';
 
 /**
  * File metadata from sync operations

@@ -4,9 +4,9 @@ story_title: "Move sync-types.ts to infrastructure/sync/types"
 epic_id: "EPIC-38"
 priority: "P0"
 effort_hours: 1
-status: "draft"
+status: "in-progress"
 created_at: "2026-01-08T06:30:00+07:00"
-updated_at: "2026-01-08T06:30:00+07:00"
+updated_at: "2026-01-08T02:35:00+07:00"
 assigned_to: "@bmad-bmm-dev"
 dependencies: []
 research_artifacts:
@@ -43,11 +43,16 @@ Currently, sync-related type definitions are scattered across the codebase. Cons
 - None (first story in EPIC-38)
 
 ### Code Dependencies
-- `src/lib/sync/sync-types.ts` (source file to move)
+- `src/lib/filesystem/sync-types.ts` (source file to move)
 - Files importing sync-types.ts (to be updated):
-  - `src/infrastructure/filesystem/adapters/local-fs-adapter.ts`
-  - `src/infrastructure/filesystem/adapters/webcontainer-fs-adapter.ts`
-  - `src/lib/filesystem/sync-manager.ts`
+  - `src/lib/notes/note-file-sync.ts`
+  - `src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts`
+  - `src/infrastructure/sync/workspace-services/notes/notes-file-sync-core.ts`
+  - `src/infrastructure/sync/workspace-services/ide-file-sync-service.ts`
+  - `src/infrastructure/sync/workspace-services/knowledge-sync/knowledge-sync-service-core.ts`
+  - `src/infrastructure/sync/workspace-services/file-sync-service.ts`
+  - `src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts`
+  - `src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts`
 
 ### Documentation
 - `_bmad-output/planning-artifacts/architecture.md` - Clean Architecture specification
@@ -120,7 +125,7 @@ mkdir -p src/infrastructure/sync/types
 
 ### Step 2: Move File (2 minutes)
 ```bash
-mv src/lib/sync/sync-types.ts src/infrastructure/sync/types/sync-types.ts
+mv src/lib/filesystem/sync-types.ts src/infrastructure/sync/types/sync-types.ts
 ```
 
 ### Step 3: Create Barrel Export (3 minutes)
@@ -132,11 +137,11 @@ export * from './sync-types';
 ### Step 4: Update Imports (15 minutes)
 ```bash
 # Find all imports
-grep -r "from '@/lib/sync/sync-types'" src --include='*.ts' --include='*.tsx'
+grep -r "@/lib/filesystem/sync-types" src --include='*.ts' --include='*.tsx'
 
 # Replace with new path
-# Old: import { FileSyncStatus } from '@/lib/sync/sync-types';
-# New: import { FileSyncStatus } from '@/infrastructure/sync/types';
+# Old: import { SyncStatus } from '@/lib/filesystem/sync-types';
+# New: import { SyncStatus } from '@/infrastructure/sync/types';
 ```
 
 ### Step 5: Validate (5 minutes)

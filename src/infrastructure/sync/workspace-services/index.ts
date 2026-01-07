@@ -23,7 +23,7 @@ export type {
 } from './file-sync-service';
 
 // Re-export SyncError from canonical location
-export type { SyncError } from '@/lib/filesystem/sync-types';
+export type { SyncError } from '@/infrastructure/sync/types';
 
 // IDE Implementation
 export { IDEFileSyncService, createIDEFileSyncService } from './ide-file-sync-service';

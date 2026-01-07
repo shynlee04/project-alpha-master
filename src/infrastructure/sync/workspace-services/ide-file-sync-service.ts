@@ -20,7 +20,7 @@ import type {
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import type { SyncManager } from '@/lib/filesystem/sync-manager/sync-manager';
 import { createSyncManager } from '@/lib/filesystem/sync-manager';
-import { SyncError } from '@/lib/filesystem/sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 
 /**
  * Configuration for IDE file sync service

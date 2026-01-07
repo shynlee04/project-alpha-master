@@ -36,6 +36,36 @@
       "template": "Execute comprehensive code scan:\n\n$ARGUMENTS\n\nAvailable scanners:\n- full-scan: Complete codebase analysis\n- targeted-scan: Focused on specific areas\n- architecture-scan: Layer violations and god components\n- state-scan: Store analysis and circular dependencies\n- types-scan: TypeScript errors and type safety\n- security-scan: Vulnerability detection\n- performance-scan: Performance bottlenecks\n- ux-scan: Accessibility and UX issues\n\nLoad context from _bmad/modules/quality/",
       "agent": "deep-scan-orchestrator",
       "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "story-cycle": {
+      "description": "Execute complete story development cycle v2.0",
+      "template": "Execute story development cycle:\n\n$ARGUMENTS\n\n9-Step Workflow:\n1. Create Story - Create story file from epic\n2. Validate Story - Validate story file 100%\n3. Create Context - Build context XML\n4. Validate Context - Validate with freshness check\n5. Pre-Planning - **NEW v2.0** Research gate\n6. Dev Story - TDD implementation\n7. Code Review - Multi-agent review\n8. Story Done - Complete story\n9. Retrospective - Epic-level review\n\nLoad context from _bmad/bmb/workflows/story-cycle/\n\nExamples:\n- story-cycle (start new story)\n- story-cycle continue S-001 (continue existing)\n- dev-story story=S-001 (jump to implementation)\n- code-review story=S-001 (run code review)",
+      "agent": "bmad-bmm-dev",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "create-story": {
+      "description": "Create a new story from epic backlog",
+      "template": "Create story file:\n\n$ARGUMENTS\n\nRequired: epic={N}\nOptional: story={N} (auto-increment)\n\nLoads: _bmad/bmb/workflows/story-cycle/steps/01-create-story.md\nOutput: {sprint_artifacts}/{epic}-{story}-{slug}.md",
+      "agent": "bmad-bmm-pm",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "dev-story": {
+      "description": "Implement story with TDD methodology",
+      "template": "Implement story with TDD:\n\n$ARGUMENTS\n\nRequired: story={story_key}\n\nWorkflow:\n1. Load context XML\n2. For each task: Red-Green-Refactor\n3. Run full test suite\n4. Update Dev Agent Record\n\nLoads: _bmad/bmb/workflows/story-cycle/steps/06-dev-story.md",
+      "agent": "bmad-bmm-dev",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "code-review": {
+      "description": "Run code review on completed implementation",
+      "template": "Execute code review:\n\n$ARGUMENTS\n\nRequired: story={story_key}\nOptional: focus={area}\n\nChecklist:\n- Design compliance (4-layer architecture)\n- Code quality (TypeScript, no any)\n- UI/UX (8-bit design, no glassmorphism)\n- Testing (≥80% coverage)\n- Documentation\n\nLoads: _bmad/bmb/workflows/story-cycle/steps/07-code-review.md",
+      "agent": "bmad-bmm-dev",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    },
+    "correct-course": {
+      "description": "Recovery workflow for stuck stories",
+      "template": "Execute course correction:\n\n$ARGUMENTS\n\nRequired: story={story_key}\n\nTriggered when:\n- Story exceeds 2x timebox\n- Validation loop >3 attempts\n- Unresolvable blockers\n\nOptions:\n- Split story into smaller pieces\n- Defer to next sprint\n- Escalate to architect\n- Reduce scope\n- Continue with acknowledged risk\n\nLoads: _bmad/bmb/workflows/story-cycle/utils/_correct-course.md",
+      "agent": "bmad-bmm-pm",
+      "model": "anthropic/claude-sonnet-4-20250514"
     }
   },
 

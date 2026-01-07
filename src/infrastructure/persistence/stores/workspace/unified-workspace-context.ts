@@ -31,7 +31,7 @@ import { createContext, useContext, type RefObject } from 'react';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 // Import types from canonical sources for internal use
-import type { SyncStatus, SyncProgress } from '@/lib/filesystem/sync-types';
+import type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 import type { ProjectMetadata } from '@/lib/workspace/project-store';
 
@@ -45,7 +45,7 @@ import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 export type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 
 // Re-export types from their canonical sources
-export type { SyncStatus, SyncProgress } from '@/lib/filesystem/sync-types';
+export type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
 export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 export type { ProjectMetadata } from '@/lib/workspace/project-store';
 

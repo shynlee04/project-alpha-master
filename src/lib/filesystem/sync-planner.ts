@@ -8,7 +8,7 @@
  */
 
 import type { LocalFSAdapter } from './local-fs-adapter';
-import type { SyncPlan, SyncItem } from './sync-types';
+import type { SyncPlan, SyncItem } from '@/infrastructure/sync/types';
 import { isExcluded } from './sync-utils';
 import { walkDirectory } from './directory-walker';
 

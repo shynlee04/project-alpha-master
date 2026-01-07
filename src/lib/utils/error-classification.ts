@@ -12,7 +12,7 @@
  * @priority HIGH (HIGH-012)
  */
 
-import type { SyncError } from '../filesystem/sync-types';
+import type { SyncError } from '@/infrastructure/sync/types';
 import type { ToolError } from '../agent/tools/tool-error';
 
 // ============================================================================

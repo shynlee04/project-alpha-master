@@ -15,7 +15,7 @@ import type {
   BaseEventPayload,
   FileEventPayload,
 } from './event-types';
-import type { SyncErrorCode } from '../filesystem/sync-types';
+import type { SyncErrorCode } from '@/infrastructure/sync/types';
 
 // =============================================================================
 // Configuration

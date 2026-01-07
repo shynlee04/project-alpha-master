@@ -18,7 +18,7 @@ import type {
 import type { KnowledgeFileSyncConfig } from './knowledge-sync-types';
 import type { SourceRecord } from '@/infrastructure/persistence/dexie-db-types';
 import { KnowledgeSourceStore } from './knowledge-source-store';
-import { SyncError } from '@/lib/filesystem/sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 
 /**
  * Knowledge File Sync Service

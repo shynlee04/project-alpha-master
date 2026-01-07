@@ -5,7 +5,7 @@
  * Utility functions for file synchronization operations.
  */
 
-import { BINARY_EXTENSIONS } from './sync-types';
+import { BINARY_EXTENSIONS } from '@/infrastructure/sync/types';
 import type { LocalFSAdapter } from './local-fs-adapter';
 
 /**

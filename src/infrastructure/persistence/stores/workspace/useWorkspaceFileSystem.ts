@@ -23,7 +23,7 @@ import type {
   SyncStatus,
   SyncProgress,
   SyncResult,
-} from '@/lib/filesystem/sync-types';
+} from '@/infrastructure/sync/types';
 import { createWorkspaceEventBus } from '@/lib/events/workspace-events';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';

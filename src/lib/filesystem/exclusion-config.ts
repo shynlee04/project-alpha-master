@@ -8,7 +8,7 @@
  * including default patterns, pattern validation, and matching.
  */
 
-import { DEFAULT_SYNC_CONFIG } from './sync-types';
+import { DEFAULT_SYNC_CONFIG } from '@/infrastructure/sync/types';
 
 // ============================================================================
 // Constants

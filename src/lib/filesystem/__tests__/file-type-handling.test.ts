@@ -9,7 +9,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { isBinaryFile } from '@/lib/filesystem/sync-utils';
-import { BINARY_EXTENSIONS } from '@/lib/filesystem/sync-types';
+import { BINARY_EXTENSIONS } from '@/infrastructure/sync/types';
 
 // Facade for test compatibility - wraps the existing isBinaryFile function
 export const shouldReadAsBinary = isBinaryFile;

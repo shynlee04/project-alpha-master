@@ -1,8 +1,8 @@
 import { getFileSystem, isBooted } from '../webcontainer';
 import type { LocalFSAdapter } from './local-fs-adapter';
-import type { SyncConfig, SyncPlan, SyncResult, SyncItem } from './sync-types';
+import type { SyncConfig, SyncPlan, SyncResult, SyncItem } from '@/infrastructure/sync/types';
 import type { WorkspaceEventEmitter } from '../events';
-import { SyncError } from './sync-types';
+import { SyncError } from '@/infrastructure/sync/types';
 
 /**
  * Execute a synchronization plan.
