@@ -219,6 +219,16 @@ export function StudyPage() {
             <div className="flex flex-col h-full">
                 {/* Header */}
                 <div className="p-6 border-b border-border">
+                    {/* STORAGE-3-3: Project Selector for desktop */}
+                    <div className="mb-4 flex justify-end">
+                        <ProjectSelector
+                            projects={projects}
+                            activeProject={activeProject}
+                            onSelect={handleProjectSelect}
+                            variant="default"
+                            className="w-[250px]"
+                        />
+                    </div>
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-3">
                             <BookOpen className="text-primary" size={24} />

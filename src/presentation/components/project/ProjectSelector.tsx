@@ -5,12 +5,7 @@
  * @created 2026-01-07
  *
  * Reusable project selector dropdown for all workspaces.
- * Features:
- * - Dropdown menu with project list
- * - Search capability (via Select primitive)
- * - Storage type badges
- * - Mobile compatibility
- * - Active project highlighting
+ * Uses only existing UI components (DropdownMenu, Button).
  */
 
 import React from 'react';
@@ -19,18 +14,12 @@ import { Check, ChevronsUpDown, Folder, Database, HardDrive } from 'lucide-react
 import { cn } from '@/lib/utils';
 import { Button } from '@/presentation/components/ui/button';
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/presentation/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/presentation/components/ui/popover';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuGroup,
+  DropdownMenuTrigger,
+} from '@/presentation/components/ui/dropdown-menu';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 export interface ProjectSelectorProps {
@@ -57,7 +46,7 @@ export function ProjectSelector({
   disabled = false,
 }: ProjectSelectorProps) {
   const { t } = useTranslation();
-  const [open, setOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   // Sort projects: active first, then by lastOpened
   const sortedProjects = React.useMemo(() => {
@@ -68,13 +57,18 @@ export function ProjectSelector({
     });
   }, [projects, activeProject]);
 
+  // Filter projects by search query
+  const filteredProjects = React.useMemo(() => {
+    if (!searchQuery) return sortedProjects;
+    const query = searchQuery.toLowerCase();
+    return sortedProjects.filter(p => p.name.toLowerCase().includes(query));
+  }, [sortedProjects, searchQuery]);
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          role="combobox"
-          aria-expanded={open}
           disabled={disabled}
           className={cn(
             "justify-between",
@@ -101,47 +95,59 @@ export function ProjectSelector({
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className={cn("p-0", variant === 'default' ? "w-[250px]" : "w-[180px]")}>
-        <Command>
-          <CommandInput placeholder={t('hub.projectSearch.placeholder', 'Search projects...')} />
-          <CommandList>
-            <CommandEmpty>{t('hub.projectSearch.noResults', 'No projects found.')}</CommandEmpty>
-            <CommandGroup>
-              {sortedProjects.map((project) => (
-                <CommandItem
-                  key={project.id}
-                  value={project.name}
-                  onSelect={() => {
-                    onSelect(project.id);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      activeProject?.id === project.id ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    {project.storageType === 'indexeddb' ? (
-                      <Database className="h-3 w-3 text-muted-foreground shrink-0" />
-                    ) : (
-                      <HardDrive className="h-3 w-3 text-muted-foreground shrink-0" />
-                    )}
-                    <span className="truncate">{project.name}</span>
-                  </div>
-                  {project.storageType === 'fsa' && (
-                    <span className="ml-auto text-[10px] text-muted-foreground bg-muted px-1 rounded">
-                      FSA
-                    </span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        className={cn(variant === 'default' ? "w-[250px]" : "w-[180px]")}
+      >
+        {/* Search input */}
+        <div className="p-2 sticky top-0 bg-popover">
+          <input
+            type="text"
+            placeholder={t('hub.projectSearch.placeholder', 'Search...')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-2 py-1.5 text-sm border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+
+        <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">
+          {filteredProjects.length === 0 ? (
+            <div className="py-6 px-2 text-center text-sm text-muted-foreground">
+              {t('hub.projectSearch.noResults', 'No projects found.')}
+            </div>
+          ) : (
+            filteredProjects.map((project) => (
+              <DropdownMenuItem
+                key={project.id}
+                onSelect={() => {
+                  onSelect(project.id);
+                  setSearchQuery('');
+                }}
+                className="cursor-pointer"
+              >
+                <Check
+                  className={cn(
+                    "h-4 w-4 shrink-0",
+                    activeProject?.id === project.id ? "opacity-100" : "opacity-0"
                   )}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+                />
+                {project.storageType === 'indexeddb' ? (
+                  <Database className="h-3 w-3 text-muted-foreground shrink-0 ml-1" />
+                ) : (
+                  <HardDrive className="h-3 w-3 text-muted-foreground shrink-0 ml-1" />
+                )}
+                <span className="truncate flex-1">{project.name}</span>
+                {project.storageType === 'fsa' && (
+                  <span className="text-[10px] text-muted-foreground bg-muted px-1 rounded shrink-0">
+                    FSA
+                  </span>
+                )}
+              </DropdownMenuItem>
+            ))
+          )}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -514,6 +514,17 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                     {/* Source Library Section */}
                     <div className="p-4 border-b border-border">
                         <div className="flex items-center justify-between mb-4">
+                            {/* STORAGE-3-4: Project Selector */}
+                            {projects.length > 0 && (
+                                <div className="mr-2">
+                                    <ProjectSelector
+                                        projects={projects}
+                                        activeProject={activeProject}
+                                        onSelect={handleProjectSelect}
+                                        variant="compact"
+                                    />
+                                </div>
+                            )}
                             <h2 className="font-mono font-bold flex items-center gap-2">
                                 <Sparkles size={16} className="text-primary" /> {t('knowledge.sources')}
                             </h2>
@@ -593,6 +604,17 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                         {!sourceLibraryCollapsed && (
                             <>
                             <div className="p-3 border-b border-border flex items-center justify-between">
+                                {/* STORAGE-3-4: Project Selector */}
+                                {projects.length > 0 && (
+                                    <div className="mr-2">
+                                        <ProjectSelector
+                                            projects={projects}
+                                            activeProject={activeProject}
+                                            onSelect={handleProjectSelect}
+                                            variant="compact"
+                                        />
+                                    </div>
+                                )}
                                 <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
                                 <div className="flex items-center gap-2">
                                     {/* AC-02: Agent Manager - comprehensive agent management UI */}

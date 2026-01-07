@@ -351,3 +351,42 @@ function WorkspaceSwitcherWrapper(): React.JSX.Element | null {
         return null;
     }
 }
+
+// ============================================================================
+// STORAGE-3-5: IDE Project Selector Component
+// ============================================================================
+
+/**
+ * IDEProjectSelector - Project selector for IDE workspace
+ * 
+ * IDE workspace only supports FSA projects, so we filter for storageType === 'fsa'
+ */
+function IDEProjectSelector() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    
+    // Only show FSA projects for IDE workspace
+    const { projects, activeProject } = useWorkspaceProjects({
+        workspaceType: 'ide',
+        storageType: 'fsa',  // IDE only works with FSA
+    });
+
+    const handleProjectSelect = (newProjectId: string) => {
+        navigate({ to: \`/ide/\${newProjectId}\` });
+    };
+
+    // Only show if there are FSA projects available
+    if (projects.length === 0) {
+        return null;
+    }
+
+    return (
+        <ProjectSelector
+            projects={projects}
+            activeProject={activeProject}
+            onSelect={handleProjectSelect}
+            variant="compact"
+        />
+    );
+}
+
