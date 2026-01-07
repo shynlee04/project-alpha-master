@@ -19,6 +19,7 @@
 
 import { create } from 'zustand';
 import type {
+  Project,
   ProjectState,
   ProjectMethods,
   ProjectBindingMethods,
@@ -95,10 +96,17 @@ export function useRecentProjects(limit = 5) {
 }
 
 /**
- * Hook to get project statistics
+ * Project CRUD methods
  */
-export function useProjectStats() {
-  return useProjectStore((state) => state.getProjectStats());
+interface ProjectMethods {
+  createProject: (input: CreateProjectInput) => string;
+  updateProject: (projectId: string, updates: UpdateProjectInput) => void;
+  deleteProject: (projectId: string) => void;
+  setActiveProject: (projectId: string | null) => void;
+  getProject: (projectId: string) => Project | undefined;
+  getAllProjects: () => Project[];
+  getActiveProject: () => Project | null;
+  restoreProjectHandle: (projectId: string) => Promise<FileSystemDirectoryHandle | null>;
 }
 
 /**

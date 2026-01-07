@@ -307,7 +307,7 @@ export function WorkflowVisualizer({
             </div>
 
             {/* Legend */}
-            <div className="absolute bottom-4 left-4 bg-background/95 backdrop-blur border rounded-lg p-3">
+            <div className="absolute bottom-4 left-4 bg-card border rounded-lg p-3">
                 <p className="text-xs font-medium mb-2">{t('chat.workflow.stepTypes')}</p>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
                     {Object.entries(STEP_INFO).map(([type, info]) => (

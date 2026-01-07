@@ -140,6 +140,7 @@ export interface ProjectMethods {
   getProject: (projectId: string) => Project | undefined;
   getAllProjects: () => Project[];
   getActiveProject: () => Project | null;
+  restoreProjectHandle: (projectId: string) => Promise<FileSystemDirectoryHandle | null>;
 }
 
 /**

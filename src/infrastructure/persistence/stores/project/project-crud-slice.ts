@@ -8,6 +8,7 @@
 
 import { StateCreator } from 'zustand';
 import { db } from '@/infrastructure/persistence/dexie-db';
+import { fsaHandleManager } from '@/lib/filesystem/fsa-handle-manager';
 import type {
   Project,
   CreateProjectInput,
@@ -105,6 +106,11 @@ export const createProjectCrudSlice: StateCreator<
       console.error('[ProjectStore] Failed to persist project to Dexie:', error);
     });
 
+    // Persist FSA handle to fsaHandles table for restoration on reload
+    fsaHandleManager.persistHandle(input.fsaHandle, projectId, 'ide').catch((error) => {
+      console.error('[ProjectStore] Failed to persist FSA handle:', error);
+    });
+
     return projectId;
   },
 
@@ -189,5 +195,41 @@ export const createProjectCrudSlice: StateCreator<
     const { activeProjectId, projects } = get();
     if (!activeProjectId) return null;
     return projects[activeProjectId] || null;
+  },
+
+  // Restore FSA handle for a project (called when accessing project after reload)
+  restoreProjectHandle: async (projectId: string) => {
+    const project = get().projects[projectId];
+    if (!project) {
+      console.warn('[ProjectStore] Project not found:', projectId);
+      return null;
+    }
+
+    // If handle already exists, return it
+    if (project.fsaHandle) {
+      return project.fsaHandle;
+    }
+
+    // Attempt to restore handle from storage
+    console.log('[ProjectStore] Attempting to restore FSA handle for project:', projectId);
+    const handle = await fsaHandleManager.restoreHandle(projectId);
+
+    if (handle) {
+      // Update the project with the restored handle
+      set((state) => ({
+        projects: {
+          ...state.projects,
+          [projectId]: {
+            ...state.projects[projectId],
+            fsaHandle: handle,
+          },
+        },
+      }));
+      console.log('[ProjectStore] FSA handle restored successfully for project:', projectId);
+    } else {
+      console.warn('[ProjectStore] Failed to restore FSA handle for project:', projectId);
+    }
+
+    return handle;
   },
 });

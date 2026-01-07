@@ -18,16 +18,38 @@ import {
     ScrollText,
     AlignLeft
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
 import { toast } from 'sonner';
+
+// ============================================================================
+// Translation Helper
+// ============================================================================
+
+/**
+ * Get translation function for use outside React components
+ * Note: This relies on i18next instance being initialized
+ */
+function getTranslation() {
+    // Lazy import to avoid circular dependencies
+    const i18n = require('i18next');
+    return (key: string, defaultValue?: string) => i18n.t(key, defaultValue);
+}
+
+/**
+ * Wrap translation key with fallback
+ */
+function t(key: string, defaultValue?: string): string {
+    return getTranslation()(key, defaultValue);
+}
 
 // ============================================================================
 // AI Magic - Open Prompt Dialog
 // ============================================================================
 
 export const insertAIItem = (editor: BlockNoteEditor) => ({
-    title: "AI Magic",
+    title: t('notes.ai.magic', 'AI Magic'),
     onItemClick: () => {
         // Open the AI Prompt Dialog
         useAIPromptStore.getState().openPrompt(editor);
@@ -35,7 +57,7 @@ export const insertAIItem = (editor: BlockNoteEditor) => ({
     aliases: ["ai", "magic", "generate"],
     group: "AI",
     icon: <Sparkles size={18} />,
-    subtext: "Generate content with AI",
+    subtext: t('notes.ai.magic.description', 'Generate content with AI'),
 });
 
 // ============================================================================
@@ -48,13 +70,13 @@ async function executeAICommand(
     commandName: string = 'AI'
 ): Promise<void> {
     // Show loading toast
-    const toastId = toast.loading(`${commandName} generating...`);
+    const toastId = toast.loading(t('notes.ai.generating', `${commandName} generating...`));
 
     try {
         const result = await generateNoteContent(prompt);
 
         if (!result || result.trim().length === 0) {
-            toast.error('AI returned empty content', { id: toastId });
+            toast.error(t('notes.ai.error.empty', 'AI returned empty content'), { id: toastId });
             return;
         }
 
@@ -62,7 +84,7 @@ async function executeAICommand(
         const blocks = await editor.tryParseMarkdownToBlocks(result);
 
         if (blocks.length === 0) {
-            toast.error('Failed to parse AI response', { id: toastId });
+            toast.error(t('notes.ai.error.parse', 'Failed to parse AI response'), { id: toastId });
             return;
         }
 
@@ -78,23 +100,23 @@ async function executeAICommand(
             editor.setTextCursorPosition(lastInsertedBlock.id, 'end');
         }
 
-        toast.success(`${commandName} complete!`, { id: toastId });
+        toast.success(t('notes.ai.success', `${commandName} complete!`), { id: toastId });
     } catch (error) {
         console.error('AI command failed:', error);
 
         if (error instanceof NoteAIError) {
             switch (error.code) {
                 case 'NO_AGENT':
-                    toast.error('Please select an AI agent first', { id: toastId });
+                    toast.error(t('notes.ai.error.noAgent', 'Please select an AI agent first'), { id: toastId });
                     break;
                 case 'NO_API_KEY':
-                    toast.error('No API key configured', { id: toastId });
+                    toast.error(t('notes.ai.error.noApiKey', 'No API key configured'), { id: toastId });
                     break;
                 default:
-                    toast.error(`${commandName} failed: ${error.message}`, { id: toastId });
+                    toast.error(t('notes.ai.error.failed', `${commandName} failed: ${error.message}`), { id: toastId });
             }
         } else {
-            toast.error('AI generation failed. Please try again.', { id: toastId });
+            toast.error(t('notes.ai.error.retry', 'AI generation failed. Please try again.'), { id: toastId });
         }
     }
 }
@@ -133,135 +155,135 @@ function extractBlockText(block: Block): string {
 // ============================================================================
 
 export const summarizeNoteItem = (editor: BlockNoteEditor) => ({
-    title: "Summarize Note",
+    title: t('notes.ai.summary', 'Summarize Note'),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
-            toast.error('No content to summarize');
+            toast.error(t('notes.ai.error.noContent', 'No content to summarize'));
             return;
         }
         await executeAICommand(
             editor,
             `Create a clear, concise summary of the following note. Format the summary with bullet points for key takeaways:\n\n${content}`,
-            'Summary'
+            t('notes.ai.summary', 'Summary')
         );
     },
     aliases: ["summary", "summarize", "tldr"],
     group: "AI",
     icon: <ScrollText size={18} />,
-    subtext: "Generate a summary of the entire note",
+    subtext: t('notes.ai.summary.description', 'Generate a summary of the entire note'),
 });
 
 export const generateOutlineItem = (editor: BlockNoteEditor) => ({
-    title: "Generate Outline",
+    title: t('notes.ai.outline', 'Generate Outline'),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
-            toast.error('No content to outline');
+            toast.error(t('notes.ai.error.noContentOutline', 'No content to outline'));
             return;
         }
         await executeAICommand(
             editor,
             `Create a structured outline from the following content. Use markdown headings (## and ###) and bullet points:\n\n${content}`,
-            'Outline'
+            t('notes.ai.outline', 'Outline')
         );
     },
     aliases: ["outline", "structure", "toc"],
     group: "AI",
     icon: <ListChecks size={18} />,
-    subtext: "Create an outline from the note",
+    subtext: t('notes.ai.outline.description', 'Create an outline from the note'),
 });
 
 export const explainConceptItem = (editor: BlockNoteEditor) => ({
-    title: "Explain Like I'm 5",
+    title: t('notes.ai.explain', "Explain Like I'm 5"),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
-            toast.error('No content to explain');
+            toast.error(t('notes.ai.error.noContentExplain', 'No content to explain'));
             return;
         }
         await executeAICommand(
             editor,
             `Explain the following content in very simple terms that a child could understand. Use analogies, examples, and simple language:\n\n${content}`,
-            'Explanation'
+            t('notes.ai.explain', 'Explanation')
         );
     },
     aliases: ["eli5", "explain", "simplify"],
     group: "AI",
     icon: <Lightbulb size={18} />,
-    subtext: "Explain the note in simple terms",
+    subtext: t('notes.ai.explain.description', 'Explain the note in simple terms'),
 });
 
 export const generateQuestionsItem = (editor: BlockNoteEditor) => ({
-    title: "Generate Questions",
+    title: t('notes.ai.questions', 'Generate Questions'),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
-            toast.error('No content for questions');
+            toast.error(t('notes.ai.error.noContentQuestions', 'No content for questions'));
             return;
         }
         await executeAICommand(
             editor,
             `Generate 5 thoughtful study questions based on the following content. Format each question with a number and make them help test understanding of the material:\n\n${content}`,
-            'Questions'
+            t('notes.ai.questions', 'Questions')
         );
     },
     aliases: ["questions", "quiz", "test"],
     group: "AI",
     icon: <FileQuestion size={18} />,
-    subtext: "Create study questions from the note",
+    subtext: t('notes.ai.questions.description', 'Create study questions from the note'),
 });
 
 export const translateNoteItem = (editor: BlockNoteEditor) => ({
-    title: "Translate Note",
+    title: t('notes.ai.translate', 'Translate Note'),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
-            toast.error('No content to translate');
+            toast.error(t('notes.ai.error.noContentTranslate', 'No content to translate'));
             return;
         }
         await executeAICommand(
             editor,
             `Translate the following content. If it's in English, translate to Vietnamese. If it's in Vietnamese, translate to English. Preserve all formatting including headings, lists, and paragraphs:\n\n${content}`,
-            'Translation'
+            t('notes.ai.translate', 'Translation')
         );
     },
     aliases: ["translate", "dich", "language"],
     group: "AI",
     icon: <Languages size={18} />,
-    subtext: "Translate between English and Vietnamese",
+    subtext: t('notes.ai.translate.description', 'Translate between English and Vietnamese'),
 });
 
 export const continueWritingItem = (editor: BlockNoteEditor) => ({
-    title: "Continue Writing",
+    title: t('notes.ai.continue', 'Continue Writing'),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
             await executeAICommand(
                 editor,
                 `Start writing an engaging introduction for a new topic. Be creative, informative, and set up the reader for what's to come.`,
-                'Content'
+                t('notes.ai.content', 'Content')
             );
             return;
         }
         await executeAICommand(
             editor,
             `Continue writing from where this text leaves off. Match the style, tone, and formatting of the existing content. Add 2-3 more paragraphs:\n\n${content}`,
-            'Continuation'
+            t('notes.ai.continuation', 'Continuation')
         );
     },
     aliases: ["continue", "write", "more"],
     group: "AI",
     icon: <AlignLeft size={18} />,
-    subtext: "Continue writing from current content",
+    subtext: t('notes.ai.continue.description', 'Continue writing from current content'),
 });
 
 export const generateFlashcardsItem = (editor: BlockNoteEditor) => ({
-    title: "Generate Flashcards",
+    title: t('notes.ai.flashcards', 'Generate Flashcards'),
     onItemClick: async () => {
         const content = getAllNoteText(editor);
         if (!content.trim()) {
-            toast.error('No content for flashcards');
+            toast.error(t('notes.ai.error.noContentFlashcards', 'No content for flashcards'));
             return;
         }
         await executeAICommand(
@@ -275,13 +297,13 @@ export const generateFlashcardsItem = (editor: BlockNoteEditor) => ({
 
 Content to create flashcards from:
 ${content}`,
-            'Flashcards'
+            t('notes.ai.flashcards', 'Flashcards')
         );
     },
     aliases: ["flashcards", "cards", "study"],
     group: "AI",
     icon: <BookOpen size={18} />,
-    subtext: "Create study flashcards from the note",
+    subtext: t('notes.ai.flashcards.description', 'Create study flashcards from the note'),
 });
 
 // ============================================================================

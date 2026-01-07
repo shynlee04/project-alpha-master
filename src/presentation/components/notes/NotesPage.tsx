@@ -343,7 +343,7 @@ export function NotesPage() {
             <MainLayout>
                 {/* S-007: Import Progress Overlay */}
                 {isImportingFiles && (
-                    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="fixed inset-0 bg-card border-b border-border z-50 flex items-center justify-center">
                         <div className="bg-card border border-border rounded-lg p-6 max-w-sm w-full mx-4 shadow-lg">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
@@ -494,7 +494,7 @@ export function NotesPage() {
         <MainLayout>
             {/* S-007: Import Progress Overlay */}
             {isImportingFiles && (
-                <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                <div className="fixed inset-0 bg-card border-b border-border z-50 flex items-center justify-center">
                     <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />

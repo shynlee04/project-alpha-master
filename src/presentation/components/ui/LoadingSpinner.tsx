@@ -202,7 +202,7 @@ export function LoadingSpinner({
       aria-label={defaultAriaLabel}
       className={cn(
         spinnerVariants({ size }),
-        fullScreen && 'fixed inset-0 z-50 bg-neutral-950/95 backdrop-blur-sm',
+        fullScreen && 'fixed inset-0 z-50 bg-neutral-950 border-b border-border',
         className
       )}
     >
