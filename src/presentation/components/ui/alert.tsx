@@ -7,7 +7,6 @@
 
 import { cn } from '@/lib/utils';
 import { type VariantProps, cva } from 'class-variance-authority';
-import { AlertCircle } from 'lucide-react';
 
 const alertVariants = cva(
   'relative w-full rounded-lg border p-4',

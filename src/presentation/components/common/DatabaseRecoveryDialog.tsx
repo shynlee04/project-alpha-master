@@ -15,7 +15,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { AlertCircle, Database, Loader2, RefreshCw, X } from 'lucide-react';
+import { AlertCircle, Database, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import {
     Dialog,
@@ -52,7 +52,7 @@ interface DatabaseRecoveryDialogProps {
  * 4. Reloads page to initialize fresh database
  * 5. User loses all data (unavoidable due to IndexedDB limitation)
  */
-export function DatabaseRecoveryDialog({ onRecoveryComplete }: DatabaseRecoveryDialogProps) {
+export function DatabaseRecoveryDialog({ onRecoveryComplete: _ }: DatabaseRecoveryDialogProps = {}) {
     const [open, setOpen] = useState(false);
     const [isRecovering, setIsRecovering] = useState(false);
     const [error, setError] = useState<string | null>(null);
