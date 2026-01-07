@@ -1,0 +1,120 @@
+api_contracts:
+  file_routes:
+    - pattern: /api/chat
+      handler: src/routes/api/chat.ts
+      method: POST
+      description: Main chat API for AI conversations with tool support
+    - pattern: /api/flashcards/generate
+      handler: src/routes/api/flashcards/generate.ts
+      method: POST
+      description: Generate flashcards from content
+    - pattern: /api/quizzes/generate
+      handler: src/routes/api/quizzes/generate.ts
+      method: POST
+      description: Generate quizzes from content
+    - pattern: /api/provider-test
+      handler: src/routes/api/provider-test.ts
+      method: GET/POST
+      description: Test LLM provider connectivity
+  router_pattern:
+    type: TanStack Router (file-based)
+    implementation: createFileRoute from '@tanstack/react-router'
+    root_file: src/routes/__root.tsx
+    generated_file: src/routeTree.gen.ts
+  tanstack_router:
+    routes:
+      - /ide/:projectId
+      - /knowledge/:projectId
+      - /knowledge
+      - /notes/:projectId
+      - /notes
+      - /study/:projectId
+      - /study
+      - /agents
+      - /settings
+      - /hub
+      - /projects
+      - /about
+      - /debug
+      - /webcontainer/:path*
+  agent_providers:
+    anthropic:
+      path: src/lib/agent/providers/anthropic-adapter.ts
+      status: exists
+      lines: 7,807
+    openrouter:
+      path: src/lib/agent/providers/provider-adapter.ts
+      status: exists (factory pattern)
+      lines: 12,956
+    openai:
+      status: implemented via provider factory
+    google:
+      status: implemented via provider factory
+    credential_vault:
+      path: src/lib/agent/providers/credential-vault.ts
+      status: exists
+      lines: 18,167
+      encryption: AES-256-GCM
+    model_registry:
+      path: src/lib/agent/providers/model-registry.ts
+      status: exists
+      lines: 13,540
+  tools:
+    read_file:
+      path: src/lib/agent/tools/read-file-tool.ts
+      status: exists
+      lines: 4,435
+      pattern: TanStack AI .client()
+    write_file:
+      path: src/lib/agent/tools/write-file-tool.ts
+      status: exists
+      lines: 3,178
+      pattern: TanStack AI .client()
+    execute_command:
+      path: src/lib/agent/tools/execute-command-tool.ts
+      status: exists
+      lines: 5,086
+      pattern: TanStack AI .client()
+    list_files:
+      path: src/lib/agent/tools/list-files-tool.ts
+      status: exists
+      lines: 3,747
+      pattern: TanStack AI .client()
+    execute_command_streaming:
+      path: src/lib/agent/tools/execute-command-streaming.ts
+      status: exists
+      lines: 7,023
+      pattern: streaming support
+    search_notes:
+      path: src/lib/agent/tools/search-notes-tool.ts
+      status: exists
+      lines: 3,164
+    process_pdf:
+      path: src/lib/agent/tools/process-pdf-tool.ts
+      status: exists
+      lines: 4,512
+    process_url:
+      path: src/lib/agent/tools/process-url-tool.ts
+      status: exists
+      lines: 3,499
+    process_image:
+      path: src/lib/agent/tools/process-image-tool.ts
+      status: exists
+      lines: 4,113
+    synthesize:
+      path: src/lib/agent/tools/synthesize-tool.ts
+      status: exists
+      lines: 4,295
+  tool_facades:
+    - file-tools-facade: src/lib/agent/facades/file-tools.ts
+    - terminal-tools-facade: src/lib/agent/facades/terminal-tools.ts
+    - knowledge-tools-facade: src/lib/agent/facades/knowledge-tools.ts
+    - file-lock: src/lib/agent/facades/file-lock.ts
+    - command-sanitizer: src/lib/agent/facades/command-sanitizer.ts
+  websocket_events:
+    - event_bus: src/infrastructure/events/event-bus.ts
+    - domain_events:
+      - RAG_PROGRESS
+      - CODE_ANALYSIS
+      - FILE_SYNC
+      - WORKSPACE_CHANGE

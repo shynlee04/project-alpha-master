@@ -1,3 +1,65 @@
+## 📅 RECENT UPDATES (January 2026)
+
+### Latest Sprint: Architecture Generation (2026-01-07)
+**Status**: In Progress (Phase: Solutioning)
+**Goal**: Generate architecture.md + ux-specification.md from PRD requirements + codebase reality
+**Tracking**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
+
+**PRD Phase Complete**:
+- **Planning**: `prd.md` (1,302 lines), `market-research.md` (40K+ lines)
+- **Codebase Scan**: 6 artifacts in `codebase-scan-results/` (592 components, 179 stores, 25+ routes)
+- **Validation**: `prd-validation-report.md`, `prd-self-validation-report.md`
+- **Handoff**: `ux-specification-handoff-2026-01-07.md` ready for next agent
+
+**UX Specification Pending**:
+- Assigned to: `@bmad-bmm-ux-designer`
+- Output: `_bmad-output/planning-artifacts/ux-specification.md`
+- Handoff document: `_bmad-output/handoffs/ux-specification-handoff-2026-01-07.md`
+
+**Architecture Phase** (Separate Team):
+- Status: In Progress
+- Output: `_bmad-output/planning-artifacts/architecture.md`
+
+**Diagnostics & Research**:
+- 6 deep-scan reports (comprehensive, state-layer, routing-layer, etc.)
+- 4 investigation reports (state-reactivity, agent-vault, system-prompts, tool-factory)
+
+**Recent Commits of Note**:
+- `40c252e7` - PRD generation artifacts, codebase analysis
+- `cb43de70` - Unified AI service design, API key management
+- `fd815176` - Provider credential vault integration (AES-256-GCM)
+- `e8401ce1` - BMAD deep-scan diagnostic framework
+
+### New Diagnostic Framework
+**Location**: `_bmad-output/scans/`
+
+| Scan Report | Focus | Lines |
+|-------------|-------|-------|
+| `comprehensive-diagnostic-report.md` | Full system health | 9,415 |
+| `state-layer-scan-report.md` | State management | 4,713 |
+| `routing-layer-scan-report.md` | Route architecture | 3,930 |
+| `error-boundary-scan-report.md` | Error boundary coverage | 5,191 |
+| `workspace-access-scan-report.md` | Workspace isolation | 5,046 |
+| `byok-vault-scan-report.md` | API key management | 5,051 |
+
+### New Research Artifacts
+**Location**: `_bmad-output/research/`
+
+| Report | Focus | Lines |
+|--------|-------|-------|
+| `state-reactivity-gaps-2026-01-07.md` | Store reactivity issues | 15,312 |
+| `agent-vault-api-flow-2026-01-07.md` | Provider/agent system | 7,632 |
+| `system-prompt-layers-2026-01-07.md` | Prompt architecture | 15,583 |
+| `tool-factory-permissions-2026-01-07.md` | Tool permission system | 13,644 |
+
+### Validated Improvements
+The self-validation confirmed several improvements over original diagnostics:
+- ✅ **AgentConfigDialog.tsx**: 292 lines (was 1,089) - 73% reduction
+- ✅ **ErrorBoundaries**: Present on ALL workspace routes (notes, knowledge, ide)
+- ✅ **AgentChatPanel.tsx**: 527 lines (manageable, not 650)
+
+---
+
 ## Ultra important: all teams must manage resources efficiently
 - no more than 2 background tasks on-going at the same time
 - kill background tasks after and before every new run
@@ -314,56 +376,77 @@ The Agentic Workflow Engine enables users to create, visualize, execute, and per
 
 ---
 
-## 🏥 PROJECT HEALTH STATUS (2026-01-05)
+## 🏥 PROJECT HEALTH STATUS (Updated 2026-01-07)
 
-> **⚠️ CRITICAL**: Project health assessment identified significant gaps between sprint claims and production reality.
+### Current Sprint Status
 
-### Health Score Overview
+**Sprint**: Architecture Generation (2026-01-07)
+**Status**: In Progress (Phase: Solutioning)
+**Tracking**: `_bmad-output/sprint-artifacts/sprint-status.yaml`
 
-| Metric | Score | Status |
-|--------|-------|--------|
-| **State Integrity** | 45% | 🔴 FAILING |
-| **Code Hygiene** | 72% | 🟡 NEEDS WORK |
-| **Integration Reality** | 25% | 🔴 CRITICAL |
-| **Documentation Sync** | 60% | 🟡 DRIFT DETECTED |
-| **Production Stability** | 30% | 🔴 CRITICAL |
-| **Overall Health** | **46.4%** | 🔴 DOWN from claimed 82.5% |
+### Validation Findings (January 2026)
 
-### Critical Blockers (P0)
+**Good News** - Self-validation revealed improvements over original diagnostics:
+- ✅ **AgentConfigDialog.tsx**: 292 lines (not 1,089 as originally claimed)
+- ✅ **ErrorBoundaries**: Present on ALL workspace routes (notes, knowledge, ide)
+- ✅ **AgentChatPanel.tsx**: 527 lines (manageable size)
 
-| ID | Issue | Root Cause | Status |
-|----|-------|------------|--------|
-| **CRIT-001** | LLM Models Not Loading After API Key Save | Model fetch fails silently, credential vault SSR issues | 🔴 S-001, S-002 |
-| **CRIT-002** | Notes Workspace Not Loading Project Files | No file-to-note conversion exists | 🔴 S-007, S-008 |
-| **CRIT-003** | Cross-Workspace State Inconsistency | Multiple overlapping stores, event bus sync incomplete | 🔴 S-009, S-010 |
+**Still Needed** - Areas requiring attention:
+- ⚠️ **Store reactivity gaps** - See `state-reactivity-gaps-2026-01-07.md`
+- ⚠️ **API key hot-reload timing** - Keys saved while component mounted don't trigger UI updates
+- ⚠️ **Agent switch reactivity** - Some workspaces not responding to agent changes
 
-### Architecture Debt (P1)
+### Diagnostic Reports Available
 
-| Category | Count | Target | Worst Offenders |
-|----------|-------|--------|-----------------|
-| **God Stores** (>300 lines) | 69 | 0 | `rag-store.ts` (1595 lines), `conversation-threads-store.ts` (726 lines) |
-| **God Components** (>300 lines) | 45 | 0 | `AgentConfigDialog.tsx` (1089 lines) |
-| **Store Duplicates** | 3 | 0 | workspace-store, rag-store, knowledge-store |
-| **TypeScript Errors** | 306 | 0 | Production code only (test files excluded) |
+| Report | Location | Focus |
+|--------|----------|-------|
+| **Comprehensive** | `_bmad-output/scans/comprehensive-diagnostic-report.md` | Full system health |
+| **State Layer** | `_bmad-output/scans/state-layer-scan-report.md` | State management |
+| **Routing Layer** | `_bmad-output/scans/routing-layer-scan-report.md` | Route architecture |
+| **Error Boundaries** | `_bmad-output/scans/error-boundary-scan-report.md` | Coverage analysis |
+| **Workspace Access** | `_bmad-output/scans/workspace-access-scan-report.md` | Isolation |
+| **BYOK Vault** | `_bmad-output/scans/byok-vault-scan-report.md` | API key management |
 
-**Assessment Document:** `_bmad-output/health-assessments/project-health-assessment-2026-01-05.md`
+### Research Artifacts Available
+
+| Report | Location | Focus |
+|--------|----------|-------|
+| **State Reactivity** | `_bmad-output/research/state-reactivity-gaps-2026-01-07.md` | Store hydration issues |
+| **Agent Vault** | `_bmad-output/research/agent-vault-api-flow-2026-01-07.md` | Provider/agent system |
+| **System Prompts** | `_bmad-output/research/system-prompt-layers-2026-01-07.md` | Prompt architecture |
+| **Tool Factory** | `_bmad-output/research/tool-factory-permissions-2026-01-07.md` | Tool permissions |
 
 ---
 
-## 🚀 ACTIVE SPRINT: Comprehensive Architecture Remediation
+## 🚀 ACTIVE SPRINT: Architecture Generation (2026-01-07)
 
-> **Target**: 95% Health Score  
-> **Duration**: 15 Days  
-> **Stories**: 33 total  
-> **Mode**: AUTONOMOUS (ASGL Orchestrated)
+> **Phase**: Solutioning
+> **Duration**: 3-4 hours
+> **Mode**: Autonomous (multi-agent delegation)
 
-### Phase Overview
+### Sprint Phases
 
-| Phase | Name | Days | Stories | Status |
-|-------|------|------|---------|--------|
-| **1** | Critical Blockers Resolution | 1-2 | S-001 to S-006 | 🟡 IN_PROGRESS (4/6 done) |
-| **2** | Workspace Integration Fixes | 3-4 | S-007 to S-010 | 🔴 NOT_STARTED |
-| **3** | Architectural Remediation | 5-8 | S-011 to S-016 | 🔴 NOT_STARTED |
+| Phase | Agent | Duration | Status |
+|-------|--------|----------|--------|
+| **Phase 1** | architect-codebase-analyzer | 20 min | ⏸️ Pending |
+| **Phase 2** | architect-adr-specialist | 15 min | ⏸️ Pending |
+| **Phase 3** | architect-rigorous | 30 min | ⏸️ Pending |
+| **Phase 4** | code-reviewer | 15 min | ⏸️ Pending |
+
+### Planned Outputs
+
+- `directory_structure.yaml` - Codebase structure analysis
+- `component-inventory.yaml` - Component inventory by workspace
+- `state-architecture.yaml` - Store architecture analysis
+- `api-contracts.yaml` - API contracts extraction
+- `architecture-patterns.yaml` - Architecture pattern detection
+- `adr-026` through `adr-029` - Formalized architecture decisions
+- `architecture.md` - Complete architecture document
+- `validation-report.md` - Quality validation
+
+---
+
+## 🚀 PREVIOUS SPRINT: Comprehensive Architecture Remediation (2025-12-05)
 | **4** | Store Consolidation & Cleanup | 9-10 | S-017 to S-021 | 🔴 NOT_STARTED |
 | **5** | Infrastructure Hardening | 11-12 | S-022 to S-025 | 🔴 NOT_STARTED |
 | **6** | Testing & Validation | 13-14 | S-026 to S-029 | 🔴 NOT_STARTED |

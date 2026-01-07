@@ -1,0 +1,250 @@
+# ADR-027: State Management Consolidation
+
+**Date:** 2026-01-07  
+**Status:** PROPOSED  
+**Author:** @bmad-bmm-dev
+
+## Context
+
+The codebase exhibits **9 god stores exceeding 300 lines** that violate the single responsibility principle and create maintenance challenges. The migration from legacy `src/stores/` to `src/infrastructure/persistence/stores/` is incomplete, and the Zustand slice pattern is only partially implemented.
+
+### Current State Analysis
+
+Based on Phase 1 findings from State Architecture Analysis and Component Inventory:
+
+#### God Stores Identified
+
+| File | Lines | Pattern | Persist |
+|------|-------|---------|---------|
+| `src/infrastructure/persistence/stores/use-app-store.ts` | 367 | combined | ✅ |
+| `src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts` | 557 | slice | ✅ |
+| `src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts` | 367 | slice | ❌ |
+| `src/infrastructure/persistence/stores/session-snapshot-manager.ts` | 321 | monolithic | ✅ |
+| `src/infrastructure/persistence/stores/plugins-store.ts` | 316 | monolithic | ✅ |
+| `src/infrastructure/persistence/stores/schema-migrations.ts` | 314 | monolithic | ❌ |
+| `src/infrastructure/persistence/stores/terminal-store.ts` | 307 | slice | ✅ |
+| `src/infrastructure/persistence/stores/conversation/useConversationStore.ts` | 304 | slice | ✅ |
+| `src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts` | 396 | slice | ✅ |
+
+#### Critical File
+
+| File | Lines | Issue |
+|------|-------|-------|
+| `src/infrastructure/persistence/dexie-db.ts` | 1,169 | Critical file requiring decomposition |
+
+### Evidence from Phase 1
+
+1. **State Architecture YAML** (`state-architecture.yaml`): 9 files exceed 300-line threshold
+2. **Architecture Patterns** (`architecture-patterns.yaml`): Slice pattern compliance is partial
+3. **Diagnostic Report** (`comprehensive-diagnostic-report.md`): CRIT-002 (God Store Pattern) - useWorkspaceFileSystem.ts at 557 lines
+
+### Problem Statement
+
+- **Maintenance Nightmare**: Single files with 300-557 lines
+- **Single Responsibility Violation**: Multiple concerns mixed
+- **Testability Issues**: Hard to unit test specific functionality
+- **Merge Conflicts**: Large files cause collaboration issues
+- **Performance Impact**: Loading large stores affects hydration
+
+## Decision
+
+Implement strict Zustand slice pattern with the following rules:
+
+### Slice Pattern Requirements
+
+1. **Maximum Slice Size**: 120 lines per slice
+2. **Maximum Store Size**: 300 lines (combined store only)
+3. **Single Responsibility**: Each slice handles one domain
+4. **No Cross-Slice Imports**: Use `get()` for cross-slice communication
+
+### Slice Architecture
+
+```
+src/infrastructure/persistence/stores/{domain}/
+├── slices/
+│   ├── {slice-name}-slice.ts (≤120 lines)
+│   └── {slice-name}-slice.test.ts
+├── {domain}-store.ts (≤300 lines, combines slices)
+├── {domain}-store.test.ts
+└── index.ts (barrel export)
+```
+
+### Persist Middleware Rules
+
+```typescript
+// ✅ CORRECT: Persist on combined store only
+export const useProjectStore = create<ProjectStoreState>()(
+  persist(
+    (...a) => ({
+      ...createProjectCrudSlice(...a),
+      ...createProjectPermissionsSlice(...a),
+      ...createProjectLayoutSlice(...a),
+      ...createProjectUtilsSlice(...a),
+    }),
+    {
+      name: 'project-state',
+      storage: createDexieStorage('projectState'),
+      partialize: (state) => ({
+        projects: state.projects,
+        activeProjectId: state.activeProjectId,
+        // Transient state excluded from persistence
+      }),
+    }
+  )
+);
+
+// ❌ WRONG: Applying persist to individual slices
+// const coreSlice = create(persist(coreSliceFn, { name: 'provider-core' }));
+```
+
+### Slice Division Examples
+
+#### Example 1: useWorkspaceFileSystem.ts (557 lines → 4 slices)
+
+```
+useWorkspaceFileSystem.ts
+├── file-operations-slice.ts (120 lines) - CRUD operations
+├── permission-handler-slice.ts (110 lines) - FSA permissions
+├── sync-status-slice.ts (100 lines) - Sync state
+├── workspace-context-slice.ts (90 lines) - Context management
+└── workspace-file-system-store.ts (280 lines) - Combined store
+```
+
+#### Example 2: provider-credentials-slice.ts (396 lines → 3 slices)
+
+```
+provider-credentials-slice.ts
+├── credentials-core-slice.ts (100 lines) - Core state
+├── credentials-encryption-slice.ts (120 lines) - Encryption operations
+├── credentials-workspace-slice.ts (90 lines) - Workspace bindings
+└── provider-credentials-store.ts (280 lines) - Combined store
+```
+
+### Migration Strategy: src/stores/ → infrastructure/persistence/
+
+#### Phase 1: Analysis and Planning (Week 1)
+
+1. Audit all files in `src/stores/`
+2. Identify duplicate functionality with `src/infrastructure/persistence/stores/`
+3. Plan slice decomposition for each god store
+4. Create migration mapping document
+
+#### Phase 2: Slice Creation (Week 2-4)
+
+For each god store:
+
+1. Create slice files in `slices/` directory
+2. Write unit tests for each slice (≥80% coverage)
+3. Create combined store with slice composition
+4. Update barrel exports
+
+#### Phase 3: Component Migration (Week 5-6)
+
+1. Update imports in affected components
+2. Test component integration
+3. Verify persistence behavior
+4. Monitor performance impact
+
+#### Phase 4: Cleanup (Week 7)
+
+1. Remove legacy files from `src/stores/`
+2. Update documentation
+3. Archive migration artifacts
+4. Verify no breaking changes
+
+### Cross-Slice Communication Pattern
+
+```typescript
+// ✅ CORRECT: Use get() for cross-slice communication
+export const createProjectWorkspaceBindingsSlice = (set, get) => ({
+  updateWorkspaceBinding: (projectId, workspaceType, binding) => {
+    const project = get().getProject(projectId);
+    // Use domain service for validation
+    const validation = validateWorkspaceBinding(project, workspaceType, binding);
+    if (!validation.isValid) {
+      throw new Error(validation.error);
+    }
+    // Update state
+    set((state) => ({
+      projects: {
+        ...state.projects,
+        [projectId]: { ...project, workspaceBindings: updatedBindings }
+      }
+    }));
+  }
+});
+
+// ❌ WRONG: Direct import causes circular dependency
+import { updateProject } from './project-crud-slice';
+```
+
+## Consequences
+
+### Positive
+
+1. **Maintainability**: Smaller files are easier to understand
+2. **Testability**: Focused slices with single responsibility
+3. **Performance**: Incremental loading of store functionality
+4. **Developer Experience**: Clear separation of concerns
+5. **No Breaking Changes**: Facade exports preserve API compatibility
+
+### Negative
+
+1. **Migration Effort**: Estimated 7 weeks for complete migration
+2. **Temporary Complexity**: Dual-running stores during migration
+3. **Testing Overhead**: More test files to maintain
+4. **Learning Curve**: Team must understand slice pattern
+
+## Implementation
+
+### File References from Phase 1
+
+| File | Lines | Action |
+|------|-------|--------|
+| `useWorkspaceFileSystem.ts` | 557 | Decompose to 4 slices |
+| `use-app-store.ts` | 367 | Decompose to 5 slices |
+| `provider-credentials-slice.ts` | 396 | Decompose to 3 slices |
+| `dexie-db.ts` | 1,169 | Decompose tables + migrations |
+| `terminal-store.ts` | 307 | Decompose to 2 slices |
+| `useConversationStore.ts` | 304 | Decompose to 3 slices |
+
+### Priority Matrix
+
+| Priority | Store | Effort | Impact | Weeks |
+|----------|-------|--------|--------|-------|
+| P0 | useWorkspaceFileSystem.ts | High | Critical | 1.5 |
+| P0 | dexie-db.ts | High | Critical | 2 |
+| P1 | provider-credentials-slice.ts | Medium | High | 1 |
+| P1 | use-app-store.ts | Medium | High | 1.5 |
+| P2 | terminal-store.ts | Low | Medium | 0.5 |
+| P2 | useConversationStore.ts | Low | Medium | 0.5 |
+| P3 | unified-workspace-context.ts | Low | Low | 0.5 |
+| P3 | session-snapshot-manager.ts | Low | Low | 0.5 |
+| P3 | plugins-store.ts | Low | Low | 0.5 |
+| P3 | schema-migrations.ts | Low | Low | 0.5 |
+
+### Success Criteria
+
+1. **Zero god stores**: No files >300 lines in persistence layer
+2. **Slice compliance**: All slices ≤120 lines
+3. **Test coverage**: ≥80% coverage for all slices
+4. **Migration complete**: All files migrated from src/stores/
+5. **Performance**: No regression in hydration time (<100ms)
+
+## Dependencies
+
+- **ADR-026**: Agent selection uses state management
+- **ADR-029**: Clean architecture for store placement
+
+## Related ADRs
+
+- **ADR-024**: State Management Consolidation (previous - focused on architecture)
+- **ADR-026**: AI Service Unification (uses state management)
+- **ADR-029**: Clean Architecture Layer Compliance (store location)
+
+## References
+
+- State Architecture Analysis: `_bmad-output/planning-artifacts/architecture/codebase-analysis/state-architecture.yaml`
+- Architecture Patterns: `_bmad-output/planning-artifacts/architecture/codebase-analysis/architecture-patterns.yaml`
+- Component Inventory: `_bmad-output/planning-artifacts/architecture/codebase-analysis/component-inventory.yaml`
+- Diagnostic Report: `_bmad-output/scans/comprehensive-diagnostic-report.md`
