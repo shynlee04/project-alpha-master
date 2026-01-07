@@ -19,7 +19,7 @@ import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
 import { StudyFilePicker } from './StudyFilePicker';
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import { useIDEStore, useProjectStore } from '@/infrastructure/persistence/stores/ide';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
 import { FolderOpen } from 'lucide-react';
@@ -34,6 +34,10 @@ export function StudyPage() {
     const { isMobile } = useResponsive();
     const projectId = useIDEStore((state) => state.projectId) || 'default';
 
+    // Get project storage type for file sync
+    const getProject = useProjectStore((state) => state.getProject);
+    const project = getProject(projectId);
+
     // Stores
     const flashcards = useFlashcardStore((state) => state.flashcards);
     const quizzes = useQuizStore((state) => state.quizzes);
@@ -43,7 +47,7 @@ export function StudyPage() {
     const [activeTab, setActiveTab] = useState<'flashcards' | 'quizzes' | 'stats'>('flashcards');
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
 
-    // P0-3: Initialize file sync service
+    // P0-3: Initialize file sync service with storage type selection
     const {
         service: fileSyncService,
         isInitializing: isFileSyncInitializing,
@@ -54,6 +58,7 @@ export function StudyPage() {
     } = useFileSyncService({
         projectId,
         workspaceType: 'study',
+        storageType: project?.storageType ?? 'indexeddb',
     });
 
     // WB-8.3: Cross-workspace event subscriptions for state synchronization

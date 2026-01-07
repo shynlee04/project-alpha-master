@@ -103,7 +103,7 @@ export function NotesPage() {
     // File sync state (CW-1.4)
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
 
-    // P0-3: Initialize file sync service
+    // P0-3: Initialize file sync service with storage type selection
     const {
         service: notesSyncService,
         isInitializing: isNotesSyncInitializing,
@@ -114,6 +114,7 @@ export function NotesPage() {
     } = useFileSyncService({
         projectId,
         workspaceType: 'notes',
+        storageType: project?.storageType ?? 'indexeddb',
         noteStore: {
             notes: useNoteStore.getState().notes,
             notesArray: notesArray,

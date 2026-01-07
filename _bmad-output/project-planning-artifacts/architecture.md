@@ -728,6 +728,67 @@ export const validateAPIResponse = <T extends z.ZodType>(
 ): z.infer<T> => schema.parse(response);
 ```
 
+#### Decision 4.2.3: Storage Type Selection Architecture
+
+**Selected:** UnifiedStorageAdapter with Factory Pattern (Option B)
+**Status:** ✅ Implemented (2026-01-07)
+**Epic:** STORAGE-UNIFICATION
+**ADR:** [ADR-STORAGE-001](./adr-storage-type-selection.md)
+
+**Problem Statement:**
+The `project.storageType` field existed but was completely ignored by file sync services. All workspace file sync was hardcoded to `LocalFSAdapter` (FSA-only), which:
+- Blocked mobile users (FSA requires desktop browsers)
+- Rendered IndexedDB projects non-functional
+- Created an interface mismatch between `StorageAdapter` and `LocalFSAdapter`
+
+**Solution:**
+Created `UnifiedStorageAdapter` that:
+1. Extends `LocalFSAdapter` for backward compatibility
+2. Internally delegates to `StorageAdapter` implementations via factory pattern
+3. Handles string↔Uint8Array encoding/decoding
+4. Uses factory pattern for backend selection based on `storageType`
+
+**Architecture:**
+```
+File Sync Services
+        ↓ (uses LocalFSAdapter interface)
+UnifiedStorageAdapter (facade)
+        ↓ (delegates to)
+Adapter Factory
+        ↓
+   ┌────┴────┐
+   │         │
+IDBAdapter  FSAAdapter
+(mobile)   (desktop)
+```
+
+**Usage Pattern:**
+```typescript
+// In workspace pages (NotesPage, StudyPage, KnowledgePage)
+const getProject = useProjectStore((state) => state.getProject);
+const project = getProject(projectId);
+
+const { service, initializeService, isSupported } = useFileSyncService({
+  projectId,
+  workspaceType: 'notes',
+  storageType: project?.storageType ?? 'indexeddb', // NOW RESPECTED
+  noteStore,
+});
+```
+
+**Consequences:**
+- ✅ Mobile users can now use IndexedDB storage
+- ✅ Desktop users can switch between FSA and IndexedDB
+- ✅ Zero breaking changes (backward compatible)
+- ⚠️ Additional adapter layer (minimal overhead)
+
+**Files:**
+- `src/infrastructure/sync/adapters/adapter-factory.ts` - Factory for creating storage adapters
+- `src/lib/filesystem/unified-storage-adapter.ts` - Facade bridging LocalFSAdapter to StorageAdapter
+- `src/lib/filesync/hooks/use-file-sync-service.ts` - Updated hook with storageType parameter
+- `src/presentation/components/notes/NotesPage.tsx` - Updated to pass storageType
+- `src/presentation/components/study/StudyPage.tsx` - Updated to pass storageType
+
 ---
 
 ### 4.3 Authentication & Security
@@ -1777,9 +1838,18 @@ project-alpha-master/
 │   │   ├── filesystem/          # FSA utilities
 │   │   │   ├── index.ts
 │   │   │   ├── local-fs-adapter.ts
+│   │   │   ├── local-fs-adapter-types.ts
+│   │   │   ├── unified-storage-adapter.ts   🆕  # Facade for storage type selection
 │   │   │   ├── sync-manager.ts
 │   │   │   ├── permission-lifecycle.ts
 │   │   │   └── sync-types.ts
+│   │   │
+│   │   ├── filesync/            # File sync services 🆕 (STORAGE-UNIFICATION)
+│   │   │   ├── index.ts
+│   │   │   ├── hooks/
+│   │   │   │   └── use-file-sync-service.ts   🆕  # Storage type aware hook
+│   │   │   ├── study-file-sync-service.ts
+│   │   │   └── notes-file-sync-service.ts
 │   │   │
 │   │   ├── knowledge/           # Knowledge Synthesis 🆕 (Phase 2)
 │   │   │   ├── index.ts              🆕
@@ -1853,6 +1923,30 @@ project-alpha-master/
 │   ├── stores/                   # Legacy Zustand (migrate to lib/state)
 │   │   ├── agents.ts
 │   │   └── agent-selection.ts
+│   │
+│   ├── infrastructure/           # Platform infrastructure 🆕 (STORAGE-UNIFICATION)
+│   │   ├── persistence/
+│   │   │   ├── stores/
+│   │   │   │   ├── ide/              # IDE state management
+│   │   │   │   ├── study/            # Study artifacts state
+│   │   │   │   ├── flashcard-store.ts
+│   │   │   │   └── dexie-db.ts       # IndexedDB wrapper
+│   │   │   └── dexie-db-helpers/  # DB utilities
+│   │   │
+│   │   └── sync/
+│   │       ├── adapters/           🆕  # Storage adapter factory
+│   │       │   ├── adapter-factory.ts    🆕  # Factory for IDBAdapter/FSAAdapter
+│   │       │   ├── idb-adapter-core.ts
+│   │       │   ├── fsa-adapter-core.ts
+│   │       │   └── index.ts
+│   │       ├── core/
+│   │       │   ├── sync-result-types.ts  # Shared sync interfaces
+│   │       │   └── storage-adapter.ts     # StorageAdapter interface
+│   │       └── workspace-services/
+│   │           ├── study-sync/
+│   │           │   └── study-sync-service-core.ts
+│   │           └── notes/
+│   │               └── notes-file-sync-service.ts
 │   │
 │   ├── styles/                   # Global styles
 │   │   ├── design-tokens.css

@@ -1,9 +1,12 @@
 /**
  * @fileoverview File Sync Hooks
- * @module lib/filesync/hooks
+ * @module infrastructure/sync/workspace-services/hooks
  *
- * Custom hooks for file sync service management.
+ * BACKWARD COMPATIBILITY FACADE
+ * Re-exports from canonical location at @/lib/filesync/hooks
+ *
+ * @deprecated Import from @/lib/filesync/hooks instead
  */
 
-export { useFileSyncService } from './use-file-sync-service';
-export type { UseFileSyncServiceOptions, UseFileSyncServiceResult } from './use-file-sync-service';
+export { useFileSyncService } from '@/lib/filesync/hooks/use-file-sync-service';
+export type { UseFileSyncServiceOptions, UseFileSyncServiceResult } from '@/lib/filesync/hooks/use-file-sync-service';
