@@ -20,6 +20,8 @@
  *
  * SECURITY: API keys are stored in encrypted credential vault (credential-vault.ts)
  * This interface only contains a FLAG indicating whether a key exists.
+ *
+ * @story A-4 - BYOK Vault Integration - Added key metadata fields
  */
 export interface ProviderConfig {
   /** Unique provider identifier (e.g., 'openrouter', 'anthropic') */
@@ -42,6 +44,30 @@ export interface ProviderConfig {
    * @security Actual API key stored in encrypted credential-vault.ts
    */
   hasApiKey: boolean;
+
+  /**
+   * Vault key identifier (A-4: BYOK Vault Integration)
+   * Unique identifier for the key in the credential vault
+   */
+  keyId?: string;
+
+  /**
+   * Key storage timestamp (A-4: BYOK Vault Integration)
+   * Unix timestamp when the API key was stored in vault
+   */
+  keyStoredAt?: number;
+
+  /**
+   * Key validation timestamp (A-4: BYOK Vault Integration)
+   * Unix timestamp when the API key was last validated
+   */
+  lastKeyValidatedAt?: number;
+
+  /**
+   * Key expiration timestamp (A-4: BYOK Vault Integration)
+   * Unix timestamp when the API key expires (if known)
+   */
+  keyExpiresAt?: number;
 
   /** Available models for this provider */
   models: ModelInfo[];
@@ -144,6 +170,49 @@ export interface ModelStateEntry {
   error: string | null;
 }
 
+/**
+ * Provider Key Metadata
+ *
+ * Tracks API key storage and validation timestamps.
+ * Part of BYOK Vault Integration (Story A-4).
+ */
+export interface ProviderKeyMetadata {
+  /** Unique key identifier in vault */
+  keyId: string;
+
+  /** Timestamp when key was stored */
+  storedAt: number;
+
+  /** Timestamp when key was last validated */
+  lastValidatedAt?: number;
+
+  /** Timestamp when key expires (if known) */
+  expiresAt?: number;
+
+  /** Whether key validation passed */
+  isValid: boolean;
+}
+
+/**
+ * Key Validation Result
+ *
+ * Result of API key validation operation.
+ * Part of BYOK Vault Integration (Story A-4).
+ */
+export interface KeyValidationResult {
+  /** Whether key is valid */
+  isValid: boolean;
+
+  /** Validation status */
+  status: 'valid' | 'invalid' | 'expired' | 'unknown';
+
+  /** Provider-reported error if invalid */
+  error?: string;
+
+  /** When validation was performed */
+  validatedAt: number;
+}
+
 // ============================================================================
 // STATE INTERFACE
 // ============================================================================
@@ -153,6 +222,7 @@ export interface ModelStateEntry {
  *
  * Complete state interface for provider configuration.
  * Includes both provider-store and models-loader-store functionality.
+ * Updated for BYOK Vault Integration (Story A-4).
  */
 export interface ProviderState {
   /** List of configured providers */
@@ -179,8 +249,11 @@ export interface ProviderState {
   /** Model cache by provider ID (merged from models-loader-store) */
   modelCache: Record<string, ModelStateEntry>;
 
+  /** Key metadata by provider ID (A-4: BYOK Vault Integration) */
+  keyMetadata: Record<string, ProviderKeyMetadata>;
+
   // ========================================================================
-  // ACTIONS (8 from provider-store + 3 from models-loader-store)
+  // ACTIONS (8 from provider-store + 3 from models-loader-store + 5 credentials)
   // ========================================================================
 
   /** Add a new provider configuration */
@@ -215,4 +288,26 @@ export interface ProviderState {
 
   /** Clear models cache for a provider (merged from models-loader-store) */
   clearModelsCache: (providerId: string) => void;
+
+  // ========================================================================
+  // CREDENTIAL VAULT ACTIONS (A-4: BYOK Vault Integration)
+  // ========================================================================
+
+  /** Store API key in encrypted credential vault */
+  storeProviderKey: (providerId: string, apiKey: string) => Promise<void>;
+
+  /** Retrieve API key from credential vault */
+  retrieveProviderKey: (providerId: string) => Promise<string | null>;
+
+  /** Check if provider has a stored API key */
+  hasProviderKey: (providerId: string) => Promise<boolean>;
+
+  /** Delete API key from credential vault */
+  deleteProviderKey: (providerId: string) => Promise<void>;
+
+  /** Validate API key by attempting to use it */
+  validateProviderKey: (providerId: string) => Promise<KeyValidationResult>;
+
+  /** Sync hasApiKey flags with actual vault state */
+  syncKeyFlags: () => Promise<void>;
 }

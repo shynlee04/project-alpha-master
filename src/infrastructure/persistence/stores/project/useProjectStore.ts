@@ -95,6 +95,21 @@ export function useRecentProjects(limit = 5) {
 }
 
 /**
+ * Hook to get project statistics
+ * 
+ * Returns aggregated stats including:
+ * - Total/active/deleted project counts
+ * - Projects by workspace binding
+ * - Recently created and opened projects
+ * 
+ * @courseCorrection Story A-1 - Fix missing export causing WSOD
+ * @added 2026-01-07
+ */
+export function useProjectStats() {
+  return useProjectStore((state) => state.getProjectStats());
+}
+
+/**
  * Hook for hydration status
  */
 export function useProjectStoreHydration() {

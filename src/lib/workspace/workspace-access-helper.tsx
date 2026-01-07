@@ -214,11 +214,11 @@ export async function createTempProject(
  */
 export type WorkspaceAccessResult = WorkspaceAccessState &
   WorkspaceAccessActions & {
-  /** Grouped state object */
-  state: WorkspaceAccessState;
-  /** Grouped actions object */
-  actions: WorkspaceAccessActions;
-};
+    /** Grouped state object */
+    state: WorkspaceAccessState;
+    /** Grouped actions object */
+    actions: WorkspaceAccessActions;
+  };
 
 export function useWorkspaceAccess(
   workspace: WorkspaceType
@@ -226,6 +226,13 @@ export function useWorkspaceAccess(
   const navigate = useNavigate();
   const [isCreatingTemp, setIsCreatingTemp] = useState(false);
   const [isEnabling, setIsEnabling] = useState(false);
+
+  /**
+   * Redirect guard to prevent infinite navigation loops
+   * @courseCorrection Story A-3 - Redirect loop prevention
+   * @added 2026-01-07
+   */
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Get projects from Zustand store (stable reference - prevents infinite loops in v5)
   const projects = useProjectStore((state) => state.projects);
@@ -255,23 +262,40 @@ export function useWorkspaceAccess(
     return 'no_binding';
   }, [workspaceProjects.length, allProjects.length]);
 
-  // Auto-redirect to hub if projects exist with this binding
+  /**
+   * Auto-redirect to hub if projects exist with this binding
+   * 
+   * @courseCorrection Story A-3 - Added isRedirecting guard
+   * Prevents infinite loops when status changes rapidly
+   */
   useEffect(() => {
-    if (status === 'has_projects') {
+    if (status === 'has_projects' && !isRedirecting) {
+      setIsRedirecting(true);
       navigate({
         to: '/hub',
         search: { workspace },
-      }).catch((err) => {
-        console.error('[useWorkspaceAccess] Failed to redirect to hub:', err);
-      });
+      })
+        .catch((err) => {
+          console.error('[useWorkspaceAccess] Failed to redirect to hub:', err);
+        })
+        .finally(() => {
+          // Reset after a short delay to allow navigation to complete
+          setTimeout(() => setIsRedirecting(false), 500);
+        });
     }
-  }, [status, workspace, navigate]);
+  }, [status, workspace, navigate, isRedirecting]);
 
-  // Auto-create temp project if no projects exist
+  /**
+   * Auto-create temp project if no projects exist
+   * 
+   * @courseCorrection Story A-3 - Added isRedirecting guard
+   * Prevents multiple temp project creation attempts
+   */
   useEffect(() => {
     const initWorkspaceAccess = async () => {
-      if (status === 'no_projects') {
+      if (status === 'no_projects' && !isRedirecting && !isCreatingTemp) {
         setIsCreatingTemp(true);
+        setIsRedirecting(true);
         try {
           const tempProject = await createTempProject(workspace);
           if (tempProject) {
@@ -285,12 +309,13 @@ export function useWorkspaceAccess(
           toast.error('Failed to create quick project. Please try again.');
         } finally {
           setIsCreatingTemp(false);
+          setTimeout(() => setIsRedirecting(false), 500);
         }
       }
     };
 
     initWorkspaceAccess();
-  }, [status, workspace, navigate]);
+  }, [status, workspace, navigate, isRedirecting, isCreatingTemp]);
 
   // Create temp project manually
   const handleCreateTemp = useCallback(async () => {

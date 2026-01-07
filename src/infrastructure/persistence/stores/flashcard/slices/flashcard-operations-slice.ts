@@ -62,6 +62,7 @@ export const createFlashcardOperations = (
     await db.transaction('rw', 'flashcards', 'flashcardSets', async () => {
       const flashcardRecords: FlashcardRecord[] = cards.map((fc) => ({
         id: fc.id,
+        workspaceId: (fc as any).workspaceId || fc.projectId, // Use projectId as fallback
         question: fc.question,
         answer: fc.answer,
         difficulty: fc.difficulty,

@@ -25,13 +25,18 @@ export interface FlashcardCrudState {
 
 /**
  * Flashcard store state interface (includes Crud + Filter + Persistence)
+ * 
+ * Note: flashcardSets and activeSetId belong in FlashcardSetStoreState,
+ * not here. This type represents the useFlashcardStore composition.
+ * 
+ * @courseCorrection Epic B - Fix type mismatch in flashcard stores
+ * @fixed 2026-01-07
  */
 export interface FlashcardStoreState extends FlashcardCrudState {
-  // Flashcard Sets
-  flashcardSets: import('@/lib/knowledge/types').FlashcardSet[];
-
-  activeSetId: string | null;
+  // Filter operations
   filterFlashcards: (filter: import('@/lib/knowledge/types').FlashcardFilter) => Flashcard[];
+
+  // Persistence operations
   loadFlashcards: () => Promise<void>;
   saveFlashcards: () => Promise<void>;
 }
@@ -98,6 +103,6 @@ export const createFlashcardCrudSlice = (
    * Clear all flashcards
    */
   clearFlashcards: () => {
-    set({ flashcards: [], activeSetId: null });
+    set({ flashcards: [] });
   },
 });

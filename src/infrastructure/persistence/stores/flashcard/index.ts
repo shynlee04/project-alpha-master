@@ -146,6 +146,7 @@ export type { FlashcardRecord, FlashcardSetRecord } from './flashcard-db';
 
 export type {
   FlashcardCrudState,
+  FlashcardStoreState,
   FlashcardStoreState as FlashcardStoreSliceState,
 } from './slices/flashcard-crud-slice';
 export type { FlashcardFilterState } from './slices/flashcard-filter-slice';
@@ -155,6 +156,7 @@ export type {
 } from './slices/flashcard-persistence-slice';
 export type {
   FlashcardSetCrudState,
+  FlashcardSetStoreState,
   FlashcardSetStoreState as FlashcardSetStoreSliceState,
 } from './slices/flashcard-set-crud-slice';
 export type { FlashcardOperations } from './slices/flashcard-operations-slice';

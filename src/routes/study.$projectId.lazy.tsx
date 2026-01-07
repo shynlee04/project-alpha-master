@@ -19,6 +19,7 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { ErrorBoundary } from '@/presentation/components/error';
 
 // Placeholder component (Study workspace not implemented yet)
 function StudyPlaceholder() {
@@ -37,8 +38,17 @@ function StudyPlaceholder() {
   );
 }
 
+/**
+ * Route definition with ErrorBoundary protection
+ * @courseCorrection Story A-2 - Add ErrorBoundary to workspace routes
+ * @added 2026-01-07
+ */
 export const Route = createLazyFileRoute('/study/$projectId')({
-  component: StudyWorkspace,
+  component: () => (
+    <ErrorBoundary>
+      <StudyWorkspace />
+    </ErrorBoundary>
+  ),
 });
 
 function StudyWorkspace() {
