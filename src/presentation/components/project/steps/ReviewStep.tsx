@@ -45,11 +45,23 @@ const WORKSPACE_TYPE_LABELS = {
   local: 'Local',
 } as const;
 
+const STORAGE_TYPE_LABELS = {
+  indexeddb: 'Browser Database',
+  fsa: 'File System Access',
+} as const;
+
 const TEMPLATE_LABELS = {
   blank: 'Blank',
   'react-app': 'React App',
   'next-app': 'Next.js App',
   'node-lib': 'Node Library',
+} as const;
+
+const WORKSPACE_BINDING_LABELS = {
+  ide: 'IDE',
+  knowledge: 'Knowledge',
+  notes: 'Notes',
+  study: 'Study',
 } as const;
 
 // ============================================================================
@@ -152,6 +164,41 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
             <span className="font-medium text-foreground">
               {PROJECT_TYPE_LABELS[formData.projectType]}
             </span>
+          </div>
+          <div className="flex justify-between py-2 border-b border-border">
+            <span className="text-muted-foreground">
+              {t('wizard.fields.storageType.label')}
+            </span>
+            <span className="font-medium text-foreground">
+              {STORAGE_TYPE_LABELS[formData.storageType]}
+            </span>
+          </div>
+          <div className="py-2 border-b border-border">
+            <div className="text-muted-foreground mb-2">
+              {t('wizard.fields.workspaceBindings.label')}
+            </div>
+            <div className="flex gap-2">
+              {formData.workspaceBindings.ide && (
+                <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
+                  {WORKSPACE_BINDING_LABELS.ide}
+                </span>
+              )}
+              {formData.workspaceBindings.knowledge && (
+                <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
+                  {WORKSPACE_BINDING_LABELS.knowledge}
+                </span>
+              )}
+              {formData.workspaceBindings.notes && (
+                <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
+                  {WORKSPACE_BINDING_LABELS.notes}
+                </span>
+              )}
+              {formData.workspaceBindings.study && (
+                <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
+                  {WORKSPACE_BINDING_LABELS.study}
+                </span>
+              )}
+            </div>
           </div>
           {formData.projectDescription && (
             <div className="py-2 border-b border-border">

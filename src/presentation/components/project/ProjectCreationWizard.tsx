@@ -17,6 +17,7 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import type { CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
+import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
 
 // Wizard Steps
 import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
@@ -69,6 +70,15 @@ const INITIAL_FORM_DATA: WizardFormData = {
   projectType: 'app',
   projectIcon: '📁',
   template: '',
+
+  storageType: 'indexeddb',
+  workspaceBindings: {
+    knowledge: true,
+    notes: true,
+    study: true,
+    // ide binding is set to false initially, will be enabled only for fsa
+    ide: false,
+  },
 
   workspaceEnabled: false,
   workspaceName: '',
@@ -248,19 +258,21 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
     setIsCreating(true);
 
     try {
+      // IDE workspace requires FSA storage type - force ide to false for indexeddb
+      const finalBindings: WorkspaceBindings = {
+        ...formData.workspaceBindings,
+        ide: formData.storageType === 'fsa' && formData.workspaceBindings.ide === true,
+      };
+
       // Create project input from wizard data
       const projectInput: CreateProjectInput = {
         name: formData.projectName,
         folderPath: formData.projectName.toLowerCase().replace(/\s+/g, '-'),
-        fsaHandle: null as any, // Will be set when folder is mounted
+        storageType: formData.storageType,
+        fsaHandle: formData.storageType === 'fsa' ? null : undefined,
         description: formData.projectDescription || undefined,
         tags: [formData.projectType],
-        bindings: {
-          ide: true,
-          knowledge: true,
-          notes: true,
-          study: true,
-        },
+        bindings: finalBindings,
       };
 
       // Create project

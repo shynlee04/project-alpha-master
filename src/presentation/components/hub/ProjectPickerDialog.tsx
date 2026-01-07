@@ -39,6 +39,8 @@ export interface ProjectPickerDialogProps {
   onOpenChange: (open: boolean) => void;
   /** Target workspace to filter projects by */
   targetWorkspace: PickerWorkspace;
+  /** Callback when user clicks "Create New Project" button */
+  onCreateNew?: () => void;
 }
 
 /** Workspace display configuration */
@@ -116,6 +118,7 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
   open,
   onOpenChange,
   targetWorkspace,
+  onCreateNew,
 }) => {
   const { t } = useTranslation();
 
@@ -169,11 +172,12 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
     onOpenChange(false);
   };
 
-  // Handle create project (navigate to hub with create action)
+  // Handle create project (triggers wizard via callback)
   const handleCreateProject = () => {
+    // Close the picker dialog
     onOpenChange(false);
-    // TODO: Trigger project creation flow
-    // For now, just close and return to hub
+    // Trigger the creation wizard callback
+    onCreateNew?.();
   };
 
   const hasProjects = projects.length > 0;
@@ -265,7 +269,18 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
           )}
 
           {/* Footer Actions */}
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-between gap-2">
+            <button
+              onClick={handleCreateProject}
+              className={cn(
+                "inline-flex items-center gap-2 px-4 py-2 border-2 border-primary",
+                "bg-primary text-primary-foreground font-medium",
+                "hover:bg-primary/90 transition-colors"
+              )}
+            >
+              <Plus className="w-4 h-4" />
+              {t('hub.projectPicker.empty.createProject')}
+            </button>
             <button
               onClick={() => onOpenChange(false)}
               className={cn(

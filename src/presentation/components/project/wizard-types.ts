@@ -7,6 +7,11 @@
  * @module presentation/components/project/wizard-types
  */
 
+import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+
+/** Storage type for project data */
+export type ProjectStorageType = 'indexeddb' | 'fsa';
+
 /** Wizard form data */
 export interface WizardFormData {
   // Step 1: Project Details (required)
@@ -15,6 +20,12 @@ export interface WizardFormData {
   projectType: 'app' | 'library' | 'experiment' | 'learning';
   projectIcon: string;
   template?: string;
+
+  // Storage type: browser DB (mobile) vs file system access (desktop)
+  storageType: ProjectStorageType;
+
+  // Workspace bindings: which workspaces this project is available in
+  workspaceBindings: WorkspaceBindings;
 
   // Step 2: Workspace Setup (optional)
   workspaceEnabled: boolean;

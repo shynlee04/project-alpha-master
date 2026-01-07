@@ -44,6 +44,14 @@ const WORKSPACE_TEMPLATES = [
   { value: 'node-lib', labelKey: 'wizard.workspaceTemplates.nodeLib', descriptionKey: 'wizard.workspaceTemplates.nodeLibDesc' },
 ] as const;
 
+// Workspace binding options
+const WORKSPACE_BINDINGS = [
+  { key: 'ide' as const, labelKey: 'wizard.workspaceBindings.ide', descriptionKey: 'wizard.workspaceBindings.ideDesc', requiresFSA: true },
+  { key: 'knowledge' as const, labelKey: 'wizard.workspaceBindings.knowledge', descriptionKey: 'wizard.workspaceBindings.knowledgeDesc', requiresFSA: false },
+  { key: 'notes' as const, labelKey: 'wizard.workspaceBindings.notes', descriptionKey: 'wizard.workspaceBindings.notesDesc', requiresFSA: false },
+  { key: 'study' as const, labelKey: 'wizard.workspaceBindings.study', descriptionKey: 'wizard.workspaceBindings.studyDesc', requiresFSA: false },
+] as const;
+
 // ============================================================================
 // Component
 // ============================================================================
@@ -214,6 +222,82 @@ export const WorkspaceSetupStep: React.FC<WorkspaceSetupStepProps> = ({
                   </div>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Workspace Bindings */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-foreground">
+              {t('wizard.fields.workspaceBindings.label')}
+            </label>
+            <div className="text-xs text-muted-foreground mb-2">
+              {t('wizard.fields.workspaceBindings.description')}
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {WORKSPACE_BINDINGS.map((binding) => {
+                const isDisabled = binding.requiresFSA && formData.storageType !== 'fsa';
+                const isChecked = formData.workspaceBindings[binding.key] === true;
+
+                return (
+                  <div
+                    key={binding.key}
+                    className={cn(
+                      "flex items-start gap-3 p-3 border-2 rounded-[4px]",
+                      "transition-all duration-150",
+                      isDisabled
+                        ? "border-border bg-muted/30 opacity-50 cursor-not-allowed"
+                        : "border-border bg-background hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                    )}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        updateFormData('workspaceBindings', {
+                          ...formData.workspaceBindings,
+                          [binding.key]: !isChecked,
+                        });
+                      }
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      id={`binding-${binding.key}`}
+                      checked={isChecked}
+                      disabled={isDisabled}
+                      onChange={() => {
+                        if (!isDisabled) {
+                          updateFormData('workspaceBindings', {
+                            ...formData.workspaceBindings,
+                            [binding.key]: !isChecked,
+                          });
+                        }
+                      }}
+                      className="mt-0.5 w-4 h-4 min-w-[16px] min-h-[16px] border-2 border-border rounded-[4px]
+                                 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]
+                                 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]
+                                 checked:bg-primary checked:border-primary
+                                 cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    <div className="flex-1">
+                      <label
+                        htmlFor={`binding-${binding.key}`}
+                        className={cn(
+                          "font-medium text-foreground text-sm cursor-pointer",
+                          isDisabled && "cursor-not-allowed"
+                        )}
+                      >
+                        {t(binding.labelKey)}
+                      </label>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        {t(binding.descriptionKey)}
+                      </div>
+                      {isDisabled && (
+                        <div className="text-xs text-muted-foreground mt-1 text-destructive">
+                          {t('wizard.workspaceBindings.requiresFSA')}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -62,22 +62,27 @@ export {
 } from './openai-compatible-store';
 
 // ============================================================================
-// IDE & UI STORES (Facade Re-exports for Backward Compatibility)
-// Note: These import from lib/state facades which re-export from infrastructure.
-// This is intentional - facades provide legacy selector functions that
-// infrastructure doesn't have (selectOpenFiles, selectActiveFile, etc.)
-// NOT a circular dependency - facades → infrastructure, not the reverse.
-// See: ADR-024, ARCH-01.2 for migration plan.
+// IDE STORE (Hook exports - Zustand v5 pattern)
+// Note: IDE store uses hook-based selectors (useOpenFiles, etc.)
+// Legacy selector functions (selectOpenFiles, etc.) removed in EPIC-CP-1
 // ============================================================================
 
 export {
   useIDEStore,
-  selectOpenFiles,
-  selectActiveFile,
-  selectExpandedPaths,
-  selectPanelLayouts,
-  createIsExpandedSelector,
-  type IDEState,
+  useOpenFiles,
+  useActiveFile,
+  useActiveFileScrollTop,
+  useExpandedPaths,
+  usePanelLayouts,
+  usePanelCollapsed,
+  useChatVisible,
+  useTerminalTab,
+  useProjectId,
+  useAIContext,
+  useFileContext,
+  resetIDEStore,
+  getIDEStoreState,
+  type CombinedIDEState,
   type TerminalTab,
 } from '@/infrastructure/persistence/stores/ide';
 

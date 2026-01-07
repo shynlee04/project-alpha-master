@@ -3,6 +3,9 @@
  * @module workspace/project-store/types
  */
 
+import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+
 /**
  * Layout configuration stored per project.
  * Optional - used for restoring IDE state.
@@ -35,9 +38,9 @@ export interface ProjectMetadata {
   /** Custom exclusion patterns for sync (glob syntax) */
   exclusionPatterns?: string[];
   /** Story 13-5: Last known permission state for faster dashboard load */
-  lastKnownPermissionState?: any;
+  lastKnownPermissionState?: FsaPermissionState;
   /** Story WB-1: Workspace binding configuration */
-  workspaceBindings?: Record<string, boolean>;
+  workspaceBindings?: WorkspaceBindings;  // FIXED: Use proper type, not Record<string, boolean>
   /** Story WB-1: File snapshot feature flag */
   fileSnapshotEnabled?: boolean;
   /** Soft delete flag (true = marked as deleted, recoverable for 30 days) */
@@ -46,9 +49,12 @@ export interface ProjectMetadata {
   deletedAt?: Date;
 }
 
+// Re-export FsaPermissionState for convenience
+export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+
 /**
  * Project with permission state for dashboard display.
  */
 export interface ProjectWithPermission extends ProjectMetadata {
-  permissionState: any;
+  permissionState: FsaPermissionState;
 }

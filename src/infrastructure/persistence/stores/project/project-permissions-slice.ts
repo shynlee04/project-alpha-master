@@ -61,6 +61,19 @@ export const createProjectPermissionsSlice: StateCreator<
       return 'unknown';
     }
 
+    // IndexedDB projects have auto-granted permission (no FSA handle needed)
+    if (project.storageType === 'indexeddb') {
+      const state = 'granted';
+      // Update cache
+      (get() as any).updateProjectPermission(projectId, state);
+      return state;
+    }
+
+    // FSA projects require a handle
+    if (!project.fsaHandle) {
+      return 'denied';
+    }
+
     try {
       const state = await getPermissionState(project.fsaHandle, 'readwrite');
 

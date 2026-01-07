@@ -134,11 +134,34 @@ export const HubHomePage: React.FC = () => {
       description: t('hub.projectCreatedDesc', 'Your project is ready to use'),
       duration: 3000,
     });
-    // Navigate to IDE with the new project
-    navigate({
-      to: '/ide/$projectId',
-      params: { projectId }
-    });
+
+    // Get the project to determine where to navigate based on storage type and bindings
+    const project = useProjectStore.getState().getProject(projectId);
+    if (!project) return;
+
+    // For indexeddb storage, navigate to the first available workspace (not IDE)
+    if (project.storageType === 'indexeddb') {
+      const bindings = project.bindings || {};
+      // Priority: Knowledge → Notes → Study
+      if (bindings.knowledge) {
+        navigate({ to: '/knowledge/$projectId', params: { projectId } });
+      } else if (bindings.notes) {
+        navigate({ to: '/notes/$projectId', params: { projectId } });
+      } else if (bindings.study) {
+        navigate({ to: '/study/$projectId', params: { projectId } });
+      } else {
+        // Fallback to hub with toast
+        toast.info(t('hub.noWorkspaceBindings', 'No workspace enabled for this project. Enable at least one workspace to access your project.'), {
+          duration: 5000,
+        });
+      }
+    } else {
+      // For fsa storage, navigate to IDE (full file system access)
+      navigate({
+        to: '/ide/$projectId',
+        params: { projectId }
+      });
+    }
   };
 
   const handleNewProject = async () => {
@@ -181,15 +204,9 @@ export const HubHomePage: React.FC = () => {
       };
 
       // Use the store's createProject method to ensure Zustand state is updated
+      // Note: Store already persists to Dexie at project-crud-slice.ts:108
       const newProjectId = useProjectStore.getState().createProject(projectInput);
       console.log('[HubHomePage] Created project:', newProjectId);
-
-      // Also persist to Dexie for permanent storage
-      const project = useProjectStore.getState().getProject(newProjectId);
-      if (project) {
-        await db.projects.put(project as unknown as ProjectRecord);
-        console.log('[HubHomePage] Persisted project to Dexie:', newProjectId);
-      }
 
       // 3. Navigate to IDE Workspace
       await navigate({
@@ -394,6 +411,7 @@ export const HubHomePage: React.FC = () => {
         open={projectPickerOpen}
         onOpenChange={setProjectPickerOpen}
         targetWorkspace={projectPickerWorkspace}
+        onCreateNew={handleOpenProjectCreationWizard}
       />
 
       {/* Project Creation Wizard */}

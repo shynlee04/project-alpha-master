@@ -41,6 +41,19 @@ const PROJECT_TYPES = [
   { value: 'learning', labelKey: 'wizard.projectTypes.learning' },
 ] as const;
 
+const STORAGE_TYPES = [
+  {
+    value: 'indexeddb' as const,
+    labelKey: 'wizard.storageTypes.indexeddb',
+    descriptionKey: 'wizard.storageTypes.indexeddbDesc',
+  },
+  {
+    value: 'fsa' as const,
+    labelKey: 'wizard.storageTypes.fsa',
+    descriptionKey: 'wizard.storageTypes.fsaDesc',
+  },
+] as const;
+
 // ============================================================================
 // Component
 // ============================================================================
@@ -185,6 +198,42 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
             ▼
           </div>
+        </div>
+      </div>
+
+      {/* Storage Type */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-foreground">
+          {t('wizard.fields.storageType.label')}
+        </label>
+        <div className="grid grid-cols-1 gap-2">
+          {STORAGE_TYPES.map((type) => (
+            <button
+              key={type.value}
+              type="button"
+              onClick={() =>
+                updateFormData('storageType', type.value)
+              }
+              className={cn(
+                "p-3 min-h-[44px] border-2 rounded-[4px]",
+                "text-left transition-all duration-150",
+                "hover:border-primary/50 hover:bg-primary/5",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+                "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                formData.storageType === type.value
+                  ? "border-primary bg-primary/10"
+                  : "border-border bg-background"
+              )}
+              aria-pressed={formData.storageType === type.value}
+            >
+              <div className="font-medium text-foreground text-sm">
+                {t(type.labelKey)}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {t(type.descriptionKey)}
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
