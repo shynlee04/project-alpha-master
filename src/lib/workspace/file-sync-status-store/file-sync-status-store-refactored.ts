@@ -92,8 +92,15 @@ export const useFileSyncStatusStore = create<FileSyncStatusStore>()(
             console.log('[FileSyncStatusStore] Hydration complete');
             if (state && state.statuses) {
               // Recompute counts from hydrated statuses
-              const recompute = get().recomputeCounts;
-              state.counts = recompute(state.statuses);
+              // Use getState() instead of get() since get() is not available in this context
+              const storeState = useFileSyncStatusStore.getState();
+              const counts = {
+                total: Object.keys(state.statuses).length,
+                pending: Object.values(state.statuses).filter((s: FileSyncStatus) => s.status === 'pending').length,
+                synced: Object.values(state.statuses).filter((s: FileSyncStatus) => s.status === 'synced').length,
+                error: Object.values(state.statuses).filter((s: FileSyncStatus) => s.status === 'error').length,
+              };
+              state.counts = counts;
             }
             if (state) {
               state.setHasHydrated(true);

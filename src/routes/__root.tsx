@@ -7,6 +7,7 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-r
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '@/presentation/components/common/AppErrorBoundary'
 import { AppInitializer } from '@/presentation/components/common/AppInitializer'
+import { DatabaseRecoveryDialog } from '@/presentation/components/common/DatabaseRecoveryDialog'
 import { initSentry } from '../lib/monitoring/sentry'
 import { initGlobalErrorHandlers } from '@/lib/errorHandling/globalErrorHandlers'
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
@@ -97,6 +98,8 @@ export const Route = createRootRoute({
           </ThemeProvider>
           {/* Migration Status Overlay */}
           <MigrationStatus />
+          {/* Database Recovery Dialog - CRITICAL-FIX-2026-01-07 */}
+          <DatabaseRecoveryDialog />
           {/* Command Palette */}
           <CommandPalette
             open={commandPalette.isOpen}

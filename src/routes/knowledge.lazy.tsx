@@ -1,32 +1,67 @@
 /**
- * Knowledge Route - Lazy Loaded
+ * @fileoverview Knowledge Workspace Route
+ * @module routes/knowledge
+ * @governance WS-2026-01-07
+ * @updated 2026-01-07T10:00:00+07:00
  *
- * Lazy-loaded route for the Knowledge Synthesis Station.
- * Integrated Source Library, Knowledge Canvas, and RAG Panel.
+ * Standardized workspace access for Knowledge workspace.
+ * Uses shared workspace-access-helper for consistent behavior.
  *
- * @epic Epic-6 Source Ingestion & Management
- * @epic Epic-8 Knowledge Canvas
- * @story 6-2 Source Card UI
- * @story 8-1 React Flow Canvas Setup
+ * Features:
+ * - Temp project auto-creation for standalone access
+ * - Project filtering by workspace binding
+ * - Empty state detection and handling
+ * - Navigation to hub with workspace filter
  *
- * @file knowledge.lazy.tsx
- * @created 2025-12-30T23:59:00Z
- * @updated 2026-01-05 - FIX: Wrap in ProjectProvider to prevent useProjectContext crash
+ * Story: Standardize access to all workspaces and across workspaces
  */
 
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { KnowledgePage } from '@/presentation/components/knowledge/KnowledgePage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
+import {
+  useWorkspaceAccess,
+  WorkspaceAccessEmptyState,
+} from '@/lib/workspace/workspace-access-helper.tsx';
 
 export const Route = createLazyFileRoute('/knowledge')({
   component: KnowledgeWorkspace,
 });
 
 /**
- * Knowledge workspace wrapper with ProjectProvider
- * FIX-2026-01-05: Without this, useProjectContext throws when used in child components
+ * Knowledge workspace wrapper with standardized access handling
+ *
+ * Three scenarios handled:
+ * 1. no_projects: Auto-create temp project and navigate to it
+ * 2. no_binding: Show empty state with enable option
+ * 3. has_projects: Auto-redirect to hub with knowledge filter
  */
 function KnowledgeWorkspace() {
+  const { state, actions, status } = useWorkspaceAccess('knowledge');
+
+  // If no projects or no binding, show empty state
+  if (status === 'no_projects' || status === 'no_binding') {
+    return <WorkspaceAccessEmptyState workspace="knowledge" status={state} actions={actions} />;
+  }
+
+  // has_projects: Redirect to hub (handled by hook), return null during redirect
+  if (status === 'has_projects') {
+    return null;
+  }
+
+  // Loading state
+  return (
+    <div className="h-screen w-screen flex items-center justify-center bg-background">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
+/**
+ * Knowledge workspace with project context
+ * This component is used by /knowledge/$projectId route
+ */
+export function KnowledgeProjectWorkspace() {
   return (
     <ProjectProvider project={null} workspace="knowledge">
       <KnowledgePage />

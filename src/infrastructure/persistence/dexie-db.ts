@@ -19,6 +19,45 @@ import { ViaGentDatabase } from './dexie-db-class';
 export { ViaGentDatabase } from './dexie-db-class';
 
 // ============================================================================
+// Database Recovery (CRITICAL-FIX-2026-01-07)
+// ============================================================================
+
+/**
+ * Database Recovery Integration
+ *
+ * Handles Dexie migration failures caused by primary key changes.
+ * Schema v20 changed primary keys (e.g., 'id' → 'id, workspaceId'),
+ * which IndexedDB cannot migrate. This system detects and recovers.
+ *
+ * See: database-recovery.ts for full implementation
+ */
+import {
+    initializeDatabaseWithRecovery,
+    recoverDatabase,
+    detectCorruptionType,
+    flagRecoveryNeeded,
+    isRecoveryNeeded,
+    shouldShowRecoveryUI,
+    getCorruptionMessage,
+    manualRecovery,
+} from './database-recovery';
+
+export {
+    recoverDatabase,
+    detectCorruptionType,
+    flagRecoveryNeeded,
+    isRecoveryNeeded,
+    shouldShowRecoveryUI,
+    getCorruptionMessage,
+    manualRecovery,
+} from './database-recovery';
+
+export type {
+    RecoveryResult,
+    CorruptionType,
+} from './database-recovery';
+
+// ============================================================================
 // Core Types
 // ============================================================================
 
@@ -212,27 +251,41 @@ export {
 
 // Internal singleton instance
 let dbInstance: ViaGentDatabase | null = null;
+let dbOpenPromise: Promise<boolean> | null = null;
 
 /**
  * Get the database instance (SSR-safe)
  * Returns null during server-side rendering
  *
- * NOTE: Database is automatically opened on first access to ensure
- * table properties (projects, ideState, etc.) are available.
+ * NOTE: Database is automatically opened with recovery handling.
+ * If migration fails (e.g., primary key change error), recovery UI is shown.
+ *
+ * CRITICAL-FIX-2026-01-07: Now uses initializeDatabaseWithRecovery()
+ * to handle Dexie migration failures caused by schema v20 primary key changes.
  */
 export function getDb(): ViaGentDatabase | null {
   if (typeof window === 'undefined') return null;
   if (!dbInstance) {
     dbInstance = new ViaGentDatabase();
-    // CRITICAL: Open database synchronously to ensure table properties
-    // are available immediately. Without this, accessing db.projects
-    // returns undefined because Dexie doesn't attach tables until open().
-    // We fire-and-forget since useLiveQuery will handle the async state.
-    dbInstance.open().catch((err) => {
-      console.error('[Dexie] Failed to open database:', err);
-    });
+
+    // Use recovery wrapper instead of direct open()
+    // This detects migration failures and shows user-friendly recovery UI
+    if (!dbOpenPromise) {
+      dbOpenPromise = initializeDatabaseWithRecovery(async () => {
+        await dbInstance!.open();
+        return dbInstance!;
+      });
+    }
   }
   return dbInstance;
+}
+
+/**
+ * Get the database open promise for awaiting initialization
+ * Useful for components that need to wait for DB to be ready
+ */
+export function getDbOpenPromise(): Promise<boolean> | null {
+  return dbOpenPromise;
 }
 
 /**
