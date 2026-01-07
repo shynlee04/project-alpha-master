@@ -8,6 +8,7 @@
 
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { Button } from '@/presentation/components/ui/button';
@@ -33,6 +34,9 @@ import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
+// STORAGE-3-2: Project Selector
+import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
+import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
 // P0-3: File Sync Service Initialization
 import { useFileSyncService } from '@/lib/filesync/hooks';
 
@@ -52,9 +56,21 @@ import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/eve
 export function NotesPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
+    const navigate = useNavigate();
+    
     // Get projectId from ProjectContext (set by route)
     const { project } = useProjectContext();
     const projectId = project?.id || 'default';
+
+    // STORAGE-3-2: Project Selector Logic
+    const { projects, activeProject } = useWorkspaceProjects({ 
+        workspaceType: 'notes' 
+    });
+
+    const handleProjectSelect = (newProjectId: string) => {
+        navigate({ to: `/notes/${newProjectId}` });
+    };
+
     const {
         notesArray,
         currentProjectId,
@@ -410,6 +426,15 @@ export function NotesPage() {
                                     workspaceType="notes"
                                 />
                             }
+                            projectSelectorSlot={
+                                <ProjectSelector
+                                    projects={projects}
+                                    activeProject={activeProject}
+                                    onSelect={handleProjectSelect}
+                                    variant="default"
+                                    className="w-full"
+                                />
+                            }
                             projectId={projectId}
                             projectName={project?.name || projectId}
                         />
@@ -559,6 +584,15 @@ export function NotesPage() {
                                 <AgentManager
                                     variant="compact"
                                     workspaceType="notes"
+                                />
+                            }
+                            projectSelectorSlot={
+                                <ProjectSelector
+                                    projects={projects}
+                                    activeProject={activeProject}
+                                    onSelect={handleProjectSelect}
+                                    variant="default"
+                                    className="w-full"
                                 />
                             }
                             projectId={projectId}

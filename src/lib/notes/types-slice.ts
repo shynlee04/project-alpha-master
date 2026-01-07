@@ -140,6 +140,13 @@ export interface NoteStoreState {
     emitFavoriteChanged?: (noteId: string, projectId: string, isFavorite: boolean) => void;
 
     // --------------------------------------------------------------------------
+    // UI Actions
+    // --------------------------------------------------------------------------
+
+    /** Set active note for editing */
+    setActiveNote: (noteId: string | null) => void;
+
+    // --------------------------------------------------------------------------
     // Reset
     // --------------------------------------------------------------------------
 

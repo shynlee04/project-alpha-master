@@ -39,6 +39,8 @@ interface NoteSidebarProps {
     onFileSync?: () => void;
     /** AC-02: Optional slot for agent selector */
     agentSelectorSlot?: React.ReactNode;
+    /** STORAGE-3-2: Optional slot for project selector */
+    projectSelectorSlot?: React.ReactNode;
     /** E1-9: Project ID for chat context */
     projectId?: string;
     /** E1-9: Project name for chat context */
@@ -72,6 +74,7 @@ export function NoteSidebar({
     onIndexForRAG: _onIndexForRAG, // P2-8: DEPRECATED - Now handled internally by NotesIndexingButton
     onFileSync,
     agentSelectorSlot,
+    projectSelectorSlot,
     projectId,
     projectName
 }: NoteSidebarProps) {
@@ -104,6 +107,13 @@ export function NoteSidebar({
         <div className="flex flex-col h-full bg-background border-r border-border">
             {/* Header */}
             <div className="p-3 border-b border-border">
+                {/* STORAGE-3-2: Project Selector */}
+                {projectSelectorSlot && (
+                    <div className="mb-3">
+                        {projectSelectorSlot}
+                    </div>
+                )}
+
                 <div className="flex items-center justify-between mb-2">
                     {/* Title with View Toggle (E1-9) */}
                     <div className="flex items-center gap-2">

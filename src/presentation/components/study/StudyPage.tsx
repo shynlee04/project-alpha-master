@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { BookOpen, Brain, Trophy, Sparkles } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/presentation/components/ui/tabs';
@@ -19,9 +20,14 @@ import { CompactStudyStats } from './study-stats';
 import { StudySession } from './study-session';
 import { QuizContainer } from './QuizContainer';
 import { StudyFilePicker } from './StudyFilePicker';
-import { useIDEStore, useProjectStore } from '@/infrastructure/persistence/stores/ide';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
 import { AgentManager } from '@/presentation/components/agent';
+// STORAGE-3-3: Project Selector
+import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
+import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
+import { useProjectContext } from '@/lib/workspace/ProjectContext';
+
 import { FolderOpen } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 // P0-3: File Sync Service Initialization
@@ -32,7 +38,20 @@ import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/eve
 export function StudyPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
-    const projectId = useIDEStore((state) => state.projectId) || 'default';
+    const navigate = useNavigate();
+    
+    // Get projectId from ProjectContext (set by route)
+    const { project: contextProject } = useProjectContext();
+    const projectId = contextProject?.id || 'default';
+
+    // STORAGE-3-3: Project Selector Logic
+    const { projects, activeProject } = useWorkspaceProjects({ 
+        workspaceType: 'study' 
+    });
+
+    const handleProjectSelect = (newProjectId: string) => {
+        navigate({ to: `/study/${newProjectId}` });
+    };
 
     // Get project storage type for file sync
     const getProject = useProjectStore((state) => state.getProject);
@@ -80,6 +99,17 @@ export function StudyPage() {
                 <div className="flex flex-col h-full overflow-y-auto">
                     {/* Header */}
                     <div className="p-4 border-b border-border">
+                        {/* STORAGE-3-3: Project Selector */}
+                        <div className="mb-3">
+                            <ProjectSelector
+                                projects={projects}
+                                activeProject={activeProject}
+                                onSelect={handleProjectSelect}
+                                variant="default"
+                                className="w-full"
+                            />
+                        </div>
+
                         <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
                                 <BookOpen className="text-primary" size={20} />

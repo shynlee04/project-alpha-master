@@ -1,0 +1,135 @@
+# Storage Remediation Sprint Status
+# Sprint: STORAGE-SPRINT-2026-01-07
+# Created: 2026-01-07
+# Status: PLAN APPROVED - Ready for Execution
+
+sprint:
+  id: "STORAGE-SPRINT-2026-01-07"
+  name: "Storage Type Architecture & User Journey Crisis Remediation"
+  started_at: "2026-01-07T00:00:00+07:00"
+  target_hours: 11-17
+  current_phase: "plan-approved"
+  stories_total: 8
+  stories_completed: 0
+
+phases:
+  - number: 1
+    name: "Comprehensive Workspace Scan"
+    status: "completed"
+    stories: []
+    hours: 0
+    completed_at: "2026-01-07T01:00:00+07:00"
+
+  - number: 2
+    name: "Wizard Clarity Fixes"
+    status: "completed"
+    stories:
+      - id: "STORAGE-2-1"
+        title: "Disable IDE Option for IndexedDB in Wizard"
+        status: "done"
+        points: 3
+        hours_estimate: 1
+        file: "_bmad-output/sprint-artifacts/STORAGE-2-1-disable-ide-indexeddb.md"
+      - id: "STORAGE-2-2"
+        title: "Add Storage Type Info Badges in Wizard"
+        status: "done"
+        points: 2
+        hours_estimate: 1
+        file: "_bmad-output/sprint-artifacts/STORAGE-2-2-storage-type-badges.md"
+    hours_estimate: 1-2
+    started_at: "2026-01-07T02:00:00+07:00"
+    completed_at: "2026-01-07T02:30:00+07:00"
+
+  - number: 3
+    name: "Project Lists in All Workspaces"
+    status: "in_progress"
+    stories:
+      - id: "STORAGE-3-1"
+        title: "Create useWorkspaceProjects Hook"
+        status: "drafted"
+        points: 5
+        hours_estimate: 1.5
+        file: "_bmad-output/sprint-artifacts/STORAGE-3-1-use-workspace-projects.md"
+      - id: "STORAGE-3-2"
+        title: "Add Project Switcher to NotesPage"
+        status: "drafted"
+        points: 3
+        hours_estimate: 0.5
+        file: "_bmad-output/sprint-artifacts/STORAGE-3-2-notes-project-switcher.md"
+      - id: "STORAGE-3-3"
+        title: "Add Project Switcher to StudyPage"
+        status: "drafted"
+        points: 3
+        hours_estimate: 0.5
+        file: "_bmad-output/sprint-artifacts/STORAGE-3-3-study-project-switcher.md"
+      - id: "STORAGE-3-4"
+        title: "Add Project Switcher to KnowledgePage"
+        status: "drafted"
+        points: 5
+        hours_estimate: 1
+        file: "_bmad-output/sprint-artifacts/STORAGE-3-4-knowledge-project-switcher.md"
+      - id: "STORAGE-3-5"
+        title: "Add Project Switcher to IDELayout"
+        status: "drafted"
+        points: 3
+        hours_estimate: 0.5
+        file: "_bmad-output/sprint-artifacts/STORAGE-3-5-ide-project-switcher.md"
+    hours_estimate: 3-4
+    started_at: "2026-01-07T02:30:00+07:00"
+
+  - number: 4
+    name: "Storage Validation & Mobile Handling"
+    status: "pending"
+    stories:
+      - id: "STORAGE-4-1"
+        title: "Make WorkspaceSwitcher Mobile-Compatible"
+        status: "drafted"
+        points: 3
+        hours_estimate: 1
+      - id: "STORAGE-4-2"
+        title: "Create Unified ProjectSelector Component"
+        status: "drafted"
+        points: 5
+        hours_estimate: 1.5
+    hours_estimate: 2-3
+
+  - number: 5
+    name: "Unified Project Access Pattern"
+    status: "pending"
+    stories:
+      - id: "STORAGE-5-1"
+        title: "Consolidate Project Access Patterns"
+        status: "drafted"
+        points: 8
+        hours_estimate: 2-3
+    hours_estimate: 2-3
+
+  - number: 6
+    name: "Testing & Validation"
+    status: "pending"
+    stories:
+      - id: "STORAGE-6-1"
+        title: "Testing & Validation"
+        status: "drafted"
+        points: 5
+        hours_estimate: 1-2
+    hours_estimate: 1-2
+
+metrics:
+  total_points: 40
+  points_completed: 0
+  points_remaining: 40
+  stories_by_status:
+    drafted: 8
+    in_progress: 0
+    review: 0
+    done: 0
+
+blockers: []
+
+next_action: "Execute Phase 2: Create story files and implement STORAGE-2-1, STORAGE-2-2"
+
+references:
+  plan: "_bmad-output/governance/storage-remediation-plan-2026-01-07.md"
+  issues_registry: "_bmad-output/workspace-remediation/issues-registry.yaml"
+  workflow: "_bmad/modules/asgl/workspace-remediation/workflow.md"

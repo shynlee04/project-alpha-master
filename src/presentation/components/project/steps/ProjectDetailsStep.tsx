@@ -206,34 +206,52 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
         <label className="block text-sm font-medium text-foreground">
           {t('wizard.fields.storageType.label')}
         </label>
-        <div className="grid grid-cols-1 gap-2">
-          {STORAGE_TYPES.map((type) => (
-            <button
-              key={type.value}
-              type="button"
-              onClick={() =>
-                updateFormData('storageType', type.value)
-              }
-              className={cn(
-                "p-3 min-h-[44px] border-2 rounded-[4px]",
-                "text-left transition-all duration-150",
-                "hover:border-primary/50 hover:bg-primary/5",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
-                "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                formData.storageType === type.value
-                  ? "border-primary bg-primary/10"
-                  : "border-border bg-background"
-              )}
-              aria-pressed={formData.storageType === type.value}
-            >
-              <div className="font-medium text-foreground text-sm">
-                {t(type.labelKey)}
-              </div>
-              <div className="text-xs text-muted-foreground mt-1">
-                {t(type.descriptionKey)}
-              </div>
-            </button>
-          ))}
+        <div className="grid grid-cols-1 gap-3">
+          {STORAGE_TYPES.map((type) => {
+            const isSelected = formData.storageType === type.value;
+
+            return (
+              <button
+                key={type.value}
+                type="button"
+                onClick={() =>
+                  updateFormData('storageType', type.value)
+                }
+                className={cn(
+                  "p-4 min-h-[60px] border-2 rounded-[4px]",
+                  "text-left transition-all duration-150",
+                  "hover:border-primary/50 hover:bg-primary/5",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+                  "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                  isSelected
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-background"
+                )}
+                aria-pressed={formData.storageType === type.value}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-foreground text-sm">
+                      {t(type.labelKey)}
+                    </span>
+                  </div>
+                  {/* Storage type compatibility badge */}
+                  {type.value === 'indexeddb' ? (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      ✅ Mobile + Desktop
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                      💻 Desktop only
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {t(type.descriptionKey)}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 

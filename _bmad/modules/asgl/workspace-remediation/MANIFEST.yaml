@@ -1,0 +1,86 @@
+# ASGL Workspace Remediation Module Manifest
+# Module: _bmad/modules/asgl/workspace-remediation/
+# Version: 1.0.0
+# Status: ACTIVE
+
+module:
+  id: "asgl-workspace-remediation"
+  name: "Workspace Storage Remediation"
+  description: "Coordinates comprehensive fix for storage type architecture and user journey issues across all workspaces"
+  governance_tier: "Tier 2 (Controlled)"
+  ttl: "permanent"
+
+entry_point: "workflow.md"
+
+workflows:
+  - id: "storage-remediation-execution"
+    name: "Storage Remediation Workflow"
+    path: "workflow.md"
+    triggers:
+      - "user_directive"
+      - "bmad:bmm:workflows:correct-course"
+    phases: 6
+    estimated_hours: 11-17
+    stories_count: 8
+
+artifacts:
+  - id: "remediation-plan"
+    path: "_bmad-output/governance/storage-remediation-plan-2026-01-07.md"
+    type: "plan"
+  - id: "issues-registry"
+    path: "_bmad-output/workspace-remediation/issues-registry.yaml"
+    type: "registry"
+  - id: "progress-tracker"
+    path: "_bmad/modules/asgl/workspace-remediation/progress.yaml"
+    type: "tracking"
+
+stories:
+  prefix: "STORAGE"
+  range: "2-1 to 6-1"
+  total_count: 8
+
+phases:
+  - number: 2
+    name: "Wizard Clarity Fixes"
+    hours: 1-2
+    stories: ["STORAGE-2-1", "STORAGE-2-2"]
+  - number: 3
+    name: "Project Lists in Workspaces"
+    hours: 3-4
+    stories: ["STORAGE-3-1", "STORAGE-3-2", "STORAGE-3-3", "STORAGE-3-4", "STORAGE-3-5"]
+  - number: 4
+    name: "Storage Validation & Mobile"
+    hours: 2-3
+    stories: ["STORAGE-4-1", "STORAGE-4-2"]
+  - number: 5
+    name: "Unified Access Pattern"
+    hours: 2-3
+    stories: ["STORAGE-5-1"]
+  - number: 6
+    name: "Testing & Validation"
+    hours: 1-2
+    stories: ["STORAGE-6-1"]
+
+integration_points:
+  - module: "core-governance"
+    purpose: "State management and governance enforcement"
+  - module: "sprint-execution"
+    purpose: "Story development cycle coordination"
+  - module: "architecture-refactoring"
+    purpose: "Pattern consolidation and component normalization"
+
+success_criteria:
+  - "Wizard clearly shows IDE = FSA only"
+  - "All workspaces have full project switcher"
+  - "Mobile users see FSA projects as disabled"
+  - "Unified project access pattern across all workspaces"
+  - "Zero TypeScript errors, all user journeys passable"
+
+metrics:
+  - "stories_completed"
+  - "hours_spent"
+  - "typecheck_errors"
+  - "user_journey_pass_rate"
+
+created: "2026-01-07"
+updated: "2026-01-07"

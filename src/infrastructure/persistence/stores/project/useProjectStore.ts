@@ -19,7 +19,6 @@
 
 import { create } from 'zustand';
 import type {
-  Project,
   ProjectState,
   ProjectMethods,
   ProjectBindingMethods,
