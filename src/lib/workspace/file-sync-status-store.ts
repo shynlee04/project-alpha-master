@@ -29,6 +29,15 @@
 // Re-export everything from refactored store
 export * from './file-sync-status-store/file-sync-status-store-refactored';
 
+// Re-export types
+export type {
+  FileSyncState,
+  FileSyncStatus,
+  FileSyncCounts,
+  SyncStatusType,
+  SyncProgress,
+} from './file-sync-status-store/types';
+
 // Re-export default as useFileSyncStatusStore for convenience
 export {
   useFileSyncStatusStore,

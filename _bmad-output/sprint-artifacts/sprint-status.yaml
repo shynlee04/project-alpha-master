@@ -687,3 +687,206 @@ retrospectives:
         - "Begin EPIC-31 sprint planning"
         - "Implement real-time story tracking for EPIC-31"
 
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-38 COURSE CORRECTION (2026-01-08T04:04:14+07:00)
+# ═══════════════════════════════════════════════════════════════════════════
+
+course_corrections:
+  epic_38:
+    id: "CC-38-01"
+    timestamp: "2026-01-08T04:04:14+07:00"
+    trigger: "correct-course-38-04.md"
+    severity: "HIGH"
+    analysis_method: "Ultrathink (5-step Sequential Thinking)"
+    agent: "@bmad-core-bmad-master"
+    
+    discovery:
+      expected_violations: 32
+      reported_violations: 106
+      actual_violations: 130
+      domain_layer_status: "EXISTS (was reported as 'No Domain Layer')"
+      agent_entity_status: "ALREADY EXISTS at domain/entities/agent.ts (208 lines)"
+    
+    decision:
+      option_selected: "B - Create Domain Layer First"
+      option_rejected_a: "Fix imports in-place (creates tech debt)"
+      option_rejected_c: "Defer domain layer (leaves 98% violations)"
+      rationale:
+        - "Domain layer structure already exists - EXTENSION work not creation"
+        - "Agent.ts already exists - 38-06 scope reduced"
+        - "Aligns with ADR-029 Clean Architecture compliance"
+        - "Future-proofs EPIC-31, EPIC-32, EPIC-33"
+    
+    scope_changes:
+      original_stories: 18
+      revised_stories: 21
+      new_stories:
+        - id: "38-05b"
+          title: "Create domain/entities/rag.ts"
+          effort: "3h"
+          priority: "P0"
+        - id: "38-05c"
+          title: "Create domain/entities/knowledge.ts"
+          effort: "1.5h"
+          priority: "P0"
+        - id: "38-05d"
+          title: "Create domain/entities/study.ts"
+          effort: "2h"
+          priority: "P0"
+      modified_stories:
+        - id: "38-04"
+          change: "BLOCKED until domain types ready, effort 2h→4h"
+        - id: "38-06"
+          change: "Scope reduced: Workspace.ts only (Agent.ts exists)"
+    
+    effort_impact:
+      original_effort: "~33 hours"
+      revised_effort: "~41-43 hours"
+      delta: "+8-10 hours"
+      story_38_04_effort_change: "2h → 4h (130 imports vs 32)"
+    
+    execution_sequence:
+      track_a:
+        name: "Sync Types (No Dependency Changes)"
+        stories: ["38-01", "38-02", "38-03"]
+        can_run_parallel_to: "Track B"
+      track_b:
+        name: "Domain Entities"
+        stories: ["38-05", "38-05b", "38-05c", "38-05d", "38-06"]
+        notes: "38-05b, 38-05c, 38-05d can run parallel after 38-05"
+      blocked:
+        story: "38-04"
+        unblocks_after: ["Track A complete", "Track B complete"]
+      sequential_after_unblock: ["38-04", "38-07", "38-08"]
+    
+    artifacts_created:
+      - path: "_bmad-output/handoffs/epic-38-course-correction-approved-2026-01-08.md"
+        description: "Dev team handoff with revised story sequence"
+      - path: "_bmad-output/planning-artifacts/epics.md"
+        description: "Updated with new stories 38-05b, 38-05c, 38-05d"
+      - path: "_bmad-output/sprint-artifacts/sprint-status.yaml"
+        description: "Updated with course correction section"
+    
+    status: "APPROVED"
+    next_actions:
+      - "Start Story 38-01 (Track A) OR Story 38-05 (Track B)"
+      - "Parallel execution recommended with 2 teams"
+      - "38-04 blocked until domain types complete"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-38 STORY STATUS (Post Course Correction)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_38_status:
+  id: "EPIC-38"
+  name: "Clean Architecture Compliance"
+  priority: "P0"
+  phase: "IN_PROGRESS"
+  course_correction_applied: true
+  total_stories: 21
+  estimated_effort: "~41-43 hours"
+  
+  stories:
+    "38-01":
+      title: "Move sync-types.ts to infrastructure/sync/types"
+      status: "ready-for-dev"
+      effort: "1h"
+      assigned_to: "Team A"
+    "38-02":
+      title: "Move file system adapters to infrastructure/filesystem"
+      status: "backlog"
+      effort: "2h"
+      depends_on: ["38-01"]
+    "38-03":
+      title: "Create facade exports in lib/filesystem"
+      status: "backlog"
+      effort: "1h"
+      depends_on: ["38-02"]
+    "38-04":
+      title: "Update 130 infrastructure→domain imports"
+      status: "blocked"
+      effort: "4h"
+      depends_on: ["38-03", "38-06"]
+      blocked_reason: "Waiting for domain entities (38-05, 38-05b, 38-05c, 38-05d, 38-06)"
+    "38-05":
+      title: "Create domain/entities/Project.ts"
+      status: "ready-for-dev"
+      effort: "2h"
+      assigned_to: "Team B"
+    "38-05b":
+      title: "Create domain/entities/rag.ts"
+      status: "backlog"
+      effort: "3h"
+      depends_on: ["38-05"]
+      new_story: true
+    "38-05c":
+      title: "Create domain/entities/knowledge.ts"
+      status: "backlog"
+      effort: "1.5h"
+      depends_on: ["38-05"]
+      new_story: true
+    "38-05d":
+      title: "Create domain/entities/study.ts"
+      status: "backlog"
+      effort: "2h"
+      depends_on: ["38-05"]
+      new_story: true
+    "38-06":
+      title: "Create domain/entities/Workspace.ts"
+      status: "backlog"
+      effort: "1.5h"
+      depends_on: ["38-05b", "38-05c", "38-05d"]
+      notes: "Agent.ts ALREADY EXISTS - scope reduced"
+    "38-07":
+      title: "Update infrastructure to import from domain entities"
+      status: "backlog"
+      effort: "2h"
+      depends_on: ["38-04"]
+    "38-08":
+      title: "Update application layer to use domain entities"
+      status: "backlog"
+      effort: "2h"
+      depends_on: ["38-07"]
+    # Stories 38-09 through 38-18 unchanged
+    "38-09":
+      title: "Define WorkspaceRepository interface"
+      status: "backlog"
+      effort: "1.5h"
+    "38-10":
+      title: "Define AgentRepository and ProjectRepository interfaces"
+      status: "backlog"
+      effort: "1.5h"
+    "38-11":
+      title: "Implement ZustandWorkspaceRepository"
+      status: "backlog"
+      effort: "2h"
+    "38-12":
+      title: "Implement ZustandAgentRepository"
+      status: "backlog"
+      effort: "2h"
+    "38-13":
+      title: "Create DI ServiceContainer"
+      status: "backlog"
+      effort: "1.5h"
+    "38-14":
+      title: "Migrate application layer to repositories"
+      status: "backlog"
+      effort: "3h"
+    "38-15":
+      title: "Extract workspace-context.ts from unified context"
+      status: "backlog"
+      effort: "2h"
+    "38-16":
+      title: "Extract file-system-context.tsx"
+      status: "backlog"
+      effort: "2h"
+    "38-17":
+      title: "Create UnifiedWorkspaceProvider (composition)"
+      status: "backlog"
+      effort: "2h"
+    "38-18":
+      title: "Install ESLint import plugin and configure rules"
+      status: "backlog"
+      effort: "1.5h"
+
+generated_at: "2026-01-08T04:04:14+07:00"

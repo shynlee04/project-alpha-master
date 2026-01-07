@@ -33,23 +33,6 @@ export { ViaGentDatabase } from './dexie-db-class';
  */
 import {
     initializeDatabaseWithRecovery,
-    recoverDatabase,
-    detectCorruptionType,
-    flagRecoveryNeeded,
-    isRecoveryNeeded,
-    shouldShowRecoveryUI,
-    getCorruptionMessage,
-    manualRecovery,
-} from './database-recovery';
-
-export {
-    recoverDatabase,
-    detectCorruptionType,
-    flagRecoveryNeeded,
-    isRecoveryNeeded,
-    shouldShowRecoveryUI,
-    getCorruptionMessage,
-    manualRecovery,
 } from './database-recovery';
 
 export type {

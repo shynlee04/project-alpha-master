@@ -4,7 +4,6 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { SnapshotSaveResult } from './types';
 
 export interface SnapshotCacheSliceState {
   /** Cache TTL in milliseconds */
@@ -62,7 +61,7 @@ export const createSnapshotCacheSlice: StateCreator<
   [],
   [],
   SnapshotCacheSlice
-> = (set, get) => {
+> = (get) => {
   // Default configuration
   const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
   const SNAPSHOT_VERSION = 1;

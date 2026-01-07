@@ -14,7 +14,7 @@ export interface FlashcardRecord {
   workspaceId: string;
   question: string;
   answer: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  difficulty: 'easy' | 'medium' | 'hard'; // Fixed: Match FlashcardDifficulty from lib/knowledge/types
   topic: string;
   projectId: string;
   sourceIds: string[];

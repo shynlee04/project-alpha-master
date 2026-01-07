@@ -35,22 +35,30 @@ Phase 3 (3-4 days): EPIC-31 through EPIC-37 (Feature epics)
 ## EPIC-38: Clean Architecture Compliance
 
 **Priority**: P0 - Critical Path Blocker
-**Status**: READY
-**Stories**: 18
-**Effort**: ~33 hours
+**Status**: IN_PROGRESS (Course Correction Applied 2026-01-08)
+**Stories**: 21 (was 18, +3 new domain entity stories)
+**Effort**: ~41-43 hours (was ~33h, revised after ultrathink analysis)
 **Dependencies**: None (foundation epic)
+
+**⚠️ Course Correction Applied**: 2026-01-08T04:04:14+07:00
+- **Trigger**: Story 38-04 research discovered 130 infrastructure→lib violations (not 32)
+- **Decision**: Option B (Create Domain Layer First) APPROVED
+- **New Stories**: 38-05b (RAG), 38-05c (Knowledge), 38-05d (Study)
+- **Blocked Story**: 38-04 (unblocks after domain types created)
+- **Reference**: `_bmad-output/handoffs/epic-38-course-correction-approved-2026-01-08.md`
 
 **Business Value**:
 - Current Clean Architecture compliance: 65% (not 75% as documented)
-- 40+ import direction violations detected
+- 130 import direction violations detected (actual count, was 32 estimated)
 - 3 god stores exceeding 300-line limit
+- Domain layer EXISTS but needs entity extraction from lib/
 - Building features on violating architecture = technical debt compounding
 
 **Success Criteria**:
 1. 100% Clean Architecture layer compliance (infrastructure → domain → core only)
-2. Zero import direction violations
+2. Zero import direction violations (130 → 0)
 3. All god components <300 lines
-4. Domain entities extracted and reusable
+4. Domain entities extracted and reusable (RAG, Knowledge, Study, Project, Workspace)
 
 ### Stories
 
@@ -59,9 +67,12 @@ Phase 3 (3-4 days): EPIC-31 through EPIC-37 (Feature epics)
 | **38-01** | Move sync-types.ts to infrastructure/sync/types | 1h | P0 | - SyncError, SyncStatus moved to infrastructure/sync/types<br>- 32 imports updated to new location<br>- Facade exports in lib/filesystem for backward compatibility |
 | **38-02** | Move file system adapters to infrastructure/filesystem | 2h | P0 | - LocalFSAdapter moved to infrastructure/filesystem/<br>- SyncManager moved to infrastructure/sync/<br>- All infrastructure imports updated |
 | **38-03** | Create facade exports in lib/filesystem | 1h | P0 | - lib/filesystem/index.ts re-exports from infrastructure<br>- Zero breaking changes to existing imports<br>- Deprecation warnings added |
-| **38-04** | Update 32 infrastructure→lib imports | 2h | P0 | - All 32 violations from Investigation B fixed<br>- Import direction: infrastructure → domain → lib (types only)<br>- Zero circular dependencies |
-| **38-05** | Create domain/entities/Project.ts | 2h | P0 | - Project entity with id, name, workspaceBindings, permissions<br>- Pure TypeScript (no framework imports)<br>- 100% testable without mocking |
-| **38-06** | Create domain/entities/Workspace.ts and Agent.ts | 2h | P0 | - Workspace entity with type, layout, preferences<br>- Agent entity with tools, workspaceBindings, systemPrompt<br>- Both entities pure and framework-independent |
+| **38-04** | Update 130 infrastructure→domain imports | 4h | P0 | ⚠️ **BLOCKED** until 38-05, 38-05b, 38-05c, 38-05d, 38-06 complete<br>- All 130 violations fixed (was 32 estimated)<br>- Import direction: infrastructure → domain only<br>- Zero circular dependencies |
+| **38-05** | Create domain/entities/Project.ts | 2h | P0 | - Project entity with id, name, workspaceBindings, permissions<br>- Pure TypeScript (no framework imports)<br>- 100% testable without mocking<br>- Follow Agent.ts pattern (already exists in domain/entities/) |
+| **38-05b** | Create domain/entities/rag.ts | 3h | P0 | **NEW** (Course Correction 2026-01-08)<br>- Extract from lib/rag/types.ts (~530 lines): DocumentSchema, SearchResult, IndexMetadata, ChunkMetadata, ChatMessage, Citation, etc.<br>- Pure TypeScript (no framework imports)<br>- Barrel export: domain/entities/rag/index.ts<br>- Update 35 infrastructure imports |
+| **38-05c** | Create domain/entities/knowledge.ts | 1.5h | P0 | **NEW** (Course Correction 2026-01-08)<br>- Extract from lib/knowledge/types.ts (~135 lines): Flashcard, FlashcardSet, FlashcardPreview, FlashcardFilter, etc.<br>- Include Zod schemas for domain validation<br>- Barrel export: domain/entities/knowledge/index.ts<br>- Update 20 infrastructure imports |
+| **38-05d** | Create domain/entities/study.ts | 2h | P0 | **NEW** (Course Correction 2026-01-08)<br>- Extract from lib/study/*: SRSData, StudySession, Quiz types<br>- Pure TypeScript (no framework imports)<br>- Barrel export: domain/entities/study/index.ts<br>- Update 17 infrastructure imports |
+| **38-06** | Create domain/entities/Workspace.ts | 1.5h | P0 | - Workspace entity with type, layout, preferences<br>- ~~Agent entity~~ **Agent.ts ALREADY EXISTS** in domain/entities/ (208 lines)<br>- Reduced scope: Workspace.ts only |
 | **38-07** | Update infrastructure to import from domain entities | 2h | P0 | - All stores import Project/Workspace/Agent from domain<br>- Zero duplicate type definitions<br>- Type consistency across layers |
 | **38-08** | Update application layer to use domain entities | 2h | P0 | - lib/agent/ imports entities from domain/<br>- lib/workspace/ imports entities from domain/<br>- 8 violations from Category 2 fixed |
 | **38-09** | Define WorkspaceRepository interface | 1.5h | P1 | - Interface in domain/repositories/<br>- Methods: findById, save, delete, findAll<br>- Zero framework dependencies |
@@ -75,12 +86,14 @@ Phase 3 (3-4 days): EPIC-31 through EPIC-37 (Feature epics)
 | **38-17** | Create UnifiedWorkspaceProvider (composition) | 2h | P1 | - Composes WorkspaceProvider + FileSystemProvider<br>- Single entry point for workspace context<br>- No mixed concerns (separation of concerns) |
 | **38-18** | Install ESLint import plugin and configure rules | 1.5h | P2 | - eslint-plugin-import installed<br>- Rule: no infrastructure importing from lib/<br>- CI block on import violations |
 
-**Total Effort**: ~33 hours
+**Total Effort**: ~41-43 hours (revised from ~33h after course correction 2026-01-08)
 
-**Dependencies**:
-- Stories 38-01 → 38-02 → 38-03 → 38-04 (sequential, import direction fixes)
-- Stories 38-05 → 38-06 → 38-07 → 38-08 (sequential, entity extraction)
-- Stories 38-09 → 38-10 → 38-11 → 38-12 (sequential, repository pattern)
+**Dependencies** (Revised 2026-01-08):
+- **Track A**: Stories 38-01 → 38-02 → 38-03 (sync types, can run parallel to Track B)
+- **Track B**: Stories 38-05 → [38-05b, 38-05c, 38-05d in parallel] → 38-06 (domain entities)
+- **BLOCKED**: Story 38-04 unblocks after Track A AND Track B complete
+- **Sequential**: 38-04 → 38-07 → 38-08 (import updates after domain types ready)
+- Stories 38-09 → 38-10 → 38-11 → 38-12 → 38-13 → 38-14 (repository pattern)
 - Stories 38-15 → 38-16 → 38-17 (sequential, context refactoring)
 - Story 38-18 independent (can run in parallel after 38-04)
 

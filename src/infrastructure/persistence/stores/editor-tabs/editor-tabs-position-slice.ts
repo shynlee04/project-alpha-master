@@ -9,7 +9,6 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { EditorTab } from '../editor-tabs-store';
 import type { EditorTabsCrudState } from './editor-tabs-crud-slice';
 
 /**
@@ -42,7 +41,7 @@ export const createEditorTabsPositionSlice: StateCreator<
   [],
   [],
   EditorTabsPositionState & EditorTabsPositionActions
-> = (set, get) => ({
+> = (set) => ({
   togglePinTab: (path: string) => {
     set(state => ({
       tabs: state.tabs.map(t =>

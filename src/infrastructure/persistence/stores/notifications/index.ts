@@ -10,7 +10,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Notification, NotificationFilter, NotificationType } from '@/lib/notifications/types';
+import type { NotificationFilter, NotificationType } from '@/lib/notifications/types';
 import { createNotificationCrudSlice, NotificationCrudState, NotificationCrudActions } from './notification-crud-slice';
 import { createNotificationFilterSlice, NotificationFilterState, NotificationFilterActions } from './notification-filter-slice';
 import { createNotificationPreferencesSlice, NotificationPreferencesState, NotificationPreferencesActions } from './notification-preferences-slice';

@@ -13,6 +13,16 @@
 import type { Table } from 'dexie';
 
 // ============================================================================
+// Shared Types
+// ============================================================================
+
+/**
+ * Workspace identifier type
+ * Used across the application for workspace-specific operations
+ */
+export type WorkspaceId = 'ide' | 'knowledge' | 'study' | 'notes';
+
+// ============================================================================
 // Core Record Types
 // ============================================================================
 

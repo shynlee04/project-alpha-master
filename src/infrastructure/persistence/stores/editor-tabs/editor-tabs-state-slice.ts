@@ -9,7 +9,6 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { EditorTab } from '../editor-tabs-store';
 import type { EditorTabsCrudState } from './editor-tabs-crud-slice';
 
 /**

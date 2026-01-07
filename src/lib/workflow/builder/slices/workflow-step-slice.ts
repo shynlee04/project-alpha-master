@@ -7,7 +7,7 @@
  * Step management operations (add, update, remove, move, select).
  */
 
-import type { WorkflowStep } from '../types';
+import type { WorkflowStep, Workflow } from '../types';
 import { generateStepId } from './workflow-utilities-slice';
 
 export interface StepManagementState {
@@ -25,7 +25,7 @@ export interface StepManagementActions {
 }
 
 export const createStepManagementSlice = (
-    set: (partial: Partial<StepManagementState>) => void,
+    set: (partial: Partial<StepManagementState & { workflow?: Workflow; selectedStepId?: string | null; errors?: Record<string, string> }>) => void,
     get: () => { workflow: Workflow | null; selectedStepId: string | null } & { validateWorkflow: () => void }
 ): StepManagementActions => ({
     addStep: (step, index) => {
@@ -50,7 +50,7 @@ export const createStepManagementSlice = (
                 steps,
                 updatedAt: Date.now(),
             },
-        } as unknown as Partial<StepManagementState>);
+        });
         get().validateWorkflow();
     },
 

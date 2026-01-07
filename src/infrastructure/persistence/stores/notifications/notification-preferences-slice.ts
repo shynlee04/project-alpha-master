@@ -9,7 +9,6 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { NotificationStoreActions } from '@/lib/notifications/types';
 
 /**
  * Notification Preferences State

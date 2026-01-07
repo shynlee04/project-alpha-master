@@ -98,16 +98,15 @@ import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-t
  * ```
  */
 export class FileSnapshotStore {
-  private cacheTTL: number;
-
   constructor(options?: { cacheTTL?: number }) {
-    this.cacheTTL = options?.cacheTTL ?? 5 * 60 * 1000; // 5 minutes default
-
     if (process.env.NODE_ENV === 'development') {
       console.warn(
         '[FileSnapshotStore] Class-based API is deprecated. Use useFileSnapshotStore instead.'
       );
     }
+
+    // Accept options to maintain API compatibility but don't use them
+    options?.cacheTTL;
   }
 
   async saveSnapshot(

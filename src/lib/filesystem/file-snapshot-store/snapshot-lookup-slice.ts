@@ -43,7 +43,7 @@ export const createSnapshotLookupSlice: StateCreator<
   [],
   [],
   SnapshotLookupSlice
-> = (set, get) => ({
+> = (set) => ({
   getSnapshot: async (projectId, path, loadContent = false) => {
     const { db } = await import('@/infrastructure/persistence/dexie-db');
     const now = Date.now();

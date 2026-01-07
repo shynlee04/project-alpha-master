@@ -10,15 +10,13 @@
 import { useTranslation } from 'react-i18next';
 import { Save, Play, Square, FolderOpen } from 'lucide-react';
 import { useWorkflowBuilderStore } from '@/lib/workflow/builder/workflow-builder-store';
-import type { WorkflowTemplate } from '@/lib/workflow/builder/types';
 
 interface WorkflowToolbarProps {
     onSave?: () => void;
-    onExecute?: () => void;
     onLoadTemplate: () => void;
 }
 
-export function WorkflowToolbar({ onSave, onExecute, onLoadTemplate }: WorkflowToolbarProps) {
+export function WorkflowToolbar({ onSave, onLoadTemplate }: WorkflowToolbarProps) {
     const { t } = useTranslation();
     const { workflow, isValid, isPreview, togglePreview } = useWorkflowBuilderStore();
 

@@ -43,6 +43,9 @@ export interface GitClientActions {
 
   /** Reset client state */
   resetClient: () => void;
+
+  /** Alias for resetClient (for useGit hook compatibility) */
+  reset: () => void;
 }
 
 /**
@@ -63,7 +66,7 @@ export const createGitClientSlice: StateCreator<
   [],
   [],
   GitClientState & GitClientActions
-> = (set, get) => ({
+> = (set) => ({
   ...initialClientState,
 
   initClient: (repoPath: string) => {
@@ -86,6 +89,10 @@ export const createGitClientSlice: StateCreator<
   },
 
   resetClient: () => {
+    set(initialClientState);
+  },
+
+  reset: () => {
     set(initialClientState);
   },
 });

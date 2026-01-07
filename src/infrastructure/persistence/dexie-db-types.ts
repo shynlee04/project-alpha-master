@@ -15,7 +15,12 @@
 export type {
     ProjectRecord,
     IDEStateRecord,
+    FileSnapshotRecord,
+    FileContentCacheRecord,
 } from './dexie-db-core-types';
+
+// Workspace Type (shared across the application)
+export type { WorkspaceId } from './dexie-db-core-types';
 
 // AI Types (Conversations, Threads)
 export type {

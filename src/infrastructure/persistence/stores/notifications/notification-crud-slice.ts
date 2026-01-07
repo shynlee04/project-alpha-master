@@ -9,7 +9,7 @@
  */
 
 import type { StateCreator } from 'zustand';
-import type { Notification, NotificationStoreState } from '@/lib/notifications/types';
+import type { Notification } from '@/lib/notifications/types';
 
 /**
  * Notification CRUD State
@@ -68,7 +68,7 @@ export const createNotificationCrudSlice: StateCreator<
   [],
   [],
   NotificationCrudState & NotificationCrudActions
-> = (set, get) => ({
+> = (set) => ({
   ...initialCrudState,
 
   addNotification: (notificationData) => {

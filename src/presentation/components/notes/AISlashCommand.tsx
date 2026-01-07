@@ -18,7 +18,6 @@ import {
     ScrollText,
     AlignLeft
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
 import { toast } from 'sonner';

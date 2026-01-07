@@ -11,7 +11,6 @@
 import type { StateCreator } from 'zustand';
 import type { GitBranch, GitClient } from '@/lib/git/git-client';
 import type { GitClientState } from './git-client-slice';
-import type { GitStatusActions } from './git-status-slice';
 
 /**
  * Git Branch State

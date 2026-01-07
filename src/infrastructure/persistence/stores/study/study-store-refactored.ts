@@ -4,7 +4,6 @@
  */
 
 import { create } from 'zustand';
-import type { Flashcard } from '@/lib/knowledge/types';
 import type { SRSData, SRSRating, StudySession, StudyStats } from '@/lib/study/srs-types';
 import { createStudyDatabaseSlice, type StudyDatabaseSlice, initializeStudyState } from './slices/study-database-slice';
 import { createStudySessionSlice, type StudySessionSlice } from './slices/study-session-slice';

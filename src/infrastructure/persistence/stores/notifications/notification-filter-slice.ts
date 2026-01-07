@@ -39,7 +39,7 @@ export const createNotificationFilterSlice: StateCreator<
   [],
   [],
   NotificationFilterState & NotificationFilterActions
-> = (set, get) => ({
+> = (get) => ({
   getUnreadCount: () => {
     return get().notifications.filter((n) => !n.read).length;
   },
