@@ -32,6 +32,8 @@ import { getCustomSlashMenuItems } from './AISlashCommand';
 import { NoteStudyMenu } from './NoteStudyMenu';
 import { AIPromptDialog } from './AIPromptDialog';
 import { AITransformMenu } from './AITransformMenu';
+import { MultiModalImport } from './MultiModalImport';
+import { VoiceRecordButton } from './VoiceRecordButton';
 import { SuggestionMenuController } from '@blocknote/react';
 import { filterSuggestionItems } from '@blocknote/core/extensions';
 
@@ -135,6 +137,53 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         debouncedSave(blocks);
     }, [editor, debouncedSave, readOnly]);
 
+    // NS-2026-01-07: Handle inserting multi-modal content (PDF, images)
+    const handleInsertContent = useCallback((content: string, title: string) => {
+        if (readOnly) return;
+
+        // Insert content at cursor position or append to document
+        const currentBlocks = editor.document;
+        const contentBlock = {
+            type: 'paragraph',
+            content: [{ type: 'text', text: content, styles: {} }],
+        } as Block;
+
+        // Create heading for the import
+        const headingBlock = {
+            type: 'heading',
+            content: [{ type: 'text', text: title, styles: {} }],
+            props: { level: 2 },
+        } as Block;
+
+        // Append to document
+        updateNote({
+            id: noteId,
+            blocks: [...currentBlocks, headingBlock, contentBlock],
+        });
+
+        toast.success(t('notes.contentInserted', 'Content inserted'));
+    }, [editor, noteId, readOnly, updateNote, t]);
+
+    // NS-2026-01-07: Handle inserting voice transcript
+    const handleInsertTranscript = useCallback((transcript: string) => {
+        if (readOnly) return;
+
+        // Insert transcript at cursor position or append to document
+        const currentBlocks = editor.document;
+        const transcriptBlock = {
+            type: 'paragraph',
+            content: [{ type: 'text', text: transcript, styles: {} }],
+        } as Block;
+
+        // Append to document
+        updateNote({
+            id: noteId,
+            blocks: [...currentBlocks, transcriptBlock],
+        });
+
+        toast.success(t('notes.transcriptInserted', 'Transcript inserted'));
+    }, [editor, noteId, readOnly, updateNote, t]);
+
     // Handle manual save to file
     const handleManualSave = useCallback(async () => {
         try {
@@ -219,6 +268,14 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 <div className="note-editor__status-spacer" />
                 <div className="flex items-center gap-2">
                     <NoteStudyMenu noteId={noteId} />
+                    {/* NS-2026-01-07: Multi-modal import (PDF, images) */}
+                    <MultiModalImport
+                        onContentReady={handleInsertContent}
+                    />
+                    {/* NS-2026-01-07: Voice recording with transcription */}
+                    <VoiceRecordButton
+                        onTranscriptReady={handleInsertTranscript}
+                    />
                     {/* UJ-003: Manual save button with >=44px touch target */}
                     <Button
                         size="sm"

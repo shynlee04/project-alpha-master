@@ -94,3 +94,16 @@ export {
     type FileSyncStatus,
     type FileSyncCounts,
 } from './file-sync-status-store';
+
+// NS-2026-01-07: Note Context Tracker for AI Awareness
+export {
+    getNoteExecutionContext,
+    formatNoteContextForPrompt,
+    hasActiveNote,
+    getActiveNoteId,
+    getActiveNote,
+    createNoteContextError,
+    type NoteExecutionContext,
+    type NoteSelection,
+    type NoteContextError,
+} from './note-context-tracker';

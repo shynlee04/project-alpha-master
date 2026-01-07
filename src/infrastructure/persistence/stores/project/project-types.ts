@@ -33,6 +33,7 @@ export interface LayoutConfig {
  * - Workspace bindings (IDE, Knowledge, Notes, Study)
  * - Permission state for dashboard display
  * - Soft delete support (recoverable for 30 days)
+ * - NS-2026-01-07: Temp project support for standalone Notes access
  */
 export interface Project {
   /** UUID v4 or generated ID */
@@ -69,6 +70,10 @@ export interface Project {
   deleted?: boolean;
   /** Timestamp when project was soft deleted */
   deletedAt?: Date;
+  /** NS-2026-01-07: Temp project flag (auto-created for standalone Notes access) */
+  isTemp?: boolean;
+  /** NS-2026-01-07: Auto-created flag (system-generated vs user-created) */
+  autoCreated?: boolean;
 }
 
 // ============================================================================

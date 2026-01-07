@@ -26,3 +26,12 @@ export { NoteContextMenu, NoteListItem } from './NoteContextMenu';
 // P2-8: Notes → Knowledge RAG Indexing
 export { NotesIndexingButton } from './NotesIndexingButton';
 
+// NS-2026-01-07: RAG Search Panel
+export { NotesRAGSearch } from './NotesRAGSearch';
+
+// NS-2026-01-07: Multi-Modal Import (PDF, Images)
+export { MultiModalImport } from './MultiModalImport';
+
+// NS-2026-01-07: Voice Recording Button
+export { VoiceRecordButton } from './VoiceRecordButton';
+

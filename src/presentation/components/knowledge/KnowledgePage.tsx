@@ -96,7 +96,7 @@ export function KnowledgePage() {
 
     // P0-LLM-001: Retrieve API key for embedding service
     // This ensures cloud embeddings work when user has saved their Gemini API key
-    const { apiKey: embeddingApiKey, hasKey: hasEmbeddingKey, isLoading: isEmbeddingKeyLoading } = useAPIKeyRetrieval({ providerId: 'gemini' });
+    const { apiKey: embeddingApiKey } = useAPIKeyRetrieval({ providerId: 'gemini' });
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {

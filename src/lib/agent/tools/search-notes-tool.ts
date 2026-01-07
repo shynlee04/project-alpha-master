@@ -2,11 +2,18 @@
  * @fileoverview Search Notes Tool
  * @module lib/agent/tools/search-notes-tool
  * @story 26-3 - Ask My Notes RAG Tool
+ * @governance NS-2026-01-07
+ *
+ * NS-2026-01-07: Enhanced with note context awareness
+ * - AI agent now understands current note context
+ * - Includes active note info in search results
+ * - Provides context-aware responses
  */
 
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
 import { searchNotes } from '@/lib/notes/note-retriever';
+import { getNoteExecutionContext } from '@/lib/workspace/note-context-tracker';
 import type { ToolResult } from './types';
 
 /**
@@ -23,6 +30,9 @@ export const searchNotesDef = toolDefinition({
 
 /**
  * Create a client implementation of search_notes tool
+ *
+ * NS-2026-01-07: Now includes current note context in search results
+ * for AI agent awareness.
  */
 export const createSearchNotesClientTool = () => {
     return searchNotesDef.client(async (args: unknown): Promise<ToolResult<string>> => {
@@ -30,23 +40,36 @@ export const createSearchNotesClientTool = () => {
 
         try {
             console.log(`[SearchNotesTool] Searching for: "${query}" (limit: ${limit})`);
+
+            // NS-2026-01-07: Get current note context for AI awareness
+            const noteContext = getNoteExecutionContext();
+
+            // Include current note context in the response
+            let contextPrefix = '';
+            if (noteContext.hasActiveNote) {
+                contextPrefix = `Currently viewing: "${noteContext.title}" (${noteContext.blockCount} blocks, ${noteContext.contentLength} characters)\n\n`;
+            }
+
             const results = await searchNotes(query, limit);
 
             if (results.length === 0) {
                 return {
                     success: true,
-                    data: `No matching notes found for "${query}".`
+                    data: `${contextPrefix}No matching notes found for "${query}".`
                 };
             }
 
             // Format as a clear string for the LLM
-            const formattedResults = results.map(note =>
-                `[Note: ${note.title}] (Score: ${note.score.toFixed(2)})\n${note.content}`
-            ).join('\n\n---\n\n');
+            // NS-2026-01-07: Exclude active note from results if it's in search results
+            const formattedResults = results
+                .filter(note => note.id !== noteContext.noteId) // Don't include current note in search results
+                .map(note =>
+                    `[Note: ${note.title}] (Score: ${note.score.toFixed(2)})\n${note.content}`
+                ).join('\n\n---\n\n');
 
             return {
                 success: true,
-                data: formattedResults
+                data: contextPrefix + formattedResults
             };
         } catch (error) {
             return {

@@ -14,7 +14,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Bot, Folder } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Bot, Folder, Sparkles } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
@@ -22,6 +22,7 @@ import { NoteTree } from './NoteTree';
 import { NotesIndexingButton } from './NotesIndexingButton';
 import { NoteSidebarChat } from './NoteSidebarChat';
 import { ProjectFilesPanel } from './ProjectFilesPanel';
+import { NotesRAGSearch } from './NotesRAGSearch';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 
 interface NoteSidebarProps {
@@ -49,8 +50,9 @@ interface NoteSidebarProps {
 
 /**
  * Sidebar view type
+ * NS-2026-01-07: Added 'rag' for AI-powered semantic search
  */
-type SidebarView = 'notes' | 'chat' | 'files';
+type SidebarView = 'notes' | 'chat' | 'files' | 'rag';
 
 /**
  * Note sidebar component
@@ -167,6 +169,23 @@ export function NoteSidebar({
                             <Folder size={14} />
                             {t('notes.title_files', 'Files')}
                         </button>
+
+                        {/* NS-2026-01-07: AI Search Toggle Button (RAG) */}
+                        <button
+                            onClick={() => setSidebarView('rag')}
+                            className={`
+                                flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-mono font-bold
+                                ${sidebarView === 'rag'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-secondary text-secondary-foreground hover:bg-accent'
+                                }
+                            `}
+                            aria-pressed={sidebarView === 'rag'}
+                            aria-label={t('notes.view.rag', 'AI Search view')}
+                        >
+                            <Sparkles size={14} />
+                            {t('notes.view.rag_title', 'AI Search')}
+                        </button>
                     </div>
                     <div className="flex items-center gap-1">
                         {/* AC-02: Agent Selector slot */}
@@ -262,7 +281,7 @@ export function NoteSidebar({
                 )}
             </div>
 
-            {/* Content Area - Conditionally render notes list or chat */}
+            {/* Content Area - Conditionally render notes list, chat, files, or RAG search */}
             {sidebarView === 'chat' ? (
                 /* E1-9: Chat Panel */
                 <div className="flex-1 overflow-hidden">
@@ -275,6 +294,14 @@ export function NoteSidebar({
                 /* S-007: Project Files Panel */
                 <div className="flex-1 overflow-hidden">
                     <ProjectFilesPanel />
+                </div>
+            ) : sidebarView === 'rag' ? (
+                /* NS-2026-01-07: RAG-powered AI Search Panel */
+                <div className="flex-1 overflow-y-auto">
+                    <NotesRAGSearch
+                        projectId={projectId || 'default'}
+                        onNoteSelect={onNoteSelect}
+                    />
                 </div>
             ) : (
                 /* Notes List */

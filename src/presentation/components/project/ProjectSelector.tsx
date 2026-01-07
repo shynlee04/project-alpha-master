@@ -3,6 +3,7 @@
  * @module presentation/components/project/ProjectSelector
  * @governance STORAGE-4-2
  * @created 2026-01-07
+ * @updated 2026-01-07T06:30:00+07:00 - NS-2026-01-07: Add temp badge for auto-created projects
  *
  * Reusable project selector dropdown for all workspaces.
  * Uses only existing UI components (DropdownMenu, Button).
@@ -138,7 +139,12 @@ export function ProjectSelector({
                   <HardDrive className="h-3 w-3 text-muted-foreground shrink-0 ml-1" />
                 )}
                 <span className="truncate flex-1">{project.name}</span>
-                {project.storageType === 'fsa' && (
+                {project.isTemp && (
+                  <span className="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/30 px-1 rounded shrink-0" title="Auto-created temporary project">
+                    Temp
+                  </span>
+                )}
+                {project.storageType === 'fsa' && !project.isTemp && (
                   <span className="text-[10px] text-muted-foreground bg-muted px-1 rounded shrink-0">
                     FSA
                   </span>

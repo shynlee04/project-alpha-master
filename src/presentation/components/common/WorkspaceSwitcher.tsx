@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { ChevronsUpDown } from 'lucide-react';
 
-import { useProjectContextSafe } from '@/lib/workspace/ProjectContext';
+import { useProjectContextSafe, type WorkspaceId } from '@/lib/workspace';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import { cn } from '@/lib/utils';
 import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
@@ -25,7 +25,7 @@ import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition
 // ============================================================================
 
 const WORKSPACE_CONFIG: Record<
-  WorkspaceType,
+  WorkspaceId,
   { icon: string; labelKey: string; color: string }
 > = {
   ide: {
@@ -167,7 +167,6 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
           'font-mono text-sm hover:bg-muted/50 hover:border-border transition-colors',
           'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
           'data-[state=open]:bg-muted/50 data-[state=open]:border-border',
-          'hidden md:flex', // Desktop only
           className
         )}
       >

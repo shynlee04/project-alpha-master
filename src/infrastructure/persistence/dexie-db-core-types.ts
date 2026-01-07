@@ -37,6 +37,9 @@ export interface ProjectRecord {
     bindings?: WorkspaceBindings | Record<string, string>;  // Union type for backwards compatibility
     folderPath?: string;
     fileSnapshotEnabled?: boolean;
+    // NS-2026-01-07: Temp project support for standalone Notes access
+    isTemp?: boolean;
+    autoCreated?: boolean;
 }
 
 /**
