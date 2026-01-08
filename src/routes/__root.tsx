@@ -1,6 +1,4 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
-// import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-// import { TanStackDevtools } from '@tanstack/react-devtools'
 
 // Header is deprecated - navigation now handled by MainLayout/MainSidebar
 // import Header from '../components/Header'
@@ -12,6 +10,7 @@ import { initSentry } from '../lib/monitoring/sentry'
 import { initGlobalErrorHandlers } from '@/lib/errorHandling/globalErrorHandlers'
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
 import { TooltipProvider } from '@/presentation/components/ui/tooltip-react19-compatible'
+import { ToastProvider, ToastContainer } from '@/presentation/components/ui/Toast'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 import { OfflineIndicator } from '@/presentation/components/offline/OfflineIndicator'
@@ -82,17 +81,21 @@ export const Route = createRootRoute({
           <ThemeProvider>
             <LocaleProvider>
               <TooltipProvider>
-                <AppInitializer>
-                  <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
-                    <AppErrorBoundary>
-                      {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
-                      {/* <OfflineIndicator /> */}
-                      {/* Notification Permission Requester */}
-                      <NotificationPermissionRequester />
-                      <Outlet />
-                    </AppErrorBoundary>
-                  </UnifiedWorkspaceProvider>
-                </AppInitializer>
+                <ToastProvider>
+                  <AppInitializer>
+                    <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
+                      <AppErrorBoundary>
+                        {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
+                        {/* <OfflineIndicator /> */}
+                        {/* Notification Permission Requester */}
+                        <NotificationPermissionRequester />
+                        <Outlet />
+                      </AppErrorBoundary>
+                    </UnifiedWorkspaceProvider>
+                  </AppInitializer>
+                  {/* Toast Container - renders toast notifications */}
+                  <ToastContainer />
+                </ToastProvider>
               </TooltipProvider>
             </LocaleProvider>
           </ThemeProvider>

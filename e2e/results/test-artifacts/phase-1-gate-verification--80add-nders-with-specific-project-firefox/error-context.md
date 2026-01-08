@@ -1,0 +1,114 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - img "Via-gent" [ref=e5]
+      - generic [ref=e6]: Via-gent
+    - navigation [ref=e7]:
+      - generic [ref=e8] [cursor=pointer]:
+        - img [ref=e9]
+        - generic [ref=e12]: Home
+      - generic [ref=e13] [cursor=pointer]:
+        - img [ref=e14]
+        - generic [ref=e16]: Projects
+      - generic [ref=e17] [cursor=pointer]:
+        - img [ref=e18]
+        - generic [ref=e27]: Knowledge
+      - generic [ref=e28] [cursor=pointer]:
+        - img [ref=e29]
+        - generic [ref=e36]: Notes
+      - generic [ref=e37] [cursor=pointer]:
+        - img [ref=e38]
+        - generic [ref=e41]: Study
+      - generic [ref=e42] [cursor=pointer]:
+        - img [ref=e43]
+        - generic [ref=e50]: Agents
+      - generic [ref=e51] [cursor=pointer]:
+        - img [ref=e52]
+        - generic [ref=e55]: Settings
+    - button "Collapse" [ref=e57]:
+      - img [ref=e58]
+  - main [ref=e60]:
+    - generic [ref=e62]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - generic [ref=e67]: 📝 Notes
+            - button [ref=e68]:
+              - img [ref=e70]
+          - generic [ref=e73]:
+            - img [ref=e74]
+            - textbox "Search notes..." [ref=e77]
+        - generic [ref=e79]:
+          - paragraph [ref=e80]: No notes yet
+          - button "Create Note" [ref=e81]:
+            - generic [ref=e82]:
+              - img [ref=e83]
+              - text: Create Note
+        - paragraph [ref=e87]: 0 notes
+      - separator [ref=e88]:
+        - generic:
+          - img
+        - generic "Double-click to collapse":
+          - generic:
+            - generic:
+              - generic: −
+      - generic [ref=e91]:
+        - img [ref=e92]
+        - paragraph [ref=e98]: Select or create a note to start writing
+        - button "Create New Note" [ref=e99]:
+          - generic [ref=e100]:
+            - img [ref=e101]
+            - text: Create New Note
+      - separator [ref=e104]:
+        - generic:
+          - img
+        - generic "Double-click to collapse":
+          - generic:
+            - generic:
+              - generic: −
+      - generic [ref=e106]:
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - img [ref=e111]
+              - generic "AI AGENT" [ref=e118]
+            - generic [ref=e119]:
+              - generic [ref=e120]:
+                - switch "Toggle" [ref=e121] [cursor=pointer]
+                - checkbox
+                - generic "Enhance prompts before sending" [ref=e122] [cursor=pointer]:
+                  - img [ref=e123]
+                  - generic [ref=e128]: Enhance
+              - generic "devstral-2512:free" [ref=e129]
+              - button "Capture" [ref=e130]:
+                - img [ref=e131]
+                - generic [ref=e143]: Capture
+              - button "Clear" [ref=e144]
+          - generic [ref=e145]:
+            - button [ref=e146]
+            - switch "Toggle Auto-Approve" [ref=e147] [cursor=pointer]
+            - checkbox
+            - generic "Auto-Approve Settings" [ref=e148]
+          - img [ref=e149]
+        - generic [ref=e152]:
+          - generic [ref=e154]:
+            - img [ref=e156]
+            - generic [ref=e163]:
+              - paragraph [ref=e167]: Hello! I'm your AI assistant. How can I help you today?
+              - text: 03:21 AM
+          - generic [ref=e169]:
+            - generic [ref=e170]:
+              - button "Attach file" [ref=e171]:
+                - img [ref=e173]
+              - button "Add link" [ref=e175]:
+                - img [ref=e177]
+            - button "Tap to record" [ref=e181]:
+              - img [ref=e183]
+            - textbox "Type a message..." [ref=e187]
+            - button "Send message" [disabled]:
+              - generic:
+                - img
+```

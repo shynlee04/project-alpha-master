@@ -21,6 +21,7 @@ import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store';
 import { ErrorBoundary } from '@/presentation/components/error';
 
 // Lazy load IDELayout
@@ -54,12 +55,14 @@ function IDEWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
 
-  // Set projectId in IDE store when component mounts
+  // Set projectId in IDE store AND workspace store when component mounts
   // Using getState() to avoid infinite loop (selector returns new fn reference each render)
+  // FIX-2026-01-09: Also set workspaceStore.currentProjectId to trigger useWorkspaceFileSystem load
   useEffect(() => {
     if (_projectId) {
       useIDEStore.getState().setProjectId(_projectId);
-      console.log('[IDERoute] Project ID set in store:', _projectId);
+      useWorkspaceStore.getState().setCurrentProject(_projectId);
+      console.log('[IDERoute] Project ID set in IDE store & workspace store:', _projectId);
     }
   }, [_projectId]);
 

@@ -33,6 +33,7 @@ import {
   saveProject,
   generateProjectId,
 } from '@/lib/workspace/project-store';
+import { useWorkspaceStore } from './workspace-store';
 import {
   getPermissionState,
   ensureReadWritePermission,
@@ -67,6 +68,9 @@ export function useWorkspaceFileSystem({
   const navigate = useNavigate();
   const deviceType = useDeviceType();
 
+  // Get currentProjectId from workspace store for reactive loading
+  const currentProjectId = useWorkspaceStore((s) => s.currentProjectId);
+
   // Infrastructure refs
   const localAdapterRef = useRef<LocalFSAdapter | null>(null);
   const syncManagerRef = useRef<SyncManager | null>(null);
@@ -87,16 +91,19 @@ export function useWorkspaceFileSystem({
   const [isWebContainerBooted, setIsWebContainerBooted] = useState(false);
   const [initialSyncCompleted, setInitialSyncCompleted] = useState(false);
 
-  // Load project on mount (if initialProjectId provided)
+  // Load project on mount (if initialProjectId provided) OR when currentProjectId changes
+  // This ensures that navigating to /ide/$projectId triggers project load in the file system
   useEffect(() => {
-    if (!initialProjectId || (projectMetadata && projectMetadata.id === initialProjectId)) {
+    const projectIdToLoad = currentProjectId || initialProjectId;
+
+    if (!projectIdToLoad || (projectMetadata && projectMetadata.id === projectIdToLoad)) {
       return;
     }
 
     let active = true;
     const load = async () => {
       try {
-        const project = await getProject(initialProjectId);
+        const project = await getProject(projectIdToLoad);
         if (!active) return;
 
         if (project) {
@@ -125,7 +132,7 @@ export function useWorkspaceFileSystem({
             setExclusionPatterns(project.exclusionPatterns);
           }
         } else {
-          console.warn('[WorkspaceProvider] Project not found:', initialProjectId);
+          console.warn('[WorkspaceProvider] Project not found:', projectIdToLoad);
         }
       } catch (err) {
         console.error('[WorkspaceProvider] Failed to load project:', err);
@@ -133,7 +140,7 @@ export function useWorkspaceFileSystem({
     };
     load();
     return () => { active = false; };
-  }, [initialProjectId, projectMetadata?.id]);
+  }, [currentProjectId, initialProjectId, projectMetadata?.id]);
 
   // Initialize event bus and bridge to cross-workspace events
   // This bridge forwards workspace sync events to the cross-workspace event bus

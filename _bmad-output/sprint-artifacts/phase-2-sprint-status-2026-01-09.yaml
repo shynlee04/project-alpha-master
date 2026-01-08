@@ -1,0 +1,491 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS: Phase 2 Agentic Capability Verification
+# Generated: 2026-01-09T03:15:00+07:00
+# Workflow: sprint-planning (BMAD V6)
+# ═══════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: phase-2-agentic-2026-01-09
+  name: "Phase 2: Agentic Capability Verification"
+  start_date: "2026-01-09T03:15:00+07:00"
+  target_end_date: "2026-01-12T23:59:00+07:00"
+  status: READY_FOR_EXECUTION
+  phase: PHASE_2_AGENTIC
+  predecessor: phase-1-foundation-2026-01-08
+  predecessor_status: "COMPLETE ✅"
+  created_by: "BMAD Correct-Course Workflow"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT GOAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+goal: |
+  Verify that agentic capabilities work end-to-end with REAL API calls:
+  - Agent file tools (read, write, list, search)
+  - Terminal command execution via WebContainer
+  - AI slash commands in Notes
+  - Cross-workspace context access
+  
+  PHILOSOPHY: This is VERIFICATION sprint, not NEW code.
+  The code exists - we prove it works.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT CONTEXT
+# ═══════════════════════════════════════════════════════════════════════════
+
+context:
+  trigger: "Phase 1 Foundation Complete - Ready for Agentic Verification"
+  philosophy: "Verify with real APIs (NO MOCKS) - prove the user journeys work"
+  previous_sprint:
+    id: phase-1-foundation-2026-01-08
+    status: "COMPLETE ✅"
+    completed_at: "2026-01-09T16:30:00+07:00"
+    gate_result: "ALL GATES PASSING"
+  
+  integration_testing:
+    module: "_bmad/modules/integration-testing"
+    api_keys:
+      gemini: "AVAILABLE in api-keys-prod.yaml"
+      openrouter: "AVAILABLE in api-keys-prod.yaml"
+    playwright_mcp: "INSTALLED"
+    no_mocks: true
+
+  key_documents:
+    - path: "_bmad-output/project-planning-artifacts/phase-2-epics-2026-01-09.md"
+      type: "Phase 2 Epics and Stories"
+    - path: "_bmad/modules/integration-testing/MANIFEST.md"
+      type: "Integration Testing Module"
+    - path: "_bmad-output/documentation/architecture.md"
+      type: "System Architecture"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# REAL-WORLD USE CASES TO VERIFY
+# ═══════════════════════════════════════════════════════════════════════════
+
+use_cases:
+  journey_1:
+    name: "Build me a Next.js app"
+    status: PENDING
+    requirements:
+      - "Agent creates files via write_file"
+      - "Agent runs npm install via execute_command"
+      - "Files appear in file tree"
+      - "Terminal shows output"
+  
+  journey_2:
+    name: "Fix this bug in my code"
+    status: PENDING
+    requirements:
+      - "Agent reads files via read_file"
+      - "Agent searches via search_files"
+      - "Agent applies fix via write_file"
+      - "Agent runs tests via execute_command"
+  
+  journey_3:
+    name: "Summarize my project notes"
+    status: PENDING
+    requirements:
+      - "Notes AI slash commands work"
+      - "Agent generates coherent summary"
+      - "Model selection affects response"
+  
+  journey_4:
+    name: "Search my knowledge base"
+    status: PENDING
+    requirements:
+      - "Agent searches files"
+      - "Agent provides answers with references"
+      - "Cross-workspace context accessible"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC: PHASE 2 AGENTIC VERIFICATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+epics:
+  EPIC-P2-1:
+    id: "EPIC-P2-1"
+    name: "Agent Tool Verification"
+    priority: "P0-CRITICAL"
+    status: "NOT_STARTED"
+    total_stories: 6
+    total_effort_hours: 8
+    description: "Verify all agent file tools work with real API"
+    
+    stories:
+      P2-01:
+        id: "P2-01"
+        name: "Verify read_file Tool"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Chat: 'Read package.json and tell me dependencies'"
+          - "Agent calls read_file tool"
+          - "File content returned correctly"
+          - "Agent summarizes in response"
+
+      P2-02:
+        id: "P2-02"
+        name: "Verify write_file Tool"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Chat: 'Create hello.txt with Hello World'"
+          - "Agent calls write_file"
+          - "File appears in file tree"
+          - "File content correct"
+
+      P2-03:
+        id: "P2-03"
+        name: "Verify list_files Tool"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Chat: 'List files in project root'"
+          - "Agent calls list_files"
+          - "File list returned"
+
+      P2-04:
+        id: "P2-04"
+        name: "Verify execute_command Tool"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-01"]
+        acceptance_criteria:
+          - "Chat: 'Run echo Hello World'"
+          - "Terminal shows command and output"
+          - "Chat: 'Run npm --version'"
+          - "Version displayed"
+
+      P2-05:
+        id: "P2-05"
+        name: "Verify search_files Tool"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-01"]
+        acceptance_criteria:
+          - "Chat: 'Search for export function'"
+          - "Agent calls search_files"
+          - "Results with file paths returned"
+
+      P2-06:
+        id: "P2-06"
+        name: "Create Agent Tool Test Suite"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-01", "P2-02", "P2-03", "P2-04", "P2-05"]
+        acceptance_criteria:
+          - "Playwright test suite created"
+          - "Uses real Gemini API key"
+          - "All tool tests pass"
+
+  EPIC-P2-2:
+    id: "EPIC-P2-2"
+    name: "AI Integration End-to-End"
+    priority: "P0-CRITICAL"
+    status: "NOT_STARTED"
+    total_stories: 5
+    total_effort_hours: 6
+    description: "Verify Settings → Notes → AI Response flow"
+    
+    stories:
+      P2-07:
+        id: "P2-07"
+        name: "Verify API Key → Store Chain"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Enter API key in Settings"
+          - "VaultStatusCard shows 'stored'"
+          - "Key persists after refresh"
+
+      P2-08:
+        id: "P2-08"
+        name: "Verify Notes AI Slash Commands"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-07"]
+        acceptance_criteria:
+          - "Open Notes workspace"
+          - "Type /summarize command"
+          - "AI response appears in editor"
+          - "Real AI response (not mock)"
+
+      P2-09:
+        id: "P2-09"
+        name: "Verify Model Selection"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-07"]
+        acceptance_criteria:
+          - "Change model in agent config"
+          - "Model persists"
+          - "New call uses selected model"
+
+      P2-10:
+        id: "P2-10"
+        name: "Verify Agent Selection per Workspace"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-07"]
+        acceptance_criteria:
+          - "Configure Agent A for Notes"
+          - "Configure Agent B for IDE"
+          - "Correct agent active per workspace"
+
+      P2-11:
+        id: "P2-11"
+        name: "Create AI Integration Test Suite"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-08", "P2-09", "P2-10"]
+        acceptance_criteria:
+          - "Playwright test suite"
+          - "Uses OpenRouter API key"
+          - "All AI tests pass"
+
+  EPIC-P2-3:
+    id: "EPIC-P2-3"
+    name: "Terminal & WebContainer"
+    priority: "P0"
+    status: "NOT_STARTED"
+    total_stories: 4
+    total_effort_hours: 6
+    description: "Verify Terminal executes commands via WebContainer"
+    
+    stories:
+      P2-12:
+        id: "P2-12"
+        name: "Verify WebContainer Boots"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Open IDE workspace"
+          - "WebContainer boots without errors"
+          - "Shell prompt appears"
+          - "Boot time < 5 seconds"
+
+      P2-13:
+        id: "P2-13"
+        name: "Verify Terminal Commands"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-12"]
+        acceptance_criteria:
+          - "Run ls, pwd, echo"
+          - "Output displays correctly"
+          - "Command history works"
+
+      P2-14:
+        id: "P2-14"
+        name: "Verify npm/pnpm Commands"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-12"]
+        acceptance_criteria:
+          - "Run npm init -y"
+          - "Run npm install lodash"
+          - "Package in node_modules"
+
+      P2-15:
+        id: "P2-15"
+        name: "Verify Agentic Terminal"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-04", "P2-13"]
+        acceptance_criteria:
+          - "Chat: 'Run npm init -y'"
+          - "Agent calls execute_command"
+          - "Terminal shows command"
+          - "Agent reports success"
+
+  EPIC-P2-4:
+    id: "EPIC-P2-4"
+    name: "Cross-Workspace Context"
+    priority: "P1"
+    status: "NOT_STARTED"
+    total_stories: 3
+    total_effort_hours: 4
+    description: "Verify agent accesses context across workspaces"
+    
+    stories:
+      P2-16:
+        id: "P2-16"
+        name: "Verify Project Visibility"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Create project in IDE"
+          - "Same project in Notes"
+          - "Files visible in both"
+
+      P2-17:
+        id: "P2-17"
+        name: "Verify Notes in IDE"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-16"]
+        acceptance_criteria:
+          - "Create note in Notes"
+          - "Switch to IDE"
+          - "Chat: 'What are my notes?'"
+          - "Agent finds note content"
+
+      P2-18:
+        id: "P2-18"
+        name: "Verify File Sync"
+        priority: "P2"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-16"]
+        acceptance_criteria:
+          - "Edit file in IDE"
+          - "Switch to Notes"
+          - "Agent sees updated content"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROGRESS METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+metrics:
+  total_stories: 18
+  stories_not_started: 18
+  stories_in_progress: 0
+  stories_done: 0
+  stories_blocked: 0
+
+  total_effort_hours: 24
+  effort_completed: 0
+  effort_remaining: 24
+
+  completion_percentage: 0
+
+  last_updated: "2026-01-09T03:15:00+07:00"
+
+  stories_completed: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY QUEUE (Execution Order)
+# ═══════════════════════════════════════════════════════════════════════════
+
+priority_queue:
+  # P0-CRITICAL - Agent Tools (can run in parallel)
+  - story_id: "P2-01"
+    reason: "read_file is foundation for all agentic ops"
+    track: "A"
+    
+  - story_id: "P2-02"
+    reason: "write_file enables file creation"
+    track: "A"
+    
+  - story_id: "P2-07"
+    reason: "API key flow needed for AI tests"
+    track: "B"
+    
+  - story_id: "P2-12"
+    reason: "WebContainer boot needed for terminal tests"
+    track: "B"
+    
+  # After initial parallel completion
+  - story_id: "P2-03"
+    reason: "list_files after read verified"
+    track: "A"
+    
+  - story_id: "P2-04"
+    reason: "execute_command critical for terminal"
+    track: "A"
+    
+  - story_id: "P2-08"
+    reason: "Notes slash commands after API key"
+    track: "B"
+    
+  - story_id: "P2-13"
+    reason: "Terminal commands after boot"
+    track: "B"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 2 GATE CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+gate_criteria:
+  journey_1_build_app:
+    description: "Build me a Next.js app"
+    criteria:
+      - "Agent creates files via write_file"
+      - "Agent runs npm install"
+      - "Files appear in file tree"
+      - "Terminal shows output"
+    status: PENDING
+    
+  journey_2_fix_bug:
+    description: "Fix this bug in my code"
+    criteria:
+      - "Agent reads files"
+      - "Agent searches codebase"
+      - "Agent applies fix"
+      - "Agent runs tests"
+    status: PENDING
+    
+  journey_3_summarize_notes:
+    description: "Summarize my notes"
+    criteria:
+      - "Notes AI slash commands work"
+      - "Agent generates summary"
+      - "Model selection works"
+    status: PENDING
+    
+  journey_4_search_kb:
+    description: "Search knowledge base"
+    criteria:
+      - "Agent searches files"
+      - "Agent provides references"
+      - "Cross-workspace context works"
+    status: PENDING
+    
+  no_errors:
+    description: "Error-free operation"
+    criteria:
+      - "Zero console errors during agentic ops"
+      - "All tests pass in 3 browsers"
+      - "Real API calls successful"
+    status: PENDING
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RALPH LOOP CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+ralph_loop:
+  active: true
+  current_iteration: 1
+  max_iterations: 500
+  completion_promise: "All 18 P2 stories DONE + 4 User Journeys PASSING"
+  checkpoint: "STARTING_PHASE_2"
+  
+  validation_gates:
+    - "Agent tools verified with real API (Gemini)"
+    - "AI slash commands working (OpenRouter)"
+    - "Terminal executes commands (WebContainer)"
+    - "Cross-workspace context accessible"

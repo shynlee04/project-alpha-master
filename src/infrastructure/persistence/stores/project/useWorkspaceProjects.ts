@@ -12,6 +12,7 @@
  */
 
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useProjectStore } from './useProjectStore';
 import { useResponsive } from '@/hooks/useResponsive';
 import type { Project, WorkspaceBindings } from './project-types';
@@ -71,9 +72,10 @@ export function useWorkspaceProjects({
   const { isMobile } = useResponsive();
 
   // Get raw state from store - 4 separate subscriptions
-  const allProjects = useProjectStore((state) =>
+  // ⚠️ CRITICAL FIX (2026-01-09): useShallow prevents infinite loops from Object.values()
+  const allProjects = useProjectStore(useShallow((state) =>
     state.projects ? Object.values(state.projects) : []
-  );
+  ));
   const activeProjectId = useProjectStore((state) => state.activeProjectId);
   const setActiveProjectAction = useProjectStore((state) => state.setActiveProject);
   const hasHydrated = useProjectStore((state) => state._hasHydrated);
@@ -85,7 +87,7 @@ export function useWorkspaceProjects({
       // Binding can be boolean true or string 'true' (legacy)
       const binding = project.bindings?.[workspaceType];
       const isBound = binding === true || String(binding) === 'true';
-      
+
       if (!isBound) return false;
 
       // 2. Check storage type if specified
@@ -103,7 +105,7 @@ export function useWorkspaceProjects({
       // Let's follow Phase 4 requirement as it's more specific about UX.
       // So we return them, but maybe add a property? No, Project type is fixed.
       // Let's return them and let the UI handle the disabled state.
-      
+
       return true;
     });
   }, [allProjects, workspaceType, storageType]);
@@ -117,7 +119,7 @@ export function useWorkspaceProjects({
   // Wrapper for setActiveProject to handle mobile validation
   const handleSetActiveProject = (projectId: string) => {
     const project = allProjects.find((p) => p.id === projectId);
-    
+
     if (!project) return;
 
     // Mobile validation for FSA projects

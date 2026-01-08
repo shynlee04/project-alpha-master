@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import type { Plugin } from 'vite'
-import { devtools } from '@tanstack/devtools-vite'
+// import { devtools } from '@tanstack/devtools-vite' // Disabled - causing E2E test false positives
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
@@ -12,7 +12,7 @@ import path from 'path'
 // Use DEPLOY_TARGET env var: 'cloudflare' | 'netlify' | 'node'
 const DEPLOY_TARGET = process.env.DEPLOY_TARGET || 'cloudflare'
 
-const devtoolsEventBusPort = Number(process.env.TANSTACK_DEVTOOLS_EVENT_BUS_PORT ?? 42071)
+// const devtoolsEventBusPort = Number(process.env.TANSTACK_DEVTOOLS_EVENT_BUS_PORT ?? 42071) // Unused - devtools disabled
 
 /**
  * Security Headers Plugin
@@ -193,7 +193,8 @@ const config = defineConfig(async () => {
       },
       securityHeadersPlugin,
       tanstackStart(),
-      devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
+      // DevTools disabled - causing false positive "Maximum update depth exceeded" in Firefox E2E tests
+      // devtools({ eventBusConfig: { port: devtoolsEventBusPort } }),
       ...(deployPlugin ? [deployPlugin] : []),
       viteTsConfigPaths({
         projects: ['./tsconfig.json'],

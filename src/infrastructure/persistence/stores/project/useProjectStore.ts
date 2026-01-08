@@ -18,6 +18,7 @@
  */
 
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import type {
   ProjectState,
   ProjectMethods,
@@ -82,16 +83,22 @@ export function useActiveProject() {
 
 /**
  * Hook to get all projects
+ * 
+ * ⚠️ CRITICAL FIX (2026-01-09): Uses useShallow to prevent infinite loops
+ * Object.values() creates a new array reference every time, which triggers
+ * re-renders with default reference equality. useShallow uses shallow comparison
+ * to detect actual changes.
  */
 export function useAllProjects() {
-  return useProjectStore((state) => state.projects ? Object.values(state.projects) : []);
+  return useProjectStore(useShallow((state) => state.projects ? Object.values(state.projects) : []));
 }
 
 /**
  * Hook to get recent projects
+ * ⚠️ CRITICAL FIX (2026-01-09): useShallow prevents infinite loops
  */
 export function useRecentProjects(limit = 5) {
-  return useProjectStore((state) => state.getRecentProjects(limit));
+  return useProjectStore(useShallow((state) => state.getRecentProjects(limit)));
 }
 
 /**
@@ -106,7 +113,7 @@ export function useRecentProjects(limit = 5) {
  * @added 2026-01-07
  */
 export function useProjectStats() {
-  return useProjectStore((state) => state.getProjectStats());
+  return useProjectStore(useShallow((state) => state.getProjectStats()));
 }
 
 /**

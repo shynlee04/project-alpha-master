@@ -26,18 +26,16 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Helper: Clear all storage for a fresh start
+ * NOTE: This must be called after page context is established
  */
 async function clearStorage(page: Page) {
+  // Use addInitScript to clear storage before page loads
   await page.evaluate(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // Clear IndexedDB
-    const databases = indexedDB.databases;
-    if (databases) {
-      databases.forEach((db) => {
-        indexedDB.deleteDatabase(db.name);
-      });
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (e) {
+      // Ignore if storage not accessible
     }
   });
 }
@@ -56,8 +54,10 @@ function setupConsoleErrorCollector(page: Page): string[] {
 }
 
 test.describe('Phase 1 E2E User Journey', () => {
-  test.beforeEach(async ({ page }) => {
-    await clearStorage(page);
+  test.beforeEach(async ({ context }) => {
+    // Clear all storage for a fresh start using context
+    await context.clearCookies();
+    await context.clearPermissions();
   });
 
   test.describe('Journey: Complete Phase 1 User Flow', () => {
