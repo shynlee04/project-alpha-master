@@ -1,29 +1,162 @@
 ---
 # BMAD Workflow Status - Via-gent Knowledge-Synthesis Research
 # Generated: 2025-12-28T22:40:00+07:00
-# Updated: 2026-01-05T14:55:00+07:00
+# Updated: 2026-01-08T19:36:00+07:00
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ⚠️  CRITICAL HEALTH ASSESSMENT COMPLETED - P0 ISSUES IDENTIFIED
+# 🚨 STRATEGIC COURSE CORRECTION - FUNDAMENTAL TRUTH GAP IDENTIFIED
 # ═══════════════════════════════════════════════════════════════════════════
-# Assessment: _bmad-output/health-assessments/project-health-assessment-2026-01-05.md
-# Course Correction: _bmad-output/sprint-artifacts/course-correction-p0-2026-01-05.yaml
-# Status: AWAITING USER APPROVAL FOR COURSE CORRECTION
-# Health Score: 46.4% (down from claimed 82.5%)
+# Codebase Diagnostic: _bmad-output/diagnostics/codebase-diagnostic-2026-01-08/
+# Course Correction: _bmad-output/sprint-artifacts/course-correction-strategic-assessment-2026-01-08.md
+# Status: ACTIVE - EPIC-STAB (Stability) TAKES PRIORITY
+# Health Score: 35% (routes broken, features inaccessible, cross-workspace disabled)
 # ═══════════════════════════════════════════════════════════════════════════
 
-# CRITICAL BLOCKING ISSUES:
-# P0-LLM-001: Models Not Loading After API Key Save (Gemini/OpenRouter)
-# P0-LLM-002: Credential Vault SSR/Hydration Issues
-# P0-UX-001: No Visual Feedback for API Key Status
-# P0-WS-001: Notes Workspace Not Loading Project Files
-# P0-WS-002: Cross-Workspace Configuration Inconsistency
+# CRITICAL BLOCKING ISSUES (from Diagnostic Phase 1-3):
+# P0-ROUTE-001: /notes, /knowledge, /study routes broken or bypassed
+# P0-ROUTE-002: workspace-access-helper returns hardcoded 'no_projects' or loops
+# P0-SYNC-001: Cross-workspace events DISABLED due to infinite loop
+# P0-DATA-001: Project creation → Notes does not flow (hardcoded projectId)
+# P0-AI-001: API Key → AI Features chain UNVERIFIED (vault not read by services)
 
-current_workflow: "course-correction-p0-2026-01-05"
-current_story: "HEALTH_ASSESSMENT_COMPLETE"
-phase: "COURSE_CORRECTION_PHASE"
-last_updated: "2026-01-05T14:55:00+07:00"
-health_score: 46.4
+# FUNDAMENTAL TRUTH GAP:
+# Users want: Open Notes → Type → AI → Save
+# Architecture provides: Event buses, transition managers, slice patterns
+# Reality: Basic features INACCESSIBLE
+
+current_workflow: "phase-1-foundation-2026-01-08"
+current_story: "P1-08"
+phase: "PHASE_1_FOUNDATION"
+last_updated: "2026-01-08T20:18:00+07:00"
+health_score: 35
+
+# Active Sprint:
+active_sprint:
+  id: "phase-1-foundation-2026-01-08"
+  status_file: "_bmad-output/sprint-artifacts/phase-1-sprint-status-2026-01-08.yaml"
+  epics_file: "_bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md"
+  total_stories: 12
+  stories_in_progress: 1
+  next_story: "P1-08"
+
+# Active Course Correction:
+active_course_correction:
+  id: "strategic-assessment-2026-01-08"
+  document: "_bmad-output/sprint-artifacts/course-correction-strategic-assessment-2026-01-08.md"
+  triggered_by: "Codebase diagnostic revealed feature inaccessibility"
+  diagnostic_phases_complete: [0, 1, 2, 3]
+  diagnostic_phases_incomplete: [4, 5, 6]
+  priority_epic: "EPIC-STAB"
+  paused_epics: ["EPIC-38", "EPIC-31", "EPIC-30"]
+  reason: "Architecture optimized without ensuring fundamentals work"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASED REMEDIATION - Scaffolded Complexity with Gates
+# Sprint Change Proposal: _bmad-output/project-planning-artifacts/sprint-change-proposal-2026-01-08.md
+# Status: PHASE 1 IN PROGRESS
+# ═══════════════════════════════════════════════════════════════════════════
+
+phased_remediation:
+  current_phase: 1
+  started_at: "2026-01-08T20:03:00+07:00"
+  sprint_change_proposal: "_bmad-output/project-planning-artifacts/sprint-change-proposal-2026-01-08.md"
+  
+  gates:
+    phase_1: PENDING  # Foundation: IDE + Notes work with mobile/desktop paths
+    phase_2: PENDING  # Persistence: DexieDB re-attached
+    phase_3: PENDING  # Advanced: AI features, vault integration
+    phase_4: PENDING  # Architecture: Clean arch, store splitting
+  
+  phase_1:
+    name: "Foundation (Simplified Routing + Full Workspace Capability)"
+    objective: "IDE and Notes work FULLY with clear mobile/desktop paths"
+    duration: "3-4 days"
+    status: "IN_PROGRESS"
+    started_at: "2026-01-08T20:03:00+07:00"
+    
+    stories:
+      P1-01:
+        name: "Simplify Notes route to 2 patterns"
+        status: "NOT_STARTED"
+        effort: "2h"
+      P1-02:
+        name: "Simplify IDE route to 2 patterns"
+        status: "NOT_STARTED"
+        effort: "2h"
+      P1-03:
+        name: "Create temp project auto-flow (mobile)"
+        status: "NOT_STARTED"
+        effort: "3h"
+      P1-04:
+        name: "Create folder picker flow (desktop)"
+        status: "NOT_STARTED"
+        effort: "2h"
+      P1-05:
+        name: "Detach complex forms with markers"
+        status: "NOT_STARTED"
+        effort: "2h"
+      P1-06:
+        name: "Investigate IDE full CRUD"
+        status: "IN_PROGRESS"
+        effort: "4h"
+        started_at: "2026-01-08T20:03:00+07:00"
+      P1-07:
+        name: "Investigate Notes full CRUD"
+        status: "NOT_STARTED"
+        effort: "4h"
+      P1-08:
+        name: "Trace vault → AI chain"
+        status: "NOT_STARTED"
+        effort: "3h"
+      P1-09:
+        name: "Verify Phase 1 gate"
+        status: "NOT_STARTED"
+        effort: "2h"
+
+  detached_features:
+    - name: "DexieDB project loading"
+      detached_in: "Phase 1"
+      reattach_in: "Phase 2"
+      status: "PENDING_DETACHMENT"
+      files: ["workspace-access-helper.tsx", "useLiveQuery calls"]
+      
+    - name: "Cross-workspace events"
+      detached_in: "Phase 1"
+      reattach_in: "Phase 2"
+      status: "ALREADY_DISABLED"
+      files: ["use-cross-workspace-events.ts"]
+      
+    - name: "AI slash commands"
+      detached_in: "Phase 1"
+      reattach_in: "Phase 3"
+      status: "PENDING_INVESTIGATION"
+      files: ["AISlashCommand.tsx", "note-ai-service.ts"]
+      
+    - name: "Complex project wizard"
+      detached_in: "Phase 1"
+      reattach_in: "Phase 2"
+      status: "PENDING_DETACHMENT"
+      files: ["ProjectCreationWizard.tsx"]
+      
+    - name: "Knowledge/Study workspaces"
+      detached_in: "Phase 1"
+      reattach_in: "Phase 2"
+      status: "PENDING_DETACHMENT"
+      files: ["knowledge.lazy.tsx", "study.lazy.tsx"]
+
+  paused_epics:
+    - id: "EPIC-38"
+      name: "Clean Architecture Compliance"
+      reason: "Architecture work blocked until Phase 4"
+      reactivate_after: "Phase 3 PASSED"
+    - id: "EPIC-31"
+      name: "AI Service Unification"
+      reason: "Depends on vault chain investigation in Phase 1"
+      reactivate_after: "Phase 1 investigation complete"
+    - id: "EPIC-30"
+      name: "P0 Critical Fixes"
+      reason: "Stories remapped to phased approach"
+      reactivate_after: "Never - absorbed into phases"
 
 # Previous workflow paused:
 paused_workflow:

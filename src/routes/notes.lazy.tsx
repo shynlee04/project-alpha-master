@@ -16,7 +16,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/presentation/components/ui/resizable';
-import { Plus, Notebook, MessageSquare, FileText, Star, Search, Settings } from 'lucide-react';
+import { Plus, Notebook, MessageSquare, FileText, Star, Search } from 'lucide-react';
 import { ErrorBoundary } from '@/presentation/components/error';
 
 // Note store - uses Dexie but not useLiveQuery from workspace-access-helper
