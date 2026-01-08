@@ -36,6 +36,7 @@ interface VaultStatus {
 
 /**
  * Check vault status
+ * P1-15 FIX: Now reactive to provider changes by using Zustand selector
  */
 function useVaultStatus(): VaultStatus {
   const [status, setStatus] = useState<VaultStatus>({
@@ -44,6 +45,9 @@ function useVaultStatus(): VaultStatus {
     hasKeys: false,
     keyCount: 0,
   });
+
+  // Subscribe to providers using selector - re-renders when providers change
+  const providers = useAppStore(s => s.providers);
 
   useEffect(() => {
     // Check if vault is initialized
@@ -55,8 +59,7 @@ function useVaultStatus(): VaultStatus {
         const vault = (credentialVault as any).masterKey;
         const isInitialized = !!vault;
 
-        // Count stored keys
-        const providers = useAppStore.getState().providers;
+        // Count stored keys from subscribed providers
         const keyCount = providers.filter(p => p.hasApiKey).length;
 
         setStatus({
@@ -72,7 +75,7 @@ function useVaultStatus(): VaultStatus {
     };
 
     checkVault();
-  }, []);
+  }, [providers]); // P1-15 FIX: Re-run when providers change
 
   return status;
 }

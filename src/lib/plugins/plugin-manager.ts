@@ -181,7 +181,20 @@ class PluginManagerClass {
 
       if (plugin.source === 'builtin') {
         // Built-in plugins are imported dynamically
-        const module = await import(`/src/lib/plugins/builtins/${plugin.manifest.name}.ts`);
+        // Use a map-based approach to avoid Vite's dynamic import limitations
+        const builtinPlugins: Record<string, () => Promise<any>> = {
+          'github-integration': () => import('./builtins/github-integration'),
+          'retro-theme-pack': () => import('./builtins/retro-theme-pack'),
+        };
+
+        const pluginName = plugin.manifest.name;
+        const pluginLoader = builtinPlugins[pluginName];
+
+        if (!pluginLoader) {
+          throw new PluginError(pluginId, `Unknown builtin plugin: ${pluginName}`);
+        }
+
+        const module = await pluginLoader();
         pluginMain = module.default;
       } else {
         // Load from storage

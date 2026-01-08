@@ -30,11 +30,17 @@ import { SnippetManager } from '@/presentation/components/snippets/SnippetManage
 import { SlashCommandManager } from '@/presentation/components/notes/SlashCommandManager';
 import { Sparkles } from 'lucide-react';
 import { AnalyticsDashboard } from '@/presentation/components/analytics';
-import { PluginMarketplace } from '@/presentation/components/plugins';
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 1 DETACHMENT: Plugin system deferred to Phase 2
+// Reason: usePluginMarketplace hook causes infinite re-render loop
+// Original: import { PluginMarketplace } from '@/presentation/components/plugins';
+// Restore in Phase 2 after hook architecture is fixed
+// ═══════════════════════════════════════════════════════════════════════════
 import { useAllProjects } from '@/infrastructure/persistence/stores/project';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
-import { Code2, BarChart3, Puzzle } from 'lucide-react';
+import { Code2, BarChart3 } from 'lucide-react';
+// Puzzle import removed - Phase 1 detachment (Plugins section deferred)
 
 export const Route = createFileRoute('/settings')({
     component: SettingsPage,
@@ -47,7 +53,8 @@ function SettingsPage() {
     const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
     const [showSlashCommandManager, setShowSlashCommandManager] = useState(false);
     const [showAnalytics, setShowAnalytics] = useState(false);
-    const [showPluginMarketplace, setShowPluginMarketplace] = useState(false);
+    // PHASE 1 DETACHMENT: Plugin state deferred
+    // const [showPluginMarketplace, setShowPluginMarketplace] = useState(false);
     // const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null); // TODO: For future implementation
     // const _selectedPluginId = selectedPluginId; // TODO: For future implementation
     // const _setSelectedPluginId = setSelectedPluginId; // TODO: For future implementation
@@ -337,8 +344,12 @@ function SettingsPage() {
                     </div>
                 </section>
 
-                {/* Plugins Section */}
-                <section className="mb-8">
+                {/* ═══════════════════════════════════════════════════════════════
+                    PHASE 1 DETACHMENT: Plugins Section deferred to Phase 2
+                    Reason: usePluginMarketplace hook causes infinite re-render loop
+                    Restore in Phase 2 after hook architecture is fixed
+                    ═════════════════════════════════════════════════════════════ */}
+                {/* <section className="mb-8">
                     <h2 className={cn(
                         'font-semibold font-mono mb-4 text-foreground',
                         isMobile ? 'text-lg' : 'text-xl'
@@ -354,27 +365,17 @@ function SettingsPage() {
                             'text-muted-foreground mb-4',
                             isMobile && 'text-sm'
                         )}>
-                            Extend functionality with community plugins. Browse the marketplace, manage installed plugins, and configure permissions.
+                            Extend functionality with community plugins.
                         </p>
 
-                        <div className={cn(
-                            'flex gap-3',
-                            isMobile ? 'flex-col' : 'flex-row'
-                        )}>
-                            <Button
-                                onClick={() => setShowPluginMarketplace(true)}
-                                variant="primary"
-                                className={cn(
-                                    'gap-2 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
-                                    isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
-                                )}
-                            >
-                                <Puzzle />
-                                <span>Browse Marketplace</span>
+                        <div className="flex gap-3">
+                            <Button onClick={() => {}} variant="outline">
+                                <Puzzle className="mr-2" />
+                                <span>Coming in Phase 2</span>
                             </Button>
                         </div>
                     </div>
-                </section>
+                </section> */}
 
                 {/* Placeholder for other settings */}
                 <section className="mb-8">
@@ -480,8 +481,10 @@ function SettingsPage() {
                     </div>
                 )}
 
-                {/* Plugin Marketplace Dialog */}
-                {showPluginMarketplace && (
+                {/* ═══════════════════════════════════════════════════════════════
+                    PHASE 1 DETACHMENT: Plugin Marketplace Dialog deferred to Phase 2
+                    ═════════════════════════════════════════════════════════════ */}
+                {/* {showPluginMarketplace && (
                     <div className="fixed inset-0 z-50 bg-background overflow-auto">
                         <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
                             <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -491,7 +494,6 @@ function SettingsPage() {
                                 <Button
                                     onClick={() => setShowPluginMarketplace(false)}
                                     variant="outline"
-                                    className="rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
                                 >
                                     Close
                                 </Button>
@@ -499,7 +501,7 @@ function SettingsPage() {
                         </div>
                         <PluginMarketplace />
                     </div>
-                )}
+                )} */}
 
                 {/* Slash Command Manager Dialog */}
                 {showSlashCommandManager && (

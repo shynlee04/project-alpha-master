@@ -35,9 +35,11 @@ export function PluginMarketplace() {
   const [installingId, setInstallingId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Refresh marketplace on mount only (NOT on refreshMarketplace change to avoid infinite loop)
   useEffect(() => {
     refreshMarketplace();
-  }, [refreshMarketplace]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const categories = Array.from(new Set(entries.map((e) => e.category)));
 

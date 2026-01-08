@@ -25,19 +25,38 @@
 # Reality: Basic features INACCESSIBLE
 
 current_workflow: "phase-1-foundation-2026-01-08"
-current_story: "P1-08"
+current_story: "P1-14"
 phase: "PHASE_1_FOUNDATION"
-last_updated: "2026-01-08T20:18:00+07:00"
-health_score: 35
+last_updated: "2026-01-09T01:49:00+07:00"
+health_score: 65  # Improved: Settings fixed, core routes working
 
 # Active Sprint:
 active_sprint:
   id: "phase-1-foundation-2026-01-08"
   status_file: "_bmad-output/sprint-artifacts/phase-1-sprint-status-2026-01-08.yaml"
   epics_file: "_bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md"
-  total_stories: 12
+  gap_analysis_file: "_bmad-output/sprint-artifacts/phase-1-gap-analysis-2026-01-09.md"
+  total_stories: 14  # Updated: Added P1-13, P1-14
+  stories_done: 13
   stories_in_progress: 1
-  next_story: "P1-08"
+  next_story: "P1-14"
+
+# Gap Identified 2026-01-09:
+gap_analysis:
+  identified_at: "2026-01-09T01:40:00+07:00"
+  identified_by: "Enhanced Code Review + User Feedback"
+  gap_type: "PLANNING_GAP"
+  description: |
+    Sprint Change Proposal missed Settings page as FIRST user journey.
+    Settings contains PluginMarketplace which has infinite loop bug.
+    Users cannot configure API keys if Settings page crashes.
+    This blocks ALL downstream AI features.
+  impact: "P0-CRITICAL - Blocks user journey"
+  corrective_action: "Detached Plugins section from Settings (P1-13)"
+  lessons_learned:
+    - "Map full user journey BEFORE writing stories"
+    - "Settings/Config pages are often FIRST touch point"
+    - "AI features require API key config - always Step 1"
 
 # Active Course Correction:
 active_course_correction:
@@ -53,7 +72,7 @@ active_course_correction:
 # ═══════════════════════════════════════════════════════════════════════════
 # PHASED REMEDIATION - Scaffolded Complexity with Gates
 # Sprint Change Proposal: _bmad-output/project-planning-artifacts/sprint-change-proposal-2026-01-08.md
-# Status: PHASE 1 IN PROGRESS
+# Status: PHASE 1 STORIES COMPLETE - GATE VERIFICATION PENDING
 # ═══════════════════════════════════════════════════════════════════════════
 
 phased_remediation:
@@ -62,17 +81,24 @@ phased_remediation:
   sprint_change_proposal: "_bmad-output/project-planning-artifacts/sprint-change-proposal-2026-01-08.md"
   
   gates:
-    phase_1: PENDING  # Foundation: IDE + Notes work with mobile/desktop paths
+    phase_1: PENDING_VERIFICATION  # Foundation: IDE + Notes + Settings work
     phase_2: PENDING  # Persistence: DexieDB re-attached
     phase_3: PENDING  # Advanced: AI features, vault integration
     phase_4: PENDING  # Architecture: Clean arch, store splitting
   
   phase_1:
     name: "Foundation (Simplified Routing + Full Workspace Capability)"
-    objective: "IDE and Notes work FULLY with clear mobile/desktop paths"
+    objective: "IDE, Notes, AND Settings work FULLY with clear mobile/desktop paths"
     duration: "3-4 days"
-    status: "IN_PROGRESS"
+    status: "STORIES_COMPLETE_GATE_PENDING"
     started_at: "2026-01-08T20:03:00+07:00"
+    gap_fixed_at: "2026-01-09T01:42:00+07:00"
+    
+    # CORRECTED: Settings was missed in original plan
+    corrected_scope: |
+      Original scope missed Settings page as first user journey.
+      Added P1-13 (Plugin decouple) and P1-14 (Full Settings simplify).
+      Settings is the GATEWAY to API key configuration.
     
     stories:
       P1-01:

@@ -323,7 +323,7 @@ export function usePluginMarketplace(): UsePluginMarketplaceReturn {
   const setFilterSearch = useSetFilterSearch();
   const setIsLoadingMarketplace = useSetIsLoadingMarketplace();
   const setError = useSetPluginError();
-  const { installPlugin } = usePluginOperations();
+  const addPlugin = useAddPlugin();
 
   // Refresh marketplace (placeholder for future API)
   const refreshMarketplace = useCallback(async () => {
@@ -345,7 +345,7 @@ export function usePluginMarketplace(): UsePluginMarketplaceReturn {
     }
   }, [setIsLoadingMarketplace, setError]);
 
-  // Install from marketplace
+  // Install from marketplace - directly use PluginManager to avoid hook nesting
   const installFromMarketplace = useCallback(
     async (entry: PluginMarketplaceEntry) => {
       // For built-in plugins, the manifest is embedded
@@ -355,9 +355,32 @@ export function usePluginMarketplace(): UsePluginMarketplaceReturn {
         throw new Error('Plugin manifest not found');
       }
 
-      return installPlugin(manifest);
+      setIsLoadingMarketplace(true);
+      setError(null);
+
+      try {
+        const pluginId = await PluginManager.install({
+          source: 'marketplace',
+          manifest,
+          autoActivate: false,
+        });
+
+        // Refresh plugins list
+        const allPlugins = await PluginManager.getAllPlugins();
+        for (const plugin of allPlugins) {
+          addPlugin(plugin);
+        }
+
+        return pluginId;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to install plugin';
+        setError(message);
+        throw error;
+      } finally {
+        setIsLoadingMarketplace(false);
+      }
     },
-    [installPlugin]
+    [setIsLoadingMarketplace, setError, addPlugin]
   );
 
   return {

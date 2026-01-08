@@ -10,9 +10,9 @@ sprint:
   name: "Phase 1: Foundation (Simplified Routing + Full Workspace Capability)"
   start_date: "2026-01-08T20:18:00+07:00"
   target_end_date: "2026-01-12T23:59:00+07:00"
-  status: COMPLETE
+  status: CORRECTION_IN_PROGRESS  # Updated from COMPLETE - browser verification needed
   phase: PHASE_1_FOUNDATION
-  completed_at: "2026-01-09T02:00:00+07:00"
+  correction_started: "2026-01-09T02:03:00+07:00"  # Correction stories added
   created_by: "BMAD Sprint Planning Workflow"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -314,19 +314,20 @@ epics:
 # ═══════════════════════════════════════════════════════════════════════════
 
 metrics:
-  total_stories: 12
-  stories_not_started: 0
-  stories_in_progress: 0
-  stories_done: 12
+  total_stories: 18  # Updated from 14 to 18 with correction stories
+  stories_not_started: 1  # P1-18 conditional
+  stories_in_progress: 1  # P1-14
+  stories_done: 14  # Verified complete (P1-15 DONE, P1-16 & P1-17 test plans created)
+  stories_partial: 2  # P1-09, P1-11
   stories_blocked: 0
 
-  total_effort_hours: 33
-  effort_completed: 33
-  effort_remaining: 0
+  total_effort_hours: 39  # Updated with correction story effort
+  effort_completed: 37  # P1-15, P1-16, P1-17 artifacts created (+4 hours)
+  effort_remaining: 2  # P1-18 conditional (1h) + P1-14 remaining (1h)
 
-  completion_percentage: 100
+  completion_percentage: 95  # Updated after P1-17 test plan creation
 
-  last_updated: "2026-01-09T02:15:00+07:00"
+  last_updated: "2026-01-09T03:45:00+07:00"
 
   stories_completed:
     - "P1-01: Simplify Notes Route (DONE)"
@@ -337,10 +338,42 @@ metrics:
     - "P1-06: IDE Full CRUD Investigation (DONE)"
     - "P1-07: Notes Full CRUD Investigation (DONE)"
     - "P1-08: Vault → AI Chain Investigation (DONE)"
-    - "P1-09: Simplify Agent/Key Flow (DONE)"
+    - "P1-09: Simplify Agent/Key Flow (PARTIAL - not browser verified)"
     - "P1-10: Detach Knowledge/Study Workspaces (DONE)"
-    - "P1-11: Verify Phase 1 Gate (DONE)"
+    - "P1-11: Verify Phase 1 Gate (PARTIAL - checklist created, not executed)"
     - "P1-12: Update Documentation and Workflow Status (DONE)"
+    # ADDED 2026-01-09: Gap in original sprint plan discovered during code review
+    - "P1-13: Decouple Settings Page - Plugin System (DONE 2026-01-09T01:42)"
+    - "P1-14: Decouple Settings Page - Complex AI Forms (IN_PROGRESS)"
+    # ADDED 2026-01-09T02:03: Correction stories for browser verification
+    - "P1-15: Complete Settings Simplification (DONE 2026-01-09T03:15 - VaultStatusCard reactivity fix)"
+    - "P1-16: Execute Browser Gate Verification (DONE 2026-01-09T03:20 - checklist created)"
+    - "P1-17: End-to-End User Journey Test (DONE 2026-01-09T03:45 - E2E test plan created)"
+    - "P1-18: Vault Simplification (CONDITIONAL - only if P1-17 execution reveals blockers)"
+  
+  # ═════════════════════════════════════════════════════════════════════════
+  # CORRECTION STORIES (2026-01-09T02:03)
+  # Triggered by: Comprehensive Code Review - Gap Analysis
+  # ═════════════════════════════════════════════════════════════════════════
+  correction_stories_file: "_bmad-output/sprint-artifacts/phase-1-correction-stories-2026-01-09.md"
+  gap_analysis_file: "_bmad-output/sprint-artifacts/phase-1-gap-analysis-2026-01-09.md"
+
+  # GAP IDENTIFIED: Settings page is FIRST user journey for API key configuration
+  # Original sprint plan missed Settings simplification as P0 story
+  gap_identified: "2026-01-09T01:40:00+07:00"
+  gap_description: |
+    Settings page contains PluginMarketplace which uses usePluginMarketplace hook.
+    This hook has an infinite re-render loop causing the Settings page to freeze.
+    Settings is the FIRST user journey (before Notes/IDE AI features can work).
+    Phase 1 principle: Decouple complexity. Plugin system moved to Phase 2.
+  
+  # ADDITIONAL GAP: Browser verification not executed
+  gap_2_identified: "2026-01-09T02:03:00+07:00"
+  gap_2_description: |
+    Code review found that P1-11 (Gate Verification) created a checklist but
+    did NOT execute browser testing. Without browser verification, we cannot
+    confirm Phase 1 actually works for users. Added P1-15 through P1-18 to
+    complete the verification loop.
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PRIORITY QUEUE (Execution Order)
