@@ -22,10 +22,13 @@ import { Button } from '@/presentation/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { ProviderSettings } from '@/presentation/components/agent/ProviderSettings';
+import { VaultStatusCard } from '@/presentation/components/agent/VaultStatusCard';
 import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
 import { SettingsExportDialog } from '@/presentation/components/settings/SettingsExportDialog';
 import { SettingsImportDialog } from '@/presentation/components/settings/SettingsImportDialog';
 import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
+import { SlashCommandManager } from '@/presentation/components/notes/SlashCommandManager';
+import { Sparkles } from 'lucide-react';
 import { AnalyticsDashboard } from '@/presentation/components/analytics';
 import { PluginMarketplace } from '@/presentation/components/plugins';
 import { useAllProjects } from '@/infrastructure/persistence/stores/project';
@@ -42,6 +45,7 @@ function SettingsPage() {
     const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
     const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
     const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
+    const [showSlashCommandManager, setShowSlashCommandManager] = useState(false);
     const [showAnalytics, setShowAnalytics] = useState(false);
     const [showPluginMarketplace, setShowPluginMarketplace] = useState(false);
     // const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null); // TODO: For future implementation
@@ -125,6 +129,11 @@ function SettingsPage() {
 
                     <div className="mb-8">
                         <ProviderSettings />
+                    </div>
+
+                    {/* P1-09: Vault Status Card - Shows vault initialization and migration status */}
+                    <div className="mb-8">
+                        <VaultStatusCard />
                     </div>
 
                     <div className={cn(
@@ -241,6 +250,48 @@ function SettingsPage() {
                             isMobile && 'text-[11px]'
                         )}>
                             Tip: Use <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Cmd+Shift+S</kbd> in the editor to open the snippet browser
+                        </p>
+                    </div>
+                </section>
+
+                {/* AI Commands Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        AI Commands (Notes)
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Create custom AI slash commands for the Notes workspace.
+                            Add your own prompts with bilingual support (EN/VI).
+                        </p>
+
+                        <Button
+                            onClick={() => setShowSlashCommandManager(true)}
+                            variant="primary"
+                            className={cn(
+                                'gap-2 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <Sparkles />
+                            <span>Manage AI Commands</span>
+                        </Button>
+
+                        <p className={cn(
+                            'text-xs text-muted-foreground mt-3',
+                            isMobile && 'text-[11px]'
+                        )}>
+                            Tip: Type <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">/</kbd> in Notes to see your commands
                         </p>
                     </div>
                 </section>
@@ -447,6 +498,30 @@ function SettingsPage() {
                             </div>
                         </div>
                         <PluginMarketplace />
+                    </div>
+                )}
+
+                {/* Slash Command Manager Dialog */}
+                {showSlashCommandManager && (
+                    <div className="fixed inset-0 z-50 bg-background overflow-auto">
+                        <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
+                            <div className="max-w-4xl mx-auto flex items-center justify-between">
+                                <h2 className="text-xl font-bold font-mono text-foreground flex items-center gap-2">
+                                    <Sparkles className="w-5 h-5 text-primary" />
+                                    AI Commands Manager
+                                </h2>
+                                <Button
+                                    onClick={() => setShowSlashCommandManager(false)}
+                                    variant="outline"
+                                    className="rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+                                >
+                                    Close
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="max-w-4xl mx-auto p-4">
+                            <SlashCommandManager />
+                        </div>
                     </div>
                 )}
             </div>

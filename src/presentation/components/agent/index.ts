@@ -51,6 +51,8 @@ export type { AgentFormData } from './hooks';
 // Agent Settings Components
 export { ProviderSettings } from './ProviderSettings';
 export { PreferenceSettings } from './PreferenceSettings';
+export { VaultStatusCard } from './VaultStatusCard';
+export type { VaultStatusCardProps } from './VaultStatusCard';
 
 // Permission and Tool Management
 export { ToolPermissionsConfig } from './ToolPermissionsConfig';

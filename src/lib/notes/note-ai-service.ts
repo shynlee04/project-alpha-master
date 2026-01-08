@@ -117,14 +117,18 @@ async function generateWithAgent(
         const providers = useAppStore.getState().providers;
         const provider = providers?.find((p: any) => p.id === agent.providerId);
         if (provider && 'apiKey' in provider && provider.apiKey) {
-            apiKey = provider.apiKey;
+            // Cast apiKey to string for legacy migration path
+            const legacyKey = String(provider.apiKey);
+            apiKey = legacyKey;
             console.log('[NoteAIService] Using legacy API key from provider store');
             // Auto-migrate to vault
-            try {
-                await credentialVault.storeCredentials(agent.providerId, apiKey);
-                console.log('[NoteAIService] Auto-migrated API key to vault');
-            } catch (e) {
-                console.warn('[NoteAIService] Failed to auto-migrate:', e);
+            if (apiKey) {
+                try {
+                    await credentialVault.storeCredentials(agent.providerId, apiKey);
+                    console.log('[NoteAIService] Auto-migrated API key to vault');
+                } catch (e) {
+                    console.warn('[NoteAIService] Failed to auto-migrate:', e);
+                }
             }
         }
     }
