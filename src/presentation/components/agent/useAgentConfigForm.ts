@@ -9,7 +9,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { Agent } from '@/core/entities/Agent'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
 import { toast } from 'sonner'
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
@@ -37,7 +37,7 @@ function mapProviderNameToId(providerName: string): string {
 }
 
 interface UseAgentConfigFormProps {
-    agent?: Agent
+    agent?: AgentData
     open: boolean
 }
 
@@ -82,7 +82,7 @@ interface UseAgentConfigFormReturn {
     // Actions
     validateForm: () => boolean
     handleCancel: () => void
-    handleSubmit: (onSuccess?: (agent: Agent) => void, onOpenChange?: (open: boolean) => void) => Promise<void>
+    handleSubmit: (onSuccess?: (agent: AgentData) => void, onOpenChange?: (open: boolean) => void) => Promise<void>
     handleProviderChange: (value: string) => void
     handleModelChange: (value: string) => void
     resetForm: () => void
@@ -101,7 +101,7 @@ export function useAgentConfigForm({
     const updateAgent = useAppStore(s => s.updateAgent)
 
     // Ref to track agent being edited (for model restoration after loadModels)
-    const editingAgentRef = useRef<Agent | undefined>(undefined)
+    const editingAgentRef = useRef<AgentData | undefined>(undefined)
 
     // Form state
     const [name, setName] = useState('')
@@ -275,7 +275,7 @@ export function useAgentConfigForm({
     /**
      * Handle form submission
      */
-    const handleSubmit = useCallback(async (onSuccess?: (agent: Agent) => void, onOpenChange?: (open: boolean) => void) => {
+    const handleSubmit = useCallback(async (onSuccess?: (agent: AgentData) => void, onOpenChange?: (open: boolean) => void) => {
         if (!validateForm()) return
 
         setIsSubmitting(true)
@@ -295,6 +295,7 @@ export function useAgentConfigForm({
                 description: description.trim() || 'AI Assistant',
                 providerId: providerId,
                 modelId: providerId === 'openai-compatible' ? customModelId : modelId,
+                model: providerId === 'openai-compatible' ? customModelId : modelId,
                 // LLM Parameters (required per Sprint Change Proposal v2.0)
                 temperature,
                 maxTokens,
@@ -315,7 +316,7 @@ export function useAgentConfigForm({
 
             safeDebug('[useAgentConfigForm] Saving agent:', sanitizeForLogging(agentData))
 
-            let savedAgent: Agent | undefined
+            let savedAgent: AgentData | undefined
 
             if (agent) {
                 // Update existing

@@ -16,7 +16,8 @@
  * - Type-safe workspace checking
  */
 
-import type { AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission';
 import type { ToolPermissionManager, PermissionCheckResult } from './tool-permission-manager';
 
 /**
@@ -78,8 +79,8 @@ export class WorkspacePermissionManager {
    */
   public checkWorkspacePermission(
     toolId: string,
-    agentTools: AgentToolBinding[],
-    agentBindings: WorkspaceBinding[],
+    agentTools: AgentToolBindingProps[],
+    agentBindings: WorkspaceBindingProps[],
     currentWorkspace: WorkspaceType
   ): WorkspacePermissionCheckResult {
     // Step 1: Check agent availability in workspace
@@ -163,8 +164,8 @@ export class WorkspacePermissionManager {
    * @returns Array of available tools with metadata
    */
   public getToolsForWorkspace(
-    agentTools: AgentToolBinding[],
-    agentBindings: WorkspaceBinding[],
+    agentTools: AgentToolBindingProps[],
+    agentBindings: WorkspaceBindingProps[],
     workspace: WorkspaceType
   ): ToolAvailability[] {
     const available: ToolAvailability[] = [];
@@ -214,7 +215,7 @@ export class WorkspacePermissionManager {
    * Check if agent is available in a workspace
    */
   public isAgentAvailableInWorkspace(
-    agentBindings: WorkspaceBinding[],
+    agentBindings: WorkspaceBindingProps[],
     workspace: WorkspaceType
   ): boolean {
     const binding = agentBindings.find(b => b.workspaceType === workspace);
@@ -225,7 +226,7 @@ export class WorkspacePermissionManager {
    * Get workspace UI variant for agent
    */
   public getWorkspaceUIVariant(
-    agentBindings: WorkspaceBinding[],
+    agentBindings: WorkspaceBindingProps[],
     workspace: WorkspaceType
   ): 'full' | 'compact' | 'minimal' {
     const binding = agentBindings.find(b => b.workspaceType === workspace);
@@ -241,14 +242,14 @@ export class WorkspacePermissionManager {
    * - unavailable: Tools not available at all (agent doesn't have them)
    */
   public categorizeToolsByWorkspace(
-    agentTools: AgentToolBinding[],
+    agentTools: AgentToolBindingProps[],
     workspace: WorkspaceType
   ): {
-    enabled: AgentToolBinding[];
-    disabled: AgentToolBinding[];
+    enabled: AgentToolBindingProps[];
+    disabled: AgentToolBindingProps[];
   } {
-    const enabled: AgentToolBinding[] = [];
-    const disabled: AgentToolBinding[] = [];
+    const enabled: AgentToolBindingProps[] = [];
+    const disabled: AgentToolBindingProps[] = [];
 
     for (const tool of agentTools) {
       const hasPermission = tool.workspacePermissions[workspace] ?? false;
@@ -269,7 +270,7 @@ export class WorkspacePermissionManager {
    * Ensures all 4 workspace types are present in workspacePermissions
    */
   public validateWorkspacePermissions(
-    toolBinding: AgentToolBinding
+    toolBinding: AgentToolBindingProps
   ): {
     valid: boolean;
     missing: WorkspaceType[];

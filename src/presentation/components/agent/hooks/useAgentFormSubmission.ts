@@ -12,7 +12,8 @@ import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
-import type { Agent } from '@/core/entities/Agent'
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding'
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission'
 import { safeDebug, sanitizeForLogging } from '@/lib/utils/security'
 
 export interface UseAgentFormSubmissionProps {
@@ -36,8 +37,8 @@ export interface UseAgentFormSubmissionProps {
         topP: number
         topK: number | undefined
         systemPrompt: string
-        tools: Agent['tools']
-        workspaceBindings: Agent['workspaceBindings']
+        tools: AgentToolBindingProps[]
+        workspaceBindings: WorkspaceBindingProps[]
     }
 }
 
@@ -80,6 +81,7 @@ export function useAgentFormSubmission({
                 name: formData.name.trim(),
                 description: formData.description.trim(),
                 providerId: formData.providerId,
+                model: effectiveModelId, // Required by AgentProps
                 modelId: effectiveModelId,
                 // LLM Parameters (required per Sprint Change Proposal v2.0)
                 temperature: formData.temperature,

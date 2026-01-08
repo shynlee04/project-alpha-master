@@ -40,7 +40,7 @@ import { detectWorkspace } from '@/lib/workspace/workspace-detector';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 
 /**
  * Props for UnifiedAgentSelector
@@ -59,13 +59,13 @@ export interface UnifiedAgentSelectorProps {
   disabled?: boolean;
 
   /** Callback when agent is selected (optional) */
-  onSelectAgent?: (agent: Agent) => void;
+  onSelectAgent?: (agent: AgentData) => void;
 }
 
 /**
  * Get status color for agent
  */
-function getStatusColor(status: Agent['status']): string {
+function getStatusColor(status: AgentData['status']): string {
   switch (status) {
     case 'online':
       return 'bg-green-500 shadow-colored-success';
@@ -387,7 +387,7 @@ export function UnifiedAgentSelector({
                 )}
               </div>
               <div className="text-[10px] text-slate-400 truncate">
-                {agent.modelId.split('/').pop()}
+                {agent.modelId?.split('/').pop() || agent.modelId}
               </div>
             </div>
           </SelectItem>

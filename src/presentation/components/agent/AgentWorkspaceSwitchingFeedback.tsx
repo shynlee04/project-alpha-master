@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { Loader2, CheckCircle, AlertCircle, Bot, ArrowRight } from 'lucide-react';
 import { Badge } from '@/presentation/components/ui/badge';
 import { cn } from '@/lib/utils';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
@@ -65,8 +65,8 @@ interface TransitionState {
   isTransitioning: boolean;
   from: WorkspaceType | null;
   to: WorkspaceType | null;
-  availableAgents: Agent[];
-  selectedAgent: Agent | null;
+  availableAgents: AgentData[];
+  selectedAgent: AgentData | null;
   phase: 'starting' | 'filtering' | 'selecting' | 'complete' | 'error';
   error: string | null;
 }

@@ -35,7 +35,7 @@ import { AITransformMenu } from './AITransformMenu';
 import { MultiModalImport } from './MultiModalImport';
 import { VoiceRecordButton } from './VoiceRecordButton';
 import { SuggestionMenuController } from '@blocknote/react';
-import { filterSuggestionItems } from '@blocknote/core/extensions';
+// filterSuggestionItems has been removed from @blocknote, using inline filter instead
 
 import './NoteEditor.css';
 
@@ -307,9 +307,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                         triggerCharacter="/"
                         getItems={async (query) =>
                             // Gets all default slash menu items and our custom item.
-                            filterSuggestionItems(
-                                getCustomSlashMenuItems(editor),
-                                query
+                            getCustomSlashMenuItems(editor).filter((item) =>
+                                item.title.toLowerCase().includes(query.toLowerCase())
                             )
                         }
                     />

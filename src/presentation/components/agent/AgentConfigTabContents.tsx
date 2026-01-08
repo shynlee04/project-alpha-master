@@ -16,7 +16,7 @@ import { AgentModelSelector } from './AgentConfigForm/AgentModelSelector';
 import { AgentAdvancedSettingsTab } from './AgentConfigForm/AgentAdvancedSettingsTab';
 import { WorkspaceToolPermissionsConfig } from './WorkspaceToolPermissionsConfig';
 import { ToolTrustLevelManager } from './ToolTrustLevelManager';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 
 interface BasicTabContentProps {
     name: string;
@@ -32,7 +32,7 @@ interface BasicTabContentProps {
 }
 
 interface WorkspaceTabContentProps {
-    agent: Agent | null;
+    agent: AgentData | null;
     onPermissionsChange: (toolId: string, workspaceType: string, isEnabled: boolean) => void;
 }
 

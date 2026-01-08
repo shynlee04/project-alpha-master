@@ -24,7 +24,7 @@
 
 import { Shield } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Agent } from '@/core/entities/Agent'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types'
 import { Badge } from '@/presentation/components/ui/badge'
 import {
@@ -56,7 +56,7 @@ const WORKSPACE_DESCRIPTIONS: Record<WorkspaceType, string> = {
  */
 export interface WorkspaceToolPermissionsConfigProps {
     /** Agent to configure permissions for */
-    agent: Agent
+    agent: AgentData
 
     /** Callback when permissions change */
     onPermissionsChange: (
@@ -143,7 +143,7 @@ export function WorkspaceToolPermissionsConfig({
  * Displays a compact summary of tool permissions across workspaces.
  */
 export interface WorkspacePermissionsSummaryProps {
-    agent: Agent
+    agent: AgentData
     className?: string
 }
 

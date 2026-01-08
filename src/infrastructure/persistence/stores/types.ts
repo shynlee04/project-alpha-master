@@ -8,7 +8,7 @@
  * @story AC-1.7 - Create single bounded store
  */
 
-import type { AgentStatus } from '@/domain/entities/agent';
+import type { AgentProps, AgentStatus } from '@/domain/entities/agent';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
 import type {
@@ -26,7 +26,7 @@ import type { AgentData } from './agents/types';
 /**
  * Agent Props for creating agents (without auto-generated fields)
  */
-export type AgentCreateProps = Omit<AgentData, 'id' | 'createdAt' | 'updatedAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>;
+export type AgentCreateProps = Omit<AgentProps, 'id' | 'createdAt' | 'updatedAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>;
 
 /**
  * Agent CRUD State
@@ -174,13 +174,13 @@ export interface ProviderState {
   isLoadingModels: Record<string, boolean>;
 
   /** Add a new provider configuration */
-  addProvider: (provider: Omit<ProviderConfig, 'id'>) => ProviderConfig;
+  addProvider: (config: ProviderConfig) => void;
 
   /** Update an existing provider configuration */
   updateProvider: (id: string, updates: Partial<ProviderConfig>) => void;
 
-  /** Remove a provider configuration */
-  removeProvider: (id: string) => Promise<void>;
+  /** Remove a provider configuration (with optional agents array for dependency checking) */
+  removeProvider: (id: string, agents?: any[]) => Promise<void>;
 
   /** Set the active provider */
   setActiveProvider: (id: string) => void;
@@ -189,13 +189,13 @@ export interface ProviderState {
   fetchModels: (providerId: string) => Promise<void>;
 
   /** Load models for a provider from cache or API */
-  loadModelsForProvider: (providerId: string) => Promise<ModelInfo[]>;
+  loadModelsForProvider: (providerId: string) => Promise<void>;
 
   /** Update model settings for a provider */
   updateModelSettings: (providerId: string, settings: Partial<ModelSettings>) => void;
 
   /** Get available models (with caching) */
-  getAvailableModels: () => Record<string, ModelInfo[]>;
+  getAvailableModels: (providerId: string) => ModelInfo[];
 
   /** Get selected model ID for a provider */
   getSelectedModel: (providerId: string) => string | null;

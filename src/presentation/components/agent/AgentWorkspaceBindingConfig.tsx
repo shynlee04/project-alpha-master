@@ -21,7 +21,7 @@ import { Label } from '@/presentation/components/ui/label';
 import { Checkbox } from '@/presentation/components/ui/checkbox';
 import { Badge } from '@/presentation/components/ui/badge';
 import { cn } from '@/lib/utils';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 
 /**
@@ -74,7 +74,7 @@ export const WORKSPACE_CONFIGS: WorkspaceConfig[] = [
  */
 export interface AgentWorkspaceBindingConfigProps {
   /** Agent to configure */
-  agent: Agent;
+  agent: AgentData;
 
   /** Callback when binding changes */
   onBindingChange?: (agentId: string, workspaceType: string, isAvailable: boolean) => void;
@@ -320,7 +320,7 @@ export function WorkspaceTypeBadge({
  * Displays a compact summary of agent workspace availability.
  */
 export interface WorkspaceAvailabilitySummaryProps {
-  agent: Agent;
+  agent: AgentData;
   className?: string;
 }
 

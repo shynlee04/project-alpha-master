@@ -5,19 +5,23 @@
  * @roadmap Replace with real API in Epic 25 (AI Foundation)
  * @see _bmad-output/epics/shards/epic-25-ai-foundation.md
  *
- * REFACTORED: Types now imported from src/core/entities (single source of truth)
+ * REFACTORED: Types now imported as Props (plain objects) for store compatibility
  */
 
-// Import domain entities as single source of truth
-import type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
+// Import Props types (plain objects) for store compatibility
+import type { AgentProps } from '@/domain/entities/agent';
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
 
 // Re-export for external consumers
-export type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
+export type { AgentProps } from '@/domain/entities/agent';
+export type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission';
+export type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
 
 /**
  * Default tools available for agents
  */
-export const DEFAULT_TOOLS: AgentToolBinding[] = [
+export const DEFAULT_TOOLS: AgentToolBindingProps[] = [
     {
         toolId: 'file-read',
         toolName: 'Read Files',
@@ -47,7 +51,7 @@ export const DEFAULT_TOOLS: AgentToolBinding[] = [
 /**
  * Default workspace bindings (available everywhere)
  */
-export const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
+export const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBindingProps[] = [
     { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
     { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
     { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
@@ -60,7 +64,7 @@ export const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
  * IMMUTABLE CONTRACT: Must match Sprint Change Proposal v2.0 specification
  * TODO: Replace with TanStack Query + API in Epic 25
  */
-export const mockAgents: Agent[] = [
+export const mockAgents: AgentProps[] = [
     {
         id: 'agt_001',
         name: 'Coder-Alpha-V2',
@@ -68,6 +72,7 @@ export const mockAgents: Agent[] = [
 
         // Provider + Model reference (foreign keys)
         providerId: 'anthropic',
+        model: 'claude-3-5-sonnet-20241022',
         modelId: 'claude-3-5-sonnet-20241022',
 
         // LLM Parameters
@@ -84,7 +89,8 @@ export const mockAgents: Agent[] = [
         successRate: 98.5,
         tokensUsed: 1_250_000,
         lastActive: new Date().toISOString(),
-        createdAt: '2024-11-15T10:00:00Z',
+        createdAt: new Date('2024-11-15T10:00:00Z').getTime(),
+        updatedAt: new Date('2024-11-15T10:00:00Z').getTime(),
     },
     {
         id: 'agt_002',
@@ -93,6 +99,7 @@ export const mockAgents: Agent[] = [
 
         // Provider + Model reference
         providerId: 'openai',
+        model: 'gpt-4-turbo',
         modelId: 'gpt-4-turbo',
 
         // LLM Parameters
@@ -109,7 +116,8 @@ export const mockAgents: Agent[] = [
         successRate: 96.2,
         tokensUsed: 890_000,
         lastActive: new Date(Date.now() - 300000).toISOString(),
-        createdAt: '2024-10-20T14:30:00Z',
+        createdAt: new Date('2024-10-20T14:30:00Z').getTime(),
+        updatedAt: new Date('2024-10-20T14:30:00Z').getTime(),
     },
     {
         id: 'agt_003',
@@ -118,6 +126,7 @@ export const mockAgents: Agent[] = [
 
         // Provider + Model reference
         providerId: 'anthropic',
+        model: 'claude-3-opus-20240229',
         modelId: 'claude-3-opus-20240229',
 
         // LLM Parameters
@@ -134,7 +143,8 @@ export const mockAgents: Agent[] = [
         successRate: 99.1,
         tokensUsed: 2_100_000,
         lastActive: new Date(Date.now() - 60000).toISOString(),
-        createdAt: '2024-09-05T08:15:00Z',
+        createdAt: new Date('2024-09-05T08:15:00Z').getTime(),
+        updatedAt: new Date('2024-09-05T08:15:00Z').getTime(),
     },
     {
         id: 'agt_004',
@@ -143,6 +153,7 @@ export const mockAgents: Agent[] = [
 
         // Provider + Model reference
         providerId: 'mistral',
+        model: 'mistral-large-latest',
         modelId: 'mistral-large-latest',
 
         // LLM Parameters
@@ -159,7 +170,8 @@ export const mockAgents: Agent[] = [
         successRate: 94.8,
         tokensUsed: 670_000,
         lastActive: new Date(Date.now() - 86400000).toISOString(),
-        createdAt: '2024-12-01T16:45:00Z',
+        createdAt: new Date('2024-12-01T16:45:00Z').getTime(),
+        updatedAt: new Date('2024-12-01T16:45:00Z').getTime(),
     },
     {
         id: 'agt_005',
@@ -168,6 +180,7 @@ export const mockAgents: Agent[] = [
 
         // Provider + Model reference
         providerId: 'google',
+        model: 'gemini-2.0-flash-exp',
         modelId: 'gemini-2.0-flash-exp',
 
         // LLM Parameters
@@ -184,7 +197,8 @@ export const mockAgents: Agent[] = [
         successRate: 97.3,
         tokensUsed: 1_450_000,
         lastActive: new Date(Date.now() - 120000).toISOString(),
-        createdAt: '2024-11-28T11:20:00Z',
+        createdAt: new Date('2024-11-28T11:20:00Z').getTime(),
+        updatedAt: new Date('2024-11-28T11:20:00Z').getTime(),
     },
     {
         id: 'agt_006',
@@ -193,6 +207,7 @@ export const mockAgents: Agent[] = [
 
         // Provider + Model reference
         providerId: 'openai',
+        model: 'gpt-4o',
         modelId: 'gpt-4o',
 
         // LLM Parameters
@@ -209,8 +224,9 @@ export const mockAgents: Agent[] = [
         successRate: 88.5,
         tokensUsed: 320_000,
         lastActive: new Date(Date.now() - 7200000).toISOString(),
-        createdAt: '2024-12-10T09:00:00Z',
+        createdAt: new Date('2024-12-10T09:00:00Z').getTime(),
+        updatedAt: new Date('2024-12-10T09:00:00Z').getTime(),
     }
 ]
 
-export type { Agent as MockAgent }
+export type { AgentProps as MockAgent }

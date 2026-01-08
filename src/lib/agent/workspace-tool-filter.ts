@@ -15,7 +15,6 @@
  * - Minimal runtime overhead
  */
 
-import type { AgentToolBinding } from '@/core/entities/Agent';
 import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import type { WorkspacePermissionManager } from './workspace-permission-manager';
 import type { Tool } from '@tanstack/ai';

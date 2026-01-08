@@ -21,7 +21,7 @@ import { Button } from '@/presentation/components/ui/button'
 import { StreamdownRenderer } from './StreamdownRenderer'
 import { UnifiedAgentSelector } from '../agent/UnifiedAgentSelector'
 import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/useConversationStore'
-import type { Agent } from '@/mocks/agents'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 import { useTranslation } from 'react-i18next'
 import { List } from 'react-window'
 import { TruncatedText } from '@/presentation/components/ui/truncated-text'
@@ -152,9 +152,9 @@ function TypingIndicator() {
  */
 interface ChatConversationProps {
     thread: ConversationThread;
-    agents: Agent[];
-    selectedAgent: Agent | null;
-    onSelectAgent: (agent: Agent) => void;
+    agents: AgentData[];
+    selectedAgent: AgentData | null;
+    onSelectAgent: (agent: AgentData) => void;
     onSendMessage: (content: string) => void;
     onBack: () => void;
     isStreaming?: boolean;

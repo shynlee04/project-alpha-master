@@ -12,8 +12,8 @@ import { Check, X, Globe, BookOpen, GraduationCap, Layout } from 'lucide-react';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import { WorkspaceTypeUtils } from '@/domain/value-objects/workspace-type';
-import type { AgentToolBinding } from '@/core/entities/Agent';
-import type { WorkspaceBinding } from '@/core/entities/Agent';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission';
 
 /**
  * Workspace icon mapping
@@ -60,8 +60,8 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
     agentId ? state.getAgent(agentId) : null
   );
 
-  const [localBindings, setLocalBindings] = useState<WorkspaceBinding[]>([]);
-  const [localTools, setLocalTools] = useState<AgentToolBinding[]>([]);
+  const [localBindings, setLocalBindings] = useState<WorkspaceBindingProps[]>([]);
+  const [localTools, setLocalTools] = useState<AgentToolBindingProps[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Sync local state with agent from store

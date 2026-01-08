@@ -186,21 +186,8 @@ export class ProviderAdapterFactory {
             ...baseAdapter,
             getModels: async (): Promise<ProviderModel[]> => {
                 const modelInfos = await this.modelRegistry.getModels(providerId, config.apiKey);
-                // Map ModelInfo to ProviderModel
-                return modelInfos.map((info): ProviderModel => ({
-                    id: info.id,
-                    name: info.name,
-                    providerId: info.providerId,
-                    contextWindow: info.contextLength || info.maxTokens || 4096,
-                    maxOutputTokens: info.maxTokens || 4096,
-                    inputModalities: (info.inputModalities || ['text']) as Array<'text' | 'image' | 'audio' | 'video' | 'code'>,
-                    outputModalities: (info.outputModalities || ['text']) as Array<'text' | 'image' | 'audio' | 'video' | 'code'>,
-                    isEnabled: true,
-                    pricing: info.pricing ? {
-                        promptPer1M: info.pricing.prompt,
-                        completionPer1M: info.pricing.completion,
-                    } : undefined,
-                }));
+                // Return ModelInfo objects directly (ProviderModel is an alias for ModelInfo)
+                return modelInfos;
             },
             testConnection: async (): Promise<{ success: boolean; latencyMs: number; error?: string }> => {
                 const result = await this.testConnection(providerId, config.apiKey, {

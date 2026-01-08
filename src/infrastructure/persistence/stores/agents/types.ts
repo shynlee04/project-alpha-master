@@ -38,7 +38,7 @@ export interface AgentCrudState {
   availableModels: Record<string, ModelInfo[]>;
 
   /** Add a new agent (pure CRUD, no validation) */
-  addAgent: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
+  addAgent: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'updatedAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
 
   /** Remove an agent by ID */
   removeAgent: (id: string) => void;
@@ -89,7 +89,7 @@ export interface AgentValidationState {
   validationErrors: Record<string, string[]>;
 
   /** Add agent with validation (wraps addAgent with validation logic) */
-  addAgentValidated: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
+  addAgentValidated: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'updatedAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
 
   /** Update agent with validation (wraps updateAgent with validation logic) */
   updateAgentValidated: (id: string, updates: Partial<AgentProps>) => void;
@@ -104,7 +104,7 @@ export interface AgentValidationState {
 
 export interface AgentEventsState {
   /** Add agent with event emission (wraps addAgent with event emission) */
-  addAgentWithEvent: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
+  addAgentWithEvent: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'updatedAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
 
   /** Remove agent with event emission (wraps removeAgent with event emission) */
   removeAgentWithEvent: (id: string) => void;
@@ -130,11 +130,17 @@ export interface AgentUtilsState {
   /** Get agent by ID */
   getAgent: (id: string) => AgentData | undefined;
 
+  /** Get active agent */
+  getActiveAgent: () => AgentData | undefined;
+
   /** Update agent status */
   updateAgentStatus: (id: string, status: AgentStatus) => void;
 
   /** Get total agents count */
   getAgentsCount: () => number;
+
+  /** Set the active agent */
+  setActiveAgent: (id: string) => void;
 }
 
 // ============================================================================

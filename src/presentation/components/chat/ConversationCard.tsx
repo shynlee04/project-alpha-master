@@ -57,9 +57,9 @@ export interface ConversationCardProps {
 /**
  * Format timestamp to relative time
  */
-function formatTimestamp(timestamp: string): string {
+function formatTimestamp(timestamp: string | number): string {
   try {
-    const date = new Date(timestamp);
+    const date = typeof timestamp === 'number' ? new Date(timestamp) : new Date(timestamp);
     return formatDistanceToNow(date, { addSuffix: true });
   } catch {
     return '';

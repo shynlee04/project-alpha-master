@@ -9,10 +9,10 @@
  * 
  * @see https://webcontainers.io/guides/configuring-headers
  */
-import handler, { createServerEntry } from '@tanstack/react-start/server-entry'
+import handler, { createServerEntry } from '@tanstack/react-start/dist/default-entry/esm/server'
 
 export default createServerEntry({
-    async fetch(request) {
+    async fetch(request: Request) {
         // Get the response from TanStack Start's handler
         const response = await handler.fetch(request)
 

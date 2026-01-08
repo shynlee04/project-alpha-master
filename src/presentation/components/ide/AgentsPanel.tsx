@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { useAgents } from '@/hooks/useAgents'
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
 import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog'
-import type { Agent } from '@/mocks/agents'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 
 /**
  * AgentsPanel - Agent management sidebar panel
@@ -24,7 +24,7 @@ import type { Agent } from '@/mocks/agents'
 export function AgentsPanel({
     onSelectAgent
 }: {
-    onSelectAgent?: (agent: Agent) => void
+    onSelectAgent?: (agent: AgentData) => void
 }) {
     const { t } = useTranslation()
     const { agents, isLoading, refreshAgents } = useAgents()
@@ -32,14 +32,14 @@ export function AgentsPanel({
 
     // Dialog state for agent configuration
     const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false)
-    const [editingAgent, setEditingAgent] = useState<Agent | undefined>(undefined)
+    const [editingAgent, setEditingAgent] = useState<AgentData | undefined>(undefined)
 
     const handleAddAgent = useCallback(() => {
         setEditingAgent(undefined)
         setIsConfigDialogOpen(true)
     }, [])
 
-    const handleEditAgent = useCallback((agent: Agent, e: React.MouseEvent) => {
+    const handleEditAgent = useCallback((agent: AgentData, e: React.MouseEvent) => {
         e.stopPropagation()
         setEditingAgent(agent)
         setIsConfigDialogOpen(true)
@@ -137,7 +137,7 @@ function AgentItem({
     onClick,
     onEdit
 }: {
-    agent: Agent
+    agent: AgentData
     isSelected?: boolean
     onClick?: () => void
     onEdit?: (e: React.MouseEvent) => void
@@ -198,5 +198,5 @@ function AgentItem({
     )
 }
 
-export type { Agent }
+export type { AgentData }
 

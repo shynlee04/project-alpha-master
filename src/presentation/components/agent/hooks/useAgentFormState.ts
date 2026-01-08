@@ -14,7 +14,8 @@ import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
 import { credentialVault } from '@/lib/agent/providers'
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus'
-import type { Agent, AgentToolBinding } from '@/core/entities/Agent'
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding'
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission'
 
 /**
  * Agent form state interface
@@ -38,10 +39,10 @@ export interface AgentFormState {
     enableNativeTools: boolean
 
     // Workspace bindings (WB-8.3)
-    workspaceBindings: Agent['workspaceBindings']
+    workspaceBindings: WorkspaceBindingProps[]
 
     // Tools array (WB-8.3)
-    tools: AgentToolBinding[]
+    tools: AgentToolBindingProps[]
 
     // UI state
     activeTab: 'basic' | 'workspace' | 'advanced'
@@ -65,8 +66,8 @@ export interface AgentFormSetters {
     setCustomModelId: (value: string) => void
     setCustomHeaders: (value: Array<{ key: string; value: string }>) => void
     setEnableNativeTools: (value: boolean) => void
-    setWorkspaceBindings: (value: Agent['workspaceBindings']) => void
-    setTools: (value: AgentToolBinding[]) => void
+    setWorkspaceBindings: (value: WorkspaceBindingProps[]) => void
+    setTools: (value: AgentToolBindingProps[]) => void
     setActiveTab: (value: 'basic' | 'workspace' | 'advanced') => void
     setIsSubmitting: (value: boolean) => void
 }
@@ -95,7 +96,7 @@ export function useAgentFormState(agentId: string | null) {
     const fetchModels = useAppStore(s => s.fetchModels)
 
     // Default workspace bindings (WB-8.3)
-    const defaultWorkspaceBindings: Agent['workspaceBindings'] = [
+    const defaultWorkspaceBindings: WorkspaceBindingProps[] = [
         { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
         { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
         { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
@@ -103,7 +104,7 @@ export function useAgentFormState(agentId: string | null) {
     ]
 
     // Default tools array (WB-8.3)
-    const defaultTools: AgentToolBinding[] = [
+    const defaultTools: AgentToolBindingProps[] = [
         { toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
         { toolId: 'write_file', toolName: 'Write File', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: true } },
         { toolId: 'list_files', toolName: 'List Files', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
@@ -128,10 +129,10 @@ export function useAgentFormState(agentId: string | null) {
     const [customModelId, setCustomModelId] = useState('')
     const [customHeaders, setCustomHeaders] = useState<Array<{ key: string; value: string }>>([])
     const [enableNativeTools, setEnableNativeTools] = useState(true)
-    const [workspaceBindings, setWorkspaceBindings] = useState<Agent['workspaceBindings']>(
+    const [workspaceBindings, setWorkspaceBindings] = useState<WorkspaceBindingProps[]>(
         agent?.workspaceBindings || defaultWorkspaceBindings
     )
-    const [tools, setTools] = useState<AgentToolBinding[]>(agent?.tools || defaultTools)
+    const [tools, setTools] = useState<AgentToolBindingProps[]>(agent?.tools || defaultTools)
     const [activeTab, setActiveTab] = useState<'basic' | 'workspace' | 'advanced'>('basic')
     const [isSubmitting, setIsSubmitting] = useState(false)
 

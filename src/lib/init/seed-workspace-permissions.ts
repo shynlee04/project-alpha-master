@@ -42,6 +42,7 @@ const TEST_AGENT: AgentData = {
 
   // Provider + Model
   providerId: 'google',
+  model: 'gemini-2.5-flash',
   modelId: 'gemini-2.5-flash',
 
   // LLM Parameters
@@ -132,7 +133,8 @@ const TEST_AGENT: AgentData = {
   successRate: 0,
   tokensUsed: 0,
   lastActive: new Date().toISOString(),
-  createdAt: new Date().toISOString(),
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
 };
 
 /**

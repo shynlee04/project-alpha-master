@@ -42,6 +42,7 @@ export const createProviderUtilsSlice: StateCreator<
     // Actions
     updateModelSettings: (providerId: string, settings: Partial<ModelSettings>) => void;
     getAvailableModels: (providerId: string) => ModelInfo[];
+    getSelectedModel: (providerId: string) => string | null;
     setSelectedModel: (modelId: string) => void;
   }
 > = (set, get) => ({
@@ -93,6 +94,20 @@ export const createProviderUtilsSlice: StateCreator<
   setSelectedModel: (modelId: string) => {
     console.log('[ProviderUtilsSlice] Setting selected model:', modelId);
     set({ selectedModelId: modelId });
+  },
+
+  /**
+   * Get selected model for a provider
+   *
+   * Convenience selector to get the selected model for a provider.
+   *
+   * @param providerId - Provider ID
+   * @returns Selected model ID or null
+   */
+  getSelectedModel: (_providerId: string) => {
+    // selectedModelId is stored at top level, not in modelSettings
+    // _providerId unused but kept for API compatibility
+    return get().selectedModelId;
   },
 });
 

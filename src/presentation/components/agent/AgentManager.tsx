@@ -34,7 +34,7 @@ import {
 import { Badge } from '@/presentation/components/ui/badge'
 import { UnifiedAgentSelector } from './UnifiedAgentSelector'
 import { AgentConfigDialog } from './AgentConfigDialog'
-import type { Agent } from '@/core/entities/Agent'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type'
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store'
@@ -72,7 +72,7 @@ interface AgentManagerProps {
   /**
    * Callback when agent is selected
    */
-  onSelectAgent?: (agent: Agent) => void
+  onSelectAgent?: (agent: AgentData) => void
 }
 
 /**
@@ -88,7 +88,7 @@ interface CapabilityIndicators {
 /**
  * Extract capability indicators from agent
  */
-function getCapabilityIndicators(agent: Agent | null): CapabilityIndicators {
+function getCapabilityIndicators(agent: AgentData | null): CapabilityIndicators {
   if (!agent) {
     return { hasTools: false, hasDeepThink: false, hasMemory: false, isDefault: false }
   }
@@ -158,7 +158,7 @@ export function AgentManager({
   }, [eventBus, selectedAgent?.id]);
 
   // Handle agent selection from UnifiedAgentSelector
-  const handleSelectAgent = useCallback((agent: Agent) => {
+  const handleSelectAgent = useCallback((agent: AgentData) => {
     // Local state update removed as store handles it via UnifiedAgentSelector
     onSelectAgent?.(agent)
   }, [onSelectAgent])

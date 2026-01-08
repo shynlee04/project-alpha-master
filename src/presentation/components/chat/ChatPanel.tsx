@@ -19,7 +19,7 @@ import {
 } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { useAgents } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import type { ThreadMessage } from '@/infrastructure/persistence/stores/conversation/types';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
@@ -150,7 +150,7 @@ export function ChatPanel({ projectId, className }: ChatPanelProps) {
     /**
      * Select an agent
      */
-    const handleSelectAgent = useCallback((agent: Agent) => {
+    const handleSelectAgent = useCallback((agent: AgentData) => {
         setActiveAgent(agent.id, 'ide');
     }, [setActiveAgent]);
 

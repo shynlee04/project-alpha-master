@@ -40,6 +40,7 @@ export interface AgentProps {
   modelId?: string; // Alias for model (used by stores)
   systemPrompt: string;
   topP?: number;
+  topK?: number;
   temperature?: number;
   maxTokens?: number;
 
@@ -118,6 +119,7 @@ export class Agent {
   readonly modelId?: string;
   readonly systemPrompt: string;
   readonly topP: number;
+  readonly topK?: number;
   readonly temperature: number;
   readonly maxTokens: number;
 
@@ -163,6 +165,7 @@ export class Agent {
     this.modelId = props.modelId ?? props.model;
     this.systemPrompt = props.systemPrompt;
     this.topP = props.topP ?? 1.0;
+    this.topK = props.topK;
     this.temperature = props.temperature ?? 0.7;
     this.maxTokens = props.maxTokens ?? 4096;
 
@@ -288,6 +291,7 @@ export class Agent {
       modelId: updates.modelId ?? this.modelId,
       systemPrompt: updates.systemPrompt ?? this.systemPrompt,
       topP: updates.topP ?? this.topP,
+      topK: updates.topK ?? this.topK,
       temperature: updates.temperature ?? this.temperature,
       maxTokens: updates.maxTokens ?? this.maxTokens,
       workspaceBindings: updates.workspaceBindings ?? this.workspaceBindings,

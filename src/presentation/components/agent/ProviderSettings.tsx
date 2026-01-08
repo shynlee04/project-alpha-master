@@ -15,7 +15,7 @@ import {
     DialogFooter,
     DialogDescription
 } from '@/presentation/components/ui/dialog';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 
 export function ProviderSettings() {
     // Use individual selectors to prevent infinite re-render loops
@@ -32,7 +32,7 @@ export function ProviderSettings() {
     // Delete Confirmation State
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [providerToDelete, setProviderToDelete] = useState<ProviderConfig | undefined>(undefined);
-    const [dependentAgents, setDependentAgents] = useState<Agent[]>([]);
+    const [dependentAgents, setDependentAgents] = useState<AgentData[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleAdd = () => {

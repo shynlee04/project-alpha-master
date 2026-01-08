@@ -98,7 +98,7 @@ export function MonacoEditor({
     const editorTheme = resolvedTheme === 'dark' ? 'vs-dark' : 'vs';
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-    const monacoRef = useRef<typeof import('monaco-editor') | null>(null);
+    const monacoRef = useRef<typeof import('monaco-editor/esm/vs/editor/editor.api') | null>(null);
     const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const scrollDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const activeFilePathRef = useRef<string | null>(activeFilePath);

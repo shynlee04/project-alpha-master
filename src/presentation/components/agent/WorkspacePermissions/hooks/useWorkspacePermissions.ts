@@ -14,12 +14,12 @@
  */
 
 import { useMemo, useCallback } from 'react'
-import type { Agent } from '@/core/entities/Agent'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types'
 import type { ToolPermission, PermissionChecker, PermissionToggleHandler } from '../types'
 
 export interface UseWorkspacePermissionsParams {
-    agent: Agent
+    agent: AgentData
     onPermissionsChange: (toolId: string, workspaceType: WorkspaceType, isEnabled: boolean) => void
 }
 

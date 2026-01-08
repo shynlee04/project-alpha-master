@@ -17,7 +17,7 @@
 import { AlertTriangle, XCircle } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
-import { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import {
     Dialog,
     DialogContent,
@@ -34,7 +34,7 @@ interface ProviderDeletionWarningDialogProps {
     /** Provider display name */
     providerName: string;
     /** Agents that depend on this provider */
-    dependentAgents: Agent[];
+    dependentAgents: AgentData[];
     /** Callback when user confirms deletion */
     onConfirm: () => Promise<void>;
     /** Callback when user cancels */
