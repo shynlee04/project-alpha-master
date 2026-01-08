@@ -238,21 +238,29 @@ export function useWorkspaceAccess(
 
   // FIX-2026-01-08: Read projects directly from Dexie, NOT from empty Zustand store
   // The Zustand store is never populated - Dexie is the single source of truth
+  // CRITICAL: Do NOT provide a default value - useLiveQuery returns undefined while loading
+  // This is how we distinguish "still loading" from "loaded with no data"
   const projectsFromDexie = useLiveQuery(
-    () => db.projects.toArray(),
-    [],
-    [] // Default to empty array while loading
+    () => db.projects.toArray()
+    // NO default value - undefined means loading
   );
+
+  // FIX-2026-01-08: Distinguish between loading and empty state
+  // useLiveQuery returns undefined while loading, then the array when loaded
+  const isLoading = projectsFromDexie === undefined;
+  const projects = projectsFromDexie ?? [];
 
   // Keep updateProjectBindings from store for mutations
   const updateProjectBindings = useProjectStore((state) => state.updateProjectBindings);
 
   // Filter projects by workspace binding
   const { allProjects, workspaceProjects } = useMemo(() => {
-    const all = projectsFromDexie || [];
+    // Return empty arrays while loading to prevent errors
+    if (isLoading) return { allProjects: [], workspaceProjects: [] };
+    const all = projects;
     const filtered = all.filter((project) => project.bindings?.[workspace] === true);
     return { allProjects: all, workspaceProjects: filtered };
-  }, [projectsFromDexie, workspace]);
+  }, [isLoading, projects, workspace]);
 
   // Find most recent project
   const mostRecentProject = useMemo(() => {
@@ -265,11 +273,13 @@ export function useWorkspaceAccess(
   }, [allProjects]);
 
   // Determine access status
+  // FIX-2026-01-08: Return 'loading' until useLiveQuery resolves to prevent premature effects
   const status: WorkspaceAccessStatus = useMemo(() => {
+    if (isLoading) return 'loading';
     if (workspaceProjects.length > 0) return 'has_projects';
     if (allProjects.length === 0) return 'no_projects';
     return 'no_binding';
-  }, [workspaceProjects.length, allProjects.length]);
+  }, [isLoading, workspaceProjects.length, allProjects.length]);
 
   /**
    * NOTE: Removed auto-redirect to hub when has_projects

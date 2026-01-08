@@ -27,10 +27,7 @@ import {
 import { Button } from '@/presentation/components/ui/button'
 import {
   Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/presentation/components/ui/tooltip'
+} from '@/presentation/components/ui/tooltip-react19-compatible'
 import { Badge } from '@/presentation/components/ui/badge'
 import { UnifiedAgentSelector } from './UnifiedAgentSelector'
 import { AgentConfigDialog } from './AgentConfigDialog'
@@ -197,51 +194,39 @@ export function AgentManager({
     return (
       <div className="flex items-center gap-1.5">
         {capabilities.hasTools && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge variant="outline" className="text-xs px-1.5 py-0.5">
-                  <Zap className="h-3 w-3 mr-1" />
-                  {t('agent.manager.tools', 'Tools')}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{selectedAgent.tools?.length ?? 0} {t('agent.manager.toolsActive', 'tools enabled')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip
+            content={`${selectedAgent.tools?.length ?? 0} ${t('agent.manager.toolsActive', 'tools enabled')}`}
+            side="top"
+          >
+            <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+              <Zap className="h-3 w-3 mr-1" />
+              {t('agent.manager.tools', 'Tools')}
+            </Badge>
+          </Tooltip>
         )}
 
         {capabilities.hasDeepThink && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge variant="outline" className="text-xs px-1.5 py-0.5">
-                  <Brain className="h-3 w-3 mr-1" />
-                  {t('agent.manager.deepThink', 'DeepThink')}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t('agent.manager.deepThinkEnabled', 'Deep thinking mode enabled')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip
+            content={t('agent.manager.deepThinkEnabled', 'Deep thinking mode enabled')}
+            side="top"
+          >
+            <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+              <Brain className="h-3 w-3 mr-1" />
+              {t('agent.manager.deepThink', 'DeepThink')}
+            </Badge>
+          </Tooltip>
         )}
 
         {capabilities.hasMemory && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge variant="outline" className="text-xs px-1.5 py-0.5">
-                  <Info className="h-3 w-3 mr-1" />
-                  {t('agent.manager.memory', 'Memory')}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t('agent.manager.memoryEnabled', 'Conversation memory enabled')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip
+            content={t('agent.manager.memoryEnabled', 'Conversation memory enabled')}
+            side="top"
+          >
+            <Badge variant="outline" className="text-xs px-1.5 py-0.5">
+              <Info className="h-3 w-3 mr-1" />
+              {t('agent.manager.memory', 'Memory')}
+            </Badge>
+          </Tooltip>
         )}
       </div>
     )
@@ -254,75 +239,61 @@ export function AgentManager({
     return (
       <div className="flex items-center gap-1">
         {/* Quick Config Button */}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 w-7 p-0"
-                onClick={handleQuickConfig}
-                disabled={disabled}
-              >
-                <Settings className="h-3.5 w-3.5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{t('agent.manager.quickConfig', 'Configure agent settings')}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip
+          content={t('agent.manager.quickConfig', 'Configure agent settings')}
+          side="top"
+        >
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0"
+            onClick={handleQuickConfig}
+            disabled={disabled}
+          >
+            <Settings className="h-3.5 w-3.5" />
+          </Button>
+        </Tooltip>
 
         {/* Workspace Binding Toggle (full/compact only) */}
         {variant !== 'minimal' && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={handleToggleWorkspaceBinding}
-                  disabled={disabled}
-                >
-                  {capabilities.isDefault ? (
-                    <Check className="h-3.5 w-3.5 text-green-500" />
-                  ) : (
-                    <Shield className="h-3.5 w-3.5" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>
-                  {capabilities.isDefault
-                    ? t('agent.manager.defaultAgent', 'Default agent for this workspace')
-                    : t('agent.manager.makeDefault', 'Set as default agent')}
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip
+            content={capabilities.isDefault
+              ? t('agent.manager.defaultAgent', 'Default agent for this workspace')
+              : t('agent.manager.makeDefault', 'Set as default agent')}
+            side="top"
+          >
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0"
+              onClick={handleToggleWorkspaceBinding}
+              disabled={disabled}
+            >
+              {capabilities.isDefault ? (
+                <Check className="h-3.5 w-3.5 text-green-500" />
+              ) : (
+                <Shield className="h-3.5 w-3.5" />
+              )}
+            </Button>
+          </Tooltip>
         )}
 
         {/* View Details Button (full variant only) */}
         {variant === 'full' && selectedAgent && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={handleViewDetails}
-                  disabled={disabled}
-                >
-                  <Info className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t('agent.manager.viewDetails', 'View agent details and configuration')}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip
+            content={t('agent.manager.viewDetails', 'View agent details and configuration')}
+            side="top"
+          >
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 w-7 p-0"
+              onClick={handleViewDetails}
+              disabled={disabled}
+            >
+              <Info className="h-3.5 w-3.5" />
+            </Button>
+          </Tooltip>
         )}
       </div>
     )

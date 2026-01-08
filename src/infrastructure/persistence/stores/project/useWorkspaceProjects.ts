@@ -69,9 +69,9 @@ export function useWorkspaceProjects({
 }: UseWorkspaceProjectsOptions): UseWorkspaceProjectsResult {
   const { t } = useTranslation();
   const { isMobile } = useResponsive();
-  
-  // Get raw state from store
-  const allProjects = useProjectStore((state) => 
+
+  // Get raw state from store - 4 separate subscriptions
+  const allProjects = useProjectStore((state) =>
     state.projects ? Object.values(state.projects) : []
   );
   const activeProjectId = useProjectStore((state) => state.activeProjectId);

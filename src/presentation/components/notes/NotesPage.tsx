@@ -6,7 +6,7 @@
  * Part of E1-1: UnifiedChatPanel integration
  */
 
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, useState, lazy, Suspense, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
@@ -22,7 +22,8 @@ import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
-import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
+// TEMPORARILY DISABLED to debug infinite loop
+// import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
 // E1-1: UnifiedChatPanel integration
 import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPanel';
 // NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
@@ -58,14 +59,14 @@ export function NotesPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
     const navigate = useNavigate();
-    
+
     // Get projectId from ProjectContext (set by route)
     const { project } = useProjectContext();
     const projectId = project?.id || 'default';
 
     // STORAGE-3-2: Project Selector Logic
-    const { projects, activeProject } = useWorkspaceProjects({ 
-        workspaceType: 'notes' 
+    const { projects, activeProject } = useWorkspaceProjects({
+        workspaceType: 'notes'
     });
 
     const handleProjectSelect = (newProjectId: string) => {
@@ -94,10 +95,11 @@ export function NotesPage() {
     const notesChatVisible = useIDEStore((s) => s.chatVisible ?? true);
 
     // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // TEMPORARILY DISABLED to debug infinite loop
     // Ensures Notes workspace reacts to changes from IDE, Knowledge, Study workspaces
-    useAllCrossWorkspaceEvents();
-    // Also subscribe to workspace changed events for agent filtering
-    useWorkspaceChangedEvents();
+    // useAllCrossWorkspaceEvents();
+    // // Also subscribe to workspace changed events for agent filtering
+    // useWorkspaceChangedEvents();
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -120,6 +122,20 @@ export function NotesPage() {
     // File sync state (CW-1.4)
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
 
+    // CRITICAL FIX: Memoize noteStore config to prevent infinite loop
+    // The noteStore object passed to useFileSyncService was recreated on every render,
+    // causing initializeService callback to be recreated continuously, triggering infinite re-renders
+    const noteStoreConfig = useMemo(
+        () => ({
+            notes: useNoteStore.getState().notes,
+            notesArray: notesArray,
+            updateNote: useNoteStore.getState().updateNote,
+            createNote: useNoteStore.getState().createNote,
+            loadNotes: useNoteStore.getState().loadNotes,
+        }),
+        [notesArray] // Only recreate when notesArray changes
+    );
+
     // P0-3: Initialize file sync service with storage type selection
     const {
         service: notesSyncService,
@@ -132,13 +148,7 @@ export function NotesPage() {
         projectId,
         workspaceType: 'notes',
         storageType: project?.storageType ?? 'indexeddb',
-        noteStore: {
-            notes: useNoteStore.getState().notes,
-            notesArray: notesArray,
-            updateNote: useNoteStore.getState().updateNote,
-            createNote: useNoteStore.getState().createNote,
-            loadNotes: useNoteStore.getState().loadNotes,
-        },
+        noteStore: noteStoreConfig,
     });
 
     // S-007: File loading state for auto-import
@@ -509,9 +519,10 @@ export function NotesPage() {
                 />
 
                 {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-                <div className="fixed bottom-4 right-4 z-50 w-96">
+                {/* TEMPORARILY DISABLED to debug infinite loop */}
+                {/* <div className="fixed bottom-4 right-4 z-50 w-96">
                     <SyncStatusPanel />
-                </div>
+                </div> */}
             </MainLayout>
         );
     }
@@ -704,9 +715,10 @@ export function NotesPage() {
             />
 
             {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-            <div className="fixed bottom-4 right-4 z-50 w-96">
+            {/* TEMPORARILY DISABLED to debug infinite loop */}
+            {/* <div className="fixed bottom-4 right-4 z-50 w-96">
                 <SyncStatusPanel />
-            </div>
+            </div> */}
         </MainLayout>
     );
 }

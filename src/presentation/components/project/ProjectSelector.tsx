@@ -13,7 +13,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, ChevronsUpDown, Folder, Database, HardDrive } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/presentation/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,35 +66,33 @@ export function ProjectSelector({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className={cn(
-            "justify-between",
-            variant === 'default' ? "w-[250px]" : "w-[180px]",
-            className
+      <DropdownMenuTrigger
+        disabled={disabled}
+        className={cn(
+          // Base button styles from Button component (variant="outline")
+          "inline-flex items-center justify-between rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground px-3 py-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+          variant === 'default' ? "w-[250px]" : "w-[180px]",
+          className
+        )}
+      >
+        <div className="flex items-center gap-2 truncate">
+          {activeProject ? (
+            <>
+              {activeProject.storageType === 'indexeddb' ? (
+                <Database className="h-4 w-4 text-muted-foreground shrink-0" />
+              ) : (
+                <HardDrive className="h-4 w-4 text-muted-foreground shrink-0" />
+              )}
+              <span className="truncate">{activeProject.name}</span>
+            </>
+          ) : (
+            <>
+              <Folder className="h-4 w-4 text-muted-foreground shrink-0" />
+              <span className="truncate">{t('common.select', 'Select project...')}</span>
+            </>
           )}
-        >
-          <div className="flex items-center gap-2 truncate">
-            {activeProject ? (
-              <>
-                {activeProject.storageType === 'indexeddb' ? (
-                  <Database className="h-4 w-4 text-muted-foreground shrink-0" />
-                ) : (
-                  <HardDrive className="h-4 w-4 text-muted-foreground shrink-0" />
-                )}
-                <span className="truncate">{activeProject.name}</span>
-              </>
-            ) : (
-              <>
-                <Folder className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="truncate">{t('common.select', 'Select project...')}</span>
-              </>
-            )}
-          </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+        </div>
+        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className={cn(variant === 'default' ? "w-[250px]" : "w-[180px]")}

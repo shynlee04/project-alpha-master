@@ -26,7 +26,6 @@ import {
 } from 'lucide-react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/presentation/components/ui/tooltip';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useTheme } from 'next-themes';
@@ -253,29 +252,22 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             const Icon = item.icon;
 
             return (
-              <Tooltip key={item.id} delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <div
-                    onClick={() => handleNavigation(item.path, item.id)}
-                    className={cn(navItemVariants({ active: isActive, collapsed: sidebarCollapsed }))}
-                  >
-                    <Icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
-                    {!sidebarCollapsed && (
-                      <TruncatedText text={item.label} className="truncate" />
-                    )}
-
-                    {/* Active Indicator Pulse */}
-                    {isActive && (
-                      <div className="absolute right-2 w-1.5 h-1.5 bg-primary animate-pulse" />
-                    )}
-                  </div>
-                </TooltipTrigger>
-                {sidebarCollapsed && (
-                  <TooltipContent side="right" className="font-pixel text-sm border-2 border-border bg-popover text-popover-foreground shadow-xl rounded-none py-2 px-3 ml-2">
-                    {item.label}
-                  </TooltipContent>
+              <div
+                key={item.id}
+                onClick={() => handleNavigation(item.path, item.id)}
+                className={cn(navItemVariants({ active: isActive, collapsed: sidebarCollapsed }))}
+                title={sidebarCollapsed ? item.label : undefined}
+              >
+                <Icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+                {!sidebarCollapsed && (
+                  <TruncatedText text={item.label} className="truncate" noTooltip />
                 )}
-              </Tooltip>
+
+                {/* Active Indicator Pulse */}
+                {isActive && (
+                  <div className="absolute right-2 w-1.5 h-1.5 bg-primary animate-pulse" />
+                )}
+              </div>
             );
           })}
         </nav>
@@ -283,23 +275,21 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         <div className="p-2 border-t-2 border-border space-y-2 bg-sidebar">
           {mounted && (
             <div className={cn("flex items-center gap-2 transition-all", sidebarCollapsed ? "flex-col" : "grid grid-cols-2")}>
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <button onClick={handleToggleTheme} className="flex items-center justify-center h-10 border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all">
-                    {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                  </button>
-                </TooltipTrigger>
-                {sidebarCollapsed && <TooltipContent side="right" className="font-pixel text-xs border-2 border-border rounded-none">{isDark ? 'Light' : 'Dark'}</TooltipContent>}
-              </Tooltip>
+              <button
+                onClick={handleToggleTheme}
+                className="flex items-center justify-center h-10 border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
+                title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+              >
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </button>
 
-              <Tooltip delayDuration={0}>
-                <TooltipTrigger asChild>
-                  <button onClick={handleToggleLocale} className="flex items-center justify-center h-10 border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all">
-                    <span className="font-pixel text-sm font-bold">{locale.toUpperCase()}</span>
-                  </button>
-                </TooltipTrigger>
-                {sidebarCollapsed && <TooltipContent side="right" className="font-pixel text-xs border-2 border-border rounded-none">{locale === 'en' ? 'Tiếng Việt' : 'English'}</TooltipContent>}
-              </Tooltip>
+              <button
+                onClick={handleToggleLocale}
+                className="flex items-center justify-center h-10 border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
+                title={locale === 'en' ? 'Tiếng Việt' : 'English'}
+              >
+                <span className="font-pixel text-sm font-bold">{locale.toUpperCase()}</span>
+              </button>
             </div>
           )}
 

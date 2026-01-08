@@ -153,8 +153,9 @@ export function IDELayout(): React.JSX.Element {
     });
 
     // WB-8.3: Subscribe to all cross-workspace events for state synchronization
+    // TEMPORARILY DISABLED - 2026-01-08 - Causing infinite loop via useAgentsStore.getState()
     // Ensures IDE workspace reacts to changes from Notes, Knowledge, Study workspaces
-    useAllCrossWorkspaceEvents();
+    // useAllCrossWorkspaceEvents();
 
     // State restoration hook
     useIDEStateRestoration({
@@ -228,7 +229,7 @@ export function IDELayout(): React.JSX.Element {
                             permissionState={permissionState}
                             openFiles={openFilesDerived}
                             activeFilePath={activeFilePath}
-                            onSave={() => {}}
+                            onSave={() => { }}
                             onActiveFileChange={setActiveFilePath}
                             onTabClose={handleTabClose}
                             onContentChange={handleContentChange}
@@ -251,9 +252,10 @@ export function IDELayout(): React.JSX.Element {
                     <StatusBar />
 
                     {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-                    <div className="fixed bottom-4 right-4 z-50 w-96">
+                    {/* TEMPORARILY DISABLED - 2026-01-08 - Investigating infinite loop */}
+                    {/* <div className="fixed bottom-4 right-4 z-50 w-96">
                         <SyncStatusPanel />
-                    </div>
+                    </div> */}
 
                     {/* Dev Tools (development mode only) */}
                     <SyncDevTools />

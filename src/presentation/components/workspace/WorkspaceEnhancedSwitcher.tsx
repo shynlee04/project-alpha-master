@@ -32,10 +32,7 @@ import { Button } from '@/presentation/components/ui/button';
 import { Badge } from '@/presentation/components/ui/badge';
 import {
   Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/presentation/components/ui/tooltip';
+} from '@/presentation/components/ui/tooltip-react19-compatible';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
@@ -204,101 +201,99 @@ export function WorkspaceEnhancedSwitcher({
       metrics.total > 0 ? Math.round((metrics.available / metrics.total) * 100) : 0;
 
     return (
-      <TooltipProvider key={workspace}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant={isActive ? 'secondary' : 'outline'}
-              size={compact ? 'sm' : 'md'}
-              onClick={() => onSelectWorkspace(workspace)}
-              disabled={!isAvailable}
+      <Tooltip
+        key={workspace}
+        content={
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Icon className="w-4 h-4" />
+              <span className="font-medium">{t(`${metadata.label.toLowerCase()}.workspace`, { workspace: metadata.label })}</span>
+            </div>
+
+            {!isAvailable && (
+              <p className="text-xs text-red-500">
+                {t('workspace.switcher.agentNotAvailable')}
+              </p>
+            )}
+
+            {isAvailable && showToolCounts && (
+              <div className="space-y-1">
+                <p className="text-xs">
+                  {t('workspace.switcher.toolsAvailableCount', { available: metrics.available, total: metrics.total })}
+                </p>
+                {metrics.available < metrics.total && (
+                  <p className="text-xs text-muted-foreground">
+                    {t('workspace.switcher.toolsDisabledCount', { count: metrics.total - metrics.available })}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <p className="text-xs text-muted-foreground">{metadata.description}</p>
+          </div>
+        }
+        side="right"
+      >
+        <Button
+          variant={isActive ? 'secondary' : 'outline'}
+          size={compact ? 'sm' : 'md'}
+          onClick={() => onSelectWorkspace(workspace)}
+          disabled={!isAvailable}
+          className={cn(
+            'justify-start gap-3 h-auto py-3 px-4',
+            isActive && metadata.color,
+            !isActive && !isAvailable && 'opacity-50 cursor-not-allowed',
+            className
+          )}
+        >
+          {/* Workspace Icon */}
+          <div
+            className={cn(
+              'p-2 rounded-lg',
+              isActive ? 'bg-background/20' : 'bg-muted'
+            )}
+          >
+            <Icon className="w-5 h-5" />
+          </div>
+
+          {/* Workspace Info */}
+          <div className="flex-1 text-left">
+            <div className="flex items-center gap-2">
+              <span className="font-medium">{metadata.label}</span>
+              {isActive && (
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+              )}
+              {!isAvailable && (
+                <XCircle className="w-4 h-4 text-red-500" />
+              )}
+            </div>
+            {!compact && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {metadata.description}
+              </p>
+            )}
+          </div>
+
+          {/* Tool Count Badge */}
+          {showToolCounts && isAvailable && (
+            <Badge
+              variant="outline"
               className={cn(
-                'justify-start gap-3 h-auto py-3 px-4',
-                isActive && metadata.color,
-                !isActive && !isAvailable && 'opacity-50 cursor-not-allowed',
-                className
+                'text-xs',
+                isActive
+                  ? 'bg-background/20 border-background/40'
+                  : 'bg-muted'
               )}
             >
-              {/* Workspace Icon */}
-              <div
-                className={cn(
-                  'p-2 rounded-lg',
-                  isActive ? 'bg-background/20' : 'bg-muted'
-                )}
-              >
-                <Icon className="w-5 h-5" />
-              </div>
+              {metrics.available}/{metrics.total}
+              {!compact && ` (${Math.round((metrics.available / metrics.total) * 100)}%)`}
+            </Badge>
+          )}
 
-              {/* Workspace Info */}
-              <div className="flex-1 text-left">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{metadata.label}</span>
-                  {isActive && (
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                  )}
-                  {!isAvailable && (
-                    <XCircle className="w-4 h-4 text-red-500" />
-                  )}
-                </div>
-                {!compact && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {metadata.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Tool Count Badge */}
-              {showToolCounts && isAvailable && (
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    'text-xs',
-                    isActive
-                      ? 'bg-background/20 border-background/40'
-                      : 'bg-muted'
-                  )}
-                >
-                  {metrics.available}/{metrics.total}
-                  {!compact && ` (${Math.round((metrics.available / metrics.total) * 100)}%)`}
-                </Badge>
-              )}
-
-              {/* Chevron */}
-              {!compact && <ChevronRight className="w-4 h-4 opacity-50" />}
-            </Button>
-          </TooltipTrigger>
-
-          <TooltipContent side="right" className="max-w-xs">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Icon className="w-4 h-4" />
-                <span className="font-medium">{t(`${metadata.label.toLowerCase()}.workspace`, { workspace: metadata.label })}</span>
-              </div>
-
-              {!isAvailable && (
-                <p className="text-xs text-red-500">
-                  {t('workspace.switcher.agentNotAvailable')}
-                </p>
-              )}
-
-              {isAvailable && showToolCounts && (
-                <div className="space-y-1">
-                  <p className="text-xs">
-                    {t('workspace.switcher.toolsAvailableCount', { available: metrics.available, total: metrics.total })}
-                  </p>
-                  {metrics.available < metrics.total && (
-                    <p className="text-xs text-muted-foreground">
-                      {t('workspace.switcher.toolsDisabledCount', { count: metrics.total - metrics.available })}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              <p className="text-xs text-muted-foreground">{metadata.description}</p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+          {/* Chevron */}
+          {!compact && <ChevronRight className="w-4 h-4 opacity-50" />}
+        </Button>
+      </Tooltip>
     );
   };
 

@@ -47,7 +47,7 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/presentation/components/ui/tooltip';
+} from '@/presentation/components/ui/tooltip-react19-compatible';
 
 /**
  * Icon mapping for tool categories

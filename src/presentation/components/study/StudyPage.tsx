@@ -39,14 +39,14 @@ export function StudyPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
     const navigate = useNavigate();
-    
+
     // Get projectId from ProjectContext (set by route)
     const { project: contextProject } = useProjectContext();
     const projectId = contextProject?.id || 'default';
 
     // STORAGE-3-3: Project Selector Logic
-    const { projects, activeProject } = useWorkspaceProjects({ 
-        workspaceType: 'study' 
+    const { projects, activeProject } = useWorkspaceProjects({
+        workspaceType: 'study'
     });
 
     const handleProjectSelect = (newProjectId: string) => {
@@ -81,10 +81,11 @@ export function StudyPage() {
     });
 
     // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // TEMPORARILY DISABLED - 2026-01-08 - Causing infinite loop via useAgentsStore.getState()
     // Ensures Study workspace reacts to changes from IDE, Notes, Knowledge workspaces
-    useAllCrossWorkspaceEvents();
+    // useAllCrossWorkspaceEvents();
     // Also subscribe to workspace changed events for agent filtering
-    useWorkspaceChangedEvents();
+    // useWorkspaceChangedEvents();
 
     // Count items
     const flashcardCount = flashcards.filter((f) => f.projectId === projectId).length;

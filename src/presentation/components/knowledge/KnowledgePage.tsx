@@ -11,7 +11,7 @@ import {
     ResizablePanelGroup,
 } from '@/presentation/components/ui/resizable';
 import { Button } from '@/presentation/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/presentation/components/ui/tooltip';
+import { Tooltip } from '@/presentation/components/ui/tooltip-react19-compatible';
 import { SourceCardGrid } from '@/presentation/components/knowledge/SourceCardGrid';
 const Canvas = lazy(() => {
     if (import.meta.env.SSR) {
@@ -89,10 +89,11 @@ export function KnowledgePage() {
     const setPanelCollapsed = useIDEStore((s) => s.setPanelCollapsed);
 
     // WB-8.3: Cross-workspace event subscriptions for state synchronization
+    // TEMPORARILY DISABLED - 2026-01-08 - Causing infinite loop via useAgentsStore.getState()
     // Ensures Knowledge workspace reacts to changes from IDE, Notes, Study workspaces
-    useAllCrossWorkspaceEvents();
+    // useAllCrossWorkspaceEvents();
     // Also subscribe to workspace changed events for agent filtering
-    useWorkspaceChangedEvents();
+    // useWorkspaceChangedEvents();
 
     // P0-LLM-001: Retrieve API key for embedding service
     // This ensures cloud embeddings work when user has saved their Gemini API key
@@ -603,73 +604,69 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
                     <div className="h-full border-r border-border flex flex-col bg-background">
                         {!sourceLibraryCollapsed && (
                             <>
-                            <div className="p-3 border-b border-border flex items-center justify-between">
-                                {/* STORAGE-3-4: Project Selector */}
-                                {projects.length > 0 && (
-                                    <div className="mr-2">
-                                        <ProjectSelector
-                                            projects={projects}
-                                            activeProject={activeProject}
-                                            onSelect={handleProjectSelect}
+                                <div className="p-3 border-b border-border flex items-center justify-between">
+                                    {/* STORAGE-3-4: Project Selector */}
+                                    {projects.length > 0 && (
+                                        <div className="mr-2">
+                                            <ProjectSelector
+                                                projects={projects}
+                                                activeProject={activeProject}
+                                                onSelect={handleProjectSelect}
+                                                variant="compact"
+                                            />
+                                        </div>
+                                    )}
+                                    <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
+                                    <div className="flex items-center gap-2">
+                                        {/* AC-02: Agent Manager - comprehensive agent management UI */}
+                                        <AgentManager
                                             variant="compact"
+                                            workspaceType="knowledge"
+                                        />
+                                        <Tooltip
+                                            content={isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}
+                                            side="bottom"
+                                        >
+                                            <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                                                <Bot size={14} />
+                                            </div>
+                                        </Tooltip>
+                                        <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
+                                            <Plus className="h-3 w-3" />
+                                        </Button>
+                                        <SynthesisDialog
+                                            sourceIds={[]}
+                                            onComplete={handleSynthesisComplete}
                                         />
                                     </div>
-                                )}
-                                <span className="font-mono font-bold text-sm">{t('knowledge.sources')}</span>
-                                <div className="flex items-center gap-2">
-                                    {/* AC-02: Agent Manager - comprehensive agent management UI */}
-                                    <AgentManager
-                                        variant="compact"
-                                        workspaceType="knowledge"
-                                    />
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <div className={`p-1.5 rounded-full ${isAiAvailable ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                                    <Bot size={14} />
-                                                </div>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{isAiAvailable ? t('knowledge.ai.active') : t('knowledge.ai.disabled')}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                    <Button variant="ghost" size="sm" className="h-6 w-6" onClick={handleOpenImport}>
-                                        <Plus className="h-3 w-3" />
-                                    </Button>
-                                    <SynthesisDialog
-                                        sourceIds={[]}
-                                        onComplete={handleSynthesisComplete}
-                                    />
                                 </div>
-                            </div>
-                            {/* P0-2: Indexing Progress Panel */}
-                            <IndexingProgressPanel className="px-3 pb-3" />
-                            <div className="flex-1 overflow-y-auto">
-                                {/* UC1: Show preview panel when synthesis is complete */}
-                                {synthesisResult && previewType ? (
-                                    <div className="h-full">
-                                        {previewType === 'flashcards' ? (
-                                            <FlashcardPreviewPanel
-                                                synthesisResult={synthesisResult}
-                                                onSave={handlePreviewSave}
-                                                onDiscard={handlePreviewDiscard}
-                                                onExportToNotes={handleExportToNotes}
-                                                onExportToStudy={handleExportToStudy}
-                                            />
-                                        ) : (
-                                            <QuizPreviewPanel
-                                                synthesisResult={synthesisResult}
-                                                onSave={handlePreviewSave}
-                                                onDiscard={handlePreviewDiscard}
-                                                onExportToNotes={handleExportToNotes}
-                                            />
-                                        )}
-                                    </div>
-                                ) : (
-                                    <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
-                                )}
-                            </div>
+                                {/* P0-2: Indexing Progress Panel */}
+                                <IndexingProgressPanel className="px-3 pb-3" />
+                                <div className="flex-1 overflow-y-auto">
+                                    {/* UC1: Show preview panel when synthesis is complete */}
+                                    {synthesisResult && previewType ? (
+                                        <div className="h-full">
+                                            {previewType === 'flashcards' ? (
+                                                <FlashcardPreviewPanel
+                                                    synthesisResult={synthesisResult}
+                                                    onSave={handlePreviewSave}
+                                                    onDiscard={handlePreviewDiscard}
+                                                    onExportToNotes={handleExportToNotes}
+                                                    onExportToStudy={handleExportToStudy}
+                                                />
+                                            ) : (
+                                                <QuizPreviewPanel
+                                                    synthesisResult={synthesisResult}
+                                                    onSave={handlePreviewSave}
+                                                    onDiscard={handlePreviewDiscard}
+                                                    onExportToNotes={handleExportToNotes}
+                                                />
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
+                                    )}
+                                </div>
                             </>
                         )}
                         {sourceLibraryCollapsed && (

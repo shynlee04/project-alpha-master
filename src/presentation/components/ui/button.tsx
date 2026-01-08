@@ -13,7 +13,8 @@
  */
 
 import * as React from 'react'
-import { Slot } from '@radix-ui/react-slot'
+// TEMPORARY: Slot import disabled due to React 19 compatibility issue
+// import { Slot } from '@radix-ui/react-slot'
 import { Loader2 } from 'lucide-react'
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -174,8 +175,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       }
       : {}
 
-    // Render as child element or button
-    const Comp = asChild ? Slot : 'button'
+    // TEMPORARY FIX: Disable asChild due to React 19 + Radix UI compatibility issue
+    // This prevents infinite loops in setRef function
+    // TODO: Re-enable once Radix UI releases React 19 compatible version
+    const Comp = 'button' // asChild ? Slot : 'button'
 
     return (
       <Comp

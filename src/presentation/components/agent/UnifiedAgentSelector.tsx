@@ -23,8 +23,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-
-} from '@/presentation/components/ui/select';
+  SelectValue,
+} from '@/presentation/components/ui/select-react19-compatible';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Button } from '@/presentation/components/ui/button';
 import {
@@ -235,7 +235,7 @@ export function UnifiedAgentSelector({
   if (variant === 'minimal') {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger>
           <Button
             variant="ghost"
             size="sm"
@@ -283,20 +283,22 @@ export function UnifiedAgentSelector({
         disabled={disabled}
       >
         <SelectTrigger className={cn('h-8 px-2 gap-1.5 font-mono text-xs', className)}>
-          {activeAgent ? (
-            <>
-              <div className={cn(
-                'h-2 w-2 rounded-full',
-                getStatusColor(activeAgent.status)
-              )} />
-              <span className="max-w-[100px] truncate">{activeAgent.name}</span>
-            </>
-          ) : (
-            <>
-              <Bot className="h-3 w-3" />
-              <span>Agent</span>
-            </>
-          )}
+          <SelectValue placeholder="Agent">
+            {activeAgent ? (
+              <>
+                <div className={cn(
+                  'h-2 w-2 rounded-full',
+                  getStatusColor(activeAgent.status)
+                )} />
+                <span className="max-w-[100px] truncate">{activeAgent.name}</span>
+              </>
+            ) : (
+              <>
+                <Bot className="h-3 w-3" />
+                <span>Agent</span>
+              </>
+            )}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent className="w-56 font-mono">
           {availableAgents.map((agent) => (
@@ -333,24 +335,26 @@ export function UnifiedAgentSelector({
           className
         )}
       >
-        <div className="flex items-center gap-2 flex-1">
-          {activeAgent ? (
-            <>
-              <div className={cn(
-                'h-2.5 w-2.5 rounded-full',
-                getStatusColor(activeAgent.status)
-              )} />
-              <span className="text-xs font-bold text-slate-100">
-                {activeAgent.name}
-              </span>
-            </>
-          ) : (
-            <>
-              <Bot className="h-4 w-4" />
-              <span className="text-sm">{t('chat.selectAgent', 'Select Agent')}</span>
-            </>
-          )}
-        </div>
+        <SelectValue placeholder={t('chat.selectAgent', 'Select Agent')}>
+          <div className="flex items-center gap-2 flex-1">
+            {activeAgent ? (
+              <>
+                <div className={cn(
+                  'h-2.5 w-2.5 rounded-full',
+                  getStatusColor(activeAgent.status)
+                )} />
+                <span className="text-xs font-bold text-slate-100">
+                  {activeAgent.name}
+                </span>
+              </>
+            ) : (
+              <>
+                <Bot className="h-4 w-4" />
+                <span className="text-sm">{t('chat.selectAgent', 'Select Agent')}</span>
+              </>
+            )}
+          </div>
+        </SelectValue>
         <ChevronDown className="h-4 w-4 opacity-50" />
       </SelectTrigger>
 

@@ -6,7 +6,6 @@
  */
 
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/presentation/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,16 +37,12 @@ export function MobileFormatButton({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={disabled || isFormatting}
-          className="h-12 w-12"
-        >
-          <Sparkles className="h-5 w-5" />
-          <span className="sr-only">{t('formatter.mobile.format_menu')}</span>
-        </Button>
+      <DropdownMenuTrigger
+        disabled={disabled || isFormatting}
+        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-12 w-12"
+      >
+        <Sparkles className="h-5 w-5" />
+        <span className="sr-only">{t('formatter.mobile.format_menu')}</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         {onFormatDocument && (

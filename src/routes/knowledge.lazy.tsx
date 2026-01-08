@@ -68,6 +68,15 @@ export const Route = createLazyFileRoute('/knowledge')({
 function KnowledgeWorkspace() {
   const { state, actions, status } = useWorkspaceAccess('knowledge');
 
+  // FIX-2026-01-08: Show loading state while Dexie data loads
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
   // If no projects, show empty state with quick-create option
   if (status === 'no_projects') {
     return <WorkspaceAccessEmptyState workspace="knowledge" status={state} actions={actions} />;

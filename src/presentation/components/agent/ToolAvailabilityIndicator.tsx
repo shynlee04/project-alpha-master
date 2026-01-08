@@ -20,7 +20,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle2, XCircle, AlertTriangle } from 'lucide-react';
 import { Badge } from '@/presentation/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/presentation/components/ui/tooltip';
+import { Tooltip } from '@/presentation/components/ui/tooltip-react19-compatible';
 import { cn } from '@/lib/utils';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
@@ -187,31 +187,29 @@ export function ToolAvailabilityIndicator({
         : 'bg-red-500/20 text-red-500 border-red-500/30';
 
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge
-              variant="outline"
-              className={cn('cursor-help', badgeColor, className)}
-            >
-              <CheckCircle2 className="w-3 h-3 mr-1" />
-              {summary.available}/{summary.total} tools available
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-xs">
-            <div className="space-y-2">
-              <p className="font-medium">
-                {t('agent.toolAvailability.toolsAvailable', { available: summary.available, total: summary.total, workspace: currentWorkspace })}
+      <Tooltip
+        content={
+          <div className="space-y-2">
+            <p className="font-medium">
+              {t('agent.toolAvailability.toolsAvailable', { available: summary.available, total: summary.total, workspace: currentWorkspace })}
+            </p>
+            {summary.blocked > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {t('agent.toolAvailability.toolsBlocked', { count: summary.blocked })}
               </p>
-              {summary.blocked > 0 && (
-                <p className="text-xs text-muted-foreground">
-                  {t('agent.toolAvailability.toolsBlocked', { count: summary.blocked })}
-                </p>
-              )}
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+            )}
+          </div>
+        }
+        side="bottom"
+      >
+        <Badge
+          variant="outline"
+          className={cn('cursor-help', badgeColor, className)}
+        >
+          <CheckCircle2 className="w-3 h-3 mr-1" />
+          {summary.available}/{summary.total} tools available
+        </Badge>
+      </Tooltip>
     );
   }
 
@@ -244,26 +242,23 @@ export function ToolAvailabilityIndicator({
           </div>
           <div className="flex flex-wrap gap-2">
             {available.map((tool) => (
-              <TooltipProvider key={tool.toolId}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        'cursor-help',
-                        'bg-green-500/20 text-green-500 border-green-500/30',
-                        'hover:bg-green-500/30'
-                      )}
-                    >
-                      {getStatusIcon(tool.status)}
-                      {showToolNames && <span className="ml-1">{tool.toolName}</span>}
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <p>{t('agent.toolAvailability.toolAvailable', { toolName: tool.toolName, workspace: currentWorkspace })}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <Tooltip
+                key={tool.toolId}
+                content={t('agent.toolAvailability.toolAvailable', { toolName: tool.toolName, workspace: currentWorkspace })}
+                side="bottom"
+              >
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'cursor-help',
+                    'bg-green-500/20 text-green-500 border-green-500/30',
+                    'hover:bg-green-500/30'
+                  )}
+                >
+                  {getStatusIcon(tool.status)}
+                  {showToolNames && <span className="ml-1">{tool.toolName}</span>}
+                </Badge>
+              </Tooltip>
             ))}
           </div>
         </div>
@@ -277,27 +272,28 @@ export function ToolAvailabilityIndicator({
           </div>
           <div className="flex flex-wrap gap-2">
             {blocked.map((tool) => (
-              <TooltipProvider key={tool.toolId}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        'cursor-help',
-                        'bg-red-500/20 text-red-500 border-red-500/30',
-                        'hover:bg-red-500/30'
-                      )}
-                    >
-                      {getStatusIcon(tool.status)}
-                      {showToolNames && <span className="ml-1">{tool.toolName}</span>}
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs">
+              <Tooltip
+                key={tool.toolId}
+                content={
+                  <div className="max-w-xs">
                     <p className="font-medium">{tool.toolName}</p>
                     <p className="text-xs text-muted-foreground mt-1">{tool.reason}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                  </div>
+                }
+                side="bottom"
+              >
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    'cursor-help',
+                    'bg-red-500/20 text-red-500 border-red-500/30',
+                    'hover:bg-red-500/30'
+                  )}
+                >
+                  {getStatusIcon(tool.status)}
+                  {showToolNames && <span className="ml-1">{tool.toolName}</span>}
+                </Badge>
+              </Tooltip>
             ))}
           </div>
         </div>

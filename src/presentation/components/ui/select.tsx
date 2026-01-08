@@ -91,9 +91,7 @@ function SelectTrigger({
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="size-4 text-[var(--muted-foreground)]" />
-      </SelectPrimitive.Icon>
+      <ChevronDownIcon className="ml-auto size-4 text-[var(--muted-foreground)]" />
     </SelectPrimitive.Trigger>
   )
 }

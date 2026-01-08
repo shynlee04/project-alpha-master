@@ -11,7 +11,7 @@ import { DatabaseRecoveryDialog } from '@/presentation/components/common/Databas
 import { initSentry } from '../lib/monitoring/sentry'
 import { initGlobalErrorHandlers } from '@/lib/errorHandling/globalErrorHandlers'
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
-import { TooltipProvider } from '@/presentation/components/ui/tooltip'
+import { TooltipProvider } from '@/presentation/components/ui/tooltip-react19-compatible'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 import { OfflineIndicator } from '@/presentation/components/offline/OfflineIndicator'
