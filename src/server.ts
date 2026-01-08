@@ -9,7 +9,7 @@
  * 
  * @see https://webcontainers.io/guides/configuring-headers
  */
-import handler, { createServerEntry } from '@tanstack/react-start/dist/default-entry/esm/server'
+import handler, { createServerEntry } from '@tanstack/react-start/server-entry'
 
 export default createServerEntry({
     async fetch(request: Request) {

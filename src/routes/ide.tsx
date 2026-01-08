@@ -55,20 +55,40 @@ function IDEWorkspace() {
     return <Outlet />;
   }
 
-  // If no projects or no binding, show empty state
-  if (status === 'no_projects' || status === 'no_binding') {
+  // If no projects, show empty state with quick-create option
+  if (status === 'no_projects') {
     return <WorkspaceAccessEmptyState workspace="ide" status={state} actions={actions} />;
   }
 
-  // has_projects: Redirect to hub (handled by hook), return null during redirect
-  if (status === 'has_projects') {
-    return null;
+  // If projects exist but none have ide binding, show enable option
+  if (status === 'no_binding') {
+    return <WorkspaceAccessEmptyState workspace="ide" status={state} actions={actions} />;
   }
 
-  // Loading state
+  // has_projects: Show project selector using Outlet (child routes handle actual IDE)
+  // For now, show a project selection UI
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-background">
-      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="flex flex-col items-center gap-4 max-w-md text-center">
+        <h2 className="text-xl font-bold">Select a Project</h2>
+        <p className="text-muted-foreground">
+          Choose a project to open in the IDE, or create a quick project.
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={actions.handleCreateTemp}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+          >
+            ⚡ Quick IDE
+          </button>
+          <button
+            onClick={actions.handleNavigateToHub}
+            className="px-4 py-2 bg-muted text-foreground rounded hover:bg-muted/80"
+          >
+            Browse Projects
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

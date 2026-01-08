@@ -120,14 +120,50 @@ export class CredentialEncryption {
     }
 
     /**
+     * Derive a wrapping key from password using PBKDF2 for AES-KW
+     *
+     * AES-KW (Key Wrapping) requires a key with different algorithm and usages
+     * than the standard encryption key. This method creates a key specifically
+     * for wrapping/unwrapping master keys.
+     *
+     * @param password - Password to derive key from
+     * @param salt - Cryptographic salt
+     * @returns Derived CryptoKey for AES-KW operations
+     */
+    async deriveWrappingKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
+        const encoder = new TextEncoder();
+        const passwordKey = await crypto.subtle.importKey(
+            'raw',
+            encoder.encode(password),
+            'PBKDF2',
+            false,
+            ['deriveKey']
+        );
+
+        // AES-KW requires exactly 128, 192, or 256 bit keys
+        return crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt: salt as any,
+                iterations: ITERATIONS,
+                hash: 'SHA-256',
+            },
+            passwordKey,
+            { name: 'AES-KW', length: KEY_LENGTH }, // AES-KW algorithm, not AES-GCM
+            false,
+            ['wrapKey', 'unwrapKey'] // Key wrapping usages, not encrypt/decrypt
+        );
+    }
+
+    /**
      * Generate a new master key for encrypting credentials
      *
-     * @returns New AES-256-GCM CryptoKey (non-extractable for security)
+     * @returns New AES-256-GCM CryptoKey (extractable for AES-KW wrapping)
      */
     async generateMasterKey(): Promise<CryptoKey> {
         return crypto.subtle.generateKey(
             { name: ENCRYPTION_ALGORITHM, length: KEY_LENGTH },
-            false, // NON-EXTRACTABLE: 2025 security best practice
+            true, // EXTRACTABLE: Required for AES-KW wrapKey to work
             ['encrypt', 'decrypt']
         );
     }

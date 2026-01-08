@@ -32,8 +32,10 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { db } from '@/infrastructure/persistence/dexie-db';
+import { useLiveQuery } from 'dexie-react-hooks';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-types';
 import { toast } from 'sonner';
 
 // ============================================================================
@@ -85,15 +87,15 @@ export interface WorkspaceAccessState {
   /** Current access status */
   status: WorkspaceAccessStatus;
   /** All projects (filtered by workspace binding) */
-  projects: Project[];
+  projects: ProjectRecord[];
   /** All projects in system */
-  allProjects: Project[];
+  allProjects: ProjectRecord[];
   /** Is temp project creation in progress */
   isCreatingTemp: boolean;
   /** Is workspace enable in progress */
   isEnabling: boolean;
   /** Most recent project (for enable binding) */
-  mostRecentProject: Project | null;
+  mostRecentProject: ProjectRecord | null;
 }
 
 /**
@@ -234,16 +236,23 @@ export function useWorkspaceAccess(
    */
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // Get projects from Zustand store (stable reference - prevents infinite loops in v5)
-  const projects = useProjectStore((state) => state.projects);
+  // FIX-2026-01-08: Read projects directly from Dexie, NOT from empty Zustand store
+  // The Zustand store is never populated - Dexie is the single source of truth
+  const projectsFromDexie = useLiveQuery(
+    () => db.projects.toArray(),
+    [],
+    [] // Default to empty array while loading
+  );
+
+  // Keep updateProjectBindings from store for mutations
   const updateProjectBindings = useProjectStore((state) => state.updateProjectBindings);
 
   // Filter projects by workspace binding
   const { allProjects, workspaceProjects } = useMemo(() => {
-    const all = Object.values(projects);
+    const all = projectsFromDexie || [];
     const filtered = all.filter((project) => project.bindings?.[workspace] === true);
     return { allProjects: all, workspaceProjects: filtered };
-  }, [projects, workspace]);
+  }, [projectsFromDexie, workspace]);
 
   // Find most recent project
   const mostRecentProject = useMemo(() => {
@@ -263,27 +272,15 @@ export function useWorkspaceAccess(
   }, [workspaceProjects.length, allProjects.length]);
 
   /**
-   * Auto-redirect to hub if projects exist with this binding
+   * NOTE: Removed auto-redirect to hub when has_projects
    * 
-   * @courseCorrection Story A-3 - Added isRedirecting guard
-   * Prevents infinite loops when status changes rapidly
+   * Previous behavior: Auto-redirect to /hub?workspace=X when projects exist
+   * Problem: This caused infinite redirect loops and prevented direct workspace access
+   * 
+   * New behavior: Stay in workspace and let the workspace component handle project selection
+   * 
+   * @courseCorrection 2026-01-08 - Removed broken redirect logic
    */
-  useEffect(() => {
-    if (status === 'has_projects' && !isRedirecting) {
-      setIsRedirecting(true);
-      navigate({
-        to: '/hub',
-        search: { workspace },
-      })
-        .catch((err) => {
-          console.error('[useWorkspaceAccess] Failed to redirect to hub:', err);
-        })
-        .finally(() => {
-          // Reset after a short delay to allow navigation to complete
-          setTimeout(() => setIsRedirecting(false), 500);
-        });
-    }
-  }, [status, workspace, navigate, isRedirecting]);
 
   /**
    * Auto-create temp project if no projects exist

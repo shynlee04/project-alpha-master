@@ -200,15 +200,18 @@ export class CredentialVault {
             if (storedEncryptedKey && storedSalt) {
                 console.log('[CredentialVault] Found existing encrypted key, attempting decryption...');
 
-                // Derive encryption key from password
+                // Derive wrapping key from password (AES-KW requires different key than AES-GCM)
                 const vaultPassword = await this.getOrCreateVaultPassword();
-                this.encryptionKey = await this.encryption.deriveKeyFromPassword(vaultPassword, storedSalt);
+                const wrappingKey = await this.encryption.deriveWrappingKey(vaultPassword, storedSalt);
 
                 // Unwrap master key using AES-KW (P0 FIX: no more exportKey error)
                 this.masterKey = await this.encryption.unwrapMasterKey(
                     storedEncryptedKey,
-                    this.encryptionKey
+                    wrappingKey
                 );
+
+                // Also derive encryption key for API key encrypt/decrypt
+                this.encryptionKey = await this.encryption.deriveKeyFromPassword(vaultPassword, storedSalt);
 
                 this.initialized = true;
                 this.initError = null;
@@ -245,14 +248,17 @@ export class CredentialVault {
         const salt = this.encryption.generateSalt();
         this.storeSalt(salt);
 
-        // Derive encryption key from password
+        // Derive wrapping key for AES-KW (different from encryption key)
+        const wrappingKey = await this.encryption.deriveWrappingKey(vaultPassword, salt);
+
+        // Also derive encryption key for API key encrypt/decrypt
         this.encryptionKey = await this.encryption.deriveKeyFromPassword(vaultPassword, salt);
 
         // Generate master key
         this.masterKey = await this.encryption.generateMasterKey();
 
         // Wrap and store master key using AES-KW (P0 FIX: no more exportKey error)
-        const wrappedKey = await this.encryption.wrapMasterKey(this.masterKey, this.encryptionKey);
+        const wrappedKey = await this.encryption.wrapMasterKey(this.masterKey, wrappingKey);
         this.storeEncryptedKey(wrappedKey);
 
         // Store version
