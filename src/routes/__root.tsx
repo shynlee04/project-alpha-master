@@ -85,8 +85,8 @@ export const Route = createRootRoute({
                 <AppInitializer>
                   <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
                     <AppErrorBoundary>
-                      {/* Offline Indicator */}
-                      <OfflineIndicator />
+                      {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
+                      {/* <OfflineIndicator /> */}
                       {/* Notification Permission Requester */}
                       <NotificationPermissionRequester />
                       <Outlet />

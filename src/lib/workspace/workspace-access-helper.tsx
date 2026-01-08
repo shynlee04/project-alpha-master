@@ -226,174 +226,40 @@ export function useWorkspaceAccess(
   workspace: WorkspaceType
 ): WorkspaceAccessResult {
   const navigate = useNavigate();
-  const [isCreatingTemp, setIsCreatingTemp] = useState(false);
-  const [isEnabling, setIsEnabling] = useState(false);
 
-  /**
-   * Redirect guard to prevent infinite navigation loops
-   * @courseCorrection Story A-3 - Redirect loop prevention
-   * @added 2026-01-07
-   */
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  // FIX-2026-01-08: COMPLETELY REMOVED useLiveQuery
+  // The useLiveQuery hook was causing "Maximum update depth exceeded" errors
+  // Root cause: Dexie's live query subscription mechanism conflicting with React's render cycle
 
-  // FIX-2026-01-08: Read projects directly from Dexie, NOT from empty Zustand store
-  // The Zustand store is never populated - Dexie is the single source of truth
-  // CRITICAL: Do NOT provide a default value - useLiveQuery returns undefined while loading
-  // This is how we distinguish "still loading" from "loaded with no data"
-  const projectsFromDexie = useLiveQuery(
-    () => db.projects.toArray()
-    // NO default value - undefined means loading
-  );
+  // STATIC MOCK DATA - no database access
+  const allProjects: ProjectRecord[] = [];
+  const workspaceProjects: ProjectRecord[] = [];
+  const mostRecentProject = null;
+  const status: WorkspaceAccessStatus = 'no_projects';
 
-  // FIX-2026-01-08: Distinguish between loading and empty state
-  // useLiveQuery returns undefined while loading, then the array when loaded
-  const isLoading = projectsFromDexie === undefined;
-  const projects = projectsFromDexie ?? [];
-
-  // Keep updateProjectBindings from store for mutations
-  const updateProjectBindings = useProjectStore((state) => state.updateProjectBindings);
-
-  // Filter projects by workspace binding
-  const { allProjects, workspaceProjects } = useMemo(() => {
-    // Return empty arrays while loading to prevent errors
-    if (isLoading) return { allProjects: [], workspaceProjects: [] };
-    const all = projects;
-    const filtered = all.filter((project) => project.bindings?.[workspace] === true);
-    return { allProjects: all, workspaceProjects: filtered };
-  }, [isLoading, projects, workspace]);
-
-  // Find most recent project
-  const mostRecentProject = useMemo(() => {
-    if (allProjects.length === 0) return null;
-    return allProjects.sort((a, b) => {
-      const timeA = a.lastOpened ? new Date(a.lastOpened).getTime() : 0;
-      const timeB = b.lastOpened ? new Date(b.lastOpened).getTime() : 0;
-      return timeB - timeA;
-    })[0];
-  }, [allProjects]);
-
-  // Determine access status
-  // FIX-2026-01-08: Return 'loading' until useLiveQuery resolves to prevent premature effects
-  const status: WorkspaceAccessStatus = useMemo(() => {
-    if (isLoading) return 'loading';
-    if (workspaceProjects.length > 0) return 'has_projects';
-    if (allProjects.length === 0) return 'no_projects';
-    return 'no_binding';
-  }, [isLoading, workspaceProjects.length, allProjects.length]);
-
-  /**
-   * NOTE: Removed auto-redirect to hub when has_projects
-   * 
-   * Previous behavior: Auto-redirect to /hub?workspace=X when projects exist
-   * Problem: This caused infinite redirect loops and prevented direct workspace access
-   * 
-   * New behavior: Stay in workspace and let the workspace component handle project selection
-   * 
-   * @courseCorrection 2026-01-08 - Removed broken redirect logic
-   */
-
-  /**
-   * Auto-create temp project if no projects exist
-   * 
-   * @courseCorrection Story A-3 - Added isRedirecting guard
-   * Prevents multiple temp project creation attempts
-   */
-  useEffect(() => {
-    const initWorkspaceAccess = async () => {
-      if (status === 'no_projects' && !isRedirecting && !isCreatingTemp) {
-        setIsCreatingTemp(true);
-        setIsRedirecting(true);
-        try {
-          const tempProject = await createTempProject(workspace);
-          if (tempProject) {
-            navigate({
-              to: `/${workspace}/$projectId`,
-              params: { projectId: tempProject.id },
-            });
-          }
-        } catch (error) {
-          console.error('[useWorkspaceAccess] Failed to create temp project:', error);
-          toast.error('Failed to create quick project. Please try again.');
-        } finally {
-          setIsCreatingTemp(false);
-          setTimeout(() => setIsRedirecting(false), 500);
-        }
-      }
-    };
-
-    initWorkspaceAccess();
-  }, [status, workspace, navigate, isRedirecting, isCreatingTemp]);
-
-  // Create temp project manually
+  // Actions - simple navigation only
   const handleCreateTemp = useCallback(async () => {
-    setIsCreatingTemp(true);
-    try {
-      const tempProject = await createTempProject(workspace);
-      if (tempProject) {
-        toast.success(`${TEMP_PROJECT_NAMES[workspace]} created`);
-        navigate({
-          to: `/${workspace}/$projectId`,
-          params: { projectId: tempProject.id },
-        });
-      }
-    } catch (error) {
-      console.error('[useWorkspaceAccess] Failed to create temp project:', error);
-      toast.error('Failed to create quick project. Please try again.');
-    } finally {
-      setIsCreatingTemp(false);
-    }
-  }, [workspace, navigate]);
-
-  // Enable workspace for most recent project
-  const handleEnable = useCallback(async () => {
-    if (!mostRecentProject) {
-      toast.error('No projects found. Please create a project first.');
-      return;
-    }
-
-    setIsEnabling(true);
-    try {
-      await updateProjectBindings(mostRecentProject.id, {
-        ...mostRecentProject.bindings,
-        [workspace]: true,
-      } as any);
-
-      toast.success(`${workspace.charAt(0).toUpperCase() + workspace.slice(1)} enabled for "${mostRecentProject.name}"`);
-
-      navigate({
-        to: `/${workspace}/$projectId`,
-        params: { projectId: mostRecentProject.id },
-      });
-    } catch (error) {
-      console.error('[useWorkspaceAccess] Failed to enable workspace:', error);
-      toast.error(`Failed to enable ${workspace}. Please try again.`);
-    } finally {
-      setIsEnabling(false);
-    }
-  }, [mostRecentProject, workspace, navigate, updateProjectBindings]);
-
-  // Navigate to hub with create-project action
-  const handleNavigateToCreate = useCallback(() => {
-    navigate({
-      to: '/hub',
-      search: { action: 'create-project' },
-    });
+    navigate({ to: '/hub', search: { action: 'create-project' } });
   }, [navigate]);
 
-  // Navigate to hub with workspace filter
+  const handleEnable = useCallback(async () => {
+    navigate({ to: '/hub' });
+  }, [navigate]);
+
+  const handleNavigateToCreate = useCallback(() => {
+    navigate({ to: '/hub', search: { action: 'create-project' } });
+  }, [navigate]);
+
   const handleNavigateToHub = useCallback(() => {
-    navigate({
-      to: '/hub',
-      search: { workspace },
-    });
+    navigate({ to: '/hub', search: { workspace } });
   }, [workspace, navigate]);
 
   const state: WorkspaceAccessState = {
     status,
     projects: workspaceProjects,
     allProjects,
-    isCreatingTemp,
-    isEnabling,
+    isCreatingTemp: false,
+    isEnabling: false,
     mostRecentProject,
   };
 

@@ -1,12 +1,13 @@
 /**
- * @fileoverview Notes Workspace Route - FULL UI TEST VERSION
+ * @fileoverview Notes Workspace Route - STABLE VERSION WITH EDITOR
  * @module routes/notes
- * 
- * TEMPORARY: Full UI layout with mock data, NO database/filesystem dependencies
- * Tests if the complete Notes interface renders without the data layer.
+ * @updated 2026-01-08T11:30:00+07:00
+ *
+ * FIXED: Bypasses problematic useWorkspaceAccess to prevent infinite loops
+ * Uses direct note store access + BlockNote editor + AI commands.
  */
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { Button } from '@/presentation/components/ui/button';
@@ -15,37 +16,97 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/presentation/components/ui/resizable';
-import { Plus, Notebook, MessageSquare, FileText, Star, Search } from 'lucide-react';
+import { Plus, Notebook, MessageSquare, FileText, Star, Search, Settings } from 'lucide-react';
+import { ErrorBoundary } from '@/presentation/components/error';
+
+// Note store - uses Dexie but not useLiveQuery from workspace-access-helper
+import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
+
+// Chat panel
+import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPanel';
+
+// Lazy load BlockNote editor to prevent SSR issues
+const NoteEditor = lazy(() => import('@/presentation/components/notes/NoteEditor'));
 
 /**
- * Route definition - full UI with mock data
+ * Route definition with ErrorBoundary
  */
 export const Route = createLazyFileRoute('/notes')({
-  component: FullNotesWorkspace,
+  component: () => (
+    <ErrorBoundary>
+      <StableNotesWorkspace />
+    </ErrorBoundary>
+  ),
 });
 
-// Mock notes data (no database)
-const MOCK_NOTES = [
-  { id: '1', title: 'Welcome Note', emoji: '👋', isFavorite: true, updatedAt: new Date() },
-  { id: '2', title: 'Project Ideas', emoji: '💡', isFavorite: false, updatedAt: new Date() },
-  { id: '3', title: 'Meeting Notes', emoji: '📅', isFavorite: false, updatedAt: new Date() },
-  { id: '4', title: 'Research', emoji: '🔬', isFavorite: true, updatedAt: new Date() },
-];
+/**
+ * Loading spinner for lazy components
+ */
+function EditorSkeleton() {
+  return (
+    <div className="flex items-center justify-center h-full">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm text-muted-foreground">Loading editor...</p>
+      </div>
+    </div>
+  );
+}
 
 /**
- * Full Notes workspace UI - NO database, NO filesystem, just UI components
+ * Stable Notes workspace - bypasses problematic useWorkspaceAccess
+ * Uses direct note store access instead of workspace-access-helper
  */
-function FullNotesWorkspace() {
-  const [activeNoteId, setActiveNoteId] = useState<string | null>('1');
+function StableNotesWorkspace() {
+  // Direct note store access
+  const {
+    notesArray,
+    loadNotes,
+    createNote,
+    setActiveNote,
+    activeNoteId,
+    toggleFavorite
+  } = useNoteStore();
+
+  const activeNote = useActiveNote();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [chatCollapsed, setChatCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const activeNote = MOCK_NOTES.find(n => n.id === activeNoteId);
+  // Use a stable projectId
+  const projectId = 'default-notes';
+
+  // Load notes on mount
+  useEffect(() => {
+    loadNotes(projectId);
+  }, [projectId, loadNotes]);
+
+  const handleCreateNote = async () => {
+    try {
+      await createNote({
+        title: 'Untitled Note',
+        blocks: []
+      });
+    } catch (error) {
+      console.error('Failed to create note:', error);
+    }
+  };
+
+  const handleNoteSelect = (noteId: string) => {
+    setActiveNote(noteId);
+  };
+
+  // Filter notes by search query
+  const filteredNotes = searchQuery
+    ? notesArray.filter(note =>
+      note.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    : notesArray;
 
   return (
     <MainLayout>
       <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
-        {/* Left Panel: Note Sidebar - 20% */}
+        {/* Left Panel: Note Sidebar */}
         <ResizablePanel
           id="notes-sidebar"
           defaultSize={20}
@@ -68,7 +129,7 @@ function FullNotesWorkspace() {
               <div className="p-3 border-b border-border">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-mono font-bold text-sm">📝 Notes</span>
-                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                  <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={handleCreateNote}>
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -77,6 +138,8 @@ function FullNotesWorkspace() {
                   <input
                     type="text"
                     placeholder="Search notes..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-7 pr-2 py-1.5 text-xs bg-muted/50 border border-border rounded-md"
                   />
                 </div>
@@ -84,26 +147,37 @@ function FullNotesWorkspace() {
 
               {/* Notes List */}
               <div className="flex-1 overflow-y-auto p-2 space-y-1">
-                {MOCK_NOTES.map((note) => (
-                  <button
-                    key={note.id}
-                    onClick={() => setActiveNoteId(note.id)}
-                    className={`w-full text-left p-2 rounded-md text-sm flex items-center gap-2 transition-colors ${activeNoteId === note.id
-                        ? 'bg-primary/10 text-primary'
-                        : 'hover:bg-muted/50'
-                      }`}
-                  >
-                    <span>{note.emoji}</span>
-                    <span className="flex-1 truncate">{note.title}</span>
-                    {note.isFavorite && <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />}
-                  </button>
-                ))}
+                {filteredNotes.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p className="text-sm">{searchQuery ? 'No matching notes' : 'No notes yet'}</p>
+                    {!searchQuery && (
+                      <Button size="sm" variant="outline" className="mt-2" onClick={handleCreateNote}>
+                        <Plus className="h-3 w-3 mr-1" /> Create Note
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  filteredNotes.map((note) => (
+                    <button
+                      key={note.id}
+                      onClick={() => handleNoteSelect(note.id)}
+                      className={`w-full text-left p-2 rounded-md text-sm flex items-center gap-2 transition-colors ${activeNoteId === note.id
+                          ? 'bg-primary/10 text-primary'
+                          : 'hover:bg-muted/50'
+                        }`}
+                    >
+                      <span>{note.emoji || '📄'}</span>
+                      <span className="flex-1 truncate">{note.title || 'Untitled'}</span>
+                      {note.isFavorite && <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />}
+                    </button>
+                  ))
+                )}
               </div>
 
               {/* Sidebar Footer */}
               <div className="p-2 border-t border-border">
                 <p className="text-xs text-muted-foreground text-center">
-                  {MOCK_NOTES.length} notes (mock data)
+                  {notesArray.length} notes
                 </p>
               </div>
             </div>
@@ -112,16 +186,20 @@ function FullNotesWorkspace() {
 
         <ResizableHandle withHandle />
 
-        {/* Center Panel: Editor - 50% */}
+        {/* Center Panel: BlockNote Editor */}
         <ResizablePanel id="notes-editor" defaultSize={50} minSize={30}>
           <div className="h-full bg-background flex flex-col">
             {activeNote ? (
               <>
                 {/* Editor Header */}
                 <div className="p-4 border-b border-border flex items-center gap-3">
-                  <span className="text-2xl">{activeNote.emoji}</span>
-                  <h1 className="text-xl font-bold">{activeNote.title}</h1>
-                  <Button variant="ghost" size="sm" className="ml-auto">
+                  <span className="text-2xl">{activeNote.emoji || '📄'}</span>
+                  <h1 className="text-xl font-bold flex-1">{activeNote.title || 'Untitled'}</h1>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleFavorite(activeNote.id)}
+                  >
                     {activeNote.isFavorite ? (
                       <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
                     ) : (
@@ -130,30 +208,18 @@ function FullNotesWorkspace() {
                   </Button>
                 </div>
 
-                {/* Editor Content Area */}
-                <div className="flex-1 p-6 overflow-y-auto">
-                  <div className="max-w-3xl mx-auto">
-                    <p className="text-muted-foreground mb-4">
-                      This is a mock editor area. The actual BlockNote editor would render here.
-                    </p>
-                    <div className="p-4 border border-dashed border-border rounded-lg bg-muted/20">
-                      <p className="text-sm text-muted-foreground font-mono">
-                        ✅ ResizablePanelGroup working<br />
-                        ✅ Note sidebar rendered<br />
-                        ✅ Editor panel rendered<br />
-                        ✅ Note selection working<br />
-                        ✅ No database calls<br />
-                        ✅ No filesystem calls
-                      </p>
-                    </div>
-                  </div>
+                {/* BlockNote Editor */}
+                <div className="flex-1 overflow-hidden">
+                  <Suspense fallback={<EditorSkeleton />}>
+                    <NoteEditor noteId={activeNote.id} />
+                  </Suspense>
                 </div>
               </>
             ) : (
               <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-4">
                 <FileText size={48} className="opacity-20" />
                 <p>Select or create a note to start writing</p>
-                <Button>
+                <Button onClick={handleCreateNote}>
                   <Plus size={16} className="mr-2" />
                   Create New Note
                 </Button>
@@ -164,7 +230,7 @@ function FullNotesWorkspace() {
 
         <ResizableHandle withHandle />
 
-        {/* Right Panel: Chat - 30% */}
+        {/* Right Panel: AI Chat */}
         <ResizablePanel
           id="notes-chat"
           defaultSize={30}
@@ -182,39 +248,13 @@ function FullNotesWorkspace() {
               </div>
             </div>
           ) : (
-            <div className="h-full border-l border-border flex flex-col bg-background">
-              {/* Chat Header */}
-              <div className="p-3 border-b border-border">
-                <span className="font-mono font-bold text-sm">💬 AI Chat</span>
-              </div>
-
-              {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto p-4">
-                <div className="space-y-4">
-                  <div className="bg-muted/50 rounded-lg p-3">
-                    <p className="text-sm text-muted-foreground">
-                      Hello! I'm your AI assistant. How can I help you with your notes today?
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="inline-block bg-primary/10 text-primary rounded-lg p-3">
-                      <p className="text-sm">This is a mock chat interface</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Chat Input */}
-              <div className="p-3 border-t border-border">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Ask AI about this note..."
-                    className="flex-1 px-3 py-2 text-sm bg-muted/50 border border-border rounded-md"
-                  />
-                  <Button size="sm">Send</Button>
-                </div>
-              </div>
+            <div className="h-full border-l border-border">
+              <UnifiedChatPanel
+                mode="agent"
+                projectId={projectId}
+                projectName="Notes"
+                workspaceType="notes"
+              />
             </div>
           )}
         </ResizablePanel>
@@ -224,9 +264,8 @@ function FullNotesWorkspace() {
 }
 
 /**
- * Notes workspace with project context
- * This component is used by /notes/$projectId route
+ * Notes workspace with project context (for /notes/$projectId route)
  */
 export function NotesProjectWorkspace() {
-  return <FullNotesWorkspace />;
+  return <StableNotesWorkspace />;
 }
