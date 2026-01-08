@@ -1,7 +1,12 @@
 /**
  * @fileoverview IDE Workspace Route - PHASE 1 SIMPLIFIED VERSION
  * @module routes/ide
- * @updated 2026-01-08T21:00:00+07:00
+ * @updated 2026-01-08T22:00:00+07:00
+ *
+ * PHASE 1 UPDATE (P1-03):
+ * - Integrated temp project auto-creation flow
+ * - Mobile users auto-create temp project
+ * - Desktop users can create temp or pick folder
  *
  * PHASE 1 DETACHMENT:
  * - Bypassed useWorkspaceAccess to prevent infinite loops
@@ -13,10 +18,13 @@
  * Original functionality preserved with PHASE_1_DETACHMENT marker.
  */
 
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { Code2, FolderOpen, Plus } from 'lucide-react';
+import { getOrCreateTempProject } from '@/lib/workspace/temp-project';
+import { FolderPickerDialog } from '@/presentation/components/workspace';
+import { useState } from 'react';
 
 // Lazy load IDELayout
 import { lazy, Suspense } from 'react';
@@ -50,7 +58,7 @@ function IDESkeleton() {
 }
 
 /**
- * IDE workspace with simplified access (Phase 1)
+ * IDE workspace with simplified access (Phase 1 + P1-03 + P1-04)
  *
  * Three scenarios handled:
  * 1. On child route (/ide/$projectId): Render Outlet with IDELayout
@@ -65,10 +73,18 @@ function IDESkeleton() {
  * Gate: GATE-R3 must pass
  * Documentation: _bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md
  * ═══════════════════════════════════════════════════════════════
+ *
+ * P1-03: Temp Project Auto-Flow
+ * Feature: Automatic temp project creation for mobile users
+ * Status: INTEGRATED - Mobile users auto-create temp project on click
+ *
+ * P1-04: Folder Picker Flow
+ * Feature: Desktop users can select a project folder via FSA API
+ * Status: INTEGRATED - Desktop users see folder picker dialog
  */
 function IDEWorkspace() {
-  // Use stable projectId for Phase 1 (reserved for future use)
-  // const projectId = 'default-ide';
+  const navigate = useNavigate();
+  const [showFolderPicker, setShowFolderPicker] = useState(false);
 
   // Check if we're on a child route like /ide/$projectId
   const isOnChildRoute = window.location.pathname !== '/ide';
@@ -93,22 +109,28 @@ function IDEWorkspace() {
             <Code2 className="h-16 w-16 text-primary" />
             <h2 className="text-2xl font-bold">Via-gent IDE</h2>
             <p className="text-muted-foreground">
-              Create a quick temp project or select an existing project to start coding.
+              Create a quick temp project or select a project folder to start coding.
             </p>
           </div>
           <div className="flex flex-col gap-3 w-full">
             <button
-              onClick={() => handleCreateTemp()}
+              onClick={() => handleCreateTemp(navigate)}
               className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium flex items-center justify-center gap-2"
             >
               <Plus className="h-4 w-4" />
               ⚡ Quick IDE (Temp Project)
             </button>
             <button
-              onClick={() => handleBrowseProjects()}
+              onClick={() => setShowFolderPicker(true)}
               className="w-full px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 font-medium flex items-center justify-center gap-2"
             >
               <FolderOpen className="h-4 w-4" />
+              Select Project Folder
+            </button>
+            <button
+              onClick={() => handleBrowseProjects(navigate)}
+              className="w-full px-6 py-3 border border-border text-foreground rounded-lg hover:bg-muted font-medium flex items-center justify-center gap-2"
+            >
               Browse Projects
             </button>
           </div>
@@ -117,29 +139,56 @@ function IDEWorkspace() {
           </p>
         </div>
       </div>
+
+      {/* Folder Picker Dialog (P1-04) */}
+      <FolderPickerDialog
+        open={showFolderPicker}
+        onOpenChange={setShowFolderPicker}
+        onSuccess={(projectId) => {
+          console.log('[IDERoute] Folder selected, navigating to:', projectId);
+          navigate({ to: '/ide/$projectId', params: { projectId } });
+        }}
+        onFallbackToTemp={async () => {
+          console.log('[IDERoute] Fallback to temp project');
+          const tempProject = await getOrCreateTempProject();
+          navigate({ to: '/ide/$projectId', params: { projectId: tempProject.id } });
+        }}
+        onCancel={() => {
+          console.log('[IDERoute] Folder picker cancelled');
+        }}
+      />
     </MainLayout>
   );
 }
 
 /**
- * Handle temp project creation
- * TODO: Wire up to P1-03 temp project flow
+ * Handle temp project creation (P1-03)
+ *
+ * Phase 1: Auto-creates temp project and navigates to it
+ * - Gets or creates temp project via getOrCreateTempProject()
+ * - Navigates to /ide/$projectId route
+ * - Temp project persists in IndexedDB via project store
  */
-function handleCreateTemp() {
+async function handleCreateTemp(navigate: ReturnType<typeof useNavigate>) {
   console.log('[IDERoute] Create temp project clicked');
-  // Phase 1: Navigate to hub with create intent
-  // Phase 1-P1-03: Auto-create temp project
-  window.location.href = '/hub?intent=create-temp';
+  try {
+    const tempProject = await getOrCreateTempProject();
+    console.log('[IDERoute] Temp project created/retrieved:', tempProject.id);
+    // Navigate to the temp project route
+    navigate({ to: '/ide/$projectId', params: { projectId: tempProject.id } });
+  } catch (error) {
+    console.error('[IDERoute] Failed to create temp project:', error);
+  }
 }
 
 /**
  * Handle browse projects
- * TODO: Wire up to hub navigation
+ * Phase 1: Navigates to hub for project selection
  */
-function handleBrowseProjects() {
+function handleBrowseProjects(navigate: ReturnType<typeof useNavigate>) {
   console.log('[IDERoute] Browse projects clicked');
   // Navigate to hub
-  window.location.href = '/hub';
+  navigate({ to: '/hub' });
 }
 
 /**

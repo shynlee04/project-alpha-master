@@ -26,21 +26,19 @@ import { toast } from 'sonner';
 // Translation Helper
 // ============================================================================
 
-/**
- * Get translation function for use outside React components
- * Note: This relies on i18next instance being initialized
- */
-function getTranslation() {
-    // Lazy import to avoid circular dependencies
-    const i18n = require('i18next');
-    return (key: string, defaultValue?: string) => i18n.t(key, defaultValue);
-}
+import i18next from 'i18next';
 
 /**
- * Wrap translation key with fallback
+ * Translation helper for use outside React components
+ * Uses the global i18next instance directly instead of require()
  */
 function t(key: string, defaultValue?: string): string {
-    return getTranslation()(key, defaultValue);
+    try {
+        const result = i18next.t(key, { defaultValue });
+        return typeof result === 'string' ? result : defaultValue || key;
+    } catch {
+        return defaultValue || key;
+    }
 }
 
 // ============================================================================
@@ -66,13 +64,17 @@ export const insertAIItem = (editor: BlockNoteEditor) => ({
 async function executeAICommand(
     editor: BlockNoteEditor,
     prompt: string,
-    commandName: string = 'AI'
+    commandName: string = 'AI',
+    options?: { includeContext?: boolean; replaceSelection?: boolean }
 ): Promise<void> {
     // Show loading toast
     const toastId = toast.loading(t('notes.ai.generating', `${commandName} generating...`));
 
     try {
-        const result = await generateNoteContent(prompt);
+        // Get page context if requested (default: true for awareness)
+        const contextBlocks = options?.includeContext !== false ? editor.document : undefined;
+
+        const result = await generateNoteContent(prompt, { contextBlocks });
 
         if (!result || result.trim().length === 0) {
             toast.error(t('notes.ai.error.empty', 'AI returned empty content'), { id: toastId });

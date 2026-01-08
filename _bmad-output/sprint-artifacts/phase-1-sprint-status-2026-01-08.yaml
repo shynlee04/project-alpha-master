@@ -115,9 +115,10 @@ epics:
         id: "P1-03"
         name: "Create Temp Project Auto-Flow (Mobile)"
         priority: "P0"
-        status: "NOT_STARTED"
+        status: "DONE"
         effort_hours: 3
-        assignee: null
+        assignee: "BMAD Dev"
+        completed_at: "2026-01-08T22:30:00+07:00"
         dependencies: ["P1-01", "P1-02"]
         acceptance_criteria:
           - "Mobile detection works"
@@ -129,14 +130,16 @@ epics:
         files_to_create:
           - "src/lib/workspace/temp-project.ts"
           - "src/presentation/components/workspace/TempProjectBanner.tsx"
+        notes: "Created temp-project.ts utility and TempProjectBanner component. Integrated with IDE route handleCreateTemp."
         
       P1-04:
         id: "P1-04"
         name: "Create Folder Picker Flow (Desktop)"
         priority: "P0"
-        status: "NOT_STARTED"
+        status: "DONE"
         effort_hours: 3
-        assignee: null
+        assignee: "BMAD Dev"
+        completed_at: "2026-01-08T23:00:00+07:00"
         dependencies: ["P1-01", "P1-02"]
         acceptance_criteria:
           - "Desktop users see folder picker dialog"
@@ -147,6 +150,7 @@ epics:
         files_to_create:
           - "src/presentation/components/workspace/FolderPickerDialog.tsx"
           - "src/lib/workspace/fsa-persistence.ts"
+        notes: "Created fsa-persistence.ts utility and FolderPickerDialog component. Integrated with IDE route. Fallback to temp on abort works."
         
       P1-05:
         id: "P1-05"
@@ -284,22 +288,24 @@ epics:
 
 metrics:
   total_stories: 12
-  stories_not_started: 8
+  stories_not_started: 6
   stories_in_progress: 1
-  stories_done: 3
+  stories_done: 5
   stories_blocked: 0
 
   total_effort_hours: 33
-  effort_completed: 8
-  effort_remaining: 25
+  effort_completed: 14
+  effort_remaining: 19
 
-  completion_percentage: 24
+  completion_percentage: 42
 
-  last_updated: "2026-01-08T21:00:00+07:00"
+  last_updated: "2026-01-08T23:00:00+07:00"
 
   stories_completed:
     - "P1-01: Simplify Notes Route (DONE)"
     - "P1-02: Simplify IDE Route (DONE)"
+    - "P1-03: Create Temp Project Auto-Flow (DONE)"
+    - "P1-04: Create Folder Picker Flow (DONE)"
     - "P1-08: Vault → AI Chain Investigation (DONE)"
 
 # ═══════════════════════════════════════════════════════════════════════════

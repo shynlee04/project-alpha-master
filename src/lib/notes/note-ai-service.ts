@@ -58,39 +58,81 @@ export async function generateNoteContent(
     prompt: string,
     options?: NoteAIOptions
 ): Promise<string> {
+    // 0. Ensure credential vault is initialized
+    try {
+        await credentialVault.initialize();
+    } catch (err) {
+        console.warn('[NoteAIService] Vault init warning:', err);
+    }
+
     // 1. Get active agent specifically for NOTES workspace
-    // This ensures consistency regardless of what the "global" active agent is
     const { getAgentForWorkspace } = useAgentSelectionStore.getState();
-    const activeAgent = getAgentForWorkspace('notes');
+    let activeAgent = getAgentForWorkspace('notes');
+
+    // 1.1 Fallback: If no notes-specific agent, try global active agent
+    if (!activeAgent) {
+        const { activeAgentId } = useAgentSelectionStore.getState();
+        if (activeAgentId) {
+            activeAgent = useAppStore.getState().getAgent(activeAgentId) || null;
+        }
+    }
 
     // Allow override, otherwise use the notes workspace agent
     const agent = options?.agentId
         ? useAppStore.getState().getAgent(options.agentId)
         : activeAgent;
 
-    // Determine the ID for error reporting
-    const agentId = agent?.id;
-
     if (!agent) {
-        if (!agentId) {
-            throw new NoteAIError(
-                'NO_AGENT',
-                'No active agent configured for Notes. Please select an agent in the sidebar.'
-            );
+        // Try to get any available agent as last resort
+        const allAgents = useAppStore.getState().agents;
+        if (allAgents.length > 0) {
+            console.warn('[NoteAIService] No notes agent, using first available agent');
+            const fallbackAgent = allAgents[0];
+            return generateWithAgent(fallbackAgent, prompt, options);
         }
         throw new NoteAIError(
-            'AGENT_NOT_FOUND',
-            `Agent "${agentId}" not found in store.`
+            'NO_AGENT',
+            'No AI agent configured. Please create an agent in Settings > Agents.'
         );
     }
 
+    return generateWithAgent(agent, prompt, options);
+}
+
+/**
+ * Internal function to generate content with a specific agent
+ */
+async function generateWithAgent(
+    agent: any,
+    prompt: string,
+    options?: NoteAIOptions
+): Promise<string> {
     // 2. Get API key from credential vault
-    const apiKey = await credentialVault.getCredentials(agent.providerId);
+    let apiKey = await credentialVault.getCredentials(agent.providerId);
+
+    // 2.1 Fallback: Check if API key is still in old location (hasApiKey flag with no vault entry)
+    if (!apiKey && agent.hasApiKey) {
+        console.warn('[NoteAIService] API key flagged but not in vault. Migration may be needed.');
+        // Try to get from legacy location if available
+        const providers = useAppStore.getState().providers;
+        const provider = providers?.find((p: any) => p.id === agent.providerId);
+        if (provider && 'apiKey' in provider && provider.apiKey) {
+            apiKey = provider.apiKey;
+            console.log('[NoteAIService] Using legacy API key from provider store');
+            // Auto-migrate to vault
+            try {
+                await credentialVault.storeCredentials(agent.providerId, apiKey);
+                console.log('[NoteAIService] Auto-migrated API key to vault');
+            } catch (e) {
+                console.warn('[NoteAIService] Failed to auto-migrate:', e);
+            }
+        }
+    }
 
     if (!apiKey) {
         throw new NoteAIError(
             'NO_API_KEY',
-            `No API key configured for provider "${agent.providerId}". Please add your API key in Settings.`
+            `No API key configured for provider "${agent.providerId}". Please add your API key in Settings > Providers.`
         );
     }
 
@@ -109,10 +151,10 @@ export async function generateNoteContent(
 
     // 4. Use system prompt (override or agent's default)
     const systemPrompt = options?.systemPromptOverride || agent.systemPrompt ||
-        'You are a helpful AI assistant for note-taking. Generate clear, concise content.';
+        'You are a helpful AI assistant for note-taking. Generate clear, concise content. Respond in the same language as the user input.';
 
     // 5. Call the provider API
-    console.log(`[NoteAIService] Calling ${agent.providerId}/${agent.modelId}`);
+    console.log(`[NoteAIService] Calling ${agent.providerId}/${agent.modelId || agent.model}`);
 
     const response = await callProviderAPI({
         providerId: agent.providerId,

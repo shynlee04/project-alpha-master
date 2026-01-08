@@ -19,8 +19,8 @@
  * ```
  */
 
-import { saveProject, getProject, generateProjectId } from '@/lib/workspace/project-store';
-import type { ProjectMetadata } from '@/lib/workspace/project-types';
+import { saveProject, getProject } from '@/lib/workspace/project-store';
+import type { Project } from '@/domain/entities/project';
 import { isDesktopPlatform } from '@/lib/utils/platform-detection';
 
 // ============================================================================
@@ -73,13 +73,13 @@ export function getStoredTempProjectId(): string | null {
  * - ONE temp project per session (reuses existing if found)
  * - Project persists in IndexedDB via project store
  */
-export async function getOrCreateTempProject(): Promise<ProjectMetadata> {
+export async function getOrCreateTempProject(): Promise<Project> {
   // Check for existing temp project
   const existingId = getStoredTempProjectId();
   if (existingId) {
     const existing = await getProject(existingId);
     if (existing) {
-      return existing;
+      return existing as Project;
     }
   }
 
@@ -91,19 +91,24 @@ export async function getOrCreateTempProject(): Promise<ProjectMetadata> {
 /**
  * Create a new temp project
  */
-async function createTempProject(): Promise<ProjectMetadata> {
+async function createTempProject(): Promise<Project> {
   const projectId = generateTempProjectId();
   const now = new Date();
   const platform = isDesktopPlatform() ? 'desktop' : 'mobile';
 
-  const tempProject: ProjectMetadata = {
+  const tempProject: Project = {
     id: projectId,
     name: `Temp Project (${formatTimestamp(now)})`,
     folderPath: `/virtual/${projectId}`,
     storageType: 'indexeddb', // Virtual storage = IndexedDB only
     lastOpened: now,
+    createdAt: now,
     autoSync: false, // No sync for temp projects
     fileSnapshotEnabled: false,
+    bindings: {}, // Empty bindings for temp project
+    tags: [], // No tags for temp project
+    isTemp: true, // Mark as temp project
+    autoCreated: true, // Mark as auto-created
   };
 
   // Save to project store
@@ -141,7 +146,7 @@ function formatTimestamp(date: Date): string {
 /**
  * Get temp project metadata for banner display
  */
-export function getTempProjectBannerProps(project: ProjectMetadata): TempProjectMetadata {
+export function getTempProjectBannerProps(project: Project): TempProjectMetadata {
   return {
     id: project.id,
     name: project.name,
