@@ -311,9 +311,68 @@ ${content}`,
 // Get Custom Slash Menu Items
 // ============================================================================
 
+import {
+    useSlashCommandStore,
+    getLocalizedCommand,
+    type CustomSlashCommand,
+} from '@/lib/notes/slash-command-store';
+import {
+    ListTodo, SpellCheck, Users,
+    FileText, MessageSquare, Wand2, Zap,
+    Brain, Code, FileCode, Globe, Heart,
+    PenTool, Search, Star, Target, Rocket,
+    Coffee, Palette, Music, Camera, Mic,
+} from 'lucide-react';
+
+// Icon map for custom commands (using already imported icons from top + new ones)
+const CUSTOM_ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
+    Sparkles, Lightbulb, ListTodo, SpellCheck, Users,
+    BookOpen, FileText, MessageSquare, Wand2, Zap,
+    Brain, Code, FileCode, Globe, Heart,
+    PenTool, Search, Star, Target, Rocket,
+    Coffee, Palette, Music, Camera, Mic,
+};
+
+/**
+ * Create a slash menu item from a custom command
+ */
+function createCustomCommandItem(
+    editor: BlockNoteEditor,
+    command: CustomSlashCommand
+): DefaultReactSuggestionItem {
+    const locale = i18next.language || 'en';
+    const localized = getLocalizedCommand(command, locale);
+    const Icon = CUSTOM_ICON_MAP[command.icon] || Sparkles;
+
+    return {
+        title: localized.title,
+        onItemClick: async () => {
+            const content = getAllNoteText(editor);
+            const promptWithContext = content.trim()
+                ? `${command.prompt}\n\nNote content:\n${content}`
+                : command.prompt;
+
+            await executeAICommand(
+                editor,
+                promptWithContext,
+                localized.title
+            );
+        },
+        aliases: command.aliases,
+        group: 'AI Custom',
+        icon: <Icon size={18} />,
+        subtext: localized.description,
+    };
+}
+
 export const getCustomSlashMenuItems = (
     editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => {
+    // Get enabled custom commands from store
+    const customCommands = useSlashCommandStore.getState().customCommands
+        .filter(cmd => cmd.isEnabled)
+        .map(cmd => createCustomCommandItem(editor, cmd));
+
     return [
         // AI Commands at the top
         insertAIItem(editor),
@@ -324,6 +383,8 @@ export const getCustomSlashMenuItems = (
         generateQuestionsItem(editor),
         translateNoteItem(editor),
         generateFlashcardsItem(editor),
+        // User-defined custom commands
+        ...customCommands,
         // Default BlockNote items
         ...getDefaultReactSlashMenuItems(editor),
     ];

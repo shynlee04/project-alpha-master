@@ -4,6 +4,19 @@
  * @governance Story WB-4: Workspace Binding Dialog
  * @refactored 2026-01-02T23:00:00+07:00
  *
+ * ═══════════════════════════════════════════════════════════════
+ * ⚠️ PHASE 1 DETACHMENT
+ * Feature: Workspace Binding Selection Dialog (149 lines)
+ * Reason: Adds workspace binding complexity before Phase 1 gates pass
+ * Re-attach in: Phase 2 (after Phase 1 gates pass)
+ * Gate: GATE-R1, GATE-R3 must pass (/notes and /ide render without errors)
+ * Tracking: _bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md
+ * ═══════════════════════════════════════════════════════════════
+ *
+ * PHASE 1 STATUS: PRESERVED - Dialog remains functional via Hub
+ * Phase 1 uses default bindings (ide: true, others: false) for new projects.
+ * Full workspace binding configuration available in Phase 2.
+ *
  * Dialog for selecting which workspaces a project syncs to.
  * Users check workspaces to enable (IDE, Notes, Knowledge, Study)
  * and select initial workspace to open via radio buttons.

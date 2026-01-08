@@ -156,9 +156,10 @@ epics:
         id: "P1-05"
         name: "Detach Complex Forms with Markers"
         priority: "P1"
-        status: "NOT_STARTED"
+        status: "DONE"
         effort_hours: 2
-        assignee: null
+        assignee: "BMAD Dev"
+        completed_at: "2026-01-08T23:30:00+07:00"
         dependencies: ["P1-03", "P1-04"]
         acceptance_criteria:
           - "ProjectCreationWizard detached with marker"
@@ -167,7 +168,10 @@ epics:
           - "All markers follow standard format"
           - "No compile errors from detached code"
         files_to_modify:
-          - "src/presentation/components/wizard/ProjectCreationWizard.tsx"
+          - "src/presentation/components/project/ProjectCreationWizard.tsx"
+          - "src/presentation/components/hub/WorkspaceBindingDialog.tsx"
+          - "src/presentation/components/project/steps/AgentSelectionStep.tsx"
+        notes: "Added Phase 1 detachment markers to all three forms. Components remain functional via Hub, marked for Phase 2 re-integration."
         
       P1-06:
         id: "P1-06"
@@ -288,24 +292,25 @@ epics:
 
 metrics:
   total_stories: 12
-  stories_not_started: 6
+  stories_not_started: 5
   stories_in_progress: 1
-  stories_done: 5
+  stories_done: 6
   stories_blocked: 0
 
   total_effort_hours: 33
-  effort_completed: 14
-  effort_remaining: 19
+  effort_completed: 16
+  effort_remaining: 17
 
-  completion_percentage: 42
+  completion_percentage: 48
 
-  last_updated: "2026-01-08T23:00:00+07:00"
+  last_updated: "2026-01-08T23:30:00+07:00"
 
   stories_completed:
     - "P1-01: Simplify Notes Route (DONE)"
     - "P1-02: Simplify IDE Route (DONE)"
     - "P1-03: Create Temp Project Auto-Flow (DONE)"
     - "P1-04: Create Folder Picker Flow (DONE)"
+    - "P1-05: Detach Complex Forms with Markers (DONE)"
     - "P1-08: Vault → AI Chain Investigation (DONE)"
 
 # ═══════════════════════════════════════════════════════════════════════════

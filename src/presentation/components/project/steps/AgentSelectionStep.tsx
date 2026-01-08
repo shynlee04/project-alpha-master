@@ -4,6 +4,19 @@
  * @governance S-023
  * @created 2026-01-06T09:55:00+07:00
  *
+ * ═══════════════════════════════════════════════════════════════
+ * ⚠️ PHASE 1 DETACHMENT
+ * Feature: Agent Selection with Tool Permissions (202 lines)
+ * Reason: Agent configuration complexity - P1-08 (Vault Chain) must complete first
+ * Re-attach in: Phase 2 (after P1-09: Simplify Agent/Key Flow)
+ * Gate: P1-08 DONE, P1-09 DONE (Vault → AI chain working)
+ * Tracking: _bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md
+ * ═══════════════════════════════════════════════════════════════
+ *
+ * PHASE 1 STATUS: PRESERVED - Step remains optional in wizard
+ * Phase 1 uses simplified agent/key flow (settings → API key entry).
+ * Full agent selection in project creation available in Phase 2.
+ *
  * Step 3 of project creation wizard: Agent configuration (optional).
  * Collects default agent selection and tool permissions.
  *

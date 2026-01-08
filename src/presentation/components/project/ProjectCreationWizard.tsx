@@ -4,6 +4,19 @@
  * @governance S-023
  * @created 2026-01-06T09:30:00+07:00
  *
+ * ═══════════════════════════════════════════════════════════════
+ * ⚠️ PHASE 1 DETACHMENT
+ * Feature: Multi-step Project Creation Wizard (513 lines)
+ * Reason: Complex wizard with workspace bindings, agent selection, file setup
+ * Re-attach in: Phase 2 (after Phase 1 gates pass)
+ * Gate: GATE-R1, GATE-R3 must pass (/notes and /ide render without errors)
+ * Tracking: _bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md
+ * ═══════════════════════════════════════════════════════════════
+ *
+ * PHASE 1 STATUS: PRESERVED - Wizard remains functional but not critical path
+ * Phase 1 uses simplified temp/folder picker flows in IDE route instead.
+ * Wizard can be accessed via Hub → "Create Project" button.
+ *
  * Multi-step wizard for creating new projects with workspace configuration,
  * agent selection, and initial file setup.
  *
