@@ -10,13 +10,15 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { Agent, AgentToolBinding, WorkspaceBinding } from '@/core/entities/Agent';
-import type { CombinedAgentsState } from '../types';
+import type { AgentStatus } from '@/domain/entities/agent';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission';
+import type { CombinedAgentsState, AgentCrudState, AgentData } from '../types';
 
 /**
  * Default tool bindings for the default agent
  */
-const DEFAULT_TOOL_BINDINGS: AgentToolBinding[] = [
+const DEFAULT_TOOL_BINDINGS: AgentToolBindingProps[] = [
   { toolId: 'read', toolName: 'File Read', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },
   { toolId: 'write', toolName: 'File Write', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: false, notes: true } },
   { toolId: 'execute', toolName: 'Terminal', isEnabled: true, workspacePermissions: { ide: true, knowledge: false, study: false, notes: false } },
@@ -26,7 +28,7 @@ const DEFAULT_TOOL_BINDINGS: AgentToolBinding[] = [
 /**
  * Default workspace bindings for the default agent
  */
-const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
+const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBindingProps[] = [
   { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
   { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
   { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
@@ -34,13 +36,14 @@ const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBinding[] = [
 ];
 
 /**
- * Default agent created on first load
+ * Default agent - exported for use in tests and initialization
  */
-export const DEFAULT_AGENT: Agent = {
+export const DEFAULT_AGENT: AgentData = {
   id: 'agt_default_001',
   name: 'Via-Gent Coder',
   description: 'Default AI coding assistant powered by Devstral via OpenRouter',
   providerId: 'openrouter',
+  model: 'mistralai/devstral-2512:free',
   modelId: 'mistralai/devstral-2512:free',
   systemPrompt: 'You are an expert AI coding assistant specializing in React, TypeScript, and full-stack web development. You help write clean, maintainable code following best practices.',
   temperature: 0.7,
@@ -48,13 +51,41 @@ export const DEFAULT_AGENT: Agent = {
   topP: 1.0,
   tools: DEFAULT_TOOL_BINDINGS,
   workspaceBindings: DEFAULT_WORKSPACE_BINDINGS,
-  status: 'online',
+  status: 'online' as AgentStatus,
   tasksCompleted: 0,
   successRate: 0,
   tokensUsed: 0,
   lastActive: new Date().toISOString(),
-  createdAt: new Date().toISOString(),
+  createdAt: Date.now(),
+  updatedAt: Date.now(),
 };
+
+/**
+ * Default agent creation helper (returns plain data)
+ */
+function createDefaultAgent(): AgentData {
+  return {
+    id: 'agt_default_001',
+    name: 'Via-Gent Coder',
+    description: 'Default AI coding assistant powered by Devstral via OpenRouter',
+    providerId: 'openrouter',
+    model: 'mistralai/devstral-2512:free',
+    modelId: 'mistralai/devstral-2512:free',
+    systemPrompt: 'You are an expert AI coding assistant specializing in React, TypeScript, and full-stack web development. You help write clean, maintainable code following best practices.',
+    temperature: 0.7,
+    maxTokens: 4096,
+    topP: 1.0,
+    tools: DEFAULT_TOOL_BINDINGS,
+    workspaceBindings: DEFAULT_WORKSPACE_BINDINGS,
+    status: 'online' as AgentStatus,
+    tasksCompleted: 0,
+    successRate: 0,
+    tokensUsed: 0,
+    lastActive: new Date().toISOString(),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+}
 
 /**
  * Generate unique agent ID
@@ -76,16 +107,20 @@ export const createAgentCrudSlice: StateCreator<
   CombinedAgentsState,
   [],
   [],
-  Omit<CombinedAgentsState, 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getAgentsCount'>
+  AgentCrudState
 > = (set) => ({
-  // =================================================================════===
+  // ========================================================================
   // STATE
   // ========================================================================
 
   /** Available models by provider ID (required by CombinedAgentsState) */
   availableModels: {},
 
-  agents: [DEFAULT_AGENT],
+  /** Active agent ID */
+  activeAgentId: null,
+
+  /** List of configured agents */
+  agents: [createDefaultAgent()],
 
   // ========================================================================
   // CRUD OPERATIONS (pure, no validation, no events)
@@ -99,14 +134,18 @@ export const createAgentCrudSlice: StateCreator<
    * For event emission, use addAgentWithEvent from agent-events-slice.
    */
   addAgent: (agentData) => {
-    const newAgent: Agent = {
+    const newAgent: AgentData = {
       ...agentData,
       id: generateId(),
-      createdAt: new Date().toISOString(),
-      lastActive: new Date().toISOString(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
       tasksCompleted: 0,
       successRate: 0,
       tokensUsed: 0,
+      lastActive: new Date().toISOString(),
+      // Ensure workspaceBindings and tools are arrays
+      workspaceBindings: agentData.workspaceBindings || [],
+      tools: agentData.tools || [],
     };
 
     console.log('[AgentCrudSlice] Adding agent:', newAgent.id, newAgent.name);
@@ -143,10 +182,10 @@ export const createAgentCrudSlice: StateCreator<
   updateAgent: (id, updates) => {
     console.log('[AgentCrudSlice] Updating agent:', id, updates);
     set((state) => ({
-      agents: state.agents.map((a) =>
-        a.id === id
-          ? { ...a, ...updates, lastActive: new Date().toISOString() }
-          : a
+      agents: state.agents.map((agent) =>
+        agent.id === id
+          ? { ...agent, ...updates, updatedAt: Date.now() }
+          : agent
       ),
     }));
   },
@@ -157,7 +196,17 @@ export const createAgentCrudSlice: StateCreator<
   resetToDefaults: () => {
     console.log('[AgentCrudSlice] Resetting to defaults');
     set({
-      agents: [DEFAULT_AGENT]
+      agents: [createDefaultAgent()]
     });
+  },
+
+  /**
+   * Set the active agent
+   *
+   * @param id - Agent ID to set as active
+   */
+  setActiveAgent: (id: string) => {
+    console.log('[AgentCrudSlice] Setting active agent:', id);
+    set({ activeAgentId: id });
   },
 });

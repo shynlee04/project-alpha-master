@@ -66,7 +66,7 @@ export function useProviderModels(providerId: string) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   const storeModels = useAppStore((state: AppState) => state.availableModels[providerId] || []);
-  const storeIsLoading = useAppStore((state: AppState) => state.isLoadingModels[providerId] || false);
+  const storeIsLoading = useAppStore((state: AppState) => state.isLoadingModels?.[providerId] || false);
   const fetchModels = useAppStore((state: AppState) => state.fetchModels);
 
   // Initialize from store

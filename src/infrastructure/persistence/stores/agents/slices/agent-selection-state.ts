@@ -6,7 +6,7 @@
  * State interface and types for agent selection store.
  */
 
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '../types';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
@@ -30,15 +30,15 @@ export interface AgentSelectionState {
   setDefaultAgent: (agentId: string, workspaceType: WorkspaceType) => void;
 
   // Actions - Queries
-  getActiveAgent: () => Agent | null;
-  getAgentForWorkspace: (workspaceType: WorkspaceType) => Agent | null;
+  getActiveAgent: () => AgentData | null;
+  getAgentForWorkspace: (workspaceType: WorkspaceType) => AgentData | null;
   selectAgentForWorkspace: (workspaceType: WorkspaceType) => void;
   needsReselection: (workspaceType: WorkspaceType) => boolean;
 
   // Actions - Events
-  emitAgentSelected: (agent: Agent, workspaceType: WorkspaceType) => void;
+  emitAgentSelected: (agent: AgentData, workspaceType: WorkspaceType) => void;
   emitAgentDeselected: (workspaceType: WorkspaceType) => void;
-  emitDefaultAgentChanged: (agent: Agent, workspaceType: WorkspaceType) => void;
+  emitDefaultAgentChanged: (agent: AgentData, workspaceType: WorkspaceType) => void;
 
   // Actions - Utilities
   setHasHydrated: (hasHydrated: boolean) => void;

@@ -17,7 +17,7 @@
 
 import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 
 /**
@@ -31,7 +31,7 @@ export interface WorkspaceExecutionContext {
   /** Current project ID */
   projectId: string | null;
   /** Active agent configuration */
-  agent: Agent | null;
+  agent: AgentData | null;
   /** Whether agent is available in current workspace */
   agentAvailable: boolean;
 }

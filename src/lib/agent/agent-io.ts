@@ -10,7 +10,7 @@
 
 import { z } from 'zod'
 import { toast } from 'sonner'
-import type { Agent } from '@/core/entities/Agent'
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents'
 
 /**
@@ -52,6 +52,35 @@ const AgentExportSchema = z.object({
 })
 
 export type AgentExportData = z.infer<typeof AgentExportSchema>
+
+/**
+ * Convert exported agent data to AgentData format for store
+ * Handles field mapping and type conversions
+ */
+function convertExportToAgentData(exported: AgentExportData): AgentData {
+    const createdAt = new Date(exported.createdAt).getTime()
+    return {
+        id: exported.id,
+        name: exported.name,
+        description: exported.description || undefined,
+        providerId: exported.providerId,
+        model: exported.modelId, // Map modelId to model
+        modelId: exported.modelId,
+        systemPrompt: exported.systemPrompt,
+        temperature: exported.temperature,
+        maxTokens: exported.maxTokens,
+        topP: exported.topP,
+        status: exported.status,
+        tasksCompleted: exported.tasksCompleted,
+        successRate: exported.successRate,
+        tokensUsed: exported.tokensUsed,
+        lastActive: exported.lastActive,
+        createdAt: createdAt, // Convert ISO string to timestamp
+        updatedAt: createdAt, // Use createdAt as default (not exported)
+        workspaceBindings: exported.workspaceBindings,
+        tools: exported.tools
+    }
+}
 
 /**
  * Export agent configurations to JSON string
@@ -124,13 +153,13 @@ export function importAgents(
 
         // Handle merge strategies
         const store = useAgentsStore.getState()
-        let agentsToAdd: Agent[] = []
+        let agentsToAdd: AgentData[] = []
 
         switch (strategy) {
             case 'replace':
                 // Replace all existing agents
                 store.agents.forEach(agent => store.removeAgent(agent.id))
-                agentsToAdd = importedAgents
+                agentsToAdd = importedAgents.map(convertExportToAgentData)
                 break
 
             case 'merge':
@@ -138,12 +167,13 @@ export function importAgents(
                 agentsToAdd = importedAgents.map(importedAgent => {
                     const existingAgent = store.agents.find(a => a.id === importedAgent.id)
                     if (existingAgent) {
-                        // Update existing agent
-                        store.updateAgent(importedAgent.id, importedAgent)
+                        // Update existing agent with converted data
+                        const converted = convertExportToAgentData(importedAgent)
+                        store.updateAgent(importedAgent.id, converted)
                         return null // Don't add again
                     }
-                    return importedAgent as Agent
-                }).filter((agent): agent is Agent => agent !== null)
+                    return convertExportToAgentData(importedAgent)
+                }).filter((agent): agent is AgentData => agent !== null)
                 break
 
             case 'cancel':

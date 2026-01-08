@@ -101,23 +101,25 @@ export interface ThreadHierarchyNode {
  * NOTE: Using type-only imports to avoid circular dependencies.
  * These types are erased by TypeScript and don't exist at runtime.
  */
-import type { ConversationMetadata, WorkspaceType } from '@/core/entities/Conversation';
+import type { ConversationMetadata } from './conversation-types';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { ConversationEvent, ConversationEventType } from './event-types';
 
 // Define slice-specific types inline using utility types to avoid circular imports
 // Each slice will provide the actual implementation
 
 // Extend ConversationMetadata with store-specific properties
-export interface ConversationMetadataExtended extends ConversationMetadata {
+// Note: We use Omit to handle type incompatibilities with base ConversationMetadata
+export interface ConversationMetadataExtended
+  extends Omit<ConversationMetadata, 'agentId'> {
   status: 'active' | 'archived' | 'deleted';
-  updatedAt: string;  // ISO string for storage (overrides number from base)
-  createdAt: string;  // ISO string for storage (overrides number from base)
-  agentId: string; // Required (overrides nullable from base)
+  // Override to make agentId required (non-null)
+  agentId: string;
 
   // Additional properties used throughout the codebase
   pinned?: boolean;  // Whether conversation is pinned to top
   tags?: string[];  // User-defined tags for organization
-  // Note: scrollPosition, title, and other base properties are inherited from ConversationMetadata
+  // Note: scrollPosition, title, createdAt, updatedAt are inherited from ConversationMetadata
 }
 
 // Extend ConversationThread with store-specific properties

@@ -31,6 +31,13 @@ export const createAgentEventsSlice: StateCreator<
   Omit<CombinedAgentsState, 'agents' | 'activeAgentId' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'setActiveAgent' | 'resetToDefaults' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getActiveAgent' | 'getAgentsCount'>
 > = (_set, get) => ({
   // ========================================================================
+  // STATE (required by CombinedAgentsState)
+  // ========================================================================
+
+  /** Available models by provider ID (cross-slice reference) */
+  availableModels: {},
+
+  // ========================================================================
   // EVENT EMISSION OPERATIONS (wrap CRUD with event emission)
   // ========================================================================
 

@@ -1,18 +1,9 @@
 import { StateCreator } from 'zustand';
-import type { ConversationMetadata, WorkspaceType } from '@/core/entities/Conversation';
-import type { CombinedConversationState } from './types';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { CombinedConversationState, ConversationMetadataExtended } from './types';
 
-export interface ConversationMetadataWithId extends ConversationMetadata {
-  id: string;
-  workspaceType: WorkspaceType;
-  projectId: string | null;
-  agentId: string;
-  status: 'active' | 'archived' | 'deleted';
-  createdAt: string;
-  updatedAt: string;
-  /** E1-6: Scroll position in pixels */
-  scrollPosition?: number;
-}
+// Use the exported type from types.ts to avoid conflicts
+export type ConversationMetadataWithId = ConversationMetadataExtended;
 
 // Slice state (subset of CombinedConversationState)
 type ConversationMetadataSliceState = Pick<CombinedConversationState,
@@ -22,7 +13,7 @@ type ConversationMetadataSliceState = Pick<CombinedConversationState,
 // Slice methods
 type ConversationMetadataSliceMethods = {
   createConversation: (workspaceType: WorkspaceType, projectId: string | null, agentId: string) => string;
-  updateConversationMetadata: (id: string, updates: Partial<ConversationMetadata>) => void;
+  updateConversationMetadata: (id: string, updates: Partial<ConversationMetadataWithId>) => void;
   deleteConversation: (id: string) => void;
   setActiveConversation: (id: string) => void;
   setScrollPosition: (id: string, scrollPosition: number) => void;
@@ -45,13 +36,23 @@ export const createConversationMetadataSlice: StateCreator<
   activeProjectConversationIds: {},
 
   createConversation: (workspaceType, projectId, agentId) => {
-    const now = new Date().toISOString();
+    const now = Date.now();
     const conversationId = generateId();
     const newConversation: ConversationMetadataWithId = {
-      id: conversationId, workspaceType, projectId, agentId,
-      status: 'active', createdAt: now, updatedAt: now,
-      title: undefined, tags: undefined, pinned: false,
+      id: conversationId,
+      workspaceType,
+      workspaceId: workspaceType, // Map workspaceType to workspaceId
+      projectId,
+      agentId,
+      status: 'active',
+      createdAt: now,
+      updatedAt: now,
+      title: 'New Conversation', // Default title (required field)
+      preview: '', // Default preview (required field)
+      messageCount: 0, // Default message count (required field)
       scrollPosition: 0, // E1-6: Initialize scroll position
+      pinned: false,
+      tags: undefined,
     };
     console.log('[ConversationMetadataSlice] Creating:', conversationId);
     set((state) => ({
@@ -73,7 +74,7 @@ export const createConversationMetadataSlice: StateCreator<
     set((state) => ({
       conversations: {
         ...state.conversations,
-        [id]: { ...existing, ...updates, updatedAt: new Date().toISOString() },
+        [id]: { ...existing, ...updates, updatedAt: Date.now() },
       },
     }));
     get().emitConversationUpdated(id, updates);
@@ -117,7 +118,7 @@ export const createConversationMetadataSlice: StateCreator<
     set((state) => ({
       conversations: {
         ...state.conversations,
-        [id]: { ...existing, scrollPosition, updatedAt: new Date().toISOString() },
+        [id]: { ...existing, scrollPosition, updatedAt: Date.now() },
       },
     }));
 

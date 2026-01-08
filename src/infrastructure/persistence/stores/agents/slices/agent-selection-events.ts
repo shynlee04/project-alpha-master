@@ -7,7 +7,7 @@
  */
 
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '../types';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 
@@ -19,7 +19,7 @@ export function createAgentSelectionEvents() {
     /**
      * Emit agent selected event
      */
-    emitAgentSelected: (agent: Agent, workspaceType: WorkspaceType) => {
+    emitAgentSelected: (agent: AgentData, workspaceType: WorkspaceType) => {
       console.log('[AgentSelectionStore] Agent selected:', agent.name, 'for workspace:', workspaceType);
 
       // Emit to domain event bus (legacy, for backward compatibility)
@@ -51,7 +51,7 @@ export function createAgentSelectionEvents() {
     /**
      * Emit default agent changed event
      */
-    emitDefaultAgentChanged: (agent: Agent, workspaceType: WorkspaceType) => {
+    emitDefaultAgentChanged: (agent: AgentData, workspaceType: WorkspaceType) => {
       console.log('[AgentSelectionStore] Default agent changed:', agent.name, 'for workspace:', workspaceType);
 
       // Emit to domain event bus (legacy, for backward compatibility)

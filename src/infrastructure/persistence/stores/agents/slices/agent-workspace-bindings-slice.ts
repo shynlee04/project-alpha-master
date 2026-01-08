@@ -10,8 +10,34 @@
 
 import { StateCreator } from 'zustand';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { WorkspaceBinding } from '@/core/entities/Agent';
-import type { CombinedAgentsState } from '../types';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
+import type { CombinedAgentsState, AgentData } from '../types';
+import type { ModelInfo } from '@/infrastructure/persistence/stores/providers/types';
+
+/**
+ * Helper to update workspace binding in plain data
+ */
+function updateWorkspaceBindingValue(
+  bindings: WorkspaceBindingProps[],
+  workspaceType: WorkspaceType,
+  updates: Partial<WorkspaceBindingProps>
+): WorkspaceBindingProps[] {
+  return bindings.map(binding =>
+    binding.workspaceType === workspaceType
+      ? { ...binding, ...updates }
+      : binding
+  );
+}
+
+/**
+ * Helper to find workspace binding
+ */
+function findWorkspaceBinding(
+  bindings: WorkspaceBindingProps[],
+  workspaceType: WorkspaceType
+): WorkspaceBindingProps | undefined {
+  return bindings.find(b => b.workspaceType === workspaceType);
+}
 
 /**
  * Agent Workspace Bindings Slice
@@ -28,13 +54,13 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
   [],
   [],
   Omit<CombinedAgentsState, 'agents' | 'activeAgentId' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'setActiveAgent' | 'resetToDefaults' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getActiveAgent' | 'getAgentsCount'>
-> = (set, get) => ({
+> = (set, get) => {
   // ========================================================================
   // STATE (required by CombinedAgentsState)
   // ========================================================================
 
   /** Available models by provider ID */
-  availableModels: {},
+  const availableModels: Record<string, ModelInfo[]> = {};
 
   // ========================================================================
   // WORKSPACE BINDING OPERATIONS
@@ -46,13 +72,13 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
    * @param workspaceType - Workspace type to filter by
    * @returns Array of agents available in the workspace
    */
-  getAgentsForWorkspace: (workspaceType: WorkspaceType) => {
+  const getAgentsForWorkspace = (workspaceType: WorkspaceType): AgentData[] => {
     const { agents } = get();
     return agents.filter(agent => {
-      const binding = agent.workspaceBindings.find(b => b.workspaceType === workspaceType);
+      const binding = findWorkspaceBinding(agent.workspaceBindings, workspaceType);
       return binding?.isAvailable === true;
     });
-  },
+  };
 
   /**
    * Update workspace binding for an agent
@@ -64,29 +90,33 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
    * @param workspaceType - Workspace type to update
    * @param isAvailable - Whether agent is available in this workspace
    */
-  updateWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, isAvailable: boolean) => {
+  const updateWorkspaceBinding = (
+    agentId: string,
+    workspaceType: WorkspaceType,
+    isAvailable: boolean
+  ): void => {
     console.log('[AgentWorkspaceBindingsSlice] Updating workspace binding:', agentId, workspaceType, isAvailable);
     set((state) => ({
       agents: state.agents.map(agent => {
         if (agent.id !== agentId) return agent;
 
-        const updatedBindings = agent.workspaceBindings.map(binding =>
-          binding.workspaceType === workspaceType
-            ? { ...binding, isAvailable }
-            : binding
+        const updatedBindings = updateWorkspaceBindingValue(
+          agent.workspaceBindings,
+          workspaceType,
+          { isAvailable }
         );
 
-        return { ...agent, workspaceBindings: updatedBindings };
+        return { ...agent, workspaceBindings: updatedBindings, updatedAt: Date.now() };
       }),
     }));
-  },
+  };
 
   /**
    * Update workspace binding with partial data (enhanced method)
    *
    * Allows updating any field in WorkspaceBinding:
    * - isAvailable
-   * - uiConfig
+   * - uiVariant
    * - isDefault
    *
    * NOTE: This is a pure update operation.
@@ -96,22 +126,26 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
    * @param workspaceType - Workspace type to update
    * @param binding - Partial binding data to update
    */
-  updateAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, binding: Partial<WorkspaceBinding>) => {
+  const updateAgentWorkspaceBinding = (
+    agentId: string,
+    workspaceType: WorkspaceType,
+    binding: Partial<WorkspaceBindingProps>
+  ): void => {
     console.log('[AgentWorkspaceBindingsSlice] Updating agent workspace binding (partial):', agentId, workspaceType, binding);
     set((state) => ({
       agents: state.agents.map(agent => {
         if (agent.id !== agentId) return agent;
 
-        const updatedBindings = agent.workspaceBindings.map(existingBinding =>
-          existingBinding.workspaceType === workspaceType
-            ? { ...existingBinding, ...binding }
-            : existingBinding
+        const updatedBindings = updateWorkspaceBindingValue(
+          agent.workspaceBindings,
+          workspaceType,
+          binding
         );
 
-        return { ...agent, workspaceBindings: updatedBindings };
+        return { ...agent, workspaceBindings: updatedBindings, updatedAt: Date.now() };
       }),
     }));
-  },
+  };
 
   /**
    * Get specific workspace binding for an agent
@@ -120,12 +154,14 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
    * @param workspaceType - Workspace type to query
    * @returns Workspace binding or undefined if not found
    */
-  getAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType) => {
+  const getAgentWorkspaceBinding = (
+    agentId: string,
+    workspaceType: WorkspaceType
+  ): WorkspaceBindingProps | undefined => {
     const agent = get().agents.find(a => a.id === agentId);
     if (!agent) return undefined;
-
-    return agent.workspaceBindings.find(b => b.workspaceType === workspaceType);
-  },
+    return findWorkspaceBinding(agent.workspaceBindings, workspaceType);
+  };
 
   /**
    * Check if agent is available in workspace
@@ -134,11 +170,22 @@ export const createAgentWorkspaceBindingsSlice: StateCreator<
    * @param workspaceType - Workspace type to check
    * @returns True if agent is available in workspace
    */
-  isAgentAvailableInWorkspace: (agentId: string, workspaceType: WorkspaceType) => {
+  const isAgentAvailableInWorkspace = (
+    agentId: string,
+    workspaceType: WorkspaceType
+  ): boolean => {
     const agent = get().agents.find(a => a.id === agentId);
     if (!agent) return false;
-
-    const binding = agent.workspaceBindings.find(b => b.workspaceType === workspaceType);
+    const binding = findWorkspaceBinding(agent.workspaceBindings, workspaceType);
     return binding?.isAvailable === true;
-  },
-});
+  };
+
+  return {
+    availableModels,
+    getAgentsForWorkspace,
+    updateWorkspaceBinding,
+    updateAgentWorkspaceBinding,
+    getAgentWorkspaceBinding,
+    isAgentAvailableInWorkspace,
+  };
+};

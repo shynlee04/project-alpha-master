@@ -5,7 +5,7 @@
  * The actual entity definitions are in src/domain/entities/
  */
 
-// Agent entity
+// Agent entity (class + types)
 export * from '../../domain/entities/agent';
 
 // Conversation types (from infrastructure layer)
@@ -14,22 +14,22 @@ export type { ConversationMetadata, ConversationState, ConversationStoreState } 
 // Provider types
 export type { ProviderType } from '../../shared/types/index';
 
-// Project entity
+// Project entity (class + types)
 export * from '../../domain/entities/project';
 
-// Workspace entity
+// Workspace entity (class + types)
 export * from '../../domain/entities/workspace';
 
-// RAG entity
+// RAG entity (class + types)
 export * from '../../domain/entities/rag';
 
-// Knowledge entity
+// Knowledge entity (class + types)
 export * from '../../domain/entities/knowledge';
 
-// Study entity
+// Study entity (class + types)
 export * from '../../domain/entities/study';
 
-// Value objects
-export type { WorkspaceBinding } from '../../domain/value-objects/workspace-binding';
-export type { AgentToolBinding } from '../../domain/value-objects/tool-permission';
-export type { WorkspaceType } from '../../domain/value-objects/workspace-type';
+// Value objects (classes + types)
+export * from '../../domain/value-objects/workspace-binding';
+export * from '../../domain/value-objects/tool-permission';
+export { WorkspaceType } from '../../domain/value-objects/workspace-type';

@@ -8,29 +8,49 @@
  * @story AC-1.3 - Split agents-store.ts god store into 5 slices
  */
 
-import type { Agent } from '@/domain/entities/agent';
-import type { WorkspaceType } from '@/domain/entities/workspace';
-import type { WorkspaceBinding } from '@/domain/entities/agent';
+import type { AgentProps, AgentStatus } from '@/domain/entities/agent';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
+import type { AgentToolBindingProps } from '@/domain/value-objects/tool-permission';
+import type { ModelInfo } from '@/infrastructure/persistence/stores/providers/types';
+
+// Re-export AgentProps for use by application services
+export type { AgentProps, AgentStatus };
+
+// Plain type for agents in store (no class methods)
+export type AgentData = Omit<AgentProps, 'workspaceBindings' | 'tools'> & {
+  workspaceBindings: WorkspaceBindingProps[];
+  tools: AgentToolBindingProps[];
+};
 
 // ============================================================================
 // SLICE 1: CRUD
 // ============================================================================
 
 export interface AgentCrudState {
-  /** List of configured agents */
-  agents: Agent[];
+  /** List of configured agents (plain data, not class instances) */
+  agents: AgentData[];
+
+  /** Active agent ID */
+  activeAgentId: string | null;
+
+  /** Available models by provider ID (required by CombinedAgentsState) */
+  availableModels: Record<string, ModelInfo[]>;
 
   /** Add a new agent (pure CRUD, no validation) */
-  addAgent: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => Agent;
+  addAgent: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
 
   /** Remove an agent by ID */
   removeAgent: (id: string) => void;
 
   /** Update an existing agent (pure CRUD, no validation) */
-  updateAgent: (id: string, updates: Partial<Agent>) => void;
+  updateAgent: (id: string, updates: Partial<AgentProps>) => void;
 
   /** Reset to default agents */
   resetToDefaults: () => void;
+
+  /** Set the active agent */
+  setActiveAgent: (id: string) => void;
 }
 
 // ============================================================================
@@ -39,16 +59,16 @@ export interface AgentCrudState {
 
 export interface AgentWorkspaceBindingsState {
   /** Get agents available in specific workspace */
-  getAgentsForWorkspace: (workspaceType: WorkspaceType) => Agent[];
+  getAgentsForWorkspace: (workspaceType: WorkspaceType) => AgentData[];
 
   /** Update workspace binding for an agent */
   updateWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, isAvailable: boolean) => void;
 
   /** Update workspace binding with partial data (enhanced) */
-  updateAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, binding: Partial<WorkspaceBinding>) => void;
+  updateAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType, binding: Partial<WorkspaceBindingProps>) => void;
 
   /** Get specific workspace binding for an agent */
-  getAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType) => WorkspaceBinding | undefined;
+  getAgentWorkspaceBinding: (agentId: string, workspaceType: WorkspaceType) => WorkspaceBindingProps | undefined;
 
   /** Check if agent is available in workspace */
   isAgentAvailableInWorkspace: (agentId: string, workspaceType: WorkspaceType) => boolean;
@@ -65,16 +85,14 @@ export interface AgentWorkspaceBindingsState {
  * Note: availableModels is a cross-slice reference from provider state.
  */
 export interface AgentValidationState {
-
-
   /** Validation errors by agent ID */
   validationErrors: Record<string, string[]>;
 
   /** Add agent with validation (wraps addAgent with validation logic) */
-  addAgentValidated: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => Agent;
+  addAgentValidated: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
 
   /** Update agent with validation (wraps updateAgent with validation logic) */
-  updateAgentValidated: (id: string, updates: Partial<Agent>) => void;
+  updateAgentValidated: (id: string, updates: Partial<AgentProps>) => void;
 
   /** Clear validation errors for an agent */
   clearValidationErrors: (agentId: string) => void;
@@ -86,13 +104,13 @@ export interface AgentValidationState {
 
 export interface AgentEventsState {
   /** Add agent with event emission (wraps addAgent with event emission) */
-  addAgentWithEvent: (agent: Omit<Agent, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => Agent;
+  addAgentWithEvent: (agent: Omit<AgentProps, 'id' | 'createdAt' | 'tasksCompleted' | 'successRate' | 'tokensUsed' | 'lastActive'>) => AgentData;
 
   /** Remove agent with event emission (wraps removeAgent with event emission) */
   removeAgentWithEvent: (id: string) => void;
 
   /** Update agent with event emission (wraps updateAgent with event emission) */
-  updateAgentWithEvent: (id: string, updates: Partial<Agent>) => void;
+  updateAgentWithEvent: (id: string, updates: Partial<AgentProps>) => void;
 
   /** Update workspace binding with event emission (wraps updateWorkspaceBinding with event emission) */
   updateWorkspaceBindingWithEvent: (agentId: string, workspaceType: WorkspaceType, isAvailable: boolean) => void;
@@ -110,10 +128,10 @@ export interface AgentUtilsState {
   setHasHydrated: (state: boolean) => void;
 
   /** Get agent by ID */
-  getAgent: (id: string) => Agent | undefined;
+  getAgent: (id: string) => AgentData | undefined;
 
   /** Update agent status */
-  updateAgentStatus: (id: string, status: Agent['status']) => void;
+  updateAgentStatus: (id: string, status: AgentStatus) => void;
 
   /** Get total agents count */
   getAgentsCount: () => number;

@@ -8,7 +8,7 @@
  * @module application/services
  */
 
-import type { Agent, AgentCreateParams, AgentUpdateParams } from '@/core/entities/Agent';
+import type { AgentData, AgentProps } from '@/infrastructure/persistence/stores/agents/types';
 
 /**
  * Agent validation errors
@@ -36,7 +36,7 @@ export class AgentService {
     /**
      * Validate agent creation parameters
      */
-    static validateCreate(params: AgentCreateParams): void {
+    static validateCreate(params: Partial<AgentProps>): void {
         // Name validation
         if (!params.name?.trim()) {
             throw new AgentValidationError('name', 'Name is required');
@@ -79,14 +79,15 @@ export class AgentService {
 
         // Tool permissions validation
         if (params.tools) {
-            params.tools.forEach((tool, index) => {
+            params.tools.forEach((tool: AgentData['tools'][number], index: number) => {
                 if (!tool.toolId?.trim()) {
                     throw new AgentValidationError(`tools[${index}].toolId`, 'Tool ID is required');
                 }
 
                 // Ensure workspace permissions are boolean
                 const wp = tool.workspacePermissions;
-                if (typeof wp.ide !== 'boolean' ||
+                if (!wp ||
+                    typeof wp.ide !== 'boolean' ||
                     typeof wp.knowledge !== 'boolean' ||
                     typeof wp.study !== 'boolean' ||
                     typeof wp.notes !== 'boolean') {
@@ -97,7 +98,7 @@ export class AgentService {
 
         // Workspace bindings validation
         if (params.workspaceBindings) {
-            const workspaceTypes = new Set(params.workspaceBindings.map(wb => wb.workspaceType));
+            const workspaceTypes = new Set(params.workspaceBindings.map((wb: AgentData['workspaceBindings'][number]) => wb.workspaceType));
             if (workspaceTypes.size !== params.workspaceBindings.length) {
                 throw new AgentValidationError('workspaceBindings', 'Duplicate workspace types detected');
             }
@@ -107,31 +108,39 @@ export class AgentService {
     /**
      * Validate agent update parameters
      */
-    static validateUpdate(params: AgentUpdateParams): void {
+    static validateUpdate(params: Partial<AgentProps> & { id: string }): void {
         if (!params.id?.trim()) {
             throw new AgentValidationError('id', 'Agent ID is required');
         }
 
         // Re-use create validation for shared fields
-        this.validateCreate(params as AgentCreateParams);
+        this.validateCreate(params);
     }
 
     /**
      * Validate agent status transition
      */
     static validateStatusTransition(
-        currentStatus: Agent['status'],
-        newStatus: Agent['status']
+        currentStatus: AgentData['status'],
+        newStatus: AgentData['status']
     ): void {
-        const validTransitions: Record<Agent['status'], Agent['status'][]> = {
+        const validTransitions: Record<string, AgentData['status'][]> = {
             offline: ['online'],
             online: ['offline', 'busy', 'error'],
             busy: ['online', 'error', 'offline'],
             error: ['offline', 'online']
         };
 
-        const allowed = validTransitions[currentStatus];
-        if (!allowed.includes(newStatus)) {
+        // Handle undefined currentStatus or invalid status
+        if (!currentStatus) {
+            throw new AgentValidationError(
+                'status',
+                `Current status is required for transition validation`
+            );
+        }
+
+        const allowed = validTransitions[currentStatus as string];
+        if (!allowed || !allowed.includes(newStatus!)) {
             throw new AgentValidationError(
                 'status',
                 `Invalid status transition: ${currentStatus} → ${newStatus}`
@@ -143,7 +152,7 @@ export class AgentService {
      * Check if agent is available in workspace
      */
     static isAvailableInWorkspace(
-        agent: Agent,
+        agent: AgentData,
         workspaceType: 'ide' | 'knowledge' | 'study' | 'notes'
     ): boolean {
         if (!agent.workspaceBindings) {
@@ -161,7 +170,7 @@ export class AgentService {
      * Check if agent has tool enabled in workspace
      */
     static hasToolInWorkspace(
-        agent: Agent,
+        agent: AgentData,
         toolId: string,
         workspaceType: 'ide' | 'knowledge' | 'study' | 'notes'
     ): boolean {
@@ -174,13 +183,16 @@ export class AgentService {
             return false;
         }
 
-        return tool.workspacePermissions[workspaceType] === true;
+        const wp = tool.workspacePermissions;
+        if (!wp) return false;
+
+        return wp[workspaceType] === true;
     }
 
     /**
      * Get default workspace binding
      */
-    static getDefaultWorkspaceBinding(agent: Agent): WorkspaceBinding | null {
+    static getDefaultWorkspaceBinding(agent: AgentData): WorkspaceBinding | null {
         if (!agent.workspaceBindings) {
             return null;
         }
@@ -191,8 +203,9 @@ export class AgentService {
     /**
      * Generate agent display name
      */
-    static getDisplayName(agent: Agent): string {
-        return `${agent.name} (${agent.modelId.split('/').pop()})`;
+    static getDisplayName(agent: AgentData): string {
+        const modelId = agent.modelId || 'unknown';
+        return `${agent.name} (${modelId.split('/').pop()})`;
     }
 }
 

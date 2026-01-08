@@ -22,7 +22,7 @@ import { useConversationStore } from '../useConversationStore';
 import type { ConversationMetadataWithId } from '../conversation-metadata-slice';
 import type { ThreadWithId } from '../thread-management-slice';
 import type { MessageWithId } from '../message-crud-slice';
-import type { WorkspaceType } from '@/core/entities/Conversation';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 // ============================================================================
 // Types
@@ -111,13 +111,6 @@ export interface PendingToolApproval {
 // ============================================================================
 // Migration Implementation
 // ============================================================================
-
-/**
- * Convert Unix timestamp to ISO 8601 string
- */
-function timestampToISO(timestamp: number): string {
-    return new Date(timestamp).toISOString();
-}
 
 /**
  * Infer workspace type from project ID
@@ -327,16 +320,18 @@ async function transformLegacyData(
         const conversation: ConversationMetadataWithId = {
             id: legacyConversation.metadata.id,
             workspaceType,
+            workspaceId: workspaceType, // Map workspaceType to workspaceId
             projectId: legacyConversation.metadata.projectId,
             agentId,
             status: 'active',
-            createdAt: timestampToISO(legacyConversation.metadata.createdAt),
-            updatedAt: timestampToISO(legacyConversation.metadata.updatedAt),
-            // lastActiveAt removed - duplicates updatedAt (Story 51-3)
+            createdAt: legacyConversation.metadata.createdAt,
+            updatedAt: legacyConversation.metadata.updatedAt,
             title: legacyConversation.metadata.title,
-            tags: [],
+            preview: '',
+            messageCount: legacyConversation.metadata.messageCount,
+            scrollPosition: legacyConversation.metadata.scrollPosition,
             pinned: false,
-            // messageCount removed - not in new schema (Story 51-3)
+            tags: undefined,
         };
 
         conversations.push(conversation);

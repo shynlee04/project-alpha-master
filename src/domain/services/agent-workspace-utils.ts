@@ -9,8 +9,13 @@
  * @story AC-1.5 - Fix circular dependencies in agent-selection-store
  */
 
-import type { Agent } from '@/core/entities/Agent';
+import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+
+// Type for agents that have workspaceBindings
+export type AgentWithWorkspaceBindings = {
+  workspaceBindings: WorkspaceBindingProps[];
+};
 
 /**
  * Check if agent is available in workspace
@@ -18,11 +23,14 @@ import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
  * Business Rule: Agent is available if it has a workspace binding
  * with isAvailable = true for the given workspace type.
  *
- * @param agent - Agent entity to check
+ * @param agent - Agent entity to check (plain data or class instance)
  * @param workspaceType - Workspace type to check availability for
  * @returns true if agent is available in workspace
  */
-export function isAgentAvailableIn(agent: Agent, workspaceType: WorkspaceType): boolean {
+export function isAgentAvailableIn(
+  agent: AgentWithWorkspaceBindings,
+  workspaceType: WorkspaceType
+): boolean {
   const binding = agent.workspaceBindings.find(
     (b) => b.workspaceType === workspaceType
   );
@@ -35,11 +43,14 @@ export function isAgentAvailableIn(agent: Agent, workspaceType: WorkspaceType): 
  * Business Rule: Agent is default if it has a workspace binding
  * with isDefault = true for the given workspace type.
  *
- * @param agent - Agent entity to check
+ * @param agent - Agent entity to check (plain data or class instance)
  * @param workspaceType - Workspace type to check default status for
  * @returns true if agent is marked as default for workspace
  */
-export function isAgentDefaultFor(agent: Agent, workspaceType: WorkspaceType): boolean {
+export function isAgentDefaultFor(
+  agent: AgentWithWorkspaceBindings,
+  workspaceType: WorkspaceType
+): boolean {
   const binding = agent.workspaceBindings.find(
     (b) => b.workspaceType === workspaceType
   );
@@ -55,7 +66,10 @@ export function isAgentDefaultFor(agent: Agent, workspaceType: WorkspaceType): b
  * @param workspaceType - Workspace type to filter for
  * @returns Array of agents available in workspace
  */
-export function getAgentsForWorkspace(agents: Agent[], workspaceType: WorkspaceType): Agent[] {
+export function getAgentsForWorkspace<T extends AgentWithWorkspaceBindings>(
+  agents: T[],
+  workspaceType: WorkspaceType
+): T[] {
   return agents.filter((agent) => isAgentAvailableIn(agent, workspaceType));
 }
 
@@ -69,6 +83,9 @@ export function getAgentsForWorkspace(agents: Agent[], workspaceType: WorkspaceT
  * @param workspaceType - Workspace type to get default for
  * @returns Default agent or null
  */
-export function getDefaultAgentForWorkspace(agents: Agent[], workspaceType: WorkspaceType): Agent | null {
+export function getDefaultAgentForWorkspace<T extends AgentWithWorkspaceBindings>(
+  agents: T[],
+  workspaceType: WorkspaceType
+): T | null {
   return agents.find((agent) => isAgentDefaultFor(agent, workspaceType)) ?? null;
 }

@@ -116,7 +116,7 @@ export async function generateNoteContent(
 
     const response = await callProviderAPI({
         providerId: agent.providerId,
-        modelId: agent.modelId,
+        modelId: agent.modelId || agent.model,
         apiKey,
         systemPrompt,
         userPrompt: fullPrompt,

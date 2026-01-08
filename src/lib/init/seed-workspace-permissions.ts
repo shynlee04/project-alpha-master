@@ -25,7 +25,7 @@
 import { ToolPermissionManager } from '../agent/tool-permission-manager';
 import { WorkspacePermissionManager } from '../agent/workspace-permission-manager';
 import { credentialVault } from '../agent/providers/credential-vault';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 
 /**
  * Gemini API key provided by user
@@ -35,7 +35,7 @@ const GEMINI_API_KEY = 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ';
 /**
  * Test agent with comprehensive workspace configuration
  */
-const TEST_AGENT: Agent = {
+const TEST_AGENT: AgentData = {
   id: 'test_workspace_agent',
   name: 'Workspace Test Agent',
   description: 'Test agent for workspace permission validation',
@@ -270,7 +270,7 @@ export async function validateWorkspacePermissions(): Promise<ValidationResult> 
 /**
  * Validate agent has complete workspace configuration
  */
-function validateAgentConfig(agent: Agent): {
+function validateAgentConfig(agent: AgentData): {
   valid: boolean;
   errors: string[];
 } {
@@ -309,7 +309,7 @@ function validateAgentConfig(agent: Agent): {
  */
 function testWorkspace(
   manager: WorkspacePermissionManager,
-  agent: Agent,
+  agent: AgentData,
   workspace: 'ide' | 'knowledge' | 'study' | 'notes'
 ): Array<{ name: string; passed: boolean; details: string }> {
   const tests: Array<{ name: string; passed: boolean; details: string }> = [];
@@ -351,7 +351,7 @@ function testWorkspace(
  */
 function testToolFiltering(
   manager: WorkspacePermissionManager,
-  agent: Agent
+  agent: AgentData
 ): Array<{ name: string; passed: boolean; details: string }> {
   const tests: Array<{ name: string; passed: boolean; details: string }> = [];
 

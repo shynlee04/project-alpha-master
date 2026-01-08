@@ -27,11 +27,13 @@ export const createAgentValidationSlice: StateCreator<
   Omit<CombinedAgentsState, 'agents' | 'activeAgentId' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'setActiveAgent' | 'resetToDefaults' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent' | '_hasHydrated' | 'setHasHydrated' | 'getAgent' | 'updateAgentStatus' | 'getActiveAgent' | 'getAgentsCount'>
 > = (set, get) => ({
   // ========================================================================
-  // STATE
+  // STATE (required by CombinedAgentsState)
   // ========================================================================
 
+  /** Available models by provider ID (cross-slice reference) */
+  availableModels: {},
 
-
+  /** Validation error tracking */
   validationErrors: {},
 
   // ========================================================================

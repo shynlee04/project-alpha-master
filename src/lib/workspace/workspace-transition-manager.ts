@@ -15,7 +15,7 @@
  * - Graceful degradation (handles missing state)
  */
 
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import type { WorkspaceType, WorkspaceTransitionEvent } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
@@ -143,7 +143,7 @@ export class WorkspaceTransitionManager {
   /**
    * Filter agents by workspace availability
    */
-  private filterAgentsByWorkspace(agents: Agent[], workspace: WorkspaceType): Agent[] {
+  private filterAgentsByWorkspace(agents: AgentData[], workspace: WorkspaceType): AgentData[] {
     return agents.filter(agent =>
       this.permissionManager.isAgentAvailableInWorkspace(agent.workspaceBindings, workspace)
     );
@@ -152,7 +152,7 @@ export class WorkspaceTransitionManager {
   /**
    * Check if agent is available in workspace
    */
-  private isAgentAvailable(agent: Agent, workspace: WorkspaceType): boolean {
+  private isAgentAvailable(agent: AgentData, workspace: WorkspaceType): boolean {
     return this.permissionManager.isAgentAvailableInWorkspace(agent.workspaceBindings, workspace);
   }
 
@@ -163,7 +163,7 @@ export class WorkspaceTransitionManager {
    * 1. Agent marked as default for workspace
    * 2. First available agent
    */
-  private findAvailableAgent(agents: Agent[], workspace: WorkspaceType): Agent | null {
+  private findAvailableAgent(agents: AgentData[], workspace: WorkspaceType): AgentData | null {
     // Try to find default agent for workspace
     const defaultAgent = agents.find(agent =>
       agent.workspaceBindings.find(binding =>
@@ -215,7 +215,7 @@ export class WorkspaceTransitionManager {
   /**
    * Get available agents for workspace
    */
-  public getAvailableAgents(workspace: WorkspaceType): Agent[] {
+  public getAvailableAgents(workspace: WorkspaceType): AgentData[] {
     const agentsStore = useAgentsStore.getState();
     return this.filterAgentsByWorkspace(agentsStore.agents, workspace);
   }
@@ -223,7 +223,7 @@ export class WorkspaceTransitionManager {
   /**
    * Get available tools for agent in workspace
    */
-  public getAvailableTools(agent: Agent, workspace: WorkspaceType) {
+  public getAvailableTools(agent: AgentData, workspace: WorkspaceType) {
     return this.permissionManager.getToolsForWorkspace(
       agent.tools,
       agent.workspaceBindings,

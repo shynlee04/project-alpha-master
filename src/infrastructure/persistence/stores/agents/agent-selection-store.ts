@@ -15,11 +15,14 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import type { Agent } from '@/core/entities/Agent';
+import type { AgentData } from './types';
 
 // Import slices
 import type { AgentSelectionState } from './slices/agent-selection-state';
 import { createAgentSelectionActions } from './slices/agent-selection-actions';
+
+// Re-export the state interface for external use
+export type { AgentSelectionState };
 import { createAgentSelectionQueries } from './slices/agent-selection-queries';
 import { createAgentSelectionEvents } from './slices/agent-selection-events';
 import { createAgentSelectionUtils } from './slices/agent-selection-utils';
@@ -107,15 +110,12 @@ if (typeof window !== 'undefined') {
   useAgentSelectionStore.getState().setHasHydrated(true);
 }
 
-// Export types
-export type { AgentSelectionState };
-
-// Export helper functions
-export function getActiveAgent(): Agent | null {
+// Export helper functions - these return AgentData (plain objects from store)
+export function getActiveAgent(): AgentData | null {
   return useAgentSelectionStore.getState().getActiveAgent();
 }
 
-export function getAgentForWorkspace(workspaceType: WorkspaceType): Agent | null {
+export function getAgentForWorkspace(workspaceType: WorkspaceType): AgentData | null {
   return useAgentSelectionStore.getState().getAgentForWorkspace(workspaceType);
 }
 
@@ -137,7 +137,7 @@ export const useAgentSelection = useAgentSelectionStore;
  * @deprecated Use useAppStore instead
  * Helper hook for getting active agent from agents list
  */
-export function useActiveAgent(agents: Agent[]) {
+export function useActiveAgent(agents: AgentData[]) {
   const { activeAgentId } = useAgentSelectionStore();
   return agents.find(agent => agent.id === activeAgentId) || null;
 }

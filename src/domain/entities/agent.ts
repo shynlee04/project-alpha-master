@@ -7,9 +7,14 @@
  * Implements business rules for agent availability and tool execution.
  */
 
-import { WorkspaceBinding } from '../value-objects/workspace-binding';
-import { AgentToolBinding } from '../value-objects/tool-permission';
+import { WorkspaceBinding, WorkspaceBindingProps } from '../value-objects/workspace-binding';
+import { AgentToolBinding, AgentToolBindingProps } from '../value-objects/tool-permission';
 import { WorkspaceType } from '../value-objects/workspace-type';
+
+/**
+ * Agent status type
+ */
+export type AgentStatus = 'online' | 'offline' | 'busy' | 'error';
 
 /**
  * Helper type for workspace bindings (can be class instance or plain object)
@@ -23,17 +28,33 @@ export type AgentToolBindingInput = AgentToolBinding | AgentToolBindingProps;
 
 /**
  * Agent entity properties - accepts both class instances and plain objects
+ * Extended with all properties used by the agent stores
  */
 export interface AgentProps {
+  // Core identity
   id: string;
   name: string;
+  description?: string;
   providerId: string;
   model: string;
+  modelId?: string; // Alias for model (used by stores)
   systemPrompt: string;
+  topP?: number;
   temperature?: number;
   maxTokens?: number;
+
+  // Workspace configuration
   workspaceBindings: WorkspaceBindingInput[];
   tools: AgentToolBindingInput[];
+
+  // State tracking
+  status?: AgentStatus;
+  tasksCompleted?: number;
+  successRate?: number;
+  tokensUsed?: number;
+  lastActive?: string;
+
+  // Timestamps
   createdAt: number;
   updatedAt: number;
 }
@@ -88,15 +109,30 @@ export interface AgentProps {
  * ```
  */
 export class Agent {
+  // Core identity
   readonly id: string;
   readonly name: string;
+  readonly description?: string;
   readonly providerId: string;
   readonly model: string;
+  readonly modelId?: string;
   readonly systemPrompt: string;
+  readonly topP: number;
   readonly temperature: number;
   readonly maxTokens: number;
+
+  // Workspace configuration
   readonly workspaceBindings: WorkspaceBinding[];
   readonly tools: AgentToolBinding[];
+
+  // State tracking
+  readonly status?: AgentStatus;
+  readonly tasksCompleted: number;
+  readonly successRate: number;
+  readonly tokensUsed: number;
+  readonly lastActive?: string;
+
+  // Timestamps
   readonly createdAt: number;
   readonly updatedAt: number;
 
@@ -117,15 +153,31 @@ export class Agent {
     };
 
     this.validateAgentProps(validatedProps);
+
+    // Core identity
     this.id = props.id;
     this.name = props.name;
+    this.description = props.description;
     this.providerId = props.providerId;
     this.model = props.model;
+    this.modelId = props.modelId ?? props.model;
     this.systemPrompt = props.systemPrompt;
+    this.topP = props.topP ?? 1.0;
     this.temperature = props.temperature ?? 0.7;
     this.maxTokens = props.maxTokens ?? 4096;
+
+    // Workspace configuration
     this.workspaceBindings = workspaceBindings;
     this.tools = tools;
+
+    // State tracking
+    this.status = props.status;
+    this.tasksCompleted = props.tasksCompleted ?? 0;
+    this.successRate = props.successRate ?? 0;
+    this.tokensUsed = props.tokensUsed ?? 0;
+    this.lastActive = props.lastActive;
+
+    // Timestamps
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }
@@ -230,13 +282,21 @@ export class Agent {
     return new Agent({
       id: this.id,
       name: updates.name ?? this.name,
+      description: updates.description ?? this.description,
       providerId: updates.providerId ?? this.providerId,
       model: updates.model ?? this.model,
+      modelId: updates.modelId ?? this.modelId,
       systemPrompt: updates.systemPrompt ?? this.systemPrompt,
+      topP: updates.topP ?? this.topP,
       temperature: updates.temperature ?? this.temperature,
       maxTokens: updates.maxTokens ?? this.maxTokens,
       workspaceBindings: updates.workspaceBindings ?? this.workspaceBindings,
       tools: updates.tools ?? this.tools,
+      status: updates.status ?? this.status,
+      tasksCompleted: updates.tasksCompleted ?? this.tasksCompleted,
+      successRate: updates.successRate ?? this.successRate,
+      tokensUsed: updates.tokensUsed ?? this.tokensUsed,
+      lastActive: updates.lastActive ?? this.lastActive,
       createdAt: this.createdAt,
       updatedAt: Date.now()
     });

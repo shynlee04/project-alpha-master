@@ -11,8 +11,8 @@
  */
 
 import { StateCreator } from 'zustand';
-import type { Agent } from '@/core/entities/Agent';
-import type { CombinedAgentsState } from '../types';
+import type { AgentStatus } from '@/domain/entities/agent';
+import type { CombinedAgentsState, AgentData } from '../types';
 
 /**
  * Agent Utils Slice
@@ -20,6 +20,7 @@ import type { CombinedAgentsState } from '../types';
  * Utility operations:
  * - setHasHydrated: Set hydration status from IndexedDB
  * - getAgent: Get agent by ID
+ * - getActiveAgent: Get active agent
  * - updateAgentStatus: Update agent status
  * - getAgentsCount: Get total agents count
  */
@@ -27,14 +28,16 @@ export const createAgentUtilsSlice: StateCreator<
   CombinedAgentsState,
   [],
   [],
-  Omit<CombinedAgentsState, 'agents' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'resetToDefaults' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent'>
+  Omit<CombinedAgentsState, 'agents' | 'addAgent' | 'removeAgent' | 'updateAgent' | 'resetToDefaults' | 'activeAgentId' | 'setActiveAgent' | 'getAgentsForWorkspace' | 'updateWorkspaceBinding' | 'updateAgentWorkspaceBinding' | 'getAgentWorkspaceBinding' | 'isAgentAvailableInWorkspace' | 'validationErrors' | 'addAgentValidated' | 'updateAgentValidated' | 'clearValidationErrors' | 'addAgentWithEvent' | 'removeAgentWithEvent' | 'updateAgentWithEvent' | 'updateWorkspaceBindingWithEvent'>
 > = (set, get) => ({
   // ========================================================================
-  // STATE
+  // STATE (required by CombinedAgentsState)
   // ========================================================================
 
+  /** Available models by provider ID (cross-slice reference) */
+  availableModels: {},
 
-
+  /** Hydration tracking state */
   _hasHydrated: false,
 
   // ========================================================================
@@ -63,8 +66,19 @@ export const createAgentUtilsSlice: StateCreator<
    * @param id - Agent ID to retrieve
    * @returns Agent or undefined if not found
    */
-  getAgent: (id: string) => {
+  getAgent: (id: string): AgentData | undefined => {
     return get().agents.find((a) => a.id === id);
+  },
+
+  /**
+   * Get active agent
+   *
+   * @returns Active agent or undefined if none set
+   */
+  getActiveAgent: (): AgentData | undefined => {
+    const { activeAgentId, agents } = get();
+    if (!activeAgentId) return undefined;
+    return agents.find((a) => a.id === activeAgentId);
   },
 
   /**
@@ -75,7 +89,7 @@ export const createAgentUtilsSlice: StateCreator<
    * @param id - Agent ID to update
    * @param status - New status
    */
-  updateAgentStatus: (id: string, status: Agent['status']) => {
+  updateAgentStatus: (id: string, status: AgentStatus): void => {
     console.log('[AgentUtilsSlice] Updating status:', id, status);
     set((state) => ({
       agents: state.agents.map((a) =>
@@ -91,7 +105,7 @@ export const createAgentUtilsSlice: StateCreator<
    *
    * @returns Total number of agents
    */
-  getAgentsCount: () => {
+  getAgentsCount: (): number => {
     return get().agents.length;
   },
 });

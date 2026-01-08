@@ -15,7 +15,8 @@
  * - Minimal runtime overhead
  */
 
-import type { AgentToolBinding, Agent } from '@/core/entities/Agent';
+import type { AgentToolBinding } from '@/core/entities/Agent';
+import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 import type { WorkspacePermissionManager } from './workspace-permission-manager';
 import type { Tool } from '@tanstack/ai';
 import { createBlockedToolResult } from './tools/permission-check';
@@ -61,7 +62,7 @@ export interface FilteredTools {
  * @returns Filtered tools for current workspace
  */
 export function filterToolsForWorkspace(
-  agent: Agent,
+  agent: AgentData,
   currentWorkspace: WorkspaceContext,
   permissionManager: WorkspacePermissionManager
 ): FilteredTools {
@@ -136,7 +137,7 @@ export function filterToolsForWorkspace(
  */
 export function createWorkspaceAwareToolExecutor<TInput = unknown, TResult = unknown>(
   toolId: string,
-  agent: Agent,
+  agent: AgentData,
   workspaceContext: WorkspaceContext,
   permissionManager: WorkspacePermissionManager,
   executeTool: (input: TInput) => Promise<TResult>
@@ -180,7 +181,7 @@ export function createWorkspaceAwareToolExecutor<TInput = unknown, TResult = unk
  * @param agent - Agent to validate
  * @returns Validation result with errors
  */
-export function validateAgentWorkspaceConfiguration(agent: Agent): {
+export function validateAgentWorkspaceConfiguration(agent: AgentData): {
   valid: boolean;
   errors: string[];
   warnings: string[];
@@ -228,7 +229,7 @@ export function validateAgentWorkspaceConfiguration(agent: Agent): {
  * Returns workspace bindings with agent available in IDE workspace only.
  * This is the default for new agents.
  */
-export function getDefaultWorkspaceBindings(): Agent['workspaceBindings'] {
+export function getDefaultWorkspaceBindings(): AgentData['workspaceBindings'] {
   return [
     {
       workspaceType: 'ide',
@@ -263,7 +264,7 @@ export function getDefaultWorkspaceBindings(): Agent['workspaceBindings'] {
  * Returns workspace permissions with tool enabled in IDE workspace only.
  * This is the default for new tools.
  */
-export function getDefaultWorkspacePermissions(): AgentToolBinding['workspacePermissions'] {
+export function getDefaultWorkspacePermissions(): NonNullable<AgentData['tools'][0]['workspacePermissions']> {
   return {
     ide: true,
     knowledge: false,
