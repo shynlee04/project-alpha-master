@@ -24,38 +24,78 @@
 # Architecture provides: Event buses, transition managers, slice patterns
 # Reality: Basic features INACCESSIBLE
 
-current_workflow: "phase-2-agentic-2026-01-09"
-current_story: "P2-01"
-phase: "PHASE_2_AGENTIC_VERIFICATION"
-last_updated: "2026-01-09T03:20:00+07:00"
-health_score: 85  # Phase 1 COMPLETE - Agentic verification starting
+current_workflow: "phase-1.5-notes-ai-foundation-2026-01-09"
+current_story: "P1.5-01"
+phase: "PHASE_1_5_STABILIZATION"
+last_updated: "2026-01-09T07:24:00+07:00"
+health_score: 75  # Phase 1.5 course correction in progress
 
-# Phase 1 Completion Summary:
+# Phase 1.5 Course Correction (2026-01-09):
+phase_1_5_stabilization:
+  id: "phase-1.5-notes-ai-foundation-2026-01-09"
+  status: "READY_FOR_EXECUTION"
+  created_at: "2026-01-09T07:24:00+07:00"
+  created_by: "BMAD Correct-Course Workflow"
+  predecessor: "phase-1-foundation-2026-01-08"
+  predecessor_status: "COMPLETE (with gaps)"
+  
+  trigger: "User identified Gemini hardcoding and Notes file system issues"
+  scope: "MAJOR"
+  
+  gemini_models_verified:
+    research_date: "2026-01-09T07:19:00+07:00"
+    sources:
+      - "https://ai-sdk.dev/providers/ai-sdk-providers/google-generative-ai"
+      - "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash"
+    recommended_default: "gemini-2.5-flash"
+    verified_models:
+      - "gemini-2.5-flash"
+      - "gemini-2.5-pro"
+      - "gemini-2.5-flash-latest"
+      - "gemini-2.5-pro-latest"
+      - "gemini-3-pro-preview"
+  
+  stories:
+    P1.5-01: { name: "Fix Gemini Model IDs", priority: "P0", effort: "1h", status: "NOT_STARTED" }
+    P1.5-02: { name: "Notes File Tree & CRUD", priority: "P0", effort: "3h", status: "NOT_STARTED" }
+    P1.5-03: { name: "BlockNote Custom Blocks", priority: "P0", effort: "4h", status: "NOT_STARTED" }
+    P1.5-04: { name: "Fix Notes 3-Pane Reactivity", priority: "P1", effort: "2h", status: "NOT_STARTED" }
+    P1.5-05: { name: "AI Foundation Verification", priority: "P2", effort: "2h", status: "NOT_STARTED" }
+  
+  total_stories: 5
+  total_effort_hours: 12
+  completed: 0
+  
+  status_file: "_bmad-output/sprint-artifacts/phase-1.5-sprint-status-2026-01-09.yaml"
+  proposal_file: "_bmad-output/sprint-artifacts/sprint-change-proposal-phase-1.5-2026-01-09.md"
+
+# Phase 1 Completion Summary (superseded by Phase 1.5):
 phase_1_complete:
-  status: "COMPLETE ✅"
+  status: "COMPLETE (with gaps) ⚠️"
   completed_at: "2026-01-09T16:30:00+07:00"
   total_stories: 18
-  gate_result: "ALL GATES PASSING"
+  gate_result: "PASSED with gaps - requires Phase 1.5 stabilization"
+  gaps_identified:
+    - "Gemini model IDs hardcoded with invalid values"
+    - "Notes file system not accessible"
+    - "BlockNote lacks custom file blocks"
+    - "Notes 3-pane props hanging"
   browsers_tested: ["Chromium", "Firefox", "WebKit", "Mobile Chrome", "Mobile Safari", "Tablet"]
-  key_achievements:
-    - "All routing gates passing"
-    - "Settings page loads without infinite loop"
-    - "VaultStatusCard displays key status"
-    - "Zero 'Maximum update depth exceeded' errors"
-    - "Mobile and desktop responsive"
+  settings_status: "WORKING ✅"
 
-# Active Sprint (Phase 2):
+# Active Sprint (Phase 1.5):
 active_sprint:
-  id: "phase-2-agentic-2026-01-09"
-  status_file: "_bmad-output/sprint-artifacts/phase-2-sprint-status-2026-01-09.yaml"
-  epics_file: "_bmad-output/project-planning-artifacts/phase-2-epics-2026-01-09.md"
+  id: "phase-1.5-notes-ai-foundation-2026-01-09"
+  status_file: "_bmad-output/sprint-artifacts/phase-1.5-sprint-status-2026-01-09.yaml"
+  proposal_file: "_bmad-output/sprint-artifacts/sprint-change-proposal-phase-1.5-2026-01-09.md"
   predecessor: "phase-1-foundation-2026-01-08"
-  predecessor_status: "COMPLETE ✅"
-  total_stories: 18
+  predecessor_status: "COMPLETE (with gaps)"
+  total_stories: 5
   stories_done: 0
   stories_in_progress: 0
-  next_story: "P2-01"
-  goal: "Verify agentic capabilities with real API calls"
+  next_story: "P1.5-01"
+  goal: "Stabilize Notes workspace and fix Gemini model loading"
+
 
 # Gap Identified 2026-01-09:
 gap_analysis:

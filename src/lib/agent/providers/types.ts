@@ -220,7 +220,7 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
         id: 'gemini',
         name: 'Google Gemini',
         type: 'gemini',
-        defaultModel: 'gemini-3.0-flash',
+        defaultModel: 'gemini-2.5-flash', // Verified 2026-01-09
         enabled: true,
         supportsNativeTools: true,
         hasApiKey: false,
@@ -230,17 +230,24 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
 };
 
 /**
- * Gemini Model Hierarchy (December 2025)
- * - gemini-3.0-flash: Fast, cheap text/RAG chat
- * - gemini-3.0-pro: Deep synthesis, reasoning
- * - gemini-2.5-flash-native-audio-preview-12-2025: Live API WebSocket (audio in/out)
- * - gemini-embedding-001: Cloud embeddings (replaces deprecated text-embedding-004)
+ * Gemini Model Hierarchy (Verified 2026-01-09)
+ * Sources: Google Cloud Vertex AI, AI SDK documentation
+ * - gemini-2.5-flash: Fast, 1M context, Tools/Search/Thinking/Vision
+ * - gemini-2.5-pro: Advanced reasoning, 1M context
+ * - gemini-2.5-flash-latest: Production stable
+ * - gemini-2.5-pro-latest: Long context (2M), stable
+ * - gemini-3-pro-preview: Latest experimental
+ * - gemini-2.5-flash-lite: Lightweight variant
+ * - gemini-embedding-001: Cloud embeddings for text (task-type-embedding)
  */
 export const GEMINI_MODELS = {
-    flash: 'gemini-3.0-flash',
-    pro: 'gemini-3.0-pro',
-    live: 'gemini-2.5-flash-native-audio-preview-12-2025',
-    embedding: 'gemini-embedding-001',
+    flash: 'gemini-2.5-flash',
+    pro: 'gemini-2.5-pro',
+    stable: 'gemini-2.5-flash-latest',
+    stablePro: 'gemini-2.5-pro-latest',
+    preview: 'gemini-3-pro-preview',
+    lite: 'gemini-2.5-flash-lite',
+    embedding: 'gemini-embedding-001', // Text embeddings for RAG
 };
 
 /**

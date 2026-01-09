@@ -630,6 +630,7 @@ export function NotesPage() {
                                 </div>
                             }>
                                 <NoteEditor
+                                    key={activeNote.id}
                                     noteId={activeNote.id}
                                     className="h-full"
                                 />

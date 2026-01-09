@@ -307,10 +307,12 @@ export class ModelRegistry {
         }
 
         if (providerId === 'gemini' || providerId === 'google') {
+            // Verified 2026-01-09 via web research
+            // Sources: AI SDK docs, Google Cloud Vertex AI
             return [
                 {
-                    id: 'gemini-2.0-flash',
-                    name: 'Gemini 2.0 Flash',
+                    id: 'gemini-2.5-flash',
+                    name: 'Gemini 2.5 Flash',
                     providerId: 'gemini',
                     contextLength: 1048576,
                     maxOutputTokens: 8192,
@@ -319,8 +321,18 @@ export class ModelRegistry {
                     topK: 40,
                 },
                 {
-                    id: 'gemini-1.5-pro',
-                    name: 'Gemini 1.5 Pro',
+                    id: 'gemini-2.5-flash-latest',
+                    name: 'Gemini 2.5 Flash (Latest)',
+                    providerId: 'gemini',
+                    contextLength: 1048576,
+                    maxOutputTokens: 8192,
+                    temperature: 1,
+                    topP: 0.95,
+                    topK: 40,
+                },
+                {
+                    id: 'gemini-2.5-pro-latest',
+                    name: 'Gemini 2.5 Pro (Latest)',
                     providerId: 'gemini',
                     contextLength: 2097152,
                     maxOutputTokens: 8192,
