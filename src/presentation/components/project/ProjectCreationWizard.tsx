@@ -85,6 +85,7 @@ const INITIAL_FORM_DATA: WizardFormData = {
   template: '',
 
   storageType: 'indexeddb',
+  fsaHandle: undefined, // Will be set when user picks folder for FSA storage
   workspaceBindings: {
     knowledge: true,
     notes: true,
@@ -203,6 +204,11 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
         } else if (formData.projectName.length > 50) {
           errors[1] = t('wizard.validation.projectNameTooLong');
         }
+
+        // FSA storage type requires a folder to be picked
+        if (formData.storageType === 'fsa' && !formData.fsaHandle) {
+          errors[1] = 'Please select a folder for your project';
+        }
         break;
 
       case 2: // Workspace Setup
@@ -282,7 +288,7 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
         name: formData.projectName,
         folderPath: formData.projectName.toLowerCase().replace(/\s+/g, '-'),
         storageType: formData.storageType,
-        fsaHandle: formData.storageType === 'fsa' ? null : undefined,
+        fsaHandle: formData.storageType === 'fsa' ? (formData.fsaHandle ?? null) : undefined,
         description: formData.projectDescription || undefined,
         tags: [formData.projectType],
         bindings: finalBindings,

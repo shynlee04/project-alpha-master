@@ -227,8 +227,31 @@ export const HubHomePage: React.FC = () => {
     const project = (projects || []).find(p => p.id === projectId);
     if (!project) return;
 
-    setSelectedProject(project as unknown as Project);
-    setDialogOpen(true);
+    // Navigate directly to the first available workspace
+    // Priority: ide > knowledge > notes > study
+    const bindings = project.bindings as WorkspaceBindings | Record<string, string> | undefined;
+
+    // Handle both new format (boolean) and legacy format (string)
+    const isEnabled = (value: boolean | string | undefined): boolean => {
+      if (typeof value === 'boolean') return value;
+      if (typeof value === 'string') return value === 'true';
+      return false;
+    };
+
+    // Check workspaces in priority order
+    if (isEnabled(bindings?.ide)) {
+      navigate({ to: '/ide/$projectId', params: { projectId } });
+    } else if (isEnabled(bindings?.knowledge)) {
+      navigate({ to: '/knowledge/$projectId', params: { projectId } });
+    } else if (isEnabled(bindings?.notes)) {
+      navigate({ to: '/notes/$projectId', params: { projectId } });
+    } else if (isEnabled(bindings?.study)) {
+      navigate({ to: '/study/$projectId', params: { projectId } });
+    } else {
+      // No workspaces enabled - fall back to opening dialog for configuration
+      setSelectedProject(project as unknown as Project);
+      setDialogOpen(true);
+    }
   };
 
   const handleWorkspaceBindingConfirm = async (

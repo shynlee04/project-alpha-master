@@ -907,4 +907,143 @@ epic_38_status:
       status: "backlog"
       effort: "1.5h"
 
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-UX STORY STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_ux_status:
+  id: "EPIC-UX"
+  name: "System-Wide UX Remediation"
+  priority: "P0-P1"
+  phase: "IN_PROGRESS"
+  total_stories: 5
+  estimated_effort: "~24-28 hours"
+
+  stories:
+    "UX-1":
+      title: "Remove Glassmorphism"
+      status: "done"
+      effort: "4h"
+      completed_at: "2026-01-09"
+      points: 8
+    "UX-2":
+      title: "Fix Rounded Corners"
+      status: "done"
+      effort: "3h"
+      completed_at: "2026-01-09"
+      points: 6
+    "UX-3":
+      title: "Touch Target Compliance"
+      status: "review"
+      effort: "2h"
+      completed_at: "2026-01-09"
+      points: 8
+      files_modified: 9
+      validation_script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
+      validation_result: "PASS - WCAG 2.5.5 compliant"
+    "UX-4":
+      title: "Internationalization Audit"
+      status: "backlog"
+      effort: "4h"
+      points: 4
+    "UX-5":
+      title: "Shadow Consolidation"
+      status: "backlog"
+      effort: "2h"
+      points: 2
+
+  progress:
+    completed: 2/5
+    in_progress: 1/5
+    blocked: 0/5
+    remaining: 2/5
+
 generated_at: "2026-01-08T04:04:14+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-UX STORY STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_ux_status:
+  id: "EPIC-UX"
+  name: "System-Wide UX Remediation"
+  priority: "P0-P1"
+  phase: "IN_PROGRESS"
+  total_stories: 5
+  estimated_effort: "~24-28 hours"
+
+  stories:
+    "UX-1":
+      title: "Remove Glassmorphism"
+      status: "done"
+      effort: "4h"
+      completed_at: "2026-01-09"
+      points: 8
+    "UX-2":
+      title: "Fix Rounded Corners"
+      status: "done"
+      effort: "3h"
+      completed_at: "2026-01-09"
+      points: 6
+    "UX-3":
+      title: "Touch Target Compliance"
+      status: "review"
+      effort: "2h"
+      completed_at: "2026-01-09"
+      points: 8
+      files_modified: 9
+      validation_script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
+      validation_result: "PASS - WCAG 2.5.5 compliant"
+    "UX-4":
+      title: "Internationalization Audit"
+      status: "backlog"
+      effort: "4h"
+      points: 4
+    "UX-5":
+      title: "Shadow Consolidation"
+      status: "backlog"
+      effort: "2h"
+      points: 2
+
+  progress:
+    completed: 2/5
+    in_progress: 1/5
+    blocked: 0/5
+    remaining: 2/5
+
+ux_3_completion:
+  timestamp: "2026-01-09"
+  status: "review"
+  files_modified: 9
+  validation_script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
+  validation_result: "PASS"
+  typescript_result: "PASS - 0 errors in modified files"
+  next_step: "code-review"
+
+ux_3_story_done:
+  timestamp: "2026-01-09"
+  status: "done"
+  completed_at: "2026-01-09"
+  points: 8
+  effort_actual: "2h"
+  effort_estimated: "4h"
+  velocity_impact: "+8 points"
+  code_review:
+    status: "approved"
+    reviewer: "Claude Code"
+    issues_found: 0
+  validation:
+    script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
+    result: "PASS"
+    typescript: "PASS - 0 errors in modified files"
+
+epic_ux_progress:
+  completed: 3/5
+  in_progress: 0/5
+  blocked: 0/5
+  remaining: 2/5
+  percent_complete: 60%
+  velocity: 8 + 6 + 8 = 22 points (EPIC-UX total: 28 points)
+  remaining_stories:
+    - "UX-4: Internationalization Audit (4 points)"
+    - "UX-5: Shadow Consolidation (2 points)"

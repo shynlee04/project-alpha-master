@@ -24,6 +24,10 @@ export interface WizardFormData {
   // Storage type: browser DB (mobile) vs file system access (desktop)
   storageType: ProjectStorageType;
 
+  // FSA folder handle (required for 'fsa' storage type)
+  // When user selects 'fsa' storage, they must pick a folder via showDirectoryPicker
+  fsaHandle?: FileSystemDirectoryHandle | null;
+
   // Workspace bindings: which workspaces this project is available in
   workspaceBindings: WorkspaceBindings;
 

@@ -10,8 +10,10 @@
  * Size target: ≤200 lines
  */
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FolderOpen, Loader2, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { WizardFormData } from '../wizard-types';
 
@@ -82,6 +84,49 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
   error,
 }) => {
   const { t } = useTranslation();
+  const [isPickingFolder, setIsPickingFolder] = useState(false);
+
+  /**
+   * Handle folder picker for FSA storage type
+   * Uses File System Access API to prompt user for folder selection
+   */
+  const handlePickFolder = useCallback(async () => {
+    // Check FSA support
+    if (typeof window === 'undefined' || !('showDirectoryPicker' in window)) {
+      toast.error('Folder selection not supported', {
+        description: 'Please use a desktop browser (Chrome, Edge, Opera) with File System Access API support.',
+      });
+      return;
+    }
+
+    setIsPickingFolder(true);
+
+    try {
+      const handle = await window.showDirectoryPicker({
+        mode: 'readwrite',
+        startIn: 'documents',
+      });
+
+      // Update form data with the selected folder handle
+      updateFormData('fsaHandle', handle);
+
+      toast.success('Folder selected', {
+        description: `Connected to: ${handle.name}`,
+      });
+    } catch (err) {
+      // User cancelled the folder picker - this is expected behavior
+      if (err instanceof Error && err.name === 'AbortError') {
+        return;
+      }
+
+      // Other errors should be reported
+      toast.error('Failed to select folder', {
+        description: err instanceof Error ? err.message : 'Unknown error',
+      });
+    } finally {
+      setIsPickingFolder(false);
+    }
+  }, [updateFormData]);
 
   return (
     <div className="space-y-6">
@@ -254,6 +299,59 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
           })}
         </div>
       </div>
+
+      {/* Folder Picker for FSA Storage */}
+      {formData.storageType === 'fsa' && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-foreground">
+            {t('wizard.fields.folder.label', 'Project Folder')}
+            <span className="text-destructive ml-1" aria-label="required">
+              *
+            </span>
+          </label>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handlePickFolder}
+              disabled={isPickingFolder}
+              className={cn(
+                "flex-1 px-4 py-3 min-h-[48px]",
+                "border-2 border-border bg-background text-foreground",
+                "rounded-[4px] transition-all duration-150",
+                "hover:border-primary/50 hover:bg-primary/5",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]",
+                "focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+                "disabled:opacity-50 disabled:cursor-not-allowed",
+                "flex items-center justify-center gap-2"
+              )}
+            >
+              {isPickingFolder ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  <span>Selecting folder...</span>
+                </>
+              ) : formData.fsaHandle ? (
+                <>
+                  <CheckCircle2 size={18} className="text-emerald-500" />
+                  <span className="text-foreground font-medium">
+                    {formData.fsaHandle.name}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <FolderOpen size={18} />
+                  <span>Select folder...</span>
+                </>
+              )}
+            </button>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {formData.fsaHandle
+              ? `Connected to: ${formData.fsaHandle.name}`
+              : 'Click to select a folder from your computer'}
+          </div>
+        </div>
+      )}
 
       {/* Project Icon */}
       <div className="space-y-2">
