@@ -260,6 +260,11 @@
   /* Minimum touch target sizes for mobile accessibility */
   --touch-target-min: 44px;
 
+  /* ===== Overlay Colors ===== */
+  /* Solid overlay colors for modals and dialogs (8-bit aesthetic) */
+  --color-overlay: #1a1a1a;
+  /* Dark overlay for dialogs - solid color replaces glassmorphism */
+
   /* ===== Border Widths ===== */
   --border-width-1: 1px;
   --border-width-2: 2px;
@@ -521,6 +526,11 @@
   /* ===== Touch Targets ===== */
   /* Minimum touch target sizes for mobile accessibility */
   --touch-target-min: 44px;
+
+  /* ===== Overlay Colors ===== */
+  /* Solid overlay colors for modals and dialogs (8-bit aesthetic) */
+  --color-overlay: #1a1a1a;
+  /* Dark overlay for dialogs - solid color replaces glassmorphism */
 
   /* ===== Border Widths ===== */
   --border-width-1: 1px;

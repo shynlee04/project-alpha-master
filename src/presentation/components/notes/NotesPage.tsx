@@ -489,6 +489,7 @@ export function NotesPage() {
                                     </div>
                                 }>
                                     <NoteEditor
+                                        key={activeNote?.id || 'empty'}
                                         noteId={activeNote?.id || ''}
                                         className="h-full"
                                     />

@@ -17,9 +17,17 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useCreateBlockNote } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
-import type { Block } from '@blocknote/core';
+import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
 import '@blocknote/mantine/style.css';
 import '@blocknote/core/fonts/inter.css';
+
+// Custom Blocks for rich content rendering
+import { ImageBlock } from './blocks/ImageBlock';
+import { CodeFileBlock } from './blocks/CodeFileBlock';
+import { FileAttachmentBlock } from './blocks/FileAttachmentBlock';
+
+// P1.5-03: Block type alias for compatibility with custom schema
+type BlockNoteBlock = any;
 
 import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +48,19 @@ import { SuggestionMenuController } from '@blocknote/react';
 import './NoteEditor.css';
 
 // ============================================================================
+// Custom BlockNote Schema
+// ============================================================================
+// P1.5-03: Custom schema with default blocks + file rendering blocks
+const schema = BlockNoteSchema.create({
+    blockSpecs: {
+        ...defaultBlockSpecs,
+        image: ImageBlock(),
+        codeFile: CodeFileBlock(),
+        fileAttachment: FileAttachmentBlock(),
+    },
+});
+
+// ============================================================================
 // Types
 // ============================================================================
 
@@ -56,7 +77,7 @@ interface NoteEditorProps {
 // Debounce Hook
 // ============================================================================
 
-function useDebouncedCallback<T extends (...args: Block[][]) => void>(
+function useDebouncedCallback<T extends (...args: BlockNoteBlock[][]) => void>(
     callback: T,
     delay: number
 ): T {
@@ -105,21 +126,24 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const saveNoteToFile = useNoteStore((state) => state.saveNoteToFile);
 
     // Get initial content from note
+    // Fixed: Include noteId in dependencies to ensure proper reactivity on note switch
     const initialContent = useMemo(() => {
         if (!note?.blocks || note.blocks.length === 0) {
             return undefined; // BlockNote will use default empty paragraph
         }
-        return note.blocks as Block[];
-    }, [note?.id]); // Only recompute when note ID changes, not on every block update
+        return note.blocks as BlockNoteBlock[];
+    }, [noteId, note?.blocks]); // Recompute when noteId OR blocks change
 
     // Create BlockNote editor instance
+    // P1.5-03: Pass custom schema with file rendering blocks
     const editor = useCreateBlockNote({
+        schema,
         initialContent,
     });
 
     // Debounced save handler (500ms)
     const debouncedSave = useDebouncedCallback(
-        async (blocks: Block[]) => {
+        async (blocks: any[]) => {
             if (readOnly) return;
 
             await updateNote({
@@ -146,14 +170,14 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         const contentBlock = {
             type: 'paragraph',
             content: [{ type: 'text', text: content, styles: {} }],
-        } as Block;
+        } as BlockNoteBlock;
 
         // Create heading for the import
         const headingBlock = {
             type: 'heading',
             content: [{ type: 'text', text: title, styles: {} }],
             props: { level: 2 },
-        } as Block;
+        } as BlockNoteBlock;
 
         // Append to document
         updateNote({
@@ -173,7 +197,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         const transcriptBlock = {
             type: 'paragraph',
             content: [{ type: 'text', text: transcript, styles: {} }],
-        } as Block;
+        } as BlockNoteBlock;
 
         // Append to document
         updateNote({
@@ -260,7 +284,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     }
 
     return (
-        <div key={`note-editor-${noteId}`} className={cn('note-editor', className)}>
+        <div className={cn('note-editor', className)}>
             {/* Status bar */}
             <div className="note-editor__status-bar">
                 {note.emoji && <span className="note-editor__emoji">{note.emoji}</span>}
@@ -307,14 +331,14 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                         triggerCharacter="/"
                         getItems={async (query) =>
                             // Gets all default slash menu items and our custom item.
-                            getCustomSlashMenuItems(editor).filter((item) =>
+                            getCustomSlashMenuItems(editor as any).filter((item) =>
                                 item.title.toLowerCase().includes(query.toLowerCase())
                             )
                         }
                     />
                 </BlockNoteView>
                 <AIPromptDialog />
-                <AITransformMenu editor={editor} />
+                <AITransformMenu editor={editor as any} />
             </div>
         </div>
     );

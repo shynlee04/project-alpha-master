@@ -163,7 +163,7 @@ export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose })
         isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       )}
     >
-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <div className="fixed inset-0 bg-[var(--color-overlay)]" onClick={onClose} />
       <div className="relative z-50 w-full max-w-3xl mx-auto mt-[10vh]">
         <div className="rounded-lg border border-border bg-card shadow-pixel overflow-hidden">
           {/* Header */}
