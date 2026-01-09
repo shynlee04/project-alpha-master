@@ -19,6 +19,8 @@ import { SystemPromptComposer, type LayerContext } from '../prompt-composer';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';
 import { buildMultimodalMessage, type ImageContent } from '../multimodal/message-builder';
+// EPIC-40 MM-03: Tool execution persistence to unified chat store
+import { useUnifiedChatStore } from '@/infrastructure/persistence/stores/chat';
 
 /**
  * Options for useAgentChatWithTools hook
@@ -47,6 +49,11 @@ export interface UseAgentChatWithToolsOptions {
     customHeaders?: Record<string, string>;
     /** Whether to enable native tools (default: true) */
     enableTools?: boolean;
+    // EPIC-40 MM-03: Tool execution persistence
+    /** Conversation ID for persisting tool calls */
+    conversationId?: string | null;
+    /** Thread ID for persisting tool calls */
+    threadId?: string | null;
 }
 
 /**
@@ -170,7 +177,16 @@ export function useAgentChatWithTools(
         customBaseURL,
         customHeaders,
         enableTools = true,
+        // EPIC-40 MM-03: Conversation context for persistence
+        conversationId,
+        threadId,
     } = options;
+
+    // EPIC-40 MM-03: Tool execution persistence methods from unified store
+    const addPendingApproval = useUnifiedChatStore((state) => state.addPendingApproval);
+    const approveToolCallInStore = useUnifiedChatStore((state) => state.approveToolCall);
+    const denyToolCallInStore = useUnifiedChatStore((state) => state.denyToolCall);
+    const activeThreadIdInStore = useUnifiedChatStore((state) => state.activeThreadId);
 
     // Track tool calls
     const [toolCalls, setToolCalls] = useState<ToolCallInfo[]>([]);
@@ -389,9 +405,36 @@ export function useAgentChatWithTools(
 
     // Approve tool call - uses { id, approved } object format
     // CRITICAL FIX: Uses approvalId (from part.approval.id), NOT toolCallId
+    // EPIC-40 MM-03: Also persist approval to unified store
     const approveToolCall = useCallback((approvalId: string, toolCallId?: string) => {
         if (addToolApprovalResponse) {
             addToolApprovalResponse({ id: approvalId, approved: true });
+
+            // EPIC-40 MM-03: Persist approval to unified store
+            // Find the pending approval from TanStack AI messages to get tool details
+            const approvalMsg = rawMessages.find((msg: any) => {
+                const m = msg as { parts?: unknown[] };
+                if (!Array.isArray(m.parts)) return false;
+                return m.parts.some((part: any) =>
+                    part?.type === 'tool-call' &&
+                    part?.state === 'approval-requested' &&
+                    part?.approval?.id === approvalId
+                );
+            });
+
+            if (approvalMsg && conversationId) {
+                const effectiveThreadId = threadId || activeThreadIdInStore;
+                if (effectiveThreadId) {
+                    const parts = (approvalMsg as any).parts as any[];
+                    const toolPart = parts.find((p: any) => p?.approval?.id === approvalId);
+
+                    if (toolPart) {
+                        // Create or update the approval in unified store
+                        // The store handles the tool call status update automatically
+                        approveToolCallInStore(approvalId);
+                    }
+                }
+            }
 
             // Update tool call status and emit event
             setToolCalls((prev) => {
@@ -413,13 +456,22 @@ export function useAgentChatWithTools(
                 return updated;
             });
         }
-    }, [addToolApprovalResponse, eventBus]);
+    }, [addToolApprovalResponse, eventBus, rawMessages, conversationId, threadId, activeThreadIdInStore, approveToolCallInStore]);
 
     // Reject tool call - uses { id, approved } object format
     // CRITICAL FIX: Uses approvalId (from part.approval.id), NOT toolCallId
+    // EPIC-40 MM-03: Also persist denial to unified store
     const rejectToolCall = useCallback((approvalId: string, reason?: string, toolCallId?: string) => {
         if (addToolApprovalResponse) {
             addToolApprovalResponse({ id: approvalId, approved: false });
+
+            // EPIC-40 MM-03: Persist denial to unified store
+            if (conversationId) {
+                const effectiveThreadId = threadId || activeThreadIdInStore;
+                if (effectiveThreadId) {
+                    denyToolCallInStore(approvalId, reason || 'User rejected');
+                }
+            }
 
             // Update tool call status and emit event
             setToolCalls((prev) => {
@@ -442,7 +494,7 @@ export function useAgentChatWithTools(
                 return updated;
             });
         }
-    }, [addToolApprovalResponse, eventBus]);
+    }, [addToolApprovalResponse, eventBus, conversationId, threadId, activeThreadIdInStore, denyToolCallInStore]);
 
     // Extract pending approvals from TanStack AI message parts (Story 25-5)
     const pendingApprovals = useMemo((): PendingApprovalInfo[] => {
@@ -512,6 +564,42 @@ export function useAgentChatWithTools(
 
         return approvals;
     }, [rawMessages]);
+
+    // EPIC-40 MM-03: Sync pending approvals to unified store
+    // This ensures tool approvals persist across page refreshes
+    const prevPendingApprovalsRef = useRef<string[]>([]);
+    useEffect(() => {
+        if (!conversationId) return;
+
+        const effectiveThreadId = threadId || activeThreadIdInStore;
+        if (!effectiveThreadId) return;
+
+        // Get current approval IDs
+        const currentApprovalIds = pendingApprovals.map(p => p.approvalId);
+        const prevApprovalIds = prevPendingApprovalsRef.current;
+
+        // Find new approvals (in current but not in previous)
+        const newApprovals = pendingApprovals.filter(p => !prevApprovalIds.includes(p.approvalId));
+
+        // Add new approvals to unified store
+        for (const approval of newApprovals) {
+            // We need a messageId for the approval - use a temporary one based on the approval
+            // This will be updated when the message is actually added
+            const messageId = `msg_${approval.approvalId}`;
+
+            addPendingApproval({
+                toolCallId: approval.toolCallId,
+                toolName: approval.toolName,
+                toolArgs: approval.toolArgs,
+                conversationId,
+                threadId: effectiveThreadId,
+                messageId,
+                status: 'pending',
+            });
+        }
+
+        prevPendingApprovalsRef.current = currentApprovalIds;
+    }, [pendingApprovals, conversationId, threadId, activeThreadIdInStore, addPendingApproval]);
 
     return {
         messages,

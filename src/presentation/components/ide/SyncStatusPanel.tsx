@@ -265,7 +265,7 @@ export function SyncStatusPanel() {
       case 'pending':
         return <Clock className="h-4 w-4 text-yellow-500" />;
       case 'in-progress':
-        return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
+        return <RefreshCw className="h-4 w-4 text-orange-500 animate-spin" />;
       case 'completed':
         return <CheckCircle2 className="h-4 w-4 text-green-500" />;
       case 'failed':
@@ -288,7 +288,7 @@ export function SyncStatusPanel() {
 
     if (syncState.inProgressCount > 0) {
       return (
-        <Badge variant="outline" className="gap-1 border-blue-500 text-blue-500">
+        <Badge variant="outline" className="gap-1 border-orange-500 text-orange-500">
           <RefreshCw className="h-3 w-3 animate-spin" />
           {t('sync.status.syncing', { count: syncState.inProgressCount })}
         </Badge>

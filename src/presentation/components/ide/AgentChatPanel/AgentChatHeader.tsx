@@ -198,11 +198,11 @@ export function AgentChatHeader({
                     text={displayModel}
                     className="text-[10px] text-muted-foreground font-mono max-w-[60px] sm:max-w-[100px]"
                 />
-                {/* P2-6: Capture Debug Session button */}
+                {/* P2-6: Capture Debug Session button - MM-11: Changed from blue to orange theme */}
                 <button
                     onClick={onCaptureDebugSession}
                     title="Capture Debug Session to Knowledge workspace"
-                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors px-2 py-1 flex items-center gap-1 hidden sm:flex"
+                    className="text-xs text-orange-400 hover:text-orange-300 transition-colors px-2 py-1 flex items-center gap-1 hidden sm:flex"
                 >
                     <Bug className="w-3 h-3" />
                     <span className="hidden lg:inline">Capture</span>

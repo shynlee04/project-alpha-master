@@ -44,6 +44,34 @@ export { processPDFDef, createProcessPDFClientTool } from './process-pdf-tool';
 export { processImageDef, createProcessImageClientTool } from './process-image-tool';
 export { processURLDef, createProcessURLClientTool } from './process-url-tool';
 
+// Voice I/O tool definitions (EPIC-40, MM-05, MM-06)
+export {
+    voiceInputDef,
+    createVoiceInputClientTool,
+    transcribeAudio,
+    quickTranscribe,
+    SUPPORTED_AUDIO_FORMATS,
+    TRANSCRIPTION_PROVIDERS,
+    SUPPORTED_LANGUAGES,
+    type VoiceInputConfig,
+    type VoiceInputInput,
+    type VoiceInputOutput,
+} from './voice-input-tool';
+export {
+    voiceOutputDef,
+    createVoiceOutputClientTool,
+    generateTextToSpeech,
+    quickSpeak,
+    playAudioFromBase64,
+    TTS_PROVIDERS,
+    OPENAI_VOICES,
+    GEMINI_VOICES,
+    TTS_FORMATS,
+    type VoiceOutputConfig,
+    type VoiceOutputInput,
+    type VoiceOutputOutput,
+} from './voice-output-tool';
+
 // Re-export facades for convenience
 export type { AgentFileTools, AgentTerminalTools, AgentKnowledgeTools } from '../facades';
 
@@ -130,18 +158,37 @@ export function createKnowledgeClientTools(getTools: () => import('../facades').
 }
 
 /**
+ * Create all voice I/O tools
+ * Uses TanStack AI .client() pattern for browser execution
+ *
+ * @governance EPIC-40
+ * @story MM-05, MM-06 - Voice Input/Output Tools
+ */
+export function createVoiceClientTools() {
+    const { createVoiceInputClientTool } = require('./voice-input-tool');
+    const { createVoiceOutputClientTool } = require('./voice-output-tool');
+
+    return {
+        voiceInput: createVoiceInputClientTool(),
+        voiceOutput: createVoiceOutputClientTool(),
+    };
+}
+
+/**
  * Returns an array of all client-side tools for use with TanStack AI chat
  *
  * @param fileTools - Function to get file tools facade
  * @param terminalTools - Function to get terminal tools facade
  * @param knowledgeTools - Function to get knowledge tools facade (optional)
+ * @param includeVoice - Whether to include voice I/O tools (optional, default: true)
  * @story 25-4 - Wire Tool Execution to UI
- * @governance EPIC-38
+ * @governance EPIC-38, EPIC-40
  */
 export function getClientTools(
     fileTools: () => import('../facades').AgentFileTools,
     terminalTools: () => import('../facades').AgentTerminalTools,
-    knowledgeTools?: () => import('../facades').AgentKnowledgeTools
+    knowledgeTools?: () => import('../facades').AgentKnowledgeTools,
+    includeVoice: boolean = true
 ) {
     const ft = createFileClientTools(fileTools);
     const tt = createTerminalClientTools(terminalTools);
@@ -162,6 +209,15 @@ export function getClientTools(
             kt.processPDF,
             kt.processImage,
             kt.processURL
+        );
+    }
+
+    // Add voice tools if enabled
+    if (includeVoice) {
+        const vt = createVoiceClientTools();
+        tools.push(
+            vt.voiceInput,
+            vt.voiceOutput
         );
     }
 

@@ -142,6 +142,9 @@ export function AgentChatPanel({
     }, [projectName, workspaceType, activeNote]);
 
     // Use the real TanStack AI hook with tools
+    // Get conversation and thread context for tool execution persistence (EPIC-40 MM-03)
+    const { activeConversationId, activeThreadId } = useThreadsStore();
+
     const {
         messages: hookMessages,
         rawMessages,
@@ -165,6 +168,9 @@ export function AgentChatPanel({
         // NOTE: customBaseURL, customHeaders, enableNativeTools are NOT part of Agent entity
         // They are provider-level configuration, NOT agent-level
         enableTools: true,
+        // EPIC-40 MM-03: Conversation context for tool execution persistence
+        conversationId: activeConversationId,
+        threadId: activeThreadId,
     });
 
     // Conversation management
@@ -193,7 +199,7 @@ export function AgentChatPanel({
     }), [projectName, t]);
 
     // Effect to sync completed messages from hook to store
-    const { addMessage, activeConversationId } = useThreadsStore();
+    const { addMessage } = useThreadsStore();
 
     // E1-5: Chat event bridge - emit events when messages sent, listen for workspace changes
     const { emitMessageSent } = useChatEventBridge({

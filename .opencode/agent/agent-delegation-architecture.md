@@ -1,6 +1,7 @@
 ---
 description: Autonomous Architecture Document generation through codebase analysis, research, and decision formalization. Designed for sub-agent delegation in Claude Code.
 delegation_target: Claude Code Sub-Agent
+mode: 'subagent`
 phase: 3-solutioning
 output: _bmad-output/planning-artifacts/architecture.md
 requires:

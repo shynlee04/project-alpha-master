@@ -423,6 +423,66 @@ code {
   user-select: none;
 }
 
+/* =============================================================================
+   VIA-GENT Z-Index Scale (MM-11 Documentation)
+   Used to prevent layering conflicts across the application
+   ============================================================================= */
+
+/*
+ * z-index scale for Via-Gent:
+ * - z-0:   Default stacking (no z-index)
+ * - z-10:  Dropdowns, hover states
+ * - z-20:  Sticky headers, navigation
+ * - z-30:  Fixed sidebar
+ * - z-40:  Fixed panels, status overlays (SyncStatusPanel uses this)
+ * - z-50:  Modals, dialogs, important overlays
+ * - z-60:  Toast notifications
+ * - z-70:  Priority toasts
+ * - z-80:  Full-screen overlays
+ * - z-90:  Critical alerts
+ * - z-100:Highest level (debug overlays)
+ *
+ * Rule: Never use arbitrary z-index values. Use Tailwind's z-{n} or add to this scale.
+ */
+
+/* =============================================================================
+   VIA-GENT Text Overflow Utilities (MM-11 Documentation)
+   Ensures consistent text truncation with tooltips
+   ============================================================================= */
+
+/*
+ * Text truncation pattern for Via-Gent:
+ * 1. Add overflow utilities to container
+ * 2. Add title attribute or tooltip component for hover
+ *
+ * Usage:
+ * <span className="truncate" title="Long text here">Long text here</span>
+ *
+ * For custom widths:
+ * <span className="max-w-[200px] truncate" title="...">...</span>
+ */
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Multi-line truncation (requires -webkit-line-clamp) */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 :root {
   /* VIA-GENT Brand Design System
    * Primary: Orange (#f97316) - MistralAI inspired

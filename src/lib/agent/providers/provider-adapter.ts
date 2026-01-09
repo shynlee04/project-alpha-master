@@ -15,6 +15,8 @@ import type { ProviderConfig, AdapterConfig, ConnectionTestResult, OpenAICompati
 import { PROVIDERS } from './types';
 import { AnthropicAdapter, createAnthropicAdapter } from './anthropic-adapter';
 import type { AnthropicAdapterConfig } from './anthropic-adapter';
+import { GeminiAdapter, createGeminiAdapter } from './gemini-adapter';
+import type { GeminiAdapterConfig } from './gemini-adapter';
 import type { ProviderModel } from '@/core/entities/Provider';
 import { ModelRegistry } from './model-registry';
 
@@ -42,7 +44,7 @@ export interface ExtendedProviderAdapter extends OpenAIAdapter {
 }
 
 // Union type for all supported adapters
-type ProviderAdapter = OpenAIAdapter | AnthropicAdapter | ExtendedProviderAdapter;
+type ProviderAdapter = OpenAIAdapter | AnthropicAdapter | GeminiAdapter | ExtendedProviderAdapter;
 
 /**
  * ProviderAdapterFactory - Creates TanStack AI adapters for various providers
@@ -71,6 +73,25 @@ export class ProviderAdapterFactory {
                 headers: config.headers,
                 dangerouslyAllowBrowser: true,
             } as AnthropicAdapterConfig);
+
+            // Wrap with extended methods
+            const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
+            this.adapters.set(providerId, extendedAdapter);
+            return extendedAdapter;
+        }
+
+        // Handle Gemini provider
+        if (providerConfig?.type === 'gemini') {
+            if (!providerConfig.enabled) {
+                throw new Error(`Provider not enabled: ${providerId}`);
+            }
+            const baseAdapter = createGeminiAdapter({
+                apiKey: config.apiKey,
+                baseURL: config.baseURL,
+                headers: config.headers,
+                model: config.model,
+                dangerouslyAllowBrowser: true,
+            } as GeminiAdapterConfig);
 
             // Wrap with extended methods
             const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
@@ -177,7 +198,7 @@ export class ProviderAdapterFactory {
      * @returns Extended adapter with additional methods
      */
     private extendAdapter(
-        baseAdapter: OpenAIAdapter | AnthropicAdapter,
+        baseAdapter: OpenAIAdapter | AnthropicAdapter | GeminiAdapter,
         providerId: string,
         config: CustomAdapterConfig
     ): ExtendedProviderAdapter {
@@ -239,6 +260,16 @@ export class ProviderAdapterFactory {
                     headers: customConfig?.headers,
                     dangerouslyAllowBrowser: true,
                 } as AnthropicAdapterConfig);
+                return adapter.testConnection();
+            }
+
+            // Handle Gemini provider test
+            if (provider?.type === 'gemini') {
+                const adapter = createGeminiAdapter({
+                    apiKey,
+                    model: provider.defaultModel,
+                    dangerouslyAllowBrowser: true,
+                } as GeminiAdapterConfig);
                 return adapter.testConnection();
             }
 

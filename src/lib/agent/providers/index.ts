@@ -32,6 +32,18 @@ export type { CustomAdapterConfig } from './provider-adapter';
 export { AnthropicAdapter, createAnthropicAdapter } from './anthropic-adapter';
 export type { AnthropicAdapterConfig } from './anthropic-adapter';
 
+// Gemini Adapter
+export { GeminiAdapter, createGeminiAdapter } from './gemini-adapter';
+export type {
+    GeminiAdapterConfig,
+    GeminiMessage,
+    GeminiContentPart,
+    GeminiTool,
+    GeminiStreamChunk,
+    GeminiModality,
+    GeminiModelId,
+} from './gemini-adapter';
+
 // Credential Vault
 export { CredentialVault, credentialVault } from './credential-vault';
 export type { VaultStatus } from './credential-vault';

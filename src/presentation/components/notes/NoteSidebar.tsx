@@ -116,9 +116,9 @@ export function NoteSidebar({
                     </div>
                 )}
 
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                     {/* Title with View Toggle (E1-9) */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap shrink-0">
                         {/* Notes View Toggle Button */}
                         <button
                             onClick={() => setSidebarView('notes')}

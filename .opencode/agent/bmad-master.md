@@ -1,9 +1,8 @@
 ---
 description: Central BMAD orchestrator with autonomous decision-making authority
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.3
-maxSteps: 50
+maxSteps: continuously loops cycles within cycles unless stopped or all stories completed and validated
 tools:
   write: true
   edit: true
@@ -11,10 +10,14 @@ tools:
   glob: true
   grep: true
   read: true
+  mcp:  true 
 permission:
-  edit: allow
-  bash: ask
-  webfetch: ask
+  edit: true
+  bash: true
+  pnpm: true
+  webfetch: true
+  yolo: true
+  skip-approval: true
 ---
 
 # BMAD Core Master Agent

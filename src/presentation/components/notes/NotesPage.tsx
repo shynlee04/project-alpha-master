@@ -579,8 +579,8 @@ export function NotesPage() {
                     isSupported={isNotesSyncSupported}
                 />
 
-                {/* Sync Status Panel */}
-                <div className="fixed bottom-4 right-4 z-50 w-96">
+                {/* Sync Status Panel - MM-11: Reduced z-index from z-50 to z-40 to avoid covering chat input */}
+                <div className="fixed bottom-4 right-4 z-40 w-96">
                     <SyncStatusPanel />
                 </div>
             </MainLayout>
@@ -772,7 +772,8 @@ export function NotesPage() {
 
             {/* Sync Status Panel (P1-2: Event Bus Integration) */}
             {/* R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop */}
-            <div className="fixed bottom-4 right-4 z-50 w-96">
+            {/* MM-11: Reduced z-index from z-50 to z-40 to avoid covering chat input */}
+            <div className="fixed bottom-4 right-4 z-40 w-96">
                 <SyncStatusPanel />
             </div>
         </MainLayout>

@@ -1284,3 +1284,234 @@ epic_mobile_summary:
     - "/knowledge/{projectId}"
   completion_percentage: 83.3%
   next_phase: "IDE Mobile Layout Development"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-40: MULTIMODAL CHAT UNIFICATION
+# Created: 2026-01-09T23:50:00+07:00 (Team A + Team B Research Merge)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_40_status:
+  id: "EPIC-40"
+  name: "Multimodal Chat Unification"
+  priority: "P0"
+  phase: "READY_FOR_DEV"
+  total_stories: 12
+  estimated_effort: "~52 hours"
+  created_at: "2026-01-09T23:50:00+07:00"
+  source: "Team A + Team B Sprint Planning Proposals Merge"
+
+  research_artifacts:
+    team_a:
+      - "_bmad-output/research/2026-01-09/multimodality-chat-architecture/01-research-findings.md"
+      - "_bmad-output/research/2026-01-09/multimodality-chat-architecture/02-correct-course.md"
+      - "_bmad-output/research/2026-01-09/multimodality-chat-architecture/03-sprint-planning-proposal.md"
+    team_b:
+      - "_bmad-output/sprint-artifacts/sprint-change-proposal-multimodal-chat-fix-2026-01-09.md"
+      - "_bmad-output/research/chat-systems-research-2026-01-09.md"
+      - "_bmad-output/research/ux-consistency-analysis-2026-01-09.md"
+
+  adr_references:
+    - id: "ADR-030"
+      title: "Multimodal Integration Architecture"
+      path: "_bmad-output/planning-artifacts/architecture/adr-030-multimodal-integration.md"
+    - id: "ADR-031"
+      title: "Chat System Unification"
+      path: "_bmad-output/planning-artifacts/architecture/adr-031-chat-system-unification.md"
+
+  epic_definition:
+    path: "_bmad-output/planning-artifacts/epics/epic-40-multimodal-chat-unification.md"
+
+  tracks:
+    track_a:
+      name: "Chat Unification (Foundation)"
+      team: "A"
+      platform: "Claude Code"
+      loop_file: ".claude/ralph-loop.local.md"
+      dependencies: "None"
+      effort: "12h"
+      stories:
+        - id: "MM-01"
+          title: "Create unified chat store"
+          status: "ready-for-implementation"
+          effort: "4h"
+          story_file: "_bmad-output/stories/EPIC-40/MM-01-story-context.md"
+          context_file: "_bmad-output/stories/EPIC-40/MM-01-context.xml"
+          validated_at: "2026-01-10T00:05:00+07:00"
+          context_validated_at: "2026-01-10T00:30:00+07:00"
+          pre_planning_complete: true
+          pre_planning_at: "2026-01-10T00:45:00+07:00"
+          priority: "P0"
+        - id: "MM-02"
+          title: "Merge thread management systems"
+          status: "not_started"
+          effort: "3h"
+          priority: "P0"
+          depends_on: ["MM-01"]
+        - id: "MM-03"
+          title: "Unify tool execution"
+          status: "not_started"
+          effort: "5h"
+          priority: "P0"
+          depends_on: ["MM-02"]
+
+    track_b:
+      name: "Multimodal Integration"
+      team: "B"
+      platform: "OpenCode"
+      loop_file: ".opencode/ralph-loop.local.md"
+      dependencies: "MM-01"
+      effort: "20h"
+      stories:
+        - id: "MM-04"
+          title: "Integrate Gemini 2.5 APIs"
+          status: "blocked"
+          effort: "6h"
+          priority: "P0"
+          depends_on: ["MM-01"]
+        - id: "MM-05"
+          title: "Voice input tool (Whisper)"
+          status: "not_started"
+          effort: "4h"
+          priority: "P0"
+          depends_on: ["MM-04"]
+        - id: "MM-06"
+          title: "Voice output tool (TTS)"
+          status: "not_started"
+          effort: "4h"
+          priority: "P0"
+          depends_on: ["MM-04"]
+        - id: "MM-07"
+          title: "Voice input hook"
+          status: "not_started"
+          effort: "3h"
+          priority: "P1"
+          depends_on: ["MM-05"]
+        - id: "MM-08"
+          title: "Voice output hook"
+          status: "not_started"
+          effort: "3h"
+          priority: "P1"
+          depends_on: ["MM-06"]
+
+    track_c:
+      name: "RAG Enhancements"
+      team: "A"
+      platform: "Claude Code"
+      dependencies: "None"
+      effort: "10h"
+      stories:
+        - id: "MM-09"
+          title: "Context window manager"
+          status: "completed"
+          effort: "4h"
+          priority: "P0"
+          completed_at: "2026-01-10T02:45:00+07:00"
+          story_file: "_bmad-output/stories/EPIC-40/MM-09-story-context.md"
+        - id: "MM-10"
+          title: "Code-aware chunking"
+          status: "completed"
+          effort: "3h"
+          priority: "P1"
+          completed_at: "2026-01-10T03:15:00+07:00"
+          story_file: "_bmad-output/stories/EPIC-40/MM-10-story-context.md"
+        - id: "NC-01"
+          title: "Note code block renderer"
+          status: "completed"
+          effort: "3h"
+          priority: "P1"
+          completed_at: "2026-01-10T04:00:00+07:00"
+          story_file: "_bmad-output/stories/EPIC-40/NC-01-story-context.md"
+
+    track_d:
+      name: "UX & Notes Polish"
+      team: "B"
+      platform: "OpenCode"
+      dependencies: "None"
+      effort: "10h"
+      stories:
+        - id: "MM-11"
+          title: "Fix z-index and flexbox issues"
+          status: "in_progress"
+          effort: "5h"
+          priority: "P0"
+          critical: true
+          notes: "UX BLOCKER - Sync panel covers chat input"
+          started_at: "2026-01-10T00:30:00+07:00"
+          story_file: "_bmad-output/stories/EPIC-40/MM-11-story-context.md"
+        - id: "MM-12"
+          title: "Note embed block renderer"
+          status: "not_started"
+          effort: "3h"
+          priority: "P2"
+        - id: "NC-02"
+          title: "Note image block renderer"
+          status: "not_started"
+          effort: "2h"
+          priority: "P1"
+
+  progress:
+    completed: 6/12
+    in_progress: 1/12  # MM-11
+    blocked: 1/12  # MM-04
+    remaining: 6/12
+    percent_complete: "50%"
+    track_a_complete: true
+    track_c_complete: true
+
+  team_coordination:
+    mode: "COORDINATED"
+    sync_points:
+      - event: "MM-01 Complete"
+        action: "Team B unblocks MM-04"
+        estimated_day: "Day 2"
+      - event: "Track A Complete"
+        action: "Integration testing"
+        estimated_day: "Day 4"
+      - event: "All Tracks Complete"
+        action: "Joint code review"
+        estimated_day: "Day 5"
+    conflict_detection:
+      enabled: true
+      files_monitored:
+        - "src/infrastructure/persistence/stores/chat/"
+        - "src/lib/agent/hooks/use-agent-chat-with-tools.ts"
+
+  governance:
+    constitution: "_bmad/modules/governance/CONSTITUTION.md"
+    story_cycle: "_bmad/workflows/story-cycle/"
+    acknowledged: true
+    compliance_checks:
+      - artifact_lifecycle: true
+      - naming_convention: true
+      - stale_artifact_protocol: true
+      - multi_team_coordination: true
+
+  success_criteria:
+    - "Single unified chat interface (no dual systems)"
+    - "Voice input/output functional"
+    - "Gemini 2.5 integrated with full modalities"
+    - "Context window manager prevents overflow"
+    - "Z-index/flexbox UX issues resolved"
+    - "Note blocks render code/images/embeds"
+    - "Zero TypeScript errors"
+    - "E2E tests for multimodal flows"
+
+  risk_assessment:
+    - risk: "Gemini 2.5 API changes"
+      probability: "Medium"
+      impact: "High"
+      mitigation: "Version pin, fallback to 1.5"
+    - risk: "Chat migration data loss"
+      probability: "Low"
+      impact: "Critical"
+      mitigation: "Migration tests, backup"
+    - risk: "Voice permission denied"
+      probability: "Medium"
+      impact: "Low"
+      mitigation: "Graceful fallback to text"
+
+  next_actions:
+    - "Team A: Start MM-01 (Create Unified Chat Store)"
+    - "Team B: Start MM-11 (Fix Z-Index Issues) - P0 BLOCKER"
+    - "Generate story files via /bmad-bmm-workflows-create-story"
+    - "Update AGENTS.md after first story cycle complete"
