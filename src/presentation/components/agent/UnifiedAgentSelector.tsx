@@ -246,7 +246,7 @@ export function UnifiedAgentSelector({
             <Bot className="h-4 w-4" />
             {activeAgent && (
               <div className={cn(
-                'absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full',
+                'h-2 w-2 rounded-none',
                 getStatusColor(activeAgent.status)
               )} />
             )}
@@ -263,7 +263,7 @@ export function UnifiedAgentSelector({
               )}
             >
               <div className={cn(
-                'h-2 w-2 rounded-full',
+                'h-2 w-2 rounded-none',
                 getStatusColor(agent.status)
               )} />
               <span className="truncate">{agent.name}</span>
@@ -287,7 +287,7 @@ export function UnifiedAgentSelector({
             {activeAgent ? (
               <>
                 <div className={cn(
-                  'h-2 w-2 rounded-full',
+                  'h-2 w-2 rounded-none',
                   getStatusColor(activeAgent.status)
                 )} />
                 <span className="max-w-[100px] truncate">{activeAgent.name}</span>
@@ -305,7 +305,7 @@ export function UnifiedAgentSelector({
             <SelectItem key={agent.id} value={agent.id} className="cursor-pointer">
               <div className="flex items-center gap-2">
                 <div className={cn(
-                  'h-2 w-2 rounded-full',
+                  'h-2 w-2 rounded-none',
                   getStatusColor(agent.status)
                 )} />
                 <span className="flex-1 truncate">{agent.name}</span>
@@ -340,7 +340,7 @@ export function UnifiedAgentSelector({
             {activeAgent ? (
               <>
                 <div className={cn(
-                  'h-2.5 w-2.5 rounded-full',
+                  'h-2.5 w-2.5 rounded-none',
                   getStatusColor(activeAgent.status)
                 )} />
                 <span className="text-xs font-bold text-slate-100">
@@ -376,7 +376,7 @@ export function UnifiedAgentSelector({
             )}
           >
             <div className={cn(
-              'w-2.5 h-2.5 rounded-full',
+              'w-2.5 h-2.5 rounded-none',
               getStatusColor(agent.status)
             )} />
             <div className="flex-1 min-w-0">

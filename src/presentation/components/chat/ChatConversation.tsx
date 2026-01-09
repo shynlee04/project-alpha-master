@@ -122,25 +122,25 @@ const MessageBubble = memo(function MessageBubble({
 MessageBubble.displayName = 'MessageBubble';
 
 /**
- * Typing Indicator
+ * Typing Indicator - UX-02: Upgraded 8-bit styling
  */
 function TypingIndicator() {
     return (
         <div className="flex gap-3 px-4 py-3">
             <div className={cn(
-                'w-8 h-8 rounded-sm flex items-center justify-center',
+                'w-8 h-8 rounded-none flex items-center justify-center',
                 'border-2 bg-purple-600 border-purple-400'
             )}>
                 <Bot className="h-4 w-4 text-white" />
             </div>
             <div className={cn(
-                'flex items-center gap-1 px-4 py-2 rounded-sm',
-                'bg-slate-800/80 border-2 border-slate-600',
-                'shadow-md'
+                'flex items-center gap-1.5 px-4 py-2 rounded-none',
+                'bg-card border-2 border-border',
+                'shadow-[var(--shadow-pixel-sm)]'
             )}>
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className="w-2 h-2 bg-primary rounded-none animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-2 h-2 bg-primary rounded-none animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-2 h-2 bg-primary rounded-none animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
         </div>
     );
@@ -303,8 +303,8 @@ export function ChatConversation({
                     />
                 </div>
 
-                {/* Empty conversation */}
-                <div className="flex-1 overflow-y-auto bg-slate-900/50">
+                {/* Empty conversation - UX-02: Fixed transparency */}
+                <div className="flex-1 overflow-y-auto bg-background">
                     <div className="flex flex-col items-center justify-center h-full text-slate-500">
                         <Bot className="h-12 w-12 mb-4 opacity-50" />
                         <p className="font-mono text-sm">
@@ -317,8 +317,8 @@ export function ChatConversation({
                 {error && (
                     <div className={cn(
                         'flex items-center gap-2 px-4 py-2',
-                        'bg-red-900/30 border-t border-red-600',
-                        'text-red-300 text-sm font-mono'
+                        'bg-destructive/90 border-t-2 border-destructive',
+                        'text-destructive-foreground text-sm font-mono'
                     )}>
                         <AlertCircle className="h-4 w-4" />
                         <span>{error}</span>
@@ -379,11 +379,11 @@ export function ChatConversation({
     // Render virtual list for messages
     return (
         <div className={cn('flex flex-col h-full', className)}>
-            {/* Header */}
+            {/* Header - UX-02: Fixed transparency */}
             <div className={cn(
                 'flex items-center gap-3 px-4 py-3',
-                'border-b-2 border-slate-700 dark:border-slate-600',
-                'bg-slate-800/80'
+                'border-b-2 border-border',
+                'bg-card'
             )}>
                 {/* Back button */}
                 <Button
@@ -454,12 +454,12 @@ export function ChatConversation({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Error display */}
+            {/* Error display - UX-02: Fixed transparency */}
             {error && (
                 <div className={cn(
                     'flex items-center gap-2 px-4 py-2',
-                    'bg-red-900/30 border-t border-red-600',
-                    'text-red-300 text-sm font-mono'
+                    'bg-destructive/90 border-t-2 border-destructive',
+                    'text-destructive-foreground text-sm font-mono'
                 )}>
                     <AlertCircle className="h-4 w-4" />
                     <span>{error}</span>

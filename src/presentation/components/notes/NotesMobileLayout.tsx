@@ -97,11 +97,10 @@ export function NotesMobileLayout({
             <button
               key={tab.id}
               onClick={() => handleContentTabChange(tab.id)}
-              className={`flex-1 py-3 text-sm font-medium transition-colors touch-target-min flex items-center justify-center gap-1 ${
-                currentContentTab === tab.id
+              className={`flex-1 py-3 text-sm font-medium transition-colors touch-target-min flex items-center justify-center gap-1 ${currentContentTab === tab.id
                   ? 'text-primary border-b-2 border-primary'
                   : 'text-muted-foreground hover:text-foreground'
-              }`}
+                }`}
               aria-label={`Switch to ${tab.label} tab`}
               aria-selected={currentContentTab === tab.id}
               role="tab"
@@ -136,11 +135,10 @@ export function NotesMobileLayout({
             <button
               key={tab.id}
               onClick={() => handleNavTabChange(tab.id)}
-              className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors touch-target-min ${
-                currentNavTab === tab.id
+              className={`flex-1 flex flex-col items-center justify-center gap-1 transition-colors touch-target-min ${currentNavTab === tab.id
                   ? 'text-primary'
                   : 'text-muted-foreground hover:text-foreground'
-              }`}
+                }`}
               aria-label={`Navigate to ${tab.label}`}
               aria-selected={currentNavTab === tab.id}
               role="tab"
@@ -156,9 +154,9 @@ export function NotesMobileLayout({
                     transition={{ duration: 0.2 }}
                   />
                 )}
-                {/* Badge indicator */}
+                {/* Badge indicator - UX-02: rounded-none for 8-bit */}
                 {tab.badge && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-none border border-background flex items-center justify-center">
                     {tab.badge}
                   </span>
                 )}

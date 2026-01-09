@@ -49,7 +49,8 @@ interface SelectValueProps {
 }
 
 const selectTriggerVariants = cva(
-  'flex items-center justify-between gap-2 whitespace-nowrap rounded-[4px] font-medium transition-[border-color,background-color] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+  // UX-02: strict rounded-none for 8-bit
+  'flex items-center justify-between gap-2 whitespace-nowrap rounded-none font-medium transition-[border-color,background-color] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
   {
     variants: {
       size: {
@@ -58,10 +59,10 @@ const selectTriggerVariants = cva(
         lg: 'h-12 px-6 text-lg min-h-[48px]',
       },
       state: {
-        default: 'border border-[var(--input)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--primary)]',
-        error: 'border border-[var(--destructive)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--destructive)] focus:ring-[var(--destructive)]',
-        success: 'border border-[var(--success)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--success)] focus:ring-[var(--success)]',
-        warning: 'border border-[var(--warning)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--warning)] focus:ring-[var(--warning)]',
+        default: 'border-2 border-[var(--input)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--primary)]',
+        error: 'border-2 border-[var(--destructive)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--destructive)] focus:ring-[var(--destructive)]',
+        success: 'border-2 border-[var(--success)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--success)] focus:ring-[var(--success)]',
+        warning: 'border-2 border-[var(--warning)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--warning)] focus:ring-[var(--warning)]',
       },
     },
     defaultVariants: {
@@ -78,13 +79,13 @@ const SelectContext = React.createContext<{
   setOpen: (open: boolean) => void
 }>({
   open: false,
-  setOpen: () => {},
+  setOpen: () => { },
 })
 
 export function Select({ value, onValueChange, disabled, children }: SelectProps) {
   const [open, setOpen] = React.useState(false)
   const [internalValue, setInternalValue] = React.useState(value)
-  
+
   // Handle external value changes
   React.useEffect(() => {
     setInternalValue(value)
@@ -107,7 +108,7 @@ export function Select({ value, onValueChange, disabled, children }: SelectProps
 
 export function SelectTrigger({ className, size = "md", state = "default", children, disabled, ...props }: SelectTriggerProps) {
   const { open, setOpen } = React.useContext(SelectContext)
-  
+
   return (
     <button
       type="button"
@@ -130,17 +131,17 @@ export function SelectTrigger({ className, size = "md", state = "default", child
 export function SelectContent({ children, className }: SelectContentProps) {
   const { open, setOpen } = React.useContext(SelectContext)
   const contentRef = React.useRef<HTMLDivElement>(null)
-  
+
   // Close on click outside
   React.useEffect(() => {
     if (!open) return
-    
+
     const handleClick = (event: MouseEvent) => {
       if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
         setOpen(false)
       }
     }
-    
+
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open, setOpen])
@@ -153,7 +154,8 @@ export function SelectContent({ children, className }: SelectContentProps) {
       data-slot="select-content"
       role="listbox"
       className={cn(
-        'bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] shadow-lg relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-[4px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 p-1',
+        // UX-02: strict rounded-none and border-2 for 8-bit
+        'bg-[var(--background)] text-[var(--foreground)] border-2 border-[var(--border)] shadow-[var(--shadow-pixel)] relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 p-1',
         className
       )}
     >
@@ -165,7 +167,7 @@ export function SelectContent({ children, className }: SelectContentProps) {
 export function SelectItem({ value, children, className, onClick }: SelectItemProps) {
   const { value: currentValue, onValueChange } = React.useContext(SelectContext)
   const isSelected = currentValue === value
-  
+
   const handleClick = () => {
     onValueChange?.(value)
     onClick?.()
@@ -175,7 +177,8 @@ export function SelectItem({ value, children, className, onClick }: SelectItemPr
     <div
       data-slot="select-item"
       className={cn(
-        'relative flex w-full cursor-default items-center gap-2 rounded-[4px] py-1.5 pr-8 pl-2 text-sm outline-hidden select-none transition-[background-color] duration-150 ease-out data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] focus:bg-[var(--primary)] focus:text-[var(--primary-foreground)] cursor-pointer',
+        // UX-02: strict rounded-none for 8-bit
+        'relative flex w-full cursor-default items-center gap-2 rounded-none py-1.5 pr-8 pl-2 text-sm outline-hidden select-none transition-[background-color] duration-150 ease-out data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] focus:bg-[var(--primary)] focus:text-[var(--primary-foreground)] cursor-pointer',
         isSelected && 'bg-[var(--accent)] text-[var(--accent-foreground)]',
         className
       )}
@@ -197,7 +200,7 @@ export function SelectItem({ value, children, className, onClick }: SelectItemPr
 export function SelectValue({ placeholder, value }: SelectValueProps) {
   const { value: contextValue } = React.useContext(SelectContext)
   const displayValue = value || contextValue
-  
+
   return (
     <span data-slot="select-value">
       {displayValue || placeholder}

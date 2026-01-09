@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils"
  */
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
-    VariantProps<typeof inputVariants> {
+  VariantProps<typeof inputVariants> {
   /** Left icon to display */
   leftIcon?: React.ReactNode
   /** Right icon to display */
@@ -33,8 +33,8 @@ export interface InputProps
  * Migrated to follow December 2025 Zustand patterns
  */
 const inputVariants = cva(
-  // Base styles with 8-bit aesthetic and theme-aware colors
-  "flex h-10 w-full items-center gap-2 rounded-[4px] border bg-[var(--background)] text-[var(--foreground)] px-3 py-2 text-sm transition-[border-color] duration-150 outline-none placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-50 file:border-0 file:bg-transparent file:text-sm file:font-medium",
+  // Base styles with 8-bit aesthetic and theme-aware colors - UX-02: strict rounded-none
+  "flex h-10 w-full items-center gap-2 rounded-none border-2 bg-[var(--background)] text-[var(--foreground)] px-3 py-2 text-sm transition-[border-color] duration-150 outline-none placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-50 file:border-0 file:bg-transparent file:text-sm file:font-medium",
   {
     variants: {
       size: {

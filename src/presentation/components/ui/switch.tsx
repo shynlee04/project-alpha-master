@@ -21,8 +21,8 @@ import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 
 const switchVariants = cva(
-  // Base styles with theme-aware colors
-  "peer inline-flex shrink-0 cursor-pointer items-center border-2 border-transparent transition-[background-color] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-[4px]",
+  // Base styles with theme-aware colors - UX-02: strict rounded-none for 8-bit
+  "peer inline-flex shrink-0 cursor-pointer items-center border-2 border-transparent transition-[background-color] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-none",
   {
     variants: {
       size: {
@@ -46,7 +46,8 @@ const switchVariants = cva(
 )
 
 const switchThumbVariants = cva(
-  "pointer-events-none block bg-white ring-0 transition-[transform] duration-200 ease-out rounded-[4px] data-[state=unchecked]:translate-x-0 shadow-sm",
+  // UX-02: strict rounded-none for 8-bit
+  "pointer-events-none block bg-white ring-0 transition-[transform] duration-200 ease-out rounded-none data-[state=unchecked]:translate-x-0 shadow-sm",
   {
     variants: {
       size: {

@@ -1563,3 +1563,225 @@ epic_40_status:
     - "Team B: Start MM-11 (Fix Z-Index Issues) - P0 BLOCKER"
     - "Generate story files via /bmad-bmm-workflows-create-story"
     - "Update AGENTS.md after first story cycle complete"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-40 REMEDIATION: Agent Chat Self-Switching & Tool Registry
+# Created: 2026-01-10T10:00:00+07:00 (Course Correction Sprint)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_40_remediation:
+  id: "EPIC-40-REMED"
+  name: "Agent Chat Self-Switching & Tool Registry"
+  parent_epic: "EPIC-40"
+  priority: "P0-CRITICAL"
+  sprint_type: "REMEDIATION"
+  phase: "READY_FOR_EXECUTION"
+  total_stories: 9
+  estimated_effort: "~21 hours"
+  target_end_date: "2026-01-24T23:59:00+07:00"
+  created_at: "2026-01-10T10:00:00+07:00"
+  source: "Phase 3 Course Correction - Agent Chat Tool Enhancement"
+
+  design_artifacts:
+    - "_bmad-output/phase3-synthesis/centralized-system-prompt-design-2026-01-10.md"
+    - "_bmad-output/planning-artifacts/architecture/adr/ADR-032-agent-chat-self-switching-orchestrator-2026-01-10.md"
+
+  sprint_file: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
+
+  critical_gaps_identified:
+    - gap: "Static Mode Selection"
+      severity: "P0"
+      current: "Agent modes (solo-dev, code, notes) require manual selection"
+      required: "Self-switching based on context (prompt, workspace, document, conversation)"
+    - gap: "4-Tool Server Limitation"
+      severity: "P0"
+      current: "Only 4 tools hardcoded in chat.ts getTools()"
+      required: "Centralized tool registry with mode/permission filtering"
+    - gap: "Missing Note Tools"
+      severity: "P0"
+      current: "create_note, read_note, update_note, delete_note, list_notes not server-exposed"
+      required: "All 5 note CRUD tools available to agent"
+    - gap: "Context Threshold Too High"
+      severity: "P1"
+      current: "80% compression threshold"
+      required: "65% compression threshold"
+
+  implementation_tracks:
+    track_a:
+      name: "Foundation"
+      stories: ["40-01", "40-03"]
+      can_parallel: true
+      effort: "4h"
+
+    track_b:
+      name: "Registry Integration"
+      stories: ["40-02", "40-04", "40-05"]
+      depends_on: "A"
+      effort: "8h"
+
+    track_c:
+      name: "Server Integration"
+      stories: ["40-06", "40-07"]
+      depends_on: "B"
+      effort: "6h"
+
+    track_d:
+      name: "Testing & Validation"
+      stories: ["40-08", "40-09"]
+      depends_on: "C"
+      effort: "5h"
+
+  stories:
+    "40-01":
+      title: "Create Centralized Tool Registry"
+      status: "not_started"
+      effort: "3h"
+      priority: "P0"
+      track: "A"
+      acceptance_criteria:
+        - "IToolDefinition interface with modes, permissions, categories"
+        - "CentralizedToolRegistry class with getFilteredTools()"
+        - "All existing tools registered in registry"
+
+    "40-02":
+      title: "Implement Mode Classifier"
+      status: "not_started"
+      effort: "3h"
+      priority: "P0"
+      track: "B"
+      depends_on: ["40-01"]
+      acceptance_criteria:
+        - "ModeClassifier analyzes 4 context sources"
+        - "Workspace-based routing (notes→knowledge mode)"
+        - "Confidence scoring for mode selection"
+
+    "40-03":
+      title: "Update Context Threshold to 65%"
+      status: "not_started"
+      effort: "1h"
+      priority: "P0"
+      track: "A"
+      acceptance_criteria:
+        - "DEFAULT_COMPRESSION_THRESHOLD changed from 80 to 65"
+        - "Context warning triggers at 65% usage"
+
+    "40-04":
+      title: "Create Note CRUD Tool Definitions"
+      status: "not_started"
+      effort: "2h"
+      priority: "P0"
+      track: "B"
+      depends_on: ["40-01"]
+      acceptance_criteria:
+        - "create_note, read_note, update_note, delete_note, list_notes tools"
+        - "All tools tagged with KNOWLEDGE mode"
+
+    "40-05":
+      title: "Wire search_notes to Tool Registry"
+      status: "not_started"
+      effort: "1h"
+      priority: "P0"
+      track: "B"
+      depends_on: ["40-01"]
+      acceptance_criteria:
+        - "search_notes registered in CentralizedToolRegistry"
+        - "Tagged with KNOWLEDGE mode"
+
+    "40-06":
+      title: "Update Server-Side getTools() with Registry"
+      status: "not_started"
+      effort: "2h"
+      priority: "P0"
+      track: "C"
+      depends_on: ["40-01", "40-04", "40-05"]
+      acceptance_criteria:
+        - "chat.ts getTools() uses CentralizedToolRegistry"
+        - "Server exposes mode-filtered tools to LLM"
+        - "All 5 note tools server-exposed"
+
+    "40-07":
+      title: "Implement Prompt Orchestrator"
+      status: "not_started"
+      effort: "4h"
+      priority: "P1"
+      track: "C"
+      depends_on: ["40-02"]
+      acceptance_criteria:
+        - "PromptOrchestrator uses ONE centralized template"
+        - "Dynamic mode injection based on ModeClassifier"
+
+    "40-08":
+      title: "Integrate Self-Switching with useAgentChatWithTools"
+      status: "not_started"
+      effort: "3h"
+      priority: "P1"
+      track: "D"
+      depends_on: ["40-02", "40-07"]
+      acceptance_criteria:
+        - "Hook calls ModeClassifier on each message"
+        - "System prompt updates dynamically"
+
+    "40-09":
+      title: "E2E Testing for Self-Switching Agent"
+      status: "not_started"
+      effort: "2h"
+      priority: "P1"
+      track: "D"
+      depends_on: ["40-06", "40-07", "40-08"]
+      acceptance_criteria:
+        - "Test: 'Create a note' → knowledge mode selected"
+        - "Test: 'Fix this bug' → coding mode selected"
+        - "All note tools work via agent"
+
+  gate_criteria:
+    agent_self_switching:
+      description: "Agent automatically switches modes based on context"
+      criteria:
+        - "Mode classifier analyzes prompt, workspace, documents, conversation"
+        - "Coding tasks trigger CODING mode"
+        - "Note tasks trigger KNOWLEDGE mode"
+        - "Mode transitions logged and observable"
+      status: "PENDING"
+
+    tool_registry:
+      description: "Centralized tool registry manages all tools"
+      criteria:
+        - "All tools registered in CentralizedToolRegistry"
+        - "Tools filtered by mode, workspace, permissions"
+        - "Server exposes filtered tools to LLM"
+      status: "PENDING"
+
+    note_tools:
+      description: "All 5 note CRUD tools work via agent"
+      criteria:
+        - "create_note, read_note, update_note, delete_note, list_notes functional"
+        - "search_notes wired and working via agent"
+      status: "PENDING"
+
+    context_threshold:
+      description: "Context compression at 65% threshold"
+      criteria:
+        - "DEFAULT_COMPRESSION_THRESHOLD = 65"
+        - "Warning triggered at 65% context usage"
+      status: "PENDING"
+
+  philosophy: |
+    ONE centralized system prompt (not fragmented), intelligent routing based
+    on context (prompt, workspace, document, conversation). Self-switching
+    agent that automatically selects optimal mode based on initiating prompt
+    and environmental context.
+
+  success_criteria:
+    must_have:
+      - "Centralized tool registry operational"
+      - "Mode classifier analyzes 4 context sources"
+      - "All 5 note CRUD tools implemented"
+      - "search_notes wired and working via agent"
+      - "Server exposes mode-filtered tools to LLM"
+      - "Context threshold at 65%"
+      - "E2E tests passing"
+
+    should_have:
+      - "Prompt orchestrator with dynamic mode injection"
+      - "Self-switching agent operational"
+      - "Mode transitions observable"

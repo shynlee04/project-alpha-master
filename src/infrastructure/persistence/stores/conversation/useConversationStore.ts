@@ -376,17 +376,24 @@ function mapUnifiedStateToLegacy(unifiedStore: ReturnType<typeof useUnifiedChatS
  * inside create(). This prevents React Rules of Hooks violations and runtime crashes.
  *
  * The facade subscribes to unified store updates and maps state reactively.
+ * CR-005 FIX: Added cleanup mechanism to prevent memory leaks.
  *
  * @deprecated Use useUnifiedChatStore directly instead
  */
+let unsubscribe: (() => void) | null = null;
+
 export const useConversationStore = create<CombinedConversationState>((set, _get, _api) => {
   // Initial state mapping
   const initialState = mapUnifiedStateToLegacy(useUnifiedChatStore.getState());
 
+  // Clean up any existing subscription before creating new one
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+
   // Subscribe to unified store changes for reactive updates
-  // NOTE: This subscription is never cleaned up in this facade pattern,
-  // which is acceptable since the facade is deprecated and will be removed
-  useUnifiedChatStore.subscribe(
+  unsubscribe = useUnifiedChatStore.subscribe(
     (unifiedState) => {
       // Re-map state when unified store changes
       const newMappedState = mapUnifiedStateToLegacy(unifiedState);

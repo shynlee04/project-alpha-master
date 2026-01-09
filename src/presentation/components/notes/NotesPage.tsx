@@ -87,6 +87,9 @@ export function NotesPage() {
 
     const activeNote = useActiveNote();
     const [mobileView, setMobileView] = useState<'list' | 'editor'>('list');
+    // UX-02: Mobile content/nav tabs - moved from conditional to fix Rules of Hooks violation
+    const [mobileContentTab, setMobileContentTab] = useState('all');
+    const [mobileNavTab, setMobileNavTab] = useState('notes');
 
     // P2-4: Panel collapse state (persisted in IDE store)
     const noteSidebarCollapsed = useIDEStore((s) => s.panelCollapsed['notes-sidebar'] ?? false);
@@ -374,15 +377,12 @@ export function NotesPage() {
 
     // Mobile Layout: Use NotesMobileLayout component
     // EPIC-MOBILE: MOBILE-INT-01 Integration
+    // UX-02: useState moved to top level to fix Rules of Hooks violation
     if (isMobile) {
-        // Determine active content tab based on filter
-        const [activeContentTab, setActiveContentTab] = useState('all');
-        const [activeNavTab, setActiveNavTab] = useState('notes');
-
         // Filter notes based on content tab
         const filteredNotes = notesArray.filter((note: any) => {
-            if (activeContentTab === 'favorites') return note.isFavorite;
-            if (activeContentTab === 'tags') return note.tags && note.tags.length > 0;
+            if (mobileContentTab === 'favorites') return note.isFavorite;
+            if (mobileContentTab === 'tags') return note.tags && note.tags.length > 0;
             return true;
         });
 
@@ -531,22 +531,22 @@ export function NotesPage() {
 
                 {/* Use NotesMobileLayout for consistent mobile UX */}
                 <NotesMobileLayout
-                    activeContentTab={activeContentTab}
-                    onContentTabChange={setActiveContentTab}
-                    activeNavTab={activeNavTab}
-                    onNavTabChange={setActiveNavTab}
+                    activeContentTab={mobileContentTab}
+                    onContentTabChange={setMobileContentTab}
+                    activeNavTab={mobileNavTab}
+                    onNavTabChange={setMobileNavTab}
                     onCreateNote={handleCreateNote}
                 >
                     {/* Render content based on nav tab */}
-                    {activeNavTab === 'notes' && (
+                    {mobileNavTab === 'notes' && (
                         mobileView === 'list' ? renderNoteList() : renderEditor()
                     )}
-                    {activeNavTab === 'search' && (
+                    {mobileNavTab === 'search' && (
                         <div className="text-center py-12 text-muted-foreground">
                             <p>Search coming soon</p>
                         </div>
                     )}
-                    {activeNavTab === 'ai' && (
+                    {mobileNavTab === 'ai' && (
                         <div className="h-full">
                             <UnifiedChatPanel
                                 mode="agent"

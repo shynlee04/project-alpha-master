@@ -32,8 +32,8 @@ export interface CardProps extends React.ComponentProps<"div"> {
  * Uses CSS custom properties for light/dark theme support
  */
 const cardVariants = cva(
-  // Base styles with 8-bit aesthetic and theme-aware colors
-  "flex flex-col gap-6 rounded-[4px] border outline-none transition-[border-color,background-color,shadow] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+  // Base styles with 8-bit aesthetic - UX-02: strict rounded-none, border-2
+  "flex flex-col gap-6 rounded-none border-2 outline-none transition-[border-color,background-color,shadow] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   {
     variants: {
       size: {

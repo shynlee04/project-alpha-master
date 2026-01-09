@@ -46,8 +46,8 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
  * Migrated to follow December 2025 Zustand patterns and light theme design tokens
  */
 const buttonVariants = cva(
-  // Base styles with 8-bit aesthetic and theme-aware colors
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[4px] font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+  // Base styles with 8-bit aesthetic - UX-02: strict rounded-none
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-medium transition-[background-color,transform] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
   {
     variants: {
       variant: {

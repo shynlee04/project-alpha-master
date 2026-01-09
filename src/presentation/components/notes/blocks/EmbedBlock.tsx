@@ -5,6 +5,7 @@
  *
  * Custom BlockNote block for embedding URLs with provider support.
  * Supports YouTube, Twitter, GitHub, Spotify, and generic embeds.
+ * CR-011 FIX: Added ErrorBoundary to prevent iframe errors from cascading.
  */
 
 import { defaultProps } from "@blocknote/core";
@@ -25,29 +26,63 @@ import {
   PROVIDER_PATTERNS,
   EMBED_URLS,
 } from "./embed-block-types";
+import { ErrorBoundary } from "@/presentation/components/common/ErrorBoundary";
 
 // Re-export types for convenience
 export type { EmbedProvider } from "./embed-block-types";
 
-// Provider detection function
+/**
+ * Detects the embed provider for a given URL.
+ *
+ * @param url - The URL to analyze
+ * @returns The detected provider type (e.g., 'youtube', 'twitter', 'github')
+ *
+ * @example
+ * detectProvider('https://www.youtube.com/watch?v=dQw4w9WgXcQ') // returns 'youtube'
+ * detectProvider('https://github.com/user/repo') // returns 'github'
+ */
 export function detectProvider(url: string): EmbedProvider {
   const lowerUrl = url.toLowerCase();
 
-  // Check each provider pattern
+  // Check each provider pattern with timeout protection
   const patterns = PROVIDER_PATTERNS as Record<EmbedProvider, RegExp[]>;
+  const startTime = Date.now();
+  const TIMEOUT_MS = 50; // Prevent regex hangs
 
   for (const [provider, regexList] of Object.entries(patterns)) {
+    // Timeout check
+    if (Date.now() - startTime > TIMEOUT_MS) {
+      console.warn('[EmbedBlock] Provider detection timeout, returning generic');
+      return 'generic';
+    }
+
     for (const regex of regexList) {
-      if (regex.test(lowerUrl)) {
-        return provider as EmbedProvider;
+      try {
+        if (regex.test(lowerUrl)) {
+          return provider as EmbedProvider;
+        }
+      } catch (error) {
+        // Skip invalid regex patterns
+        console.warn('[EmbedBlock] Invalid regex pattern:', regex);
+        continue;
       }
     }
   }
 
-  return "generic";
+  return 'generic';
 }
 
-// Extract video ID from URL
+/**
+ * Extracts the video/content ID from a URL for a specific provider.
+ *
+ * @param url - The URL to extract the ID from
+ * @param provider - The provider type (must match the URL format)
+ * @returns The extracted ID string, or null if not found
+ *
+ * @example
+ * extractVideoId('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'youtube') // returns 'dQw4w9WgXcQ'
+ * extractVideoId('https://vimeo.com/123456789', 'vimeo') // returns '123456789'
+ */
 export function extractVideoId(url: string, provider: EmbedProvider): string | null {
   const patterns = PROVIDER_PATTERNS[provider];
   if (!patterns) return null;
@@ -62,7 +97,17 @@ export function extractVideoId(url: string, provider: EmbedProvider): string | n
   return null;
 }
 
-// Get embed URL for provider
+/**
+ * Generates the embed URL for a given URL and provider.
+ *
+ * @param url - The original URL to embed
+ * @param provider - The detected provider type
+ * @returns The embed-ready URL for iframe src, or original URL if no transform available
+ *
+ * @example
+ * getEmbedUrl('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'youtube')
+ * // returns 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+ */
 export function getEmbedUrl(url: string, provider: EmbedProvider): string {
   const transformers = EMBED_URLS as Partial<Record<EmbedProvider, (url: string, id: string) => string>>;
   const transformer = transformers[provider];
@@ -79,7 +124,9 @@ export function getEmbedUrl(url: string, provider: EmbedProvider): string {
   return transformer(url, id);
 }
 
-// Provider display names
+/**
+ * Provider display names for UI rendering
+ */
 export const PROVIDER_NAMES: Record<EmbedProvider, string> = {
   youtube: "YouTube",
   vimeo: "Vimeo",
@@ -325,29 +372,60 @@ export const EmbedBlock = createReactBlockSpec(
       const embedUrl = props.block.props.embedUrl || "";
       const isIframeable = !["github", "codepen", "codesandbox"].includes(provider);
 
+      // CR-011 FIX: Wrap embed content with ErrorBoundary to prevent iframe errors from cascading
       return (
-        <div className="embed-block" data-align={props.block.props.textAlignment}>
-          <div className="embed-block__wrapper" contentEditable={false}>
-            {isIframeable ? (
-              // Iframe embed for most providers
-              <div className="embed-block__iframe-container">
-                <iframe
-                  src={embedUrl}
-                  className="embed-block__iframe"
-                  frameBorder={0}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title={props.block.props.title || "Embedded content"}
-                  onLoad={() => setIsLoading(false)}
-                  onError={() => setError(true)}
-                />
-                {isLoading && (
-                  <div className="embed-block__loading">
-                    <Loader2 size={24} className="animate-spin" />
-                    <span>Loading content...</span>
-                  </div>
-                )}
+        <ErrorBoundary
+          fallback={
+            <div className="embed-block" data-align={props.block.props.textAlignment}>
+              <div className="embed-block__wrapper embed-block__wrapper--error" contentEditable={false}>
+                <div className="embed-block__error">
+                  <FileCode size={14} />
+                  <span>Failed to load embed</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(true)}
+                  className="embed-block__error-retry"
+                >
+                  Edit URL
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRemove}
+                  className="embed-block__remove-btn"
+                  title="Remove embed"
+                >
+                  <X size={14} />
+                </button>
               </div>
+            </div>
+          }
+          onError={(error) => {
+            console.error('[EmbedBlock] ErrorBoundary caught:', error);
+          }}
+        >
+          <div className="embed-block" data-align={props.block.props.textAlignment}>
+            <div className="embed-block__wrapper" contentEditable={false}>
+              {isIframeable ? (
+                // Iframe embed for most providers
+                <div className="embed-block__iframe-container">
+                  <iframe
+                    src={embedUrl}
+                    className="embed-block__iframe"
+                    frameBorder={0}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    title={props.block.props.title || "Embedded content"}
+                    onLoad={() => setIsLoading(false)}
+                    onError={() => setError(true)}
+                  />
+                  {isLoading && (
+                    <div className="embed-block__loading">
+                      <Loader2 size={24} className="animate-spin" />
+                      <span>Loading content...</span>
+                    </div>
+                  )}
+                </div>
             ) : (
               // Link embed for code-related providers
               <a
@@ -392,6 +470,7 @@ export const EmbedBlock = createReactBlockSpec(
             <p className="embed-block__caption">{props.block.props.title}</p>
           )}
         </div>
+        </ErrorBoundary>
       );
     },
   }

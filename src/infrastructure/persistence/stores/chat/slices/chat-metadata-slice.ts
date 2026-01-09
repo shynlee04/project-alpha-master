@@ -34,14 +34,18 @@ type ChatMetadataSliceMethods = {
 
 /**
  * Generate cryptographically unique conversation ID
- * CA-003 FIX: Uses crypto.randomUUID() instead of Math.random()
- * Falls back to timestamp + random for SSR compatibility
+ * CA-003 FIX: Uses crypto.randomUUID() with high-entropy fallback
+ * Fallback combines timestamp + counter + random for SSR compatibility
  */
+let idCounter = 0;
 const generateId = () => {
-  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
-    ? crypto.randomUUID()
-    : `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  return `chat_${uuid}`;
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return `chat_${crypto.randomUUID()}`;
+  }
+  // High-entropy fallback: timestamp + counter + random
+  const randomPart = Math.random().toString(36).substring(2, 11);
+  const counterPart = (idCounter++).toString(36);
+  return `chat_${Date.now()}_${counterPart}_${randomPart}`;
 };
 
 export const createChatMetadataSlice: StateCreator<

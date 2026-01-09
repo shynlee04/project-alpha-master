@@ -5,25 +5,94 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 workflow:
-  id: grand-unification-refactor-2026-01-09
-  name: "Grand Unification Refactor"
+  id: epic-40-agent-chat-remediation-2026-01-10
+  name: "EPIC-40: Agent Chat Self-Switching & Tool Registry"
   version: "1.0.0"
   framework: "BMAD V6 Story-Cycle"
 
   # Current Phase
-  current_phase: story_complete
-  phase_started_at: "2026-01-09T23:55:00+07:00"
+  current_phase: sprint_ready
+  phase_started_at: "2026-01-10T10:00:00+07:00"
 
   # Sprint Context
-  sprint_id: grand-unification-2026-01-09
-  sprint_name: "Grand Unification"
-  sprint_status: "in_progress"
+  sprint_id: epic-40-agent-chat-remediation-2026-01-10
+  sprint_name: "EPIC-40: Agent Chat Self-Switching & Tool Registry"
+  sprint_status: "ready_for_execution"
+  sprint_file: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # EPIC STATUS
 # ═══════════════════════════════════════════════════════════════════════════
 
 epics:
+  EPIC-40:
+    id: "EPIC-40"
+    name: "Agent Chat Self-Switching Orchestrator"
+    priority: "P0-CRITICAL"
+    status: "ready"
+    total_stories: 9
+    completed_stories: 0
+    description: "Implement centralized system prompt with context-aware mode selection and tool registry"
+    sprint_file: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
+    adr_file: "_bmad-output/planning-artifacts/architecture/adr/ADR-032-agent-chat-self-switching-orchestrator-2026-01-10.md"
+
+    targets:
+      A:
+        name: "Foundation"
+        status: "ready"
+        stories_planned: 2
+        completed_stories: 0
+        current_story: null
+        stories:
+          "40-01":
+            title: "Create Centralized Tool Registry"
+            status: "not_started"
+          "40-03":
+            title: "Update Context Threshold to 65%"
+            status: "not_started"
+      B:
+        name: "Registry Integration"
+        status: "ready"
+        stories_planned: 3
+        completed_stories: 0
+        depends_on: "A"
+        stories:
+          "40-02":
+            title: "Implement Mode Classifier"
+            status: "not_started"
+          "40-04":
+            title: "Create Note CRUD Tool Definitions"
+            status: "not_started"
+          "40-05":
+            title: "Wire search_notes to Tool Registry"
+            status: "not_started"
+      C:
+        name: "Server Integration"
+        status: "ready"
+        stories_planned: 2
+        completed_stories: 0
+        depends_on: "B"
+        stories:
+          "40-06":
+            title: "Update Server-Side getTools() with Registry"
+            status: "not_started"
+          "40-07":
+            title: "Implement Prompt Orchestrator"
+            status: "not_started"
+      D:
+        name: "Testing & Validation"
+        status: "ready"
+        stories_planned: 2
+        completed_stories: 0
+        depends_on: "C"
+        stories:
+          "40-08":
+            title: "Integrate Self-Switching with useAgentChatWithTools"
+            status: "not_started"
+          "40-09":
+            title: "E2E Testing for Self-Switching Agent"
+            status: "not_started"
+
   EPIC-GU:
     id: "EPIC-GU"
     name: "Grand Unification Refactor"
@@ -61,55 +130,46 @@ epics:
 
 story_cycle:
   current_story: null
-  current_step: "09-story-complete"
-  step_status: "completed"
+  current_epic: "EPIC-40"
+  current_step: "sprint_ready"
+  step_status: "ready"
 
-  steps:
-    "01-create-story":
-      status: "completed"
-      completed_at: "2026-01-09T23:48:00+07:00"
-      output_artifact: "_bmad-output/sprint-artifacts/stories/epic-gu-story-a-01-unify-provider-types.md"
+  # EPIC-40 Sprint Planning Steps
+  "01-course-correction":
+    status: "completed"
+    completed_at: "2026-01-10T09:00:00+07:00"
+    output_artifact: "_bmad-output/phase3-synthesis/centralized-system-prompt-design-2026-01-10.md"
 
-    "02-validate-story":
-      status: "completed"
-      completed_at: "2026-01-09T23:49:00+07:00"
-      result: "CONDITIONAL PASS"
+  "02-adr-creation":
+    status: "completed"
+    completed_at: "2026-01-10T09:30:00+07:00"
+    output_artifact: "_bmad-output/planning-artifacts/architecture/adr/ADR-032-agent-chat-self-switching-orchestrator-2026-01-10.md"
 
-    "03-create-context":
-      status: "completed"
-      completed_at: "2026-01-09T23:55:00+07:00"
-      output_artifact: "_bmad-output/sprint-artifacts/stories/epic-gu-story-a-01-context.xml"
+  "03-sprint-planning":
+    status: "completed"
+    completed_at: "2026-01-10T10:00:00+07:00"
+    output_artifact: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
 
-    "04-validate-context":
-      status: "completed"
-      completed_at: "2026-01-09T23:56:00+07:00"
-      result: "PASS - Fresh context, all sections present"
-
-    "05-pre-planning":
-      status: "completed"
-      completed_at: "2026-01-09T00:00:00+07:00"
-
-    "06-dev-story":
-      status: "completed"
-      completed_at: "2026-01-09T09:00:00+07:00"
-
-    "07-code-review":
-      status: "completed"
-      completed_at: "2026-01-09T09:25:00+07:00"
-      result: "APPROVED - Grade: A- (93/100)"
-
-    "08-story-done":
-      status: "completed"
-      completed_at: "2026-01-09T09:30:00+07:00"
-
-    "09-retrospective":
-      status: "pending"
+  # Previous Story Cycle (EPIC-GU Story GU-A-01)
+  previous_cycle:
+    story: "GU-A-01"
+    epic: "EPIC-GU"
+    completed_at: "2026-01-09T09:30:00+07:00"
+    code_review_grade: "A- (93/100)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # COMPLETED SPRINTS
 # ═══════════════════════════════════════════════════════════════════════════
 
 completed_sprints:
+  - id: phase-3-synthesis-2026-01-10
+    name: "Phase 3: Agent Chat Synthesis & Course Correction"
+    completed_at: "2026-01-10T09:30:00+07:00"
+    stories_completed: 0
+    effort_hours: 4
+    status: "COMPLETE"
+    type: "course_correction"
+
   - id: phase-1.5-notes-ai-foundation-2026-01-09
     name: "Phase 1.5: Notes & AI Foundation"
     completed_at: "2026-01-09T23:30:00+07:00"
@@ -173,8 +233,10 @@ mcp_servers:
 
 timestamps:
   created_at: "2026-01-09T23:45:00+07:00"
-  last_updated: "2026-01-09T09:30:00+07:00"
+  last_updated: "2026-01-10T10:00:00+07:00"
   phase_1_5_completed: "2026-01-09T23:30:00+07:00"
+  phase_3_synthesis_completed: "2026-01-10T09:30:00+07:00"
   grand_unification_started: "2026-01-09T23:45:00+07:00"
   gu_a_01_completed: "2026-01-09T09:30:00+07:00"
   code_review_completed: "2026-01-09T09:25:00+07:00"
+  epic_40_sprint_planning_completed: "2026-01-10T10:00:00+07:00"

@@ -69,7 +69,7 @@ export const AutoApproveSettings: React.FC<AutoApproveSettingsProps> = ({
         : t('autoApprove.none');
 
     return (
-        <div className={cn('border border-border-dark bg-surface-darker', className)}>
+        <div className={cn('border-2 border-border rounded-none bg-card', className)}>
             {/* Header - Always visible */}
             <button
                 type="button"

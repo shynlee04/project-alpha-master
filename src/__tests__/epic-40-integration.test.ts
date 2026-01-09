@@ -56,12 +56,12 @@ function createTestAudioFile(type = 'audio/webm', size = 1024): File {
 describe('EmbedBlock (MM-12)', () => {
   describe('Provider Detection', () => {
     it('should detect YouTube URLs', async () => {
-      // Import using dynamic import to test module loading
       const EmbedBlock = await import('../presentation/components/notes/blocks/EmbedBlock');
 
       expect(EmbedBlock.detectProvider('https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe('youtube');
       expect(EmbedBlock.detectProvider('https://youtu.be/dQw4w9WgXcQ')).toBe('youtube');
       expect(EmbedBlock.detectProvider('https://www.youtube.com/embed/dQw4w9WgXcQ')).toBe('youtube');
+      expect(EmbedBlock.detectProvider('https://www.youtube.com/shorts/dQw4w9WgXcQ')).toBe('youtube');
     });
 
     it('should detect Twitter/X URLs', async () => {
@@ -80,6 +80,7 @@ describe('EmbedBlock (MM-12)', () => {
     it('should detect GitHub URLs', async () => {
       const EmbedBlock = await import('../presentation/components/notes/blocks/EmbedBlock');
 
+      // Regular repo URLs
       expect(EmbedBlock.detectProvider('https://github.com/user/repo')).toBe('github');
       expect(EmbedBlock.detectProvider('https://github.com/TanStack/query')).toBe('github');
     });
@@ -477,7 +478,7 @@ describe('EPIC-40 Module Integration', () => {
       { url: 'https://soundcloud.com/user/track', provider: 'soundcloud' },
       { url: 'https://codepen.io/user/pen/abc', provider: 'codepen' },
       { url: 'https://codesandbox.io/s/abc', provider: 'codesandbox' },
-      { url: 'https://www.figma.com/file/abc', provider: 'figma' },
+      { url: 'https://www.figma.com/file/abc123/My-Design', provider: 'figma' },
       { url: 'https://www.reddit.com/r/programming/comments/abc', provider: 'reddit' },
     ];
 

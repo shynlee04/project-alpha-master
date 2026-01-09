@@ -53,7 +53,7 @@ export interface SelectTriggerProps extends React.ComponentProps<typeof SelectPr
  */
 const selectTriggerVariants = cva(
   // Base styles with theme-aware colors
-  'flex items-center justify-between gap-2 whitespace-nowrap rounded-[4px] font-medium transition-[border-color,background-color] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+  'flex items-center justify-between gap-2 whitespace-nowrap rounded-none font-medium transition-[border-color,background-color] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
   {
     variants: {
       size: {
@@ -102,7 +102,7 @@ function SelectTrigger({
  */
 const selectContentVariants = cva(
   // Base styles with theme-aware colors
-  'bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] shadow-lg relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-x-hidden overflow-y-auto rounded-[4px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+  'bg-card text-card-foreground border-2 border-border shadow-[var(--shadow-pixel)] relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] origin-[var(--radix-select-content-transform-origin)] overflow-x-hidden overflow-y-auto rounded-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
   {
     variants: {
       position: {
@@ -171,7 +171,7 @@ function SelectLabel({
  * Uses CSS custom properties for light/dark theme support
  */
 const selectItemVariants = cva(
-  'relative flex w-full cursor-default items-center gap-2 rounded-[4px] py-1.5 pr-8 pl-2 text-sm outline-hidden select-none transition-[background-color] duration-150 ease-out data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] focus:bg-[var(--primary)] focus:text-[var(--primary-foreground)]'
+  'relative flex w-full cursor-default items-center gap-2 rounded-none py-1.5 pr-8 pl-2 text-sm outline-hidden select-none transition-[background-color] duration-150 ease-out data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)] focus:bg-[var(--primary)] focus:text-[var(--primary-foreground)]'
 )
 
 function SelectItem({

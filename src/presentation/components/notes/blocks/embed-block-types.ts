@@ -132,7 +132,12 @@ export const PROVIDER_PATTERNS: Record<EmbedProvider, RegExp[]> = {
     /x\.com\/[a-zA-Z0-9_]+\/status\/(\d+)/,
   ],
   github: [
+    // Regular repo URLs
+    /github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/,
+    /github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/,
+    // Blob URLs for file viewing
     /github\.com\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+\/blob\/([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)/,
+    // Gist URLs
     /gist\.github\.com\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9]+)/,
   ],
   spotify: [

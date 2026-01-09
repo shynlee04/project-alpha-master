@@ -588,7 +588,7 @@ export function useAgentChatWithTools(
         const existingApprovalIds = new Set(
             existingApprovals
                 .filter(a => a.conversationId === conversationId && a.threadId === effectiveThreadId)
-                .map(a => a.approvalId)
+                .map(a => a.id)
         );
 
         // Add only genuinely new approvals (not already in store)

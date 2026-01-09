@@ -695,7 +695,7 @@ function ResizableHandle({
     >
       {withHandle && (
         <div className={cn(
-          "bg-border z-30 flex items-center justify-center rounded-sm border shadow-sm pointer-events-none",
+          "bg-border z-30 flex items-center justify-center rounded-none border-2 border-border shadow-[var(--shadow-pixel-sm)] pointer-events-none",
           context?.direction === 'vertical' ? "h-3 w-6" : "h-6 w-3"
         )}>
           <GripVertical className={cn(
@@ -716,7 +716,7 @@ function ResizableHandle({
           title={isCollapsed ? "Double-click to expand" : "Double-click to collapse"}
         >
           <div className={cn(
-            "bg-primary text-primary-foreground rounded-full p-0.5 shadow-sm",
+            "bg-primary text-primary-foreground rounded-none p-0.5 shadow-[var(--shadow-pixel-sm)] border border-border",
             context?.direction === 'vertical' ? "w-4 h-4" : "w-4 h-4"
           )}>
             {isCollapsed ? (
