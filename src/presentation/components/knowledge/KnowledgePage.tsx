@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Plus, Bot } from 'lucide-react';
+import { Sparkles, Plus, Bot, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { DebugSessionData, SynthesisExportData, NotesRAGIndexData } from '@/infrastructure/events/event-bus';
@@ -35,8 +35,6 @@ import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/projec
 import { useProjectContext } from '@/lib/workspace/ProjectContext';
 // EPIC-MOBILE: Mobile Layout Components
 import { KnowledgeMobileLayout } from './KnowledgeMobileLayout';
-// WB-8.3: Cross-workspace event subscriptions for state synchronization
-import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 
 // KSI Module: Source → RAG Bridge
 import { createSourceRAGBridge } from '@/lib/knowledge/source-rag-bridge';
@@ -509,81 +507,106 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
         console.log('[KnowledgePage] Synthesis export requested:', exportData);
     };
 
+    // Mobile Layout: Use KnowledgeMobileLayout component
+    // EPIC-MOBILE: MOBILE-INT-02 Integration
     if (isMobile) {
-        // Mobile Layout: Simplified Stack (MVP)
+        const [activeContentTab, setActiveContentTab] = useState('browse');
+        const [activeNavTab, setActiveNavTab] = useState('browse');
+
+        // Render browse content (source cards)
+        const renderBrowseContent = () => (
+            <div>
+                {/* Indexing Progress */}
+                <IndexingProgressPanel className="mb-4" />
+                
+                {/* Project Selector */}
+                {projects.length > 0 && (
+                    <div className="mb-4">
+                        <ProjectSelector
+                            projects={projects}
+                            activeProject={activeProject}
+                            onSelect={handleProjectSelect}
+                            variant="default"
+                            className="w-full"
+                        />
+                    </div>
+                )}
+                
+                {/* Source Cards Grid */}
+                <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
+            </div>
+        );
+
+        // Render collections content
+        const renderCollectionsContent = () => (
+            <div className="space-y-2">
+                <div className="text-center py-8 text-muted-foreground">
+                    <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Collections coming soon</p>
+                </div>
+            </div>
+        );
+
+        // Render recent content
+        const renderRecentContent = () => (
+            <div className="text-center py-12 text-muted-foreground">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Recent activity coming soon</p>
+            </div>
+        );
+
         return (
             <MainLayout>
-                <div className="flex flex-col h-full overflow-y-auto">
-                    {/* Source Library Section */}
-                    <div className="p-4 border-b border-border">
-                        <div className="flex items-center justify-between mb-4">
-                            {/* STORAGE-3-4: Project Selector */}
-                            {projects.length > 0 && (
-                                <div className="mr-2">
-                                    <ProjectSelector
-                                        projects={projects}
-                                        activeProject={activeProject}
-                                        onSelect={handleProjectSelect}
-                                        variant="compact"
-                                    />
-                                </div>
-                            )}
-                            <h2 className="font-mono font-bold flex items-center gap-2">
-                                <Sparkles size={16} className="text-primary" /> {t('knowledge.sources')}
-                            </h2>
-                            <div className="flex items-center gap-2">
-                                {/* AC-02: Agent Manager - comprehensive agent management UI */}
-                                <AgentManager
-                                    variant="compact"
-                                    workspaceType="knowledge"
-                                />
-                                {isAiAvailable && (
-                                    <Sparkles size={14} className="text-primary animate-pulse" />
-                                )}
-                                <Button size="sm" onClick={handleOpenImport}>
-                                    <Plus size={16} />
-                                </Button>
-                                <SynthesisDialog
-                                    sourceIds={[]}
-                                    onComplete={handleSynthesisComplete}
-                                />
-                            </div>
-                        </div>
-                        {/* P0-2: Indexing Progress Panel */}
-                        <IndexingProgressPanel className="mb-4" />
-                        <SourceCardGrid projectId={projectId} onOpenImport={handleOpenImport} />
+                <KnowledgeMobileLayout
+                    activeContentTab={activeContentTab}
+                    onContentTabChange={setActiveContentTab}
+                    activeNavTab={activeNavTab}
+                    onNavTabChange={setActiveNavTab}
+                    onAddSource={handleOpenImport}
+                >
+                    {/* Render content based on content tab */}
+                    {activeContentTab === 'browse' && renderBrowseContent()}
+                    {activeContentTab === 'collections' && renderCollectionsContent()}
+                    {activeContentTab === 'recent' && renderRecentContent()}
+                </KnowledgeMobileLayout>
+
+                {/* Canvas Preview */}
+                <div className="h-[300px] border-b border-border relative">
+                    <div className="absolute top-2 left-2 z-10 bg-background/80 p-1 px-2 rounded text-xs font-mono text-muted-foreground border border-border">
+                        {t('knowledge.canvas.preview')}
                     </div>
-                    {/* Canvas Section - Read Only/Preview */}
-                    <div className="h-[400px] border-b border-border relative">
-                        <div className="absolute top-2 left-2 z-10 bg-background/80 p-1 px-2 rounded text-xs font-mono text-muted-foreground border border-border">
-                            {t('knowledge.canvas.preview')}
+                    <Suspense fallback={
+                        <div className="h-full w-full flex items-center justify-center bg-muted/20">
+                            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
                         </div>
-                        <Suspense fallback={<div className="h-full w-full flex items-center justify-center bg-muted/20"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" /></div>}>
-                            <Canvas indexMetadata={indexMetadata} />
-                        </Suspense>
-                    </div>
-                    {/* UC1: Synthesis Preview Panel */}
-                    {synthesisResult && previewType && (
-                        <div className="flex-1 border-b border-border">
-                            {previewType === 'flashcards' ? (
-                                <FlashcardPreviewPanel
-                                    synthesisResult={synthesisResult}
-                                    onSave={handlePreviewSave}
-                                    onDiscard={handlePreviewDiscard}
-                                    onExportToNotes={handleExportToNotes}
-                                    onExportToStudy={handleExportToStudy}
-                                />
-                            ) : (
-                                <QuizPreviewPanel
-                                    synthesisResult={synthesisResult}
-                                    onSave={handlePreviewSave}
-                                    onDiscard={handlePreviewDiscard}
-                                    onExportToNotes={handleExportToNotes}
-                                />
-                            )}
-                        </div>
-                    )}
+                    }>
+                        <Canvas indexMetadata={indexMetadata} />
+                    </Suspense>
                 </div>
+
+                {/* UC1: Synthesis Preview Panel */}
+                {synthesisResult && previewType && (
+                    <div className="flex-1 border-b border-border">
+                        {previewType === 'flashcards' ? (
+                            <FlashcardPreviewPanel
+                                synthesisResult={synthesisResult}
+                                onSave={handlePreviewSave}
+                                onDiscard={handlePreviewDiscard}
+                                onExportToNotes={handleExportToNotes}
+                                onExportToStudy={handleExportToStudy}
+                            />
+                        ) : (
+                            <QuizPreviewPanel
+                                synthesisResult={synthesisResult}
+                                onSave={handlePreviewSave}
+                                onDiscard={handlePreviewDiscard}
+                                onExportToNotes={handleExportToNotes}
+                            />
+                        )}
+                    </div>
+                )}
+
+                {/* Import Dialog */}
                 <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
             </MainLayout>
         );

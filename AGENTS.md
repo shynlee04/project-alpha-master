@@ -3330,6 +3330,76 @@ The `.vscode/settings.json` file configures:
 - Recommended refactoring deferred to avoid MVP-3 interference
 - See `_bmad-output/state-management-audit-p1.10-2025-12-26.md` for details
 
+### 11. Lazy Import Anti-Pattern (FS-01 - 2026-01-09)
+- **NEVER use nested lazy loading** when route is already lazy
+- TanStack Router's `createLazyFileRoute` already lazy-loads the component
+- Adding `React.lazy()` inside creates double lazy loading → runtime failures
+- **Correct Pattern**: Direct import inside lazy route component
+```typescript
+// ❌ WRONG - Double lazy loading
+const MyComponent = lazy(() => import('./MyComponent'));
+
+// ✅ CORRECT - Direct import (route is already lazy)
+import { MyComponent } from './MyComponent';
+```
+- See: `src/presentation/components/notes/NotesPage.tsx` (fix applied)
+
+### 12. Project Registration for Cross-Workspace Conflict Detection (FS-02 - 2026-01-09)
+- **ALWAYS register projects** in `ProjectRegistry` before workspace operations
+- Projects MUST use namespaced IDs: `{workspace}:{projectId}`
+- Example: `notes:default-notes`, `ide:proj_1704787200000_abc123`
+- **Purpose**: Prevent same folder being open in multiple workspaces simultaneously
+- **Pattern**: Singleton service with three-index architecture (folderIndex, projectIndex, namespaceIndex)
+```typescript
+import { ProjectRegistry } from '@/domain/services';
+
+const result = ProjectRegistry.register(
+  projectId,      // namespaced ID
+  folderPath,     // folder path
+  workspaceType   // 'ide' | 'knowledge' | 'study' | 'notes'
+);
+
+if (!result.success && result.conflict?.hasConflict) {
+  // Handle conflict - folder already open in another workspace
+  console.warn(`Folder open in ${result.conflict.existingWorkspaceType}`);
+}
+```
+- See: `src/domain/services/ProjectRegistry.ts` (582 lines)
+
+### 13. UI Overlay Backdrop Pattern (FS-04 - 2026-01-09)
+- **ALWAYS use semi-transparent backdrops** for overlays that don't require blocking
+- Solid backgrounds (`bg-card`) block context and frustrate users
+- **Correct Pattern**: `bg-background/80 backdrop-blur-sm` for semi-transparent overlay
+- **8-bit Design Compliance**: Use `rounded-none` instead of `rounded-lg`
+```typescript
+// ❌ WRONG - Solid background blocks view
+<div className="fixed inset-0 bg-card border-b border-border z-50">
+
+// ✅ CORRECT - Semi-transparent backdrop
+<div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50">
+```
+- **Exception**: Use solid background for modals that require focus isolation (confirm dialogs, forms)
+- See: `src/presentation/components/notes/NotesPage.tsx` (lines 482, 595 - fixes applied)
+
+### 14. Project ID Namespacing for Workspace Isolation (FS-03 - 2026-01-09)
+- **ALL new projects MUST use namespaced IDs**: `{workspace}:{projectId}`
+- Format enforced in `project-crud-slice.ts` via `generateProjectId()`
+- **Backward Compatibility**: Legacy non-namespaced IDs default to `ide` workspace
+- **Extraction**: Use `extractWorkspaceType()` to parse workspace from project ID
+```typescript
+// Generate namespaced ID
+function generateProjectId(workspaceType: 'ide' | 'knowledge' | 'study' | 'notes') {
+  return `${workspaceType}:proj_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+}
+
+// Extract workspace from ID
+function extractWorkspaceType(projectId: string) {
+  const parts = projectId.split(':');
+  return parts.length === 2 ? parts[0] : 'ide'; // Legacy default
+}
+```
+- See: `src/infrastructure/persistence/stores/project/project-crud-slice.ts` (lines 26-46)
+
 ## Existing Documentation & Guidance
 
 ### AGENTS.md

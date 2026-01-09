@@ -6,7 +6,7 @@
  * Part of E1-1: UnifiedChatPanel integration
  */
 
-import { useEffect, useState, lazy, Suspense, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
@@ -30,8 +30,9 @@ import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPane
 // NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
 // import { createNoteFileSyncService } from '@/lib/notes';
 
-// Lazy load NoteEditor to reduce bundle size
-const NoteEditor = lazy(() => import('./NoteEditor'));
+// FS-01 FIX: Direct import - no lazy() needed since route is already lazy-loaded
+// Nested lazy loading (createLazyFileRoute + React.lazy) causes chunk resolution failures
+import { NoteEditor } from './NoteEditor';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useResponsive } from '@/hooks/useResponsive';
 // AC-02: Agent Selector Unification - Use unified selector for cross-workspace sync
@@ -465,17 +466,11 @@ export function NotesPage() {
 
                 {/* Editor */}
                 <div className="flex-1 bg-background">
-                    <Suspense fallback={
-                        <div className="flex items-center justify-center h-full">
-                            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-                        </div>
-                    }>
-                        <NoteEditor
-                            key={activeNote?.id || 'empty'}
-                            noteId={activeNote?.id || ''}
-                            className="h-full"
-                        />
-                    </Suspense>
+                    <NoteEditor
+                        key={activeNote?.id || 'empty'}
+                        noteId={activeNote?.id || ''}
+                        className="h-full"
+                    />
                 </div>
             </div>
         );
@@ -483,9 +478,10 @@ export function NotesPage() {
         return (
             <MainLayout>
                 {/* S-007: Import Progress Overlay */}
+                {/* FS-04: Fixed backdrop styling - use semi-transparent background instead of solid bg-card */}
                 {isImportingFiles && (
-                    <div className="fixed inset-0 bg-card border-b border-border z-50 flex items-center justify-center">
-                        <div className="bg-card border border-border rounded-lg p-6 max-w-sm w-full mx-4 shadow-lg">
+                    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                        <div className="bg-card border border-border rounded-none p-6 max-w-sm w-full mx-4 shadow-lg">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
                                 <h3 className="font-semibold">Importing Notes</h3>
@@ -596,9 +592,10 @@ export function NotesPage() {
     return (
         <MainLayout>
             {/* S-007: Import Progress Overlay */}
+            {/* FS-04: Fixed backdrop styling - use semi-transparent background instead of solid bg-card */}
             {isImportingFiles && (
-                <div className="fixed inset-0 bg-card border-b border-border z-50 flex items-center justify-center">
-                    <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full mx-4 shadow-lg">
+                <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="bg-card border border-border rounded-none p-6 max-w-md w-full mx-4 shadow-lg">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
                             <h3 className="font-semibold">Importing Notes</h3>
@@ -688,17 +685,11 @@ export function NotesPage() {
                 >
                     <div className="h-full bg-background flex flex-col">
                         {activeNote ? (
-                            <Suspense fallback={
-                                <div className="h-full flex items-center justify-center">
-                                    <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-                                </div>
-                            }>
-                                <NoteEditor
-                                    key={activeNote.id}
-                                    noteId={activeNote.id}
-                                    className="h-full"
-                                />
-                            </Suspense>
+                            <NoteEditor
+                                key={activeNote.id}
+                                noteId={activeNote.id}
+                                className="h-full"
+                            />
                         ) : (
                             <div className="h-full flex items-center justify-center text-muted-foreground flex-col gap-4">
                                 <Notebook size={48} className="opacity-20" />

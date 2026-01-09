@@ -5,6 +5,7 @@
  *
  * FIXED: Now uses NotesPage which includes ProjectFilesPanel in sidebar
  * Phase 1.5 Correction R1: Show files in Notes workspace
+ * FS-02: Integrated ProjectRegistry for conflict detection
  */
 
 import { useEffect, useState } from 'react';
@@ -15,6 +16,8 @@ import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
+// FS-02: Import ProjectRegistry for conflict detection
+import { ProjectRegistry } from '@/domain/services';
 
 /**
  * Route definition with ErrorBoundary - Uses NotesPage with default project
@@ -30,9 +33,12 @@ export const Route = createLazyFileRoute('/notes')({
 /**
  * Notes workspace wrapper for /notes route - uses default-notes project
  * Loads or creates default project, then renders NotesPage with ProjectFilesPanel
+ * FS-02: Registers project in ProjectRegistry to prevent cross-workspace conflicts
+ * FS-03: Uses namespaced project ID format: notes:default-notes
  */
 function NotesWorkspaceDefault() {
-  const defaultProjectId = 'default-notes';
+  // FS-03: Namespaced project ID format for workspace isolation
+  const defaultProjectId = 'notes:default-notes';
   const [project, setProject] = useState<Project | null>(null);
 
   useEffect(() => {
@@ -59,6 +65,30 @@ function NotesWorkspaceDefault() {
       }
     });
   }, [defaultProjectId]);
+
+  // FS-02: Register project in ProjectRegistry to prevent cross-workspace conflicts
+  useEffect(() => {
+    if (!project) return;
+
+    // Register the project with conflict detection
+    const result = ProjectRegistry.register(
+      defaultProjectId,
+      project.folderPath,
+      'notes' // workspaceType
+    );
+
+    if (!result.success && result.conflict?.hasConflict) {
+      console.warn(
+        `[ProjectRegistry] Folder conflict detected: "${project.folderPath}" ` +
+        `already open in ${result.conflict.existingWorkspaceType}`
+      );
+    }
+
+    // Cleanup: unregister when component unmounts
+    return () => {
+      ProjectRegistry.unregister(defaultProjectId, 'notes');
+    };
+  }, [project]);
 
   // Set projectId in IDE store when component mounts
   useEffect(() => {

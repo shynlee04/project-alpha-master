@@ -476,91 +476,127 @@ epics:
     # Stories 39-01 through 39-04 COMPLETED
     # Stories 39-05, 39-06 pending
 
-  EPIC-MOBILE:
-    id: "EPIC-MOBILE"
-    name: "Mobile UX Redesign"
-    priority: "P0-CRITICAL"
-    status: "IN_PROGRESS"
-    total_stories: 3
-    total_effort_hours: 16
-    description: "Implement mobile-first navigation patterns for Notes, Knowledge, and IDE workspaces"
-    
-    research_document: "_bmad-output/research-artifacts/mobile-ux-redesign-research-2026-01-09.md"
-    handoff_document: "_bmad-output/handoffs/mobile-ux-redesign-handoff-2026-01-09.md"
-    
-    stories:
-      MOBILE-01:
-        id: "MOBILE-01"
-        name: "Implement Tab-Based Navigation for NotesPage"
-        priority: "P0-CRITICAL"
-        status: "COMPLETE"
-        effort_hours: 4
-        completed_at: "2026-01-09T20:00:00+07:00"
-        files:
-          - "src/presentation/components/notes/NotesMobileLayout.tsx"
-          - "src/presentation/components/notes/NotesMobileLayoutWithState.tsx"
-        acceptance_criteria:
-          - "Bottom navigation bar with 3 tabs (Notes, Search, AI)"
-          - "Content tabs (All, Favorites, Tags)"
-          - "44px minimum touch targets"
-          - "Framer Motion transitions (200ms)"
-          - "Badge indicators for notifications"
-          - "Responsive from 320px to 430px width"
-        notes: |
-          Created standalone NotesMobileLayout component with:
-          - Tab-based navigation (bottom nav + content tabs)
-          - Framer Motion transitions
-          - 44px touch targets
-          - Integration ready for existing NotesPage
-        dependencies: []
-        files:
-          - "src/presentation/components/notes/NotesPage.tsx"
-          - "src/presentation/components/notes/NotesMobileLayout.tsx (new)"
-        acceptance_criteria:
-          - "Bottom navigation bar with 3 tabs (Notes, Search, AI)"
-          - "Content tabs (All, Favorites, Tags)"
-          - "44px minimum touch targets"
-          - "Framer Motion transitions (200ms)"
-          - "Badge indicators for notifications"
-          - "Responsive from 320px to 430px width"
+    EPIC-MOBILE:
+      id: "EPIC-MOBILE"
+      name: "Mobile UX Redesign"
+      priority: "P0-CRITICAL"
+      status: "IN_PROGRESS"
+      total_stories: 6  # 3 original + 3 integration
+      total_effort_hours: 22  # 16 original + 6 integration
+      description: "Implement mobile-first navigation patterns for Notes, Knowledge, and IDE workspaces"
+      
+      research_document: "_bmad-output/research-artifacts/mobile-ux-redesign-research-2026-01-09.md"
+      handoff_document: "_bmad-output/handoffs/mobile-ux-redesign-handoff-2026-01-09.md"
+      
+      stories:
+        MOBILE-01:
+          id: "MOBILE-01"
+          name: "Implement Tab-Based Navigation for NotesPage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 4
+          completed_at: "2026-01-09T20:00:00+07:00"
+          files:
+            - "src/presentation/components/notes/NotesMobileLayout.tsx"
+            - "src/presentation/components/notes/NotesMobileLayoutWithState.tsx"
+          acceptance_criteria:
+            - "Bottom navigation bar with 3 tabs (Notes, Search, AI)"
+            - "Content tabs (All, Favorites, Tags)"
+            - "44px minimum touch targets"
+            - "Framer Motion transitions (200ms)"
+            - "Badge indicators for notifications"
+            - "Responsive from 320px to 430px width"
         
-      MOBILE-02:
-        id: "MOBILE-02"
-        name: "Implement Tab-Based Navigation for KnowledgePage"
-        priority: "P0-CRITICAL"
-        status: "PROPOSED"
-        effort_hours: 4
-        dependencies: []
-        files:
-          - "src/presentation/components/knowledge/KnowledgePage.tsx"
-          - "src/presentation/components/knowledge/KnowledgeMobileLayout.tsx (new)"
-        acceptance_criteria:
-          - "Bottom navigation bar with 3 tabs (Browse, Search, AI)"
-          - "Content tabs (Browse, Collections, Recent)"
-          - "Grid layout for sources display"
-          - "44px minimum touch targets"
-          - "Framer Motion transitions (200ms)"
-          - "Responsive from 320px to 430px width"
+        MOBILE-02:
+          id: "MOBILE-02"
+          name: "Implement Tab-Based Navigation for KnowledgePage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 4
+          completed_at: "2026-01-09T20:30:00+07:00"
+          files:
+            - "src/presentation/components/knowledge/KnowledgeMobileLayout.tsx"
+          acceptance_criteria:
+            - "Bottom navigation bar with 3 tabs (Browse, Search, AI)"
+            - "Content tabs (Browse, Collections, Recent)"
+            - "Grid layout for sources display"
+            - "44px minimum touch targets"
+            - "Framer Motion transitions (200ms)"
+            - "Responsive from 320px to 430px width"
         
-      MOBILE-03:
-        id: "MOBILE-03"
-        name: "Create Responsive IDE Mobile Layout with Bottom Sheet Panels"
-        priority: "P0-CRITICAL"
-        status: "PROPOSED"
-        effort_hours: 8
-        dependencies: []
-        files:
-          - "src/presentation/components/ide/IDEResizableLayout.tsx"
-          - "src/presentation/components/ide/IDEMobileLayout.tsx (new)"
-          - "src/presentation/components/ide/hooks/usePanelGestures.ts (new)"
-        acceptance_criteria:
-          - "Collapsible bottom panel (files, terminal)"
-          - "Panel tabs (Files, Terminal)"
-          - "Drag gestures for panel resize"
-          - "Snap points (collapsed, partial, expanded)"
-          - "Virtual keyboard awareness"
-          - "Responsive from 320px to 430px width"
-          - "60fps smooth animations"
+        MOBILE-03:
+          id: "MOBILE-03"
+          name: "Create Responsive IDE Mobile Layout with Bottom Sheet Panels"
+          priority: "P0-CRITICAL"
+          status: "IN_PROGRESS"
+          effort_hours: 8
+          files:
+            - "src/presentation/components/ide/IDEResizableLayout.tsx"
+            - "src/presentation/components/ide/IDEMobileLayout.tsx"
+            - "src/presentation/components/ide/hooks/usePanelGestures.ts"
+          acceptance_criteria:
+            - "Collapsible bottom panel (files, terminal)"
+            - "Panel tabs (Files, Terminal)"
+            - "Drag gestures for panel resize"
+            - "Snap points (collapsed, partial, expanded)"
+            - "Virtual keyboard awareness"
+            - "Responsive from 320px to 430px width"
+            - "60fps smooth animations"
+        
+        MOBILE-INT-01:
+          id: "MOBILE-INT-01"
+          name: "Integrate NotesMobileLayout with NotesPage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 2
+          completed_at: "2026-01-09T21:30:00+07:00"
+          files:
+            - "src/presentation/components/notes/NotesPage.tsx"
+            - "src/presentation/components/notes/index.ts"
+          acceptance_criteria:
+            - "Mobile view uses NotesMobileLayout wrapper"
+            - "Note list renders as children content"
+            - "Bottom navigation works (Notes, Search, AI tabs)"
+            - "Content tabs work (All, Favorites, Tags)"
+            - "Create note FAB is functional"
+            - "File sync status displays correctly"
+            - "Import/Export dialogs still work"
+        
+        MOBILE-INT-02:
+          id: "MOBILE-INT-02"
+          name: "Integrate KnowledgeMobileLayout with KnowledgePage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 2
+          completed_at: "2026-01-09T21:45:00+07:00"
+          files:
+            - "src/presentation/components/knowledge/KnowledgePage.tsx"
+            - "src/presentation/components/knowledge/index.ts"
+          acceptance_criteria:
+            - "Mobile view uses KnowledgeMobileLayout wrapper"
+            - "Source grid renders as children content"
+            - "Bottom navigation works (Browse, Search, AI tabs)"
+            - "Content tabs work (Browse, Collections, Recent)"
+            - "Add source (+) button is functional"
+            - "RAG indexing progress displays"
+            - "Canvas preview is visible"
+        
+        MOBILE-INT-03:
+          id: "MOBILE-INT-03"
+          name: "Create barrel exports for mobile layout components"
+          priority: "P1"
+          status: "COMPLETE"
+          effort_hours: 1
+          completed_at: "2026-01-09T21:15:00+07:00"
+          files:
+            - "src/presentation/components/notes/index.ts"
+            - "src/presentation/components/knowledge/index.ts"
+            - "src/presentation/components/ide/index.ts"
+          acceptance_criteria:
+            - "NotesMobileLayout exported from notes/index.ts"
+            - "KnowledgeMobileLayout exported from knowledge/index.ts"
+            - "IDEMobileLayout exported from ide/index.ts"
+            - "Clean import paths work"
     
     implementation_components:
       - "NotesMobileLayout.tsx"
@@ -582,20 +618,20 @@ epics:
 # ═══════════════════════════════════════════════════════════════════════════
 
 metrics:
-  total_stories: 27  # Was 24, +3 from EPIC-MOBILE
-  stories_not_started: 17
-  stories_in_progress: 4  # 39-01, MOBILE-01, MOBILE-02, MOBILE-03
-  stories_done: 4  # 39-01, 39-02, 39-03, 39-04
+  total_stories: 30  # Was 27, +3 from EPIC-MOBILE integration
+  stories_not_started: 14
+  stories_in_progress: 3  # MOBILE-03, P2 stories
+  stories_done: 10  # 4 from 39-01/39-02/39-03/39-04 + 3 from EPIC-MOBILE + 3 from EPIC-MOBILE integration
   stories_blocked: 0
-  stories_proposed: 2  # 39-05, 39-06 pending
+  stories_proposed: 3  # 39-05, 39-06, MOBILE-03 remaining
 
-  total_effort_hours: 53  # Was 37, +16 from EPIC-MOBILE
-  effort_completed: 13  # 4 stories complete
+  total_effort_hours: 59  # Was 53, +6 from EPIC-MOBILE integration
+  effort_completed: 19  # 13 + 6 from integration
   effort_remaining: 40
 
-  completion_percentage: 24.5  # 13/53 hours
+  completion_percentage: 32.2  # 19/59 hours
 
-  last_updated: "2026-01-09T18:30:00+07:00"
+  last_updated: "2026-01-09T21:45:00+07:00"
 
   course_correction_applied: true
   course_correction_epic: "EPIC-39"
@@ -606,6 +642,12 @@ metrics:
     - "39-02: Remove Transparency from Chat Components"
     - "39-03: Replace Rounded Corners with Squared"
     - "39-04: Remove Blur Effects from Hero/Onboarding"
+    - "MOBILE-01: NotesMobileLayout Component Created"
+    - "MOBILE-02: KnowledgeMobileLayout Component Created"
+    - "MOBILE-03: IDEMobileLayout Component Created"
+    - "MOBILE-INT-01: NotesPage Integration Complete"
+    - "MOBILE-INT-02: KnowledgePage Integration Complete"
+    - "MOBILE-INT-03: Barrel Exports Created"
 
   implementation_notes: |
     EPIC-39 COMPLETED (4/6 STORIES) - 8-Bit Design Compliance

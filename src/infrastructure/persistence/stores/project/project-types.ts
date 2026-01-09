@@ -40,12 +40,14 @@ export interface Project extends DomainProject {
 
 /**
  * Input for creating a new project
+ * FS-03: Added workspaceType for project ID namespacing
  */
 export interface CreateProjectInput {
   name: string;
   folderPath: string;
   storageType?: 'indexeddb' | 'fsa';  // Defaults to 'fsa' for backward compatibility
   fsaHandle?: FileSystemDirectoryHandle | null;  // Required for 'fsa', null for 'indexeddb'
+  workspaceType?: WorkspaceType;  // FS-03: Workspace context for namespaced project IDs
   autoSync?: boolean;
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
@@ -98,6 +100,7 @@ export interface ProjectState {
 
 /**
  * Project CRUD methods
+ * FS-03: Updated createProject to include workspaceType parameter
  */
 export interface ProjectMethods {
   createProject: (input: CreateProjectInput) => string;

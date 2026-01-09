@@ -77,6 +77,166 @@ The self-validation confirmed several improvements over original diagnostics:
 
 ---
 
+## 🗂️ FILE SYSTEM ARCHITECTURE (Post EPIC-FS)
+
+**Status**: Phase 1 Complete (2026-01-09)
+**Epic**: EPIC-FS (File System & Workspace Foundation)
+**Tracking**: `_bmad-output/sprint-artifacts/sprint-status.yaml` (epic_fs_status)
+
+### Overview
+
+EPIC-FS addresses foundational file system and workspace architecture issues that were causing:
+- Lazy import failures in Notes workspace
+- Project ID conflicts across workspaces
+- UI overlays blocking user interaction
+- No cross-workspace file conflict detection
+
+### Project Registration
+
+**Service**: `ProjectRegistry` (Domain Layer)
+
+**Location**: `src/domain/services/Project-registry-types.ts` (128 lines) + `src/domain/services/ProjectRegistry.ts` (582 lines)
+
+**Pattern**: Singleton with three-index architecture
+```typescript
+// Usage
+import { ProjectRegistry } from '@/domain/services';
+
+// Register project in workspace
+const result = ProjectRegistry.register(
+  'notes:default-notes',  // namespaced ID
+  '/path/to/folder',      // folder path
+  'notes'                 // workspace type
+);
+
+if (!result.success && result.conflict?.hasConflict) {
+  console.warn(`Folder already open in ${result.conflict.existingWorkspaceType}`);
+}
+```
+
+**Key Features**:
+- **folderIndex**: Conflict detection (same folder in multiple workspaces)
+- **projectIndex**: Project lifecycle tracking
+- **namespaceIndex**: Workspace isolation
+
+**Lifecycle States**: pending → active → inactive → closed
+
+### Project ID Namespacing
+
+**Format**: `{workspace}:{projectId}`
+
+**Examples**:
+- `ide:proj_1704787200000_abc123xyz` - IDE workspace project
+- `notes:default-notes` - Notes workspace default project
+- `knowledge:proj_1704787200000_xyz789def` - Knowledge workspace project
+
+**Purpose**: Cross-workspace isolation prevents ID conflicts when same folder opened in different workspaces.
+
+**Code Location**: `src/infrastructure/persistence/stores/project/project-crud-slice.ts` (lines 26-46)
+
+```typescript
+// Generate namespaced project ID
+function generateProjectId(workspaceType: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'): string {
+  const randomPart = Math.random().toString(36).substring(2, 11);
+  return `${workspaceType}:proj_${Date.now()}_${randomPart}`;
+}
+
+// Extract workspace type from project ID
+function extractWorkspaceType(projectId: string): 'ide' | 'knowledge' | 'study' | 'notes' {
+  const parts = projectId.split(':');
+  if (parts.length === 2) {
+    const workspaceType = parts[0];
+    if (['ide', 'knowledge', 'study', 'notes'].includes(workspaceType)) {
+      return workspaceType as any;
+    }
+  }
+  return 'ide'; // Legacy non-namespaced IDs default to 'ide'
+}
+```
+
+### Cross-Workspace CRUD (Planned - Phase 2)
+
+**Status**: Pending implementation (FS-05, FS-06)
+
+**Planned Architecture**:
+- **FileLockService**: All file operations go through file locking
+- **User Operations**: `UserFileOperation` with UI feedback
+- **Agent Operations**: `AgentFileOperation` with approval check
+- **Unified Interface**: `FileSystemService.crud()`
+
+**Purpose**: Prevent race conditions when users and agents modify same file simultaneously.
+
+### Mobile Considerations (Planned - Phase 2)
+
+**Status**: Pending implementation (FS-07)
+
+**Planned Features**:
+- **Mobile File Picker**: `MobileFilePicker` (IndexedDB) vs `DesktopFilePicker` (FSA)
+- **Chunked Uploads**: For large files on mobile networks
+- **Touch-Optimized UI**: File selection with 44px tap targets
+
+**Constraint**: File System Access API (FSA) NOT available on mobile browsers.
+
+### Lazy Import Pattern Fix (FS-01)
+
+**Problem**: Nested lazy loading in NotesPage caused runtime failures.
+
+**Root Cause**: Route was already lazy (`createLazyFileRoute`), component added second lazy layer.
+
+**Solution**: Remove redundant `React.lazy` wrapper for direct import.
+
+**Before**:
+```typescript
+// ❌ ANTI-PATTERN - Double lazy loading
+const NoteEditor = lazy(() => import('./NoteEditor'));
+```
+
+**After**:
+```typescript
+// ✅ CORRECT - Direct import (route is already lazy)
+import { NoteEditor } from './NoteEditor';
+```
+
+### UI Overlay Pattern Fix (FS-04)
+
+**Problem**: Import progress overlays used solid background, blocking view.
+
+**Solution**: Semi-transparent backdrop with blur effect.
+
+**Before**:
+```typescript
+// ❌ Solid background blocks interaction
+<div className="fixed inset-0 bg-card border-b border-border z-50">
+```
+
+**After**:
+```typescript
+// ✅ Semi-transparent backdrop allows context visibility
+<div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50">
+```
+
+**Design Compliance**: Changed `rounded-lg` → `rounded-none` for 8-bit design system.
+
+### EPIC-FS Progress
+
+**Phase 1 (Emergency Fixes)**: ✅ Complete (4/4 stories)
+- FS-01: Fix NoteEditor lazy import (2h)
+- FS-02: ProjectRegistry with conflict detection (4h)
+- FS-03: Project ID namespacing (3h)
+- FS-04: UI overlay fixes (2h)
+
+**Phase 2 (File System Foundation)**: 🔄 Ready to start
+- FS-05: FileLockService for concurrent access (6h)
+- FS-06: Unified CRUD interface (8h)
+- FS-07: Mobile file picker (6h)
+- FS-08: File format handlers (4h)
+
+**Phase 3-4**: Pending (24 stories remaining)
+
+**Total**: 14 stories, ~58 hours estimated, 28.6% complete
+
+---
+
 # 🤖 BMAD FRAMEWORK - MULTI-AGENTIC SYSTEM (v2.0.0)
 
 **Transformation Date**: 2026-01-06

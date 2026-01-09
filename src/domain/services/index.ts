@@ -16,3 +16,21 @@ export {
   getAgentsForWorkspace,
   getDefaultAgentForWorkspace,
 } from './agent-workspace-utils';
+
+// Project Registry - EPIC-FS, FS-02
+export {
+  ProjectRegistry,
+  ProjectRegistryClass,
+} from './ProjectRegistry';
+
+// Re-export types from ProjectRegistry (already exported with 'export type' in source)
+export type {
+  ProjectConflictResult,
+  ProjectLifecycleState,
+  ProjectNamespace,
+  ProjectRegistration,
+  ProjectRegistrationOptions,
+  ProjectRegistrationResult,
+  ProjectRegistrySnapshot,
+  ProjectRegistryStats,
+} from './ProjectRegistry';

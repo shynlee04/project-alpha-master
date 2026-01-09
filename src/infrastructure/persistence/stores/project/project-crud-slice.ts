@@ -18,10 +18,31 @@ import type {
 } from './project-types';
 
 /**
- * Generate unique project ID
+ * Generate unique project ID with workspace namespace
+ * FS-03: Project IDs now include workspace type for cross-workspace isolation
+ * Format: {workspace}:proj_{timestamp}_{random}
+ * Example: ide:proj_1704787200000_abc123xyz
  */
-function generateProjectId(): string {
-  return `proj_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+function generateProjectId(workspaceType: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'): string {
+  const randomPart = Math.random().toString(36).substring(2, 11);
+  return `${workspaceType}:proj_${Date.now()}_${randomPart}`;
+}
+
+/**
+ * Extract workspace type from a namespaced project ID
+ * FS-03: Parse project ID to get workspace context
+ * @returns Workspace type or 'ide' as default for legacy non-namespaced IDs
+ */
+function extractWorkspaceType(projectId: string): 'ide' | 'knowledge' | 'study' | 'notes' {
+  const parts = projectId.split(':');
+  if (parts.length === 2) {
+    const workspaceType = parts[0];
+    if (workspaceType === 'ide' || workspaceType === 'knowledge' || workspaceType === 'study' || workspaceType === 'notes') {
+      return workspaceType;
+    }
+  }
+  // Legacy non-namespaced IDs default to 'ide'
+  return 'ide';
 }
 
 /**
@@ -72,8 +93,10 @@ export const createProjectCrudSlice: StateCreator<
   activeProjectId: null,
 
   // Create new project
+  // FS-03: Workspace-aware project creation with namespaced IDs
   createProject: (input: CreateProjectInput) => {
-    const projectId = generateProjectId();
+    const workspaceType = input.workspaceType ?? 'ide';  // Default to 'ide' for backward compatibility
+    const projectId = generateProjectId(workspaceType);
     const now = new Date();
     const storageType = input.storageType ?? 'fsa';  // Default to 'fsa' for backward compatibility
 
@@ -96,7 +119,7 @@ export const createProjectCrudSlice: StateCreator<
       tags: input.tags ?? [],
     };
 
-    console.log('[ProjectStore] Creating project:', projectId, 'storageType:', storageType);
+    console.log('[ProjectStore] Creating project:', projectId, 'workspace:', workspaceType, 'storageType:', storageType);
 
     // Update Zustand store
     set((state) => ({
@@ -105,13 +128,14 @@ export const createProjectCrudSlice: StateCreator<
     }));
 
     // Persist to Dexie (async, non-blocking)
-    db.projects.put(toRecord(project)).catch((error) => {
+    // FS-03: Pass workspaceType for proper isolation
+    db.projects.put(toRecord(project, workspaceType)).catch((error) => {
       console.error('[ProjectStore] Failed to persist project to Dexie:', error);
     });
 
     // Persist FSA handle only for 'fsa' storage type (indexeddb projects don't need handles)
     if (storageType === 'fsa' && input.fsaHandle) {
-      fsaHandleManager.persistHandle(input.fsaHandle, projectId, 'ide').catch((error) => {
+      fsaHandleManager.persistHandle(input.fsaHandle, projectId, workspaceType).catch((error) => {
         console.error('[ProjectStore] Failed to persist FSA handle:', error);
       });
     }
@@ -143,7 +167,9 @@ export const createProjectCrudSlice: StateCreator<
     }));
 
     // Persist to Dexie (async, non-blocking)
-    db.projects.put(toRecord(updated)).catch((error) => {
+    // FS-03: Extract workspace type from project ID for proper isolation
+    const workspaceType = extractWorkspaceType(projectId);
+    db.projects.put(toRecord(updated, workspaceType)).catch((error) => {
       console.error('[ProjectStore] Failed to update project in Dexie:', error);
     });
   },

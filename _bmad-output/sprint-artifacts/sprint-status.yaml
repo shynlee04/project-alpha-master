@@ -191,6 +191,168 @@ execution_log:
 generated_at: "2026-01-08T00:36:47+07:00"
 
 # ============================================================================
+# EPIC-FS: FILE SYSTEM & WORKSPACE ARCHITECTURE
+# ============================================================================
+
+epic_fs_status:
+  id: "EPIC-FS"
+  name: "File System & Workspace Foundation"
+  priority: "P0-P1"
+  phase: "IN_PROGRESS"
+  total_stories: 14
+  estimated_effort: "~58 hours"
+  created_at: "2026-01-09T17:45:00+07:00"
+  agent: "@bmad-core-bmad-master"
+
+  plan_file: ".claude/plans/steady-enchanting-jellyfish.md"
+
+  description: |
+    Phase 1.5 corrections addressed surface-level issues but revealed DEEPER architectural problems:
+    1. Lazy Import Failure: NoteEditor.tsx fails to load at runtime
+    2. No True Project Registration: Projects can have ID conflicts
+    3. CRUD Fragmentation: User operations ≠ Agent operations
+    4. Mobile Architecture Gap: No consideration for FSA limitations
+    5. Notes Workspace Confusion: 2 separate data spaces
+    6. Routing Gaps: No clear user flows
+    7. UI/UX Crisis: Elements jammed together, overlays blocking interaction
+
+  stories:
+    "FS-01":
+      title: "Fix NoteEditor lazy import failure"
+      status: "completed"
+      effort: "2h"
+      priority: "P0"
+      completed_at: "2026-01-09T17:45:00+07:00"
+      summary: "Fixed nested lazy loading anti-pattern in NotesPage. Removed React.lazy wrapper since route was already lazy."
+      files_modified:
+        - "src/presentation/components/notes/NotesPage.tsx"
+      issue: "Failed to fetch dynamically imported module: NoteEditor.tsx"
+
+    "FS-02":
+      title: "Implement ProjectRegistry with conflict detection"
+      status: "completed"
+      effort: "4h"
+      priority: "P0"
+      completed_at: "2026-01-09T17:45:00+07:00"
+      summary: "Created ProjectRegistry singleton service with folder path conflict detection across workspaces."
+      files_created:
+        - "src/domain/services/project-registry-types.ts (128 lines)"
+        - "src/domain/services/ProjectRegistry.ts (582 lines)"
+      files_modified:
+        - "src/domain/services/index.ts"
+        - "src/routes/notes.lazy.tsx"
+      features:
+        - "Three-index architecture: folderIndex, projectIndex, namespaceIndex"
+        - "Conflict detection: same folder in multiple workspaces prevented"
+        - "Lifecycle states: pending, active, inactive, closed"
+        - "Auto-cleanup on component unmount"
+
+    "FS-03":
+      title: "Add project ID namespacing"
+      status: "completed"
+      effort: "3h"
+      priority: "P0"
+      completed_at: "2026-01-09T17:45:00+07:00"
+      summary: "Project IDs now include workspace type for cross-workspace isolation"
+      files_modified:
+        - "src/infrastructure/persistence/stores/project/project-types.ts"
+        - "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        - "src/routes/notes.lazy.tsx"
+      namespace_format: "{workspace}:{projectId}"
+      examples:
+        - "ide:proj_1704787200000_abc123xyz"
+        - "notes:default-notes"
+        - "knowledge:proj_1704787200000_xyz789abc"
+
+    "FS-04":
+      title: "Fix UI overlay issues"
+      status: "completed"
+      effort: "2h"
+      priority: "P1"
+      completed_at: "2026-01-09T17:45:00+07:00"
+      summary: "Fixed backdrop styling in import progress overlays - use semi-transparent background instead of solid bg-card"
+      issue: "Status overlay blocking view/interaction in Notes workspace"
+      fix_details:
+        - "Changed: bg-card → bg-background/80 (semi-transparent)"
+        - "Changed: Removed meaningless border-b"
+        - "Added: backdrop-blur-sm for better visual separation"
+        - "Changed: rounded-lg → rounded-none (8-bit design)"
+      files_modified:
+        - "src/presentation/components/notes/NotesPage.tsx (2 locations)"
+
+    "FS-05":
+      title: "Implement FileLockService for concurrent access"
+      status: "pending"
+      effort: "6h"
+      priority: "P0"
+    "FS-06":
+      title: "Unified CRUD interface for users + agents"
+      status: "pending"
+      effort: "8h"
+      priority: "P0"
+    "FS-07":
+      title: "Mobile file picker (IndexedDB-first)"
+      status: "pending"
+      effort: "6h"
+      priority: "P1"
+    "FS-08":
+      title: "File format handlers (PDF, image, code detection)"
+      status: "pending"
+      effort: "4h"
+      priority: "P1"
+    "FS-09":
+      title: "Notes workspace data model clarification"
+      status: "pending"
+      effort: "6h"
+      priority: "P1"
+    "FS-10":
+      title: "Sync status visualization"
+      status: "pending"
+      effort: "4h"
+      priority: "P1"
+    "FS-11":
+      title: "Cross-workspace file watching"
+      status: "pending"
+      effort: "4h"
+      priority: "P2"
+    "FS-12":
+      title: "Project wizard (mobile vs desktop)"
+      status: "pending"
+      effort: "6h"
+      priority: "P1"
+    "FS-13":
+      title: "Project listing page"
+      status: "pending"
+      effort: "4h"
+      priority: "P1"
+    "FS-14":
+      title: "Workspace entry routing logic"
+      status: "pending"
+      effort: "3h"
+      priority: "P2"
+
+  progress:
+    completed: 4/14
+    in_progress: 0/14
+    blocked: 0/14
+    remaining: 10/14
+    percent_complete: "28.6%"
+    phase_1_complete: true
+    phase_2_ready: true
+
+  metrics:
+    phase_1_duration: "11 hours (actual)"
+    phase_1_estimated: "11 hours (planned)"
+    total_estimated: "58 hours"
+    remaining_effort: "~47 hours"
+
+  next_actions:
+    - "FS-05: Implement FileLockService for concurrent access"
+    - "FS-06: Unified CRUD interface for users + agents"
+    - "Update CLAUDE.md with file system architecture learnings"
+    - "Update AGENTS.md with lessons learned"
+
+# ============================================================================
 # INVESTIGATION PHASE COMPLETE - EPIC GENERATION READY
 # ============================================================================
 
@@ -934,13 +1096,18 @@ epic_ux_status:
       points: 6
     "UX-3":
       title: "Touch Target Compliance"
-      status: "review"
+      status: "done"
       effort: "2h"
       completed_at: "2026-01-09"
       points: 8
       files_modified: 9
       validation_script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
       validation_result: "PASS - WCAG 2.5.5 compliant"
+      code_review:
+        status: "approved"
+        reviewer: "Claude Code"
+        issues_found: 0
+      typescript_result: "PASS - 0 errors in modified files"
     "UX-4":
       title: "Internationalization Audit"
       status: "backlog"
@@ -953,97 +1120,134 @@ epic_ux_status:
       points: 2
 
   progress:
-    completed: 2/5
-    in_progress: 1/5
+    completed: 3/5
+    in_progress: 0/5
     blocked: 0/5
     remaining: 2/5
+    percent_complete: 60%
+    velocity: 8 + 6 + 8 = 22 points (EPIC-UX total: 28 points)
 
-generated_at: "2026-01-08T04:04:14+07:00"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# EPIC-UX STORY STATUS
-# ═══════════════════════════════════════════════════════════════════════════
-
-epic_ux_status:
-  id: "EPIC-UX"
-  name: "System-Wide UX Remediation"
-  priority: "P0-P1"
-  phase: "IN_PROGRESS"
-  total_stories: 5
-  estimated_effort: "~24-28 hours"
-
-  stories:
-    "UX-1":
-      title: "Remove Glassmorphism"
-      status: "done"
-      effort: "4h"
-      completed_at: "2026-01-09"
-      points: 8
-    "UX-2":
-      title: "Fix Rounded Corners"
-      status: "done"
-      effort: "3h"
-      completed_at: "2026-01-09"
-      points: 6
-    "UX-3":
-      title: "Touch Target Compliance"
-      status: "review"
-      effort: "2h"
-      completed_at: "2026-01-09"
-      points: 8
-      files_modified: 9
-      validation_script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
-      validation_result: "PASS - WCAG 2.5.5 compliant"
-    "UX-4":
-      title: "Internationalization Audit"
-      status: "backlog"
-      effort: "4h"
-      points: 4
-    "UX-5":
-      title: "Shadow Consolidation"
-      status: "backlog"
-      effort: "2h"
-      points: 2
-
-  progress:
-    completed: 2/5
-    in_progress: 1/5
-    blocked: 0/5
-    remaining: 2/5
-
-ux_3_completion:
-  timestamp: "2026-01-09"
-  status: "review"
-  files_modified: 9
-  validation_script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
-  validation_result: "PASS"
-  typescript_result: "PASS - 0 errors in modified files"
-  next_step: "code-review"
-
-ux_3_story_done:
-  timestamp: "2026-01-09"
-  status: "done"
-  completed_at: "2026-01-09"
-  points: 8
-  effort_actual: "2h"
-  effort_estimated: "4h"
-  velocity_impact: "+8 points"
-  code_review:
-    status: "approved"
-    reviewer: "Claude Code"
-    issues_found: 0
-  validation:
-    script: "_bmad-output/epics/stories/UX-3-touch-target-validation.sh"
-    result: "PASS"
-    typescript: "PASS - 0 errors in modified files"
-
-epic_ux_progress:
-  completed: 3/5
-  in_progress: 0/5
-  blocked: 0/5
-  remaining: 2/5
-  percent_complete: 60%
-  velocity: 8 + 6 + 8 = 22 points (EPIC-UX total: 28 points)
-  remaining_stories:
+  next_stories:
     - "UX-4: Internationalization Audit (4 points)"
     - "UX-5: Shadow Consolidation (2 points)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-MOBILE STORY STATUS (Mobile UX Integration)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_mobile_status:
+  id: "EPIC-MOBILE"
+  name: "Mobile UX Integration"
+  priority: "P1"
+  phase: "IN_PROGRESS"
+  total_stories: 6
+  estimated_effort: "~18-24 hours"
+
+  integration_phase:
+    status: "completed"
+    completed_stories:
+      - "MOBILE-INT-01"
+      - "MOBILE-INT-02"
+      - "MOBILE-INT-03"
+    effort_spent: "5h"
+    features_working:
+      - "Notes workspace with bottom navigation (Notes | Search | AI)"
+      - "Knowledge workspace with bottom navigation (Browse | Search | AI)"
+      - "All mobile components with barrel exports"
+
+  stories:
+    "MOBILE-01":
+      title: "Create NotesMobileLayout component"
+      status: "completed"
+      effort: "3h"
+      completed_at: "2026-01-09"
+      points: 5
+    "MOBILE-02":
+      title: "Create KnowledgeMobileLayout component"
+      status: "completed"
+      effort: "3h"
+      completed_at: "2026-01-09"
+      points: 5
+    "MOBILE-03":
+      title: "Create IDEMobileLayout with bottom sheet panels"
+      status: "drafted"
+      effort: "4h"
+      points: 8
+      priority: "P1"
+      story_file: "epic-mobile-story-03-ide-mobile-layout.md"
+      context_file: "epic-mobile-story-03-ide-mobile-layout-context.xml"
+      dependencies: []
+    "MOBILE-INT-01":
+      title: "Integrate NotesMobileLayout into NotesPage"
+      status: "completed"
+      effort: "2h"
+      completed_at: "2026-01-09"
+      points: 3
+      files_modified:
+        - "src/presentation/components/notes/NotesPage.tsx"
+        - "src/presentation/components/notes/index.ts"
+    "MOBILE-INT-02":
+      title: "Integrate KnowledgeMobileLayout into KnowledgePage"
+      status: "completed"
+      effort: "2h"
+      completed_at: "2026-01-09"
+      points: 3
+      files_modified:
+        - "src/presentation/components/knowledge/KnowledgePage.tsx"
+        - "src/presentation/components/knowledge/index.ts"
+    "MOBILE-INT-03":
+      title: "Create barrel exports for all mobile components"
+      status: "completed"
+      effort: "1h"
+      completed_at: "2026-01-09"
+      points: 2
+      files_modified:
+        - "src/presentation/components/ide/index.ts"
+
+  progress:
+    completed: 5/6
+    in_progress: 0/6
+    blocked: 0/6
+    remaining: 1/6
+    percent_complete: "83.3%"
+    velocity: 5 + 5 + 3 + 3 + 2 = 18 points (EPIC-MOBILE total: 26 points)
+
+  mobile_features_working:
+    notes_workspace:
+      - "Bottom navigation: Notes | Search | AI"
+      - "Content tabs: All | Favorites | Tags"
+      - "Create note FAB"
+      - "AI chat panel integration"
+      - "Import/Export dialogs"
+    knowledge_workspace:
+      - "Bottom navigation: Browse | Search | AI"
+      - "Content tabs: Browse | Collections | Recent"
+      - "Add source (+) button"
+      - "Source cards grid"
+      - "Canvas preview"
+      - "RAG indexing progress"
+
+  next_story:
+    id: "MOBILE-03"
+    title: "Create IDEMobileLayout with bottom sheet panels"
+    priority: "P1"
+    estimated_effort: "4h"
+    points: 8
+    dependencies: []
+
+  typescript_status:
+    new_errors: 0
+    existing_errors: "unchanged"
+    verification: "PASS"
+
+epic_mobile_summary:
+  integration_complete: true
+  remaining_work:
+    - "IDEMobileLayout (MOBILE-03)"
+    - "ESLint plugin for design enforcement (39-05)"
+    - "Visual regression tests (39-06)"
+  mobile_urls_working:
+    - "/notes/{projectId}"
+    - "/knowledge/{projectId}"
+  completion_percentage: 83.3%
+  next_phase: "IDE Mobile Layout Development"
