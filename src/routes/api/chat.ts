@@ -21,6 +21,7 @@ import { json } from '@tanstack/react-start';
 import { createFileRoute } from '@tanstack/react-router';
 import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
+import { createGeminiChat } from '@tanstack/ai-gemini';
 import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
 import {
     validateChatRequest,
@@ -37,6 +38,7 @@ const PROVIDER_BASE_URLS: Record<string, string> = {
     openrouter: 'https://openrouter.ai/api/v1',
     openai: 'https://api.openai.com/v1',
     anthropic: 'https://api.anthropic.com/v1',
+    gemini: 'https://generativelanguage.googleapis.com/v1beta/openai',
 };
 
 /**
@@ -60,6 +62,10 @@ function modelSupportsTools(modelId: string): boolean {
     }
     // Known good models
     if (modelId.includes('gpt-') || modelId.includes('claude') || modelId.includes('devstral')) {
+        return true;
+    }
+    // Gemini models support function calling
+    if (modelId.includes('gemini')) {
         return true;
     }
     // Default to true but log warning
@@ -219,14 +225,16 @@ export const Route = createFileRoute('/api/chat')({
                         };
                     }
 
-                    // Create OpenAI-compatible adapter directly
-                    // TanStack AI v0.2.0: createOpenaiChat(model, apiKey, config)
-                    // Cast modelId as 'any' to allow arbitrary model strings
+                    // Create provider-specific adapter
+                    // TanStack AI v0.2.0: createOpenaiChat/createGeminiChat(model, apiKey, config)
+                    // FIX-2026-01-09: Added Gemini support using createGeminiChat
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const adapter = createOpenaiChat(modelId as any, apiKey, {
-                        baseURL,
-                        defaultHeaders,
-                    });
+                    const adapter = providerId === 'gemini' || providerId === 'google'
+                        ? createGeminiChat(modelId as any, apiKey)  // Gemini uses its own adapter
+                        : createOpenaiChat(modelId as any, apiKey, {
+                            baseURL,
+                            defaultHeaders,
+                        });
 
                     // Get tool definitions for LLM context
                     const tools = getTools();
