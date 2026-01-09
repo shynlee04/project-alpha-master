@@ -26,6 +26,10 @@ export const filterSuggestionItems = () => [];
 export const getDefaultReactSlashMenuItems = () => [];
 export const useBlockNote = () => ({});
 export const getBlockNote = () => ({});
+export const createReactBlockSpec = () => (() => ({}));
+export const defaultProps = { textAlignment: 'left' };
+export const BlockNoteSchema = { create: () => ({}) };
+export const defaultBlockSpecs = {};
 
 // XTerm Mocks
 export class Terminal {

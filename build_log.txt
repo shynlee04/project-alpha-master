@@ -1,0 +1,253 @@
+
+> project-alpha@ build /Users/apple/Documents/coding-projects/project-alpha-master
+> NODE_OPTIONS='--max-old-space-size=8192' DEPLOY_TARGET=node vite build
+
+vite v7.3.0 building client environment for production...
+transforming...
+
+/grid-pattern.svg referenced in /grid-pattern.svg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+/grid.svg referenced in /grid.svg didn't resolve at build time, it will remain unchanged to be resolved at runtime
+[plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/dpack@0.6.22/node_modules/dpack/lib/serialize-stream.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+[plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/dpack@0.6.22/node_modules/dpack/lib/parse-stream.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+node_modules/.pnpm/onnxruntime-web@1.14.0/node_modules/onnxruntime-web/dist/ort-web.min.js (6:62546): Use of eval in "node_modules/.pnpm/onnxruntime-web@1.14.0/node_modules/onnxruntime-web/dist/ort-web.min.js" is strongly discouraged as it poses security risks and may cause issues with minification.
+✓ 8253 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/layout/TerminalPanel.tsx is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/layout/MobileIDELayout.tsx but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/layout/IDELayout/IDETerminalPanel.tsx, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/canvas/canvas-db.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/canvas/canvas-utils.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/canvas-store.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/canvas/slices/canvas-io-slice.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/canvas/slices/canvas-multi-slice.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/canvas/slices/canvas-persistence-slice.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/notes/types.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/notes/slices/note-crud-slice.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/notes/index.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/notes/slices/note-crud-slice.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/workspace/index.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/common/WorkspaceSwitcher.tsx, /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/FileTree/FileTree.tsx, /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/FileTree/FileTreeItem.tsx, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/filesystem/handle-utils.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/filesystem/file-ops.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/filesystem/file-ops.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/workflow-persistence.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/workflow/builder/workflow-builder-store-refactored.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/workflow/builder/slices/workflow-persistence-slice.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/handle-utils.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/dir-ops.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/dir-ops.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/dir-ops.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/file-ops.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/dir-ops.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/file-ops.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/index.ts, dynamic import will not move module into another chunk.
+
+[plugin vite:reporter] 
+(!) /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/filesystem/permission-lifecycle.ts is dynamically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/lib/workspace/project-store/project-permissions-slice.ts but also statically imported by /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/filesystem/index.ts, /Users/apple/Documents/coding-projects/project-alpha-master/src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/client/assets/inter-v12-latin-100-BQDzDElq.woff2                      16.55 kB
+dist/client/assets/inter-v12-latin-regular-YtgfLPRn.woff2                  16.71 kB
+dist/client/assets/inter-v12-latin-900-CMga-52B.woff2                      17.18 kB
+dist/client/assets/inter-v12-latin-300-DEbyFmpd.woff2                      17.33 kB
+dist/client/assets/inter-v12-latin-200-BxfrU12A.woff2                      17.34 kB
+dist/client/assets/inter-v12-latin-500-DfX5FI9E.woff2                      17.55 kB
+dist/client/assets/inter-v12-latin-600-BvOeHRLc.woff2                      17.66 kB
+dist/client/assets/inter-v12-latin-800-Bdy4lAMa.woff2                      17.76 kB
+dist/client/assets/inter-v12-latin-700-Bj1B9WKG.woff2                      17.78 kB
+dist/client/assets/inter-v12-latin-100-46Mq0mOp.woff                       21.24 kB
+dist/client/assets/inter-v12-latin-regular-CahmJf_6.woff                   21.42 kB
+dist/client/assets/inter-v12-latin-900-ORHAl5ZU.woff                       21.98 kB
+dist/client/assets/inter-v12-latin-300-f7r92Nkj.woff                       22.16 kB
+dist/client/assets/inter-v12-latin-200-DXfqWPZg.woff                       22.24 kB
+dist/client/assets/inter-v12-latin-500-BQ2gQN_M.woff                       22.52 kB
+dist/client/assets/inter-v12-latin-600-D01NXWOK.woff                       22.64 kB
+dist/client/assets/inter-v12-latin-700-B5TOIllR.woff                       22.68 kB
+dist/client/assets/inter-v12-latin-800-DFVvDWwT.woff                       22.71 kB
+dist/client/assets/note-embedding.worker-Bul8mVF7.js                      812.45 kB
+dist/client/assets/XTerminal-DDGTF8rc.css                                   3.62 kB │ gzip:     0.99 kB
+dist/client/assets/UnifiedChatPanel-BZV40eAE.css                           15.85 kB │ gzip:     2.66 kB
+dist/client/assets/NoteEditor-B0uANyij.css                                223.05 kB │ gzip:    35.68 kB
+dist/client/assets/styles-DpF7TzuQ.css                                    225.36 kB │ gzip:    32.29 kB
+dist/client/assets/clone-DIxK8kc6.js                                        0.09 kB │ gzip:     0.11 kB
+dist/client/assets/channel-D0BLgAYv.js                                      0.11 kB │ gzip:     0.13 kB
+dist/client/assets/plus-CRghIDg_.js                                         0.15 kB │ gzip:     0.15 kB
+dist/client/assets/cloud-vc_Lm3r_.js                                        0.16 kB │ gzip:     0.16 kB
+dist/client/assets/terminal-DcsxNgYa.js                                     0.16 kB │ gzip:     0.16 kB
+dist/client/assets/arrow-left-CSgxnjS2.js                                   0.17 kB │ gzip:     0.16 kB
+dist/client/assets/___vite-browser-external_commonjs-proxy-DAH35vSC.js      0.18 kB │ gzip:     0.17 kB
+dist/client/assets/circle-check-CLOBkoDQ.js                                 0.18 kB │ gzip:     0.17 kB
+dist/client/assets/chunk-QZHKN3VN-95EvXPhI.js                               0.19 kB │ gzip:     0.16 kB
+dist/client/assets/user-BTS1YW9O.js                                         0.20 kB │ gzip:     0.18 kB
+dist/client/assets/code-xml-D4s1xgvE.js                                     0.21 kB │ gzip:     0.17 kB
+dist/client/assets/upload-DsSqAxYc.js                                       0.23 kB │ gzip:     0.19 kB
+dist/client/assets/chunk-4BX2VUAB-COJKpfwv.js                               0.23 kB │ gzip:     0.17 kB
+dist/client/assets/message-square-CVA4h05C.js                               0.23 kB │ gzip:     0.20 kB
+dist/client/assets/pen-ZzasKyWY.js                                          0.23 kB │ gzip:     0.20 kB
+dist/client/assets/copy-CQX1TuI3.js                                         0.24 kB │ gzip:     0.21 kB
+dist/client/assets/image-DgY9wImg.js                                        0.27 kB │ gzip:     0.22 kB
+dist/client/assets/book-open-CSBAi7_v.js                                    0.27 kB │ gzip:     0.20 kB
+dist/client/assets/house-ChmXQG-X.js                                        0.28 kB │ gzip:     0.21 kB
+dist/client/assets/chunk-55IACEB6-BDiDQFQC.js                               0.28 kB │ gzip:     0.24 kB
+dist/client/assets/folder-open-igx1MCTI.js                                  0.29 kB │ gzip:     0.22 kB
+dist/client/assets/graduation-cap-C0ArpPUX.js                               0.33 kB │ gzip:     0.24 kB
+dist/client/assets/chunk-FMBD7UC4-BVXHr2EH.js                               0.37 kB │ gzip:     0.27 kB
+dist/client/assets/init-Dmth1JHB.js                                         0.38 kB │ gzip:     0.19 kB
+dist/client/assets/hard-drive-1057-zED.js                                   0.39 kB │ gzip:     0.26 kB
+dist/client/assets/file-image-DnR9JKPa.js                                   0.40 kB │ gzip:     0.27 kB
+dist/client/assets/rocket-CkRZu8HP.js                                       0.46 kB │ gzip:     0.31 kB
+dist/client/assets/star-CK6QkSBW.js                                         0.47 kB │ gzip:     0.29 kB
+dist/client/assets/chunk-QN33PNHL-B_9MctWL.js                               0.51 kB │ gzip:     0.36 kB
+dist/client/assets/tag-Bv-3ERaE.js                                          0.53 kB │ gzip:     0.35 kB
+dist/client/assets/useAgents-Dnq4buJl.js                                    0.55 kB │ gzip:     0.31 kB
+dist/client/assets/stateDiagram-v2-4FDKWEC3-CLkx5Zua.js                     0.58 kB │ gzip:     0.37 kB
+dist/client/assets/min-BqXSOIRr.js                                          0.59 kB │ gzip:     0.37 kB
+dist/client/assets/classDiagram-2ON5EDUG-CwSud0Dn.js                        0.61 kB │ gzip:     0.39 kB
+dist/client/assets/classDiagram-v2-WZHVMYZB-CwSud0Dn.js                     0.61 kB │ gzip:     0.39 kB
+dist/client/assets/index-DMb1xWpz.js                                        0.64 kB │ gzip:     0.38 kB
+dist/client/assets/cpu-CbKVcOeV.js                                          0.64 kB │ gzip:     0.29 kB
+dist/client/assets/indexeddb-storage-BKfYBBYF.js                            0.69 kB │ gzip:     0.42 kB
+dist/client/assets/file-text-Cifg6PqP.js                                    0.70 kB │ gzip:     0.30 kB
+dist/client/assets/workspace-detector-BL9VnNwi.js                           0.72 kB │ gzip:     0.40 kB
+dist/client/assets/infoDiagram-WHAUD3N6-CvPkzOo2.js                         0.84 kB │ gzip:     0.52 kB
+dist/client/assets/mic-2Cy5zvpL.js                                          0.84 kB │ gzip:     0.42 kB
+dist/client/assets/agents-vPZlboaG.js                                       1.03 kB │ gzip:     0.59 kB
+dist/client/assets/study._projectId.lazy-D_d0tOtX.js                        1.05 kB │ gzip:     0.58 kB
+dist/client/assets/index-BegbcEq0.js                                        1.05 kB │ gzip:     0.56 kB
+dist/client/assets/knowledge._projectId.lazy-B0EwRhVl.js                    1.09 kB │ gzip:     0.59 kB
+dist/client/assets/hub-BIf6mBZ6.js                                          1.12 kB │ gzip:     0.59 kB
+dist/client/assets/index-Cyd-ItEq.js                                        1.13 kB │ gzip:     0.56 kB
+dist/client/assets/ordinal-DILIJJjt.js                                      1.20 kB │ gzip:     0.58 kB
+dist/client/assets/chunk-TZMSLE5B-Cx2KU9f_.js                               1.44 kB │ gzip:     0.63 kB
+dist/client/assets/dexie-react-hooks-CIfPVofw.js                            1.52 kB │ gzip:     0.72 kB
+dist/client/assets/band-CquvqAHh.js                                         1.54 kB │ gzip:     0.67 kB
+dist/client/assets/input-B7fJzaDc.js                                        1.83 kB │ gzip:     0.74 kB
+dist/client/assets/_projectId-6pdHhLTm.js                                   1.99 kB │ gzip:     1.06 kB
+dist/client/assets/ide._projectId-C-MISSqR.js                               2.16 kB │ gzip:     1.13 kB
+dist/client/assets/knowledge.lazy-Bb60xtku.js                               2.46 kB │ gzip:     0.88 kB
+dist/client/assets/study.lazy-CsUVkRVR.js                                   2.47 kB │ gzip:     0.90 kB
+dist/client/assets/ProjectContext-DL8xmxWG.js                               2.48 kB │ gzip:     0.95 kB
+dist/client/assets/debug-FCAj5_Il.js                                        2.49 kB │ gzip:     1.21 kB
+dist/client/assets/sample-conversations-r1huAQAN.js                         2.88 kB │ gzip:     1.48 kB
+dist/client/assets/ErrorBoundary-TNsjOVDK.js                                3.17 kB │ gzip:     1.18 kB
+dist/client/assets/test-error-boundary-3gSWS41o.js                          3.26 kB │ gzip:     1.03 kB
+dist/client/assets/arc-CTUbLtA8.js                                          3.42 kB │ gzip:     1.46 kB
+dist/client/assets/useIDEStore-B6MOMz5C.js                                  4.13 kB │ gzip:     1.45 kB
+dist/client/assets/diagram-S2PKOQOG-DmKa2PU7.js                             4.46 kB │ gzip:     1.95 kB
+dist/client/assets/ThemeToggle-dUp9A4yG.js                                  4.52 kB │ gzip:     1.94 kB
+dist/client/assets/defaultLocale-C4B-KCzX.js                                4.55 kB │ gzip:     2.13 kB
+dist/client/assets/linear-CfFviIJb.js                                       4.76 kB │ gzip:     1.96 kB
+dist/client/assets/index-DvJAI-39.js                                        5.30 kB │ gzip:     2.28 kB
+dist/client/assets/test-fs-adapter-B1oF8tAH.js                              5.30 kB │ gzip:     1.62 kB
+dist/client/assets/pieDiagram-ADFJNKIX-CTvTf_k4.js                          5.39 kB │ gzip:     2.39 kB
+dist/client/assets/ChatPanelWrapper-BX3TB1NE.js                             5.52 kB │ gzip:     1.72 kB
+dist/client/assets/diagram-QEK2KX5R-DAHJdBjN.js                             6.06 kB │ gzip:     2.57 kB
+dist/client/assets/slash-command-store-Cws3MZC5.js                          6.47 kB │ gzip:     2.75 kB
+dist/client/assets/index-DR11wnkb.js                                        6.54 kB │ gzip:     2.20 kB
+dist/client/assets/projects-CP1PUgiW.js                                     6.96 kB │ gzip:     2.57 kB
+dist/client/assets/shortcuts-_DTO3Jo3.js                                    7.19 kB │ gzip:     2.66 kB
+dist/client/assets/notes.lazy-D3qpqvzs.js                                   7.21 kB │ gzip:     2.56 kB
+dist/client/assets/AgentsPanel-BKGbx8KQ.js                                  7.71 kB │ gzip:     2.93 kB
+dist/client/assets/_baseUniq-By45Yois.js                                    8.48 kB │ gzip:     3.53 kB
+dist/client/assets/MainLayout-B57pUkjG.js                                   9.09 kB │ gzip:     2.95 kB
+dist/client/assets/ide-GIkD0zsh.js                                          9.30 kB │ gzip:     3.43 kB
+dist/client/assets/graph-BFYasn2g.js                                        9.37 kB │ gzip:     3.20 kB
+dist/client/assets/value-Dbnx7tlR.js                                        9.52 kB │ gzip:     4.06 kB
+dist/client/assets/stateDiagram-FKZM4ZOC-OQja_KwN.js                       10.57 kB │ gzip:     3.73 kB
+dist/client/assets/migrate-api-keys-to-vault-BisdPThV.js                   10.59 kB │ gzip:     3.04 kB
+dist/client/assets/dagre-6UL2VRFP-BDcOjvPM.js                              11.18 kB │ gzip:     4.19 kB
+dist/client/assets/step-wNkEhWaM.js                                        11.34 kB │ gzip:     3.11 kB
+dist/client/assets/time-CzqEh-Uy.js                                        15.14 kB │ gzip:     4.92 kB
+dist/client/assets/diagram-PSM6KHXK-DZxlaiKs.js                            16.02 kB │ gzip:     5.74 kB
+dist/client/assets/index-IJgfmq3j.js                                       17.55 kB │ gzip:     5.38 kB
+dist/client/assets/kanban-definition-3W4ZIXB7-B2q9xBsW.js                  20.38 kB │ gzip:     7.25 kB
+dist/client/assets/mindmap-definition-VGOIOE7T-b2gn9TKa.js                 21.10 kB │ gzip:     7.38 kB
+dist/client/assets/sankeyDiagram-TZEHDZUN-nyoa7uKa.js                      22.30 kB │ gzip:     8.22 kB
+dist/client/assets/select-BkzKVekt.js                                      22.47 kB │ gzip:     7.73 kB
+dist/client/assets/journeyDiagram-XKPGCS4Q-D4u6yPa5.js                     23.73 kB │ gzip:     8.41 kB
+dist/client/assets/timeline-definition-IT6M3QCI-BONs-iVB.js                23.77 kB │ gzip:     8.31 kB
+dist/client/assets/gitGraphDiagram-NY62KEGX-BvYDDglS.js                    24.29 kB │ gzip:     7.51 kB
+dist/client/assets/SnippetManager-Im_3K8Gl.js                              25.11 kB │ gzip:     6.98 kB
+dist/client/assets/erDiagram-Q2GNP2WA-6PIP2d53.js                          25.43 kB │ gzip:     8.92 kB
+dist/client/assets/layout-_2O31Qwt.js                                      29.29 kB │ gzip:    10.52 kB
+dist/client/assets/requirementDiagram-UZGBJVZJ-CbNQil8u.js                 30.27 kB │ gzip:     9.52 kB
+dist/client/assets/FileTree-DqXdtbKj.js                                    33.24 kB │ gzip:    10.82 kB
+dist/client/assets/index-DfZ1fheY.js                                       33.39 kB │ gzip:    12.95 kB
+dist/client/assets/quadrantDiagram-AYHSOK5B-CXDgfre_.js                    34.03 kB │ gzip:    10.04 kB
+dist/client/assets/chunk-DI55MBZ5-4nv8BR5H.js                              36.34 kB │ gzip:    11.85 kB
+dist/client/assets/xychartDiagram-PRI3JC2R-JTqtKsO2.js                     39.17 kB │ gzip:    11.07 kB
+dist/client/assets/chunk-B4BG7PRW-7xGXgb3g.js                              45.37 kB │ gzip:    14.73 kB
+dist/client/assets/ganttDiagram-JELNMOA3-DWSqEBRr.js                       53.65 kB │ gzip:    18.71 kB
+dist/client/assets/progress-Dp5ZjZJH.js                                    55.81 kB │ gzip:    16.59 kB
+dist/client/assets/flowDiagram-NV44I4VS-BpTdje00.js                        60.64 kB │ gzip:    19.53 kB
+dist/client/assets/WorkspaceBindingDialog-DfDVtCCY.js                      63.92 kB │ gzip:    14.79 kB
+dist/client/assets/index-CEjnbgur.js                                       69.20 kB │ gzip:    21.54 kB
+dist/client/assets/c4Diagram-YG6GDRKO-6zdI4iZT.js                          70.33 kB │ gzip:    19.77 kB
+dist/client/assets/IDELayoutMain-lLzUT_p8.js                               71.47 kB │ gzip:    18.08 kB
+dist/client/assets/blockDiagram-VD42YOAC-CsemTafx.js                       71.98 kB │ gzip:    20.59 kB
+dist/client/assets/module-RjUF93sV.js                                      77.27 kB │ gzip:    27.77 kB
+dist/client/assets/settings-BrMXoY0y.js                                    80.79 kB │ gzip:    20.41 kB
+dist/client/assets/cose-bilkent-S5V4N54A-isA1lq_o.js                       81.89 kB │ gzip:    22.57 kB
+dist/client/assets/notes._projectId.lazy-buOMJ9nb.js                       82.65 kB │ gzip:    24.76 kB
+dist/client/assets/sequenceDiagram-WL72ISMW-fFyCVwjJ.js                    97.99 kB │ gzip:    26.94 kB
+dist/client/assets/about.lazy-CUU8SzKi.js                                 128.14 kB │ gzip:    41.43 kB
+dist/client/assets/architectureDiagram-VXUJARFQ-D1F-2zow.js               148.79 kB │ gzip:    42.14 kB
+dist/client/assets/index-DgeYFYcO.js                                      247.65 kB │ gzip:    49.61 kB
+dist/client/assets/terminal-tools-impl-CBCaXRuA.js                        248.13 kB │ gzip:    77.93 kB
+dist/client/assets/katex-XbL3y5x-.js                                      265.42 kB │ gzip:    77.51 kB
+dist/client/assets/resizable-Bb2Fv86k.js                                  280.72 kB │ gzip:    77.47 kB
+dist/client/assets/HubHomePage-DxRQxF0F.js                                324.94 kB │ gzip:    96.35 kB
+dist/client/assets/XTerminal-DagBrO2f.js                                  336.82 kB │ gzip:    86.01 kB
+dist/client/assets/treemap-KMMF4GRG-Bb7VokfD.js                           354.65 kB │ gzip:    89.02 kB
+dist/client/assets/UnifiedChatPanel-I0XOeZkz.js                           373.71 kB │ gzip:   111.69 kB
+dist/client/assets/native-48B9X9Wg.js                                     432.75 kB │ gzip:    82.80 kB
+dist/client/assets/cytoscape.esm-5J0xJHOV.js                              441.64 kB │ gzip:   141.47 kB
+dist/client/assets/mermaid.core-4d3rZSaG.js                               443.18 kB │ gzip:   123.07 kB
+dist/client/assets/NoteEditor-B8vIJ-Yu.js                               1,240.07 kB │ gzip:   377.09 kB
+dist/client/assets/main-DVcl9eOZ.js                                     1,290.82 kB │ gzip:   394.48 kB
+dist/client/assets/index-eBn6euZP.js                                    3,672.78 kB │ gzip: 1,053.21 kB
+
+(!) Some chunks are larger than 600 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 50.53s
+vite v7.3.0 building ssr environment for production...
+transforming...
+[SSR-ALIAS] Excluding exact match: @blocknote/react
+[SSR-ALIAS] Excluding exact match: @blocknote/mantine
+[SSR-ALIAS] Excluding exact match: @blocknote/core
+[SSR-ALIAS] Excluding prefix match: @blocknote/mantine/style.css
+[SSR-ALIAS] Excluding prefix match: @blocknote/core/fonts/inter.css
+[SSR-ALIAS] Excluding exact match: @blocknote/core
+[SSR-ALIAS] Excluding exact match: @blocknote/react
+[SSR-ALIAS] Excluding exact match: @blocknote/core
+[SSR-ALIAS] Excluding exact match: @blocknote/react
+[SSR-ALIAS] Excluding exact match: @blocknote/react
+[SSR-ALIAS] Excluding exact match: @blocknote/core
+[SSR-ALIAS] Excluding exact match: @blocknote/react
+[SSR-ALIAS] Excluding exact match: recharts
+[SSR-ALIAS] Excluding exact match: mermaid
+[SSR-ALIAS] Excluding exact match: @monaco-editor/react
+[SSR-ALIAS] Excluding exact match: @webcontainer/api
+[SSR-ALIAS] Excluding exact match: @xenova/transformers
+[SSR-ALIAS] Excluding exact match: @xenova/transformers
+[SSR-ALIAS] Excluding exact match: @xyflow/react
+[SSR-ALIAS] Excluding prefix match: @xyflow/react/dist/style.css
+[SSR-ALIAS] Excluding exact match: @xyflow/react
+✓ 937 modules transformed.
+✗ Build failed in 4.88s
+error during build:
+src/presentation/components/notes/NoteEditor.tsx (20:9): "BlockNoteSchema" is not exported by "src/lib/mocks/empty.ts", imported by "src/presentation/components/notes/NoteEditor.tsx".
+file: /Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/notes/NoteEditor.tsx:20:9
+
+18: import { useCreateBlockNote } from '@blocknote/react';
+19: import { BlockNoteView } from '@blocknote/mantine';
+20: import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
+             ^
+21: import '@blocknote/mantine/style.css';
+22: import '@blocknote/core/fonts/inter.css';
+
+    at getRollupError (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/parseAst.js:401:41)
+    at error (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/parseAst.js:397:42)
+    at Module.error (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:17022:16)
+    at Module.traceVariable (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:17478:29)
+    at ModuleScope.findVariable (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:15141:39)
+    at MemberExpression.bind (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:7406:49)
+    at CallExpression.bind (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:2829:23)
+    at CallExpression.bind (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:12172:15)
+    at VariableDeclarator.bind (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:2829:23)
+    at VariableDeclaration.bind (file:///Users/apple/Documents/coding-projects/project-alpha-master/node_modules/.pnpm/rollup@4.54.0/node_modules/rollup/dist/es/shared/node-entry.js:2825:28)
+ ELIFECYCLE  Command failed with exit code 1.
