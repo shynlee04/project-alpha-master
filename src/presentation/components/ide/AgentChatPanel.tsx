@@ -17,6 +17,8 @@ import { useAutoApproveStore } from '@/infrastructure/persistence/stores/auto-ap
 import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAgents } from '@/hooks/useAgents';
 import { getCodingAgentSystemPrompt, getNotesAgentSystemPrompt } from '@/lib/agent/system-prompt';
+import { useActiveNote } from '@/lib/notes/note-store';
+import { retrieveNoteContent } from '@/lib/context/NoteContentRetriever';
 // E1-8: Workspace-specific chat settings
 import { useWorkspaceChatSettings } from '@/infrastructure/persistence/stores/chat';
 /**
@@ -107,16 +109,37 @@ export function AgentChatPanel({
         workspaceType
     });
 
-    // Get workspace-specific system prompt
+    // Get active note when in notes workspace
+    const activeNote = workspaceType === 'notes' ? useActiveNote() : null;
+
+    // Get workspace-specific system prompt with note content
     const systemPrompt = useMemo(() => {
-        const context = workspaceType === 'notes'
+        let context = workspaceType === 'notes'
             ? `Notebook: ${projectName}`
             : `Project: ${projectName}`;
+
+        // FIX: Add active note content to context when in notes workspace
+        if (workspaceType === 'notes' && activeNote) {
+            const noteContent = retrieveNoteContent(activeNote.blocks, {
+                filterSensitive: true,
+                includeMetadata: false
+            });
+
+            if (noteContent.fullText.trim().length > 0) {
+                // Add note content to context (truncate if too large)
+                const maxContentLength = 8000; // Limit to prevent context overflow
+                const truncatedContent = noteContent.fullText.length > maxContentLength
+                    ? noteContent.fullText.substring(0, maxContentLength) + '\n\n... (content truncated)'
+                    : noteContent.fullText;
+
+                context += `\n\n## ACTIVE NOTE CONTENT\nTitle: ${activeNote.title || 'Untitled'}\n\n${truncatedContent}`;
+            }
+        }
 
         return workspaceType === 'notes'
             ? getNotesAgentSystemPrompt(context)
             : getCodingAgentSystemPrompt(context);
-    }, [projectName, workspaceType]);
+    }, [projectName, workspaceType, activeNote]);
 
     // Use the real TanStack AI hook with tools
     const {

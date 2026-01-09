@@ -174,7 +174,7 @@ export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose })
             </h2>
             <button
               onClick={onClose}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="h-11 w-11 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors rounded-none"
               aria-label={t('featureSearch.close')}
             >
               <X className="w-5 h-5" />
@@ -197,7 +197,7 @@ export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose })
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-2 top-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="h-11 w-11 absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors rounded-none"
                   aria-label={t('featureSearch.clear')}
                 >
                   <X className="w-4 h-4" />

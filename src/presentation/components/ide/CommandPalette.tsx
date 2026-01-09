@@ -200,7 +200,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                   className="group relative flex cursor-pointer select-none items-center rounded-sm px-3 py-2 text-sm outline-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 hover:bg-accent hover:text-accent-foreground aria-selected:bg-accent aria-selected:text-accent-foreground"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded bg-secondary">
+                    {/* Touch target compliant icon wrapper (44x44px) */}
+                    <div className="flex h-11 w-11 items-center justify-center rounded-none bg-secondary">
                       {command.icon}
                     </div>
                     <div className="flex flex-1 flex-col">

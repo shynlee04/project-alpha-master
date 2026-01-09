@@ -5,20 +5,23 @@
  *
  * Features:
  * - Import project files as notes
+ * - Preview images and PDFs directly
  * - P1.5-02: Create new files/folders via toolbar buttons
  * - File tree with context menu for CRUD operations
  * - Sync status indicators
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { FileTree } from '@/presentation/components/ide/FileTree/FileTree';
 import { useNoteStore } from '@/lib/notes/note-store';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { Import, Loader2, FilePlus, FolderPlus } from 'lucide-react';
+import { Import, Loader2, FilePlus, FolderPlus, X, FileImage, FileText, Download } from 'lucide-react';
 import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { Button } from '@/presentation/components/ui/button';
 import { FileOperationDialog } from '@/presentation/components/ide/FileTree/FileOperationDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/presentation/components/ui/dialog';
+import { Badge } from '@/presentation/components/ui/badge';
 
 // P1.5-02: Dialog state for file/folder creation
 interface CreateDialogState {
@@ -27,9 +30,36 @@ interface CreateDialogState {
 }
 
 /**
+ * File preview dialog state
+ */
+interface PreviewState {
+    open: boolean;
+    file: File | null;
+    fileType: 'image' | 'pdf' | 'other' | null;
+    fileName: string;
+}
+
+/**
+ * File type categories
+ */
+const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.ico'];
+const PDF_EXTENSIONS = ['.pdf'];
+
+/**
+ * Get file category from extension
+ */
+function getFileCategory(fileName: string): 'image' | 'pdf' | 'text' | 'other' {
+    const ext = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+    if (IMAGE_EXTENSIONS.includes(ext)) return 'image';
+    if (PDF_EXTENSIONS.includes(ext)) return 'pdf';
+    return 'text'; // Default to text, will fail if binary
+}
+
+/**
  * ProjectFilesPanel - File browser for Notes workspace
  *
  * P1.5-02: Enhanced with file/folder creation toolbar
+ * File preview for images and PDFs
  */
 export function ProjectFilesPanel() {
     const { createNote, setActiveNote } = useNoteStore();
@@ -44,8 +74,16 @@ export function ProjectFilesPanel() {
     });
     const [refreshKey, setRefreshKey] = useState(0);
 
+    // File preview state
+    const [preview, setPreview] = useState<PreviewState>({
+        open: false,
+        file: null,
+        fileType: null,
+        fileName: '',
+    });
+
     /**
-     * Import a file as a note
+     * Import a file as a note (for text files)
      */
     const handleFileSelect = async (_path: string, handle: FileSystemFileHandle) => {
         if (handle.kind !== 'file') return;
@@ -54,12 +92,50 @@ export function ProjectFilesPanel() {
         try {
             setIsImporting(true);
             const file = await handle.getFile();
+            const fileCategory = getFileCategory(file.name);
 
+            // Handle image files - show preview
+            if (fileCategory === 'image') {
+                setPreview({
+                    open: true,
+                    file,
+                    fileType: 'image',
+                    fileName: file.name,
+                });
+                return;
+            }
+
+            // Handle PDF files - show preview
+            if (fileCategory === 'pdf') {
+                setPreview({
+                    open: true,
+                    file,
+                    fileType: 'pdf',
+                    fileName: file.name,
+                });
+                return;
+            }
+
+            // Handle text files - import as note
             let text = '';
             try {
                 text = await file.text();
             } catch (_e) {
-                toast.error(t('notes.import_error_binary', 'Cannot import binary file'));
+                // Binary file that's not image/PDF
+                toast.error(`Cannot import "${file.name}" as note. Only text files can be imported.`, {
+                    description: 'Images and PDFs can be previewed but not imported.',
+                    action: {
+                        label: 'Preview',
+                        onClick: () => {
+                            setPreview({
+                                open: true,
+                                file,
+                                fileType: 'other',
+                                fileName: file.name,
+                            });
+                        },
+                    },
+                });
                 return;
             }
 
@@ -155,6 +231,37 @@ export function ProjectFilesPanel() {
         }
     }, [directoryHandle, localAdapterRef, createDialog.type, t, handleCloseCreateDialog]);
 
+    /**
+     * Close preview dialog
+     */
+    const handleClosePreview = useCallback(() => {
+        setPreview({ open: false, file: null, fileType: null, fileName: '' });
+    }, []);
+
+    /**
+     * Download file
+     */
+    const handleDownload = useCallback(() => {
+        if (!preview.file) return;
+        const url = URL.createObjectURL(preview.file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = preview.fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success(`Downloaded ${preview.fileName}`);
+    }, [preview]);
+
+    /**
+     * Get preview URL
+     */
+    const previewUrl = useMemo(() => {
+        if (!preview.file) return '';
+        return URL.createObjectURL(preview.file);
+    }, [preview.file]);
+
     return (
         <div className="h-full flex flex-col bg-background">
             {/* P1.5-02: Enhanced header with create buttons */}
@@ -218,6 +325,78 @@ export function ProjectFilesPanel() {
                 onClose={handleCloseCreateDialog}
                 existingNames={[]}
             />
+
+            {/* File Preview Dialog */}
+            <Dialog open={preview.open} onOpenChange={(open) => !open && handleClosePreview()}>
+                <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden">
+                    <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                        <div className="flex items-center gap-2">
+                            {preview.fileType === 'image' && <FileImage className="w-5 h-5 text-blue-500" />}
+                            {preview.fileType === 'pdf' && <FileText className="w-5 h-5 text-red-500" />}
+                            {preview.fileType === 'other' && <FileText className="w-5 h-5 text-muted-foreground" />}
+                            <DialogTitle className="text-base font-medium">
+                                {preview.fileName}
+                            </DialogTitle>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {preview.fileType === 'image' && (
+                                <Badge variant="outline" className="text-xs">Image Preview</Badge>
+                            )}
+                            {preview.fileType === 'pdf' && (
+                                <Badge variant="outline" className="text-xs">PDF Preview</Badge>
+                            )}
+                            {preview.fileType === 'other' && (
+                                <Badge variant="outline" className="text-xs">Binary File</Badge>
+                            )}
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleDownload}
+                                className="h-8"
+                            >
+                                <Download size={14} className="mr-1" />
+                                Download
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleClosePreview}
+                                className="h-8 w-8 p-0"
+                            >
+                                <X size={16} />
+                            </Button>
+                        </div>
+                    </DialogHeader>
+
+                    <div className="flex-1 overflow-auto bg-muted/30 rounded-lg min-h-[300px] flex items-center justify-center">
+                        {preview.fileType === 'image' && previewUrl && (
+                            <img
+                                src={previewUrl}
+                                alt={preview.fileName}
+                                className="max-w-full max-h-[60vh] object-contain rounded"
+                            />
+                        )}
+                        {preview.fileType === 'pdf' && previewUrl && (
+                            <iframe
+                                src={previewUrl}
+                                title={preview.fileName}
+                                className="w-full h-[60vh] rounded border-0"
+                            />
+                        )}
+                        {preview.fileType === 'other' && (
+                            <div className="text-center p-8">
+                                <FileText size={48} className="mx-auto mb-4 text-muted-foreground" />
+                                <p className="text-sm text-muted-foreground mb-2">
+                                    This is a binary file that cannot be imported as a note.
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    You can download it using the button above.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

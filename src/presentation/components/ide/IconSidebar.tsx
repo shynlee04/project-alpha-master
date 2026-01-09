@@ -243,7 +243,7 @@ export function SidebarContent({
     )
 }
 
-// Sidebar Header (responsive: mobile h-8, tablet+ h-10)
+// Sidebar Header (responsive: mobile h-11 (44px), tablet+ h-10)
 export function SidebarHeader({
     title,
     actions
@@ -252,7 +252,7 @@ export function SidebarHeader({
     actions?: React.ReactNode
 }) {
     return (
-        <div className="flex items-center justify-between h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b border-border bg-secondary/30">
+        <div className="flex items-center justify-between h-11 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b border-border bg-secondary/30">
             <span className="text-xs md:text-sm font-pixel uppercase tracking-wider text-muted-foreground">
                 {title}
             </span>

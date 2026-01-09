@@ -187,7 +187,8 @@ export const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
               onClick={action.action}
               className="flex items-center gap-3 px-3 py-2 cursor-pointer rounded-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
             >
-              <div className="flex items-center justify-center w-6 h-6 rounded bg-secondary">
+              {/* Touch target compliant icon wrapper (44x44px) */}
+              <div className="flex items-center justify-center h-11 w-11 rounded-none bg-secondary">
                 {action.icon}
               </div>
               <span className="flex-1 text-sm">{action.label}</span>

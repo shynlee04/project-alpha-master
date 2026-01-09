@@ -26,9 +26,10 @@ const switchVariants = cva(
   {
     variants: {
       size: {
-        sm: "h-5 w-9",
-        md: "h-6 w-11",
-        lg: "h-7 w-14",
+        // Touch target compliant sizes (minimum 44x44px)
+        sm: "h-8 w-11 min-h-[44px] min-w-[44px]",
+        md: "h-8 w-14 min-h-[44px] min-w-[44px]",
+        lg: "h-8 w-16 min-h-[44px] min-w-[44px]",
       },
       state: {
         default: "data-[state=checked]:bg-[var(--primary)] data-[state=unchecked]:bg-[var(--muted)] focus-visible:ring-[var(--primary)]",
@@ -49,9 +50,10 @@ const switchThumbVariants = cva(
   {
     variants: {
       size: {
-        sm: "h-4 w-4 data-[state=checked]:translate-x-4",
-        md: "h-5 w-5 data-[state=checked]:translate-x-5",
-        lg: "h-6 w-6 data-[state=checked]:translate-x-7",
+        // Touch target compliant sizes (minimum 44x44px)
+        sm: "h-6 w-6 data-[state=checked]:translate-x-3",
+        md: "h-6 w-6 data-[state=checked]:translate-x-6",
+        lg: "h-6 w-7 data-[state=checked]:translate-x-8",
       },
     },
     defaultVariants: {

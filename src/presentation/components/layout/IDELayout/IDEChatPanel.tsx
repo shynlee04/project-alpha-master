@@ -47,7 +47,7 @@ export function IDEChatPanel({
 }: IDEChatPanelProps) {
     return (
         <Card id="chat-panel" className="h-full rounded-none border-0 bg-background" tabIndex={-1}>
-            <CardHeader className="h-8 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
+            <CardHeader className="h-11 md:h-10 px-3 md:px-4 py-1.5 md:py-2 border-b flex items-center bg-card">
                 <CardTitle className="text-xs md:text-sm font-semibold text-foreground">Chat</CardTitle>
             </CardHeader>
             <CardContent className="p-0 flex-1 min-h-0">
