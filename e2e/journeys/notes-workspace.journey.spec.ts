@@ -303,3 +303,96 @@ test.describe('Notes Workspace: Performance', () => {
         expect(renderTime).toBeLessThan(3000);
     });
 });
+
+/**
+ * Phase 1.5 Correction Tests (2026-01-09)
+ *
+ * Tests for sprint corrections:
+ * - R1: File panel visible in Notes sidebar
+ * - R4: Model selection visible in Settings
+ * - R7: Error toasts appear on failures
+ */
+test.describe('Phase 1.5 Corrections: Notes Workspace', () => {
+    let notesPage: NotesPage;
+
+    test.beforeEach(async ({ page }) => {
+        notesPage = new NotesPage(page);
+        await notesPage.goto();
+    });
+
+    /**
+     * R1 Verification: File panel visible in Notes sidebar
+     *
+     * @see https://github.com/via-gentium/project-alpha/issues/phase-1.5-correction
+     */
+    test('PH1.5-R1: File panel is visible in Notes sidebar', async () => {
+        // Verify the file panel (ProjectFilesPanel) exists in the sidebar
+        const filePanel = notesPage.page.locator('[data-testid="project-files-panel"]').first();
+        await expect(filePanel).toBeVisible();
+
+        // Verify it has a file list or empty state
+        const fileList = filePanel.locator('[data-testid="file-list"], [data-testid="empty-state"]');
+        await expect(fileList).toBeVisible();
+    });
+
+    /**
+     * R4 Verification: Model selection works in Settings
+     *
+     * @see https://github.com/via-gentium/project-alpha/issues/phase-1.5-correction
+     */
+    test('PH1.5-R4: Model selection visible in Provider settings', async ({ page }) => {
+        // Navigate to settings
+        await page.goto('/settings');
+
+        // Find provider settings section
+        const providerSection = page.locator('[data-testid="provider-settings"]').first();
+        await expect(providerSection).toBeVisible();
+
+        // Verify model dropdown exists for each configured provider
+        const modelDropdowns = providerSection.locator('[data-testid="model-selector"]');
+        const count = await modelDropdowns.count();
+
+        // At least one provider should have model selector visible
+        expect(count).toBeGreaterThan(0);
+    });
+
+    /**
+     * R7 Verification: Error toasts appear on failures
+     *
+     * @see https://github.com/via-gentium/project-alpha/issues/phase-1.5-correction
+     */
+    test('PH1.5-R7: Error toasts display for failed operations', async ({ page }) => {
+        // Mock a failed operation by intercepting the API
+        await page.route('**/api/notes**', route => route.fulfill({
+            status: 500,
+            contentType: 'application/json',
+            body: JSON.stringify({ error: 'Test error for validation' }),
+        }));
+
+        // Try to create a note (should fail with toast)
+        const createButton = page.locator('[data-testid="create-note-button"], button:has-text("New Note")').first();
+        await createButton.click();
+
+        // Verify error toast appears
+        const errorToast = page.locator('[data-testid="toast-error"], .toast.error, [role="alert"]');
+        await expect(errorToast).toBeVisible({ timeout: 5000 });
+    });
+
+    /**
+     * IndexedDB Project Verification: Default notes project works
+     *
+     * @see https://github.com/via-gentium/project-alpha/issues/phase-1.5-correction
+     */
+    test('PH1.5-IDB: Default notes project uses IndexedDB storage', async ({ page }) => {
+        // Navigate to notes workspace
+        await page.goto('/notes');
+
+        // Verify the page loads without "No Folder Selected" overlay
+        const noFolderOverlay = page.locator('[data-testid="no-folder-overlay"]');
+        await expect(noFolderOverlay).not.toBeVisible({ timeout: 3000 });
+
+        // Verify notes list or empty state is shown
+        const notesList = page.locator('[data-testid="notes-list"], [data-testid="empty-notes"]');
+        await expect(notesList).toBeVisible();
+    });
+});

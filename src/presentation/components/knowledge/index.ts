@@ -30,3 +30,6 @@ export { StudyArtifactExportDialog } from './StudyArtifactExportDialog';
 
 // Main Knowledge Page
 export { KnowledgePage } from './KnowledgePage';
+
+// EPIC-MOBILE: Mobile Layout Components
+export { KnowledgeMobileLayout, KnowledgeMobileLayoutWithState } from './KnowledgeMobileLayout';

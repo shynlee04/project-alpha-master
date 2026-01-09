@@ -35,3 +35,6 @@ export { MultiModalImport } from './MultiModalImport';
 // NS-2026-01-07: Voice Recording Button
 export { VoiceRecordButton } from './VoiceRecordButton';
 
+// EPIC-MOBILE: Mobile Layout Components
+export { NotesMobileLayout, NotesMobileLayoutWithState } from './NotesMobileLayout';
+

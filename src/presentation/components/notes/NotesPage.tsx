@@ -19,6 +19,7 @@ import {
 } from '@/presentation/components/ui/resizable';
 import { Plus, Notebook, ArrowLeft, MessageSquare } from 'lucide-react';
 import { NoteSidebar } from './NoteSidebar';
+import { NotesMobileLayout } from './NotesMobileLayout';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
@@ -307,6 +308,9 @@ export function NotesPage() {
             }
         } catch (error) {
             console.error('Failed to create note:', error);
+            toast.error(t('notes.create_failed', 'Failed to create note'), {
+                description: error instanceof Error ? error.message : String(error),
+            });
         }
     };
 
@@ -314,16 +318,14 @@ export function NotesPage() {
         setActiveNote(noteId);
     };
 
-    const handleBackToList = () => {
-        setMobileView('list');
-        setActiveNote(null);
-    };
-
     const handleFavoriteToggle = async (noteId: string) => {
         try {
             await toggleFavorite(noteId);
         } catch (error) {
             console.error('Failed to toggle favorite:', error);
+            toast.error(t('notes.favorite_failed', 'Failed to update favorite'), {
+                description: error instanceof Error ? error.message : String(error),
+            });
         }
     };
 
@@ -369,8 +371,115 @@ export function NotesPage() {
         setIsImportDialogOpen(true);
     };
 
-    // Mobile Layout: Stacked list and editor views
+    // Mobile Layout: Use NotesMobileLayout component
+    // EPIC-MOBILE: MOBILE-INT-01 Integration
     if (isMobile) {
+        // Determine active content tab based on filter
+        const [activeContentTab, setActiveContentTab] = useState('all');
+        const [activeNavTab, setActiveNavTab] = useState('notes');
+
+        // Filter notes based on content tab
+        const filteredNotes = notesArray.filter((note: any) => {
+            if (activeContentTab === 'favorites') return note.isFavorite;
+            if (activeContentTab === 'tags') return note.tags && note.tags.length > 0;
+            return true;
+        });
+
+        // Render note list content
+        const renderNoteList = () => (
+            <div className="space-y-2">
+                {filteredNotes.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                        <Notebook className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>No notes yet</p>
+                        <p className="text-sm">Tap + to create your first note</p>
+                    </div>
+                ) : (
+                    filteredNotes.map((note: any) => (
+                        <div
+                            key={note.id}
+                            onClick={() => handleNoteSelect(note.id)}
+                            className="p-4 bg-card border border-border touch-target-min cursor-pointer"
+                        >
+                            <div className="flex items-start justify-between">
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span>{note.emoji || '📝'}</span>
+                                        <h3 className="font-medium truncate">{note.title || 'Untitled'}</h3>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground line-clamp-2">
+                                        {note.preview || 'No content'}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleFavoriteToggle(note.id);
+                                    }}
+                                    className="p-2 touch-target-min"
+                                >
+                                    {note.isFavorite ? (
+                                        <span className="text-yellow-500">⭐</span>
+                                    ) : (
+                                        <span className="text-muted-foreground">☆</span>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        );
+
+        // Render editor content
+        const renderEditor = () => (
+            <div className="h-full flex flex-col">
+                {/* Editor Header with Back Button */}
+                <div className="p-3 border-b border-border sticky top-0 bg-background z-10 flex items-center gap-2">
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setMobileView('list')}
+                        className="px-2"
+                    >
+                        <ArrowLeft size={18} />
+                    </Button>
+                    <div className="flex-1 min-w-0">
+                        <p className="font-mono text-sm font-bold truncate">
+                            {activeNote?.emoji} {activeNote?.title || 'Untitled'}
+                        </p>
+                    </div>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => activeNote && handleFavoriteToggle(activeNote.id)}
+                        className="px-2"
+                    >
+                        {activeNote?.isFavorite ? (
+                            <span className="text-yellow-500">⭐</span>
+                        ) : (
+                            <span className="text-muted-foreground">☆</span>
+                        )}
+                    </Button>
+                </div>
+
+                {/* Editor */}
+                <div className="flex-1 bg-background">
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center h-full">
+                            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+                        </div>
+                    }>
+                        <NoteEditor
+                            key={activeNote?.id || 'empty'}
+                            noteId={activeNote?.id || ''}
+                            className="h-full"
+                        />
+                    </Suspense>
+                </div>
+            </div>
+        );
+
         return (
             <MainLayout>
                 {/* S-007: Import Progress Overlay */}
@@ -424,83 +533,35 @@ export function NotesPage() {
                     </div>
                 )}
 
-                <div className="flex flex-col h-full overflow-y-auto">
-                    {mobileView === 'list' ? (
-                        <NoteSidebar
-                            notes={notesArray as any}
-                            activeNoteId={activeNoteId}
-                            onNoteSelect={handleNoteSelect}
-                            onCreateNote={handleCreateNote}
-                            onImport={handleImport}
-                            onExport={handleExport}
-                            onIndexForRAG={handleIndexForRAG}
-                            onFileSync={() => setIsFilePickerOpen(true)}
-                            agentSelectorSlot={
-                                <AgentManager
-                                    variant="compact"
-                                    workspaceType="notes"
-                                />
-                            }
-                            projectSelectorSlot={
-                                <ProjectSelector
-                                    projects={projects}
-                                    activeProject={activeProject}
-                                    onSelect={handleProjectSelect}
-                                    variant="default"
-                                    className="w-full"
-                                />
-                            }
-                            projectId={projectId}
-                            projectName={project?.name || projectId}
-                        />
-                    ) : (
-                        <>
-                            {/* Editor Header with Back Button */}
-                            <div className="p-3 border-b border-border sticky top-0 bg-background z-10 flex items-center gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={handleBackToList}
-                                    className="px-2"
-                                >
-                                    <ArrowLeft size={18} />
-                                </Button>
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-mono text-sm font-bold truncate">
-                                        {activeNote?.emoji} {activeNote?.title || 'Untitled'}
-                                    </p>
-                                </div>
-                                <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => activeNote && handleFavoriteToggle(activeNote.id)}
-                                    className="px-2"
-                                >
-                                    {activeNote?.isFavorite ? (
-                                        <span className="text-yellow-500">⭐</span>
-                                    ) : (
-                                        <span className="text-muted-foreground">☆</span>
-                                    )}
-                                </Button>
-                            </div>
-
-                            {/* Editor */}
-                            <div className="flex-1 bg-background">
-                                <Suspense fallback={
-                                    <div className="flex items-center justify-center h-full">
-                                        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-                                    </div>
-                                }>
-                                    <NoteEditor
-                                        key={activeNote?.id || 'empty'}
-                                        noteId={activeNote?.id || ''}
-                                        className="h-full"
-                                    />
-                                </Suspense>
-                            </div>
-                        </>
+                {/* Use NotesMobileLayout for consistent mobile UX */}
+                <NotesMobileLayout
+                    activeContentTab={activeContentTab}
+                    onContentTabChange={setActiveContentTab}
+                    activeNavTab={activeNavTab}
+                    onNavTabChange={setActiveNavTab}
+                    onCreateNote={handleCreateNote}
+                >
+                    {/* Render content based on nav tab */}
+                    {activeNavTab === 'notes' && (
+                        mobileView === 'list' ? renderNoteList() : renderEditor()
                     )}
-                </div>
+                    {activeNavTab === 'search' && (
+                        <div className="text-center py-12 text-muted-foreground">
+                            <p>Search coming soon</p>
+                        </div>
+                    )}
+                    {activeNavTab === 'ai' && (
+                        <div className="h-full">
+                            <UnifiedChatPanel
+                                mode="agent"
+                                projectId={projectId}
+                                projectName={project?.name || projectId}
+                                workspaceType="notes"
+                                className="h-full"
+                            />
+                        </div>
+                    )}
+                </NotesMobileLayout>
 
                 {/* Import Dialog */}
                 <MarkdownImportDialog
@@ -522,8 +583,7 @@ export function NotesPage() {
                     isSupported={isNotesSyncSupported}
                 />
 
-                {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-                {/* R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop */}
+                {/* Sync Status Panel */}
                 <div className="fixed bottom-4 right-4 z-50 w-96">
                     <SyncStatusPanel />
                 </div>

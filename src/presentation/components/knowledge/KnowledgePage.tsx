@@ -33,6 +33,8 @@ import { AgentManager } from '@/presentation/components/agent/AgentManager';
 import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
 import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
 import { useProjectContext } from '@/lib/workspace/ProjectContext';
+// EPIC-MOBILE: Mobile Layout Components
+import { KnowledgeMobileLayout } from './KnowledgeMobileLayout';
 // WB-8.3: Cross-workspace event subscriptions for state synchronization
 import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 

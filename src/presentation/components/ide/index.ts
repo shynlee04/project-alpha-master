@@ -50,6 +50,9 @@ export { SyncStatusIndicator } from './SyncStatusIndicator';
 export { CacheIndicator } from './CacheIndicator';
 export * from './hooks';
 
+// EPIC-MOBILE: Mobile Layout Components
+export { IDEMobileLayout } from './IDEMobileLayout';
+
 // Types
 export type { CommandItem } from './CommandPalette';
 export type { CommandPaletteProps } from './CommandPalette';

@@ -472,23 +472,128 @@ epics:
           - "Test suite validates no blur effects"
           - "Test suite validates border radius limits"
 
+    # EPIC-39: 8-BIT DESIGN COMPLIANCE (4/6 COMPLETE)
+    # Stories 39-01 through 39-04 COMPLETED
+    # Stories 39-05, 39-06 pending
+
+  EPIC-MOBILE:
+    id: "EPIC-MOBILE"
+    name: "Mobile UX Redesign"
+    priority: "P0-CRITICAL"
+    status: "IN_PROGRESS"
+    total_stories: 3
+    total_effort_hours: 16
+    description: "Implement mobile-first navigation patterns for Notes, Knowledge, and IDE workspaces"
+    
+    research_document: "_bmad-output/research-artifacts/mobile-ux-redesign-research-2026-01-09.md"
+    handoff_document: "_bmad-output/handoffs/mobile-ux-redesign-handoff-2026-01-09.md"
+    
+    stories:
+      MOBILE-01:
+        id: "MOBILE-01"
+        name: "Implement Tab-Based Navigation for NotesPage"
+        priority: "P0-CRITICAL"
+        status: "COMPLETE"
+        effort_hours: 4
+        completed_at: "2026-01-09T20:00:00+07:00"
+        files:
+          - "src/presentation/components/notes/NotesMobileLayout.tsx"
+          - "src/presentation/components/notes/NotesMobileLayoutWithState.tsx"
+        acceptance_criteria:
+          - "Bottom navigation bar with 3 tabs (Notes, Search, AI)"
+          - "Content tabs (All, Favorites, Tags)"
+          - "44px minimum touch targets"
+          - "Framer Motion transitions (200ms)"
+          - "Badge indicators for notifications"
+          - "Responsive from 320px to 430px width"
+        notes: |
+          Created standalone NotesMobileLayout component with:
+          - Tab-based navigation (bottom nav + content tabs)
+          - Framer Motion transitions
+          - 44px touch targets
+          - Integration ready for existing NotesPage
+        dependencies: []
+        files:
+          - "src/presentation/components/notes/NotesPage.tsx"
+          - "src/presentation/components/notes/NotesMobileLayout.tsx (new)"
+        acceptance_criteria:
+          - "Bottom navigation bar with 3 tabs (Notes, Search, AI)"
+          - "Content tabs (All, Favorites, Tags)"
+          - "44px minimum touch targets"
+          - "Framer Motion transitions (200ms)"
+          - "Badge indicators for notifications"
+          - "Responsive from 320px to 430px width"
+        
+      MOBILE-02:
+        id: "MOBILE-02"
+        name: "Implement Tab-Based Navigation for KnowledgePage"
+        priority: "P0-CRITICAL"
+        status: "PROPOSED"
+        effort_hours: 4
+        dependencies: []
+        files:
+          - "src/presentation/components/knowledge/KnowledgePage.tsx"
+          - "src/presentation/components/knowledge/KnowledgeMobileLayout.tsx (new)"
+        acceptance_criteria:
+          - "Bottom navigation bar with 3 tabs (Browse, Search, AI)"
+          - "Content tabs (Browse, Collections, Recent)"
+          - "Grid layout for sources display"
+          - "44px minimum touch targets"
+          - "Framer Motion transitions (200ms)"
+          - "Responsive from 320px to 430px width"
+        
+      MOBILE-03:
+        id: "MOBILE-03"
+        name: "Create Responsive IDE Mobile Layout with Bottom Sheet Panels"
+        priority: "P0-CRITICAL"
+        status: "PROPOSED"
+        effort_hours: 8
+        dependencies: []
+        files:
+          - "src/presentation/components/ide/IDEResizableLayout.tsx"
+          - "src/presentation/components/ide/IDEMobileLayout.tsx (new)"
+          - "src/presentation/components/ide/hooks/usePanelGestures.ts (new)"
+        acceptance_criteria:
+          - "Collapsible bottom panel (files, terminal)"
+          - "Panel tabs (Files, Terminal)"
+          - "Drag gestures for panel resize"
+          - "Snap points (collapsed, partial, expanded)"
+          - "Virtual keyboard awareness"
+          - "Responsive from 320px to 430px width"
+          - "60fps smooth animations"
+    
+    implementation_components:
+      - "NotesMobileLayout.tsx"
+      - "KnowledgeMobileLayout.tsx"
+      - "IDEMobileLayout.tsx"
+      - "usePanelGestures.ts hook"
+      - "useResponsiveBreakpoint.ts hook"
+      - "MobileDetection.tsx component"
+      - "mobile-tokens.css"
+    
+    dependencies_required:
+      - "framer-motion ^11.0.0"
+      - "@radix-ui/react-tabs ^1.0.0"
+      - "@radix-ui/react-dialog ^1.0.0"
+      - "react-use-gesture ^10.0.0"
+
 # ═══════════════════════════════════════════════════════════════════════════
 # PROGRESS METRICS
 # ═══════════════════════════════════════════════════════════════════════════
 
 metrics:
-  total_stories: 24  # Was 18, +6 from EPIC-39
+  total_stories: 27  # Was 24, +3 from EPIC-MOBILE
   stories_not_started: 17
-  stories_in_progress: 1  # 39-01 now in progress
-  stories_done: 0
+  stories_in_progress: 4  # 39-01, MOBILE-01, MOBILE-02, MOBILE-03
+  stories_done: 4  # 39-01, 39-02, 39-03, 39-04
   stories_blocked: 0
-  stories_proposed: 5  # EPIC-39 pending approval (39-01 moved to in_progress)
+  stories_proposed: 2  # 39-05, 39-06 pending
 
-  total_effort_hours: 37  # Was 24, +13 from EPIC-39
-  effort_completed: 1  # 1 hour spent on 39-01
-  effort_remaining: 36
+  total_effort_hours: 53  # Was 37, +16 from EPIC-MOBILE
+  effort_completed: 13  # 4 stories complete
+  effort_remaining: 40
 
-  completion_percentage: 2.7  # 1/37 hours
+  completion_percentage: 24.5  # 13/53 hours
 
   last_updated: "2026-01-09T18:30:00+07:00"
 
@@ -496,18 +601,35 @@ metrics:
   course_correction_epic: "EPIC-39"
   course_correction_date: "2026-01-09"
 
-  stories_completed: []
+  stories_completed:
+    - "39-01: Remove Transparency from Agent Selectors"
+    - "39-02: Remove Transparency from Chat Components"
+    - "39-03: Replace Rounded Corners with Squared"
+    - "39-04: Remove Blur Effects from Hero/Onboarding"
 
   implementation_notes: |
-    REAL IMPLEMENTATION STARTED 2026-01-09T18:30:00+07:00
+    EPIC-39 COMPLETED (4/6 STORIES) - 8-Bit Design Compliance
+    Completed: 2026-01-09
     
-    Story 39-01: Agent Selectors (IN PROGRESS)
+    Story 39-01: COMPLETE
     - Fixed: UnifiedAgentSelector.tsx (4 transparency violations)
     
-    Story 39-02: Chat Components (STARTED)
+    Story 39-02: COMPLETE
     - Fixed: ChatConversation.tsx (7+ violations)
     - Fixed: ChatHistory.tsx (2 violations)
-    - Remaining: MessageSearch.tsx, StreamdownRenderer.tsx, ThreadsList.tsx, ConversationCard.tsx
+    - Fixed: MessageSearch.tsx, StreamdownRenderer.tsx, ThreadsList.tsx, ConversationCard.tsx
+    
+    Story 39-03: COMPLETE
+    - Removed rounded-lg from 25+ UI component files
+    - Applied rounded-none for 8-bit squared aesthetic
+    
+    Story 39-04: COMPLETE
+    - Removed blur effects from HeroSection.tsx, Onboarding.tsx
+    
+    EPIC-MOBILE STARTED (2026-01-09)
+    - Research document: _bmad-output/research-artifacts/mobile-ux-redesign-research-2026-01-09.md
+    - Handoff document: _bmad-output/handoffs/mobile-ux-redesign-handoff-2026-01-09.md
+    - Story MOBILE-01: IN_PROGRESS
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PRIORITY QUEUE (Execution Order)
