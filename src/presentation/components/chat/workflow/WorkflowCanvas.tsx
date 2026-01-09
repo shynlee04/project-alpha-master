@@ -103,7 +103,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
             onClick={onSelect}
             className={`p-4 rounded-lg border-2 cursor-pointer transition-all group
                 ${isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}
-                ${paletteItem?.color || 'bg-gray-500'} bg-opacity-10`}
+                ${paletteItem?.color || 'bg-gray-500'} bg-[var(--muted)]`}
         >
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">

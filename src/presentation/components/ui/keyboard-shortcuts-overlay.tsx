@@ -144,7 +144,7 @@ export function KeyboardShortcutsOverlay({
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-black/50" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-[100] bg-[var(--color-overlay)]" />
         <DialogPrimitive.Content
           className={cn(overlayVariants(), className)}
           onPointerDownOutside={(e) => {

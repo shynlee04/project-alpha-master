@@ -164,7 +164,7 @@ export function PreviewPanel({ previewUrl, port }: PreviewPanelProps) {
                     {/* Modal Content */}
                     <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
                         <div
-                            className="h-full transition-all duration-200 bg-white rounded-lg overflow-hidden shadow-2xl"
+                            className="h-full transition-all duration-200 bg-white rounded-none overflow-hidden shadow-2xl"
                             style={{
                                 width: frameWidth === 'full' ? '100%' : `${frameWidth}px`,
                                 maxWidth: '100%',

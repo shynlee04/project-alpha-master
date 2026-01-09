@@ -162,7 +162,7 @@ export function ErrorState({
                     <summary className="cursor-pointer hover:opacity-100 transition-opacity">
                         {t('errors.actions.showDetails', 'Show technical details')}
                     </summary>
-                    <pre className="mt-2 overflow-auto rounded bg-black/20 p-2">
+                    <pre className="mt-2 overflow-auto rounded bg-[var(--muted)] p-2">
                         {error}
                     </pre>
                 </details>

@@ -165,7 +165,7 @@ export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose })
     >
       <div className="fixed inset-0 bg-[var(--color-overlay)]" onClick={onClose} />
       <div className="relative z-50 w-full max-w-3xl mx-auto mt-[10vh]">
-        <div className="rounded-lg border border-border bg-card shadow-pixel overflow-hidden">
+        <div className="rounded-none border border-border bg-card shadow-pixel overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -191,7 +191,7 @@ export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose })
                 onChange={(e) => handleSearchChange(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder={t('featureSearch.placeholder')}
-                className="w-full h-10 pl-10 pr-3 rounded-md border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 placeholder:text-muted-foreground"
+                className="w-full h-10 pl-10 pr-3 rounded-none border border-border bg-transparent text-sm outline-none focus:ring-2 focus:ring-primary focus:ring-offset-0 placeholder:text-muted-foreground"
                 autoFocus={isOpen}
               />
               {search && (
@@ -223,7 +223,7 @@ export const FeatureSearch: React.FC<FeatureSearchProps> = ({ isOpen, onClose })
                       onClose();
                     }}
                     className={cn(
-                      "w-full text-left p-4 rounded-md border border-border transition-all",
+                      "w-full text-left p-4 rounded-none border border-border transition-all",
                       "hover:bg-accent hover:border-primary",
                       index === selectedIndex && "bg-accent border-primary ring-2 ring-primary ring-offset-0"
                     )}

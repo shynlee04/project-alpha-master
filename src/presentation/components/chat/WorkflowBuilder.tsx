@@ -43,7 +43,7 @@ function PaletteItemComponent({ item }: PaletteItemProps) {
     return (
         <div
             className={`p-3 rounded-lg border-2 border-dashed cursor-grab active:cursor-grabbing
-                hover:border-primary/50 transition-colors ${item.color} bg-opacity-10`}
+                hover:border-primary/50 transition-colors ${item.color} bg-[var(--muted)]`}
         >
             <div className="flex items-center gap-2">
                 <span className="text-lg">{item.icon}</span>
@@ -89,7 +89,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
             onClick={onSelect}
             className={`p-4 rounded-lg border-2 cursor-pointer transition-all
                 ${isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}
-                ${paletteItem?.color || 'bg-gray-500'} bg-opacity-10`}
+                ${paletteItem?.color || 'bg-gray-500'} bg-[var(--muted)]`}
         >
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
@@ -459,7 +459,7 @@ export function WorkflowBuilderModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[var(--color-overlay)] flex items-center justify-center z-50 p-4">
             <div className="bg-background rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="p-4 border-b flex items-center justify-between">
                     <h2 className="text-lg font-semibold">{t('chat.workflow.title')}</h2>

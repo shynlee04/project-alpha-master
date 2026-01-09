@@ -129,7 +129,7 @@ export function YOLOModeToggle({ className = '' }: YOLOModeToggleProps) {
 
       {/* Confirmation Dialog */}
       {showConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/80 z-50 p-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-[var(--color-overlay)] z-50 p-4">
           <div className="bg-gray-900 border border-yellow-500/50 rounded-lg p-4 max-w-sm w-full">
             <h3 className="text-lg font-pixel text-yellow-400 mb-2">
               ⚡ Enable YOLO Mode?

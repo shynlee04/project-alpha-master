@@ -45,7 +45,7 @@ const skeletonVariants = cva(
                 title: 'h-6 w-48 max-w-xs',
                 paragraph: 'space-y-2 w-full max-w-md',
                 avatar: 'h-12 w-12 rounded-full max-w-xs',
-                card: 'h-32 w-full rounded-lg',
+                card: 'h-32 w-full rounded-none',
                 list: 'space-y-3 w-full',
             },
         },
@@ -162,7 +162,7 @@ export interface SkeletonCardProps {
 
 export function SkeletonCard({ animate = true, className }: SkeletonCardProps) {
     return (
-        <div className={cn('rounded-lg border border-neutral-700 bg-neutral-900/50 p-4', animate && 'animate-pulse', className)}>
+        <div className={cn('rounded-none border border-neutral-700 bg-neutral-900/50 p-4', animate && 'animate-pulse', className)}>
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
                 <div className="h-12 w-12 bg-neutral-700 rounded-full" />

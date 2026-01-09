@@ -135,7 +135,7 @@ export function OfflineIndicator({
               className={cn(
                 // 8-bit style button
                 'px-3 py-1',
-                'bg-white/10 hover:bg-white/20',
+                'bg-[var(--color-overlay)] hover:bg-[var(--color-overlay)]',
                 'border-2 border-white/30',
                 'text-white text-xs font-mono font-semibold',
                 'transition-colors duration-200',
@@ -145,7 +145,7 @@ export function OfflineIndicator({
                 'focus:outline-none focus:ring-2 focus:ring-white/50',
 
                 // Active state
-                'active:bg-white/30'
+                'active:bg-[var(--muted)]'
               )}
               aria-label={t('offline.action.retry')}
             >

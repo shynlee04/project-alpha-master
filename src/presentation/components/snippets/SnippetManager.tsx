@@ -184,7 +184,7 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
                                         <button
                                             onClick={() => setSelectedFolder(null)}
                                             className={cn(
-                                                'w-full text-left px-2 py-1 text-sm rounded-md transition-colors',
+                                                'w-full text-left px-2 py-1 text-sm rounded-none transition-colors',
                                                 selectedFolder === null
                                                     ? 'bg-primary text-primary-foreground'
                                                     : 'hover:bg-muted'
@@ -198,7 +198,7 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
                                                 key={folder}
                                                 onClick={() => setSelectedFolder(folder)}
                                                 className={cn(
-                                                    'w-full text-left px-2 py-1 text-sm rounded-md transition-colors',
+                                                    'w-full text-left px-2 py-1 text-sm rounded-none transition-colors',
                                                     selectedFolder === folder
                                                         ? 'bg-primary text-primary-foreground'
                                                         : 'hover:bg-muted'
@@ -230,7 +230,7 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
                                                     setSelectedTags(newTags);
                                                 }}
                                                 className={cn(
-                                                    'px-2 py-1 text-xs rounded-md border transition-colors',
+                                                    'px-2 py-1 text-xs rounded-none border transition-colors',
                                                     selectedTags.includes(tag)
                                                         ? 'bg-primary text-primary-foreground border-primary'
                                                         : 'border-border hover:bg-muted'
@@ -310,11 +310,11 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
                                                 >
                                                     <div className="flex items-center gap-2 mb-1">
                                                         <h4 className="font-semibold text-sm">{snippet.name}</h4>
-                                                        <span className="px-1.5 py-0.5 text-xs bg-muted rounded-md">
+                                                        <span className="px-1.5 py-0.5 text-xs bg-muted rounded-none">
                                                             {snippet.language}
                                                         </span>
                                                         {snippet.shortcut && (
-                                                            <span className="px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-md">
+                                                            <span className="px-1.5 py-0.5 text-xs bg-primary text-primary-foreground rounded-none">
                                                                 {snippet.shortcut}
                                                             </span>
                                                         )}
@@ -333,7 +333,7 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
                                                         {snippet.tags.map((tag) => (
                                                             <span
                                                                 key={tag}
-                                                                className="px-1.5 py-0.5 text-xs bg-muted rounded-md"
+                                                                className="px-1.5 py-0.5 text-xs bg-muted rounded-none"
                                                             >
                                                                 {tag}
                                                             </span>

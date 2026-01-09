@@ -59,12 +59,9 @@ export type {
 } from './adapter-types.js';
 
 // ============================================================================
-// CONSTANTS (re-exported from lib for backward compatibility)
+// CONSTANTS
 // ============================================================================
 
-/**
- * Built-in provider configurations
- *
- * @deprecated Import from '@/lib/agent/providers/constants' instead
- */
-export { PROVIDERS, GEMINI_MODELS, FREE_MODELS } from '@/lib/agent/providers/types';
+// Note: PROVIDERS, GEMINI_MODELS, FREE_MODELS constants remain in
+// src/lib/agent/providers/types.ts to avoid circular dependency.
+// Import them directly from that location if needed.

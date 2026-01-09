@@ -127,7 +127,7 @@ export function ErrorMessage({
                             <summary className="cursor-pointer text-xs font-semibold opacity-70 hover:opacity-100 transition-opacity">
                                 {t('errors.actions.showDetails', 'Show Details')}
                             </summary>
-                            <pre className="mt-1 text-xs bg-black/20 p-2 rounded overflow-auto max-h-32">
+                            <pre className="mt-1 text-xs bg-[var(--muted)] p-2 rounded overflow-auto max-h-32">
                                 {details}
                             </pre>
                         </details>
@@ -138,7 +138,7 @@ export function ErrorMessage({
                 {onDismiss && (
                     <button
                         onClick={onDismiss}
-                        className="flex-shrink-0 p-1 rounded hover:bg-black/10 transition-colors touch-target"
+                        className="flex-shrink-0 p-1 rounded hover:bg-[var(--muted)] transition-colors touch-target"
                         aria-label={t('errors.actions.dismiss', 'Dismiss')}
                     >
                         <X className="w-4 h-4" />

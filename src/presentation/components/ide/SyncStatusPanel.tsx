@@ -313,7 +313,7 @@ export function SyncStatusPanel() {
   };
 
   return (
-    <div className="sync-status-panel p-4 bg-background border rounded-lg">
+    <div className="sync-status-panel p-4 bg-background border rounded-none">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold">{t('sync.title')}</h3>

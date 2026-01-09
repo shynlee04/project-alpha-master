@@ -42,7 +42,7 @@ export function ContactSection() {
                     <span className="ml-2 font-mono text-sm text-muted-foreground">{t('about.contact.terminal.title')}</span>
                 </div>
 
-                <div className="bg-black/90 rounded-lg border border-primary/20 p-6 shadow-2xl font-mono text-sm md:text-base relative overflow-hidden">
+                <div className="bg-[var(--color-overlay)] rounded-lg border border-primary/20 p-6 shadow-2xl font-mono text-sm md:text-base relative overflow-hidden">
                     {/* Scanline effect */}
                     <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 pointer-events-none bg-[length:100%_4px,3px_100%]" />
 

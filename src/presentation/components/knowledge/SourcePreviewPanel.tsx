@@ -197,7 +197,7 @@ export function SourcePreviewPanel({ projectId: _projectId }: SourcePreviewPanel
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"
+                className="fixed inset-0 bg-[var(--color-overlay)] z-40 transition-opacity duration-300"
                 onClick={closePreview}
             />
 

@@ -172,9 +172,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
       onOpenChange={(open) => !open && onClose()}
       className="fixed inset-0 z-50 flex items-start justify-center pt-[20%]"
     >
-      <div className="fixed inset-0 bg-black/50" />
+      <div className="fixed inset-0 bg-[var(--color-overlay)]" />
       <div className="relative z-50 w-full max-w-2xl mx-auto">
-        <Command className="rounded-lg border border-border bg-card shadow-pixel overflow-hidden">
+        <Command className="rounded-none border border-border bg-card shadow-pixel overflow-hidden">
           <div className="flex items-center border-b border-border px-4">
             <Search className="mr-2 h-4 w-4 text-muted-foreground" />
             <Command.Input
@@ -182,7 +182,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
               value={search}
               onValueChange={setSearch}
               placeholder={t('commandPalette.placeholder')}
-              className="flex h-12 w-full rounded-md border-0 bg-transparent px-0 text-sm outline-none placeholder:text-muted-foreground focus:ring-0 focus:ring-offset-0"
+              className="flex h-12 w-full rounded-none border-0 bg-transparent px-0 text-sm outline-none placeholder:text-muted-foreground focus:ring-0 focus:ring-offset-0"
             />
           </div>
           <Command.List className="max-h-96 overflow-y-auto p-2">

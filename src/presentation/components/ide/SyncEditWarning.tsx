@@ -65,7 +65,7 @@ export function SyncEditWarning({
 
     return (
         <div
-            className={`fixed z-50 flex items-center gap-3 rounded-lg border border-[var(--warning)]/30 bg-[var(--warning-950)] px-4 py-3 text-sm text-[var(--warning-100)] shadow-lg animate-in slide-in-from-bottom-2 fade-in ${isMobile ? 'top-20 left-4 right-4' : 'bottom-4 right-4'
+            className={`fixed z-50 flex items-center gap-3 rounded-none border border-[var(--warning)]/30 bg-[var(--warning-950)] px-4 py-3 text-sm text-[var(--warning-100)] shadow-lg animate-in slide-in-from-bottom-2 fade-in ${isMobile ? 'top-20 left-4 right-4' : 'bottom-4 right-4'
                 }`}
             role="alert"
         >

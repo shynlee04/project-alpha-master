@@ -352,7 +352,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
   return (
     <Dialog.Root open={isOpen} onOpenChange={() => { }}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-50" />
+        <Dialog.Overlay className="fixed inset-0 bg-[var(--color-overlay)] z-50" />
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <Dialog.Content asChild>
             {dialogContent}

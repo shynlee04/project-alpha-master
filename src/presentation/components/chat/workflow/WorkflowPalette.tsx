@@ -61,7 +61,7 @@ function PaletteItemComponent({ item }: PaletteItemProps) {
     return (
         <div
             className={`p-3 rounded-lg border-2 border-dashed cursor-grab active:cursor-grabbing
-                hover:border-primary/50 transition-colors ${item.color} bg-opacity-10`}
+                hover:border-primary/50 transition-colors ${item.color} bg-[var(--muted)]`}
         >
             <div className="flex items-center gap-2">
                 <span className="text-lg">{item.icon}</span>

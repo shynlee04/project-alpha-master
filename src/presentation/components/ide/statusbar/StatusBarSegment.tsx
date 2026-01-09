@@ -51,7 +51,7 @@ export function StatusBarSegment({
                 'text-[10px] font-mono text-white/90',
                 dividerLeft && 'border-l border-white/20',
                 dividerRight && 'border-r border-white/20',
-                clickable && 'cursor-pointer hover:bg-white/10 transition-colors',
+                clickable && 'cursor-pointer hover:bg-[var(--color-overlay)] transition-colors',
                 className
             )}
             onClick={onClick}

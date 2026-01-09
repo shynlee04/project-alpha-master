@@ -55,7 +55,7 @@ function CitationCard({
       type="button"
       onClick={onClick}
       className={twMerge(
-        'w-full text-left p-3 rounded-lg border transition-all duration-200',
+        'w-full text-left p-3 rounded-none border transition-all duration-200',
         'hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-surface-hover)]',
         isSelected
           ? 'border-[var(--color-accent-primary)] bg-[var(--color-surface-selected)]'
@@ -130,7 +130,7 @@ function FilterSection({
   };
 
   return (
-    <div className="mb-4 p-3 bg-[var(--color-surface-subtle)] rounded-lg">
+    <div className="mb-4 p-3 bg-[var(--color-surface-subtle)] rounded-none">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-[var(--color-text-secondary)]">
           {t('citation.sidebar.filterBySource')}
@@ -262,7 +262,7 @@ export function CitationSidebar({
             placeholder={t('citation.sidebar.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-[var(--color-surface-subtle)] border border-[var(--color-border-subtle)] rounded-lg text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-primary)]"
+            className="w-full pl-10 pr-4 py-2 bg-[var(--color-surface-subtle)] border border-[var(--color-border-subtle)] rounded-none text-sm text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-primary)]"
             aria-label={t('citation.sidebar.searchAriaLabel')}
           />
         </div>

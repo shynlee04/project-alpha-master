@@ -161,7 +161,7 @@ export const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex items-center justify-center w-8 h-8 rounded-md",
+            "flex items-center justify-center w-8 h-8 rounded-none",
             "hover:bg-accent hover:text-accent-foreground",
             "transition-colors focus:outline-none focus:ring-2 focus:ring-primary",
             "text-muted-foreground",
@@ -173,7 +173,7 @@ export const QuickActionsMenu: React.FC<QuickActionsMenuProps> = ({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-56 rounded-lg border border-border bg-card shadow-pixel"
+        className="w-56 rounded-none border border-border bg-card shadow-pixel"
         align="end"
       >
         {actions.map((action) => {

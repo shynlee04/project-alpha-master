@@ -102,7 +102,7 @@ export function ImagePreviewDialog({
           onClick={onClose}
           className={cn(
             "absolute top-2 right-2 z-10",
-            "bg-black/50 hover:bg-black/70 text-white rounded-full",
+             "bg-[var(--color-overlay)] hover:bg-[var(--muted)] text-white rounded-full",
             "p-1.5 transition-colors",
             // Mobile touch target
             "min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0"

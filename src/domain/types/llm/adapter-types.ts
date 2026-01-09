@@ -11,6 +11,7 @@
  */
 
 import type { ProviderType } from './provider-types.js';
+import type { ModelInfo } from './model-types.js';
 
 /**
  * Adapter configuration for creating instances
@@ -191,10 +192,3 @@ export interface AdapterResponse<T = unknown> {
   /** HTTP status code (if applicable) */
   status?: number;
 }
-
-/**
- * Model Info (minimal version for adapter types)
- *
- * Re-exported from model-types for convenience.
- */
-export type { ModelInfo } from './model-types.js';

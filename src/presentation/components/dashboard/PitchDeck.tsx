@@ -19,7 +19,7 @@ export function PitchDeck({ isOpen, onClose, onComplete }: PitchDeckProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]">
             <div className="bg-surface p-6 rounded-lg max-w-lg w-full">
                 <h2 className="text-xl font-bold mb-4">Welcome to Via-gent</h2>
                 <p className="mb-4">Pitch deck content goes here.</p>

@@ -11,10 +11,10 @@
  */
 
 // ============================================================================
-// CANONICAL TYPES - Re-exported from domain layer
+// CANONICAL TYPES - Imported for use, then re-exported
 // ============================================================================
 
-export type {
+import type {
   ProviderType,
   ProviderConfig,
   OpenAICompatibleConfig,
@@ -26,6 +26,20 @@ export type {
   StoredCredential,
   AdapterConfig,
 } from '@/domain/types/llm';
+
+// Re-export for backward compatibility
+export type {
+  ProviderType,
+  ProviderConfig,
+  OpenAICompatibleConfig,
+  ConnectionTestResult,
+  ProviderKeyMetadata,
+  KeyValidationResult,
+  ModelInfo,
+  ModelSettings,
+  StoredCredential,
+  AdapterConfig,
+};
 
 // ============================================================================
 // CONSTANTS - Kept here for now (will migrate to domain/constants later)

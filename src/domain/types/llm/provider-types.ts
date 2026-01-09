@@ -10,6 +10,9 @@
  * @created 2026-01-09
  */
 
+// Import ModelInfo first since it's used in ProviderConfig
+import type { ModelInfo } from './model-types.js';
+
 /**
  * Provider type - determines which adapter to use
  */
@@ -196,6 +199,3 @@ export interface KeyValidationResult {
   /** When validation was performed */
   validatedAt: number;
 }
-
-// Re-export ModelInfo for convenience
-export type { ModelInfo } from './model-types';

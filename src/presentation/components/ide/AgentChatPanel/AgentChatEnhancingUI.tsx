@@ -23,7 +23,7 @@ export function AgentChatEnhancingUI({ isEnhancing }: AgentChatEnhancingUIProps)
 
     return (
         <div className="absolute inset-0 z-20 bg-background/90 flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center gap-3 p-4 bg-surface-dark border border-border-dark rounded-lg shadow-xl">
+            <div className="flex flex-col items-center gap-3 p-4 bg-surface-dark border border-border-dark rounded-none shadow-xl">
                 <Sparkles className="w-8 h-8 text-primary animate-pulse" />
                 <span className="text-sm font-medium text-foreground">Enhancing prompt...</span>
             </div>
