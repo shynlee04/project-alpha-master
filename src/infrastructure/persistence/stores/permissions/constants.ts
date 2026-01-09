@@ -57,6 +57,7 @@ export const DEFAULT_CATEGORY_APPROVALS: CategoryApprovalState = {
     vision: false,
     search: false,
     web: false,
+    notes: false,  // Added for story 40-05 (Note CRUD tools)
 };
 
 /**

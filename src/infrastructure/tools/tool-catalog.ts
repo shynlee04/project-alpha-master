@@ -29,6 +29,13 @@ import { processURLDef } from '@/lib/agent/tools/process-url-tool';
 import { voiceInputDef } from '@/lib/agent/tools/voice-input-tool';
 import { voiceOutputDef } from '@/lib/agent/tools/voice-output-tool';
 
+// Note tools (Story 40-04, Registered 40-05)
+import { createNoteDef } from '@/domain/tools/note/create-note-tool';
+import { readNoteDef } from '@/domain/tools/note/read-note-tool';
+import { updateNoteDef } from '@/domain/tools/note/update-note-tool';
+import { deleteNoteDef } from '@/domain/tools/note/delete-note-tool';
+import { listNotesDef } from '@/domain/tools/note/list-notes-tool';
+
 /**
  * Default agent modes for each tool category
  */
@@ -39,6 +46,7 @@ const DEFAULT_MODES: Record<ToolCategory, AgentMode[]> = {
   vision: ['knowledge', 'orchestrator'],
   search: ['knowledge', 'coding', 'orchestrator'],
   web: ['knowledge', 'coding', 'orchestrator'],
+  notes: ['knowledge', 'orchestrator'],
 };
 
 /**
@@ -50,7 +58,7 @@ const DEFAULT_WORKSPACES: WorkspaceType[] = ['ide', 'knowledge', 'study', 'notes
  * Tool catalog configuration
  * Maps each tool to its metadata
  */
-const TOOL_CATALOG = [
+export const TOOL_CATALOG = [
   // File Tools (3)
   {
     definition: readFileDef,
@@ -148,6 +156,48 @@ const TOOL_CATALOG = [
       executionSide: 'client',
     }),
   },
+
+  // Note Tools (5) - Story 40-04, Registered 40-05
+  {
+    definition: createNoteDef,
+    metadata: createToolMetadata('create_note', 'notes', DEFAULT_MODES.notes, ['notes', 'knowledge'], {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: readNoteDef,
+    metadata: createToolMetadata('read_note', 'notes', DEFAULT_MODES.notes, ['notes', 'knowledge'], {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: updateNoteDef,
+    metadata: createToolMetadata('update_note', 'notes', DEFAULT_MODES.notes, ['notes', 'knowledge'], {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: deleteNoteDef,
+    metadata: createToolMetadata('delete_note', 'notes', DEFAULT_MODES.notes, ['notes', 'knowledge'], {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: listNotesDef,
+    metadata: createToolMetadata('list_notes', 'notes', DEFAULT_MODES.notes, ['notes', 'knowledge'], {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
 ];
 
 /**
@@ -161,6 +211,7 @@ export function getToolCountsByCategory(): Record<string, number> {
     vision: TOOL_CATALOG.filter((t) => t.metadata.category === 'vision').length,
     search: TOOL_CATALOG.filter((t) => t.metadata.category === 'search').length,
     web: TOOL_CATALOG.filter((t) => t.metadata.category === 'web').length,
+    notes: TOOL_CATALOG.filter((t) => t.metadata.category === 'notes').length,
   };
 }
 

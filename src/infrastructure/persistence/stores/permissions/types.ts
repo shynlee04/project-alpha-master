@@ -1,21 +1,17 @@
 /**
  * @fileoverview Tool Permission Types
  * @module infrastructure/persistence/stores/permissions/types
+ *
+ * Infrastructure permission state and store interface.
+ * Permission types are imported from domain layer (Clean Architecture).
  */
 
 import type { WorkspaceType } from '../workspace/workspace-types';
+import type { ToolTrustLevel, ToolCategory } from '@/domain/tools/tool-permissions';
+
 export type { WorkspaceType };
-
-/**
- * Trust level for a tool - determines when user approval is required
- */
-export type ToolTrustLevel = 'auto' | 'prompt' | 'block';
-
-/**
- * Tool category for grouping related tools
- * Used for category-level approval (ARCH-01.4)
- */
-export type ToolCategory = 'files' | 'terminal' | 'knowledge' | 'vision' | 'search' | 'web';
+// Re-export domain types for backward compatibility
+export type { ToolTrustLevel, ToolCategory };
 
 /**
  * YOLO Mode state (You Only Live Once)

@@ -25,8 +25,9 @@ export const DEFAULT_MAX_TOKENS = 128000;
 
 /**
  * Threshold percentage to trigger compression warning
+ * @story 40-03: Changed from 80 to 65 for earlier compression trigger
  */
-export const DEFAULT_COMPRESSION_THRESHOLD = 80;
+export const DEFAULT_COMPRESSION_THRESHOLD = 65;
 
 /**
  * Identify messages to remove for compression

@@ -11,12 +11,12 @@
 
 import type { ToolDefinition } from '@tanstack/ai';
 import type { WorkspaceType } from '../value-objects/workspace-type';
-import type { ToolTrustLevel, ToolCategory } from '../../infrastructure/persistence/stores/permissions/types';
+import type { ToolTrustLevel, ToolCategory, ToolRiskLevel } from './tool-permissions';
 
 // Re-export WorkspaceType for convenience
 export type { WorkspaceType };
 // Re-export permission types for tool registry
-export type { ToolTrustLevel, ToolCategory };
+export type { ToolTrustLevel, ToolCategory, ToolRiskLevel } from './tool-permissions';
 
 /**
  * Agent execution modes
@@ -49,7 +49,7 @@ export interface ToolMetadata {
   /** Execution side preference */
   executionSide: ToolExecutionSide;
   /** Risk level for approval flow */
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: ToolRiskLevel;
 }
 
 /**

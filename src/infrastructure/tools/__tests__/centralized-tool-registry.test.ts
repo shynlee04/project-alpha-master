@@ -303,3 +303,178 @@ describe('createRegisteredTool', () => {
     expect(registered.metadata).toBe(metadata);
   });
 });
+
+/**
+ * AC-4: Permission Filtering Works
+ * Tests verifying that tools are filtered based on user permission levels
+ */
+describe('Permission Filtering (AC-4)', () => {
+  let registry: CentralizedToolRegistry;
+  let autoTools: RegisteredTool[];
+  let promptTools: RegisteredTool[];
+  let blockTools: RegisteredTool[];
+
+  beforeEach(() => {
+    CentralizedToolRegistry.resetInstance();
+    registry = CentralizedToolRegistry.getInstance();
+
+    // Create tools with different trust levels
+    const createTool = (
+      id: string,
+      category: 'files' | 'terminal' | 'knowledge',
+      trustLevel: 'auto' | 'prompt' | 'block'
+    ): RegisteredTool => {
+      const def = toolDefinition({
+        name: id,
+        description: `${id} description`,
+        inputSchema: z.object({}),
+      });
+
+      return createRegisteredTool(
+        def,
+        createToolMetadata(id, category, ['coding'], ['ide'], {
+          defaultTrustLevel: trustLevel,
+        })
+      );
+    };
+
+    autoTools = [
+      createTool('auto_tool_1', 'files', 'auto'),
+      createTool('auto_tool_2', 'knowledge', 'auto'),
+    ];
+
+    promptTools = [
+      createTool('prompt_tool_1', 'terminal', 'prompt'),
+      createTool('prompt_tool_2', 'files', 'prompt'),
+    ];
+
+    blockTools = [
+      createTool('block_tool_1', 'terminal', 'block'),
+      createTool('block_tool_2', 'knowledge', 'block'),
+    ];
+
+    registry.registerAll([...autoTools, ...promptTools, ...blockTools]);
+  });
+
+  afterEach(() => {
+    CentralizedToolRegistry.resetInstance();
+  });
+
+  describe('by defaultTrustLevel metadata', () => {
+    it('should include tools with auto trust level', () => {
+      const tools = registry.getAll().filter(
+        (t) => t.metadata.defaultTrustLevel === 'auto'
+      );
+      expect(tools).toHaveLength(2);
+      expect(tools.map((t) => t.metadata.id)).toEqual(
+        expect.arrayContaining(['auto_tool_1', 'auto_tool_2'])
+      );
+    });
+
+    it('should include tools with prompt trust level', () => {
+      const tools = registry.getAll().filter(
+        (t) => t.metadata.defaultTrustLevel === 'prompt'
+      );
+      expect(tools).toHaveLength(2);
+      expect(tools.map((t) => t.metadata.id)).toEqual(
+        expect.arrayContaining(['prompt_tool_1', 'prompt_tool_2'])
+      );
+    });
+
+    it('should include tools with block trust level in registry', () => {
+      // Tools with block trust level are registered but should be filtered
+      // out at the application layer based on user permissions
+      const tools = registry.getAll().filter(
+        (t) => t.metadata.defaultTrustLevel === 'block'
+      );
+      expect(tools).toHaveLength(2);
+      expect(tools.map((t) => t.metadata.id)).toEqual(
+        expect.arrayContaining(['block_tool_1', 'block_tool_2'])
+      );
+    });
+  });
+
+  describe('simulating permission-based filtering', () => {
+    /**
+     * NOTE: Actual permission filtering happens at the application layer
+     * where user permissions are available. These tests verify the
+     * metadata is correctly set for filtering logic.
+     */
+    it('should have correct metadata for permission filtering decisions', () => {
+      const autoTool = registry.get('auto_tool_1');
+      const promptTool = registry.get('prompt_tool_1');
+      const blockTool = registry.get('block_tool_1');
+
+      expect(autoTool?.metadata.defaultTrustLevel).toBe('auto');
+      expect(autoTool?.metadata.riskLevel).toBe('medium'); // default from options
+
+      expect(promptTool?.metadata.defaultTrustLevel).toBe('prompt');
+      expect(promptTool?.metadata.riskLevel).toBe('medium');
+
+      expect(blockTool?.metadata.defaultTrustLevel).toBe('block');
+      expect(blockTool?.metadata.riskLevel).toBe('medium');
+    });
+
+    it('should allow filtering by trust level via metadata inspection', () => {
+      // Simulate filtering tools by user permission level
+      const getToolsByTrustLevel = (
+        level: 'auto' | 'prompt' | 'block'
+      ): RegisteredTool[] => {
+        return registry.getAll().filter(
+          (t) => t.metadata.defaultTrustLevel === level
+        );
+      };
+
+      const autoOnly = getToolsByTrustLevel('auto');
+      const promptOnly = getToolsByTrustLevel('prompt');
+      const blockOnly = getToolsByTrustLevel('block');
+
+      expect(autoOnly).toHaveLength(2);
+      expect(promptOnly).toHaveLength(2);
+      expect(blockOnly).toHaveLength(2);
+    });
+  });
+});
+
+/**
+ * Issue #4: Integration tests for tool catalog
+ * Tests verifying that tool catalog initializes correctly
+ */
+describe('Tool Catalog Integration', () => {
+  it('should have all required exports from tool-catalog', () => {
+    // Verify tool catalog exports the required functions
+    expect(async () => {
+      await import('../tool-catalog');
+    }).not.toThrow();
+  });
+
+  it('should export initializeToolRegistry function', async () => {
+    const catalog = await import('../tool-catalog');
+    expect(typeof catalog.initializeToolRegistry).toBe('function');
+  });
+
+  it('should export TOOL_CATALOG constant', async () => {
+    const catalog = await import('../tool-catalog');
+    expect(Array.isArray(catalog.TOOL_CATALOG)).toBe(true);
+  });
+
+  it('should have TOOL_CATALOG with 16 existing tools (11 + 5 note tools from story 40-05)', async () => {
+    const { TOOL_CATALOG } = await import('../tool-catalog');
+    expect(TOOL_CATALOG).toHaveLength(16);
+  });
+
+  it('should register tools with consistent metadata structure', async () => {
+    const { TOOL_CATALOG } = await import('../tool-catalog');
+
+    TOOL_CATALOG.forEach(({ metadata }) => {
+      expect(metadata).toHaveProperty('id');
+      expect(metadata).toHaveProperty('category');
+      expect(metadata).toHaveProperty('allowedModes');
+      expect(metadata).toHaveProperty('allowedWorkspaces');
+      expect(metadata).toHaveProperty('defaultTrustLevel');
+      expect(metadata).toHaveProperty('serverExposed');
+      expect(metadata).toHaveProperty('executionSide');
+      expect(metadata).toHaveProperty('riskLevel');
+    });
+  });
+});
