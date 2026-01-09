@@ -353,7 +353,7 @@ export function useWorkspaceFileSystem({
         lastOpened: new Date(),
         autoSync,
         createdAt: new Date(), // Required by Project entity
-        bindings: { ide: true }, // Default binding
+        bindings: { ide: true, knowledge: true, notes: true, study: true }, // All workspaces enabled
         tags: [], // Required by Project entity
       };
       await saveProject(project);
@@ -416,7 +416,7 @@ export function useWorkspaceFileSystem({
         lastOpened: new Date(),
         autoSync: true,
         createdAt: new Date(), // Required by Project entity
-        bindings: { ide: true }, // Default binding
+        bindings: { ide: true, knowledge: true, notes: true, study: true }, // All workspaces enabled
         tags: [], // Required by Project entity
       };
       await saveProject(project);

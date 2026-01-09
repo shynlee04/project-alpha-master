@@ -195,9 +195,9 @@ export const HubHomePage: React.FC = () => {
         autoSync: true,
         bindings: {
           ide: true,
-          knowledge: false,
-          notes: false,
-          study: false,
+          knowledge: true,
+          notes: true,
+          study: true,
         },
         tags: [],
       };

@@ -22,6 +22,7 @@ import { getProject } from '@/lib/workspace/project-store';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { ErrorBoundary } from '@/presentation/components/error';
 
 // Lazy load IDELayout
@@ -63,6 +64,18 @@ function IDEWorkspace() {
       useIDEStore.getState().setProjectId(_projectId);
       useWorkspaceStore.getState().setCurrentProject(_projectId);
       console.log('[IDERoute] Project ID set in IDE store & workspace store:', _projectId);
+
+      // FIX-2026-01-09: Restore FSA handle for projects with 'fsa' storage type
+      // The handle is not persisted in Dexie (cannot be serialized), so we need to restore it
+      // from the separate fsaHandles table via fsaHandleManager
+      (async () => {
+        const projectStore = useProjectStore.getState();
+        const restoredProject = await getProject(_projectId);
+        if (restoredProject?.storageType === 'fsa' && !restoredProject.fsaHandle) {
+          console.log('[IDERoute] Restoring FSA handle for project:', _projectId);
+          await projectStore.restoreProjectHandle(_projectId);
+        }
+      })();
     }
   }, [_projectId]);
 

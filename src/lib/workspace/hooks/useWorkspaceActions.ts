@@ -109,7 +109,7 @@ export function useWorkspaceActions(
                 lastOpened: new Date(),
                 autoSync,
                 createdAt: new Date(),
-                bindings: { ide: true },
+                bindings: { ide: true, knowledge: true, notes: true, study: true },
                 tags: [],
             };
             await saveProject(project);
@@ -177,7 +177,7 @@ export function useWorkspaceActions(
                 lastOpened: new Date(),
                 autoSync: true,
                 createdAt: new Date(),
-                bindings: { ide: true },
+                bindings: { ide: true, knowledge: true, notes: true, study: true },
                 tags: [],
             };
             await saveProject(project);
