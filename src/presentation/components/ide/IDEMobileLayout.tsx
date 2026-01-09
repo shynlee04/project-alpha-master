@@ -52,9 +52,11 @@ function useIDEMobilePanel(
 ): [MobileIDEPanel, React.Dispatch<React.SetStateAction<MobileIDEPanel>>] {
   const [panel, setPanel] = useState<MobileIDEPanel>(() => {
     if (typeof window === 'undefined') return defaultPanel
-    const saved = localStorage.getItem('mobile-ide-panel') as MobileIDEPanel
-    return saved && (['files', 'terminal', 'chat', 'settings'] as const).includes(saved)
-      ? saved
+    const saved = localStorage.getItem('mobile-ide-panel')
+    // Validate saved value is a valid MobileIDEPanel before using it
+    const validPanels = ['files', 'terminal', 'chat', 'settings'] as const
+    return saved && validPanels.includes(saved as MobileIDEPanel)
+      ? (saved as MobileIDEPanel)
       : defaultPanel
   })
 
@@ -121,12 +123,16 @@ export function IDEMobileLayout({
 }: IDEMobileLayoutProps) {
   // State management
   const [internalPanel, setInternalPanel] = useIDEMobilePanel('files')
-  const currentPanel = onPanelChange ? activePanel : internalPanel
-  const setCurrentPanel = onPanelChange ? onPanelChange : setInternalPanel
+  // Use activePanel from props in controlled mode, fallback to internal state
+  // This prevents currentPanel from being undefined when activePanel is not provided
+  const currentPanel = onPanelChange && activePanel !== undefined ? activePanel : internalPanel
+  // In controlled mode, use parent's callback; otherwise use internal state setter
+  const setCurrentPanel = onPanelChange ?? setInternalPanel
 
   // IDE store state
   const activeFilePath = useIDEStore((s) => s.activeFile)
-  const handleFileSelect = useIDEStore((s) => s.handleFileSelect)
+  const setActiveFile = useIDEStore((s) => s.setActiveFile)
+  const addOpenFile = useIDEStore((s) => s.addOpenFile)
 
   // FileTree refresh state
   const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0)
@@ -137,6 +143,13 @@ export function IDEMobileLayout({
   // Handle panel change
   const handlePanelChange = (panelId: MobileIDEPanel) => {
     setCurrentPanel(panelId)
+  }
+
+  // Handle file selection from FileTree
+  const handleFileSelect = async (path: string, _handle: FileSystemFileHandle) => {
+    // Add to open files and set as active
+    addOpenFile(path)
+    setActiveFile(path)
   }
 
   // Get project name with fallback
@@ -160,6 +173,7 @@ export function IDEMobileLayout({
             <button
               className="p-2 rounded-none hover:bg-muted touch-target-min"
               aria-label="Refresh"
+              onClick={() => setFileTreeRefreshKey((k) => k + 1)}
             >
               <RefreshCw className="w-5 h-5" />
             </button>
@@ -193,7 +207,11 @@ export function IDEMobileLayout({
                       <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-2">
                         Explorer
                       </h2>
-                      <FileTree selectedPath={activeFilePath ?? undefined} />
+                      <FileTree
+                        selectedPath={activeFilePath ?? undefined}
+                        onFileSelect={handleFileSelect}
+                        refreshKey={fileTreeRefreshKey}
+                      />
                     </div>
                   </div>
                 )}
@@ -207,7 +225,7 @@ export function IDEMobileLayout({
 
                 {currentPanel === 'chat' && (
                   <AgentChatPanel
-                    projectId={(projectId ?? null) as string | null}
+                    projectId={projectId ?? null}
                     projectName={displayName}
                     workspaceType="ide"
                   />
