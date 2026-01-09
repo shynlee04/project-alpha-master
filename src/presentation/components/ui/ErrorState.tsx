@@ -50,7 +50,7 @@ export interface ErrorStateProps {
  */
 const errorStateVariants = cva(
     // Base styles
-    'flex flex-col items-center justify-center p-6 rounded-lg border transition-all duration-200',
+    'flex flex-col items-center justify-center p-6 rounded-none border transition-all duration-200',
     {
         variants: {
             variant: {

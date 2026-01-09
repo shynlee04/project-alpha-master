@@ -96,9 +96,9 @@ export function DebateLoading({
     const progress = (currentRound / totalRounds) * 100;
 
     return (
-        <div className={`p-4 rounded-lg border bg-card ${className}`}>
+        <div className={`p-4 rounded-none border bg-card ${className}`}>
             <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+                <div className="w-8 h-8 rounded-none bg-primary/10 flex items-center justify-center animate-pulse">
                     <MessageSquare className="w-4 h-4 text-primary" />
                 </div>
                 <div className="flex-1">
@@ -108,7 +108,7 @@ export function DebateLoading({
             </div>
 
             {/* Progress bar */}
-            <div className="h-2 bg-muted rounded-full overflow-hidden mb-3">
+            <div className="h-2 bg-muted rounded-none overflow-hidden mb-3">
                 <div
                     className="h-full bg-primary transition-all duration-500 ease-out"
                     style={{ width: `${progress}%` }}
@@ -173,7 +173,7 @@ export function DebateTimeline({
             </div>
 
             {/* Synthesis Card */}
-            <div className="p-4 rounded-lg border bg-card">
+            <div className="p-4 rounded-none border bg-card">
                 <div className="flex items-start gap-3 mb-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
                     <div className="flex-1">
@@ -246,13 +246,13 @@ export function DebateTimeline({
 
             {/* Agreement Matrix */}
             {agreementMatrix.disagreements.length > 0 && (
-                <div className="p-4 rounded-lg border bg-card">
+                <div className="p-4 rounded-none border bg-card">
                     <p className="text-sm font-medium mb-3">{t('chat.debate.disagreements.title')}</p>
                     <div className="space-y-2">
                         {agreementMatrix.disagreements.map((disagreement, i) => (
                             <div
                                 key={i}
-                                className={`p-2 rounded border cursor-pointer transition-colors ${
+                                className={`p-2 rounded-none border cursor-pointer transition-colors ${
                                     selectedAgreement === i
                                         ? 'bg-yellow-500/10 border-yellow-500/30'
                                         : 'bg-muted/30 hover:bg-muted/50'

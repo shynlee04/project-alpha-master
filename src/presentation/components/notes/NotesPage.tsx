@@ -22,8 +22,8 @@ import { NoteSidebar } from './NoteSidebar';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
-// TEMPORARILY DISABLED to debug infinite loop
-// import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
+// R3 FIX: Re-enabled SyncStatusPanel import after noteStoreConfig memoization fixed infinite loop
+import { SyncStatusPanel } from '@/presentation/components/ide/SyncStatusPanel';
 // E1-1: UnifiedChatPanel integration
 import { UnifiedChatPanel } from '@/presentation/components/chat/UnifiedChatPanel';
 // NOTE: createNoteFileSyncService import removed - requires FileSyncService dependency
@@ -95,11 +95,11 @@ export function NotesPage() {
     const notesChatVisible = useIDEStore((s) => s.chatVisible ?? true);
 
     // WB-8.3: Cross-workspace event subscriptions for state synchronization
-    // TEMPORARILY DISABLED to debug infinite loop
+    // R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop
     // Ensures Notes workspace reacts to changes from IDE, Knowledge, Study workspaces
-    // useAllCrossWorkspaceEvents();
-    // // Also subscribe to workspace changed events for agent filtering
-    // useWorkspaceChangedEvents();
+    useAllCrossWorkspaceEvents();
+    // Also subscribe to workspace changed events for agent filtering
+    useWorkspaceChangedEvents();
 
     // P2-3: Keyboard shortcut for panel collapse/expand (Cmd/Ctrl + [)
     useEffect(() => {
@@ -189,6 +189,9 @@ export function NotesPage() {
                     }
                 } catch (error) {
                     console.error('[NotesPage] Auto-import failed:', error);
+                    toast.error(t('notes.import_failed', 'Failed to auto-import files'), {
+                        description: error instanceof Error ? error.message : String(error),
+                    });
                 } finally {
                     setIsImportingFiles(false);
                 }
@@ -520,10 +523,10 @@ export function NotesPage() {
                 />
 
                 {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-                {/* TEMPORARILY DISABLED to debug infinite loop */}
-                {/* <div className="fixed bottom-4 right-4 z-50 w-96">
+                {/* R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop */}
+                <div className="fixed bottom-4 right-4 z-50 w-96">
                     <SyncStatusPanel />
-                </div> */}
+                </div>
             </MainLayout>
         );
     }
@@ -717,10 +720,10 @@ export function NotesPage() {
             />
 
             {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-            {/* TEMPORARILY DISABLED to debug infinite loop */}
-            {/* <div className="fixed bottom-4 right-4 z-50 w-96">
+            {/* R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop */}
+            <div className="fixed bottom-4 right-4 z-50 w-96">
                 <SyncStatusPanel />
-            </div> */}
+            </div>
         </MainLayout>
     );
 }

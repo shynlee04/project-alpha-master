@@ -88,7 +88,7 @@ export function MissingApiKeyWarning({
     }
 
     return (
-        <div className={`flex flex-col items-center justify-center gap-4 p-6 bg-muted/50 border border-dashed border-muted-foreground/30 rounded-lg ${className}`}>
+        <div className={`flex flex-col items-center justify-center gap-4 p-6 bg-muted/50 border border-dashed border-muted-foreground/30 rounded-none ${className}`}>
             <div className="flex items-center gap-3">
                 <div className="p-3 bg-destructive/10 rounded-full">
                     <Key className="h-6 w-6 text-destructive" />

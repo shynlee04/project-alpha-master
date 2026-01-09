@@ -8,10 +8,10 @@ export function HeroSection() {
 
     return (
         <SectionContainer className="min-h-[100dvh] flex flex-col justify-center overflow-hidden py-20 lg:py-0">
-            {/* Background Decor Elements */}
+            {/* Background Decor Elements - 8-bit style solid orbs */}
             <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/30 rounded-full blur-[100px]" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/30 rounded-full blur-[100px]" />
+                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/30 rounded-none" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/30 rounded-none" />
             </div>
 
             {/* Tech Stack Ticker (Abstract) */}

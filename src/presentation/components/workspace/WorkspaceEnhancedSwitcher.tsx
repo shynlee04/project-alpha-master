@@ -249,7 +249,7 @@ export function WorkspaceEnhancedSwitcher({
           {/* Workspace Icon */}
           <div
             className={cn(
-              'p-2 rounded-lg',
+              'p-2 rounded-none',
               isActive ? 'bg-background/20' : 'bg-muted'
             )}
           >

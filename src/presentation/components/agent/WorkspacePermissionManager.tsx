@@ -226,7 +226,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
             return (
               <div
                 key={workspaceType}
-                className="flex items-center justify-between p-4 border rounded-lg"
+                className="flex items-center justify-between p-4 border rounded-none"
               >
                 <div className="flex items-center gap-3">
                   {WORKSPACE_ICONS[workspaceType]}
@@ -253,7 +253,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                           e.target.value as 'full' | 'compact' | 'minimal'
                         )
                       }
-                      className="px-2 py-1 text-sm border rounded"
+                      className="px-2 py-1 text-sm border rounded-none"
                     >
                       <option value="full">Full UI</option>
                       <option value="compact">Compact UI</option>
@@ -264,7 +264,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                   {/* Default Toggle */}
                   <button
                     onClick={() => toggleDefaultAgent(workspaceType)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded border ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-none border ${
                       binding.isDefault
                         ? 'bg-primary text-primary-foreground border-primary'
                         : 'border-border hover:bg-muted'
@@ -298,7 +298,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
       <div className="space-y-4">
         <h4 className="text-sm font-medium">Tool Permissions</h4>
 
-        <div className="border rounded-lg divide-y">
+        <div className="border rounded-none divide-y">
           {localTools.map((tool) => {
             if (!tool.isEnabled) return null;
 
@@ -321,7 +321,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                         key={workspaceType}
                         onClick={() => toggleToolPermission(tool.toolId, workspaceType, !permitted)}
                         disabled={!binding?.isAvailable}
-                        className={`flex items-center justify-center gap-2 px-3 py-2 text-sm rounded border transition-colors ${
+                        className={`flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-none border transition-colors ${
                           !binding?.isAvailable
                             ? 'opacity-50 cursor-not-allowed bg-muted'
                             : permitted

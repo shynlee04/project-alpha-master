@@ -43,7 +43,7 @@ export function EventIndicator({
     return (
         <div
             className={cn(
-                'rounded-lg border p-3 transition-colors',
+                'rounded-none border p-3 transition-colors',
                 getStatusStyles(status),
                 compact && 'inline-flex items-center gap-2 py-1 px-2 text-sm',
                 className

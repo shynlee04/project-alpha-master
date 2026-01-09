@@ -46,7 +46,7 @@ const loadingStateVariants = cva(
                 default: 'p-4',
                 'full-screen': 'fixed inset-0 z-50 bg-neutral-950/95 p-8',
                 inline: 'flex-row gap-2 p-0',
-                card: 'p-6 rounded-lg border border-neutral-700 bg-neutral-900/50',
+                card: 'p-6 rounded-none border border-neutral-700 bg-neutral-900/50',
             },
         },
     }

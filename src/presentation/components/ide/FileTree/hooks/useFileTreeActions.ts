@@ -5,6 +5,7 @@ import {
     FileSystemError,
     PermissionDeniedError,
 } from '@/lib/filesystem/local-fs-adapter';
+import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import type { TreeNode } from '../types';
 import { buildTreeNode, updateNodeByPath, restoreExpandedState } from '../utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
@@ -28,8 +29,8 @@ export interface UseFileTreeActionsOptions {
     expandedPaths: Set<string>;
     /** Set expanded paths */
     setExpandedPaths: React.Dispatch<React.SetStateAction<Set<string>>>;
-    /** Local adapter ref from workspace */
-    localAdapterRef: React.RefObject<LocalFSAdapter | null>;
+    /** Local adapter ref from workspace - can be LocalFSAdapter (FSA) or UnifiedStorageAdapter (IndexedDB) */
+    localAdapterRef: React.RefObject<LocalFSAdapter | UnifiedStorageAdapter | null>;
     /** Sync manager ref from workspace */
     syncManagerRef: React.RefObject<import('@/lib/filesystem').SyncManager | null>;
 }
@@ -73,11 +74,31 @@ export function useFileTreeActions(
 
     /**
      * Load root directory contents.
+     * R2 FIX: Now handles IndexedDB projects via localAdapterRef when directoryHandle is null
      */
     const loadRootDirectory = useCallback(async () => {
+        // For IndexedDB projects (temp projects), use localAdapterRef
         if (!directoryHandle) {
-            setRootNodes([]);
-            setError(null);
+            if (localAdapterRef.current) {
+                // IndexedDB project - use UnifiedStorageAdapter
+                setIsLoading(true);
+                setError(null);
+                try {
+                    const entries = await localAdapterRef.current.listDirectory();
+                    const nodes = entries.map((entry) => buildTreeNode(entry, ''));
+                    const restoredNodes = restoreExpandedState(nodes, expandedPaths);
+                    setRootNodes(restoredNodes);
+                } catch (err) {
+                    setError(`Error loading files: ${err instanceof Error ? err.message : String(err)}`);
+                    setRootNodes([]);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                // No directory and no local adapter
+                setRootNodes([]);
+                setError(null);
+            }
             return;
         }
 
@@ -131,14 +152,27 @@ export function useFileTreeActions(
         } finally {
             setIsLoading(false);
         }
-    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths, isMobile]);
+    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths, isMobile, localAdapterRef]);
 
     /**
      * Load children of a directory node.
+     * R2 FIX: Now handles IndexedDB projects via localAdapterRef when directoryHandle is null
      */
     const loadChildren = useCallback(
         async (node: TreeNode): Promise<TreeNode[]> => {
-            if (!directoryHandle) return [];
+            // For IndexedDB projects, use localAdapterRef
+            if (!directoryHandle) {
+                if (localAdapterRef.current) {
+                    try {
+                        const entries = await localAdapterRef.current.listDirectory(node.path);
+                        return entries.map((entry) => buildTreeNode(entry, node.path));
+                    } catch (err) {
+                        console.error('Error loading children (IndexedDB):', err);
+                        return [];
+                    }
+                }
+                return [];
+            }
 
             try {
                 const adapter = getAdapter();
@@ -151,7 +185,7 @@ export function useFileTreeActions(
                 return [];
             }
         },
-        [directoryHandle, getAdapter],
+        [directoryHandle, getAdapter, localAdapterRef],
     );
 
     /**

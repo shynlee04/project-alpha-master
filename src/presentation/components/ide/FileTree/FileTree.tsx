@@ -224,8 +224,8 @@ export function FileTree({
   // Render States
   // ============================================================================
 
-  // Empty state - no directory
-  if (!directoryHandle) {
+  // Empty state - no directory AND no local adapter (IndexedDB projects use localAdapterRef)
+  if (!directoryHandle && !localAdapterRef.current) {
     return (
       <div className={`h-full flex flex-col items-center justify-center text-muted-foreground p-4 ${className}`}>
         <FolderOpen size={32} className="mb-2 text-muted-foreground/70" />

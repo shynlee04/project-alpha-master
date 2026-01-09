@@ -205,12 +205,23 @@ export class UnifiedStorageAdapter extends LocalFSAdapter {
   }
 
   /**
-   * Rename file (not implemented - use delete + write)
+   * Rename file (implemented via copy + delete)
+   * R5 FIX: Now works for both IndexedDB and FSA storage
    * @override
    */
   async rename(oldPath: string, newPath: string): Promise<void> {
-    this.debug(`rename: ${oldPath} -> ${newPath} (not implemented)`);
-    throw new Error('rename not implemented - use delete + write instead');
+    await this.ensureInitialized();
+
+    // Read content from old path
+    const content = await this.storageAdapter!.readFile(oldPath);
+
+    // Write to new path
+    await this.storageAdapter!.writeFile(newPath, content.data);
+
+    // Delete old path
+    await this.storageAdapter!.deleteFile(oldPath);
+
+    this.debug(`Renamed: ${oldPath} -> ${newPath}`);
   }
 
   // ============================================================================

@@ -195,8 +195,8 @@ export function AgentValidationFeedbackBanner({
         role="alert"
         aria-live="polite"
         className={cn(
-          'flex items-center justify-between gap-4 px-4 py-3 rounded-lg',
-          'bg-green-500/10 border border-green-500/20'
+            'flex items-center justify-between gap-4 px-4 py-3 rounded-none',
+            'bg-green-500/10 border border-green-500/20'
         )}
       >
         <div className="flex items-center gap-3">
@@ -226,8 +226,8 @@ export function AgentValidationFeedbackBanner({
         role="alert"
         aria-live="polite"
         className={cn(
-          'flex flex-col gap-3 px-4 py-3 rounded-lg',
-          'bg-yellow-500/10 border border-yellow-500/20'
+            'flex flex-col gap-3 px-4 py-3 rounded-none',
+            'bg-yellow-500/10 border border-yellow-500/20'
         )}
       >
         <div className="flex items-center justify-between gap-4">
@@ -276,8 +276,8 @@ export function AgentValidationFeedbackBanner({
         role="alert"
         aria-live="assertive"
         className={cn(
-          'flex flex-col gap-3 px-4 py-3 rounded-lg',
-          'bg-destructive/10 border border-destructive/20'
+            'flex flex-col gap-3 px-4 py-3 rounded-none',
+            'bg-destructive/10 border border-destructive/20'
         )}
       >
         <div className="flex items-center justify-between gap-4">
@@ -348,8 +348,8 @@ export function AgentValidationFeedbackBanner({
         role="status"
         aria-live="polite"
         className={cn(
-          'flex items-center gap-3 px-4 py-3 rounded-lg',
-          'bg-muted/30 border border-border'
+            'flex items-center gap-3 px-4 py-3 rounded-none',
+            'bg-muted/30 border border-border'
         )}
       >
         <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />

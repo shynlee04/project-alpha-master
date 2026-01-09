@@ -395,7 +395,7 @@ export function IndexingProgressPanel() {
   const overallProgress = calculateOverallProgress();
 
   return (
-    <div className="indexing-progress-panel p-4 bg-background border rounded-lg">
+    <div className="indexing-progress-panel p-4 bg-background border rounded-none">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold">{t('indexing.title')}</h3>
@@ -415,7 +415,7 @@ export function IndexingProgressPanel() {
 
       {/* Vectors summary */}
       {indexingState.totalVectors > 0 && (
-        <div className="mb-4 p-2 bg-muted/50 rounded text-xs">
+        <div className="mb-4 p-2 bg-muted/50 rounded-none text-xs">
           <span className="font-medium">{t('indexing.vectorsCount')}: </span>
           <span className="text-muted-foreground">
             {new Intl.NumberFormat().format(indexingState.totalVectors)} {t('indexing.vectors')}
@@ -428,7 +428,7 @@ export function IndexingProgressPanel() {
         {indexingState.documents.map((doc) => (
           <div
             key={doc.id}
-            className="p-3 bg-muted/30 rounded-lg border hover:bg-muted/50 transition-colors"
+            className="p-3 bg-muted/30 rounded-none border hover:bg-muted/50 transition-colors"
           >
             {/* Document header */}
             <div className="flex items-start justify-between gap-2 mb-2">

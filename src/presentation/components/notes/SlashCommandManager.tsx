@@ -199,7 +199,7 @@ export function SlashCommandManager() {
 
             {/* Create/Edit Form */}
             {(isCreating || editingId) && (
-                <div className="border border-border rounded-lg p-4 bg-muted/30 space-y-3">
+                <div className="border border-border rounded-none p-4 bg-muted/30 space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                         <div>
                             <label className="text-sm font-medium">
@@ -209,7 +209,7 @@ export function SlashCommandManager() {
                                 type="text"
                                 value={formData.title || ''}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-md text-sm"
+                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-none text-sm"
                                 placeholder="Brainstorm Ideas"
                             />
                         </div>
@@ -221,7 +221,7 @@ export function SlashCommandManager() {
                                 type="text"
                                 value={formData.titleVi || ''}
                                 onChange={(e) => setFormData({ ...formData, titleVi: e.target.value })}
-                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-md text-sm"
+                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-none text-sm"
                                 placeholder="Brainstorm Ý tưởng"
                             />
                         </div>
@@ -235,7 +235,7 @@ export function SlashCommandManager() {
                                 type="text"
                                 value={formData.description || ''}
                                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-md text-sm"
+                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-none text-sm"
                                 placeholder="Generate creative ideas"
                             />
                         </div>
@@ -247,7 +247,7 @@ export function SlashCommandManager() {
                                 type="text"
                                 value={formData.descriptionVi || ''}
                                 onChange={(e) => setFormData({ ...formData, descriptionVi: e.target.value })}
-                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-md text-sm"
+                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-none text-sm"
                                 placeholder="Tạo các ý tưởng sáng tạo"
                             />
                         </div>
@@ -296,7 +296,7 @@ export function SlashCommandManager() {
                                     ...formData,
                                     aliases: e.target.value.split(',').map(a => a.trim()).filter(Boolean),
                                 })}
-                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-md text-sm"
+                                className="w-full mt-1 px-3 py-2 bg-background border border-border rounded-none text-sm"
                                 placeholder="brainstorm, ideas, ytuong"
                             />
                         </div>
@@ -321,11 +321,11 @@ export function SlashCommandManager() {
                     return (
                         <div
                             key={command.id}
-                            className={`flex items-center gap-3 p-3 border border-border rounded-lg ${command.isEnabled ? 'bg-background' : 'bg-muted/50 opacity-60'
+                            className={`flex items-center gap-3 p-3 border border-border rounded-none ${command.isEnabled ? 'bg-background' : 'bg-muted/50 opacity-60'
                                 }`}
                         >
                             <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
-                            <div className="w-8 h-8 flex items-center justify-center bg-primary/10 rounded">
+                            <div className="w-8 h-8 flex items-center justify-center bg-primary/10 rounded-none">
                                 {getIcon(command.icon, 'w-4 h-4 text-primary')}
                             </div>
                             <div className="flex-1 min-w-0">

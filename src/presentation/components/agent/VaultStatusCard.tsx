@@ -147,7 +147,7 @@ export function VaultStatusCard({ className = '' }: VaultStatusCardProps) {
   };
 
   return (
-    <div className={`border border-border rounded-lg p-4 space-y-3 ${className}`}>
+    <div className={`border border-border rounded-none p-4 space-y-3 ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

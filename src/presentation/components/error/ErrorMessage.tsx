@@ -96,7 +96,7 @@ export function ErrorMessage({
 
     return (
         <div className={cn(
-            "flex flex-col gap-3 p-4 rounded-lg border transition-all duration-200",
+            "flex flex-col gap-3 p-4 rounded-none border transition-all duration-200",
             getSeverityStyles(severity),
             className
         )}>

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { type VariantProps, cva } from 'class-variance-authority';
 
 const alertVariants = cva(
-  'relative w-full rounded-lg border p-4',
+  'relative w-full rounded-none border p-4',
   {
     variants: {
       variant: {

@@ -18,6 +18,7 @@ import { useNavigate } from '@tanstack/react-router';
 import {
   LocalFSAdapter,
 } from '@/infrastructure/filesystem';
+import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import { SyncManager } from '@/infrastructure/sync';
 import type {
   SyncStatus,
@@ -72,7 +73,8 @@ export function useWorkspaceFileSystem({
   const currentProjectId = useWorkspaceStore((s) => s.currentProjectId);
 
   // Infrastructure refs
-  const localAdapterRef = useRef<LocalFSAdapter | null>(null);
+  // R2 FIX: localAdapterRef can now be either LocalFSAdapter (for FSA) or UnifiedStorageAdapter (for IndexedDB)
+  const localAdapterRef = useRef<LocalFSAdapter | UnifiedStorageAdapter | null>(null);
   const syncManagerRef = useRef<SyncManager | null>(null);
   const eventBusRef = useRef<any>(null);
 
@@ -116,6 +118,20 @@ export function useWorkspaceFileSystem({
           if (project.storageType === 'indexeddb') {
             // Dexie-stored projects have no FSA handle - auto-grant permission
             setPermissionState('granted');
+
+            // R2 FIX: Create UnifiedStorageAdapter for IndexedDB projects so FileTree can list files
+            // This is critical for temp projects and any IndexedDB-backed project
+            try {
+              const indexedDbAdapter = new UnifiedStorageAdapter({
+                storageType: 'indexeddb',
+                projectId: project.id,
+              });
+              await indexedDbAdapter.initialize();
+              localAdapterRef.current = indexedDbAdapter;
+              console.log('[WorkspaceProvider] Created UnifiedStorageAdapter for IndexedDB project:', project.id);
+            } catch (err) {
+              console.error('[WorkspaceProvider] Failed to create UnifiedStorageAdapter:', err);
+            }
           } else if (project.fsaHandle) {
             const actualState = await getPermissionState(project.fsaHandle, 'readwrite');
             console.log('[WorkspaceProvider] Actual permission state:', actualState);

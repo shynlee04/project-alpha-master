@@ -82,7 +82,7 @@ export function ModelLoadingSpinner({
       }
       className={cn(
         'flex flex-col items-center justify-center gap-4 py-8 px-4',
-        'bg-muted/30 border border-border rounded-lg',
+        'bg-muted/30 border border-border rounded-none',
         className
       )}
     >

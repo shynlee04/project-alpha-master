@@ -134,7 +134,7 @@ export function RAGConfigurationPanel({
       )}
 
       {/* Enable RAG Toggle */}
-      <div className="flex items-center justify-between p-4 border rounded-lg">
+      <div className="flex items-center justify-between p-4 border rounded-none">
         <div>
           <p className="font-medium">Enable RAG</p>
           <p className="text-sm text-muted-foreground">
@@ -144,12 +144,12 @@ export function RAGConfigurationPanel({
 
         <button
           onClick={() => onUpdateConfig({ enabled: !config.enabled })}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+          className={`relative inline-flex h-6 w-11 items-center rounded-none transition-colors ${
             config.enabled ? 'bg-primary' : 'bg-muted'
           }`}
         >
           <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+            className={`inline-block h-4 w-4 transform rounded-none bg-white transition-transform ${
               config.enabled ? 'translate-x-6' : 'translate-x-1'
             }`}
           />
@@ -167,11 +167,11 @@ export function RAGConfigurationPanel({
                 <button
                   key={strategy}
                   onClick={() => onUpdateConfig({ chunkingStrategy: strategy })}
-                  className={`px-3 py-2 text-sm border rounded-md transition-colors ${
-                    config.chunkingStrategy === strategy
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'hover:bg-muted'
-                  }`}
+                   className={`px-3 py-2 text-sm border rounded-none transition-colors ${
+                     config.chunkingStrategy === strategy
+                       ? 'bg-primary text-primary-foreground border-primary'
+                       : 'hover:bg-muted'
+                   }`}
                 >
                   {strategy === 'fixed-size' ? 'Fixed Size' : strategy === 'semantic' ? 'Semantic' : 'Hybrid'}
                 </button>
@@ -311,7 +311,7 @@ export function RAGConfigurationPanel({
 
       {/* Advanced Options */}
       {config.enabled && (
-        <details className="border rounded-lg">
+        <details className="border rounded-none">
           <summary className="px-4 py-3 cursor-pointer hover:bg-muted/50">
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4" />
@@ -331,12 +331,12 @@ export function RAGConfigurationPanel({
 
               <button
                 onClick={() => onUpdateConfig({ includeMetadata: !config.includeMetadata })}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-none transition-colors ${
                   config.includeMetadata ? 'bg-primary' : 'bg-muted'
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-none bg-white transition-transform ${
                     config.includeMetadata ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
@@ -347,7 +347,7 @@ export function RAGConfigurationPanel({
       )}
 
       {/* Documentation */}
-      <div className="p-4 bg-muted/30 rounded-lg">
+      <div className="p-4 bg-muted/30 rounded-none">
         <div className="flex items-start gap-2">
           <FileText className="w-5 h-5 text-muted-foreground mt-0.5" />
           <div className="text-sm text-muted-foreground">
