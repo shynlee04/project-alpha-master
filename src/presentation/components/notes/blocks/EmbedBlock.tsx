@@ -18,7 +18,7 @@ import {
   Music,
   FileCode,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./EmbedBlock.css";
 import {
   type EmbedProvider,
@@ -161,21 +161,41 @@ export const EmbedBlock = createReactBlockSpec(
       const [isLoading, setIsLoading] = useState(false);
       const [error, setError] = useState(false);
 
-      // Auto-detect provider when URL changes
+      // Use refs for stable references to avoid stale closures (CA-005 fix)
+      const editorRef = useRef(props.editor);
+      const blockRef = useRef(props.block);
+
+      // Keep refs in sync with latest props
       useEffect(() => {
-        if (urlInput && urlInput.startsWith("http")) {
-          const provider = detectProvider(urlInput);
-          const embedUrl = getEmbedUrl(urlInput, provider);
-          props.editor.updateBlock(props.block, {
+        editorRef.current = props.editor;
+        blockRef.current = props.block;
+      }, [props.editor, props.block]);
+
+      // Memoized update function to prevent unnecessary re-renders (PF-003 fix)
+      const updateBlockWithUrl = useCallback((url: string) => {
+        if (url && url.startsWith("http")) {
+          const provider = detectProvider(url);
+          const embedUrl = getEmbedUrl(url, provider);
+          editorRef.current.updateBlock(blockRef.current, {
             type: "embed",
             props: {
-              url: urlInput.trim(),
+              url: url.trim(),
               provider,
               embedUrl,
             },
           });
         }
-      }, [urlInput]);
+      }, []);
+
+      // Auto-detect provider when URL changes with debounce (PF-003 fix)
+      useEffect(() => {
+        // Debounce to prevent immediate state updates on every keystroke
+        const timeoutId = setTimeout(() => {
+          updateBlockWithUrl(urlInput);
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+      }, [urlInput, updateBlockWithUrl]);
 
       const handleSave = () => {
         if (!urlInput.trim()) {

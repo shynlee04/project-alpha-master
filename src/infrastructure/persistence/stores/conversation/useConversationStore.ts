@@ -1,13 +1,17 @@
 /**
  * @fileoverview Backward Compatibility Facade for useConversationStore
  * @module infrastructure/persistence/stores/conversation
- * @governance EPIC-40 MM-01 | ADR-031
+ * @governance EPIC-40 MM-01 | ADR-031 | CA-001 FIX
  *
  * Facade pattern to maintain backward compatibility while using unified chat store.
  * Delegates all calls to useUnifiedChatStore to ensure single source of truth.
  *
+ * CA-001 FIX: Removed hook call inside create() callback. Now uses Zustand
+ * selector pattern for reactive state access, preventing React Rules violations.
+ *
  * @story MM-01 Task T8: Add backward compatibility facade
  * @created 2026-01-10
+ * @fixed CA-001 2026-01-10
  *
  * @migration-status TEMPORARY - Remove after MM-02 (Merge thread management)
  * @deprecation_planned 2026-02-01
@@ -141,236 +145,258 @@ function mapToLegacyMessage(msg: MessageWithId): ThreadMessage | null {
 // ============================================================================
 
 /**
+ * Helper to map unified store state to legacy format
+ * CA-001 FIX: This is now a pure function, not called inside create()
+ */
+function mapUnifiedStateToLegacy(unifiedStore: ReturnType<typeof useUnifiedChatStore.getState>): CombinedConversationState {
+  // Helper to get messages by thread ID for thread mapping
+  const messagesByThread = (threadId: string): MessageWithId[] => {
+    return Object.values(unifiedStore.messages).filter((m) => m.threadId === threadId);
+  };
+
+  return {
+    // ========== Mapped State ==========
+    conversations: Object.fromEntries(
+      Object.entries(unifiedStore.conversations).map(([id, conv]) => [
+        id,
+        mapToLegacyConversation(conv),
+      ])
+    ),
+    activeConversationId: unifiedStore.activeConversationId,
+    activeProjectConversationIds: unifiedStore.activeProjectConversationIds,
+    threads: Object.fromEntries(
+      Object.entries(unifiedStore.threads).map(([id, thread]) => [
+        id,
+        mapToLegacyThread(thread, messagesByThread),
+      ])
+    ),
+    activeThreadId: unifiedStore.activeThreadId,
+    messages: Object.fromEntries(
+      Object.entries(unifiedStore.messages)
+        .map(([id, msg]) => {
+          const legacy = mapToLegacyMessage(msg);
+          if (!legacy) return null;
+          // MessageExtended extends ThreadMessage with threadId
+          return [id, { ...legacy, threadId: msg.threadId }] as [string, ThreadMessage & { threadId: string }];
+        })
+        .filter((entry): entry is [string, ThreadMessage & { threadId: string }] => entry !== null)
+    ),
+    eventHistory: [],
+    _hasHydrated: unifiedStore._hasHydrated,
+    pendingToolApprovals: unifiedStore.pendingApprovals.map((pa) => ({
+      id: pa.id,
+      conversationId: pa.conversationId,
+      threadId: pa.threadId,
+      messageId: pa.messageId,
+      toolName: pa.toolName,
+      toolArgs: pa.toolArgs,
+      createdAt: pa.createdAt,
+      status: pa.status as 'pending' | 'approved' | 'denied',
+    })),
+
+    // ========== Delegated Methods ==========
+    createConversation: (workspaceType: WorkspaceType, projectId: string | null, agentId: string) =>
+      unifiedStore.createConversation(workspaceType, projectId, agentId),
+
+    updateConversationMetadata: (id: string, updates: Partial<ConversationMetadataExtended>) =>
+      unifiedStore.updateConversation(id, updates),
+
+    deleteConversation: (id: string) => unifiedStore.deleteConversation(id),
+
+    setActiveConversation: (id: string) => unifiedStore.setActiveConversation(id),
+
+    setScrollPosition: (id: string, scrollPosition: number) =>
+      unifiedStore.setScrollPosition(id, scrollPosition),
+
+    getConversation: (id: string) => {
+      const conv = unifiedStore.getConversation(id);
+      return conv ? mapToLegacyConversation(conv) : undefined;
+    },
+
+    getAllConversations: () =>
+      unifiedStore.getAllConversations().map(mapToLegacyConversation),
+
+    getConversationsByWorkspace: (workspaceType: WorkspaceType) =>
+      unifiedStore.getConversationsByWorkspace(workspaceType).map(mapToLegacyConversation),
+
+    getConversationsByProject: (projectId: string) =>
+      unifiedStore.getConversationsByProject(projectId).map(mapToLegacyConversation),
+
+    createThread: (conversationId: string, parentThreadId?: string) =>
+      unifiedStore.createThread(conversationId, parentThreadId),
+
+    deleteThread: (threadId: string) => unifiedStore.deleteThread(threadId),
+
+    setActiveThread: (threadId: string | null) => unifiedStore.setActiveThread(threadId),
+
+    getThread: (threadId: string) => {
+      const thread = unifiedStore.getThread(threadId);
+      return thread ? mapToLegacyThread(thread, messagesByThread) : undefined;
+    },
+
+    getThreadsByConversation: (conversationId: string) =>
+      unifiedStore.getThreadsByConversation(conversationId).map((t) => mapToLegacyThread(t, messagesByThread)),
+
+    getRootThread: (conversationId: string) => {
+      const thread = unifiedStore.getRootThread(conversationId);
+      return thread ? mapToLegacyThread(thread, messagesByThread) : undefined;
+    },
+
+    getChildThreads: (parentThreadId: string) =>
+      unifiedStore.getChildThreads(parentThreadId).map((t) => mapToLegacyThread(t, messagesByThread)),
+
+    getThreadHierarchy: (threadId: string) =>
+      unifiedStore.getThreadHierarchy(threadId).map((t) => mapToLegacyThread(t, messagesByThread)),
+
+    addMessage: (threadId: string, message: Omit<ThreadMessage, 'id' | 'timestamp'>) => {
+      const { toolCalls, ...rest } = message;
+      return unifiedStore.addMessage(threadId, {
+        ...rest,
+        toolCalls: toolCalls as any,
+      });
+    },
+
+    updateMessage: (messageId: string, updates: Partial<ThreadMessage>) =>
+      unifiedStore.updateMessage(messageId, updates as any),
+
+    deleteMessage: (messageId: string) => unifiedStore.deleteMessage(messageId),
+
+    getMessage: (messageId: string) => {
+      const msg = unifiedStore.getMessage(messageId);
+      if (!msg) return undefined;
+      const legacy = mapToLegacyMessage(msg);
+      if (!legacy) return undefined;
+      return { ...legacy, threadId: msg.threadId };
+    },
+
+    getMessagesByThread: (threadId: string) => {
+      const msgs = unifiedStore.getMessagesByThread(threadId);
+      return msgs.map((msg) => {
+        const legacy = mapToLegacyMessage(msg);
+        if (!legacy) return null;
+        return { ...legacy, threadId: msg.threadId };
+      }).filter((m): m is ThreadMessage & { threadId: string } => m !== null);
+    },
+
+    getLastMessage: (threadId: string) => {
+      const msg = unifiedStore.getLastMessage(threadId);
+      if (!msg) return undefined;
+      const legacy = mapToLegacyMessage(msg);
+      if (!legacy) return undefined;
+      return { ...legacy, threadId: msg.threadId };
+    },
+
+    // ========== Stub Methods for Events/Validation (to be implemented) ==========
+    filterConversations: () => [],
+    sortConversations: () => [],
+    searchConversations: () => [],
+    searchConversationsByTag: () => [],
+    getConversationStats: () => ({ messageCount: 0, threadCount: 0, totalTokens: 0, durationMs: 0 }),
+    getRecentConversations: () => [],
+    loadConversation: async (conversationId: string) => {
+      await unifiedStore.loadConversation(conversationId);
+    },
+    loadConversationByProject: async (projectId: string) => {
+      await unifiedStore.loadConversationByProject(projectId);
+    },
+
+    validateConversationId: () => ({ isValid: true, errors: [] }),
+    validateThreadId: () => ({ isValid: true, errors: [] }),
+    validateMessageId: () => ({ isValid: true, errors: [] }),
+    validateConversationStatus: () => ({ isValid: true, errors: [] }),
+    validateThreadStatus: () => ({ isValid: true, errors: [] }),
+    validateThreadHierarchy: () => ({ isValid: true, errors: [] }),
+    validateMessageThreadAssociation: () => ({ isValid: true, errors: [] }),
+    validateConversationIntegrity: () => ({ isValid: true, errors: [] }),
+
+    emitEvent: () => {},
+    emitConversationCreated: () => {},
+    emitConversationUpdated: () => {},
+    emitConversationDeleted: () => {},
+    emitThreadCreated: () => {},
+    emitThreadUpdated: () => {},
+    emitThreadDeleted: () => {},
+    emitMessageAdded: () => {},
+    emitMessageUpdated: () => {},
+    emitMessageDeleted: () => {},
+    addEventListener: () => () => {},
+    removeEventListener: () => {},
+    getEventHistory: () => [],
+    clearEventHistory: () => {},
+
+    persistConversation: async () => {
+      await unifiedStore.persistConversation();
+    },
+
+    getCurrentConversation: () => {
+      const state = unifiedStore.getCurrentConversation();
+      if (!state) return null;
+      return {
+        metadata: {
+          id: state.metadata.id,
+          projectId: state.metadata.projectId,
+          workspaceId: state.metadata.workspaceId,
+          workspaceType: state.metadata.workspaceType,
+          title: state.metadata.title,
+          preview: state.metadata.preview,
+          agentId: state.metadata.agentId,
+          messageCount: state.metadata.messageCount,
+          scrollPosition: state.metadata.scrollPosition,
+          createdAt: state.metadata.createdAt,
+          updatedAt: state.metadata.updatedAt,
+        },
+        messages: state.messages
+          .filter((m) => m.role !== 'tool')
+          .map((m) => ({
+            id: m.id,
+            role: m.role as 'user' | 'assistant' | 'system',
+            content: m.content,
+            agentId: m.agentId,
+            agentName: m.agentName,
+            agentModel: m.agentModel,
+            timestamp: m.timestamp,
+            toolCalls: m.toolCalls?.map((tc) => ({
+              id: tc.id,
+              name: tc.name,
+              status: (tc.status === 'cancelled' ? 'error' : tc.status) as 'pending' | 'running' | 'success' | 'error',
+              input: tc.input,
+              output: tc.output,
+              duration: tc.duration,
+            })),
+          })),
+      };
+    },
+  };
+}
+
+/**
  * Backward compatible useConversationStore facade
  *
- * Delegates to useUnifiedChatStore while maintaining the old API surface.
- * This allows gradual migration without breaking existing components.
+ * CA-001 FIX: Now uses Zustand selector pattern instead of calling hooks
+ * inside create(). This prevents React Rules of Hooks violations and runtime crashes.
+ *
+ * The facade subscribes to unified store updates and maps state reactively.
  *
  * @deprecated Use useUnifiedChatStore directly instead
  */
-export const useConversationStore = create<CombinedConversationState>(() => {
-    const unifiedStore = useUnifiedChatStore();
+export const useConversationStore = create<CombinedConversationState>((set, _get, _api) => {
+  // Initial state mapping
+  const initialState = mapUnifiedStateToLegacy(useUnifiedChatStore.getState());
 
-    // Helper to get messages by thread ID for thread mapping
-    const messagesByThread = (threadId: string): MessageWithId[] => {
-      return Object.values(unifiedStore.messages).filter((m) => m.threadId === threadId);
-    };
+  // Subscribe to unified store changes for reactive updates
+  // NOTE: This subscription is never cleaned up in this facade pattern,
+  // which is acceptable since the facade is deprecated and will be removed
+  useUnifiedChatStore.subscribe(
+    (unifiedState) => {
+      // Re-map state when unified store changes
+      const newMappedState = mapUnifiedStateToLegacy(unifiedState);
+      set(newMappedState);
+    }
+  );
 
-    return {
-      // ========== Mapped State ==========
-      conversations: Object.fromEntries(
-        Object.entries(unifiedStore.conversations).map(([id, conv]) => [
-          id,
-          mapToLegacyConversation(conv),
-        ])
-      ),
-      activeConversationId: unifiedStore.activeConversationId,
-      activeProjectConversationIds: unifiedStore.activeProjectConversationIds,
-      threads: Object.fromEntries(
-        Object.entries(unifiedStore.threads).map(([id, thread]) => [
-          id,
-          mapToLegacyThread(thread, messagesByThread),
-        ])
-      ),
-      activeThreadId: unifiedStore.activeThreadId,
-      messages: Object.fromEntries(
-        Object.entries(unifiedStore.messages)
-          .map(([id, msg]) => {
-            const legacy = mapToLegacyMessage(msg);
-            if (!legacy) return null;
-            // MessageExtended extends ThreadMessage with threadId
-            return [id, { ...legacy, threadId: msg.threadId }] as [string, ThreadMessage & { threadId: string }];
-          })
-          .filter((entry): entry is [string, ThreadMessage & { threadId: string }] => entry !== null)
-      ),
-      eventHistory: [],
-      _hasHydrated: unifiedStore._hasHydrated,
-      pendingToolApprovals: unifiedStore.pendingApprovals.map((pa) => ({
-        id: pa.id,
-        conversationId: pa.conversationId,
-        threadId: pa.threadId,
-        messageId: pa.messageId,
-        toolName: pa.toolName,
-        toolArgs: pa.toolArgs,
-        createdAt: pa.createdAt,
-        status: pa.status as 'pending' | 'approved' | 'denied',
-      })),
-
-      // ========== Delegated Methods ==========
-      createConversation: (workspaceType: WorkspaceType, projectId: string | null, agentId: string) =>
-        unifiedStore.createConversation(workspaceType, projectId, agentId),
-
-      updateConversationMetadata: (id: string, updates: Partial<ConversationMetadataExtended>) =>
-        unifiedStore.updateConversation(id, updates),
-
-      deleteConversation: (id: string) => unifiedStore.deleteConversation(id),
-
-      setActiveConversation: (id: string) => unifiedStore.setActiveConversation(id),
-
-      setScrollPosition: (id: string, scrollPosition: number) =>
-        unifiedStore.setScrollPosition(id, scrollPosition),
-
-      getConversation: (id: string) => {
-        const conv = unifiedStore.getConversation(id);
-        return conv ? mapToLegacyConversation(conv) : undefined;
-      },
-
-      getAllConversations: () =>
-        unifiedStore.getAllConversations().map(mapToLegacyConversation),
-
-      getConversationsByWorkspace: (workspaceType: WorkspaceType) =>
-        unifiedStore.getConversationsByWorkspace(workspaceType).map(mapToLegacyConversation),
-
-      getConversationsByProject: (projectId: string) =>
-        unifiedStore.getConversationsByProject(projectId).map(mapToLegacyConversation),
-
-      createThread: (conversationId: string, parentThreadId?: string) =>
-        unifiedStore.createThread(conversationId, parentThreadId),
-
-      deleteThread: (threadId: string) => unifiedStore.deleteThread(threadId),
-
-      setActiveThread: (threadId: string | null) => unifiedStore.setActiveThread(threadId),
-
-      getThread: (threadId: string) => {
-        const thread = unifiedStore.getThread(threadId);
-        return thread ? mapToLegacyThread(thread, messagesByThread) : undefined;
-      },
-
-      getThreadsByConversation: (conversationId: string) =>
-        unifiedStore.getThreadsByConversation(conversationId).map((t) => mapToLegacyThread(t, messagesByThread)),
-
-      getRootThread: (conversationId: string) => {
-        const thread = unifiedStore.getRootThread(conversationId);
-        return thread ? mapToLegacyThread(thread, messagesByThread) : undefined;
-      },
-
-      getChildThreads: (parentThreadId: string) =>
-        unifiedStore.getChildThreads(parentThreadId).map((t) => mapToLegacyThread(t, messagesByThread)),
-
-      getThreadHierarchy: (threadId: string) =>
-        unifiedStore.getThreadHierarchy(threadId).map((t) => mapToLegacyThread(t, messagesByThread)),
-
-      addMessage: (threadId: string, message: Omit<ThreadMessage, 'id' | 'timestamp'>) => {
-        const { toolCalls, ...rest } = message;
-        return unifiedStore.addMessage(threadId, {
-          ...rest,
-          toolCalls: toolCalls as any,
-        });
-      },
-
-      updateMessage: (messageId: string, updates: Partial<ThreadMessage>) =>
-        unifiedStore.updateMessage(messageId, updates as any),
-
-      deleteMessage: (messageId: string) => unifiedStore.deleteMessage(messageId),
-
-      getMessage: (messageId: string) => {
-        const msg = unifiedStore.getMessage(messageId);
-        if (!msg) return undefined;
-        const legacy = mapToLegacyMessage(msg);
-        if (!legacy) return undefined;
-        return { ...legacy, threadId: msg.threadId };
-      },
-
-      getMessagesByThread: (threadId: string) => {
-        const msgs = unifiedStore.getMessagesByThread(threadId);
-        return msgs.map((msg) => {
-          const legacy = mapToLegacyMessage(msg);
-          if (!legacy) return null;
-          return { ...legacy, threadId: msg.threadId };
-        }).filter((m): m is ThreadMessage & { threadId: string } => m !== null);
-      },
-
-      getLastMessage: (threadId: string) => {
-        const msg = unifiedStore.getLastMessage(threadId);
-        if (!msg) return undefined;
-        const legacy = mapToLegacyMessage(msg);
-        if (!legacy) return undefined;
-        return { ...legacy, threadId: msg.threadId };
-      },
-
-      // ========== Stub Methods for Events/Validation (to be implemented) ==========
-      filterConversations: () => [],
-      sortConversations: () => [],
-      searchConversations: () => [],
-      searchConversationsByTag: () => [],
-      getConversationStats: () => ({ messageCount: 0, threadCount: 0, totalTokens: 0, durationMs: 0 }),
-      getRecentConversations: () => [],
-      loadConversation: async (conversationId: string) => {
-        await unifiedStore.loadConversation(conversationId);
-      },
-      loadConversationByProject: async (projectId: string) => {
-        await unifiedStore.loadConversationByProject(projectId);
-      },
-
-      validateConversationId: () => ({ isValid: true, errors: [] }),
-      validateThreadId: () => ({ isValid: true, errors: [] }),
-      validateMessageId: () => ({ isValid: true, errors: [] }),
-      validateConversationStatus: () => ({ isValid: true, errors: [] }),
-      validateThreadStatus: () => ({ isValid: true, errors: [] }),
-      validateThreadHierarchy: () => ({ isValid: true, errors: [] }),
-      validateMessageThreadAssociation: () => ({ isValid: true, errors: [] }),
-      validateConversationIntegrity: () => ({ isValid: true, errors: [] }),
-
-      emitEvent: () => {},
-      emitConversationCreated: () => {},
-      emitConversationUpdated: () => {},
-      emitConversationDeleted: () => {},
-      emitThreadCreated: () => {},
-      emitThreadUpdated: () => {},
-      emitThreadDeleted: () => {},
-      emitMessageAdded: () => {},
-      emitMessageUpdated: () => {},
-      emitMessageDeleted: () => {},
-      addEventListener: () => () => {},
-      removeEventListener: () => {},
-      getEventHistory: () => [],
-      clearEventHistory: () => {},
-
-      persistConversation: async () => {
-        await unifiedStore.persistConversation();
-      },
-
-      getCurrentConversation: () => {
-        const state = unifiedStore.getCurrentConversation();
-        if (!state) return null;
-        return {
-          metadata: {
-            id: state.metadata.id,
-            projectId: state.metadata.projectId,
-            workspaceId: state.metadata.workspaceId,
-            workspaceType: state.metadata.workspaceType,
-            title: state.metadata.title,
-            preview: state.metadata.preview,
-            agentId: state.metadata.agentId,
-            messageCount: state.metadata.messageCount,
-            scrollPosition: state.metadata.scrollPosition,
-            createdAt: state.metadata.createdAt,
-            updatedAt: state.metadata.updatedAt,
-          },
-          messages: state.messages
-            .filter((m) => m.role !== 'tool')
-            .map((m) => ({
-              id: m.id,
-              role: m.role as 'user' | 'assistant' | 'system',
-              content: m.content,
-              agentId: m.agentId,
-              agentName: m.agentName,
-              agentModel: m.agentModel,
-              timestamp: m.timestamp,
-              toolCalls: m.toolCalls?.map((tc) => ({
-                id: tc.id,
-                name: tc.name,
-                status: (tc.status === 'cancelled' ? 'error' : tc.status) as 'pending' | 'running' | 'success' | 'error',
-                input: tc.input,
-                output: tc.output,
-                duration: tc.duration,
-              })),
-            })),
-        };
-      },
-    };
-  }
-);
+  // Return initial mapped state
+  return initialState;
+});
 
 // Re-export types for legacy consumers
 export type { CombinedConversationState } from './types';
@@ -460,5 +486,5 @@ export function useActiveThreadWithControls() {
  * NOTE: This is a snapshot of state at call time, not reactive
  */
 export function getConversationStoreState(): CombinedConversationState {
-  return useConversationStore.getState();
+  return mapUnifiedStateToLegacy(useUnifiedChatStore.getState());
 }

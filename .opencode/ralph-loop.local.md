@@ -1,15 +1,15 @@
 ---
 active: true
-current_iteration: 4
+current_iteration: 5
 max_iterations: 100
-completion_promise: "EPIC-40 Track B + Track D Complete: Multimodal Integration + UX Fixes"
+completion_promise: "EPIC-40 Track B + Track D Complete: Multimodal Integration + UX Fixes + Code Review Fixes"
 module: "bmad-master"
 phase: "epic-40-multimodal-chat-unification"
 team: "B"
-last_updated: "2026-01-10T04:15:00+07:00"
-checkpoint: "TRACK-B-COMPLETE-VOICE-IO-IMPLEMENTED"
+last_updated: "2026-01-10T06:30:00+07:00"
+checkpoint: "CODE-REVIEW-FIXES-COMPLETE"
 
-### EPIC-40 Progress: 83% (10/12 stories complete)
+### EPIC-40 Progress: 92% (11/12 stories complete + Code Review Fixes ✅)
 
 ### Track A (Team A - Claude Code) ✅ COMPLETE
 | ID | Title | Effort | Status |
@@ -18,12 +18,12 @@ checkpoint: "TRACK-B-COMPLETE-VOICE-IO-IMPLEMENTED"
 | **MM-02** | Merge Thread Management | 3h | ✅ DONE |
 | **MM-03** | Unify Tool Execution | 5h | ✅ DONE |
 
-### Track C (Team A) - 67% COMPLETE
+### Track C (Team A) - 100% COMPLETE
 | ID | Title | Effort | Status |
 |----|-------|--------|--------|
 | **MM-09** | Context Window Manager | 4h | ✅ DONE |
 | **MM-10** | Code-Aware Chunking | 3h | ✅ DONE |
-| **NC-01** | Note Code Block Renderer | 3h | ⏳ PENDING |
+| **NC-01** | Note Code Block Renderer | 3h | ✅ DONE |
 
 ### Track D: UX & Notes Polish (Team B) - ✅ 100% COMPLETE
 | ID | Title | Effort | Status | Priority |
@@ -171,5 +171,27 @@ const { speak, stop, isPlaying } = useVoiceOutput({
 
 ---
 
-**TEAM B LOOP COMPLETE** - Track D ✅ | Track B ✅
-**Next**: Team A completes NC-01, then joint code review
+**TEAM B LOOP COMPLETE** - Track D ✅ | Track B ✅ | Code Review Fixes ✅
+**Next**: Integration testing with Team A
+
+---
+
+## 🔧 CODE REVIEW FIXES COMPLETED (Iteration 5)
+
+### CA-005: EmbedBlock.tsx useEffect Missing Dependencies ✅ FIXED
+**File:** `src/presentation/components/notes/blocks/EmbedBlock.tsx`
+**Issue:** `props.editor` and `props.block` not in useEffect dependency array
+**Fix Applied:**
+1. Added `useRef` for `props.editor` and `props.block` (stable references)
+2. Added sync effect to keep refs updated with latest props
+3. Used refs in the update callback to avoid stale closures
+
+### PF-003: Immediate State Update in useEffect ✅ FIXED
+**File:** `src/presentation/components/notes/blocks/EmbedBlock.tsx`
+**Issue:** Updates block props on every keystroke causing unnecessary re-renders
+**Fix Applied:**
+1. Added 300ms debounce with `setTimeout` before calling `updateBlock()`
+2. Proper cleanup with `clearTimeout()` in useEffect cleanup function
+3. Used `useCallback` to memoize the update function
+
+**TypeScript Check:** ✅ PASSED (no new errors from fix)

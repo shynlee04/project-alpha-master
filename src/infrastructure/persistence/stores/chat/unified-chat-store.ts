@@ -23,8 +23,7 @@ import { persist } from 'zustand/middleware';
 import type { CombinedUnifiedChatState } from './unified-chat-types';
 import type { ConversationState } from '@/domain/entities/chat';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
-import { db } from '@/infrastructure/persistence/dexie-db';
-import type { ViaGentDatabase } from '@/infrastructure/persistence/dexie-db-class';
+import { getDb } from '@/infrastructure/persistence/dexie-db';
 
 // Import slices
 import { createChatMetadataSlice } from './slices/chat-metadata-slice';
@@ -53,6 +52,8 @@ export type {
 /**
  * Debounced persist function for conversation state
  * Prevents excessive IndexedDB writes during rapid updates
+ *
+ * CA-002 FIX: Uses getDb() instead of unsafe type assertion
  */
 function createDebouncedPersist(delay: number) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -62,8 +63,11 @@ function createDebouncedPersist(delay: number) {
 
     timeoutId = setTimeout(async () => {
       try {
-        const database = db as unknown as ViaGentDatabase;
-        await database.open();
+        const database = getDb();
+        if (!database) {
+          console.warn('[UnifiedChatStore] Database not available during SSR');
+          return;
+        }
 
         const table = database.conversationState;
         if (!table) return;
@@ -192,8 +196,11 @@ export const useUnifiedChatStore = create<CombinedUnifiedChatState>()(
          */
         loadConversation: async (conversationId: string): Promise<void> => {
           try {
-            const database = db as unknown as ViaGentDatabase;
-            await database.open();
+            const database = getDb();
+            if (!database) {
+              console.warn('[UnifiedChatStore] Database not available during SSR');
+              return;
+            }
 
             const table = database.conversationState;
             if (!table) return;
@@ -295,8 +302,11 @@ export const useUnifiedChatStore = create<CombinedUnifiedChatState>()(
          */
         loadConversationByProject: async (projectId: string): Promise<void> => {
           try {
-            const database = db as unknown as ViaGentDatabase;
-            await database.open();
+            const database = getDb();
+            if (!database) {
+              console.warn('[UnifiedChatStore] Database not available during SSR');
+              return;
+            }
 
             const table = database.conversationState;
             if (!table) return;

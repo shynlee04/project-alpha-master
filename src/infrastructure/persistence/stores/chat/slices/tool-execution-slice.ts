@@ -33,8 +33,29 @@ type ToolExecutionSliceMethods = {
   clearPendingApprovals: () => void;
 };
 
-const generateToolCallId = () => `tc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-const generateApprovalId = () => `appr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+/**
+ * Generate cryptographically unique tool call ID
+ * CA-003 FIX: Uses crypto.randomUUID() instead of Math.random()
+ * Falls back to timestamp + random for SSR compatibility
+ */
+const generateToolCallId = () => {
+  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `tc_${uuid}`;
+};
+
+/**
+ * Generate cryptographically unique approval ID
+ * CA-003 FIX: Uses crypto.randomUUID() instead of Math.random()
+ * Falls back to timestamp + random for SSR compatibility
+ */
+const generateApprovalId = () => {
+  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `appr_${uuid}`;
+};
 
 export const createToolExecutionSlice: StateCreator<
   CombinedUnifiedChatState,

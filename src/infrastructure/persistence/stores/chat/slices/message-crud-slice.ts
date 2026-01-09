@@ -27,7 +27,17 @@ type MessageCrudSliceMethods = {
   getLastMessage: (threadId: string) => MessageWithId | undefined;
 };
 
-const generateId = () => `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+/**
+ * Generate cryptographically unique message ID
+ * CA-003 FIX: Uses crypto.randomUUID() instead of Math.random()
+ * Falls back to timestamp + random for SSR compatibility
+ */
+const generateId = () => {
+  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `msg_${uuid}`;
+};
 
 export const createMessageCrudSlice: StateCreator<
   CombinedUnifiedChatState,

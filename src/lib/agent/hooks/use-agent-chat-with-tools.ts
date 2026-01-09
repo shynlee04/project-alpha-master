@@ -567,6 +567,7 @@ export function useAgentChatWithTools(
 
     // EPIC-40 MM-03: Sync pending approvals to unified store
     // This ensures tool approvals persist across page refreshes
+    // CA-006 FIX: Add deduplication to prevent memory leak
     const prevPendingApprovalsRef = useRef<string[]>([]);
     useEffect(() => {
         if (!conversationId) return;
@@ -581,8 +582,22 @@ export function useAgentChatWithTools(
         // Find new approvals (in current but not in previous)
         const newApprovals = pendingApprovals.filter(p => !prevApprovalIds.includes(p.approvalId));
 
-        // Add new approvals to unified store
+        // CA-006 FIX: Check for existing approvals in store to prevent duplicates
+        // This handles the case where the same approval appears multiple times in the message stream
+        const existingApprovals = useUnifiedChatStore.getState().getPendingApprovals();
+        const existingApprovalIds = new Set(
+            existingApprovals
+                .filter(a => a.conversationId === conversationId && a.threadId === effectiveThreadId)
+                .map(a => a.approvalId)
+        );
+
+        // Add only genuinely new approvals (not already in store)
         for (const approval of newApprovals) {
+            if (existingApprovalIds.has(approval.approvalId)) {
+                // Skip - already exists in store for this conversation/thread
+                continue;
+            }
+
             // We need a messageId for the approval - use a temporary one based on the approval
             // This will be updated when the message is actually added
             const messageId = `msg_${approval.approvalId}`;

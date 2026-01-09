@@ -32,7 +32,17 @@ type ChatMetadataSliceMethods = {
   getConversationsByProject: (projectId: string) => ConversationWithId[];
 };
 
-const generateId = () => `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+/**
+ * Generate cryptographically unique conversation ID
+ * CA-003 FIX: Uses crypto.randomUUID() instead of Math.random()
+ * Falls back to timestamp + random for SSR compatibility
+ */
+const generateId = () => {
+  const uuid = typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `chat_${uuid}`;
+};
 
 export const createChatMetadataSlice: StateCreator<
   CombinedUnifiedChatState,
