@@ -133,14 +133,14 @@ export function MessageSearch({
   return (
     <div
       className={cn(
-        'flex flex-col h-full bg-slate-900/95 border-l-2 border-slate-700',
+        'flex flex-col h-full bg-background border-l-2 border-border',
         className
       )}
     >
       {/* Header: Search Input */}
-      <div className="p-3 border-b-2 border-slate-700">
+      <div className="p-3 border-b-2 border-border">
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
             value={query}
@@ -148,18 +148,18 @@ export function MessageSearch({
             placeholder={t('chat.search.placeholder', 'Search messages...')}
             className={cn(
               'pl-9 pr-8 py-2 rounded-sm border-2',
-              'bg-slate-800 border-slate-600 text-slate-200',
-              'placeholder:text-slate-500',
-              'focus:border-blue-500 focus:outline-none',
+              'bg-popover border-input text-foreground',
+              'placeholder:text-muted-foreground',
+              'focus:border-primary focus:outline-none',
               'font-mono text-sm',
-              'shadow-md'
+              'shadow-pixel'
             )}
           />
           {query && (
             <button
               type="button"
               onClick={handleClearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
@@ -173,9 +173,9 @@ export function MessageSearch({
           onClick={() => setShowFilters(!showFilters)}
           className={cn(
             'mt-2 w-full px-2 py-1 rounded-sm border-2',
-            'bg-slate-800/40 border-slate-600 text-slate-400',
-            'hover:bg-slate-700/40 hover:border-slate-500',
-            'transition-colors shadow-md font-mono text-xs',
+            'bg-card border-border text-muted-foreground',
+            'hover:bg-secondary hover:border-border/80',
+            'transition-colors shadow-pixel font-mono text-xs',
             'flex items-center justify-center gap-1'
           )}
         >
@@ -318,9 +318,9 @@ function FilterToggle({ active = false, onClick, label, icon }: FilterToggleProp
         'flex items-center gap-1 px-2 py-1 rounded-sm border-2 transition-colors',
         'font-mono text-xs whitespace-nowrap',
         active
-          ? 'bg-blue-600/30 border-blue-500 text-blue-300'
-          : 'bg-slate-800/40 border-slate-600 text-slate-400 hover:bg-slate-700/40 hover:border-slate-500',
-        'shadow-md'
+          ? 'bg-primary/20 border-primary text-primary'
+          : 'bg-card border-border text-muted-foreground hover:bg-secondary hover:border-border/80',
+        'shadow-pixel'
       )}
     >
       {icon}
@@ -348,9 +348,9 @@ function MessageSearchResultCard({ result, conversationTitle, onJump }: MessageS
     <div
       className={cn(
         'p-3 rounded-sm border-2 cursor-pointer',
-        'bg-slate-800/40 border-slate-700',
-        'hover:bg-slate-700/40 hover:border-slate-600',
-        'transition-colors shadow-md'
+        'bg-card border-border',
+        'hover:bg-secondary hover:border-border/80',
+        'transition-colors shadow-pixel'
       )}
       onClick={onJump}
       role="button"
@@ -392,7 +392,7 @@ function MessageSearchResultCard({ result, conversationTitle, onJump }: MessageS
         <span
           className={cn(
             'px-1.5 py-0.5 rounded-sm text-[10px] font-mono font-bold',
-            'bg-slate-700/40 text-slate-500 border border-slate-600'
+            'bg-secondary text-muted-foreground border border-border'
           )}
           title={t('chat.search.relevanceScore', 'Relevance score')}
         >
@@ -401,19 +401,19 @@ function MessageSearchResultCard({ result, conversationTitle, onJump }: MessageS
       </div>
 
       {/* Snippet with highlighted match */}
-      <p className="text-xs text-slate-300 font-mono line-clamp-3 mb-2">
+      <p className="text-xs text-foreground font-mono line-clamp-3 mb-2">
         {snippet}
       </p>
 
       {/* Footer: Timestamp */}
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-slate-500 font-mono">
+        <span className="text-[10px] text-muted-foreground font-mono">
           {new Date(message.timestamp).toLocaleString()}
         </span>
 
         {/* Agent attribution */}
         {!isUser && message.agentName && (
-          <span className="text-[10px] text-slate-500 font-mono">
+          <span className="text-[10px] text-muted-foreground font-mono">
             {message.agentName}
           </span>
         )}

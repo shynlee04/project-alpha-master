@@ -112,7 +112,7 @@ export function RAGAutoIndexingIndicator({
     const progressPercent = total > 0 ? Math.round((current / total) * 100) : progress
 
     return (
-        <div className={cn('flex items-center gap-3 p-3 rounded-lg border bg-card', className)}>
+        <div className={cn('flex items-center gap-3 p-3 rounded-none border bg-card', className)}>
             {getStatusIcon()}
 
             <div className="flex-1 space-y-1">

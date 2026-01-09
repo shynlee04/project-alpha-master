@@ -327,9 +327,9 @@ export function UnifiedAgentSelector({
       <SelectTrigger
         className={cn(
           'h-10 px-3 gap-2 font-mono',
-          'border-2 border-slate-600 dark:border-slate-500',
-          'bg-slate-800/60 hover:bg-slate-700/80',
-          'shadow-md hover:shadow-sm',
+          'border-2 border-border',
+          'bg-card hover:bg-secondary',
+          'shadow-pixel hover:shadow-pixel-sm',
           'hover:translate-x-[2px] hover:translate-y-[2px]',
           'transition-all duration-100',
           className
@@ -361,9 +361,9 @@ export function UnifiedAgentSelector({
       <SelectContent
         className={cn(
           'w-64 p-1 font-mono',
-          'border-2 border-slate-600 dark:border-slate-500',
-          'bg-slate-800 dark:bg-slate-900',
-          'shadow-lg'
+          'border-2 border-border',
+          'bg-popover',
+          'shadow-pixel'
         )}
       >
         {availableAgents.map((agent) => (
@@ -372,7 +372,7 @@ export function UnifiedAgentSelector({
             value={agent.id}
             className={cn(
               'flex items-center gap-2 px-3 py-2 cursor-pointer',
-              'hover:bg-slate-700 focus:bg-slate-700'
+              'hover:bg-secondary focus:bg-secondary'
             )}
           >
             <div className={cn(
@@ -385,7 +385,7 @@ export function UnifiedAgentSelector({
                   {agent.name}
                 </span>
                 {agent.status === 'online' && (
-                  <Badge variant="outline" className="text-xs bg-green-900/50 text-green-400">
+                  <Badge variant="outline" className="text-xs bg-success/20 text-success">
                     ONLINE
                   </Badge>
                 )}

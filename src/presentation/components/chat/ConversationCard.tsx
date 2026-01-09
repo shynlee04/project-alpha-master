@@ -193,10 +193,10 @@ export function ConversationCard({
         'group relative p-3 rounded-sm border-2 cursor-pointer transition-colors',
         // 8-bit style: sharp corners, solid colors, no blur
         isActive
-          ? 'bg-blue-900/40 border-blue-500'
-          : 'bg-slate-800/40 border-slate-700 hover:bg-slate-700/40 hover:border-slate-600',
+          ? 'bg-primary/20 border-primary'
+          : 'bg-card border-border hover:bg-secondary hover:border-border/80',
         // 8-bit shadow
-        'shadow-md',
+        'shadow-pixel',
         className
       )}
       onClick={handleClick}
@@ -215,7 +215,7 @@ export function ConversationCard({
           <h3
             className={cn(
               'font-mono font-bold text-sm truncate',
-              isActive ? 'text-blue-300' : 'text-slate-200'
+              isActive ? 'text-primary' : 'text-foreground'
             )}
             title={displayTitle}
           >
@@ -231,10 +231,10 @@ export function ConversationCard({
             onClick={handleToggleFavorite}
             className={cn(
               'p-1 rounded-sm border-2 transition-colors',
-              'hover:bg-slate-700',
+              'hover:bg-secondary',
               pinned
-                ? 'text-yellow-400 border-yellow-500'
-                : 'text-slate-500 border-slate-600'
+                ? 'text-warning border-warning'
+                : 'text-muted-foreground border-border'
             )}
             title={pinned ? t('chat.history.unfavorite') : t('chat.history.favorite')}
           >
@@ -297,14 +297,14 @@ export function ConversationCard({
       <div className="flex items-center justify-between gap-2">
         {/* Left: Timestamp + Message count */}
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-slate-500 font-mono">
+          <span className="text-[10px] text-muted-foreground font-mono">
             {timestamp}
           </span>
           {messageCount > 0 && (
             <span className={cn(
               'px-1.5 py-0.5 rounded-sm text-[10px] font-mono font-bold',
-              'border border-slate-600',
-              isActive ? 'bg-blue-800/40 text-blue-300 border-blue-500' : 'bg-slate-700/40 text-slate-400'
+              'border border-border',
+              isActive ? 'bg-primary/20 text-primary border-primary' : 'bg-secondary text-muted-foreground'
             )}>
               {messageCount}
             </span>
@@ -319,7 +319,7 @@ export function ConversationCard({
                 key={tag}
                 className={cn(
                   'px-1.5 py-0.5 rounded-sm text-[10px] font-mono',
-                  'bg-purple-900/40 text-purple-300 border border-purple-600'
+                  'bg-secondary text-secondary-foreground border border-border'
                 )}
                 title={tag}
               >
@@ -327,7 +327,7 @@ export function ConversationCard({
               </span>
             ))}
             {tags.length > 2 && (
-              <span className="text-[10px] text-slate-500 font-mono">
+              <span className="text-[10px] text-muted-foreground font-mono">
                 +{tags.length - 2}
               </span>
             )}
@@ -339,7 +339,7 @@ export function ConversationCard({
       {status === 'archived' && (
         <div className={cn(
           'absolute top-1 right-1 px-1 py-0.5 rounded-sm',
-          'bg-slate-700/80 text-slate-400 text-[10px] font-mono border border-slate-600'
+          'bg-secondary text-muted-foreground text-[10px] font-mono border border-border'
         )}>
           {t('chat.history.archived')}
         </div>

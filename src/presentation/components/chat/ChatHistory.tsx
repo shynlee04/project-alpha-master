@@ -268,13 +268,13 @@ export function ChatHistory({
   return (
     <div
       className={cn(
-        'flex flex-col h-full bg-slate-900/95 border-l-2 border-slate-700',
+        'flex flex-col h-full bg-background border-l-2 border-border',
         className
       )}
     >
       {/* Header: Title + New Button */}
-      <div className="flex items-center justify-between p-3 border-b-2 border-slate-700">
-        <h2 className="font-mono font-bold text-sm text-slate-200">
+      <div className="flex items-center justify-between p-3 border-b-2 border-border">
+        <h2 className="font-mono font-bold text-sm text-foreground">
           {t('chat.history.title', 'History')}
         </h2>
         <Button
@@ -283,9 +283,9 @@ export function ChatHistory({
           onClick={handleNewConversation}
           className={cn(
             'px-2 py-1 rounded-sm border-2',
-            'bg-blue-600/20 border-blue-500 text-blue-300',
-            'hover:bg-blue-600/30 transition-colors',
-            'shadow-md'
+            'bg-primary/20 border-primary text-primary',
+            'hover:bg-primary/30 transition-colors',
+            'shadow-pixel'
           )}
         >
           <Plus className="h-4 w-4" />
@@ -420,9 +420,9 @@ function FilterButton({ active = false, onClick, icon, label }: FilterButtonProp
         'flex items-center gap-1 px-2 py-1 rounded-sm border-2 transition-colors',
         'font-mono text-xs whitespace-nowrap',
         active
-          ? 'bg-blue-600/30 border-blue-500 text-blue-300'
-          : 'bg-slate-800/40 border-slate-600 text-slate-400 hover:bg-slate-700/40 hover:border-slate-500',
-        'shadow-md'
+          ? 'bg-primary/20 border-primary text-primary'
+          : 'bg-card border-border text-muted-foreground hover:bg-secondary hover:border-border/80',
+        'shadow-pixel'
       )}
     >
       {icon}

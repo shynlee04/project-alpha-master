@@ -91,10 +91,9 @@ const MessageBubble = memo(function MessageBubble({
                     'inline-block text-left rounded-sm p-3',
                     'border-2',
                     isUser
-                        ? 'bg-blue-900/50 border-blue-600 text-blue-50'
-                        : 'bg-slate-800/80 border-slate-600 text-slate-100',
-                    // 8-bit shadow
-                    'shadow-md'
+                        ? 'bg-primary/20 border-primary text-primary-foreground'
+                        : 'bg-card border-border text-foreground',
+                    'shadow-pixel'
                 )}>
                     {isUser ? (
                         <p className="whitespace-pre-wrap font-mono text-sm">
@@ -269,8 +268,8 @@ export function ChatConversation({
                 {/* Header */}
                 <div className={cn(
                     'flex items-center gap-3 px-4 py-3',
-                    'border-b-2 border-slate-700 dark:border-slate-600',
-                    'bg-slate-800/80'
+                    'border-b-2 border-border',
+                    'bg-secondary'
                 )}>
                     {/* Back button */}
                     <Button
@@ -279,8 +278,7 @@ export function ChatConversation({
                         onClick={onBack}
                         className={cn(
                             'h-8 w-8',
-                            'border border-slate-600 hover:border-slate-500',
-                            'hover:bg-slate-700'
+                            'border border-border hover:bg-secondary/80'
                         )}
                     >
                         <ArrowLeft className="h-4 w-4" />
@@ -332,8 +330,8 @@ export function ChatConversation({
                     onSubmit={handleSubmit}
                     className={cn(
                         'flex gap-2 p-4',
-                        'border-t-2 border-slate-700 dark:border-slate-600',
-                        'bg-slate-800/80'
+                        'border-t-2 border-border',
+                        'bg-secondary'
                     )}
                 >
                     <textarea
@@ -346,9 +344,9 @@ export function ChatConversation({
                         rows={1}
                         className={cn(
                             'flex-1 px-3 py-2 font-mono text-sm',
-                            'bg-slate-900/80 border-2 border-slate-600',
-                            'text-slate-100 placeholder:text-slate-500',
-                            'focus:border-blue-500 focus:outline-none',
+                            'bg-popover border-2 border-input',
+                            'text-foreground placeholder:text-muted-foreground',
+                            'focus:border-primary focus:outline-none',
                             'resize-none rounded-sm',
                             'disabled:opacity-50 disabled:cursor-not-allowed'
                         )}
@@ -358,8 +356,8 @@ export function ChatConversation({
                         disabled={!debouncedInput.trim() || isStreaming || !selectedAgent}
                         className={cn(
                             'px-4 font-mono',
-                            'bg-blue-600 hover:bg-blue-500',
-                            'border-2 border-blue-400',
+                            'bg-primary hover:bg-primary/90',
+                            'border-2 border-primary-foreground',
                             'shadow-md',
                             'hover:shadow-sm',
                             'hover:translate-x-[2px] hover:translate-y-[2px]',
@@ -421,7 +419,7 @@ export function ChatConversation({
             </div>
 
             {/* Messages area with virtual scrolling */}
-            <div className="flex-1 overflow-hidden bg-slate-900/50">
+            <div className="flex-1 overflow-hidden bg-background">
                 <div className="py-4">
                     <List
                         ref={listRef}
@@ -473,8 +471,8 @@ export function ChatConversation({
                 onSubmit={handleSubmit}
                 className={cn(
                     'flex gap-2 p-4',
-                    'border-t-2 border-slate-700 dark:border-slate-600',
-                    'bg-slate-800/80'
+                    'border-t-2 border-border',
+                    'bg-secondary'
                 )}
             >
                 <textarea
@@ -487,9 +485,9 @@ export function ChatConversation({
                     rows={1}
                     className={cn(
                         'flex-1 px-3 py-2 font-mono text-sm',
-                        'bg-slate-900/80 border-2 border-slate-600',
-                        'text-slate-100 placeholder:text-slate-500',
-                        'focus:border-blue-500 focus:outline-none',
+                        'bg-popover border-2 border-input',
+                        'text-foreground placeholder:text-muted-foreground',
+                        'focus:border-primary focus:outline-none',
                         'resize-none rounded-sm',
                         'disabled:opacity-50 disabled:cursor-not-allowed'
                     )}
@@ -499,10 +497,10 @@ export function ChatConversation({
                     disabled={!debouncedInput.trim() || isStreaming || !selectedAgent}
                     className={cn(
                         'px-4 font-mono',
-                        'bg-blue-600 hover:bg-blue-500',
-                        'border-2 border-blue-400',
-                        'shadow-md',
-                        'hover:shadow-sm',
+                        'bg-primary hover:bg-primary/90',
+                        'border-2 border-primary-foreground',
+                        'shadow-pixel',
+                        'hover:shadow-pixel-sm',
                         'hover:translate-x-[2px] hover:translate-y-[2px]',
                         'transition-all duration-100',
                         'disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0'

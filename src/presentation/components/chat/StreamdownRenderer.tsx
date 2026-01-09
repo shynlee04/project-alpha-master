@@ -101,8 +101,8 @@ function MermaidDiagram({ code }: { code: string }) {
     if (!svg) {
         return (
             <div className={cn(
-                'my-4 p-4 rounded-sm border-2 border-slate-600 bg-slate-800/50',
-                'flex items-center justify-center text-slate-400 font-mono text-sm'
+                'my-4 p-4 rounded-sm border-2 border-border bg-secondary',
+                'flex items-center justify-center text-muted-foreground font-mono text-sm'
             )}>
                 Loading diagram...
             </div>
@@ -113,7 +113,7 @@ function MermaidDiagram({ code }: { code: string }) {
         <div
             ref={containerRef}
             className={cn(
-                'my-4 p-4 rounded-sm border-2 border-slate-600 bg-slate-800/50',
+                'my-4 p-4 rounded-sm border-2 border-border bg-secondary',
                 'overflow-auto',
                 '[&_svg]:max-w-full [&_svg]:h-auto'
             )}
@@ -156,12 +156,12 @@ function StreamdownRendererComponent({
                 'prose-headings:font-mono prose-headings:font-bold',
                 'prose-code:font-mono prose-code:text-sm prose-code:bg-slate-800 prose-code:px-1 prose-code:rounded',
                 'prose-pre:bg-transparent prose-pre:p-0',
-                'prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline',
+                'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
                 'prose-table:border-collapse',
-                'prose-th:border prose-th:border-slate-600 prose-th:px-3 prose-th:py-2 prose-th:bg-slate-800 prose-th:font-mono',
-                'prose-td:border prose-td:border-slate-700 prose-td:px-3 prose-td:py-2',
-                'prose-li:marker:text-slate-500',
-                'prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-slate-800/50 prose-blockquote:px-4 prose-blockquote:py-2',
+                'prose-th:border prose-th:border-border prose-th:px-3 prose-th:py-2 prose-th:bg-secondary prose-th:font-mono',
+                'prose-td:border prose-td:border-border prose-td:px-3 prose-td:py-2',
+                'prose-li:marker:text-muted-foreground',
+                'prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-secondary prose-blockquote:px-4 prose-blockquote:py-2',
                 isStreaming && 'animate-pulse-subtle',
                 className
             )}
@@ -185,7 +185,7 @@ function StreamdownRendererComponent({
 
                         if (isInline) {
                             return (
-                                <code className="font-mono text-sm bg-slate-800 px-1 rounded" {...props}>
+                                <code className="font-mono text-sm bg-secondary px-1 rounded-sm" {...props}>
                                     {children}
                                 </code>
                             );
@@ -209,7 +209,7 @@ function StreamdownRendererComponent({
                     table({ children }) {
                         return (
                             <div className="overflow-x-auto my-4">
-                                <table className="min-w-full border-2 border-slate-600">
+                                <table className="min-w-full border-2 border-border">
                                     {children}
                                 </table>
                             </div>

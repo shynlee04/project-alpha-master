@@ -66,19 +66,19 @@ export function ThreadsList({
     return (
         <div className={cn(
             'flex flex-col h-full',
-            'bg-slate-900/50 dark:bg-slate-950/60',
+            'bg-background',
             className
         )}>
             {/* Header */}
             <div className={cn(
                 'flex items-center justify-between p-4',
-                'border-b-2 border-slate-700 dark:border-slate-600'
+                'border-b-2 border-border'
             )}>
                 <TruncatedText
                     text={t('chat.conversations', 'CONVERSATIONS')}
                     className={cn(
                         'font-mono font-bold text-lg',
-                        'text-blue-400 dark:text-blue-300',
+                        'text-primary',
                         // 8-bit text shadow
                         'drop-shadow-[2px_2px_0px_rgba(0,0,0,0.5)]'
                     )}
@@ -90,10 +90,10 @@ export function ThreadsList({
                     className={cn(
                         'font-mono text-sm',
                         // 8-bit button styling
-                        'bg-green-600 hover:bg-green-500',
-                        'border-2 border-green-400',
-                        'shadow-md',
-                        'hover:shadow-sm',
+                        'bg-primary hover:bg-primary/90',
+                        'border-2 border-primary-foreground',
+                        'shadow-pixel',
+                        'hover:shadow-pixel-sm',
                         'hover:translate-x-[2px] hover:translate-y-[2px]',
                         'transition-all duration-100'
                     )}
@@ -109,11 +109,11 @@ export function ThreadsList({
                     // Empty state
                     <div className={cn(
                         'flex flex-col items-center justify-center h-full',
-                        'text-slate-500 dark:text-slate-400'
+                        'text-muted-foreground'
                     )}>
                         <div className={cn(
                             'w-20 h-20 mb-4 rounded-sm',
-                            'border-2 border-dashed border-slate-600',
+                            'border-2 border-dashed border-border',
                             'flex items-center justify-center'
                         )}>
                             <Plus className="h-8 w-8" />
