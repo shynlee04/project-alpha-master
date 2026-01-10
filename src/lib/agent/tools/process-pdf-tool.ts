@@ -49,7 +49,9 @@ const ProcessPDFOutputSchema = z.object({
     rows: z.number(),
     columns: z.number(),
     caption: z.string().optional(),
-    data: z.unknown(),
+    // FIX: Changed from z.unknown() to z.array for Mistral compatibility
+    // Table data as 2D array of cell values (strings)
+    data: z.array(z.array(z.string())),
   })),
   figures: z.array(z.object({
     caption: z.string().optional(),

@@ -188,8 +188,16 @@ export function BarChart({ data, className, height = 200 }: ChartProps) {
  * Pie Chart - Shows distribution
  */
 export function PieChart({ data, className }: ChartProps) {
-  const { segments } = useMemo(() => {
-    const total = data.reduce((sum, d) => sum + d.value, 0) || 1;
+  const { segments, isEmpty } = useMemo(() => {
+    const total = data.reduce((sum, d) => sum + d.value, 0);
+
+    // BUG-FIX-2026-01-11: Handle empty data or all-zero values to prevent invalid SVG paths
+    // When total is 0, the || 1 fallback would create degenerate paths with startAngle === endAngle
+    // causing "attribute d: Expected number" errors in SVG rendering
+    if (total === 0 || data.length === 0) {
+      return { segments: [], isEmpty: true, total: 0 };
+    }
+
     let currentAngle = 0;
 
     const segments = data.map((d) => {
@@ -206,7 +214,7 @@ export function PieChart({ data, className }: ChartProps) {
       };
     });
 
-    return { segments, total };
+    return { segments, total, isEmpty: false };
   }, [data]);
 
   const size = 200;
@@ -232,31 +240,48 @@ export function PieChart({ data, className }: ChartProps) {
   return (
     <div className={cn('flex flex-col md:flex-row items-center gap-6', className)}>
       <svg width={size} height={size} className="font-mono text-xs">
-        {segments.map((d, i) => (
-          <g key={i}>
-            <path
-              d={createPath(d.startAngle, d.endAngle)}
-              fill={d.color || `hsl(var(--primary))`}
-              opacity={0.8}
-              stroke="hsl(var(--background))"
-              strokeWidth={2}
-            />
-          </g>
-        ))}
+        {isEmpty ? (
+          // BUG-FIX-2026-01-11: Show placeholder circle when no data
+          <circle
+            cx={center}
+            cy={center}
+            r={radius}
+            fill="none"
+            stroke="hsl(var(--muted))"
+            strokeWidth={2}
+            strokeDasharray="4,4"
+          />
+        ) : (
+          segments.map((d, i) => (
+            <g key={i}>
+              <path
+                d={createPath(d.startAngle, d.endAngle)}
+                fill={d.color || `hsl(var(--primary))`}
+                opacity={0.8}
+                stroke="hsl(var(--background))"
+                strokeWidth={2}
+              />
+            </g>
+          ))
+        )}
       </svg>
 
       {/* Legend */}
       <div className="space-y-2">
-        {segments.map((d, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div
-              className="w-4 h-4 border-2 border-border"
-              style={{ backgroundColor: d.color || 'hsl(var(--primary))' }}
-            />
-            <span className="text-sm text-foreground">{d.label}</span>
-            <span className="text-sm text-muted-foreground">{d.percentage}%</span>
-          </div>
-        ))}
+        {isEmpty ? (
+          <div className="text-sm text-muted-foreground">No data available</div>
+        ) : (
+          segments.map((d, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 border-2 border-border"
+                style={{ backgroundColor: d.color || 'hsl(var(--primary))' }}
+              />
+              <span className="text-sm text-foreground">{d.label}</span>
+              <span className="text-sm text-muted-foreground">{d.percentage}%</span>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

@@ -8,6 +8,10 @@
  * and creating child threads for each exploration path.
  *
  * Story E4-2: Sequential Expansion Agent
+ *
+ * BUG-FIX-2026-01-11: Fixed structured output error with Mistral models
+ * - Added modelSupportsStructuredOutput() check
+ * - Only send response_format to models that support it (OpenAI, etc.)
  */
 
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
@@ -96,6 +100,38 @@ export class ExpansionError extends Error {
         this.name = 'ExpansionError';
         this.code = code;
     }
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Check if a model supports OpenAI-style structured output (response_format)
+ * BUG-FIX-2026-01-11: Prevents API errors with models that don't support response_format
+ *
+ * Models known to support response_format: { type: 'json_object' }:
+ * - OpenAI: gpt-4, gpt-4-turbo, gpt-3.5-turbo, gpt-4o, etc.
+ *
+ * Models known NOT to support it:
+ * - Mistral: mistralai/* (use JSON mode in system prompt instead)
+ * - Most free/alternative models via OpenRouter
+ */
+function modelSupportsStructuredOutput(modelId: string): boolean {
+    // OpenAI models support structured output
+    if (modelId.startsWith('gpt-')) {
+        return true;
+    }
+    // Claude via OpenAI compatibility (some versions support it)
+    if (modelId.includes('claude') && modelId.includes('openai')) {
+        return true;
+    }
+    // Mistral models do NOT support response_format parameter
+    if (modelId.includes('mistral')) {
+        return false;
+    }
+    // Default to false for safety - let the model infer JSON from prompt
+    return false;
 }
 
 // ============================================================================
@@ -236,13 +272,17 @@ export class SequentialExpansionAgent {
                     'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'http://localhost',
                     'X-Title': 'Via-gent Sequential Expansion',
                 };
-                body = {
+                // BUG-FIX-2026-01-11: Only add response_format for models that support it
+                const openrouterBody: Record<string, unknown> = {
                     model: modelId,
                     messages: [{ role: 'user', content: prompt }],
                     temperature,
                     max_tokens: maxTokens,
-                    response_format: { type: 'json_object' },
                 };
+                if (modelSupportsStructuredOutput(modelId)) {
+                    openrouterBody.response_format = { type: 'json_object' };
+                }
+                body = openrouterBody;
                 break;
 
             case 'openai':
@@ -251,13 +291,17 @@ export class SequentialExpansionAgent {
                     'Authorization': `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
                 };
-                body = {
+                // BUG-FIX-2026-01-11: Only add response_format for models that support it
+                const openaiBody: Record<string, unknown> = {
                     model: modelId,
                     messages: [{ role: 'user', content: prompt }],
                     temperature,
                     max_tokens: maxTokens,
-                    response_format: { type: 'json_object' },
                 };
+                if (modelSupportsStructuredOutput(modelId)) {
+                    openaiBody.response_format = { type: 'json_object' };
+                }
+                body = openaiBody;
                 break;
 
             case 'anthropic':

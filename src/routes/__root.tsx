@@ -76,7 +76,9 @@ export const Route = createRootRoute({
         <head>
           <HeadContent />
         </head>
-        <body>
+        {/* BUG-FIX-2026-01-11: Add suppressHydrationWarning to body to prevent locale mismatch warnings
+           Server renders in English (fallbackLng), client may render in saved locale (vi/en) */}
+        <body suppressHydrationWarning>
           <ThemeProvider>
             <LocaleProvider>
               <TooltipProvider>

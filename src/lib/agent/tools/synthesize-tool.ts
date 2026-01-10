@@ -42,7 +42,9 @@ const SynthesizeOutputSchema = z.object({
     subject: z.string(),
     tags: z.array(z.string()),
     contentType: z.string().optional(),
-    extractedMetadata: z.record(z.string(), z.unknown()).optional(),
+    // FIX: Changed from z.record(z.string(), z.unknown()) for Mistral compatibility
+    // Use string values for extracted metadata
+    extractedMetadata: z.record(z.string(), z.string()).optional(),
   }),
   timestamp: z.string(),
 });
@@ -97,6 +99,18 @@ export function createSynthesizeClientTool(getKnowledgeTools: () => AgentKnowled
       });
 
       // Map SynthesisResult to SynthesizeOutput format
+      // Build extractedMetadata only with defined values
+      const extractedMetadata: Record<string, string> = {};
+      if (result.frontmatter.documentType) {
+        extractedMetadata.documentType = result.frontmatter.documentType;
+      }
+      if (result.frontmatter.difficultyLevel) {
+        extractedMetadata.difficultyLevel = result.frontmatter.difficultyLevel;
+      }
+      if (result.frontmatter.estimatedStudyTimeMinutes !== undefined) {
+        extractedMetadata.estimatedStudyTimeMinutes = String(result.frontmatter.estimatedStudyTimeMinutes);
+      }
+      
       return {
         success: true,
         data: {
@@ -107,11 +121,7 @@ export function createSynthesizeClientTool(getKnowledgeTools: () => AgentKnowled
             subject: result.frontmatter.subject || '',
             tags: result.frontmatter.tags || [],
             contentType: result.frontmatter.documentType,
-            extractedMetadata: {
-              documentType: result.frontmatter.documentType,
-              difficultyLevel: result.frontmatter.difficultyLevel,
-              estimatedStudyTimeMinutes: result.frontmatter.estimatedStudyTimeMinutes,
-            },
+            extractedMetadata: Object.keys(extractedMetadata).length > 0 ? extractedMetadata : undefined,
           },
           timestamp: result.synthesizedAt,
         },

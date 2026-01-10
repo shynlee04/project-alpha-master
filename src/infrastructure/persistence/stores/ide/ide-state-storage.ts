@@ -29,6 +29,12 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 let getIDEStoreState: (() => CombinedIDEState) | null = null;
 
 /**
+ * BUG-FIX-2026-01-11: Track if we've already warned about missing projectId
+ * Prevents console spam during early initialization when projectId is not yet set.
+ */
+let hasWarnedMissingProject = false;
+
+/**
  * Set the store reference. Called by useIDEStore after creation.
  */
 export function setIDEStoreRef(getState: () => CombinedIDEState): void {
@@ -66,11 +72,11 @@ export function createIDEStateStorage(): StateStorage {
           .first();
 
         if (!record) {
-          console.log('[IDEStateStorage] No persisted state found (first run or cleared)');
+          console.debug('[IDEStateStorage] No persisted state found (first run or cleared)');
           return null;
         }
 
-        console.log(`[IDEStateStorage] Hydrating most recent state for project: ${record.projectId}`, {
+        console.debug(`[IDEStateStorage] Hydrating most recent state for project: ${record.projectId}`, {
           openFilesCount: record.openFiles.length,
           activeFile: record.activeFile,
           updatedAt: record.updatedAt,
@@ -98,9 +104,16 @@ export function createIDEStateStorage(): StateStorage {
 
         // No projectId = don't persist empty state
         if (!projectId) {
-          console.log('[IDEStateStorage] No projectId in state, skipping persistence');
+          // BUG-FIX-2026-01-11: Only warn once per session to prevent console spam
+          if (!hasWarnedMissingProject) {
+            console.debug('[IDEStateStorage] No projectId in state, skipping persistence');
+            hasWarnedMissingProject = true;
+          }
           return;
         }
+
+        // BUG-FIX-2026-01-11: Reset warning flag when projectId is available
+        hasWarnedMissingProject = false;
 
         // Create IDEStateRecord structure
         const record: IDEStateRecord = {
@@ -121,13 +134,13 @@ export function createIDEStateStorage(): StateStorage {
         // Write to ideState table (projectId is primary key)
         await db.ideState.put(record);
 
-        console.log(`[IDEStateStorage] ✅ Persisted state for project: ${projectId}`, {
+        console.debug(`[IDEStateStorage] Persisted state for project: ${projectId}`, {
           openFilesCount: record.openFiles.length,
           activeFile: record.activeFile,
           expandedPathsCount: record.expandedPaths.length,
         });
       } catch (error) {
-        console.error('[IDEStateStorage] ❌ Failed to write state:', error);
+        console.error('[IDEStateStorage] Failed to write state:', error);
         throw error;
       }
     },
@@ -151,7 +164,7 @@ export function createIDEStateStorage(): StateStorage {
         }
 
         await db.ideState.delete(projectId);
-        console.log(`[IDEStateStorage] Removed persisted state for project: ${projectId}`);
+        console.debug(`[IDEStateStorage] Removed persisted state for project: ${projectId}`);
       } catch (error) {
         console.error('[IDEStateStorage] Failed to remove state:', error);
       }

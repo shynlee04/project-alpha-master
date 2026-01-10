@@ -1,3 +1,14 @@
+/**
+ * @fileoverview i18next Configuration
+ * @module i18n/config
+ *
+ * BUG-FIX-2026-01-11: Documented hydration mismatch handling
+ * - Server renders in English (fallbackLng)
+ * - Client hydrates with user's saved locale from localStorage
+ * - suppressHydrationWarning on <body> prevents hydration warnings
+ * - See: src/routes/__root.tsx
+ */
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
