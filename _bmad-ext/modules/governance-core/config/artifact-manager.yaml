@@ -1,0 +1,306 @@
+# Artifact Manager Configuration
+# Defines artifact lifecycle management, categories, and retention policies
+# Created: 2026-01-10
+
+artifact_categories:
+  planning_artifacts:
+    name: "Planning Artifacts"
+    description: "Architecture decisions, design docs, planning artifacts"
+    storage_pattern: "docs/planning-artifacts/"
+    retention_days: 365
+    required_front_matter:
+      - artifact_type
+      - module_id
+      - created_date
+      - author
+      - status
+      - tags
+    auto_archive: true
+
+  research_cache:
+    name: "Research Cache"
+    description: "ADO research results, documentation lookups"
+    storage_pattern: "docs/ado-artifacts/ado-research-cache/"
+    retention_days: 90
+    required_front_matter:
+      - artifact_type
+      - query
+      - created_date
+      - sources
+      - confidence
+    auto_archive: true
+    cleanup_on_expire: true
+
+  sprint_status:
+    name: "Sprint Status"
+    description: "Sprint tracking, workflow statuses"
+    storage_pattern: "_bmad/state/"
+    retention_days: 90
+    retention_policy: "active_sprint_plus_2"
+    required_front_matter:
+      - artifact_type
+      - sprint_id
+      - status
+      - created_date
+    auto_archive: false
+
+  progress_reports:
+    name: "Progress Reports"
+    description: "Weekly progress reports for modules"
+    storage_pattern: "_bmad-ext/modules/*/PROGRESS-*.md"
+    retention_days: 90
+    required_front_matter:
+      - artifact_type
+      - module_id
+      - week
+      - status
+    auto_archive: true
+
+  module_docs:
+    name: "Module Documentation"
+    description: "Module overviews, MODULE.md files"
+    storage_pattern: "_bmad-ext/modules/*/MODULE.md"
+    retention_days: null
+    retention_policy: "permanent"
+    required_front_matter:
+      - artifact_type
+      - module_id
+      - created_date
+      - status
+    auto_archive: false
+
+artifact_status:
+  draft:
+    description: "Work in progress, not yet ready for review"
+    transition_to: ["active", "deprecated"]
+    validation_required: false
+
+  active:
+    description: "Active and in use"
+    transition_to: ["deprecated", "archived"]
+    validation_required: true
+    staleness_threshold_hours: 48
+
+  deprecated:
+    description: "No longer recommended, kept for reference"
+    transition_to: ["archived"]
+    validation_required: false
+    grace_period_days: 30
+
+  archived:
+    description: "Historical record only"
+    transition_to: []
+    validation_required: false
+    compression_required: true
+
+lifecycle_stages:
+  create:
+    actions:
+      - generate_timestamp
+      - add_front_matter
+      - assign_category
+      - validate_schema
+    required_fields:
+      - artifact_type
+      - created_date
+      - author
+    failure_action: "reject"
+
+  validate:
+    actions:
+      - check_required_sections
+      - validate_format
+      - check_naming_convention
+      - verify_front_matter
+    required_fields:
+      - status
+      - tags
+    failure_action: "warn"
+
+  publish:
+    actions:
+      - index_artifact
+      - register_metadata
+      - create_summary
+      - set_freshness_header
+    required_fields:
+      - all_required
+    failure_action: "reject"
+
+  archive:
+    actions:
+      - compress_content
+      - update_status
+      - move_to_archive
+      - update_index
+    required_fields:
+      - archive_reason
+    failure_action: "warn"
+
+front_matter_schema:
+  common_fields:
+    artifact_type:
+      type: enum
+      values: [planning, research, sprint, progress, module]
+      required: true
+
+    module_id:
+      type: string
+      pattern: "^[a-z0-9_]+$"
+      required: true
+
+    created_date:
+      type: datetime
+      format: "YYYY-MM-DD"
+      required: true
+
+    updated_date:
+      type: datetime
+      format: "YYYY-MM-DDTHH:mm+TZ:TZ"
+      required: false
+
+    author:
+      type: enum
+      values: [human, agent]
+      required: true
+
+    status:
+      type: enum
+      values: [draft, active, deprecated, archived]
+      required: true
+
+    tags:
+      type: array
+      item_type: string
+      required: false
+
+  context_poisoning_prevention:
+    context_anchor:
+      type: string
+      description: "One-line summary of artifact purpose"
+      required: true
+
+    last_updated:
+      type: datetime
+      format: "YYYY-MM-DDTHH:mm+TZ:TZ"
+      required: true
+
+    freshness_threshold:
+      type: integer
+      unit: hours
+      default: 48
+      required: false
+
+artifact_summary_template: |
+  ## Artifact Summary (Auto-Generated)
+  - **Purpose**: {{purpose}}
+  - **Status**: {{status}} (last validated: {{last_validated}})
+  - **Key Domains**: {{key_domains}}
+  - **Dependencies**: {{dependencies}}
+  - **Related Artifacts**: {{related_artifacts}}
+
+naming_conventions:
+  planning_artifacts:
+    pattern: "{name}-{date}.md"
+    date_format: "YYYY-MM-DD"
+    examples:
+      - "governance-plan-2026-01-10.md"
+      - "architecture-decision-2026-01-10.md"
+
+  research_cache:
+    pattern: "{query_hash}/results-{timestamp}.md"
+    date_format: "YYYY-MM-DD-HH-mm"
+    examples:
+      - "react-hooks/research-2026-01-10-14-30.md"
+
+  sprint_status:
+    pattern: "{type}-status-{sprint_id}.yaml"
+    examples:
+      - "sprint-status-phase2-01.yaml"
+      - "bmm-workflow-status.yaml"
+
+  progress_reports:
+    pattern: "PROGRESS-{date}.md"
+    date_format: "YYYY-MM-DD"
+    examples:
+      - "PROGRESS-2026-01-10.md"
+
+  module_docs:
+    pattern: "MODULE.md"
+    examples:
+      - "MODULE.md"
+
+validation_rules:
+  required_sections:
+    planning_artifacts: 5
+    research_cache: 3
+    sprint_status: 4
+    progress_reports: 4
+    module_docs: 6
+
+  max_age_hours:
+    planning_artifacts: 24
+    research_cache: 72
+    sprint_status: 48
+    progress_reports: 168
+    module_docs: null
+
+  forbidden_patterns:
+    - "^TODO.md$"
+    - "^NOTES.md$"
+    - "^temp-"
+    - "^test-"
+
+cleanup_policies:
+  research_cache:
+    schedule: "weekly"
+    age_threshold_days: 90
+    action: "delete"
+    notification: true
+
+  progress_reports:
+    schedule: "monthly"
+    age_threshold_days: 90
+    action: "compress"
+    notification: false
+
+  planning_artifacts:
+    schedule: "yearly"
+    age_threshold_days: 365
+    action: "compress"
+    notification: true
+
+  sprint_status:
+    schedule: "after_sprint_end"
+    age_threshold_sprints: 2
+    action: "archive"
+    notification: false
+
+indexing:
+  enabled: true
+  index_file: "_bmad-ext/modules/governance-core/artifacts-index.yaml"
+  update_frequency: "on_create"
+  searchable_fields:
+    - artifact_type
+    - module_id
+    - tags
+    - status
+    - created_date
+    - context_anchor
+
+notification_rules:
+  stale_artifact:
+    enabled: true
+    threshold_hours: 48
+    channels: ["console", "log"]
+    message: "Artifact {{artifact_path}} is stale ({{age_hours}}h old)"
+
+  validation_failure:
+    enabled: true
+    channels: ["console"]
+    message: "Artifact validation failed: {{errors}}"
+
+  archive_action:
+    enabled: true
+    channels: ["log"]
+    message: "Artifact {{artifact_path}} archived after {{age_days}} days"

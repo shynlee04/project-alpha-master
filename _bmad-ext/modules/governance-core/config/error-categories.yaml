@@ -1,0 +1,183 @@
+# Error Category Determination
+# Defines how different fix types are categorized and routed
+
+categories:
+  quick_patch:
+    name: "Quick Patch"
+    description: "Single component change, no cross-domain impact"
+    workflow: "direct_fix"
+    gate_required: false
+    criteria:
+      single_component: true
+      cross_domain_impact: false
+      state_boundary_violation: false
+      test_coverage_exists: true
+    examples:
+      - "Fixing a component's prop type"
+      - "Correcting a wiring bug"
+      - "Adding missing import"
+      - "Fixing typo in string"
+    response: "Immediate fix allowed, no gate"
+
+  independent_feature:
+    name: "Independent Feature"
+    description: "Isolated change with clear boundaries"
+    workflow: "isolated_workflow"
+    gate_required: true
+    gate_level: "lightweight"
+    criteria:
+      new_feature: true
+      cross_domain_impact: false
+      boundaries_clear: true
+      independently_testable: true
+    examples:
+      - "Adding a new UI component"
+      - "Implementing isolated feature with new store"
+      - "Adding new route"
+      - "Creating new hook"
+    response: "Isolated workflow with lightweight gating"
+
+  architectural_conflict:
+    name: "Architectural Conflict"
+    description: "Cross-domain impact requiring comprehensive remediation"
+    workflow: "correct_course"
+    gate_required: true
+    gate_level: "full"
+    criteria:
+      cross_domain_impact: true
+      state_boundary_violation: true
+      affects_multiple_features: true
+      requires_journey_mapping: true
+    examples:
+      - "Splitting a god store"
+      - "Refactoring sync strategy"
+      - "Changing storage router logic"
+      - "Cross-domain state management changes"
+    response: "Full correct-course with comprehensive remediation"
+
+# Determination rules
+rules:
+  # If ANY of these are true, it's an architectural conflict
+  auto_architectural:
+    - affects_multiple_domains
+    - god_store_refactoring
+    - storage_strategy_change
+    - cross_workspace_routing_change
+    - state_boundary_violation
+    - circular_dependency_introduced
+
+  # If ALL of these are true, it's a quick patch
+  auto_quick_patch:
+    - single_file_change
+    - no_boundary_crossing
+    - no_state_change
+    - test_coverage_exists
+    - no_api_change
+
+  # If ALL quick patch conditions fail but not architectural, it's independent
+  auto_independent:
+    - clearly_isolated
+    - independently_testable
+    - minimal_cross_impact
+
+# Domain impact detection
+domain_impact:
+  single_domain:
+    description: "Affects only one domain"
+    domains: 1
+
+  cross_domain:
+    description: "Affects multiple domains"
+    domains: 2-3
+    triggers: "gate_required"
+
+  multi_domain:
+    description: "Affects 4+ domains"
+    domains: 4+
+    triggers: "architectural_conflict"
+
+# State boundary violations
+state_violations:
+  cross_store_import:
+    description: "Import from another store"
+    severity: "high"
+    category: "architectural_conflict"
+
+  direct_store_mutation:
+    description: "Mutating store from another domain"
+    severity: "critical"
+    category: "architectural_conflict"
+
+  circular_dependency:
+    description: "Store A imports Store B, Store B imports Store A"
+    severity: "critical"
+    category: "architectural_conflict"
+
+# Size thresholds
+size_thresholds:
+  component:
+    small: "< 100 lines"
+    medium: "100-300 lines"
+    large: "> 300 lines"
+    large_triggers: "consider_refactoring"
+
+  store:
+    small: "< 80 lines"
+    medium: "80-120 lines"
+    large: "> 120 lines"
+    large_triggers: "split_required"
+
+  file:
+    small: "< 200 lines"
+    medium: "200-500 lines"
+    large: "> 500 lines"
+    large_triggers: "consider_splitting"
+
+# Risk assessment
+risk_levels:
+  low:
+    description: "Minimal risk, can proceed"
+    examples: ["UI only changes", "New component", "Test additions"]
+
+  medium:
+    description: "Some risk, requires review"
+    examples: ["Store modification", "API change", "Hook changes"]
+
+  high:
+    description: "Significant risk, requires gate"
+    examples: ["Cross-domain changes", "State refactoring", "Storage changes"]
+
+  critical:
+    description: "High risk, requires correct-course"
+    examples: ["God store split", "Storage router change", "Multi-domain changes"]
+
+# Gate levels
+gate_levels:
+  none:
+    description: "No gate required"
+    applies_to: ["quick_patch"]
+
+  lightweight:
+    description: "Basic validation check"
+    applies_to: ["independent_feature"]
+    checks:
+      - "TypeScript check passes"
+      - "Related tests pass"
+      - "No circular dependencies"
+
+  full:
+    description: "Complete governance check"
+    applies_to: ["architectural_conflict"]
+    checks:
+      - "All three enforcement checks"
+      - "Research if required"
+      - "Journey mapping if cross-domain"
+      - "Rollback plan documented"
+
+# Override behavior
+override:
+  allowed: true
+  pattern: "I am aware but..."
+  requires_reason: true
+  logs_as_debt: true
+  risk_multiplier: 1.5

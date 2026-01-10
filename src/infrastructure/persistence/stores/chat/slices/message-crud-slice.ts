@@ -69,11 +69,13 @@ export const createMessageCrudSlice: StateCreator<
     }));
 
     // Update thread's message count and preview
-    const thread = get().threads[threadId];
+    const state = get();
+    const threads = state.threads ?? {};
+    const thread = threads[threadId];
     if (thread) {
       set((state) => ({
         threads: {
-          ...state.threads,
+          ...(state.threads ?? {}),
           [threadId]: {
             ...thread,
             messageCount: (thread.messageCount || 0) + 1,

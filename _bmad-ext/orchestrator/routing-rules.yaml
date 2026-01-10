@@ -22,7 +22,28 @@ created: "2026-01-10"
 routing_rules:
 
   # ═════════════════════════════════════════════════════════════════════════
-  # CRITICAL: Architecture Remediation (Highest Priority)
+  # GOVERNANCE ENFORCEMENT (Highest Priority - Runs First for ALL work)
+  # ═════════════════════════════════════════════════════════════════════════
+  # All work must pass three enforcement checks before proceeding:
+  #   1. Context First (targeted domain scanning, <5K tokens)
+  #   2. Agent as Expert (codebase comparison, flaw detection)
+  #   3. Research Required (auto-trigger on tech decisions)
+  # Output: ALLOW / WARN / BLOCK with governance report
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "GOV-001"
+    name: "Governance Enforcement"
+    if: "true"  # Always applies to ALL work before anything else
+    agent: "governance-core"
+    workflow: "correct-course"
+    priority: "critical"
+    timeout_minutes: 5
+    description: "Three enforcement checks before any work proceeds"
+    governance_report: true
+    then: "continue_to_next_rule"  # If ALLOW, continue to specific workflow
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # CRITICAL: Architecture Remediation (Runs AFTER governance allows)
   # ═════════════════════════════════════════════════════════════════════════
 
   - rule_id: "REMEDIATION-001"
@@ -146,53 +167,67 @@ routing_rules:
     description: "Analyze domain-specific code"
 
   # ═════════════════════════════════════════════════════════════════════════
-  # PRODUCT MANAGEMENT
+  # SPRINT PLANNING (Enhanced Wrapper - Cohesion & Reality Validation)
   # ═════════════════════════════════════════════════════════════════════════
+  # Updated: 2026-01-11 - Sprint-Planning Wrapper adds cohesion validation,
+  # dependency mapping, and Product Reality gates before story execution
 
-  - rule_id: "PM-001"
-    name: "Sprint Planning"
+  - rule_id: "PROD-001"
+    name: "Sprint Planning (Enhanced Wrapper)"
     if: "story_type == 'sprint_planning'"
-    agent: "pm-ext"
-    workflow: "planning-cycle"
+    agent: "sprint-planning-wrapper"
+    workflow: "sprint-planning-enhanced"
     priority: "high"
-    timeout_minutes: 60
-    description: "Plan upcoming sprint"
+    timeout_minutes: 90
+    description: "Enhanced sprint planning with cohesion validation, dependency mapping, and reality gates"
+    module: "sprint-planning-wrapper"
+    outputs:
+      - "sprint-status.yaml (enhanced with cohesion flags)"
+      - "cohesion-report-{date}.md"
+      - "dependency-map.yaml"
+      - "demo-script.md"
+    hands_off_to: "story-cycle"
 
-  - rule_id: "PM-002"
+  # ═════════════════════════════════════════════════════════════════════════
+  # PRODUCT MANAGEMENT (CONSOLIDATED: pm-ext + sm-ext → product-management-ext)
+  # ═════════════════════════════════════════════════════════════════════════
+  # Updated: 2026-01-10 - Agent consolidation reduces main agent count from 9 to 7
+
+  - rule_id: "PROD-002"
     name: "Backlog Refinement"
     if: "story_type == 'backlog_refinement'"
-    agent: "pm-ext"
+    agent: "product-management-ext"
+    sub_agent: "pm"
     workflow: "planning-cycle"
     priority: "medium"
     timeout_minutes: 45
     description: "Refine backlog items"
 
-  - rule_id: "PM-003"
+  - rule_id: "PROD-003"
     name: "Sprint Retrospective"
     if: "story_type == 'retrospective'"
-    agent: "pm-ext"
+    agent: "product-management-ext"
+    sub_agent: "pm"
     workflow: "retrospective-cycle"
     priority: "low"
     timeout_minutes: 30
     description: "Conduct sprint retrospective"
 
-  # ═════════════════════════════════════════════════════════════════════════
-  # STORY MANAGEMENT
-  # ═════════════════════════════════════════════════════════════════════════
-
-  - rule_id: "SM-001"
+  - rule_id: "PROD-004"
     name: "Story Creation"
     if: "story_type == 'story_creation'"
-    agent: "sm-ext"
+    agent: "product-management-ext"
+    sub_agent: "sm"
     workflow: "story-creation-cycle"
     priority: "medium"
     timeout_minutes: 30
     description: "Create new user story"
 
-  - rule_id: "SM-002"
+  - rule_id: "PROD-005"
     name: "Story Breakdown"
     if: "story_type == 'story_breakdown'"
-    agent: "sm-ext"
+    agent: "product-management-ext"
+    sub_agent: "sm"
     workflow: "story-creation-cycle"
     priority: "medium"
     timeout_minutes: 30
@@ -283,13 +318,14 @@ routing_rules:
     description: "Review for accessibility compliance"
 
   # ═════════════════════════════════════════════════════════════════════════
-  # QUALITY & SCANNING
+  # QUALITY & SCANNING (SHARED SERVICE - not a main agent)
   # ═════════════════════════════════════════════════════════════════════════
+  # Updated: 2026-01-10 - quality-scanner-ext moved to shared-services
 
   - rule_id: "QUALITY-001"
     name: "Health Assessment"
     if: "story_type == 'health_assessment'"
-    agent: "quality-scanner-ext"
+    agent: "quality-scanner"  # Shared service, invoked directly
     workflow: "scan-cycle"
     priority: "high"
     timeout_minutes: 45
@@ -298,7 +334,7 @@ routing_rules:
   - rule_id: "QUALITY-002"
     name: "State Scan"
     if: "story_type == 'state_scan'"
-    agent: "quality-scanner-ext"
+    agent: "quality-scanner"
     workflow: "scan-cycle"
     priority: "high"
     timeout_minutes: 30
@@ -307,7 +343,7 @@ routing_rules:
   - rule_id: "QUALITY-003"
     name: "Architecture Scan"
     if: "story_type == 'architecture_scan'"
-    agent: "quality-scanner-ext"
+    agent: "quality-scanner"
     workflow: "scan-cycle"
     priority: "high"
     timeout_minutes: 30
@@ -316,7 +352,7 @@ routing_rules:
   - rule_id: "QUALITY-004"
     name: "Security Scan"
     if: "story_type == 'security_scan'"
-    agent: "quality-scanner-ext"
+    agent: "quality-scanner"
     workflow: "scan-cycle"
     priority: "critical"
     timeout_minutes: 30
@@ -341,9 +377,48 @@ routing_rules:
 # ═══════════════════════════════════════════════════════════════════════════
 
 workflows:
+  correct-course:
+    path: ".agent/workflows/bmad/bmad-bmb-workflows-correct-course.md"
+    description: "Governance enforcement - three checks before any work"
+    module: "governance-core"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # ENHANCED WORKFLOWS (Updated: 2026-01-11)
+  # ═════════════════════════════════════════════════════════════════════════
+
+  sprint-planning-enhanced:
+    path: "_bmad-ext/modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/workflow.md"
+    description: "Enhanced sprint planning with cohesion validation, dependency mapping, reality gates"
+    module: "sprint-planning-wrapper"
+    consumes:
+      - "_bmad/bmm/workflows/4-implementation/sprint-planning/"
+    produces:
+      - "sprint-status.yaml (with cohesion flags)"
+      - "cohesion-report-{date}.md"
+      - "dependency-map.yaml"
+      - "demo-script.md"
+    hands_off_to: "story-cycle"
+
   story-cycle:
-    path: "_bmad-ext/workflows/story-cycle/workflow.md"
-    description: "Full story development cycle"
+    path: "_bmad-ext/modules/implementation/workflows/story-cycle/workflow.md"
+    description: "Full story development cycle with Product Reality Gates (01a, 03a, 06a)"
+    module: "implementation"
+    product_reality_gates:
+      - step: "01a"
+        name: "User Journey Simulation"
+        description: "The Movie Script Test - 30-second demo script validation"
+        validates: ["island_feature", "split_brain", "ghost_result", "dead_end"]
+      - step: "03a"
+        name: "Agent Tool Spec"
+        description: "LLM tool definition with JSON Schema, permissions, triggers"
+        validates: ["orphan_tool", "permission_gap", "vague_trigger"]
+      - step: "06a"
+        name: "Reality Check"
+        description: "Visual regression and UI validation"
+        validates: ["visual_break", "missing_state", "zombie_feature"]
+    consumes:
+      - "sprint-status.yaml (from sprint-planning-enhanced)"
+      - "journey context"
 
   remediation-cycle:
     path: "_bmad-ext/workflows/remediation-cycle/workflow.md"
@@ -405,12 +480,49 @@ priorities:
 # ═══════════════════════════════════════════════════════════════════════════
 # ENHANCED AGENT INDEX
 # ═══════════════════════════════════════════════════════════════════════════
+# Updated: 2026-01-10 - Agent consolidation (9 → 7 main agents + 1 shared service)
 
 agents:
+  governance-core:
+    path: "_bmad-ext/modules/governance-core/"
+    description: "Adaptive governance system - enforcement checks, stage-gating"
+    capabilities: ["context_first", "expert_analysis", "research_trigger", "stage_gate", "auto_gate"]
+    hooks: ["session-start", "user-prompt-submit", "post-workflow"]
+
+  # ============================================
+  # Module-Based Wrappers (Updated: 2026-01-11)
+  # ============================================
+
+  sprint-planning-wrapper:
+    path: "_bmad-ext/modules/sprint-planning-wrapper/"
+    type: "wrapper"
+    description: "Enhanced sprint planning with cohesion validation, dependency mapping, reality gates"
+    capabilities: ["cohesion_check", "dependency_mapping", "nonsense_detection", "reality_validation"]
+    consumes:
+      - "_bmad/bmm/workflows/4-implementation/sprint-planning/"
+    produces:
+      - "sprint-status.yaml (with cohesion flags)"
+      - "cohesion-report-{date}.md"
+      - "dependency-map.yaml"
+      - "demo-script.md"
+    hands_off_to: "story-cycle"
+    scanners:
+      - "cohesion-scanner.md"
+      - "dependency-scanner.md"
+      - "nonsense-detector.md"
+    config:
+      - "gating-rules.yaml"
+      - "cohesion-patterns.yaml"
+
+  # ============================================
+  # Main Agents (7 total)
+  # ============================================
+
   dev-ext:
     path: "_bmad-ext/agents/dev-ext.md"
     wraps: "_bmad/bmm/agents/dev.md"
     capabilities: ["feature_development", "bug_fix", "code_review", "remediation"]
+    sub_agents: ["tea-ext"]
 
   architect-ext:
     path: "_bmad-ext/agents/architect-ext.md"
@@ -422,32 +534,76 @@ agents:
     wraps: "_bmad/bmm/agents/analyst.md"
     capabilities: ["requirements_analysis", "competitive_analysis"]
 
-  pm-ext:
-    path: "_bmad-ext/agents/pm-ext.md"
-    wraps: "_bmad/bmm/agents/pm.md"
-    capabilities: ["sprint_planning", "backlog_refinement", "retrospective"]
-
-  sm-ext:
-    path: "_bmad-ext/agents/sm-ext.md"
-    wraps: "_bmad/bmm/agents/sm.md"
-    capabilities: ["story_creation", "story_breakdown"]
-
-  tea-ext:
-    path: "_bmad-ext/agents/tea-ext.md"
-    wraps: "_bmad/bmm/agents/tea.md"
-    capabilities: ["test_design", "test_review", "e2e_test"]
-
-  tech-writer-ext:
-    path: "_bmad-ext/agents/tech-writer-ext.md"
-    wraps: "_bmad/bmm/agents/tech-writer.md"
-    capabilities: ["api_docs", "user_guide", "readme_update"]
+  # CONSOLIDATED (2026-01-10): pm-ext + sm-ext → product-management-ext
+  product-management-ext:
+    path: "_bmad-ext/agents/product-management-ext.md"
+    wraps: 
+      - "_bmad/bmm/agents/pm.md"
+      - "_bmad/bmm/agents/sm.md"
+    capabilities: ["sprint_planning", "backlog_refinement", "retrospective", "story_creation", "story_breakdown"]
+    sub_agents: ["pm", "sm"]
+    note: "Replaces pm-ext and sm-ext"
 
   ux-designer-ext:
     path: "_bmad-ext/agents/ux-designer-ext.md"
     wraps: "_bmad/bmm/agents/ux-designer.md"
     capabilities: ["ux_design", "accessibility_review"]
 
-  quality-scanner-ext:
-    path: "_bmad-ext/agents/quality-scanner-ext.md"
+  tech-writer-ext:
+    path: "_bmad-ext/agents/tech-writer-ext.md"
+    wraps: "_bmad/bmm/agents/tech-writer.md"
+    capabilities: ["api_docs", "user_guide", "readme_update"]
+
+  # ============================================
+  # Shared Services (1 total, not counted as main agents)
+  # ============================================
+
+  quality-scanner:
+    path: "_bmad-ext/shared-services/quality-scanner.md"
+    type: "shared_service"
     wraps: "_bmad/modules/quality/scanners/"
     capabilities: ["health_assessment", "state_scan", "architecture_scan", "security_scan"]
+    available_to: "all_agents"
+    note: "Moved from agents/ to shared-services/ (2026-01-10)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONSOLIDATION HISTORY
+# ═══════════════════════════════════════════════════════════════════════════
+
+consolidation_history:
+  - date: "2026-01-11"
+    change: "Added sprint-planning-wrapper module"
+    type: "module_wrapper"
+    description: "Enhanced sprint planning with cohesion validation, dependency mapping, Product Reality gates"
+    created:
+      - "_bmad-ext/modules/sprint-planning-wrapper/MODULE.md"
+      - "_bmad-ext/modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/"
+      - "_bmad-ext/modules/sprint-planning-wrapper/scanners/"
+      - "_bmad-ext/modules/sprint-planning-wrapper/config/"
+    integrates_with:
+      - "story-cycle (receives handoff)"
+      - "_bmad/bmm/workflows/4-implementation/sprint-planning/ (consumes)"
+
+  - date: "2026-01-11"
+    change: "Enhanced story-cycle with Product Reality Gates"
+    type: "workflow_enhancement"
+    description: "Added 3 new validation steps (01a, 03a, 06a) for UX, Agent tools, Visual reality"
+    gates_added:
+      - "01a: User Journey Simulation (Movie Script Test)"
+      - "03a: Agent Tool Spec (LLM tool definition)"
+      - "06a: Reality Check (Visual regression)"
+
+  - date: "2026-01-10"
+    change: "pm-ext + sm-ext → product-management-ext"
+    main_agent_count: "9 → 7"
+    archived:
+      - "_bmad-ext/.archive/agents/pm-ext.md"
+      - "_bmad-ext/.archive/agents/sm-ext.md"
+    created:
+      - "_bmad-ext/agents/product-management-ext.md"
+
+  - date: "2026-01-10"
+    change: "quality-scanner-ext → shared-services/quality-scanner.md"
+    reason: "Quality scanner is infrastructure, not a main agent"
+    moved_from: "_bmad-ext/agents/quality-scanner-ext.md"
+    moved_to: "_bmad-ext/shared-services/quality-scanner.md"

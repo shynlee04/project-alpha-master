@@ -1,0 +1,57 @@
+---
+name: "correct-course"
+description: "Adaptive Governance - Three enforcement checks before any work"
+author: "governance-core"
+module: "governance-core"
+version: "1.0.0"
+created: "2026-01-10"
+
+config_source: "{project-root}/_bmad/bmm/config.yaml"
+user_name: "{config_source}:user_name"
+communication_language: "{config_source}:communication_language"
+document_output_language: "{config_source}:document_output_language"
+
+# Governance-specific paths
+domains_config: "{project-root}/_bmad-ext/modules/governance-core/config/domains.yaml"
+scanner_results: "{project-root}/_bmad-ext/state/scanner-results.yaml"
+loop_state: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+artifact_registry: "{project-root}/_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+
+installed_path: "{project-root}/_bmad-ext/modules/governance-core/workflows"
+template: false
+instructions: "{installed_path}/correct-course-instructions.md"
+
+standalone: true
+
+# ═══════════════════════════════════════════════════════════════════════════
+# THREE ENFORCEMENT CHECKS
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# This workflow is DIFFERENT from BMAD's sprint correct-course:
+# - BMAD correct-course: Sprint change management (modify epics, stories, PRD)
+# - Governance correct-course: Governance enforcement (three checks before work)
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+enforcement_checks:
+  - "context_first"    # Step 1: Gather and contextualize
+  - "expert_analysis"  # Step 2: Compare with codebase
+  - "research_trigger" # Step 3: Auto-research when needed
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE REPORT FORMAT
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# ┌─────────────────────────────────────────────────────────────┐
+# │                    GOVERNANCE REPORT                        │
+# ├─────────────────────────────────────────────────────────────┤
+# │ Status: BLOCK / WARN / ALLOW                                │
+# │                                                              │
+# │ Context Check:    ✅ PASS (3 domains, 47 files, 2.3K tokens) │
+# │ Expert Analysis:  ⚠️ WARN  (Architectural conflict detected) │
+# │ Research Status:  ✅ COMPLETE (2 sources, high confidence)  │
+# │                                                              │
+# │ Recommendation: [Action required or proceed]                  │
+# │ Human Override: Type "I am aware but..." to proceed anyway. │
+# └─────────────────────────────────────────────────────────────┘
+# ═══════════════════════════════════════════════════════════════════════════

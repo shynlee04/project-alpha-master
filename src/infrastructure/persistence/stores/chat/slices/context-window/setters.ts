@@ -23,12 +23,13 @@ export function setThreadMaxTokens(
   threadId: string,
   maxTokens: number
 ): void {
-  const thread = state.threads[threadId];
+  const threads = state.threads ?? {};
+  const thread = threads[threadId];
   if (!thread) return;
 
   set({
     threads: {
-      ...state.threads,
+      ...threads,
       [threadId]: {
         ...thread,
         contextWindow: {
@@ -49,12 +50,13 @@ export function setThreadCompressionStrategy(
   threadId: string,
   strategy: CompressionStrategy
 ): void {
-  const thread = state.threads[threadId];
+  const threads = state.threads ?? {};
+  const thread = threads[threadId];
   if (!thread) return;
 
   set({
     threads: {
-      ...state.threads,
+      ...threads,
       [threadId]: {
         ...thread,
         contextWindow: {

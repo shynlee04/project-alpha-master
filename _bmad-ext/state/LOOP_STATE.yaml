@@ -10,12 +10,12 @@ last_updated: null  # Set on first use
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: null                    # UUID assigned on start
-  status: "NOT_STARTED"       # NOT_STARTED | RUNNING | PAUSED | COMPLETED | FAILED
-  started_at: null
+  id: "session-2026-01-11-bug-remediation"
+  status: "RUNNING"
+  started_at: "2026-01-11T12:00:00+07:00"
   paused_at: null
   completed_at: null
-  iteration: 0
+  iteration: 1
   max_iterations: 100
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -24,13 +24,13 @@ session:
 
 anchor:
   # When human last provided explicit direction
-  human_intent_timestamp: null
+  human_intent_timestamp: "2026-01-11T12:00:00+07:00"
 
   # What human asked for (max 200 chars) - the GROUND TRUTH
-  human_intent_summary: null
+  human_intent_summary: "Fix 6 critical runtime bugs from console logs: 1) Thread Store crash (threads undefined), 2) WebContainer boot loop (50+ boots), 3) Hydration mismatch (Home/Trang chủ), 4) Structured output error (Mistral API), 5) SVG path error, 6) IDEStateStorage spam"
 
   # Conversation ID where intent was captured
-  conversation_id: null
+  conversation_id: "console-error-analysis-2026-01-11"
 
   # Staleness threshold - if older than this, REQUIRE re-confirmation
   staleness_threshold_hours: 4
@@ -49,14 +49,14 @@ anchor:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current:
-  story_id: null              # e.g., "FS-05"
-  story_title: null
-  epic_id: null               # e.g., "EPIC-FS"
-  module: null                # MOD-A | MOD-B | MOD-C | MOD-D (from registry)
-  workflow: null              # e.g., "story-cycle"
-  agent: null                 # e.g., "dev-ext"
-  step: null                  # Current step in workflow (1-6)
-  step_started_at: null
+  story_id: "BUG-FIX-2026-01-11"
+  story_title: "Fix 6 Critical Runtime Bugs"
+  epic_id: "RUNTIME-STABILITY"
+  module: "REMEDIATION"
+  workflow: "remediation-cycle"
+  agent: "dev-ext"
+  step: 1
+  step_started_at: "2026-01-11T12:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # DELEGATION TRACKING

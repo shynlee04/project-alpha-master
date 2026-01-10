@@ -3,6 +3,7 @@
 # Delegation Protocol
 
 > Defines how the master orchestrator delegates work to enhanced agents and receives callbacks.
+> **Updated: 2026-01-11** - Now includes Product Reality Gate validation callbacks.
 
 ---
 
@@ -277,50 +278,60 @@ callback_payload:
         tests_passed: true
         test_count: 42
         lint_errors: 0
+    - product_reality_results:  # NEW: v1.1
+        ux_gate: "PASS | FAIL"
+        brain_gate: "PASS | FAIL"
+        visual_gate: "PASS | FAIL"
+        cohesion_score: 1-5
+        anti_patterns_detected: []
     - next_recommendation: "string"
     - execution_time_seconds: 120
     - partial_results: {}  # when status is PARTIAL
     - error_details: "string"  # when status is FAILED
 
-example_success_payload:
+example_success_payload_with_reality_gates:
   delegation_id: "abc-123-def"
   status: "SUCCESS"
   agent: "dev-ext"
   story_id: "FS-05"
   artifacts_created:
-    - "_bmad-output/handoffs/2026-01-10/FS-05-dev-handoff.md"
+    - "_bmad-output/handoffs/2026-01-11/FS-05-dev-handoff.md"
+    - "_bmad-output/artifacts/FS-05/journey-map.mermaid"
+    - "_bmad-output/artifacts/FS-05/tool-definition.json"
+    - "_bmad-output/artifacts/FS-05/visual-regression-report.md"
   validation_results:
     typescript_errors: 0
     tests_passed: true
     test_count: 15
     lint_errors: 0
+  product_reality_results:
+    ux_gate: "PASS"
+    brain_gate: "PASS"
+    visual_gate: "PASS"
+    cohesion_score: 4
+    anti_patterns_detected: []
   next_recommendation: "Ready for code review"
   execution_time_seconds: 180
 
-example_partial_payload:
-  delegation_id: "abc-123-def"
+example_reality_gate_failure:
+  delegation_id: "xyz-789-ghi"
   status: "PARTIAL"
   agent: "dev-ext"
-  story_id: "FS-05"
-  reason: "External API dependency unavailable"
+  story_id: "FS-06"
+  reason: "Product Reality Gate failed"
+  product_reality_results:
+    ux_gate: "FAIL"
+    brain_gate: "PASS"
+    visual_gate: "NOT_RUN"
+    cohesion_score: 2
+    anti_patterns_detected:
+      - "split_brain: Two chat implementations detected"
+      - "island_feature: No clear entry point defined"
   partial_results:
     completed_tasks: [1, 2, 3]
-    remaining_tasks: [4, 5]
-    blocker: "API rate limit exceeded"
-  next_recommendation: "Retry after API quota resets"
-
-example_failed_payload:
-  delegation_id: "abc-123-def"
-  status: "FAILED"
-  agent: "dev-ext"
-  story_id: "FS-05"
-  error_details: |
-    TypeScript compilation failed with 5 errors:
-    - src/domain/services/FileLockService.ts:42 - Type 'string' is not assignable to type 'number'
-    - src/infrastructure/persistence/stores/note-store.ts:15 - Property 'doesNotExist' does not exist
-    ...
-  recovery_attempts: 2
-  next_recommendation: "Escalate to human for type system review"
+    remaining_tasks: [4, 5, 6]
+    blocker: "UX must be unified before proceeding"
+  next_recommendation: "Revisit story design - consolidate dual chat workflows"
 ```
 
 ---
@@ -446,4 +457,5 @@ sequenceDiagram
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1.0 | 2026-01-11 | Added Product Reality Gate validation in callback payloads |
 | 1.0.0 | 2026-01-10 | Initial delegation protocol for Phase 3 |

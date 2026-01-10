@@ -425,7 +425,23 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
         }
 
         try {
-            const result = await tools.processPDF(input.file, input.base64Content, input.options);
+            // Create File from base64 if not provided (LLM only sends base64Content)
+            let pdfFile: File;
+            if (input.file && (input.file as unknown) instanceof File) {
+                pdfFile = input.file as unknown as File;
+            } else {
+                // Convert base64 to File
+                const binaryString = atob(input.base64Content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const mimeType = input.mimeType || 'application/pdf';
+                const filename = input.filename || 'document.pdf';
+                pdfFile = new File([bytes], filename, { type: mimeType });
+            }
+            
+            const result = await tools.processPDF(pdfFile, input.base64Content, input.options);
             return { success: true, data: result };
         } catch (error) {
             return {
@@ -472,7 +488,25 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
         }
 
         try {
-            const result = await tools.processImage(input.file, input.base64Content, input.options);
+            // Create File from base64 if not provided (LLM only sends base64Content)
+            let imageFile: File;
+            let mimeType: string;
+            if (input.file && (input.file as unknown) instanceof File) {
+                imageFile = input.file as unknown as File;
+                mimeType = imageFile.type;
+            } else {
+                // Convert base64 to File
+                const binaryString = atob(input.base64Content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                mimeType = input.mimeType || 'image/png';
+                const filename = input.filename || 'image.png';
+                imageFile = new File([bytes], filename, { type: mimeType });
+            }
+            
+            const result = await tools.processImage(imageFile, input.base64Content, input.options);
             return { success: true, data: result };
         } catch (error) {
             return {

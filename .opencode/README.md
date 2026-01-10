@@ -1,162 +1,121 @@
-# OpenCode Configuration for BMAD Framework
+# OpenCode Configuration - BMAD Extension Layer
 
-This directory contains the OpenCode configuration that integrates the BMAD (Business Model & Agile Development) framework with OpenCode AI coding agent.
+> **Date**: 2026-01-11 | **Version**: 2.0.0 | **Status**: CLEAN - Using _bmad-ext
 
 ## Structure
 
 ```
 .opencode/
-├── opencode.jsonc              # Main configuration file
-├── agent/                       # Custom agents
-│   ├── bmad-master.md          # Primary BMAD orchestrator
-│   ├── bmad-governance.md      # Governance enforcement agent
-│   ├── bmad-sprint-manager.md  # Sprint execution agent
-│   ├── arc-master-architect.md # Architecture remediation agent
-│   └── deep-scan-orchestrator.md # Diagnostics orchestrator
-├── command/                     # Custom commands (auto-generated from opencode.jsonc)
-├── plugin/                      # Plugin modules
-│   ├── bmad-hooks.js           # BMAD hooks integration
-│   └── bmad-context-loader.js  # Context loader plugin
-├── prompt/                      # Prompt templates
-└── instructions/                # Instruction files
-    ├── bmad-constitution.md    # BMAD constitution
-    ├── governance-rules.md     # Governance rules
-    └── agent-behavior.md       # Agent behavior guidelines
+├── agent/
+│   └── bmad-master.md          # SINGLE entry point → _bmad-ext/orchestrator/
+├── command/
+│   ├── bmad-ext-orchestrator.md # Main orchestrator (9-step protocol)
+│   ├── bmad-ext-delegate.md     # Delegate to enhanced agents
+│   └── bmad-ext-governance.md   # Governance enforcement
+├── config/
+│   ├── integrations.json
+│   └── mcp-servers.yaml
+├── instructions/
+│   ├── agent-behavior.md
+│   ├── bmad-constitution.md
+│   └── governance-rules.md
+├── rules/
+│   ├── general-rules.md
+│   ├── governance-enforcement.md
+│   └── governance-rules.md
+└── .archive/
+    ├── agents-backup/          # Archived old agents (48 files)
+    └── commands-backup/        # Archived old commands (107 files)
 ```
 
-## Integration Points
+## Quick Start
 
-### With Claude Code (.claude/)
-
-The BMAD framework is designed to work seamlessly across both Claude Code and OpenCode:
-
-- **Shared State**: `.claude/AGENT-STATE.yaml` (symlinked from `.opencode/`)
-- **Shared Hooks**: `.claude/hooks/` (referenced by OpenCode plugins)
-- **Shared Modules**: `_bmad/modules/` (accessed by both platforms)
-
-### Configuration Merging
-
-OpenCode supports configuration merging. The main config in `.opencode/opencode.jsonc` is merged with:
-- Global config: `~/.config/opencode/opencode.json`
-- Custom config: Path specified in `OPENCODE_CONFIG` env var
-
-## Usage
-
-### Using BMAD Agents
-
-In your conversations with OpenCode, you can invoke BMAD agents:
-
+### 1. Start Orchestrator (Primary Entry Point)
 ```
-@bmad-master Execute sprint task for Epic CC-1
-@bmad-governance Run governance validation
-@arc-master-architect Eliminate god stores in src/lib/state/
-@deep-scan-orchestrator Execute full scan
+@bmad-master
 ```
+This loads `_bmad-ext/orchestrator/master-orchestrator.md` which handles:
+- State management (LOOP_STATE.yaml)
+- Story routing (routing-rules.yaml)
+- Delegation to enhanced agents
+- Governance enforcement
+- Escalation on failures
 
-### Using BMAD Commands
-
-Use the custom commands defined in `opencode.jsonc`:
-
+### 2. Delegate Work
 ```
-/bmad-sprint [task description]
-/bmad-refactor [workflow name]
-/bmad-scan [scan type]
-/bmad-governance
+/bmad-ext-delegate agent=dev-ext story=FS-05
 ```
+Delegates to enhanced agents following delegation-protocol.md
 
-### Using BMAD Hooks
-
-The plugins automatically:
-- Run pre-execution validation on session creation
-- Load BMAD context when modules are mentioned
-- Log tool executions for audit
-- Update AGENT-STATE.yaml on completion
-
-## Customization
-
-### Adding New Agents
-
-Create markdown files in `.opencode/agent/` with the following frontmatter:
-
-```yaml
----
-description: Agent description
-mode: primary|subagent
-model: anthropic/claude-sonnet-4-20250514
-temperature: 0.3
-maxSteps: 20
-tools:
-  write: true
-  edit: true
-  bash: false
----
-
-# Agent Name
-
-[Agent instructions...]
+### 3. Governance Enforcement
 ```
-
-### Adding New Commands
-
-Add commands to `opencode.jsonc` under the `command` key:
-
-```json
-{
-  "command": {
-    "my-command": {
-      "description": "Command description",
-      "template": "Task template with $ARGUMENTS",
-      "agent": "agent-name",
-      "model": "anthropic/claude-haiku-4-20250514"
-    }
-  }
-}
+/bmad-ext-governance
 ```
+Runs three enforcement checks before any work:
+1. Context-First (scan → contextualize → transform)
+2. Agent as Expert (bug level, approach flaws)
+3. Research Trigger (internet validation)
 
-### Modifying Hooks
+## Enhanced Agents (Delegated via Orchestrator)
 
-Edit the plugin files in `.opencode/plugin/` to customize:
-- Pre/post execution validation
-- Context loading behavior
-- Tool execution logging
-- Custom BMAD commands
+All agents are wrapped and accessed through the orchestrator:
+
+| Agent | Wraps | Capabilities |
+|-------|-------|--------------|
+| dev-ext | dev.md | feature_development, bug_fix, remediation |
+| architect-ext | architect.md | system_design, technical_spec, adr |
+| analyst-ext | analyst.md | requirements_analysis, competitive_analysis |
+| product-management-ext | pm.md + sm.md | sprint_planning, story_creation |
+| ux-designer-ext | ux-designer.md | ux_design, accessibility_review |
+| tech-writer-ext | tech-writer.md | api_docs, user_guide, readme_update |
+| tea-ext | tea.md | test_design, test_review, e2e_test |
+
+## State Management
+
+Unified state replaces the old 3-level hierarchy:
+
+- **State File**: `_bmad-ext/state/LOOP_STATE.yaml`
+- **Artifact Registry**: `_bmad-ext/state/ARTIFACT_REGISTRY.yaml`
+- **Delegation Log**: `_bmad-ext/state/DELEGATION_LOG.yaml`
+
+## Governance
+
+The governance module (`_bmad-ext/modules/governance/`) enforces:
+
+1. **Context-First**: Auto-transform prompts with accurate context
+2. **Agent as Expert**: Define bug level, detect approach flaws
+3. **Research Trigger**: Internet-based validation for tech choices
+
+GOV-001 in routing-rules.yaml runs before ALL work.
+
+## File Reference
+
+| File | Purpose |
+|------|---------|
+| `agent/bmad-master.md` | Entry point - loads `_bmad-ext/orchestrator/master-orchestrator.md` |
+| `command/bmad-ext-orchestrator.md` | Orchestrator command - follows 9-step protocol |
+| `command/bmad-ext-delegate.md` | Delegation command - follows delegation-protocol.md |
+| `command/bmad-ext-governance.md` | Governance command - runs 3 enforcement checks |
+
+## Migration Notes (2026-01-11)
+
+- **Old agents (48 files)**: Archived to `.archive/agents-backup/`
+- **Old commands (107 files)**: Archived to `.archive/commands-backup/`
+- **New system**: Uses `_bmad-ext/` extension layer exclusively
+- **Legacy BMAD**: Still available at `_bmad/` for reference
 
 ## Dependencies
 
-The plugins use:
-- Node.js built-in modules (fs, path)
-- Bun shell API (for command execution)
-- glob (for file discovery)
+- `_bmad-ext/orchestrator/master-orchestrator.md` (entry point)
+- `_bmad-ext/orchestrator/routing-rules.yaml` (routing)
+- `_bmad-ext/orchestrator/delegation-protocol.md` (delegation)
+- `_bmad-ext/orchestrator/escalation-protocol.md` (error recovery)
+- `_bmad-ext/orchestrator/governance-auto-update.md` (doc updates)
+- `_bmad-ext/modules/governance/` (enforcement)
 
-External dependencies are managed via `~/.config/opencode/package.json` if needed.
+## References
 
-## Troubleshooting
-
-### Hooks Not Running
-
-Check that:
-1. Plugin files are in `.opencode/plugin/`
-2. Files have `.js` extension
-3. No syntax errors (run `node --check` on files)
-4. OpenCode has permissions to execute plugins
-
-### Context Not Loading
-
-Verify:
-1. BMAD modules exist in `_bmad/modules/`
-2. Module names are correctly mapped in plugins
-3. Message contains module keywords
-
-### State Not Syncing
-
-Ensure:
-1. `.claude/AGENT-STATE.yaml` is writable
-2. Symlinks are set up correctly
-3. Both platforms use the same state file
-
-## Documentation
-
-- [OpenCode Config Docs](https://opencode.ai/docs/config/)
-- [OpenCode Agents Docs](https://opencode.ai/docs/agents/)
-- [OpenCode Plugins Docs](https://opencode.ai/docs/plugins/)
 - [BMAD Framework](../AGENTS.md)
+- [BMAD Extension Layer](../_bmad-ext/README.md)
+- [Master Orchestrator](../_bmad-ext/orchestrator/master-orchestrator.md)
+- [Governance Module](../_bmad-ext/modules/governance/MODULE.md)

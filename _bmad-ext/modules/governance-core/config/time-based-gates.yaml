@@ -1,0 +1,181 @@
+# Time-Based Gates Configuration
+# Artifact freshness thresholds and time-based validation
+
+gates:
+  # Artifact freshness
+  artifact_freshness:
+    enabled: true
+    description: "Validate governance artifacts against actual code"
+
+    # Time-based thresholds (in hours)
+    thresholds:
+      critical:
+        hours: 24
+        artifacts:
+          - "CLAUDE.md"
+          - "AGENTS.md"
+          - "bmm-workflow-status.yaml"
+          - "sprint-status.yaml"
+        action: "warn_and_scan"
+
+      high:
+        hours: 48
+        artifacts:
+          - "architecture.md"
+          - "ux-specification.md"
+          - "epic-tracking.md"
+        action: "scan_if_changed"
+
+      medium:
+        hours: 72
+        artifacts:
+          - "workflow-status.yaml"
+          - "LOOP_STATE.yaml"
+        action: "log_only"
+
+      low:
+        hours: 168  # 1 week
+        artifacts:
+          - "historical_reports"
+          - "archive_docs"
+        action: "none"
+
+  # Document staleness detection
+  document_staleness:
+    enabled: true
+
+    # Compare document timestamp with code changes
+    compare_strategies:
+      artifact_vs_code:
+        # Compare artifact file modification with code files it references
+        method: "max_timestamp"
+        threshold_hours: 48
+        action: "stale_if_code_newer"
+
+      cross_reference:
+        # Check if imported/exported items match documentation
+        method: "content_comparison"
+        threshold_mismatches: 5
+        action: "stale_if_mismatches"
+
+  # Scan freshness (for cached scan results)
+  scan_freshness:
+    enabled: true
+
+    thresholds:
+      p0_domains:
+        hours: 4  # Rescan P0 domains every 4 hours
+        domains: ["artifact", "document", "state_persistence"]
+
+      p1_domains:
+        hours: 12  # Rescan P1 domains every 12 hours
+        domains: ["domain", "workspace", "feature", "relational", "api_contract", "schema_structure"]
+
+      p2_domains:
+        hours: 24  # Rescan P2 domains daily
+        domains: ["journey", "ux_ui"]
+
+    # When to invalidate cache
+    invalidate_on:
+      - "code_changes_detected"
+      - "git_commit"
+      - "config_change"
+      - "explicit_request"
+
+  # Research result freshness
+  research_freshness:
+    enabled: true
+
+    thresholds:
+      security:
+        hours: 168  # 1 week for security research
+        action: "re_required"
+
+      tech_selection:
+        hours: 720  # 1 month for tech choices
+        action: "re_if_major_version_change"
+
+      best_practices:
+        hours: 2160  # 3 months for best practices
+        action: "re_if_framework_update"
+
+      anti_patterns:
+        hours: 4320  # 6 months for anti-patterns
+        action: "log_stale"
+
+  # Time-based escalation
+  escalation:
+    enabled: true
+
+    rules:
+      stale_critical_artifact:
+        hours_overdue: 48
+        severity: "P0"
+        action: "block_work"
+        message: "Critical artifact is stale. Must update before proceeding."
+
+      stale_high_artifact:
+        hours_overdue: 96
+        severity: "P1"
+        action: "warn_and_log"
+        message: "High-priority artifact is stale. Update recommended."
+
+      stale_scan_cache:
+        hours_overdue: 8  # For P0 domains
+        severity: "P1"
+        action: "rescan_required"
+        message: "Scan cache expired. Rescan required."
+
+      stale_research:
+        hours_overdue: 336  # 2 weeks
+        severity: "P2"
+        action: "refresh_recommended"
+        message: "Research results are stale. Refresh recommended."
+
+# Timezone handling
+timezone:
+  reference: "UTC"
+  convert_for_display: true
+
+# Scheduling
+scheduled_checks:
+  enabled: true
+
+  schedule:
+    critical_check:
+      interval: "hourly"
+      domains: ["artifact", "document"]
+
+    full_scan:
+      interval: "daily"
+      time: "02:00 UTC"
+      all_domains: true
+
+    research_refresh:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00 UTC"
+
+# Notification thresholds
+notifications:
+  warn_before:
+    hours: 4  # Warn 4 hours before gate activates
+
+  block_at:
+    hours: 0  # Block immediately when threshold passed
+
+  reminder_interval:
+    hours: 12  # Re-notify every 12 hours if still stale
+
+# Grace periods
+grace_periods:
+  active_sprint:
+    enabled: true
+    multiplier: 1.5  # 50% more time during active sprint
+
+  weekend:
+    enabled: true
+    exclude_hours: ["Friday 18:00", "Monday 09:00"]
+
+  holiday:
+    enabled: false  # TODO: add holiday calendar

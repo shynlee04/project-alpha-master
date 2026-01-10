@@ -3,59 +3,92 @@
 ---
 name: "master-orchestrator"
 description: "Central orchestrator for all autonomous BMAD development"
-version: "1.0.0"
+version: "1.1.0"
 entry_point: true
+updated: "2026-01-11"
 ---
 
 # Master Orchestrator
 
 > **SINGLE ENTRY POINT** for all autonomous BMAD development.
 > Delegates to enhanced agents, receives callbacks, updates governance.
+> **Updated**: Now routes through Sprint-Planning Wrapper with Cohesion & Reality validation.
 
 ## Purpose
 
 The master orchestrator is the **central brain** of the BMAD extension layer:
 
 1. **Reads** `bmm-workflow-status.yaml` to get current story
-2. **Routes** stories to appropriate enhanced agents based on type
-3. **Creates** handoff artifacts with traceability
-4. **Spawns** enhanced agents as sub-agents
-5. **Receives** completion callbacks with validation results
-6. **Updates** governance documents (AGENTS.md, sprint-status.yaml)
-7. **Decides** whether to continue or stop
+2. **Routes** to Sprint-Planning Wrapper first (for sprint-level validation)
+3. **Routes** stories to appropriate enhanced agents based on type
+4. **Creates** handoff artifacts with traceability
+5. **Spawns** enhanced agents as sub-agents
+6. **Receives** completion callbacks with validation results
+7. **Updates** governance documents (AGENTS.md, sprint-status.yaml)
+8. **Decides** whether to continue or stop
+
+---
+
+## Product Reality Gates (NEW)
+
+The orchestrator enforces **Product Reality validation** through the enhanced story-cycle:
+
+| Gate | Step | Validates | Anti-Patterns Detected |
+|------|------|-----------|------------------------|
+| **UX Gate** | 01a | User Journey Simulation | island_feature, split_brain, ghost_result, dead_end |
+| **Brain Gate** | 03a | Agent Tool Specification | orphan_tool, permission_gap, vague_trigger |
+| **Visual Gate** | 06a | Reality Check | visual_break, missing_state, zombie_feature |
+
+**Key Insight**: Sprints fail due to **Cohesion & Reality** (fragmented UX, nonsensical flows), NOT just Logic & Order. These gates catch "Dual Chat Systems" - technically valid but users hate history loss when switching tabs.
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    MASTER ORCHESTRATOR                                  │
-│                  (Single Entry Point)                                   │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐            │
-│  │ Load Session   │  │ Route Story    │  │ Create Handoff │            │
-│  │ - LOOP_STATE   │  │ - Story type   │  │ - UUID         │            │
-│  │ - Config       │  │ → Agent map    │  │ - Parent link  │            │
-│  └────────┬───────┘  └────────┬───────┘  └────────┬───────┘            │
-│           │                   │                   │                     │
-│           └───────────────────┴───────────────────┘                     │
-│                               ▼                                         │
-│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐            │
-│  │ Verify Anchor  │  │ Delegate       │  │ Receive        │            │
-│  │ - Freshness    │  │ - Spawn agent  │  │ Callback       │            │
-│  │ - Confirm if   │  │ - Await result │  │ - Validate     │            │
-│  │   stale        │  │ - Timeout      │  │ - Update state │            │
-│  └────────────────┘  └────────┬───────┘  └────────┬───────┘            │
-│                              │                   │                     │
-│                              ▼                   ▼                     │
-│                    ┌─────────────────────────────────────┐             │
-│                    │   Enhanced Agents (Sub-Agents)      │             │
-│                    │  dev-ext | architect-ext | analyst │             │
-│                    │  pm-ext | sm-ext | tea-ext | ...   │             │
-│                    └─────────────────────────────────────┘             │
-└─────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         MASTER ORCHESTRATOR v1.1                           │
+│                       (Single Entry Point)                                 │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌────────────────┐  ┌─────────────────────┐  ┌────────────────┐           │
+│  │ Load Session   │  │ Route Request       │  │ Create Handoff │           │
+│  │ - LOOP_STATE   │  │ - Sprint planning?  │  │ - UUID         │           │
+│  │ - Config       │  │ → Wrapper first!    │  │ - Parent link  │           │
+│  └────────┬───────┘  └──────────┬──────────┘  └────────┬───────┘           │
+│           │                      │                       │                   │
+│           └──────────────────────┴───────────────────────┘                   │
+│                                  ▼                                           │
+│  ┌───────────────────────────────────────────────────────────────┐           │
+│  │           Sprint-Planning Wrapper (NEW - v1.1)                │           │
+│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐          │           │
+│  │  │ Cohesion     │ │ Dependency    │ │ Reality      │          │           │
+│  │  │ Check        │ │ Mapping       │ │ Validation   │          │           │
+│  │  │ - Movie      │ │ - Temporal    │ │ - Nonsense   │          │           │
+│  │  │   Script     │ │   Conflicts   │ │   Detector   │          │           │
+│  │  └──────────────┘ └──────────────┘ └──────────────┘          │           │
+│  └───────────────────────────────┬───────────────────────────────┘           │
+│                                  ▼                                           │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐            │      │
+│  │ Verify Anchor  │  │ Delegate       │  │ Receive        │            │      │
+│  │ - Freshness    │  │ - Spawn agent  │  │ Callback       │            │      │
+│  │ - Confirm if   │  │ - Await result │  │ - Validate     │            │      │
+│  │   stale        │  │ - Timeout      │  │ - Update state │            │      │
+│  └────────────────┘  └────────┬───────┘  └────────┬───────┘            │      │
+│                              │                   │                     │      │
+│                              ▼                   ▼                     │      │
+│                    ┌─────────────────────────────────────┐             │      │
+│                    │   Enhanced Agents (Sub-Agents)      │             │      │
+│                    │  dev-ext | architect-ext | analyst │             │      │
+│                    │  pm-ext | sm-ext | tea-ext | ...   │             │      │
+│                    └─────────────────────────────────────┘             │      │
+│                                                                              │
+│  Product Reality Gates (enforced via story-cycle):                          │
+│  ┌────────────────┐ ┌────────────────┐ ┌────────────────┐                 │
+│  │ UX Gate (01a) │ │Brain Gate(03a)│ │Visual Gate(06a)│                 │
+│  │ Journey Script │ │ Tool Spec      │ │ Reality Check  │                 │
+│  └────────────────┘ └────────────────┘ └────────────────┘                 │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -779,15 +812,23 @@ writes:
   - "AGENTS.md" (on governance update)
 
 spawns:
+  # Module Wrappers (NEW - v1.1)
+  - "_bmad-ext/modules/sprint-planning-wrapper/"
+
+  # Enhanced Agents
   - "_bmad-ext/agents/dev-ext.md"
   - "_bmad-ext/agents/architect-ext.md"
   - "_bmad-ext/agents/analyst-ext.md"
-  - "_bmad-ext/agents/pm-ext.md"
-  - "_bmad-ext/agents/sm-ext.md"
+  - "_bmad-ext/agents/product-management-ext.md"
   - "_bmad-ext/agents/tea-ext.md"
   - "_bmad-ext/agents/tech-writer-ext.md"
   - "_bmad-ext/agents/ux-designer-ext.md"
-  - "_bmad-ext/agents/quality-scanner-ext.md"
+  - "_bmad-ext/shared-services/quality-scanner.md"
+
+product_reality_gates:
+  - "step-01a-user-journey.md (UX Gate)"
+  - "step-03a-agent-tool-spec.md (Brain Gate)"
+  - "step-06a-reality-check.md (Visual Gate)"
 ```
 
 ---
@@ -796,4 +837,5 @@ spawns:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1.0 | 2026-01-11 | Added Sprint-Planning Wrapper integration, Product Reality Gates |
 | 1.0.0 | 2026-01-10 | Initial orchestrator for Phase 3 |

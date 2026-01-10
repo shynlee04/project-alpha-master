@@ -98,12 +98,14 @@ const VoiceInputConfigSchema = z.object({
 /**
  * Voice input tool input schema
  * 
- * NOTE: `audio` is typed as z.any() because z.instanceof(File) cannot be serialized
- * to JSON Schema for LLM tool definitions. The actual File object is passed
- * at runtime from the client-side implementation.
+ * NOTE: `audio` field is intentionally typed as z.string().optional() for schema
+ * serialization compatibility with providers like Mistral. The actual File object
+ * is handled at runtime in the client implementation (checking instanceof File).
+ * LLMs should only send base64Audio, never this field.
  */
 const VoiceInputInputSchema = z.object({
-  audio: z.any().optional().describe('Audio file object (client-side only, not passed by LLM)'),
+  // FIX: Changed from z.any() to z.string() for Mistral compatibility
+  audio: z.string().optional().describe('Internal: Audio file reference (client-side only, LLM should not use this)'),
   base64Audio: z.string().describe('Base64-encoded audio content'),
   mimeType: z.string().describe('MIME type of audio (e.g., audio/mp3, audio/wav)'),
   filename: z.string().optional().describe('Original filename'),
@@ -349,9 +351,11 @@ export function createVoiceInputClientTool() {
       // Primary path: base64Audio (required for LLM calls)
       if (args.base64Audio && args.mimeType) {
         audioFile = base64ToFile(args.base64Audio, args.mimeType, args.filename);
-      } else if (args.audio && args.audio instanceof File) {
+      } else if (args.audio && (args.audio as unknown) instanceof File) {
+        // Runtime check: args.audio might be a File object from client-side UI
+        // Schema uses z.string() for API compatibility, but actual value can be File
         // Fallback: direct File object from client-side UI
-        audioFile = args.audio;
+        audioFile = args.audio as unknown as File;
       } else {
         return {
           success: false,

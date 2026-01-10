@@ -70,7 +70,8 @@ export const createContextWindowSlice: StateCreator<
 
   getContextUsage: (threadId: string) => {
     const state = get();
-    const thread = state.threads[threadId];
+    const threads = state.threads ?? {};
+    const thread = threads[threadId];
     const messages = state.getMessagesByThread(threadId);
 
     if (!thread) return null;
@@ -89,7 +90,8 @@ export const createContextWindowSlice: StateCreator<
 
   updateContextWindow: (threadId: string) => {
     const state = get();
-    const thread = state.threads[threadId];
+    const threads = state.threads ?? {};
+    const thread = threads[threadId];
     const messages = state.getMessagesByThread(threadId);
 
     if (!thread) return;
@@ -114,7 +116,8 @@ export const createContextWindowSlice: StateCreator<
 
   compressContext: (threadId: string, strategy?: CompressionStrategy) => {
     const state = get();
-    const thread = state.threads[threadId];
+    const threads = state.threads ?? {};
+    const thread = threads[threadId];
     const messages = state.getMessagesByThread(threadId);
 
     if (!thread || messages.length === 0) {

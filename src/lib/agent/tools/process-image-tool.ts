@@ -17,12 +17,14 @@ import type { AgentKnowledgeTools } from '../facades';
 /**
  * Image processing input schema
  * 
- * NOTE: `file` is typed as z.any() because z.instanceof(File) cannot be serialized
- * to JSON Schema for LLM tool definitions. The actual File object is passed
- * at runtime from the client-side implementation.
+ * NOTE: `file` field is intentionally typed as z.string().optional() for schema
+ * serialization compatibility with providers like Mistral. The actual File object
+ * is handled at runtime in the client implementation (checking instanceof File).
+ * LLMs should only send base64Content, never this field.
  */
 const ProcessImageInputSchema = z.object({
-  file: z.any().optional().describe('Image file object (client-side only, not passed by LLM)'),
+  // FIX: Changed from z.any() to z.string() for Mistral compatibility
+  file: z.string().optional().describe('Internal: File reference (client-side only, LLM should not use this)'),
   base64Content: z.string().describe('Base64-encoded image content'),
   filename: z.string().optional().describe('Original filename'),
   mimeType: z.string().optional().describe('MIME type of the image (e.g., image/png, image/jpeg)'),
@@ -87,8 +89,10 @@ export function createProcessImageClientTool(getKnowledgeTools: () => AgentKnowl
       // Create File from base64 if not provided (LLM only sends base64Content)
       let imageFile: File;
       let mimeType: string;
-      if (args.file && args.file instanceof File) {
-        imageFile = args.file;
+      // Runtime check: args.file might be a File object from client-side UI
+      // Schema uses z.string() for API compatibility, but actual value can be File
+      if (args.file && (args.file as unknown) instanceof File) {
+        imageFile = args.file as unknown as File;
         mimeType = imageFile.type;
       } else {
         // Convert base64 to File

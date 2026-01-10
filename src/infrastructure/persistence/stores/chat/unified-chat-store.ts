@@ -19,7 +19,7 @@
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type { CombinedUnifiedChatState } from './unified-chat-types';
 import type { ConversationState } from '@/domain/entities/chat';
 import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
@@ -144,13 +144,13 @@ export const useUnifiedChatStore = create<CombinedUnifiedChatState>()(
           const conversation = conversations[activeConversationId];
           if (!conversation) return null;
 
-          // Get all threads for this conversation
-          const conversationThreads = Object.values(threads).filter(
+          // Get all threads for this conversation (with null check for SSR safety)
+          const conversationThreads = Object.values(threads ?? {}).filter(
             (t) => t.conversationId === activeConversationId && t.status !== 'deleted'
           );
 
-          // Get all messages for these threads
-          const conversationMessages = Object.values(messages).filter((m) =>
+          // Get all messages for these threads (with null check for SSR safety)
+          const conversationMessages = Object.values(messages ?? {}).filter((m) =>
             conversationThreads.some((t) => t.id === m.threadId)
           );
 
@@ -336,7 +336,7 @@ export const useUnifiedChatStore = create<CombinedUnifiedChatState>()(
     },
     {
       name: 'unified-chat-store',
-      storage: createDexieStorage('conversationState') as any,
+      storage: createJSONStorage(() => createDexieStorage('conversationState')),
       version: 1,
 
       // Partialize: Only persist core data, exclude ephemeral state

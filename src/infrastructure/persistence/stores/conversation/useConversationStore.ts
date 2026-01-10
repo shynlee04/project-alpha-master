@@ -151,28 +151,28 @@ function mapToLegacyMessage(msg: MessageWithId): ThreadMessage | null {
 function mapUnifiedStateToLegacy(unifiedStore: ReturnType<typeof useUnifiedChatStore.getState>): CombinedConversationState {
   // Helper to get messages by thread ID for thread mapping
   const messagesByThread = (threadId: string): MessageWithId[] => {
-    return Object.values(unifiedStore.messages).filter((m) => m.threadId === threadId);
+    return Object.values(unifiedStore.messages ?? {}).filter((m) => m.threadId === threadId);
   };
 
   return {
     // ========== Mapped State ==========
     conversations: Object.fromEntries(
-      Object.entries(unifiedStore.conversations).map(([id, conv]) => [
+      Object.entries(unifiedStore.conversations ?? {}).map(([id, conv]) => [
         id,
         mapToLegacyConversation(conv),
       ])
     ),
-    activeConversationId: unifiedStore.activeConversationId,
-    activeProjectConversationIds: unifiedStore.activeProjectConversationIds,
+    activeConversationId: unifiedStore.activeConversationId ?? null,
+    activeProjectConversationIds: unifiedStore.activeProjectConversationIds ?? {},
     threads: Object.fromEntries(
-      Object.entries(unifiedStore.threads).map(([id, thread]) => [
+      Object.entries(unifiedStore.threads ?? {}).map(([id, thread]) => [
         id,
         mapToLegacyThread(thread, messagesByThread),
       ])
     ),
-    activeThreadId: unifiedStore.activeThreadId,
+    activeThreadId: unifiedStore.activeThreadId ?? null,
     messages: Object.fromEntries(
-      Object.entries(unifiedStore.messages)
+      Object.entries(unifiedStore.messages ?? {})
         .map(([id, msg]) => {
           const legacy = mapToLegacyMessage(msg);
           if (!legacy) return null;

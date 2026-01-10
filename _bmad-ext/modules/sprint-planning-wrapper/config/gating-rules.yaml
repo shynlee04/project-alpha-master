@@ -1,0 +1,204 @@
+# Gating Rules
+# Sprint-Planning Wrapper - Configuration
+# Purpose: Auto-validation rules with loop-back on failures
+
+version: "1.0.0"
+last_updated: "2026-01-11"
+
+# Gate thresholds
+thresholds:
+  # Cohesion scores (1-5 scale)
+  cohesion_score:
+    min: 3
+    blocking: false
+    description: "Minimum acceptable sprint narrative coherence"
+
+  # Validation scores (1-5 scale)
+  validation_score:
+    min: 4
+    blocking: true
+    description: "Minimum overall Product Reality score"
+
+  # Dependency conflict tolerance
+  dependency_conflicts:
+    critical:
+      max: 0
+      blocking: true
+      description: "Critical temporal conflicts (Story B starts before A completes)"
+
+    warnings:
+      max: 3
+      blocking: false
+      description: "Minor dependency concerns to note"
+
+  # Nonsense pattern tolerance
+  nonsense_patterns:
+    critical:
+      max: 0
+      blocking: true
+      description: "Critical nonsense patterns (contradictions, etc.)"
+
+    high:
+      max: 1
+      blocking: false
+      description: "High-severity nonsense patterns"
+
+    total:
+      max: 5
+      blocking: false
+      description: "Total nonsense patterns (all severities)"
+
+# Gate definitions
+gates:
+  cohesion_gate:
+    name: "Cohesion Gate"
+    step: 3
+    description: "Validates sprint narrative coherence"
+
+    checks:
+      - name: "Narrative Check"
+        threshold: 3
+        source: "cohesion_score.narrative"
+
+      - name: "Dependency Alignment"
+        threshold: 3
+        source: "cohesion_score.dependency_alignment"
+
+      - name: "State Coverage"
+        threshold: 3
+        source: "cohesion_score.state_coverage"
+
+    on_fail:
+      action: "flag_issues"
+      message: "Sprint narrative is incoherent. Consider reordering stories."
+
+  dependency_gate:
+    name: "Dependency Gate"
+    step: 4
+    description: "Validates story dependencies and ordering"
+
+    checks:
+      - name: "Critical Conflicts"
+        threshold: 0
+        source: "dependency_conflicts.critical"
+
+      - name: "Warning Conflicts"
+        threshold: 3
+        source: "dependency_conflicts.warnings"
+
+    on_fail:
+      action: "loop_back"
+      message: "Critical dependency conflicts detected. Reorder stories or adjust scope."
+
+  reality_gate:
+    name: "Reality Gate"
+    step: 5
+    description: "Final Product Reality validation for entire sprint"
+
+    checks:
+      - name: "Validation Score"
+        threshold: 4
+        source: "validation_score"
+
+      - name: "Demo Script Quality"
+        threshold: 4
+        source: "demo_script_rating"
+
+      - name: "Entry Point Coverage"
+        threshold: 4
+        source: "entry_point_coverage"
+
+    on_fail:
+      action: "loop_back"
+      message: "Sprint fails reality check. Refine scope or user journey."
+
+  nonsense_gate:
+    name: "Nonsense Gate"
+    step: 5
+    description: "Detects contradictory, duplicate, or orphan features"
+
+    checks:
+      - name: "Critical Patterns"
+        threshold: 0
+        source: "nonsense_patterns.critical"
+
+      - name: "High Patterns"
+        threshold: 1
+        source: "nonsense_patterns.high"
+
+      - name: "Total Patterns"
+        threshold: 5
+        source: "nonsense_patterns.total"
+
+    on_fail:
+      action: "flag_or_loop"
+      message: "Nonsense patterns detected. Review and resolve before sprint start."
+
+# Loop-back configuration
+loop_back:
+  enabled: true
+  max_iterations: 3
+  current_iteration: 0
+
+  on_max_reached:
+    action: "escalate"
+    message: "Maximum validation iterations reached. Requires manual review."
+
+  triggers:
+    - gate: "dependency_gate"
+      condition: "critical_conflicts > 0"
+      return_step: 3
+
+    - gate: "reality_gate"
+      condition: "validation_score < 4"
+      return_step: 3
+
+    - gate: "nonsense_gate"
+      condition: "critical_patterns > 0"
+      return_step: 3
+
+# Auto-approval conditions
+auto_approve:
+  all_gates_passed: true
+
+  conditions:
+    - name: "Cohesion Gate"
+      status: "PASS"
+      score: ">= 4"
+
+    - name: "Dependency Gate"
+      status: "PASS"
+      critical_conflicts: 0
+
+    - name: "Reality Gate"
+      status: "PASS"
+      score: ">= 4"
+
+    - name: "Nonsense Gate"
+      status: "PASS"
+      critical: 0
+      high: "<= 1"
+
+# Output configuration
+outputs:
+  gating_results:
+    format: "yaml"
+    filename: "gating-results-{date}.yaml"
+
+    structure:
+      gate_results:
+        cohesion_gate: {PASS|FAIL}
+        dependency_gate: {PASS|FAIL}
+        reality_gate: {PASS|FAIL}
+        nonsense_gate: {PASS|FAIL}
+
+      overall_result: {PASS|FAIL}
+      loop_back: {true|false}
+      return_step: {step_number}
+      escalation: {true|false}
+
+      details:
+        scores: {individual scores}
+        conflicts: {list of conflicts}
+        patterns: {list of patterns}
+        recommendations: {list of recommendations}

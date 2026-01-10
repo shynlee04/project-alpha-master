@@ -128,7 +128,15 @@ export const createThreadManagementSlice: StateCreator<
       set({ activeThreadId: null });
       return;
     }
-    const thread = get().threads[threadId];
+    // FIX: Hydration guard - prevent access before store is ready
+    const state = get();
+    if (!state.threads) {
+      console.warn('[ThreadManagementSlice] Store not hydrated yet, deferring setActiveThread:', threadId);
+      // Defer until hydration completes
+      setTimeout(() => get().setActiveThread(threadId), 50);
+      return;
+    }
+    const thread = state.threads[threadId];
     if (!thread) { console.warn('[ThreadManagementSlice] Not found:', threadId); return; }
     console.log('[ThreadManagementSlice] Setting active:', threadId);
     set({ activeThreadId: threadId });

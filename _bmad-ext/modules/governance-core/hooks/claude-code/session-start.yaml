@@ -1,0 +1,125 @@
+# Session Start Hook
+# governance-core module
+# Triggered when a new Claude Code session begins
+
+---
+name: "session-start"
+module: "governance-core"
+version: "1.0.0"
+trigger: "session_start"
+platform: "claude-code"
+created: "2026-01-10"
+
+description: |
+  Initializes governance checks at session start. Verifies LOOP_STATE staleness,
+  loads governance configuration, and prepares context for the session.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HOOK EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution:
+  mode: "async"  # Don't block session start on failures
+  timeout_seconds: 10
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STEPS
+# ═══════════════════════════════════════════════════════════════════════════
+
+steps:
+  - step_id: "load-governance-config"
+    name: "Load Governance Configuration"
+    action: "read"
+    path: "{project-root}/_bmad-ext/modules/governance-core/config/domains.yaml"
+    on_failure: "log_warning"
+    output_var: "governance_domains"
+
+  - step_id: "check-loop-state"
+    name: "Check LOOP_STATE Staleness"
+    action: "validate"
+    path: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+    checks:
+      - name: "anchor staleness"
+        condition: |
+          (now - anchor.human_intent_timestamp) <= anchor.staleness_threshold_hours
+        message: "LOOP_STATE anchor is fresh"
+      - name: "session continuity"
+        condition: "session.id != null"
+        message: "Session ID exists"
+    on_failure: "log_warning"
+    output_var: "loop_state_status"
+
+  - step_id: "load-stage-progress"
+    name: "Load Current Stage Progress"
+    action: "read"
+    path: "{project-root}/_bmad-ext/modules/governance-core/state/stage-progress.yaml"
+    on_failure: "log_warning"
+    output_var: "stage_progress"
+
+  - step_id: "initialize-session-context"
+    name: "Initialize Session Context"
+    action: "transform"
+    template: |
+      session_governance_context:
+        timestamp: "{{now}}"
+        session_id: "{{session.id}}"
+        domains_available: {{governance_domains.domains.length}}
+        current_stage: "{{stage_progress.current_stage}}"
+        loop_state_fresh: {{loop_state_status.valid}}
+        enforcement_checks:
+          - context_first
+          - expert_analysis
+          - research_trigger
+    output_var: "session_context"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════
+
+output:
+  format: "yaml"
+  destination: "session_context"  # Stored in session context
+  display: false  # Don't display to user, just store
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COMPACT MODE
+# ═══════════════════════════════════════════════════════════════════════════
+
+compact:
+  enabled: true
+  max_output_lines: 5
+  summary_template: |
+    📋 Governance Ready
+    ─────────────────────────────────────────────────────────
+    Stage: {{stage_progress.current_stage}} | Domains: {{governance_domains.domains.length}}
+    LOOP_STATE: {{loop_state_status.valid ? 'Fresh' : 'Stale'}}
+    ─────────────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+integrates_with:
+  - workflow: "context-first"
+    trigger: "provides_domains_config"
+  - state_file: "LOOP_STATE.yaml"
+    purpose: "staleness_checking"
+  - state_file: "stage-progress.yaml"
+    purpose: "stage_tracking"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ERROR HANDLING
+# ═══════════════════════════════════════════════════════════════════════════
+
+error_handling:
+  on_missing_config:
+    action: "log_warning"
+    message: "Governance config not found, using defaults"
+
+  on_stale_loop_state:
+    action: "log_warning"
+    message: "LOOP_STATE is stale, re-confirmation may be required"
+
+  on_missing_stage_progress:
+    action: "initialize_default"
+    message: "Stage progress not found, initializing at Stage 0"
