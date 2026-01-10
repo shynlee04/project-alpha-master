@@ -27,6 +27,7 @@ import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as _debug_ProviderPlaygroundRouteRouteImport } from './routes/__debug__/provider-playground/route'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
 import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
 
@@ -155,6 +156,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const _debug_ProviderPlaygroundRouteRoute =
+  _debug_ProviderPlaygroundRouteRouteImport.update({
+    id: '/__debug__/provider-playground',
+    path: '/provider-playground',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiQuizzesGenerateRoute = ApiQuizzesGenerateRouteImport.update({
   id: '/api/quizzes/generate',
   path: '/api/quizzes/generate',
@@ -180,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
+  '/provider-playground': typeof _debug_ProviderPlaygroundRouteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/ide/$projectId': typeof IdeProjectIdRoute
@@ -206,6 +214,7 @@ export interface FileRoutesByTo {
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
+  '/provider-playground': typeof _debug_ProviderPlaygroundRouteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/ide/$projectId': typeof IdeProjectIdRoute
@@ -233,6 +242,7 @@ export interface FileRoutesById {
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
+  '/__debug__/provider-playground': typeof _debug_ProviderPlaygroundRouteRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/ide/$projectId': typeof IdeProjectIdRoute
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/notes'
     | '/study'
+    | '/provider-playground'
     | '/api/chat'
     | '/api/provider-test'
     | '/ide/$projectId'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/notes'
     | '/study'
+    | '/provider-playground'
     | '/api/chat'
     | '/api/provider-test'
     | '/ide/$projectId'
@@ -313,6 +325,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/notes'
     | '/study'
+    | '/__debug__/provider-playground'
     | '/api/chat'
     | '/api/provider-test'
     | '/ide/$projectId'
@@ -340,6 +353,7 @@ export interface RootRouteChildren {
   KnowledgeLazyRoute: typeof KnowledgeLazyRouteWithChildren
   NotesLazyRoute: typeof NotesLazyRouteWithChildren
   StudyLazyRoute: typeof StudyLazyRouteWithChildren
+  _debug_ProviderPlaygroundRouteRoute: typeof _debug_ProviderPlaygroundRouteRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiProviderTestRoute: typeof ApiProviderTestRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
@@ -505,6 +519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/__debug__/provider-playground': {
+      id: '/__debug__/provider-playground'
+      path: '/provider-playground'
+      fullPath: '/provider-playground'
+      preLoaderRoute: typeof _debug_ProviderPlaygroundRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/quizzes/generate': {
       id: '/api/quizzes/generate'
       path: '/api/quizzes/generate'
@@ -582,6 +603,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeLazyRoute: KnowledgeLazyRouteWithChildren,
   NotesLazyRoute: NotesLazyRouteWithChildren,
   StudyLazyRoute: StudyLazyRouteWithChildren,
+  _debug_ProviderPlaygroundRouteRoute: _debug_ProviderPlaygroundRouteRoute,
   ApiChatRoute: ApiChatRoute,
   ApiProviderTestRoute: ApiProviderTestRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,

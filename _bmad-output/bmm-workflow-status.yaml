@@ -25,6 +25,71 @@ workflow:
 # ═══════════════════════════════════════════════════════════════════════════
 
 epics:
+  EPIC-PRV:
+    id: "EPIC-PRV"
+    name: "Universal OpenAI-Compatible Provider System"
+    priority: "P0-CRITICAL"
+    status: "ready_for_sprint"
+    total_stories: 6
+    completed_stories: 0
+    description: "Dynamic provider registration with per-modality endpoints and test playground UI"
+    epic_file: "_bmad-output/epics/EPIC-PRV-universal-openai-compatible-provider-2026-01-11.md"
+    tech_spec: "_bmad-output/planning-artifacts/tech-spec-universal-openai-compatible-provider-2026-01-11.md"
+    quick_dev: "_bmad-output/planning-artifacts/quick-dev-provider-playground-2026-01-11.md"
+
+    targets:
+      A:
+        name: "Foundation Types"
+        status: "ready"
+        stories_planned: 1
+        completed_stories: 0
+        stories:
+          PRV-01:
+            title: "Domain Types for Universal Provider"
+            status: "not_started"
+            file: "stories/PRV-01-domain-types.md"
+      B:
+        name: "Registry & Adapter"
+        status: "ready"
+        stories_planned: 2
+        completed_stories: 0
+        depends_on: "A"
+        stories:
+          PRV-02:
+            title: "Provider Registry Service"
+            status: "not_started"
+            file: "stories/PRV-02-registry-service.md"
+          PRV-03:
+            title: "Universal Adapter Factory"
+            status: "not_started"
+            file: "stories/PRV-03-adapter-factory.md"
+      C:
+        name: "Backend & UI"
+        status: "ready"
+        stories_planned: 2
+        completed_stories: 0
+        depends_on: "B"
+        stories:
+          PRV-04:
+            title: "Backend API Endpoints"
+            status: "not_started"
+            file: "stories/PRV-04-backend-api.md"
+          PRV-05:
+            title: "Test Playground UI"
+            status: "not_started"
+            file: "stories/PRV-05-test-playground.md"
+      D:
+        name: "Integration"
+        status: "ready"
+        stories_planned: 1
+        completed_stories: 0
+        depends_on: "C"
+        stories:
+          PRV-06:
+            title: "Integration & E2E Tests"
+            status: "not_started"
+            file: "stories/PRV-06-integration-tests.md"
+
   EPIC-40:
     id: "EPIC-40"
     name: "Agent Chat Self-Switching Orchestrator"
