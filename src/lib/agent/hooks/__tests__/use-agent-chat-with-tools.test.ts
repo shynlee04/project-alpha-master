@@ -267,4 +267,235 @@ describe('useAgentChatWithTools', () => {
 
         expect(result.current.pendingApprovals[0].proposedContent).toBe('const x = 1;');
     });
+
+    /**
+     * Story 40-08: Mode Switching Tests
+     * Tests for self-switching agent behavior
+     */
+    describe('Mode Switching (Story 40-08)', () => {
+        // Mock ModeClassifier and related functions
+        beforeEach(() => {
+            vi.mock('../../mode-classifier', () => ({
+                classifyMode: vi.fn(() => ({
+                    mode: 'coding',
+                    confidence: 0.85,
+                    reasoning: ['Code keywords detected'],
+                    signals: [],
+                    timestamp: Date.now(),
+                })),
+            }));
+
+            vi.mock('../../system-prompt', () => ({
+                getAgentModeForClassifier: vi.fn((mode) => ({
+                    id: mode,
+                    name: mode.charAt(0).toUpperCase() + mode.slice(1) + ' Mode',
+                    icon: mode === 'coding' ? '💻' : '📝',
+                    prompt: `${mode} system prompt`,
+                })),
+                toComposerFormat: vi.fn((config) => ({
+                    id: config.id,
+                    name: config.name,
+                    icon: config.icon,
+                    cognitivePhase: 'Executing',
+                    persona: `You are ${config.name}`,
+                    communicationStyle: 'Direct',
+                    rules: config.prompt,
+                })),
+            }));
+
+            vi.mock('../../prompt-composer', () => ({
+                SystemPromptComposer: {
+                    getInstance: vi.fn(() => ({
+                        compose: vi.fn(() => ['layer1', 'layer2', 'layer3', 'layer4', 'layer5']),
+                        updateConfig: vi.fn(),
+                        setEventBus: vi.fn(),
+                    })),
+                },
+            }));
+
+            vi.mock('@/infrastructure/persistence/stores/chat', () => ({
+                useUnifiedChatStore: vi.fn(() => ({
+                    addPendingApproval: vi.fn(),
+                    approveToolCall: vi.fn(),
+                    denyToolCall: vi.fn(),
+                    activeThreadId: null,
+                    getPendingApprovals: vi.fn(() => []),
+                })),
+            }));
+        });
+
+        /**
+         * AC-1: Hook Calls ModeClassifier on Each Message
+         */
+        it('should call classifyMode when sendMessage is invoked', async () => {
+            const { classifyMode } = await import('../../mode-classifier');
+            const mockClassifyMode = vi.mocked(classifyMode);
+
+            const { result } = renderHook(() =>
+                useAgentChatWithTools({
+                    apiKey: 'test-key',
+                    workspaceType: 'ide',
+                })
+            );
+
+            act(() => {
+                result.current.sendMessage('implement a new component');
+            });
+
+            expect(mockClassifyMode).toHaveBeenCalledTimes(1);
+            expect(mockClassifyMode).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    prompt: 'implement a new component',
+                    workspaceType: 'ide',
+                })
+            );
+        });
+
+        it('should include workspaceType in classification context', async () => {
+            const { classifyMode } = await import('../../mode-classifier');
+            const mockClassifyMode = vi.mocked(classifyMode);
+
+            const { result } = renderHook(() =>
+                useAgentChatWithTools({
+                    apiKey: 'test-key',
+                    workspaceType: 'notes',
+                })
+            );
+
+            act(() => {
+                result.current.sendMessage('create a new note');
+            });
+
+            expect(mockClassifyMode).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    workspaceType: 'notes',
+                })
+            );
+        });
+
+        /**
+         * AC-2: System Prompt Updates Dynamically
+         */
+        it('should call getAgentModeForClassifier and toComposerFormat', async () => {
+            const { classifyMode } = await import('../../mode-classifier');
+            const { getAgentModeForClassifier, toComposerFormat } = await import('../../system-prompt');
+            const { SystemPromptComposer } = await import('../../prompt-composer');
+
+            const mockClassifyMode = vi.mocked(classifyMode);
+            const mockGetAgentModeForClassifier = vi.mocked(getAgentModeForClassifier);
+            const mockToComposerFormat = vi.mocked(toComposerFormat);
+            const mockGetInstance = vi.mocked(SystemPromptComposer.getInstance);
+            const mockComposer = { updateConfig: vi.fn(), compose: vi.fn(), setEventBus: vi.fn() };
+            mockGetInstance.mockReturnValue(mockComposer as any);
+
+            mockClassifyMode.mockReturnValue({
+                mode: 'coding',
+                confidence: 0.9,
+                reasoning: ['Code keywords'],
+                signals: [],
+                timestamp: Date.now(),
+            });
+
+            mockGetAgentModeForClassifier.mockReturnValue({
+                id: 'coding',
+                name: 'Coding Mode',
+                icon: '💻',
+                prompt: 'Coding prompt',
+            });
+
+            const { result } = renderHook(() =>
+                useAgentChatWithTools({
+                    apiKey: 'test-key',
+                    workspaceType: 'ide',
+                })
+            );
+
+            act(() => {
+                result.current.sendMessage('fix this bug');
+            });
+
+            expect(mockGetAgentModeForClassifier).toHaveBeenCalledWith('coding');
+            expect(mockToComposerFormat).toHaveBeenCalledWith(
+                expect.objectContaining({ id: 'coding' })
+            );
+            expect(mockComposer.updateConfig).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    agentMode: expect.objectContaining({ id: 'coding' }),
+                })
+            );
+        });
+
+        /**
+         * AC-3: Mode Switching Logged for Observability
+         */
+        it('should log mode classification result', async () => {
+            const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+            const { result } = renderHook(() =>
+                useAgentChatWithTools({
+                    apiKey: 'test-key',
+                    workspaceType: 'ide',
+                })
+            );
+
+            act(() => {
+                result.current.sendMessage('write code');
+            });
+
+            const hasClassificationLog = consoleLogSpy.mock.calls.some((call) =>
+                call[0]?.includes?.('[useAgentChat] Mode classification:')
+            );
+
+            expect(hasClassificationLog).toBe(true);
+
+            consoleLogSpy.mockRestore();
+        });
+
+        it('should log mode switch action', async () => {
+            const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+            const { result } = renderHook(() =>
+                useAgentChatWithTools({
+                    apiKey: 'test-key',
+                    workspaceType: 'ide',
+                })
+            );
+
+            act(() => {
+                result.current.sendMessage('test message');
+            });
+
+            const hasSwitchLog = consoleLogSpy.mock.calls.some((call) =>
+                call[0]?.includes?.('[useAgentChat] Mode switched to:')
+            );
+
+            expect(hasSwitchLog).toBe(true);
+
+            consoleLogSpy.mockRestore();
+        });
+
+        /**
+         * AC-4: Smooth Transitions Between Modes
+         */
+        it('should use default workspace type when not provided', async () => {
+            const { classifyMode } = await import('../../mode-classifier');
+            const mockClassifyMode = vi.mocked(classifyMode);
+
+            const { result } = renderHook(() =>
+                useAgentChatWithTools({
+                    apiKey: 'test-key',
+                })
+            );
+
+            act(() => {
+                result.current.sendMessage('test');
+            });
+
+            expect(mockClassifyMode).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    workspaceType: 'ide', // default
+                })
+            );
+        });
+    });
 });

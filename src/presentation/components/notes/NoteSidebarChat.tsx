@@ -58,8 +58,8 @@ export function NoteSidebarChat({
     // Get workspace context for tool facades (Notes workspace only gets file read tools)
     const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspaceSync();
 
-    // Create tool facades - Notes workspace only gets file read tools
-    const { fileTools } = useAgentChatToolFacades({
+    // Create tool facades - Notes workspace gets file read and note CRUD tools
+    const { fileTools, noteTools } = useAgentChatToolFacades({
         localAdapterRef,
         syncManagerRef,
         eventBus,
@@ -70,7 +70,7 @@ export function NoteSidebarChat({
     // Notes-specific system prompt
     const systemPrompt = `Notebook: ${projectName}\n\n${getNotesAgentSystemPrompt(projectName)}`;
 
-    // Use the real TanStack AI hook with tools (file read only for Notes)
+    // Use the real TanStack AI hook with tools (file read + note CRUD for Notes workspace)
     const {
         messages: hookMessages,
         sendMessage,
@@ -78,12 +78,14 @@ export function NoteSidebarChat({
     } = useAgentChatWithTools({
         fileTools,
         terminalTools: undefined, // Notes workspace doesn't get terminal tools
+        noteTools, // EPIC-40: Note CRUD tools for Notes workspace
         eventBus: eventBus || null,
         systemMessage: systemPrompt,
         providerId,
         modelId: activeAgent?.modelId ?? undefined,
         apiKey: apiKey ?? undefined,
         enableTools: true,
+        workspaceType: 'notes',
     });
 
     // Update local messages when hook messages change

@@ -100,8 +100,8 @@ export function AgentChatPanel({
     const { localAdapterRef, syncManagerRef, eventBus, initialSyncCompleted } = useWorkspaceSync();
 
     // Create tool facades when workspace is ready
-    // Notes workspace only gets file read tools, not write/terminal
-    const { fileTools, terminalTools } = useAgentChatToolFacades({
+    // Notes workspace gets file read + note CRUD tools, IDE gets file + terminal tools
+    const { fileTools, terminalTools, noteTools } = useAgentChatToolFacades({
         localAdapterRef,
         syncManagerRef,
         eventBus,
@@ -160,6 +160,7 @@ export function AgentChatPanel({
     } = useAgentChatWithTools({
         fileTools,
         terminalTools,
+        noteTools, // EPIC-40: Note CRUD tools (null for non-notes workspaces)
         eventBus: eventBus || null,
         systemMessage: systemPrompt,
         providerId,
@@ -168,6 +169,7 @@ export function AgentChatPanel({
         // NOTE: customBaseURL, customHeaders, enableNativeTools are NOT part of Agent entity
         // They are provider-level configuration, NOT agent-level
         enableTools: true,
+        workspaceType, // EPIC-40: Pass workspace type for mode classification
         // EPIC-40 MM-03: Conversation context for tool execution persistence
         conversationId: activeConversationId,
         threadId: activeThreadId,

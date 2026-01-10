@@ -19,7 +19,7 @@ import { SystemPromptComposer, type LayerContext } from '../prompt-composer';
 // Story 40-08: Import ModeClassifier for dynamic mode switching
 import { classifyMode } from '../mode-classifier';
 import { getAgentModeForClassifier, toComposerFormat } from '../system-prompt';
-import type { AgentFileTools, AgentTerminalTools } from '../facades';
+import type { AgentFileTools, AgentTerminalTools, AgentNoteTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';
 import { buildMultimodalMessage, type ImageContent } from '../multimodal/message-builder';
 // EPIC-40 MM-03: Tool execution persistence to unified chat store
@@ -43,6 +43,8 @@ export interface UseAgentChatWithToolsOptions {
     fileTools?: AgentFileTools | null;
     /** Terminal tools facade (required for tool execution) */
     terminalTools?: AgentTerminalTools | null;
+    /** Note tools facade (required for note CRUD in Notes workspace) - EPIC-40 */
+    noteTools?: AgentNoteTools | null;
     /** Event bus for emitting tool events */
     eventBus?: WorkspaceEventEmitter | null;
     // OpenAI Compatible Provider support
@@ -179,6 +181,7 @@ export function useAgentChatWithTools(
         // systemMessage,
         fileTools = null,
         terminalTools = null,
+        noteTools = null, // EPIC-40: Note tools for Notes workspace
         eventBus = null,
         customBaseURL,
         customHeaders,
@@ -211,8 +214,8 @@ export function useAgentChatWithTools(
         }
     }, [eventBus, agentStatus]);
 
-    // Check if tools are available
-    const toolsAvailable = enableTools && (fileTools !== null || terminalTools !== null);
+    // Check if tools are available (include noteTools for Notes workspace)
+    const toolsAvailable = enableTools && (fileTools !== null || terminalTools !== null || noteTools !== null);
 
     // Create SystemPromptComposer instance for 5-layer system prompt generation
     const promptComposer = useMemo(() => {
@@ -236,8 +239,9 @@ export function useAgentChatWithTools(
     const toolFactoryOptions = useMemo((): ToolFactoryOptions => ({
         getFileTools: () => fileTools,
         getTerminalTools: () => terminalTools,
+        getNoteTools: () => noteTools, // EPIC-40: Note tools for Notes workspace
         getEventBus: () => eventBus,
-    }), [fileTools, terminalTools, eventBus]);
+    }), [fileTools, terminalTools, noteTools, eventBus]);
 
     // Create client tools using TanStack AI clientTools helper
     const agentTools = useMemo(() => {
