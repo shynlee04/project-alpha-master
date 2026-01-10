@@ -11,7 +11,7 @@
 
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
-import type { NoteOperationResult } from './types';
+// Output type is inferred from ReadNoteOutput (z.infer from the schema)
 
 /**
  * Read Note Tool Definition
@@ -55,7 +55,7 @@ export function createReadNoteServerTool(getNoteStore: () => {
           success: false,
           error: `Note with ID "${noteId}" not found`,
           message: `Note "${noteId}" does not exist`,
-        } as NoteOperationResult;
+        };
       }
 
       return {
@@ -64,18 +64,18 @@ export function createReadNoteServerTool(getNoteStore: () => {
           id: note.id,
           title: note.title,
           content: note.content,
-          parentId: note.parentId,
+          parentId: note.parentId ?? null,
           createdAt: note.createdAt,
           updatedAt: note.updatedAt,
         },
         message: `Successfully read note "${note.title}"`,
-      } as NoteOperationResult;
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to read note: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      } as NoteOperationResult;
+      };
     }
   });
 }

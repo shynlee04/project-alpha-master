@@ -11,7 +11,8 @@
 
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
-import type { NoteOperationResult } from './types';
+// Note: NoteOperationResult type is defined in ./types but not directly used here
+// We use DeleteNoteOutput which matches the tool's outputSchema
 
 /**
  * Delete Note Tool Definition
@@ -60,13 +61,13 @@ export function createDeleteNoteServerTool(getNoteStore: () => {
           deletedTitle: noteTitle,
         },
         message: `Successfully deleted note "${noteTitle}"`,
-      } as NoteOperationResult;
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to delete note: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      } as NoteOperationResult;
+      };
     }
   });
 }

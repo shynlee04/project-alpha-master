@@ -22,7 +22,9 @@ import { createFileRoute } from '@tanstack/react-router';
 import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
 import { createGeminiChat } from '@tanstack/ai-gemini';
-import { readFileDef, writeFileDef, listFilesDef, executeCommandDef } from '../../lib/agent/tools';
+// Story 40-06: Use centralized tool registry instead of hardcoded imports
+import { toolRegistry } from '@/infrastructure/tools/centralized-tool-registry';
+import { initializeToolRegistry } from '@/infrastructure/tools/tool-catalog';
 import {
     validateChatRequest,
     createValidationErrorResponse,
@@ -116,12 +118,20 @@ function sanitizeMessagesForNoToolModel(
  * using .client() implementations with workspace facades.
  */
 function getTools() {
-    return [
-        readFileDef,
-        writeFileDef,
-        listFilesDef,
-        executeCommandDef,
-    ];
+    // Story 40-06: Use centralized tool registry
+    // Ensure registry is initialized (singleton pattern)
+    initializeToolRegistry();
+    
+    const registeredTools = toolRegistry.getServerExposedTools();
+    const tools = registeredTools.map(tool => tool.definition);
+    
+    console.log('[/api/chat] Tool Registry loaded:', {
+        totalRegistered: toolRegistry.count(),
+        serverExposed: registeredTools.length,
+        toolNames: tools.map(t => t.name),
+    });
+    
+    return tools;
 }
 
 /**

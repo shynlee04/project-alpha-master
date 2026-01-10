@@ -11,7 +11,8 @@
 
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
-import type { NoteOperationResult } from './types';
+// Note: NoteOperationResult type is defined in ./types but not directly used here
+// We use UpdateNoteOutput which matches the tool's outputSchema
 
 /**
  * Update Note Tool Definition
@@ -65,17 +66,17 @@ export function createUpdateNoteServerTool(getNoteStore: () => {
           id: result.id,
           title: result.title,
           content: result.content,
-          parentId: result.parentId,
+          parentId: result.parentId ?? null,
           updatedAt: result.updatedAt,
         },
         message: `Successfully updated note "${title || noteId}"`,
-      } as NoteOperationResult;
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to update note: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      } as NoteOperationResult;
+      };
     }
   });
 }

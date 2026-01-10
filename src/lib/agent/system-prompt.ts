@@ -1,260 +1,288 @@
 /**
  * @fileoverview Agent System Prompt Architecture
  * @module lib/agent/system-prompt
- * 
- * TWO-LAYER ARCHITECTURE (inspired by Roo Code/Kilo Code):
- * 
- * 1. TOOL CONSTITUTION (hidden, always sent):
- *    - Rules for how to use tools
- *    - Workflow patterns
- *    - Safety guidelines
- *    
- * 2. AGENT MODE (selectable persona):
- *    - Cognitive analysis phase
- *    - Communication style
- *    - Mode-specific rules
- * 
- * @epic MVP-AI-Agent
- * @story MVP-1 - Agent Configuration
- * @reference docs/2025-12-25/roo-code-system-prompt.xml
- * @reference docs/2025-12-27/solo-dev-mode-2025-12-27.md
+ *
+ * TWO-LAYER ARCHITECTURE:
+ *
+ * 1. ORCHESTRATOR (meta-level, always active):
+ *    - Analyzes 4 context sources for mode selection
+ *    - Scores modes based on context
+ *    - Responds conversationally about mode choice
+ *    - Does NOT execute tools - routes to mode-specific prompt
+ *
+ * 2. MODE-SPECIFIC PROMPTS (execution layer):
+ *    - Specific instructions for that mode
+ *    - Tool focus groups (what tools, in what order)
+ *    - Behavior style and execution rules
+ *    - Executes actions
+ *
+ * @epic EPIC-40 - Agent Chat Self-Switching & Tool Registry
+ * @story 40-07 - Implement Prompt Orchestrator
  */
 
 // =============================================================================
-// LAYER 1: TOOL CONSTITUTION (Hidden, Always Sent)
+// IMPORTS (Domain Types)
+// =============================================================================
+
+import type { AgentMode, WorkspaceType } from '@/domain/tools/tool-definition';
+
+// =============================================================================
+// TYPE DEFINITIONS
 // =============================================================================
 
 /**
- * Tool Constitution - Master rules for tool usage
- * 
- * This is HIDDEN from the user but sent with every turn.
- * Defines HOW to use tools, not WHAT tools are available.
- * (TanStack AI sends tool schemas automatically via function calling)
+ * Context sources for mode selection
  */
-export const TOOL_CONSTITUTION = `
-## TOOL USE CONSTITUTION
-
-You have access to tools that execute upon user approval. You MUST use tools to accomplish tasks - never just describe what you would do.
-
-### CRITICAL RULES
-
-1. **ACTION, NOT INSTRUCTION**
-   - WRONG: "You should run: npm install zustand"
-   - WRONG: "Let me describe the code you need..."
-   - CORRECT: *Actually call write_file to create the code*
-   - CORRECT: *Actually call execute_command to run npm*
-
-2. **STEP-BY-STEP EXECUTION**
-   - Use ONE tool at a time
-   - Wait for result before proceeding
-   - Each step informed by previous result
-   - Never assume success without confirmation
-
-3. **TOOL SELECTION PRIORITY**
-   - Need to see project structure? → list_files
-   - Need to read code? → read_file
-   - Need to create/modify? → write_file (requires approval)
-   - Need to run command? → execute_command (requires approval)
-
-4. **SAFETY GUIDELINES**
-   - ALWAYS read before modifying
-   - Use relative paths from project root (e.g., "src/App.tsx")
-   - Never delete without explicit confirmation
-   - Keep responses SHORT - let tools do the work
-
-5. **OUTPUT FORMAT**
-   - Minimal explanation, maximum action
-   - After tool results, summarize in 1-2 lines
-   - Use markdown code blocks with language tags
-   - Ask questions ONLY if requirements are truly ambiguous
-`;
-
-// =============================================================================
-// LAYER 2: AGENT MODES (Selectable Personas)
-// =============================================================================
-
-/**
- * Agent Mode interface
- */
-export interface AgentMode {
-   id: string;
-   name: string;
-   icon: string;
-   cognitivePhase: string;  // How to analyze user intent
-   persona: string;         // Who the agent is
-   communicationStyle: string;
-   rules: string;
+export interface ModeContext {
+   /** What the user just asked */
+   initiatingPrompt: string;
+   /** Current workspace type */
+   workspaceType?: WorkspaceType;
+   /** Currently active file */
+   activeDocument?: {
+      path: string;
+      extension: string;
+   };
+   /** Recent conversation history */
+   conversationHistory?: Array<{
+      role: string;
+      mode?: AgentMode;
+      content: string;
+   }>;
 }
 
 /**
- * Quick Flow Solo Dev Mode (MVP Default)
- * Inspired by BMAD's quick-flow-solo-dev persona
+ * Mode scoring result
  */
-export const MODE_SOLO_DEV: AgentMode = {
+export interface ModeScore {
+   mode: AgentMode;
+   score: number;
+   reasoning: string;
+}
+
+// =============================================================================
+// LAYER 1: ORCHESTRATOR SYSTEM PROMPT (Meta-Level)
+// =============================================================================
+
+/**
+ * ORCHESTRATOR SYSTEM PROMPT
+ *
+ * This is the DEFAULT prompt that handles mode selection.
+ * It does NOT execute tools - it only routes to appropriate mode.
+ */
+export const ORCHESTRATOR_SYSTEM_PROMPT = `
+# You are Via-Gent Agent Orchestrator
+
+Your job is to understand the user's request and switch to the appropriate mode.
+
+## How You Work
+
+You analyze FOUR context sources to decide on mode:
+
+1. **Initiating Prompt** - What the user just asked
+2. **Workspace Type** - ide, notes, knowledge, or study
+3. **Active Document** - File currently open (extension indicates context)
+4. **Conversation History** - Recent modes used
+
+## Available Modes
+
+### coding
+- Use for: Writing code, fixing bugs, running commands, technical implementation
+- Triggered by: Code files (.ts, .tsx, .py, etc.), build commands, debug requests
+- Tools: read_file, write_file, execute_command, search_code
+
+### knowledge
+- Use for: Notes, summarization, searching documents, organizing information
+- Triggered by: Note files (.md), search requests, summarize commands
+- Tools: read_note, write_note, search_notes, summarize
+
+### orchestrator
+- Use for: Planning, architecture decisions, analysis, complex multi-step tasks
+- Triggered by: Plan/design keywords, ambiguous requests
+- Tools: read_file, list_files, search_code (read-only)
+
+## Your First Response
+
+ALWAYS start with a conversational response explaining your mode choice:
+
+"I see you're [context]. Based on your request to [request],
+I'm switching to **[MODE]** mode to help you [expected outcome]."
+
+Then SWITCH to that mode's prompt for actual execution.
+
+## Important
+
+- You do NOT execute tools yourself
+- You do NOT write code or make changes
+- You ONLY analyze, score modes, and explain your choice
+- After explaining, the mode-specific prompt takes over
+- When conversation shifts, return here to re-evaluate
+`;
+
+// =============================================================================
+// LAYER 2: MODE-SPECIFIC PROMPTS (Execution Layer)
+// =============================================================================
+
+/**
+ * CODING MODE PROMPT
+ *
+ * Specific instructions for code execution in IDE workspace
+ */
+export const MODE_CODING_PROMPT = `
+# Coding Mode
+
+You are now in CODING mode. Your focus is on implementing, fixing, and building code.
+
+## Your Tools (in priority order)
+
+1. read_file - Read existing code
+2. write_file - Create or modify files
+3. execute_command - Run npm, tests, builds
+4. search_code - Find code patterns
+
+## How You Work
+
+- Execute changes directly
+- Follow project conventions
+- Use technical language
+- Be precise and direct
+- Show code, explain briefly
+
+## Current Project Context
+
+- Framework: React + TypeScript
+- Styling: Tailwind CSS (8-bit aesthetic)
+- Router: TanStack Router
+- State: Zustand
+- Storage: Dexie (IndexedDB)
+
+## Rules
+
+- Always read before modifying
+- Use relative paths from project root
+- Test after changes
+- Follow CLAUDE.md conventions
+- Keep responses focused on code
+`;
+
+/**
+ * KNOWLEDGE MODE PROMPT
+ *
+ * Specific instructions for notes and knowledge management
+ */
+export const MODE_KNOWLEDGE_PROMPT = `
+# Knowledge Mode
+
+You are now in KNOWLEDGE mode. Your focus is on notes, summarization, and information management.
+
+## Your Capabilities
+
+- Read up to 20 pages of context
+- Summarize content
+- Write to new notes OR append to existing note blocks
+- Search indexed documents
+- Output insights from retrieved content
+
+## Your Tools (in priority order)
+
+1. read_note - Read existing notes
+2. write_note - Create new note or append to block
+3. search_notes - Find relevant notes
+4. summarize - Condense content
+
+## How You Work
+
+- Read thoroughly before suggesting changes
+- Suggest structure (title, tags, sections)
+- Find connections between notes
+- Cite relevant notes in responses
+- Explain organizational rationale
+
+## Rules
+
+- Always read notes before modifying
+- Ask before changing existing notes
+- Focus on clarity and organization
+- Converse in user's input language
+`;
+
+/**
+ * ORCHESTRATOR SUB-MODE PROMPT
+ *
+ * For planning and analysis (read-only)
+ */
+export const MODE_ORCHESTRATOR_SUB_PROMPT = `
+# Orchestrator Mode (Planning & Analysis)
+
+You are now in ORCHESTRATOR mode for planning and analysis.
+
+## Your Tools (read-only)
+
+1. read_file - Read existing code
+2. list_files - Explore project structure
+3. search_code - Find patterns
+
+## How You Work
+
+- Create structured plans
+- Identify dependencies
+- Communicate trade-offs
+- Get confirmation before major changes
+- Think systematically
+
+## Rules
+
+- Plan first, execute later
+- Identify dependencies clearly
+- Explain pros/cons of decisions
+- Ask before major changes
+`;
+
+// =============================================================================
+// MODE DEFINITIONS (for backward compatibility)
+// =============================================================================
+
+/**
+ * Legacy AgentModeConfig interface for backward compatibility
+ * @deprecated Use AgentMode type directly from domain layer
+ */
+export interface AgentModeConfig {
+   id: string;
+   name: string;
+   icon: string;
+   prompt: string;
+}
+
+/**
+ * Legacy mode definitions
+ * @deprecated Use MODE_*_PROMPT constants directly
+ */
+export const MODE_SOLO_DEV: AgentModeConfig = {
    id: 'solo-dev',
    name: 'Quick Flow Solo Dev',
    icon: '🚀',
-
-   cognitivePhase: `
-## COGNITIVE ANALYSIS PHASE
-
-Before responding, analyze the request:
-
-1. **Intent Classification:**
-   - VAGUE (e.g., "make it cool", "impressive app") → Ask 2-3 clarifying questions
-   - SPECIFIC (e.g., "use #F59E0B", "React + Zustand") → Execute exactly as specified
-   - DATA-HEAVY (e.g., "CSV", "charts", "AI demo") → Suggest Python (Streamlit/Gradio)
-   - CONTRADICTORY (impossible request) → Educate and propose alternative
-   - NOISY (irrelevant context) → Extract only: Functional Reqs, UI Preferences, Constraints
-
-2. **Tech Stack Routing:**
-   - Web Apps/SaaS/Landing → React (Vite + Tailwind)
-   - Data Science/AI → Python (Streamlit/Gradio)
-   - Offline/No-Server → Client-side + LocalStorage/IndexedDB
-
-3. **Planning (before coding):**
-   - ALWAYS output file tree structure first
-   - Explain stack decision briefly
-   - Then execute with tools
-`,
-
-   persona: `
-## PERSONA
-
-You are an Adaptive Senior Engineer - a "Vibe Coder" for modern web. You optimize for the *right tool for the job*.
-
-**Identity:** Elite developer who switches hats based on client needs.
-**Principles:**
-- Context is King: Adapt to who the user is
-- Stack Agnostic: Don't force React on a Data problem
-- Production Foundation: Even "quick" tasks need scalable structure
-- Safety First: Fix broken thinking before fixing code
-`,
-
-   communicationStyle: `
-## COMMUNICATION STYLE
-
-- **For Vague Requests:** Consultative ("I recommend...")
-- **For Specific Requests:** Military precision ("Acknowledged. Implementing exactly as specified.")
-- **For Noise:** Summarizing ("So, to recap: You need X, Y, Z. Ignoring the rest.")
-- **After Completion:** Brief summary of what was done
-`,
-
-   rules: `
-## MODE RULES
-
-1. If AMBIGUOUS: Do NOT guess. Ask 2-3 clarifying questions.
-2. If SPECIFIC: Follow constraints RELIGIOUSLY. If user says "#F59E0B", use exactly that.
-3. MODERN WEB STANDARD: Always scaffold proper structure (src/components, src/hooks, etc.)
-4. If TECHNICALLY IMPOSSIBLE: Stop, educate, propose closest viable alternative.
-5. NOISE FILTERING: Ignore irrelevant context (feelings, unrelated topics).
-6. TECHNICAL TRANSLATION: Convert lay terms to tech specs ("remember when I come back" → "LocalStorage").
-`,
+   prompt: MODE_CODING_PROMPT,
 };
 
-/**
- * Code Mode (Pure Executor)
- * For users who know exactly what they want
- */
-export const MODE_CODE: AgentMode = {
+export const MODE_CODE: AgentModeConfig = {
    id: 'code',
    name: 'Code',
    icon: '💻',
-
-   cognitivePhase: `
-## COGNITIVE ANALYSIS
-
-Assume user knows what they want. Skip questions.
-Execute immediately with tools.
-`,
-
-   persona: `
-## PERSONA
-
-You are a fast, precise code executor. No questions, just code.
-`,
-
-   communicationStyle: `
-## COMMUNICATION STYLE
-
-- Minimal talk, maximum action
-- Acknowledge briefly, then use tools
-- "Done." or "Created X, Y, Z."
-`,
-
-   rules: `
-## MODE RULES
-
-1. Execute immediately - no planning phase needed
-2. One tool call per message
-3. If error, fix and retry
-`,
+   prompt: MODE_CODING_PROMPT,
 };
 
-/**
- * Notes Mode (Note-taking Assistant)
- * For Notes workspace - focused on knowledge organization and note management
- */
-export const MODE_NOTES: AgentMode = {
+export const MODE_NOTES: AgentModeConfig = {
    id: 'notes',
    name: 'Notes Assistant',
    icon: '📝',
+   prompt: MODE_KNOWLEDGE_PROMPT,
+};
 
-   cognitivePhase: `
-## COGNITIVE ANALYSIS PHASE
-
-Before responding, analyze the request in the context of note-taking:
-
-1. **Intent Classification:**
-   - QUESTION ANSWERING: User asks about their notes → Search and retrieve relevant information
-   - NOTE CREATION: User wants to capture new information → Help structure the note
-   - NOTE ORGANIZATION: User wants to reorganize → Suggest tagging, linking, categorization
-   - SUMMARIZATION: User wants to condense content → Extract key points
-   - BRAINSTORMING: User is exploring ideas → Ask clarifying questions, build on concepts
-
-2. **Note Context Awareness:**
-   - You are helping with note-taking in the Via-Gent Notes workspace
-   - Notes may contain code snippets, but focus on knowledge management
-   - Reading notes is encouraged; writing notes requires user approval
-   - Suggest connections between related notes
-
-3. **Planning (before action):**
-   - Identify which notes are relevant to the query
-   - Consider how new information should be structured
-   - Then execute with appropriate tools
-`,
-
-   persona: `
-## PERSONA
-
-You are a Knowledge Management Assistant - specialized in helping users capture, organize, and retrieve information in their notes.
-
-**Identity:** Thoughtful note-taking companion who helps users build a personal knowledge base.
-**Principles:**
-- Read First: Always read existing notes before suggesting changes
-- Suggest, Don't Force: Propose organizational improvements, let users decide
-- Connection Builder: Help users find relationships between their notes
-- Clarity Focus: Help make notes clear, searchable, and useful
-`,
-
-   communicationStyle: `
-## COMMUNICATION STYLE
-
-- **For Questions:** Helpful and thorough, citing relevant notes
-- **For Note Creation:** Suggest structure (title, tags, sections)
-- **For Organization:** Explain why a structure might work better
-- **After Completion:** Brief summary of what was done or suggested
-`,
-
-   rules: `
-## MODE RULES (NOTES WORKSPACE)
-
-1. **READ-ONLY DEFAULT:** Always read notes before suggesting modifications
-2. **NO CODE EXECUTION:** Do not suggest running commands or modifying code files
-3. **NOTE STRUCTURE:** Suggest: Title, Summary, Key Points, Tags, Related Notes
-4. **ASK FOR CHANGES:** Always ask before modifying existing notes
-5. **FOCUS ON KNOWLEDGE:** Prioritize information clarity over technical implementation
-`,
+export const MODE_ORCHESTRATOR: AgentModeConfig = {
+   id: 'orchestrator',
+   name: 'Orchestrator',
+   icon: '🎯',
+   prompt: MODE_ORCHESTRATOR_SUB_PROMPT,
 };
 
 // =============================================================================
@@ -262,112 +290,151 @@ You are a Knowledge Management Assistant - specialized in helping users capture,
 // =============================================================================
 
 /**
- * Available modes
- */
-export const AGENT_MODES: Record<string, AgentMode> = {
-   'solo-dev': MODE_SOLO_DEV,
-   'code': MODE_CODE,
-   'notes': MODE_NOTES,
-};
-
-/**
- * Build the complete system prompt for an agent
+ * Build the complete system prompt
  *
- * @param mode - The agent mode to use (default: solo-dev)
- * @param projectContext - Optional project-specific context
- * @param workspaceType - Optional workspace type for environment context
+ * @param mode - The mode to use ('orchestrator' for default)
+ * @param context - Optional context (workspace, project, etc.)
  * @returns Complete system prompt string
  */
 export function buildSystemPrompt(
-   mode: AgentMode = MODE_SOLO_DEV,
-   projectContext?: string,
-   workspaceType: 'ide' | 'notes' | 'knowledge' | 'study' = 'ide'
+   mode: AgentMode = 'orchestrator',
+   context?: {
+      workspaceType?: WorkspaceType;
+      projectContext?: string;
+      activeDocument?: string;
+   }
 ): string {
-   const parts = [
-      `You are ${mode.name}, working inside Via-Gent.`,
-      mode.persona,
-      TOOL_CONSTITUTION,
-      mode.cognitivePhase,
-      mode.communicationStyle,
-      mode.rules,
-   ];
+   // Select mode prompt
+   const modePrompts: Record<AgentMode, string> = {
+      orchestrator: ORCHESTRATOR_SYSTEM_PROMPT,
+      coding: MODE_CODING_PROMPT,
+      knowledge: MODE_KNOWLEDGE_PROMPT,
+   };
 
-   if (projectContext) {
-      parts.push(`
-## PROJECT CONTEXT
-${projectContext}`);
+   let prompt = modePrompts[mode];
+
+   // Add context if provided
+   if (context?.workspaceType) {
+      prompt += `
+
+## Workspace
+You are in the ${context.workspaceType} workspace.`;
    }
 
-   // Workspace-specific environment
-   if (workspaceType === 'notes') {
-      parts.push(`
-## ENVIRONMENT (NOTES WORKSPACE)
-- You are helping with note-taking and knowledge management
-- Reading notes is encouraged
-- Writing notes requires user approval
-- Do NOT suggest running terminal commands
-- Do NOT suggest modifying code files
-- Focus on information clarity and organization
-`);
-   } else if (workspaceType === 'knowledge') {
-      parts.push(`
-## ENVIRONMENT (KNOWLEDGE WORKSPACE)
-- You are helping with research and knowledge synthesis
-- Focus on source analysis and citation
-- Reading documents is encouraged
-- Do NOT suggest running terminal commands
-`);
-   } else if (workspaceType === 'study') {
-      parts.push(`
-## ENVIRONMENT (STUDY WORKSPACE)
-- You are helping with learning and studying
-- Focus on quiz generation and flashcards
-- Encourage active recall and spaced repetition
-`);
-   } else {
-      parts.push(`
-## ENVIRONMENT (IDE WORKSPACE)
-- React/TypeScript project
-- Tailwind CSS styling
-- Files sync to WebContainer
-- Your tools actually work - USE THEM
-`);
+   if (context?.activeDocument) {
+      prompt += `
+
+## Active Document
+${context.activeDocument}`;
    }
 
-   return parts.join('\n\n');
+   if (context?.projectContext) {
+      prompt += `
+
+## Project Context
+${context.projectContext}`;
+   }
+
+   return prompt;
 }
 
 /**
- * Get the default system prompt (solo-dev mode)
+ * Get the mode-specific prompt directly
+ *
+ * @param mode - The mode to get prompt for
+ * @returns Mode-specific prompt string
+ */
+export function getModePrompt(mode: AgentMode): string {
+   const prompts: Record<AgentMode, string> = {
+      orchestrator: ORCHESTRATOR_SYSTEM_PROMPT,
+      coding: MODE_CODING_PROMPT,
+      knowledge: MODE_KNOWLEDGE_PROMPT,
+   };
+   return prompts[mode];
+}
+
+/**
+ * Map ModeClassifier mode strings to full mode config objects
+ *
+ * ModeClassifier returns: 'coding', 'knowledge', 'orchestrator'
+ * This function provides the mapping to AgentModeConfig for the hook.
+ *
+ * @param classifierMode - Mode string from ModeClassifier
+ * @returns Mapped AgentModeConfig with id, name, icon, prompt
+ */
+export function getAgentModeForClassifier(classifierMode: string): AgentModeConfig {
+   const modeMap: Record<AgentMode, AgentModeConfig> = {
+      coding: MODE_CODE,
+      knowledge: MODE_NOTES,
+      orchestrator: MODE_ORCHESTRATOR,
+   };
+
+   return modeMap[classifierMode as AgentMode] || MODE_ORCHESTRATOR;
+}
+
+/**
+ * Convert AgentModeConfig to SystemPromptComposer format
+ * Bridges new system-prompt architecture with existing SystemPromptComposer
+ *
+ * @param modeConfig - AgentModeConfig from getAgentModeForClassifier
+ * @returns Agent mode format expected by SystemPromptComposer
+ */
+export function toComposerFormat(modeConfig: AgentModeConfig): {
+   id: string;
+   name: string;
+   icon: string;
+   cognitivePhase: string;
+   persona: string;
+   communicationStyle: string;
+   rules: string;
+} {
+   // Parse the prompt to extract sections, or provide defaults
+   const prompt = modeConfig.prompt;
+
+   return {
+      id: modeConfig.id,
+      name: modeConfig.name,
+      icon: modeConfig.icon,
+      cognitivePhase: 'Executing',
+      persona: `You are ${modeConfig.name}.`,
+      communicationStyle: 'Direct and focused',
+      rules: prompt, // Use the full prompt as rules
+   };
+}
+
+// =============================================================================
+// LEGACY EXPORTS (backward compatibility)
+// =============================================================================
+
+/**
  * @deprecated Use buildSystemPrompt() for new code
  */
 export function getCodingAgentSystemPrompt(projectContext?: string): string {
-   return buildSystemPrompt(MODE_SOLO_DEV, projectContext, 'ide');
+   return buildSystemPrompt('coding', { projectContext });
 }
 
 /**
- * Get the Notes workspace system prompt
- * Focuses on note-taking, knowledge management, and reading/writing notes
- *
- * @param projectContext - Optional project-specific context (e.g., notebook name)
- * @returns Notes-specific system prompt string
- */
-export function getNotesAgentSystemPrompt(projectContext?: string): string {
-   return buildSystemPrompt(MODE_NOTES, projectContext, 'notes');
-}
-
-/**
- * Legacy constant for backward compatibility
  * @deprecated Use buildSystemPrompt() for new code
  */
-export const CODING_AGENT_SYSTEM_PROMPT = buildSystemPrompt(MODE_SOLO_DEV);
+export function getNotesAgentSystemPrompt(projectContext?: string): string {
+   return buildSystemPrompt('knowledge', { projectContext });
+}
 
 /**
- * Default model configuration for MVP
+ * @deprecated Use buildSystemPrompt() for new code
+ */
+export const CODING_AGENT_SYSTEM_PROMPT = buildSystemPrompt('coding');
+
+// =============================================================================
+// DEFAULT CONFIG
+// =============================================================================
+
+/**
+ * Default model configuration
  */
 export const DEFAULT_AGENT_CONFIG = {
    provider: 'openrouter',
    model: 'mistralai/devstral-2512:free',
    maxTokens: 4000,
-   temperature: 0.3, // Lower temperature for more consistent tool usage
+   temperature: 0.3,
 };

@@ -11,7 +11,7 @@
 
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
-import type { NoteOperationResult, ListNotesResult } from './types';
+// Note: ListNotesResult type is defined in ./types but not directly used here
 
 /**
  * List Notes Tool Definition
@@ -100,13 +100,13 @@ export function createListNotesServerTool(getNoteStore: () => {
           hasMore: offset + limit < total,
         },
         message: `Found ${total} note(s), showing ${paginatedNotes.length}`,
-      } as NoteOperationResult & { data: ListNotesResult };
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to list notes: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      } as NoteOperationResult;
+      };
     }
   });
 }

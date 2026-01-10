@@ -9,23 +9,38 @@
  * @created 2026-01-10
  */
 
-import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+// NOTE: NoteRecord is defined in @/lib/notes/types but not used here
+// The note tools work with NoteData (markdown content) not NoteRecord (BlockNote blocks)
 
 /**
- * Result of a note CRUD operation
+ * Generic result wrapper for note operations
+ * Uses generic data type to support different tool outputs
  */
-export interface NoteOperationResult {
+export interface NoteOperationResult<T = unknown> {
   /** Success flag */
   success: boolean;
 
-  /** Operation result data */
-  data?: NoteRecord | NoteRecord[];
+  /** Operation result data (generic to support different schemas) */
+  data?: T;
 
   /** Error message if failed */
   error?: string;
 
   /** Human-readable message */
   message?: string;
+}
+
+/**
+ * Note data format for tool outputs (markdown content)
+ * This differs from NoteRecord which uses BlockNote blocks
+ */
+export interface NoteData {
+  id: string;
+  title: string;
+  content: string;
+  parentId: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
@@ -50,7 +65,7 @@ export interface NotePaginationParams {
  */
 export interface ListNotesResult {
   /** Array of notes */
-  notes: NoteRecord[];
+  notes: NoteData[];
 
   /** Total count (for pagination) */
   total: number;

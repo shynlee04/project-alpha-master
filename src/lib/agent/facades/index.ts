@@ -36,6 +36,10 @@ export type {
 } from './knowledge-tools';
 export { KnowledgeToolsFacade, createKnowledgeToolsFacade } from './knowledge-tools-impl';
 
+// Note Tools (EPIC-40 - Agent Chat)
+export type { AgentNoteTools } from './note-tools';
+export { NoteToolsFacade, createNoteToolsFacade } from './note-tools-impl';
+
 // Sync Tools (Story 12-3 - TBD)
 // export type { AgentSyncTools } from './sync-tools';
 // export { SyncToolsFacade, createSyncToolsFacade } from './sync-tools-impl';

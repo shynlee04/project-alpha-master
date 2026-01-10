@@ -20,6 +20,9 @@ import type {
 } from './mode-classifier-types';
 import type { AgentMode } from '@/domain/tools/tool-definition';
 
+// Re-export types for convenience
+export type { ContextSources, ClassificationResult, ModeClassifierConfig };
+
 /**
  * Default keyword patterns for prompt analysis
  */

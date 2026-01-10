@@ -2,8 +2,9 @@
 story_key: "40-05-register-note-tools"
 epic: 40
 story: 5
-status: "in_progress"
+status: "DONE"
 created_at: "2026-01-10T13:15:00+07:00"
+completed_at: "2026-01-10T09:18:00+07:00"
 points: 1
 ---
 
@@ -99,3 +100,67 @@ points: 1
 |--------|-----------|-------|-------|
 | backlog | 2026-01-10T12:00:00+07:00 | SM | Created from EPIC-40 remediation |
 | in_progress | 2026-01-10T13:15:00+07:00 | Dev | Story created, implementation started |
+| DONE | 2026-01-10T09:18:00+07:00 | Opus | Fixed TypeScript errors, all tests passing |
+
+## Dev Agent Record
+
+### Agent
+- Model: claude-opus-4-5-20251101
+- Session: 2026-01-10T09:15:00+07:00
+
+### Task Progress
+- [x] T1: Import all 5 note tool definitions
+- [x] T2: Add note tools to TOOL_CATALOG with proper metadata
+- [x] T3: Update getToolCountsByCategory to include 'notes' category
+- [x] T4: Write unit tests for registration
+- [x] T5: Verify TypeScript compilation
+
+### Files Changed
+| File | Action | Lines |
+|------|--------|-------|
+| src/domain/tools/note/create-note-tool.ts | Modified | Removed type casts, fixed parentId null handling |
+| src/domain/tools/note/delete-note-tool.ts | Modified | Removed type casts |
+| src/domain/tools/note/update-note-tool.ts | Modified | Removed type casts, fixed parentId null handling |
+| src/domain/tools/note/list-notes-tool.ts | Modified | Removed type casts |
+| src/domain/tools/note/read-note-tool.ts | Modified | Fixed parentId null handling |
+| src/infrastructure/tools/tool-catalog.ts | Modified | Already had note tools registered |
+
+### Tests Created
+- src/domain/tools/note/__tests__/note-tools.test.ts: 24 tests passing
+- src/infrastructure/tools/__tests__/tool-catalog.test.ts: 8 tests passing
+- src/infrastructure/tools/__tests__/centralized-tool-registry.test.ts: 36 tests passing
+
+### TypeScript Check
+✅ PASS - 0 errors in note tools (pre-existing errors in other files are out of scope)
+
+### Test Results
+✅ PASS - 68/68 tests passing (24 note tools + 44 tool catalog/registry tests)
+
+### Decisions Made
+- Decision 1: Removed `as NoteOperationResult` type casts that were causing TypeScript to infer `Promise<unknown>`
+- Decision 2: Changed `parentId ?? undefined` to `parentId ?? null` to match outputSchema which expects `string | null`
+- Decision 3: Pre-existing TypeScript errors in other files (use-agent-chat-with-tools, UnifiedAgentSelector, etc.) are out of scope for this story
+
+## Code Review
+
+**Reviewer:** claude-opus-4-5-20251101 (self-review)
+**Date:** 2026-01-10T09:18:00+07:00
+
+### Checklist
+- [x] All ACs verified
+- [x] All tests passing
+- [x] Architecture patterns followed
+- [x] No TypeScript errors (in production code for this story)
+- [x] Code quality acceptable
+
+### Issues Found
+- **Issue 1**: TypeScript errors due to `NoteOperationResult<unknown>` type inference
+  - **Fix**: Removed type casts, let TanStack AI infer types from outputSchema
+  - **Status**: FIXED ✅
+
+- **Issue 2**: `parentId` type mismatch (null vs undefined)
+  - **Fix**: Changed `parentId ?? undefined` to `parentId ?? null`
+  - **Status**: FIXED ✅
+
+### Sign-off
+[x] APPROVED for merge

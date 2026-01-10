@@ -10,7 +10,7 @@
  */
 
 import { clientTools } from '@tanstack/ai-client';
-import type { AgentFileTools, AgentTerminalTools, AgentKnowledgeTools } from './facades';
+import type { AgentFileTools, AgentTerminalTools, AgentKnowledgeTools, AgentNoteTools } from './facades';
 import { readFileDef } from './tools/read-file-tool';
 import { writeFileDef } from './tools/write-file-tool';
 import { listFilesDef } from './tools/list-files-tool';
@@ -19,6 +19,13 @@ import { synthesizeDef, type SynthesizeInput } from './tools/synthesize-tool';
 import { processPDFDef, type ProcessPDFInput } from './tools/process-pdf-tool';
 import { processImageDef, type ProcessImageInput } from './tools/process-image-tool';
 import { processURLDef, type ProcessURLInput } from './tools/process-url-tool';
+import {
+    createNoteDef,
+    readNoteDef,
+    updateNoteDef,
+    deleteNoteDef,
+    listNotesDef,
+} from '@/domain/tools/note';
 import type { WorkspaceEventEmitter } from '../events/workspace-events';
 import type {
     ReadFileInput,
@@ -43,6 +50,8 @@ export interface ToolFactoryOptions {
     getTerminalTools: () => AgentTerminalTools | null;
     /** Get the knowledge tools facade (lazy initialization) - EPIC-38 */
     getKnowledgeTools?: () => AgentKnowledgeTools | null;
+    /** Get the note tools facade (lazy initialization) - EPIC-40 */
+    getNoteTools?: () => AgentNoteTools | null;
     /** Get the workspace event emitter */
     getEventBus: () => WorkspaceEventEmitter | null;
     /** Model ID for agent configuration (optional - uses agent's default if not provided) */
@@ -529,6 +538,291 @@ export function createClientKnowledgeTools(options: ToolFactoryOptions) {
 }
 
 /**
+ * Create client-side note tools
+ * EPIC-40 - Agent Chat Note CRUD
+ */
+export function createClientNoteTools(options: ToolFactoryOptions) {
+    const { getNoteTools, getEventBus } = options;
+
+    if (!getNoteTools) {
+        return {
+            createNote: null,
+            readNote: null,
+            updateNote: null,
+            deleteNote: null,
+            listNotes: null,
+        };
+    }
+
+    // create_note - client implementation
+    const createNote = createNoteDef.client(async (args: unknown) => {
+        // ========================================================================
+        // WB-8.3: Workspace Permission Check
+        // ========================================================================
+        const workspaceContext = getWorkspaceExecutionContext();
+
+        // Check workspace permission before executing tool
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'create_note',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'create_note',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        // ========================================================================
+        // Original tool implementation
+        // ========================================================================
+        const input = args as { title: string; content: string; parentId?: string };
+        const tools = getNoteTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Note tools not available. Please ensure you are in the Notes workspace.',
+                code: 'NOTE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.createNote(input);
+
+            // Emit event for UI update using standard agent tool pattern
+            const eventBus = getEventBus();
+            eventBus?.emit('agent:tool:completed', {
+                toolName: 'create_note',
+                toolCallId: `create_note_${Date.now()}`,
+                success: true,
+                result,
+            });
+
+            return {
+                success: true,
+                data: result,
+                message: `Successfully created note "${result.title}"`,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Create failed'
+            };
+        }
+    });
+
+    // read_note - client implementation
+    const readNote = readNoteDef.client(async (args: unknown) => {
+        const workspaceContext = getWorkspaceExecutionContext();
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'read_note',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'read_note',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        const input = args as { noteId: string };
+        const tools = getNoteTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Note tools not available',
+                code: 'NOTE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.readNote(input.noteId);
+            if (!result) {
+                return {
+                    success: false,
+                    error: `Note not found: ${input.noteId}`,
+                };
+            }
+            return {
+                success: true,
+                data: result,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Read failed'
+            };
+        }
+    });
+
+    // update_note - client implementation
+    const updateNote = updateNoteDef.client(async (args: unknown) => {
+        const workspaceContext = getWorkspaceExecutionContext();
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'update_note',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'update_note',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        const input = args as { noteId: string; title?: string; content?: string };
+        const tools = getNoteTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Note tools not available',
+                code: 'NOTE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.updateNote(input.noteId, {
+                title: input.title,
+                content: input.content,
+            });
+
+            // Emit event for UI update using standard agent tool pattern
+            const eventBus = getEventBus();
+            eventBus?.emit('agent:tool:completed', {
+                toolName: 'update_note',
+                toolCallId: `update_note_${Date.now()}`,
+                success: true,
+                result,
+            });
+
+            return {
+                success: true,
+                data: result,
+                message: `Successfully updated note "${result.title}"`,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Update failed'
+            };
+        }
+    });
+
+    // delete_note - client implementation
+    const deleteNote = deleteNoteDef.client(async (args: unknown) => {
+        const workspaceContext = getWorkspaceExecutionContext();
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'delete_note',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'delete_note',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        const input = args as { noteId: string };
+        const tools = getNoteTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Note tools not available',
+                code: 'NOTE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            await tools.deleteNote(input.noteId);
+
+            // Emit event for UI update using standard agent tool pattern
+            const eventBus = getEventBus();
+            eventBus?.emit('agent:tool:completed', {
+                toolName: 'delete_note',
+                toolCallId: `delete_note_${Date.now()}`,
+                success: true,
+                result: { noteId: input.noteId },
+            });
+
+            return {
+                success: true,
+                message: `Successfully deleted note ${input.noteId}`,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'Delete failed'
+            };
+        }
+    });
+
+    // list_notes - client implementation
+    const listNotes = listNotesDef.client(async (args: unknown) => {
+        const workspaceContext = getWorkspaceExecutionContext();
+        const permissionCheck = workspacePermissionManager.checkWorkspacePermission(
+            'list_notes',
+            workspaceContext.agent?.tools || [],
+            workspaceContext.agent?.workspaceBindings || [],
+            workspaceContext.workspaceType
+        );
+
+        if (!permissionCheck.canExecute) {
+            return createWorkspaceDeniedResponse(
+                'list_notes',
+                workspaceContext.workspaceType,
+                permissionCheck.toolName
+            );
+        }
+
+        const input = args as { limit?: number; offset?: number; parentId?: string | null; search?: string };
+        const tools = getNoteTools();
+        if (!tools) {
+            return {
+                success: false,
+                error: 'Note tools not available',
+                code: 'NOTE_TOOLS_NOT_READY'
+            };
+        }
+
+        try {
+            const result = await tools.listNotes(input);
+            return {
+                success: true,
+                data: result,
+            };
+        } catch (error) {
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : 'List failed'
+            };
+        }
+    });
+
+    return {
+        createNote,
+        readNote,
+        updateNote,
+        deleteNote,
+        listNotes,
+    };
+}
+
+/**
  * Create all client tools for useChat integration
  * Uses TanStack AI clientTools() helper for type-safe tool arrays
  * 
@@ -552,11 +846,13 @@ export function createAgentClientTools(options: ToolFactoryOptions) {
     const fileTools = createClientFileTools(options);
     const terminalTools = createClientTerminalTools(options);
     const knowledgeTools = createClientKnowledgeTools(options);
+    const noteTools = createClientNoteTools(options);
 
     return {
         fileTools,
         terminalTools,
         knowledgeTools,
+        noteTools,
         /** All tools as array for useChat */
         all: [
             fileTools.readFile,
@@ -567,6 +863,11 @@ export function createAgentClientTools(options: ToolFactoryOptions) {
             ...(knowledgeTools.processPDF ? [knowledgeTools.processPDF] : []),
             ...(knowledgeTools.processImage ? [knowledgeTools.processImage] : []),
             ...(knowledgeTools.processURL ? [knowledgeTools.processURL] : []),
+            ...(noteTools.createNote ? [noteTools.createNote] : []),
+            ...(noteTools.readNote ? [noteTools.readNote] : []),
+            ...(noteTools.updateNote ? [noteTools.updateNote] : []),
+            ...(noteTools.deleteNote ? [noteTools.deleteNote] : []),
+            ...(noteTools.listNotes ? [noteTools.listNotes] : []),
         ],
         /** Get clientTools() wrapped array for createChatClientOptions */
         getClientTools() {
@@ -589,6 +890,23 @@ export function createAgentClientTools(options: ToolFactoryOptions) {
             }
             if (knowledgeTools.processURL) {
                 tools.push(knowledgeTools.processURL);
+            }
+
+            // Add note tools if available (EPIC-40)
+            if (noteTools.createNote) {
+                tools.push(noteTools.createNote);
+            }
+            if (noteTools.readNote) {
+                tools.push(noteTools.readNote);
+            }
+            if (noteTools.updateNote) {
+                tools.push(noteTools.updateNote);
+            }
+            if (noteTools.deleteNote) {
+                tools.push(noteTools.deleteNote);
+            }
+            if (noteTools.listNotes) {
+                tools.push(noteTools.listNotes);
             }
 
             return tools as any;

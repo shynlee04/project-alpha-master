@@ -16,6 +16,9 @@ import { maxIterations } from '@tanstack/ai';
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { createAgentClientTools, type ToolFactoryOptions, type ToolCallInfo } from '../factory';
 import { SystemPromptComposer, type LayerContext } from '../prompt-composer';
+// Story 40-08: Import ModeClassifier for dynamic mode switching
+import { classifyMode } from '../mode-classifier';
+import { getAgentModeForClassifier, toComposerFormat } from '../system-prompt';
 import type { AgentFileTools, AgentTerminalTools } from '../facades';
 import type { WorkspaceEventEmitter } from '../../events/workspace-events';
 import { buildMultimodalMessage, type ImageContent } from '../multimodal/message-builder';
@@ -49,6 +52,9 @@ export interface UseAgentChatWithToolsOptions {
     customHeaders?: Record<string, string>;
     /** Whether to enable native tools (default: true) */
     enableTools?: boolean;
+    // Story 40-08: Workspace type for mode classification
+    /** Workspace type for mode classification (knowledge, ide, notes, study) */
+    workspaceType?: "ide" | "notes" | "knowledge" | "study";
     // EPIC-40 MM-03: Tool execution persistence
     /** Conversation ID for persisting tool calls */
     conversationId?: string | null;
@@ -383,6 +389,41 @@ export function useAgentChatWithTools(
         return result;
     }, [rawMessages]);
 
+    // Story 40-08: Classify mode for dynamic agent switching
+    const classifyCurrentMode = useCallback((userMessage: string, currentMessages: typeof rawMessages) => {
+        // Build conversation history from messages
+        const conversationHistory = currentMessages
+            .filter((msg: any) => msg.role === 'user' || msg.role === 'assistant')
+            .slice(-10) // Last 10 messages for context
+            .map((msg: any) => ({
+                role: msg.role,
+                content: (msg.content || '') as string,
+                mode: undefined,
+            }));
+
+        // Classify mode using ModeClassifier
+        const classification = classifyMode({
+            prompt: userMessage,
+            workspaceType: options.workspaceType || 'ide',
+            activeDocument: layerContext.activeFile ? {
+                path: layerContext.activeFile.path || layerContext.activeFile.name,
+                name: layerContext.activeFile.name,
+                extension: layerContext.activeFile.name.split('.').pop() || '',
+            } : undefined,
+            conversationHistory,
+        });
+
+        console.log('[useAgentChat] Mode classification:', {
+            prompt: userMessage.substring(0, 50),
+            classifiedMode: classification.mode,
+            confidence: classification.confidence,
+            reasoning: classification.reasoning,
+        });
+
+        // Map classifier mode to AgentMode
+        return getAgentModeForClassifier(classification.mode);
+    }, [layerContext.activeFile, options.workspaceType]);
+
     // Wrap sendMessage for simple string input
     // E2-8: Support multimodal messages with images
     const sendMessage = useCallback((content: string, images?: ImageContent[]) => {
@@ -391,6 +432,13 @@ export function useAgentChatWithTools(
             content: content.substring(0, 100),
             imageCount: images?.length || 0
         });
+
+        // Story 40-08: Classify mode for this message and update SystemPromptComposer
+        const agentMode = classifyCurrentMode(content, rawMessages);
+        // Convert to SystemPromptComposer format
+        promptComposer.updateConfig({ agentMode: toComposerFormat(agentMode) });
+
+        console.log('[useAgentChat] Mode switched to:', agentMode.id, agentMode.name);
 
         // If images are provided, use buildMultimodalMessage
         if (images && images.length > 0) {
@@ -401,7 +449,7 @@ export function useAgentChatWithTools(
             // Text-only message (original behavior)
             rawSendMessage(content);
         }
-    }, [rawSendMessage]);
+    }, [rawSendMessage, classifyCurrentMode, rawMessages, promptComposer]);
 
     // Approve tool call - uses { id, approved } object format
     // CRITICAL FIX: Uses approvalId (from part.approval.id), NOT toolCallId

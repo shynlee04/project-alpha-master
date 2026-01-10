@@ -487,3 +487,193 @@ describe('EPIC-40 Module Integration', () => {
     });
   });
 });
+
+// =============================================================================
+// SELF-SWITCHING AGENT TESTS (Stories 40-06, 40-07, 40-08, 40-09)
+// =============================================================================
+
+describe('Story 40-06: Tool Registry Integration', () => {
+  it('should export toolRegistry from centralized-tool-registry', async () => {
+    const registry = await import('../infrastructure/tools/centralized-tool-registry');
+    
+    expect(registry.toolRegistry).toBeDefined();
+    expect(typeof registry.toolRegistry.getServerExposedTools).toBe('function');
+    expect(typeof registry.toolRegistry.count).toBe('function');
+  });
+
+  it('should have initializeToolRegistry function', async () => {
+    const catalog = await import('../infrastructure/tools/tool-catalog');
+    
+    expect(typeof catalog.initializeToolRegistry).toBe('function');
+  });
+
+  it('should export getToolCountsByCategory', async () => {
+    const catalog = await import('../infrastructure/tools/tool-catalog');
+    
+    expect(typeof catalog.getToolCountsByCategory).toBe('function');
+    
+    const counts = catalog.getToolCountsByCategory();
+    expect(counts).toHaveProperty('files');
+    expect(counts).toHaveProperty('notes');
+    expect(counts).toHaveProperty('terminal');
+  });
+});
+
+describe('Story 40-07: Prompt Orchestrator', () => {
+  it('should export MODE_ORCHESTRATOR from system-prompt', async () => {
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    expect(systemPrompt.MODE_ORCHESTRATOR).toBeDefined();
+    expect(systemPrompt.MODE_ORCHESTRATOR.id).toBe('orchestrator');
+    expect(systemPrompt.MODE_ORCHESTRATOR.name).toBe('Orchestrator');
+  });
+
+  it('should include orchestrator in AGENT_MODES', async () => {
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    expect(systemPrompt.AGENT_MODES['orchestrator']).toBeDefined();
+    expect(systemPrompt.AGENT_MODES['orchestrator'].id).toBe('orchestrator');
+  });
+
+  it('should export getAgentModeForClassifier function', async () => {
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    expect(typeof systemPrompt.getAgentModeForClassifier).toBe('function');
+  });
+
+  it('should map classifier modes to agent modes correctly', async () => {
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    // Test mode mapping
+    expect(systemPrompt.getAgentModeForClassifier('coding').id).toBe('code');
+    expect(systemPrompt.getAgentModeForClassifier('knowledge').id).toBe('notes');
+    expect(systemPrompt.getAgentModeForClassifier('orchestrator').id).toBe('orchestrator');
+    expect(systemPrompt.getAgentModeForClassifier('solo-dev').id).toBe('solo-dev');
+    
+    // Test default fallback
+    expect(systemPrompt.getAgentModeForClassifier('unknown').id).toBe('solo-dev');
+  });
+});
+
+describe('Story 40-08: Mode Classifier Integration', () => {
+  it('should export classifyMode from mode-classifier', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    
+    expect(typeof modeClassifier.classifyMode).toBe('function');
+  });
+
+  it('should classify "create note" as knowledge mode', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    
+    const result = modeClassifier.classifyMode({
+      prompt: 'create a note about TypeScript',
+      workspaceType: 'notes',
+      activeDocument: null,
+      conversationHistory: [],
+    });
+    
+    expect(result.mode).toBe('knowledge');
+    expect(result.confidence).toBeGreaterThan(0);
+  });
+
+  it('should classify "fix bug" as coding mode', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    
+    const result = modeClassifier.classifyMode({
+      prompt: 'fix this bug in utils.ts',
+      workspaceType: 'ide',
+      activeDocument: { name: 'utils.ts', extension: 'ts' },
+      conversationHistory: [],
+    });
+    
+    expect(result.mode).toBe('coding');
+    expect(result.confidence).toBeGreaterThan(0);
+  });
+
+  it('should classify "plan architecture" as orchestrator mode', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    
+    const result = modeClassifier.classifyMode({
+      prompt: 'plan the architecture for a new feature',
+      workspaceType: 'ide',
+      activeDocument: null,
+      conversationHistory: [],
+    });
+    
+    expect(result.mode).toBe('orchestrator');
+    expect(result.confidence).toBeGreaterThan(0);
+  });
+});
+
+describe('Story 40-09: E2E Agent Self-Switching', () => {
+  it('should have classifyMode and getAgentModeForClassifier working together', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    // Test the full pipeline: classify -> map
+    const classification = modeClassifier.classifyMode({
+      prompt: 'create a note about my meeting',
+      workspaceType: 'notes',
+      activeDocument: null,
+      conversationHistory: [],
+    });
+    
+    const agentMode = systemPrompt.getAgentModeForClassifier(classification.mode);
+    
+    expect(agentMode.id).toBe('notes');
+    expect(agentMode.name).toBe('Notes Assistant');
+  });
+
+  it('should route notes workspace to knowledge mode', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    const classification = modeClassifier.classifyMode({
+      prompt: 'help me with this',
+      workspaceType: 'notes',
+      activeDocument: null,
+      conversationHistory: [],
+    });
+    
+    const agentMode = systemPrompt.getAgentModeForClassifier(classification.mode);
+    expect(agentMode.id).toBe('notes');
+  });
+
+  it('should route ide workspace with code file to coding mode', async () => {
+    const modeClassifier = await import('../lib/agent/mode-classifier');
+    const systemPrompt = await import('../lib/agent/system-prompt');
+    
+    const classification = modeClassifier.classifyMode({
+      prompt: 'help me with this',
+      workspaceType: 'ide',
+      activeDocument: { name: 'component.tsx', extension: 'tsx' },
+      conversationHistory: [],
+    });
+    
+    const agentMode = systemPrompt.getAgentModeForClassifier(classification.mode);
+    expect(agentMode.id).toBe('code');
+  });
+});
+
+describe('Note Tools Registration (Story 40-04, 40-05)', () => {
+  it('should register all 5 note tools', async () => {
+    const catalog = await import('../infrastructure/tools/tool-catalog');
+    
+    // Initialize registry
+    catalog.initializeToolRegistry();
+    
+    const counts = catalog.getToolCountsByCategory();
+    expect(counts.notes).toBe(5);
+  });
+
+  it('should have all note tool definitions', async () => {
+    const noteTools = await import('../domain/tools/note');
+    
+    // Check that all note tool definitions are exported
+    expect(noteTools.createNoteDef).toBeDefined();
+    expect(noteTools.readNoteDef).toBeDefined();
+    expect(noteTools.updateNoteDef).toBeDefined();
+    expect(noteTools.deleteNoteDef).toBeDefined();
+    expect(noteTools.listNotesDef).toBeDefined();
+  });
+});

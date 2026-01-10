@@ -1,6 +1,6 @@
 ---
 name: 'bmad-master'
-mode: 'coordinator'
+mode: 'all'
 description: 'bmad-master agent'
 tools:
   write: true

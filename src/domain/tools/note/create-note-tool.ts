@@ -11,7 +11,8 @@
 
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
-import type { NoteOperationResult } from './types';
+// Note: NoteOperationResult type is defined in ./types but not directly used here
+// We use CreateNoteOutput which matches the tool's outputSchema
 
 /**
  * Create Note Tool Definition
@@ -62,7 +63,7 @@ export function createCreateNoteServerTool(getNoteStore: () => {
       const result = await noteStore.createNote({
         title: title || '',
         content: content || '',
-        parentId: parentId ?? null,
+        parentId: parentId ?? undefined,
       });
 
       return {
@@ -71,18 +72,18 @@ export function createCreateNoteServerTool(getNoteStore: () => {
           id: result.id,
           title: result.title,
           content: result.content,
-          parentId: result.parentId,
+          parentId: result.parentId ?? null,
           createdAt: result.createdAt,
           updatedAt: result.updatedAt,
         },
         message: `Successfully created note "${title}"`,
-      } as NoteOperationResult;
+      };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to create note: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      } as NoteOperationResult;
+      };
     }
   });
 }
