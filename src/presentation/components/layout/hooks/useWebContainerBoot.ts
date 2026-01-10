@@ -4,9 +4,13 @@
  *
  * Manages WebContainer boot sequence and preview URL handling.
  * Extracted from IDELayout.tsx for code organization.
+ *
+ * BUG-FIX-2026-01-11: Fixed boot loop caused by unstable onBooted callback
+ * - Uses useRef to track boot completion across re-renders
+ * - Prevents multiple boot() calls when callback reference changes
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 import { showMobileWebContainerError } from '@/lib/utils/mobile-error-handling';
@@ -27,9 +31,12 @@ interface UseWebContainerBootResult {
 /**
  * Hook to manage WebContainer boot and dev server ready state.
  *
- * - Initiates WebContainer boot on mount
+ * - Initiates WebContainer boot on mount (once per component lifecycle)
  * - Listens for server ready events
  * - Exposes preview URL and port for PreviewPanel
+ *
+ * @bugfix Boot loop prevention: Uses useRef to track if boot was already attempted,
+ * preventing re-boots when the onBooted callback reference changes on re-renders.
  */
 export function useWebContainerBoot({
     onBooted,
@@ -39,17 +46,34 @@ export function useWebContainerBoot({
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [previewPort, setPreviewPort] = useState<number | null>(null);
 
+    // Track if boot was already attempted to prevent boot loops
+    // BUG-FIX-2026-01-11: onBooted callback is unstable (new function on each render)
+    // Without this ref, the effect would re-run on every render
+    const bootAttemptedRef = useRef(false);
+    const onBootedRef = useRef(onBooted);
+
+    // Keep the callback ref updated without triggering effect
+    useEffect(() => {
+        onBootedRef.current = onBooted;
+    }, [onBooted]);
+
     useEffect(() => {
         if (!canBootWebContainer) {
             console.log('[IDE] WebContainer boot skipped (missing capabilities)');
             return;
         }
 
+        // BUG-FIX-2026-01-11: Prevent boot loop - only attempt once per component lifecycle
+        if (bootAttemptedRef.current) {
+            return;
+        }
+        bootAttemptedRef.current = true;
+
         boot()
             .then(() => {
                 // Notify WorkspaceContext that boot is complete
                 // This enables useInitialSync to trigger auto-sync
-                onBooted();
+                onBootedRef.current();
                 console.log('[IDE] WebContainer booted, auto-sync can now proceed');
 
                 if (isBooted()) {
@@ -73,7 +97,7 @@ export function useWebContainerBoot({
                     console.error('[IDE] WebContainer boot failed:', error);
                 }
             });
-    }, [onBooted]);
+    }, [canBootWebContainer, deviceType]);
 
     return { previewUrl, previewPort };
 }
