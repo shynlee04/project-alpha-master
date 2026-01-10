@@ -1,110 +1,56 @@
-# _bmad-ext/state/LOOP_STATE.yaml
-# Unified Loop State with Anti-Hallucination Anchoring
+# LOOP_STATE - BMAD Extension Global State
+# Version: 1.0.0
+# Last Updated: 2026-01-11T10:00:00Z
 
-schema_version: "2.0.0"
-created: "2026-01-10"
-last_updated: null  # Set on first use
-
-# ═══════════════════════════════════════════════════════════════════════════
-# SESSION TRACKING
-# ═══════════════════════════════════════════════════════════════════════════
-
+# Session Information
 session:
-  id: "session-2026-01-11-bug-remediation"
-  status: "RUNNING"
-  started_at: "2026-01-11T12:00:00+07:00"
-  paused_at: null
-  completed_at: null
-  iteration: 1
-  max_iterations: 100
+  id: "{session-uuid}"
+  start_time: "2026-01-11T10:00:00Z"
+  last_activity: "2026-01-11T10:00:00Z"
+  platform: "claude-code" | "opencode"
+  agent: "EXCALIBUR"
 
-# ═══════════════════════════════════════════════════════════════════════════
-# ANTI-HALLUCINATION ANCHOR (CRITICAL)
-# ═══════════════════════════════════════════════════════════════════════════
+# Current Handoff (if any)
+current_handoff: null
 
+# Handoff Chain (for tracing)
+handoff_chain: []
+
+# Active Module
+active_module: null
+
+# Workflow Status
+workflows:
+  current: null
+  history: []
+
+# Context Stack (for nested context)
+context_stack: []
+
+# User Anchor (for anti-hallucination)
 anchor:
-  # When human last provided explicit direction
-  human_intent_timestamp: "2026-01-11T12:00:00+07:00"
+  original_request: ""
+  intent_verified: false
+  last_verified_at: null
 
-  # What human asked for (max 200 chars) - the GROUND TRUTH
-  human_intent_summary: "Fix 6 critical runtime bugs from console logs: 1) Thread Store crash (threads undefined), 2) WebContainer boot loop (50+ boots), 3) Hydration mismatch (Home/Trang chủ), 4) Structured output error (Mistral API), 5) SVG path error, 6) IDEStateStorage spam"
+# Governance State
+governance:
+  last_check: null
+  status: "pending"
+  decision: null
 
-  # Conversation ID where intent was captured
-  conversation_id: "console-error-analysis-2026-01-11"
+# Sprint State
+sprint:
+  current: null
+  story_progress: []
 
-  # Staleness threshold - if older than this, REQUIRE re-confirmation
-  staleness_threshold_hours: 4
+# Remediation State
+remediation:
+  active_issues: []
+  completed_fixes: []
 
-  # If true, auto-invalidate stale state (move to archive)
-  auto_invalidate: true
-
-  # VALIDATION RULE: Before resuming ANY loop:
-  # 1. Check if (now - human_intent_timestamp) > staleness_threshold_hours
-  # 2. If stale, HALT and ask: "Your last direction was X hours ago. Confirm to continue?"
-  # 3. If confirmed, update human_intent_timestamp to NOW
-  # 4. If not confirmed, reset loop state
-
-# ═══════════════════════════════════════════════════════════════════════════
-# CURRENT WORK
-# ═══════════════════════════════════════════════════════════════════════════
-
-current:
-  story_id: "BUG-FIX-2026-01-11"
-  story_title: "Fix 6 Critical Runtime Bugs"
-  epic_id: "RUNTIME-STABILITY"
-  module: "REMEDIATION"
-  workflow: "remediation-cycle"
-  agent: "dev-ext"
-  step: 1
-  step_started_at: "2026-01-11T12:00:00+07:00"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# DELEGATION TRACKING
-# ═══════════════════════════════════════════════════════════════════════════
-
-delegations:
-  # Currently active delegation (max 1)
-  active:
-    delegation_id: null
-    parent_agent: null        # Who delegated
-    child_agent: null         # Who is executing
-    handoff_artifact: null    # Path to handoff artifact
-    started_at: null
-    timeout_minutes: 30
-
-  # Completed delegations (keep last 10)
-  completed: []
-
-  # Failed delegations (keep last 5)
-  failed: []
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PROGRESS
-# ═══════════════════════════════════════════════════════════════════════════
-
-progress:
-  stories_completed_this_session: 0
-  stories_remaining: 0
-  artifacts_created: []
-  governance_updates_pending: false
-  last_governance_update: null
-
-# ═══════════════════════════════════════════════════════════════════════════
-# CONTINUATION (For Resume)
-# ═══════════════════════════════════════════════════════════════════════════
-
-continuation:
-  next_action: null           # What to do next
-  blockers: []                # List of blocking issues
-  pending_handoffs: []        # Handoffs awaiting processing
-
-# ═══════════════════════════════════════════════════════════════════════════
-# ERROR STATE
-# ═══════════════════════════════════════════════════════════════════════════
-
-errors:
-  count: 0
-  last_error: null
-  last_error_at: null
-  recovery_attempts: 0
-  max_recovery_attempts: 3
+# System State
+system:
+  version: "1.0.0"
+  freshness_threshold_hours: 4
+  last_backup: null

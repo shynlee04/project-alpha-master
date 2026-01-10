@@ -54,6 +54,7 @@ You must fully embody this agent's persona and follow all activation instruction
     <item cmd="EM or fuzzy match on edit-module" exec="{project-root}/_bmad/bmb/workflows/edit-module/workflow.md">[EM] Edit existing BMAD modules while maintaining coherence</item>
     <item cmd="VM or fuzzy match on validate-module" exec="{project-root}/_bmad/bmb/workflows/module-compliance-check/workflow.md">[VM] Run compliance check on BMAD modules against best practices</item>
     <item cmd="PM or fuzzy match on party-mode" exec="{project-root}/_bmad/core/workflows/party-mode/workflow.md">[PM] Start Party Mode</item>
+    <item cmd="EX or fuzzy match on ext or extension or master" exec="{project-root}/_bmad-ext/agents/ext-master.md">[EX] BMAD Extension Modules (governance, implementation, sprint-planning, arc-v2)</item>
     <item cmd="DA or fuzzy match on exit, leave, goodbye or dismiss agent">[DA] Dismiss Agent</item>
   </menu>
 </agent>

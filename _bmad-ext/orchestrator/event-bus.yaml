@@ -1,0 +1,586 @@
+# Event Bus System for BMAD Extension
+
+**Version**: 1.0.0  
+**Created**: 2026-01-11  
+**Purpose**: Define event types, handlers, and routing for event-driven workflow system
+
+---
+
+## Event Bus Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           EVENT BUS                                     │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   ┌─────────────┐ │
+│  │  EMITTER    │   │   QUEUE     │   │  ROUTER     │   │  HANDLERS   │ │
+│  │             │   │             │   │             │   │             │ │
+│  │ • Workflows │──▶│ • Priority  │──▶│ • Type      │──▶│ • Sub-agent │ │
+│  │ • Agents    │   │   Queue     │   │   Routing   │   │ • Coord     │ │
+│  │ • Hooks     │   │ • FIFO      │   │ • Priority  │   │ • Handoff   │ │
+│  │ • User      │   │   ordered   │   │   routing   │   │ • Prompt    │ │
+│  └─────────────┘   └─────────────┘   └─────────────┘   └─────────────┘ │
+│                                    │                                     │
+│                                    ▼                                     │
+│  ┌─────────────────────────────────────────────────────────────────┐   │
+│  │                    EVENT DISPATCHER                             │   │
+│  │                                                                  │   │
+│  │  ┌─────────────────┐   ┌─────────────────┐   ┌────────────────┐ │   │
+│  │  │ Sub-Agent       │   │ BMAD-Master     │   │ Handoff        │ │   │
+│  │  │ Delegation      │   │ Coordination    │   │ Manager        │ │   │
+│  │  │                 │   │                 │   │                │ │   │
+│  │  │ • validator     │   │ • validation    │   │ • Create       │ │   │
+│  │  │ • context       │   │ • critical      │   │ • Transfer     │ │   │
+│  │  │ • investigator  │   │   decisions     │   │ • Resume       │ │   │
+│  │  │ • researcher    │   │ • approval      │   │ • Switch       │ │   │
+│  │  └─────────────────┘   └─────────────────┘   └────────────────┘ │   │
+│  └─────────────────────────────────────────────────────────────────┘   │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Event Type Definitions
+
+### Core Events
+
+```yaml
+events:
+  validation_required:
+    id: "E-VAL-001"
+    priority: "high"
+    category: "coordination"
+    description: "Validation needed before proceeding with workflow"
+    payload_schema:
+      type: "object"
+      required: ["validation_type", "target"]
+      properties:
+        validation_type:
+          enum: ["typescript", "architecture", "security", "governance", "business_logic"]
+        target:
+          type: "string"
+        criteria: []
+        timeout_minutes:
+          type: "number"
+          default: 5
+    handlers:
+      - type: "bmad-master"
+        action: "validate"
+      - type: "sub-agent"
+        agent: "quality-scanner"
+        when: "validation_type in ['typescript', 'security']"
+        
+  context_needed:
+    id: "E-CTX-001"
+    priority: "medium"
+    category: "delegation"
+    description: "Additional context required for workflow execution"
+    payload_schema:
+      type: "object"
+      required: ["context_type", "domains"]
+      properties:
+        context_type:
+          enum: ["domain_scan", "file_scan", "dependency_map", "state_analysis"]
+        domains: []
+        depth:
+          type: "string"
+          enum: ["shallow", "medium", "deep"]
+          default: "medium"
+        freshness_hours:
+          type: "number"
+          default: 4
+    handlers:
+      - type: "sub-agent"
+        agent: "domain-scanner"
+      - type: "sub-agent"
+        agent: "context-validator"
+        
+  investigation_triggered:
+    id: "E-INV-001"
+    priority: "high"
+    category: "delegation"
+    description: "Deep investigation of issues, patterns, or anomalies"
+    payload_schema:
+      type: "object"
+      required: ["investigation_type", "target"]
+      properties:
+        investigation_type:
+          enum: ["state_boundary", "sync_fragmentation", "context_poisoning", "performance"]
+        target: "description of what to investigate"
+        hypothesis: "initial hypothesis to test"
+        evidence_required: []
+    handlers:
+      - type: "sub-agent"
+        agent: "analyst-ext"
+      - type: "sub-agent"
+        agent: "architect-ext"
+        when: "investigation_type in ['state_boundary', 'sync_fragmentation']"
+        
+  research_required:
+    id: "E-RES-001"
+    priority: "medium"
+    category: "delegation"
+    description: "Internet-based research for technology decisions"
+    payload_schema:
+      type: "object"
+      required: ["research_type", "query"]
+      properties:
+        research_type:
+          enum: ["tech_comparison", "best_practices", "performance", "security", "compatibility"]
+        query: "search query or topic"
+        sources_required:
+          type: "number"
+          default: 5
+        include_raw_content:
+          type: "boolean"
+          default: false
+    handlers:
+      - type: "sub-agent"
+        agent: "analyst-ext"
+        
+  workflow_complete:
+    id: "E-WFC-001"
+    priority: "low"
+    category: "system"
+    description: "Workflow step or chain completed"
+    payload_schema:
+      type: "object"
+      required: ["workflow_id", "status"]
+      properties:
+        workflow_id: "identifier"
+        status: "SUCCESS" | "PARTIAL" | "FAILED"
+        artifacts_created: []
+        next_workflow: "id of next workflow in chain"
+    handlers:
+      - type: "handoff"
+        action: "create_and_transfer"
+        when: "next_workflow defined"
+      - type: "continue"
+        action: "next_workflow"
+        when: "next_workflow defined and no delegation needed"
+        
+  workflow_error:
+    id: "E-WFE-001"
+    priority: "critical"
+    category: "error"
+    description: "Error occurred during workflow execution"
+    payload_schema:
+      type: "object"
+      required: ["workflow_id", "error_type", "error_message"]
+      properties:
+        workflow_id: "identifier"
+        error_type:
+          enum: ["validation_failure", "context_stale", "dependency_missing", "permission_denied", "timeout"]
+        error_message: "description"
+        recoverable: "boolean"
+        recovery_strategy: "retry | handoff | abort"
+    handlers:
+      - type: "bmad-master"
+        action: "handle_error"
+      - type: "sub-agent"
+        agent: "typescript-fixer"
+        when: "error_type == 'validation_failure' and 'typescript' in error_message"
+        
+  user_intervention_required:
+    id: "E-INT-001"
+    priority: "high"
+    category: "user"
+    description: "Human input needed to proceed"
+    payload_schema:
+      type: "object"
+      required: ["intervention_type", "prompt"]
+      properties:
+        intervention_type:
+          enum: ["decision", "clarification", "approval", "confirmation"]
+        prompt: "question for user"
+        options: []
+        context: {}
+    handlers:
+      - type: "prompt"
+        action: "display_and_wait"
+```
+
+### Workflow-Specific Events
+
+```yaml
+workflow_events:
+  # Story Cycle Events
+  user_journey_validated:
+    id: "E-SJ-001"
+    parent: "workflow_complete"
+    priority: "low"
+    
+  agent_tool_spec_generated:
+    id: "E-ST-001"
+    parent: "workflow_complete"
+    priority: "medium"
+    
+  visual_reality_check_passed:
+    id: "E-VR-001"
+    parent: "workflow_complete"
+    priority: "low"
+    
+  # Governance Events
+  context_first_complete:
+    id: "E-GC-001"
+    parent: "workflow_complete"
+    priority: "low"
+    
+  expert_analysis_complete:
+    id: "E-GE-001"
+    parent: "workflow_complete"
+    priority: "low"
+    
+  research_trigger_complete:
+    id: "E-GR-001"
+    parent: "workflow_complete"
+    priority: "low"
+    
+  governance_decision_made:
+    id: "E-GD-001"
+    priority: "high"
+    payload:
+      decision: "proceed" | "warn" | "stop"
+      checks_passed: []
+```
+
+---
+
+## Event Queue Management
+
+### Queue Structure
+
+```yaml
+event_queue:
+  schema_version: "1.0.0"
+  
+  # Priority levels
+  priority_levels:
+    critical: 100
+    high: 75
+    medium: 50
+    low: 25
+    
+  # Queue entries
+  entries: []
+  
+  # Statistics
+  stats:
+    total_events: 0
+    pending_events: 0
+    processed_events: 0
+    failed_events: 0
+    avg_processing_time_ms: 0
+```
+
+### Queue Entry Format
+
+```yaml
+queue_entry:
+  - event_id: "evt-{uuid}"
+    event_type: "validation_required"
+    priority: "high"
+    priority_score: 75
+    status: "pending" | "processing" | "handled" | "failed"
+    created_at: "2026-01-11T10:00:00Z"
+    triggered_by: "workflow-id step-03"
+    
+    payload:
+      validation_type: "typescript"
+      target: "src/domain/services/file-lock.ts"
+      
+    handlers:
+      - type: "bmad-master"
+        status: "pending"
+        
+    result: null
+    handled_at: null
+    processing_time_ms: null
+    
+    retry_count: 0
+    max_retries: 2
+    last_error: null
+```
+
+---
+
+## Event Router
+
+### Routing Rules
+
+```yaml
+event_router:
+  rules:
+    # Route by type
+    - when: "event_type == 'validation_required'"
+      route_to: "handlers.validation_handler"
+      
+    - when: "event_type == 'context_needed'"
+      route_to: "handlers.context_handler"
+      
+    - when: "event_type == 'investigation_triggered'"
+      route_to: "handlers.investigation_handler"
+      
+    - when: "event_type == 'research_required'"
+      route_to: "handlers.research_handler"
+      
+    - when: "event_type == 'workflow_error'"
+      route_to: "handlers.error_handler"
+      
+    # Route by priority
+    - when: "priority >= 100"
+      route_to: "handlers.critical_handler"
+      
+    # Route by category
+    - when: "category == 'coordination'"
+      route_to: "handlers.bmad_master_coordinator"
+      
+    - when: "category == 'delegation'"
+      route_to: "handlers.sub_agent_delegator"
+      
+    - when: "category == 'user'"
+      route_to: "handlers.user_prompter"
+```
+
+---
+
+## Handler Implementations
+
+### Handler: validation_handler
+
+```yaml
+handler:
+  id: "validation_handler"
+  type: "coordinator"
+  for_events: ["validation_required"]
+  
+  steps:
+    - name: "Create coordination request"
+      action: "create_coordination_request"
+      
+    - name: "Send to bmad-master"
+      action: "delegate_to_bmad_master"
+      
+    - name: "Await validation result"
+      action: "await_callback"
+      
+    - name: "Process validation result"
+      action: "update_event_with_result"
+      
+    - name: "Resume or route"
+      action: "route_based_on_result"
+```
+
+### Handler: context_handler
+
+```yaml
+handler:
+  id: "context_handler"
+  type: "delegator"
+  for_events: ["context_needed"]
+  
+  steps:
+    - name: "Select appropriate sub-agent"
+      action: "select_agent"
+      rules:
+        - when: "context_type == 'domain_scan'"
+          agent: "domain-scanner"
+        - when: "context_type == 'file_scan'"
+          agent: "context-validator"
+          
+    - name: "Create delegation request"
+      action: "create_delegation_request"
+      
+    - name: "Delegate to sub-agent"
+      action: "delegate"
+      
+    - name: "Await context bundle"
+      action: "await_callback"
+      
+    - name: "Update workflow context"
+      action: "update_workflow_context"
+```
+
+### Handler: investigation_handler
+
+```yaml
+handler:
+  id: "investigation_handler"
+  type: "delegator"
+  for_events: ["investigation_triggered"]
+  
+  steps:
+    - name: "Select investigator"
+      action: "select_agent"
+      rules:
+        - when: "investigation_type in ['state_boundary', 'sync_fragmentation']"
+          agent: "architect-ext"
+        - else:
+          agent: "analyst-ext"
+          
+    - name: "Create investigation brief"
+      action: "create_delegation_request"
+      
+    - name: "Delegate investigation"
+      action: "delegate"
+      
+    - name: "Await investigation report"
+      action: "await_callback"
+      
+    - name: "Process findings"
+      action: "process_investigation_report"
+```
+
+### Handler: research_handler
+
+```yaml
+handler:
+  id: "research_handler"
+  type: "delegator"
+  for_events: ["research_required"]
+  
+  steps:
+    - name: "Create research brief"
+      action: "create_delegation_request"
+      
+    - name: "Delegate to researcher"
+      action: "delegate"
+      
+    - name: "Await research findings"
+      action: "await_callback"
+      
+    - name: "Integrate findings"
+      action: "integrate_research_findings"
+```
+
+### Handler: error_handler
+
+```yaml
+handler:
+  id: "error_handler"
+  type: "coordinator"
+  for_events: ["workflow_error"]
+  
+  steps:
+    - name: "Assess error"
+      action: "analyze_error"
+      
+    - name: "Determine recovery"
+      action: "determine_recovery_strategy"
+      
+    - when: "recoverable == true"
+      steps:
+        - name: "Attempt recovery"
+          action: "recover"
+          
+        - name: "If recovery failed, escalate"
+          action: "escalate_to_bmad_master"
+          
+    - when: "recoverable == false"
+      steps:
+        - name: "Escalate to bmad-master"
+          action: "escalate_to_bmad_master"
+```
+
+---
+
+## Event-Driven Workflow Triggers
+
+### Example: Workflow with Event Triggers
+
+```yaml
+workflow:
+  id: "story-cycle"
+  name: "Story Development Cycle"
+  
+  steps:
+    - id: "step-01"
+      name: "Initialize"
+      
+    - id: "step-02"
+      name: "User Journey Validation"
+      
+    - id: "step-03"
+      name: "Agent Tool Specification"
+      events:
+        on_complete:
+          - event: "agent_tool_spec_generated"
+            
+    - id: "step-04"
+      name: "Implementation"
+      
+    - id: "step-05"
+      name: "Testing"
+      
+    - id: "step-06"
+      name: "Reality Check"
+      
+    - id: "step-07"
+      name: "Review"
+      
+  # Event triggers that can switch workflows
+  event_triggers:
+    - event: "context_needed"
+      condition: "step in ['step-04', 'step-05']"
+      action: "switch_to_workflow"
+      target_workflow: "context-gathering"
+      
+    - event: "validation_required"
+      condition: "step in ['step-04', 'step-06']"
+      action: "pause_and_coordinate"
+      coordinator: "bmad-master"
+      
+    - event: "research_required"
+      condition: "step == 'step-03'"
+      action: "switch_to_workflow"
+      target_workflow: "research"
+      
+    - event: "workflow_error"
+      condition: "any step"
+      action: "handle_error"
+```
+
+---
+
+## State Persistence
+
+### Event State in LOOP_STATE
+
+```yaml
+loop_state:
+  event_bus:
+    queue_id: "{queue-id}"
+    
+    current_event: null
+    
+    pending_events: []
+    
+    processed_events: []
+    
+    failed_events: []
+    
+    handlers:
+      validation: "active"
+      context: "active"
+      investigation: "active"
+      research: "active"
+      error: "active"
+      
+  workflow_chain:
+    active_chain: null
+    pending_workflows: []
+    active_workflow: null
+    
+  sub_agents:
+    delegations:
+      active: []
+      completed: []
+      failed: []
+```
+
+---
+
+**Last Updated**: 2026-01-11  
+**Version**: 1.0.0

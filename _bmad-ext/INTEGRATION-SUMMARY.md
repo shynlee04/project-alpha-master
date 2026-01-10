@@ -1,265 +1,230 @@
-# _bmad-ext Integration Summary
+# Integration Layer - Summary of Changes
 
-> **Date**: 2026-01-11 | **Version**: 1.0.0 | **Status**: Ready for Testing
+## Created Files
 
-## System Overview
+### 1. `_bmad-ext/agents/ext-master.md` (NEW)
+**Purpose**: Central orchestrator for all _bmad-ext modules
 
-The `_bmad-ext` extension layer wraps BMAD core without modifying it, providing:
-- Platform-agnostic orchestration (OpenCode, Cursor, Claude Code, Augment)
-- Enhanced agents with pre/post execution hooks
-- Unified state management (single LOOP_STATE.yaml)
-- Explicit delegation and escalation protocols
-- Automatic governance updates
+**Key Features**:
+- Loads `_bmad-ext/config.yaml` on activation
+- Displays unified menu of all modules
+- Routes requests to appropriate module
+- Manages cross-module handoffs
+- Auto-checks for handoffs after workflow completion
 
-## Architecture Diagram
+**Menu Options**:
+- `[GV] Governance Module` - Phase 0 enforcement
+- `[GC] Governance-Core Module` - Auto-gating & correct-course
+- `[SP] Sprint-Planning Wrapper` - Enhanced sprint planning
+- `[IM] Implementation Module` - Phase 4 execution
+- `[AR] Architecture Remediation v2` - Fresh remediation
+- `[XR] Cross-Module Routing` - Route across modules
+- `[HS] Handoff Status` - Check pending handoffs
 
-```
-User Request
-    ↓
-┌─────────────────────────────────────────────────────────────┐
-│  Master Orchestrator (_bmad-ext/orchestrator/)               │
-│  - master-orchestrator.md (entry point)                     │
-│  - routing-rules.yaml (story → agent routing)               │
-│  - delegation-protocol.md (agent handoff)                   │
-│  - escalation-protocol.md (error recovery)                  │
-│  - governance-auto-update.md (doc updates)                  │
-└─────────────────────────────────────────────────────────────┘
-    ↓
-┌─────────────────────────────────────────────────────────────┐
-│  Governance Layer (_bmad-ext/modules/governance-core/)       │
-│  Three Enforcement Checks (GOV-001):                        │
-│  1. Context-First (scan → contextualize → transform)        │
-│  2. Agent as Expert (bug level, approach flaws)             │
-│  3. Research Trigger (internet validation)                  │
-└─────────────────────────────────────────────────────────────┘
-    ↓ (if ALLOW)
-┌─────────────────────────────────────────────────────────────┐
-│  Enhanced Agents (_bmad-ext/agents/)                         │
-│  - dev-ext.md (feature, bug fix, remediation)               │
-│  - architect-ext.md (system design, ADR)                    │
-│  - analyst-ext.md (requirements, competitive)               │
-│  - product-management-ext.md (sprint, story)                │
-│  - ux-designer-ext.md (UX, a11y)                            │
-│  - tech-writer-ext.md (docs, guides)                        │
-│  - tea-ext.md (testing)                                     │
-└─────────────────────────────────────────────────────────────┘
-    ↓
-┌─────────────────────────────────────────────────────────────┐
-│  State Layer (_bmad-ext/state/)                              │
-│  - LOOP_STATE.yaml (unified state, replaces 3 files)        │
-│  - ARTIFACT_REGISTRY.yaml (artifact tracking)               │
-│  - DELEGATION_LOG.yaml (delegation history)                 │
-└─────────────────────────────────────────────────────────────┘
-```
+### 2. `_bmad-ext/config.yaml` (NEW)
+**Purpose**: Central configuration for all _bmad-ext modules
 
-## Files Status
+**Contents**:
+- Module registry with version, status, workflows, scanners
+- Cross-module routing rules
+- Handoff configuration
+- State management settings
+- Freshness thresholds
+- BMAD core integration settings
 
-### ✅ COMPLETE - Ready for Testing
+### 3. `_bmad-ext/protocols/handoff.md` (NEW)
+**Purpose**: Define cross-module communication protocol
 
-| File | Status | Notes |
-|------|--------|-------|
-| `_bmad-ext/orchestrator/master-orchestrator.md` | ✅ Ready | 800 lines, full implementation |
-| `_bmad-ext/orchestrator/routing-rules.yaml` | ✅ Ready | 515 lines, governance-first |
-| `_bmad-ext/orchestrator/delegation-protocol.md` | ✅ Ready | 450 lines, explicit protocol |
-| `_bmad-ext/orchestrator/escalation-protocol.md` | ✅ Ready | 452 lines, 4 recovery strategies |
-| `_bmad-ext/orchestrator/governance-auto-update.md` | ✅ Ready | 418 lines, auto-update |
-| `_bmad-ext/modules/governance/MODULE.md` | ✅ Ready | Foundation governance |
-| `_bmad-ext/modules/governance-core/` | ✅ Ready | Full governance enforcement |
-| `_bmad-ext/agents/dev-ext.md` | ✅ Ready | Enhanced dev agent |
-| `_bmad-ext/agents/architect-ext.md` | ✅ Ready | Enhanced architect agent |
-| `_bmad-ext/agents/analyst-ext.md` | ✅ Ready | Enhanced analyst agent |
-| `_bmad-ext/agents/product-management-ext.md` | ✅ Ready | Consolidated pm+sm |
-| `_bmad-ext/agents/ux-designer-ext.md` | ✅ Ready | Enhanced ux-designer |
-| `_bmad-ext/agents/tech-writer-ext.md` | ✅ Ready | Enhanced tech-writer |
-| `_bmad-ext/agents/tea-ext.md` | ✅ Ready | Enhanced tea agent |
-| `.opencode/agent/bmad-agent-core-bmad-master.md` | ✅ Updated | Points to new orchestrator |
-| `.opencode/commands/bmad-ext-orchestrator.md` | ✅ Ready | OpenCode commands |
+**Key Components**:
+- Handoff document structure (YAML template)
+- Handoff flow diagram
+- Module-to-module handoff patterns
+- API for handoff operations
+- Error handling rules
+- State tracking
 
-### 📋 Legacy Files (Deprecate Later)
+### 4. `_bmad-ext/state/LOOP_STATE.yaml` (NEW)
+**Purpose**: Global state tracking for _bmad-ext
 
-| File | Action | Status |
-|------|--------|--------|
-| `_bmad/core/agents/bmad-master.md` | Replace | Redirect added |
-| `_bmad/core/MODULE-ROUTING.yaml` | Replace | Redirect needed |
-| `.claude/ralph-loop.local.md` | Integrate | Into LOOP_STATE.yaml |
-| `.claude/AGENT-STATE.yaml` | Integrate | Into LOOP_STATE.yaml |
+**Tracks**:
+- Session information
+- Current handoff
+- Handoff chain (for tracing)
+- Active module
+- Workflow history
+- Context stack
+- User anchor (anti-hallucination)
+- Governance state
+- Sprint state
+- Remediation state
 
-## OpenCode Integration
+### 5. `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` (NEW)
+**Purpose**: Track all artifacts in _bmad-ext
 
-### Agent Entry Point
+**Registers**:
+- All artifacts
+- Handoffs
+- Scan results
+- Governance reports
+- Sprint artifacts
+- Story artifacts
+- Remediation artifacts
 
-**File**: `.opencode/agent/bmad-agent-core-bmad-master.md`
+### 6. `_bmad-ext/README-INTEGRATION.md` (NEW)
+**Purpose**: Comprehensive documentation of the integration layer
 
-```markdown
----
-name: 'bmad-master'
-mode: 'all'
-description: 'BMAD Master Orchestrator v3.2 - Enhanced with _bmad-ext extension layer'
-tools:
-  write: true
-  edit: true
-  bash: true
-  yolo: true
+**Includes**:
+- Problem statement
+- Solution overview
+- Usage instructions
+- Cross-module flow examples
+- Module integration map
+- File structure
+- Migration guide
+- Troubleshooting
+
 ---
 
-<agent-activation CRITICAL="TRUE">
-1. LOAD the FULL agent file from @_bmad-ext/orchestrator/master-orchestrator.md
-2. READ its entire contents
-3. Execute ALL activation steps exactly as written
-4. Follow the agent's persona and menu system precisely
-</agent-activation>
-```
+## Updated Files
 
-### Commands Available
+### 1. `_bmad/bmb/agents/module-builder.md`
+**Change**: Added menu item for ext-master
 
-**File**: `.opencode/commands/bmad-ext-orchestrator.md`
-
-| Command | Description |
-|---------|-------------|
-| `/bmad-ext:orchestrator:start` | Start autonomous session |
-| `/bmad-ext:orchestrator:delegate` | Delegate to enhanced agent |
-| `/bmad-ext:orchestrator:status` | Show session status |
-| `/bmad-ext:orchestrator:governance:update` | Force governance update |
-| `/bmad-ext:orchestrator:pause` | Pause execution |
-| `/bmad-ext:orchestrator:resume` | Resume execution |
-
-## Governance Testing
-
-The user will test `@_bmad-ext/modules/governance/` modules. Here's what to expect:
-
-### Three Enforcement Concepts
-
-1. **Context-First**
-   - Location: `_bmad-ext/modules/governance/workflows/context-first/`
-   - Purpose: Auto-transform prompts with accurate context
-   - Steps: Scan → Contextualize → Transform
-
-2. **Agent as Expert**
-   - Location: `_bmad-ext/modules/governance/workflows/expert-analysis/`
-   - Purpose: Define bug level, detect approach flaws
-   - Steps: Analyze → Compare → Detect → Decide
-
-3. **Research Trigger**
-   - Location: `_bmad-ext/modules/governance/workflows/research-trigger/`
-   - Purpose: Internet-based tech validation
-   - Triggers: Tech choice, performance, best-practices
-
-### Integration Point
-
-Governance runs as **GOV-001** in `routing-rules.yaml`:
 ```yaml
-- rule_id: "GOV-001"
-  name: "Governance Enforcement"
-  if: "true"  # Always applies to ALL work
-  agent: "governance-core"
-  workflow: "correct-course"
-  priority: "critical"
-  then: "continue_to_next_rule"  # If ALLOW
+# BEFORE:
+<item cmd="PM" ...>[PM] Start Party Mode</item>
+<item cmd="DA" ...>[DA] Dismiss Agent</item>
+
+# AFTER:
+<item cmd="PM" ...>[PM] Start Party Mode</item>
+<item cmd="EX" exec="{project-root}/_bmad-ext/agents/ext-master.md">
+  [EX] BMAD Extension Modules (governance, implementation, sprint-planning, arc-v2)
+</item>
+<item cmd="DA" ...>[DA] Dismiss Agent</item>
 ```
 
-## State Migration
+### 2. `_bmad/bmb/agents/workflow-builder.md`
+**Change**: Added menu item for ext-master
 
-### Legacy (3-level hierarchy)
-```
-.claude/ralph-loop.local.md         → session active status
-.claude/AGENT-STATE.yaml            → session tracking
-LOOP_STATE-grandparent.yaml         → strategic (quarterly goals)
-LOOP_STATE-parent.yaml              → tactical (epics)
-LOOP_STATE-child.yaml               → operational (current story)
-```
+```yaml
+# BEFORE:
+<item cmd="PM" ...>[PM] Start Party Mode</item>
+<item cmd="DA" ...>[DA] Dismiss Agent</item>
 
-### New (Unified state)
-```
-_bmad-ext/state/LOOP_STATE.yaml     → ALL of the above consolidated
-_bmad-ext/state/ARTIFACT_REGISTRY.yaml  → Artifact tracking
-_bmad-ext/state/DELEGATION_LOG.yaml     → Delegation history
+# AFTER:
+<item cmd="PM" ...>[PM] Start Party Mode</item>
+<item cmd="EX" exec="{project-root}/_bmad-ext/agents/ext-master.md">
+  [EX] BMAD Extension Workflows (context-first, correct-course, story-cycle)
+</item>
+<item cmd="DA" ...>[DA] Dismiss Agent</item>
 ```
 
-## Testing Checklist
+### 3. `_bmad-ext/modules/*/MODULE.md`
+**Change**: Added "Entry Point" section referencing EXCALIBUR
 
-### Phase 1: Governance Module Testing
+**Affected Files**:
+- `_bmad-ext/modules/governance/MODULE.md`
+- `_bmad-ext/modules/governance-core/MODULE.md`
+- `_bmad-ext/modules/implementation/MODULE.md`
+- `_bmad-ext/modules/sprint-planning-wrapper/MODULE.md`
+- `_bmad-ext/modules/arc-v2/MODULE.md`
 
-- [ ] Context-First workflow executes correctly
-- [ ] Expert Analysis detects approach flaws
-- [ ] Research Trigger fires on tech decisions
-- [ ] Governance report generated (ALLOW/WARN/BLOCK)
+**New Section Format**:
+```markdown
+## Entry Point
 
-### Phase 2: Orchestrator Testing
+### Via EXCALIBUR (Recommended)
+```bash
+/ext-master
+# Then select: [XX] Module Name
+```
 
-- [ ] Master orchestrator loads from new path
-- [ ] Routing rules apply in correct order
-- [ ] GOV-001 runs before other rules
-- [ ] Delegation creates handoff artifacts
-- [ ] Callback receives proper payload
-- [ ] Escalation handles failures correctly
+### Direct Entry
+```bash
+cat _bmad-ext/modules/{module}/workflows/{workflow}/workflow.md
+```
+```
 
-### Phase 3: Enhanced Agent Testing
+---
 
-- [ ] dev-ext loads wrapped agent correctly
-- [ ] Pre-execution hooks run (anchor check, handoff load)
-- [ ] Post-execution hooks run (callback, state update)
-- [ ] Sub-agent spawning works (dev-ext → tea-ext)
+## Created Directories
 
-### Phase 4: State Layer Testing
+```
+_bmad-ext/
+├── state/                      # State management
+│   ├── LOOP_STATE.yaml
+│   └── ARTIFACT_REGISTRY.yaml
+├── .handoffs/                  # Pending handoffs
+├── .backups/                   # State backups
+├── .archive/
+│   └── handoffs/               # Archived handoffs
+└── README-INTEGRATION.md       # Documentation
+```
 
-- [ ] LOOP_STATE.yaml created from template
-- [ ] All legacy state migrated correctly
-- [ ] Delegation tracking functional
-- [ ] Error state management works
+---
 
-### Phase 5: OpenCode Integration Testing
+## What This Enables
 
-- [ ] Agent loads from new path
-- [ ] Commands execute correctly
-- [ ] Menu system displays properly
-- [ ] Exit back to orchestrator works
+### Before Integration Layer
+```
+_bmad/bmb/agents/module-builder
+        ↓ (isolated, no access to _bmad-ext/)
+        
+_bmad-ext/modules/
+        ↓ (stand-alone, no entry point)
+        → No user access
+        → No integration with module-builder
+        → No cross-module handoffs
+```
 
-## Known Issues / Workarounds
+### After Integration Layer
+```
+_bmad/bmb/agents/module-builder
+        ↓ (menu item added)
+_bmad-ext/agents/ext-master  ← UNIFIED ENTRY POINT
+        ↓ (routes to modules)
+_bmad-ext/modules/*/
+        ↓ (connected, handoffs enabled)
+        → All modules accessible
+        → Cross-module communication
+        → Seamless workflow chaining
+```
 
-1. **YAML Syntax Error in routing-rules.yaml**
-   - File: `_bmad-ext/orchestrator/routing-rules.yaml`
-   - Line: ~469 (fixed: wrapped list syntax)
-   - Status: ✅ FIXED
+---
 
-2. **Legacy State Files Still Exist**
-   - Files: `.claude/ralph-loop.local.md`, `.claude/AGENT-STATE.yaml`
-   - Action: These will be integrated into LOOP_STATE.yaml during first run
-   - Status: ✅ Handled
+## Usage Flow
 
-3. **MODULE-ROUTING.yaml Redirect Needed**
-   - Status: Need to create redirect file
-   - Action: Run migration script
+### Scenario: Governance → Implementation Handoff
 
-## Next Steps for User
+```
+1. User → /module-builder → [EX] BMAD Extension Modules
+2. EXCALIBUR menu → [GV] Governance Module
+3. Governance runs: context-first, expert-analysis, research-trigger
+4. Governance generates report: decision="proceed"
+5. EXCALIBUR creates handoff document
+6. EXCALIBUR routes to [IM] Implementation Module
+7. Implementation loads handoff context
+8. Implementation executes story-cycle workflow
+9. Story complete → handoff to validation (optional)
+```
 
-1. **Test Governance Module**:
-   ```bash
-   # User will test:
-   @_bmad-ext/modules/governance/
-   ```
+---
 
-2. **Verify Orchestrator Integration**:
-   ```bash
-   # Invoke via OpenCode:
-   /bmad-ext:orchestrator:start
-   ```
+## Files Modified Summary
 
-3. **Run Full Integration Test**:
-   ```bash
-   # Complete story cycle:
-   /bmad-ext:orchestrator:delegate agent=dev-ext story=FS-05 workflow=story-cycle
-   ```
+| File | Type | Change |
+|------|------|--------|
+| `_bmad-ext/agents/ext-master.md` | NEW | Central orchestrator agent |
+| `_bmad-ext/config.yaml` | NEW | Module registry & routing |
+| `_bmad-ext/protocols/handoff.md` | NEW | Cross-module protocol |
+| `_bmad-ext/state/LOOP_STATE.yaml` | NEW | Global state |
+| `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | NEW | Artifact tracking |
+| `_bmad-ext/README-INTEGRATION.md` | NEW | Documentation |
+| `_bmad/bmb/agents/module-builder.md` | UPDATED | Added EX menu item |
+| `_bmad/bmb/agents/workflow-builder.md` | UPDATED | Added EX menu item |
+| `_bmad-ext/modules/*/MODULE.md` | UPDATED | Added entry point |
 
-## References
+---
 
-| Document | Path |
-|----------|------|
-| Master Orchestrator | `_bmad-ext/orchestrator/master-orchestrator.md` |
-| Routing Rules | `_bmad-ext/orchestrator/routing-rules.yaml` |
-| Delegation Protocol | `_bmad-ext/orchestrator/delegation-protocol.md` |
-| Escalation Protocol | `_bmad-ext/orchestrator/escalation-protocol.md` |
-| Governance Auto-Update | `_bmad-ext/orchestrator/governance-auto-update.md` |
-| Governance Module | `_bmad-ext/modules/governance/MODULE.md` |
-| Governance Core | `_bmad-ext/modules/governance-core/MODULE.md` |
-| OpenCode Agent | `.opencode/agent/bmad-agent-core-bmad-master.md` |
-| OpenCode Commands | `.opencode/commands/bmad-ext-orchestrator.md` |
+**Date**: 2026-01-11  
+**Version**: 1.0.0

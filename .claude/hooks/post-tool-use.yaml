@@ -1,0 +1,154 @@
+---
+name: bmad-action-logger
+description: Log actions for handoff detection and governance
+when: PostToolUse
+priority: 1
+once: false
+---
+
+# BMAD Action Logger Hook
+
+> Fires when: Claude completes a tool use (Edit, Write, Bash, etc.)
+> Purpose: Track actions, detect handoff needs, trigger governance updates
+
+---
+
+## Logging Actions
+
+### 1. Track File Modifications
+
+```yaml
+modification_tracking:
+  file_edits: []
+  files_created: []
+  tests_run: []
+  errors_encountered: []
+```
+
+After each Edit/Write:
+```bash
+# Append to session log
+echo "$TIMESTAMP: Edited $file_path" >> .claude/session.log
+```
+
+### 2. Pattern Detection
+
+Detect patterns that suggest handoff:
+
+```yaml
+handoff_patterns:
+  feature_complete:
+    indicators:
+      - edited 5+ .ts/.tsx files
+      - tests passing
+      - no errors in last 3 operations
+    suggest: code-review
+
+  typescript_errors:
+    indicators:
+      - Edit followed by tsc error
+      - 3+ consecutive type errors
+    suggest: typescript-fixer
+
+  god_component:
+    indicators:
+      - Component exceeds 130 lines
+      - Component has >3 hooks
+    suggest: component-splitter
+
+  god_store:
+    indicators:
+      - Store exceeds 320 lines
+      - Store has >15 selectors
+    suggest: store-refactorer
+
+  governance_update_needed:
+    indicators:
+      - Edited agent file
+      - Created new workflow
+      - Modified core config
+    suggest: governance-auto-update
+```
+
+### 3. Governance Check
+
+After governance file modification:
+
+```yaml
+governance_files:
+  - _bmad/core/agents/*
+  - _bmad/bmm/agents/*
+  - _bmad/modules/*/workflows/*
+  - .claude/agents/*
+
+action_after_edit:
+  1. Log: "Governance file modified: $file"
+  2. Check: AGENTS.md updated timestamp
+  3. If AGENTS.md older than 3 days → Suggest update
+  4. Add to session summary: "Governance update pending"
+```
+
+---
+
+## Output to Session Summary
+
+At end of action, append:
+
+```markdown
+---
+_action_completed:
+  tool: {tool_name}
+  target: {file_path}
+  status: {success|failure}
+  handoff_suggested: {agent_name or null}
+  governance_update: {true|false}
+---
+```
+
+---
+
+## Handoff Detection Algorithm
+
+```
+IF pattern_match(feature_complete) AND no_previous_handoff:
+    SUGGEST "Code review recommended. Run /review?"
+
+ELSE IF pattern_match(typescript_errors) AND error_count > 5:
+    SUGGEST "Multiple TypeScript errors. Run /typescript-fixer?"
+
+ELSE IF pattern_match(god_component):
+    SUGGEST "Component exceeds size limit. Run /component-splitter?"
+
+ELSE IF pattern_match(god_store):
+    SUGGEST "Store exceeds size limit. Run /store-refactorer?"
+
+ELSE IF pattern_match(governance_update_needed):
+    SUGGEST "Agent/workflow modified. Update AGENTS.md?"
+```
+
+---
+
+## Integration with AGENT-STATE
+
+After each action, update:
+
+```yaml
+# .claude/AGENT-STATE.yaml
+session:
+  actions_completed: {increment}
+  last_action: {tool}:{target}
+  last_action_time: {timestamp}
+
+handoffs:
+  pending: [{suggested_handoffs}]
+
+governance:
+  files_modified: [{modified_files}]
+  update_pending: {true|false}
+```
+
+---
+
+**Version:** 1.0.0
+**Updated:** 2026-01-10
+**Hook Type:** PostToolUse

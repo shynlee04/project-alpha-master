@@ -85,7 +85,20 @@ description: "BMAD Extension Implementation Module - Story execution and bug fix
 
 **Location**: `workflows/correct-course/`
 
-## Directory Structure
+## Entry Point
+
+### Via EXCALIBUR (Recommended)
+```bash
+# Activate via ext-master agent
+/ext-master
+# Then select: [IM] Implementation Module
+```
+
+### Direct Entry
+```bash
+# Load workflow directly
+cat _bmad-ext/modules/implementation/workflows/story-cycle/workflow.md
+```
 
 ```
 implementation/

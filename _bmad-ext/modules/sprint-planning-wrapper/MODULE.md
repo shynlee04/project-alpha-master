@@ -134,7 +134,20 @@ _bmad-ext/modules/sprint-planning-wrapper/
     └── cohesion-patterns.yaml
 ```
 
-## Usage
+## Entry Point
+
+### Via EXCALIBUR (Recommended)
+```bash
+# Activate via ext-master agent
+/ext-master
+# Then select: [SP] Sprint-Planning Wrapper
+```
+
+### Direct Entry
+```bash
+# Load workflow directly
+cat _bmad-ext/modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/workflow.md
+```
 
 ```bash
 # From project root

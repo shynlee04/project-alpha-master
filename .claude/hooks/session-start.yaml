@@ -1,0 +1,127 @@
+---
+name: bmad-session-init
+description: Initialize BMAD framework at session start
+when: SessionStart
+priority: 1
+once: false
+---
+
+# BMAD Session Initialization Hook
+
+> Fires when: A new Claude Code session starts
+> Purpose: Load BMAD configuration and verify state before any interaction
+
+---
+
+## Execution Steps
+
+### 1. Load Core Configuration
+
+```bash
+# Read in order of priority
+Read: _bmad/core/config.yaml
+Read: _bmad/bmb/config.yaml
+Read: .claude/AGENT-COORDINATOR.md
+```
+
+### 2. Read Loop State
+
+```bash
+# Check current loop state
+Read: .claude/LOOP_STATE-child.yaml
+Read: _bmad/modules/asgl/LOOP_STATE-parent.yaml
+```
+
+Extract:
+- `active` status (true/false)
+- `current_iteration`
+- `current_story`
+- `next_action`
+
+### 3. Verify Anchor Artifact
+
+If `current_story` is set:
+
+```bash
+# Check anchor exists and is fresh
+Read: _bmad-output/story-contexts/{current_story}-context.xml
+```
+
+**Staleness Check:**
+- If artifact modified > 4 hours ago → Prompt user:
+  - "Context artifact is {X} hours old. Re-run validation before proceeding?"
+  - If yes → Load `_bmad-ext/validators/stale-artifact-validator.md`
+  - If no → Continue with stale artifact (user's choice)
+
+### 4. Load Session Variables
+
+From config.yaml, store:
+- `{user_name}` - For personalized communication
+- `{communication_language}` - For language preference
+- `{output_folder}` - For artifact output location
+
+### 5. Initialize Session Tracking
+
+Create/update `.claude/AGENT-STATE.yaml`:
+
+```yaml
+session:
+  id: SESSION-{timestamp}
+  status: ACTIVE
+  start_time: {iso_timestamp}
+  loaded_at: {iso_timestamp}
+
+current:
+  agent: main
+  story: {from LOOP_STATE or null}
+  workflow: {from LOOP_STATE or null}
+
+context:
+  skills_loaded: []
+  artifacts_loaded: []
+  loop_active: {from LOOP_STATE.active}
+```
+
+---
+
+## Output Format
+
+On successful initialization, display:
+
+```
+╔═══════════════════════════════════════════════════════════════╗
+║  BMAD v6.0 Session Initialized                               ║
+╠═══════════════════════════════════════════════════════════════╣
+║  User: {user_name}                                            ║
+║  Language: {communication_language}                           ║
+║  Session: {session_id}                                        ║
+║  Loop Status: {ACTIVE if active else PAUSED}                  ║
+║  Current Story: {story_id or "None"}                          ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Error Handling
+
+| Error | Action |
+|-------|--------|
+| config.yaml not found | Use defaults, warn user |
+| LOOP_STATE corrupted | Offer to reset to grandparent |
+| Anchor artifact missing | Prompt to run story initialization |
+| Permission denied | Continue without session file creation |
+
+---
+
+## Next Steps
+
+After session init:
+1. Display greeting using {user_name}
+2. Show current status if loop active
+3. Wait for user input (don't auto-execute)
+
+---
+
+**Version:** 1.0.0
+**Updated:** 2026-01-10
+**Hook Type:** SessionStart

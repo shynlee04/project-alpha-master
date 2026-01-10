@@ -1,0 +1,162 @@
+---
+name: bmad-exit-guard
+description: Prevent data loss on session exit
+when: Stop
+priority: 1
+once: false
+---
+
+# BMAD Exit Guard Hook
+
+> Fires when: User attempts to exit Claude Code
+> Purpose: Prevent data loss, save state, handle active loops
+
+---
+
+## Exit Checks
+
+### 1. Unsaved Changes Detection
+
+```bash
+# Check for uncommitted changes
+if git_status_has_changes():
+    warn "You have uncommitted changes."
+    ask "Commit before exit? (yes/no/skip)"
+```
+
+**Options:**
+- **yes**: Run git commit with AI-generated message
+- **no**: Exit without committing (user's choice)
+- **skip**: Don't ask again for this session
+
+### 2. Active Loop Check
+
+```bash
+# Check if Ralph Loop is active
+Read: .claude/ralph-loop.local.md
+
+if active == true:
+    warn "Autonomous loop is still running!"
+    ask "Pause loop before exit? (yes/no)"
+```
+
+**If yes:**
+```bash
+# Update loop state
+echo "active: false" > .claude/ralph-loop.local.md
+# Save iteration progress
+echo "paused_at_iteration: ${current_iteration}" >> .claude/ralph-loop.local.md
+```
+
+**If no:**
+```
+⚠️ WARNING: Loop will continue running in background.
+This may cause unexpected behavior when you return.
+```
+
+### 3. Session State Save
+
+```bash
+# Save AGENT-STATE.yaml
+Write: .claude/AGENT-STATE.yaml
+content:
+  session:
+    status: PAUSED
+    end_time: {timestamp}
+    duration: {calculated_duration}
+
+  current:
+    agent: {last_agent}
+    story: {current_story}
+
+  summary:
+    actions_completed: {count}
+    files_modified: {count}
+    handoffs_completed: {count}
+```
+
+### 4. Continuation Prompt Generation
+
+If session was active (more than 5 actions):
+
+```bash
+# Generate resume prompt
+Write: .claude/continuation-prompt.md
+content: |
+  # Resume Session
+
+  Last session: {session_id}
+  Ended: {timestamp}
+  Duration: {duration}
+
+  ## Progress Summary
+  - Stories completed: {count}
+  - Current story: {story_id}
+  - Next action: {next_action}
+
+  ## Resume
+  Type `/resume` to continue where you left off.
+```
+
+---
+
+## Output Format
+
+```
+╔═══════════════════════════════════════════════════════════════╗
+║  Session Summary                                              ║
+╠═══════════════════════════════════════════════════════════════╣
+║  Duration: {duration}                                          ║
+║  Actions: {count}                                              ║
+║  Files modified: {count}                                       ║
+║  Uncommitted changes: {yes/no}                                 ║
+║  Loop status: {active/paused}                                  ║
+╠═══════════════════════════════════════════════════════════════╣
+║  [C] Commit changes    [P] Pause loop    [X] Force exit        ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+---
+
+## Blocking Exit
+
+Block exit (require action) when:
+
+1. **Critical operation in progress**
+   - Mid-git commit
+   - Running migration
+   - Active deployment
+
+2. **Unsaved work with no history**
+   - New files not tracked
+   - Files never committed
+
+3. **User confirms block**
+   - "Don't let me forget to..."
+
+**Action:** Show prompt, wait for user response before allowing exit.
+
+---
+
+## Clean Exit
+
+When exit is allowed:
+
+1. Save session state
+2. Close open file handles
+3. Generate continuation prompt
+4. Display "Goodbye!" message
+
+```
+✅ Session saved safely
+📝 Continuation prompt available
+👋 Thanks for using BMAD!
+
+Resume anytime with: /resume
+```
+
+---
+
+**Version:** 1.0.0
+**Updated:** 2026-01-10
+**Hook Type:** Stop

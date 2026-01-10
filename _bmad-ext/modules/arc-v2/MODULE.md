@@ -202,7 +202,20 @@ Before any code change:
 
 ---
 
-## Quick Start
+## Entry Point
+
+### Via EXCALIBUR (Recommended)
+```bash
+# Activate via ext-master agent
+/ext-master
+# Then select: [AR] Architecture Remediation v2
+```
+
+### Direct Entry
+```bash
+# Load workflow directly
+cat _bmad-ext/modules/arc-v2/workflows/diagnostic-first.md
+```
 
 ```bash
 # Start fresh remediation session

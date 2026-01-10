@@ -117,7 +117,8 @@ export interface ChatOptions {
   tools?: ToolDefinition[];
 
   /** Tool choice */
-  toolChoice?: 'auto' | 'required' | { type: 'function'; name: string };
+  // FIX-2026-01-11: Added 'none' and 'any' for Mistral/OpenRouter compatibility
+  toolChoice?: 'auto' | 'none' | 'any' | 'required' | { type: 'function'; name: string };
 }
 
 /**

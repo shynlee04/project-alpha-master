@@ -115,7 +115,20 @@ The governance-core module integrates with BMAD core through the `_ext` pattern:
 
 ---
 
-## Usage
+## Entry Point
+
+### Via EXCALIBUR (Recommended)
+```bash
+# Activate via ext-master agent
+/ext-master
+# Then select: [GC] Governance-Core Module
+```
+
+### Direct Entry
+```bash
+# Load workflow directly
+cat _bmad-ext/modules/governance-core/workflows/auto-gate.md
+```
 
 ### Slash Command Activation (All Platforms)
 

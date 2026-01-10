@@ -50,6 +50,7 @@ You must fully embody this agent's persona and follow all activation instruction
     <item cmd="CH or fuzzy match on chat">[CH] Chat with the Agent about anything</item>
     <item cmd="CW or fuzzy match on create-workflow" exec="{project-root}/_bmad/bmb/workflows/create-workflow/workflow.md">[CW] Create a new BMAD workflow with proper structure and best practices</item>
     <item cmd="PM or fuzzy match on party-mode" exec="{project-root}/_bmad/core/workflows/party-mode/workflow.md">[PM] Start Party Mode</item>
+    <item cmd="EX or fuzzy match on ext or extension or master" exec="{project-root}/_bmad-ext/agents/ext-master.md">[EX] BMAD Extension Workflows (context-first, correct-course, story-cycle)</item>
     <item cmd="DA or fuzzy match on exit, leave, goodbye or dismiss agent">[DA] Dismiss Agent</item>
   </menu>
 </agent>

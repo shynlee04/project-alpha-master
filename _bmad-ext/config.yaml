@@ -1,0 +1,183 @@
+# BMAD Extension Configuration
+# Central configuration for all _bmad-ext modules
+# Version: 1.0.0
+# Created: 2026-01-11
+
+# Core Configuration Values
+user_name: Admin
+communication_language: English
+document_output_language: English
+
+# Extension Module Paths
+ext_modules_path: "{project-root}/_bmad-ext/modules"
+ext_agents_path: "{project-root}/_bmad-ext/agents"
+ext_protocols_path: "{project-root}/_bmad-ext/protocols"
+ext_state_path: "{project-root}/_bmad-ext/state"
+handoff_dir: "{project-root}/_bmad-ext/.handoffs"
+artifact_registry: "{project-root}/_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+loop_state: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+
+# Module Registry
+modules:
+  governance:
+    id: "governance"
+    name: "Governance Module"
+    version: "2.0.0"
+    status: "active"
+    phase: "0"
+    tier: "foundation"
+    description: "Foundation layer - Context-first enforcement, expert analysis, research triggers"
+    entry_point: "workflows/context-first/workflow.md"
+    workflows:
+      - "context-first"
+      - "expert-analysis"
+      - "research-trigger"
+      - "stage-gate"
+    scanners:
+      - "artifact-scanner"
+      - "domain-scanner"
+      - "workspace-scanner"
+      - "feature-scanner"
+      - "relationship-scanner"
+      - "journey-scanner"
+      - "ux-ui-scanner"
+      - "api-contract-scanner"
+      - "schema-scanner"
+      - "file-structure-scanner"
+      - "agent-rag-scanner"
+
+  governance-core:
+    id: "governance-core"
+    name: "Governance-Core Module"
+    version: "1.0.0"
+    status: "active"
+    tier: "core"
+    description: "Adaptive Governance + Correct-Course - Auto-gating and remediation workflows"
+    entry_point: "workflows/auto-gate.md"
+    workflows:
+      - "correct-course"
+      - "auto-gate"
+      - "context-first"
+      - "expert-analysis"
+      - "research-trigger"
+      - "stage-gate"
+
+  implementation:
+    id: "implementation"
+    name: "Implementation Module"
+    version: "1.0.0"
+    status: "active"
+    phase: "4"
+    tier: "execution"
+    description: "Story execution and bug fix workflows"
+    entry_point: "workflows/story-cycle/workflow.md"
+    workflows:
+      - "story-cycle"
+      - "correct-course"
+
+  sprint-planning-wrapper:
+    id: "sprint-planning-wrapper"
+    name: "Sprint-Planning Wrapper"
+    version: "1.0.0"
+    status: "active"
+    description: "Enhanced sprint planning with cohesion validation and dependency mapping"
+    entry_point: "workflows/sprint-planning-enhanced/workflow.md"
+    workflows:
+      - "sprint-planning-enhanced"
+    scanners:
+      - "cohesion-scanner"
+      - "dependency-scanner"
+      - "nonsense-detector"
+
+  arc-v2:
+    id: "arc-v2"
+    name: "Architecture Remediation v2.0"
+    version: "2.0.0"
+    status: "active"
+    description: "Fresh architecture remediation - Diagnostic-first approach"
+    entry_point: "workflows/diagnostic-first.md"
+    workflows:
+      - "diagnostic-first"
+      - "domain-remediation"
+      - "journey-repair"
+    agents:
+      - "context-validator"
+      - "domain-scanner"
+      - "journey-mapper"
+      - "remediation-executor"
+
+# Cross-Module Routing Rules
+routing_rules:
+  - rule_id: "GOV-001"
+    name: "Governance Enforcement"
+    if: "request.type in ['feature_request', 'bug_fix', 'refactor']"
+    module: "governance"
+    priority: "critical"
+    timeout_minutes: 5
+    required: true
+
+  - rule_id: "GOV-CORE-001"
+    name: "Correct-Course Trigger"
+    if: "request.requires_correct_course == true"
+    module: "governance-core"
+    priority: "high"
+    timeout_minutes: 10
+
+  - rule_id: "SP-001"
+    name: "Sprint Planning"
+    if: "request.type == 'sprint_planning'"
+    module: "sprint-planning-wrapper"
+    priority: "high"
+    timeout_minutes: 15
+
+  - rule_id: "IM-001"
+    name: "Story Execution"
+    if: "request.type == 'story' and governance.decision == 'proceed'"
+    module: "implementation"
+    priority: "medium"
+    timeout_minutes: 30
+
+  - rule_id: "IM-002"
+    name: "Bug Fix Execution"
+    if: "request.type == 'bug_fix' and governance.decision == 'proceed'"
+    module: "implementation"
+    priority: "medium"
+    timeout_minutes: 30
+
+  - rule_id: "AR-001"
+    name: "Architecture Remediation"
+    if: "request.type == 'architecture_remediation'"
+    module: "arc-v2"
+    priority: "high"
+    timeout_minutes: 20
+
+# Handoff Configuration
+handoff:
+  enabled: true
+  artifacts_dir: "{project-root}/_bmad-ext/.handoffs"
+  max_pending_handoffs: 10
+  stale_threshold_hours: 4
+  auto_cleanup: true
+
+# State Management
+state:
+  loop_state_file: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+  artifact_registry_file: "{project-root}/_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+  auto_update: true
+  backup_enabled: true
+  backup_dir: "{project-root}/_bmad-ext/.backups"
+
+# Freshness Thresholds
+freshness:
+  scan_results_max_hours: 4
+  remediation_plans_max_hours: 24
+  domain_reports_max_hours: 48
+  governance_reports_max_hours: 2
+
+# Integration with BMAD Core
+bmad_integration:
+  config_path: "{project-root}/_bmad/bmb/config.yaml"
+  workflow_path: "{project-root}/_bmad/bmb/workflows"
+  orchestrator_path: "{project-root}/_bmad-ext/orchestrator"
+  enable_bridge: true
+  bridge_menu_item: true

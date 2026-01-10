@@ -1,0 +1,478 @@
+# ============================================================================
+# UNIFIED AGENT REGISTRY
+# ============================================================================
+# Single source of truth for ALL agents across Claude Code and Open Code platforms
+#
+# Purpose:
+#   - Track all available agents across platforms
+#   - Enable platform router to make optimal routing decisions
+#   - Provide capabilities matrix for load balancing and failover
+#   - Support 100% platform integration
+#
+# Governance:
+#   - Tier 2 Document (Controlled & Iterative)
+#   - Never replace entire file - use line-based updates with frontmatter tracking
+#   - All agents must acknowledge governance before inclusion
+#   - Update agents: add/remove agents, update capabilities, change availability
+#
+# Last Updated: 2026-01-07T02:50:00+07:00
+# Updated By: bmad-master (Framework Consolidation - Phase 1-4)
+# ============================================================================
+
+registry_version: "1.0.0"
+last_sync: "2026-01-06T00:00:00+07:00"
+platforms:
+  - claude-code
+  - opencode
+
+agents:
+  # ============================================================================
+  # CORE GOVERNANCE & STANDARDS MODULE AGENTS
+  # ============================================================================
+  - id: "bmad-core-master"
+    name: "BMAD Core Master Orchestrator"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "orchestration"
+      - "routing"
+      - "state-management"
+      - "time-boxing-enforcement"
+      - "deep-investigation-triggering"
+      - "autonomous-decision-making"
+    availability: "active"
+    specialization: "Multi-platform coordination with full autonomy"
+    module: "core-governance"
+    max_concurrent_tasks: 10
+    avg_token_efficiency: 0.85
+
+  - id: "platform-router"
+    name: "Platform Router Service"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "platform-detection"
+      - "load-balancing"
+      - "failover"
+      - "optimal-platform-selection"
+      - "cross-platform-handoff"
+    availability: "active"
+    specialization: "Optimal platform routing for task execution"
+    module: "core-governance"
+    max_concurrent_tasks: 20
+    avg_token_efficiency: 0.90
+
+  - id: "governance-enforcer"
+    name: "Governance Enforcement Agent"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "constitution-validation"
+      - "tier-boundary-enforcement"
+      - "artifact-lifecycle-management"
+      - "naming-convention-validation"
+    availability: "active"
+    specialization: "Ensures compliance with governance standards"
+    module: "core-governance"
+    max_concurrent_tasks: 5
+    avg_token_efficiency: 0.80
+
+  # ============================================================================
+  # ARCHITECTURE & REFACTORING MODULE AGENTS
+  # ============================================================================
+  - id: "master-architect"
+    name: "Master Architecture Specialist"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "system-design"
+      - "technical-debt-auditing"
+      - "remediation-planning"
+      - "god-store-elimination"
+      - "component-normalization"
+    availability: "active"
+    specialization: "Comprehensive architecture assessment and refactoring"
+    module: "architecture-refactoring"
+    max_concurrent_tasks: 3
+    avg_token_efficiency: 0.75
+
+  - id: "store-refactorer"
+    name: "Store Refactoring Specialist"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "god-store-splitting"
+      - "zustand-v5-migration"
+      - "state-management-optimization"
+      - "slice-extraction"
+    availability: "active"
+    specialization: "Eliminates god stores and creates focused Zustand slices"
+    module: "architecture-refactoring"
+    max_concurrent_tasks: 2
+    avg_token_efficiency: 0.70
+
+  - id: "component-splitter"
+    name: "Component Splitting Specialist"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "god-component-elimination"
+      - "component-extraction"
+      - "hook-isolation"
+      - "prop-interface-design"
+    availability: "active"
+    specialization: "Splits oversized React components into focused modules"
+    module: "architecture-refactoring"
+    max_concurrent_tasks: 2
+    avg_token_efficiency: 0.70
+
+  - id: "typescript-fixer"
+    name: "TypeScript Error Remediation Specialist"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "type-error-resolution"
+      - "type-safety-improvement"
+      - "generic-type-design"
+      - "ts-configuration-optimization"
+    availability: "active"
+    specialization: "Systematic TypeScript error elimination"
+    module: "architecture-refactoring"
+    max_concurrent_tasks: 3
+    avg_token_efficiency: 0.75
+
+  - id: "unified-analyzer"
+    name: "Unified Codebase Analyzer"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "state-scanning"
+      - "architecture-scanning"
+      - "ux-scanning"
+      - "security-scanning"
+      - "performance-scanning"
+      - "persistence-scanning"
+      - "types-scanning"
+      - "workspace-scanning"
+      - "layer-violation-detection"
+      - "god-component-detection"
+      - "circular-dependency-analysis"
+      - "technical-debt-auditing"
+    availability: "active"
+    specialization: "Comprehensive codebase diagnostics - replaces 10 deep-scan agents"
+    module: "quality"
+    max_concurrent_tasks: 5
+    avg_token_efficiency: 0.80
+    trigger_phrases:
+      - "analyze", "scan", "audit", "health check", "diagnose"
+      - "god store", "god component", "technical debt"
+      - "typescript error", "type safety", "layer violation"
+
+  # ============================================================================
+  # SPRINT & FEATURE EXECUTION MODULE AGENTS (BMM)
+  # ============================================================================
+  - id: "product-manager-rigorous"
+    name: "Product Manager (Spec-Driven Rigor)"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "user-journey-analysis"
+      - "edge-case-assessment"
+      - "multi-viewpoint-validation"
+      - "health-metric-enforcement"
+      - "spec-driven-development"
+    availability: "active"
+    specialization: "Production-ready assessment with spec-driven rigor"
+    module: "sprint-execution"
+    max_concurrent_tasks: 3
+    avg_token_efficiency: 0.75
+
+  - id: "bmm-analyst"
+    name: "Requirements Analyst"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "requirements-analysis"
+      - "user-story-breakdown"
+      - "acceptance-criteria-definition"
+      - "stakeholder-interview-simulation"
+    availability: "active"
+    specialization: "Analyzes and clarifies requirements from user input"
+    module: "sprint-execution"
+    max_concurrent_tasks: 5
+    avg_token_efficiency: 0.80
+
+  - id: "bmm-architect"
+    name: "System Architect"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "system-design"
+      - "adr-creation"
+      - "technical-specification"
+      - "architecture-diagramming"
+    availability: "active"
+    specialization: "Designs scalable system architecture"
+    module: "sprint-execution"
+    max_concurrent_tasks: 3
+    avg_token_efficiency: 0.75
+
+  - id: "bmm-dev"
+    name: "Feature Developer"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "feature-implementation"
+      - "code-writing"
+      - "test-implementation"
+      - "documentation-writing"
+    availability: "active"
+    specialization: "Implements features following specifications"
+    module: "sprint-execution"
+    max_concurrent_tasks: 8
+    avg_token_efficiency: 0.85
+
+  - id: "bmm-pm"
+    name: "Product Manager"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "backlog-management"
+      - "sprint-planning"
+      - "priority-assignment"
+      - "scope-management"
+    availability: "active"
+    specialization: "Manages product backlog and sprint planning"
+    module: "sprint-execution"
+    max_concurrent_tasks: 4
+    avg_token_efficiency: 0.80
+
+  - id: "bmm-sm"
+    name: "Scrum Master"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "story-creation"
+      - "sprint-tracking"
+      - "ceremony-facilitation"
+      - "velocity-tracking"
+    availability: "active"
+    specialization: "Facilitates agile ceremonies and story tracking"
+    module: "sprint-execution"
+    max_concurrent_tasks: 5
+    avg_token_efficiency: 0.80
+
+  - id: "bmm-tea"
+    name: "Test Automation Engineer"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "test-strategy-design"
+      - "automation-framework-building"
+      - "test-coverage-analysis"
+      - "quality-assurance"
+    availability: "active"
+    specialization: "Designs and implements test automation strategies"
+    module: "sprint-execution"
+    max_concurrent_tasks: 4
+    avg_token_efficiency: 0.75
+
+  - id: "bmm-tech-writer"
+    name: "Technical Writer"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "documentation-writing"
+      - "api-reference-generation"
+      - "guide-creation"
+      - "knowledge-base-management"
+    availability: "active"
+    specialization: "Creates comprehensive technical documentation"
+    module: "sprint-execution"
+    max_concurrent_tasks: 6
+    avg_token_efficiency: 0.85
+
+  - id: "bmm-ux-designer"
+    name: "UX/UI Designer"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "ui-design"
+      - "ux-research"
+      - "wireframe-creation"
+      - "design-system-management"
+    availability: "active"
+    specialization: "Designs user-centric interfaces and experiences"
+    module: "sprint-execution"
+    max_concurrent_tasks: 4
+    avg_token_efficiency: 0.80
+
+  # ============================================================================
+  # INTEGRATION & TESTING MODULE AGENTS
+  # ============================================================================
+  - id: "real-world-validator"
+    name: "Real-World Testing Validator"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "browser-automation"
+      - "real-api-testing"
+      - "visual-regression-testing"
+      - "cross-platform-validation"
+      - "performance-testing"
+    availability: "active"
+    specialization: "Real-world testing with production APIs (NO MOCKS)"
+    module: "integration-testing"
+    max_concurrent_tasks: 3
+    avg_token_efficiency: 0.70
+    requires_api_keys: true
+    api_keys_required:
+      - "gemini"
+      - "openrouter"
+
+  - id: "browser-automation-specialist"
+    name: "Browser Automation Specialist"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "playwright-automation"
+      - "chromedev-debugging"
+      - "screenshot-capture"
+      - "network-interception"
+      - "memory-leak-detection"
+    availability: "active"
+    specialization: "Browser automation using Playwright and ChromeDev MCP"
+    module: "integration-testing"
+    max_concurrent_tasks: 4
+    avg_token_efficiency: 0.75
+    requires_mcp_servers: true
+    mcp_servers_required:
+      - "playwright"
+      - "chromedev"
+
+  - id: "integration-point-detector"
+    name: "Integration Point Detector"
+    platforms: ["claude-code", "opencode"]
+    capabilities:
+      - "cross-platform-scanning"
+      - "integration-keyword-detection"
+      - "dual-team-synchronization"
+      - "shared-notification-routing"
+    availability: "active"
+    specialization: "Detects and manages cross-team integration points"
+    module: "integration-testing"
+    max_concurrent_tasks: 10
+    avg_token_efficiency: 0.90
+
+# ============================================================================
+# PLATFORM ROUTING MATRIX
+# ============================================================================
+# Decision matrix for optimal platform selection based on task type
+# ============================================================================
+
+routing_matrix:
+  task_type_to_platform:
+    code_generation:
+      optimal_platform: "claude-code"
+      reasoning: "Better at complex refactoring and code synthesis"
+      fallback_platform: "opencode"
+
+    documentation:
+      optimal_platform: "opencode"
+      reasoning: "Better at structured documentation generation"
+      fallback_platform: "claude-code"
+
+    architecture_design:
+      optimal_platform: "claude-code"
+      reasoning: "Superior system design and ADR creation"
+      fallback_platform: "opencode"
+
+    testing_validation:
+      optimal_platform: "both"
+      reasoning: "Cross-platform validation for maximum coverage"
+      fallback_platform: "claude-code"
+
+    real_world_testing:
+      optimal_platform: "both"
+      reasoning: "Both platforms run parallel tests for comparison"
+      fallback_platform: null
+
+    user_interface:
+      optimal_platform: "opencode"
+      reasoning: "Better UI/UX design capabilities"
+      fallback_platform: "claude-code"
+
+    debugging:
+      optimal_platform: "claude-code"
+      reasoning: "Stronger debugging and error analysis"
+      fallback_platform: "opencode"
+
+    refactoring:
+      optimal_platform: "claude-code"
+      reasoning: "Better at complex code refactoring"
+      fallback_platform: "opencode"
+
+# ============================================================================
+# LOAD BALANCING CONFIGURATION
+# ============================================================================
+
+load_balancing:
+  strategy: "round_robin_with_priority"
+  max_concurrent_per_platform: 15
+  queue_threshold: 10
+  retry_attempts: 3
+  retry_backoff_ms: 1000
+
+# ============================================================================
+# FAILOVER CONFIGURATION
+# ============================================================================
+
+failover:
+  enabled: true
+  health_check_interval_seconds: 30
+  unresponsive_threshold_seconds: 120
+  auto_failover: true
+  notification_on_failover: true
+
+# ============================================================================
+# AGENT GROUPINGS (FOR BATCH OPERATIONS)
+# ============================================================================
+
+agent_groups:
+  core_orchestration:
+    - "bmad-core-master"
+    - "platform-router"
+    - "governance-enforcer"
+
+  architecture_team:
+    - "master-architect"
+    - "unified-analyzer"
+    - "store-refactorer"
+    - "component-splitter"
+    - "typescript-fixer"
+    - "workspace-architect"
+    - "file-sync-specialist"
+
+  implementation_team:
+    - "product-manager-rigorous"
+    - "bmm-analyst"
+    - "bmm-architect"
+    - "bmm-dev"
+    - "bmm-pm"
+    - "bmm-sm"
+    - "bmm-tea"
+    - "bmm-tech-writer"
+    - "bmm-ux-designer"
+
+  testing_team:
+    - "real-world-validator"
+    - "browser-automation-specialist"
+    - "integration-point-detector"
+
+# ============================================================================
+# LEGACY NOTICES
+# ============================================================================
+# The following agent subdirectories have been consolidated:
+# - .claude/agents/bmad-analysis/ (4 agents) → Functions merged into unified-analyzer + bmm-*
+# - .claude/agents/bmad-planning/ (7 agents) → Functions merged into bmm-pm + bmm-sm
+# - .claude/agents/bmad-research/ (2 agents) → Functions merged into unified-analyzer
+# - .claude/agents/bmad-review/ (3 agents) → Functions merged into bmm-tea
+# - .claude/agents/deep-scan-*.md (11 agents) → Consolidated into unified-analyzer
+#
+# These directories may be removed in future cleanup.
+# ============================================================================
+
+# ============================================================================
+# PERFORMANCE TRACKING
+# ============================================================================
+
+performance_metrics:
+  collection_enabled: true
+  retention_days: 90
+  metrics:
+    - "agent_response_time"
+    - "token_usage"
+    - "success_rate"
+    - "failover_count"
+    - "queue_depth"

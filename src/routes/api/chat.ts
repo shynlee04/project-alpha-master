@@ -281,13 +281,20 @@ export const Route = createFileRoute('/api/chat')({
 
                     // Create streaming chat with the adapter
                     // NOTE: Some free models may not support tools
+                    // FIX-2026-01-11: Mistral/OpenRouter requires explicit tool_choice
+                    // Error 3051 "Invalid structured output syntax" when tool_choice is null
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const stream = chat({
                         adapter: adapter as any,
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         messages: finalMessages as any,
                         // Only pass tools if enabled and model supports them
-                        ...(enableTools && { tools }),
+                        ...(enableTools && {
+                            tools,
+                            // Mistral/OpenRouter requires explicit tool_choice (rejects null)
+                            // Set to 'auto' for default behavior when tools are available
+                            toolChoice: 'auto' as const,
+                        }),
                     });
 
                     // Create abort controller for streaming

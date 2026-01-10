@@ -1,0 +1,491 @@
+---
+version: 6.0.0
+description: BMAD Command Registry - Hierarchical routing for slash commands
+updated: 2026-01-10
+---
+
+# =============================================================================
+# BMAD COMMAND REGISTRY
+# =============================================================================
+# This index replaces 100+ scattered command files with a single source
+# of truth. Commands are organized by priority and category for efficient
+# lookup and execution.
+#
+# Loading Strategy:
+# 1. Session start: Load frontmatter + structure only (~2k tokens)
+# 2. On invocation: Load full command content from path
+# 3. Cache: Loaded commands for session duration
+# =============================================================================
+
+commands:
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 1: CORE ORCHESTRATION (Priority 1-10)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: bmad-master
+    name: BMAD Master
+    shorthand: /bm
+    path: _bmad/core/agents/bmad-master.md
+    description: Load BMAD master orchestrator for autonomous development
+    category: core
+    priority: 1
+    args:
+      - name: mode
+        description: "auto" for autonomous, "interactive" for manual
+        required: false
+
+  - id: asgl
+    name: ASGL Loop
+    shorthand: /loop
+    path: _bmad/modules/asgl/workflows/main-loop.md
+    description: Start Autonomous Sprint Governance Loop
+    category: core
+    priority: 2
+
+  - id: workflow-builder
+    name: Workflow Builder
+    shorthand: /wb
+    path: _bmad/bmb/agents/workflow-builder.md
+    description: Create and manage BMAD workflows
+    category: core
+    priority: 3
+
+  - id: bmad-orchestrator
+    name: BMAD Orchestrator
+    shorthand: /orch
+    path: .claude/skills/bmad-orchestrator/SKILL.md
+    description: Orchestrate BMAD framework - load agents, manage workflows
+    category: core
+    priority: 4
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 2: DEVELOPMENT WORKFLOWS (Priority 10-29)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: dev-story
+    name: Develop Story
+    shorthand: /dev
+    path: _bmad/bmm/workflows/dev-story.md
+    description: Implement a user story with TDD
+    category: development
+    priority: 10
+    args:
+      - name: story_id
+        description: Story identifier (e.g., FS-05)
+        required: true
+
+  - id: code-review
+    name: Code Review
+    shorthand: /review
+    path: _bmad/bmm/workflows/code-review.md
+    description: Review code changes with quality focus
+    category: development
+    priority: 11
+
+  - id: quick-dev
+    name: Quick Dev
+    shorthand: /qd
+    path: _bmad/bmm/workflows/quick-dev.md
+    description: Quick implementation without full story process
+    category: development
+    priority: 12
+
+  - id: create-story
+    name: Create Story
+    shorthand: /story
+    path: _bmad/bmm/workflows/create-story.md
+    description: Generate user story from requirements
+    category: development
+    priority: 13
+
+  - id: testarch
+    name: Test Architecture
+    shorthand: /testarch
+    path: _bmad/bmm/workflows/testarch-framework.md
+    description: Design test architecture and strategy
+    category: development
+    priority: 14
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 3: PLANNING & ANALYSIS (Priority 30-49)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: prd
+    name: PRD Workflow
+    shorthand: /prd
+    path: _bmad/bmm/workflows/create-prd.md
+    description: Create Product Requirements Document
+    category: planning
+    priority: 30
+
+  - id: architecture
+    name: Architecture Design
+    shorthand: /arch
+    path: _bmad/bmm/workflows/create-architecture.md
+    description: Create system architecture specification
+    category: planning
+    priority: 31
+
+  - id: tech-spec
+    name: Technical Spec
+    shorthand: /spec
+    path: _bmad/bmm/workflows/create-tech-spec.md
+    description: Create detailed technical specification
+    category: planning
+    priority: 32
+
+  - id: ux-design
+    name: UX Design
+    shorthand: /ux
+    path: _bmad/bmm/workflows/create-ux-design.md
+    description: Create UX design specification
+    category: planning
+    priority: 33
+
+  - id: epics-stories
+    name: Epics & Stories
+    shorthand: /epics
+    path: _bmad/bmm/workflows/create-epics-and-stories.md
+    description: Break down requirements into epics and stories
+    category: planning
+    priority: 34
+
+  - id: sprint-planning
+    name: Sprint Planning
+    shorthand: /sprint
+    path: _bmad/bmm/workflows/sprint-planning.md
+    description: Plan sprint with story allocation
+    category: planning
+    priority: 35
+
+  - id: sprint-planning-wrapper
+    name: Sprint Planning Wrapper
+    shorthand: /sprintpw
+    path: .claude/commands/sprint-planning-wrapper.md
+    description: Enhanced sprint planning with cohesion validation, dependency mapping, reality gates
+    category: planning
+    priority: 36
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 4: ADO WORKFLOWS (Priority 50-69)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: ado
+    name: ADO Coordinator
+    shorthand: /ado
+    path: .claude/commands/ado.md
+    description: Agentic Development Orchestrator - research-driven development
+    category: ado
+    priority: 50
+
+  - id: ado-research
+    name: ADO Research
+    shorthand: /research
+    path: .claude/commands/ado-research.md
+    description: Execute MCP research queries (DeepWiki, Context7, etc.)
+    category: ado
+    priority: 51
+    args:
+      - name: query
+        description: Research query
+        required: true
+
+  - id: ado-planning
+    name: ADO Planning
+    shorthand: /aplan
+    path: .claude/commands/ado-planning.md
+    description: Create technical plans with research backing
+    category: ado
+    priority: 52
+
+  - id: ado-implementation
+    name: ADO Implementation
+    shorthand: /aimpl
+    path: .claude/commands/ado-implementation.md
+    description: Implement with validation gates
+    category: ado
+    priority: 53
+
+  - id: ado-discovery
+    name: ADO Discovery
+    shorthand: /adisc
+    path: .claude/commands/ado-discovery.md
+    description: Requirements gathering and constraint definition
+    category: ado
+    priority: 54
+
+  - id: ado-status
+    name: ADO Status
+    shorthand: /astatus
+    path: .claude/commands/ado-status.md
+    description: Check ADO workflow status
+    category: ado
+    priority: 55
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 5: DIAGNOSTICS & SCANNING (Priority 70-79)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: deep-scan
+    name: Deep Scan
+    shorthand: /scan
+    path: .claude/commands/deep-scan-targeted.md
+    description: Targeted codebase analysis
+    category: diagnostics
+    priority: 70
+
+  - id: full-scan
+    name: Full Scan
+    shorthand: /fscan
+    path: .claude/commands/deep-scan-full.md
+    description: Comprehensive codebase scan
+    category: diagnostics
+    priority: 71
+
+  - id: diagnostic
+    name: Codebase Diagnostic
+    shorthand: /diag
+    path: .claude/commands/codebase-diagnostic.md
+    description: Diagnose codebase health issues
+    category: diagnostics
+    priority: 72
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 6: ARCHITECTURE REMEDIATION (Priority 80-89)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: store-refactorer
+    name: Store Refactorer
+    shorthand: /store
+    path: .claude/agents/store-refactorer-loader.md
+    description: Refactor god stores into focused slices
+    category: remediation
+    priority: 80
+
+  - id: component-splitter
+    name: Component Splitter
+    shorthand: /split
+    path: .claude/agents/component-splitter.md
+    description: Split large components into focused modules
+    category: remediation
+    priority: 81
+
+  - id: typescript-fixer
+    name: TypeScript Fixer
+    shorthand: /tsfix
+    path: _bmad/modules/architecture-remediation/agents/typescript-fixer.md
+    description: Batch TypeScript error remediation
+    category: remediation
+    priority: 82
+
+  - id: workspace-architect
+    name: Workspace Architect
+    shorthand: /ws
+    path: .claude/agents/workspace-architect.md
+    description: Workspace E2E file system implementation
+    category: remediation
+    priority: 83
+
+  # ═══════════════════════════════════════════════════════════════════════
+  # TIER 7: UTILITIES (Priority 90-99)
+  # ═══════════════════════════════════════════════════════════════════════
+  - id: status
+    name: Status
+    shorthand: /status
+    builtin: true
+    description: Show current sprint and workflow status
+    category: utils
+    priority: 90
+
+  - id: help
+    name: Help
+    shorthand: /help
+    builtin: true
+    description: Show available commands
+    category: utils
+    priority: 91
+
+  - id: clear
+    name: Clear
+    shorthand: /clear
+    builtin: true
+    description: Reset conversation context
+    category: utils
+    priority: 92
+
+  - id: story-cycle
+    name: Story Cycle
+    shorthand: /cycle
+    path: .claude/commands/story-cycle.md
+    description: Complete story development cycle
+    category: utils
+    priority: 93
+
+  - id: orchestrate-implement
+    name: Orchestrate Implement
+    shorthand: /oi
+    path: .claude/commands/orchestrate-implement.md
+    description: Orchestrate and implement task delegation
+    category: utils
+    priority: 94
+
+# =============================================================================
+# COMMAND GROUPS (for / menu display)
+# =============================================================================
+
+groups:
+  core:
+    name: "BMAD Core"
+    description: "Orchestration and framework control"
+    commands: [bmad-master, asgl, workflow-builder, bmad-orchestrator]
+    icon: "🔄"
+    color: "blue"
+
+  development:
+    name: "Development"
+    description: "Feature implementation and code review"
+    commands: [dev-story, code-review, quick-dev, create-story, testarch]
+    icon: "💻"
+    color: "green"
+
+  planning:
+    name: "Planning"
+    description: "Architecture, specs, and sprint planning"
+    commands: [prd, architecture, tech-spec, ux-design, epics-stories, sprint-planning, sprint-planning-wrapper]
+    icon: "📋"
+    color: "purple"
+
+  ado:
+    name: "ADO"
+    description: "Research-driven development workflows"
+    commands: [ado, ado-research, ado-planning, ado-implementation, ado-discovery, ado-status]
+    icon: "🔬"
+    color: "cyan"
+
+  diagnostics:
+    name: "Diagnostics"
+    description: "Codebase analysis and scanning"
+    commands: [deep-scan, full-scan, diagnostic]
+    icon: "🔍"
+    color: "yellow"
+
+  remediation:
+    name: "Remediation"
+    description: "Architecture refactoring and fixes"
+    commands: [store-refactorer, component-splitter, typescript-fixer, workspace-architect]
+    icon: "🔧"
+    color: "orange"
+
+  utils:
+    name: "Utilities"
+    description: "Helper commands and status"
+    commands: [status, help, clear, story-cycle, orchestrate-implement]
+    icon: "🛠️"
+    color: "gray"
+
+# =============================================================================
+# FUZZY MATCHING ALIASES
+# =============================================================================
+# Allows users to type partial or alternative command names
+# =============================================================================
+
+aliases:
+  # Core aliases
+  bmad-master: [bm, master, orchestrator, bmad, bmad-coordinator]
+  asgl: [loop, sprint, autonomous, ralph, ralph-loop]
+  workflow-builder: [wb, builder, workflow, wf-builder]
+  bmad-orchestrator: [orch, orchestrator, bmad-orch]
+
+  # Development aliases
+  dev-story: [dev, implement, develop, code, write, story-dev]
+  code-review: [review, cr, pr-review, code-review]
+  quick-dev: [qd, quick, fast-dev, impl]
+  create-story: [story, create-story, new-story]
+  testarch: [testarch, test-arch, test-strategy]
+
+  # Planning aliases
+  prd: [prd, product-requirements, requirements]
+  architecture: [arch, architecture-design, system-design]
+  tech-spec: [spec, technical-spec, tech-specification]
+  ux-design: [ux, design, ux-spec]
+  epics-stories: [epics, stories, breakdown]
+  sprint-planning: [sprint, planning, sprint-plan]
+  sprint-planning-wrapper: [sprintpw, enhanced-sprint, cohesion-check, reality-sprint]
+
+  # ADO aliases
+  ado: [ado-coordinator, research-driven, rd]
+  ado-research: [research, ado-res, query-research]
+  ado-planning: [aplan, ado-plan, research-plan]
+  ado-implementation: [aimpl, ado-impl, validate-impl]
+  ado-discovery: [adisc, discover, requirements-gathering]
+  ado-status: [astatus, ado-stat, workflow-status]
+
+  # Diagnostics aliases
+  deep-scan: [scan, analyze, targeted-scan]
+  full-scan: [fscan, full, comprehensive-scan]
+  diagnostic: [diag, diagnose, health-check]
+
+  # Remediation aliases
+  store-refactorer: [store, refactor, split-store, god-store]
+  component-splitter: [split, component, god-component]
+  typescript-fixer: [tsfix, typescript, fix-ts, ts-errors]
+  workspace-architect: [ws, workspace, fs-e2e, file-system]
+
+  # Utils aliases
+  status: [sitrep, state, current, progress]
+  help: [?, commands, list, menu]
+  clear: [reset, clean, new-session]
+
+# =============================================================================
+# COMMAND CHAINS
+# =============================================================================
+# Predefined sequences of commands for common workflows
+# =============================================================================
+
+chains:
+  full-story-cycle:
+    name: "Complete Story Development"
+    description: "Full cycle from planning to implementation"
+    steps:
+      - command: dev-story
+        wait_for_completion: true
+      - command: code-review
+        wait_for_completion: true
+
+  research-and-implement:
+    name: "Research Driven Implementation"
+    description: "Research before implementation"
+    steps:
+      - command: ado-research
+        args: {query: "$ARGUMENTS"}
+      - command: ado-planning
+      - command: ado-implementation
+
+  remediation-cycle:
+    name: "Architecture Remediation"
+    description: "Full remediation with validation"
+    steps:
+      - command: diagnostic
+      - command: store-refactorer
+        if: "god_store_detected"
+      - command: component-splitter
+        if: "god_component_detected"
+      - command: typescript-fixer
+        if: "ts_errors > 0"
+
+# =============================================================================
+# DEPRECATED COMMANDS (for migration)
+# =============================================================================
+# These commands are mapped to new equivalents for backward compatibility
+# =============================================================================
+
+deprecated:
+  - old: /bmad
+    new: /bm
+    message: "Use /bm instead (shorter)"
+
+  - old: /ralph-loop
+    new: /loop
+    message: "Use /loop instead (unified ASGL)"
+
+  - old: /bmm-dev
+    new: /dev
+    message: "Use /dev instead"
+
+# =============================================================================
+# END OF REGISTRY
+# =============================================================================
