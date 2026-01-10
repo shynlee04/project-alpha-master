@@ -9,12 +9,16 @@
  * @story MM-04 - Integrate Gemini 2.5 APIs
  */
 
-import { createGeminiChat, type GeminiTextConfig } from '@tanstack/ai-gemini';
+import { createGeminiChat, type GeminiTextConfig, type GeminiTextModel } from '@tanstack/ai-gemini';
 import type { AdapterConfig, ConnectionTestResult } from './types';
-import { GEMINI_MODELS } from './types';
 
 // Re-export types for convenience
 export type { GeminiTextConfig };
+
+/**
+ * Default Gemini model - using 2.5 Flash for best cost/performance balance
+ */
+const DEFAULT_MODEL = 'gemini-2.5-flash' as const satisfies GeminiTextModel;
 
 /**
  * Gemini-specific adapter configuration
@@ -28,8 +32,9 @@ export interface GeminiAdapterConfig extends AdapterConfig {
 
 /**
  * Gemini model IDs supported by this adapter
+ * Using the exact type from @tanstack/ai-gemini for type safety
  */
-export type GeminiModelId = (typeof GEMINI_MODELS)[keyof typeof GEMINI_MODELS];
+export type GeminiModelId = GeminiTextModel;
 
 /**
  * Input modality types for Gemini
@@ -92,19 +97,22 @@ export class GeminiAdapter {
     private defaultModel: GeminiModelId;
 
     constructor(config: GeminiAdapterConfig) {
+        if (!config.apiKey) {
+            throw new Error('GeminiAdapter: API key is required');
+        }
         this.apiKey = config.apiKey;
-        this.defaultModel = (config.model as GeminiModelId) || GEMINI_MODELS.flash;
+        this.defaultModel = (config.model as GeminiModelId) || DEFAULT_MODEL;
     }
 
     /**
      * Create a TanStack AI Gemini adapter for a specific model
-     * @param model - Gemini model ID
+     * @param model - Gemini model ID (must be one of the supported model IDs)
      * @returns TanStack AI Gemini adapter instance
      */
     private createAdapter(model: string) {
-        // Note: TanStack AI Gemini uses @google/genai internally
-        // which handles base URL automatically
-        return createGeminiChat(model as never, this.apiKey, {});
+        // createGeminiChat(model: TModel, apiKey: string, config?) => GeminiTextAdapter<TModel>
+        // The model parameter must be one of the literal types from @tanstack/ai-gemini
+        return createGeminiChat(model as GeminiModelId, this.apiKey, {});
     }
 
     /**
@@ -141,7 +149,7 @@ export class GeminiAdapter {
 
         if (hasMultimodal) {
             // Gemini 2.5 Flash has excellent multimodal support with 1M context
-            return GEMINI_MODELS.flash;
+            return DEFAULT_MODEL;
         }
 
         // For text-only, can use any model - default to flash for cost efficiency
@@ -345,9 +353,9 @@ export class GeminiAdapter {
             console.error('[GeminiAdapter] Failed to fetch models:', error);
             // Return default models on error
             return [
-                { id: GEMINI_MODELS.flash, name: 'Gemini 2.5 Flash', contextLength: 1048576 },
-                { id: GEMINI_MODELS.pro, name: 'Gemini 2.5 Pro', contextLength: 2097152 },
-                { id: GEMINI_MODELS.lite, name: 'Gemini 2.5 Flash Lite', contextLength: 1048576 },
+                { id: DEFAULT_MODEL, name: 'Gemini 2.5 Flash', contextLength: 1048576 },
+                { id: 'gemini-2.5-pro' as const, name: 'Gemini 2.5 Pro', contextLength: 2097152 },
+                { id: 'gemini-2.5-flash-lite' as const, name: 'Gemini 2.5 Flash Lite', contextLength: 1048576 },
             ];
         }
     }

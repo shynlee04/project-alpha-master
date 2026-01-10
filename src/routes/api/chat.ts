@@ -33,7 +33,9 @@ import {
 
 // Default configuration
 const DEFAULT_PROVIDER = 'openrouter';
-const DEFAULT_MODEL = 'mistralai/devstral-2512:free';
+// FIX-2026-01-11: Changed default from Mistral to OpenRouter free model
+// Mistral models return "Invalid structured output syntax" with tools
+const DEFAULT_MODEL = 'meta-llama/llama-3.3-8b-instruct:free';
 
 // Provider base URLs
 const PROVIDER_BASE_URLS: Record<string, string> = {
@@ -46,11 +48,18 @@ const PROVIDER_BASE_URLS: Record<string, string> = {
 /**
  * Models known to NOT support function calling
  * Add models here that return errors when tools are passed
+ *
+ * Models that return "Invalid structured output syntax" or similar errors
+ * when tools are passed should be added to this list.
  */
 const MODELS_WITHOUT_TOOL_SUPPORT = [
     'nex-agi/deepseek-v3.1-nex-n1:free',
     'deepseek/deepseek-chat:free',
     'deepseek-chat',
+    // Mistral models through OpenRouter return "Invalid structured output syntax"
+    // because TanStack AI uses OpenAI-specific strict mode schemas
+    'mistralai/devstral-2512:free',
+    'mistralai/',
     // Add more models here as discovered
 ];
 
@@ -62,8 +71,12 @@ function modelSupportsTools(modelId: string): boolean {
     if (MODELS_WITHOUT_TOOL_SUPPORT.some(m => modelId.includes(m))) {
         return false;
     }
-    // Known good models
-    if (modelId.includes('gpt-') || modelId.includes('claude') || modelId.includes('devstral')) {
+    // Known good models (removed devstral - it's in blocklist)
+    if (modelId.includes('gpt-') || modelId.includes('claude')) {
+        return true;
+    }
+    // Llama models generally support function calling
+    if (modelId.includes('llama')) {
         return true;
     }
     // Gemini models support function calling

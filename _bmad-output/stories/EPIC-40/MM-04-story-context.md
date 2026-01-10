@@ -165,17 +165,35 @@ interface GeminiModelConfig {
 
 ### Provider Integration Pattern
 ```typescript
-import { createGeminiAdapter } from '@tanstack/ai-gemini';
+// CORRECT PATTERN 1: Using geminiText() (auto API key from GEMINI_API_KEY env)
+import { geminiText } from '@tanstack/ai-gemini';
 
-const gemini25Adapter = createGeminiAdapter({
-  modelId: 'gemini-2.5-flash',
-  apiKey: await credentialVault.getKey('gemini'),
-  config: {
-    temperature: 0.7,
-    maxOutputTokens: 8192,
-  },
+const adapter = geminiText('gemini-2.5-flash', {
+  // config options (apiKey not needed - uses GEMINI_API_KEY env)
+  temperature: 0.7,
+});
+
+// CORRECT PATTERN 2: Using createGeminiChat() (explicit API key)
+import { createGeminiChat } from '@tanstack/ai-gemini';
+
+const adapter = createGeminiChat(
+  'gemini-2.5-flash',  // model first!
+  await credentialVault.getKey('gemini'),  // apiKey second
+  { temperature: 0.7 }  // config optional
+);
+
+// Then use with TanStack AI chat():
+import { chat } from '@tanstack/ai';
+
+const stream = chat({
+  adapter,
+  messages: [...],
 });
 ```
+
+> ⚠️ **IMPORTANT**: There is NO `createGeminiAdapter` function in `@tanstack/ai-gemini`.
+> The correct exports are `geminiText()` and `createGeminiChat()`.
+> The model parameter comes FIRST, then the API key.
 
 ---
 
