@@ -192,10 +192,12 @@ export function useAgentChatWithTools(
     } = options;
 
     // EPIC-40 MM-03: Tool execution persistence methods from unified store
-    const addPendingApproval = useUnifiedChatStore((state) => state.addPendingApproval);
-    const approveToolCallInStore = useUnifiedChatStore((state) => state.approveToolCall);
-    const denyToolCallInStore = useUnifiedChatStore((state) => state.denyToolCall);
-    const activeThreadIdInStore = useUnifiedChatStore((state) => state.activeThreadId);
+    // CRITICAL FIX: Add optional chaining to prevent crash during store hydration
+    // Zustand persist middleware returns undefined state before hydration completes
+    const addPendingApproval = useUnifiedChatStore((state) => state?.addPendingApproval);
+    const approveToolCallInStore = useUnifiedChatStore((state) => state?.approveToolCall);
+    const denyToolCallInStore = useUnifiedChatStore((state) => state?.denyToolCall);
+    const activeThreadIdInStore = useUnifiedChatStore((state) => state?.activeThreadId);
 
     // Track tool calls
     const [toolCalls, setToolCalls] = useState<ToolCallInfo[]>([]);
@@ -318,9 +320,41 @@ export function useAgentChatWithTools(
     // Destructure with fallbacks (API may vary between versions)
     const rawMessages = chatResult.messages ?? [];
     const rawSendMessage = chatResult.sendMessage;
-    const isLoading = chatResult.isLoading ?? false;
+    const rawIsLoading = chatResult.isLoading ?? false;
     const error = chatResult.error ?? null;
     const addToolApprovalResponse = chatResult.addToolApprovalResponse;
+
+    // CRITICAL FIX: Add timeout protection to prevent isLoading from getting stuck
+    // If the request hangs for > 30 seconds, force isLoading to false
+    const [isLoadingOverride, setIsLoadingOverride] = useState(false);
+    const isLoadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Clear timeout when loading completes
+    useEffect(() => {
+        if (!rawIsLoading && isLoadingTimeoutRef.current) {
+            clearTimeout(isLoadingTimeoutRef.current);
+          isLoadingTimeoutRef.current = null;
+          setIsLoadingOverride(false);
+        }
+    }, [rawIsLoading]);
+
+    // Set timeout when loading starts
+    useEffect(() => {
+        if (rawIsLoading && !isLoadingOverride) {
+          isLoadingTimeoutRef.current = setTimeout(() => {
+            console.warn('[useAgentChat] Request timed out, forcing isLoading to false');
+            setIsLoadingOverride(true); // This will cause isLoading to be false
+          }, 30000); // 30 second timeout
+          return () => {
+            if (isLoadingTimeoutRef.current) {
+              clearTimeout(isLoadingTimeoutRef.current);
+            }
+          };
+        }
+    }, [rawIsLoading, isLoadingOverride]);
+
+    // Use the override to force isLoading to false after timeout
+    const isLoading = isLoadingOverride ? false : rawIsLoading;
 
     // DEBUG: Log chat state
     useEffect(() => {
@@ -483,7 +517,8 @@ export function useAgentChatWithTools(
                     if (toolPart) {
                         // Create or update the approval in unified store
                         // The store handles the tool call status update automatically
-                        approveToolCallInStore(approvalId);
+                        // CRITICAL FIX: Guard against undefined during hydration
+                        approveToolCallInStore?.(approvalId);
                     }
                 }
             }
@@ -521,7 +556,8 @@ export function useAgentChatWithTools(
             if (conversationId) {
                 const effectiveThreadId = threadId || activeThreadIdInStore;
                 if (effectiveThreadId) {
-                    denyToolCallInStore(approvalId, reason || 'User rejected');
+                    // CRITICAL FIX: Guard against undefined during hydration
+                    denyToolCallInStore?.(approvalId, reason || 'User rejected');
                 }
             }
 
@@ -622,7 +658,8 @@ export function useAgentChatWithTools(
     // CA-006 FIX: Add deduplication to prevent memory leak
     const prevPendingApprovalsRef = useRef<string[]>([]);
     useEffect(() => {
-        if (!conversationId) return;
+        // CRITICAL FIX: Skip if store isn't hydrated yet (functions are undefined)
+        if (!addPendingApproval || !conversationId) return;
 
         const effectiveThreadId = threadId || activeThreadIdInStore;
         if (!effectiveThreadId) return;

@@ -30,6 +30,9 @@ import { SyncStatusIndicator } from './SyncStatusIndicator';
 // Auto-dismiss delay in milliseconds after sync completion
 const AUTO_DISMISS_DELAY_MS = 3000;
 
+// CRITICAL FIX: Timeout to auto-dismiss stuck sync operations (5 minutes)
+const STUCK_SYNC_TIMEOUT_MS = 5 * 60 * 1000;
+
 // ============================================================================
 // Component
 // ============================================================================
@@ -53,12 +56,36 @@ export function SyncStatusPanel() {
   // Track auto-dismiss state for completed syncs
   const [isDismissed, setIsDismissed] = useState(false);
 
+  // CRITICAL FIX: Track sync start time to detect stuck operations
+  const [syncStartTime, setSyncStartTime] = useState<number | null>(null);
+
   // Compute current status for auto-dismiss logic
   const status = syncProgress.error
     ? 'error'
     : syncProgress.isRunning
       ? 'running'
       : 'completed';
+
+  // CRITICAL FIX: Auto-dismiss timer for stuck syncs
+  useEffect(() => {
+    // When sync starts running, record the start time
+    if (status === 'running' && syncStartTime === null) {
+      setSyncStartTime(Date.now());
+      // Set up timeout to auto-dismiss stuck syncs
+      const stuckTimer = setTimeout(() => {
+        console.warn('[SyncStatusPanel] Sync operation stuck, auto-dismissing');
+        setIsDismissed(true);
+        // Clear the sync state in the store to prevent it from showing again
+        useFileSyncStatusStore.getState().setSyncFailed('Operation timed out');
+      }, STUCK_SYNC_TIMEOUT_MS);
+      return () => clearTimeout(stuckTimer);
+    }
+
+    // When sync completes or errors, clear the start time
+    if (status !== 'running' && syncStartTime !== null) {
+      setSyncStartTime(null);
+    }
+  }, [status, syncStartTime]);
 
   // Auto-dismiss timer for completed state
   useEffect(() => {
@@ -75,6 +102,14 @@ export function SyncStatusPanel() {
       }, AUTO_DISMISS_DELAY_MS);
 
       return () => clearTimeout(timer);
+    }
+
+    // CRITICAL FIX: Also auto-dismiss errors after a longer delay (30 seconds)
+    if (status === 'error') {
+      const errorTimer = setTimeout(() => {
+        setIsDismissed(true);
+      }, 30000);
+      return () => clearTimeout(errorTimer);
     }
   }, [status, syncProgress.progress]);
 

@@ -110,7 +110,15 @@ export const createNoteSyncSlice: StateCreator<
 
         const handler = fileSaveHandlers.get(currentProjectId);
         if (!handler) {
-            console.log(`[NoteStore-Sync] No file save handler registered for project ${currentProjectId}`);
+            // CRITICAL FIX: When no file save handler is registered (e.g., IndexedDB storage),
+            // the note is already saved to IndexedDB by updateNote. Clear the dirty flag immediately
+            // so the UI doesn't incorrectly show "Unsaved changes".
+            set(state => {
+                const dirtyIds = new Set(state.dirtyNoteIds);
+                dirtyIds.delete(noteId);
+                return { dirtyNoteIds: dirtyIds };
+            });
+            console.log(`[NoteStore-Sync] No file save handler registered for project ${currentProjectId}, clearing dirty flag`);
             return;
         }
 

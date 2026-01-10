@@ -275,13 +275,54 @@ export function AgentChatPanel({
         if (!activeConversationId) return;
 
         if (!isLoading && hookMessages.length > 0) {
-            const currentSessionMessages = hookMessages.map((msg, index) => ({
-                id: `msg_${index}_${Date.now()}`,
-                role: msg.role === 'tool' ? 'assistant' : (msg.role as 'user' | 'assistant'),
-                content: msg.content,
-                timestamp: new Date(),
-                toolExecutions: msg.role === 'assistant' ? [] : undefined,
-            }));
+            // CRITICAL FIX: Extract tool executions from raw messages
+            // The toolExecutions field was hardcoded to [], which prevented tool UI from showing
+            const currentSessionMessages = hookMessages.map((msg, index) => {
+                // Extract tool calls from raw message parts
+                const rawMsg = rawMessages[index] as { parts?: unknown[] } | undefined;
+                let toolExecutions: any[] | undefined = undefined;
+
+                if (rawMsg?.parts && Array.isArray(rawMsg.parts)) {
+                    for (const part of rawMsg.parts) {
+                        const p = part as {
+                            type?: string;
+                            id?: string;
+                            name?: string;
+                            state?: string;
+                            input?: Record<string, unknown>;
+                            output?: unknown;
+                        };
+
+                        if (p.type === 'tool-call' && p.name) {
+                            let status: 'pending' | 'running' | 'success' | 'error' = 'pending';
+
+                            switch (p.state) {
+                                case 'executing': status = 'running'; break;
+                                case 'result': status = 'success'; break;
+                                case 'error': status = 'error'; break;
+                                case 'approval-requested': status = 'pending'; break;
+                            }
+
+                            if (!toolExecutions) toolExecutions = [];
+                            toolExecutions.push({
+                                id: p.id || `tool_${toolExecutions.length}`,
+                                name: p.name,
+                                status,
+                                input: p.input ? JSON.stringify(p.input) : undefined,
+                                output: p.output ? JSON.stringify(p.output) : undefined,
+                            });
+                        }
+                    }
+                }
+
+                return {
+                    id: `msg_${index}_${Date.now()}`,
+                    role: msg.role === 'tool' ? 'assistant' : (msg.role as 'user' | 'assistant'),
+                    content: msg.content,
+                    timestamp: new Date(),
+                    toolExecutions: toolExecutions && toolExecutions.length > 0 ? toolExecutions : undefined,
+                };
+            });
 
             currentSessionMessages.forEach(msg => {
                 const record: any = {
@@ -301,7 +342,7 @@ export function AgentChatPanel({
                 addMessage(activeConversationId, record);
             });
         }
-    }, [isLoading, hookMessages, activeConversationId, addMessage, activeAgentId]);
+    }, [isLoading, hookMessages, rawMessages, activeConversationId, addMessage, activeAgentId]);
 
     // E1-6: Restore scroll position when conversation changes
     useEffect(() => {
