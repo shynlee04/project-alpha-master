@@ -35,6 +35,25 @@ export const TOOL_CATEGORIES: Record<string, ToolCategory> = {
     // Web operations
     fetch_url: 'web',
     browse_web: 'web',
+
+    // Note operations
+    create_note: 'notes',
+    read_note: 'notes',
+    update_note: 'notes',
+    delete_note: 'notes',
+    list_notes: 'notes',
+
+    // EPIC-TOOLS: Unified operations (cross-workspace)
+    read: 'unified',
+    write: 'unified',
+    delete: 'unified',
+    list: 'unified',
+
+    // EPIC-TOOLS: Composite agentic workflows
+    research: 'composite',
+    storyboard: 'composite',
+    analyze: 'composite',
+    plan: 'composite',
 };
 
 /**
@@ -58,6 +77,8 @@ export const DEFAULT_CATEGORY_APPROVALS: CategoryApprovalState = {
     search: false,
     web: false,
     notes: false,  // Added for story 40-05 (Note CRUD tools)
+    unified: false,  // EPIC-TOOLS: Cross-workspace unified operations
+    composite: false,  // EPIC-TOOLS: Multi-step agentic workflows
 };
 
 /**

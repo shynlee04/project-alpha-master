@@ -29,8 +29,19 @@ export type ToolTrustLevel = 'auto' | 'prompt' | 'block';
  * - search: Search operations
  * - web: Web scraping and URL processing
  * - notes: Note CRUD operations (create, read, update, delete, list)
+ * - unified: Cross-workspace file operations (read, write, delete, list)
+ * - composite: Multi-step agentic workflows (research, storyboard, analyze, plan)
  */
-export type ToolCategory = 'files' | 'terminal' | 'knowledge' | 'vision' | 'search' | 'web' | 'notes';
+export type ToolCategory =
+  | 'files'
+  | 'terminal'
+  | 'knowledge'
+  | 'vision'
+  | 'search'
+  | 'web'
+  | 'notes'
+  | 'unified'
+  | 'composite';
 
 /**
  * Risk level for approval flow

@@ -36,6 +36,18 @@ import { updateNoteDef } from '@/domain/tools/note/update-note-tool';
 import { deleteNoteDef } from '@/domain/tools/note/delete-note-tool';
 import { listNotesDef } from '@/domain/tools/note/list-notes-tool';
 
+// EPIC-TOOLS: Unified file operations (consolidates read_file + read_note, etc.)
+import { readDef } from '@/lib/agent/tools/unified/read-tool';
+import { writeDef } from '@/lib/agent/tools/unified/write-tool';
+import { deleteDef } from '@/lib/agent/tools/unified/delete-tool';
+import { listDef } from '@/lib/agent/tools/unified/list-tool';
+
+// EPIC-TOOLS: Composite agentic tools (multi-step workflows)
+import { researchDef } from '@/lib/agent/tools/composite/research-tool';
+import { storyboardDef } from '@/lib/agent/tools/composite/storyboard-tool';
+import { analyzeDef } from '@/lib/agent/tools/composite/analyze-tool';
+import { planDef } from '@/lib/agent/tools/composite/plan-tool';
+
 /**
  * Default agent modes for each tool category
  */
@@ -47,6 +59,8 @@ const DEFAULT_MODES: Record<ToolCategory, AgentMode[]> = {
   search: ['knowledge', 'coding', 'orchestrator'],
   web: ['knowledge', 'coding', 'orchestrator'],
   notes: ['knowledge', 'orchestrator'],
+  unified: ['coding', 'knowledge', 'orchestrator'], // Cross-workspace operations
+  composite: ['knowledge', 'orchestrator'], // Multi-step agentic workflows
 };
 
 /**
@@ -198,6 +212,80 @@ export const TOOL_CATALOG = [
       executionSide: 'both',
     }),
   },
+
+  // ==========================================================================
+  // UNIFIED TOOLS (4) - Cross-workspace file operations
+  // EPIC-TOOLS: Consolidates read_file/read_note, write_file/create_note, etc.
+  // ==========================================================================
+  {
+    definition: readDef,
+    metadata: createToolMetadata('read', 'unified', DEFAULT_MODES.unified, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: writeDef,
+    metadata: createToolMetadata('write', 'unified', DEFAULT_MODES.unified, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'prompt', // Write requires approval
+      riskLevel: 'high',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: deleteDef,
+    metadata: createToolMetadata('delete', 'unified', DEFAULT_MODES.unified, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'prompt', // Delete requires approval
+      riskLevel: 'high',
+      executionSide: 'both',
+    }),
+  },
+  {
+    definition: listDef,
+    metadata: createToolMetadata('list', 'unified', DEFAULT_MODES.unified, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'both',
+    }),
+  },
+
+  // ==========================================================================
+  // COMPOSITE TOOLS (4) - Multi-step agentic workflows
+  // EPIC-TOOLS: Advanced agentic capabilities (research, storyboard, analyze, plan)
+  // ==========================================================================
+  {
+    definition: researchDef,
+    metadata: createToolMetadata('research', 'composite', DEFAULT_MODES.composite, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto', // Read-only research
+      riskLevel: 'low',
+      executionSide: 'server', // Heavy AI processing on server
+    }),
+  },
+  {
+    definition: storyboardDef,
+    metadata: createToolMetadata('storyboard', 'composite', DEFAULT_MODES.composite, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'server',
+    }),
+  },
+  {
+    definition: analyzeDef,
+    metadata: createToolMetadata('analyze', 'composite', DEFAULT_MODES.composite, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'server',
+    }),
+  },
+  {
+    definition: planDef,
+    metadata: createToolMetadata('plan', 'composite', DEFAULT_MODES.composite, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'server',
+    }),
+  },
 ];
 
 /**
@@ -212,6 +300,8 @@ export function getToolCountsByCategory(): Record<string, number> {
     search: TOOL_CATALOG.filter((t) => t.metadata.category === 'search').length,
     web: TOOL_CATALOG.filter((t) => t.metadata.category === 'web').length,
     notes: TOOL_CATALOG.filter((t) => t.metadata.category === 'notes').length,
+    unified: TOOL_CATALOG.filter((t) => t.metadata.category === 'unified').length,
+    composite: TOOL_CATALOG.filter((t) => t.metadata.category === 'composite').length,
   };
 }
 
