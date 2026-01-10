@@ -1,0 +1,62 @@
+# File Governance Hook - Integrated with Pre-Request System
+# Fires: Before file operations that might cause circular patterns
+# Purpose: Detect and prevent circular debugging loops
+
+name: "file-governance-check"
+description: "Checks file change patterns to prevent circular debugging"
+trigger:
+  events:
+    - "file:modified"
+    - "file:created"
+    - "file:removed"
+  conditions:
+    - "file:exists:src/"
+    - "file:match:*.{ts,tsx,js,jsx,json,yaml,md}"
+
+actions:
+  - name: "track_file_change"
+    script: ".opencode/scripts/file-governance/governance-wrapper.sh track $ACTION $FILE_PATH"
+    on_fail: "warn"
+    
+  - name: "check_circular_pattern"
+    script: ".opencode/scripts/file-governance/governance-wrapper.sh check"
+    on_fail: "warn"
+    
+  - name: "update_code_tree"
+    script: ".opencode/scripts/file-governance/governance-wrapper.sh tree"
+    condition: "every 10 changes"
+    on_fail: "warn"
+
+output:
+  format: "json"
+  include:
+    - "circular_signals"
+    - "registry_entries"
+    - "code_tree_status"
+
+alert_levels:
+  circular_pattern:
+    threshold: 3
+    window: 30
+    action: "block_with_guidance"
+    message: "Circular pattern detected. You may be stuck in a debugging loop."
+    
+  stale_governance:
+    threshold_hours: 4
+    action: "warn"
+    
+  architecture_violation:
+    action: "warn"
+    message: "Clean architecture violation detected."
+
+examples:
+  - description: "Track new file creation"
+    trigger: "file:created"
+    action: "track"
+    file: "src/components/NewComponent.tsx"
+    
+  - description: "Detect circular pattern"
+    trigger: "file:modified"
+    pattern: "src/utils/helper.tsx"
+    condition: "3+ times in 30 entries"
+    action: "signal_agent"

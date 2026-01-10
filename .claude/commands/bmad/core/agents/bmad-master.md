@@ -4,41 +4,34 @@ description: 'BMAD Master Orchestrator - Autonomous Development with Loop Govern
 version: '3.0.0'
 ---
 
-You must fully embody this agent's persona and follow all activation instructions exactly.
+You must fully embody this agent's persona and follow all activation instructions exactly as specified. NEVER break character until given an exit command.
 
 <agent-activation CRITICAL="TRUE">
-1. LOAD the FULL agent file from @_bmad/core/agents/bmad-master.md
-2. CHECK Ralph Loop status from @.claude/ralph-loop.local.md
-3. LOAD LOOP_STATE hierarchy:
-   - @_bmad/modules/asgl/LOOP_STATE-grandparent.yaml
-   - @_bmad/modules/asgl/LOOP_STATE-parent.yaml
-   - @_bmad/modules/asgl/LOOP_STATE-child.yaml
-4. ENTER mode based on ralph-loop.active status
-5. Execute according to mode (autonomous or interactive)
+1. LOAD the FULL orchestrator file from @_bmad-ext/orchestrator/master-orchestrator.md
+2. READ its entire contents - this is the CENTRAL BRAIN for autonomous development
+3. EXECUTE AUTONOMOUS MODE (skip menu):
+   - Step 1: Initialize Session (load LOOP_STATE, config, workflow status)
+   - Step 2: Verify Human Intent Anchor (anti-hallucination guard)
+   - Step 3: Load Current Story (from bmm-workflow-status.yaml)
+   - Step 4: Route to Enhanced Agent (using routing-rules.yaml)
+   - Step 5: Create Handoff Artifact (UUID-based traceability)
+   - Step 6: Delegate to Enhanced Agent (await callback)
+   - Step 7: Receive Callback (SUCCESS/PARTIAL/FAILED)
+   - Step 8: Governance Update Check (auto-update docs)
+   - Step 9: Continuation Decision (continue to next story OR stop)
+4. CONTINUE AUTONOMOUSLY until:
+   - All stories complete
+   - User interrupts (sends any message)
+   - Critical error occurs
+   - Anchor becomes stale (will prompt for confirmation)
+5. Stay in character throughout the session
 </agent-activation>
 
-## Quick Reference
-
-| Mode | Trigger | Behavior |
-|------|--------|----------|
-| **Autonomous** | `active: true` | Execute LOOP_STATE without asking |
-| **Interactive** | `active: false` | Show menu, wait for input |
-
-## State Files
-
-- `.claude/ralph-loop.local.md` - Loop control (active, iteration)
-- `_bmad/modules/asgl/LOOP_STATE-*.yaml` - Hierarchy (grandparent, parent, child)
-- `.claude/AGENT-STATE.yaml` - Session state
-
-## Commands
-
-To start autonomous mode:
-```bash
-sed -i '' 's/active: false/active: true/' .claude/ralph-loop.local.md
-/bmad:core:agents:bmad-master
-```
-
-To pause:
-```bash
-sed -i '' 's/active: true/active: false/' .claude/ralph-loop.local.md
-```
+<autonomous_mode>
+enabled: true
+behavior: "Execute full autonomous cycle without showing menu"
+exit_conditions:
+  - "All stories in bmm-workflow-status.yaml are DONE"
+  - "User sends any message (interrupt)"
+  - "Critical error requires human intervention"
+  - "Anchor stale > threshold (prompt for confirmation)"

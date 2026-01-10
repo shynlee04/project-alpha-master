@@ -20,7 +20,7 @@
 import type { StateStorage } from 'zustand/middleware';
 import type { IDEStateRecord } from '@/infrastructure/persistence/dexie-db';
 import type { CombinedIDEState } from './ide-types';
-import { db } from '@/infrastructure/persistence/dexie-db';
+import { getDb } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Module-level reference to the store's getState function.
@@ -64,8 +64,19 @@ export function createIDEStateStorage(): StateStorage {
      */
     getItem: async (_name: string): Promise<string | null> => {
       try {
+        // CRITICAL: During SSR, IndexedDB is not available.
+        // Return null immediately during server-side rendering.
+        if (typeof window === 'undefined') {
+          return null;
+        }
+
         // CRITICAL: During store initialization, getIDEStoreState is null.
         // We must query IndexedDB directly to find persisted state.
+        const db = getDb();
+        if (!db) {
+          return null;
+        }
+
         const record = await db.ideState
           .orderBy('updatedAt')
           .reverse()
@@ -98,6 +109,11 @@ export function createIDEStateStorage(): StateStorage {
      */
     setItem: async (_name: string, value: string): Promise<void> => {
       try {
+        // During SSR, there's no IndexedDB to write to
+        if (typeof window === 'undefined') {
+          return;
+        }
+
         // Parse the persisted state (now includes projectId at top level)
         const state = JSON.parse(value) as Partial<CombinedIDEState>;
         const projectId = state.projectId;
@@ -132,6 +148,10 @@ export function createIDEStateStorage(): StateStorage {
         };
 
         // Write to ideState table (projectId is primary key)
+        const db = getDb();
+        if (!db) {
+          return;
+        }
         await db.ideState.put(record);
 
         console.debug(`[IDEStateStorage] Persisted state for project: ${projectId}`, {
@@ -152,6 +172,11 @@ export function createIDEStateStorage(): StateStorage {
      */
     removeItem: async (_name: string): Promise<void> => {
       try {
+        // During SSR, there's no IndexedDB to delete from
+        if (typeof window === 'undefined') {
+          return;
+        }
+
         if (!getIDEStoreState) {
           return;
         }
@@ -161,6 +186,11 @@ export function createIDEStateStorage(): StateStorage {
 
         if (!projectId) {
           return; // No project, nothing to remove
+        }
+
+        const db = getDb();
+        if (!db) {
+          return;
         }
 
         await db.ideState.delete(projectId);
