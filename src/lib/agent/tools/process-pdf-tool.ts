@@ -16,10 +16,16 @@ import type { AgentKnowledgeTools } from '../facades';
 
 /**
  * PDF processing input schema
+ * 
+ * NOTE: `file` is typed as z.any() because z.instanceof(File) cannot be serialized
+ * to JSON Schema for LLM tool definitions. The actual File object is passed
+ * at runtime from the client-side implementation.
  */
 const ProcessPDFInputSchema = z.object({
-  file: z.instanceof(File).describe('PDF file to process'),
+  file: z.any().optional().describe('PDF file object (client-side only, not passed by LLM)'),
   base64Content: z.string().describe('Base64-encoded PDF content'),
+  filename: z.string().optional().describe('Original filename'),
+  mimeType: z.string().optional().default('application/pdf').describe('MIME type of the PDF'),
   options: z.object({
     extractHeadings: z.boolean().optional().default(true),
     extractTables: z.boolean().optional().default(true),
@@ -83,7 +89,7 @@ export function createProcessPDFClientTool(getKnowledgeTools: () => AgentKnowled
     const args = input as ProcessPDFInput;
 
     try {
-      // Validate inputs
+      // Validate inputs - base64Content is required for LLM-initiated calls
       if (!args.base64Content) {
         return {
           success: false,
@@ -91,16 +97,25 @@ export function createProcessPDFClientTool(getKnowledgeTools: () => AgentKnowled
         };
       }
 
-      if (!args.file || args.file.type !== 'application/pdf') {
-        return {
-          success: false,
-          error: 'Valid PDF file is required',
-        };
+      // Create File from base64 if not provided (LLM only sends base64Content)
+      let pdfFile: File;
+      if (args.file && args.file instanceof File) {
+        pdfFile = args.file;
+      } else {
+        // Convert base64 to File
+        const binaryString = atob(args.base64Content);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const mimeType = args.mimeType || 'application/pdf';
+        const filename = args.filename || 'document.pdf';
+        pdfFile = new File([bytes], filename, { type: mimeType });
       }
 
       // Call knowledge tools facade
       const tools = getKnowledgeTools();
-      const result = await tools.processPDF(args.file, args.base64Content, args.options);
+      const result = await tools.processPDF(pdfFile, args.base64Content, args.options);
 
       // Map GeminiPDFResult to ProcessPDFOutput schema
       const mappedResult: ProcessPDFOutput = {

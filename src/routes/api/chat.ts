@@ -300,12 +300,22 @@ export const Route = createFileRoute('/api/chat')({
                     });
 
                     // Create SSE stream with abort controller
+                    console.log('[/api/chat] About to create SSE stream from chat() result');
+                    
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const readableStream = toServerSentEventsStream(
-                        stream as any,
-                        abortController as any
-                    );
+                    let readableStream: ReadableStream;
+                    try {
+                        readableStream = toServerSentEventsStream(
+                            stream as any,
+                            abortController as any
+                        );
+                        console.log('[/api/chat] SSE stream created successfully');
+                    } catch (sseError) {
+                        console.error('[/api/chat] Failed to create SSE stream:', sseError);
+                        throw sseError;
+                    }
 
+                    console.log('[/api/chat] Returning SSE Response');
                     return new Response(readableStream, {
                         headers: {
                             'Content-Type': 'text/event-stream',

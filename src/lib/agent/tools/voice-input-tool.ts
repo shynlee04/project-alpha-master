@@ -97,11 +97,16 @@ const VoiceInputConfigSchema = z.object({
 
 /**
  * Voice input tool input schema
+ * 
+ * NOTE: `audio` is typed as z.any() because z.instanceof(File) cannot be serialized
+ * to JSON Schema for LLM tool definitions. The actual File object is passed
+ * at runtime from the client-side implementation.
  */
 const VoiceInputInputSchema = z.object({
-  audio: z.instanceof(File).describe('Audio file to transcribe'),
-  base64Audio: z.string().optional().describe('Base64-encoded audio (alternative to File)'),
-  mimeType: z.string().optional().describe('MIME type of audio (required for base64)'),
+  audio: z.any().optional().describe('Audio file object (client-side only, not passed by LLM)'),
+  base64Audio: z.string().describe('Base64-encoded audio content'),
+  mimeType: z.string().describe('MIME type of audio (e.g., audio/mp3, audio/wav)'),
+  filename: z.string().optional().describe('Original filename'),
   config: VoiceInputConfigSchema.optional().describe('Transcription configuration'),
 });
 
@@ -341,15 +346,16 @@ export function createVoiceInputClientTool() {
     try {
       let audioFile: File;
 
-      // Handle base64 audio input
+      // Primary path: base64Audio (required for LLM calls)
       if (args.base64Audio && args.mimeType) {
-        audioFile = base64ToFile(args.base64Audio, args.mimeType);
-      } else if (args.audio) {
+        audioFile = base64ToFile(args.base64Audio, args.mimeType, args.filename);
+      } else if (args.audio && args.audio instanceof File) {
+        // Fallback: direct File object from client-side UI
         audioFile = args.audio;
       } else {
         return {
           success: false,
-          error: 'Either audio file or base64Audio with mimeType is required',
+          error: 'base64Audio and mimeType are required',
         };
       }
 

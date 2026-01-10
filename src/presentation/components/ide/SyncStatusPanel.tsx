@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { Badge } from '@/presentation/components/ui/badge';
 import { Button } from '@/presentation/components/ui/button';
-import { RefreshCw, AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { RefreshCw, AlertCircle, CheckCircle2, Clock, XCircle, X } from 'lucide-react';
 import {
   crossWorkspaceEventBus,
   SyncStatusEvent,
@@ -99,6 +99,10 @@ export function SyncStatusPanel() {
     lastSyncTime: null,
   });
 
+  // DISMISS FIX: Track dismissed state and show again when new operations arrive
+  const [isDismissed, setIsDismissed] = useState(false);
+  const prevOperationsCountRef = useRef(0);
+
   // Track operations by path for accumulation
   const operationsMapRef = useRef<Map<string, SyncOperation>>(new Map());
 
@@ -128,6 +132,7 @@ export function SyncStatusPanel() {
 
   /**
    * Update sync state from operations map
+   * DISMISS FIX: Re-show panel when new operations arrive after dismissal
    */
   const updateStateFromMap = useCallback(() => {
     const operations = Array.from(operationsMapRef.current.values());
@@ -135,6 +140,15 @@ export function SyncStatusPanel() {
     const completedCount = operations.filter(op => op.status === 'completed').length;
     const failedCount = operations.filter(op => op.status === 'failed').length;
     const pendingCount = operations.filter(op => op.status === 'pending').length;
+
+    const newCount = operations.length;
+    const prevCount = prevOperationsCountRef.current;
+
+    // DISMISS FIX: Re-show panel if new operations arrive after dismissal
+    if (isDismissed && newCount > 0 && newCount !== prevCount) {
+      setIsDismissed(false);
+    }
+    prevOperationsCountRef.current = newCount;
 
     setSyncState({
       operations: operations.sort((a, b) => b.timestamp - a.timestamp),
@@ -147,7 +161,7 @@ export function SyncStatusPanel() {
         ? Math.max(...operations.map(op => op.timestamp))
         : null,
     });
-  }, []);
+  }, [isDismissed]);
 
   // Subscribe to sync events from cross-workspace event bus
   useEffect(() => {
@@ -312,12 +326,35 @@ export function SyncStatusPanel() {
     );
   };
 
+  /**
+   * Dismiss handler - hides panel until new operations arrive
+   */
+  const handleDismiss = useCallback(() => {
+    setIsDismissed(true);
+  }, []);
+
+  // DISMISS FIX: Hide panel if dismissed AND no operations to show
+  // (will re-show when new operations arrive via updateStateFromMap)
+  if (isDismissed && syncState.operations.length === 0) {
+    return null;
+  }
+
   return (
     <div className="sync-status-panel p-4 bg-background border rounded-none">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold">{t('sync.title')}</h3>
-        {getOverallStatusBadge()}
+        <div className="flex items-center gap-2">
+          {getOverallStatusBadge()}
+          {/* Dismiss button */}
+          <button
+            onClick={handleDismiss}
+            className="p-1 rounded-none border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Dismiss sync status"
+          >
+            <X size={14} />
+          </button>
+        </div>
       </div>
 
       {/* Last sync time */}
@@ -377,14 +414,6 @@ export function SyncStatusPanel() {
             )}
           </div>
         ))}
-
-        {/* Empty state */}
-        {syncState.operations.length === 0 && (
-          <div className="text-center py-6 text-sm text-muted-foreground">
-            <CheckCircle2 className="h-8 w-8 mx-auto mb-2 text-[var(--success)]" />
-            <p>{t('sync.empty')}</p>
-          </div>
-        )}
       </div>
 
       {/* Summary stats */}

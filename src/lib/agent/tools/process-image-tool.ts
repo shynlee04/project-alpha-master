@@ -16,10 +16,16 @@ import type { AgentKnowledgeTools } from '../facades';
 
 /**
  * Image processing input schema
+ * 
+ * NOTE: `file` is typed as z.any() because z.instanceof(File) cannot be serialized
+ * to JSON Schema for LLM tool definitions. The actual File object is passed
+ * at runtime from the client-side implementation.
  */
 const ProcessImageInputSchema = z.object({
-  file: z.instanceof(File).describe('Image file to process'),
+  file: z.any().optional().describe('Image file object (client-side only, not passed by LLM)'),
   base64Content: z.string().describe('Base64-encoded image content'),
+  filename: z.string().optional().describe('Original filename'),
+  mimeType: z.string().optional().describe('MIME type of the image (e.g., image/png, image/jpeg)'),
   options: z.object({
     extractText: z.boolean().optional().default(true),
     generateDescription: z.boolean().optional().default(true),
@@ -70,7 +76,7 @@ export function createProcessImageClientTool(getKnowledgeTools: () => AgentKnowl
     const args = input as ProcessImageInput;
 
     try {
-      // Validate inputs
+      // Validate inputs - base64Content is required for LLM-initiated calls
       if (!args.base64Content) {
         return {
           success: false,
@@ -78,16 +84,27 @@ export function createProcessImageClientTool(getKnowledgeTools: () => AgentKnowl
         };
       }
 
-      if (!args.file || !args.file.type.startsWith('image/')) {
-        return {
-          success: false,
-          error: 'Valid image file is required',
-        };
+      // Create File from base64 if not provided (LLM only sends base64Content)
+      let imageFile: File;
+      let mimeType: string;
+      if (args.file && args.file instanceof File) {
+        imageFile = args.file;
+        mimeType = imageFile.type;
+      } else {
+        // Convert base64 to File
+        const binaryString = atob(args.base64Content);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        mimeType = args.mimeType || 'image/png';
+        const filename = args.filename || 'image.png';
+        imageFile = new File([bytes], filename, { type: mimeType });
       }
 
       // Call knowledge tools facade
       const tools = getKnowledgeTools();
-      const result = await tools.processImage(args.file, args.base64Content, args.options);
+      const result = await tools.processImage(imageFile, args.base64Content, args.options);
 
       // Map GeminiImageResult to ProcessImageOutput schema
       const mappedResult: ProcessImageOutput = {
@@ -99,7 +116,7 @@ export function createProcessImageClientTool(getKnowledgeTools: () => AgentKnowl
         })),
         isHandwriting: result.imageType === 'handwriting',
         metadata: {
-          mimeType: args.file.type,
+          mimeType,
           width: undefined,
           height: undefined,
         },
