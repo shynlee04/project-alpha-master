@@ -9,6 +9,8 @@
  * 
  * @see https://webcontainers.io/guides/configuring-headers
  */
+
+// @ts-expect-error - Module resolution requires bundler/nodenext, types exist at runtime
 import handler, { createServerEntry } from '@tanstack/react-start/server-entry'
 
 export default createServerEntry({

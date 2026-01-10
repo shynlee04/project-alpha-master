@@ -24,7 +24,6 @@ import { IDEHeaderBar } from './IDEHeaderBar';
 import { StatusBar } from '../ide/StatusBar';
 import { MobileIDELayout } from './MobileIDELayout';
 import { useResponsive } from '@/hooks/useResponsive';
-import { SyncStatusPanel } from '@/presentation/components/ui/activity-indicators';
 import { SyncDevTools } from '@/presentation/components/dev/SyncDevTools';
 import {
     useIDEKeyboardShortcuts,
@@ -35,8 +34,6 @@ import {
 } from './hooks';
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
-// WB-8.3: Cross-workspace event subscriptions for state synchronization
-import { useAllCrossWorkspaceEvents } from '@/lib/events/use-cross-workspace-events';
 
 // Import sub-components
 import {

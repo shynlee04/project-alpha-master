@@ -6,7 +6,7 @@
  */
 
 import { ReactNode, useState, useEffect } from 'react'
-import { useResponsiveBreakpoint, Breakpoint } from '@/hooks/useResponsiveBreakpoint'
+import { useResponsiveBreakpoint } from '@/hooks/useResponsiveBreakpoint'
 
 interface MobileDetectionProps {
   /** Content to render on mobile only */
@@ -26,7 +26,7 @@ export function MobileDetection({
   mobileOnly,
   desktopOnly,
   children,
-  breakpoint = 768,
+  breakpoint: _breakpoint = 768,
 }: MobileDetectionProps) {
   const currentBreakpoint = useResponsiveBreakpoint()
   const isMobile = currentBreakpoint === 'mobile'

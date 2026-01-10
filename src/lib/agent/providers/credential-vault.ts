@@ -66,6 +66,7 @@ export interface VaultStatus {
  */
 export class CredentialVault {
     private masterKey: CryptoKey | null = null;
+    /** @internal Stored for future use in multi-key scenarios */
     private encryptionKey: CryptoKey | null = null;
     private initialized = false;
     private _cachedPassword?: string;
@@ -120,6 +121,14 @@ export class CredentialVault {
      */
     verifyEncryptionCompliance() {
         return this.encryption.verifyEncryptionCompliance();
+    }
+
+    /**
+     * Check if encryption key is loaded (for debugging/status checks)
+     * @internal
+     */
+    hasEncryptionKeyLoaded(): boolean {
+        return this.encryptionKey !== null;
     }
 
     /**

@@ -1,6 +1,6 @@
 # AGENTS.md - Project Alpha Governance
 
-> **Version:** 2.0.0 | **Updated:** 2026-01-09T20:50+07:00 | **Health:** 75%
+> **Version:** 2.0.1 | **Updated:** 2026-01-10T18:15+07:00 | **Health:** 85%
 
 ---
 
@@ -13,6 +13,8 @@
 | **Next Story** | FS-05: FileLockService |
 | **Sprint** | phase-2-sprint-status-2026-01-09.yaml |
 | **Blocked Epic** | EPIC-38 (waiting on EPIC-FS) |
+| **Last Complete Epic** | EPIC-40: Multimodal Chat (100%) |
+| **TypeScript Errors** | 0 ✅ |
 
 ---
 

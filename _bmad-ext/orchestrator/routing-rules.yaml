@@ -1,0 +1,453 @@
+# _bmad-ext/orchestrator/routing-rules.yaml
+# Dynamic Story → Enhanced Agent Routing
+# Replaces static MODULE-ROUTING.yaml (316 lines)
+
+schema_version: "1.0.0"
+created: "2026-01-10"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ROUTING RULES
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# Rules are evaluated in order. First match wins.
+# Each rule has:
+#   - if: condition to match
+#   - agent: enhanced agent to delegate to
+#   - workflow: workflow to execute
+#   - priority: for execution ordering
+#   - timeout: max execution time
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+routing_rules:
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # CRITICAL: Architecture Remediation (Highest Priority)
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "REMEDIATION-001"
+    name: "God Store Split"
+    if: "story_type == 'god_store_split'"
+    agent: "dev-ext"
+    workflow: "remediation-cycle"
+    priority: "critical"
+    timeout_minutes: 120
+    description: "Split large stores (>300 lines) into focused slices"
+
+  - rule_id: "REMEDIATION-002"
+    name: "Component Split"
+    if: "story_type == 'component_split'"
+    agent: "dev-ext"
+    workflow: "remediation-cycle"
+    priority: "critical"
+    timeout_minutes: 90
+    description: "Break down god components into smaller modules"
+
+  - rule_id: "REMEDIATION-003"
+    name: "TypeScript Fix"
+    if: "story_type == 'typescript_fix'"
+    agent: "dev-ext"
+    workflow: "remediation-cycle"
+    priority: "critical"
+    timeout_minutes: 60
+    description: "Fix TypeScript compilation errors"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # FEATURE DEVELOPMENT
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "DEV-001"
+    name: "Feature Development"
+    if: "story_type == 'feature_development'"
+    agent: "dev-ext"
+    workflow: "story-cycle"
+    priority: "high"
+    timeout_minutes: 60
+    description: "Implement new features following TDD"
+
+  - rule_id: "DEV-002"
+    name: "Bug Fix"
+    if: "story_type == 'bug_fix'"
+    agent: "dev-ext"
+    workflow: "story-cycle"
+    priority: "high"
+    timeout_minutes: 45
+    description: "Fix reported bugs with tests"
+
+  - rule_id: "DEV-003"
+    name: "Code Review"
+    if: "story_type == 'code_review'"
+    agent: "dev-ext"
+    workflow: "review-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Review code changes and provide feedback"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # ARCHITECTURE & DESIGN
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "ARCH-001"
+    name: "System Design"
+    if: "story_type == 'system_design'"
+    agent: "architect-ext"
+    workflow: "architecture-cycle"
+    priority: "high"
+    timeout_minutes: 60
+    description: "Create system architecture design"
+
+  - rule_id: "ARCH-002"
+    name: "Technical Specification"
+    if: "story_type == 'technical_spec'"
+    agent: "architect-ext"
+    workflow: "architecture-cycle"
+    priority: "high"
+    timeout_minutes: 60
+    description: "Create detailed technical specification"
+
+  - rule_id: "ARCH-003"
+    name: "Architecture Decision Record"
+    if: "story_type == 'adr'"
+    agent: "architect-ext"
+    workflow: "adr-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Document architecture decision"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # ANALYSIS & RESEARCH
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "ANALYSIS-001"
+    name: "Requirements Analysis"
+    if: "story_type == 'product_analysis' OR story_type == 'requirements_analysis'"
+    agent: "analyst-ext"
+    workflow: "analysis-cycle"
+    priority: "high"
+    timeout_minutes: 45
+    description: "Analyze and document requirements"
+
+  - rule_id: "ANALYSIS-002"
+    name: "Competitive Analysis"
+    if: "story_type == 'competitive_analysis'"
+    agent: "analyst-ext"
+    workflow: "analysis-cycle"
+    priority: "medium"
+    timeout_minutes: 60
+    description: "Research competitive landscape"
+
+  - rule_id: "ANALYSIS-003"
+    name: "Domain Analysis"
+    if: "story_type == 'domain_analysis'"
+    agent: "quality-scanner-ext"
+    workflow: "scan-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Analyze domain-specific code"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # PRODUCT MANAGEMENT
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "PM-001"
+    name: "Sprint Planning"
+    if: "story_type == 'sprint_planning'"
+    agent: "pm-ext"
+    workflow: "planning-cycle"
+    priority: "high"
+    timeout_minutes: 60
+    description: "Plan upcoming sprint"
+
+  - rule_id: "PM-002"
+    name: "Backlog Refinement"
+    if: "story_type == 'backlog_refinement'"
+    agent: "pm-ext"
+    workflow: "planning-cycle"
+    priority: "medium"
+    timeout_minutes: 45
+    description: "Refine backlog items"
+
+  - rule_id: "PM-003"
+    name: "Sprint Retrospective"
+    if: "story_type == 'retrospective'"
+    agent: "pm-ext"
+    workflow: "retrospective-cycle"
+    priority: "low"
+    timeout_minutes: 30
+    description: "Conduct sprint retrospective"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # STORY MANAGEMENT
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "SM-001"
+    name: "Story Creation"
+    if: "story_type == 'story_creation'"
+    agent: "sm-ext"
+    workflow: "story-creation-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Create new user story"
+
+  - rule_id: "SM-002"
+    name: "Story Breakdown"
+    if: "story_type == 'story_breakdown'"
+    agent: "sm-ext"
+    workflow: "story-creation-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Break epic into stories"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # TESTING
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "TEA-001"
+    name: "Test Design"
+    if: "story_type == 'test_design'"
+    agent: "tea-ext"
+    workflow: "testing-cycle"
+    priority: "medium"
+    timeout_minutes: 45
+    description: "Design test strategy and test cases"
+
+  - rule_id: "TEA-002"
+    name: "Test Review"
+    if: "story_type == 'test_review'"
+    agent: "tea-ext"
+    workflow: "testing-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Review existing tests"
+
+  - rule_id: "TEA-003"
+    name: "E2E Test"
+    if: "story_type == 'e2e_test'"
+    agent: "tea-ext"
+    workflow: "e2e-cycle"
+    priority: "high"
+    timeout_minutes: 60
+    description: "Create end-to-end tests"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # DOCUMENTATION
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "DOCS-001"
+    name: "API Documentation"
+    if: "story_type == 'api_docs'"
+    agent: "tech-writer-ext"
+    workflow: "documentation-cycle"
+    priority: "medium"
+    timeout_minutes: 45
+    description: "Create API documentation"
+
+  - rule_id: "DOCS-002"
+    name: "User Guide"
+    if: "story_type == 'user_guide'"
+    agent: "tech-writer-ext"
+    workflow: "documentation-cycle"
+    priority: "low"
+    timeout_minutes: 60
+    description: "Create user guide"
+
+  - rule_id: "DOCS-003"
+    name: "README Update"
+    if: "story_type == 'readme_update'"
+    agent: "tech-writer-ext"
+    workflow: "documentation-cycle"
+    priority: "low"
+    timeout_minutes: 15
+    description: "Update README documentation"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # UX DESIGN
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "UX-001"
+    name: "UX Design"
+    if: "story_type == 'ux_design'"
+    agent: "ux-designer-ext"
+    workflow: "design-cycle"
+    priority: "medium"
+    timeout_minutes: 60
+    description: "Create UX design and wireframes"
+
+  - rule_id: "UX-002"
+    name: "Accessibility Review"
+    if: "story_type == 'accessibility_review'"
+    agent: "ux-designer-ext"
+    workflow: "design-cycle"
+    priority: "medium"
+    timeout_minutes: 30
+    description: "Review for accessibility compliance"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # QUALITY & SCANNING
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "QUALITY-001"
+    name: "Health Assessment"
+    if: "story_type == 'health_assessment'"
+    agent: "quality-scanner-ext"
+    workflow: "scan-cycle"
+    priority: "high"
+    timeout_minutes: 45
+    description: "Full codebase health scan"
+
+  - rule_id: "QUALITY-002"
+    name: "State Scan"
+    if: "story_type == 'state_scan'"
+    agent: "quality-scanner-ext"
+    workflow: "scan-cycle"
+    priority: "high"
+    timeout_minutes: 30
+    description: "Scan Zustand state management"
+
+  - rule_id: "QUALITY-003"
+    name: "Architecture Scan"
+    if: "story_type == 'architecture_scan'"
+    agent: "quality-scanner-ext"
+    workflow: "scan-cycle"
+    priority: "high"
+    timeout_minutes: 30
+    description: "Scan for architecture issues"
+
+  - rule_id: "QUALITY-004"
+    name: "Security Scan"
+    if: "story_type == 'security_scan'"
+    agent: "quality-scanner-ext"
+    workflow: "scan-cycle"
+    priority: "critical"
+    timeout_minutes: 30
+    description: "Scan for security vulnerabilities"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # DEFAULT FALLBACK
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - rule_id: "DEFAULT-001"
+    name: "Default Handler"
+    if: "true"  # Always matches if nothing above did
+    agent: "dev-ext"
+    workflow: "story-cycle"
+    priority: "medium"
+    timeout_minutes: 60
+    description: "Default handler for unknown story types"
+    log: "Unknown story type '{story_type}', using default dev-ext"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# WORKFLOW DEFINITIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+workflows:
+  story-cycle:
+    path: "_bmad-ext/workflows/story-cycle/workflow.md"
+    description: "Full story development cycle"
+
+  remediation-cycle:
+    path: "_bmad-ext/workflows/remediation-cycle/workflow.md"
+    description: "Architecture remediation cycle"
+
+  architecture-cycle:
+    path: "_bmad-ext/workflows/architecture-cycle/workflow.md"
+    description: "Architecture design cycle"
+
+  analysis-cycle:
+    path: "_bmad-ext/workflows/analysis-cycle/workflow.md"
+    description: "Requirements analysis cycle"
+
+  planning-cycle:
+    path: "_bmad-ext/workflows/planning-cycle/workflow.md"
+    description: "Product planning cycle"
+
+  testing-cycle:
+    path: "_bmad-ext/workflows/testing-cycle/workflow.md"
+    description: "Test design cycle"
+
+  documentation-cycle:
+    path: "_bmad-ext/workflows/documentation-cycle/workflow.md"
+    description: "Documentation cycle"
+
+  design-cycle:
+    path: "_bmad-ext/workflows/design-cycle/workflow.md"
+    description: "UX design cycle"
+
+  scan-cycle:
+    path: "_bmad-ext/workflows/scan-cycle/workflow.md"
+    description: "Quality scan cycle"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY LEVELS
+# ═══════════════════════════════════════════════════════════════════════════
+
+priorities:
+  critical:
+    value: 100
+    description: "System stability issues, security vulnerabilities"
+    examples: ["god_store_split", "security_scan"]
+
+  high:
+    value: 75
+    description: "Feature development, architecture work, health scans"
+    examples: ["feature_development", "system_design", "health_assessment"]
+
+  medium:
+    value: 50
+    description: "Documentation, analysis, design, testing"
+    examples: ["api_docs", "ux_design", "test_design"]
+
+  low:
+    value: 25
+    description: "Nice-to-have documentation, guides"
+    examples: ["user_guide", "readme_update"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ENHANCED AGENT INDEX
+# ═══════════════════════════════════════════════════════════════════════════
+
+agents:
+  dev-ext:
+    path: "_bmad-ext/agents/dev-ext.md"
+    wraps: "_bmad/bmm/agents/dev.md"
+    capabilities: ["feature_development", "bug_fix", "code_review", "remediation"]
+
+  architect-ext:
+    path: "_bmad-ext/agents/architect-ext.md"
+    wraps: "_bmad/bmm/agents/architect.md"
+    capabilities: ["system_design", "technical_spec", "adr"]
+
+  analyst-ext:
+    path: "_bmad-ext/agents/analyst-ext.md"
+    wraps: "_bmad/bmm/agents/analyst.md"
+    capabilities: ["requirements_analysis", "competitive_analysis"]
+
+  pm-ext:
+    path: "_bmad-ext/agents/pm-ext.md"
+    wraps: "_bmad/bmm/agents/pm.md"
+    capabilities: ["sprint_planning", "backlog_refinement", "retrospective"]
+
+  sm-ext:
+    path: "_bmad-ext/agents/sm-ext.md"
+    wraps: "_bmad/bmm/agents/sm.md"
+    capabilities: ["story_creation", "story_breakdown"]
+
+  tea-ext:
+    path: "_bmad-ext/agents/tea-ext.md"
+    wraps: "_bmad/bmm/agents/tea.md"
+    capabilities: ["test_design", "test_review", "e2e_test"]
+
+  tech-writer-ext:
+    path: "_bmad-ext/agents/tech-writer-ext.md"
+    wraps: "_bmad/bmm/agents/tech-writer.md"
+    capabilities: ["api_docs", "user_guide", "readme_update"]
+
+  ux-designer-ext:
+    path: "_bmad-ext/agents/ux-designer-ext.md"
+    wraps: "_bmad/bmm/agents/ux-designer.md"
+    capabilities: ["ux_design", "accessibility_review"]
+
+  quality-scanner-ext:
+    path: "_bmad-ext/agents/quality-scanner-ext.md"
+    wraps: "_bmad/modules/quality/scanners/"
+    capabilities: ["health_assessment", "state_scan", "architecture_scan", "security_scan"]

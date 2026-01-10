@@ -1,0 +1,55 @@
+# _bmad-ext/schemas/handoff-artifact.schema.yaml
+# Required fields for all handoff artifacts
+
+schema_version: "1.0.0"
+
+required_frontmatter:
+  - artifact_id         # UUID
+  - artifact_type       # "handoff"
+  - parent_id           # UUID of parent (null if root)
+  - story_id            # Associated story
+  - source_agent        # Who created this
+  - target_agent        # Who should consume this
+  - created_at          # ISO timestamp
+  - status              # PENDING | CONSUMED | EXPIRED
+
+required_sections:
+  - context_summary     # What was done (max 500 chars)
+  - handoff_data        # Structured data for target agent
+  - acceptance_criteria # What target agent must achieve
+  - validation_commands # How to verify completion
+  - escalation_path     # What to do on failure
+
+example: |
+  ---
+  artifact_id: "abc123-def456"
+  artifact_type: "handoff"
+  parent_id: null
+  story_id: "FS-05"
+  source_agent: "master-orchestrator"
+  target_agent: "dev-ext"
+  created_at: "2026-01-10T10:00:00+07:00"
+  status: "PENDING"
+  ---
+
+  ## Context Summary
+  Implementing FileLockService for EPIC-FS story FS-05.
+
+  ## Handoff Data
+  - story_file: "_bmad-output/sprint-artifacts/stories/FS-05.md"
+  - acceptance_criteria: 5 items
+  - estimated_hours: 4
+
+  ## Acceptance Criteria
+  1. FileLockService interface defined
+  2. Unit tests passing
+  3. Integration with existing FileService
+
+  ## Validation Commands
+  ```bash
+  pnpm tsc --noEmit
+  pnpm vitest run src/domain/services/FileLockService.test.ts
+  ```
+
+  ## Escalation Path
+  On failure → Report to master-orchestrator with error details

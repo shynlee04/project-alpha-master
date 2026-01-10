@@ -13,7 +13,6 @@ import { TooltipProvider } from '@/presentation/components/ui/tooltip-react19-co
 import { ToastProvider, ToastContainer } from '@/presentation/components/ui/Toast'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
-import { OfflineIndicator } from '@/presentation/components/offline/OfflineIndicator'
 import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
 import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
 import { useCommandPalette } from '@/hooks/useCommandPalette'

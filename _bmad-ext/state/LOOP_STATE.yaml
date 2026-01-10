@@ -1,0 +1,110 @@
+# _bmad-ext/state/LOOP_STATE.yaml
+# Unified Loop State with Anti-Hallucination Anchoring
+
+schema_version: "2.0.0"
+created: "2026-01-10"
+last_updated: null  # Set on first use
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SESSION TRACKING
+# ═══════════════════════════════════════════════════════════════════════════
+
+session:
+  id: null                    # UUID assigned on start
+  status: "NOT_STARTED"       # NOT_STARTED | RUNNING | PAUSED | COMPLETED | FAILED
+  started_at: null
+  paused_at: null
+  completed_at: null
+  iteration: 0
+  max_iterations: 100
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ANTI-HALLUCINATION ANCHOR (CRITICAL)
+# ═══════════════════════════════════════════════════════════════════════════
+
+anchor:
+  # When human last provided explicit direction
+  human_intent_timestamp: null
+
+  # What human asked for (max 200 chars) - the GROUND TRUTH
+  human_intent_summary: null
+
+  # Conversation ID where intent was captured
+  conversation_id: null
+
+  # Staleness threshold - if older than this, REQUIRE re-confirmation
+  staleness_threshold_hours: 4
+
+  # If true, auto-invalidate stale state (move to archive)
+  auto_invalidate: true
+
+  # VALIDATION RULE: Before resuming ANY loop:
+  # 1. Check if (now - human_intent_timestamp) > staleness_threshold_hours
+  # 2. If stale, HALT and ask: "Your last direction was X hours ago. Confirm to continue?"
+  # 3. If confirmed, update human_intent_timestamp to NOW
+  # 4. If not confirmed, reset loop state
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT WORK
+# ═══════════════════════════════════════════════════════════════════════════
+
+current:
+  story_id: null              # e.g., "FS-05"
+  story_title: null
+  epic_id: null               # e.g., "EPIC-FS"
+  module: null                # MOD-A | MOD-B | MOD-C | MOD-D (from registry)
+  workflow: null              # e.g., "story-cycle"
+  agent: null                 # e.g., "dev-ext"
+  step: null                  # Current step in workflow (1-6)
+  step_started_at: null
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DELEGATION TRACKING
+# ═══════════════════════════════════════════════════════════════════════════
+
+delegations:
+  # Currently active delegation (max 1)
+  active:
+    delegation_id: null
+    parent_agent: null        # Who delegated
+    child_agent: null         # Who is executing
+    handoff_artifact: null    # Path to handoff artifact
+    started_at: null
+    timeout_minutes: 30
+
+  # Completed delegations (keep last 10)
+  completed: []
+
+  # Failed delegations (keep last 5)
+  failed: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROGRESS
+# ═══════════════════════════════════════════════════════════════════════════
+
+progress:
+  stories_completed_this_session: 0
+  stories_remaining: 0
+  artifacts_created: []
+  governance_updates_pending: false
+  last_governance_update: null
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONTINUATION (For Resume)
+# ═══════════════════════════════════════════════════════════════════════════
+
+continuation:
+  next_action: null           # What to do next
+  blockers: []                # List of blocking issues
+  pending_handoffs: []        # Handoffs awaiting processing
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ERROR STATE
+# ═══════════════════════════════════════════════════════════════════════════
+
+errors:
+  count: 0
+  last_error: null
+  last_error_at: null
+  recovery_attempts: 0
+  max_recovery_attempts: 3

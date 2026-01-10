@@ -46,8 +46,8 @@ export class NoteToolsFacade implements AgentNoteTools {
       title: note.title,
       content,
       parentId: note.parentId ?? null,
-      createdAt: note.createdAt,
-      updatedAt: note.updatedAt,
+      createdAt: new Date(note.createdAt).toISOString(),
+      updatedAt: new Date(note.updatedAt).toISOString(),
     };
   }
 

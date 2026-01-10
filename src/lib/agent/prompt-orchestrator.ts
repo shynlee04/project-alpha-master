@@ -9,7 +9,7 @@
  * @story 40-07 - Implement Prompt Orchestrator
  */
 
-import { classifyMode, getModeClassifier } from './mode-classifier';
+import { classifyMode } from './mode-classifier';
 import { toolRegistry } from '@/infrastructure/tools/centralized-tool-registry';
 import type { ContextSources, ClassificationResult } from './mode-classifier-types';
 import type { AgentMode, WorkspaceType } from '@/domain/tools';
@@ -17,9 +17,6 @@ import {
   buildSystemPrompt,
   getModePrompt,
   ORCHESTRATOR_SYSTEM_PROMPT,
-  MODE_CODING_PROMPT,
-  MODE_KNOWLEDGE_PROMPT,
-  MODE_ORCHESTRATOR_SUB_PROMPT,
 } from './system-prompt';
 
 /**

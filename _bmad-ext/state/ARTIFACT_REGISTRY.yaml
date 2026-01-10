@@ -1,0 +1,55 @@
+# _bmad-ext/state/ARTIFACT_REGISTRY.yaml
+# Central Artifact Registry with Parent/Child Linking
+
+schema_version: "1.0.0"
+created: "2026-01-10"
+last_updated: null
+
+# ═══════════════════════════════════════════════════════════════════════════
+# REGISTRY ENTRIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+artifacts: []
+# Each entry has:
+# - id: UUID
+# - path: relative path from project root
+# - type: handoff | story | sprint | diagnostic | governance
+# - parent_id: UUID of parent artifact (null if root)
+# - children_ids: [UUID, UUID, ...]
+# - status: ACTIVE | STALE | ARCHIVED
+# - created_at: ISO timestamp
+# - updated_at: ISO timestamp
+# - created_by: agent ID
+# - story_id: associated story (if applicable)
+# - ttl_hours: time-to-live (null = permanent)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INDEXES (For Fast Lookup)
+# ═══════════════════════════════════════════════════════════════════════════
+
+indexes:
+  by_story: {}    # story_id → [artifact_ids]
+  by_parent: {}   # parent_id → [child_ids]
+  by_status:
+    ACTIVE: []
+    STALE: []
+    ARCHIVED: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# VALIDATION RULES
+# ═══════════════════════════════════════════════════════════════════════════
+
+validation:
+  # Run daily
+  orphan_detection:
+    enabled: true
+    archive_after_hours: 48
+
+  # Run before workflow
+  stale_detection:
+    enabled: true
+    thresholds:
+      handoff: 4        # hours
+      diagnostic: 1     # hours
+      story: 168        # hours (7 days)
+      governance: null  # never stale

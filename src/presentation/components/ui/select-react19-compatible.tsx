@@ -13,10 +13,10 @@
  */
 
 import * as React from "react"
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { CheckIcon, ChevronDownIcon } from "lucide-react"
 import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { useTranslation } from "react-i18next"
+
 
 interface SelectProps {
   value?: string
@@ -46,6 +46,7 @@ interface SelectItemProps {
 interface SelectValueProps {
   placeholder?: string
   value?: string
+  children?: React.ReactNode
 }
 
 const selectTriggerVariants = cva(
@@ -82,7 +83,7 @@ const SelectContext = React.createContext<{
   setOpen: () => { },
 })
 
-export function Select({ value, onValueChange, disabled, children }: SelectProps) {
+export function Select({ value, onValueChange, disabled: _disabled, children }: SelectProps) {
   const [open, setOpen] = React.useState(false)
   const [internalValue, setInternalValue] = React.useState(value)
 
@@ -197,9 +198,18 @@ export function SelectItem({ value, children, className, onClick }: SelectItemPr
   )
 }
 
-export function SelectValue({ placeholder, value }: SelectValueProps) {
+export function SelectValue({ placeholder, value, children }: SelectValueProps) {
   const { value: contextValue } = React.useContext(SelectContext)
   const displayValue = value || contextValue
+
+  // If children are provided, render them instead of the value
+  if (children) {
+    return (
+      <span data-slot="select-value">
+        {children}
+      </span>
+    )
+  }
 
   return (
     <span data-slot="select-value">

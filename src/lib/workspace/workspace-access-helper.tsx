@@ -28,15 +28,12 @@
  * ```
  */
 
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { db } from '@/infrastructure/persistence/dexie-db';
-import { useLiveQuery } from 'dexie-react-hooks';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-types';
-import { toast } from 'sonner';
 
 // ============================================================================
 // Constants

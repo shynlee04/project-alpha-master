@@ -17,23 +17,26 @@ import { cn } from "@/lib/utils"
 
 interface TooltipProps {
   children: React.ReactNode
-  content: React.ReactNode
+  content?: React.ReactNode
   side?: "top" | "bottom" | "left" | "right"
   align?: "start" | "center" | "end"
   className?: string
+  delayDuration?: number
 }
 
-export function Tooltip({ children, content, side = "top", align = "center", className }: TooltipProps) {
+export function Tooltip({ children, content, side = "top", align = "center", className, delayDuration = 200 }: TooltipProps) {
   const [isOpen, setIsOpen] = React.useState(false)
-  const timeoutRef = React.useRef<NodeJS.Timeout>()
+  const timeoutRef = React.useRef<NodeJS.Timeout>(null)
   const triggerRef = React.useRef<HTMLDivElement>(null)
 
   const handleMouseEnter = React.useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
-    setIsOpen(true)
-  }, [])
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(true)
+    }, delayDuration)
+  }, [delayDuration])
 
   const handleMouseLeave = React.useCallback(() => {
     if (timeoutRef.current) {
