@@ -267,6 +267,38 @@ export function ProviderSettings() {
                                 </div>
                             )}
 
+                            {/* GEM-2026-01-11: Gemini Capabilities Section */}
+                            {provider.id === 'google' && provider.hasApiKey && (
+                                <div className="mt-3 p-3 bg-muted/30 rounded border border-border">
+                                    <h4 className="text-xs font-semibold font-mono mb-2 text-foreground">
+                                        Gemini Capabilities
+                                    </h4>
+                                    <div className="flex flex-wrap gap-2">
+                                        <span className="px-2 py-0.5 bg-green-500/10 text-green-600 text-xs rounded border border-green-500/20">
+                                            Text ✓
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 text-xs rounded border border-blue-500/20">
+                                            Images ✓
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-purple-500/10 text-purple-600 text-xs rounded border border-purple-500/20">
+                                            Audio ✓
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 text-xs rounded border border-orange-500/20">
+                                            Video ⏳
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-cyan-600 text-xs rounded border border-cyan-500/20">
+                                            Thinking ✓
+                                        </span>
+                                        <span className="px-2 py-0.5 bg-pink-500/10 text-pink-600 text-xs rounded border border-pink-500/20">
+                                            Grounding ✓
+                                        </span>
+                                    </div>
+                                    <p className="text-[10px] text-muted-foreground mt-2">
+                                        Context window: up to 1M tokens
+                                    </p>
+                                </div>
+                            )}
+
                             {/* R4 FIX: No models message */}
                             {provider.hasApiKey && models.length === 0 && !isLoading && (
                                 <div className="flex items-center gap-2 mt-2">

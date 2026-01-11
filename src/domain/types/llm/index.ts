@@ -6,8 +6,11 @@
  * Re-exports all canonical type definitions.
  *
  * @ epic EPIC-GU
+ * @ epic EPIC-PRV
  * @ story GU-A-01 - Unify Provider Type Definitions
+ * @ story PRV-01 - Universal Provider Types
  * @created 2026-01-09
+ * @updated 2026-01-11
  */
 
 // ============================================================================
@@ -21,6 +24,19 @@ export type {
   ConnectionTestResult,
   ProviderKeyMetadata,
   KeyValidationResult,
+} from './provider-types.js';
+
+// ============================================================================
+// UNIVERSAL PROVIDER TYPES (EPIC-PRV)
+// ============================================================================
+
+export type {
+  ModalityType,
+  UniversalProviderConfig,
+  UniversalModelConfig,
+  ProviderRequestContext,
+  ProviderResponse,
+  ProviderRegistryEntry,
 } from './provider-types.js';
 
 // ============================================================================

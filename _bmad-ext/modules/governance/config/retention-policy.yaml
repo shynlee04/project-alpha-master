@@ -1,0 +1,136 @@
+# BMAD Extension - Retention Policy Configuration
+# Defines TTL (Time To Live) for all artifact types
+
+---
+version: "1.0.0"
+updated: "2026-01-11"
+
+# Tier 1: Constitution - Never Modified
+tier_1:
+  description: "Constitution - Global development standards"
+  ttl: "permanent"
+  archive: false
+  examples:
+    - "agent-os/standards/global/*.md"
+    - "CLAUDE.md"
+    - "AGENTS.md"
+  governance_rule: "Read-only check - if causes issues, stop and notify human"
+
+# Tier 2: Controlled - Single Source of Truth
+tier_2:
+  description: "Controlled & Iterative - Living truth documents"
+  ttl: "permanent"
+  archive: false
+  examples:
+    - "PRD (Product Requirements Document)"
+    - "Architecture documents"
+    - "UX Specifications"
+    - "Epics and Stories"
+    - "AGENTS.md"
+  governance_rule: "Iterative updates - never replace whole file, use line edits"
+
+# Tier 3: Archival - Medium-Live
+tier_3:
+  description: "Archival - Medium-term artifacts"
+  ttl_days: 90
+  archive: true
+  archive_folder: "_bmad-output/.archive/"
+  examples:
+    - "Sprint status files"
+    - "Research artifacts"
+    - "Epic planning documents"
+    - "Course-correction changes"
+  governance_rule: "Date stamping and folder categorization required"
+
+# Tier 4: Ephemeral - Short-Live
+tier_4:
+  description: "Ephemeral - Short-term context and reports"
+  ttl_hours: 24
+  archive: false
+  purge: true
+  examples:
+    - "Stories context files"
+    - "Validation reports"
+    - "Temporary reports"
+  governance_rule: "Strict naming, metadata, and parent-document references required"
+
+# Artifact Type Specific TTLs
+artifact_ttl:
+  handoff:
+    tier: 4
+    hours: 4
+    description: "Handoff artifacts between agents"
+  context:
+    tier: 4
+    hours: 24
+    description: "Story context files"
+  report:
+    tier: 4
+    hours: 24
+    description: "Analysis and validation reports"
+  story:
+    tier: 3
+    days: 90
+    description: "Completed story files"
+  epic:
+    tier: 3
+    days: 90
+    description: "Epic planning documents"
+  session:
+    tier: 4
+    hours: 4
+    description: "Session state artifacts"
+  loop_state:
+    tier: 4
+    hours: 4
+    description: "LOOP_STATE.yaml - refresh every session"
+  artifact_registry:
+    tier: 3
+    days: 90
+    description: "ARTIFACT_REGISTRY.yaml"
+
+# Stale Detection Rules
+stale_detection:
+  enabled: true
+  check_interval_minutes: 30
+  thresholds:
+    tier_4_hours: 24
+    tier_3_days: 90
+  actions:
+    on_stale_tier_4:
+      - "Log warning"
+      - "Mark as stale in registry"
+      - "Exclude from context loading"
+    on_stale_tier_3:
+      - "Log info"
+      - "Move to archive folder"
+      - "Update registry with archive location"
+    on_stale_tier_2:
+      - "Log critical"
+      - "Notify human"
+      - "Do NOT auto-archive"
+
+# Auto-Archive Rules
+auto_archive:
+  enabled: true
+  triggers:
+    - "Story completed"
+    - "Epic completed"
+    - "Sprint rotation"
+    - "Manual trigger (AR command)"
+  archive_structure:
+    folder: "_bmad-output/.archive/"
+    date_format: "YYYY-MM-DD/"
+    include_manifest: true
+
+# Context Poisoning Prevention
+context_poisoning:
+  enabled: true
+  rules:
+    - "Max context age: 24 hours for Tier 4"
+    - "Max context age: 90 days for Tier 3"
+    - "Disjointed metadata sequences → auto-retrieve historical"
+    - "Stale artifacts → exclude from context loading"
+  ttl_strict:
+    tier_4_hours: 24
+    tier_3_days: 90

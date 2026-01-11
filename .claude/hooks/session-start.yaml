@@ -1,127 +1,102 @@
----
-name: bmad-session-init
-description: Initialize BMAD framework at session start
-when: SessionStart
-priority: 1
-once: false
----
+# @HOOK: session-start
+# Initialize BMAD extension layer at session start
+# Version: 2.1.0
+# Updated: 2026-01-11 - Added bridge validation
 
-# BMAD Session Initialization Hook
+steps:
+  - name: load_bmad_config
+    description: Load BMAD core configuration
+    files:
+      - _bmad/core/config.yaml
+      - _bmad-ext/MANIFEST.yaml
+    extract:
+      - user_name
+      - communication_language
+      - output_folder
 
-> Fires when: A new Claude Code session starts
-> Purpose: Load BMAD configuration and verify state before any interaction
+  - name: init_loop_state
+    description: Initialize or load LOOP_STATE
+    file: _bmad-ext/state/LOOP_STATE.yaml
+    if_not_exists: create
+    template: loop_state_template_v2
 
----
+  - name: generate_session_id
+    description: Generate session UUID if needed
+    condition: session.id == null
+    action: generate_uuid
+    store_in: session.id
 
-## Execution Steps
+  - name: load_artifact_registry
+    description: Load or create artifact registry
+    file: _bmad-ext/state/ARTIFACT_REGISTRY.yaml
+    if_not_exists: create
+    template: artifact_registry_template
 
-### 1. Load Core Configuration
+  - name: verify_anchor
+    description: Verify human intent anchor freshness
+    threshold_hours: 4
+    on_stale: prompt_user
 
-```bash
-# Read in order of priority
-Read: _bmad/core/config.yaml
-Read: _bmad/bmb/config.yaml
-Read: .claude/AGENT-COORDINATOR.md
-```
+  - name: load_workflow_status
+    description: Load current workflow status
+    file: bmm-workflow-status.yaml
+    extract:
+      - current_workflow.story
+      - current_workflow.epic
+      - current_workflow.status
 
-### 2. Read Loop State
+  - name: detect_stale_artifacts
+    description: Run stale artifact detection
+    module: _bmad-ext/modules/governance/scanners/artifact-scanner.md
 
-```bash
-# Check current loop state
-Read: .claude/LOOP_STATE-child.yaml
-Read: _bmad/modules/asgl/LOOP_STATE-parent.yaml
-```
+  # ========================================
+  # BRIDGE VALIDATION (v2.1.0)
+  # ========================================
+  - name: validate_bridge_commands
+    description: Verify BMAD bridge commands are available
+    check:
+      - .claude/commands/bmad/governance.yaml exists
+      - .claude/commands/bmad/expert.yaml exists
+      - .claude/commands/bmad/research.yaml exists
+      - .claude/commands/bmad/remediate.yaml exists
+      - .claude/commands/bmad/scan.yaml exists
+    on_fail:
+      action: warn_only
+      message: "Some BMAD bridge commands not found. Check .claude/commands/bmad/"
 
-Extract:
-- `active` status (true/false)
-- `current_iteration`
-- `current_story`
-- `next_action`
+  - name: validate_bridge_skills
+    description: Verify BMAD bridge skills are registered
+    check:
+      - .claude/skills/bmad-bridge/governance-scan/SKILL.md exists
+      - .claude/skills/bmad-bridge/expert-analysis/SKILL.md exists
+      - .claude/skills/bmad-bridge/research-trigger/SKILL.md exists
+      - .claude/skills/bmad-bridge/remediation-router/SKILL.md exists
+    on_fail:
+      action: warn_only
+      message: "Some BMAD bridge skills not found. Check .claude/skills/bmad-bridge/"
 
-### 3. Verify Anchor Artifact
+  - name: register_bridge_metadata
+    description: Register BMAD bridge metadata for session
+    metadata:
+      bridge_version: "1.0.0"
+      bridge_commands:
+        - /gov - Governance context-first workflow
+        - /expert - Expert analysis workflow
+        - /research - Research trigger workflow
+        - /fix - Remediation router
+        - /scan - Domain scanner
+      bridge_skills:
+        - governance-scan
+        - expert-analysis
+        - research-trigger
+        - remediation-router
 
-If `current_story` is set:
-
-```bash
-# Check anchor exists and is fresh
-Read: _bmad-output/story-contexts/{current_story}-context.xml
-```
-
-**Staleness Check:**
-- If artifact modified > 4 hours ago → Prompt user:
-  - "Context artifact is {X} hours old. Re-run validation before proceeding?"
-  - If yes → Load `_bmad-ext/validators/stale-artifact-validator.md`
-  - If no → Continue with stale artifact (user's choice)
-
-### 4. Load Session Variables
-
-From config.yaml, store:
-- `{user_name}` - For personalized communication
-- `{communication_language}` - For language preference
-- `{output_folder}` - For artifact output location
-
-### 5. Initialize Session Tracking
-
-Create/update `.claude/AGENT-STATE.yaml`:
-
-```yaml
-session:
-  id: SESSION-{timestamp}
-  status: ACTIVE
-  start_time: {iso_timestamp}
-  loaded_at: {iso_timestamp}
-
-current:
-  agent: main
-  story: {from LOOP_STATE or null}
-  workflow: {from LOOP_STATE or null}
-
-context:
-  skills_loaded: []
-  artifacts_loaded: []
-  loop_active: {from LOOP_STATE.active}
-```
-
----
-
-## Output Format
-
-On successful initialization, display:
-
-```
-╔═══════════════════════════════════════════════════════════════╗
-║  BMAD v6.0 Session Initialized                               ║
-╠═══════════════════════════════════════════════════════════════╣
-║  User: {user_name}                                            ║
-║  Language: {communication_language}                           ║
-║  Session: {session_id}                                        ║
-║  Loop Status: {ACTIVE if active else PAUSED}                  ║
-║  Current Story: {story_id or "None"}                          ║
-╚═══════════════════════════════════════════════════════════════╝
-```
-
----
-
-## Error Handling
-
-| Error | Action |
-|-------|--------|
-| config.yaml not found | Use defaults, warn user |
-| LOOP_STATE corrupted | Offer to reset to grandparent |
-| Anchor artifact missing | Prompt to run story initialization |
-| Permission denied | Continue without session file creation |
-
----
-
-## Next Steps
-
-After session init:
-1. Display greeting using {user_name}
-2. Show current status if loop active
-3. Wait for user input (don't auto-execute)
-
----
-
-**Version:** 1.0.0
-**Updated:** 2026-01-10
-**Hook Type:** SessionStart
+outputs:
+  session_id: session.id
+  loop_state_loaded: true
+  anchor_fresh: true
+  stale_artifacts_count: 0
+  bridge_validated: true
+  bridge_commands_count: 5
+  bridge_skills_count: 4
+  ready_for_work: true

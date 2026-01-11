@@ -25,11 +25,15 @@ import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
+import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as _debug_ProviderPlaygroundRouteRouteImport } from './routes/__debug__/provider-playground/route'
+import { Route as __debug_ProviderPlaygroundRouteImport } from './routes/$__debug__.provider-playground'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
+import { Route as ApiProvidersIdRouteImport } from './routes/api/providers.$id'
 import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
+import { Route as ApiProvidersIdTestRouteImport } from './routes/api/providers.$id.test'
+import { Route as ApiProvidersIdExecuteRouteImport } from './routes/api/providers.$id.execute'
 
 const StudyLazyRouteImport = createFileRoute('/study')()
 const NotesLazyRouteImport = createFileRoute('/notes')()
@@ -146,6 +150,11 @@ const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
   path: '/$projectId',
   getParentRoute: () => IdeRoute,
 } as any)
+const ApiProvidersRoute = ApiProvidersRouteImport.update({
+  id: '/api/providers',
+  path: '/api/providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProviderTestRoute = ApiProviderTestRouteImport.update({
   id: '/api/provider-test',
   path: '/api/provider-test',
@@ -156,10 +165,10 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const _debug_ProviderPlaygroundRouteRoute =
-  _debug_ProviderPlaygroundRouteRouteImport.update({
-    id: '/__debug__/provider-playground',
-    path: '/provider-playground',
+const __debug_ProviderPlaygroundRoute =
+  __debug_ProviderPlaygroundRouteImport.update({
+    id: '/$__debug__/provider-playground',
+    path: '/$__debug_/provider-playground',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiQuizzesGenerateRoute = ApiQuizzesGenerateRouteImport.update({
@@ -167,10 +176,25 @@ const ApiQuizzesGenerateRoute = ApiQuizzesGenerateRouteImport.update({
   path: '/api/quizzes/generate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProvidersIdRoute = ApiProvidersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiProvidersRoute,
+} as any)
 const ApiFlashcardsGenerateRoute = ApiFlashcardsGenerateRouteImport.update({
   id: '/api/flashcards/generate',
   path: '/api/flashcards/generate',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProvidersIdTestRoute = ApiProvidersIdTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => ApiProvidersIdRoute,
+} as any)
+const ApiProvidersIdExecuteRoute = ApiProvidersIdExecuteRouteImport.update({
+  id: '/execute',
+  path: '/execute',
+  getParentRoute: () => ApiProvidersIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -187,9 +211,10 @@ export interface FileRoutesByFullPath {
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
-  '/provider-playground': typeof _debug_ProviderPlaygroundRouteRoute
+  '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
+  '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -198,7 +223,10 @@ export interface FileRoutesByFullPath {
   '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
+  '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
+  '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -214,9 +242,10 @@ export interface FileRoutesByTo {
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
-  '/provider-playground': typeof _debug_ProviderPlaygroundRouteRoute
+  '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
+  '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -225,7 +254,10 @@ export interface FileRoutesByTo {
   '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
+  '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
+  '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -242,9 +274,10 @@ export interface FileRoutesById {
   '/knowledge': typeof KnowledgeLazyRouteWithChildren
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
-  '/__debug__/provider-playground': typeof _debug_ProviderPlaygroundRouteRoute
+  '/$__debug__/provider-playground': typeof __debug_ProviderPlaygroundRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
+  '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
@@ -253,7 +286,10 @@ export interface FileRoutesById {
   '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace/': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
+  '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
+  '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
+  '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -271,9 +307,10 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/notes'
     | '/study'
-    | '/provider-playground'
+    | '/$__debug_/provider-playground'
     | '/api/chat'
     | '/api/provider-test'
+    | '/api/providers'
     | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -282,7 +319,10 @@ export interface FileRouteTypes {
     | '/study/$projectId'
     | '/workspace'
     | '/api/flashcards/generate'
+    | '/api/providers/$id'
     | '/api/quizzes/generate'
+    | '/api/providers/$id/execute'
+    | '/api/providers/$id/test'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -298,9 +338,10 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/notes'
     | '/study'
-    | '/provider-playground'
+    | '/$__debug_/provider-playground'
     | '/api/chat'
     | '/api/provider-test'
+    | '/api/providers'
     | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -309,7 +350,10 @@ export interface FileRouteTypes {
     | '/study/$projectId'
     | '/workspace'
     | '/api/flashcards/generate'
+    | '/api/providers/$id'
     | '/api/quizzes/generate'
+    | '/api/providers/$id/execute'
+    | '/api/providers/$id/test'
   id:
     | '__root__'
     | '/'
@@ -325,9 +369,10 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/notes'
     | '/study'
-    | '/__debug__/provider-playground'
+    | '/$__debug__/provider-playground'
     | '/api/chat'
     | '/api/provider-test'
+    | '/api/providers'
     | '/ide/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
@@ -336,7 +381,10 @@ export interface FileRouteTypes {
     | '/study/$projectId'
     | '/workspace/'
     | '/api/flashcards/generate'
+    | '/api/providers/$id'
     | '/api/quizzes/generate'
+    | '/api/providers/$id/execute'
+    | '/api/providers/$id/test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,9 +401,10 @@ export interface RootRouteChildren {
   KnowledgeLazyRoute: typeof KnowledgeLazyRouteWithChildren
   NotesLazyRoute: typeof NotesLazyRouteWithChildren
   StudyLazyRoute: typeof StudyLazyRouteWithChildren
-  _debug_ProviderPlaygroundRouteRoute: typeof _debug_ProviderPlaygroundRouteRoute
+  __debug_ProviderPlaygroundRoute: typeof __debug_ProviderPlaygroundRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiProviderTestRoute: typeof ApiProviderTestRoute
+  ApiProvidersRoute: typeof ApiProvidersRouteWithChildren
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
   WorkspaceIndexRoute: typeof WorkspaceIndexRoute
@@ -505,6 +554,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IdeProjectIdRouteImport
       parentRoute: typeof IdeRoute
     }
+    '/api/providers': {
+      id: '/api/providers'
+      path: '/api/providers'
+      fullPath: '/api/providers'
+      preLoaderRoute: typeof ApiProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/provider-test': {
       id: '/api/provider-test'
       path: '/api/provider-test'
@@ -519,11 +575,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/__debug__/provider-playground': {
-      id: '/__debug__/provider-playground'
-      path: '/provider-playground'
-      fullPath: '/provider-playground'
-      preLoaderRoute: typeof _debug_ProviderPlaygroundRouteRouteImport
+    '/$__debug__/provider-playground': {
+      id: '/$__debug__/provider-playground'
+      path: '/$__debug_/provider-playground'
+      fullPath: '/$__debug_/provider-playground'
+      preLoaderRoute: typeof __debug_ProviderPlaygroundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/quizzes/generate': {
@@ -533,12 +589,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiQuizzesGenerateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/providers/$id': {
+      id: '/api/providers/$id'
+      path: '/$id'
+      fullPath: '/api/providers/$id'
+      preLoaderRoute: typeof ApiProvidersIdRouteImport
+      parentRoute: typeof ApiProvidersRoute
+    }
     '/api/flashcards/generate': {
       id: '/api/flashcards/generate'
       path: '/api/flashcards/generate'
       fullPath: '/api/flashcards/generate'
       preLoaderRoute: typeof ApiFlashcardsGenerateRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/providers/$id/test': {
+      id: '/api/providers/$id/test'
+      path: '/test'
+      fullPath: '/api/providers/$id/test'
+      preLoaderRoute: typeof ApiProvidersIdTestRouteImport
+      parentRoute: typeof ApiProvidersIdRoute
+    }
+    '/api/providers/$id/execute': {
+      id: '/api/providers/$id/execute'
+      path: '/execute'
+      fullPath: '/api/providers/$id/execute'
+      preLoaderRoute: typeof ApiProvidersIdExecuteRouteImport
+      parentRoute: typeof ApiProvidersIdRoute
     }
   }
 }
@@ -589,6 +666,32 @@ const StudyLazyRouteWithChildren = StudyLazyRoute._addFileChildren(
   StudyLazyRouteChildren,
 )
 
+interface ApiProvidersIdRouteChildren {
+  ApiProvidersIdExecuteRoute: typeof ApiProvidersIdExecuteRoute
+  ApiProvidersIdTestRoute: typeof ApiProvidersIdTestRoute
+}
+
+const ApiProvidersIdRouteChildren: ApiProvidersIdRouteChildren = {
+  ApiProvidersIdExecuteRoute: ApiProvidersIdExecuteRoute,
+  ApiProvidersIdTestRoute: ApiProvidersIdTestRoute,
+}
+
+const ApiProvidersIdRouteWithChildren = ApiProvidersIdRoute._addFileChildren(
+  ApiProvidersIdRouteChildren,
+)
+
+interface ApiProvidersRouteChildren {
+  ApiProvidersIdRoute: typeof ApiProvidersIdRouteWithChildren
+}
+
+const ApiProvidersRouteChildren: ApiProvidersRouteChildren = {
+  ApiProvidersIdRoute: ApiProvidersIdRouteWithChildren,
+}
+
+const ApiProvidersRouteWithChildren = ApiProvidersRoute._addFileChildren(
+  ApiProvidersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -603,9 +706,10 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeLazyRoute: KnowledgeLazyRouteWithChildren,
   NotesLazyRoute: NotesLazyRouteWithChildren,
   StudyLazyRoute: StudyLazyRouteWithChildren,
-  _debug_ProviderPlaygroundRouteRoute: _debug_ProviderPlaygroundRouteRoute,
+  __debug_ProviderPlaygroundRoute: __debug_ProviderPlaygroundRoute,
   ApiChatRoute: ApiChatRoute,
   ApiProviderTestRoute: ApiProviderTestRoute,
+  ApiProvidersRoute: ApiProvidersRouteWithChildren,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
   WorkspaceIndexRoute: WorkspaceIndexRoute,

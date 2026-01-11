@@ -1,171 +1,151 @@
----
-name: "governance"
-version: "2.0.0"
-status: "active"
-phase: "0"
-created: "2026-01-11"
-updated: "2026-01-11"
-tier: "foundation"
-description: "BMAD Extension Governance Module - Context-first enforcement, expert analysis, and research triggers"
----
+# BMAD Extension Layer - Unified Governance Module v2.0
 
-# Governance Module
+**Version**: 2.0.0
+**Status**: ACTIVE
+**Created**: 2026-01-11
+**Updated**: 2026-01-11
 
-**Purpose**: Foundation layer for all BMAD extension workflows. Enforces three enforcement concepts before any development work can proceed.
+## Purpose
 
-## Phase Classification
+Unified governance module that consolidates all self-governance, artifact management, context filtering, and stale document detection. This is the **single source of truth** for all extension layer governance.
 
-**PHASE 0: Governance Foundation** - CRITICAL, must complete before any development work
+## Why v2.0
 
-```
-User Request
-    ↓
-[PHASE 0] Governance Check
-    ├── Context-First (scan, contextualize, transform)
-    ├── Expert Analysis (bug/error level, codebase comparison)
-    └── Research Trigger (internet-based validation)
-    ↓
-Governance Report → Stop / Warn / Proceed
-    ↓ (if Proceed)
-[PHASE 1] Governance Consolidation
-    ↓
-[PHASE 3] Orchestrator Update
-    ↓
-[PHASE 4] Implementation Workflows
-    ├── Story-Cycle (new features, stories)
-    └── Correct-Course (bug fixes, remediation)
-    ↓
-[PHASE 5] Enhanced Agent Wrappers
-```
+This version consolidates the duplicate structures from:
+- `_bmad-ext/modules/governance/` (Phase 0 complex structure)
+- `_bmad-ext/modules/governance-core/` (Similar but separate)
 
-## Module Order
+The duplication caused:
+- Confusion about which module to use
+- Overlapping functionality
+- Neither fully integrated into the command system
 
-1. **Phase 0**: Governance (this module) ✅
-2. **Phase 1**: Governance Consolidation
-3. **Phase 3**: Orchestrator Update
-4. **Phase 4**: Implementation (story-cycle, correct-course)
-5. **Phase 5**: Enhanced Agent Wrappers
+## Core Concepts
 
-## Three Enforcement Concepts
+### 1. The 4-Tier TTL System
 
-### 1. Context-First (Two-Step Hook)
+| Tier | Name | TTL | Action |
+|------|------|-----|--------|
+| 1 | Constitution | Permanent | Never archive - read-only |
+| 2 | Controlled | Permanent | Update iteratively - single source |
+| 3 | Archival | 90 days | Archive if stale |
+| 4 | Ephemeral | 24 hours | Auto-purge if stale |
 
-**Purpose**: Auto-transform human dev prompt with accurate, relevant context
+### 2. Self-Governance Triggers
 
-**Steps**:
-1. **Scan**: Which domains, how deep, what slices to include
-2. **Contextualize**: Transform prompt with relevant context
-3. **Output**: Improved prompt for new session with accurate context
+Governance is triggered automatically at these points:
 
-**Workflow**: `workflows/context-first/`
+1. **On Session Start** → Check all active artifacts for staleness
+2. **On Artifact Creation** → Register with timestamp and TTL
+3. **On Step Completion** → Validate context freshness
+4. **On Story Completion** → Run full artifact scan
+5. **On Epic Completion** → Run comprehensive governance check
 
-### 2. Agent as Expert
+### 3. The Three Enforcement Checks
 
-**Purpose**: Define bug/error level and detect flaws in user approach
+Before any development work, the system performs:
 
-**Steps**:
-1. **Analyze**: Bug/error level (quick patch vs architectural conflict)
-2. **Compare**: Against actual codebase
-3. **Detect**: Flaws in user approach (overlapping, conflict, overwhelming)
-4. **Decide**: Proceed / Warn / Stop
+1. **Context-First** → Gather relevant context, auto-transform prompt
+2. **Expert Analysis** → Define bug/error level, compare with codebase
+3. **Research Trigger** → Internet-based validation for tech choices
 
-**Workflow**: `workflows/expert-analysis/`
-
-### 3. Research Trigger
-
-**Purpose**: Internet-based research for tech choices and trade-offs
-
-**Triggers**:
-- Tech choice validation needed
-- Performance trade-off analysis required
-- Best-practice verification
-- Preventing "not-the-best-practice" chaos
-
-**Workflow**: `workflows/research-trigger/`
-
-## Directory Structure
+## Module Structure
 
 ```
 governance/
-├── MODULE.md                    # This file
-├── workflows/
-│   ├── context-first/           # Context-First enforcement
-│   ├── expert-analysis/         # Agent as Expert analysis
-│   ├── research-trigger/        # Research Trigger workflow
-│   └── stage-gate/              # Stage gating enforcement
-├── scanners/                    # Deep scanning capabilities
-│   ├── artifact-scanner.md
-│   ├── domain-scanner.md
-│   ├── workspace-scanner.md
-│   ├── feature-scanner.md
-│   ├── relationship-scanner.md
-│   ├── journey-scanner.md
-│   ├── ux-ui-scanner.md
-│   ├── api-contract-scanner.md
-│   ├── schema-scanner.md
-│   ├── file-structure-scanner.md
-│   └── agent-rag-scanner.md
-├── agent-rag/                   # Agent/AI/RAG ecosystem governance
-│   ├── tools-governance.md
-│   ├── rag-context-governance.md
-│   ├── conversation-threads.md
-│   ├── multimodality-governance.md
-│   └── staging-by-phase.md
-├── artifacts/                   # Artifact management
-│   ├── registry.yaml
-│   ├── naming-convention.md
-│   ├── date-stamping-policy.md
-│   ├── archiving-policy.md
-│   └── file-monitor.md
+├── MODULE.md                          # This file
 ├── config/
-│   ├── checklists.yaml
-│   ├── domains.yaml
-│   └── gates.yaml
-└── policies/
-    ├── context-strategy.md
-    ├── artifact-lifecycle.md
-    └── gating-policy.md
+│   ├── module.yaml                    # Module configuration
+│   ├── domains.yaml                   # Domain classifications (13 domains)
+│   └── retention-policy.yaml          # TTL and archiving rules
+├── policies/
+│   ├── artifact-lifecycle.md          # Artifact creation → archive → purge
+│   ├── context-strategy.md            # Context filtering and TTL rules
+│   └── gating-policy.md               # Gatekeeping before work
+├── scanners/
+│   ├── artifact-scanner.md            # Detect stale artifacts
+│   └── context-scanner.md             # Detect stale context
+├── workflows/
+│   ├── self-governance-cycle.md       # Main governance loop
+│   └── stale-detection.md             # Stale document detection
+└── utils/
+    ├── timestamp-validator.ts         # Date/time validation helpers
+    └── artifact-registry.ts           # Artifact tracking operations
+```
+
+## Quick Start
+
+### For Claude Code
+
+```bash
+# Load governance module
+/correct-course
+
+# This triggers the self-governance cycle before any work
+```
+
+### For Open Code
+
+```bash
+# Via ext-master agent
+/ext-master
+# Select: Governance Module
+```
+
+### Direct Integration
+
+```yaml
+# In any workflow or agent
+action: "invoke-governance"
+module: "_bmad-ext/modules/governance"
+task: "check-artifacts"
+params:
+  scope: "current-session"
 ```
 
 ## Integration Points
 
-### Input
-- User dev prompts (via orchestrator)
-- Bug/error reports
-- Feature requests
+### Reads From
+- `_bmad-ext/state/LOOP_STATE.yaml` - Session state
+- `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` - Active artifacts
+- `bmm-workflow-status.yaml` - Story progress
 
-### Output
-- `governance_report.yaml` - Report with:
-  - `issue_level`: quick_patch | feature_fix | architectural
-  - `context_slices`: List of relevant files
-  - `recommended_approach`: Expert recommendation
-  - `research_findings`: Internet research results (if triggered)
-  - `decision`: proceed | warn | stop
+### Writes To
+- `_bmad-ext/state/LOOP_STATE.yaml` - Governance updates
+- `AGENTS.md` - Governance section updates
+- `_bmad-output/.archive/` - Archived artifacts
 
-### Updates
-- `workflow-status.yaml` - Track governance checks
-- `ARTIFACT_REGISTRY.yaml` - Register generated artifacts
+### Invoked By
+- `_bmad-ext/orchestrator/master-orchestrator.md` - On step completion
+- `.claude/hooks/` - Session start/user prompt hooks
+- Any enhanced agent - On artifact creation
 
-## Dependencies
+## Governance Metrics
 
-- **Required by**: All development workflows (Phase 2-5)
-- **Depends on**: None (foundation layer)
-- **Integrates with**: Orchestrator (Phase 3)
+Track these in `LOOP_STATE.governance`:
 
-## Handoff Protocol
+```yaml
+governance:
+  last_check: "2026-01-11T10:00:00Z"
+  stale_detected: 0
+  artifacts_scanned: 15
+  contexts_validated: 8
+  auto_archives: 2
+  health_score: 95
+```
 
-When governance approves work, handoff to:
-- **Phase 1**: Governance Consolidation (one-time setup)
-- **Phase 3**: Orchestrator Update (after consolidation)
-- **Phase 4**: Implementation Workflows
-  - **Story-Cycle**: For new features, story execution
-  - **Correct-Course**: For bug fixes, remediation
-- **Phase 5**: Enhanced Agent Wrappers (final)
+## Migration from v1.0
 
----
+If you have artifacts in the old modules:
 
-## History
+1. **governance/** → Use this module instead
+2. **governance-core/** → Use this module instead (hooks moved to `.claude/hooks/`)
 
-| Date | Version | Changes |
-|------|---------|---------|
-| 2026-01-11 | 2.0.0 | Initial Phase 0 governance module creation |
+The old modules are now deprecated and will be archived in the next update.
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0.0 | 2026-01-11 | Consolidated from governance/ + governance-core/ |
+| 1.0.0 | 2026-01-10 | Initial governance module (now deprecated) |

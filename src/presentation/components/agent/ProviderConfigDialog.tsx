@@ -24,7 +24,7 @@ interface ProviderConfigDialogProps {
  * Built-in providers have hardcoded base URLs that cannot be modified
  */
 function isBuiltInProvider(providerId: string): boolean {
-    const builtInIds = ['openai', 'anthropic', 'gemini', 'openrouter'];
+    const builtInIds = ['openai', 'anthropic', 'google', 'openrouter'];
     return builtInIds.includes(providerId);
 }
 
@@ -36,9 +36,49 @@ function getBuiltInBaseUrl(providerId: string): string {
         openai: 'https://api.openai.com/v1',
         anthropic: 'https://api.anthropic.com/v1',
         openrouter: 'https://openrouter.ai/api/v1',
-        gemini: 'Gemini SDK (Native)',
+        google: 'https://generativelanguage.googleapis.com/v1beta/models',
     };
     return urls[providerId] || '';
+}
+
+/**
+ * Validate API key format for built-in providers
+ * Returns { valid: true } or { valid: false, error: string }
+ */
+function validateBuiltInProviderApiKey(providerId: string, apiKey: string): { valid: boolean; error?: string } {
+    if (!apiKey || !apiKey.trim()) {
+        return { valid: false, error: 'API key is required' };
+    }
+
+    switch (providerId) {
+        case 'google':
+            // Gemini API keys are typically 39+ characters
+            // They don't start with 'sk-' (that's OpenAI)
+            if (apiKey.trim().length < 30) {
+                return { valid: false, error: 'API key appears too short. Gemini keys are typically 39+ characters.' };
+            }
+            if (apiKey.trim().startsWith('sk-')) {
+                return { valid: false, error: 'Invalid format. Gemini API keys do not start with "sk-". Get your key from Google AI Studio.' };
+            }
+            return { valid: true };
+        
+        case 'openai':
+            // OpenAI keys start with sk-
+            if (!apiKey.trim().startsWith('sk-')) {
+                return { valid: false, error: 'Invalid format. OpenAI keys start with "sk-"' };
+            }
+            return { valid: true };
+        
+        case 'anthropic':
+            // Anthropic keys start with ant-
+            if (!apiKey.trim().startsWith('ant-')) {
+                return { valid: false, error: 'Invalid format. Anthropic keys start with "ant-"' };
+            }
+            return { valid: true };
+        
+        default:
+            return { valid: true };
+    }
 }
 
 export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderConfigDialogProps) {
@@ -103,6 +143,18 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
         }
 
         const providerId = provider?.id || 'openai-compatible';
+        
+        // Validate API key format for built-in providers
+        if (isBuiltInProvider(providerId)) {
+            const validation = validateBuiltInProviderApiKey(providerId, apiKey.trim());
+            if (!validation.valid) {
+                toast.error(`✗ ${validation.error}`);
+                setTestResult({ valid: false, error: validation.error });
+                setKeyStatus('error');
+                return;
+            }
+        }
+        
         setIsTestingConnection(true);
         setTestResult(null);
 

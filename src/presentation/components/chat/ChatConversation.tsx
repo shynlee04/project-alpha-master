@@ -56,7 +56,7 @@ const MessageBubble = memo(function MessageBubble({
         )}>
             {/* Avatar */}
             <div className={cn(
-                'flex-shrink-0 w-8 h-8 rounded-sm flex items-center justify-center',
+                'flex-shrink-0 w-8 h-8 rounded-none flex items-center justify-center',
                 'border-2',
                 isUser
                     ? 'bg-blue-600 border-blue-400 text-white'
@@ -88,10 +88,10 @@ const MessageBubble = memo(function MessageBubble({
 
                 {/* Message bubble */}
                 <div className={cn(
-                    'inline-block text-left rounded-sm p-3',
+                    'inline-block text-left rounded-none p-3',
                     'border-2',
                     isUser
-                        ? 'bg-primary/20 border-primary text-primary-foreground'
+                        ? 'bg-primary-100 dark:bg-primary-900 border-primary text-primary-foreground'
                         : 'bg-card border-border text-foreground',
                     'shadow-pixel'
                 )}>
@@ -264,7 +264,7 @@ export function ChatConversation({
     // Render empty state
     if (thread.messages.length === 0) {
         return (
-            <div className={cn('flex flex-col h-full', className)}>
+            <div className={cn('flex flex-col h-full', className)} style={{ minHeight: '400px' }}>
                 {/* Header */}
                 <div className={cn(
                     'flex items-center gap-3 px-4 py-3',
@@ -303,10 +303,10 @@ export function ChatConversation({
                     />
                 </div>
 
-                {/* Empty conversation - UX-02: Fixed transparency */}
-                <div className="flex-1 overflow-y-auto bg-background">
-                    <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                        <Bot className="h-12 w-12 mb-4 opacity-50" />
+                {/* Empty conversation - CHAT-001: Flex-safe pattern with min-h-0 */}
+                <div className="flex-1 min-h-0 overflow-y-auto bg-background">
+                    <div className="flex flex-col items-center justify-center min-h-[200px] text-muted-foreground">
+                        <Bot className="h-12 w-12 mb-4" />
                         <p className="font-mono text-sm">
                             {t('chat.startChatting', 'Start chatting with AI agent')}
                         </p>
@@ -317,7 +317,7 @@ export function ChatConversation({
                 {error && (
                     <div className={cn(
                         'flex items-center gap-2 px-4 py-2',
-                        'bg-destructive/90 border-t-2 border-destructive',
+                        'bg-destructive border-t-2 border-destructive',
                         'text-destructive-foreground text-sm font-mono'
                     )}>
                         <AlertCircle className="h-4 w-4" />
@@ -343,11 +343,18 @@ export function ChatConversation({
                         disabled={isStreaming || !selectedAgent}
                         rows={1}
                         className={cn(
-                            'flex-1 px-3 py-2 font-mono text-sm',
+                            // CHAT-002: Auto-expand with field-sizing
+                            'flex-1 px-3 py-2 font-mono',
+                            // iOS zoom prevention: text-base (16px) on mobile, text-sm on desktop
+                            'text-base md:text-sm',
+                            // Height constraints: min 1 line (~40px), max ~6 lines (~150px)
+                            'min-h-[40px] max-h-[150px]',
                             'bg-popover border-2 border-input',
                             'text-foreground placeholder:text-muted-foreground',
                             'focus:border-primary focus:outline-none',
-                            'resize-none rounded-sm',
+                            // CHAT-002: field-sizing enables auto-grow, rounded-none for 8-bit design
+                            'resize-none rounded-none field-sizing-content',
+                            'overflow-y-auto',
                             'disabled:opacity-50 disabled:cursor-not-allowed'
                         )}
                     />
@@ -356,10 +363,10 @@ export function ChatConversation({
                         disabled={!debouncedInput.trim() || isStreaming || !selectedAgent}
                         className={cn(
                             'px-4 font-mono',
-                            'bg-primary hover:bg-primary/90',
+                            'bg-primary hover:bg-primary-600',
                             'border-2 border-primary-foreground',
-                            'shadow-md',
-                            'hover:shadow-sm',
+                            'shadow-pixel',
+                            'hover:shadow-pixel-sm',
                             'hover:translate-x-[2px] hover:translate-y-[2px]',
                             'transition-all duration-100',
                             'disabled:opacity-50 disabled:translate-x-0 disabled:translate-y-0'
@@ -378,7 +385,7 @@ export function ChatConversation({
 
     // Render virtual list for messages
     return (
-        <div className={cn('flex flex-col h-full', className)}>
+        <div className={cn('flex flex-col h-full', className)} style={{ minHeight: '400px' }}>
             {/* Header - UX-02: Fixed transparency */}
             <div className={cn(
                 'flex items-center gap-3 px-4 py-3',
@@ -418,9 +425,9 @@ export function ChatConversation({
                 />
             </div>
 
-            {/* Messages area with virtual scrolling */}
-            <div className="flex-1 overflow-hidden bg-background">
-                <div className="py-4">
+            {/* Messages area with virtual scrolling - CHAT-001: min-h-0 allows flex child to shrink */}
+            <div className="flex-1 min-h-0 overflow-hidden bg-background">
+                <div className="min-h-[200px] py-4">
                     <List
                         ref={listRef}
                         height={600} // Fixed height for virtual list
@@ -484,11 +491,18 @@ export function ChatConversation({
                     disabled={isStreaming || !selectedAgent}
                     rows={1}
                     className={cn(
-                        'flex-1 px-3 py-2 font-mono text-sm',
+                        // CHAT-002: Auto-expand with field-sizing
+                        'flex-1 px-3 py-2 font-mono',
+                        // iOS zoom prevention: text-base (16px) on mobile, text-sm on desktop
+                        'text-base md:text-sm',
+                        // Height constraints: min 1 line (~40px), max ~6 lines (~150px)
+                        'min-h-[40px] max-h-[150px]',
                         'bg-popover border-2 border-input',
                         'text-foreground placeholder:text-muted-foreground',
                         'focus:border-primary focus:outline-none',
-                        'resize-none rounded-sm',
+                        // CHAT-002: field-sizing enables auto-grow, rounded-none for 8-bit design
+                        'resize-none rounded-none field-sizing-content',
+                        'overflow-y-auto',
                         'disabled:opacity-50 disabled:cursor-not-allowed'
                     )}
                 />
@@ -497,7 +511,7 @@ export function ChatConversation({
                     disabled={!debouncedInput.trim() || isStreaming || !selectedAgent}
                     className={cn(
                         'px-4 font-mono',
-                        'bg-primary hover:bg-primary/90',
+                        'bg-primary hover:bg-primary-600',
                         'border-2 border-primary-foreground',
                         'shadow-pixel',
                         'hover:shadow-pixel-sm',

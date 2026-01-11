@@ -21,7 +21,7 @@ import { json } from '@tanstack/react-start';
 import { createFileRoute } from '@tanstack/react-router';
 import { chat, toServerSentEventsStream } from '@tanstack/ai';
 import { createOpenaiChat } from '@tanstack/ai-openai';
-import { createGeminiChat } from '@tanstack/ai-gemini';
+import { geminiText } from '@tanstack/ai-gemini';
 // Story 40-06: Use centralized tool registry instead of hardcoded imports
 import { toolRegistry } from '@/infrastructure/tools/centralized-tool-registry';
 import { initializeToolRegistry } from '@/infrastructure/tools/tool-catalog';
@@ -249,15 +249,15 @@ export const Route = createFileRoute('/api/chat')({
                     }
 
                     // Create provider-specific adapter
-                    // TanStack AI v0.2.0: createOpenaiChat/createGeminiChat(model, apiKey, config)
-                    // FIX-2026-01-09: Added Gemini support using createGeminiChat
+                    // TanStack AI v0.2.0: openaiText/geminiText(model, config) or createOpenaiChat/createGeminiChat(model, apiKey, config)
+                    // Updated 2026-01-11: Use modern geminiText pattern for Google provider
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const adapter = providerId === 'gemini' || providerId === 'google'
-                        ? createGeminiChat(modelId as any, apiKey)  // Gemini uses its own adapter
+                    const adapter = providerId === 'google'
+                        ? geminiText(modelId as any, { apiKey })  // Use modern geminiText pattern
                         : createOpenaiChat(modelId as any, apiKey, {
                             baseURL,
                             defaultHeaders,
-                        });
+                          });
 
                     // Get tool definitions for LLM context
                     const tools = getTools();

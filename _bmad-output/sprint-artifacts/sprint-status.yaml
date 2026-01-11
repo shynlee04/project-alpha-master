@@ -1785,3 +1785,227 @@ epic_40_remediation:
       - "Prompt orchestrator with dynamic mode injection"
       - "Self-switching agent operational"
       - "Mode transitions observable"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-CHAT: UNIFIED CHAT REMEDIATION
+# Created: 2026-01-11T12:00:00+07:00
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_chat_status:
+  id: "EPIC-CHAT"
+  name: "Unified Chat System Remediation"
+  priority: "P0-CRITICAL"
+  phase: "READY_FOR_DEV"
+  total_stories: 17
+  estimated_effort: "~190 hours"
+  created_at: "2026-01-11T12:00:00+07:00"
+  source: "misty-honking-neumann.md plan"
+  plan_file: ".claude/plans/misty-honking-neumann.md"
+
+  problem_areas:
+    - "Layout/Responsiveness: Chat breaks in resizable panes"
+    - "UX Cohesion: Controls scattered, not grouped by use case"
+    - "Architecture: Props/state conflicts, unregulated routing"
+    - "Thread Management: No CRUD UI, no workspace association"
+    - "Input/Output: Multi-line issues, no collapsible sections, poor artifact handling"
+    - "Design: 52+ violations of 8-bit design system"
+
+  stories:
+    "CHAT-001":
+      title: "Fix Chat Panel Layout and Responsiveness"
+      status: "done"
+      effort: "8h"
+      priority: "P0-CRITICAL"
+      phase: "1"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-001-fix-layout-responsiveness-2026-01-11.md"
+      completed_at: "2026-01-11T20:33:00+07:00"
+      acceptance_criteria:
+        - "Message area maintains 200px minimum height"
+        - "Input area never covers messages during resize"
+        - "No horizontal overflow at 280px minimum width"
+        - "Empty state follows same layout rules"
+      files_to_modify:
+        - "src/presentation/components/chat/ChatConversation.tsx"
+        - "src/presentation/components/chat/ExpandableChatPanel.tsx"
+      tests_created:
+        - "src/presentation/components/chat/__tests__/ChatConversation.test.tsx"
+
+    "CHAT-002":
+      title: "Fix Multi-line Input Textarea"
+      status: "done"
+      effort: "6h"
+      priority: "P0-CRITICAL"
+      phase: "1"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-002-fix-multiline-input-2026-01-11.md"
+      completed_at: "2026-01-11T21:00:00+07:00"
+      depends_on: []
+      acceptance_criteria:
+        - "Auto-expand from 1 to 6 lines (min-h-[40px] max-h-[150px])"
+        - "Show scroll indicator at max height (overflow-y-auto)"
+        - "Prevent iOS zoom on focus (text-base/16px font)"
+        - "Maintain responsive layout (rounded-none)"
+      files_to_modify:
+        - "src/presentation/components/chat/ChatConversation.tsx"
+      tests_created:
+        - "src/presentation/components/chat/__tests__/ChatConversation.test.tsx"
+
+    "CHAT-003":
+      title: "Fix 8-bit Design System Violations"
+      status: "backlog"
+      effort: "12h"
+      priority: "P1-HIGH"
+      phase: "1"
+      depends_on: []
+
+    "CHAT-004":
+      title: "Group Chat Controls by Use Case"
+      status: "backlog"
+      effort: "10h"
+      priority: "P1-HIGH"
+      phase: "1"
+      depends_on: []
+
+    "CHAT-005":
+      title: "Implement Thread Workspace Association"
+      status: "backlog"
+      effort: "16h"
+      priority: "P0-CRITICAL"
+      phase: "2"
+      depends_on: []
+
+    "CHAT-006":
+      title: "Complete Thread CRUD Operations"
+      status: "backlog"
+      effort: "12h"
+      priority: "P1-HIGH"
+      phase: "2"
+      depends_on: ["CHAT-005"]
+
+    "CHAT-007":
+      title: "Add Collapsible Message Sections"
+      status: "backlog"
+      effort: "14h"
+      priority: "P1-HIGH"
+      phase: "2"
+      depends_on: []
+
+    "CHAT-008":
+      title: "Add Message Interactions"
+      status: "backlog"
+      effort: "8h"
+      priority: "P2-MEDIUM"
+      phase: "2"
+      depends_on: []
+
+    "CHAT-009":
+      title: "Artifact Rendering System"
+      status: "backlog"
+      effort: "20h"
+      priority: "P0-CRITICAL"
+      phase: "3"
+      depends_on: []
+
+    "CHAT-010":
+      title: "Save Chat to Project"
+      status: "backlog"
+      effort: "12h"
+      priority: "P1-HIGH"
+      phase: "3"
+      depends_on: []
+
+    "CHAT-011":
+      title: "Chat-Notes Integration"
+      status: "backlog"
+      effort: "10h"
+      priority: "P2-MEDIUM"
+      phase: "3"
+      depends_on: []
+
+    "CHAT-012":
+      title: "Chat History and Search"
+      status: "backlog"
+      effort: "8h"
+      priority: "P2-MEDIUM"
+      phase: "3"
+      depends_on: []
+
+    "CHAT-013":
+      title: "Multi-Agent Chat"
+      status: "backlog"
+      effort: "16h"
+      priority: "P2-MEDIUM"
+      phase: "4"
+      depends_on: []
+
+    "CHAT-014":
+      title: "Advanced Media Handling"
+      status: "backlog"
+      effort: "16h"
+      priority: "P2-MEDIUM"
+      phase: "4"
+      depends_on: []
+
+    "CHAT-015":
+      title: "Voice Input and Output"
+      status: "backlog"
+      effort: "12h"
+      priority: "P3-LOW"
+      phase: "4"
+      depends_on: []
+
+    "CHAT-016":
+      title: "Chat Templates and Slash Commands"
+      status: "backlog"
+      effort: "10h"
+      priority: "P3-LOW"
+      phase: "4"
+      depends_on: []
+
+    "CHAT-017":
+      title: "Mobile Optimization"
+      status: "backlog"
+      effort: "14h"
+      priority: "P1-HIGH"
+      phase: "4"
+      depends_on: []
+
+  phases:
+    phase_1:
+      name: "Critical UX Fixes"
+      duration: "Weeks 1-3"
+      stories: ["CHAT-001", "CHAT-002", "CHAT-003", "CHAT-004"]
+      effort: "36h"
+      priority: "P0-P1"
+
+    phase_2:
+      name: "Thread Management & Message Display"
+      duration: "Weeks 4-6"
+      stories: ["CHAT-005", "CHAT-006", "CHAT-007", "CHAT-008"]
+      effort: "50h"
+      priority: "P0-P2"
+
+    phase_3:
+      name: "Project Integration & Artifacts"
+      duration: "Weeks 7-9"
+      stories: ["CHAT-009", "CHAT-010", "CHAT-011", "CHAT-012"]
+      effort: "50h"
+      priority: "P0-P2"
+
+    phase_4:
+      name: "Advanced Features"
+      duration: "Weeks 10-12"
+      stories: ["CHAT-013", "CHAT-014", "CHAT-015", "CHAT-016", "CHAT-017"]
+      effort: "68h"
+      priority: "P1-P3"
+
+  progress:
+    completed: 2/17
+    in_progress: 0/17
+    blocked: 0/17
+    remaining: 15/17
+    percent_complete: "12%"
+
+  next_actions:
+    - "CHAT-003: Fix 8-bit design system violations"
+    - "CHAT-004: Group chat controls by use case"
+    - "CHAT-005: Implement thread workspace association"

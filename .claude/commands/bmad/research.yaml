@@ -1,0 +1,59 @@
+---
+name: "bmad-research"
+shorthand: "/research"
+description: "Internet-based research for tech choices and best practices"
+category: "governance"
+version: "1.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "workflow"
+  source: "_bmad-ext/modules/governance/workflows/research-trigger"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+  depends_on: "bmad-expert"
+
+# Metadata
+metadata:
+  module: "governance"
+  phase: "0"
+  ttl_hours: 24  # Research stays valid longer
+  triggered_by:
+    - "flaws_detected"
+    - "tech_choice_needed"
+    - "architectural_conflict"
+---
+
+# BMAD Research Trigger
+
+**Purpose**: Run research-trigger workflow from _bmad-ext
+
+## What This Does
+
+1. Loads `_bmad-ext/modules/governance/workflows/research-trigger/workflow.md`
+2. Conducts internet-based research to validate:
+   - Technology choices
+   - Trade-off analysis
+   - Best practices
+   - Anti-patterns to avoid
+
+## When to Use
+
+- After `/expert` detects flaws or tech choices
+- When choosing between libraries/frameworks
+- When validating architectural decisions
+- When "not-the-best-practice" risks exist
+
+## Research Categories
+
+| Category | Questions Answered |
+|----------|-------------------|
+| Tech Choice | Which library? Which framework? |
+| Trade-offs | Performance vs maintainability |
+| Best Practice | Industry standards, anti-patterns |
+| Architectural | Breaking changes, migration complexity |
+
+## Output
+
+Generates: `_bmad-output/governance/research-trigger-output-{date}.md`

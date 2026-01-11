@@ -34,3 +34,42 @@ export type {
   ProjectRegistrySnapshot,
   ProjectRegistryStats,
 } from './ProjectRegistry';
+
+// Universal Provider Registry - EPIC-PRV, PRV-02
+export {
+  universalProviderRegistry,
+  getProvider,
+  listProviders,
+  registerProvider,
+  removeProvider,
+  updateProvider,
+} from './universal-provider-registry';
+
+export type {
+  UniversalProviderConfig,
+  UniversalModelConfig,
+  ModalityType,
+  ProviderRequestContext,
+  ProviderResponse,
+  ProviderRegistryEntry,
+} from '@/domain/types/llm/provider-types';
+
+// Universal Adapter Factory - EPIC-PRV, PRV-03
+export {
+  createProviderAdapter,
+  testProviderConnection,
+  executeProviderRequest,
+  buildRequestPayload,
+} from './universal-adapter-factory';
+
+export type {
+  UniversalProviderAdapter,
+} from './universal-adapter-factory';
+
+export type {
+  TextRequestPayload,
+  ImageRequestPayload,
+  TTSRequestPayload,
+  STTRequestPayload,
+  RequestPayload,
+} from './universal-adapter-factory';

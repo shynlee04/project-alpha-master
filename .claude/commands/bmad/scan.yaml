@@ -1,0 +1,71 @@
+---
+name: "bmad-scan"
+shorthand: "/scan"
+description: "6-domain targeted scanner - generate fresh evidence before remediation"
+category: "diagnostic"
+version: "1.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "agent"
+  source: "_bmad-ext/modules/arc-v2/agents/domain-scanner"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+
+# Metadata
+metadata:
+  module: "arc-v2"
+  phase: "0"
+  ttl_hours: 4  # Scan evidence expires in 4 hours
+  domains:
+    - "persistence"
+    - "sync"
+    - "state"
+    - "routing"
+    - "agents"
+    - "ux"
+---
+
+# BMAD Domain Scanner
+
+**Purpose**: Run 6-domain targeted scanner from _bmad-ext
+
+## What This Does
+
+1. Loads `_bmad-ext/modules/arc-v2/agents/domain-scanner.md`
+2. Scans targeted domain(s) for:
+   - God artifacts (stores, components)
+   - Code quality issues
+   - Architecture violations
+   - Health score calculation
+
+## 6 Domains
+
+| Domain | Scope | Key Files |
+|--------|-------|-----------|
+| PERSISTENCE | Dexie, IndexedDB, quota | `src/infrastructure/persistence/` |
+| SYNC | FSA, IndexedDB sync | `src/infrastructure/sync/` |
+| STATE | Zustand, React state | `src/infrastructure/persistence/stores/` |
+| ROUTING | Workspaces, navigation | `src/routes/`, workspace access |
+| AGENTS | CRUD, permissions, keys | Agent stores, provider configs |
+| UX | Components, journeys | `src/presentation/components/` |
+
+## When to Use
+
+- Before any remediation work
+- When health score is unknown
+- When creating remediation plan
+- After significant code changes
+
+## Usage
+
+```
+/scan                    # Scan all 6 domains
+/scan state              # Scan STATE domain only
+/scan agents ux          # Scan AGENTS and UX domains
+```
+
+## Output
+
+Generates: `_bmad-output/scans/{domain}-scan-{date}.yaml`

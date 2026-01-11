@@ -98,8 +98,11 @@ _bmad-ext/modules/arc-v2/
 ├── agents/
 │   ├── context-validator.md      # Session-start sub-agent
 │   ├── domain-scanner.md         # 6-domain targeted scanner
-│   ├── journey-mapper.md         # User journey analyzer
-│   └── remediation-executor.md   # Fix executor with rollback
+│   ├── store-refactorer.md       # Zustand store refactoring specialist
+│   ├── component-splitter.md     # React component splitting specialist
+│   ├── workspace-architect.md    # File system & architecture specialist
+│   ├── journey-mapper.md         # User journey analyzer (TODO)
+│   └── remediation-executor.md   # Fix executor with rollback (TODO)
 ├── workflows/
 │   ├── diagnostic-first.md       # Always scan before plan
 │   ├── domain-remediation.md     # Per-domain fix workflow
@@ -230,4 +233,47 @@ cat _bmad-ext/modules/arc-v2/workflows/diagnostic-first.md
 
 **Module Owner**: arc-v2
 **Integrates With**: `_bmad-ext/orchestrator/routing-rules.yaml`
-**Last Updated**: 2026-01-10
+**Last Updated**: 2026-01-11
+
+---
+
+## Remediation Agents (NEW)
+
+### Active Agents (Ready for Deployment)
+
+| Agent | Domain | Purpose | Status |
+|-------|--------|---------|--------|
+| `context-validator.md` | All | Pre-execution prompt validation | ✅ Ready |
+| `domain-scanner.md` | All | 6-domain targeted scanning | ✅ Ready |
+| `store-refactorer.md` | STATE | Zustand store splitting | ✅ Ready |
+| `component-splitter.md` | UX | React component splitting | ✅ Ready |
+| `workspace-architect.md` | ROUTING | File structure architecture | ✅ Ready |
+
+### Agent Activation Matrix
+
+```yaml
+store_refactorer:
+  triggers:
+    - store > 120 lines
+    - Epic CC-1 activation
+    - Epic CP-1 activation
+  coordinates_with:
+    - domain-scanner (for analysis)
+    - component-splitter (if store has embedded components)
+
+component_splitter:
+  triggers:
+    - component > 300 lines
+    - god component detected
+  coordinates_with:
+    - domain-scanner (for analysis)
+    - store-refactorer (if component contains stores)
+
+workspace_architect:
+  triggers:
+    - file in wrong layer
+    - cross-workspace duplication
+    - circular dependencies
+  coordinates_with:
+    - domain-scanner (for analysis)
+```

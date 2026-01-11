@@ -31,6 +31,7 @@ export type ToolTrustLevel = 'auto' | 'prompt' | 'block';
  * - notes: Note CRUD operations (create, read, update, delete, list)
  * - unified: Cross-workspace file operations (read, write, delete, list)
  * - composite: Multi-step agentic workflows (research, storyboard, analyze, plan)
+ * - provider: LLM provider operations (EPIC-PRV - list, test, execute)
  */
 export type ToolCategory =
   | 'files'
@@ -41,7 +42,8 @@ export type ToolCategory =
   | 'web'
   | 'notes'
   | 'unified'
-  | 'composite';
+  | 'composite'
+  | 'provider';
 
 /**
  * Risk level for approval flow

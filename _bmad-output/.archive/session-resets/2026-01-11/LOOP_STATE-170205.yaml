@@ -1,0 +1,56 @@
+# LOOP_STATE - BMAD Extension Global State
+# Version: 1.0.0
+# Last Updated: 2026-01-11T10:00:00Z
+
+# Session Information
+session:
+  id: "{session-uuid}"
+  start_time: "2026-01-11T10:00:00Z"
+  last_activity: "2026-01-11T10:00:00Z"
+  platform: "claude-code" | "opencode"
+  agent: "EXCALIBUR"
+
+# Current Handoff (if any)
+current_handoff: null
+
+# Handoff Chain (for tracing)
+handoff_chain: []
+
+# Active Module
+active_module: null
+
+# Workflow Status
+workflows:
+  current: null
+  history: []
+
+# Context Stack (for nested context)
+context_stack: []
+
+# User Anchor (for anti-hallucination)
+anchor:
+  original_request: ""
+  intent_verified: false
+  last_verified_at: null
+
+# Governance State
+governance:
+  last_check: null
+  status: "pending"
+  decision: null
+
+# Sprint State
+sprint:
+  current: null
+  story_progress: []
+
+# Remediation State
+remediation:
+  active_issues: []
+  completed_fixes: []
+
+# System State
+system:
+  version: "1.0.0"
+  freshness_threshold_hours: 4
+  last_backup: null

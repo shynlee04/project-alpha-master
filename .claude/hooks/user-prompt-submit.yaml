@@ -4,6 +4,8 @@ description: Enrich user input with BMAD context before processing
 when: UserPromptSubmit
 priority: 2
 once: false
+version: 2.1.0
+updated: 2026-01-11 - Added governance gate
 ---
 
 # BMAD Input Enrichment Hook
@@ -78,6 +80,20 @@ intent_keywords:
     - update agents.md
     - constitution
     - standard
+
+  # ========================================
+  # BRIDGE: Governance Gate (v2.1.0)
+  # ========================================
+  governance_gate:
+    - refactor
+    - remediation
+    - split store
+    - split component
+    - architecture
+    - reorganize
+    - god store
+    - god component
+    - workspace architect
 ```
 
 ### 3. Match Against Routing Rules
@@ -190,6 +206,36 @@ steps:
   3. Offer to search artifacts for referenced content
   4. If found → reload artifact
   5. If not found → proceed without reference (warn user)
+```
+
+### Case: Governance Gate Trigger (BRIDGE v2.1.0)
+
+If user message contains governance_gate keywords:
+
+```yaml
+action: governance_gate_check
+trigger_match:
+  - refactor
+  - remediation
+  - split store
+  - split component
+  - architecture
+  - reorganize
+  - god store
+  - god component
+
+steps:
+  1. Check LOOP_STATE.yaml freshness (< 4 hours)
+  2. If stale → suggest: "Run /gov first to refresh context"
+  3. Load context-first workflow frontmatter
+  4. Offer: "Run governance analysis before proceeding?"
+  5. If yes → trigger /gov command
+  6. If no → proceed with warning about potential context issues
+
+available_commands:
+  - "/gov" - Run context-first governance workflow
+  - "/scan" - Run domain scanner for fresh evidence
+  - "/expert" - Run expert analysis on approach
 ```
 
 ---

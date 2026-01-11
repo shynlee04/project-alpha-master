@@ -48,6 +48,9 @@ import { storyboardDef } from '@/lib/agent/tools/composite/storyboard-tool';
 import { analyzeDef } from '@/lib/agent/tools/composite/analyze-tool';
 import { planDef } from '@/lib/agent/tools/composite/plan-tool';
 
+// EPIC-PRV: Provider tools (Story PRV-06)
+import { listProvidersDef, executeProviderDef, testProviderDef } from '@/domain/tools/provider';
+
 /**
  * Default agent modes for each tool category
  */
@@ -61,6 +64,7 @@ const DEFAULT_MODES: Record<ToolCategory, AgentMode[]> = {
   notes: ['knowledge', 'orchestrator'],
   unified: ['coding', 'knowledge', 'orchestrator'], // Cross-workspace operations
   composite: ['knowledge', 'orchestrator'], // Multi-step agentic workflows
+  provider: ['knowledge', 'coding', 'orchestrator'], // EPIC-PRV - Provider operations
 };
 
 /**
@@ -286,6 +290,35 @@ export const TOOL_CATALOG = [
       executionSide: 'server',
     }),
   },
+
+  // ==========================================================================
+  // PROVIDER TOOLS (3) - EPIC-PRV, PRV-06
+  // LLM provider operations (list, execute, test)
+  // ==========================================================================
+  {
+    definition: listProvidersDef,
+    metadata: createToolMetadata('list_providers', 'provider', DEFAULT_MODES.provider, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'server',
+    }),
+  },
+  {
+    definition: executeProviderDef,
+    metadata: createToolMetadata('execute_provider', 'provider', DEFAULT_MODES.provider, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'prompt', // Provider execution may have costs
+      riskLevel: 'medium',
+      executionSide: 'server',
+    }),
+  },
+  {
+    definition: testProviderDef,
+    metadata: createToolMetadata('test_provider', 'provider', DEFAULT_MODES.provider, DEFAULT_WORKSPACES, {
+      defaultTrustLevel: 'auto',
+      riskLevel: 'low',
+      executionSide: 'server',
+    }),
+  },
 ];
 
 /**
@@ -302,6 +335,7 @@ export function getToolCountsByCategory(): Record<string, number> {
     notes: TOOL_CATALOG.filter((t) => t.metadata.category === 'notes').length,
     unified: TOOL_CATALOG.filter((t) => t.metadata.category === 'unified').length,
     composite: TOOL_CATALOG.filter((t) => t.metadata.category === 'composite').length,
+    provider: TOOL_CATALOG.filter((t) => t.metadata.category === 'provider').length,
   };
 }
 

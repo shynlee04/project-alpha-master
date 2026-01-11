@@ -5,20 +5,126 @@
  * Adapter for Google Gemini API using @tanstack/ai-gemini.
  * Supports streaming, tool use, and multimodal capabilities (text, image, audio).
  *
+ * Updated 2026-01-11 to use geminiText() pattern with proper model validation.
+ *
  * @epic EPIC-40 - Multimodal Chat Unification
  * @story MM-04 - Integrate Gemini 2.5 APIs
  */
 
-import { createGeminiChat, type GeminiTextConfig, type GeminiTextModel } from '@tanstack/ai-gemini';
+import { geminiText, type GeminiTextConfig } from '@tanstack/ai-gemini';
 import type { AdapterConfig, ConnectionTestResult } from './types';
 
 // Re-export types for convenience
 export type { GeminiTextConfig };
 
 /**
+ * Gemini model IDs supported by this adapter
+ * Using const assertion for literal type safety and runtime validation
+ */
+const GEMINI_MODELS = [
+  'gemini-3-pro-preview',
+  'gemini-3-flash-preview',
+  'gemini-2.5-pro',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-preview-09-2025',
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-flash-lite-preview-09-2025',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite'
+] as const;
+
+export type GeminiModelId = typeof GEMINI_MODELS[number];
+
+/**
+ * Validate that a model ID is a supported Gemini model
+ * @param model - Model ID to validate
+ * @returns True if model is valid
+ */
+export function isValidGeminiModel(model: string): model is GeminiModelId {
+  return GEMINI_MODELS.includes(model as GeminiModelId);
+}
+
+/**
+ * Validate that a model ID is supported, throw if not
+ * @param model - Model ID to validate
+ * @throws Error if model is not supported
+ */
+export function validateGeminiModelId(model: string): asserts model is GeminiModelId {
+  if (!isValidGeminiModel(model)) {
+    const validModels = GEMINI_MODELS.join(', ');
+    throw new Error(
+      `Invalid Gemini model: "${model}".\n` +
+      `Supported models: ${validModels}\n` +
+      `For the latest models, visit: https://ai.google.dev/gemini-api/docs/models`
+    );
+  }
+}
+
+/**
+ * Google Gemini API error codes and user-friendly messages
+ */
+const GEMINI_ERROR_CODES: Record<string, string> = {
+  'API_KEY_INVALID': 'Your Gemini API key is invalid or expired. Get a new key from Google AI Studio.',
+  'RESOURCE_EXHAUSTED': 'Rate limit exceeded. Please wait before trying again.',
+  'BLOCKED_RESPONSE': 'Content was blocked due to safety filters. Try a different prompt.',
+  'INVALID_ARGUMENT': 'Invalid request format. Check your input parameters.',
+  'DEADLINE_EXCEEDED': 'Request took too long. Try with a shorter input.',
+  'UNAUTHENTICATED': 'Authentication failed. Please check your API key.',
+  'PERMISSION_DENIED': 'Permission denied. Ensure the Gemini API is enabled in your Google Cloud project.',
+};
+
+/**
+ * Format Gemini API error into user-friendly message
+ * @param error - Error from Gemini API or runtime
+ * @returns User-friendly error message
+ */
+export function formatGeminiError(error: unknown): string {
+  // Handle known error structures
+  if (typeof error === 'object' && error !== null) {
+    const errorObj = error as Record<string, unknown>;
+    
+    // Check for Google API error format
+    if (errorObj.code && GEMINI_ERROR_CODES[errorObj.code as string]) {
+      return GEMINI_ERROR_CODES[errorObj.code as string];
+    }
+    
+    // Check for error message
+    if (errorObj.message) {
+      const msg = errorObj.message as string;
+      
+      // Map common patterns
+      if (msg.includes('API key')) {
+        return 'Invalid API key. Get your key from https://aistudio.google.com/app/apikey';
+      }
+      if (msg.includes('rate limit')) {
+        return 'Rate limit exceeded. Please wait a moment and try again.';
+      }
+      if (msg.includes('safety')) {
+        return 'Content was blocked by safety filters. Try a different prompt.';
+      }
+      
+      return msg;
+    }
+  }
+  
+  // Handle standard Error objects
+  if (error instanceof Error) {
+    const msg = error.message;
+    
+    if (msg.includes('Invalid Gemini model')) {
+      return `${msg}\n\nFor the latest models, visit: https://ai.google.dev/gemini-api/docs/models`;
+    }
+    
+    return msg;
+  }
+  
+  return 'An unknown error occurred. Please try again.';
+}
+
+/**
  * Default Gemini model - using 2.5 Flash for best cost/performance balance
  */
-const DEFAULT_MODEL = 'gemini-2.5-flash' as const satisfies GeminiTextModel;
+const DEFAULT_MODEL = 'gemini-2.5-flash' as const satisfies GeminiModelId;
 
 /**
  * Gemini-specific adapter configuration
@@ -29,12 +135,6 @@ export interface GeminiAdapterConfig extends AdapterConfig {
     /** Custom headers for requests */
     headers?: Record<string, string>;
 }
-
-/**
- * Gemini model IDs supported by this adapter
- * Using the exact type from @tanstack/ai-gemini for type safety
- */
-export type GeminiModelId = GeminiTextModel;
 
 /**
  * Input modality types for Gemini
@@ -101,18 +201,26 @@ export class GeminiAdapter {
             throw new Error('GeminiAdapter: API key is required');
         }
         this.apiKey = config.apiKey;
-        this.defaultModel = (config.model as GeminiModelId) || DEFAULT_MODEL;
+        // Validate model ID during construction
+        const modelId = config.model || DEFAULT_MODEL;
+        validateGeminiModelId(modelId);
+        this.defaultModel = modelId;
     }
 
     /**
      * Create a TanStack AI Gemini adapter for a specific model
+     * Uses the modern geminiText() pattern for simplicity
      * @param model - Gemini model ID (must be one of the supported model IDs)
      * @returns TanStack AI Gemini adapter instance
      */
     private createAdapter(model: string) {
-        // createGeminiChat(model: TModel, apiKey: string, config?) => GeminiTextAdapter<TModel>
-        // The model parameter must be one of the literal types from @tanstack/ai-gemini
-        return createGeminiChat(model as GeminiModelId, this.apiKey, {});
+        // Validate model ID before creating adapter
+        validateGeminiModelId(model);
+        
+        // Use geminiText() pattern - simpler and recommended by TanStack AI
+        return geminiText(model as GeminiModelId, {
+            apiKey: this.apiKey,
+        });
     }
 
     /**
@@ -240,14 +348,14 @@ export class GeminiAdapter {
                 } else if (chunk.type === 'error') {
                     yield {
                         type: 'error',
-                        error: chunk.error?.message || 'Unknown error',
+                        error: formatGeminiError(chunk.error || 'Unknown streaming error'),
                     };
                 }
             }
         } catch (error) {
             yield {
                 type: 'error',
-                error: error instanceof Error ? error.message : 'Unknown streaming error',
+                error: formatGeminiError(error),
             };
         }
     }

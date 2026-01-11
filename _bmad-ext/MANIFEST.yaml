@@ -2,9 +2,9 @@
 # BMAD Extension Layer Registry - DO NOT DELETE
 # This layer wraps BMAD core without modifying it
 
-schema_version: "1.0.0"
+schema_version: "2.0.0"
 created: "2026-01-10"
-updated: "2026-01-10"
+updated: "2026-01-11"
 status: "ACTIVE"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -52,18 +52,18 @@ entry_points:
 modules:
   orchestrator:
     path: "orchestrator/"
-    status: "PENDING"  # Will be ACTIVE after Phase 3
+    status: "ACTIVE"  # Now ACTIVE after Phase 3
     files:
       - "master-orchestrator.md"
       - "delegation-protocol.md"
       - "routing-rules.yaml"
       - "escalation-protocol.md"
       - "governance-auto-update.md"
-    
+     
   agents:
     path: "agents/"
-    count: 9
-    status: "PENDING"  # Will be ACTIVE after Phase 2
+    count: 10
+    status: "ACTIVE"  # Now ACTIVE after Phase 2
     wrapped_from: "_bmad/bmm/agents/"
     files:
       - "_template-enhanced-agent.md"
@@ -76,6 +76,7 @@ modules:
       - "tech-writer-ext.md"
       - "ux-designer-ext.md"
       - "quality-scanner-ext.md"
+      - "module-builder-ext.md"
     
   workflows:
     path: "workflows/"
@@ -88,7 +89,7 @@ modules:
     
   state:
     path: "state/"
-    status: "PENDING"  # Will be ACTIVE after Phase 1
+    status: "ACTIVE"  # Now ACTIVE after Phase 1 completion
     files:
       - "LOOP_STATE.yaml"
       - "ARTIFACT_REGISTRY.yaml"
@@ -179,37 +180,43 @@ implementation_phases:
       
   phase_1:
     name: "State Layer"
-    status: "PENDING"
+    status: "COMPLETE"
+    completed_at: "2026-01-11"
     actions:
       - "Create LOOP_STATE.yaml (unified)"
       - "Create ARTIFACT_REGISTRY.yaml"
       - "Create handoff-artifact.schema.yaml"
-      
+      - "Create DELEGATION_LOG.yaml"
+       
   phase_2:
     name: "Enhanced Agents"
-    status: "PENDING"
+    status: "ACTIVE"  # Now activating - agents already exist
     actions:
       - "Create agent template"
       - "Create 9 enhanced agents"
-      
+      - "Create module-builder-ext.md"
+       
   phase_3:
     name: "Orchestrator"
-    status: "PENDING"
+    status: "ACTIVE"  # Now activating - orchestrator already exists
     actions:
       - "Create master-orchestrator.md"
       - "Create delegation-protocol.md"
       - "Create routing-rules.yaml"
-      
+      - "Create escalation-protocol.md"
+      - "Create governance-auto-update.md"
+       
   phase_4:
     name: "Platform Wrappers"
-    status: "PENDING"
+    status: "ACTIVE"  # Now activating - wrappers already exist
     actions:
       - "Create .augment/commands/bmad-ext/"
       - "Create .cursor/commands/bmad-ext/"
+      - "Create .claude/commands/bmad-ext/"
       
   phase_5:
     name: "Integration Test"
-    status: "PENDING"
+    status: "PENDING"  # Will be ACTIVE after phases 1-4 complete
     actions:
       - "Execute one complete story cycle"
       - "Verify handoff artifacts"
@@ -233,3 +240,17 @@ archived:
     archived_at: "2026-01-10"
     reason: "Duplicate of architecture-remediation module"
     archive_path: "_bmad-output/.archive/2026-01-10/phase-0-triage/architecture-refactoring/"
+    
+  - id: "governance-core"
+    archived_at: "2026-01-11"
+    reason: "Duplicate of governance/ v2.0 - consolidated for reduced complexity"
+    archive_path: "_bmad-output/.archive/2026-01-11/governance-core-migration/"
+    files:
+      - "MODULE.md"
+      - "PROGRESS-2026-01-10.md"
+      - "config/"
+      - "core/"
+      - "hooks/"
+      - "policies/"
+      - "scanners/"
+      - "workflows/"

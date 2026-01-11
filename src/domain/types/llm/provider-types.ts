@@ -7,11 +7,28 @@
  *
  * @ epic EPIC-GU
  * @ story GU-A-01 - Unify Provider Type Definitions
+ * @ epic EPIC-PRV
+ * @ story PRV-01 - Universal Provider Types
  * @created 2026-01-09
+ * @updated 2026-01-11
  */
 
 // Import ModelInfo first since it's used in ProviderConfig
 import type { ModelInfo } from './model-types.js';
+
+// ============================================================================
+// MODALITY TYPES (EPIC-PRV)
+// ============================================================================
+
+/**
+ * Supported modality types for multi-modal providers
+ *
+ * Updated 2026-01-11: Added 'audio' for Gemini 2.5 support
+ *
+ * @ epic EPIC-PRV
+ * @ story PRV-01
+ */
+export type ModalityType = 'text' | 'image' | 'audio' | 'tts' | 'stt';
 
 /**
  * Provider type - determines which adapter to use
@@ -20,7 +37,8 @@ export type ProviderType =
   | 'openai'
   | 'openai-compatible'
   | 'anthropic'
-  | 'gemini';
+  | 'gemini'
+  | 'universal'; // EPIC-PRV: Multi-endpoint provider
 
 /**
  * Provider Configuration
@@ -199,3 +217,213 @@ export interface KeyValidationResult {
   /** When validation was performed */
   validatedAt: number;
 }
+
+// ============================================================================
+// UNIVERSAL PROVIDER TYPES (EPIC-PRV)
+// ============================================================================
+
+/**
+ * Universal Model Configuration
+ *
+ * Represents a model available from a universal provider.
+ * Models are manually configured, not auto-discovered.
+ *
+ * @ epic EPIC-PRV
+ * @ story PRV-01
+ */
+export interface UniversalModelConfig {
+  /** Unique model identifier (e.g., 'zai-org/GLM-4.7-TEE') */
+  id: string;
+
+  /** Display name for UI */
+  name: string;
+
+  /**
+   * Supported modalities for this model
+   * A model may support text, image generation, TTS, STT, etc.
+   */
+  modalities: ModalityType[];
+
+  /** Maximum context window in tokens (if known) */
+  contextLength?: number;
+
+  /** Whether model supports streaming responses */
+  supportsStreaming?: boolean;
+
+  /** Whether this is a free model */
+  isFree?: boolean;
+
+  /** Model description */
+  description?: string;
+
+  /** Model version/identifier for provider API */
+  version?: string;
+}
+
+/**
+ * Universal Provider Configuration
+ *
+ * Represents an OpenAI-compatible provider with per-modality endpoints.
+ * This enables providers like Chutes.ai that have different URLs for different modalities.
+ *
+ * @ epic EPIC-PRV
+ * @ story PRV-01
+ */
+export interface UniversalProviderConfig {
+  /** Unique provider identifier (e.g., 'chutes', 'openrouter') */
+  id: string;
+
+  /** Display name for UI */
+  name: string;
+
+  /** Provider description */
+  description?: string;
+
+  /**
+   * Per-modality endpoints
+   * Each modality can have its own base URL
+   *
+   * @example
+   * endpoints: {
+   *   text: 'https://llm.chutes.ai/v1',
+   *   image: 'https://image.chutes.ai',
+   *   tts: 'https://chutes-kokoro.chutes.ai',
+   *   stt: 'https://chutes-whisper-large-v3.chutes.ai',
+   * }
+   */
+  endpoints: Partial<Record<ModalityType, string>>;
+
+  /**
+   * Default API key (stored in credential vault)
+   * @security Actual API key stored in encrypted credential-vault.ts
+   * This is just a reference flag
+   */
+  hasApiKey: boolean;
+
+  /** Vault key identifier (BYOK Vault Integration) */
+  keyId?: string;
+
+  /** Whether provider requires API key (false for localhost) */
+  requiresApiKey?: boolean;
+
+  /** Default headers for requests */
+  defaultHeaders?: Record<string, string>;
+
+  /** Available models for this provider (manually configured) */
+  models: UniversalModelConfig[];
+
+  /** Default model ID */
+  defaultModel?: string;
+
+  /** Documentation URL */
+  docsUrl?: string;
+
+  /** Provider website URL */
+  websiteUrl?: string;
+
+  /** Whether provider is currently active */
+  enabled?: boolean;
+
+  /** Custom provider flag (user-added vs built-in) */
+  isCustom?: boolean;
+
+  /** When this config was created (ISO 8601) */
+  createdAt: string;
+
+  /** When this config was last updated (ISO 8601) */
+  updatedAt: string;
+}
+
+/**
+ * Provider Request Context
+ *
+ * Context for executing a provider request.
+ *
+ * @ epic EPIC-PRV
+ * @ story PRV-01
+ */
+export interface ProviderRequestContext {
+  /** Provider identifier */
+  providerId: string;
+
+  /** Model identifier */
+  model: string;
+
+  /** Request modality */
+  modality: ModalityType;
+
+  /** Request payload (built by request builder) */
+  payload: unknown;
+
+  /** API key override (optional) */
+  apiKeyOverride?: string;
+
+  /** Generation parameters */
+  parameters?: {
+    maxTokens?: number;
+    temperature?: number;
+    topP?: number;
+    stream?: boolean;
+  };
+}
+
+/**
+ * Provider Response
+ *
+ * Standardized response from any provider.
+ *
+ * @ epic EPIC-PRV
+ * @ story PRV-01
+ */
+export interface ProviderResponse {
+  /** Whether request succeeded */
+  success: boolean;
+
+  /** Request latency in milliseconds */
+  latencyMs: number;
+
+  /** Response data (varies by modality) */
+  data?: unknown;
+
+  /** HTTP status code */
+  statusCode?: number;
+
+  /** Response headers */
+  headers?: Record<string, string>;
+
+  /** Error message if failed */
+  error?: string;
+
+  /** Usage statistics (if provided by provider) */
+  usage?: {
+    promptTokens?: number;
+    completionTokens?: number;
+    totalTokens?: number;
+  };
+}
+
+/**
+ * Provider Registry Entry
+ *
+ * Internal registry entry with metadata.
+ *
+ * @ epic EPIC-PRV
+ * @ story PRV-02
+ */
+export interface ProviderRegistryEntry {
+  /** Provider configuration */
+  config: UniversalProviderConfig;
+
+  /** When entry was registered */
+  registeredAt: string;
+
+  /** When entry was last accessed */
+  lastAccessedAt?: string;
+
+  /** Request count for this provider */
+  requestCount?: number;
+
+  /** Success rate (0-1) */
+  successRate?: number;
+}
+
