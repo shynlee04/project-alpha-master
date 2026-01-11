@@ -145,7 +145,7 @@ export interface ChatThread {
   /** Associated project ID */
   projectId: string;
   /** Workspace type (for workspace-scoped threads) */
-  workspaceId?: WorkspaceType;
+  workspaceType?: WorkspaceType;
   /** Thread title */
   title: string;
   /** Preview of thread content */
@@ -228,7 +228,6 @@ export interface ConversationState {
   metadata: {
     id: string;
     projectId: string | null;
-    workspaceId: WorkspaceType;
     workspaceType: WorkspaceType;
     title: string;
     preview: string;

@@ -1,0 +1,46 @@
+---
+name: "bmad-ext-master"
+shorthand: "/ext-master"
+description: "Master gateway to all BMAD-ext modules - loads bridge skills for governance, arc-v2, sprint-planning, implementation"
+category: "core"
+version: "1.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "skill"
+  source: ".claude/skills/bmad-ext-bridge/SKILL.md"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+
+# Metadata
+metadata:
+  module: "bmad-ext-bridge"
+  phase: "0"
+  ttl_hours: 0
+  sub_modules:
+    - "governance"
+    - "arc-v2"
+    - "sprint-planning-wrapper"
+    - "implementation"
+  builder_commands:
+    - "module-builder"
+    - "workflow-builder"
+    - "agent-builder"
+
+# Usage examples
+examples:
+  - "/ext-master"
+  - "/ext-governance"
+  - "/ext-arc"
+
+# Related commands
+see_also:
+  - "bmad-ext-governance"
+  - "bmad-ext-arc-v2"
+  - "bmad-ext-sprint-planning"
+  - "bmad-ext-implementation"
+  - "module-builder"
+  - "workflow-builder"
+  - "agent-builder"
+

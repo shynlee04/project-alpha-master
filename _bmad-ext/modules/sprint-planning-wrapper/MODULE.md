@@ -1,12 +1,38 @@
 # Sprint-Planning Wrapper Module
 
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Last Updated**: 2026-01-11
 **Status**: Active
 
 ## Purpose
 
 Wraps the existing BMAD `sprint-planning` workflow with auto gatekeeping, looping, automation, and handoff work. Adds **Cohesion & Reality validation** to prevent "Dual Chat" type failures.
+
+## Timing Standards (Based on Actual Data)
+
+| Work Unit | Real Average | Examples |
+|-----------|--------------|----------|
+| **Story (simple)** | 1-2 hours | FS-05: 1.5h, MOBILE stories |
+| **Story (complex)** | 2-4 hours | 40-01 Tool Registry: ~3h |
+| **Epic (6-8 stories)** | 4-8 hours | EPIC-40: 12 stories/day |
+| **Epic (mini 3-4)** | 2-4 hours | EPIC-39: 4 stories/day |
+
+### Velocity Reality
+
+```
+✅ NORMAL: 4-8 stories/day, 1-3 epics/day
+✅ EXCEPTIONAL: 2-3 epics/day in flow state
+```
+
+### Wrapper Processing Time
+
+| Step | Duration | Notes |
+|------|----------|-------|
+| **Sprint Planning Wrapper** | 5-15 min | Cohesion + Dependency + Reality checks |
+| **Cohesion Check** | 2-3 min | Validate sprint flow |
+| **Dependency Map** | 1-2 min | Find hidden deps |
+| **Reality Validation** | 2-3 min | Movie Script Test |
+| **Agent Handoff** | < 5 min | UUID + callback processing |
 
 ## Problem Statement
 
@@ -180,3 +206,12 @@ cat workflows/sprint-planning-enhanced/workflow.md
 - ❌ Incoherent sprint narrative → Reorder stories
 - ❌ Dependency conflicts → Adjust story sequencing
 - ❌ Critical anti-patterns → Flag for review before sprint start
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.1.0 | 2026-01-11 | Added realistic timing governance (5-15 min wrapper processing) |
+| 1.0.0 | 2026-01-11 | Initial Sprint-Planning Wrapper module |

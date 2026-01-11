@@ -9,6 +9,7 @@
  */
 
 import { useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
 import { Bot, Loader2, Zap, AlertCircle } from 'lucide-react';
 import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
@@ -37,8 +38,13 @@ import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace'
 export function AgentStatusSegment() {
     const { t } = useTranslation();
     const { eventBus } = useWorkspaceSync();
-    const agentStatus = useStatusBarStore((s) => s.agentStatus);
-    const setAgentStatus = useStatusBarStore((s) => s.setAgentStatus);
+    // PERF-06: Use useShallow to prevent re-renders on unrelated state changes
+    const { agentStatus, setAgentStatus } = useStatusBarStore(
+        useShallow((s) => ({
+            agentStatus: s.agentStatus,
+            setAgentStatus: s.setAgentStatus,
+        }))
+    );
 
     // Subscribe to agent activity events
     useEffect(() => {

@@ -1,14 +1,17 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { Bot, User, Send, ChevronDown, ChevronUp, Code, Mic, MicOff } from 'lucide-react'
-import { Button } from '@/presentation/components/ui/button'
+import { Bot, User, Code } from 'lucide-react'
+import { CollapsibleSection } from '@/presentation/components/chat/CollapsibleSection'
+import { ArtifactPreviewModal } from '@/presentation/components/chat/ArtifactPreviewModal'
 import { useDeviceType } from '@/hooks/useMediaQuery'
+import { useArtifactPreview } from '@/presentation/hooks/useArtifactPreview'
 import { toast } from 'sonner'
 
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
 import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer'
-import { FileAttachmentInput, type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
+import { type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { NoteReferencePicker, useNoteReferencePicker } from '@/presentation/components/chat/NoteReferencePicker'
+import { ChatInputControls } from '@/presentation/components/chat/ChatInputControls'
 import { useTranslation } from 'react-i18next'
 import { StreamingIndicator } from '@/presentation/components/ui/StreamingIndicator'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
@@ -81,7 +84,7 @@ export function EnhancedChatInterface({
     isTyping = false,
     onSendMessage,
     className,
-    onPreviewArtifact,
+    onPreviewArtifact: _onPreviewArtifact, // CHAT-009: Now handled internally via modal
     onSaveArtifact,
     onScroll,
     setScrollRef,
@@ -94,7 +97,9 @@ export function EnhancedChatInterface({
     // E2-4: File attachments state
     const [attachments, setAttachments] = useState<Attachment[]>([])
     const messagesEndRef = useRef<HTMLDivElement>(null)
-    const formRef = useRef<HTMLFormElement>(null)
+
+    // CHAT-009: Artifact preview modal - using extracted hook
+    const { artifactPreview, openArtifact, closeArtifact } = useArtifactPreview()
 
     // E2-1: Voice recording hook for speech-to-text input
     const voiceRecording = useVoiceRecording({
@@ -154,14 +159,6 @@ export function EnhancedChatInterface({
         }
     }, [])
 
-    // E1-10: Adjust form position when keyboard is visible
-    useEffect(() => {
-        if (keyboardHeight > 0 && formRef.current) {
-            // Scroll form into view when keyboard appears
-            formRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' })
-        }
-    }, [keyboardHeight])
-
     // E1-10: Auto-scroll to bottom on new messages (only if autoScroll is enabled)
     useEffect(() => {
         if (autoScroll) {
@@ -184,6 +181,52 @@ export function EnhancedChatInterface({
             messages: messages.map(m => ({ id: m.id, role: m.role, contentLength: m.content?.length }))
         });
     }, [messages]);
+
+    /**
+     * CHAT-009: Detect language from code content
+     * Simple heuristic-based detection for artifact preview
+     */
+    const detectLanguageFromCode = useCallback((code: string): string => {
+        const trimmed = code.trim()
+
+        // Check for HTML
+        if (trimmed.startsWith('<!DOCTYPE html>') || /<html[\s>]/i.test(trimmed)) {
+            return 'html'
+        }
+
+        // Check for SVG
+        if (trimmed.startsWith('<svg') || /<svg[\s>]/i.test(trimmed)) {
+            return 'svg'
+        }
+
+        // Check for JSX/TSX
+        if (/\s(import|from)\s+['"]react['"]/.test(code) || /React\.(FC|useState|useEffect)/.test(code)) {
+            return code.includes(': React\.') || /:\s*React\./.test(code) ? 'typescript' : 'javascript'
+        }
+
+        // Check for TypeScript
+        if (/\b(interface|type|enum)\s+\w+/.test(code) || /:\s*(string|number|boolean|null)\b/.test(code)) {
+            return 'typescript'
+        }
+
+        // Check for JSON
+        if (trimmed.startsWith('{') && trimmed.endsWith('}') && !/=>/.test(code)) {
+            try {
+                JSON.parse(code)
+                return 'json'
+            } catch {
+                // Not valid JSON
+            }
+        }
+
+        // Check for CSS
+        if (/[\w-]+\s*{\s*[\w-]+:\s*[^}]+}/.test(code) && !/function|=>|const|let|var/.test(code)) {
+            return 'css'
+        }
+
+        // Default to text
+        return 'text'
+    }, [])
 
     /**
      * E2-8: Handle form submission with multimodal support
@@ -285,7 +328,12 @@ export function EnhancedChatInterface({
                         <ChatMessageBubble
                             key={message.id}
                             message={message}
-                            onPreviewArtifact={onPreviewArtifact}
+                            onPreviewArtifact={(code) => {
+                                // CHAT-009: Open modal instead of new tab
+                                // Try to detect language from code context
+                                const language = detectLanguageFromCode(code)
+                                openArtifact(code, language)
+                            }}
                             onSaveArtifact={onSaveArtifact}
                         />
                     ))
@@ -297,140 +345,35 @@ export function EnhancedChatInterface({
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Input area - E1-10: Mobile-optimized with attachment/voice buttons */}
-            <form
-                ref={formRef}
+            {/* CHAT-004: Input area with grouped controls */}
+            <ChatInputControls
+                input={input}
+                setInput={setInput}
+                attachments={attachments}
+                onAddAttachment={handleAddAttachment}
+                onRemoveAttachment={handleRemoveAttachment}
+                voiceRecording={voiceRecording}
+                onVoiceClick={handleVoiceClick}
+                isTyping={isTyping}
                 onSubmit={handleSubmit}
-                className={cn(
-                    "shrink-0 border-t border-border bg-secondary/30",
-                    // E1-10: Add extra padding when keyboard is visible
-                    isMobile && keyboardHeight > 0 && "pb-safe"
-                )}
-            >
-                <div className={cn(
-                    "flex gap-2 items-end p-3",
-                    // E1-10: Stack buttons vertically on mobile for better touch targets
-                    isMobile ? "flex-wrap" : ""
-                )}>
-                    {/* E2-4: File attachment input */}
-                    <FileAttachmentInput
-                        attachments={attachments}
-                        onAdd={handleAddAttachment}
-                        onRemove={handleRemoveAttachment}
-                        disabled={isTyping}
-                    />
-
-                    {/* E2-1: Voice input button with recording state */}
-                    <Button
-                        type="button"
-                        variant={voiceRecording.isRecording ? "destructive" : "ghost"}
-                        onClick={handleVoiceClick}
-                        className={cn(
-                            "shrink-0 relative",
-                            // E2-1: Pulsing animation when recording
-                            voiceRecording.isRecording && "animate-pulse",
-                            // E1-10: Touch targets ≥44x44px on mobile, prominent on mobile
-                            isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-9 w-9"
-                        )}
-                        aria-label={
-                            voiceRecording.isRecording
-                                ? t('voice.tapToStop', 'Tap to stop')
-                                : t('voice.tapToRecord', 'Tap to record')
-                        }
-                        title={
-                            voiceRecording.isRecording
-                                ? t('voice.recording', 'Listening...')
-                                : t('voice.record', 'Tap to speak')
-                        }
-                    >
-                        {voiceRecording.isRecording ? (
-                            <MicOff className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
-                        ) : (
-                            <Mic className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
-                        )}
-                        {/* E2-1: Volume level indicator */}
-                        {voiceRecording.isRecording && voiceRecording.volumeLevel > 0.01 && (
-                            <span
-                                className="absolute inset-0 rounded-full bg-primary/20"
-                                style={{
-                                    transform: `scale(${0.8 + voiceRecording.volumeLevel * 0.4})`,
-                                    transition: 'transform 100ms ease-out',
-                                }}
-                            />
-                        )}
-                    </Button>
-
-                    {/* Text input */}
-                    <textarea
-                        value={input}
-                        onChange={(e) => {
-                            setInput(e.target.value)
-                            // Auto-resize textarea
-                            e.target.style.height = 'auto'
-                            e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
-                        }}
-                        onKeyDown={async (e) => {
-                            // E2-8: Submit on Enter (without Shift) - supports attachments
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault()
-                                const hasContent = input.trim() || attachments.length > 0
-                                if (hasContent && !isTyping) {
-                                    // Convert image attachments to base64
-                                    const imageData = await convertImageAttachments(
-                                        attachments.filter((a): a is FileAttachment => a.type === 'image')
-                                    )
-                                    const images: ImageContent[] = imageData.map((data) => ({
-                                        base64: data.base64,
-                                        mimeType: data.mimeType,
-                                    }))
-                                    // Send with optional images
-                                    onSendMessage(input.trim(), images.length > 0 ? images : undefined)
-                                    setInput('')
-                                    // Clear attachments
-                                    attachments.forEach(a => {
-                                        if ('preview' in a && a.preview) {
-                                            URL.revokeObjectURL(a.preview)
-                                        }
-                                    })
-                                    setAttachments([])
-                                    e.currentTarget.style.height = 'auto'
-                                }
-                            }
-                        }}
-                        placeholder={t('chat.placeholder', 'Type a message...')}
-                        className={cn(
-                            "flex-1 min-h-[40px] max-h-[150px] px-3 py-2 bg-background border border-border rounded-none placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none overflow-y-auto",
-                            // E1-10: Larger text on mobile for readability
-                            isMobile ? "text-base" : "text-base md:text-sm"
-                        )}
-                        disabled={isTyping}
-                        rows={1}
-                    />
-
-                    {/* Send button - E1-10: Larger on mobile for touch targets */}
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        iconOnly={true}
-                        className={cn(
-                            "shrink-0",
-                            // E1-10: Touch targets ≥44x44px on mobile
-                            isMobile ? "h-11 w-11 min-w-[44px] min-h-[44px]" : "h-10 w-10"
-                        )}
-                        // E2-8: Allow sending with just attachments
-                        disabled={(!input.trim() && attachments.length === 0) || isTyping}
-                        aria-label={t('chat.send', 'Send message')}
-                    >
-                        <Send className={cn(isMobile ? "w-5 h-5" : "w-4 h-4")} />
-                    </Button>
-                </div>
-            </form>
+                isMobile={isMobile}
+            />
 
             {/* E3-5: Note Reference Picker Dialog */}
             <NoteReferencePicker
                 open={notePicker.open}
                 onClose={notePicker.onClose}
                 onSelectNote={notePicker.onSelectNote}
+            />
+
+            {/* CHAT-009: Artifact Preview Modal */}
+            <ArtifactPreviewModal
+                open={artifactPreview.open}
+                onClose={closeArtifact}
+                code={artifactPreview.code}
+                language={artifactPreview.language}
+                fileName={artifactPreview.fileName}
+                onSave={onSaveArtifact}
             />
         </div>
     )
@@ -529,27 +472,25 @@ function MessageContent({
     )
 }
 
+/**
+ * CHAT-007: Tool execution log with consistent collapse behavior
+ *
+ * Uses CollapsibleSection for unified UX with other collapsible content.
+ * Shows tool badges in expandable section.
+ */
 function ToolExecutionLog({ executions }: { executions: ToolExecution[] }) {
-    const [isExpanded, setExpanded] = useState(false)
     const { t } = useTranslation()
 
     return (
         <div className="mt-2 w-full">
-            <button
-                onClick={() => setExpanded(!isExpanded)}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground mb-2"
+            <CollapsibleSection
+                title={`${executions.length} ${t('chat.toolsUsed', 'tools used')}`}
+                icon={<Code className="w-3 h-3" />}
+                defaultCollapsed={true}
+                variant="compact"
+                framed={false}
             >
-                <Code className="w-3 h-3" />
-                {executions.length} {t('chat.toolsUsed', 'tools used')}
-                {isExpanded ? (
-                    <ChevronUp className="w-3 h-3" />
-                ) : (
-                    <ChevronDown className="w-3 h-3" />
-                )}
-            </button>
-
-            {isExpanded && (
-                <div className="flex flex-wrap gap-2 pl-1">
+                <div className="flex flex-wrap gap-2 pl-1 mt-2">
                     {executions.map((exec) => (
                         <ToolCallBadge
                             key={exec.id}
@@ -560,7 +501,7 @@ function ToolExecutionLog({ executions }: { executions: ToolExecution[] }) {
                         />
                     ))}
                 </div>
-            )}
+            </CollapsibleSection>
         </div>
     )
 }
@@ -573,7 +514,7 @@ function TypingIndicator() {
             <div className="w-8 h-8 bg-primary/20 flex items-center justify-center rounded-none">
                 <Bot className="w-4 h-4 text-primary" />
             </div>
-            <div className="px-4 py-3 bg-secondary rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
+            <div className="px-4 py-3 bg-secondary rounded-none shadow-pixel">
                 <StreamingIndicator
                     size="md"
                     message={t('chat.thinking', 'Thinking...')}

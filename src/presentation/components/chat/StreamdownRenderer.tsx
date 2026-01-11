@@ -18,6 +18,7 @@ import remarkGfm from 'remark-gfm';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { CodeBlock } from './CodeBlock';
+import { CollapsibleSection } from './CollapsibleSection';
 
 /**
  * Props for StreamdownRenderer component
@@ -36,7 +37,10 @@ interface StreamdownRendererProps {
 }
 
 /**
- * Mermaid diagram renderer
+ * CHAT-007: Mermaid diagram renderer with collapsible support
+ *
+ * Diagrams taller than 250px are collapsed by default.
+ * Users can expand/collapse via header toggle.
  */
 function MermaidDiagram({ code }: { code: string }) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -109,16 +113,29 @@ function MermaidDiagram({ code }: { code: string }) {
         );
     }
 
-    return (
+    // CHAT-007: Wrap diagram in collapsible section
+    const diagramContent = (
         <div
             ref={containerRef}
             className={cn(
-                'my-4 p-4 rounded-sm border-2 border-border bg-secondary',
                 'overflow-auto',
                 '[&_svg]:max-w-full [&_svg]:h-auto'
             )}
             dangerouslySetInnerHTML={{ __html: svg }}
         />
+    );
+
+    return (
+        <CollapsibleSection
+            title="Diagram"
+            collapseThreshold={250}
+            variant="default"
+            className="my-4"
+        >
+            <div className="p-4 bg-secondary">
+                {diagramContent}
+            </div>
+        </CollapsibleSection>
     );
 }
 

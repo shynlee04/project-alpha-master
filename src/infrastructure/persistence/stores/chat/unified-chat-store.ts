@@ -158,7 +158,6 @@ export const useUnifiedChatStore = create<CombinedUnifiedChatState>()(
             metadata: {
               id: conversation.id,
               projectId: conversation.projectId || '',
-              workspaceId: conversation.workspaceType,
               workspaceType: conversation.workspaceType,
               title: conversation.title || 'New Chat',
               preview: conversation.preview || '',
@@ -257,7 +256,7 @@ export const useUnifiedChatStore = create<CombinedUnifiedChatState>()(
                       id: threadId,
                       conversationId,
                       projectId: state.metadata.projectId || '',
-                      workspaceId: state.metadata.workspaceType,
+                      workspaceType: state.metadata.workspaceType, // CHAT-024: Standardized naming
                       title: 'Main Thread',
                       preview: state.metadata.preview,
                       status: 'active',

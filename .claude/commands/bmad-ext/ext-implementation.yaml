@@ -1,0 +1,118 @@
+---
+name: "bmad-ext-implementation"
+shorthand: "/ext-implementation"
+description: "BMAD-ext implementation module - story-cycle workflow for new features, correct-course workflow for bug fixes/remediation"
+category: "implementation"
+version: "1.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "skill"
+  source: ".claude/skills/bmad-ext-bridge/modules/implementation/SKILL.md"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+
+# Metadata
+metadata:
+  module: "implementation"
+  phase: "4"
+  ttl_hours: 0
+  workflows:
+    - "story-cycle"
+    - "correct-course"
+  sub_workflows:
+    - "quick-patch"
+    - "feature-fix"
+    - "architectural-conflict"
+---
+
+# BMAD-EXT Implementation Module Bridge
+
+**Purpose**: Gateway to story execution and bug fix workflows
+
+## Workflows
+
+### Story-Cycle Workflow (New Features)
+
+```bash
+/story-cycle
+# Execute stories from assignment to completion
+```
+
+**Steps**:
+1. **Init**: Load story context, validate prerequisites
+2. **Validate**: Check dependencies, sprint capacity
+3. **Implement**: Execute development work
+4. **Test**: Run tests, verify coverage
+5. **Review**: Code review, quality check
+6. **Done**: Update sprint-status, mark complete
+7. **Retrospective**: Story completion summary
+
+### Correct-Course Workflow (Bug Fixes/Remediation)
+
+```bash
+/correct-course
+# Categorize and execute bug fixes
+```
+
+**Categorization**:
+1. **Quick Patch**: Simple bugs, wrong component wiring
+2. **Feature Fix**: Independent feature, no chained impact
+3. **Architectural Conflict**: Requires comprehensive remediation
+
+**Steps**:
+1. **Receive Report**: Get governance report with issue level
+2. **Categorize**: Determine remediation type
+3. **Route**: Delegate to appropriate sub-workflow
+4. **Complete**: Update status, create handoff
+
+## Sub-Workflows
+
+### Quick Patch
+```bash
+/quick-patch
+# Simple fixes, single component
+```
+
+### Feature Fix
+```bash
+/feature-fix
+# Independent features
+```
+
+### Architectural Conflict
+```bash
+/arch-fix
+# Deep remediation, god-store-split, component-split
+```
+
+## Routing Rules
+
+```yaml
+to_story_cycle:
+  - "governance.issue_level == 'new_feature'"
+  - "story_key exists and assigned"
+  - "sprint has capacity"
+
+to_correct_course:
+  - "governance.issue_level in ['quick_patch', 'feature_fix', 'architectural']"
+  - "bug or error report filed"
+  - "remediation approved"
+```
+
+## Usage
+
+```bash
+/ext-implementation   # Load implementation bridge
+/story-cycle          # Execute story-cycle workflow
+/correct-course       # Execute correct-course workflow
+/quick-patch          # Quick patch workflow
+/feature-fix          # Feature fix workflow
+/arch-fix             # Architectural conflict workflow
+```
+
+## Output
+
+- **Story-Cycle**: Updated `sprint-status.yaml`, story completion artifact
+- **Correct-Course**: Remediation complete, bug resolution artifact

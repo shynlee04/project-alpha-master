@@ -319,8 +319,7 @@ async function transformLegacyData(
 
         const conversation: ConversationMetadataWithId = {
             id: legacyConversation.metadata.id,
-            workspaceType,
-            workspaceId: workspaceType, // Map workspaceType to workspaceId
+            workspaceType, // CHAT-024: Standardized naming
             projectId: legacyConversation.metadata.projectId,
             agentId,
             status: 'active',

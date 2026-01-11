@@ -98,9 +98,15 @@ export interface CombinedUnifiedChatState {
   // ========== Thread Management Methods ==========
   createThread: (conversationId: string, parentThreadId?: string) => string;
   deleteThread: (threadId: string) => void;
+  updateThread: (threadId: string, updates: Partial<Omit<ThreadWithId, 'id' | 'conversationId' | 'createdAt'>>) => void;
+  /** CHAT-006: Archive a thread (sets status to 'archived') */
+  archiveThread: (threadId: string) => void;
+  /** CHAT-006: Unarchive a thread (sets status back to 'active') */
+  unarchiveThread: (threadId: string) => void;
   setActiveThread: (threadId: string | null) => void;
   getThread: (threadId: string) => ThreadWithId | undefined;
   getThreadsByConversation: (conversationId: string) => ThreadWithId[];
+  getThreadsByWorkspace: (workspaceType: ThreadWithId['workspaceType']) => ThreadWithId[];
   getRootThread: (conversationId: string) => ThreadWithId | undefined;
   getChildThreads: (parentThreadId: string) => ThreadWithId[];
   getThreadHierarchy: (threadId: string) => ThreadWithId[];

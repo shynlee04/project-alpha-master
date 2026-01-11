@@ -22,9 +22,15 @@ type ThreadManagementSliceState = Pick<CombinedUnifiedChatState,
 type ThreadManagementSliceMethods = {
   createThread: (conversationId: string, parentThreadId?: string) => string;
   deleteThread: (threadId: string) => void;
+  updateThread: (threadId: string, updates: Partial<Omit<ThreadWithId, 'id' | 'conversationId' | 'createdAt'>>) => void;
+  /** CHAT-006: Archive a thread (sets status to 'archived') */
+  archiveThread: (threadId: string) => void;
+  /** CHAT-006: Unarchive a thread (sets status back to 'active') */
+  unarchiveThread: (threadId: string) => void;
   setActiveThread: (threadId: string | null) => void;
   getThread: (threadId: string) => ThreadWithId | undefined;
   getThreadsByConversation: (conversationId: string) => ThreadWithId[];
+  getThreadsByWorkspace: (workspaceType: ThreadWithId['workspaceType']) => ThreadWithId[];
   getRootThread: (conversationId: string) => ThreadWithId | undefined;
   getChildThreads: (parentThreadId: string) => ThreadWithId[];
   getThreadHierarchy: (threadId: string) => ThreadWithId[];
@@ -61,11 +67,16 @@ export const createThreadManagementSlice: StateCreator<
     const isRoot = !parentThreadId;
     const conversation = get().conversations[conversationId];
 
+    // CHAT-005: Validate workspace association
+    if (!conversation?.workspaceType) {
+      console.warn('[ThreadManagementSlice] Conversation missing workspaceType:', conversationId);
+    }
+
     const newThread: ThreadWithId = {
       id: threadId,
       conversationId,
       projectId: conversation?.projectId || '',
-      workspaceId: conversation?.workspaceType,
+      workspaceType: conversation?.workspaceType,
       title: isRoot ? 'Main Thread' : 'New Thread',
       preview: '',
       parentThreadId: parentThreadId || null,
@@ -80,6 +91,7 @@ export const createThreadManagementSlice: StateCreator<
     console.log('[ThreadManagementSlice] Creating:', threadId, {
       conversationId,
       parentThreadId,
+      workspaceType: conversation?.workspaceType,
     });
 
     set((state) => ({
@@ -122,6 +134,110 @@ export const createThreadManagementSlice: StateCreator<
     get().persistConversation();
   },
 
+  // CHAT-005: Update thread (title, status, etc.) with workspace validation
+  updateThread: (threadId, updates) => {
+    const thread = get().threads[threadId];
+    if (!thread) {
+      console.warn('[ThreadManagementSlice] Thread not found for update:', threadId);
+      return;
+    }
+
+    // CHAT-005: Don't allow updates to deleted threads
+    if (thread.status === 'deleted') {
+      console.warn('[ThreadManagementSlice] Cannot update deleted thread:', threadId);
+      return;
+    }
+
+    // CHAT-005: Workspace validation - don't allow cross-workspace updates
+    if (thread.workspaceType && updates.workspaceType && thread.workspaceType !== updates.workspaceType) {
+      console.warn('[ThreadManagementSlice] Cannot change thread workspace:', {
+        current: thread.workspaceType,
+        attempted: updates.workspaceType,
+      });
+      return;
+    }
+
+    set((state) => ({
+      threads: {
+        ...state.threads,
+        [threadId]: {
+          ...thread,
+          ...updates,
+          updatedAt: Date.now(),
+        },
+      },
+    }));
+    get().persistConversation();
+  },
+
+  // CHAT-006: Archive a thread (sets status to 'archived')
+  archiveThread: (threadId) => {
+    const thread = get().threads[threadId];
+    if (!thread) {
+      console.warn('[ThreadManagementSlice] Thread not found for archive:', threadId);
+      return;
+    }
+
+    // Cannot archive deleted threads
+    if (thread.status === 'deleted') {
+      console.warn('[ThreadManagementSlice] Cannot archive deleted thread:', threadId);
+      return;
+    }
+
+    // Already archived
+    if (thread.status === 'archived') {
+      console.log('[ThreadManagementSlice] Thread already archived:', threadId);
+      return;
+    }
+
+    console.log('[ThreadManagementSlice] Archiving thread:', threadId);
+    set((state) => ({
+      threads: {
+        ...state.threads,
+        [threadId]: {
+          ...thread,
+          status: 'archived',
+          updatedAt: Date.now(),
+        },
+      },
+    }));
+    get().persistConversation();
+  },
+
+  // CHAT-006: Unarchive a thread (sets status back to 'active')
+  unarchiveThread: (threadId) => {
+    const thread = get().threads[threadId];
+    if (!thread) {
+      console.warn('[ThreadManagementSlice] Thread not found for unarchive:', threadId);
+      return;
+    }
+
+    // Cannot unarchive deleted threads
+    if (thread.status === 'deleted') {
+      console.warn('[ThreadManagementSlice] Cannot unarchive deleted thread:', threadId);
+      return;
+    }
+
+    // Not archived
+    if (thread.status !== 'archived') {
+      console.log('[ThreadManagementSlice] Thread is not archived:', threadId);
+      return;
+    }
+
+    console.log('[ThreadManagementSlice] Unarchiving thread:', threadId);
+    set((state) => ({
+      threads: {
+        ...state.threads,
+        [threadId]: {
+          ...thread,
+          status: 'active',
+          updatedAt: Date.now(),
+        },
+      },
+    }));
+    get().persistConversation();
+  },
+
   setActiveThread: (threadId) => {
     if (!threadId) {
       console.log('[ThreadManagementSlice] Clearing active thread');
@@ -147,6 +263,12 @@ export const createThreadManagementSlice: StateCreator<
   getThreadsByConversation: (conversationId) =>
     Object.values(get().threads).filter(
       (t) => t.conversationId === conversationId && t.status !== 'deleted'
+    ),
+
+  // CHAT-005: Get threads by workspace type (following getConversationsByWorkspace pattern)
+  getThreadsByWorkspace: (workspaceType) =>
+    Object.values(get().threads).filter(
+      (t) => t.workspaceType === workspaceType && t.status !== 'deleted'
     ),
 
   getRootThread: (conversationId) =>

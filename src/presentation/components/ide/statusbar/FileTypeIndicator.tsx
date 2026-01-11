@@ -7,6 +7,7 @@
  * Displays current file type/language based on file extension.
  */
 
+import { useShallow } from 'zustand/react/shallow';
 import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
 
@@ -61,9 +62,13 @@ function getLanguageFromType(fileType: string): string {
  * Displays language name based on file extension.
  */
 export function FileTypeIndicator() {
-    // Select individual primitives to avoid re-render loops
-    const fileType = useStatusBarStore((s) => s.fileType);
-    const encoding = useStatusBarStore((s) => s.encoding);
+    // PERF-06: Use useShallow to prevent re-renders on unrelated state changes
+    const { fileType, encoding } = useStatusBarStore(
+        useShallow((s) => ({
+            fileType: s.fileType,
+            encoding: s.encoding,
+        }))
+    );
 
     if (!fileType) {
         return null;

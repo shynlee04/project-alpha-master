@@ -8,7 +8,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { useConversationStore as useThreadsStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { ChatMessage } from '../EnhancedChatInterface';
 import { mapHookMessages, mapStoreMessages } from './message-mappers';
 
@@ -41,7 +41,7 @@ export function useAgentChatConversationManager({
     const {
         activeThreadId,
         threads,
-    } = useThreadsStore();
+    } = useConversationStore();
 
     // E1-6: Handle scroll events and track position
     const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {

@@ -9,10 +9,15 @@
 
 import { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Send, Trash2, Bot, User, MessageSquare } from 'lucide-react';
+import { Trash2, Bot, User, MessageSquare } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { Input } from '@/presentation/components/ui/input';
+import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRenderer';
+import { ArtifactPreviewModal } from '@/presentation/components/chat/ArtifactPreviewModal';
+import { ChatInputControls } from '@/presentation/components/chat/ChatInputControls';
+import { useArtifactPreview } from '@/presentation/hooks/useArtifactPreview';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
+import type { Attachment } from '@/presentation/components/chat/FileAttachmentInput';
+import type { UseVoiceRecordingState } from '@/lib/voice/use-voice-recording';
 
 interface RAGChatPanelProps {
   /** Chat messages */
@@ -80,34 +85,35 @@ export const RAGChatPanel = memo(function RAGChatPanel({
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+
+  // CHAT-009: Artifact preview state and handlers
+  const { artifactPreview, openArtifact, closeArtifact } = useArtifactPreview();
+
+  // CHAT-004: Attachments state (empty - RAGChatPanel doesn't support file attachments)
+  const [attachments] = useState<Attachment[]>([]);
+
+  // CHAT-004: Voice recording state (not supported - minimal mode)
+  const voiceRecording: UseVoiceRecordingState = {
+    isRecording: false,
+    isProcessing: false,
+    volumeLevel: 0,
+    error: null,
+    isSupported: false,
+  };
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input on mount
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  const handleSend = useCallback(() => {
+  // CHAT-004: Handle form submit from ChatInputControls
+  const handleSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
     if (inputValue.trim() && !loading) {
       onSendMessage(inputValue.trim());
       setInputValue('');
     }
   }, [inputValue, loading, onSendMessage]);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSend();
-      }
-    },
-    [handleSend]
-  );
 
   const handleClearChat = useCallback(() => {
     if (messages.length > 0) {
@@ -115,35 +121,85 @@ export const RAGChatPanel = memo(function RAGChatPanel({
     }
   }, [messages.length, onClearChat]);
 
-  const renderMessageContent = (message: ChatMessage) => {
-    // Split content by citation markers and render
-    const parts = message.content.split(/(\[\d+\])/g);
+  // CHAT-004: No-op attachment handlers (not supported in RAGChatPanel)
+  const handleAddAttachment = useCallback(() => {
+    // File attachments not supported in Knowledge workspace chat
+    console.warn('[RAGChatPanel] File attachments not supported');
+  }, []);
 
-    return (
-      <>
-        {parts.map((part, index) => {
-          const citationMatch = part.match(/^\[(\d+)\]$/);
-          if (citationMatch) {
-            const citationId = parseInt(citationMatch[1], 10);
-            const citation = message.citations?.find((c) => c.id === citationId);
-            if (citation) {
-              return (
-                <CitationMarker
-                  key={index}
-                  citation={citation}
-                  onClick={() => onCitationClick(citation)}
-                />
-              );
+  const handleRemoveAttachment = useCallback(() => {
+    // File attachments not supported in Knowledge workspace chat
+  }, []);
+
+  const handleVoiceClick = useCallback(() => {
+    // Voice input not supported in Knowledge workspace chat
+    console.warn('[RAGChatPanel] Voice input not supported');
+  }, []);
+
+  /**
+   * CHAT-009: Render message content with markdown and citation support
+   *
+   * Splits content by citation markers and renders:
+   * - Non-citation parts with StreamdownRenderer (markdown + code blocks)
+   * - Citation markers as interactive CitationMarker components
+   *
+   * This preserves citation functionality while enabling rich markdown rendering.
+   */
+  const renderMessageContent = useCallback(
+    (message: ChatMessage) => {
+      // Split content by citation markers [1], [2], etc.
+      const parts = message.content.split(/(\[\d+\])/g);
+
+      return (
+        <>
+          {parts.map((part, index) => {
+            const citationMatch = part.match(/^\[(\d+)\]$/);
+            if (citationMatch) {
+              // This is a citation marker
+              const citationId = parseInt(citationMatch[1], 10);
+              const citation = message.citations?.find((c) => c.id === citationId);
+              if (citation) {
+                return (
+                  <CitationMarker
+                    key={`citation-${index}`}
+                    citation={citation}
+                    onClick={() => onCitationClick(citation)}
+                  />
+                );
+              }
+              // Fallback for orphaned citation markers
+              return <span key={`citation-${index}`}>{part}</span>;
             }
-          }
-          return <span key={index}>{part}</span>;
-        })}
-      </>
-    );
-  };
+            // This is content - render with markdown support
+            return (
+              <StreamdownRenderer
+                key={`content-${index}`}
+                content={part}
+                isStreaming={message.streaming}
+                onPreviewArtifact={(code) => openArtifact(code, 'text', 'artifact.txt')}
+                onSaveArtifact={(code, language) => {
+                  // CHAT-009: Save artifact handler
+                  // For now, trigger download via browser - could be enhanced with localAdapterRef
+                  const blob = new Blob([code], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `artifact.${language || 'txt'}`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }}
+              />
+            );
+          })}
+        </>
+      );
+    },
+    [onCitationClick, openArtifact]
+  );
 
   const isEmpty = messages.length === 0;
-  const canSend = inputValue.trim() && !loading;
 
   return (
     <div className="flex flex-col h-full bg-background border-2 border-border rounded-none">
@@ -251,29 +307,29 @@ export const RAGChatPanel = memo(function RAGChatPanel({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="p-3 border-t border-border">
-        <div className="flex gap-2">
-          <Input
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t('rag.chat.input.placeholder', 'Ask a question...')}
-            className="flex-1 border-2 border-input rounded-none"
-            disabled={loading}
-            aria-label={t('rag.chat.input.label', 'Chat input')}
-          />
-          <Button
-            onClick={handleSend}
-            disabled={!canSend}
-            className="border-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-none"
-            aria-label={t('rag.chat.send', 'Send message')}
-          >
-            <Send size={16} />
-          </Button>
-        </div>
-      </div>
+      {/* CHAT-004: Input using ChatInputControls with minimal mode */}
+      <ChatInputControls
+        input={inputValue}
+        setInput={setInputValue}
+        attachments={attachments}
+        onAddAttachment={handleAddAttachment}
+        onRemoveAttachment={handleRemoveAttachment}
+        voiceRecording={voiceRecording}
+        onVoiceClick={handleVoiceClick}
+        isTyping={loading}
+        onSubmit={handleSubmit}
+        showAttachments={false}
+        showVoice={false}
+      />
+
+      {/* CHAT-009: Artifact Preview Modal */}
+      <ArtifactPreviewModal
+        open={artifactPreview.open}
+        onClose={closeArtifact}
+        code={artifactPreview.code}
+        language={artifactPreview.language}
+        fileName={artifactPreview.fileName}
+      />
     </div>
   );
 });

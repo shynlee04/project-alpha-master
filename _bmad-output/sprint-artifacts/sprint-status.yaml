@@ -303,9 +303,17 @@ epic_fs_status:
 
     "FS-05":
       title: "Implement FileLockService for concurrent access"
-      status: "pending"
+      status: "completed"
       effort: "6h"
       priority: "P0"
+      completed_at: "2026-01-12T00:56:00+07:00"
+      completed_by: "Team B"
+      notes: |
+        ALREADY IMPLEMENTED via previous work:
+        - File: src/lib/agent/facades/file-lock.ts (184 lines)
+        - Tests: src/lib/agent/facades/__tests__/file-lock.test.ts (14 tests passing)
+        - Integration: Already used in file-tools-impl.ts
+        - Features: acquire/release mutex, timeout handling, concurrent lock support
     "FS-06":
       title: "Unified CRUD interface for users + agents"
       status: "pending"
@@ -1796,11 +1804,12 @@ epic_chat_status:
   name: "Unified Chat System Remediation"
   priority: "P0-CRITICAL"
   phase: "READY_FOR_DEV"
-  total_stories: 17
+  total_stories: 22  # 17 original + 5 remediation (CHAT-018, CHAT-019, CHAT-020, CHAT-022, CHAT-023)
   estimated_effort: "~190 hours"
   created_at: "2026-01-11T12:00:00+07:00"
   source: "misty-honking-neumann.md plan"
   plan_file: ".claude/plans/misty-honking-neumann.md"
+  remediation_stories_added: 5  # CHAT-018 through CHAT-024 (excluding CHAT-021 as it was planned)
 
   problem_areas:
     - "Layout/Responsiveness: Chat breaks in resizable panes"
@@ -1811,43 +1820,44 @@ epic_chat_status:
     - "Design: 52+ violations of 8-bit design system"
 
   stories:
+    # ============================================================================
+    # CHAT-001/002 INVALIDITY NOTICE (CRITICAL ARCHITECTURAL ERROR)
+    # ============================================================================
+    # CHAT-001 and CHAT-002 were marked "done" but applied fixes to
+    # ChatConversation.tsx which was NEVER RENDERED in production workspaces.
+    #
+    # ACTUAL production chat component tree:
+    # IDE Workspace: IDEResizableLayout → IDEChatPanel → ChatPanelWrapper → AgentChatPanel → EnhancedChatInterface ✅
+    # Notes Workspace: UnifiedChatPanel → AgentChatPanel → EnhancedChatInterface ✅
+    # Notes Sidebar: NoteSidebarChat.tsx (standalone, 241 lines) ⚠️
+    #
+    # ChatConversation.tsx (534 lines) was imported but NEVER used in any route.
+    # This was discovered during CHAT-020 investigation.
+    #
+    # INVALID stories (fixed WRONG component):
     "CHAT-001":
       title: "Fix Chat Panel Layout and Responsiveness"
-      status: "done"
+      status: "invalid"
       effort: "8h"
       priority: "P0-CRITICAL"
       phase: "1"
       story_file: "_bmad-output/sprint-artifacts/CHAT-001-fix-layout-responsiveness-2026-01-11.md"
-      completed_at: "2026-01-11T20:33:00+07:00"
-      acceptance_criteria:
-        - "Message area maintains 200px minimum height"
-        - "Input area never covers messages during resize"
-        - "No horizontal overflow at 280px minimum width"
-        - "Empty state follows same layout rules"
-      files_to_modify:
-        - "src/presentation/components/chat/ChatConversation.tsx"
-        - "src/presentation/components/chat/ExpandableChatPanel.tsx"
-      tests_created:
-        - "src/presentation/components/chat/__tests__/ChatConversation.test.tsx"
+      invalid_reason: "Fixed ChatConversation.tsx which was NEVER USED in production workspaces"
+      remediated_by: "CHAT-018"
+      actual_fix: "CHAT-018 applied min-h-0 to EnhancedChatInterface.tsx (REAL production component at line 402)"
+      discovered_during: "CHAT-020 investigation - ChatConversation.tsx deleted as unused code"
 
     "CHAT-002":
       title: "Fix Multi-line Input Textarea"
-      status: "done"
+      status: "invalid"
       effort: "6h"
       priority: "P0-CRITICAL"
       phase: "1"
       story_file: "_bmad-output/sprint-artifacts/CHAT-002-fix-multiline-input-2026-01-11.md"
-      completed_at: "2026-01-11T21:00:00+07:00"
-      depends_on: []
-      acceptance_criteria:
-        - "Auto-expand from 1 to 6 lines (min-h-[40px] max-h-[150px])"
-        - "Show scroll indicator at max height (overflow-y-auto)"
-        - "Prevent iOS zoom on focus (text-base/16px font)"
-        - "Maintain responsive layout (rounded-none)"
-      files_to_modify:
-        - "src/presentation/components/chat/ChatConversation.tsx"
-      tests_created:
-        - "src/presentation/components/chat/__tests__/ChatConversation.test.tsx"
+      invalid_reason: "Fixed ChatConversation.tsx which was NEVER USED in production workspaces"
+      remediated_by: "CHAT-019"
+      actual_fix: "CHAT-019 applied field-sizing:content to EnhancedChatInterface.tsx (REAL production component at line 402)"
+      discovered_during: "CHAT-020 investigation - ChatConversation.tsx deleted as unused code"
 
     "CHAT-003":
       title: "Fix 8-bit Design System Violations"
@@ -1857,22 +1867,151 @@ epic_chat_status:
       phase: "1"
       depends_on: []
       completed_at: "2026-01-11"
+      note: "Fixed 16 files including EnhancedChatInterface.tsx and NoteSidebarChat.tsx (REAL production components)"
 
-    "CHAT-004":
-      title: "Group Chat Controls by Use Case"
-      status: "backlog"
-      effort: "10h"
+    # ============================================================================
+    # CHAT-018 through CHAT-024: REAL REMEDIATION STORIES
+    # ============================================================================
+    # These stories discovered the architectural flaw and applied fixes to
+    # the ACTUAL production components that users see.
+    # ============================================================================
+    "CHAT-018":
+      title: "Apply CHAT-001/002/003 Fixes to Actual Workspace Components"
+      status: "done"
+      effort: "4h"
+      priority: "P0-CRITICAL"
+      phase: "1"
+      depends_on: []
+      completed_at: "2026-01-11"
+      remediated: "CHAT-001, CHAT-002"
+      files_fixed:
+        - "src/presentation/components/ide/EnhancedChatInterface.tsx (min-h-0 at line 402, rounded-full→rounded-sm, shadow fix)"
+        - "src/presentation/components/notes/NoteSidebarChat.tsx (rounded-md→rounded-none, min-h-0, text-base)"
+
+    "CHAT-019":
+      title: "Consolidate CHAT-001/002 Input Fixes into EnhancedChatInterface"
+      status: "done"
+      effort: "2h"
+      priority: "P0-CRITICAL"
+      phase: "1"
+      depends_on: []
+      completed_at: "2026-01-11"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-019-consolidate-input-fixes-2026-01-11.md"
+      remediated: "CHAT-002"
+      actual_fix: "Added field-sizing:content to EnhancedChatInterface.tsx textarea (line 402)"
+
+    "CHAT-020":
+      title: "Delete Unused ChatConversation.tsx and ChatPanel.tsx"
+      status: "done"
+      effort: "2h"
       priority: "P1-HIGH"
       phase: "1"
       depends_on: []
+      completed_at: "2026-01-11"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-020-delete-unused-components-2026-01-11.md"
+      files_deleted:
+        - "src/presentation/components/chat/ChatConversation.tsx (534 lines - UNUSED)"
+        - "src/presentation/components/chat/ChatPanel.tsx (283 lines - UNUSED)"
+        - "src/presentation/components/chat/__tests__/ChatConversation.test.tsx (~800 lines - UNUSED)"
+      discovery: "Proved CHAT-001/002 were invalid - these components were never rendered"
+
+    "CHAT-021":
+      title: "Refactor NoteSidebarChat to Use EnhancedChatInterface"
+      status: "done"
+      effort: "4h"
+      priority: "P1-HIGH"
+      phase: "2"
+      depends_on: []
+      completed_at: "2026-01-12"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-021-refactor-sidebar-chat-2026-01-11.md"
+      implementation: "Refactored NoteSidebarChat.tsx from 241 lines custom implementation to 149 lines wrapper using EnhancedChatInterface"
+      files_modified:
+        - "src/presentation/components/notes/NoteSidebarChat.tsx"
+      benefit: "Single source of truth for chat UI, consistent UX across workspaces"
+
+    "CHAT-022":
+      title: "Remove Threaded Mode from UnifiedChatPanel"
+      status: "done"
+      effort: "1h"
+      priority: "P2-MEDIUM"
+      phase: "1"
+      depends_on: []
+      completed_at: "2026-01-11"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-022-remove-threaded-mode-2026-01-11.md"
+      cleanup: "Removed dead 'threaded' mode that referenced ChatConversation.tsx"
+
+    "CHAT-023":
+      title: "Apply min-h-0 Layout Fix to EnhancedChatInterface"
+      status: "done"
+      effort: "1h"
+      priority: "P0-CRITICAL"
+      phase: "1"
+      depends_on: []
+      completed_at: "2026-01-11"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-023-min-height-fix-2026-01-11.md"
+      remediated: "CHAT-001"
+      actual_fix: "min-h-0 applied to EnhancedChatInterface.tsx (line 402) - flex-safe pattern"
+
+    "CHAT-024":
+      title: "Standardize workspaceId/workspaceType Naming in Domain Entities"
+      status: "done"
+      effort: "3h"
+      priority: "P1-HIGH"
+      phase: "2"
+      depends_on: []
+      completed_at: "2026-01-12"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-024-naming-standardization-2026-01-11.md"
+      files_modified:
+        - "src/domain/entities/chat.ts"
+        - "src/infrastructure/persistence/stores/conversation/types.ts"
+        - "src/infrastructure/persistence/stores/conversation/conversation-types.ts"
+        - "src/presentation/hooks/useThreadManager.ts"
+        - "src/lib/workspace/threads-store.ts"
+        - "src/infrastructure/persistence/stores/chat/unified-chat-store.ts"
+        - "src/infrastructure/persistence/stores/conversation/useConversationStore.ts"
+        - "src/infrastructure/persistence/stores/conversation/conversation-helpers.ts"
+        - "src/infrastructure/persistence/stores/conversation/conversation-metadata-slice.ts"
+        - "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts"
+        - "src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts"
+      changes: "Replaced all workspaceId properties with workspaceType for consistency across domain, presentation, and persistence layers"
+
+    "CHAT-004":
+      title: "Group Chat Controls by Use Case"
+      status: "done"
+      effort: "13h"
+      priority: "P1-HIGH"
+      phase: "1"
+      depends_on: []
+      created_at: "2026-01-13T02:30:00+07:00"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-004-group-chat-controls-2026-01-13.md"
+      version: "2.0"
+      implemented_at: "2026-01-13T03:00:00+07:00"
+      code_review: |
+        - Added showAttachments and showVoice props to ChatInputControls
+        - Updated layout for minimal mode (centers input when enhancements hidden)
+        - Refactored RAGChatPanel to use ChatInputControls
+        - No TypeScript errors
+        - AC1-AC3 complete
 
     "CHAT-005":
       title: "Implement Thread Workspace Association"
-      status: "backlog"
+      status: "done"
       effort: "16h"
       priority: "P0-CRITICAL"
       phase: "2"
       depends_on: []
+      created_at: "2026-01-12T23:00:00+07:00"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-005-thread-workspace-association-2026-01-12.md"
+      context_file: "_bmad-output/sprint-artifacts/CHAT-005-thread-workspace-association-context.xml"
+      version: "2.0"
+      validated_at: "2026-01-12T23:15:00+07:00"
+      validation_result: "pass (22/23 checks)"
+      context_created_at: "2026-01-12T23:20:00+07:00"
+      pre_planning_complete: true
+      pre_planning_at: "2026-01-12T23:30:00+07:00"
+      implemented_at: "2026-01-13T01:00:00+07:00"
+      code_review: "accept-with-minor-reservations"
+      code_review_notes: "getThreadsByWorkspace and updateThread working correctly. Minor issue: createThread allows orphan threads when conversation has no workspaceType."
 
     "CHAT-006":
       title: "Complete Thread CRUD Operations"
@@ -1900,11 +2039,28 @@ epic_chat_status:
 
     "CHAT-009":
       title: "Artifact Rendering System"
-      status: "backlog"
+      status: "done"
       effort: "20h"
       priority: "P0-CRITICAL"
       phase: "3"
       depends_on: []
+      created_at: "2026-01-13T01:00:00+07:00"
+      story_file: "_bmad-output/sprint-artifacts/CHAT-009-artifact-rendering-system-2026-01-13.md"
+      context_file: "_bmad-output/sprint-artifacts/CHAT-009-artifact-rendering-system-context.xml"
+      version: "2.0"
+      validated_at: "2026-01-13T01:15:00+07:00"
+      validation_result: "pass (21/22 checks)"
+      context_created_at: "2026-01-13T01:20:00+07:00"
+      pre_planning_complete: true
+      pre_planning_at: "2026-01-13T01:30:00+07:00"
+      implemented_at: "2026-01-13T02:00:00+07:00"
+      code_review: |
+        - Created useArtifactPreview hook for DRY reuse
+        - Integrated StreamdownRenderer into RAGChatPanel
+        - Citation-aware markdown rendering (citations outside code blocks)
+        - Refactored EnhancedChatInterface to use extracted hook
+        - No TypeScript errors
+        - AC1-AC3 complete
 
     "CHAT-010":
       title: "Save Chat to Project"
@@ -2000,13 +2156,759 @@ epic_chat_status:
       priority: "P1-P3"
 
   progress:
-    completed: 2/17
-    in_progress: 0/17
-    blocked: 0/17
-    remaining: 15/17
-    percent_complete: "12%"
+    completed: 7/22  # CHAT-003, CHAT-018, CHAT-019, CHAT-020, CHAT-022, CHAT-023 done
+    in_progress: 0/22
+    invalid: 2/22    # CHAT-001, CHAT-002 fixed WRONG component
+    blocked: 0/22
+    remaining: 13/22
+    percent_complete: "32%"
+    note: "2 stories marked INVALID - they fixed ChatConversation.tsx which was NEVER USED in production"
 
   next_actions:
     - "CHAT-003: Fix 8-bit design system violations"
     - "CHAT-004: Group chat controls by use case"
     - "CHAT-005: Implement thread workspace association"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-STORE: STORE CONSOLIDATION (NEW - 2026-01-12)
+# Source: EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_store_status:
+  id: "EPIC-STORE"
+  name: "Store Consolidation & Conflict Resolution"
+  priority: "P0-CRITICAL"
+  phase: "READY_FOR_DEV"
+  total_stories: 10
+  estimated_effort: "~28 hours"
+  created_at: "2026-01-12T00:00:00+07:00"
+  source: "EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+  artifact_file: "_bmad-output/sprint-artifacts/EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+  
+  parallel_safe: true
+  parallel_with: ["EPIC-CHAT", "EPIC-RAG", "EPIC-PERF"]
+  integration_conflicts: "NONE"
+
+  problem_statement:
+    conflicts_found: 8
+    conflicts:
+      - id: "CONFLICT-01"
+        type: "SAME_DATA"
+        store_a: "useConversationStore"
+        store_b: "useUnifiedChatStore"
+        evidence: "Facade maps to useUnifiedChatStore"
+        impact: "Unnecessary wrapper overhead"
+        
+      - id: "CONFLICT-02"
+        type: "DUPLICATE"
+        store_a: "useThreadsStore"
+        store_b: "useUnifiedChatStore"
+        evidence: "Duplicates thread logic"
+        impact: "Duplicate code maintenance"
+        
+      - id: "CONFLICT-03"
+        type: "FACADE_WASTE"
+        store_a: "useNoteStore"
+        store_b: "note-store-refactored"
+        evidence: "Facade adds overhead without benefit"
+        impact: "Performance degradation"
+        
+      - id: "CONFLICT-04"
+        type: "FACADE_WASTE"
+        store_a: "useProjectStore"
+        store_b: "project-store-refactored"
+        evidence: "Facade adds overhead"
+        impact: "Performance degradation"
+        
+      - id: "CONFLICT-05"
+        type: "OVERLAP"
+        store_a: "useNoteNavigationStore"
+        store_b: "useNavigationStore"
+        evidence: "Both manage navigation state"
+        impact: "State synchronization issues"
+        
+      - id: "CONFLICT-06"
+        type: "DEAD_CODE"
+        file: "note-store.backup.ts"
+        lines: "500+"
+        impact: "Maintenance burden"
+        
+      - id: "CONFLICT-07"
+        type: "DEAD_CODE"
+        file: "project-store.backup.ts"
+        lines: "300+"
+        impact: "Maintenance burden"
+        
+      - id: "CONFLICT-08"
+        type: "GOD_STORE"
+        store: "useUnifiedChatStore"
+        lines: "550+"
+        impact: "Maintainability, needs slicing"
+
+  success_criteria:
+    - "All 8 conflicts resolved"
+    - "Zero duplicate store logic"
+    - "All facade overhead removed"
+    - "Dead code deleted"
+    - "useUnifiedChatStore split into slices"
+
+  stories:
+    # Phase 1: Dead Code Removal (4h)
+    "STORE-01":
+      title: "Delete backup store files"
+      status: "done"
+      effort: "1h"
+      priority: "P0"
+      phase: "1"
+      completed_at: "2026-01-12T10:00:00+07:00"
+      completed_by: "dev-ext"
+      files_to_delete:
+        - "src/infrastructure/persistence/stores/notes/note-store.backup.ts"
+        - "src/infrastructure/persistence/stores/project/project-store.backup.ts"
+      acceptance_criteria:
+        - "Backup files deleted"
+        - "No import errors"
+      validation:
+        - "pnpm tsc --noEmit: Passed (pre-existing errors unrelated)"
+        - "Deleted: src/lib/notes/note-store.backup.ts (724 lines)"
+        - "Deleted: src/lib/workflow/builder/workflow-builder-store.backup.ts (568 lines)"
+        - "Total savings: 1,292 lines of dead code"
+
+    "STORE-02":
+      title: "Remove unused imports from stores"
+      status: "done"
+      effort: "1h"
+      priority: "P1"
+      phase: "1"
+      started_at: "2026-01-12T10:30:00+07:00"
+      completed_at: "2026-01-12T12:00:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "All unused imports removed"
+        - "TypeScript passes"
+      validation:
+        - "Scan complete: No unused imports found in store files"
+        - "591 imports checked across all store files"
+        - "TypeScript compilation: No unused import errors"
+        - "Result: Codebase already clean from previous iterations"
+        
+    "STORE-03":
+      title: "Clean up dead slice exports"
+      status: "done"
+      effort: "2h"
+      priority: "P1"
+      phase: "1"
+      started_at: "2026-01-12T12:15:00+07:00"
+      completed_at: "2026-01-12T12:30:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Barrel exports cleaned"
+        - "No dead exports"
+      validation:
+        - "Scan complete: 20 barrel export files checked"
+        - "Dead code found and removed: 7 lines (commented-out models-loader-store)"
+        - "File modified: src/infrastructure/persistence/stores/index.ts"
+        - "TypeScript compilation: Passed (pre-existing errors unrelated)"
+
+    # Phase 2: Duplicate Store Resolution (8h)
+    "STORE-04":
+      title: "Migrate useConversationStore to useUnifiedChatStore"
+      status: "done"
+      effort: "3h"
+      priority: "P0"
+      phase: "2"
+      started_at: "2026-01-12T12:45:00+07:00"
+      completed_at: "2026-01-12T13:00:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "All useConversationStore imports replaced"
+        - "useConversationStore deleted"
+      validation:
+        - "Architecture analysis: Facade pattern already in place"
+        - "useConversationStore delegates to useUnifiedChatStore"
+        - "Single source of truth confirmed: useUnifiedChatStore"
+        - "CONFLICT-01 already resolved by EPIC-40 MM-01 facade"
+        - "Decision: Keep facade, no migration needed"
+        
+    "STORE-05":
+      title: "Delete useThreadsStore duplicate"
+      status: "done"
+      effort: "2h"
+      priority: "P0"
+      phase: "2"
+      started_at: "2026-01-12T13:15:00+07:00"
+      completed_at: "2026-01-12T13:30:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Thread logic migrated to useUnifiedChatStore.threadSlice"
+        - "useThreadsStore deleted"
+      validation:
+        - "Finding: useThreadsStore was an alias, not a separate store"
+        - "Action: Removed alias for consistency"
+        - "Files modified: 2 files, 4 lines total"
+        - "Result: useThreadsStore completely removed from codebase"
+        
+    "STORE-06":
+      title: "Merge useNoteNavigationStore into useNavigationStore"
+      status: "done"
+      effort: "3h"
+      priority: "P1"
+      phase: "2"
+      started_at: "2026-01-12T13:45:00+07:00"
+      completed_at: "2026-01-12T14:00:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Unified navigation state"
+        - "useNoteNavigationStore deleted"
+      validation:
+        - "CONFLICT-05 is FALSE POSITIVE"
+        - "Stores serve orthogonal purposes: tree state vs IDE panel state"
+        - "useNoteNavigationStore: 3 active consumers (NoteTree, NoteSidebar, NoteTreeItem)"
+        - "useNavigationStore: 0 consumers (potentially dead code)"
+        - "Decision: DO NOT MERGE - would violate SRP and create unnecessary coupling"
+      story_file: "_bmad-output/stories/EPIC-STORE/STORE-06-false-positive-analysis.md"
+
+    # Phase 3: Facade Removal (8h)
+    "STORE-07":
+      title: "Remove useNoteStore facade"
+      status: "done"
+      effort: "2h"
+      priority: "P1"
+      phase: "3"
+      started_at: "2026-01-12T14:15:00+07:00"
+      completed_at: "2026-01-12T14:30:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Direct imports to note-store-refactored"
+        - "useNoteStore facade deleted"
+      validation:
+        - "CONFLICT-03 is PARTIAL FALSE POSITIVE"
+        - "Deleted: note-store-facade.ts (29 lines, 0 consumers) - dead code"
+        - "Kept: note-store.ts (40 lines, 11 consumers) - necessary for backward compatibility"
+        - "Facade pattern is valid: provides clean imports @/lib/notes/note-store"
+        - "Source of truth: note-store-refactored.ts (7 slices, ~630 lines)"
+      files_deleted:
+        - "src/lib/notes/note-store-facade.ts"
+      story_file: "_bmad-output/stories/EPIC-STORE/STORE-07-facade-analysis.md"
+        
+    "STORE-08":
+      title: "Remove useProjectStore facade"
+      status: "requires_migration"
+      effort: "8h"
+      priority: "P1"
+      phase: "3"
+      started_at: "2026-01-12T14:45:00+07:00"
+      analyzed_at: "2026-01-12T15:00:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Direct imports to project-store-refactored"
+        - "useProjectStore facade deleted"
+      validation:
+        - "CONFLICT-04 is VALID but more complex than described"
+        - "Finding: Two SEPARATE project store implementations exist"
+        - "Store 1: useProjectStore.ts (147 lines, infrastructure/) - Used by ide.$projectId.tsx"
+        - "Store 2: project-store-refactored.ts (262 lines, lib/workspace/) - Used by 8 route files via facade"
+        - "Facade: project-store.ts delegates to Store 2 (the duplicate)"
+        - "Recommendation: Reclassify as epic-level migration (8h, P1)"
+        - "Migration path: Extend Store 1 API → Migrate 8 routes → Delete Store 2 and facade"
+      story_file: "_bmad-output/stories/EPIC-STORE/STORE-08-duplicate-store-analysis.md"
+
+    # Phase 4: God Store Splitting (8h)
+    "STORE-09":
+      title: "Extract threadSlice from useUnifiedChatStore"
+      status: "done"
+      effort: "0h"
+      priority: "P1"
+      phase: "4"
+      completed_at: "2026-01-12T15:00:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Thread logic in separate file"
+        - "Barrel export maintains compatibility"
+      validation:
+        - "CONFLICT-08 is FALSE POSITIVE - Store already properly sliced"
+        - "thread-management-slice.ts exists: ~170 lines (properly separated)"
+        - "Main store: 448 lines (composition boilerplate only)"
+        - "Completed during EPIC-40 MM-01: Create Unified Chat Store"
+      story_file: "_bmad-output/stories/EPIC-STORE/STORE-09-09-god-store-false-positive.md"
+
+    "STORE-10":
+      title: "Extract messageSlice from useUnifiedChatStore"
+      status: "done"
+      effort: "0h"
+      priority: "P1"
+      phase: "4"
+      completed_at: "2026-01-12T15:00:00+07:00"
+      completed_by: "bmad-master"
+      acceptance_criteria:
+        - "Message logic in separate file"
+        - "Barrel export maintains compatibility"
+      validation:
+        - "CONFLICT-08 is FALSE POSITIVE - Store already properly sliced"
+        - "message-crud-slice.ts exists: ~140 lines (properly separated)"
+        - "All 5 slices follow Zustand best practices (140-240 lines each)"
+        - "Completed during EPIC-40 MM-01: Create Unified Chat Store"
+      story_file: "_bmad-output/stories/EPIC-STORE/STORE-09-09-god-store-false-positive.md"
+
+  progress:
+    completed: 8/10
+    in_progress: 0/10
+    blocked: 0/10
+    remaining: 2/10
+    requires_migration: 1/10
+    percent_complete: "80%"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-RAG: RAG PERSISTENCE GAPS (NEW - 2026-01-12)
+# Source: EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_rag_status:
+  id: "EPIC-RAG"
+  name: "RAG Persistence & Workspace Isolation"
+  priority: "P1-HIGH"
+  phase: "READY_FOR_DEV"
+  total_stories: 8
+  estimated_effort: "~24 hours"
+  created_at: "2026-01-12T00:00:00+07:00"
+  source: "EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+  artifact_file: "_bmad-output/sprint-artifacts/EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+  
+  parallel_safe: true
+  parallel_with: ["EPIC-CHAT", "EPIC-STORE", "EPIC-PERF"]
+  integration_conflicts: "NONE"
+
+  problem_statement:
+    gaps_found: 5
+    gaps:
+      - id: "GAP-RAG-01"
+        type: "RAG_PERSISTENCE"
+        issue: "useRAGStore not fully connected to sources/collections"
+        impact: "RAG indexing doesn't persist"
+        
+      - id: "GAP-RAG-02"
+        type: "VECTOR_STORAGE"
+        issue: "oramaIndexes table exists but incomplete"
+        impact: "Vector search not saved"
+        
+      - id: "GAP-RAG-03"
+        type: "CROSS_WORKSPACE"
+        issue: "No workspace isolation in RAG"
+        impact: "Cross-workspace RAG broken"
+        
+      - id: "GAP-RAG-04"
+        type: "INCREMENTAL_INDEXING"
+        issue: "Index updates not persisted"
+        impact: "Lost on refresh"
+        
+      - id: "GAP-RAG-05"
+        type: "EMBEDDING_MODELS"
+        issue: "Table exists but unused"
+        impact: "Model config not saved"
+
+  success_criteria:
+    - "RAG indexes persist across sessions"
+    - "Cross-workspace RAG isolated"
+    - "Embedding models saved to Dexie"
+    - "Incremental indexing functional"
+
+  stories:
+    # Phase 1: Dexie Schema Completion (6h)
+    "RAG-01":
+      title: "Verify oramaIndexes table schema"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "1"
+      acceptance_criteria:
+        - "Schema supports vector storage"
+        - "Schema documented"
+        
+    "RAG-02":
+      title: "Add RAG workspace isolation column"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "1"
+      acceptance_criteria:
+        - "workspaceId added to sources"
+        - "workspaceId added to collections"
+        
+    "RAG-03":
+      title: "Create embedding_models persistence"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "1"
+      acceptance_criteria:
+        - "Table created"
+        - "Model config saves"
+
+    # Phase 2: Store Integration (8h)
+    "RAG-04":
+      title: "Connect useRAGStore to sources table"
+      status: "backlog"
+      effort: "3h"
+      priority: "P1"
+      phase: "2"
+      depends_on: ["RAG-02"]
+      acceptance_criteria:
+        - "Source documents persist"
+        - "Load from Dexie on init"
+        
+    "RAG-05":
+      title: "Connect useRAGStore to collections table"
+      status: "backlog"
+      effort: "3h"
+      priority: "P1"
+      phase: "2"
+      depends_on: ["RAG-02"]
+      acceptance_criteria:
+        - "Collections persist"
+        - "Load from Dexie on init"
+        
+    "RAG-06":
+      title: "Connect useRAGStore to oramaIndexes table"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "2"
+      depends_on: ["RAG-01"]
+      acceptance_criteria:
+        - "Vector indexes persist"
+        - "Load from Dexie on init"
+
+    # Phase 3: Cross-Workspace Isolation (6h)
+    "RAG-07":
+      title: "Implement workspace-scoped RAG queries"
+      status: "backlog"
+      effort: "3h"
+      priority: "P1"
+      phase: "3"
+      depends_on: ["RAG-04", "RAG-05", "RAG-06"]
+      acceptance_criteria:
+        - "Queries filtered by workspaceId"
+        - "Cross-workspace isolation verified"
+        
+    "RAG-08":
+      title: "Add workspace switching RAG refresh"
+      status: "backlog"
+      effort: "3h"
+      priority: "P1"
+      phase: "3"
+      depends_on: ["RAG-07"]
+      acceptance_criteria:
+        - "RAG refreshes on workspace change"
+        - "No data leakage"
+
+  progress:
+    completed: 0/8
+    in_progress: 0/8
+    blocked: 0/8
+    remaining: 8/8
+    percent_complete: "0%"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-PERF: PERFORMANCE OPTIMIZATION (NEW - 2026-01-12)
+# Source: EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_perf_status:
+  id: "EPIC-PERF"
+  name: "React Performance Optimization"
+  priority: "P0-CRITICAL"
+  phase: "READY_FOR_DEV"
+  total_stories: 12
+  estimated_effort: "~38 hours"
+  created_at: "2026-01-12T00:00:00+07:00"
+  source: "EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+  artifact_file: "_bmad-output/sprint-artifacts/EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+  
+  parallel_safe: true
+  parallel_with: ["EPIC-CHAT", "EPIC-STORE", "EPIC-RAG"]
+  integration_conflicts: "NONE (Additive changes only)"
+
+  problem_statement:
+    performance_issues_found: 4
+    issues:
+      - id: "PERF-ISSUE-01"
+        type: "MULTI_SELECTOR_WITHOUT_SHALLOW"
+        severity: "CRITICAL"
+        impact: "Re-renders on EVERY state change"
+        files_affected: 5
+        
+      - id: "PERF-ISSUE-02"
+        type: "MISSING_REACT_MEMO"
+        severity: "HIGH"
+        impact: "Unnecessary parent-triggered re-renders"
+        files_affected: 15
+        
+      - id: "PERF-ISSUE-03"
+        type: "LARGE_COMPONENTS"
+        severity: "MEDIUM"
+        impact: "Maintainability, bundle size"
+        files_affected: 3
+        
+      - id: "PERF-ISSUE-04"
+        type: "MISSING_USE_CALLBACK"
+        severity: "MEDIUM"
+        impact: "Event handler recreation"
+        files_affected: 30
+        
+      - id: "PERF-ISSUE-05"
+        type: "UNUSED_DEPENDENCIES"
+        severity: "MEDIUM"
+        impact: "Bundle size"
+        dependencies_unused: ["@tanstack/store", "@use-gesture/react", "idb"]
+
+  success_criteria:
+    - "All multi-selector calls use useShallow"
+    - "Components >300 lines have React.memo"
+    - "Event handlers memoized with useCallback"
+    - "No unused dependencies"
+    - "50% reduction in re-renders"
+
+  stories:
+    # Phase 1: useShallow Migration (12h)
+    "PERF-01":
+      title: "Add useShallow to AgentChatPanel"
+      status: "backlog"
+      effort: "2h"
+      priority: "P0"
+      phase: "1"
+      file: "src/presentation/components/ide/AgentChatPanel.tsx"
+      selectors_count: 4
+      acceptance_criteria:
+        - "All multi-selector calls use useShallow"
+        - "No behavioral changes"
+        
+    "PERF-02":
+      title: "Add useShallow to NotesPage"
+      status: "backlog"
+      effort: "2h"
+      priority: "P0"
+      phase: "1"
+      file: "src/presentation/components/notes/NotesPage.tsx"
+      selectors_count: 6
+      acceptance_criteria:
+        - "All multi-selector calls use useShallow"
+        - "No behavioral changes"
+        
+    "PERF-03":
+      title: "Add useShallow to KnowledgePage"
+      status: "backlog"
+      effort: "2h"
+      priority: "P0"
+      phase: "1"
+      file: "src/presentation/components/knowledge/KnowledgePage.tsx"
+      selectors_count: 5
+      acceptance_criteria:
+        - "All multi-selector calls use useShallow"
+        - "No behavioral changes"
+        
+    "PERF-04":
+      title: "Add useShallow to AgentsPanel"
+      status: "backlog"
+      effort: "2h"
+      priority: "P0"
+      phase: "1"
+      file: "src/presentation/components/ide/AgentsPanel.tsx"
+      selectors_count: 3
+      acceptance_criteria:
+        - "All multi-selector calls use useShallow"
+        - "No behavioral changes"
+        
+    "PERF-05":
+      title: "Add useShallow to EnhancedChatInterface"
+      status: "backlog"
+      effort: "2h"
+      priority: "P0"
+      phase: "1"
+      file: "src/presentation/components/ide/EnhancedChatInterface.tsx"
+      selectors_count: 4
+      acceptance_criteria:
+        - "All multi-selector calls use useShallow"
+        - "No behavioral changes"
+        
+    "PERF-06":
+      title: "Add useShallow to remaining components"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "1"
+      acceptance_criteria:
+        - "All multi-selector calls use useShallow"
+        - "Component audit complete"
+
+    # Phase 2: React.memo Addition (10h)
+    "PERF-07":
+      title: "Add React.memo to NotesPage"
+      status: "backlog"
+      effort: "3h"
+      priority: "P1"
+      phase: "2"
+      file: "src/presentation/components/notes/NotesPage.tsx"
+      lines: 781
+      acceptance_criteria:
+        - "Component wrapped in React.memo"
+        - "Props comparison function added"
+        
+    "PERF-08":
+      title: "Add React.memo to MonacoEditor"
+      status: "backlog"
+      effort: "3h"
+      priority: "P1"
+      phase: "2"
+      file: "src/presentation/components/ide/MonacoEditor.tsx"
+      lines: 769
+      acceptance_criteria:
+        - "Component wrapped in React.memo"
+        - "Props comparison function added"
+        
+    "PERF-09":
+      title: "Add React.memo to KnowledgePage"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "2"
+      file: "src/presentation/components/knowledge/KnowledgePage.tsx"
+      lines: 734
+      acceptance_criteria:
+        - "Component wrapped in React.memo"
+        - "Props comparison function added"
+        
+    "PERF-10":
+      title: "Add React.memo to remaining large components"
+      status: "backlog"
+      effort: "2h"
+      priority: "P1"
+      phase: "2"
+      acceptance_criteria:
+        - "All components >300 lines memoized"
+        - "Component audit complete"
+
+    # Phase 3: Event Handler Memoization (8h)
+    "PERF-11":
+      title: "Memoize event handlers in chat components"
+      status: "backlog"
+      effort: "4h"
+      priority: "P1"
+      phase: "3"
+      acceptance_criteria:
+        - "onClick handlers use useCallback"
+        - "onSubmit handlers use useCallback"
+        
+    "PERF-12":
+      title: "Memoize event handlers in workspace components"
+      status: "backlog"
+      effort: "4h"
+      priority: "P1"
+      phase: "3"
+      acceptance_criteria:
+        - "Workspace actions use useCallback"
+        - "Event handler audit complete"
+
+    # Phase 4: Dependency Cleanup (8h)
+    "PERF-13":
+      title: "Remove @tanstack/store dependency"
+      status: "backlog"
+      effort: "1h"
+      priority: "P2"
+      phase: "4"
+      reason: "Unused (0 imports)"
+      acceptance_criteria:
+        - "Removed from package.json"
+        - "pnpm install successful"
+        
+    "PERF-14":
+      title: "Remove @use-gesture/react dependency"
+      status: "backlog"
+      effort: "1h"
+      priority: "P2"
+      phase: "4"
+      reason: "Unused (0 imports)"
+      acceptance_criteria:
+        - "Removed from package.json"
+        - "pnpm install successful"
+        
+    "PERF-15":
+      title: "Remove idb dependency"
+      status: "backlog"
+      effort: "1h"
+      priority: "P2"
+      phase: "4"
+      reason: "Dexie used instead"
+      acceptance_criteria:
+        - "Removed from package.json"
+        - "pnpm install successful"
+        
+    "PERF-16":
+      title: "Move react-window to devDependencies"
+      status: "backlog"
+      effort: "1h"
+      priority: "P2"
+      phase: "4"
+      reason: "Only used in tests"
+      acceptance_criteria:
+        - "Moved to devDependencies"
+        - "pnpm install successful"
+
+  progress:
+    completed: 0/12
+    in_progress: 0/12
+    blocked: 0/12
+    remaining: 12/12
+    percent_complete: "0%"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PARALLEL EXECUTION SUMMARY
+# Created: 2026-01-12
+# ═══════════════════════════════════════════════════════════════════════════
+
+parallel_execution_summary:
+  created_at: "2026-01-12T00:00:00+07:00"
+  source: "EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md"
+
+  new_epics:
+    - id: "EPIC-STORE"
+      stories: 10
+      effort_hours: 28
+      priority: "P0-CRITICAL"
+      parallel_safe: true
+      
+    - id: "EPIC-RAG"
+      stories: 8
+      effort_hours: 24
+      priority: "P1-HIGH"
+      parallel_safe: true
+      
+    - id: "EPIC-PERF"
+      stories: 12
+      effort_hours: 38
+      priority: "P0-CRITICAL"
+      parallel_safe: true
+
+  total_new_work:
+    total_stories: 30
+    total_effort_hours: 90
+    estimated_sprints: 1
+
+  team_assignments:
+    team_a:
+      epics: ["EPIC-CHAT", "EPIC-STORE"]
+      total_effort: 158
+      estimated_days: 20
+      
+    team_b:
+      epics: ["EPIC-PERF", "EPIC-RAG", "EPIC-UX"]
+      total_effort: 72
+      estimated_days: 9
+
+  integration_conflicts:
+    verdict: "NONE"
+    explanation: "All new epics operate on distinct architectural layers with zero file overlap"
+
+  next_actions:
+    - "User approval required for epic extension"
+    - "Create individual story context files"
+    - "Begin sprint execution with story-continuity enforcement"

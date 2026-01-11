@@ -54,3 +54,21 @@ pnpm tsc --noEmit && pnpm test
 ## Completion Signal
 If all 4 workspaces share the same `src/lib/state` stores and data flows are proven unified:
 <promise>DONE</promise>
+
+---
+
+## Team A EPIC-CHAT Autonomous Execution
+
+**Ralph Loop Configuration**: `.claude/ralph-loop.local.md`
+
+**Purpose**: Autonomous execution of EPIC-CHAT (Unified Chat System Remediation) stories until 100% complete.
+
+**Status**: 12/22 stories complete (55%)
+
+**Quick Start**:
+1. Read `.claude/ralph-loop.local.md` for full configuration
+2. Read `_bmad-ext/state/LOOP_STATE.yaml` for current state
+3. Read `_bmad-output/sprint-artifacts/sprint-status.yaml` for story status
+4. Start with CHAT-007 (Add Collapsible Message Sections)
+
+**Next 10 Stories**: CHAT-007, CHAT-008, CHAT-010, CHAT-011, CHAT-012, CHAT-013, CHAT-014, CHAT-015, CHAT-016, CHAT-017

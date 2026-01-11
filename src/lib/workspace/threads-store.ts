@@ -28,7 +28,7 @@ function toRecord(thread: ConversationThread): ConversationThreadRecord {
     return {
         id: thread.id,
         projectId: thread.projectId,
-        workspaceId: thread.workspaceId || 'ide', // PERSIST-S002: Workspace isolation
+        workspaceId: thread.workspaceType || 'ide', // CHAT-024: Standardized naming
         title: thread.title,
         preview: thread.preview,
         messages: thread.messages.map(m => ({

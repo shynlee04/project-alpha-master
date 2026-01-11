@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect, lazy, Suspense } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Folder, Terminal, Sparkles, Settings, Play, RefreshCw, Menu } from 'lucide-react'
 
@@ -130,9 +131,14 @@ export function IDEMobileLayout({
   const setCurrentPanel = onPanelChange ?? setInternalPanel
 
   // IDE store state
-  const activeFilePath = useIDEStore((s) => s.activeFile)
-  const setActiveFile = useIDEStore((s) => s.setActiveFile)
-  const addOpenFile = useIDEStore((s) => s.addOpenFile)
+  // PERF-02: Use useShallow to prevent re-renders on unrelated state changes
+  const { activeFile: activeFilePath, setActiveFile, addOpenFile } = useIDEStore(
+    useShallow((s) => ({
+      activeFile: s.activeFile,
+      setActiveFile: s.setActiveFile,
+      addOpenFile: s.addOpenFile,
+    }))
+  )
 
   // FileTree refresh state
   const [fileTreeRefreshKey, setFileTreeRefreshKey] = useState(0)

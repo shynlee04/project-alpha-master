@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { Search, Plus, Folder, Tag, Code2, Filter, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
@@ -50,13 +51,26 @@ export function SnippetManager({ open, onOpenChange, onSnippetSelect }: SnippetM
     const { t } = useTranslation();
     const { isMobile } = useDeviceType();
 
-    const searchQuery = useSnippetStore((s) => s.searchQuery);
-    const selectedFolder = useSnippetStore((s) => s.selectedFolder);
-    const selectedTags = useSnippetStore((s) => s.selectedTags);
-    const setSearchQuery = useSnippetStore((s) => s.setSearchQuery);
-    const setSelectedFolder = useSnippetStore((s) => s.setSelectedFolder);
-    const setSelectedTags = useSnippetStore((s) => s.setSelectedTags);
-    const clearFilters = useSnippetStore((s) => s.clearFilters);
+    // PERF-04: Use useShallow to prevent re-renders on unrelated state changes
+    const {
+        searchQuery,
+        selectedFolder,
+        selectedTags,
+        setSearchQuery,
+        setSelectedFolder,
+        setSelectedTags,
+        clearFilters,
+    } = useSnippetStore(
+        useShallow((s) => ({
+            searchQuery: s.searchQuery,
+            selectedFolder: s.selectedFolder,
+            selectedTags: s.selectedTags,
+            setSearchQuery: s.setSearchQuery,
+            setSelectedFolder: s.setSelectedFolder,
+            setSelectedTags: s.setSelectedTags,
+            clearFilters: s.clearFilters,
+        }))
+    );
 
     const snippets = useFilteredSnippets();
     const folders = useSnippetFolders();

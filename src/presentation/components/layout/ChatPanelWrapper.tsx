@@ -1,24 +1,31 @@
 /**
- * @fileoverview Chat Panel Wrapper Component
+ * @fileoverview Chat Panel Wrapper Component - INTEGRATED WITH UNIFIED CHAT STORE
  * @module components/layout/ChatPanelWrapper
  * 
  * Right sidebar containing AI chat platform with conversation threads.
- * Shows ThreadCard list when no thread is active.
+ * Shows ThreadManager when no thread is active (uses UnifiedChatStore - Dexie).
  * Shows AgentChatPanel when a thread is selected.
  * 
- * @epic Epic-MRT Mobile Responsive Transformation
- * @story MRT-7 Chat Panel Mobile
+ * @epic EPIC-CHAT - Thread Management Integration
+ * @story CHAT-006-INTEGRATED - ThreadManager now properly integrated
+ * 
+ * ARCHITECTURE:
+ * - Uses UnifiedChatStore with Dexie persistence (correct for RAG, indexing)
+ * - Replaces legacy ThreadCard + ConversationStore pattern
+ * - ThreadManager provides full CRUD: create, rename, archive, delete
+ * 
+ * @created 2026-01-11 - Integrated ThreadManager with UnifiedChatStore
  */
 
-import { useCallback, useMemo, useState } from 'react';
-import { X, MessageSquarePlus, ArrowLeft } from 'lucide-react';
+import { X, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { AgentChatPanel } from '../ide/AgentChatPanel';
-import { ThreadCard } from '../chat/ThreadCard';
-import { useConversationStore as useThreadsStore, useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
-import type { ConversationThread } from '@/infrastructure/persistence/stores/conversation/types';
+import { ThreadManager } from '../chat/ThreadManager';
+import { useActiveThread } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { useDeviceType } from '@/hooks/useMediaQuery';
+import type { WorkspaceType } from '@/domain/entities/chat';
 
 /**
  * Props for ChatPanelWrapper component.
@@ -33,11 +40,13 @@ export interface ChatPanelWrapperProps {
 }
 
 /**
- * ChatPanelWrapper - Right sidebar with AI chat platform.
+ * ChatPanelWrapper - Right sidebar with AI chat platform
+ * 
+ * INTEGRATED WITH UNIFIED CHAT STORE (Dexie) via ThreadManager
  * 
  * View States:
- * 1. ThreadsList: When no thread is active (shows paginated cards)
- * 2. AgentChatPanel: When a thread is selected (existing working chat)
+ * 1. ThreadManager: When no thread is active (full CRUD thread management)
+ * 2. AgentChatPanel: When a thread is selected (chat interface)
  * 
  * Styling matches AgentChatPanel using semantic classes:
  * - bg-surface-dark, bg-surface-darker
@@ -50,70 +59,31 @@ export function ChatPanelWrapper({
     onClose,
 }: ChatPanelWrapperProps): React.JSX.Element {
     const { t } = useTranslation();
-    // MRT-7: Mobile responsive detection for touch targets
     const { isMobile } = useDeviceType();
 
-    const [currentPage, setCurrentPage] = useState(0);
-    const pageSize = 6;
+    // Determine workspace type - ThreadManager needs this for filtering
+    const workspaceType: WorkspaceType = projectId ? 'ide' : 'notes';
 
-    // Thread store
-    const {
-        activeThreadId,
-        setActiveThread,
-        createThread,
-        deleteThread,
-        getThreadsByConversation,
-    } = useThreadsStore();
-
+    // Get active thread from facade (maps to UnifiedChatStore)
     const activeThread = useActiveThread();
 
-    // Get threads for current project
-    const projectThreads = useMemo(() => {
-        if (!projectId) return [];
-        return getThreadsByConversation(projectId);
-    }, [getThreadsByConversation, projectId]);
+    // Get setActiveThread from facade for back navigation
+    const { setActiveThread } = useConversationStore();
 
-    // Pagination
-    const totalPages = Math.ceil(projectThreads.length / pageSize);
-    const paginatedThreads = useMemo(() => {
-        const start = currentPage * pageSize;
-        return projectThreads.slice(start, start + pageSize);
-    }, [projectThreads, currentPage, pageSize]);
-
-    // Handlers
-    const handleNewThread = useCallback(() => {
-        if (!projectId) return;
-        const threadId = createThread(projectId);
-        setActiveThread(threadId);
-    }, [createThread, projectId, setActiveThread]);
-
-    const handleSelectThread = useCallback((threadId: string) => {
-        setActiveThread(threadId);
-    }, [setActiveThread]);
-
-    const handleDeleteThread = useCallback((threadId: string) => {
-        deleteThread(threadId);
-    }, [deleteThread]);
-
-    const handleBackToList = useCallback(() => {
-        setActiveThread(null);
-    }, [setActiveThread]);
-
-    // If a thread is active, show existing AgentChatPanel
+    // If a thread is active, show AgentChatPanel
     if (activeThread) {
         return (
             <div className="h-full flex flex-col bg-surface-dark border-l border-border-dark">
-                {/* Header - MRT-7: 44px height on mobile for touch targets */}
+                {/* Header */}
                 <div className={cn(
                     "px-3 flex items-center justify-between border-b border-border-dark bg-surface-darker",
                     isMobile ? 'h-11' : 'h-9'
                 )}>
                     <div className="flex items-center gap-2">
                         <button
-                            onClick={handleBackToList}
+                            onClick={() => setActiveThread(null)}
                             className={cn(
                                 'text-muted-foreground hover:text-foreground transition-colors',
-                                // MRT-7: Larger touch target on mobile
                                 isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : 'p-1'
                             )}
                             title={t('chat.backToList', 'Back to threads')}
@@ -128,7 +98,6 @@ export function ChatPanelWrapper({
                         onClick={onClose}
                         className={cn(
                             'text-muted-foreground hover:text-foreground transition-colors',
-                            // MRT-7: Larger touch target on mobile
                             isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : ''
                         )}
                         title={t('chat.close', 'Close chat panel')}
@@ -137,7 +106,7 @@ export function ChatPanelWrapper({
                     </button>
                 </div>
 
-                {/* Existing working AgentChatPanel */}
+                {/* Chat Interface */}
                 <div className="flex-1 min-h-0">
                     <AgentChatPanel
                         projectId={projectId}
@@ -148,10 +117,10 @@ export function ChatPanelWrapper({
         );
     }
 
-    // No active thread - show ThreadCard list (box-like cards)
+    // No active thread - show ThreadManager (INTEGRATED with UnifiedChatStore - Dexie)
     return (
         <div className="h-full flex flex-col bg-surface-dark border-l border-border-dark">
-            {/* Header - MRT-7: 44px height on mobile for touch targets */}
+            {/* Header */}
             <div className={cn(
                 "px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker",
                 isMobile ? 'h-11' : 'h-9'
@@ -159,105 +128,30 @@ export function ChatPanelWrapper({
                 <span className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel">
                     {t('chat.conversations', 'Conversations')}
                 </span>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={handleNewThread}
-                        disabled={!projectId}
-                        className={cn(
-                            'flex items-center gap-1 font-pixel',
-                            'text-green-400 hover:text-green-300 transition-colors',
-                            'disabled:opacity-50 disabled:cursor-not-allowed',
-                            // MRT-7: Larger touch target on mobile
-                            isMobile ? 'px-3 py-2 text-xs min-h-[44px] touch-manipulation' : 'px-2 py-1 text-[10px]'
-                        )}
-                    >
-                        <MessageSquarePlus className={cn(isMobile ? 'w-4 h-4' : 'w-3 h-3')} />
-                        {t('chat.newConversation', 'NEW')}
-                    </button>
-                    <button
-                        onClick={onClose}
-                        className={cn(
-                            'text-muted-foreground hover:text-foreground transition-colors',
-                            // MRT-7: Larger touch target on mobile
-                            isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : ''
-                        )}
-                        title={t('chat.close', 'Close chat panel')}
-                    >
-                        <X className={cn(isMobile ? 'w-5 h-5' : 'w-4 h-4')} />
-                    </button>
-                </div>
+                <button
+                    onClick={onClose}
+                    className={cn(
+                        'text-muted-foreground hover:text-foreground transition-colors',
+                        isMobile ? 'p-2 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : ''
+                    )}
+                    title={t('chat.close', 'Close chat panel')}
+                >
+                    <X className={cn(isMobile ? 'w-5 h-5' : 'w-4 h-4')} />
+                </button>
             </div>
 
-            {/* Threads Grid */}
-            <div className="flex-1 overflow-auto p-3 bg-background">
-                {!projectId ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                        <p className="text-xs font-pixel">{t('chat.noProject', 'Open a project to start chatting')}</p>
-                    </div>
-                ) : projectThreads.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                        <MessageSquarePlus className="w-8 h-8 mb-3 opacity-40" />
-                        <p className="text-xs font-pixel mb-3">{t('chat.noConversations', 'No conversations yet')}</p>
-                        <button
-                            onClick={handleNewThread}
-                            className={cn(
-                                'flex items-center gap-2 px-4 py-2',
-                                'border border-border-dark bg-surface-dark',
-                                'text-xs font-pixel text-green-400 hover:text-green-300',
-                                'hover:bg-surface-darker transition-colors',
-                                'shadow-md'
-                            )}
-                        >
-                            <MessageSquarePlus className="w-4 h-4" />
-                            {t('chat.startConversation', 'START CHAT')}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 gap-2">
-                        {paginatedThreads.map((thread: ConversationThread) => (
-                            <ThreadCard
-                                key={thread.id}
-                                thread={thread}
-                                isActive={thread.id === activeThreadId}
-                                onSelect={handleSelectThread}
-                                onDelete={handleDeleteThread}
-                            />
-                        ))}
-                    </div>
-                )}
+            {/* ThreadManager - Uses UnifiedChatStore with Dexie (CORRECT ARCHITECTURE) */}
+            <div className="flex-1 overflow-auto">
+                <ThreadManager
+                    workspaceType={workspaceType}
+                    onThreadSelect={(threadId) => {
+                        // Sync with facade for back navigation
+                        setActiveThread(threadId);
+                    }}
+                />
             </div>
-
-            {/* Pagination - MRT-7: Larger touch targets on mobile */}
-            {totalPages > 1 && (
-                <div className={cn(
-                    "px-4 flex items-center justify-center gap-3 border-t border-border-dark bg-surface-darker",
-                    isMobile ? 'h-11' : 'h-8'
-                )}>
-                    <button
-                        onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-                        disabled={currentPage === 0}
-                        className={cn(
-                            'font-pixel text-muted-foreground hover:text-foreground disabled:opacity-30',
-                            isMobile ? 'text-sm min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : 'text-[10px]'
-                        )}
-                    >
-                        ◀
-                    </button>
-                    <span className={cn('font-pixel text-muted-foreground', isMobile ? 'text-sm' : 'text-[10px]')}>
-                        {currentPage + 1}/{totalPages}
-                    </span>
-                    <button
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
-                        disabled={currentPage >= totalPages - 1}
-                        className={cn(
-                            'font-pixel text-muted-foreground hover:text-foreground disabled:opacity-30',
-                            isMobile ? 'text-sm min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation' : 'text-[10px]'
-                        )}
-                    >
-                        ▶
-                    </button>
-                </div>
-            )}
         </div>
     );
 }
+
+export default ChatPanelWrapper;

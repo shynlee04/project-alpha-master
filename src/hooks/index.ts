@@ -46,3 +46,8 @@ export {
 export {
     useCommandPalette,
 } from './useCommandPalette';
+
+// Thread manager hook (CHAT-005) - Uses UnifiedChatStore (Dexie) - CORRECT ARCHITECTURE
+export {
+    useThreadManager,
+} from '../presentation/hooks/useThreadManager';

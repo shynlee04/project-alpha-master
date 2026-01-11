@@ -6,7 +6,7 @@
  * @story MRT-5 Monaco Editor Mobile Optimization
  */
 
-import { useCallback, useRef, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import Editor, { type OnMount, type OnChange } from '@monaco-editor/react';
 import type { editor } from 'monaco-editor';
 import { getLanguageFromPath } from '@/lib/editor/language-utils';
@@ -74,8 +74,11 @@ export interface MonacoEditorProps {
 /**
  * Monaco Editor wrapper with multi-file support, tabs, and auto-save.
  * Uses the `path` prop for multi-model editing (unique model per file).
+ * 
+ * PERF-08: Wrapped with React.memo to prevent unnecessary re-renders.
+ * This is a large component (700+ lines) with expensive Monaco operations.
  */
-export function MonacoEditor({
+export const MonacoEditor = React.memo(function MonacoEditor({
     openFiles,
     activeFilePath,
     onSave,
@@ -766,4 +769,4 @@ export function MonacoEditor({
             )}
         </div>
     );
-}
+});

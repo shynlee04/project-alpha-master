@@ -1,9 +1,13 @@
 /**
  * @fileoverview Chat Components Barrel Export
  * @module presentation/components/chat
+ * 
+ * ARCHITECTURE CHANGE 2026-01-11:
+ * - ThreadManager now integrated with UnifiedChatStore (Dexie)
+ * - Legacy ThreadCard/ThreadsList archived to _bmad-output/.archive/legacy-thread-components-2026-01-11/
+ * - All thread management now uses UnifiedChatStore for RAG, indexing, cross-workspace
  */
 
-// Main chat interface
 // Main chat interface
 export { EnhancedChatInterface } from '../ide/EnhancedChatInterface';
 export type { ChatMessage, ToolExecution, EnhancedChatProps } from '../ide/EnhancedChatInterface';
@@ -13,9 +17,10 @@ export { NoteReferencePicker, useNoteReferencePicker } from './NoteReferencePick
 export { NoteReference, parseNoteReferences, renderTextWithNoteReferences } from './NoteReference';
 export type { NoteReferenceProps } from './NoteReference';
 
-// Chat message components
-export { ChatPanel } from './ChatPanel';
+// Thread Management (CHAT-006) - INTEGRATED with UnifiedChatStore (Dexie)
+// ✅ CORRECT ARCHITECTURE for RAG, vector indexing, cross-workspace
 export { ThreadManager } from './ThreadManager';
+export type { ThreadManagerProps } from './ThreadManager';
 
 // Tool execution display
 export { ToolCallBadge } from './ToolCallBadge';
@@ -26,6 +31,23 @@ export { StreamdownRenderer } from './StreamdownRenderer';
 // File attachments
 export { FileAttachmentInput } from './FileAttachmentInput';
 export type { Attachment, FileAttachment } from './FileAttachmentInput';
+
+// Input controls (CHAT-004: Grouped by use case)
+export { ChatInputControls } from './ChatInputControls';
+
+// Collapsible Sections (CHAT-007)
+export {
+  CollapsibleSection,
+  MessageCollapseControls,
+} from './CollapsibleSection';
+export type {
+  CollapsibleSectionProps,
+  MessageCollapseControlsProps,
+} from './CollapsibleSection';
+
+// Artifact Preview (CHAT-009)
+export { ArtifactPreviewModal } from './ArtifactPreviewModal';
+export type { ArtifactPreviewModalProps } from './ArtifactPreviewModal';
 
 // Agent Approvals
 export { ApprovalOverlay } from './ApprovalOverlay';

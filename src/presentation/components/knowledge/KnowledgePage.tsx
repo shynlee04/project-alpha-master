@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, Plus, Bot, FileText } from 'lucide-react';
 import { toast } from 'sonner';
@@ -54,7 +54,12 @@ import { useSynthesisStore } from '@/infrastructure/persistence/stores/synthesis
 import type { SynthesisResult } from '@/lib/knowledge/synthesis-types';
 import type { ArtifactType } from '@/lib/knowledge/synthesis-types';
 
-export function KnowledgePage() {
+/**
+ * PERF-09: KnowledgePage wrapped with React.memo to prevent unnecessary re-renders
+ * from parent component updates. This is a large component (700+ lines) that
+ * benefits significantly from memoization.
+ */
+export const KnowledgePage = React.memo(function KnowledgePage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
     const navigate = useNavigate();
@@ -731,4 +736,4 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
             <SourceImportDialog open={importDialogOpen} onOpenChange={setImportDialogOpen} projectId={projectId} />
         </MainLayout>
     );
-}
+});

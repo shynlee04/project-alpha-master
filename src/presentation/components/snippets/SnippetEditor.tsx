@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { useWorkspaceContext } from '@/hooks/useWorkspaceContext';
@@ -120,8 +121,13 @@ export function SnippetEditor({ open, onOpenChange, snippet }: SnippetEditorProp
     const { isMobile } = useDeviceType();
     const { currentWorkspace } = useWorkspaceContext();
 
-    const createSnippet = useSnippetStore((s) => s.createSnippet);
-    const updateSnippet = useSnippetStore((s) => s.updateSnippet);
+    // PERF-05: Use useShallow to prevent re-renders on unrelated state changes
+    const { createSnippet, updateSnippet } = useSnippetStore(
+        useShallow((s) => ({
+            createSnippet: s.createSnippet,
+            updateSnippet: s.updateSnippet,
+        }))
+    );
 
     const [formData, setFormData] = useState<SnippetFormData>(initialFormState);
     const [errors, setErrors] = useState<Partial<Record<keyof SnippetFormData, string>>>({});

@@ -52,7 +52,7 @@ export interface ContextWindowConfig {
 export interface ConversationThread {
     id: string;
     projectId: string;
-    workspaceId?: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
+    workspaceType?: WorkspaceType; // CHAT-024: Standardized naming (was workspaceId)
     title: string;
     preview: string;
     messages: ThreadMessage[];

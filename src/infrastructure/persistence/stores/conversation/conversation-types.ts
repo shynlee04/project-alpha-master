@@ -53,8 +53,7 @@ export interface PendingToolApproval {
 export interface ConversationMetadata {
   id: string;
   projectId: string | null;
-  workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
-  workspaceType: WorkspaceType; // NEW: Workspace awareness
+  workspaceType: WorkspaceType; // CHAT-024: Standardized naming (was workspaceId)
 
   title: string;
   preview: string;

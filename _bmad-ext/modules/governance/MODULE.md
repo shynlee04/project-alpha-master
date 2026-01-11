@@ -1,6 +1,6 @@
-# BMAD Extension Layer - Unified Governance Module v2.0
+# BMAD Extension Layer - Unified Governance Module v2.1
 
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Status**: ACTIVE
 **Created**: 2026-01-11
 **Updated**: 2026-01-11
@@ -8,6 +8,35 @@
 ## Purpose
 
 Unified governance module that consolidates all self-governance, artifact management, context filtering, and stale document detection. This is the **single source of truth** for all extension layer governance.
+
+## Timing Governance (Based on Actual Data)
+
+> **Source**: `bmm-workflow-status.yaml` timing analysis
+
+### Real Timing Standards
+
+| Work Unit | Actual Average | Examples |
+|-----------|----------------|----------|
+| **Story (simple)** | 1-2 hours | FS-05: 1.5h, MOBILE stories |
+| **Story (complex)** | 2-4 hours | 40-01 Tool Registry: ~3h |
+| **Epic (6-8 stories)** | 4-8 hours | EPIC-40: 12 stories/day |
+| **Epic (mini 3-4)** | 2-4 hours | EPIC-39: 4 stories/day |
+
+### Velocity Reality
+
+```
+NORMAL: 4-8 stories/day, 1-3 epics/day
+EXCEPTIONAL: 2-3 epics/day in flow state
+```
+
+### Time-Boxing Rules
+
+| Level | Duration | On Timeout |
+|-------|----------|------------|
+| Step | 15 min | Escalate to story |
+| Story | 4 hours max | Split or continue |
+| Deep Investigation | 30 min | Split story |
+| Epic | 8 hours | Adjust scope |
 
 ## Why v2.0
 
@@ -147,5 +176,6 @@ The old modules are now deprecated and will be archived in the next update.
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 2.1.0 | 2026-01-11 | Added realistic timing governance |
 | 2.0.0 | 2026-01-11 | Consolidated from governance/ + governance-core/ |
 | 1.0.0 | 2026-01-10 | Initial governance module (now deprecated) |

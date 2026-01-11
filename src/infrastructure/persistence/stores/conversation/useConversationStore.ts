@@ -42,8 +42,7 @@ import type { ThreadMessage, ThreadToolCall } from './types';
 function mapToLegacyConversation(conv: ConversationWithId): ConversationMetadataExtended {
   return {
     id: conv.id,
-    workspaceType: conv.workspaceType,
-    workspaceId: conv.workspaceType,
+    workspaceType: conv.workspaceType, // CHAT-024: Removed duplicate workspaceId facade
     projectId: conv.projectId,
     agentId: conv.agentId,
     status: conv.status,
@@ -97,7 +96,7 @@ function mapToLegacyThread(
     id: thread.id,
     conversationId: thread.conversationId,
     projectId: thread.projectId,
-    workspaceId: thread.workspaceId,
+    workspaceType: thread.workspaceType, // CHAT-024: Standardized naming
     title: thread.title,
     preview: thread.preview,
     messageCount: thread.messageCount,
@@ -335,8 +334,7 @@ function mapUnifiedStateToLegacy(unifiedStore: ReturnType<typeof useUnifiedChatS
         metadata: {
           id: state.metadata.id,
           projectId: state.metadata.projectId,
-          workspaceId: state.metadata.workspaceId,
-          workspaceType: state.metadata.workspaceType,
+          workspaceType: state.metadata.workspaceType, // CHAT-024: Standardized naming
           title: state.metadata.title,
           preview: state.metadata.preview,
           agentId: state.metadata.agentId,

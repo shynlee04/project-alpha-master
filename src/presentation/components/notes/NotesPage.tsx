@@ -6,7 +6,7 @@
  * Part of E1-1: UnifiedChatPanel integration
  */
 
-import { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useNoteStore, useActiveNote } from '@/lib/notes/note-store';
@@ -57,7 +57,12 @@ import type { FileSavedPayload } from '@/lib/events/store-events';
 // WB-8.3: Cross-workspace event subscriptions for state synchronization
 import { useAllCrossWorkspaceEvents, useWorkspaceChangedEvents } from '@/lib/events/use-cross-workspace-events';
 
-export function NotesPage() {
+/**
+ * PERF-07: NotesPage wrapped with React.memo to prevent unnecessary re-renders
+ * from parent component updates. This is a large component (700+ lines) that
+ * benefits significantly from memoization.
+ */
+export const NotesPage = React.memo(function NotesPage() {
     const { t } = useTranslation();
     const { isMobile } = useResponsive();
     const navigate = useNavigate();
@@ -778,4 +783,4 @@ export function NotesPage() {
             </div>
         </MainLayout>
     );
-}
+});

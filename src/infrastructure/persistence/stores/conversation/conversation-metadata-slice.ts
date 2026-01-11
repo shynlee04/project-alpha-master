@@ -40,8 +40,7 @@ export const createConversationMetadataSlice: StateCreator<
     const conversationId = generateId();
     const newConversation: ConversationMetadataWithId = {
       id: conversationId,
-      workspaceType,
-      workspaceId: workspaceType, // Map workspaceType to workspaceId
+      workspaceType, // CHAT-024: Standardized naming
       projectId,
       agentId,
       status: 'active',

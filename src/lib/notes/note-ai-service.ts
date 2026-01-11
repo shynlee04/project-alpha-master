@@ -3,11 +3,14 @@
  * @module lib/notes/note-ai-service
  * @story NR-01 - Wire AI Service to Agent System
  * @fixed 2025-12-31 - Connected to real agent system (replaces mock)
+ * @fixed 2026-01-12 - EPIC-41-01: Use GeminiAdapter instead of raw fetch for Gemini API
+ * @refactor 2026-01-12 - EPIC-41-02: Use unified ProviderService for all providers
  */
 
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { credentialVault } from '@/lib/agent/providers/credential-vault';
+import { providerService } from '@/application/services/ProviderService';
 import type { Block } from '@blocknote/core';
 
 /**
@@ -194,7 +197,8 @@ function extractBlockText(block: Block): string {
 }
 
 /**
- * Call the appropriate provider API
+ * Call the appropriate provider API using unified ProviderService
+ * @story EPIC-41-02 - Unified provider service layer
  */
 async function callProviderAPI(params: {
     providerId: string;
@@ -205,125 +209,27 @@ async function callProviderAPI(params: {
     temperature: number;
     maxTokens: number;
 }): Promise<string> {
-    const { providerId, modelId, apiKey, systemPrompt, userPrompt, temperature, maxTokens } = params;
-
-    let endpoint: string;
-    let headers: Record<string, string>;
-    let body: object;
-
-    // Build request based on provider type
-    switch (providerId) {
-        case 'openrouter':
-            endpoint = 'https://openrouter.ai/api/v1/chat/completions';
-            headers = {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'http://localhost',
-                'X-Title': 'Via-gent Notes'
-            };
-            body = {
-                model: modelId,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                ],
-                temperature,
-                max_tokens: maxTokens
-            };
-            break;
-
-        case 'openai':
-            endpoint = 'https://api.openai.com/v1/chat/completions';
-            headers = {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            };
-            body = {
-                model: modelId,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                ],
-                temperature,
-                max_tokens: maxTokens
-            };
-            break;
-
-        case 'anthropic':
-            endpoint = 'https://api.anthropic.com/v1/messages';
-            headers = {
-                'x-api-key': apiKey,
-                'Content-Type': 'application/json',
-                'anthropic-version': '2023-06-01'
-            };
-            body = {
-                model: modelId,
-                system: systemPrompt,
-                messages: [{ role: 'user', content: userPrompt }],
-                max_tokens: maxTokens
-            };
-            break;
-
-        case 'google':
-            endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
-            headers = { 'Content-Type': 'application/json' };
-            body = {
-                contents: [{ parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] }],
-                generationConfig: { temperature, maxOutputTokens: maxTokens }
-            };
-            break;
-
-        default:
-            // OpenAI-compatible fallback for custom providers
-            endpoint = 'https://api.openai.com/v1/chat/completions';
-            headers = {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            };
-            body = {
-                model: modelId,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                ],
-                temperature,
-                max_tokens: maxTokens
-            };
-    }
+    const { providerId, modelId, systemPrompt, userPrompt, temperature, maxTokens } = params;
 
     try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(body)
-        });
+        // Use unified ProviderService for all providers
+        // This handles provider ID normalization (google → gemini) and adapter routing
+        const response = await providerService.generateContent(
+            providerId,
+            [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ],
+            {
+                model: modelId,
+                temperature,
+                maxTokens,
+            }
+        );
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('[NoteAIService] API error:', response.status, errorText);
-            throw new NoteAIError(
-                'API_ERROR',
-                `AI API error (${response.status}): ${errorText.slice(0, 200)}`
-            );
-        }
-
-        const data = await response.json();
-
-        // Extract content based on provider response format
-        if (providerId === 'anthropic') {
-            return data.content?.[0]?.text || '';
-        } else if (providerId === 'google') {
-            return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        } else {
-            // OpenAI / OpenRouter format
-            return data.choices?.[0]?.message?.content || '';
-        }
+        return response;
     } catch (error) {
-        if (error instanceof NoteAIError) {
-            throw error;
-        }
-
-        console.error('[NoteAIService] Fetch error:', error);
+        console.error('[NoteAIService] Provider error:', error);
         throw new NoteAIError(
             'API_ERROR',
             `Failed to call AI API: ${error instanceof Error ? error.message : 'Unknown error'}`

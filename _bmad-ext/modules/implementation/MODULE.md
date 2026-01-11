@@ -1,17 +1,53 @@
 ---
 name: "implementation"
-version: "1.0.0"
+version: "2.0.0"
 status: "active"
 phase: "4"
 created: "2026-01-11"
-updated: "2026-01-11"
+updated: "2026-01-12"
 tier: "execution"
-description: "BMAD Extension Implementation Module - Story execution and bug fix workflows"
+description: "BMAD Extension Implementation Module v2.0 - Story execution and bug fix workflows with deep analysis, evidence-based validation, and real code verification."
 ---
 
-# Implementation Module
+# Implementation Module v2.0
 
-**Purpose**: Execute development work through story-cycle (new features) and correct-course (bug fixes/remediation) workflows.
+**Purpose**: Execute development work through story-cycle (new features) and correct-course (bug fixes/remediation) workflows with **v2.0 enhancements**.
+
+## v2.0 Key Improvements
+
+| Aspect | v1.0 | v2.0 Enhanced |
+|--------|------|---------------|
+| **Context Loading** | Read story file | **ENFORCED** grep/glob analysis |
+| **Cross-Impact** | None | Full workspace/story mapping |
+| **Dead Code Detection** | None | Systematic overlap analysis |
+| **Validation** | Basic checklist | **Evidence-based** with file:line |
+| **Code Review** | Diff summary | **Real code** path walking |
+| **Journey Mapping** | Script only | **Code-verified** journey |
+| **Skepticism** | Assumed correct | **Evidence before assertion** |
+
+## Timing Standards (Based on Actual Data)
+
+| Work Unit | Real Average | Examples |
+|-----------|--------------|----------|
+| **Story (simple)** | 1-2 hours | FS-05: 1.5h, MOBILE stories |
+| **Story (complex)** | 2-4 hours | 40-01 Tool Registry: ~3h |
+| **Epic (6-8 stories)** | 4-8 hours | EPIC-40: 12 stories/day |
+| **Epic (mini 3-4)** | 2-4 hours | EPIC-39: 4 stories/day |
+
+### Velocity Reality
+
+```
+✅ NORMAL: 4-8 stories/day, 1-3 epics/day
+✅ EXCEPTIONAL: 2-3 epics/day in flow state
+```
+
+### Time-Boxing
+
+| Level | Duration | On Timeout |
+|-------|----------|------------|
+| Step | 15 min | Escalate to story |
+| Story | 4 hours max | Split or continue |
+| Deep Investigation | 30 min | Split story |
 
 ## Phase Position
 
@@ -31,11 +67,20 @@ description: "BMAD Extension Implementation Module - Story execution and bug fix
 [PHASE 5] Enhanced Agent Wrappers
 ```
 
-## Workflows
+## Workflows v2.0
 
-### 1. Story-Cycle Workflow
+### 1. Story-Cycle Workflow v2.0
 
-**Purpose**: Execute stories from assignment to completion with sprint tracking
+**Purpose**: Execute stories from assignment to completion with **deep analysis**, **evidence-based validation**, and **real code verification**.
+
+**v2.0 Enhancements**:
+- **Step 1 (Init)**: Deep project analysis via grep/glob
+- **Step 1a (Journey)**: Code-verified journey with state machine
+- **Step 2 (Validate)**: Evidence-based checklist with file:line
+- **Step 3a (Tool Spec)**: Agent tool specifications
+- **Step 3 (Implement)**: **ENFORCED** context loading + conflict detection
+- **Step 5 (Review)**: Real code path walking + HTML validation
+- **Step 6a (Reality)**: Visual regression with journey comparison
 
 **Entry Point**:
 - Governance approval for new feature
@@ -48,13 +93,16 @@ description: "BMAD Extension Implementation Module - Story execution and bug fix
 - Handoff artifact created
 
 **Steps**:
-1. **Init**: Load story context, validate prerequisites
-2. **Validate**: Check dependencies, sprint capacity
-3. **Implement**: Execute development work
-4. **Test**: Run tests, verify coverage
-5. **Review**: Code review, quality check
-6. **Done**: Update sprint-status, mark complete
-7. **Retrospective**: Story completion summary
+1. **Init (v2.0)**: Load story + deep project analysis
+2. **User Journey (v2.0)**: Code-verified journey simulation
+3. **Validate (v2.0)**: Evidence-based prerequisites
+4. **Agent Tool Spec**: Define AI/LLM tool specifications
+5. **Implement (v2.0)**: TDD with enforced grep/glob + conflict detection
+6. **Test**: Run tests, verify coverage
+7. **Review (v2.0)**: Real code analysis + journey walking
+8. **Done**: Update sprint-status, mark complete
+9. **Reality Check (v2.0)**: Visual verification with journey map
+10. **Retrospective**: Story completion summary
 
 **Location**: `workflows/story-cycle/`
 
@@ -190,4 +238,6 @@ When story/fix complete:
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-01-12 | 2.0.0 | v2.0 release: Deep analysis, evidence-based validation, real code verification, journey walking, enforced grep/glob |
+| 2026-01-11 | 1.1.0 | Added realistic timing governance (1-4h stories, 4-8h epics) |
 | 2026-01-11 | 1.0.0 | Initial Phase 4 implementation module creation |

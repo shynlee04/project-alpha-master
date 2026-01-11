@@ -10,6 +10,7 @@
  */
 
 import { useTranslation } from 'react-i18next';
+import { useShallow } from 'zustand/react/shallow';
 import { Check, RefreshCw, AlertTriangle, CloudOff } from 'lucide-react';
 import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 import { StatusBarSegment } from './StatusBarSegment';
@@ -38,10 +39,14 @@ interface SyncStatusSegmentProps {
  */
 export function SyncStatusSegment({ onRetry }: SyncStatusSegmentProps) {
     const { t } = useTranslation();
-    // Select individual primitives to avoid re-render loops
-    const status = useStatusBarStore((s) => s.syncStatus);
-    const progress = useStatusBarStore((s) => s.syncProgress);
-    const error = useStatusBarStore((s) => s.syncError);
+    // PERF-03: Use useShallow to prevent re-render loops
+    const { status, progress, error } = useStatusBarStore(
+        useShallow((s) => ({
+            status: s.syncStatus,
+            progress: s.syncProgress,
+            error: s.syncError,
+        }))
+    );
 
     const handleClick = () => {
         if (status === 'error' && onRetry) {

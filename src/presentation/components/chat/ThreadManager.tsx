@@ -1,112 +1,131 @@
 /**
  * @fileoverview Thread Manager Component
  * @module presentation/components/chat/ThreadManager
- * @governance Architectural Specification v3.0
+ * @governance CHAT-005 | CHAT-006
  *
  * Thread management UI with CRUD operations.
- * Addresses gap in ARC Module: Thread management incomplete.
+ * CHAT-005: Integrated with unified chat store via useThreadManager hook
+ * CHAT-006: CRUD UI with proper workspace association
  */
 
 import { useState } from 'react';
-import { Plus, Folder, MessageSquare, Trash2, Edit2, Check, X } from 'lucide-react';
-
-/**
- * Thread data structure
- */
-export interface Thread {
-  id: string;
-  title: string;
-  agentId: string;
-  messageCount: number;
-  createdAt: number;
-  updatedAt: number;
-  isArchived: boolean;
-  workspaceType: string;
-}
+import { Plus, Folder, MessageSquare, Trash2, Edit2, Check, X, Archive } from 'lucide-react';
+import { useThreadManager } from '@/presentation/hooks/useThreadManager';
+import type { WorkspaceType } from '@/domain/entities/chat';
 
 /**
  * Props for ThreadManager
  */
 export interface ThreadManagerProps {
-  workspaceType: string;
-  threads: Thread[];
-  activeThreadId: string | null;
-  onCreateThread: (title: string) => void;
-  onSelectThread: (threadId: string) => void;
-  onUpdateThread: (threadId: string, updates: Partial<Thread>) => void;
-  onDeleteThread: (threadId: string) => void;
-  onArchiveThread: (threadId: string) => void;
+  /** Workspace type for filtering threads */
+  workspaceType: WorkspaceType;
+  /** Optional conversation ID for further filtering */
+  conversationId?: string;
+  /** Optional callback when thread is selected */
+  onThreadSelect?: (threadId: string) => void;
 }
 
 /**
  * Thread Manager Component
  *
+ * CHAT-006: Store-integrated thread CRUD UI
+ *
  * Provides UI for:
  * - Creating new threads
  * - Listing threads by workspace
  * - Selecting active thread
- * - Renaming threads
+ * - Renaming threads (wired to store)
  * - Deleting threads
- * - Archiving threads
+ * - Archiving/unarchiving threads
+ * - Viewing archived threads
  *
  * @example
  * ```tsx
  * <ThreadManager
  *   workspaceType="ide"
- *   threads={threads}
- *   activeThreadId={activeThreadId}
- *   onCreateThread={(title) => createThread(title)}
- *   onSelectThread={(id) => setActiveThread(id)}
- *   onUpdateThread={(id, updates) => updateThread(id, updates)}
- *   onDeleteThread={(id) => deleteThread(id)}
- *   onArchiveThread={(id) => archiveThread(id)}
+ *   onThreadSelect={(id) => console.log('Selected:', id)}
  * />
  * ```
  */
 export function ThreadManager({
   workspaceType,
-  threads,
-  activeThreadId,
-  onCreateThread,
-  onSelectThread,
-  onUpdateThread,
-  onDeleteThread,
-  onArchiveThread,
+  conversationId,
+  onThreadSelect,
 }: ThreadManagerProps) {
+  // CHAT-006: Use the store-integrated hook with full CRUD
+  const {
+    activeThreads,
+    archivedThreads,
+    activeThreadId,
+    createThread,
+    deleteThread,
+    updateThread,
+    archiveThread,
+    unarchiveThread,
+    setActiveThread,
+  } = useThreadManager({ workspaceType, conversationId });
+
+  // Local UI state
   const [isCreating, setIsCreating] = useState(false);
   const [newThreadTitle, setNewThreadTitle] = useState('');
   const [editingThreadId, setEditingThreadId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
 
-  // Filter threads by workspace
-  const workspaceThreads = threads.filter(t => t.workspaceType === workspaceType && !t.isArchived);
-
   /**
    * Handle create thread
    */
   const handleCreateThread = () => {
-    if (!newThreadTitle.trim()) return;
-
-    onCreateThread(newThreadTitle);
-    setNewThreadTitle('');
-    setIsCreating(false);
+    const title = newThreadTitle.trim() || 'New Thread';
+    try {
+      const threadId = createThread(title);
+      setNewThreadTitle('');
+      setIsCreating(false);
+      // Auto-select the newly created thread
+      setActiveThread(threadId);
+      onThreadSelect?.(threadId);
+    } catch (err) {
+      console.error('[ThreadManager] Failed to create thread:', err);
+    }
   };
 
   /**
-   * Handle start editing
+   * Handle thread selection
    */
-  const handleStartEdit = (thread: Thread) => {
-    setEditingThreadId(thread.id);
-    setEditingTitle(thread.title);
+  const handleSelectThread = (threadId: string) => {
+    setActiveThread(threadId);
+    onThreadSelect?.(threadId);
   };
 
   /**
-   * Handle save edit
+   * Handle delete thread
+   */
+  const handleDeleteThread = (threadId: string) => {
+    if (confirm('Delete this thread? This action cannot be undone.')) {
+      deleteThread(threadId);
+      if (activeThreadId === threadId) {
+        // Clear active thread if we deleted the active one
+        // setActiveThread(null); // TODO: implement clearActiveThread
+      }
+    }
+  };
+
+  /**
+   * Handle start editing (UI only - store update pending CHAT-007)
+   */
+  const handleStartEdit = (threadId: string, currentTitle: string) => {
+    setEditingThreadId(threadId);
+    setEditingTitle(currentTitle);
+  };
+
+  /**
+   * CHAT-006: Handle save edit - wire up updateThread from hook
    */
   const handleSaveEdit = () => {
     if (!editingThreadId) return;
 
-    onUpdateThread(editingThreadId, { title: editingTitle });
+    const newTitle = editingTitle.trim() || 'Untitled Thread';
+    updateThread(editingThreadId, { title: newTitle });
+
     setEditingThreadId(null);
     setEditingTitle('');
   };
@@ -122,16 +141,16 @@ export function ThreadManager({
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b">
+      <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <Folder className="w-5 h-5 text-muted-foreground" />
           <h3 className="font-semibold">Threads</h3>
-          <span className="text-sm text-muted-foreground">({workspaceThreads.length})</span>
+          <span className="text-sm text-muted-foreground">({activeThreads.length})</span>
         </div>
 
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-none hover:bg-primary/90"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-none hover:bg-primary/90 shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]"
         >
           <Plus className="w-4 h-4" />
           New Thread
@@ -140,7 +159,7 @@ export function ThreadManager({
 
       {/* Create Thread Input */}
       {isCreating && (
-        <div className="p-4 border-b bg-muted/30">
+        <div className="p-4 border-b border-border bg-muted/30">
           <input
             type="text"
             value={newThreadTitle}
@@ -153,13 +172,13 @@ export function ThreadManager({
               }
             }}
             placeholder="Thread title..."
-            className="w-full px-3 py-2 border rounded-none focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2 bg-background border border-border rounded-none focus:outline-none focus:border-primary"
             autoFocus
           />
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleCreateThread}
-              className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-none"
+              className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-none shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]"
             >
               Create
             </button>
@@ -168,7 +187,7 @@ export function ThreadManager({
                 setIsCreating(false);
                 setNewThreadTitle('');
               }}
-              className="px-3 py-1.5 text-sm border rounded-none hover:bg-muted"
+              className="px-3 py-1.5 text-sm border border-border rounded-none hover:bg-muted"
             >
               Cancel
             </button>
@@ -178,15 +197,15 @@ export function ThreadManager({
 
       {/* Threads List */}
       <div className="flex-1 overflow-y-auto">
-        {workspaceThreads.length === 0 ? (
+        {activeThreads.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
             <MessageSquare className="w-12 h-12 mb-2 opacity-50" />
             <p>No threads yet</p>
             <p className="text-sm">Create a thread to start chatting</p>
           </div>
         ) : (
-          <div className="divide-y">
-            {workspaceThreads.map((thread) => {
+          <div className="divide-y divide-border/50">
+            {activeThreads.map((thread) => {
               const isActive = thread.id === activeThreadId;
               const isEditing = editingThreadId === thread.id;
 
@@ -196,7 +215,7 @@ export function ThreadManager({
                   className={`flex items-center gap-3 p-4 hover:bg-muted/50 cursor-pointer transition-colors ${
                     isActive ? 'bg-muted border-l-4 border-l-primary' : ''
                   }`}
-                  onClick={() => !isEditing && onSelectThread(thread.id)}
+                  onClick={() => !isEditing && handleSelectThread(thread.id)}
                 >
                   {/* Thread Icon */}
                   <MessageSquare className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -212,7 +231,7 @@ export function ThreadManager({
                         if (e.key === 'Escape') handleCancelEdit();
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 px-2 py-1 border rounded-none focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 px-2 py-1 bg-background border border-border rounded-none focus:outline-none focus:border-primary"
                       autoFocus
                     />
                   ) : (
@@ -254,7 +273,7 @@ export function ThreadManager({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleStartEdit(thread);
+                            handleStartEdit(thread.id, thread.title);
                           }}
                           className="p-1.5 hover:bg-muted rounded-none"
                           title="Rename"
@@ -264,19 +283,17 @@ export function ThreadManager({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onArchiveThread(thread.id);
+                            archiveThread(thread.id);
                           }}
                           className="p-1.5 hover:bg-muted rounded-none"
                           title="Archive"
                         >
-                          <Folder className="w-4 h-4 text-muted-foreground" />
+                          <Archive className="w-4 h-4 text-muted-foreground" />
                         </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm('Delete this thread?')) {
-                              onDeleteThread(thread.id);
-                            }
+                            handleDeleteThread(thread.id);
                           }}
                           className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded-none"
                           title="Delete"
@@ -294,39 +311,38 @@ export function ThreadManager({
       </div>
 
       {/* Archived Threads */}
-      {threads.filter(t => t.workspaceType === workspaceType && t.isArchived).length > 0 && (
-        <details className="border-t">
+      {archivedThreads.length > 0 && (
+        <details className="border-t border-border">
           <summary className="px-4 py-3 text-sm text-muted-foreground cursor-pointer hover:bg-muted/50">
-            Archived Threads ({threads.filter(t => t.workspaceType === workspaceType && t.isArchived).length})
+            Archived Threads ({archivedThreads.length})
           </summary>
-          <div className="divide-y">
-            {threads
-              .filter(t => t.workspaceType === workspaceType && t.isArchived)
-              .map((thread) => (
-                <div
-                  key={thread.id}
-                  className="flex items-center gap-3 p-4 hover:bg-muted/50 cursor-pointer opacity-60"
-                  onClick={() => onSelectThread(thread.id)}
-                >
-                  <MessageSquare className="w-5 h-5 text-muted-foreground" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{thread.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {thread.messageCount} messages · Archived
-                    </p>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUpdateThread(thread.id, { isArchived: false });
-                    }}
-                    className="p-1.5 hover:bg-muted rounded-none"
-                    title="Unarchive"
-                  >
-                    <Folder className="w-4 h-4 text-muted-foreground" />
-                  </button>
+          <div className="divide-y divide-border/50">
+            {archivedThreads.map((thread) => (
+              <div
+                key={thread.id}
+                className="flex items-center gap-3 p-4 hover:bg-muted/50 cursor-pointer opacity-60"
+                onClick={() => handleSelectThread(thread.id)}
+              >
+                <MessageSquare className="w-5 h-5 text-muted-foreground" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium truncate">{thread.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {thread.messageCount} messages · Archived
+                  </p>
                 </div>
-              ))}
+                {/* CHAT-006: Unarchive button - wired to store */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    unarchiveThread(thread.id);
+                  }}
+                  className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900 rounded-none"
+                  title="Unarchive"
+                >
+                  <Folder className="w-4 h-4 text-green-600" />
+                </button>
+              </div>
+            ))}
           </div>
         </details>
       )}

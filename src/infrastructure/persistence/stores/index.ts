@@ -34,16 +34,6 @@ export type {
   ModelSettings
 } from './providers/types';
 
-// Models-loader-store was merged into provider-store (Story AC-1.6)
-// Use useAppStore or useProviderStore instead
-// export {
-//   useModelsStore,
-//   useProviderModels as useModelsForProvider,
-//   useSelectedModel,
-//   type ModelsState,
-//   type ModelStateEntry
-// } from '@/stores/models-loader-store';
-
 export {
   useAutoApproveStore,
   TOOL_CATEGORY_MAP,

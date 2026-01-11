@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useDeviceType } from '@/hooks/useMediaQuery';
@@ -9,7 +10,7 @@ import { useConversationPersistence } from '@/lib/events/use-conversation-persis
 import { useChatStateSync } from '@/lib/events/use-chat-state-sync';
 import type { WorkspaceChangeEvent, ChatStateUpdateEvent } from '@/lib/events';
 
-import { useConversationStore as useThreadsStore, getConversationStoreState } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useConversationStore, getConversationStoreState } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
 import { EnhancedChatInterface, ChatMessage } from './EnhancedChatInterface';
 import { AutoApproveSettings } from '../chat/AutoApproveSettings';
 import { useAgentChatWithTools, type PendingApprovalInfo } from '@/lib/agent/hooks/use-agent-chat-with-tools';
@@ -143,7 +144,13 @@ export function AgentChatPanel({
 
     // Use the real TanStack AI hook with tools
     // Get conversation and thread context for tool execution persistence (EPIC-40 MM-03)
-    const { activeConversationId, activeThreadId } = useThreadsStore();
+    // PERF-01: Use useShallow to prevent re-renders on unrelated state changes
+    const { activeConversationId, activeThreadId } = useConversationStore(
+        useShallow((state) => ({
+            activeConversationId: state.activeConversationId,
+            activeThreadId: state.activeThreadId,
+        }))
+    );
 
     const {
         messages: hookMessages,
@@ -183,11 +190,22 @@ export function AgentChatPanel({
     });
 
     // Prompt Enhancement
-    const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore();
+    // PERF-01: Use useShallow to prevent re-renders
+    const { isEnabled: isEnhancementEnabled, toggle: toggleEnhancement } = usePromptEnhancementStore(
+        useShallow((state) => ({
+            isEnabled: state.isEnabled,
+            toggle: state.toggle,
+        }))
+    );
     const { enhancePrompt, isEnhancing: isEnhancingPrompt } = usePromptEnhancer();
 
     // Auto-Approve Settings
-    const { shouldAutoApprove } = useAutoApproveStore();
+    // PERF-01: Use useShallow to prevent re-renders
+    const { shouldAutoApprove } = useAutoApproveStore(
+        useShallow((state) => ({
+            shouldAutoApprove: state.shouldAutoApprove,
+        }))
+    );
 
     // E1-8: Workspace-specific chat settings (model, temperature, autoScroll)
     const chatSettings = useWorkspaceChatSettings(workspaceType);
@@ -201,7 +219,12 @@ export function AgentChatPanel({
     }), [projectName, t]);
 
     // Effect to sync completed messages from hook to store
-    const { addMessage } = useThreadsStore();
+    // PERF-01: Use useShallow to only subscribe to addMessage action
+    const { addMessage } = useConversationStore(
+        useShallow((state) => ({
+            addMessage: state.addMessage,
+        }))
+    );
 
     // E1-5: Chat event bridge - emit events when messages sent, listen for workspace changes
     const { emitMessageSent } = useChatEventBridge({
@@ -475,8 +498,13 @@ export function AgentChatPanel({
     }, [isMobile, isTablet, t, localAdapterRef]);
 
     // Clear conversation
-    const createThread = useThreadsStore(state => state.createThread);
-    const setActiveThread = useThreadsStore(state => state.setActiveThread);
+    // PERF-01: Use useShallow to only subscribe to needed actions
+    const { createThread, setActiveThread } = useConversationStore(
+        useShallow((state) => ({
+            createThread: state.createThread,
+            setActiveThread: state.setActiveThread,
+        }))
+    );
 
     const handleClear = useCallback(async () => {
         if (projectId) {

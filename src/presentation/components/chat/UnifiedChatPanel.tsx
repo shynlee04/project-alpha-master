@@ -12,14 +12,14 @@
 
 import { memo } from 'react';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
-import { ChatPanel as ThreadedChatPanel } from './ChatPanel';
 import { RAGChatPanel } from '@/presentation/components/rag/RAGChatPanel';
 import { AgentChatPanel } from '@/presentation/components/ide/AgentChatPanel';
 
 /**
  * Chat mode variants
+ * Note: 'threaded' mode was removed in CHAT-020 (ChatConversation.tsx unused)
  */
-export type ChatMode = 'threaded' | 'simple' | 'agent';
+export type ChatMode = 'simple' | 'agent';
 
 /**
  * Base props for all modes
@@ -29,13 +29,6 @@ interface BaseProps {
   projectId: string;
   /** Additional CSS classes */
   className?: string;
-}
-
-/**
- * Props for threaded mode (ChatPanel)
- */
-interface ThreadedModeProps extends BaseProps {
-  mode: 'threaded';
 }
 
 /**
@@ -75,21 +68,19 @@ interface AgentModeProps extends BaseProps {
 /**
  * Union type for all mode props
  */
-export type UnifiedChatPanelProps = ThreadedModeProps | SimpleModeProps | AgentModeProps;
+export type UnifiedChatPanelProps = SimpleModeProps | AgentModeProps;
 
 /**
  * UnifiedChatPanel - Single entry point for all chat interfaces
  *
  * Routes to appropriate implementation based on mode prop:
- * - 'threaded': Uses ChatPanel (threaded conversations)
  * - 'simple': Uses RAGChatPanel (citations, simple message list)
  * - 'agent': Uses AgentChatPanel (tool execution, approvals)
  *
+ * CHAT-020: Removed 'threaded' mode (ChatConversation.tsx was unused)
+ *
  * @example
  * ```tsx
- * // Threaded mode (IDE workspace)
- * <UnifiedChatPanel mode="threaded" projectId={projectId} />
- *
  * // Simple mode (Knowledge workspace)
  * <UnifiedChatPanel
  *   mode="simple"
@@ -123,13 +114,9 @@ export type UnifiedChatPanelProps = ThreadedModeProps | SimpleModeProps | AgentM
 export const UnifiedChatPanel = memo(function UnifiedChatPanel(
   props: UnifiedChatPanelProps
 ) {
-  const { mode, projectId, className } = props;
+  const { mode, projectId } = props;
 
   switch (mode) {
-    case 'threaded':
-      // Threaded conversations - uses ChatPanel
-      return <ThreadedChatPanel projectId={projectId} className={className} />;
-
     case 'simple':
       // Simple chat with citations - uses RAGChatPanel
       return (
@@ -156,10 +143,14 @@ export const UnifiedChatPanel = memo(function UnifiedChatPanel(
       );
 
     default:
-      // Fallback to threaded mode
+      // Fallback to agent mode (safe default)
       const _exhaustive: never = mode;
-      console.warn(`Unknown chat mode: ${_exhaustive}, falling back to threaded`);
-      return <ThreadedChatPanel projectId={projectId} className={className} />;
+      console.warn(`Unknown chat mode: ${String(_exhaustive)}, falling back to agent`);
+      return (
+        <AgentChatPanel
+          projectId={projectId}
+        />
+      );
   }
 });
 
@@ -179,15 +170,6 @@ export function isAgentModeProps(
   props: UnifiedChatPanelProps
 ): props is AgentModeProps {
   return props.mode === 'agent';
-}
-
-/**
- * Type guard to check if props are for threaded mode
- */
-export function isThreadedModeProps(
-  props: UnifiedChatPanelProps
-): props is ThreadedModeProps {
-  return props.mode === 'threaded';
 }
 
 export default UnifiedChatPanel;
