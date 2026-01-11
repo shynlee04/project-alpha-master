@@ -87,9 +87,9 @@ export function TimeoutWarning({
   }
 
   return (
-    <div className="flex items-center gap-3 p-4 bg-yellow-500/10 border border-yellow-500/50 rounded-lg">
+    <div className="flex items-center gap-3 p-4 bg-yellow-500/10 border border-yellow-500/50 rounded-none">
       {/* Warning icon */}
-      <div className="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center text-yellow-500 flex-shrink-0">
+      <div className="w-8 h-8 bg-yellow-500/20 rounded-none flex items-center justify-center text-yellow-500 flex-shrink-0">
         ⚠️
       </div>
 
@@ -108,7 +108,7 @@ export function TimeoutWarning({
 
       {/* Progress */}
       <div className="flex-1">
-        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-muted rounded-none h-2 overflow-hidden">
           <div
             className="bg-yellow-500 h-full transition-all duration-300"
             style={{ width: `${(elapsed / timeout) * 100}%` }}

@@ -562,3 +562,243 @@ describe('ChatConversation - CHAT-002 Multi-line Input Fixes', () => {
         });
     });
 });
+
+describe('ChatConversation - CHAT-003 8-bit Design System Fixes', () => {
+    const mockThread = {
+        id: 'thread-1',
+        title: 'Test Conversation',
+        messages: [
+            { id: 'msg-1', role: 'user', content: 'Hello' },
+            { id: 'msg-2', role: 'assistant', content: 'Hi there' },
+        ],
+    };
+
+    const defaultProps = {
+        thread: mockThread,
+        selectedAgent: { id: 'agent-1', name: 'Test Agent' },
+        onBack: vi.fn(),
+        onSelectAgent: vi.fn(),
+        onSendMessage: vi.fn(),
+        isStreaming: false,
+    };
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    afterEach(() => {
+        cleanup();
+    });
+
+    describe('AC-1: Use rounded-none Instead of rounded-sm', () => {
+        it('should use rounded-none for message bubbles', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            // Check for rounded-none in message bubbles (message area divs)
+            const allDivs = container.querySelectorAll('div');
+            let hasRoundedNone = false;
+            let hasRoundedSm = false;
+
+            allDivs.forEach(div => {
+                div.classList.forEach(cls => {
+                    if (cls === 'rounded-none') hasRoundedNone = true;
+                    if (cls === 'rounded-sm') hasRoundedSm = true;
+                });
+            });
+
+            expect(hasRoundedNone).toBe(true);
+            expect(hasRoundedSm).toBe(false);
+        });
+
+        it('should not use rounded-sm anywhere in the component', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            // Search all elements for rounded-sm
+            const allElements = container.querySelectorAll('*');
+            let hasRoundedSm = false;
+
+            allElements.forEach(el => {
+                el.classList.forEach(cls => {
+                    if (cls.includes('rounded-sm')) {
+                        hasRoundedSm = true;
+                    }
+                });
+            });
+
+            expect(hasRoundedSm).toBe(false);
+        });
+    });
+
+    describe('AC-2: Use Solid Colors Instead of Opacity Modifiers', () => {
+        it('should not use opacity modifiers like bg-primary/20', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            // Check for opacity modifiers in class names
+            const allElements = container.querySelectorAll('*');
+            let hasOpacityModifier = false;
+
+            allElements.forEach(el => {
+                el.classList.forEach(cls => {
+                    // Check for patterns like /20, /50, /80, /90
+                    if (/\/(10|20|30|40|50|60|70|80|90)$/.test(cls)) {
+                        hasOpacityModifier = true;
+                    }
+                });
+            });
+
+            expect(hasOpacityModifier).toBe(false);
+        });
+
+        it('should use solid color classes for backgrounds', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            // Check submit buttons for bg-primary (solid color, not bg-primary/90)
+            const allButtons = container.querySelectorAll('button');
+            let hasSolidPrimaryColor = false;
+            let hasOpacityPrimaryColor = false;
+
+            allButtons.forEach(btn => {
+                btn.classList.forEach(cls => {
+                    if (cls === 'bg-primary' || cls === 'bg-primary-600') {
+                        hasSolidPrimaryColor = true;
+                    }
+                    if (/bg-primary\/\d+/.test(cls)) {
+                        hasOpacityPrimaryColor = true;
+                    }
+                });
+            });
+
+            // Should have solid bg-primary or bg-primary-600
+            expect(hasSolidPrimaryColor).toBe(true);
+            // Should NOT have opacity modifiers like bg-primary/90
+            expect(hasOpacityPrimaryColor).toBe(false);
+        });
+    });
+
+    describe('AC-3: Use shadow-pixel Instead of shadow-md', () => {
+        it('should use shadow-pixel class on submit buttons', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            // Check for shadow-pixel class on submit buttons
+            const allButtons = container.querySelectorAll('button');
+            let hasShadowPixel = false;
+
+            allButtons.forEach(btn => {
+                btn.classList.forEach(cls => {
+                    if (cls.includes('shadow-pixel')) {
+                        hasShadowPixel = true;
+                    }
+                });
+            });
+
+            expect(hasShadowPixel).toBe(true);
+        });
+
+        it('should use shadow-pixel-sm hover variant', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            // Check for shadow-pixel-sm hover class on submit buttons
+            const allButtons = container.querySelectorAll('button');
+            let hasShadowPixelSm = false;
+
+            allButtons.forEach(btn => {
+                btn.classList.forEach(cls => {
+                    if (cls.includes('shadow-pixel-sm')) {
+                        hasShadowPixelSm = true;
+                    }
+                });
+            });
+
+            expect(hasShadowPixelSm).toBe(true);
+        });
+
+        it('should not use shadow-md or shadow-lg on buttons', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            const allButtons = container.querySelectorAll('button');
+            let hasStandardShadow = false;
+
+            allButtons.forEach(btn => {
+                btn.classList.forEach(cls => {
+                    if (cls === 'shadow-md' || cls === 'shadow-lg' || cls === 'shadow-sm') {
+                        hasStandardShadow = true;
+                    }
+                });
+            });
+
+            expect(hasStandardShadow).toBe(false);
+        });
+    });
+
+    describe('AC-4: Use Semantic Colors Instead of opacity-50', () => {
+        it('should use text-muted-foreground instead of opacity-50 for empty state', () => {
+            const emptyThread = { ...mockThread, messages: [] };
+            const { container } = render(
+                <ChatConversation {...defaultProps} thread={emptyThread} />
+            );
+
+            // Empty state should use text-muted-foreground
+            const allDivs = container.querySelectorAll('div');
+            let hasMutedForeground = false;
+
+            allDivs.forEach(div => {
+                div.classList.forEach(cls => {
+                    if (cls === 'text-muted-foreground') {
+                        hasMutedForeground = true;
+                    }
+                });
+            });
+
+            expect(hasMutedForeground).toBe(true);
+        });
+
+        it('should not use opacity-50 on icons', () => {
+            const emptyThread = { ...mockThread, messages: [] };
+            const { container } = render(
+                <ChatConversation {...defaultProps} thread={emptyThread} />
+            );
+
+            // Check that Bot icon doesn't have opacity-50
+            const allElements = container.querySelectorAll('*');
+            let hasIconOpacity = false;
+
+            allElements.forEach(el => {
+                if (el.classList.contains('opacity-50')) {
+                    // Make sure it's for disabled state (acceptable)
+                    const parent = el.parentElement;
+                    if (parent && !parent.classList.contains('disabled:opacity-50')) {
+                        hasIconOpacity = true;
+                    }
+                }
+            });
+
+            // Note: disabled:opacity-50 is acceptable for disabled states
+            // We're checking that we don't use opacity-50 for decorative purposes
+            expect(hasIconOpacity).toBe(false);
+        });
+    });
+
+    describe('8-bit Design Integration', () => {
+        it('should maintain consistent 8-bit styling across buttons', () => {
+            const { container } = render(<ChatConversation {...defaultProps} />);
+
+            const allButtons = container.querySelectorAll('button');
+            let hasRoundedNone = false;
+            let hasShadowPixel = false;
+            let hasBorder2 = false;
+
+            allButtons.forEach(btn => {
+                btn.classList.forEach(cls => {
+                    if (cls === 'rounded-none') hasRoundedNone = true;
+                    if (cls.includes('shadow-pixel')) hasShadowPixel = true;
+                    if (cls === 'border-2') hasBorder2 = true;
+                });
+            });
+
+            // All 8-bit design tokens should be present on buttons
+            expect(hasRoundedNone).toBe(true);
+            expect(hasShadowPixel).toBe(true);
+            expect(hasBorder2).toBe(true);
+        });
+    });
+});

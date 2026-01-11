@@ -55,7 +55,7 @@ function StepNode({ data }: { data: StepNodeData }) {
 
     return (
         <div
-            className={`px-4 py-2 rounded-lg border-2 shadow-md min-w-[150px]
+            className={`px-4 py-2 rounded-none border-2 shadow-md min-w-[150px]
                 ${isExecuting ? 'border-primary bg-primary/10 ring-2 ring-primary/50' : stepInfo.borderColor}
                 ${stepInfo.bgColor} transition-all`}
         >
@@ -125,21 +125,21 @@ function ZoomControls() {
         <div className="flex items-center gap-1">
             <button
                 onClick={() => zoomIn()}
-                className="p-1 rounded hover:bg-muted border"
+                className="p-1 rounded hover:bg-muted border rounded-none"
                 title="Zoom In"
             >
                 <ZoomIn className="w-4 h-4" />
             </button>
             <button
                 onClick={() => zoomOut()}
-                className="p-1 rounded hover:bg-muted border"
+                className="p-1 rounded hover:bg-muted border rounded-none"
                 title="Zoom Out"
             >
                 <ZoomOut className="w-4 h-4" />
             </button>
             <button
                 onClick={() => fitView({ padding: 0.2 })}
-                className="p-1 rounded hover:bg-muted border"
+                className="p-1 rounded hover:bg-muted border rounded-none"
                 title="Fit View"
             >
                 <Maximize2 className="w-4 h-4" />
@@ -294,12 +294,12 @@ export function WorkflowVisualizer({
             </ReactFlow>
 
             {/* Custom zoom controls with export */}
-            <div className="absolute top-4 right-4 flex items-center gap-2 bg-background border rounded-lg p-1">
+            <div className="absolute top-4 right-4 flex items-center gap-2 bg-background border rounded-none p-1">
                 <ZoomControls />
                 <div className="w-px h-6 bg-border" />
                 <button
                     onClick={handleExport}
-                    className="p-1 rounded hover:bg-muted"
+                    className="p-1 rounded hover:bg-muted rounded-none"
                     title={t('chat.workflow.exportImage')}
                 >
                     <Download className="w-4 h-4" />
@@ -307,7 +307,7 @@ export function WorkflowVisualizer({
             </div>
 
             {/* Legend */}
-            <div className="absolute bottom-4 left-4 bg-card border rounded-lg p-3">
+            <div className="absolute bottom-4 left-4 bg-card border rounded-none p-3">
                 <p className="text-xs font-medium mb-2">{t('chat.workflow.stepTypes')}</p>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
                     {Object.entries(STEP_INFO).map(([type, info]) => (
@@ -339,7 +339,7 @@ export function WorkflowViewer({ workflowId, className = '' }: WorkflowViewerPro
 
     if (!workflow) {
         return (
-            <div className={`p-6 rounded-lg border bg-card ${className}`}>
+            <div className={`p-6 rounded-none border bg-card ${className}`}>
                 <p className="text-center text-muted-foreground">Workflow not found</p>
             </div>
         );

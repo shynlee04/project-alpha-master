@@ -155,7 +155,7 @@ export function SuggestionChips({
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-9 w-32 bg-muted rounded-lg animate-pulse"
+            className="h-9 w-32 bg-muted rounded-none animate-pulse"
           />
         ))}
       </div>
@@ -187,8 +187,8 @@ export function SuggestionChips({
               className={`
                 group relative
                 ${mobile
-                  ? 'bg-panel border border-border rounded-lg p-3'
-                  : 'inline-flex items-center gap-2 bg-panel border border-border rounded-lg px-3 py-2 hover:border-border-hover cursor-pointer'}
+                  ? 'bg-panel border border-border rounded-none p-3'
+                  : 'inline-flex items-center gap-2 bg-panel border border-border rounded-none px-3 py-2 hover:border-border-hover cursor-pointer'}
               `}
               onClick={() => !executingId && handleExecute(suggestion)}
             >
@@ -225,10 +225,10 @@ export function SuggestionChips({
               {/* Executing indicator */}
               {executingId === suggestion.id && (
                 <div className={`
-                  absolute inset-0 bg-panel/80 rounded-lg
+                  absolute inset-0 bg-panel/80 rounded-none
                   flex items-center justify-center
                 `}>
-                  <div className="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-accent" />
+                  <div className="inline-block animate-spin rounded-none h-5 w-5 border-b-2 border-accent" />
                 </div>
               )}
             </div>

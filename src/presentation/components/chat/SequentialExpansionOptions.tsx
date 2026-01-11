@@ -117,7 +117,7 @@ export function SequentialExpansionOptions({
                             onClick={() => isExpanded ? undefined : handleExpand(index, question)}
                             disabled={isExpanding || expandingIndex !== null}
                             className={`
-                                w-full text-left p-3 rounded-lg border transition-all
+                                w-full text-left p-3 rounded-none border transition-all
                                 flex items-start gap-3 group
                                 ${isExpanded
                                     ? 'bg-success/10 border-success/30 text-success-foreground'
@@ -129,7 +129,7 @@ export function SequentialExpansionOptions({
                         >
                             {/* Icon */}
                             <div className={`
-                                flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center
+                                flex-shrink-0 w-6 h-6 rounded-none flex items-center justify-center
                                 ${isExpanded
                                     ? 'bg-success text-success-foreground'
                                     : 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground'

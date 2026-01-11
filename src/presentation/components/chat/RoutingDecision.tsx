@@ -54,9 +54,9 @@ export function RoutingDecisionDisplay({
     };
 
     return (
-        <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border">
+        <div className="flex items-start gap-3 p-3 rounded-none bg-muted/30 border border-border">
             {/* Icon */}
-            <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${intentInfo.bgColor} ${intentInfo.textColor}`}>
+            <div className={`flex-shrink-0 w-8 h-8 rounded-none flex items-center justify-center ${intentInfo.bgColor} ${intentInfo.textColor}`}>
                 {intentInfo.icon}
             </div>
 
@@ -105,7 +105,7 @@ export function RoutingDecisionDisplay({
                                         <button
                                             key={intent}
                                             onClick={() => onOverride(intent)}
-                                            className={`text-xs px-2 py-1 rounded transition-colors ${
+                                            className={`text-xs px-2 py-1 rounded-none transition-colors ${
                                                 decision.intent === intent
                                                     ? 'bg-primary text-primary-foreground'
                                                     : 'bg-background hover:bg-accent'
@@ -128,14 +128,14 @@ export function RoutingDecisionDisplay({
                     <div className="flex gap-1">
                         <button
                             onClick={() => handleFeedback(true)}
-                            className="p-1 rounded hover:bg-success/20 text-muted-foreground hover:text-success transition-colors"
+                            className="p-1 rounded-none hover:bg-success/20 text-muted-foreground hover:text-success transition-colors"
                             title={t('chat.routing.correct', 'Correct')}
                         >
                             <ThumbsUp className="w-4 h-4" />
                         </button>
                         <button
                             onClick={() => handleFeedback(false)}
-                            className="p-1 rounded hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
+                            className="p-1 rounded-none hover:bg-destructive/20 text-muted-foreground hover:text-destructive transition-colors"
                             title={t('chat.routing.incorrect', 'Incorrect')}
                         >
                             <ThumbsDown className="w-4 h-4" />
@@ -146,7 +146,7 @@ export function RoutingDecisionDisplay({
                 {/* Expand */}
                 <button
                     onClick={() => setExpanded(!expanded)}
-                    className="p-1 rounded hover:bg-accent text-muted-foreground transition-colors"
+                    className="p-1 rounded-none hover:bg-accent text-muted-foreground transition-colors"
                 >
                     <ChevronDown className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
                 </button>
@@ -172,7 +172,7 @@ export function RoutingLoading({ message }: RoutingLoadingProps) {
 
     return (
         <div className="flex items-center gap-2 text-sm text-muted-foreground px-3 py-2">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <div className="w-2 h-2 rounded-none bg-primary animate-pulse" />
             <span>{message || t('chat.routing.classifying', 'Detecting intent...')}</span>
         </div>
     );

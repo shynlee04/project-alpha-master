@@ -304,7 +304,7 @@ export function DebateTimeline({
                     const isExpanded = expandedRound === round;
 
                     return (
-                        <div key={round} className="border rounded-lg overflow-hidden">
+                        <div key={round} className="border rounded-none overflow-hidden">
                             <button
                                 onClick={() => setExpandedRound(isExpanded ? null : round)}
                                 className="w-full p-3 flex items-center justify-between hover:bg-muted/30 transition-colors"
@@ -362,7 +362,7 @@ export function DebateTimeline({
 
             {/* Influential Arguments */}
             {synthesis.influentialArguments.length > 0 && (
-                <div className="p-4 rounded-lg border bg-muted/20">
+                <div className="p-4 rounded-none border bg-muted/20">
                     <p className="text-sm font-medium mb-2">{t('chat.debate.influential.title')}</p>
                     <div className="space-y-2">
                         {synthesis.influentialArguments.map((influential, i) => {

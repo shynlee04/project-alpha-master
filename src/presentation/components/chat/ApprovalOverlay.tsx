@@ -153,7 +153,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
 
   const dialogContent = (
     <div className={cn(
-      'relative bg-surface-dark border border-border-dark rounded-none shadow-pixel',
+      'relative bg-surface-dark border border-border-dark rounded-none-none shadow-pixel',
       mode === 'fullscreen'
         ? 'w-full max-w-4xl max-h-[90vh] mx-auto my-8'
         : 'w-full',
@@ -163,7 +163,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
       <div className="flex items-center justify-between p-6 border-b border-border-dark bg-surface-darker">
         <div className="flex items-center gap-3">
           <div className={cn(
-            'p-2 rounded',
+            'p-2 rounded-none',
             riskConfig.bgColor,
             riskConfig.borderColor,
             'border'
@@ -183,7 +183,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
         {mode === 'fullscreen' && (
           <Dialog.Close asChild>
             <button
-              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-none transition-colors"
               aria-label={t('chat.approvalOverlay.close')}
             >
               <X className="w-5 h-5" />
@@ -237,7 +237,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
 
         {/* Warning Message */}
         <div className={cn(
-          'p-4 rounded border',
+          'p-4 rounded-none border',
           riskConfig.bgColor,
           riskConfig.borderColor
         )}>
@@ -286,7 +286,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
               onClick={onReject}
               disabled={isLoading}
               className={cn(
-                'px-4 py-2 text-sm font-medium border border-border-dark rounded-none',
+                'px-4 py-2 text-sm font-medium border border-border-dark rounded-none-none',
                 'text-muted-foreground hover:text-foreground hover:bg-accent',
                 'transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
                 'focus:outline-none focus:ring-2 focus:ring-primary/50'
@@ -303,7 +303,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
             onClick={onReject}
             disabled={isLoading}
             className={cn(
-              'px-4 py-2 text-sm font-medium border border-border-dark rounded-none',
+              'px-4 py-2 text-sm font-medium border border-border-dark rounded-none-none',
               'text-muted-foreground hover:text-foreground hover:bg-accent',
               'transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
               'focus:outline-none focus:ring-2 focus:ring-primary/50'
@@ -320,7 +320,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
           onClick={onApprove}
           disabled={isLoading}
           className={cn(
-            'px-6 py-2 text-sm font-medium border border-primary/20 rounded-none',
+            'px-6 py-2 text-sm font-medium border border-primary/20 rounded-none-none',
             'bg-primary text-primary-foreground hover:bg-primary/90',
             'transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
             'focus:outline-none focus:ring-2 focus:ring-primary/50',
@@ -330,7 +330,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
           <div className="flex items-center gap-2">
             {isLoading ? (
               <>
-                <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-none-full animate-spin" />
                 {t('chat.approvalOverlay.processing')}
               </>
             ) : (

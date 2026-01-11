@@ -1851,11 +1851,12 @@ epic_chat_status:
 
     "CHAT-003":
       title: "Fix 8-bit Design System Violations"
-      status: "backlog"
+      status: "done"
       effort: "12h"
       priority: "P1-HIGH"
       phase: "1"
       depends_on: []
+      completed_at: "2026-01-11"
 
     "CHAT-004":
       title: "Group Chat Controls by Use Case"

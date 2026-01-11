@@ -90,7 +90,7 @@ export function ImagePreviewDialog({
         className={cn(
           "max-w-4xl w-full p-0 gap-0",
           // Mobile: full-screen
-          "sm:max-w-4xl sm:rounded-lg",
+          "sm:max-w-4xl sm:rounded-none",
           // Remove default padding
           "!p-0"
         )}
@@ -102,7 +102,7 @@ export function ImagePreviewDialog({
           onClick={onClose}
           className={cn(
             "absolute top-2 right-2 z-10",
-             "bg-[var(--color-overlay)] hover:bg-[var(--muted)] text-white rounded-full",
+             "bg-[var(--color-overlay)] hover:bg-[var(--muted)] text-white rounded-none",
             "p-1.5 transition-colors",
             // Mobile touch target
             "min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0"

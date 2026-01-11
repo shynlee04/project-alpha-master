@@ -106,8 +106,8 @@ export function ChatBubble({
         className={cn(
           positionClasses,
           "flex size-14 items-center justify-center",
-          "rounded-full bg-primary text-primary-foreground",
-          "shadow-lg hover:shadow-xl",
+          "rounded-none bg-primary text-primary-foreground",
+          "shadow-pixel hover:shadow-md",
           "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
           "hover:scale-110 active:scale-95",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -124,7 +124,7 @@ export function ChatBubble({
             className={cn(
               "absolute -top-1 -right-1",
               "flex min-h-5 min-w-5 items-center justify-center",
-              "rounded-full bg-destructive px-1.5 py-0.5",
+              "rounded-none bg-destructive px-1.5 py-0.5",
               "text-[10px] font-bold text-destructive-foreground",
               "ring-2 ring-background",
               "animate-in zoom-in duration-200"

@@ -101,7 +101,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
             {...attributes}
             {...listeners}
             onClick={onSelect}
-            className={`p-4 rounded-lg border-2 cursor-pointer transition-all group
+            className={`p-4 rounded-none border-2 cursor-pointer transition-all group
                 ${isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}
                 ${paletteItem?.color || 'bg-gray-500'} bg-[var(--muted)]`}
         >
@@ -120,7 +120,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
                         e.stopPropagation();
                         onDelete();
                     }}
-                    className="p-1 rounded hover:bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100"
+                    className="p-1 rounded-none hover:bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>

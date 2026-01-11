@@ -64,7 +64,7 @@ export function ToolProgressIndicator({
     const status = getStatus();
 
     return (
-        <div className="tool-progress-indicator border rounded-lg overflow-hidden bg-background">
+        <div className="tool-progress-indicator border rounded-none overflow-hidden bg-background">
             {/* Header */}
             <div className="flex items-center gap-2 px-3 py-2 border-b bg-accent/5">
                 <Terminal className="w-4 h-4 text-accent-foreground" />
@@ -137,7 +137,7 @@ function StatusBadge({ status }: { status: 'pending' | 'running' | 'success' | '
     const Icon = variant.icon;
 
     return (
-        <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${variant.className}`}>
+        <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-none text-xs font-medium ${variant.className}`}>
             {Icon && <Icon className="w-3 h-3" />}
             <span>{variant.text}</span>
         </div>

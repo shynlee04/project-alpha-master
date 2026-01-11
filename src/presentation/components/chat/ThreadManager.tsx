@@ -131,7 +131,7 @@ export function ThreadManager({
 
         <button
           onClick={() => setIsCreating(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-none hover:bg-primary/90"
         >
           <Plus className="w-4 h-4" />
           New Thread
@@ -153,13 +153,13 @@ export function ThreadManager({
               }
             }}
             placeholder="Thread title..."
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-3 py-2 border rounded-none focus:outline-none focus:ring-2 focus:ring-primary"
             autoFocus
           />
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleCreateThread}
-              className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md"
+              className="px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-none"
             >
               Create
             </button>
@@ -168,7 +168,7 @@ export function ThreadManager({
                 setIsCreating(false);
                 setNewThreadTitle('');
               }}
-              className="px-3 py-1.5 text-sm border rounded-md hover:bg-muted"
+              className="px-3 py-1.5 text-sm border rounded-none hover:bg-muted"
             >
               Cancel
             </button>
@@ -212,7 +212,7 @@ export function ThreadManager({
                         if (e.key === 'Escape') handleCancelEdit();
                       }}
                       onClick={(e) => e.stopPropagation()}
-                      className="flex-1 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 px-2 py-1 border rounded-none focus:outline-none focus:ring-2 focus:ring-primary"
                       autoFocus
                     />
                   ) : (
@@ -233,7 +233,7 @@ export function ThreadManager({
                             e.stopPropagation();
                             handleSaveEdit();
                           }}
-                          className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900 rounded"
+                          className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900 rounded-none"
                           title="Save"
                         >
                           <Check className="w-4 h-4 text-green-600" />
@@ -243,7 +243,7 @@ export function ThreadManager({
                             e.stopPropagation();
                             handleCancelEdit();
                           }}
-                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded"
+                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded-none"
                           title="Cancel"
                         >
                           <X className="w-4 h-4 text-red-600" />
@@ -256,7 +256,7 @@ export function ThreadManager({
                             e.stopPropagation();
                             handleStartEdit(thread);
                           }}
-                          className="p-1.5 hover:bg-muted rounded"
+                          className="p-1.5 hover:bg-muted rounded-none"
                           title="Rename"
                         >
                           <Edit2 className="w-4 h-4 text-muted-foreground" />
@@ -266,7 +266,7 @@ export function ThreadManager({
                             e.stopPropagation();
                             onArchiveThread(thread.id);
                           }}
-                          className="p-1.5 hover:bg-muted rounded"
+                          className="p-1.5 hover:bg-muted rounded-none"
                           title="Archive"
                         >
                           <Folder className="w-4 h-4 text-muted-foreground" />
@@ -278,7 +278,7 @@ export function ThreadManager({
                               onDeleteThread(thread.id);
                             }
                           }}
-                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded"
+                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded-none"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
@@ -320,7 +320,7 @@ export function ThreadManager({
                       e.stopPropagation();
                       onUpdateThread(thread.id, { isArchived: false });
                     }}
-                    className="p-1.5 hover:bg-muted rounded"
+                    className="p-1.5 hover:bg-muted rounded-none"
                     title="Unarchive"
                   >
                     <Folder className="w-4 h-4 text-muted-foreground" />

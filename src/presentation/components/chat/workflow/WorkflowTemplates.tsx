@@ -44,7 +44,7 @@ function TemplateCard({ template, onLoad }: TemplateCardProps) {
     return (
         <button
             onClick={onLoad}
-            className="p-3 rounded-lg border border-dashed hover:border-primary/50 hover:bg-primary/5 transition-all text-left w-full"
+            className="p-3 rounded-none border border-dashed hover:border-primary/50 hover:bg-primary/5 transition-all text-left w-full"
         >
             <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">{template.icon}</span>

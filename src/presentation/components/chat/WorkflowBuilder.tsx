@@ -42,7 +42,7 @@ interface PaletteItemProps {
 function PaletteItemComponent({ item }: PaletteItemProps) {
     return (
         <div
-            className={`p-3 rounded-lg border-2 border-dashed cursor-grab active:cursor-grabbing
+            className={`p-3 rounded-none border-2 border-dashed cursor-grab active:cursor-grabbing
                 hover:border-primary/50 transition-colors ${item.color} bg-[var(--muted)]`}
         >
             <div className="flex items-center gap-2">
@@ -87,7 +87,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
             {...attributes}
             {...listeners}
             onClick={onSelect}
-            className={`p-4 rounded-lg border-2 cursor-pointer transition-all
+            className={`p-4 rounded-none border-2 cursor-pointer transition-all
                 ${isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}
                 ${paletteItem?.color || 'bg-gray-500'} bg-[var(--muted)]`}
         >
@@ -124,7 +124,7 @@ function TemplateCard({ template, onLoad }: TemplateCardProps) {
     return (
         <button
             onClick={onLoad}
-            className="p-3 rounded-lg border border-dashed hover:border-primary/50 hover:bg-primary/5 transition-all text-left w-full"
+            className="p-3 rounded-none border border-dashed hover:border-primary/50 hover:bg-primary/5 transition-all text-left w-full"
         >
             <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">{template.icon}</span>
@@ -224,20 +224,20 @@ export function WorkflowBuilder({ onSave, onExecute, className = '' }: WorkflowB
     // Initialize workflow if none exists
     if (!workflow) {
         return (
-            <div className={`p-6 rounded-lg border bg-card ${className}`}>
+            <div className={`p-6 rounded-none border bg-card ${className}`}>
                 <div className="text-center py-8">
                     <p className="text-lg font-medium mb-4">{t('chat.workflow.noWorkflow')}</p>
                     <div className="flex items-center justify-center gap-3">
                         <button
                             onClick={createWorkflow}
-                            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                            className="px-4 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
                         >
                             <Plus className="w-4 h-4 mr-2 inline" />
                             {t('chat.workflow.createBlank')}
                         </button>
                         <button
                             onClick={() => setShowTemplates(true)}
-                            className="px-4 py-2 border rounded-lg hover:bg-muted transition-colors"
+                            className="px-4 py-2 border rounded-none hover:bg-muted transition-colors"
                         >
                             <FolderOpen className="w-4 h-4 mr-2 inline" />
                             {t('chat.workflow.fromTemplate')}
@@ -269,7 +269,7 @@ export function WorkflowBuilder({ onSave, onExecute, className = '' }: WorkflowB
     const stepsIds = workflow.steps.map((s) => s.id);
 
     return (
-        <div className={`p-6 rounded-lg border bg-card ${className}`}>
+        <div className={`p-6 rounded-none border bg-card ${className}`}>
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <div>
@@ -384,7 +384,7 @@ export function WorkflowBuilder({ onSave, onExecute, className = '' }: WorkflowB
                             <p className="text-sm font-medium mb-2">{t('chat.workflow.previewMode')}</p>
                             <button
                                 onClick={handleExecute}
-                                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-none hover:bg-primary/90 transition-colors"
                             >
                                 <Play className="w-4 h-4 mr-2 inline" />
                                 {t('chat.workflow.execute')}
@@ -460,7 +460,7 @@ export function WorkflowBuilderModal({
 
     return (
         <div className="fixed inset-0 bg-[var(--color-overlay)] flex items-center justify-center z-50 p-4">
-            <div className="bg-background rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-background rounded-none shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                 <div className="p-4 border-b flex items-center justify-between">
                     <h2 className="text-lg font-semibold">{t('chat.workflow.title')}</h2>
                     <button onClick={onClose} className="p-2 rounded hover:bg-muted">
