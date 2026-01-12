@@ -431,7 +431,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             }
 
             // Deep validation: check each block for known BlockNote issues
-            // Filter out invalid blocks instead of failing entirely
+            // Filter out invalid blocks recursively (including nested children)
             const noContentBlockTypes = new Set([
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
@@ -439,53 +439,74 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 'transformPipeline', 'artifactGallery', 'multiStepGeneration'
             ]);
 
-            const validBlocks: any[] = [];
-            const invalidBlocks: any[] = [];
+            // Recursive function to filter invalid blocks from entire tree
+            function filterValidBlocks(blocks: any[]): any[] {
+                const valid: any[] = [];
+                const invalid: any[] = [];
 
-            for (let i = 0; i < sanitized.length; i++) {
-                const block = sanitized[i];
-                const blockType = block.type;
-                let isValid = true;
+                for (const block of blocks) {
+                    const blockType = block.type;
+                    let isValid = true;
 
-                // Check for content: "none" blocks that have content property
-                if (noContentBlockTypes.has(blockType)) {
-                    if ('content' in block && block.content !== undefined) {
-                        console.warn(`[NoteEditor] Removing block ${i} (type: ${blockType}) - has content but shouldn't`, block.id);
-                        isValid = false;
+                    // Check for content: "none" blocks that have content property
+                    if (noContentBlockTypes.has(blockType)) {
+                        if ('content' in block && block.content !== undefined) {
+                            console.warn(`[NoteEditor] Removing block (type: ${blockType}, id: ${block.id}) - has content but shouldn't`);
+                            isValid = false;
+                        }
                     }
-                }
 
-                // CRITICAL: Check table block content structure
-                // Tables require a specific 2D array structure for content
-                if (blockType === 'table') {
-                    const tableContent = block.content;
-                    if (!Array.isArray(tableContent) || tableContent.length === 0) {
-                        console.warn(`[NoteEditor] Removing table block ${i} (id: ${block.id}) - invalid content structure`, block);
-                        isValid = false;
-                    } else {
-                        // Check each row has cells
-                        for (let r = 0; r < tableContent.length; r++) {
-                            const row = tableContent[r];
-                            if (!Array.isArray(row)) {
-                                console.warn(`[NoteEditor] Removing table block ${i} (id: ${block.id}) - row ${r} is not an array`, block);
-                                isValid = false;
-                                break;
+                    // CRITICAL: Check table block content structure
+                    if (blockType === 'table') {
+                        const tableContent = block.content;
+                        if (!Array.isArray(tableContent) || tableContent.length === 0) {
+                            console.warn(`[NoteEditor] Removing table block (id: ${block.id}) - invalid content structure`);
+                            isValid = false;
+                        } else {
+                            // Check each row has cells
+                            for (let r = 0; r < tableContent.length; r++) {
+                                const row = tableContent[r];
+                                if (!Array.isArray(row)) {
+                                    console.warn(`[NoteEditor] Removing table block (id: ${block.id}) - row ${r} is not an array`);
+                                    isValid = false;
+                                    break;
+                                }
                             }
                         }
                     }
+
+                    if (isValid) {
+                        // Recursively filter children
+                        const filteredChildren = block.children && Array.isArray(block.children)
+                            ? filterValidBlocks(block.children)
+                            : [];
+
+                        // Only add if either the block is valid or it has valid children
+                        if (filteredChildren.length > 0 || blockType !== 'table') {
+                            valid.push({
+                                ...block,
+                                children: filteredChildren
+                            });
+                        } else {
+                            invalid.push({ id: block.id, type: blockType });
+                        }
+                    } else {
+                        invalid.push({ id: block.id, type: blockType });
+                    }
                 }
 
-                if (isValid) {
-                    validBlocks.push(block);
-                } else {
-                    invalidBlocks.push({ index: i, id: block.id, type: blockType });
+                if (invalid.length > 0) {
+                    console.warn(`[NoteEditor] Filtered ${invalid.length} invalid blocks in subtree:`, invalid);
                 }
+
+                return valid;
             }
 
-            if (invalidBlocks.length > 0) {
-                console.warn(`[NoteEditor] Filtered out ${invalidBlocks.length} invalid blocks:`, invalidBlocks);
-                // Use valid blocks instead of crashing
-                const result = validBlocks.length > 0 ? validBlocks as BlockNoteBlock[] : undefined;
+            const fullyFiltered = filterValidBlocks(sanitized);
+
+            if (fullyFiltered.length !== sanitized.length) {
+                console.warn(`[NoteEditor] Total blocks filtered: ${sanitized.length - fullyFiltered.length}`);
+                const result = fullyFiltered.length > 0 ? fullyFiltered as BlockNoteBlock[] : undefined;
                 console.log('[NoteEditor] Returning initialContent:', result ? `${result.length} blocks (filtered)` : 'undefined');
                 return result;
             }
