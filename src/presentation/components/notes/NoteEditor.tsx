@@ -42,6 +42,14 @@ import { ArtifactBlock } from './blocks/ArtifactBlock';
 import { VideoGenerationBlock } from './blocks/VideoGenerationBlock';
 // 44-08: PowerPoint/Slides Export Block
 import { SlidesExportBlock } from './blocks/SlidesExportBlock';
+// 44-09: Chart/Diagram Generation Block
+import { ChartDiagramBlock } from './blocks/ChartDiagramBlock';
+// 44-10: Sequential Transformation Pipeline Block
+import { TransformPipelineBlock } from './blocks/TransformPipelineBlock';
+// 44-11: Artifact Gallery and Management Block
+import { ArtifactGalleryBlock } from './blocks/ArtifactGalleryBlock';
+// 44-12: Multi-Step Generation with Blur Animation Block
+import { MultiStepGenerationBlock } from './blocks/MultiStepGenerationBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 // Using 'any' because the custom schema creates complex generic types
@@ -169,7 +177,8 @@ function sanitizeBlocks(blocks: any[]): any[] {
         'todoItem', 'toggle', 'text', 'quote', 'callout', 'image',
         'codeFile', 'fileAttachment', 'aiImage', 'aiVision', 'storyboard',
         'videoAnalysis', 'ttsBlock', 'artifactBlock', 'videoGeneration',
-        'codeBlock', 'table', 'divider', 'slidesExport'
+        'codeBlock', 'table', 'divider', 'slidesExport', 'chartDiagram',
+        'transformPipeline', 'artifactGallery', 'multiStepGeneration'
     ]);
 
     // Default props required by BlockNote
@@ -284,6 +293,14 @@ const schema = BlockNoteSchema.create({
         videoGeneration: VideoGenerationBlock(),
         // 44-08: PowerPoint/Slides Export Block
         slidesExport: SlidesExportBlock(),
+        // 44-09: Chart/Diagram Generation Block
+        chartDiagram: ChartDiagramBlock(),
+        // 44-10: Sequential Transformation Pipeline Block
+        transformPipeline: TransformPipelineBlock(),
+        // 44-11: Artifact Gallery and Management Block
+        artifactGallery: ArtifactGalleryBlock(),
+        // 44-12: Multi-Step Generation with Blur Animation Block
+        multiStepGeneration: MultiStepGenerationBlock(),
     },
 });
 

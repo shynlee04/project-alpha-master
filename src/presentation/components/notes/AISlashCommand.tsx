@@ -24,6 +24,10 @@ import {
     Volume2,
     Clapperboard,
     FileDown,
+    BarChart3,
+    Workflow,
+    FolderOpen,
+    Layers,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -863,6 +867,161 @@ export const insertSlidesItem = (editor: BlockNoteEditor) => ({
     subtext: t('notes.ai.slides.description', 'Export notes as PowerPoint presentation'),
 });
 
+/**
+ * Insert Chart/Diagram Block
+ * @story 44-09: Chart/Diagram Generation
+ */
+export const insertChartDiagramItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.chart.title', 'Chart & Diagram'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Chart/Diagram block
+        const chartBlock = {
+            type: "chartDiagram",
+            props: {
+                title: t('notes.ai.chart.titlePlaceholder', 'Data Visualization'),
+                mode: 'chart',
+                chartType: 'bar',
+                diagramType: 'flowchart',
+                dataJson: '[]',
+                mermaidCode: '',
+                status: 'idle',
+                errorMessage: '',
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([chartBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([chartBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.chart.inserted', 'Chart/Diagram block inserted'));
+    },
+    aliases: ["chart", "diagram", "mermaid", "flowchart", "bar-chart", "pie-chart", "graph", "visualization"],
+    group: "AI",
+    icon: <BarChart3 size={18} />,
+    subtext: t('notes.ai.chart.description', 'Create charts and diagrams with AI'),
+});
+
+/**
+ * Insert Transformation Pipeline Block
+ * @story 44-10: Sequential Transformation Pipeline
+ */
+export const insertTransformPipelineItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.pipeline.title', 'Transform Pipeline'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Transform Pipeline block
+        const pipelineBlock = {
+            type: "transformPipeline",
+            props: {
+                title: t('notes.ai.pipeline.titlePlaceholder', 'My Pipeline'),
+                inputText: '',
+                pipelineJson: '[]',
+                status: 'idle',
+                errorMessage: '',
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([pipelineBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([pipelineBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.pipeline.inserted', 'Transform Pipeline block inserted'));
+    },
+    aliases: ["pipeline", "transform", "chain", "workflow", "sequence", "multi-step"],
+    group: "AI",
+    icon: <Workflow size={18} />,
+    subtext: t('notes.ai.pipeline.description', 'Chain multiple AI transformations'),
+});
+
+/**
+ * Insert Artifact Gallery Block
+ * @story 44-11: Artifact Gallery and Management
+ */
+export const insertArtifactGalleryItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.gallery.title', 'Artifact Gallery'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Artifact Gallery block
+        const galleryBlock = {
+            type: "artifactGallery",
+            props: {
+                viewMode: 'grid',
+                showFilters: 'false',
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([galleryBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([galleryBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.gallery.inserted', 'Artifact Gallery block inserted'));
+    },
+    aliases: ["gallery", "artifacts", "browse", "manage", "collection", "ai-content"],
+    group: "AI",
+    icon: <FolderOpen size={18} />,
+    subtext: t('notes.ai.gallery.description', 'Browse and manage AI-generated content'),
+});
+
+/**
+ * Insert Multi-Step Generation Block
+ * @story 44-12: Multi-step generation with blur animation (FINAL)
+ */
+export const insertMultiStepItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.multistep.title', 'Multi-Step Generation'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Multi-Step Generation block
+        const multistepBlock = {
+            type: "multiStepGeneration",
+            props: {
+                stepsJson: '[]',
+                configJson: '{"autoReveal":true,"revealDelay":300,"chainContext":true}',
+                pipelineStatus: 'idle',
+                isEditing: 'true',
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([multistepBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([multistepBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.multistep.inserted', 'Multi-Step Generation block inserted'));
+    },
+    aliases: ["multistep", "pipeline", "blur", "reveal", "chain", "orchestrate", "sequence"],
+    group: "AI",
+    icon: <Layers size={18} />,
+    subtext: t('notes.ai.multistep.description', 'Generate content step-by-step with blur reveal'),
+});
+
 // ============================================================================
 // Get Custom Slash Menu Items
 // ============================================================================
@@ -968,6 +1127,10 @@ export const getCustomSlashMenuItems = (
         insertArtifactItem(editor), // 44-06: HTML Artifact
         insertVideoGenItem(editor), // 44-07: Video Generation (Experimental)
         insertSlidesItem(editor), // 44-08: PowerPoint/Slides Export
+        insertChartDiagramItem(editor), // 44-09: Chart/Diagram Generation
+        insertTransformPipelineItem(editor), // 44-10: Sequential Transformation Pipeline
+        insertArtifactGalleryItem(editor), // 44-11: Artifact Gallery and Management
+        insertMultiStepItem(editor), // 44-12: Multi-Step Generation with Blur Animation
         continueWritingItem(editor),
         summarizeNoteItem(editor),
         generateOutlineItem(editor),
