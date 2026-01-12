@@ -25,6 +25,7 @@ import type {
   ModelSettings,
   StoredCredential,
   AdapterConfig,
+  ModalityType,
 } from '@/domain/types/llm';
 
 // Re-export for backward compatibility
@@ -39,6 +40,7 @@ export type {
   ModelSettings,
   StoredCredential,
   AdapterConfig,
+  ModalityType,
 };
 
 // ============================================================================
@@ -102,9 +104,45 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
     name: 'Google Gemini',
     type: 'gemini',
     baseURL: 'https://generativelanguage.googleapis.com',
-    defaultModel: 'gemini-2.5-flash',
+    defaultModel: 'gemini-3-flash',
     enabled: true,
     supportsNativeTools: true,
+    hasApiKey: false,
+    models: [],
+    lastModelFetchAt: undefined,
+  },
+  groq: {
+    id: 'groq',
+    name: 'Groq',
+    type: 'openai-compatible',
+    baseURL: 'https://api.groq.com/openai/v1',
+    defaultModel: 'llava-v1.5-7b',
+    enabled: true,
+    supportsNativeTools: false,
+    hasApiKey: false,
+    models: [],
+    lastModelFetchAt: undefined,
+  },
+  mistral: {
+    id: 'mistral',
+    name: 'Mistral AI',
+    type: 'openai-compatible',
+    baseURL: 'https://api.mistral.ai/v1',
+    defaultModel: 'pixtral-12b-2409',
+    enabled: true,
+    supportsNativeTools: true,
+    hasApiKey: false,
+    models: [],
+    lastModelFetchAt: undefined,
+  },
+  chutes: {
+    id: 'chutes',
+    name: 'Chutes.ai',
+    type: 'openai-compatible',
+    baseURL: 'https://llm.chutes.ai/v1',
+    defaultModel: 'zai-org/GLM-4.7-TEE',
+    enabled: true,
+    supportsNativeTools: false,
     hasApiKey: false,
     models: [],
     lastModelFetchAt: undefined,
@@ -112,15 +150,18 @@ export const PROVIDERS: Record<string, ProviderConfig> = {
 };
 
 /**
- * Gemini Model Hierarchy (Verified 2026-01-09)
+ * Gemini Model Hierarchy (Updated 2026-01-14)
  * Sources: Google Cloud Vertex AI, AI SDK documentation
  */
 export const GEMINI_MODELS = {
-  flash: 'gemini-2.5-flash',
-  pro: 'gemini-2.5-pro',
+  flash: 'gemini-3-flash',
+  pro: 'gemini-3-pro',
+  flash25: 'gemini-2.5-flash',
+  pro25: 'gemini-2.5-pro',
   stable: 'gemini-2.5-flash-latest',
   stablePro: 'gemini-2.5-pro-latest',
-  preview: 'gemini-3-pro-preview',
+  imagePro: 'gemini-3-pro-image-preview', // Nano Banana Pro
+  imageFlash: 'gemini-2.5-flash-image', // Nano Banana
   lite: 'gemini-2.5-flash-lite',
   embedding: 'gemini-embedding-001',
 } as const;

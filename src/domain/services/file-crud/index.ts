@@ -51,7 +51,9 @@ export {
 
 // Implementation
 export type {
-  FileOperationsAdapter,
+  StorageAdapter,
+} from '@/domain/interfaces/storage-adapter.interface';
+export type {
   UnifiedFileCrudConfig,
 } from './unified-file-crud';
 export {

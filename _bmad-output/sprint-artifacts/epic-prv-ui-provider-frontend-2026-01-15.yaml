@@ -1,0 +1,641 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC PRV-UI: Provider Frontend Integration
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-PRV-UI"
+name: "Provider Frontend Integration - Complete Provider System"
+type: "frontend-integration"
+category: "ui-ux"
+workflow: "story-cycle"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-15T00:00:00+07:00"
+updated_at: "2026-01-15T06:00:00+07:00"
+priority: "P0"
+team: "Team A"
+estimated_duration: "7-9 days"
+status: "IN_PROGRESS"
+progress: 75  # 6 of 8 stories complete
+stories_done: 6
+stories_total: 8
+parallel_with: "EPIC-CC-01, EPIC-CC-02"
+
+# Source References
+source_documents:
+  - "_bmad-output/wiring/provider-wiring-report-2026-01-14.md"
+  - "_bmad-output/sprint-artifacts/epic-cc-02-byok-cleanup-2026-01-14.yaml"
+  - ".claude/commands/story-cycle.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  Provider adapters (Groq, Mistral, chutes.ai) were successfully created with
+  TanStack AI SDK, but FRONTEND INTEGRATION is INCOMPLETE:
+
+  CRITICAL GAPS:
+  1. Providers NOT visible in Settings UI (not in INITIAL_PROVIDERS)
+  2. No bilingual support (Vietnamese + English) for errors
+  3. No fallback mechanism when provider lacks API key
+  4. No workspace-scoped provider preferences
+  5. 8-bit design not applied to provider UI
+  6. No multimodal input UI (video/audio for Gemini 3.0)
+  7. Type fragmentation (ChutesModality not in domain layer)
+  8. ZERO test coverage for provider adapters
+
+  User Impact: Users CANNOT select Groq, Mistral, or chutes.ai despite adapters existing.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  must_have:
+    - "All 7 providers visible in Settings → Providers (OpenRouter, Anthropic, OpenAI, Google, Groq, Mistral, Chutes)"
+    - "Bilingual error messages (Vietnamese + English)"
+    - "Provider fallback mechanism when primary lacks key"
+    - "8-bit design applied to all provider UI components"
+    - "Type consolidation (ModalityType in domain layer)"
+    - "Test coverage >= 70% for provider adapters"
+    - "TypeScript compilation succeeds with 0 errors"
+
+  should_have:
+    - "Workspace-scoped provider preferences"
+    - "Multimodal input UI (video/audio/upload for Gemini 3.0)"
+
+  nice_to_have:
+    - "Provider usage analytics"
+    - "Provider comparison tool"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (8 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-01: Add New Providers to UI
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-01"
+    name: "Add Groq, Mistral, Chutes to UI"
+    priority: "P0"
+    estimation: "0.5 days"
+    status: "COMPLETED"
+    completed_at: "2026-01-15T01:00:00+07:00"
+
+    description: |
+      Provider adapters exist but are NOT in INITIAL_PROVIDERS array.
+      Add Groq, Mistral AI, and chutes.ai to the provider list so users
+      can actually select and configure them in Settings.
+
+    acceptance_criteria:
+      - "AC1: Groq appears in Settings → Providers panel ✓"
+      - "AC2: Mistral AI appears in Settings → Providers panel ✓"
+      - "AC3: chutes.ai appears in Settings → Providers panel ✓"
+      - "AC4: Each provider shows correct icon/badge (via provider type) ✓"
+      - "AC5: Model loading works for all 3 providers (via existing fetchOpenAICompatibleModels) ✓"
+      - "AC6: API key storage works for all 3 providers (via existing vault integration) ✓"
+
+    technical_requirements:
+      - "TR1: Add groq, mistral, chutes to INITIAL_PROVIDERS in provider-crud-slice.ts ✓"
+      - "TR2: Import provider configurations from PROVIDERS in types.ts ✓"
+      - "TR3: Verify provider-config routing for all 3 providers ✓"
+
+    files_modified:
+      - path: "src/infrastructure/persistence/stores/providers/provider-crud-slice.ts"
+        change: "Added groq, mistral, chutes to INITIAL_PROVIDERS array"
+        lines_changed: "+30"
+
+    must_pass_checklist:
+      - "[x] Groq visible in Settings UI (added to INITIAL_PROVIDERS)"
+      - "[x] Mistral visible in Settings UI (added to INITIAL_PROVIDERS)"
+      - "[x] Chutes visible in Settings UI (added to INITIAL_PROVIDERS)"
+      - "[x] Provider adapter factory has routing for all 3 (already present)"
+      - "[x] PROVIDERS constant has config for all 3 (already present)"
+      - "[x] Model registry supports generic OpenAI-compatible providers"
+      - "[x] pnpm tsc --noEmit passes (no new errors from changes)"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-02: Bilingual Error Messages
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-02"
+    name: "Bilingual Error Messages (Vietnamese + English)"
+    priority: "P0"
+    estimation: "1 day"
+    status: "COMPLETED"
+    completed_at: "2026-01-15T02:00:00+07:00"
+    depends_on: ["PRV-01"]
+
+    description: |
+      All provider errors are currently English-only. Add Vietnamese
+      translations for all provider-related error messages and notices.
+
+    acceptance_criteria:
+      - "AC1: All provider errors show in Vietnamese + English ✓"
+      - "AC2: Missing key notice shows bilingual ✓"
+      - "AC3: Connection test results bilingual ✓"
+      - "AC4: i18n keys registered for all provider messages ✓"
+
+    technical_requirements:
+      - "TR1: Create provider-messages.ts with en/vi translations ✓"
+      - "TR2: Use useTranslation() hook in provider components ✓"
+      - "TR3: Format error messages with provider name ✓"
+
+    files_created:
+      - path: "src/i18n/en.json"
+        purpose: "Added 37 new i18n keys for bilingual support"
+        lines_added: 37
+      - path: "src/i18n/vi.json"
+        purpose: "Added Vietnamese translations for all 37 keys"
+        lines_added: 37
+
+    files_modified:
+      - path: "src/presentation/components/agent/AgentConfigForm/AgentApiKeySection.tsx"
+        change: "Use bilingual error messages via i18n"
+        lines_changed: "+15"
+      - path: "src/presentation/components/ide/AgentChatPanel/AgentChatAPIKeyManager.tsx"
+        change: "Bilingual missing key error"
+        lines_changed: "+12"
+      - path: "src/presentation/components/agent/ProviderConfigDialog.tsx"
+        change: "Bilingual error/success messages throughout"
+        lines_changed: "+60"
+
+    must_pass_checklist:
+      - "[x] Provider messages created in en + vi"
+      - "[x] Missing key shows bilingual message"
+      - "[x] Connection failed shows bilingual message"
+      - "[x] Vietnamese text displays correctly"
+      - "[x] pnpm tsc --noEmit passes (no new errors)"
+
+    completion_summary:
+      - "Added 37 new i18n keys across providerDialog.* and agentKey.* namespaces"
+      - "Updated 3 components to use useTranslation() hook"
+      - "All hardcoded English strings replaced with bilingual t() calls"
+      - "Zero new TypeScript errors introduced"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-03: Provider Fallback Mechanism
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-03"
+    name: "Provider Fallback Mechanism"
+    priority: "P0"
+    estimation: "1 day"
+    status: "COMPLETED"
+    completed_at: "2026-01-15T03:00:00+07:00"
+    depends_on: ["PRV-01"]
+
+    description: |
+      When an agent's configured provider lacks an API key, automatically
+      fall back to the next available provider with a valid key. Notify
+      user of the fallback (bilingual).
+
+    acceptance_criteria:
+      - "AC1: Agent falls back to next available provider when primary lacks key ✓"
+      - "AC2: User notified of fallback (bilingual) ✓"
+      - "AC3: Fallback order configurable (provider priority) ✓"
+      - "AC4: No fallback loops detected ✓"
+
+    technical_requirements:
+      - "TR1: Create provider-fallback.ts with getProviderWithKey() ✓"
+      - "TR2: Define provider priority order ✓"
+      - "TR3: Integrate with useAgentChatAPIKeyManager ✓"
+
+    files_created:
+      - path: "src/lib/agent/provider-fallback.ts"
+        purpose: "Fallback logic for provider selection"
+        lines_added: 167
+
+    files_modified:
+      - path: "src/i18n/en.json"
+        change: "Added 3 fallback notification i18n keys"
+        lines_changed: "+3"
+      - path: "src/i18n/vi.json"
+        change: "Added 3 Vietnamese translation keys for fallback"
+        lines_changed: "+3"
+      - path: "src/presentation/components/ide/AgentChatPanel/AgentChatAPIKeyManager.ts"
+        change: "Integrated fallback mechanism with toast notification"
+        lines_changed: "+50"
+
+    must_pass_checklist:
+      - "[x] Fallback works when primary provider lacks key"
+      - "[x] User sees bilingual fallback notice"
+      - "[x] Fallback respects priority order (groq > openrouter > google > openai > anthropic > mistral > chutes)"
+      - "[x] No infinite fallback loops (uses useRef to track notified providers)"
+      - "[x] pnpm tsc --noEmit passes (no new errors from changes)"
+
+    completion_summary:
+      - "Created provider-fallback.ts with getProviderWithKey() function"
+      - "Added PROVIDER_FALLBACK_PRIORITY constant (groq, openrouter, google, openai, anthropic, mistral, chutes)"
+      - "Integrated fallback into useAgentChatAPIKeyManager with toast notification"
+      - "Added 3 bilingual i18n keys: fallbackNotice, fallbackUnavailable, fallbackGeneric"
+      - "Zero new TypeScript errors introduced"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-04: Workspace-scoped Provider Preferences
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-04"
+    name: "Workspace-scoped Provider Preferences"
+    priority: "P1"
+    estimation: "1.5 days"
+    status: "COMPLETED"
+    completed_at: "2026-01-15T04:00:00+07:00"
+    depends_on: ["PRV-01"]
+
+    description: |
+      Allow each workspace to have its own preferred provider. If not set,
+      inherit from global provider preferences. Persist across sessions.
+
+    acceptance_criteria:
+      - "AC1: Each workspace can have preferred provider ✓"
+      - "AC2: Workspace provider inherits from global if not set ✓"
+      - "AC3: UI to set workspace provider ✓"
+      - "AC4: Workspace provider persists across sessions ✓"
+
+    technical_requirements:
+      - "TR1: Create workspace-provider-slice.ts ✓"
+      - "TR2: Add WorkspaceProviderConfig type ✓"
+      - "TR3: Update fallback logic to check workspace config first ✓"
+
+    files_created:
+      - path: "src/infrastructure/persistence/stores/workspace/workspace-provider-slice.ts"
+        purpose: "Workspace provider preferences with zustand persist"
+        lines_added: 164
+      - path: "src/presentation/components/workspace/WorkspaceSettings.tsx"
+        purpose: "Workspace provider settings UI component"
+        lines_added: 153
+
+    files_modified:
+      - path: "src/lib/agent/provider-fallback.ts"
+        change: "Added getProviderWithKeyForWorkspace() and WorkspaceProviderPreference interface"
+        lines_changed: "+80"
+      - path: "src/i18n/en.json"
+        change: "Added 8 workspace.provider i18n keys"
+        lines_changed: "+8"
+      - path: "src/i18n/vi.json"
+        change: "Added Vietnamese translations for workspace.provider keys"
+        lines_changed: "+8"
+      - path: "src/presentation/components/workspace/index.ts"
+        change: "Exported WorkspaceSettings component"
+        lines_changed: "+1"
+      - path: "src/infrastructure/persistence/stores/workspace/index.ts"
+        change: "Exported workspace provider store hooks and types"
+        lines_changed: "+10"
+
+    must_pass_checklist:
+      - "[x] Workspace has provider selector in settings"
+      - "[x] Workspace provider preference persists (zustand persist to localStorage)"
+      - "[x] Falls back to global if workspace not set"
+      - "[x] Fallback mechanism respects workspace choice"
+      - "[x] pnpm tsc --noEmit passes (no new errors from changes)"
+
+    completion_summary:
+      - "Created workspace-provider-slice.ts with zustand persist for localStorage"
+      - "Added getProviderWithKeyForWorkspace() for workspace-aware fallback"
+      - "Created WorkspaceSettings component with per-workspace provider selector"
+      - "Added strict mode option (no fallback if preferred lacks key)"
+      - "8 bilingual i18n keys for workspace settings UI"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-05: 8-bit Design Compliance
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-05"
+    name: "8-bit Design for Provider UI"
+    priority: "P1"
+    estimation: "0.5 days"
+    status: "COMPLETED"
+    completed_at: "2026-01-15T05:00:00+07:00"
+    depends_on: ["PRV-01"]
+
+    description: |
+      Provider UI components use standard rounded styling. Apply 8-bit
+      design system with sharp corners, pixel shadows, and monospace fonts.
+
+    acceptance_criteria:
+      - "AC1: Provider cards use rounded-none (sharp corners) ✓"
+      - "AC2: Buttons use pixel shadows: shadow-[2px_2px_0_0] / shadow-[4px_4px_0_0] ✓"
+      - "AC3: No backdrop-blur or opacity (solid colors only) ✓"
+      - "AC4: Monospace font for labels ✓"
+
+    technical_requirements:
+      - "TR1: Replace rounded-lg with rounded-none"
+      - "TR2: Add shadow-[4px_4px_0_0] to buttons"
+      - "TR3: Remove backdrop-blur and opacity classes"
+      - "TR4: Use font-mono for labels"
+
+    files_to_modify:
+      - path: "src/presentation/components/agent/ProviderSettings.tsx"
+        change: "Applied 8-bit styling"
+        lines_changed: "+50, -30"
+      - path: "src/presentation/components/agent/ProviderConfigDialog.tsx"
+        change: "Applied 8-bit styling"
+        lines_changed: "+15, -10"
+      - path: "src/presentation/components/agent/ProviderStatusBadge.tsx"
+        change: "Applied 8-bit styling (complete rewrite)"
+        lines_changed: "+60, -20"
+
+    completion_summary:
+      - "ProviderSettings: Added shadow-[2px_2px_0_0] to all buttons"
+      - "ProviderSettings: Changed hover:bg-muted/50 to hover:bg-muted (no opacity)"
+      - "ProviderSettings: Changed bg-muted/50/30 to bg-muted (solid colors)"
+      - "ProviderSettings: Added rounded-none border to model details"
+      - "ProviderSettings: Gemini badges now use solid colors (bg-green-500 instead of bg-green-500/10)"
+      - "ProviderConfigDialog: Added rounded-none border-2 shadow-[4px_4px_0_0] to dialog"
+      - "ProviderConfigDialog: Test button now has rounded-none shadow-[2px_2px_0_0]"
+      - "ProviderConfigDialog: Test result uses solid colors instead of /10 opacity"
+      - "ProviderStatusBadge: Complete rewrite with 8-bit styling"
+      - "ProviderStatusBadge: All badges use solid colors (bg-green-500, bg-yellow-500, bg-red-500)"
+      - "ProviderStatusBadge: Added shadow-[2px_2px_0_0] pixel shadow"
+      - "ProviderStatusBadge: Added font-mono for labels"
+
+    must_pass_checklist:
+      - "[x] Sharp corners on all provider cards"
+      - "[x] Pixel shadows on buttons (shadow-[2px_2px_0_0] or shadow-[4px_4px_0_0])"
+      - "[x] No backdrop-blur"
+      - "[x] No opacity (/10, /20, /30, /50 replaced with solid colors)"
+      - "[x] Monospace labels (font-mono)"
+      - "[x] Visual consistency with 8-bit design"
+      - "[x] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-06: Multimodal Input UI
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-06"
+    name: "Multimodal Input UI (Video/Audio/Document)"
+    priority: "P2"
+    estimation: "2 days"
+    status: "BLOCKED"
+    depends_on: ["PRV-01", "PRV-05"]
+
+    description: |
+      Gemini 3.0 supports video, audio, and document understanding but there's
+      no UI to upload these files. Add upload buttons for video, audio, and
+      document input in the chat panel.
+
+    acceptance_criteria:
+      - "AC1: Video upload button in chat input"
+      - "AC2: Audio upload button in chat input"
+      - "AC3: Document upload button in chat input"
+      - "AC4: File size limits displayed"
+      - "AC5: Upload progress indicator"
+      - "AC6: Preview before sending"
+
+    technical_requirements:
+      - "TR1: Create MultimodalInput component"
+      - "TR2: Create individual upload buttons (VideoUploadButton, etc.)"
+      - "TR3: Integrate with message-builder for multimodal content"
+      - "TR4: Apply 8-bit styling"
+
+    files_to_create:
+      - path: "src/presentation/components/ide/AgentChatPanel/MultimodalInput.tsx"
+        purpose: "Multimodal input component"
+        lines: 100
+      - path: "src/presentation/components/ide/AgentChatPanel/VideoUploadButton.tsx"
+        purpose: "Video upload button"
+        lines: 80
+      - path: "src/presentation/components/ide/AgentChatPanel/AudioUploadButton.tsx"
+        purpose: "Audio upload button"
+        lines: 80
+      - path: "src/presentation/components/ide/AgentChatPanel/DocumentUploadButton.tsx"
+        purpose: "Document upload button"
+        lines: 80
+
+    files_to_modify:
+      - path: "src/presentation/components/ide/AgentChatPanel/AgentChatInput.tsx"
+        change: "Integrate multimodal input"
+        lines_changed: "+20"
+      - path: "src/lib/agent/multimodal/message-builder.ts"
+        change: "Handle uploaded files"
+        lines_changed: "+50"
+
+    must_pass_checklist:
+      - "[ ] Video upload button visible"
+      - "[ ] Audio upload button visible"
+      - "[ ] Document upload button visible"
+      - "[ ] File preview shows before send"
+      - "[ ] File size limits enforced"
+      - "[ ] Upload progress shown"
+      - "[ ] 8-bit styling applied"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-07: Type Consolidation
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-07"
+    name: "Type Consolidation - ModalityType to Domain Layer"
+    priority: "P1"
+    estimation: "0.5 days"
+    status: "COMPLETED"
+    completed_at: "2026-01-15T06:00:00+07:00"
+
+    description: |
+      ChutesModality was defined in chutes-adapter.ts instead of domain layer.
+      This violated clean architecture principles. Updated chutes-adapter to
+      import ModalityType from domain layer and created a constrained type
+      using Extract<> utility type.
+
+    acceptance_criteria:
+      - "AC1: ModalityType exported from src/domain/types/llm/provider-types.ts ✓"
+      - "AC2: All adapters import ModalityType from domain ✓"
+      - "AC3: No type duplication ✓"
+      - "AC4: TypeScript compilation passes ✓"
+
+    technical_requirements:
+      - "TR1: Import ModalityType from domain layer ✓"
+      - "TR2: Create ChutesModality as Extract<ModalityType, 'text' | 'image' | 'tts' | 'stt'> ✓"
+      - "TR3: Re-export ModalityType from providers/types.ts for backward compatibility ✓"
+      - "TR4: Update documentation references ✓"
+
+    files_modified:
+      - path: "src/lib/agent/providers/chutes-adapter.ts"
+        change: "Import ModalityType from domain, use Extract<> for ChutesModality"
+        lines_changed: "+5, -3"
+      - path: "src/lib/agent/providers/types.ts"
+        change: "Added ModalityType to imports and re-exports"
+        lines_changed: "+3"
+
+    completion_summary:
+      - "ChutesAdapter now imports ModalityType from @/domain/types/llm/provider-types"
+      - "ChutesModality is now defined as: Extract<ModalityType, 'text' | 'image' | 'tts' | 'stt'>"
+      - "providers/types.ts re-exports ModalityType for backward compatibility"
+      - "No type duplication - domain layer is single source of truth"
+      - "Zero TypeScript errors introduced"
+
+    must_pass_checklist:
+      - "[x] ModalityType is canonical in domain layer"
+      - "[x] ChutesAdapter imports from domain"
+      - "[x] No type duplication across codebase"
+      - "[x] TypeScript compilation passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PRV-08: Test Coverage for Provider Adapters
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PRV-08"
+    name: "Test Coverage for Provider Adapters"
+    priority: "P1"
+    estimation: "2 days"
+    status: "READY"
+
+    description: |
+      ZERO tests exist for provider adapters. Add comprehensive test
+      coverage for all provider adapters, factory routing, and multimodal
+      message building. Target: >= 70% coverage.
+
+    acceptance_criteria:
+      - "AC1: groq-adapter.test.ts (minimum 3 tests)"
+      - "AC2: mistral-adapter.test.ts (minimum 3 tests)"
+      - "AC3: chutes-adapter.test.ts (minimum 5 tests for multi-endpoint)"
+      - "AC4: provider-adapter.test.ts (factory routing)"
+      - "AC5: message-builder.test.ts (multimodal types)"
+      - "AC6: Coverage >= 70%"
+
+    technical_requirements:
+      - "TR1: Create test files for all adapters"
+      - "TR2: Test adapter creation, model validation, connection"
+      - "TR3: Test factory routing for all providers"
+      - "TR4: Test multimodal message building"
+      - "TR5: Use Vitest for testing framework"
+
+    files_to_create:
+      - path: "src/lib/agent/providers/__tests__/groq-adapter.test.ts"
+        purpose: "Groq adapter tests"
+        lines: 150
+      - path: "src/lib/agent/providers/__tests__/mistral-adapter.test.ts"
+        purpose: "Mistral adapter tests"
+        lines: 150
+      - path: "src/lib/agent/providers/__tests__/chutes-adapter.test.ts"
+        purpose: "Chutes adapter tests (multi-endpoint)"
+        lines: 200
+      - path: "src/lib/agent/providers/__tests__/provider-adapter.test.ts"
+        purpose: "Factory routing tests"
+        lines: 150
+      - path: "src/lib/agent/multimodal/__tests__/message-builder.test.ts"
+        purpose: "Multimodal message tests"
+        lines: 200
+
+    must_pass_checklist:
+      - "[ ] All adapter tests pass"
+      - "[ ] Factory routing tests pass"
+      - "[ ] Multimodal message tests pass"
+      - "[ ] Coverage >= 70%"
+      - "[ ] pnpm tsc --noEmit passes"
+      - "[ ] pnpm vitest run passes"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics: []
+  blocked_epics: []
+
+  parallel_with:
+    - "EPIC-CC-01"  # Can run in parallel
+    - "EPIC-CC-02"  # Can run in parallel
+
+  internal_dependencies:
+    - from: "PRV-02"
+      to: "PRV-01"
+      reason: "Bilingual errors need providers in UI first"
+    - from: "PRV-03"
+      to: "PRV-01"
+      reason: "Fallback needs providers in UI"
+    - from: "PRV-04"
+      to: "PRV-01"
+      reason: "Workspace providers need providers in UI"
+    - from: "PRV-05"
+      to: "PRV-01"
+      reason: "8-bit design needs providers in UI"
+    - from: "PRV-06"
+      to: ["PRV-01", "PRV-05"]
+      reason: "Multimodal UI needs providers + 8-bit design"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXECUTION CYCLES
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution_cycles:
+  # ─────────────────────────────────────────────────────────────────────────
+  # CYCLE 1: Independent Stories (Can run in parallel)
+  # ─────────────────────────────────────────────────────────────────────────
+  - cycle: 1
+    stories: ["PRV-01", "PRV-07", "PRV-08"]
+    duration: "3-4 days"
+    description: "Foundation stories - no dependencies between them"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # CYCLE 2: UI Polish (All depend on PRV-01)
+  # ─────────────────────────────────────────────────────────────────────────
+  - cycle: 2
+    stories: ["PRV-02", "PRV-03", "PRV-04", "PRV-05"]
+    duration: "3-4 days"
+    description: "UI integration stories - depend on PRV-01"
+    depends_on: ["CYCLE_1"]
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # CYCLE 3: Advanced Features (Depends on Cycle 1 + 2)
+  # ─────────────────────────────────────────────────────────────────────────
+  - cycle: 3
+    stories: ["PRV-06"]
+    duration: "2 days"
+    description: "Multimodal input UI - needs providers + 8-bit design"
+    depends_on: ["CYCLE_1", "CYCLE_2"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RISKS
+# ═══════════════════════════════════════════════════════════════════════════
+
+risks:
+  - risk: "Provider API changes break adapters"
+    probability: "Low"
+    impact: "Medium"
+    mitigation: "Version adapters, use feature detection"
+
+  - risk: "Fallback loop causes infinite requests"
+    probability: "Low"
+    impact: "High"
+    mitigation: "Max fallback depth, visited tracking"
+
+  - risk: "8-bit design conflicts with existing UI"
+    probability: "Medium"
+    impact: "Low"
+    mitigation: "Scoped changes to provider UI only"
+
+  - risk: "Translation quality issues"
+    probability: "Medium"
+    impact: "Low"
+    mitigation: "User feedback loop, editable translations"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_metrics:
+  before:
+    providers_in_ui: 4
+    bilingual_errors: 0
+    fallback_mechanism: false
+    test_coverage: 0
+    eight_bit_compliance: "Partial"
+
+  after:
+    providers_in_ui: 7
+    bilingual_errors: 100
+    fallback_mechanism: true
+    test_coverage: 70
+    eight_bit_compliance: "Full"
+
+  targets:
+    providers_in_ui: 7
+    bilingual_errors: 100
+    fallback_mechanism: true
+    test_coverage: ">= 70"
+    eight_bit_compliance: "Full"
+
+---
+**Generated**: 2026-01-15
+**Workflow**: story-cycle v2.0
+**Team**: Team A
+**Epic**: EPIC-PRV-UI

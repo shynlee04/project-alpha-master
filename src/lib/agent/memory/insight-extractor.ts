@@ -12,6 +12,7 @@
 /**
  * Multimodal content types
  * E2-8: Extended MIME type support including GIF
+ * Updated 2026-01-14: Added video and audio support for Gemini 3.0
  */
 export type MultimodalContent =
   | { type: 'text'; text: string }
@@ -19,6 +20,21 @@ export type MultimodalContent =
       type: 'image';
       source: { type: 'data'; value: string };
       metadata: { mimeType: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif' };
+    }
+  | {
+      type: 'video';
+      source: { type: 'data'; value: string };
+      metadata: { mimeType: 'video/mp4' | 'video/webm' | 'video/quicktime' };
+    }
+  | {
+      type: 'audio';
+      source: { type: 'data'; value: string };
+      metadata: { mimeType: 'audio/mp3' | 'audio/wav' | 'audio/webm' | 'audio/ogg' | 'audio/mpeg' };
+    }
+  | {
+      type: 'document';
+      source: { type: 'data'; value: string };
+      metadata: { mimeType: 'application/pdf' };
     };
 
 /**

@@ -24,11 +24,12 @@ import type { ModelInfo } from './model-types.js';
  * Supported modality types for multi-modal providers
  *
  * Updated 2026-01-11: Added 'audio' for Gemini 2.5 support
+ * Updated 2026-01-14: Added 'video' for Gemini 3.0 support
  *
  * @ epic EPIC-PRV
  * @ story PRV-01
  */
-export type ModalityType = 'text' | 'image' | 'audio' | 'tts' | 'stt';
+export type ModalityType = 'text' | 'image' | 'audio' | 'video' | 'tts' | 'stt';
 
 /**
  * Provider type - determines which adapter to use

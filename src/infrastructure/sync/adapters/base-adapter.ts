@@ -15,7 +15,7 @@ import type {
   StorageAdapter,
   FileContent,
   FileMetadata,
-} from '../core/sync-types';
+} from '@/domain/interfaces/storage-adapter.interface';
 
 // Re-export error classes for backwards compatibility
 export {

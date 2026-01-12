@@ -8,3 +8,5 @@ export type { TempProjectBannerProps } from './TempProjectBanner';
 
 export { FolderPickerDialog, FolderPickerCompact } from './FolderPickerDialog';
 export type { FolderPickerDialogProps, FolderPickerResult } from './FolderPickerDialog';
+
+export { WorkspaceSettings } from './WorkspaceSettings';

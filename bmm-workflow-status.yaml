@@ -3,15 +3,15 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.1.0"
-last_updated: "2026-01-14T19:00:00+07:00"
-updated_by: "EXCALIBUR - Correct-Course Architectural Remediation Activated"
+last_updated: "2026-01-14T23:00:00+07:00"
+updated_by: "EXCALIBUR - Team A PROVIDER WIRING COMPLETED (REVIEW)"
 previous_version: "_bmad-output/.archive/2026-01-09/workflow-history/bmm-workflow-status-v1-ARCHIVED.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 35  # CORRECTED - reflects actual architectural state
+health_score: 45  # Improved - Provider wiring complete (Groq, Mistral, chutes.ai, Gemini 3.0)
 context_ttl: "24h"
 current_phase: "CORRECT-COURSE"
 
@@ -55,22 +55,54 @@ limits:
 current_workflow:
   id: "correct-course-2026-01-14"
   status: "ACTIVE"
-  epic: "EPIC-CC-01"
-  story: "PS-01"
-  started_at: "2026-01-14T19:00:00+07:00"
+  epic: "EPIC-CC-02"
+  story: "BYOK-02"
+  started_at: "2026-01-14T23:30:00+07:00"
   completed_at: null
-  team: "Team B"
+  team: "Team A"
   story_status: "READY"
-  story_summary: "Split useWorkspaceFileSystem God Store (571 lines → 3 slices)"
+  story_summary: "Add Zod Validation Schemas for Credentials"
+  
+  completed_stories:
+    - id: "PS-01"
+      name: "Split useWorkspaceFileSystem God Store"
+      completed_at: "2026-01-14T21:30:00+07:00"
+      result: "571 lines → 119 lines orchestrator + 3 focused slices"
+    - id: "PRV-WIRING"
+      name: "Wire All Providers with TanStack AI SDK"
+      completed_at: "2026-01-14T23:00:00+07:00"
+      result: "Groq, Mistral, chutes.ai adapters created + Gemini 3.0 models + video/audio support"
+      status: "REVIEW"
+      files:
+        - "src/lib/agent/providers/groq-adapter.ts"
+        - "src/lib/agent/providers/mistral-adapter.ts"
+        - "src/lib/agent/providers/chutes-adapter.ts"
+        - "src/lib/agent/providers/gemini-adapter.ts (updated)"
+        - "src/lib/agent/providers/provider-adapter.ts (updated)"
+        - "src/lib/agent/providers/types.ts (updated)"
+        - "src/lib/agent/multimodal/message-builder.ts (extended)"
+        - "src/lib/agent/memory/insight-extractor.ts (extended)"
+      report: "_bmad-output/wiring/provider-wiring-report-2026-01-14.md"
+    - id: "BYOK-01"
+      name: "Split Provider Credentials God Slice"
+      completed_at: "2026-01-14T23:30:00+07:00"
+      result: "396 lines → 48 lines orchestrator + vault-slice (134) + crud-slice (397)"
+      files:
+        - "src/infrastructure/persistence/stores/providers/credentials/vault-slice.ts"
+        - "src/infrastructure/persistence/stores/providers/credentials/crud-slice.ts"
+        - "src/infrastructure/persistence/stores/providers/credentials/index.ts"
+        - "src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts (refactored)"
+        - "src/infrastructure/persistence/stores/providers/index.ts (updated)"
+      team: "Team A"
 
 parallel_workflows:
-  - id: "cc-02-byok-2026-01-14"
-    status: "READY"
-    epic: "EPIC-CC-02"
-    story: "BYOK-01"
-    team: "Team A"
-    story_summary: "Split Provider Credentials God Slice (396 lines → 2 slices)"
-    started_at: null
+  - id: "cc-01-project-space-2026-01-14"
+    status: "ACTIVE"
+    epic: "EPIC-CC-01"
+    story: "PS-02"
+    team: "Team B"
+    story_summary: "Create StorageAdapter Domain Interface"
+    started_at: "2026-01-14T19:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
@@ -83,10 +115,10 @@ active_epics:
 
   - id: "EPIC-CC-01"
     name: "Project Space Foundation"
-    status: "READY"
-    progress: 0
+    status: "IN_PROGRESS"
+    progress: 20
     stories_total: 5
-    stories_done: 0
+    stories_done: 1
     priority: "P0"
     team: "Team B"
     blocked_by: null
@@ -94,10 +126,10 @@ active_epics:
     stories:
       - id: "PS-01"
         name: "Split useWorkspaceFileSystem God Store"
-        status: "READY"
+        status: "COMPLETED"
       - id: "PS-02"
         name: "Create StorageAdapter Domain Interface"
-        status: "BLOCKED_BY_PS-01"
+        status: "READY"
       - id: "PS-03"
         name: "Consolidate Dexie Databases"
         status: "BLOCKED_BY_PS-02"
@@ -110,10 +142,10 @@ active_epics:
 
   - id: "EPIC-CC-02"
     name: "BYOK Cleanup"
-    status: "READY"
-    progress: 0
+    status: "IN_PROGRESS"
+    progress: 25
     stories_total: 4
-    stories_done: 0
+    stories_done: 1
     priority: "P0"
     team: "Team A"
     blocked_by: null
@@ -122,7 +154,7 @@ active_epics:
     stories:
       - id: "BYOK-01"
         name: "Split Provider Credentials God Slice"
-        status: "READY"
+        status: "COMPLETED"
       - id: "BYOK-02"
         name: "Add Zod Validation Schemas"
         status: "BLOCKED_BY_BYOK-01"

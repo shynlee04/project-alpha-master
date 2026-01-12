@@ -17,6 +17,12 @@ import { AnthropicAdapter, createAnthropicAdapter } from './anthropic-adapter';
 import type { AnthropicAdapterConfig } from './anthropic-adapter';
 import { GeminiAdapter, createGeminiAdapter } from './gemini-adapter';
 import type { GeminiAdapterConfig } from './gemini-adapter';
+import { GroqAdapter, createGroqAdapter } from './groq-adapter';
+import type { GroqAdapterConfig } from './groq-adapter';
+import { MistralAdapter, createMistralAdapter } from './mistral-adapter';
+import type { MistralAdapterConfig } from './mistral-adapter';
+import { ChutesAdapter, createChutesAdapter } from './chutes-adapter';
+import type { ChutesAdapterConfig } from './chutes-adapter';
 import type { ProviderModel } from '@/core/entities/Provider';
 import { ModelRegistry } from './model-registry';
 
@@ -44,7 +50,7 @@ export interface ExtendedProviderAdapter extends OpenAIAdapter {
 }
 
 // Union type for all supported adapters
-type ProviderAdapter = OpenAIAdapter | AnthropicAdapter | GeminiAdapter | ExtendedProviderAdapter;
+type ProviderAdapter = OpenAIAdapter | AnthropicAdapter | GeminiAdapter | GroqAdapter | MistralAdapter | ChutesAdapter | ExtendedProviderAdapter;
 
 /**
  * ProviderAdapterFactory - Creates TanStack AI adapters for various providers
@@ -94,6 +100,57 @@ export class ProviderAdapterFactory {
             } as GeminiAdapterConfig);
 
             // Wrap with extended methods
+            const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
+            this.adapters.set(providerId, extendedAdapter);
+            return extendedAdapter;
+        }
+
+        // Handle Groq provider
+        if (providerId === 'groq') {
+            if (!providerConfig.enabled) {
+                throw new Error(`Provider not enabled: ${providerId}`);
+            }
+            const baseAdapter = createGroqAdapter({
+                apiKey: config.apiKey,
+                baseURL: config.baseURL,
+                headers: config.headers,
+                model: config.model,
+            } as GroqAdapterConfig);
+
+            const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
+            this.adapters.set(providerId, extendedAdapter);
+            return extendedAdapter;
+        }
+
+        // Handle Mistral provider
+        if (providerId === 'mistral') {
+            if (!providerConfig.enabled) {
+                throw new Error(`Provider not enabled: ${providerId}`);
+            }
+            const baseAdapter = createMistralAdapter({
+                apiKey: config.apiKey,
+                baseURL: config.baseURL,
+                headers: config.headers,
+                model: config.model,
+            } as MistralAdapterConfig);
+
+            const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
+            this.adapters.set(providerId, extendedAdapter);
+            return extendedAdapter;
+        }
+
+        // Handle Chutes provider
+        if (providerId === 'chutes') {
+            if (!providerConfig.enabled) {
+                throw new Error(`Provider not enabled: ${providerId}`);
+            }
+            const baseAdapter = createChutesAdapter({
+                apiKey: config.apiKey,
+                baseURL: config.baseURL,
+                headers: config.headers,
+                model: config.model,
+            } as ChutesAdapterConfig);
+
             const extendedAdapter = this.extendAdapter(baseAdapter, providerId, config);
             this.adapters.set(providerId, extendedAdapter);
             return extendedAdapter;
@@ -198,7 +255,7 @@ export class ProviderAdapterFactory {
      * @returns Extended adapter with additional methods
      */
     private extendAdapter(
-        baseAdapter: OpenAIAdapter | AnthropicAdapter | GeminiAdapter,
+        baseAdapter: OpenAIAdapter | AnthropicAdapter | GeminiAdapter | GroqAdapter | MistralAdapter | ChutesAdapter,
         providerId: string,
         config: CustomAdapterConfig
     ): ExtendedProviderAdapter {
@@ -270,6 +327,33 @@ export class ProviderAdapterFactory {
                     model: provider.defaultModel,
                     dangerouslyAllowBrowser: true,
                 } as GeminiAdapterConfig);
+                return adapter.testConnection();
+            }
+
+            // Handle Groq provider test
+            if (providerId === 'groq') {
+                const adapter = createGroqAdapter({
+                    apiKey,
+                    model: provider.defaultModel,
+                } as GroqAdapterConfig);
+                return adapter.testConnection();
+            }
+
+            // Handle Mistral provider test
+            if (providerId === 'mistral') {
+                const adapter = createMistralAdapter({
+                    apiKey,
+                    model: provider.defaultModel,
+                } as MistralAdapterConfig);
+                return adapter.testConnection();
+            }
+
+            // Handle Chutes provider test
+            if (providerId === 'chutes') {
+                const adapter = createChutesAdapter({
+                    apiKey,
+                    model: provider.defaultModel,
+                } as ChutesAdapterConfig);
                 return adapter.testConnection();
             }
 

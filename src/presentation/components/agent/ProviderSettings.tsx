@@ -148,7 +148,7 @@ export function ProviderSettings() {
                 <Button
                     variant="outline"
                     size="sm"
-                    className="gap-2 rounded-none"
+                    className="gap-2 rounded-none shadow-[2px_2px_0_0]"
                     onClick={handleAdd}
                 >
                     <Plus className="h-4 w-4" />
@@ -163,7 +163,7 @@ export function ProviderSettings() {
                     const selectedModel = selectedModels[provider.id] || models[0]?.id || '';
 
                     return (
-                        <div key={provider.id} className="p-4 hover:bg-muted/50 transition-colors">
+                        <div key={provider.id} className="p-4 hover:bg-muted transition-colors">
                             <div className="flex items-center justify-between mb-3">
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex items-center gap-2">
@@ -183,7 +183,7 @@ export function ProviderSettings() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-8 w-8 rounded-none"
+                                        className="h-8 w-8 rounded-none shadow-[2px_2px_0_0]"
                                         aria-label="Edit provider"
                                         onClick={() => handleEdit(provider)}
                                     >
@@ -192,7 +192,7 @@ export function ProviderSettings() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-none"
+                                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-none shadow-[2px_2px_0_0]"
                                         onClick={() => confirmDelete(provider)}
                                         aria-label="Delete provider"
                                     >
@@ -211,7 +211,7 @@ export function ProviderSettings() {
                                         value={selectedModel}
                                         onValueChange={(value) => handleModelChange(provider.id, value)}
                                     >
-                                        <SelectTrigger className="h-8 rounded-none text-xs font-mono flex-1">
+                                        <SelectTrigger className="h-8 rounded-none text-xs font-mono flex-1 shadow-[2px_2px_0_0]">
                                             <SelectValue placeholder="Select a model" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -237,7 +237,7 @@ export function ProviderSettings() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-8 w-8 rounded-none"
+                                        className="h-8 w-8 rounded-none shadow-[2px_2px_0_0]"
                                         aria-label="Refresh models"
                                         onClick={() => handleRefreshModels(provider.id)}
                                         disabled={isLoading}
@@ -249,7 +249,7 @@ export function ProviderSettings() {
 
                             {/* R4 FIX: Show selected model details */}
                             {selectedModel && models.find(m => m.id === selectedModel) && (
-                                <div className="mt-2 p-2 bg-muted/50 rounded text-xs font-mono">
+                                <div className="mt-2 p-2 bg-muted rounded-none text-xs font-mono border border-border">
                                     {(() => {
                                         const model = models.find(m => m.id === selectedModel)!;
                                         return (
@@ -269,27 +269,27 @@ export function ProviderSettings() {
 
                             {/* GEM-2026-01-11: Gemini Capabilities Section */}
                             {provider.id === 'google' && provider.hasApiKey && (
-                                <div className="mt-3 p-3 bg-muted/30 rounded border border-border">
+                                <div className="mt-3 p-3 bg-muted rounded-none border border-border">
                                     <h4 className="text-xs font-semibold font-mono mb-2 text-foreground">
                                         Gemini Capabilities
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-0.5 bg-green-500/10 text-green-600 text-xs rounded border border-green-500/20">
+                                        <span className="px-2 py-0.5 bg-green-500 text-white text-xs rounded-none border border-green-600 font-mono">
                                             Text ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 text-xs rounded border border-blue-500/20">
+                                        <span className="px-2 py-0.5 bg-blue-500 text-white text-xs rounded-none border border-blue-600 font-mono">
                                             Images ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-purple-500/10 text-purple-600 text-xs rounded border border-purple-500/20">
+                                        <span className="px-2 py-0.5 bg-purple-500 text-white text-xs rounded-none border border-purple-600 font-mono">
                                             Audio ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-orange-500/10 text-orange-600 text-xs rounded border border-orange-500/20">
+                                        <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-none border border-orange-600 font-mono">
                                             Video ⏳
                                         </span>
-                                        <span className="px-2 py-0.5 bg-cyan-500/10 text-cyan-600 text-xs rounded border border-cyan-500/20">
+                                        <span className="px-2 py-0.5 bg-cyan-500 text-white text-xs rounded-none border border-cyan-600 font-mono">
                                             Thinking ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-pink-500/10 text-pink-600 text-xs rounded border border-pink-500/20">
+                                        <span className="px-2 py-0.5 bg-pink-500 text-white text-xs rounded-none border border-pink-600 font-mono">
                                             Grounding ✓
                                         </span>
                                     </div>
@@ -308,7 +308,7 @@ export function ProviderSettings() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="h-7 px-2 rounded-none text-xs"
+                                        className="h-7 px-2 rounded-none text-xs shadow-[2px_2px_0_0]"
                                         onClick={() => handleRefreshModels(provider.id)}
                                     >
                                         <RefreshCw className="h-3 w-3 mr-1" />
@@ -351,7 +351,7 @@ export function ProviderSettings() {
                 />
             ) : (
                 <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[425px] rounded-none border-2 border-border shadow-[4px_4px_0_0]">
                         <DialogHeader>
                             <DialogTitle className="flex items-center gap-2 text-destructive">
                                 <AlertTriangle className="h-5 w-5" />

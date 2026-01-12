@@ -1,58 +1,25 @@
 /**
- * @fileoverview File Type Definitions
+ * @fileoverview File Type Definitions - Domain Re-exports
  * @module infrastructure/sync/core/file-types
  *
- * File metadata, content, and change event types.
- * Used for change detection and conflict resolution.
+ * ⚠️ DEPRECATED: These types are now re-exported from the domain layer.
+ * See: /src/domain/interfaces/storage-adapter.interface.ts
+ *
+ * This file exists for backward compatibility during migration.
+ * Consumers should import directly from @domain/interfaces/storage-adapter.interface
  */
 
 import type { FileSyncState } from './sync-core-types.js';
 
-/**
- * File metadata from sync operations
- * Used for change detection and conflict resolution
- */
-export interface FileMetadata {
-  /** File path relative to project root */
-  path: string;
-  /** File size in bytes */
-  size: number;
-  /** Last modified timestamp (milliseconds since epoch) */
-  lastModified: number;
-  /** Content MIME type (optional) */
-  contentType?: string;
-  /** Checksum for content comparison (optional) */
-  checksum?: string;
-  /** Sync state of this file */
-  syncState?: FileSyncState;
-  /** Last sync timestamp */
-  lastSyncedAt?: number;
-}
+// Re-export from domain layer (Clean Architecture)
+// See: /src/domain/interfaces/storage-adapter.interface.ts
+export type {
+  FileMetadata,
+  FileContent,
+  FileChangeEvent
+} from '@/domain/interfaces/storage-adapter.interface';
 
 /**
- * File content wrapper for sync operations
+ * @deprecated - Use FileSyncState from domain layer
  */
-export interface FileContent {
-  /** File path */
-  path: string;
-  /** Content as Uint8Array for binary data */
-  data: Uint8Array;
-  /** Content as string (convenience accessor) */
-  text?: string;
-  /** Metadata */
-  metadata: FileMetadata;
-}
-
-/**
- * File change event from watcher or sync operation
- */
-export interface FileChangeEvent {
-  /** Change type */
-  type: 'created' | 'modified' | 'deleted';
-  /** File path */
-  path: string;
-  /** Event timestamp */
-  timestamp: number;
-  /** Source of the change */
-  source: 'local' | 'platform' | 'user';
-}
+export type { FileSyncState } from './sync-core-types.js';

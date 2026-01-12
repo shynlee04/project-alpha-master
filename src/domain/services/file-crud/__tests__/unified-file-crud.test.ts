@@ -9,8 +9,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   UnifiedFileCrudService,
-  type FileOperationsAdapter,
 } from '../unified-file-crud';
+import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
 import type { FileLock } from '@/lib/agent/facades/file-lock';
 
 // Mock FileLock
@@ -23,21 +23,41 @@ function createMockFileLock(): FileLock {
   } as unknown as FileLock;
 }
 
-// Mock FileOperationsAdapter
-function createMockAdapter(): FileOperationsAdapter {
-  const files = new Map<string, string>();
-  files.set('existing.txt', 'existing content');
-  files.set('folder/nested.md', '# Nested');
+// Mock StorageAdapter
+function createMockAdapter(): StorageAdapter {
+  const files = new Map<string, { content: Uint8Array; metadata: { size: number; lastModified: number } }>();
+  files.set('existing.txt', {
+    content: new TextEncoder().encode('existing content'),
+    metadata: { size: 14, lastModified: Date.now() }
+  });
+  files.set('folder/nested.md', {
+    content: new TextEncoder().encode('# Nested'),
+    metadata: { size: 9, lastModified: Date.now() }
+  });
 
   return {
+    name: 'mock-adapter',
     readFile: vi.fn().mockImplementation(async (path: string) => {
-      if (files.has(path)) {
-        return { content: files.get(path)! };
+      const file = files.get(path);
+      if (file) {
+        return {
+          path,
+          data: file.content,
+          text: new TextDecoder().decode(file.content),
+          metadata: {
+            path,
+            size: file.metadata.size,
+            lastModified: file.metadata.lastModified,
+          },
+        };
       }
       throw new Error(`File not found: ${path}`);
     }),
-    writeFile: vi.fn().mockImplementation(async (path: string, content: string) => {
-      files.set(path, content);
+    writeFile: vi.fn().mockImplementation(async (path: string, content: Uint8Array) => {
+      files.set(path, {
+        content,
+        metadata: { size: content.length, lastModified: Date.now() },
+      });
     }),
     deleteFile: vi.fn().mockImplementation(async (path: string) => {
       if (!files.has(path)) {
@@ -45,25 +65,29 @@ function createMockAdapter(): FileOperationsAdapter {
       }
       files.delete(path);
     }),
-    listDirectory: vi.fn().mockResolvedValue([
-      { name: 'file1.txt', type: 'file' as const, handle: {} as FileSystemHandle },
-      { name: 'file2.md', type: 'file' as const, handle: {} as FileSystemHandle },
-      { name: 'folder', type: 'directory' as const, handle: {} as FileSystemHandle },
-    ]),
-    rename: vi.fn().mockImplementation(async (from: string, to: string) => {
-      const content = files.get(from);
-      if (!content) {
-        throw new Error(`File not found: ${from}`);
+    listFiles: vi.fn().mockImplementation(async (pattern: string) => {
+      return Array.from(files.keys()).filter((key) => key.match(pattern.replace('**/*', '.*').replace('*', '[^/]*')));
+    }),
+    getMetadata: vi.fn().mockImplementation(async (path: string) => {
+      const file = files.get(path);
+      if (file) {
+        return {
+          path,
+          size: file.metadata.size,
+          lastModified: file.metadata.lastModified,
+        };
       }
-      files.delete(from);
-      files.set(to, content);
+      throw new Error(`File not found: ${path}`);
+    }),
+    exists: vi.fn().mockImplementation(async (path: string) => {
+      return files.has(path);
     }),
   };
 }
 
 describe('UnifiedFileCrudService', () => {
   let service: UnifiedFileCrudService;
-  let mockAdapter: FileOperationsAdapter;
+  let mockAdapter: StorageAdapter;
   let mockFileLock: FileLock;
 
   beforeEach(() => {
@@ -88,7 +112,7 @@ describe('UnifiedFileCrudService', () => {
         expect(result.data.name).toBe('new-file.txt');
         expect(result.data.contentType).toBe('text');
       }
-      expect(mockAdapter.writeFile).toHaveBeenCalledWith('new-file.txt', 'Hello World');
+      expect(mockAdapter.writeFile).toHaveBeenCalledWith('new-file.txt', new TextEncoder().encode('Hello World'));
     });
 
     it('should acquire lock for agent operations', async () => {
@@ -120,7 +144,7 @@ describe('UnifiedFileCrudService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(mockAdapter.writeFile).toHaveBeenCalledWith('existing.txt', 'new content');
+      expect(mockAdapter.writeFile).toHaveBeenCalledWith('existing.txt', new TextEncoder().encode('new content'));
     });
   });
 
@@ -160,7 +184,7 @@ describe('UnifiedFileCrudService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(mockAdapter.writeFile).toHaveBeenCalledWith('existing.txt', 'updated content');
+      expect(mockAdapter.writeFile).toHaveBeenCalledWith('existing.txt', new TextEncoder().encode('updated content'));
     });
 
     it('should fail when file does not exist and createIfMissing is false', async () => {
@@ -182,7 +206,7 @@ describe('UnifiedFileCrudService', () => {
       });
 
       expect(result.success).toBe(true);
-      expect(mockAdapter.writeFile).toHaveBeenCalledWith('new-file.txt', 'content');
+      expect(mockAdapter.writeFile).toHaveBeenCalledWith('new-file.txt', new TextEncoder().encode('content'));
     });
   });
 
@@ -213,33 +237,6 @@ describe('UnifiedFileCrudService', () => {
     });
   });
 
-  describe('list', () => {
-    it('should list directory contents', async () => {
-      const result = await service.list('.', { source: 'user' });
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data).toHaveLength(3);
-        expect(result.data[0].name).toBe('file1.txt');
-        expect(result.data[2].type).toBe('directory');
-      }
-    });
-
-    it('should filter by extensions', async () => {
-      const result = await service.list('.', {
-        source: 'user',
-        extensions: ['md'],
-      });
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        // Should include directories and .md files
-        const files = result.data.filter((e) => e.type === 'file');
-        expect(files.every((f) => f.name.endsWith('.md'))).toBe(true);
-      }
-    });
-  });
-
   describe('move', () => {
     it('should move file successfully', async () => {
       const result = await service.move('existing.txt', 'renamed.txt', {
@@ -250,7 +247,6 @@ describe('UnifiedFileCrudService', () => {
       if (result.success) {
         expect(result.data.path).toBe('renamed.txt');
       }
-      expect(mockAdapter.rename).toHaveBeenCalledWith('existing.txt', 'renamed.txt');
     });
 
     it('should fail when source does not exist', async () => {
@@ -274,7 +270,7 @@ describe('UnifiedFileCrudService', () => {
         expect(result.data.path).toBe('copy.txt');
       }
       expect(mockAdapter.readFile).toHaveBeenCalledWith('existing.txt');
-      expect(mockAdapter.writeFile).toHaveBeenCalledWith('copy.txt', 'existing content');
+      expect(mockAdapter.writeFile).toHaveBeenCalledWith('copy.txt', new TextEncoder().encode('existing content'));
     });
   });
 

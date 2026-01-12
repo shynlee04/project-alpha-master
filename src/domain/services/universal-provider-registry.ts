@@ -100,14 +100,90 @@ const BUILTIN_PROVIDERS: Omit<UniversalProviderConfig, 'hasApiKey' | 'createdAt'
     enabled: false,
   },
   // ============================================================================
-  // GOOGLE GEMINI PROVIDER (Added 2026-01-11)
+  // GOOGLE GEMINI PROVIDER (Updated 2026-01-14 with Gemini 3.0 models)
+  // Source: https://ai.google.dev/gemini-api/docs
   // ============================================================================
   {
     id: 'google',
     name: 'Google Gemini',
-    description: 'Google\'s Gemini AI models with multimodal capabilities (text, image, audio)',
+    description: 'Google\'s Gemini 3.0 AI models with multimodal capabilities (text, image, audio, video)',
     endpoints: {
       text: 'https://generativelanguage.googleapis.com/v1beta/models',
+      image: 'https://generativelanguage.googleapis.com/v1beta/models',
+    },
+    requiresApiKey: true,
+    defaultHeaders: {
+      'Content-Type': 'application/json',
+    },
+    models: [
+      // Gemini 3.0 Series (Preview)
+      {
+        id: 'gemini-3-pro',
+        name: 'Gemini 3 Pro',
+        modalities: ['text', 'image', 'audio', 'video'],
+        contextLength: 1048576,
+        supportsStreaming: true,
+        description: 'First in new 3-series, complex tasks with broad reasoning across modalities',
+      },
+      {
+        id: 'gemini-3-flash',
+        name: 'Gemini 3 Flash',
+        modalities: ['text', 'image', 'audio', 'video'],
+        contextLength: 1048576,
+        supportsStreaming: true,
+        description: 'Latest 3-series with Pro-level intelligence at Flash speed',
+      },
+      // Image Generation Models (Nano Banana)
+      {
+        id: 'gemini-3-pro-image-preview',
+        name: 'Nano Banana Pro (Gemini 3 Pro Image)',
+        modalities: ['image'],
+        contextLength: 1048576,
+        supportsStreaming: false,
+        description: 'Highest quality image generation with 4K support, Google Search grounding',
+      },
+      {
+        id: 'gemini-2.5-flash-image',
+        name: 'Nano Banana (Gemini 2.5 Flash Image)',
+        modalities: ['image'],
+        contextLength: 1048576,
+        supportsStreaming: false,
+        description: 'Speed-optimized image generation for high-volume, low-latency tasks',
+      },
+      // Imagen 3.0 (OpenAI-compatible endpoint)
+      {
+        id: 'imagen-3.0-generate-002',
+        name: 'Imagen 3.0',
+        modalities: ['image'],
+        contextLength: 1048576,
+        supportsStreaming: false,
+        description: 'Imagen 3.0 generation via OpenAI-compatible endpoint',
+      },
+      // Legacy Stable Models
+      {
+        id: 'gemini-2.0-flash',
+        name: 'Gemini 2.0 Flash',
+        modalities: ['text', 'image', 'audio'],
+        contextLength: 1048576,
+        supportsStreaming: true,
+        description: 'Stable, production-ready model',
+      },
+    ],
+    defaultModel: 'gemini-3-flash',
+    docsUrl: 'https://ai.google.dev/gemini-api/docs',
+    websiteUrl: 'https://gemini.google.com',
+    enabled: false,
+  },
+  // ============================================================================
+  // GROQ PROVIDER (Added 2026-01-14)
+  // Source: https://console.groq.com/docs
+  // ============================================================================
+  {
+    id: 'groq',
+    name: 'Groq',
+    description: 'Ultra-fast LLM inference with low latency, LLaVA vision models supported',
+    endpoints: {
+      text: 'https://api.groq.com/openai/v1',
     },
     requiresApiKey: true,
     defaultHeaders: {
@@ -115,41 +191,87 @@ const BUILTIN_PROVIDERS: Omit<UniversalProviderConfig, 'hasApiKey' | 'createdAt'
     },
     models: [
       {
-        id: 'gemini-2.5-pro',
-        name: 'Gemini 2.5 Pro',
-        modalities: ['text', 'image', 'audio'],
-        contextLength: 1048576,
-        supportsStreaming: true,
-        description: 'Flagship model with enhanced reasoning and multimodal support',
-      },
-      {
-        id: 'gemini-2.5-flash',
-        name: 'Gemini 2.5 Flash',
-        modalities: ['text', 'image', 'audio'],
-        contextLength: 1048576,
-        supportsStreaming: true,
-        description: 'Fast and cost-effective model for most use cases',
-      },
-      {
-        id: 'gemini-2.5-flash-lite',
-        name: 'Gemini 2.5 Flash Lite',
-        modalities: ['text', 'image', 'audio'],
-        contextLength: 1048576,
-        supportsStreaming: true,
-        description: 'Lightweight model optimized for efficiency',
-      },
-      {
-        id: 'gemini-2.0-flash',
-        name: 'Gemini 2.0 Flash',
+        id: 'llava-v1.5-7b',
+        name: 'LLaVA v1.5 7B',
         modalities: ['text', 'image'],
-        contextLength: 1048576,
+        contextLength: 4096,
         supportsStreaming: true,
-        description: 'Stable, production-ready model',
+        description: 'Vision-language model for image understanding and VQA',
+      },
+      {
+        id: 'llama-3.3-70b-versatile',
+        name: 'Llama 3.3 70B Versatile',
+        modalities: ['text'],
+        contextLength: 131072,
+        supportsStreaming: true,
+        description: 'Versatile model for general use',
+      },
+      {
+        id: 'llama-3.1-8b-instant',
+        name: 'Llama 3.1 8B Instant',
+        modalities: ['text'],
+        contextLength: 131072,
+        supportsStreaming: true,
+        description: 'Lightweight model for low-latency responses',
       },
     ],
-    defaultModel: 'gemini-2.5-flash',
-    docsUrl: 'https://ai.google.dev/gemini-api/docs',
-    websiteUrl: 'https://gemini.google.com',
+    defaultModel: 'llava-v1.5-7b',
+    docsUrl: 'https://console.groq.com/docs',
+    websiteUrl: 'https://groq.com',
+    enabled: false,
+  },
+  // ============================================================================
+  // MISTRAL AI PROVIDER (Added 2026-01-14)
+  // Source: https://docs.mistral.ai
+  // ============================================================================
+  {
+    id: 'mistral',
+    name: 'Mistral AI',
+    description: 'Pixtral multimodal models with native vision support, OpenAI-compatible API',
+    endpoints: {
+      text: 'https://api.mistral.ai/v1',
+    },
+    requiresApiKey: true,
+    defaultHeaders: {
+      'Content-Type': 'application/json',
+    },
+    models: [
+      {
+        id: 'pixtral-12b-2409',
+        name: 'Pixtral 12B',
+        modalities: ['text', 'image'],
+        contextLength: 8192,
+        supportsStreaming: true,
+        description: '12B multimodal with 400M vision encoder, native image understanding',
+      },
+      {
+        id: 'pixtral-large-2411',
+        name: 'Pixtral Large',
+        modalities: ['text', 'image'],
+        contextLength: 131072,
+        supportsStreaming: true,
+        description: '124B frontier multimodal model built on Mistral Large 2',
+      },
+      {
+        id: 'pixtral-large-latest',
+        name: 'Pixtral Large (Latest)',
+        modalities: ['text', 'image'],
+        contextLength: 131072,
+        supportsStreaming: true,
+        description: 'Latest Pixtral Large model with all improvements',
+      },
+      {
+        id: 'mistral-large-2411',
+        name: 'Mistral Large 3',
+        modalities: ['text'],
+        contextLength: 131072,
+        supportsStreaming: true,
+        description: 'Flagship text model with advanced reasoning',
+      },
+    ],
+    defaultModel: 'pixtral-12b-2409',
+    docsUrl: 'https://docs.mistral.ai',
+    websiteUrl: 'https://mistral.ai',
     enabled: false,
   },
 ];
@@ -518,6 +640,7 @@ class UniversalProviderRegistry {
       text: 0,
       image: 0,
       audio: 0,
+      video: 0,
       tts: 0,
       stt: 0,
     };

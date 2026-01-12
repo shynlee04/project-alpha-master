@@ -28,32 +28,17 @@ import {
   createFileMetadata,
   detectContentType,
 } from './file-crud-types';
-import type { LocalFSAdapter, DirectoryEntry } from '@/infrastructure/filesystem';
+import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
 import type { FileLock } from '@/lib/agent/facades/file-lock';
 import { fileLock as defaultFileLock } from '@/lib/agent/facades/file-lock';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 
 /**
- * Adapter interface for file operations
- *
- * Abstracts over LocalFSAdapter to enable testing and
- * workspace-specific implementations.
- */
-export interface FileOperationsAdapter {
-  readFile(path: string): Promise<{ content: string }>;
-  writeFile(path: string, content: string): Promise<void>;
-  deleteFile(path: string): Promise<void>;
-  listDirectory(path?: string): Promise<DirectoryEntry[]>;
-  rename(oldPath: string, newPath: string): Promise<void>;
-  createFile?(path: string, content?: string): Promise<void>;
-}
-
-/**
  * Configuration for UnifiedFileCrudService
  */
 export interface UnifiedFileCrudConfig {
-  /** File operations adapter */
-  adapter: FileOperationsAdapter;
+  /** Storage adapter for file operations */
+  adapter: StorageAdapter;
   /** File lock for concurrent access control */
   fileLock?: FileLock;
   /** Event bus for operation events */
@@ -96,7 +81,7 @@ export interface UnifiedFileCrudConfig {
  * ```
  */
 export class UnifiedFileCrudService implements IFileCrudService {
-  private readonly adapter: FileOperationsAdapter;
+  private readonly adapter: StorageAdapter;
   private readonly fileLock: FileLock;
   private readonly eventBus?: WorkspaceEventEmitter;
   private readonly debug: boolean;
@@ -207,11 +192,7 @@ export class UnifiedFileCrudService implements IFileCrudService {
       }
 
       await this.withLock(normalizedPath, options, async () => {
-        if (this.adapter.createFile) {
-          await this.adapter.createFile(normalizedPath, content);
-        } else {
-          await this.adapter.writeFile(normalizedPath, content);
-        }
+        await this.adapter.writeFile(normalizedPath, new TextEncoder().encode(content));
       });
 
       const metadata = createFileMetadata(normalizedPath, {
@@ -245,8 +226,9 @@ export class UnifiedFileCrudService implements IFileCrudService {
 
     try {
       const result = await this.adapter.readFile(normalizedPath);
+      const content = result.text ?? new TextDecoder().decode(result.data);
       this.emitEvent('read', normalizedPath, options.source, true);
-      return success(result.content);
+      return success(content);
     } catch (error) {
       this.emitEvent('read', normalizedPath, options.source, false);
 
@@ -312,7 +294,7 @@ export class UnifiedFileCrudService implements IFileCrudService {
       }
 
       await this.withLock(normalizedPath, options, async () => {
-        await this.adapter.writeFile(normalizedPath, content);
+        await this.adapter.writeFile(normalizedPath, new TextEncoder().encode(content));
       });
 
       const metadata = createFileMetadata(normalizedPath, {
@@ -387,18 +369,27 @@ export class UnifiedFileCrudService implements IFileCrudService {
     this.log('list', { path: normalizedPath, source: options.source });
 
     try {
-      const entries = await this.adapter.listDirectory(normalizedPath);
+      const pattern = normalizedPath === '.' ? '**/*' : `${normalizedPath}/**/*`;
+      const filePaths = await this.adapter.listFiles(pattern);
 
-      const fileEntries: FileEntry[] = entries.map((entry) => ({
-        name: entry.name,
-        path: normalizedPath === '.'
-          ? entry.name
-          : `${normalizedPath}/${entry.name}`,
-        type: entry.type,
-        contentType: entry.type === 'file' ? detectContentType(entry.name) : undefined,
-      }));
+      const fileEntries: FileEntry[] = [];
+      for (const filePath of filePaths) {
+        const metadata = await this.adapter.getMetadata(filePath);
+        const relativePath = normalizedPath === '.' ? filePath : filePath.replace(`${normalizedPath}/`, '');
+        const name = relativePath.split('/').pop() || '';
+        const isDirectory = metadata.contentType === undefined;
 
-      // Apply filters
+        const entry: FileEntry = {
+          name,
+          path: relativePath,
+          type: isDirectory ? 'directory' : 'file',
+          size: metadata.size,
+          lastModified: metadata.lastModified ? new Date(metadata.lastModified).toISOString() : undefined,
+          contentType: isDirectory ? undefined : detectContentType(name),
+        };
+        fileEntries.push(entry);
+      }
+
       let filtered = fileEntries;
 
       if (options.extensions?.length) {
@@ -466,7 +457,10 @@ export class UnifiedFileCrudService implements IFileCrudService {
 
       await this.withLock(normalizedFrom, options, async () => {
         await this.withLock(normalizedTo, { ...options, useLock: false }, async () => {
-          await this.adapter.rename(normalizedFrom, normalizedTo);
+          const readResult = await this.adapter.readFile(normalizedFrom);
+          const content = readResult.text ?? new TextDecoder().decode(readResult.data);
+          await this.adapter.writeFile(normalizedTo, new TextEncoder().encode(content));
+          await this.adapter.deleteFile(normalizedFrom);
         });
       });
 
@@ -563,12 +557,12 @@ export class UnifiedFileCrudService implements IFileCrudService {
     const normalizedPath = this.normalizePath(path);
 
     try {
-      const result = await this.adapter.readFile(normalizedPath);
-      const metadata = createFileMetadata(normalizedPath, {
-        size: new TextEncoder().encode(result.content).length,
-        lastModified: new Date().toISOString(),
+      const metadata = await this.adapter.getMetadata(normalizedPath);
+      const domainMetadata = createFileMetadata(normalizedPath, {
+        size: metadata.size,
+        lastModified: metadata.lastModified ? new Date(metadata.lastModified).toISOString() : undefined,
       });
-      return success(metadata);
+      return success(domainMetadata);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       if (errorMessage.includes('not found') || errorMessage.includes('NotFoundError')) {
@@ -589,34 +583,34 @@ export class UnifiedFileCrudService implements IFileCrudService {
 }
 
 /**
- * Factory function to create UnifiedFileCrudService from LocalFSAdapter
+ * Factory function to create UnifiedFileCrudService from a StorageAdapter
+ *
+ * The adapter must implement the StorageAdapter interface from domain layer.
+ * This follows Clean Architecture - domain layer defines the interface,
+ * infrastructure layer implements it, and this factory creates the service.
+ *
+ * @param adapter - Storage adapter implementing StorageAdapter interface
+ * @param options - Optional configuration
+ * @returns UnifiedFileCrudService instance
+ *
+ * @example
+ * ```typescript
+ * import { fsaAdapter } from '@/infrastructure/sync/adapters/fsa-adapter';
+ *
+ * const adapter = fsaAdapter;
+ * const crudService = createUnifiedFileCrudService(adapter);
+ * ```
  */
 export function createUnifiedFileCrudService(
-  adapter: LocalFSAdapter,
+  adapter: StorageAdapter,
   options?: {
     fileLock?: FileLock;
     eventBus?: WorkspaceEventEmitter;
     debug?: boolean;
   }
 ): UnifiedFileCrudService {
-  // Create adapter wrapper
-  const operationsAdapter: FileOperationsAdapter = {
-    readFile: async (path) => {
-      const result = await adapter.readFile(path);
-      if ('content' in result) {
-        return { content: result.content };
-      }
-      throw new Error('Binary file not supported in text mode');
-    },
-    writeFile: (path, content) => adapter.writeFile(path, content),
-    deleteFile: (path) => adapter.deleteFile(path),
-    listDirectory: (path) => adapter.listDirectory(path),
-    rename: (oldPath, newPath) => adapter.rename(oldPath, newPath),
-    createFile: adapter.createFile ? (path, content) => adapter.createFile!(path, content) : undefined,
-  };
-
   return new UnifiedFileCrudService({
-    adapter: operationsAdapter,
+    adapter,
     fileLock: options?.fileLock,
     eventBus: options?.eventBus,
     debug: options?.debug,

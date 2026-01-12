@@ -1,16 +1,22 @@
 /**
- * @fileoverview Sync Result Type Definitions
+ * @fileoverview Sync Result Type Definitions - Domain Re-exports
  * @module infrastructure/sync/core/sync-result-types
  *
- * Sync options, results, conflicts, and storage adapter interface.
- * Core configuration types for sync operations.
+ * ⚠️ DEPRECATED: StorageAdapter interface is now defined in the domain layer.
+ * See: /src/domain/interfaces/storage-adapter.interface.ts
+ *
+ * This file re-exports StorageAdapter from domain for backward compatibility.
  */
 
 import type { SyncDirection, ConflictStrategy } from './sync-core-types.js';
-import type { FileChangeEvent, FileContent, FileMetadata } from './file-types.js';
+import type { FileChangeEvent, FileContent, FileMetadata, FileSyncState } from './file-types.js';
+
+// Re-export from domain layer (Clean Architecture)
+// See: /src/domain/interfaces/storage-adapter.interface.ts
+export type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
 
 // ============================================================================
-// Conflict Types
+// Conflict Types (Infrastructure-specific - keep here)
 // ============================================================================
 
 /**
@@ -119,75 +125,14 @@ export interface FailedFile {
 }
 
 // ============================================================================
-// Storage Adapter Interface
+// Sync Direction & Strategy (Infrastructure-specific - keep here)
 // ============================================================================
 
 /**
- * File change callback type
+ * Sync direction determines how changes flow between storage backends
+ *
+ * - **local-to-platform**: Local FS → IndexedDB (and optionally WebContainer)
+ * - **platform-to-local**: IndexedDB → Local FS (restore from backup)
+ * - **bidirectional**: Two-way sync with conflict detection and resolution
  */
-export type FileChangeCallback = (event: FileChangeEvent) => void;
-
-/**
- * Storage adapter interface
- * All storage backends (FSA, IndexedDB, WebContainer) must implement this interface
- */
-export interface StorageAdapter {
-  /**
-   * Read file content
-   * @param path - File path relative to storage root
-   * @returns File content with metadata
-   */
-  readFile(path: string): Promise<FileContent>;
-
-  /**
-   * Write file content
-   * @param path - File path relative to storage root
-   * @param content - Content to write
-   */
-  writeFile(path: string, content: Uint8Array): Promise<void>;
-
-  /**
-   * Delete file
-   * @param path - File path relative to storage root
-   */
-  deleteFile(path: string): Promise<void>;
-
-  /**
-   * List files matching pattern
-   * @param pattern - Glob pattern for matching files
-   * @returns Array of file paths
-   */
-  listFiles(pattern: string): Promise<string[]>;
-
-  /**
-   * Get file metadata
-   * @param path - File path relative to storage root
-   * @returns File metadata
-   */
-  getMetadata(path: string): Promise<FileMetadata>;
-
-  /**
-   * Check if file exists
-   * @param path - File path relative to storage root
-   * @returns Whether file exists
-   */
-  exists(path: string): Promise<boolean>;
-
-  /**
-   * Watch for file changes
-   * @param callback - Callback invoked on file changes
-   * @returns Unsubscribe function
-   */
-  watch?(callback: FileChangeCallback): () => void;
-
-  /**
-   * Check adapter availability
-   * @returns Whether adapter is ready for use
-   */
-  isAvailable?(): boolean;
-
-  /**
-   * Get adapter name for debugging
-   */
-  readonly name: string;
-}
+export type { SyncDirection, ConflictStrategy } from './sync-core-types.js';

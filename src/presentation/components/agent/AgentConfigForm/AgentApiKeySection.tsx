@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ApiKeyStatus } from './ApiKeyStatus'
 import { ApiKeyInput } from './ApiKeyInput'
@@ -35,6 +36,7 @@ export function AgentApiKeySection({
     onSetApiKey,
     onTestConnection
 }: AgentApiKeySectionProps) {
+    const { t } = useTranslation()
     const [apiKey, setApiKey] = useState('')
     const [isSaving, setIsSaving] = useState(false)
     const [isTesting, setIsTesting] = useState(false)
@@ -47,9 +49,9 @@ export function AgentApiKeySection({
         try {
             await onSetApiKey(apiKey)
             setApiKey('••••')
-            toast.success('API key saved successfully')
+            toast.success(t('agentKey.saveSuccess'))
         } catch (error) {
-            toast.error('Failed to save API key')
+            toast.error(t('agentKey.saveFailed'))
         } finally {
             setIsSaving(false)
         }
@@ -62,10 +64,10 @@ export function AgentApiKeySection({
             const result = await onTestConnection()
             if (result.success) {
                 setConnectionStatus('success')
-                toast.success(`Connection successful! (${result.latencyMs}ms)`)
+                toast.success(t('agentKey.connectionSuccess', { latency: result.latencyMs }))
             } else {
                 setConnectionStatus('error')
-                toast.error(`Connection failed: ${result.error}`)
+                toast.error(t('agentKey.connectionFailed', { error: result.error }))
             }
         } finally {
             setIsTesting(false)

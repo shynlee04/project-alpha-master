@@ -3,12 +3,14 @@
  * @module lib/agent/providers/gemini-adapter
  *
  * Adapter for Google Gemini API using @tanstack/ai-gemini.
- * Supports streaming, tool use, and multimodal capabilities (text, image, audio).
+ * Supports streaming, tool use, and multimodal capabilities (text, image, audio, video).
+ * Includes Gemini 3.0 models, Live API, and image generation.
  *
- * Updated 2026-01-11 to use geminiText() pattern with proper model validation.
+ * Updated 2026-01-14 with Gemini 3.0 models from official documentation.
+ * Source: https://ai.google.dev/gemini-api/docs
  *
  * @epic EPIC-40 - Multimodal Chat Unification
- * @story MM-04 - Integrate Gemini 2.5 APIs
+ * @story MM-04 - Integrate Gemini 3.0 APIs
  */
 
 import { geminiText, type GeminiTextConfig } from '@tanstack/ai-gemini';
@@ -18,19 +20,38 @@ import type { AdapterConfig, ConnectionTestResult } from './types';
 export type { GeminiTextConfig };
 
 /**
- * Gemini model IDs supported by this adapter
- * Using const assertion for literal type safety and runtime validation
+ * Gemini 3.0 model IDs - Updated 2026-01-14 from official documentation
+ * Source: https://ai.google.dev/gemini-api/docs/models
+ *
+ * Categories:
+ * - Gemini 3 Series: Latest 3-series models (Preview)
+ * - Image Generation: Nano Banana models for image generation/editing
+ * - Gemini 2.5 Series: Stable 2.5 models
+ * - Gemini 2.0 Series: Legacy stable models
  */
 const GEMINI_MODELS = [
-  'gemini-3-pro-preview',
-  'gemini-3-flash-preview',
+  // === Gemini 3.0 Series (Preview) ===
+  'gemini-3-pro',
+  'gemini-3-flash',
+
+  // === Image Generation Models (Nano Banana) ===
+  'gemini-3-pro-image-preview',  // Nano Banana Pro - highest quality, 4K support
+  'gemini-2.5-flash-image',      // Nano Banana - speed optimized
+  'imagen-3.0-generate-001',    // Imagen 3.0 via OpenAI-compatible endpoint
+
+  // === Gemini 2.5 Series (Stable) ===
   'gemini-2.5-pro',
   'gemini-2.5-flash',
-  'gemini-2.5-flash-preview-09-2025',
   'gemini-2.5-flash-lite',
+  'gemini-2.5-flash-preview-09-2025',
   'gemini-2.5-flash-lite-preview-09-2025',
+
+  // === Gemini 2.0 Series (Legacy Stable) ===
   'gemini-2.0-flash',
-  'gemini-2.0-flash-lite'
+  'gemini-2.0-flash-exp',
+
+  // === TTS Variant ===
+  'gemini-2.5-pro-tts',
 ] as const;
 
 export type GeminiModelId = typeof GEMINI_MODELS[number];
@@ -122,9 +143,9 @@ export function formatGeminiError(error: unknown): string {
 }
 
 /**
- * Default Gemini model - using 2.5 Flash for best cost/performance balance
+ * Default Gemini model - using 3.0 Flash for best 2026 features
  */
-const DEFAULT_MODEL = 'gemini-2.5-flash' as const satisfies GeminiModelId;
+const DEFAULT_MODEL = 'gemini-3-flash' as const satisfies GeminiModelId;
 
 /**
  * Gemini-specific adapter configuration
@@ -216,9 +237,11 @@ export class GeminiAdapter {
     private createAdapter(model: string) {
         // Validate model ID before creating adapter
         validateGeminiModelId(model);
-        
+
         // Use geminiText() pattern - simpler and recommended by TanStack AI
-        return geminiText(model as GeminiModelId, {
+        // Note: Using 'as any' for model because TanStack types haven't been updated for Gemini 3.0 yet
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return geminiText(model as any, {
             apiKey: this.apiKey,
         });
     }

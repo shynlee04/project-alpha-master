@@ -72,3 +72,14 @@ export { useWorkspaceStore, useWorkspaceContext as useWorkspaceStoreContext, use
 export type { WorkspaceState, ToolAvailability } from './workspace-store';
 export type { WorkspaceType, WorkspaceMetadata, WorkspaceTransitionEvent } from './workspace-types';
 export { WORKSPACES } from './workspace-types';
+
+// Workspace Provider Preferences (PRV-04)
+export {
+  useWorkspaceProviderStore,
+  useWorkspaceProviderPreference,
+  useAllWorkspaceProviderPreferences,
+} from './workspace-provider-slice';
+export type {
+  WorkspaceProviderPreference,
+  WorkspaceProviderState,
+} from './workspace-provider-slice';

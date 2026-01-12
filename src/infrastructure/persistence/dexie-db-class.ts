@@ -62,6 +62,15 @@ import type {
     PluginStorageTable,
 } from './dexie-db-plugin-types';
 
+import type {
+    FlashcardsTable,
+    FlashcardSetsTable,
+    StudySessionsTable,
+    StudyCardsTable,
+    QuizzesTable,
+    QuizQuestionsTable,
+} from './dexie-db-study-types';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -173,6 +182,18 @@ export class ViaGentDatabase extends Dexie {
     pluginSettings!: PluginSettingsTable;
     pluginMarketplace!: PluginMarketplaceTable;
     pluginStorage!: PluginStorageTable;
+
+    // ========================================================================
+    // EPIC-CC-01 PS-03: Consolidated Study Tables
+    // Migrated from FlashcardDB, StudyDB, QuizDB
+    // ========================================================================
+
+    flashcards!: FlashcardsTable;
+    flashcardSets!: FlashcardSetsTable;
+    studySessions!: StudySessionsTable;
+    studyCards!: StudyCardsTable;
+    quizzes!: QuizzesTable;
+    quizQuestions!: QuizQuestionsTable;
 
     // ========================================================================
     // Constructor

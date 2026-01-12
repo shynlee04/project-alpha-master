@@ -45,9 +45,9 @@ function getBuiltInBaseUrl(providerId: string): string {
  * Validate API key format for built-in providers
  * Returns { valid: true } or { valid: false, error: string }
  */
-function validateBuiltInProviderApiKey(providerId: string, apiKey: string): { valid: boolean; error?: string } {
+function validateBuiltInProviderApiKey(providerId: string, apiKey: string, t: (key: string, params?: Record<string, unknown>) => string): { valid: boolean; error?: string } {
     if (!apiKey || !apiKey.trim()) {
-        return { valid: false, error: 'API key is required' };
+        return { valid: false, error: t('providerDialog.apiKeyRequired') };
     }
 
     switch (providerId) {
@@ -55,27 +55,27 @@ function validateBuiltInProviderApiKey(providerId: string, apiKey: string): { va
             // Gemini API keys are typically 39+ characters
             // They don't start with 'sk-' (that's OpenAI)
             if (apiKey.trim().length < 30) {
-                return { valid: false, error: 'API key appears too short. Gemini keys are typically 39+ characters.' };
+                return { valid: false, error: t('providerDialog.apiKeyTooShort') };
             }
             if (apiKey.trim().startsWith('sk-')) {
-                return { valid: false, error: 'Invalid format. Gemini API keys do not start with "sk-". Get your key from Google AI Studio.' };
+                return { valid: false, error: t('providerDialog.geminiWrongPrefix') };
             }
             return { valid: true };
-        
+
         case 'openai':
             // OpenAI keys start with sk-
             if (!apiKey.trim().startsWith('sk-')) {
-                return { valid: false, error: 'Invalid format. OpenAI keys start with "sk-"' };
+                return { valid: false, error: t('providerDialog.invalidFormat', { provider: 'OpenAI', prefix: 'sk-' }) };
             }
             return { valid: true };
-        
+
         case 'anthropic':
             // Anthropic keys start with ant-
             if (!apiKey.trim().startsWith('ant-')) {
-                return { valid: false, error: 'Invalid format. Anthropic keys start with "ant-"' };
+                return { valid: false, error: t('providerDialog.invalidFormat', { provider: 'Anthropic', prefix: 'ant-' }) };
             }
             return { valid: true };
-        
+
         default:
             return { valid: true };
     }
@@ -138,15 +138,15 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
      */
     const handleTestConnection = async () => {
         if (!apiKey.trim()) {
-            toast.error('Please enter an API key first');
+            toast.error(t('providerDialog.pleaseEnterKey'));
             return;
         }
 
         const providerId = provider?.id || 'openai-compatible';
-        
+
         // Validate API key format for built-in providers
         if (isBuiltInProvider(providerId)) {
-            const validation = validateBuiltInProviderApiKey(providerId, apiKey.trim());
+            const validation = validateBuiltInProviderApiKey(providerId, apiKey.trim(), t);
             if (!validation.valid) {
                 toast.error(`✗ ${validation.error}`);
                 setTestResult({ valid: false, error: validation.error });
@@ -154,7 +154,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 return;
             }
         }
-        
+
         setIsTestingConnection(true);
         setTestResult(null);
 
@@ -175,16 +175,16 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
             if (data.valid) {
                 const latencyMsg = data.latencyMs ? ` (${data.latencyMs}ms)` : '';
-                toast.success(`✓ Connection successful${latencyMsg}`);
+                toast.success(t('providerDialog.connectionTestSuccess', { latency: latencyMsg }));
                 setKeyStatus('configured');
             } else {
-                toast.error(`✗ Connection failed: ${data.error || 'Unknown error'}`);
+                toast.error(t('providerDialog.connectionTestFailed', { error: data.error || t('providerDialog.unknownError') }));
                 setKeyStatus('error');
             }
         } catch (error) {
             const errorMsg = error instanceof Error ? error.message : 'Network error';
             setTestResult({ valid: false, error: errorMsg });
-            toast.error(`✗ Test failed: ${errorMsg}`);
+            toast.error(t('providerDialog.testFailed', { error: errorMsg }));
             setKeyStatus('error');
         } finally {
             setIsTestingConnection(false);
@@ -197,8 +197,8 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
         // Validation
         if (isAddingCustom) {
             // Custom provider requires name and base URL
-            if (!name.trim()) newErrors.name = 'Name is required';
-            if (!baseURL.trim()) newErrors.baseURL = 'Base URL is required for custom providers';
+            if (!name.trim()) newErrors.name = t('providerDialog.nameRequired');
+            if (!baseURL.trim()) newErrors.baseURL = t('providerDialog.baseUrlRequired');
         }
 
         if (Object.keys(newErrors).length > 0) {
@@ -220,30 +220,30 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
 
                     // Update hasApiKey flag immediately for visual feedback
                     updateProvider(provider.id, { hasApiKey: true });
-                    
+
                     // Now try to load models (Validation)
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
-                        
+
                         // SUCCESS: Key valid and models loaded
                         setKeyStatus('configured');
-                        toast.success(`✓ ${provider.name} configured and verified`);
+                        toast.success(t('providerDialog.configuredVerified', { name: provider.name }));
                         onOpenChange(false); // Only close on success
                     } catch (error) {
                         // FAILURE: Key saved but verification failed
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
                         setKeyStatus('error');
-                        
+
                         // Warn user and keep dialog open
-                        toast.error(`Key saved, but validation failed: ${errorMessage}`);
+                        toast.error(t('providerDialog.keySavedValidationFailed', { error: errorMessage }));
                     } finally {
                         setIsFetchingModels(false);
                     }
                 } else {
                     setIsValidatingKey(false);
-                    toast.info('No API key provided - existing key kept');
+                    toast.info(t('providerDialog.noApiKeyKept'));
                     onOpenChange(false);
                 }
             } else if (isAddingCustom) {
@@ -268,25 +268,25 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 if (apiKey) {
                     await credentialVault.storeCredentials(id, apiKey);
                     updateProvider(id, { hasApiKey: true });
-                    
+
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(id);
                         setKeyStatus('configured');
-                        toast.success(`✓ Custom provider "${name}" configured and verified`);
+                        toast.success(t('providerDialog.customProviderConfigured', { name }));
                         onOpenChange(false);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
                         setKeyStatus('error');
-                        toast.error(`Provider added, but validation failed: ${errorMessage}`);
+                        toast.error(t('providerDialog.providerAddValidationFailed', { error: errorMessage }));
                         // Keep dialog open
                     } finally {
                         setIsFetchingModels(false);
                     }
                 } else {
                     setIsValidatingKey(false);
-                    toast.success(`✓ Custom provider "${name}" added`);
+                    toast.success(t('providerDialog.customProviderAdded', { name }));
                     onOpenChange(false);
                 }
             } else if (provider?.isCustom) {
@@ -302,25 +302,25 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                 if (apiKey) {
                     await credentialVault.storeCredentials(provider.id, apiKey);
                     updateProvider(provider.id, { hasApiKey: true });
-                    
+
                     setIsFetchingModels(true);
                     try {
                         await fetchModels(provider.id);
                         setKeyStatus('configured');
-                        toast.success(`✓ Provider "${name}" updated and verified`);
+                        toast.success(t('providerDialog.providerUpdatedVerified', { name }));
                         onOpenChange(false);
                     } catch (error) {
                         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch models';
                         setFetchError(errorMessage);
                         setKeyStatus('error');
-                        toast.error(`Provider updated, but validation failed: ${errorMessage}`);
+                        toast.error(t('providerDialog.providerUpdateValidationFailed', { error: errorMessage }));
                         // Keep dialog open
                     } finally {
                         setIsFetchingModels(false);
                     }
                 } else {
                     setIsValidatingKey(false);
-                    toast.success(`✓ Provider "${name}" updated`);
+                    toast.success(t('providerDialog.providerUpdated', { name }));
                     onOpenChange(false);
                 }
             }
@@ -328,7 +328,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
             console.error('[ProviderConfigDialog] Failed to save provider:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             setKeyStatus('error');
-            toast.error(`Failed to save provider configuration: ${errorMessage}`);
+            toast.error(t('providerDialog.saveFailed', { error: errorMessage }));
         } finally {
             setIsSubmitting(false);
             setIsValidatingKey(false);
@@ -338,7 +338,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
     // Render different dialogs based on context
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] rounded-none border-2 border-border shadow-[4px_4px_0_0]">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         {isBuiltIn ? <Key className="h-5 w-5" /> : <Server className="h-5 w-5" />}
@@ -438,18 +438,18 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                                 size="sm"
                                 onClick={handleTestConnection}
                                 disabled={!apiKey || isTestingConnection}
-                                className="h-7 text-xs"
+                                className="h-7 text-xs rounded-none shadow-[2px_2px_0_0]"
                             >
                                 <Zap className={`h-3 w-3 mr-1 ${isTestingConnection ? 'animate-pulse' : ''}`} />
-                                {isTestingConnection ? 'Testing...' : 'Test Connection'}
+                                {isTestingConnection ? t('providerDialog.testingConnection') : t('providerDialog.testConnection')}
                             </Button>
                         </div>
                         {/* Test result feedback */}
                         {testResult && (
-                            <div className={`text-xs p-2 rounded ${testResult.valid ? 'bg-green-500/10 text-green-600' : 'bg-destructive/10 text-destructive'}`}>
+                            <div className={`text-xs p-2 rounded-none border ${testResult.valid ? 'bg-green-500 text-white border-green-600' : 'bg-destructive text-white border-destructive'}`}>
                                 {testResult.valid
-                                    ? `✓ Valid connection${testResult.latencyMs ? ` (${testResult.latencyMs}ms latency)` : ''}`
-                                    : `✗ ${testResult.error || 'Invalid API key'}`
+                                    ? t('providerDialog.validConnection', { latency: testResult.latencyMs ? ` (${testResult.latencyMs}ms latency)` : '' })
+                                    : `✗ ${testResult.error || t('providerDialog.invalidApiKey')}`
                                 }
                             </div>
                         )}

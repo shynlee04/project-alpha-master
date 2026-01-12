@@ -1,7 +1,7 @@
 # LOOP_STATE - BMAD Extension Global State
-# Version: 2.2.0
-# last_updated: "2026-01-14T19:00:00+07:00"
-# Status: CORRECT-COURSE ACTIVATED - CC-01 READY
+# Version: 2.3.0
+# last_updated: "2026-01-14T23:00:00+07:00"
+# Status: CORRECT-COURSE ACTIVE - PS-01 + BYOK-01 COMPLETED, PS-02 NEXT
 #
 # IMPORTANT: This file is the single source of truth for BMAD Extension Layer.
 # All agents must read this file at session start and update it at key points.
@@ -54,155 +54,44 @@ anchor:
 # CURRENT WORK CONTEXT
 # ═══════════════════════════════════════════════════════════════════════════════
 current_work:
-  epic_id: "EPIC-CC-02"
-  epic_title: "BYOK Cleanup - Architectural Remediation"
-  story_id: "BYOK-01"
-  story_title: "Split Provider Credentials God Slice"
+  epic_id: "EPIC-CC-01"
+  epic_title: "Project Space Foundation - Architectural Remediation"
+  story_id: "PS-02"
+  story_title: "Create StorageAdapter Domain Interface"
   task_type: "architectural-refactor"
-  step: "ready-to-start"
-  governance_status: "correct-course-activated"
-  team: "Team A"
+  step: "planning-in-progress"
+  governance_status: "correct-course-phase-1"
+  team: "Team B"
 
-  stories_completed_session: []
+  # AS OF 2026-01-14 VALIDATION:
+  # COMPLETED:
+  # - PS-01: Split useWorkspaceFileSystem - DONE (571→119 lines + 3 slices)
+  # - BYOK-01: Split ProviderCredentialsSlice - DONE (crud-slice.ts + vault-slice.ts)
+  #
+  # NOT STARTED (files don't exist):
+  # - PS-02: StorageAdapter Interface - NOT STARTED
+  # - PS-03: Consolidate Databases - NOT STARTED
+  # - PS-04: Fix Import Violation - NOT STARTED
+  # - PS-05: Content Hashing - NOT STARTED
+  # - BYOK-02: Zod Validation - NOT STARTED
+  # - BYOK-03: Archive Migration - NOT STARTED
+  # - BYOK-04: projectId in Logs - NOT STARTED
 
-  pending_stories_priority_order:
-    - "BYOK-01: Split Provider Credentials God Slice (READY - Team A)"
-    - "BYOK-04: Add projectId to Tool Logs (READY - Team A parallel)"
-    - "BYOK-02: Add Zod Validation Schemas (blocked by BYOK-01)"
-    - "BYOK-03: Archive Migration Code (blocked by BYOK-01)"
+  stories_completed_this_session:
+    - "PS-01: Split useWorkspaceFileSystem God Store - 2026-01-13 (files created)"
+    - "BYOK-01: Split Provider Credentials Slice - 2026-01-13 (files created)"
 
-  findings:
-    - "EPIC-45/46/47 marked as SUPERSEDED - not properly tested"
-    - "Deep investigation found 67 total issues (20 P0, 29 P1, 18 P2)"
-    - "15 god components identified across workspaces"
-    - "5 god stores >300 lines each"
-    - "47 direct getState() violations"
-    - "6 Correct-Course epics created for systematic remediation"
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# WORKFLOW STATUS
-# ═══════════════════════════════════════════════════════════════════════════════
-workflows:
-  current: "correct-course"
-  status: "phase-1-parallel-execution"
-  history:
-    - workflow: "architectural-investigation"
-      started: "2026-01-14T14:00:00+07:00"
-      completed: "2026-01-14T18:00:00+07:00"
-      outcome: "SUCCESS"
-      notes: "6 sub-agents deployed, 67 issues found, 6 CC epics created"
-    - workflow: "epic-45-stories"
-      started: "2026-01-14T01:00:00+07:00"
-      completed: "2026-01-14T05:00:00+07:00"
-      outcome: "SUPERSEDED"
-      notes: "Code changes made but NOT properly tested - superseded by Correct-Course"
-    - workflow: "epic-44-stories"
-      started: "2026-01-13T00:00:00+07:00"
-      completed: "2026-01-14T14:00:00+07:00"
-      outcome: "PARTIAL"
-      notes: "12 stories claimed complete but underlying architecture broken"
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# CORRECT-COURSE EPICS
-# ═══════════════════════════════════════════════════════════════════════════════
-correct_course_epics:
-  - id: "EPIC-CC-01"
-    name: "Project Space Foundation"
-    team: "Team B"
-    priority: "P0"
-    status: "READY"
-    stories: 5
-    duration: "5-7 days"
-    file: "_bmad-output/sprint-artifacts/epic-cc-01-project-space-foundation-2026-01-14.yaml"
+  pending_stories:
+    # Team B (Project Space) - Sequential
+    - "PS-02: Create StorageAdapter Domain Interface (READY - CRITICAL PATH)"
+    - "PS-03: Consolidate Dexie Databases (BLOCKED_BY_PS-02)"
+    - "PS-04: Fix Domain→Infrastructure Import (BLOCKED_BY_PS-02)"
+    - "PS-05: Add Content Hashing (BLOCKED_BY_PS-04)"
     
-  - id: "EPIC-CC-02"
-    name: "BYOK Cleanup"
-    team: "Team A"
-    priority: "P0"
-    status: "READY"
-    stories: 4
-    duration: "2-3 days"
-    file: "_bmad-output/sprint-artifacts/epic-cc-02-byok-cleanup-2026-01-14.yaml"
-    parallel_with: "EPIC-CC-01"
-    
-  - id: "EPIC-CC-03"
-    name: "Chat Flow Stabilization"
-    team: "Team A"
-    priority: "P1"
-    status: "BLOCKED"
-    blocked_by: "EPIC-CC-01"
-    stories: 5
-    duration: "3-5 days"
-    file: "_bmad-output/sprint-artifacts/epic-cc-03-chat-flow-2026-01-14.yaml"
-    
-  - id: "EPIC-CC-04"
-    name: "Notes Refactoring"
-    team: "Team B"
-    priority: "P1"
-    status: "BLOCKED"
-    blocked_by: "EPIC-CC-01"
-    stories: 5
-    duration: "6-8 days"
-    file: "_bmad-output/sprint-artifacts/epic-cc-04-notes-refactor-2026-01-14.yaml"
-    
-  - id: "EPIC-CC-05"
-    name: "Agent/LLM Infrastructure"
-    team: "Team A"
-    priority: "P1"
-    status: "BLOCKED"
-    blocked_by: "EPIC-CC-01, EPIC-CC-02"
-    stories: 5
-    duration: "6-8 days"
-    file: "_bmad-output/sprint-artifacts/epic-cc-05-agent-llm-2026-01-14.yaml"
-    
-  - id: "EPIC-CC-06"
-    name: "Type Safety & Cleanup"
-    team: "Team B"
-    priority: "P2"
-    status: "BLOCKED"
-    blocked_by: "EPIC-CC-01, EPIC-CC-04"
-    stories: 4
-    duration: "4-5 days"
-    file: "_bmad-output/sprint-artifacts/epic-cc-06-type-safety-2026-01-14.yaml"
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# DELEGATIONS
-# ═══════════════════════════════════════════════════════════════════════════════
-delegations:
-  active:
-    - delegation_id: "del-cc-01-ps-01"
-      parent_agent: "EXCALIBUR"
-      child_agent: "dev-ext"
-      handoff_artifact: "epic-cc-01-project-space-foundation-2026-01-14.yaml"
-      task: "PS-01: Split useWorkspaceFileSystem God Store"
-      team: "Team B"
-      started_at: null
-      status: "PENDING"
-      
-    - delegation_id: "del-cc-02-byok-01"
-      parent_agent: "EXCALIBUR"
-      child_agent: "dev-ext"
-      handoff_artifact: "epic-cc-02-byok-cleanup-2026-01-14.yaml"
-      task: "BYOK-01: Split Provider Credentials God Slice"
-      team: "Team A"
-      started_at: null
-      status: "PENDING"
-      
-  completed: []
-  failed: []
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# PROGRESS TRACKING
-# ═══════════════════════════════════════════════════════════════════════════════
-progress:
-  stories_completed_this_session: 0
-  epics_registered_this_session:
-    - "EPIC-CC-01: Project Space Foundation (5 stories, READY)"
-    - "EPIC-CC-02: BYOK Cleanup (4 stories, READY)"
-    - "EPIC-CC-03: Chat Flow Stabilization (5 stories, BLOCKED)"
-    - "EPIC-CC-04: Notes Refactoring (5 stories, BLOCKED)"
-    - "EPIC-CC-05: Agent/LLM Infrastructure (5 stories, BLOCKED)"
-    - "EPIC-CC-06: Type Safety & Cleanup (4 stories, BLOCKED)"
+    # Team A (BYOK) - Parallel
+    - "BYOK-02: Add Zod Validation (BLOCKED_BY_BYOK-01)"
+    - "BYOK-03: Archive Migration Code (BLOCKED_BY_BYOK-01)"
+    - "BYOK-04: Add projectId to Tool Logs (READY)"
   artifacts_created:
     - "_bmad-output/sprint-artifacts/epic-cc-01-project-space-foundation-2026-01-14.yaml"
     - "_bmad-output/sprint-artifacts/epic-cc-02-byok-cleanup-2026-01-14.yaml"
@@ -218,16 +107,17 @@ progress:
 # GOVERNANCE STATE (CORRECTED)
 # ═══════════════════════════════════════════════════════════════════════════════
 governance:
-  last_check: "2026-01-14T19:00:00+07:00"
+  last_check: "2026-01-14T23:00:00+07:00"
   status: "correct-course-active"
-  health_score: 35  # CORRECTED from false 85 - reflects actual state
+  health_score: 30  # CORRECTED: Only PS-01 + BYOK-01 complete (2/8 stories = 25%)
   stale_detected: true
   violations:
     - "EPIC-45/46/47 marked complete without proper testing"
     - "Previous health_score (85) was falsely optimistic"
     - "67 architectural issues discovered during deep investigation"
+    - "LOOP_STATE had false completion status for PS-02/PS-04"
   typescript_errors: 8
-  notes: "Correct-Course workflow activated to systematically remediate architecture"
+  notes: "Correct-Course Phase 1 in progress - 2 of 8 stories with files created"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SUPERSEDED ARTIFACTS (POISONED)
