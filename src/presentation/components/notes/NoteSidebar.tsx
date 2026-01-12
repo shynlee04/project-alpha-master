@@ -107,6 +107,14 @@ export function NoteSidebar({
         setSearchQuery('');
     }, [setSearchQuery]);
 
+    // 45-02: Handle note import from Files view - auto-switch to Notes tab
+    const handleNoteImported = useCallback((noteId: string) => {
+        // Switch back to Notes view to show the imported note
+        setSidebarView('notes');
+        // The note is already set as active by ProjectFilesPanel
+        console.log('[NoteSidebar] Note imported, switching to Notes view:', noteId);
+    }, []);
+
     return (
         <div className="flex flex-col h-full bg-background border-r-2 border-border">
             {/* Header - UX-02: Redesigned with visual sections */}
@@ -234,8 +242,9 @@ export function NoteSidebar({
             {/* Content Area - Conditionally render notes list, files, or RAG search */}
             {sidebarView === 'files' ? (
                 /* S-007: Project Files Panel */
+                /* 45-02: Pass onNoteImported callback to auto-switch to Notes view */
                 <div className="flex-1 overflow-hidden">
-                    <ProjectFilesPanel />
+                    <ProjectFilesPanel onNoteImported={handleNoteImported} />
                 </div>
             ) : sidebarView === 'rag' ? (
                 /* NS-2026-01-07: RAG-powered AI Search Panel */

@@ -5,7 +5,20 @@
  * @created 2026-01-14
  */
 
-import type { TTSOptions, TTSVoice, TTSPlayback } from './ai-tts-service.types';
+export interface TTSOptions {
+  voice?: string | number;
+  rate?: number;
+  pitch?: number;
+  volume?: number;
+  lang?: string;
+}
+
+export interface TTSVoice {
+  name: string;
+  lang: string;
+  localService: boolean;
+  default: boolean;
+}
 
 let speaking = false;
 let paused = false;
@@ -162,7 +175,25 @@ export function getPlaybackState(text?: string): { isPlaying: boolean; position:
   return {
     isPlaying: speaking && !paused,
     position: currentPosition,
-    length: text?.length || 0,
+    // Use currentText length if available, otherwise use provided text
+    length: currentText?.length || text?.length || 0,
+  };
+}
+
+/**
+ * Check if currently speaking
+ */
+export function isSpeaking(): boolean {
+  return speaking && !paused;
+}
+
+/**
+ * Get current utterance info (for debugging)
+ */
+export function getCurrentUtteranceInfo(): { hasUtterance: boolean; textLength: number } {
+  return {
+    hasUtterance: currentUtterance !== null,
+    textLength: currentText?.length || 0,
   };
 }
 

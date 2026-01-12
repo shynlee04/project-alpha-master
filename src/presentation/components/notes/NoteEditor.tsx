@@ -33,6 +33,8 @@ import { AIVisionBlock } from './blocks/AIVisionBlock';
 import { StoryboardBlock } from './blocks/StoryboardBlock';
 // 44-04: Video Understanding Block
 import { VideoBlock } from './blocks/VideoBlock';
+// 44-05: Text-to-Speech Block
+import { TTSBlock } from './blocks/TTSBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 type BlockNoteBlock = any;
@@ -98,6 +100,8 @@ const schema = BlockNoteSchema.create({
         storyboard: StoryboardBlock(),
         // 44-04: Video Understanding Block
         videoAnalysis: VideoBlock(),
+        // 44-05: Text-to-Speech Block
+        ttsBlock: TTSBlock(),
     },
 });
 

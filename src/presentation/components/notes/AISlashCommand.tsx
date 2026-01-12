@@ -21,6 +21,7 @@ import {
     Eye,
     Images,
     Video,
+    Volume2,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -687,6 +688,48 @@ export const insertVideoItem = (editor: BlockNoteEditor) => ({
 });
 
 // ============================================================================
+// Text-to-Speech Block (Story 44-05)
+// ============================================================================
+
+/**
+ * Insert Text-to-Speech Block
+ * @story 44-05: Text-to-speech output block
+ */
+export const insertTTSItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.tts', 'Text-to-Speech'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new TTS block
+        const ttsBlock = {
+            type: "ttsBlock",
+            props: {
+                text: "",
+                voiceName: "",
+                speed: 1,
+                volume: 1,
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([ttsBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([ttsBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.tts.inserted', 'Text-to-Speech block inserted'));
+    },
+    aliases: ["tts", "speak", "read-aloud", "voice", "speech"],
+    group: "AI",
+    icon: <Volume2 size={18} />,
+    subtext: t('notes.ai.tts.description', 'Read text aloud with text-to-speech'),
+});
+
+// ============================================================================
 // Get Custom Slash Menu Items
 // ============================================================================
 
@@ -787,6 +830,7 @@ export const getCustomSlashMenuItems = (
         insertAIVisionItem(editor), // 44-02: AI Vision/Understanding
         insertStoryboardItem(editor), // 44-03: Sequential Storyboard
         insertVideoItem(editor), // 44-04: Video Understanding
+        insertTTSItem(editor), // 44-05: Text-to-Speech
         continueWritingItem(editor),
         summarizeNoteItem(editor),
         generateOutlineItem(editor),

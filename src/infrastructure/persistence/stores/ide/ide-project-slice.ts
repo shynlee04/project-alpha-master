@@ -15,6 +15,7 @@
  */
 
 import { StateCreator } from 'zustand';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 import type { IDEProjectState } from './ide-types';
 
 export const createIDEProjectSlice: StateCreator<
@@ -38,6 +39,8 @@ export const createIDEProjectSlice: StateCreator<
    * Set the current project ID
    * Scopes all IDE state to this project
    *
+   * 45-03: Emits WORKSPACE_CHANGED event to notify other workspaces
+   *
    * @param projectId - Project ID to set (null for no project)
    *
    * @example
@@ -47,8 +50,13 @@ export const createIDEProjectSlice: StateCreator<
   setProjectId: (projectId: string | null) => {
     set({ projectId });
 
-    // TODO: Load project-specific state from Dexie
-    // When changing projects, load that project's IDE state
+    // 45-03: Emit event for cross-workspace project synchronization
+    eventBus.emit(DomainEventType.WORKSPACE_CHANGED, {
+      workspaceType: 'ide',
+      projectId,
+      timestamp: new Date(),
+    });
+
     console.log('[IDESlice] Project ID set to:', projectId);
   },
 

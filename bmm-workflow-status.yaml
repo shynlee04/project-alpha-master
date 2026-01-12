@@ -55,12 +55,12 @@ current_workflow:
   id: "chat-remediation-epic-45-2026-01-14"
   status: "IN_PROGRESS"
   epic: "EPIC-45"
-  story: "45-02"
-  started_at: "2026-01-14T01:30:00+07:00"
+  story: "45-03"
+  started_at: "2026-01-14T02:00:00+07:00"
   completed_at: null
   team: "Team A"
-  story_status: "IN_PROGRESS"
-  story_summary: "Fix file → note import - auto-switch to editor, fix race condition"
+  story_status: "PENDING"
+  story_summary: "Create unified project state (single source of truth)"
 
 parallel_workflows:
   - id: "notes-ai-epic-44-2026-01-14"
@@ -82,9 +82,9 @@ active_epics:
   - id: "EPIC-45"
     name: "Chat State & Project Foundation"
     status: "IN_PROGRESS"
-    progress: 20
+    progress: 40
     stories_total: 5
-    stories_done: 1
+    stories_done: 2
     priority: "P0"
     team: "Team A"
     blocked_by: null
@@ -97,7 +97,8 @@ active_epics:
         file: "src/presentation/components/notes/ProjectFilesPanel.tsx"
       - id: "45-02"
         name: "Fix file → note import - auto-switch to editor, fix race condition"
-        status: "in_progress"
+        status: "COMPLETED"
+        completed_at: "2026-01-14T02:00:00+07:00"
         file: "src/presentation/components/notes/ProjectFilesPanel.tsx"
       - id: "45-03"
         name: "Create unified project state (single source of truth)"

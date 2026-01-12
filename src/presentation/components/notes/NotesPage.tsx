@@ -75,6 +75,16 @@ export const NotesPage = React.memo(function NotesPage() {
     const { project } = useProjectContext();
     const projectId = project?.id || 'default';
 
+    // 45-03: Sync projectId from IDE store (single source of truth)
+    // When project changes in other workspaces (IDE, Knowledge), Notes workspace follows
+    const ideProjectId = useIDEStore((s) => s.projectId);
+    useEffect(() => {
+        if (ideProjectId && ideProjectId !== projectId) {
+            console.log('[NotesPage] Project changed in IDE store, navigating:', ideProjectId);
+            navigate({ to: `/notes/${ideProjectId}` });
+        }
+    }, [ideProjectId, projectId, navigate]);
+
     // STORAGE-3-2: Project Selector Logic
     const { projects, activeProject } = useWorkspaceProjects({
         workspaceType: 'notes'

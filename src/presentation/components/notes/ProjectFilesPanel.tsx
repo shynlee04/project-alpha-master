@@ -56,12 +56,21 @@ function getFileCategory(fileName: string): 'image' | 'pdf' | 'text' | 'other' {
 }
 
 /**
+ * 45-02: Props for ProjectFilesPanel
+ */
+interface ProjectFilesPanelProps {
+    /** Callback when a note is successfully imported from a file */
+    onNoteImported?: (noteId: string) => void;
+}
+
+/**
  * ProjectFilesPanel - File browser for Notes workspace
  *
  * P1.5-02: Enhanced with file/folder creation toolbar
  * File preview for images and PDFs
+ * 45-02: Notifies parent when note is imported for auto-switch to Notes view
  */
-export function ProjectFilesPanel() {
+export function ProjectFilesPanel({ onNoteImported }: ProjectFilesPanelProps = {}) {
     const { createNote, setActiveNote } = useNoteStore();
     const { t } = useTranslation();
     const { directoryHandle, openFolder, localAdapterRef } = useWorkspaceSync();
@@ -170,6 +179,9 @@ export function ProjectFilesPanel() {
                     }
                 ]
             });
+
+            // 45-02: Notify parent that note was imported (triggers view switch)
+            onNoteImported?.(noteId);
 
             setActiveNote(noteId);
             toast.success(t('notes.import_success', { name: file.name }));
