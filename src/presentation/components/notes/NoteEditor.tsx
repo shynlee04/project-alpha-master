@@ -430,8 +430,17 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 });
             }
 
-            // Deep validation: check each block for known BlockNote issues
-            // Filter out invalid blocks recursively (including nested children)
+            // Known BlockNote block types for validation
+            const knownBlockTypes = new Set([
+                'heading', 'paragraph', 'bulletListItem', 'numberedListItem',
+                'checkListItem', 'codeBlock', 'quote', 'callout', 'toggle',
+                'table', 'image', 'codeFile', 'fileAttachment', 'divider',
+                'aiImage', 'aiVision', 'storyboard', 'videoAnalysis',
+                'ttsBlock', 'artifactBlock', 'videoGeneration', 'slidesExport',
+                'chartDiagram', 'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+            ]);
+
+            // Blocks with content: "none" spec should NOT have content property
             const noContentBlockTypes = new Set([
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
@@ -439,29 +448,79 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 'transformPipeline', 'artifactGallery', 'multiStepGeneration'
             ]);
 
-            // Recursive function to filter invalid blocks from entire tree
-            function filterValidBlocks(blocks: any[]): any[] {
+            // Recursive function to validate and sanitize block structure
+            function filterValidBlocks(blocks: any[], depth = 0): any[] {
+                if (!Array.isArray(blocks)) return [];
+                if (depth > 50) {
+                    console.warn('[NoteEditor] Max recursion depth exceeded, returning empty array');
+                    return [];
+                }
+
                 const valid: any[] = [];
                 const invalid: any[] = [];
 
                 for (const block of blocks) {
+                    // CRITICAL: Validate block has required fields
+                    if (!block || typeof block !== 'object') {
+                        console.warn('[NoteEditor] Skipping invalid block (not an object)');
+                        invalid.push({ reason: 'not_an_object' });
+                        continue;
+                    }
+
+                    if (!block.type || typeof block.type !== 'string') {
+                        console.warn('[NoteEditor] Skipping block without valid type:', block);
+                        invalid.push({ reason: 'no_type' });
+                        continue;
+                    }
+
                     const blockType = block.type;
                     let isValid = true;
+                    let invalidReason = '';
+
+                    // Check if block type is known
+                    if (!knownBlockTypes.has(blockType)) {
+                        console.warn(`[NoteEditor] Unknown block type "${blockType}", removing:`, block.id);
+                        isValid = false;
+                        invalidReason = 'unknown_type';
+                    }
+
+                    // Ensure block has id (required for BlockNote)
+                    if (isValid && !block.id) {
+                        console.warn(`[NoteEditor] Block missing id, generating one for type: ${blockType}`);
+                        block.id = crypto.randomUUID();
+                    }
+
+                    // Ensure block has props object (required for BlockNote)
+                    if (isValid && (!block.props || typeof block.props !== 'object')) {
+                        block.props = block.props || {};
+                    }
 
                     // Check for content: "none" blocks that have content property
-                    if (noContentBlockTypes.has(blockType)) {
+                    if (isValid && noContentBlockTypes.has(blockType)) {
                         if ('content' in block && block.content !== undefined) {
                             console.warn(`[NoteEditor] Removing block (type: ${blockType}, id: ${block.id}) - has content but shouldn't`);
                             isValid = false;
+                            invalidReason = 'content_none_violation';
+                        }
+                    }
+
+                    // For content-using blocks, validate content structure
+                    if (isValid && !noContentBlockTypes.has(blockType)) {
+                        // content must be an array if present
+                        if ('content' in block && block.content !== undefined && !Array.isArray(block.content)) {
+                            console.warn(`[NoteEditor] Block (type: ${blockType}, id: ${block.id}) has non-array content, removing`);
+                            isValid = false;
+                            invalidReason = 'invalid_content_type';
                         }
                     }
 
                     // CRITICAL: Check table block content structure
-                    if (blockType === 'table') {
+                    if (isValid && blockType === 'table') {
                         const tableContent = block.content;
                         if (!Array.isArray(tableContent) || tableContent.length === 0) {
                             console.warn(`[NoteEditor] Removing table block (id: ${block.id}) - invalid content structure`);
                             isValid = false;
+                            invalidReason = 'table_invalid_content';
                         } else {
                             // Check each row has cells
                             for (let r = 0; r < tableContent.length; r++) {
@@ -469,6 +528,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                                 if (!Array.isArray(row)) {
                                     console.warn(`[NoteEditor] Removing table block (id: ${block.id}) - row ${r} is not an array`);
                                     isValid = false;
+                                    invalidReason = 'table_row_not_array';
                                     break;
                                 }
                             }
@@ -478,25 +538,34 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     if (isValid) {
                         // Recursively filter children
                         const filteredChildren = block.children && Array.isArray(block.children)
-                            ? filterValidBlocks(block.children)
+                            ? filterValidBlocks(block.children, depth + 1)
                             : [];
 
-                        // Only add if either the block is valid or it has valid children
-                        if (filteredChildren.length > 0 || blockType !== 'table') {
-                            valid.push({
-                                ...block,
-                                children: filteredChildren
-                            });
-                        } else {
-                            invalid.push({ id: block.id, type: blockType });
+                        // Create sanitized block
+                        const sanitizedBlock: any = {
+                            id: block.id,
+                            type: blockType,
+                            props: block.props || {},
+                            children: filteredChildren
+                        };
+
+                        // Only add content for blocks that use it
+                        if (!noContentBlockTypes.has(blockType) && Array.isArray(block.content)) {
+                            sanitizedBlock.content = block.content;
                         }
+
+                        // Add any other BlockNote-required fields
+                        if (block.externalId !== undefined) sanitizedBlock.externalId = block.externalId;
+                        if (block.externalKey !== undefined) sanitizedBlock.externalKey = block.externalKey;
+
+                        valid.push(sanitizedBlock);
                     } else {
-                        invalid.push({ id: block.id, type: blockType });
+                        invalid.push({ id: block.id, type: blockType, reason: invalidReason });
                     }
                 }
 
-                if (invalid.length > 0) {
-                    console.warn(`[NoteEditor] Filtered ${invalid.length} invalid blocks in subtree:`, invalid);
+                if (invalid.length > 0 && depth === 0) {
+                    console.warn(`[NoteEditor] Filtered ${invalid.length} invalid blocks:`, invalid);
                 }
 
                 return valid;
