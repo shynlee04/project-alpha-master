@@ -213,20 +213,32 @@ function sanitizeBlocks(blocks: any[]): any[] {
 
             // Ensure props exists with required defaults
             // Custom blocks need their custom props preserved, standard blocks use whitelist
+            // Blocks with content: "none" spec should NOT have content property
+            // These custom blocks manage their own rendering and don't use text content
+            const noContentBlockTypes = new Set([
+                'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
+                'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
+                'videoGeneration', 'slidesExport', 'chartDiagram',
+                'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+            ]);
+
+            // Custom blocks that need their props preserved
             const customBlockTypes = new Set([
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
-                'videoGeneration', 'slidesExport'
+                'videoGeneration', 'slidesExport', 'chartDiagram',
+                'transformPipeline', 'artifactGallery', 'multiStepGeneration'
             ]);
 
-            if (customBlockTypes.has(blockType) && block.props && typeof block.props === 'object') {
-                // For custom blocks, preserve all props but ensure defaults
+            if (customBlockTypes.has(blockType)) {
+                // CRITICAL: For custom blocks, ALWAYS preserve props (even if empty object)
+                // Custom blocks define their own prop schemas with defaults
                 sanitized.props = {
-                    ...defaultProps,
-                    ...block.props,
+                    ...defaultProps, // Base BlockNote defaults
+                    ...(block.props && typeof block.props === 'object' ? block.props : {}),
                 };
             } else {
-                // For standard blocks, only allow known props
+                // For standard blocks, only allow known safe props
                 sanitized.props = {
                     ...defaultProps,
                 };
@@ -242,19 +254,22 @@ function sanitizeBlocks(blocks: any[]): any[] {
                 }
             }
 
-            // Sanitize content: each item must be a proper object with type, text, styles
-            // CRITICAL: Always provide an array (even if empty) for BlockNote compatibility
-            if (Array.isArray(block.content) && block.content.length > 0) {
-                sanitized.content = block.content
-                    .map(sanitizeContentItem)
-                    .filter(Boolean); // Remove null/undefined items
-            }
+            // CRITICAL: Only set content for blocks that USE content
+            // Blocks with content: "none" spec should NOT have a content property at all
+            // These are custom blocks that manage their own content rendering
+            if (!noContentBlockTypes.has(blockType)) {
+                if (Array.isArray(block.content) && block.content.length > 0) {
+                    sanitized.content = block.content
+                        .map(sanitizeContentItem)
+                        .filter(Boolean); // Remove null/undefined items
+                }
 
-            // Always provide an empty array if no content (not undefined)
-            // This matches BlockNote's expected structure
-            if (!sanitized.content || sanitized.content.length === 0) {
-                sanitized.content = [];
+                // Always provide an empty array if no content (for content-using blocks)
+                if (!sanitized.content) {
+                    sanitized.content = [];
+                }
             }
+            // For content: "none" blocks, DO NOT set sanitized.content at all
 
             // CRITICAL: Ensure children array exists (BlockNote requires this)
             if (Array.isArray(block.children)) {
