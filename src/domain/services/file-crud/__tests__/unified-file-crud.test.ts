@@ -28,7 +28,7 @@ function createMockAdapter(): StorageAdapter {
   const files = new Map<string, { content: Uint8Array; metadata: { size: number; lastModified: number } }>();
   files.set('existing.txt', {
     content: new TextEncoder().encode('existing content'),
-    metadata: { size: 14, lastModified: Date.now() }
+    metadata: { size: new TextEncoder().encode('existing content').length, lastModified: Date.now() }
   });
   files.set('folder/nested.md', {
     content: new TextEncoder().encode('# Nested'),

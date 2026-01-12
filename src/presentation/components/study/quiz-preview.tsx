@@ -16,8 +16,8 @@ const questionCardVariants = cva(
       variant: {
         default: 'border-border bg-card',
         selected: 'border-primary bg-primary/5',
-        correct: 'border-green-500 bg-green-500/10',
-        incorrect: 'border-red-500 bg-red-500/10',
+        correct: 'border-success bg-success/10',
+        incorrect: 'border-destructive bg-destructive/10',
       },
     },
     defaultVariants: {
@@ -33,8 +33,8 @@ const optionVariants = cva(
       variant: {
         default: 'border-border hover:border-primary hover:bg-accent',
         selected: 'border-primary bg-primary text-primary-foreground',
-        correct: 'border-green-500 bg-green-500 text-white',
-        incorrect: 'border-red-500 bg-red-500 text-white',
+        correct: 'border-success bg-success text-success-foreground',
+        incorrect: 'border-destructive bg-destructive text-destructive-foreground',
       },
     },
     defaultVariants: {
@@ -84,9 +84,9 @@ export function QuestionCard({
           <div className="mt-2 flex items-center gap-2">
             <span className={cn(
               'rounded px-2 py-0.5 text-xs font-medium',
-              question.difficulty === 'easy' && 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-              question.difficulty === 'medium' && 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-              question.difficulty === 'hard' && 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+              question.difficulty === 'easy' && 'bg-success/20 text-success dark:bg-success/30 dark:text-success',
+              question.difficulty === 'medium' && 'bg-warning/20 text-warning dark:bg-warning/30 dark:text-warning',
+              question.difficulty === 'hard' && 'bg-destructive/20 text-destructive dark:bg-destructive/30 dark:text-destructive'
             )}>
               {question.difficulty}
             </span>
@@ -110,8 +110,8 @@ export function QuestionCard({
             <span className={cn(
               'flex h-5 w-5 shrink-0 items-center justify-center rounded border text-xs font-medium',
               getOptionVariant(optionIndex) === 'selected' && 'border-primary bg-primary text-primary-foreground',
-              getOptionVariant(optionIndex) === 'correct' && 'border-green-500 bg-green-500 text-white',
-              getOptionVariant(optionIndex) === 'incorrect' && 'border-red-500 bg-red-500 text-white',
+              getOptionVariant(optionIndex) === 'correct' && 'border-success bg-success text-success-foreground',
+              getOptionVariant(optionIndex) === 'incorrect' && 'border-destructive bg-destructive text-destructive-foreground',
               !getOptionVariant(optionIndex) && 'border-muted-foreground/30'
             )}>
               {String.fromCharCode(65 + optionIndex)}
@@ -318,7 +318,7 @@ export function QuizSettingsPanel({
               includeExplanation: e.target.checked,
             })
           }
-          className="h-4 w-4 rounded-none border-gray-300"
+          className="h-4 w-4 rounded-none border-border"
         />
         <label htmlFor="includeExplanation" className="text-sm font-medium">
           {t('quizzes.settings.includeExplanations')}

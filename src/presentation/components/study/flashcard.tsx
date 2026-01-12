@@ -33,10 +33,10 @@ export interface FlashcardViewProps {
  * Rating button configuration
  */
 const RATING_CONFIG: Record<SRSRating, { label: string; className: string; key: string }> = {
-  again: { label: 'study.rating.again', className: 'bg-red-500/20 border-red-500 text-red-400 hover:bg-red-500/30', key: '1' },
+  again: { label: 'study.rating.again', className: 'bg-destructive/20 border-destructive text-destructive hover:bg-destructive/30', key: '1' },
   hard: { label: 'study.rating.hard', className: 'bg-orange-500/20 border-orange-500 text-orange-400 hover:bg-orange-500/30', key: '2' },
-  good: { label: 'study.rating.good', className: 'bg-green-500/20 border-green-500 text-green-400 hover:bg-green-500/30', key: '3' },
-  easy: { label: 'study.rating.easy', className: 'bg-blue-500/20 border-blue-500 text-blue-400 hover:bg-blue-500/30', key: '4' },
+  good: { label: 'study.rating.good', className: 'bg-success/20 border-success text-success hover:bg-success/30', key: '3' },
+  easy: { label: 'study.rating.easy', className: 'bg-info/20 border-info text-info hover:bg-info/30', key: '4' },
 };
 
 /**

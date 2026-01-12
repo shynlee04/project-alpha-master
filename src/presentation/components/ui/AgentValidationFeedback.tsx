@@ -86,7 +86,7 @@ export function showValidationToast(props: AgentValidationFeedbackProps) {
       // Success with warnings
       toast.success(
         <div className="flex items-start gap-3">
-          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+          <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="font-medium">{agentName} validated successfully</p>
             <p className="text-sm text-muted-foreground mt-1">
@@ -99,7 +99,7 @@ export function showValidationToast(props: AgentValidationFeedbackProps) {
           description: (
             <div className="mt-2 space-y-1">
               {warnings.map((warning, i) => (
-                <div key={i} className="text-xs text-yellow-600 dark:text-yellow-400 flex items-start gap-2">
+                <div key={i} className="text-xs text-warning flex items-start gap-2">
                   <Info className="w-3 h-3 flex-shrink-0 mt-0.5" />
                   <span>
                     <strong>{warning.field}:</strong> {warning.message}
@@ -114,7 +114,7 @@ export function showValidationToast(props: AgentValidationFeedbackProps) {
       // Pure success
       toast.success(
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-5 h-5 text-green-500" />
+          <CheckCircle2 className="w-5 h-5 text-success" />
           <span className="font-medium">{agentName} is valid and ready to use</span>
         </div>,
         { duration: 3000 }
@@ -196,13 +196,13 @@ export function AgentValidationFeedbackBanner({
         aria-live="polite"
         className={cn(
             'flex items-center justify-between gap-4 px-4 py-3 rounded-none',
-            'bg-green-500/10 border border-green-500/20'
+            'bg-success/10 border border-success/20'
         )}
       >
         <div className="flex items-center gap-3">
-          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" aria-hidden="true" />
+          <CheckCircle2 className="w-5 h-5 text-success flex-shrink-0" aria-hidden="true" />
           <div>
-            <p className="text-sm font-medium text-green-600 dark:text-green-400">
+            <p className="text-sm font-medium text-success">
               {agentName} is valid and ready to use
             </p>
           </div>
@@ -227,14 +227,14 @@ export function AgentValidationFeedbackBanner({
         aria-live="polite"
         className={cn(
             'flex flex-col gap-3 px-4 py-3 rounded-none',
-            'bg-yellow-500/10 border border-yellow-500/20'
+            'bg-warning/10 border border-warning/20'
         )}
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" aria-hidden="true" />
+            <AlertCircle className="w-5 h-5 text-warning flex-shrink-0" aria-hidden="true" />
             <div>
-              <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
+              <p className="text-sm font-medium text-warning">
                 {agentName} validated with warnings
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -256,7 +256,7 @@ export function AgentValidationFeedbackBanner({
           {warnings.map((warning, i) => (
             <div
               key={i}
-              className="text-xs text-yellow-600 dark:text-yellow-400 flex items-start gap-2 pl-8"
+              className="text-xs text-warning flex items-start gap-2 pl-8"
             >
               <Info className="w-3 h-3 flex-shrink-0 mt-0.5" aria-hidden="true" />
               <span>

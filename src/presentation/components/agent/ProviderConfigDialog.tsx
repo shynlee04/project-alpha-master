@@ -446,7 +446,7 @@ export function ProviderConfigDialog({ open, onOpenChange, provider }: ProviderC
                         </div>
                         {/* Test result feedback */}
                         {testResult && (
-                            <div className={`text-xs p-2 rounded-none border ${testResult.valid ? 'bg-green-500 text-white border-green-600' : 'bg-destructive text-white border-destructive'}`}>
+                            <div className={`text-xs p-2 rounded-none border ${testResult.valid ? 'bg-success text-success-foreground border-success' : 'bg-destructive text-destructive-foreground border-destructive'}`}>
                                 {testResult.valid
                                     ? t('providerDialog.validConnection', { latency: testResult.latencyMs ? ` (${testResult.latencyMs}ms latency)` : '' })
                                     : `✗ ${testResult.error || t('providerDialog.invalidApiKey')}`

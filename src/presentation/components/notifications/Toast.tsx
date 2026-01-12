@@ -39,17 +39,17 @@ function getNotificationIcon(type: Notification['type']) {
 
   switch (type) {
     case 'success':
-      return <CheckCircle className={cn(iconClass, 'text-green-500')} />;
+      return <CheckCircle className={cn(iconClass, 'text-success')} />;
     case 'error':
-      return <XCircle className={cn(iconClass, 'text-red-500')} />;
+      return <XCircle className={cn(iconClass, 'text-destructive')} />;
     case 'warning':
-      return <AlertTriangle className={cn(iconClass, 'text-yellow-500')} />;
+      return <AlertTriangle className={cn(iconClass, 'text-warning')} />;
     case 'info':
-      return <Info className={cn(iconClass, 'text-blue-500')} />;
+      return <Info className={cn(iconClass, 'text-info')} />;
     case 'system':
       return <Bell className={cn(iconClass, 'text-purple-500')} />;
     default:
-      return <Info className={cn(iconClass, 'text-gray-500')} />;
+      return <Info className={cn(iconClass, 'text-muted-foreground')} />;
   }
 }
 
@@ -60,33 +60,33 @@ function getNotificationColors(type: Notification['type']) {
   switch (type) {
     case 'success':
       return {
-        bg: 'bg-green-950 border-green-700',
-        border: 'border-l-4 border-l-green-500',
+        bg: 'bg-success/10 border-success/30',
+        border: 'border-l-4 border-l-success',
       };
     case 'error':
       return {
-        bg: 'bg-red-950 border-red-700',
-        border: 'border-l-4 border-l-red-500',
+        bg: 'bg-destructive/10 border-destructive/30',
+        border: 'border-l-4 border-l-destructive',
       };
     case 'warning':
       return {
-        bg: 'bg-yellow-950 border-yellow-700',
-        border: 'border-l-4 border-l-yellow-500',
+        bg: 'bg-warning/10 border-warning/30',
+        border: 'border-l-4 border-l-warning',
       };
     case 'info':
       return {
-        bg: 'bg-blue-950 border-blue-700',
-        border: 'border-l-4 border-l-blue-500',
+        bg: 'bg-info/10 border-info/30',
+        border: 'border-l-4 border-l-info',
       };
     case 'system':
       return {
-        bg: 'bg-purple-950 border-purple-700',
+        bg: 'bg-purple-950/50 border-purple-700/50',
         border: 'border-l-4 border-l-purple-500',
       };
     default:
       return {
-        bg: 'bg-gray-950 border-gray-700',
-        border: 'border-l-4 border-l-gray-500',
+        bg: 'bg-muted border-muted-foreground/30',
+        border: 'border-l-4 border-l-muted-foreground',
       };
   }
 }
@@ -154,18 +154,18 @@ export function Toast({ notification, onDismiss, onAction }: ToastProps) {
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Title */}
-          <h4 className="text-sm font-semibold text-gray-100 truncate">
+          <h4 className="text-sm font-semibold text-foreground truncate">
             {notification.title}
           </h4>
 
           {/* Message */}
-          <p className="mt-1 text-sm text-gray-300 line-clamp-2">
+          <p className="mt-1 text-sm text-foreground/80 line-clamp-2">
             {notification.message}
           </p>
 
           {/* Grouped Count */}
           {notification.groupCount && notification.groupCount > 1 && (
-            <span className="mt-1 inline-block text-xs text-gray-400">
+            <span className="mt-1 inline-block text-xs text-muted-foreground">
               ({notification.groupCount} {t('notifications.grouped', 'notifications')})
             </span>
           )}
@@ -175,7 +175,7 @@ export function Toast({ notification, onDismiss, onAction }: ToastProps) {
         <button
           type="button"
           onClick={() => onDismiss(notification.id)}
-          className="flex-shrink-0 rounded-sm p-1 text-gray-400 hover:text-gray-100 hover:bg-gray-800 transition-colors"
+          className="flex-shrink-0 rounded-sm p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
           aria-label={t('notifications.dismiss', 'Dismiss notification')}
         >
           <X className="size-4" />
@@ -195,8 +195,8 @@ export function Toast({ notification, onDismiss, onAction }: ToastProps) {
                 action.variant === 'primary'
                   ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                   : action.variant === 'secondary'
-                  ? 'bg-gray-700 text-gray-100 hover:bg-gray-600'
-                  : 'bg-transparent text-gray-300 hover:bg-gray-800'
+                  ? 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  : 'bg-transparent text-foreground hover:bg-muted'
               )}
             >
               {action.label}
@@ -207,7 +207,7 @@ export function Toast({ notification, onDismiss, onAction }: ToastProps) {
 
       {/* Timestamp (for persistent notifications) */}
       {notification.persistent && (
-        <div className="mt-2 text-xs text-gray-500">
+        <div className="mt-2 text-xs text-muted-foreground">
           {formatRelativeTime(notification.createdAt)}
         </div>
       )}
@@ -215,8 +215,8 @@ export function Toast({ notification, onDismiss, onAction }: ToastProps) {
       {/* Priority Indicator */}
       {notification.priority === 'urgent' && (
         <div className="absolute top-2 right-2 flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive/75 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive" />
         </div>
       )}
     </div>

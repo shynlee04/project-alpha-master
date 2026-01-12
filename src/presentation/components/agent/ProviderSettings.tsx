@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Plus, Trash2, Edit2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/presentation/components/ui/button';
 import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useAgentsStore } from '@/infrastructure/persistence/stores/agents';
@@ -8,6 +9,12 @@ import { ProviderDeletionWarningDialog } from './ProviderDeletionWarningDialog';
 import { ProviderStatusBadge, type ProviderStatus } from './ProviderStatusBadge';
 import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 import type { ModelInfo } from '@/domain/types/llm/model-types';
+import {
+    getHardcodedModels,
+    hasHardcodedModels,
+    type HardcodedModel,
+    CUSTOM_MODEL_VALUE,
+} from '@/lib/agent/providers/hardcoded-models';
 import {
     Dialog,
     DialogContent,
@@ -26,6 +33,9 @@ import {
 import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 
 export function ProviderSettings() {
+    const { t, i18n } = useTranslation();
+    const isVietnamese = i18n.language === 'vi';
+
     // Use individual selectors to prevent infinite re-render loops
     const providers = useAppStore(s => s.providers)
     const removeProvider = useAppStore(s => s.removeProvider)
@@ -50,11 +60,31 @@ export function ProviderSettings() {
 
     // R4 FIX: Model selection state per provider
     const [selectedModels, setSelectedModels] = useState<Record<string, string>>({});
+    // Custom model input state per provider
+    const [customModelInputs, setCustomModelInputs] = useState<Record<string, string>>({});
 
     // R4 FIX: Get models for a provider with memoization
     const getProviderModels = useMemo(() => (providerId: string): ModelInfo[] => {
         return getAvailableModels(providerId);
     }, [getAvailableModels]);
+
+    // Get hardcoded models with bilingual names for Groq, Mistral, Chutes
+    const getHardcodedModelList = useMemo(() => (providerId: string): HardcodedModel[] | null => {
+        if (!hasHardcodedModels(providerId)) return null;
+        return getHardcodedModels(providerId) || null;
+    }, []);
+
+    // Convert hardcoded model to display format (bilingual)
+    const formatHardcodedModel = (model: HardcodedModel): ModelInfo => ({
+        id: model.id,
+        name: isVietnamese ? model.nameVi : model.nameEn,
+        contextLength: model.contextLength,
+        isFree: model.isFree,
+        supportsStreaming: model.capabilities?.streaming,
+        supportsImages: model.capabilities?.images,
+        supportsTools: model.capabilities?.tools,
+        providerId: ''
+    });
 
     const handleAdd = () => {
         setEditingProvider(undefined);
@@ -158,9 +188,15 @@ export function ProviderSettings() {
 
             <div className="border border-border rounded-none divide-y divide-border bg-background">
                 {providers.map(provider => {
-                    const models = getProviderModels(provider.id);
+                    const hardcodedModels = getHardcodedModelList(provider.id);
+                    const useHardcoded = hardcodedModels !== null;
+                    const models = useHardcoded
+                        ? hardcodedModels.map(formatHardcodedModel)
+                        : getProviderModels(provider.id);
                     const isLoading = isLoadingModels[provider.id];
                     const selectedModel = selectedModels[provider.id] || models[0]?.id || '';
+                    const isCustomModel = selectedModel === CUSTOM_MODEL_VALUE;
+                    const customInputValue = customModelInputs[provider.id] || '';
 
                     return (
                         <div key={provider.id} className="p-4 hover:bg-muted transition-colors">
@@ -176,7 +212,7 @@ export function ProviderSettings() {
                                         />
                                     </div>
                                     <span className="text-xs text-muted-foreground font-mono">
-                                        {models.length} models • {provider.isCustom ? 'Custom' : 'Built-in'}
+                                        {models.length} {t('providers.models.available', '{count} models').replace('{count}', String(models.length))} • {provider.isCustom ? 'Custom' : 'Built-in'}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -201,66 +237,101 @@ export function ProviderSettings() {
                                 </div>
                             </div>
 
-                            {/* R4 FIX: Inline model selection dropdown */}
+                            {/* Model selection with hardcoded dropdown for Groq, Mistral, Chutes */}
                             {provider.hasApiKey && models.length > 0 && (
-                                <div className="flex items-center gap-2 mt-2">
-                                    <span className="text-xs text-muted-foreground font-mono whitespace-nowrap">
-                                        Available Models:
-                                    </span>
-                                    <Select
-                                        value={selectedModel}
-                                        onValueChange={(value) => handleModelChange(provider.id, value)}
-                                    >
-                                        <SelectTrigger className="h-8 rounded-none text-xs font-mono flex-1 shadow-[2px_2px_0_0]">
-                                            <SelectValue placeholder="Select a model" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {models.map((model) => (
-                                                <SelectItem key={model.id} value={model.id} className="font-mono text-xs">
-                                                    <div className="flex items-center justify-between gap-2">
-                                                        <span>{model.name}</span>
-                                                        {model.isFree && (
-                                                            <span className="text-xs text-green-500">(Free)</span>
-                                                        )}
-                                                        {model.contextLength && (
-                                                            <span className="text-xs text-muted-foreground">
-                                                                {model.contextLength >= 1000000
-                                                                    ? `${Math.round(model.contextLength / 1000)}K ctx`
-                                                                    : `${model.contextLength} ctx`}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 w-8 rounded-none shadow-[2px_2px_0_0]"
-                                        aria-label="Refresh models"
-                                        onClick={() => handleRefreshModels(provider.id)}
-                                        disabled={isLoading}
-                                    >
-                                        <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
-                                    </Button>
+                                <div className="space-y-2 mt-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs text-muted-foreground font-mono whitespace-nowrap">
+                                            {t('providers.models.available')}:
+                                        </span>
+                                        <Select
+                                            value={selectedModel}
+                                            onValueChange={(value) => {
+                                                handleModelChange(provider.id, value);
+                                                // Clear custom input when switching away from custom
+                                                if (value !== CUSTOM_MODEL_VALUE) {
+                                                    setCustomModelInputs(prev => ({ ...prev, [provider.id]: '' }));
+                                                }
+                                            }}
+                                        >
+                                            <SelectTrigger className="h-8 rounded-none text-xs font-mono flex-1 shadow-[2px_2px_0_0]">
+                                                <SelectValue placeholder={t('providers.models.select')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {models.map((model) => (
+                                                    <SelectItem key={model.id} value={model.id} className="font-mono text-xs">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <span>{model.name}</span>
+                                                            {model.isFree && (
+                                                                <span className="text-xs text-green-500">(Free)</span>
+                                                            )}
+                                                            {model.contextLength && (
+                                                                <span className="text-xs text-muted-foreground">
+                                                                    {model.contextLength >= 1000000
+                                                                        ? `${Math.round(model.contextLength / 1000)}K ${t('providers.models.context')}`
+                                                                        : `${model.contextLength} ${t('providers.models.context')}`}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                                {/* Custom model option for OpenAI-compatible providers */}
+                                                {['groq', 'mistral', 'chutes', 'openai-compatible'].includes(provider.type) && (
+                                                    <SelectItem value={CUSTOM_MODEL_VALUE} className="font-mono text-xs text-blue-500">
+                                                        + {t('providers.models.custom')}
+                                                    </SelectItem>
+                                                )}
+                                            </SelectContent>
+                                        </Select>
+                                        {!useHardcoded && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-8 w-8 rounded-none shadow-[2px_2px_0_0]"
+                                                aria-label="Refresh models"
+                                                onClick={() => handleRefreshModels(provider.id)}
+                                                disabled={isLoading}
+                                            >
+                                                <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
+                                            </Button>
+                                        )}
+                                    </div>
+
+                                    {/* Custom model input field */}
+                                    {isCustomModel && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-muted-foreground font-mono">
+                                                {t('providers.models.customLabel')}:
+                                            </span>
+                                            <input
+                                                type="text"
+                                                value={customInputValue}
+                                                onChange={(e) => setCustomModelInputs(prev => ({ ...prev, [provider.id]: e.target.value }))}
+                                                placeholder={t('providers.models.customPlaceholder')}
+                                                className="h-8 px-2 text-xs font-mono rounded-none border border-border bg-background flex-1 shadow-[2px_2px_0_0] focus:outline-none focus:ring-2 focus:ring-primary"
+                                            />
+                                            <span className="text-xs text-muted-foreground font-mono">
+                                                {customInputValue && `${customInputValue}`}
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
-                            {/* R4 FIX: Show selected model details */}
-                            {selectedModel && models.find(m => m.id === selectedModel) && (
+                            {/* Show selected model details */}
+                            {selectedModel && selectedModel !== CUSTOM_MODEL_VALUE && models.find(m => m.id === selectedModel) && (
                                 <div className="mt-2 p-2 bg-muted rounded-none text-xs font-mono border border-border">
                                     {(() => {
                                         const model = models.find(m => m.id === selectedModel)!;
                                         return (
                                             <div className="flex items-center gap-3 text-muted-foreground">
-                                                <span>Selected: <span className="text-foreground">{model.name}</span></span>
+                                                <span>{t('providers.models.selected')}: <span className="text-foreground">{model.name}</span></span>
                                                 {model.contextLength && (
-                                                    <span>Context: {model.contextLength.toLocaleString()} tokens</span>
+                                                    <span>{t('providers.models.context')}: {model.contextLength.toLocaleString()} {t('providers.models.tokens')}</span>
                                                 )}
-                                                {model.supportsStreaming && <span>Streaming: ✓</span>}
-                                                {model.supportsImages && <span>Vision: ✓</span>}
-                                                {model.supportsTools && <span>Tools: ✓</span>}
+                                                {model.supportsStreaming && <span>{t('providers.models.streaming')}: ✓</span>}
+                                                {model.supportsImages && <span>{t('providers.models.vision')}: ✓</span>}
+                                                {model.supportsTools && <span>{t('providers.models.tools')}: ✓</span>}
                                             </div>
                                         );
                                     })()}
@@ -274,22 +345,22 @@ export function ProviderSettings() {
                                         Gemini Capabilities
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-2 py-0.5 bg-green-500 text-white text-xs rounded-none border border-green-600 font-mono">
+                                        <span className="px-2 py-0.5 bg-success text-success-foreground text-xs rounded-none border border-success font-mono">
                                             Text ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-blue-500 text-white text-xs rounded-none border border-blue-600 font-mono">
+                                        <span className="px-2 py-0.5 bg-info text-info-foreground text-xs rounded-none border border-info font-mono">
                                             Images ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-purple-500 text-white text-xs rounded-none border border-purple-600 font-mono">
+                                        <span className="px-2 py-0.5 bg-purple-600 text-white text-xs rounded-none border border-purple-700 font-mono">
                                             Audio ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-orange-500 text-white text-xs rounded-none border border-orange-600 font-mono">
+                                        <span className="px-2 py-0.5 bg-primary text-primary-foreground text-xs rounded-none border border-primary-700 font-mono">
                                             Video ⏳
                                         </span>
-                                        <span className="px-2 py-0.5 bg-cyan-500 text-white text-xs rounded-none border border-cyan-600 font-mono">
+                                        <span className="px-2 py-0.5 bg-cyan-600 text-white text-xs rounded-none border border-cyan-700 font-mono">
                                             Thinking ✓
                                         </span>
-                                        <span className="px-2 py-0.5 bg-pink-500 text-white text-xs rounded-none border border-pink-600 font-mono">
+                                        <span className="px-2 py-0.5 bg-pink-600 text-white text-xs rounded-none border border-pink-700 font-mono">
                                             Grounding ✓
                                         </span>
                                     </div>

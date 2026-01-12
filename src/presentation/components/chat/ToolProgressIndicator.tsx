@@ -124,7 +124,7 @@ function StatusBadge({ status }: { status: 'pending' | 'running' | 'success' | '
         success: {
             icon: CheckCircle2,
             text: 'Complete',
-            className: 'bg-green-500/20 text-green-600',
+            className: 'bg-success/20 text-success',
         },
         error: {
             icon: AlertCircle,
@@ -157,7 +157,7 @@ function ChunkLine({ chunk }: { chunk: StreamingChunk }) {
             case 'error':
                 return 'text-destructive font-medium';
             case 'complete':
-                return 'text-green-600 dark:text-green-400';
+                return 'text-success';
             default:
                 return 'text-foreground/90';
         }

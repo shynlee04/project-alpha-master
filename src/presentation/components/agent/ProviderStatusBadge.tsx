@@ -25,17 +25,17 @@ export function ProviderStatusBadge({ status, className }: ProviderStatusBadgePr
         configured: {
             icon: CheckCircle,
             label: t('providers.status.configured', 'Configured'),
-            color: 'bg-green-500 text-white border-green-600 hover:bg-green-600'
+            color: 'bg-success text-success-foreground border-success hover:bg-success-600'
         },
         missing: {
             icon: AlertTriangle,
             label: t('providers.status.missing', 'Missing Key'),
-            color: 'bg-yellow-500 text-white border-yellow-600 hover:bg-yellow-600'
+            color: 'bg-warning text-warning-foreground border-warning hover:bg-warning-600'
         },
         error: {
             icon: XCircle,
             label: t('providers.status.error', 'Error'),
-            color: 'bg-red-500 text-white border-red-600 hover:bg-red-600'
+            color: 'bg-destructive text-destructive-foreground border-destructive hover:bg-destructive-600'
         },
         loading: {
             icon: Loader2,

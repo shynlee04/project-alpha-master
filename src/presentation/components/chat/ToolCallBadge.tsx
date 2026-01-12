@@ -76,8 +76,8 @@ const STATUS_ICONS: Record<ToolCallStatus, typeof Loader2 | null> = {
 const STATUS_STYLES: Record<ToolCallStatus, string> = {
     pending: 'bg-muted text-muted-foreground animate-pulse',
     running: 'bg-primary/20 text-primary border-primary/50',
-    success: 'bg-green-500/20 text-green-500 border-green-500/50',
-    error: 'bg-red-500/20 text-red-500 border-red-500/50',
+    success: 'bg-success/20 text-success border-success/50',
+    error: 'bg-destructive/20 text-destructive border-destructive/50',
 };
 
 /**

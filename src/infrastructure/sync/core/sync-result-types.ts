@@ -9,11 +9,15 @@
  */
 
 import type { SyncDirection, ConflictStrategy } from './sync-core-types.js';
-import type { FileChangeEvent, FileContent, FileMetadata, FileSyncState } from './file-types.js';
+import type { FileContent, FileMetadata } from './file-types.js';
 
 // Re-export from domain layer (Clean Architecture)
 // See: /src/domain/interfaces/storage-adapter.interface.ts
-export type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
+export type {
+  StorageAdapter,
+  FileChangeCallback,
+  FileChangeEvent,
+} from '@/domain/interfaces/storage-adapter.interface';
 
 // ============================================================================
 // Conflict Types (Infrastructure-specific - keep here)

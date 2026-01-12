@@ -9,17 +9,11 @@
  * Consumers should import directly from @domain/interfaces/storage-adapter.interface
  */
 
-import type { FileSyncState } from './sync-core-types.js';
-
 // Re-export from domain layer (Clean Architecture)
 // See: /src/domain/interfaces/storage-adapter.interface.ts
 export type {
   FileMetadata,
   FileContent,
-  FileChangeEvent
+  FileChangeEvent,
+  FileSyncState,
 } from '@/domain/interfaces/storage-adapter.interface';
-
-/**
- * @deprecated - Use FileSyncState from domain layer
- */
-export type { FileSyncState } from './sync-core-types.js';

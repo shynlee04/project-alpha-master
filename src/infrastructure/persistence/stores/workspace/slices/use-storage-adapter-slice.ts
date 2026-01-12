@@ -25,7 +25,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from 'react';
-import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
+import { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { SyncManager } from '@/infrastructure/sync';
 import type {
   SyncStatus,
@@ -54,7 +54,7 @@ export interface UseStorageAdapterSliceOptions {
   setExclusionPatterns: Dispatch<SetStateAction<string[]>>;
 
   // Refs from loader slice
-  localAdapterRef: RefObject<StorageAdapter | null>;
+  localAdapterRef: RefObject<LocalFSAdapter | null>;
 }
 
 /**

@@ -36,13 +36,13 @@ export function getStatusIcon(status: EventStatus, activity?: ActivityType): Luc
 export function getStatusStyles(status: EventStatus): string {
     switch (status) {
         case 'loading':
-            return 'bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-300'
+            return 'bg-info/10 border-info/20 text-info dark:text-info'
         case 'success':
-            return 'bg-green-500/10 border-green-500/20 text-green-700 dark:text-green-300'
+            return 'bg-success/10 border-success/20 text-success dark:text-success'
         case 'error':
-            return 'bg-red-500/10 border-red-500/20 text-red-700 dark:text-red-300'
+            return 'bg-destructive/10 border-destructive/20 text-destructive dark:text-destructive'
         case 'warning':
-            return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-700 dark:text-yellow-300'
+            return 'bg-warning/10 border-warning/20 text-warning dark:text-warning'
         case 'idle':
         default:
             return 'bg-muted/50 border-muted text-muted-foreground'

@@ -15,10 +15,10 @@ const badgeVariants = cva(
             variant: {
                 default: 'bg-secondary text-secondary-foreground',
                 primary: 'bg-primary text-primary-foreground shadow-colored-primary',
-                success: 'bg-green-600 text-white shadow-colored-success',
-                warning: 'bg-amber-500 text-black shadow-colored-warning',
-                error: 'bg-red-600 text-white shadow-colored-error',
-                info: 'bg-blue-600 text-white shadow-colored-info',
+                success: 'bg-success text-success-foreground shadow-colored-success',
+                warning: 'bg-warning text-warning-foreground shadow-colored-warning',
+                error: 'bg-destructive text-destructive-foreground shadow-colored-error',
+                info: 'bg-info text-info-foreground shadow-colored-info',
                 muted: 'bg-muted text-muted-foreground',
             },
             size: {

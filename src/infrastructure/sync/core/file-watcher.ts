@@ -6,7 +6,7 @@
  * Integrates with File System Access API's watcher functionality.
  */
 
-import type { FileChangeCallback } from './sync-types';
+import type { FileChangeCallback, FileChangeEvent } from './sync-types';
 import { SyncEventBus } from './sync-event-bus';
 
 // ============================================================================

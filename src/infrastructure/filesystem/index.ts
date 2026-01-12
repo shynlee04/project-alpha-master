@@ -79,3 +79,13 @@ export {
 // ============================================================================
 
 export { LocalFSAdapter, localFS } from './local-fs-adapter';
+
+// ============================================================================
+// FSA Storage Adapter (Implements StorageAdapter interface)
+// ============================================================================
+
+export {
+  FSAStorageAdapter,
+  createFSAStorageAdapter,
+  getFSAStorageAdapter,
+} from './fsa-storage-adapter';

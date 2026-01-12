@@ -16,10 +16,10 @@ const dotVariants = cva(
     {
         variants: {
             status: {
-                online: 'bg-green-500',
-                offline: 'bg-zinc-500',
-                busy: 'bg-amber-500',
-                error: 'bg-red-500',
+                online: 'bg-success',
+                offline: 'bg-muted-foreground',
+                busy: 'bg-warning',
+                error: 'bg-destructive',
                 active: 'bg-primary',
             },
             size: {

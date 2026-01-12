@@ -99,11 +99,11 @@ const positionClasses = {
  * Badge color classes
  */
 const colorClasses = {
-  red: 'bg-red-600 text-white',
-  blue: 'bg-blue-600 text-white',
-  green: 'bg-green-600 text-white',
-  yellow: 'bg-yellow-600 text-white',
-  purple: 'bg-purple-600 text-white',
+  red: 'bg-destructive text-destructive-foreground',
+  blue: 'bg-info text-info-foreground',
+  green: 'bg-success text-success-foreground',
+  yellow: 'bg-warning text-warning-foreground',
+  purple: 'bg-purple-600 text-purple-foreground',
 };
 
 /**
@@ -143,7 +143,7 @@ export function NotificationBadge({
         type="button"
         onClick={onClick}
         className={cn(
-          'relative rounded-sm p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800 transition-colors',
+          'relative rounded-sm p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors',
           className
         )}
         aria-label={t('notifications.noNotifications', 'No notifications')}
@@ -206,7 +206,7 @@ export function NotificationBadgeWithLabel({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium text-gray-300">{displayLabel}</span>
+      <span className="text-sm font-medium text-muted-foreground">{displayLabel}</span>
       <NotificationBadge {...badgeProps} />
     </div>
   );
@@ -238,7 +238,7 @@ export function NotificationBadgeDot({
         type="button"
         onClick={onClick}
         className={cn(
-          'relative rounded-sm p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800 transition-colors',
+          'relative rounded-sm p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors',
           className
         )}
         aria-label={t('notifications.noNotifications', 'No notifications')}
@@ -263,7 +263,7 @@ export function NotificationBadgeDot({
       {/* Dot indicator */}
       <span
         className={cn(
-          'absolute top-1 right-1 flex h-3 w-3 rounded-full bg-red-600',
+          'absolute top-1 right-1 flex h-3 w-3 rounded-full bg-destructive',
           'animate-in zoom-in-50 fade-in-50',
           count > 0 && 'animate-pulse'
         )}

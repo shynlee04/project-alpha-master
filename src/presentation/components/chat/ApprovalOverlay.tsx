@@ -116,26 +116,26 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
       case 'high':
         return {
           icon: AlertTriangle,
-          color: 'text-red-400',
-          bgColor: 'bg-red-500/10',
-          borderColor: 'border-red-500/30',
+          color: 'text-destructive',
+          bgColor: 'bg-destructive/10',
+          borderColor: 'border-destructive/30',
           label: t('chat.approvalOverlay.risk.high')
         };
       case 'medium':
         return {
           icon: AlertTriangle,
-          color: 'text-yellow-400',
-          bgColor: 'bg-yellow-500/10',
-          borderColor: 'border-yellow-500/30',
+          color: 'text-warning',
+          bgColor: 'bg-warning/10',
+          borderColor: 'border-warning/30',
           label: t('chat.approvalOverlay.risk.medium')
         };
       case 'low':
       default:
         return {
           icon: CheckCircle,
-          color: 'text-green-400',
-          bgColor: 'bg-green-500/10',
-          borderColor: 'border-green-500/30',
+          color: 'text-success',
+          bgColor: 'bg-success/10',
+          borderColor: 'border-success/30',
           label: t('chat.approvalOverlay.risk.low')
         };
     }
@@ -266,7 +266,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
               className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
             />
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-green-400" />
+              <ShieldCheck className="w-4 h-4 text-success" />
               <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
                 {t('chat.approvalOverlay.sessionTrust', 'Trust for this session')}
               </span>

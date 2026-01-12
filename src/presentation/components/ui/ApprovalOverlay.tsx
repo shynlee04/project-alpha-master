@@ -88,17 +88,17 @@ const RISK_CONFIG: Record<RiskLevel, {
 }> = {
     LOW: {
         icon: ShieldCheck,
-        color: 'text-green-400',
-        bgColor: 'bg-green-500/10',
-        borderColor: 'border-green-500/30',
+        color: 'text-success',
+        bgColor: 'bg-success/10',
+        borderColor: 'border-success/30',
         label: 'approval.risk.low',
         animation: 'risk-low',
     },
     MEDIUM: {
         icon: ShieldQuestion,
-        color: 'text-yellow-400',
-        bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/30',
+        color: 'text-warning',
+        bgColor: 'bg-warning/10',
+        borderColor: 'border-warning/30',
         label: 'approval.risk.medium',
         animation: 'risk-medium',
     },
@@ -112,9 +112,9 @@ const RISK_CONFIG: Record<RiskLevel, {
     },
     CRITICAL: {
         icon: AlertTriangle,
-        color: 'text-red-400',
-        bgColor: 'bg-red-500/10',
-        borderColor: 'border-red-500/30',
+        color: 'text-destructive',
+        bgColor: 'bg-destructive/10',
+        borderColor: 'border-destructive/30',
         label: 'approval.risk.critical',
         animation: 'risk-critical',
     },
@@ -375,9 +375,9 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
                         onClick={handleDeny}
                         className={cn(
                             'flex-1 rounded-none gap-2',
-                            'border-red-500/30',
-                            'hover:bg-red-500/10',
-                            'text-red-400',
+                            'border-destructive/30',
+                            'hover:bg-destructive/10',
+                            'text-destructive',
                             'deny-button'
                         )}
                         aria-label={t('approval.deny', 'Deny this request')}
@@ -391,9 +391,9 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
                         onClick={handleAllowOnce}
                         className={cn(
                             'flex-1 rounded-none gap-2',
-                            'border-yellow-500/30',
-                            'hover:bg-yellow-500/10',
-                            'text-yellow-400',
+                            'border-warning/30',
+                            'hover:bg-warning/10',
+                            'text-warning',
                             'allow-once-button'
                         )}
                         aria-label={t('approval.allowOnce', 'Allow once')}

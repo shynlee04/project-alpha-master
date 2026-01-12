@@ -190,10 +190,21 @@ export const useAppStore = create<AppState>()(
           state.agents = [DEFAULT_AGENT];
         }
 
+        // Ensure all built-in providers exist (merge, don't replace)
+        const { INITIAL_PROVIDERS } = require('./providers/provider-crud-slice');
+        const existingIds = new Set(state.providers?.map(p => p.id) || []);
+        const missingProviders = INITIAL_PROVIDERS.filter(p => !existingIds.has(p.id));
+
+        if (missingProviders.length > 0) {
+          console.log('[AppStore] Adding missing built-in providers:', missingProviders.map(p => p.id));
+          state.providers = [...(state.providers || []), ...missingProviders];
+        }
+
         // Ensure at least one provider exists
         if (!state.providers || state.providers.length === 0) {
-          console.log('[AppStore] No providers found, this should not happen');
-          // Providers are initialized in the slice, so this shouldn't occur
+          console.log('[AppStore] No providers found, restoring all built-in providers');
+          state.providers = INITIAL_PROVIDERS;
+          state.activeProviderId = INITIAL_PROVIDERS[0].id;
         }
 
         // Ensure activeProviderId points to valid provider

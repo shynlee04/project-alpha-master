@@ -76,14 +76,14 @@ export function ProgressIndicator({
           className={cn(
             "h-full transition-all duration-300 ease-out",
             status === "loading" && "bg-primary animate-pulse",
-            status === "success" && "bg-green-500",
-            status === "error" && "bg-red-500",
+            status === "success" && "bg-success",
+            status === "error" && "bg-destructive",
             status === "idle" && "bg-primary"
           )}
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
-      
+
       {/* Status Icon */}
       <div className="flex items-center gap-2">
         {status === "loading" && (
@@ -96,16 +96,16 @@ export function ProgressIndicator({
         )}
         {status === "success" && (
           <>
-            <CheckCircle2 className="w-4 h-4 text-green-500" />
-            <span className="text-sm text-green-500 font-medium">
+            <CheckCircle2 className="w-4 h-4 text-success" />
+            <span className="text-sm text-success font-medium">
               {t("progress.ready")}
             </span>
           </>
         )}
         {status === "error" && (
           <>
-            <AlertCircle className="w-4 h-4 text-red-500" />
-            <span className="text-sm text-red-500 font-medium">
+            <AlertCircle className="w-4 h-4 text-destructive" />
+            <span className="text-sm text-destructive font-medium">
               Error
             </span>
           </>

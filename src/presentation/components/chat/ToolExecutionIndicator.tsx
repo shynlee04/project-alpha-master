@@ -76,13 +76,13 @@ function StatusIcon({ status, compact }: { status: ToolExecutionStatus; compact:
 
   switch (status) {
     case 'pending':
-      return <Clock className={cn(size, 'text-gray-400')} />;
+      return <Clock className={cn(size, 'text-muted-foreground')} />;
     case 'executing':
-      return <Loader2 className={cn(size, 'text-blue-400 animate-spin')} />;
+      return <Loader2 className={cn(size, 'text-info animate-spin')} />;
     case 'completed':
-      return <CheckCircle2 className={cn(size, 'text-green-400')} />;
+      return <CheckCircle2 className={cn(size, 'text-success')} />;
     case 'failed':
-      return <XCircle className={cn(size, 'text-red-400')} />;
+      return <XCircle className={cn(size, 'text-destructive')} />;
     default:
       return null;
   }
@@ -115,13 +115,13 @@ function getStatusClasses(status: ToolExecutionStatus): string {
 
   switch (status) {
     case 'pending':
-      return cn(base, size, 'bg-gray-800/50 border-gray-700 text-gray-400');
+      return cn(base, size, 'bg-muted/50 border-border text-muted-foreground');
     case 'executing':
-      return cn(base, size, 'bg-blue-900/30 border-blue-700/50 text-blue-300 anim-status-pulse');
+      return cn(base, size, 'bg-info/30 border-info/50 text-info anim-status-pulse');
     case 'completed':
-      return cn(base, size, 'bg-green-900/20 border-green-700/30 text-green-300 anim-tool-call-appear');
+      return cn(base, size, 'bg-success/20 border-success/30 text-success anim-tool-call-appear');
     case 'failed':
-      return cn(base, size, 'bg-red-900/20 border-red-700/30 text-red-300');
+      return cn(base, size, 'bg-destructive/20 border-destructive/30 text-destructive');
     default:
       return base;
   }
@@ -160,21 +160,21 @@ export function ToolExecutionIndicator({
       </span>
 
       {/* Separator */}
-      <span className="text-gray-600">·</span>
+      <span className="text-muted-foreground">·</span>
 
       {/* Status icon */}
       <StatusIcon status={status} compact={compact} />
 
       {/* Status text */}
-      <span className={cn(textSize, 'text-gray-400')}>
+      <span className={cn(textSize, 'text-muted-foreground')}>
         {statusText}
       </span>
 
       {/* Duration */}
       {duration !== undefined && status === 'completed' && (
         <>
-          <span className="text-gray-600">·</span>
-          <span className={cn(textSize, 'text-gray-500')}>
+          <span className="text-muted-foreground">·</span>
+          <span className={cn(textSize, 'text-muted-foreground')}>
             {duration}ms
           </span>
         </>
@@ -182,7 +182,7 @@ export function ToolExecutionIndicator({
 
       {/* Error message */}
       {error && status === 'failed' && (
-        <span className={cn(textSize, 'text-red-400 ml-1')}>
+        <span className={cn(textSize, 'text-destructive ml-1')}>
           : {error}
         </span>
       )}

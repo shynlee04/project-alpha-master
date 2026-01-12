@@ -31,7 +31,7 @@ import type { MigrationState } from './providers/use-migration-state';
  * Current schema version
  * Increment this when introducing breaking changes to persisted state
  */
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 /**
  * Migration function type
@@ -86,6 +86,27 @@ const MIGRATIONS: Migration[] = [
       console.log('[SchemaMigration] v1: Initial version tracking established');
     },
     estimatedDuration: 10,
+  },
+
+  // Version 2: Add missing built-in providers (Groq, Mistral, Chutes)
+  {
+    version: 2,
+    description: 'Add Groq, Mistral AI, and Chutes.ai providers',
+    migrate: (state) => {
+      const { INITIAL_PROVIDERS } = require('./providers/provider-crud-slice');
+      const existingIds = new Set(state.providers.map(p => p.id));
+
+      // Add any missing built-in providers
+      const missingProviders = INITIAL_PROVIDERS.filter(p => !existingIds.has(p.id));
+
+      if (missingProviders.length > 0) {
+        console.log('[SchemaMigration] v2: Adding missing providers:', missingProviders.map(p => p.id));
+        state.providers = [...state.providers, ...missingProviders];
+      } else {
+        console.log('[SchemaMigration] v2: All built-in providers already present');
+      }
+    },
+    estimatedDuration: 50,
   },
 
   // Future migrations will be added here:

@@ -70,9 +70,9 @@ export function OfflineIndicator({
   }
 
   const statusColors = {
-    online: 'bg-green-500 border-green-600',
-    offline: 'bg-red-500 border-red-600',
-    unknown: 'bg-yellow-500 border-yellow-600',
+    online: 'bg-success border-success',
+    offline: 'bg-destructive border-destructive',
+    unknown: 'bg-warning border-warning',
   }
 
   return (
@@ -193,7 +193,7 @@ export function CompactOfflineIndicator({
     <div
       className={cn(
         'fixed top-4 right-4 z-[9999]',
-        'bg-red-500 border-2 border-red-600',
+        'bg-destructive border-2 border-destructive',
         'p-2',
         'shadow-lg',
         className
@@ -217,9 +217,9 @@ export function OfflineStatusDot({
   const { status } = useOfflineStatus()
 
   const statusColors = {
-    online: 'bg-green-500',
-    offline: 'bg-red-500',
-    unknown: 'bg-yellow-500',
+    online: 'bg-success',
+    offline: 'bg-destructive',
+    unknown: 'bg-warning',
   }
 
   return (
@@ -252,7 +252,7 @@ export function OfflineStatusDot({
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
-          className="text-gray-900 dark:text-gray-100"
+          className="text-foreground"
         />
       </svg>
     </div>
