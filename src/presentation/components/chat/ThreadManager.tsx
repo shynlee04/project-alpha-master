@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { Plus, Folder, MessageSquare, Trash2, Edit2, Check, X, Archive } from 'lucide-react';
 import { useThreadManager } from '@/presentation/hooks/useThreadManager';
 import { AlertDialog } from '@/presentation/components/ui/alert-dialog';
+import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 import type { WorkspaceType } from '@/domain/entities/chat';
 
 /**
@@ -251,7 +252,7 @@ export function ThreadManager({
                     />
                   ) : (
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{thread.title}</p>
+                      <TruncatedText text={thread.title} className="font-medium" />
                       <p className="text-xs text-muted-foreground">
                         {thread.messageCount} messages · Updated {new Date(thread.updatedAt).toLocaleDateString()}
                       </p>
@@ -352,7 +353,7 @@ export function ThreadManager({
               >
                 <MessageSquare className="w-5 h-5 text-muted-foreground" />
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{thread.title}</p>
+                  <TruncatedText text={thread.title} className="font-medium" />
                   <p className="text-xs text-muted-foreground">
                     {thread.messageCount} messages · Archived
                   </p>

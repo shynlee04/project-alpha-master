@@ -47,6 +47,10 @@ import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/projec
 // P0-3: File Sync Service Initialization
 import { useFileSyncService } from '@/lib/filesync/hooks';
 import type { NotesFileSyncService } from '@/infrastructure/sync/workspace-services/notes/notes-file-sync-service';
+// CHAT-006: Thread management
+import { ThreadManager } from '@/presentation/components/chat/ThreadManager';
+import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { useShallow } from 'zustand/react/shallow';
 
 // P2-7: Import Knowledge → Notes event types
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
@@ -110,6 +114,22 @@ export const NotesPage = React.memo(function NotesPage() {
     // UX-02: Mobile content/nav tabs - moved from conditional to fix Rules of Hooks violation
     const [mobileContentTab, setMobileContentTab] = useState('all');
     const [mobileNavTab, setMobileNavTab] = useState('notes');
+
+    // CHAT-006: Get thread info for mobile layout
+    const { activeConversationId, setActiveThread } = useConversationStore(
+        useShallow((state) => ({
+            activeConversationId: state.activeConversationId,
+            setActiveThread: state.setActiveThread,
+        }))
+    );
+
+    // CHAT-006: Get active thread count for mobile badge
+    const mobileThreadCount = useConversationStore((state) => {
+        const threads = Object.values(state.threads).filter(
+            t => t.status === 'active' && t.conversationId === activeConversationId
+        );
+        return threads.length;
+    });
 
     // P2-4: Panel collapse state (persisted in IDE store)
     const noteSidebarCollapsed = useIDEStore((s) => s.panelCollapsed['notes-sidebar'] ?? false);
@@ -567,6 +587,7 @@ export const NotesPage = React.memo(function NotesPage() {
                     activeNavTab={mobileNavTab}
                     onNavTabChange={setMobileNavTab}
                     onCreateNote={handleCreateNote}
+                    threadCount={mobileThreadCount}
                 >
                     {/* Render content based on nav tab */}
                     {mobileNavTab === 'notes' && (
@@ -585,6 +606,18 @@ export const NotesPage = React.memo(function NotesPage() {
                                 projectName={project?.name || projectId}
                                 workspaceType="notes"
                                 className="h-full"
+                            />
+                        </div>
+                    )}
+                    {mobileNavTab === 'threads' && (
+                        <div className="h-full">
+                            <ThreadManager
+                                workspaceType="notes"
+                                conversationId={activeConversationId || undefined}
+                                onThreadSelect={(threadId) => {
+                                    setActiveThread(threadId);
+                                    setMobileNavTab('ai'); // Switch to chat after selecting thread
+                                }}
                             />
                         </div>
                     )}
@@ -656,12 +689,13 @@ export const NotesPage = React.memo(function NotesPage() {
             )}
 
             <ResizablePanelGroup direction="horizontal" className="h-full items-stretch">
-                {/* Note Sidebar - 20% (min 15%, max 30%) - P2-2: Collapsible */}
+                {/* Note Sidebar - 20% (min 18%, max 35%) - Content-aware min 220px for controls */}
                 <ResizablePanel
                     id="notes-sidebar"
                     defaultSize={20}
-                    minSize={15}
-                    maxSize={30}
+                    minSize={18}
+                    maxSize={35}
+                    minPixelSize={220}
                     collapsible={true}
                     collapsedSize={3}
                     onCollapse={(collapsed) => setPanelCollapsed('notes-sidebar', collapsed)}
@@ -710,11 +744,12 @@ export const NotesPage = React.memo(function NotesPage() {
 
                 <ResizableHandle withHandle />
 
-                {/* Main Editor Area - 50% (E1-1: Reduced from 80% to accommodate chat) */}
+                {/* Main Editor Area - 50% (min 35%) - Content-aware min 400px for Monaco editor */}
                 <ResizablePanel
                     id="notes-editor"
                     defaultSize={50}
-                    minSize={30}
+                    minSize={35}
+                    minPixelSize={400}
                 >
                     <div className="h-full bg-background flex flex-col">
                         {activeNote ? (
@@ -738,13 +773,14 @@ export const NotesPage = React.memo(function NotesPage() {
 
                 <ResizableHandle withHandle />
 
-                {/* E1-1: Chat Panel - 30% (min 20%, max 40%, collapsible) */}
+                {/* Chat Panel - 30% (min 22%, max 45%) - Content-aware min 280px for chat UI */}
                 {notesChatVisible && (
                     <ResizablePanel
                         id="notes-chat"
                         defaultSize={30}
-                        minSize={20}
-                        maxSize={40}
+                        minSize={22}
+                        maxSize={45}
+                        minPixelSize={280}
                         collapsible={true}
                         collapsedSize={3}
                         onCollapse={(collapsed) => setPanelCollapsed('notes-chat', collapsed)}

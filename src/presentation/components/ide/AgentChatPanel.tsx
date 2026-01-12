@@ -34,7 +34,6 @@ import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
 
 // CHAT-006: Thread Manager UI Integration
 import { ThreadManager } from '../chat/ThreadManager';
-import { MessageSquare, X } from 'lucide-react';
 
 // Import sub-components
 import {
@@ -81,8 +80,9 @@ export function AgentChatPanel({
     const { t } = useTranslation();
     const { isMobile, isTablet } = useDeviceType();
 
-    // CHAT-006: Thread sidebar state
-    const [threadSidebarOpen, setThreadSidebarOpen] = useState(false);
+    // CHAT-006: Chat view state - 'chat' for messages, 'threads' for thread management
+    // Auto-transition to 'chat' when messages exist
+    const [chatViewState, setChatViewState] = useState<'chat' | 'threads'>('chat');
 
     // Get selected agent from Zustand store
     const { activeAgentId, selectAgentForWorkspace } = useAgentSelection();
@@ -597,48 +597,35 @@ export function AgentChatPanel({
         return thread?.title || null;
     });
 
-    return (
-        <div className="flex flex-row h-full bg-surface-dark relative">
-            {/* CHAT-006: Thread Manager Sidebar */}
-            {threadSidebarOpen && (
-                <div className="w-80 border-r border-border bg-surface-darker flex-shrink-0">
-                    <div className="flex items-center justify-between p-3 border-b border-border">
-                        <div className="flex items-center gap-2">
-                            <MessageSquare className="w-4 h-4 text-muted-foreground" />
-                            <h3 className="font-mono text-sm font-bold">THREADS</h3>
-                        </div>
-                        <button
-                            onClick={() => setThreadSidebarOpen(false)}
-                            className="p-1 hover:bg-muted rounded-sm transition-colors"
-                            title="Close thread sidebar"
-                        >
-                            <X className="w-4 h-4 text-muted-foreground" />
-                        </button>
-                    </div>
-                    <ThreadManager
-                        workspaceType={workspaceType}
-                        conversationId={activeConversationId || undefined}
-                        onThreadSelect={() => {
-                            // Thread is already selected by ThreadManager's internal handler
-                            // Keep sidebar open for further navigation
-                        }}
-                    />
-                </div>
-            )}
+    // Get thread count for tab indicator
+    const threadCount = useConversationStore((state) => {
+        const threads = Object.values(state.threads).filter(
+            t => t.status === 'active' && t.conversationId === activeConversationId
+        );
+        return threads.length;
+    });
 
-            {/* Main Chat Area */}
-            <div className="flex flex-col flex-1 min-w-0">
-                {/* Header */}
-                <AgentChatHeader
-                    modelId={modelId}
-                    toolsAvailable={toolsAvailable}
-                    isEnhancementEnabled={isEnhancementEnabled}
-                    onToggleEnhancement={toggleEnhancement}
-                    onClear={handleClear}
-                    onCaptureDebugSession={handleCaptureDebugSession}
-                    activeThreadName={activeThreadTitle}
-                    onToggleThreadSidebar={() => setThreadSidebarOpen(!threadSidebarOpen)}
-                />
+    // CHAT-006: Handle thread selection from ThreadManager
+    const handleThreadSelect = (threadId: string) => {
+        setActiveThread(threadId);
+        setChatViewState('chat'); // Return to chat view after selecting a thread
+    };
+
+    return (
+        <div className="flex flex-col h-full bg-surface-dark relative">
+            {/* Header */}
+            <AgentChatHeader
+                modelId={modelId}
+                toolsAvailable={toolsAvailable}
+                isEnhancementEnabled={isEnhancementEnabled}
+                onToggleEnhancement={toggleEnhancement}
+                onClear={handleClear}
+                onCaptureDebugSession={handleCaptureDebugSession}
+                activeThreadName={activeThreadTitle}
+                chatViewState={chatViewState}
+                setChatViewState={setChatViewState}
+                threadCount={threadCount}
+            />
 
             {/* Status */}
             <AgentChatStatus
@@ -647,34 +634,51 @@ export function AgentChatPanel({
                 providerId={providerId}
             />
 
-            {/* Auto-Approve Settings */}
-            <AutoApproveSettings className="mx-2 mt-2" compact />
+            {/* Auto-Approve Settings - only show in chat view */}
+            {chatViewState === 'chat' && (
+                <AutoApproveSettings className="mx-2 mt-2" compact />
+            )}
 
-            {/* Content */}
+            {/* Content - Tabbed View */}
             <div className="flex-1 overflow-hidden relative">
                 {/* Enhancement Blocking UI */}
                 <AgentChatEnhancingUI isEnhancing={isEnhancingPrompt} />
 
-                <EnhancedChatInterface
-                    messages={displayMessages}
-                    onSendMessage={handleSendMessage}
-                    isTyping={isLoading}
-                    onPreviewArtifact={handlePreviewArtifact}
-                    onSaveArtifact={handleSaveArtifact}
-                    onScroll={handleScroll}
-                    setScrollRef={scrollRef}
-                    autoScroll={chatSettings.autoScroll} // E1-8: Workspace-specific auto-scroll
-                />
+                {/* Chat View */}
+                {chatViewState === 'chat' && (
+                    <EnhancedChatInterface
+                        messages={displayMessages}
+                        onSendMessage={handleSendMessage}
+                        isTyping={isLoading}
+                        onPreviewArtifact={handlePreviewArtifact}
+                        onSaveArtifact={handleSaveArtifact}
+                        onScroll={handleScroll}
+                        setScrollRef={scrollRef}
+                        autoScroll={chatSettings.autoScroll}
+                    />
+                )}
+
+                {/* Threads View */}
+                {chatViewState === 'threads' && (
+                    <div className="h-full overflow-y-auto">
+                        <ThreadManager
+                            workspaceType={workspaceType}
+                            conversationId={activeConversationId || undefined}
+                            onThreadSelect={handleThreadSelect}
+                        />
+                    </div>
+                )}
             </div>
 
-            {/* Approvals */}
-            <AgentChatApprovals
-                pendingApprovals={pendingApprovals}
-                onApprove={handleApprove}
-                onReject={handleReject}
-                className="mx-2"
-            />
-            </div>
+            {/* Approvals - only show in chat view */}
+            {chatViewState === 'chat' && (
+                <AgentChatApprovals
+                    pendingApprovals={pendingApprovals}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    className="mx-2"
+                />
+            )}
         </div>
     );
 }

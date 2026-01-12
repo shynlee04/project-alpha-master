@@ -19,6 +19,9 @@ import { useProjectContextSafe } from '@/lib/workspace/ProjectContext';
 import { cn } from '@/lib/utils';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
+// CHAT-006: Chat view states for tabbed interface
+type ChatViewState = 'chat' | 'threads';
+
 // E1-11: Workspace configuration for chat header switcher
 const WORKSPACE_CONFIG: Record<
     WorkspaceType,
@@ -53,9 +56,11 @@ interface AgentChatHeaderProps {
     onToggleEnhancement: () => void;
     onClear: () => void;
     onCaptureDebugSession: () => void;
-    // CHAT-006: Thread display and sidebar toggle
+    // CHAT-006: Thread display and tabbed view state
     activeThreadName?: string | null;
-    onToggleThreadSidebar?: () => void;
+    chatViewState?: ChatViewState;
+    setChatViewState?: (state: ChatViewState) => void;
+    threadCount?: number;
 }
 
 /**
@@ -72,7 +77,9 @@ export function AgentChatHeader({
     onClear,
     onCaptureDebugSession,
     activeThreadName,
-    onToggleThreadSidebar
+    chatViewState = 'chat',
+    setChatViewState,
+    threadCount = 0,
 }: AgentChatHeaderProps) {
     const { t } = useTranslation();
 
@@ -95,23 +102,71 @@ export function AgentChatHeader({
     const currentWorkspaceConfig = WORKSPACE_CONFIG[currentWorkspace as WorkspaceType];
 
     return (
-        <div className="h-10 px-4 flex items-center justify-between border-b border-border-dark bg-surface-darker">
-            <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-primary/20 flex items-center justify-center border border-primary/30 flex-shrink-0">
-                    <Bot className="w-3.5 h-3.5 text-primary" />
+        <div className="flex flex-col bg-surface-darker">
+            {/* CHAT-006: Tabbed View Interface */}
+            {setChatViewState && (
+                <div className="flex items-center border-b border-border-dark">
+                    <button
+                        onClick={() => setChatViewState('chat')}
+                        className={cn(
+                            'px-4 py-2 text-xs font-medium font-mono transition-colors',
+                            'hover:bg-muted/30 focus:outline-none',
+                            chatViewState === 'chat'
+                                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                                : 'text-muted-foreground'
+                        )}
+                    >
+                        <span className="flex items-center gap-1.5">
+                            <Bot className="w-3 h-3" />
+                            CHAT
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => setChatViewState('threads')}
+                        className={cn(
+                            'px-4 py-2 text-xs font-medium font-mono transition-colors',
+                            'hover:bg-muted/30 focus:outline-none',
+                            chatViewState === 'threads'
+                                ? 'text-primary border-b-2 border-primary bg-primary/5'
+                                : 'text-muted-foreground'
+                        )}
+                    >
+                        <span className="flex items-center gap-1.5">
+                            <MessageSquare className="w-3 h-3" />
+                            THREADS
+                            {threadCount > 0 && (
+                                <span className={cn(
+                                    'px-1.5 py-0.5 text-[10px] rounded-none',
+                                    chatViewState === 'threads'
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'bg-muted text-muted-foreground'
+                                )}>
+                                    {threadCount}
+                                </span>
+                            )}
+                        </span>
+                    </button>
                 </div>
-                <TruncatedText
-                    text="AI AGENT"
-                    className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel max-w-[80px]"
-                />
-                {toolsAvailable && (
+            )}
+
+            {/* Original Header Content */}
+            <div className={cn(
+                'h-10 px-4 flex items-center justify-between',
+                !setChatViewState && 'border-b border-border-dark'
+            )}>
+                <div className="flex items-center gap-2">
                     <TruncatedText
-                        text="TOOLS READY"
-                        className="text-[10px] text-green-400 font-pixel max-w-[80px]"
+                        text={activeThreadName || 'AI AGENT'}
+                        className="text-xs font-bold text-muted-foreground tracking-wider uppercase font-pixel max-w-[120px]"
                     />
-                )}
-            </div>
-            <div className="flex items-center gap-2">
+                    {toolsAvailable && (
+                        <TruncatedText
+                            text="TOOLS READY"
+                            className="text-[10px] text-green-400 font-pixel max-w-[80px]"
+                        />
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
                 {/* E1-11: Workspace Switcher (compact for chat header) */}
                 {enabledWorkspaces.length > 1 && (
                     <DropdownMenu.Root>
@@ -180,24 +235,6 @@ export function AgentChatHeader({
                     </DropdownMenu.Root>
                 )}
 
-                {/* CHAT-006: Thread Toggle Button */}
-                {onToggleThreadSidebar && (
-                    <button
-                        onClick={onToggleThreadSidebar}
-                        title={activeThreadName ? `Thread: ${activeThreadName}` : 'Open thread sidebar'}
-                        className={cn(
-                            'flex items-center gap-1 px-2 py-1 bg-muted/20 border border-border/60',
-                            'font-mono text-[10px] hover:bg-muted/30 hover:border-border/80 transition-colors',
-                            'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring/50'
-                        )}
-                    >
-                        <MessageSquare className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-foreground max-w-[80px] truncate hidden sm:inline">
-                            {activeThreadName || 'Threads'}
-                        </span>
-                    </button>
-                )}
-
                 {/* Prompt Enhancement Toggle */}
                 <div className="flex items-center gap-2 border-l border-border-dark pl-3">
                     <Switch
@@ -238,6 +275,7 @@ export function AgentChatHeader({
                     Clear
                 </button>
             </div>
+        </div>
         </div>
     );
 }

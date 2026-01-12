@@ -11,7 +11,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Folder, Search, Sparkles, FileText, Star, Tag, Plus } from 'lucide-react'
+import { Folder, Search, Sparkles, FileText, Star, Tag, Plus, MessageSquare } from 'lucide-react'
 
 // Tab configuration
 const CONTENT_TABS = [
@@ -25,6 +25,7 @@ const BOTTOM_NAV_TABS = [
   { id: 'notes', label: 'Notes', icon: <Folder className="w-5 h-5" />, badge: null },
   { id: 'search', label: 'Search', icon: <Search className="w-5 h-5" />, badge: null },
   { id: 'ai', label: 'AI', icon: <Sparkles className="w-5 h-5" />, badge: null },
+  { id: 'threads', label: 'Threads', icon: <MessageSquare className="w-5 h-5" />, badge: null },
 ] as const
 
 interface NotesMobileLayoutProps {
@@ -42,6 +43,8 @@ interface NotesMobileLayoutProps {
   title?: string
   /** Callback for create new note action */
   onCreateNote?: () => void
+  /** Thread count for badge display */
+  threadCount?: number
 }
 
 export function NotesMobileLayout({
@@ -52,6 +55,7 @@ export function NotesMobileLayout({
   onNavTabChange,
   title = 'Notes',
   onCreateNote,
+  threadCount = 0,
 }: NotesMobileLayoutProps) {
   const [internalContentTab, setInternalContentTab] = useState(activeContentTab)
   const [internalNavTab, setInternalNavTab] = useState(activeNavTab)
@@ -158,6 +162,12 @@ export function NotesMobileLayout({
                 {tab.badge && (
                   <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-none border border-background flex items-center justify-center">
                     {tab.badge}
+                  </span>
+                )}
+                {/* Dynamic badge for threads tab */}
+                {tab.id === 'threads' && threadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-none border border-background flex items-center justify-center">
+                    {threadCount}
                   </span>
                 )}
               </div>

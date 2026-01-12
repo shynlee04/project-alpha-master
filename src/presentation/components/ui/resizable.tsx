@@ -30,6 +30,8 @@ type ResizablePanelProps = React.HTMLAttributes<HTMLDivElement> & {
   id?: string
   collapsible?: boolean
   onCollapse?: (collapsed: boolean) => void
+  /** Absolute minimum width in pixels (for horizontal) or height (for vertical) */
+  minPixelSize?: number
 }
 
 type ResizableHandleProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -58,6 +60,8 @@ type PanelConfig = {
   collapsedSize?: number
   collapsible?: boolean
   onCollapse?: (collapsed: boolean) => void
+  /** Absolute minimum width/height in pixels for content-aware sizing */
+  minPixelSize?: number
 }
 
 const ResizableContext = React.createContext<ResizableContextType | null>(null)
@@ -340,15 +344,27 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       const rightMin = rightConfig?.minSize ?? 5
       const rightMax = rightConfig?.maxSize ?? 100
 
+      // Calculate pixel-based minimums as percentages
+      const leftPixelMinPercent = leftConfig?.minPixelSize
+        ? (leftConfig.minPixelSize / containerSize) * 100
+        : 0
+      const rightPixelMinPercent = rightConfig?.minPixelSize
+        ? (rightConfig.minPixelSize / containerSize) * 100
+        : 0
+
+      // Use the larger of percentage or pixel-based minimum
+      const effectiveLeftMin = Math.max(leftMin, leftPixelMinPercent)
+      const effectiveRightMin = Math.max(rightMin, rightPixelMinPercent)
+
       // Clamp to constraints
-      if (newLeft < leftMin) {
-        const diff = leftMin - newLeft
-        newLeft = leftMin
+      if (newLeft < effectiveLeftMin) {
+        const diff = effectiveLeftMin - newLeft
+        newLeft = effectiveLeftMin
         newRight = newRight + diff
       }
-      if (newRight < rightMin) {
-        const diff = rightMin - newRight
-        newRight = rightMin
+      if (newRight < effectiveRightMin) {
+        const diff = effectiveRightMin - newRight
+        newRight = effectiveRightMin
         newLeft = newLeft - diff
       }
       if (newLeft > leftMax) {
@@ -363,7 +379,7 @@ const ResizablePanelGroup = React.forwardRef<ImperativePanelGroupHandle, Resizab
       }
 
       // Final bounds check
-      if (newLeft < leftMin || newRight < rightMin) return
+      if (newLeft < effectiveLeftMin || newRight < effectiveRightMin) return
 
       // Update layout
       const newLayout = [...startLayout]
@@ -540,6 +556,7 @@ function ResizablePanel({
   onCollapse,
   id,
   children,
+  minPixelSize,
   _size,
   _index,
   ...props
@@ -558,10 +575,11 @@ function ResizablePanel({
         maxSize,
         collapsedSize,
         collapsible,
-        onCollapse
+        onCollapse,
+        minPixelSize
       })
     }
-  }, [context, _index, defaultSize, minSize, maxSize, collapsedSize, collapsible, onCollapse])
+  }, [context, _index, defaultSize, minSize, maxSize, collapsedSize, collapsible, onCollapse, minPixelSize])
 
   return (
     <div
