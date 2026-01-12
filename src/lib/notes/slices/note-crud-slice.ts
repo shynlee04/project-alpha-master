@@ -68,16 +68,31 @@ export const createNoteCRUDSlice: StateCreator<
     },
 
     /**
-     * 45-04: Load notes from ALL projects (browser mode)
-     * Used when user wants to see all notes across all projects
+     * 45-04: Load notes for browser mode (isolated to browser-mode project)
+     * 
+     * FIX C-01: Previously loaded ALL projects' notes and set currentProjectId=null,
+     * causing state boundary failure. Now properly isolates to browser-mode project.
+     * 
+     * @governance Team-B-Debug-2026-01-14
      */
     loadAllNotes: async () => {
         set({ loading: true, error: null });
 
         try {
-            // Load all notes regardless of projectId
+            // FIX C-01: Import browser mode utilities
+            const { getOrCreateBrowserModeProject, BROWSER_MODE_PROJECT_ID } = await import('@/lib/workspace/browser-mode');
+            
+            // Ensure browser mode project exists
+            const browserProject = await getOrCreateBrowserModeProject();
+            
+            if (!browserProject) {
+                throw new Error('Failed to create browser mode project');
+            }
+
+            // Load ONLY browser-mode project notes (isolated, not ALL projects)
             const notes = await db.notes
-                .toCollection()
+                .where('projectId')
+                .equals(BROWSER_MODE_PROJECT_ID)
                 .sortBy('order');
 
             const notesMap = new Map<string, NoteRecord>();
@@ -87,25 +102,43 @@ export const createNoteCRUDSlice: StateCreator<
                 notes: notesMap,
                 notesArray: notes,
                 loading: false,
-                currentProjectId: null, // No specific project in browser mode
+                currentProjectId: BROWSER_MODE_PROJECT_ID, // FIX: Set to browser-mode project, not null
             });
 
-            console.log(`[NoteStore-CRUD] Loaded ${notes.length} notes from all projects (browser mode)`);
+            console.log(`[NoteStore-CRUD] Loaded ${notes.length} notes for browser mode project`);
         } catch (error) {
             set({ error: (error as Error).message, loading: false });
-            console.error('[NoteStore-CRUD] Failed to load all notes:', error);
+            console.error('[NoteStore-CRUD] Failed to load browser mode notes:', error);
         }
     },
 
     /**
      * Create a new note
+     * 
+     * FIX C-02: Previously threw error when currentProjectId was null in browser mode.
+     * Now auto-creates browser mode project if needed.
+     * 
      * @param params - Optional note creation parameters
      * @returns Created note ID
+     * @governance Team-B-Debug-2026-01-14
      */
     createNote: async (params?: CreateNoteParams) => {
-        const { currentProjectId } = get();
+        let { currentProjectId } = get();
+        
+        // FIX C-02: Auto-create browser mode project if no project selected
         if (!currentProjectId) {
-            throw new Error('No project selected');
+            const { getOrCreateBrowserModeProject, BROWSER_MODE_PROJECT_ID } = await import('@/lib/workspace/browser-mode');
+            const browserProject = await getOrCreateBrowserModeProject();
+            
+            if (browserProject) {
+                currentProjectId = BROWSER_MODE_PROJECT_ID;
+                set({ currentProjectId });
+                console.log('[NoteStore-CRUD] Auto-created browser mode project for note creation');
+            }
+        }
+        
+        if (!currentProjectId) {
+            throw new Error('No project selected and browser mode unavailable');
         }
 
         const now = Date.now();

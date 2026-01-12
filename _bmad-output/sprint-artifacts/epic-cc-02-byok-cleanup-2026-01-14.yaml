@@ -1,0 +1,311 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC CC-02: BYOK Cleanup (Correct-Course)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-CC-02"
+name: "BYOK Vault System Cleanup - Architectural Remediation"
+type: "correct-course"
+category: "architectural"
+workflow: "correct-course/architectural-conflict"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-14T19:00:00+07:00"
+updated_at: "2026-01-14T19:00:00+07:00"
+priority: "P0"
+team: "Team A"
+estimated_duration: "2-3 days"
+status: "READY"
+parallel_with: "EPIC-CC-01"
+
+# Source References
+source_documents:
+  - "_bmad-output/architectural-scan/shards/ARCH-INDEX.md"
+  - "_bmad-output/architectural-scan/shards/shard-03-01-byok.md"
+  - "_bmad-output/architectural-scan/shards/shard-05-remediation-grouping.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  The BYOK (Bring Your Own Key) system is mostly solid but has these issues:
+  
+  1. **God Credentials Slice** (P0): `provider-credentials-slice.ts` is 396 lines
+     mixing 3 concerns: CRUD operations, migration logic, vault integration.
+     
+  2. **Migration Code in Production** (P1): `migrate-api-keys-to-vault.ts` (388 lines)
+     is legacy code that should be removed or archived.
+     
+  3. **Missing Zod Validation** (P1): No input validation schemas for credentials.
+     Uses `Record<string, unknown>` in provider config types.
+     
+  4. **Missing projectId in Tool Logs** (P0): `ToolExecutionLogRecord` doesn't
+     track which project triggered the tool execution.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  must_have:
+    - "provider-credentials-slice.ts split into focused slices (<200 lines each)"
+    - "Zod validation schemas for all credential inputs"
+    - "ToolExecutionLogRecord includes projectId field"
+    - "Zero 'as any' casts in provider credential code"
+    - "TypeScript compilation succeeds with 0 errors"
+    
+  should_have:
+    - "Migration code archived or removed"
+    - "Audit logging for key usage (basic)"
+    
+  nice_to_have:
+    - "Key usage statistics display"
+    - "Workspace-specific key overrides (future feature)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (4 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  # ─────────────────────────────────────────────────────────────────────────
+  # BYOK-01: Split Provider Credentials God Slice
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "BYOK-01"
+    name: "Split Provider Credentials God Slice"
+    priority: "P0"
+    estimation: "1 day"
+    status: "READY"
+    
+    description: |
+      The provider-credentials-slice.ts (396 lines) mixes:
+      - API key CRUD operations
+      - Migration logic from old storage
+      - Vault integration (encrypt/decrypt)
+      
+      Split into focused slices following Zustand v5 patterns.
+    
+    acceptance_criteria:
+      - "AC1: Create crud-slice.ts (~100 lines) for CRUD operations"
+      - "AC2: Create vault-slice.ts (~80 lines) for vault integration"
+      - "AC3: Remove or archive migration logic"
+      - "AC4: provider-credentials-slice.ts becomes orchestrator (<200 lines)"
+      - "AC5: Zero regression in key management"
+    
+    technical_requirements:
+      - "TR1: Each slice exports individual selectors with useShallow"
+      - "TR2: Slices compose into combined store"
+      - "TR3: Vault slice handles encryption/decryption only"
+      - "TR4: CRUD slice handles add/update/delete only"
+    
+    files_to_create:
+      - path: "src/infrastructure/persistence/stores/providers/credentials/crud-slice.ts"
+        purpose: "CRUD operations for credentials"
+        lines: 100
+      - path: "src/infrastructure/persistence/stores/providers/credentials/vault-slice.ts"
+        purpose: "Vault integration (encrypt/decrypt)"
+        lines: 80
+    
+    files_to_modify:
+      - path: "src/infrastructure/persistence/stores/provider-credentials-slice.ts"
+        change: "Reduce to orchestrator, import slices"
+        lines_changed: -200
+    
+    must_pass_checklist:
+      - "[ ] CRUD slice created and tested"
+      - "[ ] Vault slice created and tested"
+      - "[ ] Slices compose correctly"
+      - "[ ] Add key workflow works"
+      - "[ ] Edit key workflow works"
+      - "[ ] Delete key workflow works"
+      - "[ ] Keys decrypt correctly for API calls"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # BYOK-02: Add Zod Validation Schemas
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "BYOK-02"
+    name: "Add Zod Validation Schemas for Credentials"
+    priority: "P1"
+    estimation: "0.5 days"
+    status: "BLOCKED_BY_BYOK-01"
+    depends_on: ["BYOK-01"]
+    
+    description: |
+      Currently credentials use `Record<string, unknown>` which provides
+      no type safety. Add Zod schemas for:
+      - API key format validation (per provider)
+      - Provider configuration validation
+      - Credential storage validation
+    
+    acceptance_criteria:
+      - "AC1: Zod schemas created for all credential types"
+      - "AC2: API key format validated per provider"
+      - "AC3: Invalid keys rejected with clear error"
+      - "AC4: Type safety at compile time"
+    
+    technical_requirements:
+      - "TR1: Create domain/schemas/credential-schemas.ts"
+      - "TR2: Validate on add/update operations"
+      - "TR3: Provider-specific validation rules"
+    
+    files_to_create:
+      - path: "src/domain/schemas/credential-schemas.ts"
+        purpose: "Zod schemas for credential validation"
+        lines: 80
+    
+    files_to_modify:
+      - path: "src/domain/types/llm/provider-types.ts"
+        change: "Use Zod inferred types"
+        lines_changed: +30
+      - path: "src/infrastructure/persistence/stores/providers/credentials/crud-slice.ts"
+        change: "Add validation before storage"
+        lines_changed: +20
+    
+    must_pass_checklist:
+      - "[ ] Zod schemas created for all providers"
+      - "[ ] Invalid key rejected with clear message"
+      - "[ ] Valid key accepted and stored"
+      - "[ ] TypeScript types derived from Zod"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # BYOK-03: Archive Migration Code
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "BYOK-03"
+    name: "Archive Legacy Migration Code"
+    priority: "P1"
+    estimation: "0.5 days"
+    status: "BLOCKED_BY_BYOK-01"
+    depends_on: ["BYOK-01"]
+    
+    description: |
+      The migrate-api-keys-to-vault.ts (388 lines) is legacy code from
+      the vault migration. If migration is complete for all users,
+      this code should be archived, not executed.
+    
+    acceptance_criteria:
+      - "AC1: Verify migration is complete (no users on old format)"
+      - "AC2: Archive migration code to .archive/"
+      - "AC3: Remove migration triggers from production code"
+      - "AC4: Document rollback procedure if needed"
+    
+    technical_requirements:
+      - "TR1: Check Dexie for any old-format credentials"
+      - "TR2: If found, complete migration first"
+      - "TR3: Archive code, don't delete"
+    
+    files_to_archive:
+      - path: "src/lib/vault/migrate-api-keys-to-vault.ts"
+        destination: "_bmad-output/.archive/vault-migration/"
+        reason: "Migration complete, no longer needed in production"
+      - path: "src/lib/vault/migration-backup.ts"
+        destination: "_bmad-output/.archive/vault-migration/"
+        reason: "Backup code, no longer needed"
+    
+    must_pass_checklist:
+      - "[ ] Verified no users on old credential format"
+      - "[ ] Migration code archived"
+      - "[ ] No migration triggers in production"
+      - "[ ] Rollback procedure documented"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # BYOK-04: Add projectId to Tool Execution Logs
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "BYOK-04"
+    name: "Add projectId to Tool Execution Logs"
+    priority: "P0"
+    estimation: "0.5 days"
+    status: "READY"
+    
+    description: |
+      Currently ToolExecutionLogRecord tracks workspace and duration
+      but not which project triggered the execution. This is needed
+      for proper audit logging and usage analytics.
+    
+    acceptance_criteria:
+      - "AC1: ToolExecutionLogRecord includes projectId field"
+      - "AC2: Migration v21 adds projectId column"
+      - "AC3: All tool executions log projectId"
+      - "AC4: Existing logs have null projectId (acceptable)"
+    
+    technical_requirements:
+      - "TR1: Update ToolExecutionLogRecord type"
+      - "TR2: Create Dexie migration v21"
+      - "TR3: Update tool-execution-logger.ts"
+      - "TR4: Pass projectId through tool execution chain"
+    
+    files_to_modify:
+      - path: "src/domain/types/tool-execution-log.ts"
+        change: "Add projectId field"
+        lines_changed: +5
+      - path: "src/infrastructure/persistence/dexie-db-migrations.ts"
+        change: "Add migration v21 for projectId"
+        lines_changed: +20
+      - path: "src/lib/agent/tool-execution-logger.ts"
+        change: "Log projectId with each execution"
+        lines_changed: +10
+    
+    must_pass_checklist:
+      - "[ ] ToolExecutionLogRecord has projectId field"
+      - "[ ] Migration v21 created and tested"
+      - "[ ] Tool executions log projectId"
+      - "[ ] Audit query can filter by projectId"
+      - "[ ] pnpm tsc --noEmit passes"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics: []
+  blocked_epics: []
+  
+  parallel_with:
+    - "EPIC-CC-01"  # Can run in parallel, different domains
+  
+  internal_dependencies:
+    - from: "BYOK-02"
+      to: "BYOK-01"
+      reason: "Validation needs slices to exist"
+    - from: "BYOK-03"
+      to: "BYOK-01"
+      reason: "Archive after slice refactor complete"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RISKS
+# ═══════════════════════════════════════════════════════════════════════════
+
+risks:
+  - risk: "Key loss during refactor"
+    probability: "Low"
+    impact: "Critical"
+    mitigation: "Backup before, test read/write, rollback plan"
+    
+  - risk: "Encryption breaking"
+    probability: "Low"
+    impact: "Critical"
+    mitigation: "Test encrypt/decrypt for all key types"
+    
+  - risk: "Provider adapter incompatibility"
+    probability: "Medium"
+    impact: "High"
+    mitigation: "Test each provider after refactor"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXECUTION NOTES
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution_notes:
+  team: "Team A"
+  parallel_safe: true
+  can_run_with: ["EPIC-CC-01"]
+  
+  execution_order:
+    - "BYOK-01: Split god slice (Day 1)"
+    - "BYOK-04: Add projectId (Day 1, parallel)"
+    - "BYOK-02: Add Zod validation (Day 2)"
+    - "BYOK-03: Archive migration (Day 2-3)"

@@ -170,32 +170,79 @@ export function showMobileIDEError(
 }
 
 /**
+ * Show mobile-aware workspace error with auto-redirect to Notes workspace
+ *
+ * This function provides a seamless mobile experience by:
+ * 1. Showing a toast notification explaining why FSA is unavailable
+ * 2. Providing a "Go to Notes" action button
+ * 3. Auto-redirecting after a delay if user doesn't click immediately
+ *
+ * @param navigate - TanStack Router navigate function
+ * @param delayMs - Delay before auto-redirect (default: 2000ms)
+ */
+export function showMobileWorkspaceRedirect(
+    navigate: (to: string) => void,
+    delayMs: number = 2000
+): void {
+    const { t } = useTranslation()
+
+    const messages = {
+        title: t('workspace.mobileFsaUnavailable', 'Desktop Feature'),
+        description: t(
+            'workspace.mobileRedirectDescription',
+            'File sync requires a desktop browser. Switching to Notes workspace where you can continue working.'
+        ),
+        action: t('workspace.goToNotes', 'Go to Notes'),
+    }
+
+    // Show toast with action
+    toast.info(messages.title, {
+        description: messages.description,
+        action: {
+            label: messages.action,
+            onClick: () => {
+                navigate('/notes')
+            },
+        },
+        duration: delayMs + 1000, // Slightly longer than redirect delay
+        id: 'mobile-workspace-redirect', // Prevent duplicate toasts
+    })
+
+    // Auto-redirect after delay
+    console.log('[MobileWorkspace] Auto-redirecting to /notes in', delayMs, 'ms')
+    setTimeout(() => {
+        console.log('[MobileWorkspace] Executing auto-redirect to /notes')
+        navigate('/notes')
+    }, delayMs)
+}
+
+/**
  * Show mobile-aware WebContainer error toast
- * 
+ *
  * @param type - The type of WebContainer error
  * @param onAction - Optional callback when action is clicked
  */
 export function showMobileWebContainerError(
-  type: WebContainerErrorType,
-  onAction?: () => void
+    type: WebContainerErrorType,
+    onAction?: () => void
 ): void {
-  const messages = getMobileWebContainerErrorMessages(type)
+    const messages = getMobileWebContainerErrorMessages(type)
 
-  toast.error(messages.title, {
-    description: messages.description,
-    action: {
-      label: messages.action,
-      onClick: () => {
-        if (onAction) {
-          onAction()
-        } else {
-          // Default action: navigate to Home
-          window.location.href = '/'
-        }
-      },
-    },
-    duration: 8000,
-  })
+    toast.error(messages.title, {
+        description: messages.description,
+        action: {
+            label: messages.action,
+            onClick: () => {
+                if (onAction) {
+                    onAction()
+                } else {
+                    // Default action: navigate to Home
+                    window.location.href = '/'
+                }
+            },
+        },
+        duration: 8000,
+    })
 }
 
 /**

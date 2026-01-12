@@ -13,6 +13,7 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
+import { useNoteStore } from '@/lib/notes';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
@@ -36,37 +37,88 @@ export const Route = createLazyFileRoute('/notes')({
  * Loads or creates default project, then renders NotesPage with ProjectFilesPanel
  * FS-02: Registers project in ProjectRegistry to prevent cross-workspace conflicts
  * FS-03: Uses namespaced project ID format: notes:browser-mode
+ * TEAM-A-2026-01-12: Auto-creates default_note for browser-mode projects
  */
 function NotesWorkspaceDefault() {
-  // 45-04: Browser mode project ID (shows notes from all projects)
-  const browserModeProjectId = 'notes:browser-mode';
-  const [project, setProject] = useState<Project | null>(null);
+    // 45-04: Browser mode project ID (shows notes from all projects)
+    const browserModeProjectId = 'notes:browser-mode';
+    const [project, setProject] = useState<Project | null>(null);
 
-  useEffect(() => {
-    // Try to get existing browser mode project
-    getProject(browserModeProjectId).then((p) => {
-      if (p) {
-        setProject(p as Project | null);
-      } else {
-        // 45-04: Create browser mode project if it doesn't exist
-        // Browser mode allows viewing notes from all projects
-        setProject({
-          id: browserModeProjectId,
-          name: 'Browser Mode',
-          folderPath: 'Notes', // Uses IndexedDB storage (no file system)
-          storageType: 'indexeddb',
-          createdAt: new Date(),
-          lastOpened: new Date(),
-          autoSync: false,
-          bindings: { notes: true, knowledge: true },
-          tags: [],
-          isTemp: true,
-          isBrowserMode: true, // 45-04: Special flag for browser mode
-          autoCreated: true,
-        } as Project);
-      }
-    });
-  }, [browserModeProjectId]);
+    // TEAM-A-2026-01-12: Get note store methods for default_note creation
+    const createNote = useNoteStore.getState().createNote;
+    const setActiveNote = useNoteStore.getState().setActiveNote;
+
+    useEffect(() => {
+        // Try to get existing browser mode project
+        getProject(browserModeProjectId).then(async (p) => {
+            if (p) {
+                setProject(p as Project | null);
+            } else {
+                // 45-04: Create browser mode project if it doesn't exist
+                // Browser mode allows viewing notes from all projects
+                const newProject = {
+                    id: browserModeProjectId,
+                    name: 'Browser Mode',
+                    folderPath: 'Notes', // Uses IndexedDB storage (no file system)
+                    storageType: 'indexeddb',
+                    createdAt: new Date(),
+                    lastOpened: new Date(),
+                    autoSync: false,
+                    bindings: { notes: true, knowledge: true },
+                    tags: [],
+                    isTemp: true,
+                    isBrowserMode: true, // 45-04: Special flag for browser mode
+                    autoCreated: true,
+                } as Project;
+
+                setProject(newProject);
+
+                // TEAM-A-2026-01-12: Auto-create default_note for browser-mode
+                console.log('[NotesWorkspaceDefault] Creating default_note for browser-mode...');
+                try {
+                    const defaultNoteId = await createNote({
+                        title: 'Welcome to Notes',
+                        emoji: '👋',
+                        blocks: [
+                            {
+                                id: crypto.randomUUID(),
+                                type: 'paragraph',
+                                content: [
+                                    { type: 'text', text: 'Welcome to Notes! This is your default note to get started.', styles: {} }
+                                ],
+                                props: { textAlignment: 'left', textColor: 'default', backgroundColor: 'default' },
+                                children: []
+                            },
+                            {
+                                id: crypto.randomUUID(),
+                                type: 'paragraph',
+                                content: [
+                                    { type: 'text', text: 'Start writing, create new notes, or import markdown files from your device.', styles: {} }
+                                ],
+                                props: { textAlignment: 'left', textColor: 'default', backgroundColor: 'default' },
+                                children: []
+                            },
+                            {
+                                id: crypto.randomUUID(),
+                                type: 'paragraph',
+                                content: [
+                                    { type: 'text', text: '💡 Tip: Use the sidebar to navigate between notes and access AI-powered features.', styles: {} }
+                                ],
+                                props: { textAlignment: 'left', textColor: 'default', backgroundColor: 'default' },
+                                children: []
+                            }
+                        ] as unknown as import('@blocknote/core').Block[],
+                    });
+                    
+                    // Select the default_note as active
+                    setActiveNote(defaultNoteId);
+                    console.log('[NotesWorkspaceDefault] Created and selected default_note:', defaultNoteId);
+                } catch (error) {
+                    console.error('[NotesWorkspaceDefault] Failed to create default_note:', error);
+                }
+            }
+        });
+    }, [browserModeProjectId, createNote, setActiveNote]);
 
   // FS-02: Register project in ProjectRegistry to prevent cross-workspace conflicts
   useEffect(() => {

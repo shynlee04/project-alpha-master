@@ -1,5 +1,5 @@
 /**
- * @fileoverview Unified Storage Adapter - LocalFSAdapter Interface with Storage Backend Selection
+ * Unified Storage Adapter - LocalFSAdapter Interface with Storage Backend Selection
  * @module lib/filesystem/unified-storage-adapter
  *
  * Provides the LocalFSAdapter interface while internally delegating to
@@ -11,6 +11,7 @@
  *
  * @epic STORAGE-UNIFICATION
  * @story S-001 - Create unified storage adapter
+ * @story TEAM-A-2026-01-12 - Add device-aware storage type enforcement
  */
 
 import type { FileReadResult, FileReadBinaryResult, DirectoryEntry } from './fs-types';
@@ -19,17 +20,29 @@ import { createStorageAdapter, type StorageType, isStorageTypeSupported } from '
 import type { StorageAdapter } from '@/infrastructure/sync/core/sync-result-types';
 
 /**
+ * Device type detection result
+ * Matches the return type of useDeviceType() hook
+ */
+export interface DeviceType {
+    isMobile: boolean;
+    isTablet: boolean;
+    isDesktop: boolean;
+    isPhonePortrait: boolean;
+    isPhoneLandscape: boolean;
+}
+
+/**
  * Configuration for unified storage adapter
  */
 export interface UnifiedStorageAdapterConfig {
-  /** Storage type to use */
-  storageType: StorageType;
-  /** Project ID for IndexedDB namespacing */
-  projectId: string;
-  /** Optional pre-existing FSA directory handle */
-  fsaHandle?: FileSystemDirectoryHandle;
-  /** Enable debug logging */
-  debug?: boolean;
+    /** Storage type to use */
+    storageType: StorageType;
+    /** Project ID for IndexedDB namespacing */
+    projectId: string;
+    /** Optional pre-existing FSA directory handle */
+    fsaHandle?: FileSystemDirectoryHandle;
+    /** Enable debug logging */
+    debug?: boolean;
 }
 
 /**
@@ -49,46 +62,46 @@ export interface UnifiedStorageAdapterConfig {
  * await adapter.writeFile('notes/test.md', 'Hello World');
  */
 export class UnifiedStorageAdapter extends LocalFSAdapter {
-  private storageType: StorageType;
-  private projectId: string;
-  private storageAdapter: StorageAdapter | null = null;
-  private fsaHandle?: FileSystemDirectoryHandle;
-  private debugMode: boolean;
+    private storageType: StorageType;
+    private projectId: string;
+    private storageAdapter: StorageAdapter | null = null;
+    private fsaHandle?: FileSystemDirectoryHandle;
+    private debugMode: boolean;
 
-  constructor(config: UnifiedStorageAdapterConfig) {
-    // Initialize parent (LocalFSAdapter)
-    super();
+    constructor(config: UnifiedStorageAdapterConfig) {
+        // Initialize parent (LocalFSAdapter)
+        super();
 
-    this.storageType = config.storageType;
-    this.projectId = config.projectId;
-    this.fsaHandle = config.fsaHandle;
-    this.debugMode = config.debug ?? false;
-  }
-
-  // Override initialization to create appropriate backend adapter
-  async initialize(): Promise<void> {
-    if (this.storageAdapter) {
-      return; // Already initialized
+        this.storageType = config.storageType;
+        this.projectId = config.projectId;
+        this.fsaHandle = config.fsaHandle;
+        this.debugMode = config.debug ?? false;
     }
 
-    // Create the appropriate storage adapter
-    this.storageAdapter = createStorageAdapter({
-      storageType: this.storageType,
-      projectId: this.projectId,
-      fsaHandle: this.fsaHandle,
-      debug: this.debugMode,
-    });
+    // Override initialization to create appropriate backend adapter
+    async initialize(): Promise<void> {
+        if (this.storageAdapter) {
+            return; // Already initialized
+        }
 
-    // For FSA with existing handle, mount it
-    if (this.storageType === 'fsa' && this.fsaHandle) {
-      const fsaAdapter = this.storageAdapter as any;
-      if ('mount' in fsaAdapter && typeof fsaAdapter.mount === 'function') {
-        await fsaAdapter.mount(this.fsaHandle);
-      }
+        // Create the appropriate storage adapter
+        this.storageAdapter = createStorageAdapter({
+            storageType: this.storageType,
+            projectId: this.projectId,
+            fsaHandle: this.fsaHandle,
+            debug: this.debugMode,
+        });
+
+        // For FSA with existing handle, mount it
+        if (this.storageType === 'fsa' && this.fsaHandle) {
+            const fsaAdapter = this.storageAdapter as any;
+            if ('mount' in fsaAdapter && typeof fsaAdapter.mount === 'function') {
+                await fsaAdapter.mount(this.fsaHandle);
+            }
+        }
+
+        this.debug(`Unified adapter initialized: ${this.storageType}`);
     }
-
-    this.debug(`Unified adapter initialized: ${this.storageType}`);
-  }
 
   // ============================================================================
   // LocalFSAdapter Interface Implementation (string-based API)
@@ -293,17 +306,67 @@ export class UnifiedStorageAdapter extends LocalFSAdapter {
     }
   }
 
-  /**
-   * Get directory handle
-   * @override
-   */
-  getDirectoryHandle(): FileSystemDirectoryHandle | null {
-    return this.fsaHandle || null;
-  }
+   /**
+    * Get directory handle
+    * @override
+    */
+   getDirectoryHandle(): FileSystemDirectoryHandle | null {
+     return this.fsaHandle || null;
+   }
 
-  // ============================================================================
-  // Private Helper Methods
-  // ============================================================================
+   // ============================================================================
+   // TEAM-A-2026-01-12: Device-Aware Storage Type Enforcement
+   // ============================================================================
+
+   /**
+    * Enforce storage type based on device capabilities
+    *
+    * Mobile devices cannot use FSA (File System Access API) as it's only
+    * available in desktop browsers (Chrome, Edge, Opera). This method
+    * ensures mobile devices always use IndexedDB storage.
+    *
+    * @param deviceType - Device type from useDeviceType hook
+    * @returns Enforced storage type ('indexeddb' for mobile/tablet, 'fsa' for desktop)
+    *
+    * @example
+    * const storageType = UnifiedStorageAdapter.enforceStorageType({
+    *   isMobile: true,
+    *   isTablet: false,
+    *   isDesktop: false
+    * });
+    * // Returns: 'indexeddb'
+    */
+   static enforceStorageType(deviceType: DeviceType): StorageType {
+     if (deviceType.isMobile || deviceType.isTablet) {
+       console.log('[UnifiedStorageAdapter] Mobile/tablet detected, enforcing indexeddb storage');
+       return 'indexeddb';
+     }
+     // Desktop can use either, default to FSA for better persistence
+     return 'fsa';
+   }
+
+   /**
+    * Get storage type with device awareness
+    *
+    * Combines the configured storage type with device detection
+    * to return the actual storage type that will be used.
+    *
+    * @param deviceType - Device type from useDeviceType hook
+    * @returns The storage type that will actually be used
+    */
+   getStorageTypeWithDeviceCheck(deviceType: DeviceType): StorageType {
+     // If already set to indexeddb, return as-is
+     if (this.storageType === 'indexeddb') {
+       return 'indexeddb';
+     }
+
+     // For FSA storage, check if device supports it
+     return UnifiedStorageAdapter.enforceStorageType(deviceType);
+   }
+
+   // ============================================================================
+   // Private Helper Methods
+   // ============================================================================
 
   /** Ensure storage adapter is initialized */
   private async ensureInitialized(): Promise<void> {

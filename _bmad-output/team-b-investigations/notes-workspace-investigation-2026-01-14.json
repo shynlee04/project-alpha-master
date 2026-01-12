@@ -1,0 +1,813 @@
+{
+  "sub_agent_id": "notes-workspace-investigation",
+  "session_id": "team-b-architectural-remediation-2026-01-14",
+  "timestamp": "2026-01-14T10:30:00Z",
+  
+  "executive_summary": {
+    "total_files_investigated": 47,
+    "god_components_found": [
+      {
+        "file": "src/presentation/components/notes/AISlashCommand.tsx",
+        "lines": 1147,
+        "primary_issue": "16+ responsibilities mixed: command menu UI, 18 command implementations, context extraction, translation, state management, block insertion",
+        "severity": "P0"
+      },
+      {
+        "file": "src/presentation/components/notes/NoteEditor.tsx",
+        "lines": 947,
+        "primary_issue": "12+ responsibilities mixed: BlockNote initialization, block sanitization, error handling, scroll position, AI integration, content tracking",
+        "severity": "P0"
+      },
+      {
+        "file": "src/presentation/components/notes/NotesPage.tsx",
+        "lines": 877,
+        "primary_issue": "Complex layout orchestration with 6+ major responsibilities: project management, file sync, dialogs, panels, event handlers",
+        "severity": "P1"
+      },
+      {
+        "file": "src/lib/notes/slash-command-store.ts",
+        "lines": 472,
+        "primary_issue": "Single file with 20+ methods, no slice separation, persistence mixed with business logic",
+        "severity": "P1"
+      }
+    ],
+    "state_stores_found": [
+      {
+        "file": "src/lib/notes/note-store-refactored.ts",
+        "lines": 206,
+        "slices": 7,
+        "status": "GOOD",
+        "note": "Well-structured slice pattern with CRUD, Metadata, Query, Sync, Indexing, Events, UI slices"
+      },
+      {
+        "file": "src/lib/notes/slash-command-store.ts",
+        "lines": 472,
+        "slices": 0,
+        "status": "NEEDS_REFACTORING",
+        "note": "Single-file store without slice pattern"
+      },
+      {
+        "file": "src/lib/notes/ai-prompt-store.ts",
+        "lines": "~100",
+        "slices": 1,
+        "status": "OK",
+        "note": "Simple AI prompt state management"
+      },
+      {
+        "file": "src/lib/notes/ai-loading-store.ts",
+        "lines": "~50",
+        "slices": 1,
+        "status": "OK",
+        "note": "AI loading state tracking"
+      },
+      {
+        "file": "src/lib/notes/ai-insertion-store.ts",
+        "lines": "~60",
+        "slices": 1,
+        "status": "OK",
+        "note": "AI content insertion state"
+      },
+      {
+        "file": "src/lib/notes/prompt-history-store.ts",
+        "lines": "~100",
+        "slices": 1,
+        "status": "OK",
+        "note": "Prompt history tracking"
+      }
+    ],
+    "key_findings": [
+      "BlockNote editor with 18 custom block types (AI Image, Vision, Storyboard, Video, TTS, Artifact, etc.)",
+      "18 slash commands hardcoded in single file with no registry pattern",
+      "6 separate AI services (image, vision, storyboard, video, tts, note-ai) with duplicate patterns",
+      "Note store follows clean slice pattern (7 slices, ~630 lines total with slices)",
+      "Cross-workspace integration via event bus (Knowledge export, IDE file saves)",
+      "File sync service integration with Notes workspace",
+      "Markdown import/export functionality",
+      "Mobile layout support with responsive design",
+      "RAG indexing for Knowledge workspace integration"
+    ],
+    "critical_issues": [
+      "AISlashCommand.tsx:1147 lines with 18 command implementations in single file",
+      "NoteEditor.tsx:947 lines with mixed responsibilities",
+      "6 separate AI services with duplicated provider selection logic",
+      "slash-command-store.ts lacks slice pattern",
+      "50+ `as any` type assertions in AISlashCommand.tsx (lines 537-1013)"
+    ]
+  },
+  
+  "feature_mapping": {
+    "blocknote_editor": {
+      "components": [
+        {
+          "file": "src/presentation/components/notes/NoteEditor.tsx",
+          "responsibilities": [
+            "BlockNote initialization with custom schema",
+            "Block sanitization (sanitizeBlocks, sanitizeContentItem)",
+            "Scroll position preservation (45-05)",
+            "Auto-save with debounce (500ms)",
+            "Error handling with corruption detection",
+            "AI prompt dialog integration",
+            "AI insertion dialog",
+            "AI transform menu",
+            "Multi-modal import (PDF, images)",
+            "Voice recording",
+            "AI suggestions panel",
+            "Save status indicator"
+          ],
+          "hooks": [
+            {
+              "name": "useDebouncedCallback",
+              "file": "src/presentation/components/notes/NoteEditor.tsx:343",
+              "lines": 33,
+              "purpose": "Debounce auto-save to 500ms"
+            }
+          ],
+          "custom_blocks": [
+            "ImageBlock", "CodeFileBlock", "FileAttachmentBlock",
+            "AIImageBlock", "AIVisionBlock", "StoryboardBlock",
+            "VideoBlock", "TTSBlock", "ArtifactBlock",
+            "VideoGenerationBlock", "SlidesExportBlock",
+            "ChartDiagramBlock", "TransformPipelineBlock",
+            "ArtifactGalleryBlock", "MultiStepGenerationBlock"
+          ],
+          "state_stores": [
+            "useNoteStore",
+            "useNoteNavigationStore",
+            "useAIPromptStore",
+            "useAILoadingStore",
+            "useAIInsertionStore"
+          ],
+          "architecture_violations": [
+            {
+              "violation": "God component - 12+ responsibilities",
+              "location": "NoteEditor.tsx:381-911",
+              "severity": "P0",
+              "recommendation": "Extract useEditorInitialization, useBlockSanitizer, useAutoSave, useEditorHistory hooks"
+            },
+            {
+              "violation": "50+ `as any` casts for BlockNote types",
+              "location": "NoteEditor.tsx:lines 56, 308, 886, 897",
+              "severity": "P1",
+              "recommendation": "Define proper BlockNote types or use generic constraints"
+            }
+          ],
+          "user_journey": "User opens NoteEditor → BlockNote initializes with sanitized blocks → User types content → Debounced auto-save triggers → Changes persist to Dexie + optional file sync"
+        },
+        {
+          "file": "src/presentation/components/notes/blocks/*.tsx",
+          "count": 16,
+          "total_lines": "~800",
+          "avg_lines_per_block": 50,
+          "responsibilities": [
+            "Block rendering",
+            "User interaction handling",
+            "AI service integration",
+            "State management for block content"
+          ]
+        }
+      ],
+      "hooks": [],
+      "state_stores": [],
+      "architecture_violations": [],
+      "user_journey": ""
+    },
+    "ai_slash_commands": {
+      "components": [
+        {
+          "file": "src/presentation/components/notes/AISlashCommand.tsx",
+          "lines": 1147,
+          "responsibilities": [
+            "Slash command menu UI and rendering",
+            "18 command implementations (insertAIItem, summarizeNoteItem, generateOutlineItem, explainConceptItem, generateQuestionsItem, translateNoteItem, continueWritingItem, generateFlashcardsItem, insertAIImageItem, insertAIVisionItem, insertStoryboardItem, insertVideoItem, insertTTSItem, insertArtifactItem, insertVideoGenItem, insertSlidesItem, insertChartDiagramItem, insertTransformPipelineItem, insertArtifactGalleryItem, insertMultiStepItem)",
+            "Context extraction (getContextByMode, getTextAboveCursor, getBlocksAboveCursor)",
+            "Translation helper function",
+            "Menu item generation",
+            "State management for AI loading",
+            "State management for AI insertion",
+            "Prompt tracking",
+            "Error handling"
+          ],
+          "exports": [
+            {
+              "name": "executeAICommand",
+              "lines": 92-215,
+              "purpose": "Execute AI command with context extraction, loading states, error handling"
+            },
+            {
+              "name": "getCustomSlashMenuItems",
+              "lines": 1111-1146,
+              "purpose": "Get all slash menu items including custom commands"
+            },
+            {
+              "name": "ContextMode type",
+              "purpose": "Type for context extraction mode (above_cursor, all, none, selection)"
+            }
+          ],
+          "hooks": [],
+          "state_stores": [
+            "useAIPromptStore",
+            "useAILoadingStore", 
+            "useAIInsertionStore",
+            "useSlashCommandStore"
+          ],
+          "architecture_violations": [
+            {
+              "violation": "GOD COMPONENT - 18 command implementations in single file",
+              "location": "AISlashCommand.tsx:358-1023",
+              "severity": "P0",
+              "recommendation": "Extract each command to its own file with Command interface pattern"
+            },
+            {
+              "violation": "50+ `as any` type assertions bypassing TypeScript safety",
+              "location": "AISlashCommand.tsx:537-1013",
+              "severity": "P0",
+              "recommendation": "Define proper BlockNoteEditor generic types or extract to reduce casting"
+            },
+            {
+              "violation": "Context extraction logic mixed with UI",
+              "location": "AISlashCommand.tsx:232-335",
+              "severity": "P1",
+              "recommendation": "Extract context extraction to lib/notes/services/context-extractor.ts"
+            }
+          ],
+          "user_journey": "User types '/' → Menu opens showing all commands → User selects command (or AI Magic for free-form) → executeAICommand called → Context extracted → AI service called → Result parsed to blocks → Insertion dialog shown"
+        },
+        {
+          "file": "src/presentation/components/notes/SlashCommandManager.tsx",
+          "lines": 384,
+          "responsibilities": [
+            "Custom command management UI",
+            "Category filtering",
+            "Tag filtering",
+            "Import/export commands"
+          ]
+        },
+        {
+          "file": "src/presentation/components/notes/PromptRefinementDialog.tsx",
+          "lines": 238,
+          "responsibilities": [
+            "2-step prompt refinement workflow",
+            "Variable input handling",
+            "Prompt template substitution"
+          ]
+        }
+      ],
+      "hooks": [],
+      "state_stores": [],
+      "architecture_violations": [],
+      "user_journey": ""
+    },
+    "ai_services": {
+      "components": [
+        {
+          "file": "src/lib/notes/note-ai-service.ts",
+          "lines": 378,
+          "responsibilities": [
+            "Main AI content generation service",
+            "Agent selection for notes workspace",
+            "API key retrieval from credential vault",
+            "Context building from blocks",
+            "Provider API calls via ProviderService",
+            "Streaming support"
+          ],
+          "exports": [
+            {
+              "name": "generateNoteContent",
+              "lines": 60-103,
+              "purpose": "Generate AI content for notes"
+            },
+            {
+              "name": "generateNoteContentStream",
+              "lines": 264-305,
+              "purpose": "Stream AI content generation"
+            },
+            {
+              "name": "NoteAIError",
+              "lines": 41-49,
+              "purpose": "Custom error class for AI errors"
+            }
+          ]
+        },
+        {
+          "file": "src/lib/notes/ai-image-service.ts",
+          "lines": 378,
+          "responsibilities": [
+            "AI image generation",
+            "Provider selection (Gemini/Imagen, OpenAI/DALL-E)",
+            "Image size handling",
+            "Base64 conversion"
+          ]
+        },
+        {
+          "file": "src/lib/notes/ai-vision-service.ts",
+          "lines": "~200",
+          "responsibilities": [
+            "AI image analysis/vision understanding",
+            "Multi-image support",
+            "Analysis mode selection"
+          ]
+        },
+        {
+          "file": "src/lib/notes/ai-storyboard-service.ts",
+          "lines": "~200",
+          "responsibilities": [
+            "Sequential multi-image storyboard generation",
+            "Frame count configuration",
+            "Style presets"
+          ]
+        },
+        {
+          "file": "src/lib/notes/ai-video-service.ts",
+          "lines": "~200",
+          "responsibilities": [
+            "Video analysis/understanding",
+            "Frame extraction",
+            "Custom questions"
+          ]
+        },
+        {
+          "file": "src/lib/notes/ai-tts-service.ts",
+          "lines": "~150",
+          "responsibilities": [
+            "Text-to-speech generation",
+            "Voice selection",
+            "Speed/volume control"
+          ]
+        }
+      ],
+      "hooks": [],
+      "state_stores": [],
+      "architecture_violations": [
+        {
+          "violation": "6 separate AI services with DUPLICATED provider selection logic",
+          "severity": "P1",
+          "recommendation": "Create unified NoteAIService with handler interface pattern"
+        },
+        {
+          "violation": "Each service has its own credential vault access pattern",
+          "severity": "P2",
+          "recommendation": "Extract common provider selection to base class or utility"
+        }
+      ],
+      "user_journey": ""
+    },
+    "note_management": {
+      "components": [
+        {
+          "file": "src/presentation/components/notes/NoteSidebar.tsx",
+          "lines": "~310",
+          "responsibilities": [
+            "Note list display",
+            "Search with debounce",
+            "Favorites filter",
+            "Create/delete note",
+            "Import/export UI",
+            "RAG indexing trigger",
+            "File sync trigger",
+            "Agent selector slot",
+            "Project selector slot"
+          ]
+        },
+        {
+          "file": "src/presentation/components/notes/NoteTreeItem.tsx",
+          "lines": "~100",
+          "responsibilities": [
+            "Individual note item rendering",
+            "Favorite toggle",
+            "Click handling"
+          ]
+        },
+        {
+          "file": "src/presentation/components/notes/MarkdownImportDialog.tsx",
+          "lines": 192,
+          "responsibilities": [
+            "Markdown file import",
+            "File picker",
+            "Import confirmation"
+          ]
+        },
+        {
+          "file": "src/presentation/components/notes/MarkdownExportDialog.tsx",
+          "lines": 56,
+          "responsibilities": [
+            "Markdown export",
+            "Format selection",
+            "Export to file sync"
+          ]
+        }
+      ],
+      "hooks": [],
+      "state_stores": [],
+      "architecture_violations": [],
+      "user_journey": ""
+    },
+    "note_context_and_state": {
+      "components": [],
+      "hooks": [],
+      "state_stores": [],
+      "architecture_violations": [],
+      "user_journey": ""
+    }
+  },
+  
+  "architecture_connections": {
+    "project_space_integration": {
+      "connection_points": [
+        {
+          "file": "src/presentation/components/notes/NotesPage.tsx:61-85",
+          "mechanism": "useProjectContext hook",
+          "description": "Get projectId for note scoping"
+        },
+        {
+          "file": "src/lib/notes/note-store-refactored.ts:140-142",
+          "mechanism": "loadNotes(projectId)",
+          "description": "Load notes filtered by project"
+        },
+        {
+          "file": "src/presentation/components/notes/ProjectFilesPanel.tsx",
+          "mechanism": "File sync service",
+          "description": "Import/export project markdown files"
+        }
+      ],
+      "violations": []
+    },
+    "agent_llm_integration": {
+      "connection_points": [
+        {
+          "file": "src/lib/notes/note-ai-service.ts:71-86",
+          "mechanism": "useAgentSelectionStore.getAgentForWorkspace('notes')",
+          "description": "Get notes-specific AI agent"
+        },
+        {
+          "file": "src/lib/notes/note-ai-service.ts:114-136",
+          "mechanism": "credentialVault for API key access",
+          "description": "Retrieve API keys securely"
+        },
+        {
+          "file": "src/lib/notes/note-ai-service.ts:166-174",
+          "mechanism": "providerService.generateContent",
+          "description": "Unified provider service call"
+        },
+        {
+          "file": "src/presentation/components/notes/AISlashCommand.tsx:92-215",
+          "mechanism": "executeAICommand",
+          "description": "Execute AI commands with context"
+        }
+      ],
+      "violations": [
+        {
+          "violation": "AISlashCommand.tsx has hardcoded block insertion logic using `as any`",
+          "severity": "P1",
+          "description": "No abstracted block insertion interface"
+        }
+      ]
+    },
+    "byok_vault_integration": {
+      "connection_points": [
+        {
+          "file": "src/lib/agent/providers/credential-vault.ts",
+          "mechanism": "credentialVault.initialize()",
+          "description": "Vault initialization"
+        },
+        {
+          "file": "src/lib/notes/note-ai-service.ts:66-69",
+          "mechanism": "credentialVault.getCredentials(providerId)",
+          "description": "Get API key for provider"
+        }
+      ],
+      "violations": []
+    },
+    "persistence_integration": {
+      "connection_points": [
+        {
+          "file": "src/lib/notes/note-store-refactored.ts:50-147",
+          "mechanism": "Zustand with Dexie persistence",
+          "description": "Note state persisted to IndexedDB"
+        },
+        {
+          "file": "src/infrastructure/persistence/dexie-db.ts",
+          "mechanism": "notes table schema",
+          "description": "Note storage schema"
+        },
+        {
+          "file": "src/lib/notes/slices/note-sync-slice.ts",
+          "mechanism": "File save handlers",
+          "description": "File system sync for notes"
+        }
+      ],
+      "violations": [
+        {
+          "violation": "Slash command store persists to localStorage via Zustand persist",
+          "severity": "P2",
+          "description": "Inconsistent persistence strategy (localStorage vs Dexie)"
+        }
+      ]
+    },
+    "knowledge_workspace_integration": {
+      "connection_points": [
+        {
+          "file": "src/presentation/components/notes/NotesPage.tsx:284-347",
+          "mechanism": "DomainEventType.KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED",
+          "description": "Receive synthesis exports from Knowledge workspace"
+        },
+        {
+          "file": "src/presentation/components/notes/NotesIndexingButton.tsx",
+          "mechanism": "eventBus.emit(NOTES_RAG_INDEX_REQUESTED)",
+          "description": "Trigger RAG indexing for Knowledge workspace"
+        }
+      ],
+      "violations": []
+    }
+  },
+  
+  "user_journeys": [
+    {
+      "name": "Writing with AI Assistance",
+      "steps": [
+        "1. User creates new note via NoteSidebar or NoteEditor empty state",
+        "2. NoteEditor initializes with empty BlockNote schema",
+        "3. User types '/' to open slash command menu",
+        "4. User selects AI Magic or specific command",
+        "5. executeAICommand called with context extraction",
+        "6. Context mode determines text/blocks above cursor",
+        "7. generateNoteContent calls AI service via ProviderService",
+        "8. AI response parsed to BlockNote blocks",
+        "9. AIInsertionDialog shown for replace/append/above selection",
+        "10. Blocks inserted into editor",
+        "11. Debounced auto-save persists to Dexie",
+        "12. Optional file sync exports to markdown"
+      ],
+      "components_involved": [
+        "NoteSidebar",
+        "NoteEditor",
+        "AISlashCommand",
+        "AIPromptDialog",
+        "AIInsertionDialog",
+        "note-store-refactored",
+        "note-ai-service",
+        "providerService",
+        "credentialVault"
+      ],
+      "state_dependencies": [
+        "useNoteStore (notes, activeNoteId)",
+        "useAIPromptStore (prompt dialog state)",
+        "useAILoadingStore (loading states)",
+        "useAIInsertionStore (pending content)"
+      ],
+      "potential_issues": [
+        "Context extraction fails for complex block structures",
+        "AI response parsing fails for non-standard markdown",
+        "Block insertion fails with ProseMirror errors on corrupted blocks",
+        "Auto-save debounce may lose edits on rapid changes"
+      ]
+    },
+    {
+      "name": "Using Slash Commands",
+      "steps": [
+        "1. User types '/' in editor",
+        "2. BlockNote suggestion menu triggers",
+        "3. getCustomSlashMenuItems called with editor instance",
+        "4. Menu items filtered by query",
+        "5. User selects command or custom command",
+        "6. Command handler executes",
+        "7. For simple commands: block inserted directly",
+        "8. For complex commands: PromptRefinementDialog shown for variables",
+        "9. executeAICommand called with final prompt",
+        "10. AI content generated and inserted as blocks"
+      ],
+      "components_involved": [
+        "AISlashCommand",
+        "SlashCommandManager",
+        "PromptRefinementDialog",
+        "BlockNoteView",
+        "SuggestionMenuController"
+      ],
+      "state_dependencies": [
+        "useSlashCommandStore (custom commands)",
+        "usePromptRefinementStore (refinement state)"
+      ],
+      "potential_issues": [
+        "50+ `as any` casts in command implementations may cause runtime errors",
+        "Custom command prompt variables may not match expected format",
+        "Command execution may time out without user feedback"
+      ]
+    },
+    {
+      "name": "Organizing Notes",
+      "steps": [
+        "1. User views note list in NoteSidebar",
+        "2. User searches with debounced search input",
+        "3. User filters by favorites or tags",
+        "4. User creates new note or selects existing",
+        "5. Note loaded from Dexie via useNoteStore",
+        "6. Note displayed in NoteEditor",
+        "7. User can favorite, move, or delete note",
+        "8. Changes persist to Dexie",
+        "9. Optional: Export to markdown via file sync",
+        "10. Optional: Index for RAG in Knowledge workspace"
+      ],
+      "components_involved": [
+        "NoteSidebar",
+        "NoteTreeItem",
+        "NoteEditor",
+        "note-store-refactored",
+        "note-sync-slice",
+        "NotesIndexingButton"
+      ],
+      "state_dependencies": [
+        "useNoteStore (notes, activeNoteId)",
+        "useNotesByParent (hierarchical notes)",
+        "useFavoriteNotes (filtered list)"
+      ],
+      "potential_issues": [
+        "Note hierarchy may not be fully implemented",
+        "Tag filtering UI may be incomplete",
+        "File sync may fail for large notes"
+      ]
+    },
+    {
+      "name": "AI Chat Integration",
+      "steps": [
+        "1. User opens chat panel (UnifiedChatPanel)",
+        "2. Chat runs in 'notes' workspace context",
+        "3. User selects text in NoteEditor",
+        "4. AI chat can reference selected text",
+        "5. Chat responses can be inserted into note",
+        "6. Thread management via ThreadManager",
+        "7. Conversations persisted via useConversationStore"
+      ],
+      "components_involved": [
+        "UnifiedChatPanel",
+        "ThreadManager",
+        "NoteEditor",
+        "useConversationStore"
+      ],
+      "state_dependencies": [
+        "useConversationStore (threads, messages)",
+        "useAgentSelectionStore (agent for notes)"
+      ],
+      "potential_issues": [
+        "Chat context may not properly include note content",
+        "Thread persistence may have issues",
+        "Chat-to-note insertion may fail for complex content"
+      ]
+    }
+  ],
+  
+  "missing_issues_discovered": [
+    {
+      "issue": "NotesPage.tsx:877 lines - god component with mixed responsibilities",
+      "severity": "P1",
+      "description": "Page-level component handles project management, file sync, dialogs, panels, event handlers all in one file",
+      "recommendation": "Extract to smaller components: ProjectManager, FileSyncPanel, DialogOrchestrator"
+    },
+    {
+      "issue": "Block sanitization logic duplicated in NoteEditor.tsx and note-store-refactored.ts",
+      "severity": "P2",
+      "description": "SanitizeBlocks function exists in both files with slight variations",
+      "recommendation": "Extract to lib/notes/utils/block-sanitizer.ts"
+    },
+    {
+      "issue": "AI insertion dialog flow is complex with multiple states",
+      "severity": "P2",
+      "description": "AIInsertionDialog handles replace/append/above modes but state is spread across stores",
+      "recommendation": "Consolidate insertion state in useAIInsertionStore"
+    },
+    {
+      "issue": "Event bus subscriptions in NotesPage.tsx not properly cleaned up",
+      "severity": "P2",
+      "description": "useEffect cleanup returns unsubscribe but may not cover all cases",
+      "recommendation": "Add comprehensive cleanup verification"
+    },
+    {
+      "issue": "Mobile layout uses inline component definitions",
+      "severity": "P3",
+      "description": "renderNoteList and renderEditor functions defined inline in NotesPage",
+      "recommendation": "Extract to separate components"
+    },
+    {
+      "issue": "Prompt history store has legacy API key fallback logic",
+      "severity": "P3",
+      "description": "Migration code for old API key storage still present",
+      "recommendation": "Clean up legacy migration code after full vault migration"
+    }
+  ],
+  
+  "refactoring_recommendations": [
+    {
+      "issue": "AISlashCommand.tsx - 1147 lines with 18 command implementations",
+      "priority": "P0",
+      "recommendation": "Extract each command to individual file in lib/notes/commands/, create Command interface, move context extraction to lib/notes/services/context-extractor.ts",
+      "estimated_effort": "3 days"
+    },
+    {
+      "issue": "AISlashCommand.tsx - 50+ `as any` type assertions",
+      "priority": "P0",
+      "recommendation": "Define proper BlockNoteEditor generic types, use type generics for block operations",
+      "estimated_effort": "1 day"
+    },
+    {
+      "issue": "NoteEditor.tsx - 947 lines with mixed responsibilities",
+      "priority": "P0",
+      "recommendation": "Extract 6+ hooks: useEditorInitialization, useBlockSanitizer, useAutoSave, useEditorHistory, useScrollPosition, useAISuggestions",
+      "estimated_effort": "2 days"
+    },
+    {
+      "issue": "slash-command-store.ts - 472 lines without slices",
+      "priority": "P1",
+      "recommendation": "Split into slices: commands slice, filter slice, persistence slice",
+      "estimated_effort": "4 hours"
+    },
+    {
+      "issue": "6 separate AI services with duplicated provider logic",
+      "priority": "P1",
+      "recommendation": "Create unified NoteAIService facade with handler interface pattern, extract common provider selection",
+      "estimated_effort": "2 days"
+    },
+    {
+      "issue": "NotesPage.tsx - 877 lines with mixed concerns",
+      "priority": "P1",
+      "recommendation": "Extract ProjectManager, FileSyncPanel, DialogOrchestrator components",
+      "estimated_effort": "1 day"
+    },
+    {
+      "issue": "Block sanitization duplicated",
+      "priority": "P2",
+      "recommendation": "Extract to lib/notes/utils/block-sanitizer.ts with comprehensive tests",
+      "estimated_effort": "2 hours"
+    }
+  ],
+  
+  "files_needed_for_refactoring": [
+    "src/presentation/components/notes/AISlashCommand.tsx",
+    "src/presentation/components/notes/NoteEditor.tsx",
+    "src/presentation/components/notes/NotesPage.tsx",
+    "src/lib/notes/slash-command-store.ts",
+    "src/lib/notes/note-store-refactored.ts",
+    "src/lib/notes/note-ai-service.ts",
+    "src/lib/notes/ai-image-service.ts",
+    "src/lib/notes/ai-vision-service.ts",
+    "src/lib/notes/ai-storyboard-service.ts",
+    "src/lib/notes/ai-video-service.ts",
+    "src/lib/notes/ai-tts-service.ts",
+    "src/lib/notes/slices/note-sync-slice.ts"
+  ],
+  
+  "test_coverage_recommendations": [
+    {
+      "area": "Block sanitization",
+      "priority": "P0",
+      "tests": [
+        "Test sanitizeBlocks with valid block structure",
+        "Test sanitizeBlocks with corrupted blocks",
+        "Test sanitizeBlocks with unknown block types",
+        "Test sanitizeBlocks with content:none violations",
+        "Test sanitizeBlocks with table structure validation"
+      ]
+    },
+    {
+      "area": "AI command execution",
+      "priority": "P0",
+      "tests": [
+        "Test executeAICommand with contextMode='above_cursor'",
+        "Test executeAICommand with contextMode='all'",
+        "Test executeAICommand with contextMode='none'",
+        "Test executeAICommand with contextMode='selection'",
+        "Test executeAICommand with missing API key",
+        "Test executeAICommand with empty response"
+      ]
+    },
+    {
+      "area": "Slash command registry",
+      "priority": "P1",
+      "tests": [
+        "Test command filtering by query",
+        "Test custom command CRUD operations",
+        "Test command category filtering",
+        "Test command import/export",
+        "Test prompt variable substitution"
+      ]
+    },
+    {
+      "area": "Note CRUD operations",
+      "priority": "P1",
+      "tests": [
+        "Test createNote with default blocks",
+        "Test updateNote with block changes",
+        "Test deleteNote cascade",
+        "Test moveNote with parentId",
+        "Test toggleFavorite"
+      ]
+    },
+    {
+      "area": "File sync",
+      "priority": "P2",
+      "tests": [
+        "Test markdown import parsing",
+        "Test markdown export generation",
+        "Test file picker dialog flow",
+        "Test auto-import on service ready"
+      ]
+    }
+  ]
+}

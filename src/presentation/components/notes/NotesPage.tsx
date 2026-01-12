@@ -77,7 +77,24 @@ export const NotesPage = React.memo(function NotesPage() {
 
     // Get projectId from ProjectContext (set by route)
     const { project } = useProjectContext();
-    const projectId = project?.id || 'default';
+    
+    // FIX TB-15: Don't fallback to 'default' - use actual project ID or browser-mode ID
+    // The route component should ensure project is loaded before rendering NotesPage
+    // For browser-mode (/notes route), project will be the browser-mode project
+    const projectId = project?.id;
+    
+    // FIX TB-15: Show loading state if project context not yet available
+    // This handles edge case where component renders before project loads
+    if (!projectId) {
+        return (
+            <div className="h-full flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-sm text-muted-foreground">Loading notes...</p>
+                </div>
+            </div>
+        );
+    }
 
     // 45-03: Sync projectId from IDE store (single source of truth)
     // When project changes in other workspaces (IDE, Knowledge), Notes workspace follows

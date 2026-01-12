@@ -38,9 +38,13 @@ export const Route = createLazyFileRoute('/notes/$projectId')({
 function NotesWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const [project, setProject] = useState<Project | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getProject(_projectId).then((p) => setProject(p as Project | null));
+    setIsLoading(true);
+    getProject(_projectId)
+      .then((p) => setProject(p as Project | null))
+      .finally(() => setIsLoading(false));
   }, [_projectId]);
 
   // Set projectId in IDE store when component mounts
@@ -51,6 +55,30 @@ function NotesWorkspace() {
       console.log('[NotesRoute] Project ID set in store:', _projectId);
     }
   }, [_projectId]);
+
+  // FIX TB-14: Show loading state while project is being fetched
+  // This prevents NotesPage from seeing project=null and falling back to 'default'
+  if (isLoading) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // FIX TB-14: If project not found after loading, show error
+  if (!project) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-sm text-destructive">Project not found: {_projectId}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ProjectProvider project={project} workspace="notes">

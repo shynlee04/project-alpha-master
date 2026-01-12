@@ -58,16 +58,10 @@ export function isFSASupported(): boolean {
   return 'showDirectoryPicker' in window;
 }
 
-/**
- * Check if running on desktop platform
- */
-export function isDesktopPlatform(): boolean {
-  // Check for touch support (mobile devices typically have touch)
-  const hasTouch = typeof window !== 'undefined' && 'ontouchstart' in window;
-  // Check screen width (desktop typically > 768px)
-  const isWideScreen = typeof window !== 'undefined' && window.innerWidth >= 768;
-  return !hasTouch && isWideScreen;
-}
+// FIX C-04: Removed duplicate isDesktopPlatform() - now re-exported from canonical source
+// @see src/lib/utils/platform-detection.ts for implementation
+// Re-export for backward compatibility
+export { isDesktopPlatform } from '@/lib/utils/platform-detection';
 
 /**
  * Pick a folder using File System Access API

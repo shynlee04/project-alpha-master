@@ -2912,3 +2912,93 @@ parallel_execution_summary:
     - "User approval required for epic extension"
     - "Create individual story context files"
     - "Begin sprint execution with story-continuity enforcement"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAM A: IDE WORKSPACE COURSE CORRECTION (2026-01-12)
+# ═══════════════════════════════════════════════════════════════════════════
+
+team_a_ide_workspace_course_correction:
+  id: "CC-TEAM-A-IDE-01"
+  timestamp: "2026-01-12T00:00:00+07:00"
+  trigger: "ReactNodeViewRenderer 'Cannot find node position' Error Investigation"
+  severity: "HIGH"
+  team: "A"
+  
+  investigation_summary:
+    issues_found:
+      - id: "ISSUE-01"
+        description: "ReactNodeViewRenderer 'Cannot find node position' Error"
+        location: "BlockNote/ProseMirror integration"
+        owner: "Team B"
+        status: "in_progress"
+        
+      - id: "ISSUE-02"
+        description: "Mobile users not properly routed to /notes workspace"
+        location: "useWorkspaceActions.ts, mobile-error-handling.ts"
+        owner: "Team A"
+        status: "completed"
+        
+  root_cause_analysis:
+    mobile_routing:
+      problem: "Mobile/tablet users attempting to use FSA API getDirectoryHandle() which is desktop-only"
+      evidence: |
+        - useWorkspaceActions.ts: openFolder callback showed mobile error on FSA operations
+        - mobile-error-handling.ts: Only showed error message, no redirect to /notes
+        - unified-storage-adapter.ts: No device-aware storage type enforcement
+      
+      solution_implemented:
+        - Added showMobileWorkspaceRedirect() in mobile-error-handling.ts
+        - Modified useWorkspaceActions.ts openFolder/switchFolder to auto-redirect
+        - Added device-aware storage type enforcement in unified-storage-adapter.ts
+        
+  files_modified:
+    - path: "src/lib/utils/mobile-error-handling.ts"
+      changes: |
+        - Added showMobileWorkspaceRedirect() function
+        - Toast notification with auto-redirect to /notes after 2000ms
+        - Prevents duplicate toasts with id: 'mobile-workspace-redirect'
+        
+    - path: "src/lib/workspace/hooks/useWorkspaceActions.ts"
+      changes: |
+        - Changed openFolder callback from showMobileWorkspaceError to showMobileWorkspaceRedirect
+        - Changed switchFolder callback similarly
+        - Added navigate to dependency array
+        
+    - path: "src/routes/notes.lazy.tsx"
+      changes: |
+        - Added auto-creation of default_note for browser-mode projects
+        - default_note contains: "Welcome to Notes" title, emoji, 3 sample paragraphs
+        - Block structure includes id (crypto.randomUUID()), content, props, children
+        - Auto-selects default_note as active note
+        
+    - path: "src/lib/filesystem/unified-storage-adapter.ts"
+      changes: |
+        - Added DeviceType interface
+        - Added static enforceStorageType(deviceType: DeviceType): StorageType
+        - Added getStorageTypeWithDeviceCheck(deviceType: DeviceType): StorageType
+        
+    - path: "src/presentation/components/notes/NoteSidebar.tsx"
+      changes: |
+        - Added browser mode indicator
+        - Shows "Browser Mode" badge with notebook icon
+        - Shows "IndexedDB" hint for storage type
+        - Conditionally rendered when isBrowserMode={true}
+        
+  validation:
+    typescript_compilation: "PASS"
+    notes_lazy_errors: "FIXED (added id and children to Block objects)"
+    api_route_errors: "PRE-EXISTING (not related to this work)"
+    
+  status: "COMPLETED"
+  completed_at: "2026-01-12T06:00:00+07:00"
+  
+  next_actions:
+    - owner: "Team B"
+      action: "Resolve ReactNodeViewRenderer 'Cannot find node position' Error"
+      priority: "P0"
+    - owner: "Team A"
+      action: "Verify mobile auto-redirect flow in browser"
+      priority: "P1"
+    - owner: "Team A"
+      action: "Test browser mode indicator rendering"
+      priority: "P2"

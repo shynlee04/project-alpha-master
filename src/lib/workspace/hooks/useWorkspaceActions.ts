@@ -19,7 +19,7 @@ import {
 import type { useWorkspaceState } from './useWorkspaceState';
 import type { useSyncOperations } from './useSyncOperations';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
+import { showMobileWorkspaceRedirect } from '@/lib/utils/mobile-error-handling';
 
 type WorkspaceStateReturn = ReturnType<typeof useWorkspaceState>;
 type SyncOperationsReturn = ReturnType<typeof useSyncOperations>;
@@ -57,11 +57,10 @@ export function useWorkspaceActions(
 
     const openFolder = useCallback(async (): Promise<void> => {
         if (!LocalFSAdapter.isSupported()) {
-            // Check if mobile/tablet and show appropriate error
-            // Check if mobile/tablet and show appropriate error
+            // Check if mobile/tablet and redirect to Notes workspace
             const { isMobile, isTablet } = deviceType;
             if (isMobile || isTablet) {
-                showMobileWorkspaceError('openFailed');
+                showMobileWorkspaceRedirect((path) => navigate({ to: path }));
                 return;
             }
             console.warn('[Workspace] File System Access API not supported');
@@ -119,11 +118,10 @@ export function useWorkspaceActions(
             await performSync(handle, { fullSync: autoSync });
         } catch (error) {
             if ((error as Error).name !== 'AbortError') {
-                // Check if mobile/tablet and show appropriate error
-                // Check if mobile/tablet and show appropriate error
+                // Check if mobile/tablet and redirect to Notes workspace
                 const { isMobile, isTablet } = deviceType;
                 if (isMobile || isTablet) {
-                    showMobileWorkspaceError('openFailed');
+                    showMobileWorkspaceRedirect((path) => navigate({ to: path }));
                     return;
                 }
                 console.error('[Workspace] Failed to open folder:', error);
@@ -131,15 +129,14 @@ export function useWorkspaceActions(
         } finally {
             setIsOpeningFolder(false);
         }
-    }, [directoryHandle, performSync, projectId, autoSync, setDirectoryHandle, setPermissionState, setProjectMetadata, setIsOpeningFolder, setAutoSyncState, deviceType]); // Added deviceType to deps
+    }, [directoryHandle, performSync, projectId, autoSync, setDirectoryHandle, setPermissionState, setProjectMetadata, setIsOpeningFolder, setAutoSyncState, deviceType, navigate]); // Added deviceType and navigate to deps
 
     const switchFolder = useCallback(async (): Promise<void> => {
         if (!LocalFSAdapter.isSupported()) {
-            // Check if mobile/tablet and show appropriate error
-            // Check if mobile/tablet and show appropriate error
+            // Check if mobile/tablet and redirect to Notes workspace
             const { isMobile, isTablet } = deviceType;
             if (isMobile || isTablet) {
-                showMobileWorkspaceError('openFailed');
+                showMobileWorkspaceRedirect((path) => navigate({ to: path }));
                 return;
             }
             console.warn('[Workspace] File System Access API not supported');
@@ -190,11 +187,10 @@ export function useWorkspaceActions(
             navigate({ to: '/workspace/$projectId', params: { projectId: newProjectId } });
         } catch (error) {
             if ((error as Error).name !== 'AbortError') {
-                // Check if mobile/tablet and show appropriate error
-                // Check if mobile/tablet and show appropriate error
+                // Check if mobile/tablet and redirect to Notes workspace
                 const { isMobile, isTablet } = deviceType;
                 if (isMobile || isTablet) {
-                    showMobileWorkspaceError('openFailed');
+                    showMobileWorkspaceRedirect((path) => navigate({ to: path }));
                     return;
                 }
                 console.error('[Workspace] Failed to switch folder:', error);

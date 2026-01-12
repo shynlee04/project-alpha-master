@@ -1,0 +1,99 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC CC-05: Agent/LLM Infrastructure (Correct-Course)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-CC-05"
+name: "Agent/LLM Infrastructure - Architectural Remediation"
+type: "correct-course"
+category: "architectural"
+workflow: "correct-course/architectural-conflict"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-14T19:00:00+07:00"
+updated_at: "2026-01-14T19:00:00+07:00"
+priority: "P1"
+team: "Team A"
+estimated_duration: "6-8 days"
+status: "BLOCKED"
+blocked_by: "EPIC-CC-01, EPIC-CC-02"
+
+# Source References
+source_documents:
+  - "_bmad-output/architectural-scan/shards/shard-03-03-agent-llm.md"
+  - "_bmad-output/team-b-investigations/consolidated-investigation-report-2026-01-14.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  The Agent/LLM infrastructure has god modules:
+  
+  1. **lib/knowledge/** (P0): 46 files mixing 6 concerns:
+     - synthesis, import, graph, pdf, url, flashcard
+  
+  2. **lib/rag/** (P0): 30 files mixing 5 concerns:
+     - chunking, embedding, indexing, retrieval, query
+  
+  3. **blocksToMarkdown incomplete** (P0): Complex blocks not properly converted.
+  
+  4. **Missing vault-ready check** (P0): KnowledgeToolsFacade doesn't verify vault.
+  
+  5. **NoteStoreState lazy dependency** (P0): Causes initialization issues.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (5 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  - id: "AGENT-01"
+    name: "Split lib/knowledge/ God Module"
+    priority: "P0"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Split 46 files into 6 subdirectories: synthesis/, import/, graph/, pdf/, url/, flashcard/"
+    
+  - id: "AGENT-02"
+    name: "Split lib/rag/ God Module"
+    priority: "P0"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Split 30 files into 5 subdirectories: chunking/, embedding/, indexing/, retrieval/, query/"
+    
+  - id: "AGENT-03"
+    name: "Fix Tool Initialization Issues"
+    priority: "P0"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Add vault-ready check, fix blocksToMarkdown, fix NoteStoreState lazy dependency"
+    
+  - id: "AGENT-04"
+    name: "Add Tool Catalog Initialization"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Initialize tool catalog at startup, not lazily"
+    
+  - id: "AGENT-05"
+    name: "Agent Infrastructure Integration Testing"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Full integration test of agent infrastructure after refactoring"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES & EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics:
+    - "EPIC-CC-01"  # Needs StorageAdapter for knowledge persistence
+    - "EPIC-CC-02"  # Needs BYOK for credential access
+  blocked_epics: []
+
+execution_notes:
+  team: "Team A"
+  sequence: "After CC-01 and CC-02 complete"

@@ -1,37 +1,38 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.0 - Governance Compliant
+# BMM WORKFLOW STATUS v2.1 - CORRECT-COURSE ACTIVATED
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.0.0"
-last_updated: "2026-01-14T14:00:00+07:00"
-updated_by: "BMAD-Agent - EPIC-44 COMPLETE! All 12 stories delivered"
+schema_version: "2.1.0"
+last_updated: "2026-01-14T19:00:00+07:00"
+updated_by: "EXCALIBUR - Correct-Course Architectural Remediation Activated"
 previous_version: "_bmad-output/.archive/2026-01-09/workflow-history/bmm-workflow-status-v1-ARCHIVED.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 85
+health_score: 35  # CORRECTED - reflects actual architectural state
 context_ttl: "24h"
-current_phase: "IMPLEMENTATION"
+current_phase: "CORRECT-COURSE"
 
 # PHASE GUIDANCE
 phase_guidance: |
-  All new stories require epic prefix (e.g., FS-05, P1.5-03)
-  Epic numbers are MONOTONIC (greater = later priority)
-  No epic can start before lower-numbered epic reaches 80%
-  Story completion: code + test + review + human-approval
+  CORRECT-COURSE WORKFLOW ACTIVE:
+  - CC-01 and CC-02 run in PARALLEL (Team A + Team B)
+  - CC-03 through CC-06 are BLOCKED until Phase 1 complete
+  - All stories must be TESTED before claiming complete
+  - Delete more code than added (net reduction expected)
 
 # TEAMS
 teams:
   - id: "Team A"
-    name: "Chat Remediation Squad"
-    focus: "Unified Chat Interface - State, Routing, Space-Aware Orchestration"
-    assigned_epic: "EPIC-45"
+    name: "BYOK & Agent Infrastructure Squad"
+    focus: "CC-02 (BYOK) → CC-03 (Chat) → CC-05 (Agent/LLM)"
+    assigned_epic: "EPIC-CC-02"
   - id: "Team B"
-    name: "Notes AI Squad"
-    focus: "Multimodal Rich Content"
-    assigned_epic: "EPIC-44"
+    name: "Project Space & Notes Squad"
+    focus: "CC-01 (Project Space) → CC-04 (Notes) → CC-06 (Type Safety)"
+    assigned_epic: "EPIC-CC-01"
 
 # NUMBERING RULES
 numbering:
@@ -52,24 +53,24 @@ limits:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "epic-45-complete-2026-01-14"
-  status: "COMPLETED"
-  epic: "EPIC-45"
-  story: "45-05"
-  started_at: "2026-01-14T01:00:00+07:00"
-  completed_at: "2026-01-14T05:00:00+07:00"
-  team: "Team A"
-  story_status: "COMPLETED"
-  story_summary: "EPIC-45 Chat State & Project Foundation - All 5 stories delivered"
+  id: "correct-course-2026-01-14"
+  status: "ACTIVE"
+  epic: "EPIC-CC-01"
+  story: "PS-01"
+  started_at: "2026-01-14T19:00:00+07:00"
+  completed_at: null
+  team: "Team B"
+  story_status: "READY"
+  story_summary: "Split useWorkspaceFileSystem God Store (571 lines → 3 slices)"
 
 parallel_workflows:
-  - id: "notes-ai-epic-44-2026-01-14"
-    status: "COMPLETED"
-    epic: "EPIC-44"
-    story: "44-12"
-    team: "Team B"
-    story_summary: "Multi-step Generation with Blur Animation - EPIC COMPLETE!"
-    completed_at: "2026-01-14T14:00:00+07:00"
+  - id: "cc-02-byok-2026-01-14"
+    status: "READY"
+    epic: "EPIC-CC-02"
+    story: "BYOK-01"
+    team: "Team A"
+    story_summary: "Split Provider Credentials God Slice (396 lines → 2 slices)"
+    started_at: null
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
@@ -77,102 +78,97 @@ parallel_workflows:
 
 active_epics:
   # ═══════════════════════════════════════════════════════════════════════════
-  # TEAM A: Chat Remediation (Correct-Course Workflow)
+  # CORRECT-COURSE EPICS (ARCHITECTURAL REMEDIATION)
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: "EPIC-CC-01"
+    name: "Project Space Foundation"
+    status: "READY"
+    progress: 0
+    stories_total: 5
+    stories_done: 0
+    priority: "P0"
+    team: "Team B"
+    blocked_by: null
+    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-01-project-space-foundation-2026-01-14.yaml"
+    stories:
+      - id: "PS-01"
+        name: "Split useWorkspaceFileSystem God Store"
+        status: "READY"
+      - id: "PS-02"
+        name: "Create StorageAdapter Domain Interface"
+        status: "BLOCKED_BY_PS-01"
+      - id: "PS-03"
+        name: "Consolidate Dexie Databases"
+        status: "BLOCKED_BY_PS-02"
+      - id: "PS-04"
+        name: "Fix Domain→Infrastructure Import Violation"
+        status: "BLOCKED_BY_PS-02"
+      - id: "PS-05"
+        name: "Add Content Hashing for Sync"
+        status: "BLOCKED_BY_PS-04"
+
+  - id: "EPIC-CC-02"
+    name: "BYOK Cleanup"
+    status: "READY"
+    progress: 0
+    stories_total: 4
+    stories_done: 0
+    priority: "P0"
+    team: "Team A"
+    blocked_by: null
+    parallel_with: "EPIC-CC-01"
+    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-02-byok-cleanup-2026-01-14.yaml"
+    stories:
+      - id: "BYOK-01"
+        name: "Split Provider Credentials God Slice"
+        status: "READY"
+      - id: "BYOK-02"
+        name: "Add Zod Validation Schemas"
+        status: "BLOCKED_BY_BYOK-01"
+      - id: "BYOK-03"
+        name: "Archive Legacy Migration Code"
+        status: "BLOCKED_BY_BYOK-01"
+      - id: "BYOK-04"
+        name: "Add projectId to Tool Execution Logs"
+        status: "READY"
+
+  - id: "EPIC-CC-03"
+    name: "Chat Flow Stabilization"
+    status: "BLOCKED"
+    progress: 0
+    stories_total: 5
+    stories_done: 0
+    priority: "P1"
+    team: "Team A"
+    blocked_by: "EPIC-CC-01"
+    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-03-chat-flow-2026-01-14.yaml"
+
+  - id: "EPIC-CC-04"
+    name: "Notes Refactoring"
+    status: "BLOCKED"
+    progress: 0
+    stories_total: 5
+    stories_done: 0
+    priority: "P1"
+    team: "Team B"
+    blocked_by: "EPIC-CC-01"
+    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-04-notes-refactor-2026-01-14.yaml"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # SUPERSEDED EPICS (Not properly tested - replaced by Correct-Course)
   # ═══════════════════════════════════════════════════════════════════════════
 
   - id: "EPIC-45"
     name: "Chat State & Project Foundation"
-    status: "COMPLETED"
+    status: "SUPERSEDED"
     progress: 100
     stories_total: 5
     stories_done: 5
     priority: "P0"
     team: "Team A"
-    blocked_by: null
-    completed_at: "2026-01-14T05:00:00+07:00"
-    sprint_file: "_bmad-output/sprint-artifacts/epic-45-chat-state-2026-01-14.yaml"
-    stories:
-      - id: "45-01"
-        name: "IDE Store Foundation"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T01:30:00+07:00"
-        file: "src/infrastructure/persistence/stores/ide/ide-store.ts"
-      - id: "45-02"
-        name: "Route-Sync Pattern"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T02:00:00+07:00"
-        file: "src/routes/notes.lazy.tsx"
-      - id: "45-03"
-        name: "Unified Project State"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T03:00:00+07:00"
-        file: "src/presentation/components/notes/NotesPage.tsx"
-      - id: "45-04"
-        name: "Browser Mode"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T04:00:00+07:00"
-        file: "src/lib/workspace/browser-mode.ts"
-      - id: "45-05"
-        name: "Scroll Position Preservation"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T05:00:00+07:00"
-        file: "src/lib/notes/note-navigation-store.ts"
-
-  - id: "EPIC-46"
-    name: "Space-Aware Agent Orchestration"
-    status: "READY"
-    progress: 0
-    stories_total: 4
-    stories_done: 0
-    priority: "P1"
-    team: "Team A"
-    blocked_by: null
-    sprint_file: "_bmad-output/sprint-artifacts/epic-46-space-aware-2026-01-14.yaml"
-    planning_complete_at: "2026-01-14T12:30:00+07:00"
-    stories:
-      - id: "46-01"
-        name: "Unified tool context propagation across workspaces"
-        status: "READY"
-        story_file: "_bmad-output/sprint-artifacts/46-01-tool-context-propagation-2026-01-14.md"
-        description: "Tools must receive workspaceType context in all agent calls"
-        notes: "90% complete - only projectId logging needed"
-      - id: "46-02"
-        name: "Workspace-specific system prompts"
-        status: "READY"
-        story_file: "_bmad-output/sprint-artifacts/46-02-workspace-prompts-2026-01-14.md"
-        description: "Generate system prompts based on available tools per workspace"
-      - id: "46-03"
-        name: "Tool execution metadata display in chat blocks"
-        status: "READY"
-        story_file: "_bmad-output/sprint-artifacts/46-03-tool-metadata-display-2026-01-14.md"
-        description: "Show tool name, workspace, status, duration in CollapsibleSection"
-      - id: "46-04"
-        name: "Space-aware render modes for chat components"
-        status: "READY"
-        story_file: "_bmad-output/sprint-artifacts/46-04-space-aware-render-modes-2026-01-14.md"
-        description: "CodeBlock and other components show workspace-specific actions"
-
-  - id: "EPIC-47"
-    name: "Workspace-Aware Artifacts & Actions"
-    status: "pending"
-    progress: 0
-    stories_total: 3
-    stories_done: 0
-    priority: "P1"
-    team: "Team A"
-    blocked_by: "EPIC-46"
-    sprint_file: "_bmad-output/sprint-artifacts/epic-47-artifacts-2026-01-14.yaml"
-    stories:
-      - id: "47-01"
-        name: "Add workspace-aware Save to Project for artifacts"
-        status: "pending"
-        description: "IDE→src/, Notes→notes/, Knowledge→knowledge/, Study→study/"
-      - id: "47-02"
-        name: "Code block execute button (IDE workspace only)"
-        status: "pending"
-      - id: "47-03"
-        name: "Artifact preview modal improvements"
-        status: "pending"
+    notes: "Code written but NOT tested - superseded by CC-01, CC-03"
+    superseded_by: "EPIC-CC-01, EPIC-CC-03"
 
   # ═══════════════════════════════════════════════════════════════════════════
   # TEAM B: Notes AI (Parallel Work)

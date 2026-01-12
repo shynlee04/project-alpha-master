@@ -198,6 +198,24 @@ export function NoteSidebar({
                     </div>
                 </div>
 
+                {/* TEAM-A-2026-01-12: Storage Mode Indicator */}
+                {isBrowserMode && (
+                    <div className="flex items-center gap-1">
+                        <span className={`
+                            inline-flex items-center gap-1 px-2 py-1 
+                            text-xs font-mono font-bold
+                            rounded-none border border-border
+                            bg-muted/50 text-muted-foreground
+                        `}>
+                            <Notebook size={12} />
+                            {t('notes.storageMode.browser', 'Browser Mode')}
+                        </span>
+                        <span className="text-xs text-muted-foreground/70">
+                            {t('notes.storageMode.hint', 'IndexedDB')}
+                        </span>
+                    </div>
+                )}
+
                 {/* Search Input - only show in notes view */}
                 {sidebarView === 'notes' && (
                     <div className="relative">

@@ -1,0 +1,400 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC CC-01: Project Space Foundation (Correct-Course)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-CC-01"
+name: "Project Space Foundation - Architectural Remediation"
+type: "correct-course"
+category: "architectural"
+workflow: "correct-course/architectural-conflict"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-14T19:00:00+07:00"
+updated_at: "2026-01-14T19:00:00+07:00"
+priority: "P0"
+team: "Team B"
+estimated_duration: "5-7 days"
+status: "READY"
+
+# Source References
+source_documents:
+  - "_bmad-output/architectural-scan/shards/ARCH-INDEX.md"
+  - "_bmad-output/architectural-scan/shards/shard-03-02-project-space.md"
+  - "_bmad-output/architectural-scan/shards/shard-05-remediation-grouping.md"
+  - "_bmad-output/team-b-investigations/consolidated-investigation-report-2026-01-14.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  The Project Space (Desktop FS vs Browser DB) has critical architectural issues:
+  
+  1. **God Store** (P0): `useWorkspaceFileSystem.ts` is 571 lines mixing:
+     - Project loading logic
+     - File operations (CRUD)
+     - Dexie queries
+     
+  2. **No Storage Abstraction** (P0): Components directly import FSA or IDB adapters.
+     There's no unified StorageAdapter interface in the domain layer.
+     
+  3. **Multiple Dexie Databases** (P0): Data is fragmented across:
+     - ViaGentDatabase (main)
+     - FlashcardDB (separate)
+     - StudyDB (separate)
+     
+  4. **Domain→Infrastructure Import** (P0): `unified-file-crud.ts:31` violates
+     Clean Architecture by importing from infrastructure layer.
+     
+  5. **Sync Without Content Hash** (P1): `bidirectional-sync-core.ts:144`
+     only compares lastModified, not content hashes.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  must_have:
+    - "useWorkspaceFileSystem.ts reduced to <150 lines (orchestrator only)"
+    - "StorageAdapter interface created in domain/interfaces/"
+    - "FSA and IDB adapters implement StorageAdapter interface"
+    - "Zero direct FSA/IDB imports in presentation layer"
+    - "TypeScript compilation succeeds with 0 errors"
+    - "All existing tests pass"
+    
+  should_have:
+    - "FlashcardDB consolidated into ViaGentDatabase"
+    - "StudyDB consolidated into ViaGentDatabase"
+    - "Content hashing added for sync conflict detection"
+    
+  nice_to_have:
+    - "Route validation guards for project IDs"
+    - "Bidirectional sync with hash comparison"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (5 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  # ─────────────────────────────────────────────────────────────────────────
+  # PS-01: Split useWorkspaceFileSystem God Store
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PS-01"
+    name: "Split useWorkspaceFileSystem God Store"
+    priority: "P0"
+    estimation: "2 days"
+    status: "READY"
+    
+    description: |
+      The useWorkspaceFileSystem.ts (571 lines) is a god store mixing 3 concerns:
+      - Project loading (should be separate)
+      - File operations CRUD (should be separate)
+      - Storage adapter management (should be separate)
+      
+      Split into 3 focused slices following Zustand v5 patterns.
+    
+    acceptance_criteria:
+      - "AC1: Create file-loader-slice.ts (~100 lines) for project loading"
+      - "AC2: Create file-ops-slice.ts (~120 lines) for CRUD operations"
+      - "AC3: Create storage-adapter-slice.ts (~80 lines) for adapter management"
+      - "AC4: useWorkspaceFileSystem.ts becomes orchestrator only (<150 lines)"
+      - "AC5: All slices use useShallow for selectors"
+      - "AC6: Zero regression in existing functionality"
+    
+    technical_requirements:
+      - "TR1: Each slice exports individual selectors with useShallow"
+      - "TR2: Slices compose into combined store"
+      - "TR3: No cross-slice circular dependencies"
+      - "TR4: Type-safe slice interfaces"
+    
+    files_to_create:
+      - path: "src/infrastructure/persistence/stores/workspace/file-loader-slice.ts"
+        purpose: "Project loading logic only"
+        lines: 100
+      - path: "src/infrastructure/persistence/stores/workspace/file-ops-slice.ts"
+        purpose: "File CRUD operations only"
+        lines: 120
+      - path: "src/infrastructure/persistence/stores/workspace/storage-adapter-slice.ts"
+        purpose: "Adapter management (FSA/IDB selection)"
+        lines: 80
+    
+    files_to_modify:
+      - path: "src/lib/workspace/useWorkspaceFileSystem.ts"
+        change: "Reduce to orchestrator, import slices, <150 lines"
+        lines_changed: -400
+    
+    must_pass_checklist:
+      - "[ ] File loader slice created and tested in isolation"
+      - "[ ] File ops slice created and tested in isolation"
+      - "[ ] Storage adapter slice created and tested in isolation"
+      - "[ ] All slices compose correctly"
+      - "[ ] useWorkspaceFileSystem.ts < 150 lines"
+      - "[ ] Desktop FS mode works (create, read, write, delete)"
+      - "[ ] Browser IDB mode works (create, read, write, delete)"
+      - "[ ] Vitest unit tests pass"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PS-02: Create StorageAdapter Domain Interface
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PS-02"
+    name: "Create StorageAdapter Domain Interface"
+    priority: "P0"
+    estimation: "1 day"
+    status: "BLOCKED_BY_PS-01"
+    depends_on: ["PS-01"]
+    
+    description: |
+      Create a StorageAdapter interface in the domain layer that abstracts
+      file operations. Both FSA and IDB adapters will implement this interface.
+      Components will only use this interface, never direct adapter imports.
+    
+    acceptance_criteria:
+      - "AC1: StorageAdapter interface defined in domain/interfaces/"
+      - "AC2: Interface includes: getFile, writeFile, deleteFile, listFiles"
+      - "AC3: FSA adapter implements StorageAdapter"
+      - "AC4: IDB adapter implements StorageAdapter"
+      - "AC5: Factory creates appropriate adapter based on capability"
+      - "AC6: Zero direct FSA/IDB imports in presentation layer"
+    
+    technical_requirements:
+      - "TR1: Interface in domain layer (Clean Architecture)"
+      - "TR2: Adapters in infrastructure layer"
+      - "TR3: Factory pattern for adapter selection"
+      - "TR4: Context provides adapter instance"
+    
+    files_to_create:
+      - path: "src/domain/interfaces/storage-adapter.ts"
+        purpose: "Storage abstraction interface"
+        lines: 80
+      - path: "src/infrastructure/persistence/adapters/storage-adapter-factory.ts"
+        purpose: "Creates appropriate adapter (FSA or IDB)"
+        lines: 60
+    
+    files_to_modify:
+      - path: "src/lib/workspace/fsa-adapter-core.ts"
+        change: "Implement StorageAdapter interface"
+        lines_changed: +30
+      - path: "src/lib/workspace/idb-adapter-core.ts"
+        change: "Implement StorageAdapter interface"
+        lines_changed: +30
+      - path: "src/lib/workspace/unified-storage-adapter.ts"
+        change: "Use factory, reduce complexity"
+        lines_changed: -100
+    
+    must_pass_checklist:
+      - "[ ] StorageAdapter interface created in domain layer"
+      - "[ ] FSA adapter implements interface"
+      - "[ ] IDB adapter implements interface"
+      - "[ ] Factory creates correct adapter"
+      - "[ ] unified-file-crud.ts no longer imports infrastructure"
+      - "[ ] All presentation components use StorageAdapter only"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PS-03: Consolidate Dexie Databases
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PS-03"
+    name: "Consolidate Dexie Databases"
+    priority: "P0"
+    estimation: "2 days"
+    status: "BLOCKED_BY_PS-02"
+    depends_on: ["PS-02"]
+    
+    description: |
+      Currently there are 3 separate Dexie databases:
+      - ViaGentDatabase (main)
+      - FlashcardDB
+      - StudyDB
+      
+      This causes data fragmentation and complicates migrations.
+      Consolidate all into ViaGentDatabase with proper table prefixes.
+    
+    acceptance_criteria:
+      - "AC1: FlashcardDB tables moved to ViaGentDatabase"
+      - "AC2: StudyDB tables moved to ViaGentDatabase"
+      - "AC3: Migration script handles existing data"
+      - "AC4: Old databases cleaned up after migration"
+      - "AC5: All workspace features work with consolidated DB"
+    
+    technical_requirements:
+      - "TR1: Add flashcard tables to ViaGentDatabase schema"
+      - "TR2: Add study tables to ViaGentDatabase schema"
+      - "TR3: Create migration v21 for data transfer"
+      - "TR4: Update all references to use new tables"
+    
+    files_to_modify:
+      - path: "src/infrastructure/persistence/dexie-db.ts"
+        change: "Add flashcard and study tables"
+        lines_changed: +50
+      - path: "src/infrastructure/persistence/dexie-db-migrations.ts"
+        change: "Add migration v21 for consolidation"
+        lines_changed: +100
+      - path: "src/lib/flashcard/flashcard-db.ts"
+        change: "Deprecate, redirect to ViaGentDatabase"
+        lines_changed: -50
+      - path: "src/lib/study/study-database-slice.ts"
+        change: "Update to use ViaGentDatabase"
+        lines_changed: +20
+    
+    files_to_delete:
+      - path: "src/lib/flashcard/flashcard-db.ts"
+        reason: "Consolidated into ViaGentDatabase (after migration verified)"
+    
+    must_pass_checklist:
+      - "[ ] ViaGentDatabase schema includes flashcard tables"
+      - "[ ] ViaGentDatabase schema includes study tables"
+      - "[ ] Migration v21 transfers existing data"
+      - "[ ] Flashcard features work with new tables"
+      - "[ ] Study features work with new tables"
+      - "[ ] Quiz features work with new tables"
+      - "[ ] No data loss during migration"
+      - "[ ] pnpm tsc --noEmit passes"
+      - "[ ] Vitest tests pass"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PS-04: Fix Domain→Infrastructure Import Violation
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PS-04"
+    name: "Fix Domain→Infrastructure Import Violation"
+    priority: "P0"
+    estimation: "0.5 days"
+    status: "BLOCKED_BY_PS-02"
+    depends_on: ["PS-02"]
+    
+    description: |
+      The file `domain/services/file-crud/unified-file-crud.ts:31` imports
+      from infrastructure layer, violating Clean Architecture.
+      
+      With StorageAdapter interface in domain layer (PS-02), this can be fixed
+      by injecting the adapter instead of importing it.
+    
+    acceptance_criteria:
+      - "AC1: unified-file-crud.ts uses StorageAdapter interface"
+      - "AC2: Adapter injected via context or parameter"
+      - "AC3: Zero infrastructure imports in domain layer"
+      - "AC4: Dependency direction: Infrastructure → Domain (never reverse)"
+    
+    technical_requirements:
+      - "TR1: Update unified-file-crud.ts to accept StorageAdapter"
+      - "TR2: Provide adapter via context or factory"
+      - "TR3: All callers updated to provide adapter"
+    
+    files_to_modify:
+      - path: "src/domain/services/file-crud/unified-file-crud.ts"
+        change: "Use StorageAdapter interface, remove infrastructure import"
+        lines_changed: -10
+    
+    must_pass_checklist:
+      - "[ ] unified-file-crud.ts has no infrastructure imports"
+      - "[ ] Uses StorageAdapter interface from domain"
+      - "[ ] All callers provide adapter correctly"
+      - "[ ] pnpm tsc --noEmit passes"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # PS-05: Add Content Hashing for Sync
+  # ─────────────────────────────────────────────────────────────────────────
+  - id: "PS-05"
+    name: "Add Content Hashing for Sync Conflict Detection"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED_BY_PS-04"
+    depends_on: ["PS-04"]
+    
+    description: |
+      Currently bidirectional-sync-core.ts:144 only compares lastModified
+      timestamps for sync. This is unreliable across time zones and systems.
+      
+      Add SHA-256 content hashing for reliable change detection.
+    
+    acceptance_criteria:
+      - "AC1: Content hasher utility created"
+      - "AC2: Sync compares content hashes, not just timestamps"
+      - "AC3: Identical content doesn't trigger false conflicts"
+      - "AC4: Different content triggers proper conflict resolution"
+    
+    technical_requirements:
+      - "TR1: Use Web Crypto API for SHA-256"
+      - "TR2: Store hash with file metadata in Dexie"
+      - "TR3: Compare hashes during sync"
+    
+    files_to_create:
+      - path: "src/infrastructure/sync/content-hasher.ts"
+        purpose: "SHA-256 content hashing for sync"
+        lines: 50
+    
+    files_to_modify:
+      - path: "src/infrastructure/sync/bidirectional-sync-core.ts"
+        change: "Add hash comparison to sync logic"
+        lines_changed: +50
+    
+    must_pass_checklist:
+      - "[ ] Content hasher created and tested"
+      - "[ ] Sync uses hash comparison"
+      - "[ ] Identical content doesn't trigger conflict"
+      - "[ ] Modified content detected correctly"
+      - "[ ] pnpm tsc --noEmit passes"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics: []
+  blocked_epics:
+    - "EPIC-CC-03"  # Chat Flow depends on storage abstraction
+    - "EPIC-CC-04"  # Notes depends on storage abstraction
+    - "EPIC-CC-05"  # Agent/LLM depends on storage abstraction
+    
+  internal_dependencies:
+    - from: "PS-02"
+      to: "PS-01"
+      reason: "StorageAdapter needs slices to exist"
+    - from: "PS-03"
+      to: "PS-02"
+      reason: "DB consolidation uses StorageAdapter"
+    - from: "PS-04"
+      to: "PS-02"
+      reason: "Fix requires StorageAdapter interface"
+    - from: "PS-05"
+      to: "PS-04"
+      reason: "Sync enhancement after core fixes"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RISKS
+# ═══════════════════════════════════════════════════════════════════════════
+
+risks:
+  - risk: "Data loss during DB consolidation"
+    probability: "Low"
+    impact: "Critical"
+    mitigation: "Backup before migration, test in staging, rollback plan"
+    
+  - risk: "Adapter interface breaks existing code"
+    probability: "High"
+    impact: "High"
+    mitigation: "Gradual migration, facade pattern for transition"
+    
+  - risk: "FS permission UX poor"
+    probability: "Medium"
+    impact: "High"
+    mitigation: "Test with real users, iterate on UX"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXECUTION NOTES
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution_notes:
+  team: "Team B"
+  parallel_safe: false
+  must_complete_before: ["EPIC-CC-03", "EPIC-CC-04", "EPIC-CC-05"]
+  
+  execution_order:
+    - "PS-01: Split god store (Day 1-2)"
+    - "PS-02: Create StorageAdapter (Day 3)"
+    - "PS-03: Consolidate databases (Day 4-5)"
+    - "PS-04: Fix import violation (Day 5)"
+    - "PS-05: Add content hashing (Day 6-7)"
