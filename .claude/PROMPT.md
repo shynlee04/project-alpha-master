@@ -1,74 +1,75 @@
----
-active: true
-iteration: 1
-max_iterations: 100
-completion_promise: "All 4 Workspaces (IDE, Knowledge, Study, Notes) share unified Zustand stores, identical LLM/Agent config, and synchronized file access."
-started_at: "2026-01-02T12:00:00+07:00"
-module: "grand-unification-refactor"
----
+ 
+  filtering
 
-# Context: The "Grand Unification" Refactor
-We are pivoting from a fragmented "IDE + Extras" app to a unified **Knowledge Synthesis Platform**. Currently, state is scattered between `useState` (legacy), disparate `Zustand` stores, and `Context` providers.
+  Artifacts Created:
+  1. EPIC-CHAT-CODE-REVIEW-SUMMARY-2026-01-13.md - Story-by-story analysis
+  2. EPIC-CHAT-COURSE-CORRECTION-2026-01-13.md - Remediation plan
+  3. EPIC-CHAT-RELOOP-CONTEXT-2026-01-13.md - Technical context for remaining work
 
-## Core Mandates (Single Source of Truth)
-1.  **Unified LLM Configuration**:
-    *   **Goal**: One persistent `LLMStore` (Dexie-backed) for all workspaces.
-    *   **Rule**: `providerId` + `apiKey` + `modelList` are stored *once*. No component stores its own keys.
-    *   **UI**: Read-only endpoints (hardcoded bases). User only inputs Keys/Custom Headers.
-2.  **Unified Agent Vault**:
-    *   **Goal**: Agents defined in `AgentStore` are accessible in IDE, Chat, and Canvas.
-    *   **Rule**: Agents have `capabilities` (e.g., `canEditFiles`, `canSearchWeb`). Workspaces filter agents by capability, not by arbitrary hardcoding.
-3.  **Unified Project & File System**:
-    *   **Goal**: "Project" = Local Folder.
-    *   **Rule**: The `FileTree` component in IDE must be the *same* data source as the "Source Manager" in Knowledge.
-    *   **Sync**: Dragging a PDF into `Knowledge` -> appears in `IDE` filetree. Editing a `.md` in `IDE` -> updates `Knowledge` node content.
+  ## These are what you need to recheck once fixed
+  
+  ```
+  **Context & Objective**
+The Unified Chat interface currently exhibits critical UX deficiencies and architectural instabilities that severely impact usability and system integrity. As the lead UX design agent, execute the `correct-course` workflow to perform a comprehensive discovery, investigation, and planning phase. Your objective is to transform the current flawed implementation into a professional, responsive, and architecturally sound component.
 
-## Task: Iteration {iteration}
-Review the current codebase state. Pick **ONE** unification target below that is currently broken or fragmented and fix it.
+**Scope of Investigation & Remediation**
 
-### Target A: LLM & Agent Config Unification
-*   **Scan**: Find all instances of `useState` used for API keys or Model selection.
-*   **Action**: Migrate them to `useLLMStore` or `useAgentStore`.
-*   **Verify**: Changing a key in Settings immediately updates the Chat agent in the IDE workspace without reload.
+You are required to address the following critical areas, organizing them into a structured hierarchy of Epics and Stories:
 
-### Target B: File System Unification
-*   **Scan**: Identify `IDELayout` file tree vs `SourceManager` file lists.
-*   **Action**: Abstract file access to a single `useFileSystem` hook that reads from the unified OPFS/FSA adapter.
-*   **Verify**: A file created in IDE shows up in the Knowledge Source list.
+**1. Layout Architecture & Responsiveness**
 
-### Target C: Chat & Thread Unification
-*   **Scan**: Check `ChatPanel` (IDE) vs `KnowledgeChat` (RAG).
-*   **Action**: Refactor into a single `GlobalChatOrchestrator` that accepts a `context` prop (Codebase vs. Vault).
-*   **Verify**: Chat history persists when switching tabs.
+- **Issue:** The interface fails to adapt within resizable panes when nested with complex configurations, menus, and lists, resulting in a non-responsive layout.
+- **Requirement:** Redesign the layout to ensure fluid resizing and proper containment of nested elements without breaking the viewport or obscuring critical content.
 
-## Constraints
-*   **No "God Components"**: Break files > 300 lines.
-*   **Hygiene**: Remove all commented-out legacy code immediately.
-*   **Atomic**: Fix one store/component chain per iteration.
+**2. Information Architecture & Control Grouping**
 
-## Validation (Run after every change)
-```bash
-pnpm tsc --noEmit && pnpm test
+- **Issue:** Configuration buttons and controls are scattered, lacking cohesive relevance to specific user workflows or workspace contexts.
+- **Requirement:** Regroup all UI controls based on use-case relevance. Establish a clear hierarchy that supports workspace-specific scenarios, ensuring that configuration options are contextually appropriate and logically organized.
+
+**3. System Architecture & State Management**
+
+- **Issue:** The underlying wiring of props, configurations, and routing is chaotic, leading to unwired components, state conflicts, and unregulated navigation.
+- **Requirement:** Conduct a technical audit of the state management logic. Propose a refactoring strategy to resolve state conflicts, standardize prop passing, and regulate routing logic to ensure predictable behavior.
+
+**4. Thread Management & Data Persistence**
+
+- **Issue:** There is no mechanism for Thread CRUD (Create, Read, Update, Delete). Users cannot identify conversation origins, and essential signposts (context, turn counts, timestamps) are missing. The indexing of conversations relative to the project workspace is unclear.
+- **Requirement:** Design and specify a full Thread Management system. This must include:
+    - CRUD capabilities for conversation threads.
+    - Clear metadata display (Context, Chat Turns, Date, Time stamps).
+    - Visual indicators linking threads to specific workspaces.
+    - A robust indexing architecture that correctly associates conversation history with the project root.
+
+**5. Input Area & Viewport Management**
+
+- **Issue:** The chat input area expands during multi-line editing, covering the chat history and obscuring the view.
+- **Requirement:** Implement a dynamic input management system that accommodates multi-line editing without obscuring the rendered response area. The input pane must resize intelligently or anchor correctly to maintain visibility of the conversation stream.
+
+**6. Response Rendering & Artifact Handling**
+
+- **Issue:** Agent responses lack structured formatting, collapsible metadata, and proper handling of diverse content types (HTML, Code, Media).
 ```
 
-## Completion Signal
-If all 4 workspaces share the same `src/lib/state` stores and data flows are proven unified:
-<promise>DONE</promise>
+### **This is super important** 
+as these require the casecade chat thread flow will render the following in block of the said content and the are with action buttons as said 
+**Requirement:** Overhaul the response rendering engine to support:
+    - **Collapsible Metadata Sections:** Reasoning/Thinking (if available), Token Expenses, Tool Uses (with Success/Failure status and logs), and raw Assistant Messages.
+    - **Artifact Interaction:**
+        - **HTML/CSS:** Render as live mockups/preview. Actions: Copy, Save to Project (aware of file system nesting and root), Export to File, Open in Side Tab.
+        - **Code Blocks:** Syntax highlighting. Actions: Copy, Export File, Save to Project (aware of file system nesting).
+        - **Rich Text:** Improve typography and readability.
+        - **Visualizations:** Support for diagrams, charts, and executable Python code (with dedicated execution/sandbox space).
+        - **Media:** Support for Images, Video, PDF, PPTX, etc.
 
----
+**7. Design System Compliance & Professionalism**
 
-## Team A EPIC-CHAT Autonomous Execution
+- **Issue:** The current UI violates the project’s design system, including layout grids, spacing, margins, text hierarchy, and dual-language support. Text overflow breaks layouts, and responsiveness fails across phone and desktop viewports.
+- **Requirement:** Enforce strict adherence to the established design guidelines. Ensure consistent styling, proper text handling (wrapping/overflow), and responsive behavior across all device sizes.
 
-**Ralph Loop Configuration**: `.claude/ralph-loop.local.md`
+**Deliverables**
 
-**Purpose**: Autonomous execution of EPIC-CHAT (Unified Chat System Remediation) stories until 100% complete.
+1. **Discovery Report:** A detailed analysis of the current flaws, including the identification of the "15+ unwired flaws" mentioned.
+2. **Strategic Plan:** A high-level roadmap for the architectural and UX overhaul.
+3. **Epics & User Stories:** A breakdown of the requirements above into actionable development tickets, following the `correct-course` workflow standards.
 
-**Status**: 12/22 stories complete (55%)
-
-**Quick Start**:
-1. Read `.claude/ralph-loop.local.md` for full configuration
-2. Read `_bmad-ext/state/LOOP_STATE.yaml` for current state
-3. Read `_bmad-output/sprint-artifacts/sprint-status.yaml` for story status
-4. Start with CHAT-007 (Add Collapsible Message Sections)
-
-**Next 10 Stories**: CHAT-007, CHAT-008, CHAT-010, CHAT-011, CHAT-012, CHAT-013, CHAT-014, CHAT-015, CHAT-016, CHAT-017
+Ensure all proposals account for the distinction between file-system-based projects and non-file-system environments regarding write permissions and file saving.

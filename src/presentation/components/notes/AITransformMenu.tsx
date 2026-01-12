@@ -2,8 +2,9 @@
  * @fileoverview AI Transform Menu for Text Selection
  * @module components/notes/AITransformMenu
  * @story NR-04 - Add Text Selection AI Transform
+ * @story EPIC-42-07 - AI commands in transform bar
  * @created 2025-12-31
- * @updated 2026-01-01 - Fixed selection detection using BlockNote API
+ * @updated 2026-01-13 - Added custom AI prompt in transform bar
  * 
  * Floating menu that appears when text is selected in the editor.
  * Provides AI-powered text transformation actions.
@@ -20,13 +21,19 @@ import {
     FileText,
     Loader2,
     X,
-    AlertCircle
+    AlertCircle,
+    MessageSquare,
+    Send
 } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
+import { Input } from '@/presentation/components/ui/input';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
+// TODO: EPIC-42-03 - Integrate block-level loading with transform actions
+// import { useAILoadingStore } from '@/lib/notes/ai-loading-store';
 import { toast } from 'sonner';
 import type { BlockNoteEditor } from '@blocknote/core';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Types
@@ -90,6 +97,12 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [loadingAction, setLoadingAction] = useState<string | null>(null);
     const [selectedText, setSelectedText] = useState('');
+    // EPIC-42-07 & 42-08: Custom prompt input in transform bar
+    const [showCustomPrompt, setShowCustomPrompt] = useState(false);
+    const [customPrompt, setCustomPrompt] = useState('');
+
+    // TODO: EPIC-42-03 - Integrate block-level loading with transform actions
+    // const { startBlockLoading, stopBlockLoading } = useAILoadingStore.getState();
 
     // Get active agent info - SPECIFICALLY for Notes workspace
     const getAgentForWorkspace = useAgentSelectionStore(s => s.getAgentForWorkspace);
@@ -184,11 +197,72 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
         }
     }, [editor, selectedText, hasAgent, t]);
 
+    /**
+     * EPIC-42-07 & 42-08: Custom prompt handler for inline quick prompt
+     * Allows users to enter a custom AI command directly in the transform bar
+     */
+    const handleCustomPrompt = useCallback(async () => {
+        if (!customPrompt.trim() || !selectedText.trim() || !hasAgent) return;
+
+        setIsLoading(true);
+        setLoadingAction('custom');
+
+        try {
+            const prompt = `${customPrompt}\n\nText to work with:\n${selectedText}`;
+            const result = await generateNoteContent(prompt);
+
+            // Get current selection and replace with transformed content
+            const selection = editor.getSelection();
+            if (selection && selection.blocks.length > 0) {
+                // Parse the result as blocks
+                const newBlocks = await editor.tryParseMarkdownToBlocks(result);
+
+                // Get the first selected block ID
+                const firstBlockId = selection.blocks[0].id;
+
+                // Insert new blocks after the first selected block
+                editor.insertBlocks(newBlocks, firstBlockId, 'after');
+
+                // Remove the original selected blocks
+                const blockIdsToRemove = selection.blocks.map(b => b.id);
+                editor.removeBlocks(blockIdsToRemove);
+            }
+
+            toast.success(t('notes.ai.customPrompt.success', 'Custom transform applied'));
+            setIsOpen(false);
+            setSelectedText('');
+            setShowCustomPrompt(false);
+            setCustomPrompt('');
+        } catch (error) {
+            console.error('Custom prompt transform failed:', error);
+
+            if (error instanceof NoteAIError) {
+                switch (error.code) {
+                    case 'NO_AGENT':
+                        toast.error(t('notes.ai.error.noAgent', 'Please select an AI agent first'));
+                        break;
+                    case 'NO_API_KEY':
+                        toast.error(t('notes.ai.error.noApiKey', 'No API key configured'));
+                        break;
+                    default:
+                        toast.error(t('notes.ai.customPrompt.error', 'Custom transform failed'));
+                }
+            } else {
+                toast.error(t('notes.ai.customPrompt.error', 'Custom transform failed'));
+            }
+        } finally {
+            setIsLoading(false);
+            setLoadingAction(null);
+        }
+    }, [editor, selectedText, customPrompt, hasAgent, t]);
+
     const handleCancel = () => {
         setIsOpen(false);
         setIsLoading(false);
         setLoadingAction(null);
         setSelectedText('');
+        setShowCustomPrompt(false);
+        setCustomPrompt('');
     };
 
     // Don't render if nothing is selected
@@ -225,16 +299,82 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
                     </Button>
                 ))}
 
-                {/* Cancel button */}
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 px-2 ml-1 border-l border-border"
-                    onClick={handleCancel}
-                    title={t('common.cancel', 'Cancel')}
-                >
-                    <X className="w-4 h-4" />
-                </Button>
+                {/* EPIC-42-07 & 42-08: Custom AI prompt input */}
+                {showCustomPrompt ? (
+                    <div className="flex items-center gap-1 ml-1 border-l border-border pl-2">
+                        <Input
+                            value={customPrompt}
+                            onChange={(e) => setCustomPrompt(e.target.value)}
+                            placeholder={t('notes.ai.customPrompt.placeholder', 'What should AI do with this text?')}
+                            className="h-7 w-48 text-xs"
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleCustomPrompt();
+                                }
+                                if (e.key === 'Escape') {
+                                    setShowCustomPrompt(false);
+                                    setCustomPrompt('');
+                                }
+                            }}
+                            autoFocus
+                            disabled={isLoading}
+                        />
+                        <Button
+                            size="sm"
+                            className="h-7 px-2"
+                            onClick={handleCustomPrompt}
+                            disabled={!customPrompt.trim() || isLoading || !hasAgent}
+                            title={t('notes.ai.customPrompt.send', 'Send')}
+                        >
+                            {loadingAction === 'custom' ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                                <Send className="w-3 h-3" />
+                            )}
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2"
+                            onClick={() => {
+                                setShowCustomPrompt(false);
+                                setCustomPrompt('');
+                            }}
+                            title={t('common.cancel', 'Cancel')}
+                        >
+                            <X className="w-3 h-3" />
+                        </Button>
+                    </div>
+                ) : (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className={cn(
+                            "h-8 px-2 gap-1 ml-1 border-l border-border",
+                            "hover:bg-primary/10 hover:text-primary"
+                        )}
+                        onClick={() => setShowCustomPrompt(true)}
+                        disabled={isLoading || !hasAgent}
+                        title={t('notes.ai.customPrompt.title', 'Custom AI Command')}
+                    >
+                        <MessageSquare className="w-4 h-4" />
+                        <span className="text-xs hidden sm:inline">{t('notes.ai.custom', 'Custom')}</span>
+                    </Button>
+                )}
+
+                {/* Cancel button - only show when not in custom prompt mode */}
+                {!showCustomPrompt && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-2"
+                        onClick={handleCancel}
+                        title={t('common.cancel', 'Cancel')}
+                    >
+                        <X className="w-4 h-4" />
+                    </Button>
+                )}
 
                 {/* No agent warning */}
                 {!hasAgent && (

@@ -15,6 +15,7 @@ import { Input } from '@/presentation/components/ui/input';
 import { ConversationCard } from './ConversationCard';
 import { useChatHistory } from '@/hooks/useChatHistory';
 import { useConversationStore } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+import { AlertDialog } from '@/presentation/components/ui/alert-dialog';
 
 /**
  * Filter options
@@ -101,6 +102,8 @@ export function ChatHistory({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] = useState<string | null>(null);
 
   // Get messages for last message preview (from thread store)
   const getMessages = useConversationStore((s) => s.getMessagesByThread);
@@ -209,11 +212,18 @@ export function ChatHistory({
   /**
    * Handle delete conversation
    */
-  const handleDeleteConversation = useCallback((conversationId: string) => {
-    if (confirm(t('chat.history.confirmDelete', 'Are you sure you want to delete this conversation?'))) {
-      deleteConversation(conversationId);
+  const handleDeleteClick = useCallback((conversationId: string) => {
+    setConversationToDelete(conversationId);
+    setDeleteDialogOpen(true);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (conversationToDelete) {
+      deleteConversation(conversationToDelete);
+      setConversationToDelete(null);
     }
-  }, [deleteConversation, t]);
+    setDeleteDialogOpen(false);
+  }, [conversationToDelete, deleteConversation]);
 
   /**
    * Handle archive conversation
@@ -386,7 +396,7 @@ export function ChatHistory({
                 isActive={conversation.id === selectedConversationId}
                 messageCount={messageCount}
                 onClick={handleSelectConversation}
-                onDelete={handleDeleteConversation}
+                onDelete={handleDeleteClick}
                 onArchive={handleArchiveConversation}
                 onUnarchive={handleUnarchiveConversation}
                 onToggleFavorite={toggleFavorite}
@@ -397,6 +407,18 @@ export function ChatHistory({
           })
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={deleteDialogOpen}
+        title="Delete Conversation?"
+        message="Are you sure you want to delete this conversation? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="error"
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeleteDialogOpen(false)}
+      />
     </div>
   );
 }

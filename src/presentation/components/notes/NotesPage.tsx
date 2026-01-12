@@ -23,6 +23,10 @@ import { NotesMobileLayout } from './NotesMobileLayout';
 import { MarkdownImportDialog } from './MarkdownImportDialog';
 import { MarkdownExportDialog } from './MarkdownExportDialog';
 import { NotesFilePicker } from './NotesFilePicker';
+import { SlashCommandsDialog } from './SlashCommandsDialog';
+// 43-03: Prompt Refinement Dialog for 2-step workflow
+import { PromptRefinementDialog } from './PromptRefinementDialog';
+// Note: PromptSuggestionsPanel is now integrated inside NoteEditor.tsx (43-04)
 // R3 FIX: Re-enabled SyncStatusPanel import after noteStoreConfig memoization fixed infinite loop
 import { SyncStatusPanel } from '@/presentation/components/ide/SyncStatusPanel';
 // E1-1: UnifiedChatPanel integration
@@ -131,6 +135,9 @@ export const NotesPage = React.memo(function NotesPage() {
 
     // File sync state (CW-1.4)
     const [isFilePickerOpen, setIsFilePickerOpen] = useState(false);
+
+    // Slash Commands dialog state (43-01)
+    const [isSlashCommandsDialogOpen, setIsSlashCommandsDialogOpen] = useState(false);
 
     // CRITICAL FIX: Memoize noteStore config to prevent infinite loop
     // The noteStore object passed to useFileSyncService was recreated on every render,
@@ -659,6 +666,7 @@ export const NotesPage = React.memo(function NotesPage() {
                             onExport={handleExport}
                             onIndexForRAG={handleIndexForRAG}
                             onFileSync={() => setIsFilePickerOpen(true)}
+                            onSlashCommands={() => setIsSlashCommandsDialogOpen(true)}
                             agentSelectorSlot={
                                 <AgentManager
                                     variant="compact"
@@ -774,6 +782,15 @@ export const NotesPage = React.memo(function NotesPage() {
                 isReady={isNotesSyncReady}
                 isSupported={isNotesSyncSupported}
             />
+
+            {/* Slash Commands Dialog (43-01) */}
+            <SlashCommandsDialog
+                open={isSlashCommandsDialogOpen}
+                onOpenChange={setIsSlashCommandsDialogOpen}
+            />
+
+            {/* Prompt Refinement Dialog (43-03: 2-step workflow) */}
+            <PromptRefinementDialog />
 
             {/* Sync Status Panel (P1-2: Event Bus Integration) */}
             {/* R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop */}

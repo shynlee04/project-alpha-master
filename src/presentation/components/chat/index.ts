@@ -35,6 +35,10 @@ export type { Attachment, FileAttachment } from './FileAttachmentInput';
 // Input controls (CHAT-004: Grouped by use case)
 export { ChatInputControls } from './ChatInputControls';
 
+// Export Controls (CHAT-010: Save Chat to Project)
+export { ChatExportControls } from './ChatExportControls';
+export type { ChatExportControlsProps } from './ChatExportControls';
+
 // Collapsible Sections (CHAT-007)
 export {
   CollapsibleSection,
@@ -104,3 +108,17 @@ export type {
     WorkflowVisualizerProps,
     WorkflowViewerProps,
 } from './WorkflowVisualizer';
+
+// Multi-Agent Chat Panel (CHAT-013)
+export {
+    MultiAgentChatPanel,
+    MultiAgentTriggerButtons,
+    MultiAgentInlineTrigger,
+    MultiAgentLoading,
+} from './MultiAgentChatPanel';
+export type {
+    MultiAgentChatPanelProps,
+    MultiAgentTriggerButtonsProps,
+    MultiAgentInlineTriggerProps,
+    MultiAgentLoadingProps,
+} from './MultiAgentChatPanel';

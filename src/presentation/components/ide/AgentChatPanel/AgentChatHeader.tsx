@@ -9,7 +9,7 @@
  * @governance E1-11: Workspace Switcher in Chat Header
  */
 
-import { Bot, Sparkles, Bug, ChevronDown } from 'lucide-react';
+import { Bot, Sparkles, Bug, ChevronDown, MessageSquare } from 'lucide-react';
 import { Switch } from '@/presentation/components/ui/switch';
 import { Label } from '@/presentation/components/ui/label';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
@@ -53,6 +53,9 @@ interface AgentChatHeaderProps {
     onToggleEnhancement: () => void;
     onClear: () => void;
     onCaptureDebugSession: () => void;
+    // CHAT-006: Thread display and sidebar toggle
+    activeThreadName?: string | null;
+    onToggleThreadSidebar?: () => void;
 }
 
 /**
@@ -67,7 +70,9 @@ export function AgentChatHeader({
     isEnhancementEnabled,
     onToggleEnhancement,
     onClear,
-    onCaptureDebugSession
+    onCaptureDebugSession,
+    activeThreadName,
+    onToggleThreadSidebar
 }: AgentChatHeaderProps) {
     const { t } = useTranslation();
 
@@ -173,6 +178,24 @@ export function AgentChatHeader({
                             </DropdownMenu.Content>
                         </DropdownMenu.Portal>
                     </DropdownMenu.Root>
+                )}
+
+                {/* CHAT-006: Thread Toggle Button */}
+                {onToggleThreadSidebar && (
+                    <button
+                        onClick={onToggleThreadSidebar}
+                        title={activeThreadName ? `Thread: ${activeThreadName}` : 'Open thread sidebar'}
+                        className={cn(
+                            'flex items-center gap-1 px-2 py-1 bg-muted/20 border border-border/60',
+                            'font-mono text-[10px] hover:bg-muted/30 hover:border-border/80 transition-colors',
+                            'focus:outline-none focus-visible:ring-1 focus-visible:ring-ring/50'
+                        )}
+                    >
+                        <MessageSquare className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-foreground max-w-[80px] truncate hidden sm:inline">
+                            {activeThreadName || 'Threads'}
+                        </span>
+                    </button>
                 )}
 
                 {/* Prompt Enhancement Toggle */}

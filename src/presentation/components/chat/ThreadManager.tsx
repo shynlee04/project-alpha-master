@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { Plus, Folder, MessageSquare, Trash2, Edit2, Check, X, Archive } from 'lucide-react';
 import { useThreadManager } from '@/presentation/hooks/useThreadManager';
+import { AlertDialog } from '@/presentation/components/ui/alert-dialog';
 import type { WorkspaceType } from '@/domain/entities/chat';
 
 /**
@@ -71,6 +72,10 @@ export function ThreadManager({
   const [editingThreadId, setEditingThreadId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
 
+  // Dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [threadToDelete, setThreadToDelete] = useState<string | null>(null);
+
   /**
    * Handle create thread
    */
@@ -97,16 +102,26 @@ export function ThreadManager({
   };
 
   /**
-   * Handle delete thread
+   * Handle delete thread - opens confirmation dialog
    */
-  const handleDeleteThread = (threadId: string) => {
-    if (confirm('Delete this thread? This action cannot be undone.')) {
-      deleteThread(threadId);
-      if (activeThreadId === threadId) {
+  const handleDeleteClick = (threadId: string) => {
+    setThreadToDelete(threadId);
+    setDeleteDialogOpen(true);
+  };
+
+  /**
+   * Confirm delete thread after dialog confirmation
+   */
+  const handleConfirmDelete = async () => {
+    if (threadToDelete) {
+      deleteThread(threadToDelete);
+      if (activeThreadId === threadToDelete) {
         // Clear active thread if we deleted the active one
         // setActiveThread(null); // TODO: implement clearActiveThread
       }
+      setThreadToDelete(null);
     }
+    setDeleteDialogOpen(false);
   };
 
   /**
@@ -293,7 +308,7 @@ export function ThreadManager({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteThread(thread.id);
+                            handleDeleteClick(thread.id);
                           }}
                           className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded-none"
                           title="Delete"
@@ -309,6 +324,18 @@ export function ThreadManager({
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={deleteDialogOpen}
+        title="Delete Thread?"
+        message="Are you sure you want to delete this thread? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="error"
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeleteDialogOpen(false)}
+      />
 
       {/* Archived Threads */}
       {archivedThreads.length > 0 && (

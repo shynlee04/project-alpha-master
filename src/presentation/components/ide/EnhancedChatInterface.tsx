@@ -5,6 +5,7 @@ import { CollapsibleSection } from '@/presentation/components/chat/CollapsibleSe
 import { ArtifactPreviewModal } from '@/presentation/components/chat/ArtifactPreviewModal'
 import { useDeviceType } from '@/hooks/useMediaQuery'
 import { useArtifactPreview } from '@/presentation/hooks/useArtifactPreview'
+import { useChatExport } from '@/presentation/hooks/useChatExport'
 import { toast } from 'sonner'
 
 import { ToolCallBadge } from '@/presentation/components/chat/ToolCallBadge'
@@ -12,11 +13,14 @@ import { StreamdownRenderer } from '@/presentation/components/chat/StreamdownRen
 import { type Attachment, type FileAttachment } from '@/presentation/components/chat/FileAttachmentInput'
 import { NoteReferencePicker, useNoteReferencePicker } from '@/presentation/components/chat/NoteReferencePicker'
 import { ChatInputControls } from '@/presentation/components/chat/ChatInputControls'
+import { ChatExportControls } from '@/presentation/components/chat/ChatExportControls'
+import { MultiAgentChatPanel } from '@/presentation/components/chat/MultiAgentChatPanel'
 import { useTranslation } from 'react-i18next'
 import { StreamingIndicator } from '@/presentation/components/ui/StreamingIndicator'
 import { useVoiceRecording } from '@/lib/voice/use-voice-recording'
 import { convertImageAttachments } from '@/lib/media/image-attachments'
 import type { ImageContent } from '@/lib/agent/multimodal/message-builder'
+import type { ReactNode } from 'react'
 
 /**
  * @fileoverview Enhanced Chat Interface with Mobile Optimization
@@ -77,6 +81,18 @@ interface EnhancedChatProps {
     setScrollRef?: React.RefObject<HTMLDivElement | null>
     /** E1-8: Auto-scroll to bottom on new messages */
     autoScroll?: boolean
+    /** CHAT-013: Enable multi-agent chat features */
+    enableMultiAgent?: boolean
+    /** CHAT-013: Provider ID for multi-agent operations */
+    providerId?: string
+    /** CHAT-013: Model ID for multi-agent operations */
+    modelId?: string
+    /** CHAT-013: Conversation ID for multi-agent context */
+    conversationId?: string
+    /** CHAT-013: Thread ID for multi-agent context */
+    threadId?: string
+    /** CHAT-013: Custom content to render below messages area */
+    belowMessagesContent?: ReactNode
 }
 
 export function EnhancedChatInterface({
@@ -89,6 +105,12 @@ export function EnhancedChatInterface({
     onScroll,
     setScrollRef,
     autoScroll = true, // E1-8: Default to true for backward compatibility
+    enableMultiAgent = false, // CHAT-013: Multi-agent features
+    providerId,
+    modelId,
+    conversationId,
+    threadId,
+    belowMessagesContent,
 }: EnhancedChatProps) {
     const { t } = useTranslation()
     const { isMobile } = useDeviceType()
@@ -100,6 +122,12 @@ export function EnhancedChatInterface({
 
     // CHAT-009: Artifact preview modal - using extracted hook
     const { artifactPreview, openArtifact, closeArtifact } = useArtifactPreview()
+
+    // CHAT-010: Chat export hook
+    const chatExport = useChatExport({
+        messages,
+        workspaceName: 'Project', // TODO: Get from workspace context
+    })
 
     // E2-1: Voice recording hook for speech-to-text input
     const voiceRecording = useVoiceRecording({
@@ -305,11 +333,28 @@ export function EnhancedChatInterface({
 
     return (
         <div className={cn("flex flex-col h-full bg-background", className)}>
+            {/* CHAT-010: Export controls toolbar */}
+            {messages.length > 0 && (
+                <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-secondary/30">
+                    <span className="text-xs font-mono text-muted-foreground">
+                        {t('chat.conversation', 'Conversation')}
+                    </span>
+                    <ChatExportControls
+                        messageCount={messages.length}
+                        onExportMarkdown={chatExport.exportToMarkdown}
+                        onExportJSON={chatExport.exportToJSON}
+                        onCopy={chatExport.copyToClipboard}
+                        variant="inline"
+                        className="border-0 bg-transparent p-0"
+                    />
+                </div>
+            )}
+
             {/* Messages area - E1-10: Smooth scrolling on mobile */}
             <div
                 ref={setScrollRef}
                 className={cn(
-                    "flex-1 overflow-auto p-4 space-y-4 scrollbar-thin",
+                    "flex-1 min-h-0 overflow-auto p-4 space-y-4 scrollbar-thin",
                     // E1-10: Native smooth scrolling on iOS
                     isMobile && "[-webkit-overflow-scrolling:touch]"
                 )}
@@ -344,6 +389,30 @@ export function EnhancedChatInterface({
 
                 <div ref={messagesEndRef} />
             </div>
+
+            {/* CHAT-013: Multi-Agent Chat Panel */}
+            {enableMultiAgent && (
+                <div className="border-t border-border bg-muted/20">
+                    <MultiAgentChatPanel
+                        providerId={providerId}
+                        modelId={modelId}
+                        conversationId={conversationId}
+                        threadId={threadId}
+                        messages={messages.map(m => ({
+                            role: m.role,
+                            content: m.content,
+                        }))}
+                        className="p-3"
+                    />
+                </div>
+            )}
+
+            {/* CHAT-013: Custom content below messages */}
+            {belowMessagesContent && (
+                <div className="border-t border-border">
+                    {belowMessagesContent}
+                </div>
+            )}
 
             {/* CHAT-004: Input area with grouped controls */}
             <ChatInputControls

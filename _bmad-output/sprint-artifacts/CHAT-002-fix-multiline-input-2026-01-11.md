@@ -243,3 +243,110 @@ Use `field-sizing: content` with fallback to JS-based auto-resize for broader co
 ## Pre-Planning Gate Report (ARCHIVED)
 
 *Completed before development*
+
+## ACTUAL CODE REVIEW (Post-Verification 2026-01-13)
+
+### CRITICAL FINDING: Implementation Location Mismatch + Redundant Code
+
+**Status**: ⚠️ **DOCUMENTED ≠ ACTUAL LOCATION**
+
+This story claims to fix textarea in `ChatConversation.tsx`, but:
+1. **`ChatConversation.tsx` was DELETED** in CHAT-020
+2. The actual implementation is in `ChatInputControls.tsx`
+3. Implementation exists BUT has **redundant/conflicting code**
+
+### Actual Implementation Analysis
+
+**File**: `src/presentation/components/chat/ChatInputControls.tsx` (lines 280-313)
+
+**Actual Textarea Code**:
+```tsx
+<textarea
+    value={input}
+    onChange={(e) => {
+        setInput(e.target.value)
+        // Auto-resize textarea
+        e.target.style.height = 'auto'
+        e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`  // ← MANUAL RESIZE
+    }}
+    className={cn(
+        "w-full min-h-0 min-h-[40px] max-h-[150px]",
+        // ...
+        "field-sizing-content",  // ← CSS FIELD-SIZING
+        // ...
+    )}
+    style={{ fieldSizing: 'content' }}  // ← INLINE FIELD-SIZING
+    disabled={isTyping}
+    rows={1}
+/>
+```
+
+**CRITICAL ISSUE**: The code has **BOTH** `fieldSizing: 'content'` (CSS auto-grow) AND manual JavaScript resize logic (lines 285-286). These conflict!
+
+### What Was Documented vs What Exists
+
+| Claim | Status | Evidence |
+|-------|--------|----------|
+| Fixed `ChatConversation.tsx` textarea | ❌ WRONG FILE | Actual: `ChatInputControls.tsx` |
+| Auto-expand from 1 to 6 lines | ✅ IMPLEMENTED | `max-h-[150px]` + field-sizing |
+| Show scroll indicator at max | ✅ IMPLEMENTED | `overflow-y-auto` on textarea |
+| Prevent iOS zoom | ✅ IMPLEMENTED | `text-base` on line 307 |
+| Tests created (11 passing) | ❌ DELETED | Test file deleted with ChatConversation |
+| Clean implementation | ❌ CONFLICTING | Has both CSS and JS resize |
+
+### Actual Current State (2026-01-13)
+
+1. **Redundant Auto-Resize**: Lines 285-286 do manual height calculation
+2. **Also Has fieldSizing**: Line 309 has `fieldSizing: 'content'`
+3. **These Conflict**: The JS resize may override CSS field-sizing
+4. **Confusing Code**: Developers don't know which method is active
+
+### Code Quality Issues
+
+**Problem 1: Conflicting Auto-Resize Methods**
+```tsx
+// CSS method (line 309)
+style={{ fieldSizing: 'content' }}
+
+// JS method (lines 285-286)
+e.target.style.height = 'auto'
+e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
+```
+
+When both are present, the JS `style.height` directly sets the height, **overriding** the CSS `field-sizing` behavior.
+
+**Problem 2: Wrong File Reference**
+Story documentation references `ChatConversation.tsx` which was deleted.
+
+**Problem 3: Deleted Tests**
+Test file `ChatConversation.test.tsx` was also deleted in CHAT-020.
+
+### Verification Against Codebase (2026-01-13)
+
+```bash
+# Actual file with implementation
+$ grep -n "fieldSizing" src/presentation/components/chat/ChatInputControls.tsx
+309:                        style={{ fieldSizing: 'content' }}
+
+# Conflicting JS resize in same file
+$ grep -n "target.scrollHeight" src/presentation/components/chat/ChatInputControls.tsx
+286:                        e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
+
+# Original file doesn't exist
+$ ls src/presentation/components/chat/ChatConversation.tsx
+ls: cannot access: No such file or directory
+```
+
+### Recommendation
+
+**This story needs cleanup**:
+
+1. **Choose ONE method**: Either use `fieldSizing: 'content'` (CSS-only) OR JS auto-resize
+2. **Remove the other**: Delete conflicting code
+3. **Update documentation**: Change file references from `ChatConversation.tsx` to `ChatInputControls.tsx`
+4. **Add proper tests**: Create tests for the actual component
+
+**Recommended approach**:
+- Keep `fieldSizing: 'content'` (modern, cleaner)
+- Remove lines 285-286 (JS resize)
+- Add fallback for older browsers without field-sizing support

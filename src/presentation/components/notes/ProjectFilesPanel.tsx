@@ -11,7 +11,7 @@
  * - Sync status indicators
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { FileTree } from '@/presentation/components/ide/FileTree/FileTree';
 import { useNoteStore } from '@/lib/notes/note-store';
 import { toast } from 'sonner';
@@ -81,6 +81,20 @@ export function ProjectFilesPanel() {
         fileType: null,
         fileName: '',
     });
+
+    /**
+     * 45-01: Reload FileTree when file system context changes
+     *
+     * When user switches views (Files ↔ Notes ↔ AI), the directoryHandle
+     * and localAdapterRef may become stale. This effect ensures the FileTree
+     * reloads when the file system context is restored.
+     */
+    useEffect(() => {
+        // Reload FileTree when directoryHandle or adapter becomes available
+        if (directoryHandle || localAdapterRef.current) {
+            setRefreshKey(prev => prev + 1);
+        }
+    }, [directoryHandle, localAdapterRef?.current]);
 
     /**
      * Import a file as a note (for text files)

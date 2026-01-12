@@ -110,3 +110,42 @@ export {
     type MarkdownConversionOptions,
     type MarkdownParseResult,
 } from './markdown-converter';
+
+// EPIC-42-02: AI Prompt Store
+export {
+    useAIPromptStore,
+    CONTEXT_MODE_LABELS,
+    type ContextMode,
+} from './ai-prompt-store';
+
+// EPIC-42-03: AI Loading Store
+export {
+    useAILoadingStore,
+    useBlockLoadingState,
+    useIsAnyAILoading,
+    type BlockLoadingState,
+} from './ai-loading-store';
+
+// EPIC-42-04: AI Insertion Store
+export {
+    useAIInsertionStore,
+    generatePendingContentId,
+    type InsertionMode,
+    type PendingAIContent,
+} from './ai-insertion-store';
+
+// EPIC-42-10: Streaming AI Hook
+export {
+    useStreamingAI,
+    type StreamingState,
+    type StreamingOptions,
+} from './use-streaming-ai';
+
+// Note AI Service (NR-01, EPIC-41, EPIC-42-10)
+export {
+    generateNoteContent,
+    generateNoteContentStream,
+    NoteAIError,
+    NOTE_AI_ERRORS,
+    type NoteAIOptions,
+} from './note-ai-service';

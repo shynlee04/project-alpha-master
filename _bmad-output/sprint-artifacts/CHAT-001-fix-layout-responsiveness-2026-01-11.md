@@ -307,6 +307,96 @@ None - implementation is complete and correct.
 ### Issues Found
 None - story file is complete and ready for context creation.
 
+## ACTUAL CODE REVIEW (Post-Verification 2026-01-13)
+
+### CRITICAL FINDING: Ghost Story
+
+**Status**: ❌ **DOCUMENTED ≠ IMPLEMENTED**
+
+This story claims to fix layout issues in `ChatConversation.tsx`, but:
+1. **`ChatConversation.tsx` was DELETED** in CHAT-020 (confirmed by verification summary)
+2. The "fixes" were applied to a file that no longer exists
+3. The actual chat interface uses `EnhancedChatInterface.tsx` and `UnifiedChatPanel.tsx`
+
+### Actual Layout Implementation Analysis
+
+**File**: `src/presentation/components/ide/EnhancedChatInterface.tsx` (lines 335-391)
+
+**Actual Container Structure**:
+```tsx
+// Line 335 - Main container
+<div className={cn("flex flex-col h-full bg-background", className)}>
+    {/* Export toolbar */}
+    <div className="flex items-center justify-between px-3 py-2 border-b...">
+
+    {/* Messages area - Line 354 */}
+    <div className={cn("flex-1 overflow-auto p-4 space-y-4 scrollbar-thin", isMobile && "[-webkit-overflow-scrolling:touch]")}>
+        {/* messages */}
+    </div>
+
+    {/* Multi-agent panel - Line 394 */}
+    {/* Input area - Line 418 (via ChatInputControls) */}
+</div>
+```
+
+**ISSUE IDENTIFIED**: The messages area has `flex-1 overflow-auto` BUT **NO `min-h-0`**!
+
+**File**: `src/presentation/components/chat/ChatInputControls.tsx` (line 286)
+
+**Textarea Auto-Resize Issue**:
+```tsx
+// Line 285-286 - PROBLEMATIC CODE
+e.target.style.height = 'auto'
+e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
+```
+
+**ISSUE IDENTIFIED**: Textarea grows to 150px which can push into message area!
+
+### What Was Documented vs What Exists
+
+| Claim | Status | Evidence |
+|-------|--------|----------|
+| Fixed `ChatConversation.tsx` with `min-h-0` pattern | ❌ FALSE | File was deleted in CHAT-020 |
+| Applied fixes to lines 267-376, 381-516 | ❌ FALSE | These lines no longer exist |
+| Message area has `min-h-[200px]` constraint | ❌ FALSE | No min-h constraint in actual code |
+| Input area never covers messages | ⚠️ PARTIAL | Flex layout exists but no `min-h-0` on messages area |
+| Tests created (15 passing) | ❌ UNVERIFIED | Test file `ChatConversation.test.tsx` was also deleted |
+
+### Actual Current State
+
+1. **Layout Vulnerability**: `EnhancedChatInterface.tsx:354` lacks `min-h-0` on flex child
+2. **Input Expansion**: Textarea can expand to 150px (line 286 ChatInputControls.tsx)
+3. **No Minimum Height**: Messages area has no `min-h-[200px]` constraint
+4. **Resizable Pane Risk**: Without `min-h-0`, flex child won't shrink properly in resizable panes
+
+### Verification Against Codebase (2026-01-13)
+
+```bash
+# File doesn't exist
+$ ls src/presentation/components/chat/ChatConversation.tsx
+ls: cannot access: No such file or directory
+
+# Verification summary confirms deletion
+$ grep -r "CHAT-020" _bmad-output/sprint-artifacts/
+CHAT-020-delete-unused-components-2026-01-11.md:...ChatConversation.tsx unused...
+```
+
+### Root Cause Analysis
+
+**Why this story passed review but doesn't work**:
+1. Story was written for a component that was later deleted
+2. Verification was done on the non-existent file's "changes"
+3. No actual verification against the running application
+4. Tests were written for deleted component
+
+### Recommendation
+
+**This story needs to be RE-DONE** for the actual components:
+1. Add `min-h-0` to `EnhancedChatInterface.tsx` line 357 messages div
+2. Cap textarea expansion or use `fieldSizing: content` properly
+3. Add minimum height constraint to messages area
+4. Test in actual resizable pane context
+
 ---
 
 ## Status History

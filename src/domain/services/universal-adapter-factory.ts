@@ -90,6 +90,13 @@ export function buildRequestPayload(modality: ModalityType, input: string): Requ
         audio_b64: input,
         language: null,
       };
+    
+    case 'audio':
+      // Audio modality uses same format as STT for processing
+      return {
+        audio_b64: input,
+        language: null,
+      };
   }
 }
 

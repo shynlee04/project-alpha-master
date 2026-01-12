@@ -16,10 +16,18 @@ import {
     Languages,
     Lightbulb,
     ScrollText,
-    AlignLeft
+    AlignLeft,
+    ImagePlus,
+    Eye,
+    Images,
+    Video,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
+import { useAILoadingStore } from '@/lib/notes/ai-loading-store';
+import { useAIInsertionStore, generatePendingContentId } from '@/lib/notes/ai-insertion-store';
+// 43-06: Prompt History Tracking
+import { startPromptTracking, completePromptTracking } from '@/lib/notes/prompt-history-store';
 import { toast } from 'sonner';
 
 // ============================================================================
@@ -61,27 +69,82 @@ export const insertAIItem = (editor: BlockNoteEditor) => ({
 // Helper: Execute AI Command with Loading Toast
 // ============================================================================
 
-async function executeAICommand(
+/**
+ * Extended options for AI command execution
+ * @story EPIC-42-01 - Block-above-cursor context extraction
+ */
+interface ExecuteAICommandOptions {
+    /** Context mode - defaults to 'above_cursor' for smart context */
+    contextMode?: ContextMode;
+    /** @deprecated Use contextMode instead */
+    includeContext?: boolean;
+    /** Replace selection instead of inserting after */
+    replaceSelection?: boolean;
+}
+
+export async function executeAICommand(
     editor: BlockNoteEditor,
     prompt: string,
     commandName: string = 'AI',
-    options?: { includeContext?: boolean; replaceSelection?: boolean }
+    options?: ExecuteAICommandOptions
 ): Promise<void> {
-    // Show loading toast
+    // Get current block ID for loading state tracking
+    const cursorPosition = editor.getTextCursorPosition();
+    const currentBlockId = cursorPosition?.block?.id || 'unknown';
+    
+    // Get loading store actions
+    const { startBlockLoading, stopBlockLoading, updateLoadingMessage } = useAILoadingStore.getState();
+    
+    // Start block loading state (EPIC-42-03)
+    startBlockLoading(currentBlockId, commandName, 'Preparing...');
+    
+    // Show loading toast (keep for backward compatibility)
     const toastId = toast.loading(t('notes.ai.generating', `${commandName} generating...`));
 
-    try {
-        // Get page context if requested (default: true for awareness)
-        const contextBlocks = options?.includeContext !== false ? editor.document : undefined;
+    // 43-06: Start prompt history tracking
+    const { historyId, startTime } = startPromptTracking(commandName, prompt, {
+        contextLength: 0, // Will be updated below
+    });
 
-        const result = await generateNoteContent(prompt, { contextBlocks });
+    try {
+        // Determine context mode
+        // Default to 'above_cursor' for smart context (EPIC-42-01)
+        // If legacy includeContext is explicitly false, use 'none'
+        let contextMode: ContextMode = 'above_cursor';
+        if (options?.contextMode) {
+            contextMode = options.contextMode;
+        } else if (options?.includeContext === false) {
+            contextMode = 'none';
+        }
+        
+        // Update loading message
+        updateLoadingMessage(currentBlockId, 'Getting context...');
+        
+        // Get context based on mode
+        const context = getContextByMode(editor, contextMode);
+        
+        // Build the full prompt with context
+        let fullPrompt = prompt;
+        if (context.text && context.text.trim().length > 0) {
+            fullPrompt = `${prompt}\n\n---\nContext from note:\n${context.text}`;
+        }
+
+        // Update loading message
+        updateLoadingMessage(currentBlockId, 'Generating content...');
+
+        const result = await generateNoteContent(fullPrompt, { 
+            contextBlocks: context.blocks 
+        });
 
         if (!result || result.trim().length === 0) {
             toast.error(t('notes.ai.error.empty', 'AI returned empty content'), { id: toastId });
             return;
         }
 
-        // Parse markdown to blocks
+        // Update loading message
+        updateLoadingMessage(currentBlockId, 'Inserting content...');
+
+// Parse markdown to blocks
         const blocks = await editor.tryParseMarkdownToBlocks(result);
 
         if (blocks.length === 0) {
@@ -89,21 +152,40 @@ async function executeAICommand(
             return;
         }
 
-        // Get current cursor position
+        // Update loading message
+        updateLoadingMessage(currentBlockId, 'Inserting content...');
+
+        // Get cursor position for insertion (EPIC-42-04: Smart content insertion)
         const cursorPosition = editor.getTextCursorPosition();
+        const targetBlockId = cursorPosition?.block?.id || 'unknown';
 
-        // Insert blocks after current position
-        editor.insertBlocks(blocks, cursorPosition.block, 'after');
+        // Set pending content in insertion store (EPIC-42-04)
+        // This will trigger the AIInsertionDialog based on autoInsert setting
+        useAIInsertionStore.getState().setPendingContent({
+            id: generatePendingContentId(),
+            rawContent: result,
+            blocks: blocks,
+            targetBlockId,
+            commandName: commandName || 'AI',
+            generatedAt: Date.now(),
+            editor: editor,
+        });
 
-        // Move cursor to end of inserted content
-        const lastInsertedBlock = blocks[blocks.length - 1];
-        if (lastInsertedBlock?.id) {
-            editor.setTextCursorPosition(lastInsertedBlock.id, 'end');
-        }
-
+        // Stop block loading but keep toast for feedback
         toast.success(t('notes.ai.success', `${commandName} complete!`), { id: toastId });
+        
+        // 43-06: Complete prompt history tracking with success
+        completePromptTracking(historyId, startTime, 'success', {
+            outputLength: result.length,
+        });
     } catch (error) {
         console.error('AI command failed:', error);
+        
+        // 43-06: Complete prompt history tracking with error
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        completePromptTracking(historyId, startTime, 'error', {
+            errorMessage,
+        });
 
         if (error instanceof NoteAIError) {
             switch (error.code) {
@@ -119,6 +201,9 @@ async function executeAICommand(
         } else {
             toast.error(t('notes.ai.error.retry', 'AI generation failed. Please try again.'), { id: toastId });
         }
+    } finally {
+        // Always stop block loading (EPIC-42-03)
+        stopBlockLoading(currentBlockId);
     }
 }
 
@@ -132,6 +217,114 @@ function getAllNoteText(editor: BlockNoteEditor): string {
         .map(block => extractBlockText(block))
         .filter(Boolean)
         .join('\n\n');
+}
+
+/**
+ * Get text only from blocks ABOVE the current cursor position
+ * @story EPIC-42-01 - Block-above-cursor context extraction
+ */
+function getTextAboveCursor(editor: BlockNoteEditor): string {
+    try {
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition?.block?.id) {
+            // Fallback to empty if no cursor
+            return '';
+        }
+        
+        const currentBlockId = cursorPosition.block.id;
+        const allBlocks = editor.document;
+        
+        // Find index of current block
+        const currentIndex = allBlocks.findIndex(b => b.id === currentBlockId);
+        
+        if (currentIndex <= 0) {
+            // No blocks above or cursor at first block
+            return '';
+        }
+        
+        // Get blocks 0 to currentIndex-1 (above cursor, not including current)
+        const blocksAbove = allBlocks.slice(0, currentIndex);
+        
+        return blocksAbove
+            .map(block => extractBlockText(block))
+            .filter(Boolean)
+            .join('\n\n');
+    } catch (error) {
+        console.warn('[AISlashCommand] Failed to get text above cursor:', error);
+        return '';
+    }
+}
+
+/**
+ * Get blocks ABOVE the current cursor position
+ * @story EPIC-42-01 - Block-above-cursor context extraction
+ */
+function getBlocksAboveCursor(editor: BlockNoteEditor): Block[] {
+    try {
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition?.block?.id) {
+            return [];
+        }
+        
+        const currentBlockId = cursorPosition.block.id;
+        const allBlocks = editor.document;
+        
+        const currentIndex = allBlocks.findIndex(b => b.id === currentBlockId);
+        
+        if (currentIndex <= 0) {
+            return [];
+        }
+        
+        return allBlocks.slice(0, currentIndex);
+    } catch (error) {
+        console.warn('[AISlashCommand] Failed to get blocks above cursor:', error);
+        return [];
+    }
+}
+
+/**
+ * Context mode options for AI commands
+ * @story EPIC-42-01 - Block-above-cursor context extraction
+ */
+export type ContextMode = 'above_cursor' | 'all' | 'none' | 'selection';
+
+/**
+ * Get context based on mode
+ * @story EPIC-42-01 - Block-above-cursor context extraction
+ */
+function getContextByMode(editor: BlockNoteEditor, mode: ContextMode): {
+    text: string;
+    blocks: Block[] | undefined;
+} {
+    switch (mode) {
+        case 'above_cursor':
+            return {
+                text: getTextAboveCursor(editor),
+                blocks: getBlocksAboveCursor(editor),
+            };
+        case 'all':
+            return {
+                text: getAllNoteText(editor),
+                blocks: editor.document,
+            };
+        case 'none':
+            return {
+                text: '',
+                blocks: undefined,
+            };
+        case 'selection':
+            // Try to get selected text
+            const selectedText = editor.getSelectedText?.() || '';
+            return {
+                text: selectedText,
+                blocks: undefined,
+            };
+        default:
+            return {
+                text: getTextAboveCursor(editor),
+                blocks: getBlocksAboveCursor(editor),
+            };
+    }
 }
 
 function extractBlockText(block: Block): string {
@@ -308,6 +501,192 @@ ${content}`,
 });
 
 // ============================================================================
+// AI Image Generation Block (Story 44-01)
+// ============================================================================
+
+/**
+ * Insert AI Image Generation Block
+ * @story 44-01: Image generation block type
+ */
+export const insertAIImageItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.image', 'AI Image'),
+    onItemClick: () => {
+        // Get cursor position for insertion
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new AI Image block
+        // Cast to any since this is a custom block type not in the default schema
+        const aiImageBlock = {
+            type: "aiImage",
+            props: {
+                prompt: "",
+                imageData: "",
+                mimeType: "image/png",
+                status: "idle",
+                errorMessage: "",
+                sizeId: "square",
+            },
+        } as any;
+        
+        // Insert block after current position
+        if (currentBlockId) {
+            (editor as any).insertBlocks([aiImageBlock], currentBlockId, "after");
+        } else {
+            // Append to end of document
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([aiImageBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.image.inserted', 'AI Image block inserted'));
+    },
+    aliases: ["image", "ai-image", "generate-image", "picture", "illustration"],
+    group: "AI",
+    icon: <ImagePlus size={18} />,
+    subtext: t('notes.ai.image.description', 'Generate images with AI from text prompts'),
+});
+
+// ============================================================================
+// AI Vision Understanding Block (Story 44-02)
+// ============================================================================
+
+/**
+ * Insert AI Vision Understanding Block
+ * @story 44-02: Image understanding (vision) in blocks
+ */
+export const insertAIVisionItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.vision', 'AI Vision'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new AI Vision block
+        // Cast to any since this is a custom block type not in the default schema
+        const aiVisionBlock = {
+            type: "aiVision",
+            props: {
+                analysisMode: "describe",
+                images: "[]",
+                analysisResult: "",
+                customQuestion: "",
+                status: "idle",
+                errorMessage: "",
+                language: "en",
+            },
+        } as any;
+        
+        // Insert block after current position
+        if (currentBlockId) {
+            (editor as any).insertBlocks([aiVisionBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([aiVisionBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.vision.inserted', 'AI Vision block inserted'));
+    },
+    aliases: ["vision", "ai-vision", "analyze-image", "image-understanding"],
+    group: "AI",
+    icon: <Eye size={18} />,
+    subtext: t('notes.ai.vision.description', 'Analyze images with AI (describe, extract text, understand)'),
+});
+
+// ============================================================================
+// Sequential Storyboard Block (Story 44-03)
+// ============================================================================
+
+/**
+ * Insert Sequential Storyboard Block
+ * @story 44-03: Sequential multi-image storyboard
+ */
+export const insertStoryboardItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.storyboard', 'Storyboard'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Storyboard block
+        const storyboardBlock = {
+            type: "storyboard",
+            props: {
+                prompt: "",
+                frameCount: 3,
+                style: "digital-art",
+                language: "en",
+                frames: "[]",
+                status: "idle",
+                errorMessage: "",
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([storyboardBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([storyboardBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.storyboard.inserted', 'Storyboard block inserted'));
+    },
+    aliases: ["storyboard", "comic", "sequential", "frames", "multi-image"],
+    group: "AI",
+    icon: <Images size={18} />,
+    subtext: t('notes.ai.storyboard.description', 'Create sequential visual storyboards with AI'),
+});
+
+// ============================================================================
+// Video Understanding Block (Story 44-04)
+// ============================================================================
+
+/**
+ * Insert Video Understanding Block
+ * @story 44-04: Video input understanding
+ */
+export const insertVideoItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.video', 'Video Analysis'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Video Analysis block
+        const videoBlock = {
+            type: "videoAnalysis",
+            props: {
+                analysisMode: "describe",
+                customQuestion: "",
+                videoData: "",
+                analysisResult: "",
+                frameCount: 5,
+                status: "idle",
+                errorMessage: "",
+                language: "en",
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([videoBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([videoBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.video.inserted', 'Video Analysis block inserted'));
+    },
+    aliases: ["video", "ai-video", "video-understanding", "analyze-video"],
+    group: "AI",
+    icon: <Video size={18} />,
+    subtext: t('notes.ai.video.description', 'Analyze video content with AI'),
+});
+
+// ============================================================================
 // Get Custom Slash Menu Items
 // ============================================================================
 
@@ -315,7 +694,9 @@ import {
     useSlashCommandStore,
     getLocalizedCommand,
     type CustomSlashCommand,
+    promptNeedsRefinement,
 } from '@/lib/notes/slash-command-store';
+import { usePromptRefinementStore } from './PromptRefinementDialog';
 import {
     ListTodo, SpellCheck, Users,
     FileText, MessageSquare, Wand2, Zap,
@@ -335,6 +716,7 @@ const CUSTOM_ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = 
 
 /**
  * Create a slash menu item from a custom command
+ * @story 43-03: Added support for prompt refinement workflow
  */
 function createCustomCommandItem(
     editor: BlockNoteEditor,
@@ -347,16 +729,41 @@ function createCustomCommandItem(
     return {
         title: localized.title,
         onItemClick: async () => {
-            const content = getAllNoteText(editor);
-            const promptWithContext = content.trim()
-                ? `${command.prompt}\n\nNote content:\n${content}`
-                : command.prompt;
+            // 43-03: Check if this command needs refinement
+            const needsRefinement = promptNeedsRefinement(command);
+            
+            if (needsRefinement) {
+                // Get note context for the refinement dialog
+                const content = getAllNoteText(editor);
+                
+                // Open refinement dialog instead of executing directly
+                usePromptRefinementStore.getState().openRefinement(
+                    command,
+                    editor,
+                    content,
+                    async (finalPrompt: string) => {
+                        // Execute with the refined prompt
+                        await executeAICommand(
+                            editor,
+                            finalPrompt,
+                            localized.title,
+                            { contextMode: 'none' } // Context already included in finalPrompt
+                        );
+                    }
+                );
+            } else {
+                // Original behavior: execute directly
+                const content = getAllNoteText(editor);
+                const promptWithContext = content.trim()
+                    ? `${command.prompt}\n\nNote content:\n${content}`
+                    : command.prompt;
 
-            await executeAICommand(
-                editor,
-                promptWithContext,
-                localized.title
-            );
+                await executeAICommand(
+                    editor,
+                    promptWithContext,
+                    localized.title
+                );
+            }
         },
         aliases: command.aliases,
         group: 'AI Custom',
@@ -376,6 +783,10 @@ export const getCustomSlashMenuItems = (
     return [
         // AI Commands at the top
         insertAIItem(editor),
+        insertAIImageItem(editor), // 44-01: AI Image Generation
+        insertAIVisionItem(editor), // 44-02: AI Vision/Understanding
+        insertStoryboardItem(editor), // 44-03: Sequential Storyboard
+        insertVideoItem(editor), // 44-04: Video Understanding
         continueWritingItem(editor),
         summarizeNoteItem(editor),
         generateOutlineItem(editor),

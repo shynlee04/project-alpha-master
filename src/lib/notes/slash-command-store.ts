@@ -14,6 +14,78 @@ import { persist } from 'zustand/middleware';
 // Types
 // ============================================================================
 
+/**
+ * Command categories (43-02: Category system)
+ */
+export const COMMAND_CATEGORIES = {
+    writing: {
+        id: 'writing',
+        label: 'Writing',
+        labelVi: 'Viết',
+        icon: 'PenTool',
+        description: 'Writing assistance and content creation',
+    },
+    productivity: {
+        id: 'productivity',
+        label: 'Productivity',
+        labelVi: 'Năng suất',
+        icon: 'ListTodo',
+        description: 'Task management and organization',
+    },
+    analysis: {
+        id: 'analysis',
+        label: 'Analysis',
+        labelVi: 'Phân tích',
+        icon: 'Brain',
+        description: 'Research, analysis, and insights',
+    },
+    communication: {
+        id: 'communication',
+        label: 'Communication',
+        labelVi: 'Giao tiếp',
+        icon: 'MessageSquare',
+        description: 'Emails, meetings, and collaboration',
+    },
+    technical: {
+        id: 'technical',
+        label: 'Technical',
+        labelVi: 'Kỹ thuật',
+        icon: 'Code',
+        description: 'Code, documentation, and technical tasks',
+    },
+    creative: {
+        id: 'creative',
+        label: 'Creative',
+        labelVi: 'Sáng tạo',
+        icon: 'Palette',
+        description: 'Creative projects and brainstorming',
+    },
+    custom: {
+        id: 'custom',
+        label: 'Custom',
+        labelVi: 'Tùy chỉnh',
+        icon: 'Settings',
+        description: 'User-defined commands',
+    },
+} as const;
+
+export type CommandCategory = keyof typeof COMMAND_CATEGORIES;
+
+/**
+ * Prompt variable definition for 2-step refinement workflow
+ * @story 43-03: 2-step prompt refinement workflow
+ */
+export interface PromptVariable {
+    name: string; // Variable name (used in {{name}} placeholder)
+    label: string; // Display label (EN)
+    labelVi?: string; // Display label (VI)
+    type: 'text' | 'textarea' | 'select'; // Input type
+    options?: string[]; // For select type
+    placeholder?: string; // Input placeholder
+    defaultValue?: string; // Default value
+    required?: boolean; // Whether the variable is required
+}
+
 export interface CustomSlashCommand {
     id: string;
     title: string;
@@ -23,6 +95,10 @@ export interface CustomSlashCommand {
     prompt: string;
     icon: string; // Icon name from lucide-react
     aliases: string[];
+    category?: CommandCategory; // 43-02: Category field
+    tags?: string[]; // 43-02: Tags field
+    variables?: PromptVariable[]; // 43-03: Prompt variables for refinement
+    enableRefinement?: boolean; // 43-03: Enable 2-step refinement UI
     isEnabled: boolean;
     createdAt: number;
     updatedAt: number;
@@ -30,6 +106,8 @@ export interface CustomSlashCommand {
 
 export interface SlashCommandStoreState {
     customCommands: CustomSlashCommand[];
+    selectedCategory: CommandCategory | 'all'; // 43-02: Category filter state
+    selectedTags: string[]; // 43-02: Tag filter state
 
     // Actions
     addCommand: (command: Omit<CustomSlashCommand, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -40,6 +118,13 @@ export interface SlashCommandStoreState {
     importCommands: (commands: CustomSlashCommand[]) => void;
     exportCommands: () => CustomSlashCommand[];
     resetToDefaults: () => void;
+    selectCategory: (category: CommandCategory | 'all') => void; // 43-02: Category selector
+    toggleTag: (tag: string) => void; // 43-02: Tag toggle
+    clearTagFilters: () => void; // 43-02: Clear tag filters
+
+    // Selectors
+    getCommandsByCategory: (category: CommandCategory | 'all') => CustomSlashCommand[]; // 43-02
+    getAllTags: () => string[]; // 43-02
 }
 
 // ============================================================================
@@ -53,9 +138,30 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         titleVi: 'Brainstorm Ý tưởng',
         description: 'Generate creative ideas about any topic',
         descriptionVi: 'Tạo các ý tưởng sáng tạo về bất kỳ chủ đề nào',
-        prompt: 'Based on the current note context, brainstorm 5-10 creative and diverse ideas. Format as a numbered list with brief explanations for each idea.',
+        prompt: 'Based on the current note context, brainstorm 5-10 creative and diverse ideas about {{topic}}. The tone should be {{tone}}. Format as a numbered list with brief explanations for each idea.',
         icon: 'Lightbulb',
         aliases: ['brainstorm', 'ideas', 'ytuong'],
+        category: 'creative',
+        tags: ['brainstorming', 'ideas', 'creative'],
+        enableRefinement: true,
+        variables: [
+            {
+                name: 'topic',
+                label: 'Topic',
+                labelVi: 'Chủ đề',
+                type: 'text',
+                placeholder: 'e.g., startup ideas, marketing strategies',
+                required: true,
+            },
+            {
+                name: 'tone',
+                label: 'Tone',
+                labelVi: 'Giọng điệu',
+                type: 'select',
+                options: ['creative', 'professional', 'casual', 'innovative', 'practical'],
+                defaultValue: 'creative',
+            },
+        ],
         isEnabled: true,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -69,6 +175,8 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         prompt: 'Based on the current note, create a structured todo list with actionable items. Use checkbox format: - [ ] Task description',
         icon: 'ListTodo',
         aliases: ['todo', 'tasks', 'congviec'],
+        category: 'productivity',
+        tags: ['productivity', 'tasks', 'organization'],
         isEnabled: true,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -82,6 +190,8 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         prompt: 'Proofread the following content and fix all grammar, spelling, and punctuation errors. Keep the original meaning and tone. Output the corrected version.',
         icon: 'SpellCheck',
         aliases: ['proofread', 'fix', 'grammar', 'sualooi'],
+        category: 'writing',
+        tags: ['writing', 'grammar', 'proofreading'],
         isEnabled: true,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -95,6 +205,59 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         prompt: 'Format the following content as professional meeting notes with: ## Attendees, ## Discussion Points, ## Action Items, ## Next Steps',
         icon: 'Users',
         aliases: ['meeting', 'hop', 'notes'],
+        category: 'communication',
+        tags: ['communication', 'meetings', 'notes'],
+        isEnabled: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+    },
+    // 43-03: New command with variables showcase
+    {
+        id: 'custom-write-email',
+        title: 'Write Email',
+        titleVi: 'Viết Email',
+        description: 'Generate a professional email',
+        descriptionVi: 'Tạo email chuyên nghiệp',
+        prompt: 'Write a {{tone}} email to {{recipient}} about {{subject}}. The email should be {{length}} and include a clear call to action.',
+        icon: 'MessageSquare',
+        aliases: ['email', 'mail', 'thu'],
+        category: 'communication',
+        tags: ['communication', 'email', 'writing'],
+        enableRefinement: true,
+        variables: [
+            {
+                name: 'recipient',
+                label: 'Recipient',
+                labelVi: 'Người nhận',
+                type: 'text',
+                placeholder: 'e.g., my manager, a client, the team',
+                required: true,
+            },
+            {
+                name: 'subject',
+                label: 'Subject',
+                labelVi: 'Chủ đề',
+                type: 'textarea',
+                placeholder: 'What is the email about?',
+                required: true,
+            },
+            {
+                name: 'tone',
+                label: 'Tone',
+                labelVi: 'Giọng điệu',
+                type: 'select',
+                options: ['professional', 'friendly', 'formal', 'casual', 'urgent'],
+                defaultValue: 'professional',
+            },
+            {
+                name: 'length',
+                label: 'Length',
+                labelVi: 'Độ dài',
+                type: 'select',
+                options: ['brief (2-3 sentences)', 'medium (1 paragraph)', 'detailed (multiple paragraphs)'],
+                defaultValue: 'medium (1 paragraph)',
+            },
+        ],
         isEnabled: true,
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -123,6 +286,8 @@ export const useSlashCommandStore = create<SlashCommandStoreState>()(
     persist(
         (set, get) => ({
             customCommands: DEFAULT_COMMANDS,
+            selectedCategory: 'all',
+            selectedTags: [],
 
             addCommand: (command) => {
                 const newCommand: CustomSlashCommand = {
@@ -192,6 +357,35 @@ export const useSlashCommandStore = create<SlashCommandStoreState>()(
             resetToDefaults: () => {
                 set({ customCommands: DEFAULT_COMMANDS });
             },
+
+            // 43-02: Category and tag filtering
+            selectCategory: (category) => {
+                set({ selectedCategory: category });
+            },
+
+            toggleTag: (tag) => {
+                set((state) => ({
+                    selectedTags: state.selectedTags.includes(tag)
+                        ? state.selectedTags.filter((t) => t !== tag)
+                        : [...state.selectedTags, tag],
+                }));
+            },
+
+            clearTagFilters: () => {
+                set({ selectedTags: [] });
+            },
+
+            getCommandsByCategory: (category) => {
+                return get().customCommands.filter(
+                    (cmd) => category === 'all' || cmd.category === category
+                );
+            },
+
+            getAllTags: () => {
+                const allTags = get().customCommands
+                    .flatMap((cmd) => cmd.tags || []);
+                return Array.from(new Set(allTags)).sort();
+            },
         }),
         {
             name: 'via-gent-custom-slash-commands',
@@ -212,4 +406,66 @@ export function getLocalizedCommand(command: CustomSlashCommand, locale: string 
         title: isVietnamese && command.titleVi ? command.titleVi : command.title,
         description: isVietnamese && command.descriptionVi ? command.descriptionVi : command.description,
     };
+}
+
+// ============================================================================
+// 43-03: Variable Extraction and Substitution Helpers
+// ============================================================================
+
+/**
+ * Extract variable names from a prompt template
+ * Matches {{variableName}} patterns
+ * @story 43-03: 2-step prompt refinement workflow
+ */
+export function extractVariablesFromPrompt(prompt: string): string[] {
+    const regex = /\{\{(\w+)\}\}/g;
+    const matches: string[] = [];
+    let match;
+    while ((match = regex.exec(prompt)) !== null) {
+        if (!matches.includes(match[1])) {
+            matches.push(match[1]);
+        }
+    }
+    return matches;
+}
+
+/**
+ * Substitute variables in a prompt template with their values
+ * @story 43-03: 2-step prompt refinement workflow
+ */
+export function substituteVariables(
+    prompt: string,
+    values: Record<string, string>
+): string {
+    let result = prompt;
+    for (const [key, value] of Object.entries(values)) {
+        result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value);
+    }
+    return result;
+}
+
+/**
+ * Check if a prompt contains variables that need refinement
+ * @story 43-03: 2-step prompt refinement workflow
+ */
+export function promptNeedsRefinement(command: CustomSlashCommand): boolean {
+    // Explicit refinement flag takes precedence
+    if (command.enableRefinement === true) return true;
+    if (command.enableRefinement === false) return false;
+    
+    // Auto-detect variables in prompt
+    const variables = extractVariablesFromPrompt(command.prompt);
+    return variables.length > 0;
+}
+
+/**
+ * Get localized variable label
+ * @story 43-03: 2-step prompt refinement workflow
+ */
+export function getLocalizedVariableLabel(
+    variable: PromptVariable,
+    locale: string = 'en'
+): string {
+    const isVietnamese = locale.toLowerCase().startsWith('vi');
+    return isVietnamese && variable.labelVi ? variable.labelVi : variable.label;
 }

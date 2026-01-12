@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +31,10 @@ import { useWorkspaceChatSettings } from '@/infrastructure/persistence/stores/ch
 import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 import { usePromptEnhancementStore } from '@/infrastructure/persistence/stores/prompt-enhancement-store';
 import { usePromptEnhancer } from '@/lib/agent/hooks/use-prompt-enhancer';
+
+// CHAT-006: Thread Manager UI Integration
+import { ThreadManager } from '../chat/ThreadManager';
+import { MessageSquare, X } from 'lucide-react';
 
 // Import sub-components
 import {
@@ -76,6 +80,9 @@ export function AgentChatPanel({
 }: AgentChatPanelProps) {
     const { t } = useTranslation();
     const { isMobile, isTablet } = useDeviceType();
+
+    // CHAT-006: Thread sidebar state
+    const [threadSidebarOpen, setThreadSidebarOpen] = useState(false);
 
     // Get selected agent from Zustand store
     const { activeAgentId, selectAgentForWorkspace } = useAgentSelection();
@@ -576,17 +583,62 @@ export function AgentChatPanel({
     // Display messages with welcome fallback
     const displayMessages = allMessages.length > 0 ? allMessages : [createWelcomeMessage()];
 
+    // CHAT-006: Get active thread info for header display
+    const activeThreadInfo = useConversationStore(
+        useShallow((state) => ({
+            activeThreadId: state.activeThreadId,
+        }))
+    );
+
+    // Get the active thread title
+    const activeThreadTitle = useConversationStore((state) => {
+        if (!activeThreadInfo.activeThreadId) return null;
+        const thread = state.threads[activeThreadInfo.activeThreadId];
+        return thread?.title || null;
+    });
+
     return (
-        <div className="flex flex-col h-full bg-surface-dark relative">
-            {/* Header */}
-            <AgentChatHeader
-                modelId={modelId}
-                toolsAvailable={toolsAvailable}
-                isEnhancementEnabled={isEnhancementEnabled}
-                onToggleEnhancement={toggleEnhancement}
-                onClear={handleClear}
-                onCaptureDebugSession={handleCaptureDebugSession}
-            />
+        <div className="flex flex-row h-full bg-surface-dark relative">
+            {/* CHAT-006: Thread Manager Sidebar */}
+            {threadSidebarOpen && (
+                <div className="w-80 border-r border-border bg-surface-darker flex-shrink-0">
+                    <div className="flex items-center justify-between p-3 border-b border-border">
+                        <div className="flex items-center gap-2">
+                            <MessageSquare className="w-4 h-4 text-muted-foreground" />
+                            <h3 className="font-mono text-sm font-bold">THREADS</h3>
+                        </div>
+                        <button
+                            onClick={() => setThreadSidebarOpen(false)}
+                            className="p-1 hover:bg-muted rounded-sm transition-colors"
+                            title="Close thread sidebar"
+                        >
+                            <X className="w-4 h-4 text-muted-foreground" />
+                        </button>
+                    </div>
+                    <ThreadManager
+                        workspaceType={workspaceType}
+                        conversationId={activeConversationId || undefined}
+                        onThreadSelect={() => {
+                            // Thread is already selected by ThreadManager's internal handler
+                            // Keep sidebar open for further navigation
+                        }}
+                    />
+                </div>
+            )}
+
+            {/* Main Chat Area */}
+            <div className="flex flex-col flex-1 min-w-0">
+                {/* Header */}
+                <AgentChatHeader
+                    modelId={modelId}
+                    toolsAvailable={toolsAvailable}
+                    isEnhancementEnabled={isEnhancementEnabled}
+                    onToggleEnhancement={toggleEnhancement}
+                    onClear={handleClear}
+                    onCaptureDebugSession={handleCaptureDebugSession}
+                    activeThreadName={activeThreadTitle}
+                    onToggleThreadSidebar={() => setThreadSidebarOpen(!threadSidebarOpen)}
+                />
 
             {/* Status */}
             <AgentChatStatus
@@ -622,6 +674,7 @@ export function AgentChatPanel({
                 onReject={handleReject}
                 className="mx-2"
             />
+            </div>
         </div>
     );
 }

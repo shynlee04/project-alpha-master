@@ -281,9 +281,7 @@ export const ChatInputControls = memo(function ChatInputControls({
                         value={input}
                         onChange={(e) => {
                             setInput(e.target.value)
-                            // Auto-resize textarea
-                            e.target.style.height = 'auto'
-                            e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
+                            // Auto-resize handled by CSS fieldSizing (see style prop below)
                         }}
                         onKeyDown={(e) => {
                             // Submit on Enter (without Shift)

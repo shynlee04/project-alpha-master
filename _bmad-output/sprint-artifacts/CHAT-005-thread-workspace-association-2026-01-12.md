@@ -2,7 +2,7 @@
 story_key: "CHAT-005-thread-workspace-association"
 epic: "EPIC-CHAT"
 story: 5
-status: "drafted"
+status: "partial"
 created_at: "2026-01-12T23:00:00+07:00"
 version: "2.0"
 points: 16
@@ -280,3 +280,80 @@ Pre-planning gate passed. Ready for implementation.
 | drafted | 2026-01-12T23:00:00+07:00 | SM | Story file created v2.0 |
 | | | | |
 | | | | |
+
+---
+
+## ACTUAL CODE REVIEW (Post-Verification 2026-01-13)
+
+### Status: ⚠️ **PARTIALLY IMPLEMENTED (not documented)**
+
+This story is marked as "drafted" but significant implementation exists in the codebase.
+
+### Verification Against Codebase (2026-01-13)
+
+```bash
+# Store methods exist
+$ grep -n "getThreadsByWorkspace\|updateThread\|createThread" src/infrastructure/persistence/stores/chat/slices/thread-management-slice.ts
+23:  createThread: (conversationId, parentThreadId) => string;
+25:  updateThread: (threadId, updates) => void;
+33:  getThreadsByWorkspace: (workspaceType) => ThreadWithId[];
+64: createThread: (conversationId, parentThreadId) => {
+138: updateThread: (threadId, updates) => {
+269: getThreadsByWorkspace: (workspaceType) =>
+
+# Hook uses updateThread
+$ grep -n "getThreadsByWorkspace\|updateThread" src/presentation/hooks/useThreadManager.ts
+78:  const updateThread = useUnifiedChatStore((state) => state.updateThread)
+130:      updateThread(threadId, { title })
+198:      updateThread(threadId, updates)
+
+# Hook does NOT use getThreadsByWorkspace (still manual filtering)
+$ grep "getThreadsByWorkspace" src/presentation/hooks/useThreadManager.ts
+# Result: (empty) - not using the store method
+```
+
+### What Was Documented vs What Exists
+
+| Claim | Status | Evidence |
+|-------|--------|----------|
+| Add getThreadsByWorkspace to store | ✅ IMPLEMENTED | Line 33, 269 in thread-management-slice.ts |
+| Add updateThread to store | ✅ IMPLEMENTED | Line 25, 138 in thread-management-slice.ts |
+| Workspace validation in createThread | ✅ IMPLEMENTED | Line 68-70 sets workspaceType from conversation |
+| Hook uses getThreadsByWorkspace | ❌ NOT IMPLEMENTED | Hook still does manual filtering |
+| Tests created | ❌ UNKNOWN | No test files found |
+| Story status updated | ❌ INCOMPLETE | Still shows "drafted" |
+
+### Actual Current State (2026-01-13)
+
+1. **Store Methods Implemented**: Both `getThreadsByWorkspace` and `updateThread` exist
+2. **Hook Integration Partial**: `updateThread` is used (line 78) but `getThreadsByWorkspace` is not
+3. **Manual Filtering Remains**: Hook still filters manually instead of calling store method
+4. **TODO Comment Found**: Line 107 in ThreadManager.tsx has TODO for `clearActiveThread`
+
+### Code Quality Issues
+
+**Problem 1: Unused Store Method**
+```typescript
+// Store has the method (line 269)
+getThreadsByWorkspace: (workspaceType) => { /* implementation */ }
+
+// But hook doesn't use it (useThreadManager.ts)
+// Still doing manual filtering somewhere
+```
+
+**Problem 2: Incomplete Implementation**
+The store methods exist but the hook wasn't updated to use them. This creates a disconnect between what the store provides and what the hook uses.
+
+### Recommendation
+
+**This story is PARTIALLY DONE**:
+
+1. ✅ Store methods exist (`getThreadsByWorkspace`, `updateThread`)
+2. ❌ Hook not updated to use `getThreadsByWorkspace`
+3. ❌ No tests documented
+4. ❌ Story status not updated
+
+**Remaining work**:
+1. Update `useThreadManager` to use `getThreadsByWorkspace` instead of manual filtering
+2. Create unit tests for the new store methods
+3. Update story status to reflect partial completion

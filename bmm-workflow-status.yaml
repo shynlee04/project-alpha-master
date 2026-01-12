@@ -3,8 +3,8 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.0.0"
-last_updated: "2026-01-12T01:10:00+07:00"
-updated_by: "BMAD-Master ses_4693 + Team B"
+last_updated: "2026-01-14T01:00:00+07:00"
+updated_by: "BMAD-Master - Team A assigned: EPIC-45/46/47 (Chat Remediation)"
 previous_version: "_bmad-output/.archive/2026-01-09/workflow-history/bmm-workflow-status-v1-ARCHIVED.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -22,12 +22,23 @@ phase_guidance: |
   No epic can start before lower-numbered epic reaches 80%
   Story completion: code + test + review + human-approval
 
+# TEAMS
+teams:
+  - id: "Team A"
+    name: "Chat Remediation Squad"
+    focus: "Unified Chat Interface - State, Routing, Space-Aware Orchestration"
+    assigned_epic: "EPIC-45"
+  - id: "Team B"
+    name: "Notes AI Squad"
+    focus: "Multimodal Rich Content"
+    assigned_epic: "EPIC-44"
+
 # NUMBERING RULES
 numbering:
   epic_format: "EPIC-{NN}"
   story_format: "{EPIC}-{NN}"
-  next_epic_number: 41
-  reserved_prefixes: ["FS-", "P1-", "P1.5-", "STAB-", "UX-", "39-", "40-", "MOBILE-", "PERF-", "RAG-", "STORE-"]
+  next_epic_number: 48
+  reserved_prefixes: ["FS-", "P1-", "P1.5-", "STAB-", "UX-", "39-", "40-", "MOBILE-", "PERF-", "RAG-", "STORE-", "CHAT-"]
 
 # LIMITS
 limits:
@@ -41,45 +52,169 @@ limits:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "perf-optimization-2026-01-12"
+  id: "chat-remediation-epic-45-2026-01-14"
   status: "IN_PROGRESS"
-  epic: "EPIC-PERF"
-  story: "PERF-01"
-  started_at: "2026-01-12T16:00:00+07:00"
-  team: "Team B"
+  epic: "EPIC-45"
+  story: "45-02"
+  started_at: "2026-01-14T01:30:00+07:00"
+  completed_at: null
+  team: "Team A"
+  story_status: "IN_PROGRESS"
+  story_summary: "Fix file → note import - auto-switch to editor, fix race condition"
+
+parallel_workflows:
+  - id: "notes-ai-epic-44-2026-01-14"
+    status: "IN_PROGRESS"
+    epic: "EPIC-44"
+    story: "44-04"
+    team: "Team B"
+    story_summary: "Next Multimodal story (Team B)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
 # ═══════════════════════════════════════════════════════════════════════════
 
 active_epics:
-  - id: "EPIC-FS"
-    name: "File System Foundation"
-    status: "COMPLETED"
-    progress: 100
-    stories_total: 14
-    stories_done: 14
-    priority: "P0"
-    completed_at: "2026-01-12T16:00:00+07:00"
-    sprint_file: "phase-2-sprint-status-2026-01-09.yaml"
-    
-  - id: "EPIC-39"
-    name: "8-bit Design Compliance"
+  # ═══════════════════════════════════════════════════════════════════════════
+  # TEAM A: Chat Remediation (Correct-Course Workflow)
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: "EPIC-45"
+    name: "Chat State & Project Foundation"
     status: "IN_PROGRESS"
-    progress: 67
-    stories_total: 6
-    stories_done: 4
+    progress: 20
+    stories_total: 5
+    stories_done: 1
+    priority: "P0"
+    team: "Team A"
+    blocked_by: null
+    sprint_file: "_bmad-output/sprint-artifacts/epic-45-chat-state-2026-01-14.yaml"
+    stories:
+      - id: "45-01"
+        name: "Fix Files view state loss - project persists across view switches"
+        status: "COMPLETED"
+        completed_at: "2026-01-14T01:30:00+07:00"
+        file: "src/presentation/components/notes/ProjectFilesPanel.tsx"
+      - id: "45-02"
+        name: "Fix file → note import - auto-switch to editor, fix race condition"
+        status: "in_progress"
+        file: "src/presentation/components/notes/ProjectFilesPanel.tsx"
+      - id: "45-03"
+        name: "Create unified project state (single source of truth)"
+        status: "pending"
+        file: "src/infrastructure/persistence/stores/workspace/unified-project-context.ts"
+      - id: "45-04"
+        name: "Implement browser space vs project space mode switch"
+        status: "pending"
+      - id: "45-05"
+        name: "Preserve scroll position per note when switching views"
+        status: "pending"
+
+  - id: "EPIC-46"
+    name: "Space-Aware Agent Orchestration"
+    status: "pending"
+    progress: 0
+    stories_total: 4
+    stories_done: 0
     priority: "P1"
-    sprint_file: "phase-2-sprint-status-2026-01-09.yaml"
-    
-  - id: "EPIC-40"
-    name: "Multimodal Chat Unification"
+    team: "Team A"
+    blocked_by: "EPIC-45"
+    sprint_file: "_bmad-output/sprint-artifacts/epic-46-space-aware-2026-01-14.yaml"
+    stories:
+      - id: "46-01"
+        name: "Unified tool context propagation across workspaces"
+        status: "pending"
+        description: "Tools must receive workspaceType context in all agent calls"
+      - id: "46-02"
+        name: "Workspace-specific system prompts"
+        status: "pending"
+        description: "Generate system prompts based on available tools per workspace"
+      - id: "46-03"
+        name: "Tool execution metadata display in chat blocks"
+        status: "pending"
+        description: "Show tool name, workspace, status, duration in CollapsibleSection"
+      - id: "46-04"
+        name: "Space-aware render modes for chat components"
+        status: "pending"
+        description: "CodeBlock and other components show workspace-specific actions"
+
+  - id: "EPIC-47"
+    name: "Workspace-Aware Artifacts & Actions"
+    status: "pending"
+    progress: 0
+    stories_total: 3
+    stories_done: 0
+    priority: "P1"
+    team: "Team A"
+    blocked_by: "EPIC-46"
+    sprint_file: "_bmad-output/sprint-artifacts/epic-47-artifacts-2026-01-14.yaml"
+    stories:
+      - id: "47-01"
+        name: "Add workspace-aware Save to Project for artifacts"
+        status: "pending"
+        description: "IDE→src/, Notes→notes/, Knowledge→knowledge/, Study→study/"
+      - id: "47-02"
+        name: "Code block execute button (IDE workspace only)"
+        status: "pending"
+      - id: "47-03"
+        name: "Artifact preview modal improvements"
+        status: "pending"
+
+  # ═══════════════════════════════════════════════════════════════════════════
+  # TEAM B: Notes AI (Parallel Work)
+  # ═══════════════════════════════════════════════════════════════════════════
+
+  - id: "EPIC-41"
+    name: "AI Provider Foundation"
     status: "COMPLETED"
     progress: 100
-    stories_total: 12
-    stories_done: 12
+    stories_total: 8
+    stories_done: 8
+    priority: "P0"
+    completed_at: "2026-01-13T03:38:00+07:00"
+    sprint_file: "notes-ai-sprint-2026-01-13.yaml"
+
+  - id: "EPIC-42"
+    name: "Context-Aware Block AI"
+    status: "COMPLETED"
+    progress: 100
+    stories_total: 10
+    stories_done: 10
     priority: "P1"
-    completed_at: "2026-01-10T08:00:00+07:00"
+    sprint_file: "notes-ai-sprint-2026-01-13.yaml"
+
+  - id: "EPIC-43"
+    name: "Prompt Engineering Hub"
+    status: "COMPLETED"
+    progress: 100
+    stories_total: 8
+    stories_done: 8
+    priority: "P1"
+    blocked_by: null
+    completed_at: "2026-01-13T22:10:00+07:00"
+
+  - id: "EPIC-44"
+    name: "Multimodal Rich Content"
+    status: "IN_PROGRESS"
+    progress: 25
+    stories_total: 12
+    stories_done: 3
+    priority: "P2"
+    blocked_by: null
+    team: "Team B"
+    stories:
+      - id: "44-01"
+        name: "AI Image Generation Block"
+        status: "COMPLETED"
+        completed_at: "2026-01-13T23:45:00+07:00"
+      - id: "44-02"
+        name: "AI Vision Understanding Block"
+        status: "COMPLETED"
+        completed_at: "2026-01-13T23:59:00+07:00"
+      - id: "44-03"
+        name: "Sequential Storyboard Block"
+        status: "COMPLETED"
+        completed_at: "2026-01-14T00:30:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # BLOCKED/PAUSED EPICS
@@ -95,12 +230,20 @@ blocked_epics: []
 epic_ordering:
   rule: "Epic N cannot start before Epic N-1 is 80% complete"
   current_order:
-    - "EPIC-PERF"  # P0-CRITICAL - Performance (Team B)
-    - "EPIC-RAG"   # P1-HIGH - RAG Persistence (Team B)
+    # Team A: Chat Remediation (Sequential dependency)
+    - "EPIC-45"    # P0 - Chat State & Project Foundation (IN PROGRESS)
+    - "EPIC-46"    # P1 - Space-Aware Agent Orchestration (blocked by EPIC-45)
+    - "EPIC-47"    # P1 - Workspace-Aware Artifacts (blocked by EPIC-46)
+
+    # Team B: Parallel work (no dependency on Team A)
+    - "EPIC-44"    # P2 - Multimodal Rich Content (Team B, IN PROGRESS)
     - "EPIC-39"    # P1 - 8-bit Design (67% done)
     - "EPIC-38"    # UNBLOCKED - Architecture Extension
-    
+
   complete:
+    - "EPIC-43"    # Prompt Engineering Hub - 2026-01-13
+    - "EPIC-41"    # AI Provider Foundation - 2026-01-13
+    - "EPIC-42"    # Context-Aware Block AI - 2026-01-13
     - "EPIC-FS"    # File System - 2026-01-12
     - "EPIC-STORE" # Store Consolidation - 2026-01-12
     - "EPIC-UX"    # UX Remediation - 2026-01-09
@@ -118,6 +261,10 @@ sprint_links:
   master: "_bmad-output/sprint-artifacts/sprint-status.yaml"
   story_index: "_bmad-output/sprint-artifacts/stories/STORY-INDEX.md"
   active_sprints:
+    - "_bmad-output/sprint-artifacts/epic-45-chat-state-2026-01-14.yaml"    # Team A
+    - "_bmad-output/sprint-artifacts/epic-46-space-aware-2026-01-14.yaml"    # Team A
+    - "_bmad-output/sprint-artifacts/epic-47-artifacts-2026-01-14.yaml"     # Team A
+    - "_bmad-output/sprint-artifacts/notes-ai-sprint-2026-01-13.yaml"        # Team B
     - "_bmad-output/sprint-artifacts/phase-2-sprint-status-2026-01-09.yaml"
     - "_bmad-output/sprint-artifacts/phase-1.5-sprint-status-2026-01-09.yaml"
     - "_bmad-output/sprint-artifacts/phase-3-marketing-sprint-2026-01-09.yaml"

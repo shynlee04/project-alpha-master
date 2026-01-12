@@ -14,7 +14,7 @@
  * - Mobile responsive
  */
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCreateBlockNote } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
@@ -25,6 +25,14 @@ import '@blocknote/core/fonts/inter.css';
 import { ImageBlock } from './blocks/ImageBlock';
 import { CodeFileBlock } from './blocks/CodeFileBlock';
 import { FileAttachmentBlock } from './blocks/FileAttachmentBlock';
+// 44-01: AI Image Generation Block
+import { AIImageBlock } from './blocks/AIImageBlock';
+// 44-02: AI Vision/Understanding Block
+import { AIVisionBlock } from './blocks/AIVisionBlock';
+// 44-03: Sequential Multi-Image Storyboard Block
+import { StoryboardBlock } from './blocks/StoryboardBlock';
+// 44-04: Video Understanding Block
+import { VideoBlock } from './blocks/VideoBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 type BlockNoteBlock = any;
@@ -32,7 +40,7 @@ type BlockNoteBlock = any;
 import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils'; // Keep existing imports
-import { Save } from 'lucide-react';
+import { Save, Sparkles } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { toast } from 'sonner';
 
@@ -40,12 +48,37 @@ import { getCustomSlashMenuItems } from './AISlashCommand';
 import { NoteStudyMenu } from './NoteStudyMenu';
 import { AIPromptDialog } from './AIPromptDialog';
 import { AITransformMenu } from './AITransformMenu';
+import { AIInsertionDialog } from './AIInsertionDialog';
 import { MultiModalImport } from './MultiModalImport';
 import { VoiceRecordButton } from './VoiceRecordButton';
+// 43-04: AI Prompt Suggestions Panel
+import { PromptSuggestionsPanel } from './PromptSuggestionsPanel';
 import { SuggestionMenuController } from '@blocknote/react';
 // filterSuggestionItems has been removed from @blocknote, using inline filter instead
 
 import './NoteEditor.css';
+
+// ============================================================================
+// Helper: Extract text from blocks
+// ============================================================================
+function extractTextFromBlocks(blocks: BlockNoteBlock[]): string {
+    if (!blocks || !Array.isArray(blocks)) return '';
+    
+    return blocks.map((block) => {
+        if (!block?.content) return '';
+        if (Array.isArray(block.content)) {
+            return block.content
+                .map((item: any) => {
+                    if (typeof item === 'object' && item !== null && 'text' in item) {
+                        return item.text;
+                    }
+                    return '';
+                })
+                .join('');
+        }
+        return '';
+    }).filter(Boolean).join('\n\n');
+}
 
 // ============================================================================
 // Custom BlockNote Schema
@@ -57,6 +90,14 @@ const schema = BlockNoteSchema.create({
         image: ImageBlock(),
         codeFile: CodeFileBlock(),
         fileAttachment: FileAttachmentBlock(),
+        // 44-01: AI Image Generation Block
+        aiImage: AIImageBlock(),
+        // 44-02: AI Vision/Understanding Block
+        aiVision: AIVisionBlock(),
+        // 44-03: Sequential Multi-Image Storyboard Block
+        storyboard: StoryboardBlock(),
+        // 44-04: Video Understanding Block
+        videoAnalysis: VideoBlock(),
     },
 });
 
@@ -141,6 +182,17 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         initialContent,
     });
 
+    // 43-04: Track note content for AI suggestions
+    const [noteContent, setNoteContent] = useState<string>('');
+    const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+
+    // Update note content when initial blocks change
+    useEffect(() => {
+        if (note?.blocks) {
+            setNoteContent(extractTextFromBlocks(note.blocks as BlockNoteBlock[]));
+        }
+    }, [note?.blocks]);
+
     // Debounced save handler (500ms)
     const debouncedSave = useDebouncedCallback(
         async (blocks: any[]) => {
@@ -159,6 +211,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         if (readOnly) return;
         const blocks = editor.document;
         debouncedSave(blocks);
+        // 43-04: Update note content for AI suggestions
+        setNoteContent(extractTextFromBlocks(blocks));
     }, [editor, debouncedSave, readOnly]);
 
     // NS-2026-01-07: Handle inserting multi-modal content (PDF, images)
@@ -284,7 +338,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     }
 
     return (
-        <div className={cn('note-editor', className)}>
+        <div className={cn('note-editor relative', className)}>
             {/* Status bar */}
             <div className="note-editor__status-bar">
                 {note.emoji && <span className="note-editor__emoji">{note.emoji}</span>}
@@ -292,6 +346,16 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 <div className="note-editor__status-spacer" />
                 <div className="flex items-center gap-2">
                     <NoteStudyMenu noteId={noteId} />
+                    {/* 43-04: Toggle AI Suggestions Panel */}
+                    <Button
+                        size="sm"
+                        variant={showSuggestions ? 'secondary' : 'ghost'}
+                        onClick={() => setShowSuggestions(!showSuggestions)}
+                        className="h-11 px-3"
+                        title={t('notes.suggestions.toggle', 'Toggle AI Suggestions')}
+                    >
+                        <Sparkles size={16} className={showSuggestions ? 'text-primary' : ''} />
+                    </Button>
                     {/* NS-2026-01-07: Multi-modal import (PDF, images) */}
                     <MultiModalImport
                         onContentReady={handleInsertContent}
@@ -338,8 +402,19 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     />
                 </BlockNoteView>
                 <AIPromptDialog />
+                <AIInsertionDialog />
                 <AITransformMenu editor={editor as any} />
             </div>
+
+            {/* 43-04: AI Suggestions Panel - Floating panel when showSuggestions is true */}
+            {showSuggestions && (
+                <div className="absolute right-4 top-16 z-10 w-80 max-h-[calc(100%-5rem)] overflow-y-auto shadow-lg">
+                    <PromptSuggestionsPanel
+                        editor={editor as any}
+                        noteContent={noteContent}
+                    />
+                </div>
+            )}
         </div>
     );
 }

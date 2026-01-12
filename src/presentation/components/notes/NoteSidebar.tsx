@@ -13,7 +13,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Folder, Sparkles } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Folder, Sparkles, Bolt } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
@@ -36,6 +36,8 @@ interface NoteSidebarProps {
     onIndexForRAG?: () => void;
     /** CW-1.4: File sync settings callback */
     onFileSync?: () => void;
+    /** 43-01: Slash commands manager callback */
+    onSlashCommands?: () => void;
     /** AC-02: Optional slot for agent selector */
     agentSelectorSlot?: React.ReactNode;
     /** STORAGE-3-2: Optional slot for project selector */
@@ -74,6 +76,7 @@ export function NoteSidebar({
     onExport,
     onIndexForRAG: _onIndexForRAG, // P2-8: DEPRECATED - Now handled internally by NotesIndexingButton
     onFileSync,
+    onSlashCommands,
     agentSelectorSlot,
     projectSelectorSlot,
     projectId,
@@ -274,6 +277,20 @@ export function NoteSidebar({
                         >
                             <FileUp size={14} />
                             <span className="text-xs hidden sm:inline">{t('notes.import.short', 'Import')}</span>
+                        </Button>
+                    )}
+
+                    {/* Slash Commands - 43-01 */}
+                    {onSlashCommands && (
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={onSlashCommands}
+                            className="h-9 px-2 rounded-none border border-border flex items-center gap-1"
+                            aria-label={t('notes.slashCommands.manage', 'Manage Slash Commands')}
+                        >
+                            <Bolt size={14} />
+                            <span className="text-xs hidden sm:inline">{t('notes.slashCommands.short', 'Commands')}</span>
                         </Button>
                     )}
 

@@ -2,7 +2,7 @@
 story_key: "CHAT-009-artifact-rendering-system"
 epic: "EPIC-CHAT"
 story: 9
-status: "drafted"
+status: "done"
 created_at: "2026-01-13T01:00:00+07:00"
 version: "2.0"
 points: 20

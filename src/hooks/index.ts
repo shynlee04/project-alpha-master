@@ -51,3 +51,19 @@ export {
 export {
     useThreadManager,
 } from '../presentation/hooks/useThreadManager';
+
+// Multi-agent chat hook (CHAT-013)
+export {
+    useMultiAgentChat,
+    useDebate,
+    useRouting,
+    useExpansion,
+} from '../lib/agent/hooks/use-multi-agent-chat';
+export type {
+    MultiAgentConfig,
+    MultiAgentState,
+    MultiAgentResults,
+    UseMultiAgentChatOptions,
+    UseMultiAgentChatActions,
+    UseMultiAgentChatReturn,
+} from '../lib/agent/hooks/use-multi-agent-chat';
