@@ -571,13 +571,26 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 return valid;
             }
 
+            // FAIL-SAFE: If ANY corruption detected, return empty to prevent ProseMirror crashes
             const fullyFiltered = filterValidBlocks(sanitized);
 
             if (fullyFiltered.length !== sanitized.length) {
-                console.warn(`[NoteEditor] Total blocks filtered: ${sanitized.length - fullyFiltered.length}`);
-                const result = fullyFiltered.length > 0 ? fullyFiltered as BlockNoteBlock[] : undefined;
-                console.log('[NoteEditor] Returning initialContent:', result ? `${result.length} blocks (filtered)` : 'undefined');
-                return result;
+                const filteredCount = sanitized.length - fullyFiltered.length;
+                console.error(`[NoteEditor] BLOCK CORRUPTION DETECTED: ${filteredCount} invalid blocks filtered`);
+
+                // Force editor remount by incrementing corruption counter
+                setCorruptionDetected(prev => prev + 1);
+
+                // Show user-facing error
+                toast.error(`Note corruption detected: ${filteredCount} damaged block(s) removed. Note may display incompletely.`, {
+                    duration: 5000,
+                    id: `block-corruption-${noteId}` // Prevent duplicate toasts
+                });
+
+                // CRITICAL: Return UNDEFINED to force BlockNote to create fresh empty document
+                // This is better than passing potentially malformed blocks that crash ProseMirror
+                console.warn('[NoteEditor] Returning undefined (fresh editor) due to corruption');
+                return undefined;
             }
 
             const result = sanitized.length > 0 ? sanitized as BlockNoteBlock[] : undefined;
@@ -600,6 +613,9 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     // 43-04: Track note content for AI suggestions
     const [noteContent, setNoteContent] = useState<string>('');
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+
+    // FAIL-SAFE: Track corruption state to force editor remount
+    const [corruptionDetected, setCorruptionDetected] = useState<number>(0);
 
     // Update note content when initial blocks change
     useEffect(() => {
@@ -850,13 +866,15 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 <ErrorBoundary
                     onError={(error) => {
                         console.error('[NoteEditor] BlockNote render error:', error);
-                        // Attempt recovery by forcing page reload on critical errors
+                        // Force editor remount on ProseMirror errors
                         if (error.message.includes('node position') || error.message.includes('Cannot find')) {
-                            console.warn('[NoteEditor] Detected corrupted editor state, recommend reloading');
+                            console.warn('[NoteEditor] ProseMirror error detected, forcing remount');
+                            setCorruptionDetected(prev => prev + 1);
                         }
                     }}
                 >
                     <BlockNoteView
+                        key={`${noteId}-editor-${corruptionDetected}`}
                         editor={editor}
                         onChange={handleChange}
                         theme="dark"
