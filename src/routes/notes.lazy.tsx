@@ -31,40 +31,42 @@ export const Route = createLazyFileRoute('/notes')({
 });
 
 /**
- * Notes workspace wrapper for /notes route - uses default-notes project
+ * Notes workspace wrapper for /notes route - uses browser-mode project
+ * 45-04: Loads or creates browser mode project for all-notes view
  * Loads or creates default project, then renders NotesPage with ProjectFilesPanel
  * FS-02: Registers project in ProjectRegistry to prevent cross-workspace conflicts
- * FS-03: Uses namespaced project ID format: notes:default-notes
+ * FS-03: Uses namespaced project ID format: notes:browser-mode
  */
 function NotesWorkspaceDefault() {
-  // FS-03: Namespaced project ID format for workspace isolation
-  const defaultProjectId = 'notes:default-notes';
+  // 45-04: Browser mode project ID (shows notes from all projects)
+  const browserModeProjectId = 'notes:browser-mode';
   const [project, setProject] = useState<Project | null>(null);
 
   useEffect(() => {
-    // Try to get existing default project
-    getProject(defaultProjectId).then((p) => {
+    // Try to get existing browser mode project
+    getProject(browserModeProjectId).then((p) => {
       if (p) {
         setProject(p as Project | null);
       } else {
-        // Create default project if it doesn't exist
-        // R1 FIX: Use proper Project type with all required fields
+        // 45-04: Create browser mode project if it doesn't exist
+        // Browser mode allows viewing notes from all projects
         setProject({
-          id: defaultProjectId,
-          name: 'Notes',
-          folderPath: 'Notes',
+          id: browserModeProjectId,
+          name: 'Browser Mode',
+          folderPath: 'Notes', // Uses IndexedDB storage (no file system)
           storageType: 'indexeddb',
           createdAt: new Date(),
           lastOpened: new Date(),
           autoSync: false,
-          bindings: { notes: true },
+          bindings: { notes: true, knowledge: true },
           tags: [],
           isTemp: true,
+          isBrowserMode: true, // 45-04: Special flag for browser mode
           autoCreated: true,
         } as Project);
       }
     });
-  }, [defaultProjectId]);
+  }, [browserModeProjectId]);
 
   // FS-02: Register project in ProjectRegistry to prevent cross-workspace conflicts
   useEffect(() => {
@@ -72,7 +74,7 @@ function NotesWorkspaceDefault() {
 
     // Register the project with conflict detection
     const result = ProjectRegistry.register(
-      defaultProjectId,
+      browserModeProjectId,
       project.folderPath,
       'notes' // workspaceType
     );
@@ -86,16 +88,16 @@ function NotesWorkspaceDefault() {
 
     // Cleanup: unregister when component unmounts
     return () => {
-      ProjectRegistry.unregister(defaultProjectId, 'notes');
+      ProjectRegistry.unregister(browserModeProjectId, 'notes');
     };
   }, [project]);
 
   // Set projectId in IDE store when component mounts
   useEffect(() => {
-    if (defaultProjectId) {
-      useIDEStore.getState().setProjectId(defaultProjectId);
+    if (browserModeProjectId) {
+      useIDEStore.getState().setProjectId(browserModeProjectId);
     }
-  }, [defaultProjectId]);
+  }, [browserModeProjectId]);
 
   if (!project) {
     return (

@@ -98,6 +98,8 @@ export interface Project {
   isTemp?: boolean;
   /** Auto-created flag (system-generated vs user-created) */
   autoCreated?: boolean;
+  /** 45-04: Browser mode flag (special project showing all notes across projects) */
+  isBrowserMode?: boolean;
 }
 
 /**

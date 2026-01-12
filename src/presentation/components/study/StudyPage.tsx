@@ -6,7 +6,7 @@
  * @story 9-5 Study Integration (UI Wiring)
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
@@ -26,6 +26,7 @@ import { AgentManager } from '@/presentation/components/agent';
 // STORAGE-3-3: Project Selector
 import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
 import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useProjectContext } from '@/lib/workspace/ProjectContext';
 
 import { FolderOpen } from 'lucide-react';
@@ -41,6 +42,16 @@ export function StudyPage() {
     // Get projectId from ProjectContext (set by route)
     const { project: contextProject } = useProjectContext();
     const projectId = contextProject?.id || 'default';
+
+    // 45-03: Sync projectId from IDE store (single source of truth)
+    // When project changes in other workspaces (IDE, Notes), Study workspace follows
+    const ideProjectId = useIDEStore((s) => s.projectId);
+    useEffect(() => {
+        if (ideProjectId && ideProjectId !== projectId) {
+            console.log('[StudyPage] Project changed in IDE store, navigating:', ideProjectId);
+            navigate({ to: `/study/${ideProjectId}` });
+        }
+    }, [ideProjectId, projectId, navigate]);
 
     // STORAGE-3-3: Project Selector Logic
     const { projects, activeProject } = useWorkspaceProjects({

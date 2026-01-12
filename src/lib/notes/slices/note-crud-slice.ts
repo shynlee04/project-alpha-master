@@ -35,7 +35,7 @@ export const createNoteCRUDSlice: StateCreator<
     NoteStoreState,
     [],
     [],
-    Pick<NoteStoreState, 'loadNotes' | 'createNote' | 'updateNote' | 'deleteNote'>
+    Pick<NoteStoreState, 'loadNotes' | 'loadAllNotes' | 'createNote' | 'updateNote' | 'deleteNote'>
 > = (set, get) => ({
     /**
      * Load notes for a project from IndexedDB
@@ -63,6 +63,36 @@ export const createNoteCRUDSlice: StateCreator<
         } catch (error) {
             set({ error: (error as Error).message, loading: false });
             console.error('[NoteStore-CRUD] Failed to load notes:', error);
+        }
+    },
+
+    /**
+     * 45-04: Load notes from ALL projects (browser mode)
+     * Used when user wants to see all notes across all projects
+     */
+    loadAllNotes: async () => {
+        set({ loading: true, error: null });
+
+        try {
+            // Load all notes regardless of projectId
+            const notes = await db.notes
+                .toCollection()
+                .sortBy('order');
+
+            const notesMap = new Map<string, NoteRecord>();
+            notes.forEach(note => notesMap.set(note.id, note));
+
+            set({
+                notes: notesMap,
+                notesArray: notes,
+                loading: false,
+                currentProjectId: null, // No specific project in browser mode
+            });
+
+            console.log(`[NoteStore-CRUD] Loaded ${notes.length} notes from all projects (browser mode)`);
+        } catch (error) {
+            set({ error: (error as Error).message, loading: false });
+            console.error('[NoteStore-CRUD] Failed to load all notes:', error);
         }
     },
 

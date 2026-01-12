@@ -3,8 +3,8 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.0.0"
-last_updated: "2026-01-14T01:00:00+07:00"
-updated_by: "BMAD-Master - Team A assigned: EPIC-45/46/47 (Chat Remediation)"
+last_updated: "2026-01-14T03:00:00+07:00"
+updated_by: "BMAD-Master - Team B completed: 44-04, 44-05 (Video + TTS Blocks)"
 previous_version: "_bmad-output/.archive/2026-01-09/workflow-history/bmm-workflow-status-v1-ARCHIVED.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -66,9 +66,9 @@ parallel_workflows:
   - id: "notes-ai-epic-44-2026-01-14"
     status: "IN_PROGRESS"
     epic: "EPIC-44"
-    story: "44-04"
+    story: "44-06"
     team: "Team B"
-    story_summary: "Next Multimodal story (Team B)"
+    story_summary: "Interactive HTML Artifact Block"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
@@ -197,9 +197,9 @@ active_epics:
   - id: "EPIC-44"
     name: "Multimodal Rich Content"
     status: "IN_PROGRESS"
-    progress: 25
+    progress: 42
     stories_total: 12
-    stories_done: 3
+    stories_done: 5
     priority: "P2"
     blocked_by: null
     team: "Team B"
@@ -216,6 +216,14 @@ active_epics:
         name: "Sequential Storyboard Block"
         status: "COMPLETED"
         completed_at: "2026-01-14T00:30:00+07:00"
+      - id: "44-04"
+        name: "Video Understanding Block"
+        status: "COMPLETED"
+        completed_at: "2026-01-14T02:30:00+07:00"
+      - id: "44-05"
+        name: "Text-to-Speech Block"
+        status: "COMPLETED"
+        completed_at: "2026-01-14T03:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # BLOCKED/PAUSED EPICS

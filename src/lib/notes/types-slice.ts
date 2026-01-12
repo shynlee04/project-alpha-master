@@ -59,6 +59,9 @@ export interface NoteStoreState {
     /** Load notes for a project */
     loadNotes: (projectId: string) => Promise<void>;
 
+    /** 45-04: Load notes from all projects (browser mode) */
+    loadAllNotes: () => Promise<void>;
+
     /** Create a new note */
     createNote: (params?: CreateNoteParams) => Promise<string>;
 
