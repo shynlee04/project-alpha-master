@@ -3,8 +3,8 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.0.0"
-last_updated: "2026-01-14T11:35:00+07:00"
-updated_by: "BMAD-Agent - Completed 44-07 Video Generation Block (Experimental)"
+last_updated: "2026-01-14T12:15:00+07:00"
+updated_by: "BMAD-Agent - Completed 44-08 PowerPoint/Slides Export"
 previous_version: "_bmad-output/.archive/2026-01-09/workflow-history/bmm-workflow-status-v1-ARCHIVED.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -66,9 +66,9 @@ parallel_workflows:
   - id: "notes-ai-epic-44-2026-01-14"
     status: "IN_PROGRESS"
     epic: "EPIC-44"
-    story: "44-08"
+    story: "44-09"
     team: "Team B"
-    story_summary: "PowerPoint/Slides Export"
+    story_summary: "Chart/Diagram Generation"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
@@ -209,9 +209,9 @@ active_epics:
   - id: "EPIC-44"
     name: "Multimodal Rich Content"
     status: "IN_PROGRESS"
-    progress: 58
+    progress: 67
     stories_total: 12
-    stories_done: 7
+    stories_done: 8
     priority: "P2"
     blocked_by: null
     team: "Team B"
@@ -244,6 +244,10 @@ active_epics:
         name: "Video Generation Block (Experimental)"
         status: "COMPLETED"
         completed_at: "2026-01-14T11:35:00+07:00"
+      - id: "44-08"
+        name: "PowerPoint/Slides Export"
+        status: "COMPLETED"
+        completed_at: "2026-01-14T12:15:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # BLOCKED/PAUSED EPICS

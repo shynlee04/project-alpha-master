@@ -44,6 +44,7 @@ import { VideoGenerationBlock } from './blocks/VideoGenerationBlock';
 import { SlidesExportBlock } from './blocks/SlidesExportBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
+// Using 'any' because the custom schema creates complex generic types
 type BlockNoteBlock = any;
 
 import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
@@ -91,6 +92,71 @@ function extractTextFromBlocks(blocks: BlockNoteBlock[]): string {
 }
 
 /**
+ * Sanitize a single content item for BlockNote
+ * Content items must be objects with type, text, and optional styles
+ *
+ * BlockNote content item structure:
+ * - Text content: { type: 'text', text: string, styles: {} }
+ * - Other types (mentions, links): similar structure with type-specific props
+ */
+function sanitizeContentItem(item: any): any {
+    // Handle null/undefined
+    if (item == null) {
+        return null; // Will be filtered out
+    }
+
+    // Handle strings - convert to text content
+    if (typeof item === 'string') {
+        return item.trim() ? {
+            type: 'text',
+            text: item,
+            styles: {},
+        } : null;
+    }
+
+    // Handle non-object items
+    if (typeof item !== 'object') {
+        return null;
+    }
+
+    // Handle arrays (shouldn't happen in content array, but sanitize anyway)
+    if (Array.isArray(item)) {
+        return null;
+    }
+
+    // Text content type - ensure required fields
+    if (item.type === 'text' || !item.type) {
+        const text = String(item.text ?? '');
+        if (!text.trim()) {
+            return null; // Skip empty text items
+        }
+        return {
+            type: 'text',
+            text: text,
+            styles: typeof item.styles === 'object' && item.styles !== null ? item.styles : {},
+        };
+    }
+
+    // For other content types (mentions, links, etc.)
+    // Only preserve known safe properties to avoid passing unknown data
+    const knownProps = ['type', 'text', 'styles', 'href', 'title', 'target'];
+    const sanitized: any = {};
+    for (const prop of knownProps) {
+        if (prop in item && item[prop] !== undefined) {
+            sanitized[prop] = item[prop];
+        }
+    }
+    if (!sanitized.type) {
+        sanitized.type = 'text';
+    }
+    if (!sanitized.styles) {
+        sanitized.styles = {};
+    }
+
+    return sanitized;
+}
+
+/**
  * Sanitize block data to prevent ProseMirror "Cannot find node position" errors
  * Filters out malformed or corrupted blocks before loading into editor
  * NOTE: Returns new objects to avoid mutating source blocks (React immutability)
@@ -103,7 +169,7 @@ function sanitizeBlocks(blocks: any[]): any[] {
         'todoItem', 'toggle', 'text', 'quote', 'callout', 'image',
         'codeFile', 'fileAttachment', 'aiImage', 'aiVision', 'storyboard',
         'videoAnalysis', 'ttsBlock', 'artifactBlock', 'videoGeneration',
-        'codeBlock', 'table', 'divider'
+        'codeBlock', 'table', 'divider', 'slidesExport'
     ]);
 
     // Default props required by BlockNote
@@ -127,29 +193,58 @@ function sanitizeBlocks(blocks: any[]): any[] {
             return true;
         })
         .map((block, index) => {
-            // Create new object to avoid mutation, preserving all properties
+            const blockType = block.type || 'paragraph';
             const sanitized: any = {};
 
             // CRITICAL: Ensure id exists (BlockNote requires this)
             sanitized.id = block.id || `block-${Date.now()}-${index}`;
 
             // Ensure type exists
-            sanitized.type = block.type || 'paragraph';
+            sanitized.type = blockType;
 
             // Ensure props exists with required defaults
-            sanitized.props = {
-                ...defaultProps,
-                ...(block.props || {}),
-            };
+            // Custom blocks need their custom props preserved, standard blocks use whitelist
+            const customBlockTypes = new Set([
+                'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
+                'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
+                'videoGeneration', 'slidesExport'
+            ]);
 
-            // Fix content: must be array or undefined (BlockNote requirement)
-            if (Array.isArray(block.content)) {
-                sanitized.content = block.content;
-            } else if (block.content === undefined || block.content === null) {
-                sanitized.content = undefined;
+            if (customBlockTypes.has(blockType) && block.props && typeof block.props === 'object') {
+                // For custom blocks, preserve all props but ensure defaults
+                sanitized.props = {
+                    ...defaultProps,
+                    ...block.props,
+                };
             } else {
-                console.warn('[NoteEditor] Fixing block with malformed content:', sanitized.type);
-                sanitized.content = undefined;
+                // For standard blocks, only allow known props
+                sanitized.props = {
+                    ...defaultProps,
+                };
+
+                if (block.props && typeof block.props === 'object') {
+                    // Standard block props whitelist
+                    const allowedProps = ['textColor', 'backgroundColor', 'textAlignment', 'level', 'checked'];
+                    for (const prop of allowedProps) {
+                        if (prop in block.props) {
+                            sanitized.props[prop] = block.props[prop];
+                        }
+                    }
+                }
+            }
+
+            // Sanitize content: each item must be a proper object with type, text, styles
+            // CRITICAL: Always provide an array (even if empty) for BlockNote compatibility
+            if (Array.isArray(block.content) && block.content.length > 0) {
+                sanitized.content = block.content
+                    .map(sanitizeContentItem)
+                    .filter(Boolean); // Remove null/undefined items
+            }
+
+            // Always provide an empty array if no content (not undefined)
+            // This matches BlockNote's expected structure
+            if (!sanitized.content || sanitized.content.length === 0) {
+                sanitized.content = [];
             }
 
             // CRITICAL: Ensure children array exists (BlockNote requires this)
@@ -265,7 +360,11 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     // Get initial content from note
     // Fixed: Include noteId in dependencies to ensure proper reactivity on note switch
     const initialContent = useMemo(() => {
+        // Always log for debugging
+        console.log('[NoteEditor] Computing initialContent for note:', noteId, 'has note:', !!note);
+
         if (!note?.blocks || note.blocks.length === 0) {
+            console.log('[NoteEditor] No blocks, returning undefined (empty editor)');
             return undefined; // BlockNote will use default empty paragraph
         }
 
@@ -288,16 +387,19 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     hasProps: !!firstBlock.props,
                     hasContent: 'content' in firstBlock,
                     hasChildren: !!firstBlock.children,
-                    contentType: Array.isArray(firstBlock.content) ? typeof firstBlock.content : typeof firstBlock.content,
+                    contentType: firstBlock.content === undefined ? 'undefined' : Array.isArray(firstBlock.content) ? 'array' : typeof firstBlock.content,
                     childrenType: Array.isArray(firstBlock.children) ? 'array' : typeof firstBlock.children,
                     id: firstBlock.id,
                     type: firstBlock.type,
                 });
             }
 
-            return sanitized.length > 0 ? sanitized as BlockNoteBlock[] : undefined;
+            const result = sanitized.length > 0 ? sanitized as BlockNoteBlock[] : undefined;
+            console.log('[NoteEditor] Returning initialContent:', result ? `${result.length} blocks` : 'undefined');
+            return result;
         } catch (error) {
             console.error('[NoteEditor] Error sanitizing blocks:', error);
+            console.error('[NoteEditor] Error stack:', (error as Error).stack);
             return undefined; // Return undefined to let BlockNote create empty editor
         }
     }, [noteId, note?.blocks]); // Recompute when noteId OR blocks change

@@ -74,7 +74,15 @@ const SAMPLE_OUTLINE = `## Slide 1: Introduction
 function SlidesExportComponent(props: { block: any }) {
   const { t } = useTranslation();
   const blockProps = props.block.props;
-  const [slides, setSlides] = useState<SlideData[]>(blockProps.slides || []);
+  // Parse slides from JSON string (BlockNote stores complex data as strings)
+  const initialSlides = (() => {
+    try {
+      return JSON.parse(blockProps.slidesJson || "[]") as SlideData[];
+    } catch {
+      return [];
+    }
+  })();
+  const [slides, setSlides] = useState<SlideData[]>(initialSlides);
   const [presentationTitle, setPresentationTitle] = useState(blockProps.title || DEFAULT_PRESENTATION_TITLE);
   const [author, setAuthor] = useState(blockProps.author || DEFAULT_AUTHOR);
   const [filename, setFilename] = useState(blockProps.filename || DEFAULT_FILENAME);
@@ -84,9 +92,15 @@ function SlidesExportComponent(props: { block: any }) {
   const [aiPrompt, setAiPrompt] = useState('');
 
   const updateBlock = useCallback((updates: Record<string, unknown>) => {
+    // If slides array is provided, serialize to JSON string
+    const serializedUpdates = { ...updates };
+    if ('slides' in serializedUpdates && Array.isArray(serializedUpdates.slides)) {
+      serializedUpdates.slidesJson = JSON.stringify(serializedUpdates.slides);
+      delete serializedUpdates.slides;
+    }
     props.block.editor.updateBlock(props.block, {
       type: "slidesExport",
-      props: updates,
+      props: serializedUpdates,
     });
   }, [props.block]);
 
@@ -418,7 +432,8 @@ export const SlidesExportBlock = createReactBlockSpec(
       author: { default: "Project Alpha" },
       subject: { default: "" },
       filename: { default: "presentation.pptx" },
-      slides: { default: [] },
+      // Slides stored as JSON string (BlockNote doesn't support array defaults)
+      slidesJson: { default: "[]" },
       status: { default: "idle" },
       errorMessage: { default: "" },
       textAlignment: defaultProps.textAlignment,
