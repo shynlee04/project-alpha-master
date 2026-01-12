@@ -82,7 +82,16 @@ export const StoryboardBlock = createReactBlockSpec(
   },
   {
     render: (props) => {
-      const storedFrames = JSON.parse(props.block.props.frames || "[]") as StoredFrame[];
+      // Safe JSON parse with fallback for corrupted data
+      const parseFrames = (jsonStr: string): StoredFrame[] => {
+        try {
+          return JSON.parse(jsonStr || "[]") as StoredFrame[];
+        } catch {
+          console.warn('[StoryboardBlock] Corrupted frames data, using empty array');
+          return [];
+        }
+      };
+      const storedFrames = parseFrames(props.block.props.frames || "[]");
       const {
         prompt,
         frameCount,

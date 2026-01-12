@@ -20,6 +20,7 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
 import '@blocknote/mantine/style.css';
 import '@blocknote/core/fonts/inter.css';
+import { ErrorBoundary } from '@/presentation/components/error/ErrorBoundary';
 
 // Custom Blocks for rich content rendering
 import { ImageBlock } from './blocks/ImageBlock';
@@ -37,6 +38,10 @@ import { VideoBlock } from './blocks/VideoBlock';
 import { TTSBlock } from './blocks/TTSBlock';
 // 44-06: Interactive HTML Artifact Block
 import { ArtifactBlock } from './blocks/ArtifactBlock';
+// 44-07: Video Generation Block (Experimental)
+import { VideoGenerationBlock } from './blocks/VideoGenerationBlock';
+// 44-08: PowerPoint/Slides Export Block
+import { SlidesExportBlock } from './blocks/SlidesExportBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 type BlockNoteBlock = any;
@@ -68,7 +73,7 @@ import './NoteEditor.css';
 // ============================================================================
 function extractTextFromBlocks(blocks: BlockNoteBlock[]): string {
     if (!blocks || !Array.isArray(blocks)) return '';
-    
+
     return blocks.map((block) => {
         if (!block?.content) return '';
         if (Array.isArray(block.content)) {
@@ -83,6 +88,79 @@ function extractTextFromBlocks(blocks: BlockNoteBlock[]): string {
         }
         return '';
     }).filter(Boolean).join('\n\n');
+}
+
+/**
+ * Sanitize block data to prevent ProseMirror "Cannot find node position" errors
+ * Filters out malformed or corrupted blocks before loading into editor
+ * NOTE: Returns new objects to avoid mutating source blocks (React immutability)
+ */
+function sanitizeBlocks(blocks: any[]): any[] {
+    if (!blocks || !Array.isArray(blocks)) return [];
+
+    const validBlockTypes = new Set([
+        'paragraph', 'heading', 'bulletListItem', 'numberedListItem',
+        'todoItem', 'toggle', 'text', 'quote', 'callout', 'image',
+        'codeFile', 'fileAttachment', 'aiImage', 'aiVision', 'storyboard',
+        'videoAnalysis', 'ttsBlock', 'artifactBlock', 'videoGeneration',
+        'codeBlock', 'table', 'divider'
+    ]);
+
+    // Default props required by BlockNote
+    const defaultProps = {
+        textColor: 'default',
+        backgroundColor: 'default',
+        textAlignment: 'left',
+    };
+
+    return blocks
+        .filter((block) => {
+            // Must be an object with type
+            if (!block || typeof block !== 'object') return false;
+
+            // Must have a valid type (or be a valid default block)
+            if (block.type && !validBlockTypes.has(block.type)) {
+                console.warn('[NoteEditor] Skipping block with unknown type:', block.type);
+                return false;
+            }
+
+            return true;
+        })
+        .map((block, index) => {
+            // Create new object to avoid mutation, preserving all properties
+            const sanitized: any = {};
+
+            // CRITICAL: Ensure id exists (BlockNote requires this)
+            sanitized.id = block.id || `block-${Date.now()}-${index}`;
+
+            // Ensure type exists
+            sanitized.type = block.type || 'paragraph';
+
+            // Ensure props exists with required defaults
+            sanitized.props = {
+                ...defaultProps,
+                ...(block.props || {}),
+            };
+
+            // Fix content: must be array or undefined (BlockNote requirement)
+            if (Array.isArray(block.content)) {
+                sanitized.content = block.content;
+            } else if (block.content === undefined || block.content === null) {
+                sanitized.content = undefined;
+            } else {
+                console.warn('[NoteEditor] Fixing block with malformed content:', sanitized.type);
+                sanitized.content = undefined;
+            }
+
+            // CRITICAL: Ensure children array exists (BlockNote requires this)
+            if (Array.isArray(block.children)) {
+                sanitized.children = sanitizeBlocks(block.children);
+            } else {
+                sanitized.children = [];
+            }
+
+            return sanitized;
+        });
 }
 
 // ============================================================================
@@ -107,6 +185,10 @@ const schema = BlockNoteSchema.create({
         ttsBlock: TTSBlock(),
         // 44-06: Interactive HTML Artifact Block
         artifactBlock: ArtifactBlock(),
+        // 44-07: Video Generation Block (Experimental)
+        videoGeneration: VideoGenerationBlock(),
+        // 44-08: PowerPoint/Slides Export Block
+        slidesExport: SlidesExportBlock(),
     },
 });
 
@@ -186,7 +268,38 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         if (!note?.blocks || note.blocks.length === 0) {
             return undefined; // BlockNote will use default empty paragraph
         }
-        return note.blocks as BlockNoteBlock[];
+
+        // Debug: Log original blocks
+        console.log('[NoteEditor] Original blocks:', JSON.stringify(note.blocks, null, 2));
+
+        try {
+            // Sanitize blocks to prevent ProseMirror "Cannot find node position" errors
+            const sanitized = sanitizeBlocks(note.blocks);
+
+            // Debug: Log sanitized blocks
+            console.log('[NoteEditor] Sanitized blocks:', JSON.stringify(sanitized, null, 2));
+
+            // Validate first block structure before passing to BlockNote
+            if (sanitized.length > 0) {
+                const firstBlock = sanitized[0];
+                console.log('[NoteEditor] First block structure:', {
+                    hasId: !!firstBlock.id,
+                    hasType: !!firstBlock.type,
+                    hasProps: !!firstBlock.props,
+                    hasContent: 'content' in firstBlock,
+                    hasChildren: !!firstBlock.children,
+                    contentType: Array.isArray(firstBlock.content) ? typeof firstBlock.content : typeof firstBlock.content,
+                    childrenType: Array.isArray(firstBlock.children) ? 'array' : typeof firstBlock.children,
+                    id: firstBlock.id,
+                    type: firstBlock.type,
+                });
+            }
+
+            return sanitized.length > 0 ? sanitized as BlockNoteBlock[] : undefined;
+        } catch (error) {
+            console.error('[NoteEditor] Error sanitizing blocks:', error);
+            return undefined; // Return undefined to let BlockNote create empty editor
+        }
     }, [noteId, note?.blocks]); // Recompute when noteId OR blocks change
 
     // Create BlockNote editor instance
@@ -446,23 +559,33 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
 
             {/* BlockNote editor */}
             <div ref={contentRef} className="note-editor__content">
-                <BlockNoteView
-                    editor={editor}
-                    onChange={handleChange}
-                    theme="dark"
-                    editable={!readOnly}
-                    slashMenu={false}
-                >
-                    <SuggestionMenuController
-                        triggerCharacter="/"
-                        getItems={async (query) =>
-                            // Gets all default slash menu items and our custom item.
-                            getCustomSlashMenuItems(editor as any).filter((item) =>
-                                item.title.toLowerCase().includes(query.toLowerCase())
-                            )
+                <ErrorBoundary
+                    onError={(error) => {
+                        console.error('[NoteEditor] BlockNote render error:', error);
+                        // Attempt recovery by forcing page reload on critical errors
+                        if (error.message.includes('node position') || error.message.includes('Cannot find')) {
+                            console.warn('[NoteEditor] Detected corrupted editor state, recommend reloading');
                         }
-                    />
-                </BlockNoteView>
+                    }}
+                >
+                    <BlockNoteView
+                        editor={editor}
+                        onChange={handleChange}
+                        theme="dark"
+                        editable={!readOnly}
+                        slashMenu={false}
+                    >
+                        <SuggestionMenuController
+                            triggerCharacter="/"
+                            getItems={async (query) =>
+                                // Gets all default slash menu items and our custom item.
+                                getCustomSlashMenuItems(editor as any).filter((item) =>
+                                    item.title.toLowerCase().includes(query.toLowerCase())
+                                )
+                            }
+                        />
+                    </BlockNoteView>
+                </ErrorBoundary>
                 <AIPromptDialog />
                 <AIInsertionDialog />
                 <AITransformMenu editor={editor as any} />

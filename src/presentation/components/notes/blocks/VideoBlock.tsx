@@ -91,7 +91,16 @@ export const VideoBlock = createReactBlockSpec(
         language,
       } = props.block.props;
 
-      const video: StoredVideo | null = videoData ? JSON.parse(videoData) : null;
+      // Safe JSON parse with fallback for corrupted data
+      const parseVideoData = (jsonStr: string): StoredVideo | null => {
+        try {
+          return jsonStr ? JSON.parse(jsonStr) : null;
+        } catch {
+          console.warn('[VideoBlock] Corrupted videoData, using null');
+          return null;
+        }
+      };
+      const video: StoredVideo | null = parseVideoData(videoData);
       const videoRef = useRef<HTMLVideoElement>(null);
 
       const [mode, setMode] = useState<VideoAnalysisMode>(analysisMode as VideoAnalysisMode || 'describe');

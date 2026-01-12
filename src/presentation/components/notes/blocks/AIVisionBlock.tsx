@@ -62,7 +62,16 @@ export const AIVisionBlock = createReactBlockSpec(
   },
   {
     render: (props) => {
-      const images = JSON.parse(props.block.props.images || "[]") as StoredImage[];
+      // Safe JSON parse with fallback for corrupted data
+      const parseImages = (jsonStr: string): StoredImage[] => {
+        try {
+          return JSON.parse(jsonStr || "[]") as StoredImage[];
+        } catch {
+          console.warn('[AIVisionBlock] Corrupted images data, using empty array');
+          return [];
+        }
+      };
+      const images = parseImages(props.block.props.images || "[]");
       const {
         analysisMode,
         analysisResult,

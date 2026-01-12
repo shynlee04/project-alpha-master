@@ -22,7 +22,8 @@ import {
     Images,
     Video,
     Volume2,
-    Code2,
+    Clapperboard,
+    FileDown,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -770,8 +771,96 @@ export const insertArtifactItem = (editor: BlockNoteEditor) => ({
     },
     aliases: ["artifact", "html", "embed", "interactive", "widget", "code"],
     group: "AI",
-    icon: <Code2 size={18} />,
+    icon: <Code size={18} />,
     subtext: t('notes.ai.artifact.description', 'Embed interactive HTML/CSS/JS content'),
+});
+
+// ============================================================================
+// Video Generation Block (Story 44-07 - Experimental)
+// ============================================================================
+
+/**
+ * Insert Video Generation Block
+ * @story 44-07: Video generation block (experimental - requires Veo API access)
+ */
+export const insertVideoGenItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.videogen', 'Generate Video'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Video Generation block
+        const videoGenBlock = {
+            type: "videoGeneration",
+            props: {
+                prompt: "",
+                stylePreset: "cinematic",
+                videoData: "",
+                status: "idle",
+                progressMessage: "",
+                errorMessage: "",
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([videoGenBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([videoGenBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.videogen.inserted', 'Video Generation block inserted'));
+    },
+    aliases: ["video-gen", "generate-video", "veo", "ai-video", "create-video"],
+    group: "AI",
+    icon: <Clapperboard size={18} />,
+    subtext: t('notes.ai.videogen.description', 'Generate videos with AI (Experimental - requires Veo access)'),
+});
+
+// ============================================================================
+// Slides Export Block (Story 44-08)
+// ============================================================================
+
+/**
+ * Insert Slides Export Block
+ * @story 44-08: PowerPoint/Slides Export
+ */
+export const insertSlidesItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.slides.title', 'PowerPoint Export'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Slides Export block
+        const slidesBlock = {
+            type: "slidesExport",
+            props: {
+                title: t('notes.ai.slides.titlePlaceholder', 'My Presentation'),
+                author: 'Project Alpha',
+                filename: 'presentation.pptx',
+                slides: [],
+                status: 'idle',
+                errorMessage: '',
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([slidesBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([slidesBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.slides.inserted', 'Slides Export block inserted'));
+    },
+    aliases: ["slides", "powerpoint", "pptx", "export-presentation", "create-deck"],
+    group: "AI",
+    icon: <FileDown size={18} />,
+    subtext: t('notes.ai.slides.description', 'Export notes as PowerPoint presentation'),
 });
 
 // ============================================================================
@@ -877,6 +966,8 @@ export const getCustomSlashMenuItems = (
         insertVideoItem(editor), // 44-04: Video Understanding
         insertTTSItem(editor), // 44-05: Text-to-Speech
         insertArtifactItem(editor), // 44-06: HTML Artifact
+        insertVideoGenItem(editor), // 44-07: Video Generation (Experimental)
+        insertSlidesItem(editor), // 44-08: PowerPoint/Slides Export
         continueWritingItem(editor),
         summarizeNoteItem(editor),
         generateOutlineItem(editor),

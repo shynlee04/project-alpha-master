@@ -29,9 +29,6 @@ interface NavigationState {
     /** Collapse a node */
     collapseNode: (id: string) => void;
 
-    /** Expand all nodes */
-    expandAll: () => void;
-
     /** Collapse all nodes */
     collapseAll: () => void;
 
@@ -106,11 +103,6 @@ export const useNoteNavigationStore = create<NavigationState>()(
                     newExpanded.delete(id);
                     return { expandedNodes: newExpanded };
                 }),
-
-            expandAll: () =>
-                set(() => ({
-                    expandedNodes: new Set<string>(), // Will be populated with all node IDs
-                })),
 
             collapseAll: () =>
                 set(() => ({
