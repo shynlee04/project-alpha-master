@@ -135,10 +135,10 @@ export function NoteSidebar({
 
                 {/* Section 2: View Mode Tabs */}
                 <div className="space-y-1">
-                    <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                    <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider truncate">
                         {t('notes.view.mode', 'View')}
                     </label>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 min-w-0 overflow-hidden">
                         {/* Notes View Button */}
                         <button
                             onClick={() => setSidebarView('notes')}
@@ -282,7 +282,7 @@ export function NoteSidebar({
                 </div>
 
                 {/* Actions Row */}
-                <div className="flex items-center gap-1 flex-wrap">
+                <div className="flex items-center gap-1 overflow-x-auto">
                     {/* Import */}
                     {onImport && (
                         <Button

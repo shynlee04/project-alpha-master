@@ -590,8 +590,8 @@ function ResizablePanel({
         flexBasis: `${_size}%`,
         flexGrow: 0,
         flexShrink: 0,
-        minWidth: context?.direction === 'horizontal' ? 0 : undefined,
-        minHeight: context?.direction === 'vertical' ? 0 : undefined,
+        minWidth: context?.direction === 'horizontal' ? (minPixelSize ?? 0) : undefined,
+        minHeight: context?.direction === 'vertical' ? (minPixelSize ?? 0) : undefined,
       }}
       id={id}
       {...props}

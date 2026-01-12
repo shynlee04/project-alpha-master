@@ -89,7 +89,7 @@ export function NoteTreeItem({
                 aria-selected={isActive}
                 tabIndex={0}
                 className={`
-                    flex items-center gap-2 py-1.5 pr-2 cursor-pointer select-none
+                    flex items-center gap-2 py-1.5 pr-2 cursor-pointer select-none min-w-0
                     ${isActive ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}
                     focus:outline-none focus:ring-1 focus:ring-primary
                 `}
@@ -121,7 +121,7 @@ export function NoteTreeItem({
                 {/* 45-04: Project Badge (browser mode only) */}
                 {isBrowserMode && node.note.projectId && (
                     <span
-                        className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono whitespace-nowrap"
+                        className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono max-w-[60px] truncate"
                         title={`Project: ${node.note.projectId}`}
                     >
                         {node.note.projectId.split(':')[0] || node.note.projectId}

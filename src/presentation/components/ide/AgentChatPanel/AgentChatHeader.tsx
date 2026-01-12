@@ -166,7 +166,7 @@ export function AgentChatHeader({
                         />
                     )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                 {/* E1-11: Workspace Switcher (compact for chat header) */}
                 {enabledWorkspaces.length > 1 && (
                     <DropdownMenu.Root>
