@@ -21,6 +21,7 @@ import type { StateCreator } from 'zustand';
 import type { NoteStoreState } from '../types-slice';
 import type { CreateNoteParams, UpdateNoteParams } from '../types';
 import { generateNoteId, DEFAULT_NOTE_BLOCKS } from '../types';
+import { useNoteNavigationStore } from '../note-navigation-store';
 
 /**
  * CRUD Operations Slice
@@ -258,6 +259,8 @@ export const createNoteCRUDSlice: StateCreator<
                     await deleteRecursive(child.id);
                 }
                 await db.notes.delete(id);
+                // 45-05: Clear scroll position for deleted note
+                useNoteNavigationStore.getState().clearNoteScrollPosition(id);
             };
 
             await deleteRecursive(noteId);

@@ -1,12 +1,13 @@
 /**
  * @fileoverview Note Navigation Store for Tree Structure
  * @module lib/notes/note-navigation-store
- * @governance EPIC-26-5
+ * @governance EPIC-26-5, 45-05
  *
- * Manages tree state, expanded/collapsed nodes, search, and drag-and-drop
- * for hierarchical note navigation.
+ * Manages tree state, expanded/collapsed nodes, search, drag-and-drop,
+ * and scroll position for hierarchical note navigation.
  *
  * Story 26.5: Note Hierarchy & Sidebar Navigation
+ * Story 45-05: Preserve scroll position per note
  */
 
 import { create } from 'zustand';
@@ -57,6 +58,19 @@ interface NavigationState {
 
     /** Set focused node */
     setFocusedNode: (id: string | null) => void;
+
+    // 45-05: Scroll position preservation
+    /** Map of note ID to scroll position (scrollTop) */
+    noteScrollPositions: Record<string, number>;
+
+    /** Set scroll position for a note */
+    setNoteScrollPosition: (noteId: string, scrollTop: number) => void;
+
+    /** Get scroll position for a note */
+    getNoteScrollPosition: (noteId: string) => number;
+
+    /** Clear scroll position for a note (called on delete) */
+    clearNoteScrollPosition: (noteId: string) => void;
 }
 
 /**
@@ -64,7 +78,7 @@ interface NavigationState {
  */
 export const useNoteNavigationStore = create<NavigationState>()(
     persist(
-        (set) => ({
+        (set, get) => ({
             // Expanded nodes state
             expandedNodes: new Set<string>(),
 
@@ -121,13 +135,37 @@ export const useNoteNavigationStore = create<NavigationState>()(
             // Keyboard navigation state
             focusedNodeId: null,
             setFocusedNode: (id: string | null) => set({ focusedNodeId: id }),
+
+            // 45-05: Scroll position preservation
+            noteScrollPositions: {},
+
+            setNoteScrollPosition: (noteId: string, scrollTop: number) =>
+                set((state) => ({
+                    noteScrollPositions: {
+                        ...state.noteScrollPositions,
+                        [noteId]: scrollTop,
+                    },
+                })),
+
+            getNoteScrollPosition: (noteId: string) => {
+                const positions = get().noteScrollPositions;
+                return positions[noteId] ?? 0;
+            },
+
+            clearNoteScrollPosition: (noteId: string) =>
+                set((state) => {
+                    const newPositions = { ...state.noteScrollPositions };
+                    delete newPositions[noteId];
+                    return { noteScrollPositions: newPositions };
+                }),
         }),
         {
             name: 'note-navigation-storage',
-            // Persist only expanded nodes and favorites filter
+            // Persist expanded nodes, favorites filter, and scroll positions
             partialize: (state) => ({
                 expandedNodes: Array.from(state.expandedNodes), // Convert Set to Array for serialization
                 showFavoritesOnly: state.showFavoritesOnly,
+                noteScrollPositions: state.noteScrollPositions,
             }),
             // Rehydrate Set from Array
             onRehydrateStorage: () => (state) => {
@@ -158,4 +196,15 @@ export function useSearchQuery(): string {
  */
 export function useFavoritesFilter(): boolean {
     return useNoteNavigationStore((state) => state.showFavoritesOnly);
+}
+
+/**
+ * 45-05: Hook to get scroll position methods
+ */
+export function useNoteScrollPosition() {
+    return useNoteNavigationStore((state) => ({
+        setNoteScrollPosition: state.setNoteScrollPosition,
+        getNoteScrollPosition: state.getNoteScrollPosition,
+        clearNoteScrollPosition: state.clearNoteScrollPosition,
+    }));
 }

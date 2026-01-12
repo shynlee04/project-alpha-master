@@ -35,11 +35,14 @@ import { StoryboardBlock } from './blocks/StoryboardBlock';
 import { VideoBlock } from './blocks/VideoBlock';
 // 44-05: Text-to-Speech Block
 import { TTSBlock } from './blocks/TTSBlock';
+// 44-06: Interactive HTML Artifact Block
+import { ArtifactBlock } from './blocks/ArtifactBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 type BlockNoteBlock = any;
 
 import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
+import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils'; // Keep existing imports
 import { Save, Sparkles } from 'lucide-react';
@@ -102,6 +105,8 @@ const schema = BlockNoteSchema.create({
         videoAnalysis: VideoBlock(),
         // 44-05: Text-to-Speech Block
         ttsBlock: TTSBlock(),
+        // 44-06: Interactive HTML Artifact Block
+        artifactBlock: ArtifactBlock(),
     },
 });
 
@@ -170,6 +175,11 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const isNoteDirty = useNoteStore((state) => state.isNoteDirty(noteId));
     const saveNoteToFile = useNoteStore((state) => state.saveNoteToFile);
 
+    // 45-05: Scroll position preservation
+    const contentRef = useRef<HTMLDivElement>(null);
+    const { setNoteScrollPosition, getNoteScrollPosition } = useNoteNavigationStore();
+    const previousNoteIdRef = useRef<string | null>(null);
+
     // Get initial content from note
     // Fixed: Include noteId in dependencies to ensure proper reactivity on note switch
     const initialContent = useMemo(() => {
@@ -196,6 +206,54 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             setNoteContent(extractTextFromBlocks(note.blocks as BlockNoteBlock[]));
         }
     }, [note?.blocks]);
+
+    // 45-05: Restore scroll position when note changes
+    useEffect(() => {
+        if (noteId !== previousNoteIdRef.current) {
+            // Save previous note's scroll position before switching
+            if (previousNoteIdRef.current && contentRef.current) {
+                const scrollTop = contentRef.current.scrollTop;
+                setNoteScrollPosition(previousNoteIdRef.current, scrollTop);
+            }
+
+            // Restore scroll position for new note
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                if (contentRef.current) {
+                    const savedScrollTop = getNoteScrollPosition(noteId);
+                    // Clamp to valid range (handle case where content got shorter)
+                    const maxScroll = contentRef.current.scrollHeight - contentRef.current.clientHeight;
+                    const clampedScrollTop = Math.min(savedScrollTop, Math.max(0, maxScroll));
+                    contentRef.current.scrollTop = clampedScrollTop;
+                }
+            });
+
+            previousNoteIdRef.current = noteId;
+        }
+    }, [noteId, getNoteScrollPosition, setNoteScrollPosition]);
+
+    // 45-05: Save scroll position on scroll (throttled)
+    useEffect(() => {
+        const contentElement = contentRef.current;
+        if (!contentElement) return;
+
+        let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+        const handleScroll = () => {
+            if (timeoutId) clearTimeout(timeoutId);
+            // Throttle scroll position saving to 100ms
+            timeoutId = setTimeout(() => {
+                setNoteScrollPosition(noteId, contentElement.scrollTop);
+            }, 100);
+        };
+
+        contentElement.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            contentElement.removeEventListener('scroll', handleScroll);
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    }, [noteId, setNoteScrollPosition]);
 
     // Debounced save handler (500ms)
     const debouncedSave = useDebouncedCallback(
@@ -387,7 +445,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             </div>
 
             {/* BlockNote editor */}
-            <div className="note-editor__content">
+            <div ref={contentRef} className="note-editor__content">
                 <BlockNoteView
                     editor={editor}
                     onChange={handleChange}

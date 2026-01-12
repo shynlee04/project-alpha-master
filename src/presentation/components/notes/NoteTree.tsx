@@ -18,6 +18,8 @@ interface NoteTreeProps {
     notes: NoteRecord[];
     activeNoteId: string | null;
     onNoteSelect: (noteId: string) => void;
+    /** 45-04: Show project badges in browser mode */
+    isBrowserMode?: boolean;
 }
 
 /**
@@ -30,7 +32,7 @@ interface NoteTreeProps {
  * - Keyboard navigation
  * - Active state highlighting
  */
-export function NoteTree({ notes, activeNoteId, onNoteSelect }: NoteTreeProps) {
+export function NoteTree({ notes, activeNoteId, onNoteSelect, isBrowserMode }: NoteTreeProps) {
     const { searchQuery, showFavoritesOnly } = useNoteNavigationStore();
 
     // Build tree structure
@@ -71,6 +73,7 @@ export function NoteTree({ notes, activeNoteId, onNoteSelect }: NoteTreeProps) {
                     isActive={activeNoteId === node.id}
                     onNoteSelect={onNoteSelect}
                     level={0}
+                    isBrowserMode={isBrowserMode}
                 />
             ))}
         </div>

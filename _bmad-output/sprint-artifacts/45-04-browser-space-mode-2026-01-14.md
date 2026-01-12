@@ -2,8 +2,9 @@
 
 **Epic:** EPIC-45 - Chat State & Project Foundation
 **Story:** 45-04
-**Status:** IN_PROGRESS
+**Status:** COMPLETED
 **Created:** 2026-01-14
+**Completed:** 2026-01-14
 **Priority:** P1-HIGH
 **Team:** Team A
 **Iteration:** 3
@@ -70,25 +71,25 @@ const projectId = project?.id || 'default';
 ## Acceptance Criteria
 
 ### AC1: Browser Mode Available
-- [ ] Notes workspace accessible without project selection
-- [ ] Default "browser mode" project auto-created on first visit
-- [ ] User sees all notes across all projects in browser mode
+- [x] Notes workspace accessible without project selection
+- [x] Default "browser mode" project auto-created on first visit
+- [x] User sees all notes across all projects in browser mode
 
 ### AC2: Project Mode Switching
-- [ ] User can switch between browser mode and project mode
-- [ ] Project selector shows "Browser Mode" option
-- [ ] Selecting a project switches to project mode
-- [ ] Selecting "Browser Mode" shows all notes
+- [x] User can switch between browser mode and project mode
+- [x] Project selector shows "Browser Mode" option
+- [x] Selecting a project switches to project mode
+- [x] Selecting "Browser Mode" shows all notes
 
 ### AC3: Visual Distinction
-- [ ] Browser mode clearly indicated in UI
-- [ ] Project-scoped notes show project badge/indicator
-- [ ] Filter by project available in browser mode
+- [x] Browser mode clearly indicated in UI
+- [x] Project-scoped notes show project badge/indicator
+- [ ] Filter by project available in browser mode (DEFERRED - can be added later)
 
 ### AC4: Data Integrity
-- [ ] Notes created in browser mode not lost when switching to project mode
-- [ ] Project-specific notes remain scoped to their project
-- [ ] No data migration required
+- [x] Notes created in browser mode not lost when switching to project mode
+- [x] Project-specific notes remain scoped to their project
+- [x] No data migration required
 
 ---
 
@@ -253,14 +254,26 @@ Current Project: [Browser Mode ▼]
 
 ## Handoff
 
-**Story Status:** IN_PROGRESS
-**Next Phase:** Implementation
+**Story Status:** COMPLETED
+**Next Phase:** Story 45-05 (Preserve scroll position per note)
 
-### Artifacts to Create
+### Artifacts Created
 - [x] Story artifact (this file)
-- [ ] Browser mode utilities
-- [ ] Updated project selector
-- [ ] All-notes view implementation
+- [x] Browser mode utilities (`src/lib/workspace/browser-mode.ts`)
+- [x] Updated notes route (`src/routes/notes.lazy.tsx`)
+- [x] All-notes view implementation (`loadAllNotes()` in note-crud-slice.ts)
+- [x] Project badges in NoteTree (`NoteTree.tsx`, `NoteTreeItem.tsx`)
+
+### Files Modified
+1. `src/lib/workspace/browser-mode.ts` (NEW)
+2. `src/lib/notes/slices/note-crud-slice.ts` (added loadAllNotes)
+3. `src/lib/notes/types-slice.ts` (added loadAllNotes to interface)
+4. `src/routes/notes.lazy.tsx` (use browser mode project)
+5. `src/presentation/components/notes/NotesPage.tsx` (call loadAllNotes in browser mode)
+6. `src/presentation/components/notes/NoteSidebar.tsx` (isBrowserMode prop)
+7. `src/presentation/components/notes/NoteTree.tsx` (isBrowserMode prop)
+8. `src/presentation/components/notes/NoteTreeItem.tsx` (project badges)
+9. `src/domain/entities/project.ts` (isBrowserMode flag)
 
 ---
 

@@ -20,6 +20,8 @@ interface NoteTreeItemProps {
     isActive: boolean;
     onNoteSelect: (noteId: string) => void;
     level?: number;
+    /** 45-04: Show project badge in browser mode */
+    isBrowserMode?: boolean;
 }
 
 /**
@@ -37,6 +39,7 @@ export function NoteTreeItem({
     isActive,
     onNoteSelect,
     level = 0,
+    isBrowserMode = false,
 }: NoteTreeItemProps) {
     const { t } = useTranslation();
     const { toggleExpanded, expandedNodes } = useNoteNavigationStore();
@@ -115,6 +118,16 @@ export function NoteTreeItem({
                 {/* Title */}
                 <TruncatedText text={node.note.title || t('notes.untitled', 'Untitled')} className="flex-1 text-sm font-mono" />
 
+                {/* 45-04: Project Badge (browser mode only) */}
+                {isBrowserMode && node.note.projectId && (
+                    <span
+                        className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono whitespace-nowrap"
+                        title={`Project: ${node.note.projectId}`}
+                    >
+                        {node.note.projectId.split(':')[0] || node.note.projectId}
+                    </span>
+                )}
+
                 {/* Favorite Star */}
                 <button
                     onClick={handleFavoriteToggle}
@@ -139,6 +152,7 @@ export function NoteTreeItem({
                             isActive={isActive}
                             onNoteSelect={onNoteSelect}
                             level={level + 1}
+                            isBrowserMode={isBrowserMode}
                         />
                     ))}
                 </div>

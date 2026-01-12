@@ -22,6 +22,7 @@ import {
     Images,
     Video,
     Volume2,
+    Code2,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -730,6 +731,50 @@ export const insertTTSItem = (editor: BlockNoteEditor) => ({
 });
 
 // ============================================================================
+// Interactive HTML Artifact Block (Story 44-06)
+// ============================================================================
+
+/**
+ * Insert Interactive HTML Artifact Block
+ * @story 44-06: Interactive HTML artifact block
+ */
+export const insertArtifactItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.ai.artifact', 'HTML Artifact'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+        
+        // Create new Artifact block
+        const artifactBlock = {
+            type: "artifactBlock",
+            props: {
+                html: "",
+                css: "",
+                js: "",
+                title: "Interactive Artifact",
+                source: "user-created",
+                height: 300,
+            },
+        } as any;
+        
+        if (currentBlockId) {
+            (editor as any).insertBlocks([artifactBlock], currentBlockId, "after");
+        } else {
+            const doc = editor.document;
+            if (doc.length > 0) {
+                (editor as any).insertBlocks([artifactBlock], doc[doc.length - 1], "after");
+            }
+        }
+        
+        toast.info(t('notes.ai.artifact.inserted', 'HTML Artifact block inserted'));
+    },
+    aliases: ["artifact", "html", "embed", "interactive", "widget", "code"],
+    group: "AI",
+    icon: <Code2 size={18} />,
+    subtext: t('notes.ai.artifact.description', 'Embed interactive HTML/CSS/JS content'),
+});
+
+// ============================================================================
 // Get Custom Slash Menu Items
 // ============================================================================
 
@@ -831,6 +876,7 @@ export const getCustomSlashMenuItems = (
         insertStoryboardItem(editor), // 44-03: Sequential Storyboard
         insertVideoItem(editor), // 44-04: Video Understanding
         insertTTSItem(editor), // 44-05: Text-to-Speech
+        insertArtifactItem(editor), // 44-06: HTML Artifact
         continueWritingItem(editor),
         summarizeNoteItem(editor),
         generateOutlineItem(editor),

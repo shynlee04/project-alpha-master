@@ -98,6 +98,7 @@ export const NotesPage = React.memo(function NotesPage() {
         notesArray,
         currentProjectId,
         loadNotes,
+        loadAllNotes,
         createNote,
         setActiveNote,
         activeNoteId,
@@ -159,6 +160,7 @@ export const NotesPage = React.memo(function NotesPage() {
             updateNote: useNoteStore.getState().updateNote,
             createNote: useNoteStore.getState().createNote,
             loadNotes: useNoteStore.getState().loadNotes,
+            loadAllNotes: useNoteStore.getState().loadAllNotes,
         }),
         [notesArray] // Only recreate when notesArray changes
     );
@@ -182,11 +184,18 @@ export const NotesPage = React.memo(function NotesPage() {
     const [isImportingFiles, setIsImportingFiles] = useState(false);
     const [importProgress, setImportProgress] = useState({ current: 0, total: 0, currentFile: '' });
 
+    // 45-04: Load notes based on project mode
+    // - Browser mode: load all notes from all projects
+    // - Project mode: load notes for specific project
     useEffect(() => {
-        if (projectId && currentProjectId !== projectId) {
+        if (project?.isBrowserMode) {
+            // Browser mode: show notes from all projects
+            loadAllNotes();
+        } else if (projectId && currentProjectId !== projectId) {
+            // Project mode: show notes for specific project
             loadNotes(projectId);
         }
-    }, [projectId, currentProjectId, loadNotes]);
+    }, [projectId, currentProjectId, loadNotes, loadAllNotes, project?.isBrowserMode]);
 
     // S-007: Auto-import project files when file sync service becomes ready
     useEffect(() => {
@@ -694,6 +703,7 @@ export const NotesPage = React.memo(function NotesPage() {
                             }
                             projectId={projectId}
                             projectName={project?.name || projectId}
+                            isBrowserMode={project?.isBrowserMode}
                         />
                     )}
                 </ResizablePanel>

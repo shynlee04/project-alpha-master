@@ -46,6 +46,8 @@ interface NoteSidebarProps {
     projectId?: string;
     /** E1-9: Project name for chat context */
     projectName?: string;
+    /** 45-04: Browser mode flag - show project badges when true */
+    isBrowserMode?: boolean;
 }
 
 /**
@@ -80,7 +82,8 @@ export function NoteSidebar({
     agentSelectorSlot,
     projectSelectorSlot,
     projectId,
-    projectName: _projectName // UX-02: No longer used after chat removal
+    projectName: _projectName, // UX-02: No longer used after chat removal
+    isBrowserMode = false,
 }: NoteSidebarProps) {
     const { t } = useTranslation();
     const { searchQuery, setSearchQuery, showFavoritesOnly, toggleFavoritesFilter } = useNoteNavigationStore();
@@ -257,7 +260,12 @@ export function NoteSidebar({
             ) : (
                 /* Notes List */
                 <div className="flex-1 overflow-y-auto">
-                    <NoteTree notes={notes} activeNoteId={activeNoteId} onNoteSelect={onNoteSelect} />
+                    <NoteTree
+                        notes={notes}
+                        activeNoteId={activeNoteId}
+                        onNoteSelect={onNoteSelect}
+                        isBrowserMode={isBrowserMode}
+                    />
                 </div>
             )}
 

@@ -12,7 +12,8 @@
  *   if (isBrowserModeProject(project)) { ... }
  */
 
-import { getProject, createProject as createProjectInStore } from '@/lib/workspace/project-store';
+import { getProject } from '@/lib/workspace/project-store';
+import { useProjectStore } from '@/lib/workspace/project-store/project-store-refactored';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 /** Default browser mode project ID */
@@ -43,11 +44,12 @@ export async function getOrCreateBrowserModeProject(): Promise<Project | null> {
     }
 
     // Create browser mode project if it doesn't exist
-    const browserProject = await createProjectInStore({
+    // Use Zustand store's saveProject method
+    const browserProjectData = {
       id: BROWSER_MODE_PROJECT_ID,
       name: BROWSER_MODE_DISPLAY_NAME,
       folderPath: 'Notes', // Uses IndexedDB storage (no file system)
-      storageType: 'indexeddb',
+      storageType: 'indexeddb' as const,
       createdAt: new Date(),
       lastOpened: new Date(),
       autoSync: false,
@@ -56,10 +58,13 @@ export async function getOrCreateBrowserModeProject(): Promise<Project | null> {
       isBrowserMode: true, // Special flag for browser mode
       isTemp: true, // Temporary/auto-created project
       autoCreated: true,
-    } as Project);
+    } as Project;
+
+    const { saveProject } = useProjectStore.getState();
+    await saveProject(browserProjectData);
 
     console.log('[BrowserMode] Created browser mode project:', BROWSER_MODE_PROJECT_ID);
-    return browserProject;
+    return browserProjectData;
   } catch (error) {
     console.error('[BrowserMode] Failed to create browser mode project:', error);
     return null;
