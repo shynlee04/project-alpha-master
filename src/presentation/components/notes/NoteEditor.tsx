@@ -254,10 +254,15 @@ function sanitizeBlocks(blocks: any[]): any[] {
                 }
             }
 
-            // CRITICAL: Only set content for blocks that USE content
-            // Blocks with content: "none" spec should NOT have a content property at all
-            // These are custom blocks that manage their own content rendering
-            if (!noContentBlockTypes.has(blockType)) {
+            // CRITICAL: Handle content based on block type
+            // Blocks with content: "none" spec must NOT have a content property at all
+            // These custom blocks manage their own rendering and don't use text content
+            if (noContentBlockTypes.has(blockType)) {
+                // CRITICAL: Explicitly delete content if it exists on source block
+                // This handles blocks that were stored with content before the fix
+                delete (sanitized as any).content;
+            } else {
+                // For content-using blocks, sanitize and set content
                 if (Array.isArray(block.content) && block.content.length > 0) {
                     sanitized.content = block.content
                         .map(sanitizeContentItem)
@@ -269,7 +274,6 @@ function sanitizeBlocks(blocks: any[]): any[] {
                     sanitized.content = [];
                 }
             }
-            // For content: "none" blocks, DO NOT set sanitized.content at all
 
             // CRITICAL: Ensure children array exists (BlockNote requires this)
             if (Array.isArray(block.children)) {
