@@ -430,6 +430,46 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 });
             }
 
+            // Deep validation: check each block before passing to BlockNote
+            const noContentBlockTypes = new Set([
+                'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
+                'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
+                'videoGeneration', 'slidesExport', 'chartDiagram',
+                'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+            ]);
+
+            let hasInvalidBlock = false;
+            for (let i = 0; i < sanitized.length; i++) {
+                const block = sanitized[i];
+                const blockType = block.type;
+
+                // Check for content: "none" blocks that have content property
+                if (noContentBlockTypes.has(blockType)) {
+                    if ('content' in block && block.content !== undefined) {
+                        console.error(`[NoteEditor] BLOCK VALIDATION ERROR: Block ${i} (type: ${blockType}, id: ${block.id}) has content property but shouldn't!`, block);
+                        hasInvalidBlock = true;
+                    }
+                }
+
+                // Check children recursively
+                if (block.children && Array.isArray(block.children)) {
+                    for (let j = 0; j < block.children.length; j++) {
+                        const child = block.children[j];
+                        if (noContentBlockTypes.has(child.type)) {
+                            if ('content' in child && child.content !== undefined) {
+                                console.error(`[NoteEditor] BLOCK VALIDATION ERROR: Child ${j} of block ${i} (type: ${child.type}) has content property but shouldn't!`, child);
+                                hasInvalidBlock = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (hasInvalidBlock) {
+                console.error('[NoteEditor] BLOCKS ARE INVALID - returning undefined to prevent crash');
+                return undefined;
+            }
+
             const result = sanitized.length > 0 ? sanitized as BlockNoteBlock[] : undefined;
             console.log('[NoteEditor] Returning initialContent:', result ? `${result.length} blocks` : 'undefined');
             return result;
