@@ -1127,6 +1127,7 @@ const CUSTOM_ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = 
 /**
  * Create a slash menu item from a custom command
  * @story 43-03: Added support for prompt refinement workflow
+ * @story UX-13: Added usage tracking
  */
 function createCustomCommandItem(
     editor: BlockNoteEditor,
@@ -1139,13 +1140,16 @@ function createCustomCommandItem(
     return {
         title: localized.title,
         onItemClick: async () => {
+            // UX-13: Record command usage
+            useSlashCommandStore.getState().recordUsage(command.id);
+
             // 43-03: Check if this command needs refinement
             const needsRefinement = promptNeedsRefinement(command);
-            
+
             if (needsRefinement) {
                 // Get note context for the refinement dialog
                 const content = getAllNoteText(editor);
-                
+
                 // Open refinement dialog instead of executing directly
                 usePromptRefinementStore.getState().openRefinement(
                     command,
@@ -1179,6 +1183,61 @@ function createCustomCommandItem(
         group: 'AI Custom',
         icon: <Icon size={18} />,
         subtext: localized.description,
+    };
+}
+
+/**
+ * Create a recently used command item with usage count badge
+ * @story UX-13: Recently used commands section
+ */
+function createRecentCommandItem(
+    editor: BlockNoteEditor,
+    command: CustomSlashCommand
+): DefaultReactSuggestionItem {
+    const locale = i18next.language || 'en';
+    const localized = getLocalizedCommand(command, locale);
+    const Icon = CUSTOM_ICON_MAP[command.icon] || Sparkles;
+
+    return {
+        title: localized.title,
+        onItemClick: async () => {
+            // Record usage again on re-execution
+            useSlashCommandStore.getState().recordUsage(command.id);
+
+            const needsRefinement = promptNeedsRefinement(command);
+
+            if (needsRefinement) {
+                const content = getAllNoteText(editor);
+                usePromptRefinementStore.getState().openRefinement(
+                    command,
+                    editor,
+                    content,
+                    async (finalPrompt: string) => {
+                        await executeAICommand(
+                            editor,
+                            finalPrompt,
+                            localized.title,
+                            { contextMode: 'none' }
+                        );
+                    }
+                );
+            } else {
+                const content = getAllNoteText(editor);
+                const promptWithContext = content.trim()
+                    ? `${command.prompt}\n\nNote content:\n${content}`
+                    : command.prompt;
+
+                await executeAICommand(
+                    editor,
+                    promptWithContext,
+                    localized.title
+                );
+            }
+        },
+        aliases: command.aliases,
+        group: 'Recently Used',
+        icon: <Icon size={18} />,
+        subtext: `${localized.description} (${command.useCount || 0} uses)`,
     };
 }
 

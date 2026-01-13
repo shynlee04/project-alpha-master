@@ -25,6 +25,9 @@ export default {
 export const BlockNoteView = () => null;
 export const useCreateBlockNote = () => ({});
 export const SuggestionMenuController = () => null;
+export const SideMenuController = () => null;
+export const useSelectedBlocks = () => ({});
+export const DragHandleMenu = () => null; // preemptive addition
 export const filterSuggestionItems = () => [];
 export const getDefaultReactSlashMenuItems = () => [];
 export const useBlockNote = () => ({});

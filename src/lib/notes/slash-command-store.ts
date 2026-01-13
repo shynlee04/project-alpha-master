@@ -100,6 +100,9 @@ export interface CustomSlashCommand {
     variables?: PromptVariable[]; // 43-03: Prompt variables for refinement
     enableRefinement?: boolean; // 43-03: Enable 2-step refinement UI
     isEnabled: boolean;
+    isFavorite?: boolean; // UX-13: User can mark commands as favorites
+    useCount?: number; // UX-13: Track how many times command was used
+    lastUsedAt?: number; // UX-13: Track when command was last used
     createdAt: number;
     updatedAt: number;
 }
@@ -108,6 +111,7 @@ export interface SlashCommandStoreState {
     customCommands: CustomSlashCommand[];
     selectedCategory: CommandCategory | 'all'; // 43-02: Category filter state
     selectedTags: string[]; // 43-02: Tag filter state
+    showFavoritesOnly: boolean; // UX-13: Filter to show only favorites
 
     // Actions
     addCommand: (command: Omit<CustomSlashCommand, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -122,9 +126,16 @@ export interface SlashCommandStoreState {
     toggleTag: (tag: string) => void; // 43-02: Tag toggle
     clearTagFilters: () => void; // 43-02: Clear tag filters
 
+    // UX-13: Command History and Favorites
+    recordUsage: (id: string) => void; // Track when command is used
+    toggleFavorite: (id: string) => void; // Mark command as favorite
+    setShowFavoritesOnly: (show: boolean) => void; // Filter favorites
+
     // Selectors
     getCommandsByCategory: (category: CommandCategory | 'all') => CustomSlashCommand[]; // 43-02
     getAllTags: () => string[]; // 43-02
+    getRecentCommands: (limit?: number) => CustomSlashCommand[]; // UX-13: Recently used
+    getFavoriteCommands: () => CustomSlashCommand[]; // UX-13: Favorites
 }
 
 // ============================================================================
@@ -163,6 +174,9 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
             },
         ],
         isEnabled: true,
+        isFavorite: false, // UX-13
+        useCount: 0, // UX-13
+        lastUsedAt: undefined, // UX-13
         createdAt: Date.now(),
         updatedAt: Date.now(),
     },
@@ -178,6 +192,9 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         category: 'productivity',
         tags: ['productivity', 'tasks', 'organization'],
         isEnabled: true,
+        isFavorite: false, // UX-13
+        useCount: 0, // UX-13
+        lastUsedAt: undefined, // UX-13
         createdAt: Date.now(),
         updatedAt: Date.now(),
     },
@@ -193,6 +210,9 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         category: 'writing',
         tags: ['writing', 'grammar', 'proofreading'],
         isEnabled: true,
+        isFavorite: false, // UX-13
+        useCount: 0, // UX-13
+        lastUsedAt: undefined, // UX-13
         createdAt: Date.now(),
         updatedAt: Date.now(),
     },
@@ -208,6 +228,9 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         category: 'communication',
         tags: ['communication', 'meetings', 'notes'],
         isEnabled: true,
+        isFavorite: false, // UX-13
+        useCount: 0, // UX-13
+        lastUsedAt: undefined, // UX-13
         createdAt: Date.now(),
         updatedAt: Date.now(),
     },
@@ -224,6 +247,9 @@ const DEFAULT_COMMANDS: CustomSlashCommand[] = [
         category: 'communication',
         tags: ['communication', 'email', 'writing'],
         enableRefinement: true,
+        isFavorite: false, // UX-13
+        useCount: 0, // UX-13
+        lastUsedAt: undefined, // UX-13
         variables: [
             {
                 name: 'recipient',
@@ -288,13 +314,16 @@ export const useSlashCommandStore = create<SlashCommandStoreState>()(
             customCommands: DEFAULT_COMMANDS,
             selectedCategory: 'all',
             selectedTags: [],
+            showFavoritesOnly: false, // UX-13
 
             addCommand: (command) => {
                 const newCommand: CustomSlashCommand = {
                     ...command,
-                    id: `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                    id: `custom-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
                     createdAt: Date.now(),
                     updatedAt: Date.now(),
+                    isFavorite: false,
+                    useCount: 0,
                 };
                 set((state) => ({
                     customCommands: [...state.customCommands, newCommand],
@@ -342,7 +371,7 @@ export const useSlashCommandStore = create<SlashCommandStoreState>()(
                         ...state.customCommands,
                         ...commands.map((cmd) => ({
                             ...cmd,
-                            id: `imported-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                            id: `imported-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
                             createdAt: Date.now(),
                             updatedAt: Date.now(),
                         })),
@@ -385,6 +414,47 @@ export const useSlashCommandStore = create<SlashCommandStoreState>()(
                 const allTags = get().customCommands
                     .flatMap((cmd) => cmd.tags || []);
                 return Array.from(new Set(allTags)).sort();
+            },
+
+            // UX-13: Command History and Favorites
+            recordUsage: (id) => {
+                set((state) => ({
+                    customCommands: state.customCommands.map((cmd) =>
+                        cmd.id === id
+                            ? {
+                                ...cmd,
+                                useCount: (cmd.useCount || 0) + 1,
+                                lastUsedAt: Date.now(),
+                                updatedAt: Date.now(),
+                            }
+                            : cmd
+                    ),
+                }));
+            },
+
+            toggleFavorite: (id) => {
+                set((state) => ({
+                    customCommands: state.customCommands.map((cmd) =>
+                        cmd.id === id
+                            ? { ...cmd, isFavorite: !cmd.isFavorite, updatedAt: Date.now() }
+                            : cmd
+                    ),
+                }));
+            },
+
+            setShowFavoritesOnly: (show) => {
+                set({ showFavoritesOnly: show });
+            },
+
+            getRecentCommands: (limit = 10) => {
+                return get().customCommands
+                    .filter((cmd) => cmd.lastUsedAt)
+                    .sort((a, b) => (b.lastUsedAt || 0) - (a.lastUsedAt || 0))
+                    .slice(0, limit);
+            },
+
+            getFavoriteCommands: () => {
+                return get().customCommands.filter((cmd) => cmd.isFavorite);
             },
         }),
         {
