@@ -17,7 +17,10 @@ export default {
         setMonarchTokensProvider: () => { },
         registerCompletionItemProvider: () => { }
     },
-    Uri: { parse: () => { } }
+    Uri: { parse: () => { } },
+    // Mermaid mock methods
+    initialize: () => { },
+    render: async () => ({ svg: '' }),
 };
 export const BlockNoteView = () => null;
 export const useCreateBlockNote = () => ({});
@@ -210,6 +213,10 @@ export const CartesianGrid = () => null;
 export const Tooltip = () => null;
 export const Legend = () => null;
 export const ResponsiveContainer = () => null;
+export const AreaChart = () => null;
+export const Area = () => null;
+export const ScatterChart = () => null;
+export const Scatter = () => null;
 
 // Transformers.js Mock
 export const pipeline = async () => (() => []);

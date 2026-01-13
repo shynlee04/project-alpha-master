@@ -56,6 +56,10 @@ import { MultiStepGenerationBlock } from './blocks/MultiStepGenerationBlock';
 import { CalloutBlock } from './blocks/CalloutBlock';
 // UX-10: Block References
 import { ReferenceBlock } from './blocks/ReferenceBlock';
+// UX-11: Column Layouts
+import { ColumnBlock } from './blocks/ColumnBlock';
+// UX-12: Synced Blocks
+import { SyncedBlock } from './blocks/SyncedBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 // Using 'any' because the custom schema creates complex generic types
@@ -193,7 +197,9 @@ function sanitizeBlocks(blocks: any[]): any[] {
         'videoAnalysis', 'ttsBlock', 'artifactBlock', 'videoGeneration',
         'codeBlock', 'table', 'divider', 'slidesExport', 'chartDiagram',
         'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-        'reference' // UX-10: Block references
+        'reference', // UX-10: Block references
+        'column', // UX-11: Column layouts
+        'synced' // UX-12: Synced blocks
     ]);
 
     // Default props required by BlockNote
@@ -234,7 +240,11 @@ function sanitizeBlocks(blocks: any[]): any[] {
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
-                'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+                'transformPipeline', 'artifactGallery', 'multiStepGeneration',
+                // UX-09-11: Container blocks with content
+                // 'callout', // UX-09: Has inline content - NOT a no-content block
+                'reference', // UX-10: Has content: "none" - uses contentSnapshot prop
+                // 'column', // UX-11: Has inline content - NOT a no-content block
             ]);
 
             // Custom blocks that need their props preserved
@@ -243,8 +253,11 @@ function sanitizeBlocks(blocks: any[]): any[] {
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
                 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-                'callout', // UX-09: Callout blocks have custom props (calloutType)
-                'reference' // UX-10: Reference blocks have custom props (referencedBlockId, etc.)
+                // UX-09-12: Container blocks with custom props
+                'callout', // UX-09: Has calloutType prop
+                'reference', // UX-10: Has referencedBlockId, referenceMode props
+                'column', // UX-11: Has columnCount, columnRatios props
+                'synced', // UX-12: Has syncGroupId, sourceBlockId, sourceNoteId props
             ]);
 
             if (customBlockTypes.has(blockType)) {
@@ -341,6 +354,10 @@ const schema = BlockNoteSchema.create({
         callout: CalloutBlock(),
         // UX-10: Block References (Obsidian-style ^blockId)
         reference: ReferenceBlock(),
+        // UX-11: Column Layouts (Multi-column containers)
+        column: ColumnBlock(),
+        // UX-12: Synced Blocks (Content mirroring across instances)
+        synced: SyncedBlock(),
     },
 });
 
@@ -483,7 +500,9 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 'aiImage', 'aiVision', 'storyboard', 'videoAnalysis',
                 'ttsBlock', 'artifactBlock', 'videoGeneration', 'slidesExport',
                 'chartDiagram', 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-                'reference' // UX-10: Block references
+                'reference', // UX-10: Block references
+                'column', // UX-11: Column layouts
+                'synced' // UX-12: Synced blocks
             ]);
 
             // Blocks with content: "none" spec should NOT have content property
@@ -492,7 +511,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
                 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-                'reference' // UX-10: Reference blocks use contentSnapshot prop instead of content
+                'reference', // UX-10: Reference blocks use contentSnapshot prop instead of content
+                // 'column', // UX-11: Has inline content - NOT a no-content block
             ]);
 
             // Recursive function to validate and sanitize block structure

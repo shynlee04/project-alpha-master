@@ -1,0 +1,333 @@
+/**
+ * @fileoverview Column Block Styles
+ * @module presentation/components/notes/blocks/ColumnBlock.css
+ * @story UX-11
+ *
+ * Multi-column container styles with responsive design.
+ */
+
+/* ============================================================================
+   Column Block Container
+   ========================================================================== */
+
+.column-block {
+    position: relative;
+    width: 100%;
+    margin: 8px 0;
+    border: 1px dashed var(--color-border, #333);
+    border-radius: 0;
+    background: var(--color-surface, #0a0a0a);
+    transition: border-color 0.2s ease;
+}
+
+.column-block:hover {
+    border-color: var(--color-border-hover, #444);
+}
+
+.column-block--align-left {
+    text-align: left;
+}
+
+.column-block--align-center {
+    text-align: center;
+}
+
+.column-block--align-right {
+    text-align: right;
+}
+
+/* ============================================================================
+   Column Header Container
+   ========================================================================== */
+
+.column-block__container {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+    min-height: 40px;
+}
+
+/* ============================================================================
+   Column Header (Controls)
+   ========================================================================== */
+
+.column-block__column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--color-surface-alt, #141414);
+    border: 1px solid var(--color-border, #222);
+}
+
+.column-block__column-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted, #888);
+}
+
+/* ============================================================================
+   Ratio Control
+   ========================================================================== */
+
+.column-block__ratio-control {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.column-block__ratio-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid var(--color-border, #333);
+    background: var(--color-surface, #0a0a0a);
+    color: var(--color-fg, #ccc);
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.column-block__ratio-btn:hover:not(:disabled) {
+    background: var(--color-surface-alt, #1a1a1a);
+    border-color: var(--color-border-hover, #444);
+}
+
+.column-block__ratio-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.column-block__ratio-value {
+    min-width: 16px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-muted, #888);
+}
+
+/* ============================================================================
+   Content Area
+   ========================================================================== */
+
+.column-block__content-area {
+    padding: 16px;
+    min-height: 60px;
+}
+
+.column-block__editable {
+    min-height: 40px;
+}
+
+/* ============================================================================
+   Controls Footer
+   ========================================================================== */
+
+.column-block__controls {
+    display: flex;
+    justify-content: center;
+    padding: 8px 16px;
+    background: var(--color-surface-alt, #141414);
+    border-top: 1px solid var(--color-border, #222);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.column-block__controls--visible {
+    opacity: 1;
+}
+
+.column-block__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.column-block__action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--color-border, #333);
+    background: var(--color-surface, #0a0a0a);
+    color: var(--color-fg, #ccc);
+    border-radius: 0;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.column-block__action-btn:hover:not(:disabled) {
+    background: var(--color-surface-alt, #1a1a1a);
+    border-color: var(--color-border-hover, #444);
+}
+
+.column-block__action-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.column-block__divider {
+    width: 1px;
+    height: 20px;
+    background: var(--color-border, #333);
+}
+
+/* ============================================================================
+   Empty State
+   ========================================================================== */
+
+.column-block__empty-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--color-muted, #666);
+}
+
+.column-block__empty-hint p {
+    margin: 0;
+    max-width: 300px;
+}
+
+/* ============================================================================
+   Responsive Design
+   ========================================================================== */
+
+/* Tablet: Collapse to 2 columns max */
+@media (max-width: 1024px) {
+    .column-block--4-cols .column-block__container,
+    .column-block--3-cols .column-block__container {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* Hide extra column headers on tablet */
+    .column-block--4-cols .column-block__column-header:nth-child(n+3),
+    .column-block--3-cols .column-block__column-header:nth-child(n+3) {
+        display: none;
+    }
+}
+
+/* Mobile: Stack all columns vertically */
+@media (max-width: 768px) {
+    .column-block__container {
+        grid-template-columns: 1fr !important;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .column-block__column-header {
+        padding: 6px 8px;
+    }
+
+    .column-block__content-area {
+        padding: 12px;
+    }
+
+    /* On mobile, only show first column header */
+    .column-block__column-header:not(:first-child) {
+        display: none;
+    }
+
+    .column-block__controls {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .column-block__actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .column-block__action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .column-block__divider {
+        width: 100%;
+        height: 1px;
+    }
+
+    .column-block__empty-hint {
+        padding: 24px 16px;
+    }
+
+    .column-block__empty-hint svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .column-block__empty-hint p {
+        font-size: 13px;
+    }
+}
+
+/* ============================================================================
+   Dark Mode
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    .column-block {
+        --color-surface: #0a0a0a;
+        --color-surface-alt: #141414;
+        --color-border: #333;
+        --color-border-hover: #444;
+        --color-fg: #ccc;
+        --color-muted: #888;
+    }
+}
+
+/* ============================================================================
+   8-bit Design System Compliance
+   ========================================================================== */
+
+.column-block,
+.column-block__column-header,
+.column-block__ratio-btn,
+.column-block__action-btn {
+    border-radius: 0 !important;
+}
+
+/* No box shadows */
+.column-block,
+.column-block__column-header,
+.column-block__ratio-btn,
+.column-block__action-btn {
+    box-shadow: none !important;
+}
+
+/* ============================================================================
+   Focus States
+   ========================================================================== */
+
+.column-block__ratio-btn:focus-visible,
+.column-block__action-btn:focus-visible {
+    outline: 2px solid var(--color-accent, #3b82f6);
+    outline-offset: 2px;
+}
+
+/* ============================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .column-block__controls,
+    .column-block__column-header {
+        display: none !important;
+    }
+
+    .column-block__container {
+        border: none;
+        gap: 8px;
+    }
+}

@@ -31,6 +31,8 @@ import {
     Info,
     ChevronRight,
     Link,
+    Link2,
+    Columns,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -1279,6 +1281,71 @@ export const insertBlockReference = (editor: BlockNoteEditor) => {
     };
 };
 
+// ============================================================================
+// UX-11: Column Layouts
+// ============================================================================
+
+/**
+ * Insert a column layout block
+ * Creates a multi-column container for organizing content
+ */
+export const insertColumnBlock = (editor: BlockNoteEditor) => {
+    return {
+        title: t('notes.blocks.column.title', 'Column Layout'),
+        onItemClick: () => {
+            const cursorPosition = editor.getTextCursorPosition();
+            if (!cursorPosition?.block) return;
+
+            // Change the current block to a column block
+            (editor.updateBlock as any)(cursorPosition.block, {
+                type: 'column',
+                props: {
+                    columnCount: 2, // Default to 2 columns
+                    columnRatios: JSON.stringify([6, 6]), // Equal 50/50 split
+                    textAlignment: 'left',
+                },
+            });
+        },
+        aliases: ['column', 'columns', 'col', '2col', '3col'],
+        group: 'Basic Blocks',
+        icon: <Columns size={18} />,
+        subtext: t('notes.blocks.column.description', 'Multi-column layout container'),
+    };
+};
+
+/**
+ * Insert a synced block
+ * Creates a block that mirrors content across all instances in the sync group
+ */
+export const insertSyncedBlock = (editor: BlockNoteEditor) => {
+    return {
+        title: t('notes.blocks.synced.title', 'Synced Block'),
+        onItemClick: () => {
+            const cursorPosition = editor.getTextCursorPosition();
+            if (!cursorPosition?.block) return;
+
+            // Generate sync group ID
+            const syncGroupId = crypto.randomUUID();
+            const sourceBlockId = crypto.randomUUID();
+
+            // Change the current block to a synced block
+            (editor.updateBlock as any)(cursorPosition.block, {
+                type: 'synced',
+                props: {
+                    syncGroupId,
+                    sourceBlockId,
+                    sourceNoteId: '', // Will be set when note is saved
+                    textAlignment: 'left',
+                },
+            });
+        },
+        aliases: ['sync', 'synced', 'link', 'mirror'],
+        group: 'Basic Blocks',
+        icon: <Link2 size={18} />,
+        subtext: t('notes.blocks.synced.description', 'Sync content across multiple instances'),
+    };
+};
+
 export const getCustomSlashMenuItems = (
     editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => {
@@ -1318,6 +1385,10 @@ export const getCustomSlashMenuItems = (
         insertCalloutBlock(editor, 'tip'),
         // UX-10: Block References
         insertBlockReference(editor),
+        // UX-11: Column Layouts
+        insertColumnBlock(editor),
+        // UX-12: Synced Blocks
+        insertSyncedBlock(editor),
         // User-defined custom commands
         ...customCommands,
         // Default BlockNote items
