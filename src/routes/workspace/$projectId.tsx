@@ -1,36 +1,93 @@
 /**
- * @fileoverview Project Workspace Route (Legacy)
- * @module routes/workspace/$projectId
- * @governance Story WB-6: Cross-Workspace Navigation
- * @updated 2026-01-06 - Fixed to use loader pattern and setProjectId
- *
- * Legacy workspace route for a specific project ID.
- * Uses ProjectProvider and syncs projectId to IDE store.
- * NOTE: New projects should use /ide/$projectId instead.
- *
- * Route Pattern: /workspace/$projectId
- * - Uses loader to fetch project BEFORE render (no flash of null state)
- * - Calls setProjectId to sync IDE store
- * - WorkspaceSwitcher in header allows switching to other workspaces
- */
+  * @fileoverview Project Workspace Route (Legacy)
+  * @module routes/workspace/$projectId
+  * @governance Story WB-6: Cross-Workspace Navigation
+  * @updated 2026-01-06 - Fixed to use loader pattern and setProjectId
+  *
+  * Legacy workspace route for a specific project ID.
+  * Uses ProjectProvider and syncs projectId to IDE store.
+  * NOTE: New projects should use /ide/$projectId instead.
+  *
+  * Route Pattern: /workspace/$projectId
+  * - Uses loader to fetch project BEFORE render (no flash of null state)
+  * - Calls setProjectId to sync IDE store
+  * - WorkspaceSwitcher in header allows switching to other workspaces
+  */
 
 import { lazy, Suspense, useEffect } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast'
 import { ProjectProvider } from '@/lib/workspace/ProjectContext'
 import { getProject } from '@/lib/workspace/project-store'
+import { useProjectStore } from '@/infrastructure/persistence/stores/project'
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types'
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide'
 
 // Lazy load IDELayout to reduce initial bundle size
 const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayoutMain').then(m => ({ default: m.IDELayout })))
 
+// ============================================================================
+// Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
+// ============================================================================
+
+/**
+  * Retry getting a project with exponential backoff
+  * Handles timing issues between project creation and route guard execution
+  */
+async function getProjectWithRetry(
+  projectId: string,
+  maxRetries: number = 3,
+  baseDelayMs: number = 50
+): Promise<Project | null> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    // Try getting from Zustand store first (fastest)
+    const fromStore = useProjectStore.getState().getProject(projectId);
+    if (fromStore) {
+      if (attempt > 1) {
+        console.log(`[WorkspaceRoute] Project found on attempt ${attempt}/${maxRetries}`);
+      }
+      return fromStore as Project;
+    }
+
+    // Fallback to facade (handles Dexie lookup)
+    try {
+      const fromFacade = await getProject(projectId);
+      if (fromFacade) {
+        return fromFacade as Project;
+      }
+    } catch (error) {
+      lastError = error as Error;
+    }
+
+    if (attempt < maxRetries) {
+      const delayMs = baseDelayMs * Math.pow(2, attempt - 1); // Exponential backoff
+      console.log(`[WorkspaceRoute] Project not found, attempt ${attempt}/${maxRetries}, retrying in ${delayMs}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+
+  console.error(`[WorkspaceRoute] Project not found after ${maxRetries} attempts:`, projectId, lastError);
+  return null;
+}
+
 export const Route = createFileRoute('/workspace/$projectId')({
     ssr: false,
     // FIX-2026-01-06: Use loader to fetch project BEFORE component renders
-    // This prevents the flash where project=null on first render
+    // FIX-2026-01-13: Added retry logic for timing issues
     loader: async ({ params }) => {
-        const project = await getProject(params.projectId);
+        console.log('[WorkspaceRoute] Loading project:', params.projectId);
+        const project = await getProjectWithRetry(params.projectId);
+
+        if (!project) {
+            console.error('[WorkspaceRoute] CRITICAL: Project not found after retry:', params.projectId);
+            console.error('[WorkspaceRoute] Available projects:', Object.keys(useProjectStore.getState().projects));
+            // Redirect to hub if project not found
+            throw redirect({ to: '/hub' });
+        }
+
+        console.log('[WorkspaceRoute] Project found:', { id: project.id, name: project.name });
         return { project };
     },
     component: ProjectWorkspace,

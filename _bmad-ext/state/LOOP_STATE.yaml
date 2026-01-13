@@ -12,12 +12,12 @@
 session:
   id: "ralph-loop-v4-story-based-2026-01-15"
   start_time: "2026-01-15T14:00:00+07:00"
-  last_activity: "2026-01-15T23:00:00+07:00"
+  last_activity: "2026-01-15T23:30:00+07:00"
   platform: "claude-code"
   agent: "RALPH-LOOP-MASTER"
-  iteration: 60
+  iteration: 61
   max_iterations: 100
-  status: "ACTIVE_EPIC-UX-01-UX09"
+  status: "ACTIVE_EPIC-UX-01-UX09-COMPLETE"
   team: "Team A"
   ralph_loop_version: "4.0.0"
   ralph_loop_config: ".claude/ralph-loop.local.md"
@@ -61,8 +61,8 @@ current_work:
   story_id: "UX-09"
   story_title: "Toggle and Callout Blocks"
   task_type: "implementation"
-  step: "init"
-  governance_status: "ux09-in-progress"
+  step: "complete"
+  governance_status: "ux09-complete"
   team: "Team A"
   phase: "phase-2-block-editor"
   next_story: "Phase 2: UX-10 Block References (2d, no dependencies)"
@@ -85,7 +85,7 @@ current_work:
   # Phase 2: Block Editor (P0-P1) - IN PROGRESS
   # - UX-07: In-Block AI Generation UI (1d, no dependencies) - COMPLETE
   # - UX-08: Context Scope Selection (4h, no dependencies) - COMPLETE
-  # - UX-09: Toggle and Callout Blocks (1d, no dependencies) - IN PROGRESS
+  # - UX-09: Toggle and Callout Blocks (1d, no dependencies) - COMPLETE
   #
   # Ralph Loop v4.0 will execute each story through:
   # 1. Story-Cycle Workflow (BMAD Implementation Module v2.0)
@@ -129,6 +129,7 @@ current_work:
     - "UX-06: Mobile Chat Accessibility - 2026-01-15 (SyncStatusPanel hidden on mobile via hidden md:block)"
     - "UX-07: In-Block AI Generation UI - 2026-01-15 (InBlockAIPopup.tsx created, NoteEditor.tsx integrated, portal rendering)"
     - "UX-08: Context Scope Selection - 2026-01-15 (added below_cursor mode, updated AIPromptDialog with ArrowDown icon)"
+    - "UX-09: Toggle and Callout Blocks - 2026-01-15 (CalloutBlock created, toggleListItem from defaults, slash menu integrated)"
     - "PS-01: Split useWorkspaceFileSystem God Store - 2026-01-13 (files created)"
     - "BYOK-01: Split Provider Credentials Slice - 2026-01-13 (files created)"
     - "PS-02: Create StorageAdapter Domain Interface - 2026-01-15 (interface exists, documented)"
@@ -194,7 +195,9 @@ current_work:
     - "_bmad-output/sprint-artifacts/epic-ux-01-block-editor-panel-overhaul-2026-01-15.md"
     # UX-08 Story Artifact
     - "_bmad-output/sprint-artifacts/UX-08-context-scope-selection-2026-01-15.md"
-  last_governance_update: "2026-01-15T20:00:00+07:00"
+    # UX-09 Story Artifact
+    - "_bmad-output/sprint-artifacts/stories/UX-09-toggle-and-callout-blocks-2026-01-15.md"
+  last_governance_update: "2026-01-15T23:30:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # GOVERNANCE STATE (Team A Initialized)

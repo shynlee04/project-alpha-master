@@ -30,6 +30,7 @@ import {
     Layers,
     Info,
     ChevronRight,
+    Link,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -1185,24 +1186,23 @@ function createCustomCommandItem(
 
 /**
  * Insert a toggle list item (collapsible list)
+ * Uses updateBlock to change the current block to a toggleListItem
  */
 export const insertToggleListItem = (editor: BlockNoteEditor) => ({
     title: t('notes.blocks.toggle', 'Toggle List'),
     onItemClick: () => {
         const cursorPosition = editor.getTextCursorPosition();
-        if (!cursorPosition) return;
+        if (!cursorPosition?.block) return;
 
-        // Insert a toggle list item block
-        editor.insertBlocks(
-            [
-                {
-                    type: 'toggleListItem',
-                    content: [{ type: 'text', text: '', styles: {} }],
-                    children: [],
-                },
-            ],
-            cursorPosition.block
-        );
+        // Change the current block to a toggle list item
+        editor.updateBlock(cursorPosition.block, {
+            type: 'toggleListItem',
+            props: {
+                textColor: 'default',
+                backgroundColor: 'default',
+                textAlignment: 'left',
+            },
+        });
     },
     aliases: ['toggle', 'collapsible', 'accordion', 'togglelist'],
     group: 'Basic Blocks',
@@ -1212,9 +1212,10 @@ export const insertToggleListItem = (editor: BlockNoteEditor) => ({
 
 /**
  * Insert a callout block (info/warning/error/success/tip)
+ * Uses updateBlock to change the current block to a callout
  */
 export const insertCalloutBlock = (editor: BlockNoteEditor, calloutType: 'info' | 'warning' | 'error' | 'success' | 'tip' = 'info') => {
-    const typeLabels = {
+    const typeLabels: Record<string, string> = {
         info: t('notes.blocks.callout.info', 'Info Callout'),
         warning: t('notes.blocks.callout.warning', 'Warning Callout'),
         error: t('notes.blocks.callout.error', 'Error Callout'),
@@ -1226,27 +1227,55 @@ export const insertCalloutBlock = (editor: BlockNoteEditor, calloutType: 'info' 
         title: typeLabels[calloutType],
         onItemClick: () => {
             const cursorPosition = editor.getTextCursorPosition();
-            if (!cursorPosition) return;
+            if (!cursorPosition?.block) return;
 
-            // Insert a callout block
-            editor.insertBlocks(
-                [
-                    {
-                        type: 'callout',
-                        props: {
-                            calloutType: calloutType,
-                            textAlignment: 'left',
-                        },
-                        content: [{ type: 'text', text: '', styles: {} }],
-                    },
-                ],
-                cursorPosition.block
-            );
+            // Change the current block to a callout
+            // Use type assertion because BlockNoteEditor doesn't know about custom schema
+            (editor.updateBlock as any)(cursorPosition.block, {
+                type: 'callout',
+                props: {
+                    calloutType: calloutType,
+                    textAlignment: 'left',
+                },
+            });
         },
         aliases: ['callout', 'info', 'alert', 'note', calloutType],
         group: 'Basic Blocks',
         icon: <Info size={18} />,
         subtext: t('notes.blocks.callout.description', 'Highlighted callout box'),
+    };
+};
+
+// ============================================================================
+// UX-10: Block References
+// ============================================================================
+
+/**
+ * Insert a block reference (^blockId)
+ * Creates a reference block that links to another block in the document
+ */
+export const insertBlockReference = (editor: BlockNoteEditor) => {
+    return {
+        title: t('notes.blocks.reference.title', 'Block Reference'),
+        onItemClick: () => {
+            const cursorPosition = editor.getTextCursorPosition();
+            if (!cursorPosition?.block) return;
+
+            // Change the current block to a reference block
+            // The block will be in edit mode, prompting user to enter block ID
+            (editor.updateBlock as any)(cursorPosition.block, {
+                type: 'reference',
+                props: {
+                    referencedBlockId: '', // Empty = edit mode, user will enter ID
+                    mode: 'inline',
+                    textAlignment: 'left',
+                },
+            });
+        },
+        aliases: ['ref', 'reference', 'blockref', 'link', '^'],
+        group: 'Basic Blocks',
+        icon: <Link size={18} />,
+        subtext: t('notes.blocks.reference.description', 'Link to another block (^blockId)'),
     };
 };
 
@@ -1287,6 +1316,8 @@ export const getCustomSlashMenuItems = (
         insertCalloutBlock(editor, 'error'),
         insertCalloutBlock(editor, 'success'),
         insertCalloutBlock(editor, 'tip'),
+        // UX-10: Block References
+        insertBlockReference(editor),
         // User-defined custom commands
         ...customCommands,
         // Default BlockNote items

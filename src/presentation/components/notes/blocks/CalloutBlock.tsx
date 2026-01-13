@@ -12,7 +12,7 @@
  * - Keyboard shortcuts for creation
  */
 
-import { useState } from "react";
+
 import { defaultProps } from "@blocknote/core";
 import { createReactBlockSpec } from "@blocknote/react";
 import { Info, AlertTriangle, AlertCircle, CheckCircle, Lightbulb } from "lucide-react";
@@ -102,7 +102,7 @@ function CalloutBlockContent(props: {
                 <Icon className="w-5 h-5" strokeWidth={2} />
             </div>
 
-            {/* Content */}
+            {/* Content area - renders children (contentRef) */}
             <div className="flex-1 min-w-0">
                 {props.children}
             </div>
@@ -162,7 +162,8 @@ export const CalloutBlock = createReactBlockSpec(
                     calloutType={calloutType}
                     onTypeChange={handleTypeChange}
                 >
-                    {props.inlineContent}
+                    {/* contentRef renders the inline content area for rich text editing */}
+                    <div ref={props.contentRef} />
                 </CalloutBlockContent>
             );
         },

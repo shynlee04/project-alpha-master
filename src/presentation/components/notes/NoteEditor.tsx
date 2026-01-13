@@ -54,6 +54,8 @@ import { ArtifactGalleryBlock } from './blocks/ArtifactGalleryBlock';
 import { MultiStepGenerationBlock } from './blocks/MultiStepGenerationBlock';
 // UX-09: Toggle and Callout Blocks
 import { CalloutBlock } from './blocks/CalloutBlock';
+// UX-10: Block References
+import { ReferenceBlock } from './blocks/ReferenceBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 // Using 'any' because the custom schema creates complex generic types
@@ -190,7 +192,8 @@ function sanitizeBlocks(blocks: any[]): any[] {
         'codeFile', 'fileAttachment', 'aiImage', 'aiVision', 'storyboard',
         'videoAnalysis', 'ttsBlock', 'artifactBlock', 'videoGeneration',
         'codeBlock', 'table', 'divider', 'slidesExport', 'chartDiagram',
-        'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+        'transformPipeline', 'artifactGallery', 'multiStepGeneration',
+        'reference' // UX-10: Block references
     ]);
 
     // Default props required by BlockNote
@@ -240,7 +243,8 @@ function sanitizeBlocks(blocks: any[]): any[] {
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
                 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-                'callout' // UX-09: Callout blocks have custom props (calloutType)
+                'callout', // UX-09: Callout blocks have custom props (calloutType)
+                'reference' // UX-10: Reference blocks have custom props (referencedBlockId, etc.)
             ]);
 
             if (customBlockTypes.has(blockType)) {
@@ -335,6 +339,8 @@ const schema = BlockNoteSchema.create({
         multiStepGeneration: MultiStepGenerationBlock(),
         // UX-09: Callout Block (Notion-style info boxes)
         callout: CalloutBlock(),
+        // UX-10: Block References (Obsidian-style ^blockId)
+        reference: ReferenceBlock(),
     },
 });
 
@@ -476,7 +482,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 'table', 'image', 'codeFile', 'fileAttachment', 'divider',
                 'aiImage', 'aiVision', 'storyboard', 'videoAnalysis',
                 'ttsBlock', 'artifactBlock', 'videoGeneration', 'slidesExport',
-                'chartDiagram', 'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+                'chartDiagram', 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
+                'reference' // UX-10: Block references
             ]);
 
             // Blocks with content: "none" spec should NOT have content property
@@ -484,7 +491,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
-                'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+                'transformPipeline', 'artifactGallery', 'multiStepGeneration',
+                'reference' // UX-10: Reference blocks use contentSnapshot prop instead of content
             ]);
 
             // Recursive function to validate and sanitize block structure

@@ -158,6 +158,10 @@ export function useFileOpsSlice({
 
       // Perform initial sync
       await performSync(handle, { fullSync: autoSync, projectId });
+      
+      // FIX-2026-01-13: Navigate to the new IDE project page
+      // Without this, user selects folder but URL stays on old project - nothing happens
+      navigate({ to: '/ide/$projectId', params: { projectId } });
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         const { isMobile, isTablet } = deviceType;

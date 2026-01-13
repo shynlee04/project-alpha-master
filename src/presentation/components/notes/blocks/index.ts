@@ -9,6 +9,7 @@
  * - FileAttachmentBlock: Generic file attachments
  * - EmbedBlock: Rich embeds (YouTube, Twitter, GitHub, Spotify, etc.)
  * - CalloutBlock: UX-09 - Notion-style callout blocks with icons
+ * - ReferenceBlock: UX-10 - Obsidian-style block references
  */
 
 // Re-export all blocks
@@ -21,4 +22,15 @@ export type { EmbedProvider } from "./embed-block-types";
 // UX-09: Callout blocks
 export { CalloutBlock, createCalloutContent, getCalloutIcon } from "./CalloutBlock";
 export type { CalloutType } from "./CalloutBlock";
+
+// UX-10: Block references
+export {
+    ReferenceBlock,
+    createReferenceBlock,
+    extractBlockId,
+    findBlockById,
+    extractBlockText,
+    isBlockReference,
+} from "./ReferenceBlock";
+export type { ReferenceMode, ReferenceBlockProps } from "./ReferenceBlock";
 
