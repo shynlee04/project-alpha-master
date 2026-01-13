@@ -269,6 +269,32 @@
   --border-width-1: 1px;
   --border-width-2: 2px;
   --border-width-3: 3px;
+
+  /* ===== Z-Index Scale (UX-01) ===== */
+  /* Unified z-index token system - prevents z-index wars */
+  /* Usage: style={{ zIndex: 'var(--z-modal)' }} or className="[&]:z-[var(--z-modal)]" */
+  --z-base: 0;
+  /* Default stacking (no z-index) */
+  --z-dropdown: 10;
+  /* Dropdowns, hover states, tooltips */
+  --z-sticky: 20;
+  /* Sticky headers, navigation bars */
+  --z-sidebar: 30;
+  /* Fixed sidebars, panels */
+  --z-panel: 40;
+  /* Fixed panels, status overlays (SyncStatusPanel) */
+  --z-modal: 50;
+  /* Modals, dialogs, important overlays */
+  --z-toast: 60;
+  /* Toast notifications */
+  --z-popover: 70;
+  /* Priority popovers, dropdown menus */
+  --z-overlay: 80;
+  /* Full-screen overlays, command palettes */
+  --z-alert: 90;
+  /* Critical alerts, confirmations */
+  --z-debug: 100;
+  /* Highest level - debug overlays, devtools */
 }
 
 /* =============================================================================
@@ -536,6 +562,32 @@
   --border-width-1: 1px;
   --border-width-2: 2px;
   --border-width-3: 3px;
+
+  /* ===== Z-Index Scale (UX-01) ===== */
+  /* Unified z-index token system - prevents z-index wars */
+  /* Usage: style={{ zIndex: 'var(--z-modal)' }} or className="[&]:z-[var(--z-modal)]" */
+  --z-base: 0;
+  /* Default stacking (no z-index) */
+  --z-dropdown: 10;
+  /* Dropdowns, hover states, tooltips */
+  --z-sticky: 20;
+  /* Sticky headers, navigation bars */
+  --z-sidebar: 30;
+  /* Fixed sidebars, panels */
+  --z-panel: 40;
+  /* Fixed panels, status overlays (SyncStatusPanel) */
+  --z-modal: 50;
+  /* Modals, dialogs, important overlays */
+  --z-toast: 60;
+  /* Toast notifications */
+  --z-popover: 70;
+  /* Priority popovers, dropdown menus */
+  --z-overlay: 80;
+  /* Full-screen overlays, command palettes */
+  --z-alert: 90;
+  /* Critical alerts, confirmations */
+  --z-debug: 100;
+  /* Highest level - debug overlays, devtools */
 }
 
 /* =============================================================================

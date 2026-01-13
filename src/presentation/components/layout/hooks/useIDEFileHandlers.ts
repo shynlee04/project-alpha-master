@@ -10,34 +10,25 @@ import { useCallback } from 'react';
 import type { SyncManager } from '@/infrastructure/sync';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 import type { OpenFile } from '../../ide/MonacoEditor';
+import type { LocalFSAdapter } from '@/infrastructure/filesystem';
+import type { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 
 interface UseIDEFileHandlersOptions {
-    /** Current open files */
-    openFiles: OpenFile[];
-    /** Open file paths from Zustand */
-    openFilePaths: string[];
-    /** Currently active file path */
-    activeFilePath: string | null;
-    /** Setter for active file path */
-    setActiveFilePath: (path: string | null) => void;
-    /** Add file to open files */
-    addOpenFile: (path: string) => void;
-    /** Remove file from open files */
-    removeOpenFile: (path: string) => void;
-    /** Setter for selected file path (FileTree highlight) */
-    setSelectedFilePath: React.Dispatch<React.SetStateAction<string | undefined>>;
-    /** Setter for file tree refresh key */
-    setFileTreeRefreshKey: React.Dispatch<React.SetStateAction<number>>;
-    /** Setter for file content cache */
-    setFileContentCache: React.Dispatch<React.SetStateAction<Map<string, string>>>;
-    /** Reference to sync manager */
-    syncManagerRef: React.RefObject<SyncManager | null>;
-    /** Event bus for file events */
-    eventBus: WorkspaceEventEmitter;
-    /** Toast notification function */
-    toast: (message: string, type?: 'success' | 'warning' | 'error') => void;
+  openFiles: OpenFile[];
+  openFilePaths: string[];
+  activeFilePath: string | null;
+  setActiveFilePath: (path: string | null) => void;
+  addOpenFile: (path: string) => void;
+  removeOpenFile: (path: string) => void;
+  setSelectedFilePath: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setFileTreeRefreshKey: React.Dispatch<React.SetStateAction<number>>;
+  setFileContentCache: React.Dispatch<React.SetStateAction<Map<string, string>>>;
+  syncManagerRef: React.RefObject<SyncManager | null>;
+  localAdapterRef: React.RefObject<LocalFSAdapter | UnifiedStorageAdapter | null>;
+  eventBus: WorkspaceEventEmitter;
+  toast: (message: string, type?: 'success' | 'warning' | 'error') => void;
 }
 
 interface UseIDEFileHandlersResult {
@@ -71,6 +62,7 @@ export function useIDEFileHandlers({
     setFileTreeRefreshKey,
     setFileContentCache,
     syncManagerRef,
+    localAdapterRef,
     eventBus,
     toast,
 }: UseIDEFileHandlersOptions): UseIDEFileHandlersResult {
@@ -107,21 +99,39 @@ export function useIDEFileHandlers({
             console.log('[IDE] Saving file:', path);
 
             try {
+                // Try syncManager first (preferred path)
                 if (syncManagerRef.current) {
                     await syncManagerRef.current.writeFile(path, content);
-                    // Update local content cache
                     setFileContentCache((prev) => new Map(prev).set(path, content));
-                    console.log('[IDE] File saved successfully:', path);
+                    console.log('[IDE] File saved via SyncManager:', path);
                     setFileTreeRefreshKey((prev) => prev + 1);
-                } else {
-                    console.warn('[IDE] No SyncManager available for save');
-                    // Mobile users get specific error message
-                    if (isMobile || isTablet) {
-                        showMobileWorkspaceError('openFailed');
-                        return;
-                    }
-                    toast('No project folder open - save skipped', 'warning');
+                    return;
                 }
+
+                // Fallback: Try to use localAdapterRef directly
+                if (localAdapterRef.current) {
+                    // UnifiedStorageAdapter takes string, LocalFSAdapter takes Uint8Array
+                    if ('readFile' in localAdapterRef.current && typeof localAdapterRef.current.readFile === 'function') {
+                        // Check which type of adapter we have
+                        const adapter = localAdapterRef.current;
+                        if ('writeFile' in adapter) {
+                            const writeFile = adapter.writeFile as (path: string, content: string | Uint8Array) => Promise<void>;
+                            await writeFile(path, content);
+                            setFileContentCache((prev) => new Map(prev).set(path, content));
+                            console.log('[IDE] File saved via localAdapter:', path);
+                            setFileTreeRefreshKey((prev) => prev + 1);
+                            return;
+                        }
+                    }
+                }
+
+                // Mobile users get specific error message
+                if (isMobile || isTablet) {
+                    showMobileWorkspaceError('openFailed');
+                    return;
+                }
+                console.warn('[IDE] No storage available for save');
+                toast('No project folder open - save skipped', 'warning');
             } catch (error) {
                 console.error('[IDE] Failed to save file:', path, error);
                 // Mobile users get specific error message
@@ -133,7 +143,7 @@ export function useIDEFileHandlers({
                 toast(`Failed to save ${path.split('/').pop()}: ${errorMessage}`, 'error');
             }
         },
-        [syncManagerRef, isMobile, isTablet, setFileTreeRefreshKey, setFileContentCache, toast],
+        [syncManagerRef, localAdapterRef, isMobile, isTablet, setFileTreeRefreshKey, setFileContentCache, toast],
     );
 
     const handleContentChange = useCallback(

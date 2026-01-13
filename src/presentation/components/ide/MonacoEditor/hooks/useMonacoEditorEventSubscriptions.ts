@@ -4,8 +4,9 @@
  * 
  * MVP-3: Tool Execution - File Operations
  * 
- * This hook subscribes to file system events emitted by AI agents (via FileToolsFacade)
- * and updates Monaco Editor content when the currently open file is modified by the agent.
+ * This hook subscribes to:
+ * 1. Workspace eventBus file events from AI agents (file:modified)
+ * 2. CrossWorkspaceEventBus file change events from external sources (FSA watch)
  * 
  * @example
  * ```tsx
@@ -29,6 +30,9 @@
 import { useEffect, useRef } from 'react';
 import type { WorkspaceEventEmitter } from '@/lib/events';
 import type { OpenFile } from '../EditorTabBar';
+import { crossWorkspaceEventBus, type FileChangeEvent as CrossFileChangeEvent } from '@/lib/events/cross-workspace-event-bus';
+import { storageAdapterFactory } from '@/infrastructure/filesystem/StorageAdapterFactory';
+import { useProjectId } from '@/infrastructure/persistence/stores/ide';
 
 /**
  * File event payload from EventBus
@@ -56,16 +60,16 @@ interface UseMonacoEditorEventSubscriptionsParams {
 }
 
 /**
- * Hook for subscribing MonacoEditor to EventBus file events from AI agents
- * 
- * Subscribes to:
- * - file:modified (agent source only) - Updates editor content when agent modifies open file
+ * Hook for subscribing MonacoEditor to file events from:
+ * 1. Workspace eventBus - AI agent file modifications (file:modified)
+ * 2. CrossWorkspaceEventBus - External file changes from FSA watch (onFileChange)
  * 
  * Behavior:
  * - Only updates files that are currently open in the editor
- * - Preserves cursor position and scroll position
- * - Clears dirty state (unsaved changes) when agent modifies file
+ * - Preserves cursor position and scroll position (handled by Monaco)
+ * - Clears dirty state (unsaved changes) when external agent modifies file
  * - Ignores events from 'editor' source (user edits) to avoid loops
+ * - Reads fresh content from storage adapter for external file changes
  * 
  * @param params - Hook parameters
  */
@@ -81,6 +85,12 @@ export function useMonacoEditorEventSubscriptions({
         activeFilePathRef.current = activeFilePath;
     }, [activeFilePath]);
 
+    // Get projectId from IDE store (real project context)
+    const projectId = useProjectId();
+
+    // =========================================================================
+    // Effect 1: Subscribe to workspace eventBus (AI agent file modifications)
+    // =========================================================================
     useEffect(() => {
         // Guard against undefined eventBus
         if (!eventBus) {
@@ -110,7 +120,7 @@ export function useMonacoEditorEventSubscriptions({
                         return {
                             ...file,
                             content: payload.content,
-                            dirty: false, // Clear dirty state since agent modified it
+                            isDirty: false, // Clear dirty state since agent modified it
                         };
                     }
                     return file;
@@ -126,4 +136,75 @@ export function useMonacoEditorEventSubscriptions({
             eventBus.off('file:modified', handleFileModified as any);
         };
     }, [eventBus, openFiles, setOpenFiles]);
+
+    // =========================================================================
+    // Effect 2: Subscribe to CrossWorkspaceEventBus (FSA external file changes)
+    // =========================================================================
+    useEffect(() => {
+        /**
+         * Handle external file changes from FSA storage adapter watch
+         * When a file is modified outside the IDE (e.g., in VS Code), reload it
+         */
+        const handleExternalFileChange = async (event: CrossFileChangeEvent) => {
+            // Only process events from IDE workspace (ignore other workspaces)
+            if (event.workspaceId !== 'ide') {
+                return;
+            }
+
+            // Only update if the file is currently open in the editor
+            const openFile = openFiles.find(f => f.path === event.filePath);
+            if (!openFile) {
+                return;
+            }
+
+            console.log('[MonacoEditor] External file change detected:', event.filePath);
+
+            try {
+                // Use real projectId from IDE store (not hardcoded)
+                const realProjectId = projectId || 'default';
+                if (!realProjectId || realProjectId === 'default') {
+                    console.warn('[MonacoEditor] No projectId available for file reload');
+                    return;
+                }
+
+                // Read fresh content from storage adapter
+                const adapter = storageAdapterFactory.createAdapter({
+                    projectId: realProjectId,
+                });
+
+                // Read the file content
+                const content = await adapter.readFile(event.filePath);
+
+                // Update the file content in openFiles
+                // Ensure content is a string (adapter may return FileContent)
+                const contentString = typeof content === 'string' ? content : 
+                    content instanceof Blob ? await content.text() : String(content);
+                
+                setOpenFiles(prevFiles => 
+                    prevFiles.map(file => {
+                        if (file.path === event.filePath) {
+                            return {
+                                ...file,
+                                content: contentString,
+                                isDirty: false, // External change clears local dirty state
+                            };
+                        }
+                        return file;
+                    })
+                );
+
+                console.log('[MonacoEditor] Reloaded file from external change:', event.filePath);
+            } catch (error) {
+                console.error('[MonacoEditor] Failed to reload file after external change:', event.filePath, error);
+            }
+        };
+
+        // Subscribe to cross-workspace file change events
+        crossWorkspaceEventBus.onFileChange(handleExternalFileChange);
+
+        // Cleanup function
+        return () => {
+            crossWorkspaceEventBus.offFileChange(handleExternalFileChange);
+        };
+    }, [openFiles, setOpenFiles, projectId]);
 }

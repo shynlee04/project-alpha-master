@@ -51,7 +51,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-[var(--color-overlay)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-opacity duration-200",
+        "fixed inset-0 z-[var(--z-modal)] bg-[var(--color-overlay)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-opacity duration-200",
         className
       )}
       {...props}
@@ -65,7 +65,7 @@ function DialogOverlay({
  */
 const dialogContentVariants = cva(
   // Base styles with 8-bit aesthetic and theme-aware colors
-  "fixed left-[50%] top-[50%] z-50 grid w-[95vw] md:w-full translate-x-[-50%] translate-y-[-50%] gap-4 border-2 p-6 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-[4px] outline-none max-h-[85vh] overflow-y-auto overflow-x-hidden focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+  "fixed left-[50%] top-[50%] z-[var(--z-modal)] grid w-[95vw] md:w-full translate-x-[-50%] translate-y-[-50%] gap-4 border-2 p-6 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-[4px] outline-none max-h-[85vh] overflow-y-auto overflow-x-hidden focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   {
     variants: {
       size: {

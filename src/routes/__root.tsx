@@ -11,6 +11,7 @@ import { initGlobalErrorHandlers } from '@/lib/errorHandling/globalErrorHandlers
 import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
 import { TooltipProvider } from '@/presentation/components/ui/tooltip-react19-compatible'
 import { ToastProvider, ToastContainer } from '@/presentation/components/ui/Toast'
+import { OverlayRoot } from '@/presentation/components/ui/OverlayRoot'
 import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
 import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
 import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
@@ -83,19 +84,22 @@ export const Route = createRootRoute({
             <LocaleProvider>
               <TooltipProvider>
                 <ToastProvider>
-                  <AppInitializer>
-                    <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
-                      <AppErrorBoundary>
-                        {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
-                        {/* <OfflineIndicator /> */}
-                        {/* Notification Permission Requester */}
-                        <NotificationPermissionRequester />
-                        <Outlet />
-                      </AppErrorBoundary>
-                    </UnifiedWorkspaceProvider>
-                  </AppInitializer>
-                  {/* Toast Container - renders toast notifications */}
-                  <ToastContainer />
+                  {/* UX-02: OverlayRoot for unified portal rendering */}
+                  <OverlayRoot>
+                    <AppInitializer>
+                      <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
+                        <AppErrorBoundary>
+                          {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
+                          {/* <OfflineIndicator /> */}
+                          {/* Notification Permission Requester */}
+                          <NotificationPermissionRequester />
+                          <Outlet />
+                        </AppErrorBoundary>
+                      </UnifiedWorkspaceProvider>
+                    </AppInitializer>
+                    {/* Toast Container - renders toast notifications */}
+                    <ToastContainer />
+                  </OverlayRoot>
                 </ToastProvider>
               </TooltipProvider>
             </LocaleProvider>

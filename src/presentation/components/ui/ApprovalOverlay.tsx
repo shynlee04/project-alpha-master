@@ -251,7 +251,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
     return (
         <div
             className={cn(
-                'fixed inset-0 z-[100] flex items-center justify-center',
+                'fixed inset-0 z-[var(--z-modal)] flex items-center justify-center',
                 'bg-[var(--color-overlay)]',
                 'approval-overlay-backdrop',
                 isExiting ? 'fade-out' : 'fade-in',

@@ -57,7 +57,7 @@ export function DefinitionTooltip({
           position: 'absolute',
           left: position?.x ?? 0,
           top: position?.y ?? 0,
-          zIndex: 1000,
+          zIndex: 'var(--z-popover)',
           minWidth: '300px',
           maxWidth: '600px',
         }}

@@ -552,7 +552,7 @@ function ArtifactGalleryComponent(props: { block: any }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            zIndex: 1000,
+            zIndex: 'var(--z-popover)',
           }}
           onClick={() => setSelectedArtifact(null)}
         >

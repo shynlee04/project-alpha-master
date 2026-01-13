@@ -24,7 +24,6 @@ import { IDEHeaderBar } from './IDEHeaderBar';
 import { StatusBar } from '../ide/StatusBar';
 import { MobileIDELayout } from './MobileIDELayout';
 import { useResponsive } from '@/hooks/useResponsive';
-import { SyncDevTools } from '@/presentation/components/dev/SyncDevTools';
 import {
     useIDEKeyboardShortcuts,
     useWebContainerBoot,
@@ -34,6 +33,7 @@ import {
 } from './hooks';
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
+import { useVFSAutoWatch } from '@/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice';
 
 // Import sub-components
 import {
@@ -134,6 +134,7 @@ export function IDELayout(): React.JSX.Element {
         setFileTreeRefreshKey,
         setFileContentCache,
         syncManagerRef,
+        localAdapterRef,
         eventBus,
         toast,
     });
@@ -148,6 +149,9 @@ export function IDELayout(): React.JSX.Element {
         activeFilePath: activeFilePath ?? null,
         setOpenFiles,
     });
+
+    // PS-02-B: Start VFS auto-watch for hot reload
+    useVFSAutoWatch(projectId ?? null);
 
     // WB-8.3: Subscribe to all cross-workspace events for state synchronization
     // TEMPORARILY DISABLED - 2026-01-08 - Causing infinite loop via useAgentsStore.getState()
@@ -248,14 +252,6 @@ export function IDELayout(): React.JSX.Element {
                     {/* VS Code-style footer StatusBar */}
                     <StatusBar />
 
-                    {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-                    {/* TEMPORARILY DISABLED - 2026-01-08 - Investigating infinite loop */}
-                    {/* <div className="fixed bottom-4 right-4 z-50 w-96">
-                        <SyncStatusPanel />
-                    </div> */}
-
-                    {/* Dev Tools (development mode only) */}
-                    <SyncDevTools />
                 </div>
             </SidebarProvider>
         </StatusAnnouncerProvider>

@@ -25,6 +25,8 @@
 import { useEffect, useState } from 'react';
 import type { FileChangeEvent } from '@/domain/interfaces/storage-adapter.interface';
 import { storageAdapterFactory } from '@/infrastructure/filesystem/StorageAdapterFactory';
+import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
+import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
 
 // ============================================================================
 // Types
@@ -46,13 +48,13 @@ export interface VFSSyncState {
  * VFS Sync actions interface
  */
 export interface VFSSyncActions {
-  // Actions
   startWatch: (projectId: string) => void;
   stopWatch: () => void;
   acknowledgeChange: (path: string) => void;
   dismissNotification: (path: string) => void;
   retryAfterError: () => void;
   clearAllChanges: () => void;
+  completeWatchCycle: () => void;  // Mark sync cycle as complete
 }
 
 /**
@@ -118,6 +120,7 @@ function createVFSSyncStore() {
       dismissNotification,
       retryAfterError,
       clearAllChanges,
+      completeWatchCycle,
     };
 
     subscribers.forEach((cb) => cb(state));
@@ -190,6 +193,7 @@ function createVFSSyncStore() {
 
   /**
    * Handle file change event
+   * Also emits to crossWorkspaceEventBus for cross-workspace sync
    */
   const handleFileChangeEvent = (event: FileChangeEvent) => {
     // Check for rate limiting
@@ -205,11 +209,32 @@ function createVFSSyncStore() {
     pendingChanges = [event, ...pendingChanges].slice(0, MAX_PENDING_CHANGES);
     changeCount = pendingChanges.length;
 
+    // Emit to crossWorkspaceEventBus for UI components and other workspaces
+    try {
+      crossWorkspaceEventBus.emitFileChange({
+        workspaceId: 'ide',
+        projectPath: '', // Will be set by the adapter
+        filePath: event.path,
+        changeType: event.type,
+      });
+    } catch (error) {
+      console.warn('[VFSSync] Failed to emit file change event:', error);
+    }
+
     // Update state
     syncState = 'syncing';
     lastSyncedAt = new Date();
     errorMessage = null;
     notify();
+
+    // Bridge to StatusBar store for SyncStatusSegment
+    try {
+      useStatusBarStore.getState().setSyncStatus('syncing');
+      useStatusBarStore.getState().setLastSyncTime(lastSyncedAt);
+      useStatusBarStore.getState().setSyncError(null);
+    } catch (error) {
+      console.warn('[VFSSync] Failed to sync with StatusBar store:', error);
+    }
   };
 
   /**
@@ -251,6 +276,25 @@ function createVFSSyncStore() {
     notify();
   };
 
+  /**
+   * Complete a watch cycle - marks sync as complete and syncs with StatusBar
+   */
+  const completeWatchCycle = () => {
+    syncState = pendingChanges.length > 0 ? 'syncing' : 'idle';
+    lastSyncedAt = new Date();
+    notify();
+
+    // Bridge to StatusBar store
+    try {
+      useStatusBarStore.getState().setSyncStatus(
+        pendingChanges.length > 0 ? 'synced' : 'idle'
+      );
+      useStatusBarStore.getState().setLastSyncTime(lastSyncedAt);
+    } catch (error) {
+      console.warn('[VFSSync] Failed to sync with StatusBar store:', error);
+    }
+  };
+
   // Initial state
   notify();
 
@@ -283,6 +327,7 @@ function createVFSSyncStore() {
         dismissNotification,
         retryAfterError,
         clearAllChanges,
+        completeWatchCycle,
       };
     },
     subscribe: (cb: (state: VFSSyncStore) => void) => {

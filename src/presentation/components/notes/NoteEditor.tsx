@@ -1,7 +1,7 @@
 /**
  * @fileoverview BlockNote Editor Component
  * @module components/notes/NoteEditor
- * @governance EPIC-26-1
+ * @governance EPIC-26-1, EPIC-UX-01
  *
  * Notion-like block editor with auto-save persistence.
  * Uses BlockNote library with 8-bit styling overrides.
@@ -12,10 +12,12 @@
  * - Auto-save with debounce (500ms)
  * - Dark theme integration
  * - Mobile responsive
+ * - UX-03: Multi-block selection with drag handle
+ * - UX-03: Selection info indicator
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useCreateBlockNote } from '@blocknote/react';
+import { useCreateBlockNote, SideMenuController, useSelectedBlocks } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import { BlockNoteSchema, defaultBlockSpecs } from '@blocknote/core';
 import '@blocknote/mantine/style.css';
@@ -74,6 +76,14 @@ import { VoiceRecordButton } from './VoiceRecordButton';
 import { PromptSuggestionsPanel } from './PromptSuggestionsPanel';
 import { SuggestionMenuController } from '@blocknote/react';
 // filterSuggestionItems has been removed from @blocknote, using inline filter instead
+// UX-07: In-Block AI Generation UI
+import {
+    InBlockAIPopup,
+    FloatingAIButton,
+    useEmptyBlockDetection,
+    type ContextScope,
+    type AIAction,
+} from './InBlockAIPopup';
 
 import './NoteEditor.css';
 
@@ -375,6 +385,30 @@ function useDebouncedCallback<T extends (...args: BlockNoteBlock[][]) => void>(
 }
 
 // ============================================================================
+// UX-03: Selection Info Component
+// ============================================================================
+// Displays the number of currently selected blocks in the editor
+interface SelectionInfoProps {
+    editor: ReturnType<typeof useCreateBlockNote>;
+}
+
+function SelectionInfo({ editor }: SelectionInfoProps) {
+    const selectedBlocks = useSelectedBlocks(editor);
+
+    if (selectedBlocks.length <= 1) {
+        return null; // Don't show for single or no selection
+    }
+
+    return (
+        <div className="fixed bottom-20 right-4 z-[var(--z-panel)] bg-[var(--card)] border border-[var(--border)] rounded-[4px] px-3 py-2 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] text-sm">
+            <span className="text-[var(--muted-foreground)]">
+                {selectedBlocks.length} blocks selected
+            </span>
+        </div>
+    );
+}
+
+// ============================================================================
 // Component
 // ============================================================================
 
@@ -614,6 +648,13 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const [noteContent, setNoteContent] = useState<string>('');
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
+    // UX-07: In-Block AI Generation UI state
+    const [showAIPopup, setShowAIPopup] = useState<boolean>(false);
+    const aiTriggerRef = useRef<HTMLDivElement>(null);
+
+    // Detect empty block for AI button
+    const { isEmptyBlock, buttonPosition } = useEmptyBlockDetection(editor as any);
+
     // FAIL-SAFE: Track corruption state to force editor remount
     const [corruptionDetected, setCorruptionDetected] = useState<number>(0);
 
@@ -757,6 +798,29 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         }
     }, [noteId, saveNoteToFile, t]);
 
+    // UX-07: Handle AI action selection from InBlockAIPopup
+    const handleAIActionSelect = useCallback(async (action: AIAction, scope: ContextScope) => {
+        // Import executeAICommand dynamically to avoid circular dependency
+        const { executeAICommand } = await import('./AISlashCommand');
+
+        // Map ContextScope to ContextMode
+        const contextModeMap: Record<ContextScope['mode'], 'above_cursor' | 'all' | 'none' | 'selection'> = {
+            'above': 'above_cursor',
+            'below': 'above_cursor', // Use above_cursor for below (will use content above insertion point)
+            'all': 'all',
+            'selection': 'selection',
+        };
+
+        const contextMode = contextModeMap[scope.mode];
+
+        // Execute the AI command with context mode
+        await executeAICommand(editor as any, action.prompt, action.commandName, {
+            contextMode,
+        });
+
+        setShowAIPopup(false);
+    }, [editor]);
+
     // Render save status indicator
     const renderSaveStatus = () => {
         // Show dirty indicator if note has unsaved changes
@@ -881,6 +945,8 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                         editable={!readOnly}
                         slashMenu={false}
                     >
+                        {/* UX-03: Side Menu with drag handle for multi-block selection */}
+                        <SideMenuController />
                         <SuggestionMenuController
                             triggerCharacter="/"
                             getItems={async (query) =>
@@ -906,6 +972,25 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                     />
                 </div>
             )}
+
+            {/* UX-03: Selection Info - Shows when multiple blocks are selected */}
+            <SelectionInfo editor={editor as any} />
+
+            {/* UX-07: In-Block AI Generation UI - Container-aware popup */}
+            <InBlockAIPopup
+                editor={editor as any}
+                isOpen={showAIPopup}
+                onClose={() => setShowAIPopup(false)}
+                onActionSelect={handleAIActionSelect}
+                triggerRef={aiTriggerRef}
+            />
+
+            {/* UX-07: Floating AI Button for empty blocks */}
+            <FloatingAIButton
+                show={isEmptyBlock}
+                onClick={() => setShowAIPopup(true)}
+                position={buttonPosition ?? undefined}
+            />
         </div>
     );
 }

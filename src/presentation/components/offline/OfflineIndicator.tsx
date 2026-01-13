@@ -79,7 +79,7 @@ export function OfflineIndicator({
     <div
       className={cn(
         // Fixed positioning
-        'fixed z-[9999]',
+        'fixed z-[var(--z-alert)]',
 
         // Position
         positionClasses[position],
@@ -192,7 +192,7 @@ export function CompactOfflineIndicator({
   return (
     <div
       className={cn(
-        'fixed top-4 right-4 z-[9999]',
+        'fixed top-4 right-4 z-[var(--z-alert)]',
         'bg-destructive border-2 border-destructive',
         'p-2',
         'shadow-lg',

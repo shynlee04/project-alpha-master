@@ -374,6 +374,19 @@ code {
 
   /* Panel transition duration */
   --panel-transition-duration: 200ms;
+
+  /* Z-Index Scale Tokens (UX-01) */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-sidebar: 30;
+  --z-panel: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-popover: 70;
+  --z-overlay: 80;
+  --z-alert: 90;
+  --z-debug: 100;
 }
 
 /* ===== Mobile Panel Transitions (Epic-MRT) ===== */
@@ -424,25 +437,33 @@ code {
 }
 
 /* =============================================================================
-   VIA-GENT Z-Index Scale (MM-11 Documentation)
+   VIA-GENT Z-Index Scale (UX-01: Unified Z-Index Scale)
    Used to prevent layering conflicts across the application
    ============================================================================= */
 
 /*
- * z-index scale for Via-Gent:
- * - z-0:   Default stacking (no z-index)
- * - z-10:  Dropdowns, hover states
- * - z-20:  Sticky headers, navigation
- * - z-30:  Fixed sidebar
- * - z-40:  Fixed panels, status overlays (SyncStatusPanel uses this)
- * - z-50:  Modals, dialogs, important overlays
- * - z-60:  Toast notifications
- * - z-70:  Priority toasts
- * - z-80:  Full-screen overlays
- * - z-90:  Critical alerts
- * - z-100:Highest level (debug overlays)
+ * Z-Index Scale - Use CSS Custom Properties (Tokens):
  *
- * Rule: Never use arbitrary z-index values. Use Tailwind's z-{n} or add to this scale.
+ * CSS Token    | Value | Usage
+ * -------------|-------|----------------------------------------
+ * --z-base     | 0     | Default stacking (no z-index)
+ * --z-dropdown | 10    | Dropdowns, hover states
+ * --z-sticky   | 20    | Sticky headers, navigation
+ * --z-sidebar  | 30    | Fixed sidebars, panels
+ * --z-panel    | 40    | Fixed panels, status overlays (SyncStatusPanel)
+ * --z-modal    | 50    | Modals, dialogs, important overlays
+ * --z-toast    | 60    | Toast notifications
+ * --z-popover  | 70    | Priority popovers, dropdown menus
+ * --z-overlay  | 80    | Full-screen overlays, command palettes
+ * --z-alert    | 90    | Critical alerts
+ * --z-debug    | 100   | Highest level (debug overlays, devtools)
+ *
+ * USAGE IN REACT:
+ * 1. Inline style: style={{ zIndex: 'var(--z-modal)' }}
+ * 2. Tailwind with arbitrary value: className="[&]:z-[var(--z-modal)]"
+ * 3. Tailwind conventional values map: z-10 → dropdown, z-20 → sticky, z-40 → panel, z-50 → modal
+ *
+ * NEVER use arbitrary values like z-[9999], zIndex: 1000, etc.
  */
 
 /* =============================================================================

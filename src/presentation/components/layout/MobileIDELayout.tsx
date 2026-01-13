@@ -199,6 +199,7 @@ export function MobileIDELayout(): React.JSX.Element {
         setFileTreeRefreshKey,
         setFileContentCache,
         syncManagerRef,
+        localAdapterRef: _localAdapterRef,
         eventBus,
         toast,
     });

@@ -21,6 +21,7 @@ import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter'
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
 import { getProject, type ProjectMetadata } from '@/lib/workspace/project-store';
 import { useWorkspaceStore } from '../workspace-store';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 
 /**
  * File loader slice configuration
@@ -116,9 +117,41 @@ export function useFileLoaderSlice({
               console.error('[FileLoaderSlice] Failed to create UnifiedStorageAdapter:', err);
             }
           } else {
-            // FSA projects require handle restoration via user interaction
-            // PS-04: Set permission state to 'prompt' to trigger folder picker
-            setPermissionState('prompt');
+            // FSA projects - restore handle via project store
+            // FIX-2026-01-13: Properly restore FSA handle and set directoryHandle state
+            console.log('[FileLoaderSlice] FSA project - attempting handle restoration for:', project.id);
+            
+            try {
+              const projectStore = useProjectStore.getState();
+              const result = await projectStore.restoreProjectHandle(project.id);
+              
+              if (!active) return; // Check if component is still mounted
+              
+              if (result.success && result.handle) {
+                console.log('[FileLoaderSlice] FSA handle restored successfully');
+                setDirectoryHandle(result.handle);
+                setPermissionState('granted');
+                
+                // Create FSA adapter for this handle
+                const fsaAdapter = new LocalFSAdapter();
+                fsaAdapter.setDirectoryHandle(result.handle);
+                localAdapterRef.current = fsaAdapter;
+                console.log('[FileLoaderSlice] Created LocalFSAdapter for FSA project:', project.id);
+              } else if (result.requiresUserInteraction) {
+                console.log('[FileLoaderSlice] FSA handle requires user interaction');
+                // Set to 'prompt' to show the PermissionOverlay
+                setPermissionState('prompt');
+              } else {
+                console.warn('[FileLoaderSlice] FSA handle restoration failed:', result.error);
+                // Set to 'prompt' to allow user to manually restore
+                setPermissionState('prompt');
+              }
+            } catch (err) {
+              console.error('[FileLoaderSlice] Failed to restore FSA handle:', err);
+              if (active) {
+                setPermissionState('prompt');
+              }
+            }
           }
 
           if (project.autoSync !== undefined) {

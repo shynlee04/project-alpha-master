@@ -11,7 +11,7 @@ previous_version: "bmm-workflow-status-v2.2.yaml"
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 60  # Same - Critical issues identified, fix in progress
+health_score: 75  # Improved - Critical P0 audit issues fixed (route guards, restoration)
 context_ttl: "24h"
 current_phase: "CORRECT-COURSE"
 
@@ -228,24 +228,81 @@ active_epics:
           - WebContainer → UnifiedStorageAdapter (preview only)
           TypeScript: 0 errors ✅
       
-      # Blocked Stories (Dependencies on PS-02-A)
-      - id: "PS-02-B"
-        name: "Hot Reactive Sync Integration"
-        status: "BLOCKED_BY_PS-02-A"
-        effort: "4h"
-        priority: "P0"
-        addresses_issue: "URI-03"
-        description: |
-          Connect FSAStorageAdapter.watch() to:
-          - Monaco for external file change detection
-          - Sync status indicators
-          - Permission boundary enforcement
-        depends_on: ["PS-02-A"]
-        subtasks:
-          - "Create useVFSSyncSlice for watch→UI connection"
-          - "Create SyncStatusIndicator component"
-          - "Connect file change events to React state"
-      
+       # PS-02-B: Hot Reactive Sync - NOW IN PROGRESS (bugs fixed 2026-01-15)
+       - id: "PS-02-B"
+         name: "Hot Reactive Sync Integration"
+         status: "IN_PROGRESS"
+         effort: "4h"
+         priority: "P0"
+         completed_at: "2026-01-15T22:00:00+07:00"
+         addresses_issue: "URI-03"
+         description: |
+           Connect FSAStorageAdapter.watch() to:
+           - Monaco for external file change detection
+           - Sync status indicators
+           - Permission boundary enforcement
+         result: |
+           - Fixed projectId bug (was hardcoded, now uses useProjectId())
+           - Connected VFS sync slice to StatusBar store
+           - Monaco subscribes to crossWorkspaceEventBus for external changes
+         files:
+           - "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts"
+           - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
+
+       # Audit Fix Stories (P0 - Critical UX)
+       - id: "AUDIT-P0-01"
+         name: "Add Route Guards for Platform & Storage Type"
+         status: "COMPLETED"
+         effort: "2h"
+         priority: "P0"
+         addresses_audit: "PART 3 - VIOLATION #1, #2"
+         description: |
+           Add beforeLoad route guards in ide.$projectId.tsx:
+           - Redirect mobile users to Notes workspace
+           - Redirect non-FSA projects to Notes workspace
+         files:
+           - "src/routes/ide.$projectId.tsx"
+         result: |
+           - Mobile users auto-redirected to /notes/$projectId
+           - IndexDB projects auto-redirected to /notes/$projectId
+           - Console logging for debugging
+
+       - id: "AUDIT-P0-02"
+         name: "Fix FSA Handle Restoration Condition"
+         status: "COMPLETED"
+         effort: "1h"
+         priority: "P0"
+         addresses_audit: "PART 2 - Broken restoration condition"
+         description: |
+           Fix broken restoration condition at ide.$projectId.tsx:74
+           The condition `!restoredProject.storageMetadata` was always false.
+           Now restores handle for ALL FSA projects.
+         files:
+           - "src/routes/ide.$projectId.tsx"
+         result: |
+           - FSA handles now restored on every project load
+           - No more manual "Restore Access" clicks required
+
+       # Audit Fix Stories (P1 - UX Improvements)
+       - id: "AUDIT-P1-01"
+         name: "Platform Detection in Project Wizard"
+         status: "COMPLETED"
+         effort: "2h"
+         priority: "P1"
+         addresses_audit: "PART 1 - Default storage wrong for desktop"
+         description: |
+           Update ProjectDetailsStep.tsx:
+           - Auto-detect platform (mobile/tablet/desktop)
+           - Hide FSA option on mobile/tablet
+           - Auto-select 'indexeddb' on mobile
+           - Auto-select 'fsa' on desktop
+         files:
+           - "src/presentation/components/project/steps/ProjectDetailsStep.tsx"
+         result: |
+           - Desktop users default to File System Access
+           - Mobile users only see Browser Storage option
+           - No more confusing UX
+
       # NEW: Critical Stories for User-Reported Issues
       - id: "PS-04"
         name: "Handle Persistence Architecture"

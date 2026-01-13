@@ -660,8 +660,9 @@ export const NotesPage = React.memo(function NotesPage() {
                     isSupported={isNotesSyncSupported}
                 />
 
-                {/* Sync Status Panel - MM-11: Reduced z-index from z-50 to z-40 to avoid covering chat input */}
-                <div className="fixed bottom-4 right-4 z-40 w-96">
+                {/* Sync Status Panel - UX-06: Hidden on mobile to avoid covering chat input */}
+                {/* Uses md breakpoint (>=768px) to show panel only on desktop/tablet */}
+                <div className="fixed bottom-4 right-4 z-[var(--z-panel)] w-96 max-w-[calc(100vw-2rem)] hidden md:block">
                     <SyncStatusPanel />
                 </div>
             </MainLayout>
@@ -865,10 +866,9 @@ export const NotesPage = React.memo(function NotesPage() {
             {/* Prompt Refinement Dialog (43-03: 2-step workflow) */}
             <PromptRefinementDialog />
 
-            {/* Sync Status Panel (P1-2: Event Bus Integration) */}
-            {/* R3 FIX: Re-enabled after noteStoreConfig memoization fixed infinite loop */}
-            {/* MM-11: Reduced z-index from z-50 to z-40 to avoid covering chat input */}
-            <div className="fixed bottom-4 right-4 z-40 w-96">
+            {/* Sync Status Panel - UX-06: Hidden on mobile to avoid covering chat input */}
+            {/* Uses md breakpoint (>=768px) to show panel only on desktop/tablet */}
+            <div className="fixed bottom-4 right-4 z-[var(--z-panel)] w-96 max-w-[calc(100vw-2rem)] hidden md:block">
                 <SyncStatusPanel />
             </div>
         </MainLayout>

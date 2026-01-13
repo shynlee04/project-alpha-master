@@ -60,11 +60,13 @@ Create a sync slice that:
 
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
-| FR-01 | Create `useVFSSyncSlice` for watch→UI connection | P0 | Pending |
-| FR-02 | Create `SyncStatusIndicator` component | P0 | Pending |
-| FR-03 | Display file change notifications | P0 | Pending |
-| FR-04 | Handle permission revocation gracefully | P1 | Pending |
-| FR-05 | Debounce rapid successive changes | P1 | Pending |
+| FR-01 | Create `useVFSSyncSlice` for watch→UI connection | P0 | DONE |
+| FR-02 | Create `SyncStatusIndicator` component | P0 | DONE |
+| FR-03 | Display file change notifications | P0 | DONE |
+| FR-04 | Handle permission revocation gracefully | P1 | DONE |
+| FR-05 | Debounce rapid successive changes | P1 | DONE |
+| **FR-06** | **Integrate useVFSAutoWatch in IDELayoutMain** | **P0** | **IN_PROGRESS** |
+| **FR-07** | **Bridge FSA watch callbacks to crossWorkspaceEventBus** | **P0** | **IN_PROGRESS** |
 
 ### Non-Functional Requirements
 
@@ -111,14 +113,15 @@ src/presentation/components/workspace/
 └── index.ts                       ✅ Update exports
 ```
 
-### Phase 3: Integration
+### Phase 3: Integration (IN PROGRESS)
 
 ```
 Integration Points:
 1. useWorkspaceFileSystem.ts - Initialize watch on project load
-2. MonacoEditor - Subscribe to change events
-3. FileTree - Refresh on external changes
-4. IDE layout - Show sync status in status bar
+2. IDELayoutMain.tsx - Add useVFSAutoWatch() call ⏮️ IN PROGRESS
+3. FSAStorageAdapter - Bridge to crossWorkspaceEventBus ⏮️ IN PROGRESS
+4. Fix SyncDevTools to use crossWorkspaceEventBus instead of dead bus
+5. Uncomment SyncStatusPanel in IDELayoutMain.tsx
 ```
 
 ---
@@ -139,7 +142,10 @@ Integration Points:
 
 | File | Change | Priority |
 |------|--------|----------|
-| `src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts` | Initialize watch | P0 |
+| `src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts` | Initialize watch ⏮️ | P0 |
+| `src/presentation/components/layout/IDELayoutMain.tsx` | Add useVFSAutoWatch, uncomment SyncStatusPanel ⏮️ | P0 |
+| `src/infrastructure/filesystem/fsa-storage-adapter.ts` | Bridge to crossWorkspaceEventBus ⏮️ | P0 |
+| `src/presentation/components/dev/SyncDevTools.tsx` | Fix to use crossWorkspaceEventBus | P1 |
 | `src/presentation/components/workspace/index.ts` | Export sync components | P1 |
 | `src/presentation/components/ide/IDELayout.tsx` | Add status to status bar | P2 |
 
@@ -169,29 +175,40 @@ Integration Points:
 
 ## Story Tasks
 
-### Task 1: Create useVFSSyncSlice (2h)
+### Task 1: Create useVFSSyncSlice (COMPLETED)
 
-- [ ] Define VFS sync state interface
-- [ ] Implement startWatch() with FSAStorageAdapter.watch()
-- [ ] Implement stopWatch() with cleanup
-- [ ] Handle FileChangeEvent callbacks
-- [ ] Implement acknowledge/dismiss actions
-- [ ] Add error handling for permission revocation
-- [ ] Write unit tests (≥80% coverage)
+- [x] Define VFS sync state interface
+- [x] Implement startWatch() with FSAStorageAdapter.watch()
+- [x] Implement stopWatch() with cleanup
+- [x] Handle FileChangeEvent callbacks
+- [x] Implement acknowledge/dismiss actions
+- [x] Add error handling for permission revocation
+- [x] Write unit tests (≥80% coverage)
 
-### Task 2: Create SyncStatusIndicator Component (1h)
+### Task 2: Create SyncStatusIndicator Component (COMPLETED)
 
-- [ ] Design 8-bit status badge (idle, syncing, error, revoked)
-- [ ] Connect to useVFSSyncSlice
-- [ ] Add to status bar area
-- [ ] Implement animated transitions
-- [ ] Write component tests
+- [x] Design 8-bit status badge (idle, syncing, error, revoked)
+- [x] Connect to useVFSSyncSlice
+- [x] Add to status bar area
+- [x] Implement animated transitions
+- [x] Write component tests
 
-### Task 3: Create FileChangeNotification Component (30min)
+### Task 3: Create FileChangeNotification Component (COMPLETED)
 
-- [ ] Design toaster notification for changes
-- [ ] Show file path and change type
-- [ ] "Refresh" button to apply changes
+- [x] Design toaster notification for changes
+- [x] Show file path and change type
+- [x] "Refresh" button to apply changes
+- [x] Auto-dismiss after 5s
+- [x] Write component tests
+
+### Task 4: Integration (IN PROGRESS - MISSING FROM ORIGINAL)
+
+- [ ] Add useVFSAutoWatch() call in IDELayoutMain.tsx ⏮️
+- [ ] Bridge FSA watch callbacks to crossWorkspaceEventBus ⏮️
+- [ ] Fix SyncDevTools to use crossWorkspaceEventBus
+- [ ] Uncomment SyncStatusPanel in IDELayoutMain.tsx
+- [ ] Full E2E testing
+- [ ] Performance testing (latency < 500ms)
 - [ ] Auto-dismiss after 5s
 - [ ] Write component tests
 
