@@ -56,6 +56,10 @@ import type {
 } from './dexie-db-snippet-types';
 
 import type {
+    SavedBlocksTable,
+} from './dexie-db-block-types';
+
+import type {
     PluginsTable,
     PluginSettingsTable,
     PluginMarketplaceTable,
@@ -173,6 +177,12 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     codeSnippets!: CodeSnippetsTable;
+
+    // ========================================================================
+    // Story UX-13: Database Backed Blocks Tables
+    // ========================================================================
+
+    savedBlocks!: SavedBlocksTable;
 
     // ========================================================================
     // Story S-037: Plugin System Tables

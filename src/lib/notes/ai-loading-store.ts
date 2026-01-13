@@ -3,6 +3,7 @@ import { create } from 'zustand';
 /**
  * Loading state for AI generation at block level
  * @story EPIC-42-03 - Block-specific loading animation
+ * @story UX-15 - Streaming Animations (enhanced with tokens and typing indicator)
  */
 export interface BlockLoadingState {
     /** Block ID that is generating content */
@@ -13,6 +14,15 @@ export interface BlockLoadingState {
     startedAt: number;
     /** Progress message (optional) */
     message?: string;
+    // UX-15: Streaming Animation enhancements
+    /** Tokens consumed so far */
+    tokensUsed?: number;
+    /** Maximum context tokens (default 128k for most models) */
+    maxTokens?: number;
+    /** Character count of generated content */
+    charCount?: number;
+    /** Whether typing indicator should be shown */
+    isTyping?: boolean;
 }
 
 interface AILoadingState {
@@ -26,6 +36,12 @@ interface AILoadingState {
     stopBlockLoading: (blockId: string) => void;
     /** Update loading message for a block */
     updateLoadingMessage: (blockId: string, message: string) => void;
+    /** UX-15: Update token count for a block */
+    updateTokenCount: (blockId: string, tokensUsed: number, maxTokens?: number) => void;
+    /** UX-15: Update character count for a block */
+    updateCharCount: (blockId: string, charCount: number) => void;
+    /** UX-15: Update typing indicator state */
+    updateTypingState: (blockId: string, isTyping: boolean) => void;
     /** Check if a block is loading */
     isBlockLoading: (blockId: string) => boolean;
     /** Get loading state for a block */
@@ -68,9 +84,45 @@ export const useAILoadingStore = create<AILoadingState>((set, get) => ({
         set((state) => {
             const existing = state.loadingBlocks.get(blockId);
             if (!existing) return state;
-            
+
             const newMap = new Map(state.loadingBlocks);
             newMap.set(blockId, { ...existing, message });
+            return { loadingBlocks: newMap };
+        });
+    },
+
+    // UX-15: Update token count for streaming progress
+    updateTokenCount: (blockId, tokensUsed, maxTokens = 128000) => {
+        set((state) => {
+            const existing = state.loadingBlocks.get(blockId);
+            if (!existing) return state;
+
+            const newMap = new Map(state.loadingBlocks);
+            newMap.set(blockId, { ...existing, tokensUsed, maxTokens });
+            return { loadingBlocks: newMap };
+        });
+    },
+
+    // UX-15: Update character count for streaming progress
+    updateCharCount: (blockId, charCount) => {
+        set((state) => {
+            const existing = state.loadingBlocks.get(blockId);
+            if (!existing) return state;
+
+            const newMap = new Map(state.loadingBlocks);
+            newMap.set(blockId, { ...existing, charCount });
+            return { loadingBlocks: newMap };
+        });
+    },
+
+    // UX-15: Update typing indicator state
+    updateTypingState: (blockId, isTyping) => {
+        set((state) => {
+            const existing = state.loadingBlocks.get(blockId);
+            if (!existing) return state;
+
+            const newMap = new Map(state.loadingBlocks);
+            newMap.set(blockId, { ...existing, isTyping });
             return { loadingBlocks: newMap };
         });
     },

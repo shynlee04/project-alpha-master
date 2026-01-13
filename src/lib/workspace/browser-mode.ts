@@ -13,7 +13,10 @@
  */
 
 import { getProject } from '@/lib/workspace/project-store';
-import { useProjectStore } from '@/lib/workspace/project-store/project-store-refactored';
+// FIX-2026-01-14: Use infrastructure store which has REAL Dexie persistence
+// The lib/workspace version is a STUB that doesn't persist
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
 /** Default browser mode project ID */
@@ -34,34 +37,84 @@ export function isBrowserModeProject(project: Project | null): boolean {
 /**
  * Get or create the default browser mode project
  * Creates the browser mode project if it doesn't exist
+ * 
+ * FIX-2026-01-14: Uses DIRECT Dexie persistence instead of broken Zustand store facade
+ * The lib/workspace/project-store saveProject was a STUB that didn't persist.
+ * 
  * @returns Browser mode project
  */
 export async function getOrCreateBrowserModeProject(): Promise<Project | null> {
   try {
-    const existing = await getProject(BROWSER_MODE_PROJECT_ID);
-    if (existing) {
-      return existing as Project;
+    // Check Dexie directly for existing project
+    const existingRecord = await db.projects.get(BROWSER_MODE_PROJECT_ID);
+    if (existingRecord) {
+      // Update lastOpened
+      await db.projects.update(BROWSER_MODE_PROJECT_ID, { lastOpened: new Date() });
+      
+      // Convert record to Project type
+      const project: Project = {
+        id: existingRecord.id,
+        name: existingRecord.name,
+        folderPath: existingRecord.folderPath || existingRecord.path || 'Notes',
+        storageType: 'indexeddb',
+        lastOpened: new Date(),
+        createdAt: new Date(existingRecord.createdAt),
+        autoSync: false,
+        bindings: existingRecord.bindings || { notes: true, knowledge: true },
+        tags: [],
+        isBrowserMode: true,
+        isTemp: true,
+        autoCreated: true,
+      };
+      
+      // Also update Zustand store for reactive UI
+      useProjectStore.setState((state) => ({
+        projects: { ...state.projects, [project.id]: project },
+      }));
+      
+      console.log('[BrowserMode] Found existing browser mode project:', BROWSER_MODE_PROJECT_ID);
+      return project;
     }
 
     // Create browser mode project if it doesn't exist
-    // Use Zustand store's saveProject method
-    const browserProjectData = {
+    const now = new Date();
+    const browserProjectData: Project = {
       id: BROWSER_MODE_PROJECT_ID,
       name: BROWSER_MODE_DISPLAY_NAME,
       folderPath: 'Notes', // Uses IndexedDB storage (no file system)
-      storageType: 'indexeddb' as const,
-      createdAt: new Date(),
-      lastOpened: new Date(),
+      storageType: 'indexeddb',
+      createdAt: now,
+      lastOpened: now,
       autoSync: false,
-      bindings: { notes: true, knowledge: true },
+      bindings: { notes: true, knowledge: true, ide: false, study: false },
       tags: [],
       isBrowserMode: true, // Special flag for browser mode
       isTemp: true, // Temporary/auto-created project
       autoCreated: true,
-    } as Project;
+    };
 
-    const { saveProject } = useProjectStore.getState();
-    await saveProject(browserProjectData);
+    // FIX-2026-01-14: Persist DIRECTLY to Dexie (bypass broken store facade)
+    const dexieRecord = {
+      id: BROWSER_MODE_PROJECT_ID,
+      name: BROWSER_MODE_DISPLAY_NAME,
+      path: 'Notes',
+      folderPath: 'Notes',
+      workspaceId: 'notes' as const,
+      storageType: 'indexeddb' as const,
+      lastOpened: now,
+      createdAt: now,
+      bindings: browserProjectData.bindings,
+      isTemp: true,
+      isBrowserMode: true,
+      autoCreated: true,
+    };
+    
+    await db.projects.put(dexieRecord);
+    
+    // Also update Zustand store for reactive UI
+    useProjectStore.setState((state) => ({
+      projects: { ...state.projects, [browserProjectData.id]: browserProjectData },
+    }));
 
     console.log('[BrowserMode] Created browser mode project:', BROWSER_MODE_PROJECT_ID);
     return browserProjectData;

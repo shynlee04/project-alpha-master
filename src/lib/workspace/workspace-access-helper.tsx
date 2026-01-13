@@ -28,7 +28,7 @@
  * ```
  */
 
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
@@ -223,25 +223,109 @@ export function useWorkspaceAccess(
   workspace: WorkspaceType
 ): WorkspaceAccessResult {
   const navigate = useNavigate();
+  
+  // FIX-2026-01-14: Replaced broken useLiveQuery with controlled useEffect pattern
+  // useLiveQuery caused infinite re-renders due to Dexie subscription conflicts
+  // This pattern loads data once on mount and when workspace changes
+  
+  const [allProjects, setAllProjects] = useState<ProjectRecord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCreatingTemp, setIsCreatingTemp] = useState(false);
+  const [isEnabling, setIsEnabling] = useState(false);
+  const hasLoadedRef = useRef(false);
+  
+  // Load projects from Dexie on mount and when workspace changes
+  useEffect(() => {
+    let isMounted = true;
+    
+    async function loadProjects() {
+      try {
+        const projects = await db.projects.toArray();
+        if (isMounted) {
+          setAllProjects(projects);
+          setIsLoading(false);
+          hasLoadedRef.current = true;
+        }
+      } catch (error) {
+        console.error('[useWorkspaceAccess] Failed to load projects:', error);
+        if (isMounted) {
+          setAllProjects([]);
+          setIsLoading(false);
+        }
+      }
+    }
+    
+    loadProjects();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [workspace]);
+  
+  // Filter projects by workspace binding
+  const workspaceProjects = allProjects.filter((project) => {
+    const bindings = project.bindings || {};
+    return bindings[workspace] === true;
+  });
+  
+  // Find most recent project for this workspace
+  const mostRecentProject = workspaceProjects.length > 0
+    ? workspaceProjects.reduce((latest, project) => {
+        const latestTime = latest.lastOpened ? new Date(latest.lastOpened).getTime() : 0;
+        const projectTime = project.lastOpened ? new Date(project.lastOpened).getTime() : 0;
+        return projectTime > latestTime ? project : latest;
+      }, workspaceProjects[0])
+    : null;
+  
+  // Determine status
+  let status: WorkspaceAccessStatus = 'loading';
+  if (!isLoading) {
+    if (allProjects.length === 0) {
+      status = 'no_projects';
+    } else if (workspaceProjects.length === 0) {
+      status = 'no_binding';
+    } else {
+      status = 'has_projects';
+    }
+  }
 
-  // FIX-2026-01-08: COMPLETELY REMOVED useLiveQuery
-  // The useLiveQuery hook was causing "Maximum update depth exceeded" errors
-  // Root cause: Dexie's live query subscription mechanism conflicting with React's render cycle
-
-  // STATIC MOCK DATA - no database access
-  const allProjects: ProjectRecord[] = [];
-  const workspaceProjects: ProjectRecord[] = [];
-  const mostRecentProject = null;
-  const status: WorkspaceAccessStatus = 'no_projects';
-
-  // Actions - simple navigation only
+  // Actions
   const handleCreateTemp = useCallback(async () => {
-    navigate({ to: '/hub', search: { action: 'create-project' } });
-  }, [navigate]);
+    setIsCreatingTemp(true);
+    try {
+      const result = await createTempProject(workspace);
+      if (result) {
+        navigate({ to: `/${workspace}/$projectId`, params: { projectId: result.id } });
+      } else {
+        navigate({ to: '/hub', search: { action: 'create-project' } });
+      }
+    } catch (error) {
+      console.error('[useWorkspaceAccess] Failed to create temp project:', error);
+      navigate({ to: '/hub', search: { action: 'create-project' } });
+    } finally {
+      setIsCreatingTemp(false);
+    }
+  }, [navigate, workspace]);
 
   const handleEnable = useCallback(async () => {
-    navigate({ to: '/hub' });
-  }, [navigate]);
+    if (!mostRecentProject) {
+      navigate({ to: '/hub' });
+      return;
+    }
+    
+    setIsEnabling(true);
+    try {
+      // Enable workspace binding for most recent project
+      const bindings = { ...(mostRecentProject.bindings || {}), [workspace]: true };
+      await db.projects.update(mostRecentProject.id, { bindings });
+      navigate({ to: `/${workspace}/$projectId`, params: { projectId: mostRecentProject.id } });
+    } catch (error) {
+      console.error('[useWorkspaceAccess] Failed to enable workspace:', error);
+      navigate({ to: '/hub' });
+    } finally {
+      setIsEnabling(false);
+    }
+  }, [navigate, workspace, mostRecentProject]);
 
   const handleNavigateToCreate = useCallback(() => {
     navigate({ to: '/hub', search: { action: 'create-project' } });
@@ -255,8 +339,8 @@ export function useWorkspaceAccess(
     status,
     projects: workspaceProjects,
     allProjects,
-    isCreatingTemp: false,
-    isEnabling: false,
+    isCreatingTemp,
+    isEnabling,
     mostRecentProject,
   };
 

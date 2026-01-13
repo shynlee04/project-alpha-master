@@ -33,6 +33,7 @@ import {
     Link,
     Link2,
     Columns,
+    Copy, // UX-14: Templates icon
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -40,6 +41,13 @@ import { useAILoadingStore } from '@/lib/notes/ai-loading-store';
 import { useAIInsertionStore, generatePendingContentId } from '@/lib/notes/ai-insertion-store';
 // 43-06: Prompt History Tracking
 import { startPromptTracking, completePromptTracking } from '@/lib/notes/prompt-history-store';
+// UX-13: Saved Blocks
+import {
+    useSavedBlocksStore,
+    getBlockTypeIcon,
+} from '@/lib/notes/saved-blocks-store';
+import type { SavedBlockRecord } from '@/infrastructure/persistence/dexie-db';
+import { openSaveBlockDialog } from './SaveBlockDialog';
 import { toast } from 'sonner';
 
 // ============================================================================
@@ -1405,6 +1413,195 @@ export const insertSyncedBlock = (editor: BlockNoteEditor) => {
     };
 };
 
+// ============================================================================
+// UX-13: Saved Blocks Menu Items
+// ============================================================================
+
+/**
+ * Get saved blocks menu items for the slash command
+ * Returns recent and favorite saved blocks as slash menu items
+ * @story UX-13 - Database Backed Blocks
+ */
+function getSavedBlocksMenuItems(
+    editor: BlockNoteEditor
+): DefaultReactSuggestionItem[] {
+    const store = useSavedBlocksStore.getState();
+
+    // Get recent blocks (max 5) and favorite blocks
+    const recentBlocks = store.getRecentBlocks(5);
+    const favoriteBlocks = store.getFavoriteBlocks();
+
+    // Combine and deduplicate, keeping favorites first
+    const combinedBlocks: SavedBlockRecord[] = [
+        ...favoriteBlocks.filter(b => !recentBlocks.some(r => r.id === b.id)),
+        ...recentBlocks,
+    ].slice(0, 8); // Limit to 8 items total
+
+    if (combinedBlocks.length === 0) {
+        return [];
+    }
+
+    return combinedBlocks.map((block) => {
+        const iconName = getBlockTypeIcon(block.blockType) as keyof typeof IMPORTED_ICONS;
+        const IconComponent = IMPORTED_ICONS[iconName] || FileText;
+
+        return {
+            title: block.name,
+            onItemClick: async () => {
+                await insertSavedBlock(editor, block);
+            },
+            aliases: ['saved', block.blockType, ...block.tags.slice(0, 2)],
+            group: block.isFavorite ? 'Saved Blocks (⭐ Favorites)' : 'Saved Blocks',
+            icon: <IconComponent size={18} />,
+            subtext: block.description || `${block.blockType} block`,
+        };
+    });
+}
+
+/**
+ * UX-14: Get templates menu items for the slash command
+ * Returns all saved templates as slash menu items
+ * Templates are separated from regular saved blocks
+ */
+function getTemplatesMenuItems(
+    editor: BlockNoteEditor
+): DefaultReactSuggestionItem[] {
+    const store = useSavedBlocksStore.getState();
+    const templates = store.getTemplates();
+
+    if (templates.length === 0) {
+        return [];
+    }
+
+    return templates.map((template) => {
+        const iconName = getBlockTypeIcon(template.blockType) as keyof typeof IMPORTED_ICONS;
+        const IconComponent = IMPORTED_ICONS[iconName] || Copy;
+
+        return {
+            title: template.name,
+            onItemClick: async () => {
+                await insertSavedBlock(editor, template);
+            },
+            aliases: ['template', template.blockType, ...template.tags.slice(0, 2)],
+            group: 'Templates',
+            icon: <IconComponent size={18} />,
+            subtext: template.description || `${template.blockType} template`,
+        };
+    });
+}
+
+/**
+ * Insert a saved block into the editor
+ * @story UX-13 - Database Backed Blocks
+ */
+async function insertSavedBlock(
+    editor: BlockNoteEditor,
+    block: SavedBlockRecord
+): Promise<void> {
+    try {
+        const cursorPosition = editor.getTextCursorPosition();
+        const currentBlockId = cursorPosition?.block?.id;
+
+        // Get the block data (BlockNote JSON structure)
+        const blockData = block.blockData as unknown;
+
+        if (!blockData) {
+            toast.error(t('notes.blocks.saved.error.noData', 'Block data is empty'));
+            return;
+        }
+
+        // If blockData is an array (multiple blocks), insert all
+        if (Array.isArray(blockData)) {
+            if (currentBlockId) {
+                (editor as any).insertBlocks(blockData, currentBlockId, 'after');
+            } else {
+                // Append to end
+                const doc = editor.document;
+                if (doc.length > 0) {
+                    (editor as any).insertBlocks(blockData, doc[doc.length - 1], 'after');
+                }
+            }
+        } else if (typeof blockData === 'object' && blockData !== null) {
+            // Single block
+            if (currentBlockId) {
+                (editor as any).insertBlocks([blockData], currentBlockId, 'after');
+            } else {
+                const doc = editor.document;
+                if (doc.length > 0) {
+                    (editor as any).insertBlocks([blockData], doc[doc.length - 1], 'after');
+                }
+            }
+        } else {
+            toast.error(t('notes.blocks.saved.error.invalid', 'Invalid block data format'));
+            return;
+        }
+
+        // Record usage
+        await useSavedBlocksStore.getState().recordUsage(block.id);
+
+        toast.success(t('notes.blocks.saved.inserted', `Inserted "${block.name}"`));
+    } catch (error) {
+        console.error('[SavedBlocks] Failed to insert block:', error);
+        toast.error(t('notes.blocks.saved.error.insert', 'Failed to insert saved block'));
+    }
+}
+
+// Icon lookup map for saved blocks
+const IMPORTED_ICONS = {
+    FileText,
+    Info,
+    ChevronRight,
+    Link,
+    Columns,
+    Link2,
+    ImagePlus,
+    Eye,
+    BarChart3,
+    Box: FileText, // Fallback
+} as const;
+
+// ============================================================================
+// UX-13: Save Block to Library
+// ============================================================================
+
+/**
+ * Save the current block to the library
+ * @story UX-13 - Database Backed Blocks
+ */
+export const saveToLibraryItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.blocks.saveToLibrary.title', 'Save to Library'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition?.block) {
+            toast.error(t('notes.blocks.save.error.noBlock', 'No block to save'));
+            return;
+        }
+
+        // Get the current block
+        const currentBlock = cursorPosition.block;
+
+        // Generate a suggested name from block content
+        let suggestedName = 'My Block';
+        if (currentBlock.content && Array.isArray(currentBlock.content)) {
+            const textContent = currentBlock.content
+                .filter((item: any) => item?.text)
+                .map((item: any) => item.text)
+                .join(' ')
+                .trim();
+            if (textContent) {
+                suggestedName = textContent.slice(0, 50);
+            }
+        }
+
+        // Open the save block dialog
+        openSaveBlockDialog(currentBlock, suggestedName);
+    },
+    aliases: ['save', 'library', 'save-block', 'favorite', 'bookmark'],
+    group: 'Basic Blocks',
+    icon: <Star size={18} />,
+    subtext: t('notes.blocks.saveToLibrary.description', 'Save this block for reuse'),
+});
+
 export const getCustomSlashMenuItems = (
     editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => {
@@ -1419,6 +1616,12 @@ export const getCustomSlashMenuItems = (
     const customCommands = store.customCommands
         .filter(cmd => cmd.isEnabled)
         .map(cmd => createCustomCommandItem(editor, cmd));
+
+    // UX-13: Get saved blocks menu items
+    const savedBlocksItems = getSavedBlocksMenuItems(editor);
+
+    // UX-14: Get templates menu items
+    const templatesItems = getTemplatesMenuItems(editor);
 
     return [
         // AI Commands at the top
@@ -1455,8 +1658,14 @@ export const getCustomSlashMenuItems = (
         insertColumnBlock(editor),
         // UX-12: Synced Blocks
         insertSyncedBlock(editor),
+        // UX-13: Save to Library
+        saveToLibraryItem(editor),
         // UX-13: Recently used commands section (if any)
         ...(recentCommands.length > 0 ? recentCommands : []),
+        // UX-13: Saved Blocks section
+        ...savedBlocksItems,
+        // UX-14: Templates section
+        ...templatesItems,
         // User-defined custom commands
         ...customCommands,
         // Default BlockNote items

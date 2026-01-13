@@ -2,8 +2,9 @@
  * @fileoverview React hook for streaming AI content generation
  * @module lib/notes/use-streaming-ai
  * @story EPIC-42-10 - Streaming output to blocks
+ * @story UX-15 - Streaming Animations (enhanced with tokens and typing indicator)
  * @created 2026-01-13
- * 
+ *
  * Provides a hook for streaming AI content generation with progressive
  * block updates in the editor.
  */
@@ -74,9 +75,16 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
 
     // Ref to track the streaming placeholder block ID
     const placeholderBlockRef = useRef<string | null>(null);
-    
-    // Get loading store actions
-    const { startBlockLoading, stopBlockLoading, updateLoadingMessage } = useAILoadingStore.getState();
+
+    // Get loading store actions (UX-15: includes new streaming methods)
+    const {
+        startBlockLoading,
+        stopBlockLoading,
+        updateLoadingMessage,
+        updateTypingState,
+        updateCharCount,
+        // updateTokenCount - TODO: Add when ProviderService exposes token usage
+    } = useAILoadingStore.getState();
 
     /**
      * Cancel ongoing streaming
@@ -90,13 +98,14 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
                 message: 'Cancelled',
                 abortController: null,
             }));
-            
+
             // Clean up loading state
             if (placeholderBlockRef.current) {
                 stopBlockLoading(placeholderBlockRef.current);
+                updateTypingState(placeholderBlockRef.current, false); // UX-15: Clear typing state
             }
         }
-    }, [state.abortController, stopBlockLoading]);
+    }, [state.abortController, stopBlockLoading, updateTypingState]);
 
     /**
      * Stream content from AI and insert into editor
@@ -161,6 +170,7 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
             // Start loading indicator
             if (placeholderBlockId) {
                 startBlockLoading(placeholderBlockId, 'AI Generation', 'Generating...');
+                updateTypingState(placeholderBlockId, true); // UX-15: Show typing indicator
             }
 
             // Stream content
@@ -181,7 +191,7 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
                 // Accumulate content
                 if (chunk.text) {
                     fullContent += chunk.text;
-                    
+
                     // Update state
                     setState(prev => ({
                         ...prev,
@@ -201,13 +211,19 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
                             editor.updateBlock(placeholderBlockId, {
                                 content: [{ type: 'text', text: fullContent + (chunk.done ? '' : '▋'), styles: {} }],
                             });
-                            
+
+                            // UX-15: Update character count in loading store
+                            updateCharCount(placeholderBlockId, fullContent.length);
+
                             // Update loading message
                             updateLoadingMessage(placeholderBlockId, `${fullContent.length} chars...`);
                         } catch (e) {
                             console.debug('Block update skipped:', e);
                         }
                     }
+
+                    // Note: Token count tracking would be added here when ProviderService
+                    // exposes token usage information in the chunk (UX-15 future enhancement)
                 }
 
                 // Handle completion
@@ -246,6 +262,7 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
 
             // Stop loading indicator
             if (placeholderBlockId) {
+                updateTypingState(placeholderBlockId, false); // UX-15: Clear typing indicator
                 stopBlockLoading(placeholderBlockId);
             }
 
@@ -275,6 +292,7 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
 
             // Clean up loading state
             if (placeholderBlockId) {
+                updateTypingState(placeholderBlockId, false); // UX-15: Clear typing indicator
                 stopBlockLoading(placeholderBlockId);
             }
 
@@ -283,7 +301,7 @@ export function useStreamingAI(editor: BlockNoteEditor | null) {
 
             return fullContent;
         }
-    }, [editor, startBlockLoading, stopBlockLoading, updateLoadingMessage]);
+    }, [editor, startBlockLoading, stopBlockLoading, updateLoadingMessage, updateTypingState, updateCharCount]);
 
     /**
      * Reset state

@@ -209,6 +209,19 @@ code {
   }
 }
 
+/* UX-15: Typing indicator bounce animation for streaming AI */
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }

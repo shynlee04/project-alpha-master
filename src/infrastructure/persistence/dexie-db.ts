@@ -192,6 +192,18 @@ export type {
 export { generatePluginId, generateStorageId } from './dexie-db-plugin-types';
 
 // ============================================================================
+// UX-13: Saved Blocks Types
+// ============================================================================
+
+export type {
+    SavedBlockRecord,
+    SavedBlocksTable,
+    SavedBlockTemplate,
+    SavedBlockWithMeta,
+    SavedBlockType,
+} from './dexie-db-block-types';
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 

@@ -75,6 +75,8 @@ import { toast } from 'sonner';
 
 import { getCustomSlashMenuItems } from './AISlashCommand';
 import { NoteStudyMenu } from './NoteStudyMenu';
+// UX-13: Save Block Dialog
+import { SaveBlockDialog, useSaveBlockDialog } from './SaveBlockDialog';
 import { AIPromptDialog } from './AIPromptDialog';
 import { AITransformMenu } from './AITransformMenu';
 import { AIInsertionDialog } from './AIInsertionDialog';
@@ -449,6 +451,9 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const isIndexing = useIsNoteIndexing(noteId);
     const isNoteDirty = useNoteStore((state) => state.isNoteDirty(noteId));
     const saveNoteToFile = useNoteStore((state) => state.saveNoteToFile);
+
+    // UX-13: Save Block Dialog state
+    const saveBlockDialog = useSaveBlockDialog();
 
     // 45-05: Scroll position preservation
     const contentRef = useRef<HTMLDivElement>(null);
@@ -995,6 +1000,15 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 <AIPromptDialog />
                 <AIInsertionDialog />
                 <AITransformMenu editor={editor as any} />
+                {/* UX-13: Save Block Dialog */}
+                {saveBlockDialog.isOpen && saveBlockDialog.block && (
+                    <SaveBlockDialog
+                        block={saveBlockDialog.block}
+                        open={saveBlockDialog.isOpen}
+                        suggestedName={saveBlockDialog.suggestedName}
+                        onOpenChange={saveBlockDialog.close}
+                    />
+                )}
             </div>
 
             {/* 43-04: AI Suggestions Panel - Floating panel when showSuggestions is true */}
