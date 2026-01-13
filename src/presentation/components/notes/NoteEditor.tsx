@@ -52,6 +52,8 @@ import { TransformPipelineBlock } from './blocks/TransformPipelineBlock';
 import { ArtifactGalleryBlock } from './blocks/ArtifactGalleryBlock';
 // 44-12: Multi-Step Generation with Blur Animation Block
 import { MultiStepGenerationBlock } from './blocks/MultiStepGenerationBlock';
+// UX-09: Toggle and Callout Blocks
+import { CalloutBlock } from './blocks/CalloutBlock';
 
 // P1.5-03: Block type alias for compatibility with custom schema
 // Using 'any' because the custom schema creates complex generic types
@@ -237,7 +239,8 @@ function sanitizeBlocks(blocks: any[]): any[] {
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
-                'transformPipeline', 'artifactGallery', 'multiStepGeneration'
+                'transformPipeline', 'artifactGallery', 'multiStepGeneration',
+                'callout' // UX-09: Callout blocks have custom props (calloutType)
             ]);
 
             if (customBlockTypes.has(blockType)) {
@@ -330,6 +333,8 @@ const schema = BlockNoteSchema.create({
         artifactGallery: ArtifactGalleryBlock(),
         // 44-12: Multi-Step Generation with Blur Animation Block
         multiStepGeneration: MultiStepGenerationBlock(),
+        // UX-09: Callout Block (Notion-style info boxes)
+        callout: CalloutBlock(),
     },
 });
 
@@ -799,14 +804,15 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     }, [noteId, saveNoteToFile, t]);
 
     // UX-07: Handle AI action selection from InBlockAIPopup
+    // UX-08: Updated to support below_cursor mode
     const handleAIActionSelect = useCallback(async (action: AIAction, scope: ContextScope) => {
         // Import executeAICommand dynamically to avoid circular dependency
         const { executeAICommand } = await import('./AISlashCommand');
 
         // Map ContextScope to ContextMode
-        const contextModeMap: Record<ContextScope['mode'], 'above_cursor' | 'all' | 'none' | 'selection'> = {
+        const contextModeMap: Record<ContextScope['mode'], 'above_cursor' | 'below_cursor' | 'all' | 'none' | 'selection'> = {
             'above': 'above_cursor',
-            'below': 'above_cursor', // Use above_cursor for below (will use content above insertion point)
+            'below': 'below_cursor', // Use content below cursor (UX-08)
             'all': 'all',
             'selection': 'selection',
         };

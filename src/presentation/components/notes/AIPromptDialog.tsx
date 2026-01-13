@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, Loader2, Bot, ChevronDown, FileText, ArrowUp, Ban, TextSelect, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Sparkles, Loader2, Bot, ChevronDown, FileText, ArrowUp, ArrowDown, Ban, TextSelect, Eye, EyeOff, AlertTriangle } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -46,7 +46,7 @@ export function AIPromptDialog() {
     // Get context based on current mode
     const getContextByMode = (): { text: string; blocks: Block[] | undefined } => {
         if (!editor) return { text: '', blocks: undefined };
-        
+
         switch (contextMode) {
             case 'above_cursor': {
                 try {
@@ -66,6 +66,28 @@ export function AIPromptDialog() {
                         .filter(Boolean)
                         .join('\n\n');
                     return { text, blocks: blocksAbove };
+                } catch {
+                    return { text: '', blocks: undefined };
+                }
+            }
+            case 'below_cursor': {
+                try {
+                    const cursorPosition = editor.getTextCursorPosition();
+                    if (!cursorPosition?.block?.id) {
+                        return { text: '', blocks: undefined };
+                    }
+                    const currentBlockId = cursorPosition.block.id;
+                    const allBlocks = editor.document;
+                    const currentIndex = allBlocks.findIndex(b => b.id === currentBlockId);
+                    if (currentIndex < 0 || currentIndex >= allBlocks.length - 1) {
+                        return { text: '', blocks: undefined };
+                    }
+                    const blocksBelow = allBlocks.slice(currentIndex + 1);
+                    const text = blocksBelow
+                        .map(block => extractBlockText(block))
+                        .filter(Boolean)
+                        .join('\n\n');
+                    return { text, blocks: blocksBelow };
                 } catch {
                     return { text: '', blocks: undefined };
                 }
@@ -108,6 +130,7 @@ export function AIPromptDialog() {
     const getContextModeIcon = (mode: ContextMode) => {
         switch (mode) {
             case 'above_cursor': return <ArrowUp className="w-4 h-4" />;
+            case 'below_cursor': return <ArrowDown className="w-4 h-4" />;
             case 'all': return <FileText className="w-4 h-4" />;
             case 'selection': return <TextSelect className="w-4 h-4" />;
             case 'none': return <Ban className="w-4 h-4" />;
@@ -278,6 +301,15 @@ export function AIPromptDialog() {
                                             </div>
                                             <span className="text-xs text-muted-foreground pl-6">
                                                 {CONTEXT_MODE_LABELS.above_cursor.description[locale]}
+                                            </span>
+                                        </DropdownMenuRadioItem>
+                                        <DropdownMenuRadioItem value="below_cursor" className="flex-col items-start gap-1">
+                                            <div className="flex items-center gap-2">
+                                                <ArrowDown className="w-4 h-4" />
+                                                <span>{CONTEXT_MODE_LABELS.below_cursor[locale]}</span>
+                                            </div>
+                                            <span className="text-xs text-muted-foreground pl-6">
+                                                {CONTEXT_MODE_LABELS.below_cursor.description[locale]}
                                             </span>
                                         </DropdownMenuRadioItem>
                                         <DropdownMenuRadioItem value="all" className="flex-col items-start gap-1">

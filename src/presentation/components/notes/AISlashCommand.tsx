@@ -28,6 +28,8 @@ import {
     Workflow,
     FolderOpen,
     Layers,
+    Info,
+    ChevronRight,
 } from 'lucide-react';
 import { useAIPromptStore } from '@/lib/notes/ai-prompt-store';
 import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
@@ -290,14 +292,78 @@ function getBlocksAboveCursor(editor: BlockNoteEditor): Block[] {
 }
 
 /**
+ * Get text BELOW the current cursor position
+ * @story UX-08 - Context Scope Selection (below_cursor mode)
+ */
+function getTextBelowCursor(editor: BlockNoteEditor): string {
+    try {
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition?.block?.id) {
+            return '';
+        }
+
+        const currentBlockId = cursorPosition.block.id;
+        const allBlocks = editor.document;
+
+        // Find index of current block
+        const currentIndex = allBlocks.findIndex(b => b.id === currentBlockId);
+
+        if (currentIndex < 0 || currentIndex >= allBlocks.length - 1) {
+            // No blocks below cursor
+            return '';
+        }
+
+        // Get blocks from currentIndex+1 to end (content below cursor)
+        const blocksBelow = allBlocks.slice(currentIndex + 1);
+
+        return blocksBelow
+            .map(block => extractBlockText(block))
+            .filter(Boolean)
+            .join('\n\n');
+    } catch (error) {
+        console.warn('[AISlashCommand] Failed to get text below cursor:', error);
+        return '';
+    }
+}
+
+/**
+ * Get blocks BELOW the current cursor position
+ * @story UX-08 - Context Scope Selection (below_cursor mode)
+ */
+function getBlocksBelowCursor(editor: BlockNoteEditor): Block[] {
+    try {
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition?.block?.id) {
+            return [];
+        }
+
+        const currentBlockId = cursorPosition.block.id;
+        const allBlocks = editor.document;
+
+        const currentIndex = allBlocks.findIndex(b => b.id === currentBlockId);
+
+        if (currentIndex < 0 || currentIndex >= allBlocks.length - 1) {
+            return [];
+        }
+
+        return allBlocks.slice(currentIndex + 1);
+    } catch (error) {
+        console.warn('[AISlashCommand] Failed to get blocks below cursor:', error);
+        return [];
+    }
+}
+
+/**
  * Context mode options for AI commands
  * @story EPIC-42-01 - Block-above-cursor context extraction
+ * @story UX-08 - Context Scope Selection (added below_cursor mode)
  */
-export type ContextMode = 'above_cursor' | 'all' | 'none' | 'selection';
+export type ContextMode = 'above_cursor' | 'below_cursor' | 'all' | 'none' | 'selection';
 
 /**
  * Get context based on mode
  * @story EPIC-42-01 - Block-above-cursor context extraction
+ * @story UX-08 - Context Scope Selection (added below_cursor mode)
  */
 function getContextByMode(editor: BlockNoteEditor, mode: ContextMode): {
     text: string;
@@ -308,6 +374,11 @@ function getContextByMode(editor: BlockNoteEditor, mode: ContextMode): {
             return {
                 text: getTextAboveCursor(editor),
                 blocks: getBlocksAboveCursor(editor),
+            };
+        case 'below_cursor':
+            return {
+                text: getTextBelowCursor(editor),
+                blocks: getBlocksBelowCursor(editor),
             };
         case 'all':
             return {
@@ -1108,6 +1179,77 @@ function createCustomCommandItem(
     };
 }
 
+// ============================================================================
+// UX-09: Toggle and Callout Blocks
+// ============================================================================
+
+/**
+ * Insert a toggle list item (collapsible list)
+ */
+export const insertToggleListItem = (editor: BlockNoteEditor) => ({
+    title: t('notes.blocks.toggle', 'Toggle List'),
+    onItemClick: () => {
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition) return;
+
+        // Insert a toggle list item block
+        editor.insertBlocks(
+            [
+                {
+                    type: 'toggleListItem',
+                    content: [{ type: 'text', text: '', styles: {} }],
+                    children: [],
+                },
+            ],
+            cursorPosition.block
+        );
+    },
+    aliases: ['toggle', 'collapsible', 'accordion', 'togglelist'],
+    group: 'Basic Blocks',
+    icon: <ChevronRight size={18} />,
+    subtext: t('notes.blocks.toggle.description', 'Collapsible list item'),
+});
+
+/**
+ * Insert a callout block (info/warning/error/success/tip)
+ */
+export const insertCalloutBlock = (editor: BlockNoteEditor, calloutType: 'info' | 'warning' | 'error' | 'success' | 'tip' = 'info') => {
+    const typeLabels = {
+        info: t('notes.blocks.callout.info', 'Info Callout'),
+        warning: t('notes.blocks.callout.warning', 'Warning Callout'),
+        error: t('notes.blocks.callout.error', 'Error Callout'),
+        success: t('notes.blocks.callout.success', 'Success Callout'),
+        tip: t('notes.blocks.callout.tip', 'Tip Callout'),
+    };
+
+    return {
+        title: typeLabels[calloutType],
+        onItemClick: () => {
+            const cursorPosition = editor.getTextCursorPosition();
+            if (!cursorPosition) return;
+
+            // Insert a callout block
+            editor.insertBlocks(
+                [
+                    {
+                        type: 'callout',
+                        props: {
+                            calloutType: calloutType,
+                            textAlignment: 'left',
+                        },
+                        content: [{ type: 'text', text: '', styles: {} }],
+                    },
+                ],
+                cursorPosition.block
+            );
+        },
+        aliases: ['callout', 'info', 'alert', 'note', calloutType],
+        group: 'Basic Blocks',
+        icon: <Info size={18} />,
+        subtext: t('notes.blocks.callout.description', 'Highlighted callout box'),
+    };
+};
+
 export const getCustomSlashMenuItems = (
     editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => {
@@ -1138,6 +1280,13 @@ export const getCustomSlashMenuItems = (
         generateQuestionsItem(editor),
         translateNoteItem(editor),
         generateFlashcardsItem(editor),
+        // UX-09: Toggle and Callout blocks
+        insertToggleListItem(editor),
+        insertCalloutBlock(editor, 'info'),
+        insertCalloutBlock(editor, 'warning'),
+        insertCalloutBlock(editor, 'error'),
+        insertCalloutBlock(editor, 'success'),
+        insertCalloutBlock(editor, 'tip'),
         // User-defined custom commands
         ...customCommands,
         // Default BlockNote items

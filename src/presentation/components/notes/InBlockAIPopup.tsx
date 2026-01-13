@@ -42,7 +42,7 @@ export interface AIAction {
     icon: React.ComponentType<{ className?: string; size?: number }>;
     prompt: string;
     commandName: string;
-    contextMode?: 'above_cursor' | 'all' | 'none' | 'selection';
+    contextMode?: 'above_cursor' | 'below_cursor' | 'all' | 'none' | 'selection';
 }
 
 export interface InBlockAIPopupProps {

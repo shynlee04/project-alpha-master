@@ -8,6 +8,7 @@
  * - CodeFileBlock: Syntax-highlighted code files
  * - FileAttachmentBlock: Generic file attachments
  * - EmbedBlock: Rich embeds (YouTube, Twitter, GitHub, Spotify, etc.)
+ * - CalloutBlock: UX-09 - Notion-style callout blocks with icons
  */
 
 // Re-export all blocks
@@ -16,4 +17,8 @@ export { CodeFileBlock, createCodeFileBlock } from "./CodeFileBlock";
 export { FileAttachmentBlock, createFileAttachmentBlock } from "./FileAttachmentBlock";
 export { EmbedBlock } from "./EmbedBlock";
 export type { EmbedProvider } from "./embed-block-types";
+
+// UX-09: Callout blocks
+export { CalloutBlock, createCalloutContent, getCalloutIcon } from "./CalloutBlock";
+export type { CalloutType } from "./CalloutBlock";
 

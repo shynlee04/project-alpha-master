@@ -5,8 +5,9 @@ import type { BlockNoteEditor } from '@blocknote/core';
 /**
  * Context mode for AI prompt generation
  * @story EPIC-42-02 - Context toggle in AI prompt dialog
+ * @story UX-08 - Context Scope Selection (added below_cursor mode)
  */
-export type ContextMode = 'above_cursor' | 'all' | 'none' | 'selection';
+export type ContextMode = 'above_cursor' | 'below_cursor' | 'all' | 'none' | 'selection';
 
 /**
  * Labels for context mode options (for UI display)
@@ -18,6 +19,14 @@ export const CONTEXT_MODE_LABELS: Record<ContextMode, { en: string; vi: string; 
         description: {
             en: 'Only include blocks above your cursor position',
             vi: 'Chỉ bao gồm các khối phía trên vị trí con trỏ',
+        },
+    },
+    below_cursor: {
+        en: 'Content below cursor',
+        vi: 'Nội dung phía dưới con trỏ',
+        description: {
+            en: 'Only include blocks below your cursor position',
+            vi: 'Chỉ bao gồm các khối phía dưới vị trí con trỏ',
         },
     },
     all: {
