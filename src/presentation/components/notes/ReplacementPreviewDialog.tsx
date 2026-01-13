@@ -9,7 +9,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+// Note: useTranslation is imported but we use a custom t() helper for simpler fallback handling
 import {
     Dialog,
     DialogContent,
@@ -67,7 +67,7 @@ export function ReplacementPreviewDialog({
     onAccept,
     onReject,
 }: ReplacementPreviewProps) {
-    const { t: translate } = useTranslation();
+    // Note: Using custom t() function instead of useTranslation hook
     const [isLoading, setIsLoading] = useState(false);
     const [replacementText, setReplacementText] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -293,7 +293,7 @@ function notifyPreviewListeners() {
 export function openReplacementPreview(options: Omit<ReplacementPreviewState, 'onAccept' | 'onReject'>) {
     previewState = {
         ...options,
-        onAccept: (replacementText) => {
+        onAccept: (_replacementText: string) => {
             // Will be called by dialog component
         },
         onReject: () => {
@@ -328,8 +328,9 @@ export function useReplacementPreview() {
     const open = useCallback((options: Omit<ReplacementPreviewState, 'onAccept' | 'onReject'>) => {
         previewState = {
             ...options,
-            onAccept: options.onAccept || (() => {}),
-            onReject: options.onReject || (() => {}),
+            // Provide default no-op handlers since they're omitted from options type
+            onAccept: () => {},
+            onReject: () => {},
         };
         notifyPreviewListeners();
     }, []);

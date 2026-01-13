@@ -301,6 +301,127 @@ src/
 
 ---
 
+## 🔒 ARCHITECTURAL BOUNDARIES (Non-Negotiable)
+
+> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
+> **Updated**: 2026-01-16
+
+### 6-Domain Architecture Contract
+
+| Domain | Rule | Violation = Block |
+|--------|------|-------------------|
+| **D1: Identity & Routing** | Platform contract determined ONCE at app start | Never check device type at call sites |
+| **D2: Storage Contract** | Storage type set at project creation, immutable | Never decide FSA vs IndexedDB per operation |
+| **D3: State & Persistence** | Persist FIRST, then update Zustand | Never update Zustand without DexieDB |
+| **D4: Entity Naming** | `projectId` = storage, `workspaceType` = UI enum | Never use `workspaceId` as entity ID |
+| **D5: Database** | Single ViaGentDatabase for all tables | Never create new Dexie databases |
+| **D6: File Tree** | ONE canonical location per concern | Never duplicate stores/adapters |
+
+### Canonical File Locations (ONLY USE THESE)
+
+```
+✅ CANONICAL (Use these):
+src/infrastructure/persistence/stores/project/    → Project Store
+src/infrastructure/persistence/stores/note/       → Note Store
+src/infrastructure/persistence/dexie-db.ts        → Single Dexie DB
+src/infrastructure/filesystem/                    → All FS adapters
+src/domain/services/                              → Business logic
+src/domain/types/                                 → Domain types
+
+❌ DEPRECATED (Never import from):
+src/lib/workspace/project-store/                  → ARCHIVED
+src/lib/filesystem/local-fs-adapter.ts            → ARCHIVED
+src/lib/workspace/file-sync-status-store/         → ARCHIVED
+src/lib/state/                                    → ARCHIVED
+src/stores/                                       → NEVER EXISTED
+```
+
+### Storage Contract Pattern
+
+```typescript
+// ✅ CORRECT: Storage determined once at project creation
+const project = await createProject({
+  name: "My Project",
+  storageType: getPlatformContract().storageType  // Set once, never changes
+});
+
+// ❌ WRONG: Storage decided at call site
+if (isMobile) {
+  await idbAdapter.write(...);
+} else {
+  await fsaAdapter.write(...);
+}
+```
+
+### Persist-First Pattern (Mandatory)
+
+```typescript
+// ✅ CORRECT: Persist first, then Zustand
+async createNote(input: CreateNoteInput): Promise<Note> {
+  const note = generateNote(input);
+  
+  // Step 1: Persist to DexieDB FIRST (fail-fast)
+  await db.notes.put(note);
+  
+  // Step 2: Update Zustand ONLY after persistence succeeds
+  set((state) => ({ notes: [...state.notes, note] }));
+  
+  return note;
+}
+
+// ❌ WRONG: Zustand first (data loss risk)
+async createNote(input: CreateNoteInput): Promise<Note> {
+  const note = generateNote(input);
+  set((state) => ({ notes: [...state.notes, note] }));  // Lost if DB fails!
+  await db.notes.put(note);
+  return note;
+}
+```
+
+### Route Guard Pattern (All Workspace Routes)
+
+```typescript
+// ✅ CORRECT: Every workspace route has beforeLoad guard
+export const Route = createFileRoute('/ide/$projectId')({
+  beforeLoad: async ({ params }) => {
+    const platform = getPlatformContract();
+    
+    // Platform check
+    if (!platform.canAccessIDE) {
+      throw redirect({ to: '/notes/$projectId', params });
+    }
+    
+    // Project validation
+    const project = await db.projects.get(params.projectId);
+    if (!project) {
+      throw redirect({ to: '/hub', search: { error: 'not-found' } });
+    }
+    
+    return { project, platform };
+  }
+});
+```
+
+### Entity Naming Rules
+
+| Term | Meaning | Type | Example |
+|------|---------|------|---------|
+| `projectId` | Storage container identity | `string` (UUID) | `"proj_abc123"` |
+| `workspaceType` | UI context | `'ide' \| 'notes' \| 'knowledge' \| 'study'` | `"notes"` |
+| `workspaceBindings` | Which workspaces can access project | `WorkspaceBindings` | `{ ide: true, notes: true }` |
+
+```typescript
+// ❌ NEVER: These patterns cause bugs
+const id = workspaceId || projectId;  // Confusing fallback
+const workspace = projects.find(p => p.workspaceId === id);  // Wrong field
+
+// ✅ ALWAYS: Clear intent
+const project = projects.find(p => p.id === projectId);
+const canAccessIDE = project.workspaceBindings.ide;
+```
+
+---
+
 ## 🎨 8-bit Design Tokens
 
 ```css

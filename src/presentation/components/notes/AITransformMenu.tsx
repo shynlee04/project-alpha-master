@@ -21,7 +21,6 @@ import {
     Expand,
     Languages,
     FileText,
-    Loader2,
     X,
     AlertCircle,
     MessageSquare,
@@ -29,7 +28,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { Input } from '@/presentation/components/ui/input';
-import { generateNoteContent, NoteAIError } from '@/lib/notes/note-ai-service';
+import { generateNoteContent } from '@/lib/notes/note-ai-service';
 import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
 import { ReplacementPreviewDialog } from './ReplacementPreviewDialog';
 import { toast } from 'sonner';
@@ -95,8 +94,9 @@ const createTransformActions = (t: (key: string, fallback: string) => string): A
 export function AITransformMenu({ editor }: AITransformMenuProps) {
     const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [loadingAction, setLoadingAction] = useState<string | null>(null);
+    // Note: isLoading and loadingAction are reserved for future loading states (EPIC-42-03)
+    const [_isLoading, _setIsLoading] = useState(false);
+    const [_loadingAction, _setLoadingAction] = useState<string | null>(null);
     const [selectedText, setSelectedText] = useState('');
     // EPIC-42-07 & 42-08: Custom prompt input in transform bar
     const [showCustomPrompt, setShowCustomPrompt] = useState(false);
@@ -197,20 +197,19 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
     const applyReplacement = useCallback((replacementText: string) => {
         const selection = editor.getSelection();
         if (selection && selection.blocks.length > 0) {
-            // Parse the result as blocks
-            editor.tryParseMarkdownToBlocks(replacementText).then((newBlocks) => {
-                if (newBlocks.length > 0) {
-                    // Get the first selected block ID
-                    const firstBlockId = selection.blocks[0].id;
+            // Parse the result as blocks (tryParseMarkdownToBlocks is synchronous)
+            const newBlocks = editor.tryParseMarkdownToBlocks(replacementText);
+            if (newBlocks.length > 0) {
+                // Get the first selected block ID
+                const firstBlockId = selection.blocks[0].id;
 
-                    // Insert new blocks after the first selected block
-                    editor.insertBlocks(newBlocks, firstBlockId, 'after');
+                // Insert new blocks after the first selected block
+                editor.insertBlocks(newBlocks, firstBlockId, 'after');
 
-                    // Remove the original selected blocks
-                    const blockIdsToRemove = selection.blocks.map(b => b.id);
-                    editor.removeBlocks(blockIdsToRemove);
-                }
-            });
+                // Remove the original selected blocks
+                const blockIdsToRemove = selection.blocks.map(b => b.id);
+                editor.removeBlocks(blockIdsToRemove);
+            }
         }
 
         toast.success(t('notes.ai.transform.success', 'Text transformed successfully'));
@@ -251,8 +250,8 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
 
     const handleCancel = () => {
         setIsOpen(false);
-        setIsLoading(false);
-        setLoadingAction(null);
+        _setIsLoading(false);
+        _setLoadingAction(null);
         setSelectedText('');
         setShowCustomPrompt(false);
         setCustomPrompt('');

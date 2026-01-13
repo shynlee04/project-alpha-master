@@ -1,46 +1,46 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.3 - CORRECT-COURSE PHASE 2 (SURVIVAL - Handle Persistence)
+# BMM WORKFLOW STATUS v2.4 - CORRECT-COURSE (Architectural Remediation Planning)
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.3.0"
-last_updated: "2026-01-15T18:00:00+07:00"
-updated_by: "EXCALIBUR - Added PS-04/PS-05/PS-06 for Critical User Issues"
-previous_version: "bmm-workflow-status-v2.2.yaml"
+schema_version: "2.4.0"
+last_updated: "2026-01-16T16:00:00+07:00"
+updated_by: "BMAD Master - Correct-Course Phase 6 (Awaiting Authorization)"
+previous_version: "bmm-workflow-status-v2.3.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 75  # Improved - Critical P0 audit issues fixed (route guards, restoration)
+health_score: 60  # Lowered - Foundation collapse identified, remediation planned
 context_ttl: "24h"
-current_phase: "CORRECT-COURSE"
+current_phase: "CORRECT-COURSE-PLANNING"
 
 # PHASE GUIDANCE
 phase_guidance: |
-  CORRECT-COURSE PHASE 2 - SURVIVAL (Handle Persistence & VFS):
-  Focus on fixing CRITICAL user-reported issues:
+  CORRECT-COURSE ARCHITECTURAL REMEDIATION - PHASE 6 (AWAITING AUTHORIZATION):
   
-  1. URI-01: Handle Persistence (PS-04) - CRITICAL
-     - Projects don't persist on browser refresh
-     - FileSystemDirectoryHandle can't be serialized
-     - Solution: Store metadata, restore on demand
+  CRITICAL: Foundation collapse identified. Notes/IDE non-functional due to:
+  1. D1: Broken routing (useWorkspaceAccess returns empty) - PARTIALLY FIXED
+  2. D2: Storage contract violation (FSA vs IndexedDB decided per-call)
+  3. D3: State fragmentation (59 store files, STUB implementations)
+  4. D4: Entity naming collision (project vs workspace)
+  5. D5: Database silos (11 separate IndexedDB databases)
+  6. D6: File tree pollution (duplicate stores in lib/ and infrastructure/)
   
-  2. URI-02: VFS Tree Structure (PS-05) - CRITICAL
-     - Folders-in-folders not displayed
-     - Currently using flat hash map
-     - Solution: Implement hierarchical VFS
+  COMPLETED TODAY:
+  - Fixed useWorkspaceAccess hook (workspace-access-helper.tsx)
+  - Fixed browser-mode.ts direct Dexie persistence
+  - Fixed 10 TypeScript errors (AITransformMenu, ReplacementPreviewDialog)
+  - Created comprehensive remediation plan
+  - Updated CLAUDE.md with architectural boundaries
+  - Updated AGENTS.md with file tree governance
   
-  3. URI-03: Hot Reactive Sync (PS-02-B) - HIGH
-     - External file changes not detected
-     - watch() exists but disconnected
-     - Solution: Connect to UI
+  AWAITING USER DECISION:
+  1. Storage Architecture: Cross-workspace projects (Option B) or per-workspace?
+  2. Mobile IDE Access: Hard block or read-only preview?
+  3. Database Consolidation Timing: Now or after routing stable?
   
-  4. URI-04: RAG Infrastructure (PS-06) - MEDIUM
-     - No semantic search capability
-     - Solution: Chunking + Embedding + Index services
-  
-  Team B Priority Order: PS-02-A → PS-04 → PS-02-B → PS-05 → PS-06
-  Team A continues: BYOK-02 → BYOK-04
+  PLAN DOCUMENT: _bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md
   
 # TEAMS
 teams:

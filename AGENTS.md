@@ -114,6 +114,118 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | `_bmad-ext/orchestrator/escalation-protocol.md` | Failure handling | On failure |
 | `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
+| `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md` | Architectural remediation plan | Before any refactoring |
+
+---
+
+## 🗂️ FILE TREE GOVERNANCE (Strict Enforcement)
+
+> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
+> **Updated**: 2026-01-16
+> **Enforcement**: MANDATORY - All file changes must follow these rules
+
+### Canonical Directory Structure
+
+```
+src/
+├── routes/                          # TanStack Router ONLY
+│   ├── __root.tsx                   # Root layout
+│   ├── index.tsx                    # Hub entry
+│   ├── notes.lazy.tsx               # Notes workspace route
+│   ├── notes.$projectId.lazy.tsx    # Notes with project
+│   ├── ide.$projectId.tsx           # IDE workspace route
+│   ├── knowledge.$projectId.tsx     # Knowledge workspace route
+│   └── study.$projectId.tsx         # Study workspace route
+│
+├── presentation/                    # React UI ONLY
+│   ├── components/                  # UI components
+│   │   ├── ui/                      # Design system primitives
+│   │   ├── common/                  # Shared components
+│   │   ├── notes/                   # Notes-specific
+│   │   ├── ide/                     # IDE-specific
+│   │   ├── knowledge/               # Knowledge-specific
+│   │   └── study/                   # Study-specific
+│   └── hooks/                       # React hooks (UI concerns only)
+│
+├── domain/                          # Business Logic ONLY
+│   ├── entities/                    # Domain entities (Project, Agent, etc.)
+│   ├── services/                    # Domain services
+│   ├── types/                       # Domain types
+│   └── interfaces/                  # Repository interfaces
+│
+├── infrastructure/                  # External Interfaces ONLY
+│   ├── persistence/                 # Data persistence
+│   │   ├── dexie-db.ts              # Single DexieDB (ViaGentDatabase)
+│   │   └── stores/                  # Zustand stores (canonical location)
+│   │       ├── project/             # Project store
+│   │       ├── note/                # Note store
+│   │       ├── agents/              # Agent stores
+│   │       └── workspace/           # Workspace stores
+│   ├── filesystem/                  # File system adapters
+│   │   ├── fsa-storage-adapter.ts   # FSA adapter (desktop)
+│   │   ├── platform-detection.ts    # Platform contract
+│   │   └── StorageAdapterFactory.ts # Storage factory
+│   ├── sync/                        # Sync services
+│   └── events/                      # Event bus
+│
+└── lib/                             # LEGACY - Migrate to above
+    ├── utils.ts                     # Keep (utility functions)
+    └── [everything else]            # DEPRECATED - Do not add new files
+```
+
+### File Change Rules
+
+| Action | Rule | Gatekeeping |
+|--------|------|-------------|
+| **CREATE** | Only in canonical directories | Block if in `src/lib/` (except utils) |
+| **MODIFY** | Check canonical location first | If duplicate exists, modify canonical only |
+| **DELETE** | Archive to `_bmad-ext/.archive/` first | Never delete without archive |
+| **MOVE** | Create facade re-export at old path | Maintain backward compatibility |
+
+### Deprecated Directories (Do NOT Add Files)
+
+```
+❌ DEPRECATED - NEVER ADD NEW FILES:
+src/lib/workspace/                   # Migrate to infrastructure/persistence/stores/
+src/lib/filesystem/                  # Migrate to infrastructure/filesystem/
+src/lib/state/                       # Migrate to infrastructure/persistence/stores/
+src/lib/sync/                        # Migrate to infrastructure/sync/
+src/lib/storage/                     # Migrate to infrastructure/persistence/
+src/stores/                          # NEVER EXISTED - Do not create
+```
+
+### Files Pending Archive (Do Not Modify)
+
+```
+⚠️ PENDING ARCHIVE - DO NOT MODIFY:
+src/lib/workspace/project-store/project-crud-slice.ts    # STUB - use infrastructure version
+src/lib/workspace/fsa-persistence.ts.bak*                # Dead code
+src/lib/workspace/file-sync-status-store/                # Duplicate
+src/lib/filesystem/local-fs-adapter.ts                   # Duplicate
+```
+
+### File Change Tracking Template
+
+When modifying files, document in story artifact:
+
+```yaml
+file_changes:
+  created:
+    - path: "src/infrastructure/filesystem/platform-detection.ts"
+      reason: "ARC-A01: Platform contract implementation"
+      lines: 120
+  modified:
+    - path: "src/routes/ide.$projectId.tsx"
+      reason: "ARC-A02: Add route guard"
+      lines_changed: 25
+  archived:
+    - path: "src/lib/workspace/project-store/"
+      archive_path: "_bmad-ext/.archive/project-store-2026-01-16/"
+      reason: "ARC-E02: Consolidated to infrastructure"
+  deleted:
+    - path: "src/lib/workspace/fsa-persistence.ts.bak"
+      reason: "ARC-E01: Dead code cleanup"
+```
 
 ---
 
