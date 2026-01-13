@@ -1408,8 +1408,15 @@ export const insertSyncedBlock = (editor: BlockNoteEditor) => {
 export const getCustomSlashMenuItems = (
     editor: BlockNoteEditor
 ): DefaultReactSuggestionItem[] => {
+    const store = useSlashCommandStore.getState();
+
+    // UX-13: Get recently used commands (with usage history)
+    const recentCommands = store.getRecentCommands(5)
+        .filter(cmd => cmd.isEnabled)
+        .map(cmd => createRecentCommandItem(editor, cmd));
+
     // Get enabled custom commands from store
-    const customCommands = useSlashCommandStore.getState().customCommands
+    const customCommands = store.customCommands
         .filter(cmd => cmd.isEnabled)
         .map(cmd => createCustomCommandItem(editor, cmd));
 
@@ -1448,6 +1455,8 @@ export const getCustomSlashMenuItems = (
         insertColumnBlock(editor),
         // UX-12: Synced Blocks
         insertSyncedBlock(editor),
+        // UX-13: Recently used commands section (if any)
+        ...(recentCommands.length > 0 ? recentCommands : []),
         // User-defined custom commands
         ...customCommands,
         // Default BlockNote items
