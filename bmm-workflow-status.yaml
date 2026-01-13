@@ -107,6 +107,9 @@ current_workflow:
     - id: "TS-FIX-06"
       description: "Fix implicit any types in schema-migrations.ts"
       status: "COMPLETED"
+    - id: "BUILD-FIX-01"
+      description: "Fix Vercel SSR build errors (recharts, mermaid, blocknote exports)"
+      status: "COMPLETED"
   
   completed_stories:
     - id: "PS-01"
