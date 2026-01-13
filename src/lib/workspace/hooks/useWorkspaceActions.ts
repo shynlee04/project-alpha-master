@@ -20,6 +20,7 @@ import type { useWorkspaceState } from './useWorkspaceState';
 import type { useSyncOperations } from './useSyncOperations';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceRedirect } from '@/lib/utils/mobile-error-handling';
+import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
 
 type WorkspaceStateReturn = ReturnType<typeof useWorkspaceState>;
 type SyncOperationsReturn = ReturnType<typeof useSyncOperations>;
@@ -104,7 +105,7 @@ export function useWorkspaceActions(
                 name: handle.name,
                 folderPath: handle.name,
                 storageType: 'fsa',
-                fsaHandle: handle,
+                storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata
                 lastOpened: new Date(),
                 autoSync,
                 createdAt: new Date(),
@@ -170,7 +171,7 @@ export function useWorkspaceActions(
                 name: handle.name,
                 folderPath: handle.name,
                 storageType: 'fsa',
-                fsaHandle: handle,
+                storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata
                 lastOpened: new Date(),
                 autoSync: true,
                 createdAt: new Date(),

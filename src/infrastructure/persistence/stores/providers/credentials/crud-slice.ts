@@ -6,16 +6,18 @@
  *
  * Key Design Decisions:
  * - Owns keyMetadata state
- * - Validates keys before/after storage
+ * - Validates keys before/after storage using Zod schemas
  * - Syncs hasApiKey flag with provider configs
  * - Uses vault-slice for encryption/decryption
  *
  * @module providers/credentials/crud-slice
  * @story BYOK-01 - Split provider credentials god slice
+ * @story BYOK-02 - Add Zod Validation Schemas
  */
 
 import { StateCreator } from 'zustand';
 import type { ProviderConfig } from '../types';
+import { validateProviderApiKey as validateKeySchema } from './schemas';
 
 // ============================================================================
 // TYPES
@@ -105,13 +107,14 @@ export const createProviderCredentialsCrudSlice: StateCreator<
    * Store API key in vault and update metadata
    *
    * This method:
-   * 1. Stores the API key via vault-slice (encrypted)
-   * 2. Updates key metadata (storedAt, keyId)
-   * 3. Syncs hasApiKey flag in provider config
+   * 1. Validates API key format using Zod schemas (BYOK-02)
+   * 2. Stores the API key via vault-slice (encrypted)
+   * 3. Updates key metadata (storedAt, keyId)
+   * 4. Syncs hasApiKey flag in provider config
    *
    * @param providerId - Provider ID to store key for
    * @param apiKey - Plain text API key to encrypt and store
-   * @throws Error if vault unavailable or storage fails
+   * @throws Error if validation fails, vault unavailable, or storage fails
    */
   storeProviderKey: async (providerId: string, apiKey: string) => {
     console.log('[ProviderCredentialsCrudSlice] Storing key for:', providerId);
@@ -122,6 +125,15 @@ export const createProviderCredentialsCrudSlice: StateCreator<
     }
 
     try {
+      // BYOK-02: Validate API key format before storing
+      const validationResult = validateKeySchema(providerId, apiKey);
+      if (!validationResult.success) {
+        const error = validationResult.error || 'Invalid API key format';
+        console.error('[ProviderCredentialsCrudSlice] ❌ Validation failed:', error);
+        throw new Error(`Invalid API key format: ${error}`);
+      }
+      console.log('[ProviderCredentialsCrudSlice] ✅ Key format validated for:', providerId);
+
       // Store in vault via vault-slice
       await get().storeVaultCredential(providerId, apiKey);
 

@@ -18,10 +18,10 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings, CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
-
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';
+import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
 
 // Hub subcomponents
 import { BootSequence } from './BootSequence';
@@ -191,7 +191,7 @@ export const HubHomePage: React.FC = () => {
       const projectInput: CreateProjectInput = {
         name: handle.name,
         folderPath: handle.name,
-        fsaHandle: handle,
+        storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata instead of handle
         autoSync: true,
         bindings: {
           ide: true,

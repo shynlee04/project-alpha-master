@@ -189,7 +189,7 @@ export class HandlePersistenceService {
    */
   private async trySilentRestore(
     projectId: string,
-    record: FSAHandleRecord
+    _record: FSAHandleRecord  // Unused but kept for clarity
   ): Promise<FileSystemDirectoryHandle | null> {
     if (!isFSAAvailable()) {
       return null;

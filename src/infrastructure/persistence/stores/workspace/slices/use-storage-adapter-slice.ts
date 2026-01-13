@@ -291,7 +291,7 @@ export function useStorageAdapterSlice({
         autoSync: enabled,
       };
 
-      if (updatedProject.fsaHandle) {
+      if (updatedProject.storageMetadata) { // PS-04: Check storageMetadata instead of fsaHandle
         const saved = await saveProject(updatedProject);
         if (saved) {
           setProjectMetadata(updatedProject);
@@ -321,7 +321,7 @@ export function useStorageAdapterSlice({
         exclusionPatterns: patterns,
       };
 
-      if (updatedProject.fsaHandle) {
+      if (updatedProject.storageMetadata) { // PS-04: Check storageMetadata instead of fsaHandle
         const saved = await saveProject(updatedProject);
         if (saved) {
           setProjectMetadata(updatedProject);

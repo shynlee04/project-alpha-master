@@ -30,7 +30,8 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import type { CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
-import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
 
 // Wizard Steps
 import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
@@ -288,7 +289,9 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
         name: formData.projectName,
         folderPath: formData.projectName.toLowerCase().replace(/\s+/g, '-'),
         storageType: formData.storageType,
-        fsaHandle: formData.storageType === 'fsa' ? (formData.fsaHandle ?? null) : undefined,
+        storageMetadata: formData.storageType === 'fsa' && formData.fsaHandle
+          ? serializeHandle(formData.fsaHandle, 'ide') // PS-04: Use serializable metadata
+          : undefined,
         description: formData.projectDescription || undefined,
         tags: [formData.projectType],
         bindings: finalBindings,

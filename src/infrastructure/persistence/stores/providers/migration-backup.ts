@@ -1,6 +1,12 @@
 /**
  * Migration Backup & Rollback System
  *
+ * ⚠️ HISTORICAL CODE - PRESERVED FOR ROLLBACK/AUDIT ⚠️
+ *
+ * This migration was part of ADR-001: Provider Store Consolidation.
+ * Archive location: _bmad-ext/.archive/providers/api-key-migration-2026-01-13/
+ * Archived by: BYOK-03 (2026-01-13)
+ *
  * Provides 3-layer backup strategy for safe provider state migration:
  * - Layer 1: IndexedDB backup (automatic, 7-day retention)
  * - Layer 2: localStorage backup (immediate fallback)
@@ -8,8 +14,14 @@
  *
  * @module providers/migration-backup
  * @story 3.2 Phase 2.1 - Create backup & rollback mechanism
- * @priority P0 CRITICAL (Data loss prevention)
+ * @story BYOK-03 - Archive Legacy Migration Code (2026-01-13)
+ * @priority P0 CRITICAL (Data loss prevention) → HISTORICAL (Preserved)
  * @risk LOW - No data modification, only backup creation
+ *
+ * Status: Migration complete. System preserved for:
+ * - Restoring users from old backups
+ * - Reference for future migration patterns
+ * - Audit trail for data safety compliance
  */
 
 import type { ProviderConfig } from './types';

@@ -18,7 +18,7 @@
  */
 
 import { Suspense, lazy, type ComponentType } from 'react';
-import { useTranslation } from 'react-i18next';
+import { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
 import { type TerminalTab } from '@/lib/workspace';
@@ -57,7 +57,7 @@ export interface TerminalPanelProps {
     /** Whether initial sync has completed */
     initialSyncCompleted?: boolean;
     /** Permission state for file system access */
-    permissionState?: 'unknown' | 'prompt' | 'granted' | 'denied';
+    permissionState?: FsaPermissionState;
     /** Optional className for outer container */
     className?: string;
 }

@@ -1,5 +1,3 @@
-# _bmad-ext/agents/dev-ext.md
-
 ---
 name: "dev-ext"
 description: "Enhanced Developer Agent with orchestration hooks"

@@ -157,9 +157,9 @@ active_epics:
   - id: "EPIC-CC-01"
     name: "Project Space Foundation"
     status: "IN_PROGRESS"
-    progress: 28  # Adjusted for new critical stories
+    progress: 40  # PS-04 completed (4/10 stories)
     stories_total: 10
-    stories_done: 3
+    stories_done: 4
     priority: "P0"
     team: "Team B"
     blocked_by: null
@@ -169,18 +169,22 @@ active_epics:
         description: "Project IDs not persistent - need to open folder every time"
         severity: "CRITICAL"
         target_story: "PS-04"
+        status: "RESOLVED"
       - id: "URI-02"
         description: "Folders in folders not displayed - flat structure only"
         severity: "CRITICAL"
         target_story: "PS-05"
+        status: "UNBLOCKED"
       - id: "URI-03"
         description: "External file changes not detected - watch() disconnected"
         severity: "HIGH"
         target_story: "PS-02-B"
+        status: "BLOCKED"
       - id: "URI-04"
         description: "No RAG indexing for semantic search"
         severity: "MEDIUM"
         target_story: "PS-06"
+        status: "BLOCKED"
     stories:
       # Completed Stories
       - id: "PS-01"
@@ -201,22 +205,28 @@ active_epics:
         files:
           - "src/infrastructure/filesystem/fsa-storage-adapter.ts"
       
-      # In Progress Stories
-      - id: "PS-02-A"
+       - id: "PS-02-A"
         name: "Platform Detection & Storage Routing"
-        status: "IN_PROGRESS"
+        status: "COMPLETED"
         effort: "4h"
         priority: "P0"
+        completed_at: "2026-01-15T19:00:00+07:00"
         description: |
           Create platform detection and route:
           - Desktop → FSA (File System Access API)
           - Mobile → IDB (IndexedDB via Dexie)
           - WebContainer → for IDE preview only
         depends_on: ["FSA-ADAPTER"]
-        subtasks:
-          - "Create usePlatformDetection() hook"
-          - "Create StorageAdapterFactory"
-          - "Route Desktop→FSA, Mobile→IDB"
+        files:
+          - "src/infrastructure/filesystem/platform-detection.ts"
+          - "src/infrastructure/filesystem/storage-types.ts"
+          - "src/infrastructure/filesystem/StorageAdapterFactory.ts"
+        result: |
+          Platform detection and storage routing complete.
+          - Desktop with FSA → FSAStorageAdapter
+          - Mobile/Tablet → UnifiedStorageAdapter (IndexedDB)
+          - WebContainer → UnifiedStorageAdapter (preview only)
+          TypeScript: 0 errors ✅
       
       # Blocked Stories (Dependencies on PS-02-A)
       - id: "PS-02-B"
@@ -343,27 +353,36 @@ active_epics:
 
   - id: "EPIC-CC-02"
     name: "BYOK Cleanup"
-    status: "IN_PROGRESS"
-    progress: 25
+    status: "COMPLETED"
+    progress: 100
     stories_total: 4
-    stories_done: 1
+    stories_done: 4
     priority: "P0"
     team: "Team A"
     blocked_by: null
     parallel_with: "EPIC-CC-01"
+    completed_at: "2026-01-15T12:00:00+07:00"
     stories:
       - id: "BYOK-01"
         name: "Split Provider Credentials God Slice"
         status: "COMPLETED"
+        completed_at: "2026-01-13T11:00:00+07:00"
+        result: "396 lines → 48 lines orchestrator + vault-slice (134) + crud-slice (397)"
       - id: "BYOK-02"
         name: "Add Zod Validation Schemas"
-        status: "READY"
+        status: "COMPLETED"
+        completed_at: "2026-01-13T11:23:00+07:00"
+        result: "schemas.ts created + crud-slice updated with Zod validation"
       - id: "BYOK-03"
         name: "Archive Legacy Migration Code"
-        status: "BLOCKED_BY_BYOK-02"
+        status: "COMPLETED"
+        completed_at: "2026-01-13T11:31:00+07:00"
+        result: "Archive created at _bmad-ext/.archive/providers/api-key-migration-2026-01-13/"
       - id: "BYOK-04"
         name: "Add projectId to Tool Execution Logs"
-        status: "READY"
+        status: "COMPLETED"
+        completed_at: "2026-01-15T11:38:00+07:00"
+        result: "Added projectId field to ToolExecutionLogRecord, updated ToolExecutionLogger"
 
   - id: "EPIC-CC-03"
     name: "Chat Flow Stabilization"

@@ -100,6 +100,7 @@ export interface ToolExecutionLogRecord {
     conversationId: string;     // Foreign key to conversation thread
     messageId: string;          // Foreign key to the message containing tool call
     workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
+    projectId?: string;         // BYOK-04: Project identifier for audit trail
     toolName: string;           // e.g., 'readFile', 'writeFile', 'runCommand'
     args: unknown;              // Tool input parameters (JSON serialized)
     result?: {
@@ -128,7 +129,7 @@ export interface FSAHandleRecord {
     directoryPath: string;      // Original directory path for display
     grantedAt: number;          // When permission was granted
     lastAccessedAt: number;     // Last successful access check
-    permissionStatus: 'granted' | 'prompt' | 'denied' | 'unknown';
+    permissionStatus: 'granted' | 'prompt' | 'denied' | 'unknown' | 'dismissed';
     createdAt: number;
     updatedAt: number;
 }

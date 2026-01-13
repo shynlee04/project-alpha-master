@@ -9,6 +9,8 @@
 
 ## 🔴 NON-NEGOTIABLE BMAD RULES (Must Obey At All Times)
 
+## DO NOT RUN TYPESCRIPT check MANY TIMES --> IT IS BEST THAT YOU SAVE IT INTO TXT FILE -> ONLY ONCE ALL ERRORS ARE HANDLED CHECK WILL BE RUN AGAIN
+
 > **Source**: `_bmad-ext/orchestrator/master-orchestrator.md` | **Applies**: All platforms, workflows, iterations
 
 ### 1. ANCHOR VERIFICATION (Anti-Hallucination)

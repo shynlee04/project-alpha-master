@@ -18,8 +18,9 @@ import {
 
 /**
  * Get permission state label for display
+ * PS-04: Added 'dismissed' for user-cancelled permission dialogs
  */
-export type FsaPermissionState = 'unknown' | 'granted' | 'prompt' | 'denied';
+export type FsaPermissionState = 'unknown' | 'granted' | 'prompt' | 'denied' | 'dismissed';
 
 interface PermissionCapableHandle extends FileSystemDirectoryHandle {
   queryPermission?: (options: { mode: 'read' | 'readwrite' }) => Promise<PermissionState>;

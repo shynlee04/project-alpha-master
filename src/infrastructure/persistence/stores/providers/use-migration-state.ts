@@ -1,12 +1,23 @@
 /**
  * Migration State Hook
  *
+ * ⚠️ HISTORICAL CODE - PRESERVED FOR ROLLBACK/AUDIT ⚠️
+ *
+ * This migration was part of ADR-001: Provider Store Consolidation.
+ * Archive location: _bmad-ext/.archive/providers/api-key-migration-2026-01-13/
+ * Archived by: BYOK-03 (2026-01-13)
+ *
  * Manages loading and error states for provider state migration.
  * Provides UI feedback during backup, migration, and restore operations.
  *
  * @module providers/use-migration-state
  * @story 3.2 Phase 2.1 - Add loading states to UI
- * @priority P0 CRITICAL (User experience during migration)
+ * @story BYOK-03 - Archive Legacy Migration Code (2026-01-13)
+ * @priority P0 CRITICAL (User experience during migration) → HISTORICAL (Preserved)
+ *
+ * Status: Migration complete. Hook remains active for:
+ * - Potential rollback scenarios
+ * - UI compatibility for migration restoration
  */
 
 import { create } from 'zustand';

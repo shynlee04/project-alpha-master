@@ -19,7 +19,6 @@ import { useState, useEffect, useRef, type RefObject, type Dispatch, type SetSta
 import { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-import { getPermissionState } from '@/lib/filesystem/permission-lifecycle';
 import { getProject, type ProjectMetadata } from '@/lib/workspace/project-store';
 import { useWorkspaceStore } from '../workspace-store';
 
@@ -94,7 +93,10 @@ export function useFileLoaderSlice({
         if (project) {
           console.log('[FileLoaderSlice] Hydrated project:', project.name);
           setProjectMetadata(project);
-          setDirectoryHandle(project.fsaHandle || null);
+
+          // PS-04: FSA handle not stored in Project - set to null initially
+          // Handle will be restored via restoreProjectHandle when needed
+          setDirectoryHandle(null);
 
           // Check actual permission state based on storage type
           if (project.storageType === 'indexeddb') {
@@ -113,12 +115,9 @@ export function useFileLoaderSlice({
             } catch (err) {
               console.error('[FileLoaderSlice] Failed to create UnifiedStorageAdapter:', err);
             }
-          } else if (project.fsaHandle) {
-            const actualState = await getPermissionState(project.fsaHandle, 'readwrite');
-            console.log('[FileLoaderSlice] Actual permission state:', actualState);
-            setPermissionState(actualState);
           } else {
-            // No handle means we need to prompt for folder selection
+            // FSA projects require handle restoration via user interaction
+            // PS-04: Set permission state to 'prompt' to trigger folder picker
             setPermissionState('prompt');
           }
 

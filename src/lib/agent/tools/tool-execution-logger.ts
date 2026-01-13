@@ -18,12 +18,15 @@ export class ToolExecutionLogger {
   /**
    * Log the start of a tool execution.
    * Returns the generated log ID for later updates.
+   *
+   * BYOK-04: Added projectId parameter for audit trail.
    */
   async logExecution(
     context: ToolExecutionContext,
     toolName: string,
     args: Record<string, unknown>,
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide' // PERSIST-S002: Workspace isolation
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide', // PERSIST-S002: Workspace isolation
+    projectId?: string // BYOK-04: Project identifier for audit trail
   ): Promise<string> {
     const logId = crypto.randomUUID();
 
@@ -32,6 +35,7 @@ export class ToolExecutionLogger {
       conversationId: (context as any).conversationId || 'unknown',
       messageId: (context as any).messageId || 'unknown',
       workspaceId, // PERSIST-S002: Workspace isolation
+      projectId: projectId || context.projectId, // BYOK-04: Parameter or context fallback
       toolName,
       args,
       status: 'pending',

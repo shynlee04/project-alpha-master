@@ -71,7 +71,7 @@ function IDEWorkspace() {
       (async () => {
         const projectStore = useProjectStore.getState();
         const restoredProject = await getProject(_projectId);
-        if (restoredProject?.storageType === 'fsa' && !restoredProject.fsaHandle) {
+        if (restoredProject?.storageType === 'fsa' && !restoredProject.storageMetadata) {
           console.log('[IDERoute] Restoring FSA handle for project:', _projectId);
           await projectStore.restoreProjectHandle(_projectId);
         }

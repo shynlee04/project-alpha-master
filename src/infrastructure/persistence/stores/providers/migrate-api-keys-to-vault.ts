@@ -1,12 +1,18 @@
 /**
  * Provider API Key Migration Script
  *
+ * ⚠️ HISTORICAL CODE - PRESERVED FOR ROLLBACK/AUDIT ⚠️
+ *
+ * This migration was part of ADR-001: Provider Store Consolidation.
+ * Archive location: _bmad-ext/.archive/providers/api-key-migration-2026-01-13/
+ * Archived by: BYOK-03 (2026-01-13)
+ *
  * Migrates API keys from provider state (insecure) to encrypted credential vault (secure).
- * Part of ADR-001: Provider Store Consolidation.
  *
  * @module providers/migrate-api-keys-to-vault
  * @story 3.2 Phase 2.2 - Migration Logic Implementation
- * @priority P0 CRITICAL (Security)
+ * @story BYOK-03 - Archive Legacy Migration Code (2026-01-13)
+ * @priority P0 CRITICAL (Security) → HISTORICAL (Preserved)
  * @risk MEDIUM (Modifies data, but rollback mechanism in place)
  *
  * Security Fix:
@@ -22,6 +28,11 @@
  * 4. Verify migration success
  * 5. Clean up old apiKey fields from persisted state
  * 6. Rollback on any error
+ *
+ * Status: Migration complete for all users. This code remains for:
+ * - Rollback support for users with old backups
+ * - Audit trail for security compliance
+ * - Reference for future migration patterns
  */
 
 import type { ProviderConfig } from './types';

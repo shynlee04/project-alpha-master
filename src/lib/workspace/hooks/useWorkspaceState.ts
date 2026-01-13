@@ -14,13 +14,13 @@ export function useWorkspaceState(initialProject: ProjectMetadata | null = null)
     // State
     const [projectMetadata, setProjectMetadata] = useState<ProjectMetadata | null>(initialProject);
     const [directoryHandle, setDirectoryHandle] = useState<FileSystemDirectoryHandle | null>(
-        initialProject?.fsaHandle ?? null
+        null // PS-04: Handle restored via restoreProjectHandle when needed
     );
     const [permissionState, setPermissionState] = useState<FsaPermissionState>(
         // IndexedDB projects have auto-granted permission (no FSA handle needed)
         initialProject?.storageType === 'indexeddb' ? 'granted' :
         // FSA projects start with 'prompt' state (needs permission check)
-        initialProject?.fsaHandle ? 'prompt' : 'unknown'
+        initialProject?.storageMetadata ? 'prompt' : 'unknown'
     );
     const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
     const [syncProgress, setSyncProgress] = useState<SyncProgress | null>(null);

@@ -51,8 +51,9 @@ export interface HandleRestoreResult {
 /**
  * Permission state for FSA handles
  * NOTE: Aligned with Dexie FSAHandleRecord.permissionStatus values
+ * PS-04: Added 'dismissed' for user-cancelled permission dialogs
  */
-export type HandlePermissionState = 'granted' | 'denied' | 'prompt' | 'unknown';
+export type HandlePermissionState = 'granted' | 'denied' | 'prompt' | 'unknown' | 'dismissed';
 
 /**
  * Configuration for handle persistence operations

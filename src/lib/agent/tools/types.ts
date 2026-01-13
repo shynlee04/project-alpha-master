@@ -42,6 +42,8 @@ export interface ToolExecutionContext {
     language?: 'en' | 'vi';
     /** Tool permission manager for trust level checks */
     permissionManager?: ToolPermissionManager;
+    /** BYOK-04: Project identifier for audit trail */
+    projectId?: string;
 }
 
 /**
