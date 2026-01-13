@@ -26,8 +26,8 @@ export function MobileCapabilityBanner() {
 
     return (
         <>
-            <div className="bg-amber-100 dark:bg-amber-900/30 border-b border-amber-200 dark:border-amber-800 px-4 py-3 flex items-center justify-between text-sm">
-                <div className="flex items-center gap-3 text-amber-800 dark:text-amber-200">
+            <div className="bg-warning/10 border-b border-warning/30 px-4 py-3 flex items-center justify-between text-sm">
+                <div className="flex items-center gap-3 text-warning">
                     <WifiOff className="h-5 w-5 shrink-0" />
                     <p>
                         <span className="font-semibold block sm:inline">{t('mobileDemo.welcome')}</span>
@@ -38,7 +38,7 @@ export function MobileCapabilityBanner() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowModal(true)}
-                    className="text-amber-800 hover:text-amber-900 hover:bg-amber-200/50 dark:text-amber-200 dark:hover:text-amber-100 dark:hover:bg-amber-800/50 shrink-0 ml-2"
+                    className="text-warning hover:text-warning/90 hover:bg-warning/20 shrink-0 ml-2"
                 >
                     {t('mobileDemo.learnMore')}
                 </Button>
@@ -48,7 +48,7 @@ export function MobileCapabilityBanner() {
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                            <Info className="h-5 w-5 text-blue-500" />
+                            <Info className="h-5 w-5 text-info" />
                             {t('mobileDemo.dialogTitle')}
                         </DialogTitle>
                         <DialogDescription className="pt-2 space-y-2">
@@ -59,7 +59,7 @@ export function MobileCapabilityBanner() {
                                 <li>{t('mobileDemo.browserEdge')}</li>
                                 <li>{t('mobileDemo.browserFirefox')}</li>
                             </ul>
-                            <p className="mt-2 text-amber-600 dark:text-amber-400 font-medium">
+                            <p className="mt-2 text-warning font-medium">
                                 {t('mobileDemo.currentDeviceNote')}
                             </p>
                         </DialogDescription>

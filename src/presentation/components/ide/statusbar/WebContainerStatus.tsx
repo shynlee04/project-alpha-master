@@ -37,7 +37,7 @@ export function WebContainerStatus() {
             case 'ready':
                 return <Cloud className="w-3 h-3" />;
             case 'error':
-                return <CloudOff className="w-3 h-3 text-red-400" />;
+                return <CloudOff className="w-3 h-3 text-destructive" />;
             default:
                 return <Cloud className="w-3 h-3 opacity-50" />;
         }
@@ -59,11 +59,11 @@ export function WebContainerStatus() {
     const getTextColor = () => {
         switch (status) {
             case 'ready':
-                return 'text-emerald-400';
+                return 'text-success';
             case 'error':
-                return 'text-red-400';
+                return 'text-destructive';
             default:
-                return 'text-white/80';
+                return 'text-foreground/80';
         }
     };
 

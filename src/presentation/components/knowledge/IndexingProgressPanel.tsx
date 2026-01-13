@@ -306,19 +306,19 @@ export function IndexingProgressPanel() {
   const getStageIcon = (stage: IndexingStage) => {
     switch (stage) {
       case 'idle':
-        return <FileText className="h-4 w-4 text-gray-400" />;
+        return <FileText className="h-4 w-4 text-muted-foreground" />;
       case 'chunking':
-        return <FileText className="h-4 w-4 text-blue-500" />;
+        return <FileText className="h-4 w-4 text-info" />;
       case 'embedding':
-        return <Zap className="h-4 w-4 text-purple-500" />;
+        return <Zap className="h-4 w-4 text-purple-400" />;
       case 'indexing':
-        return <Database className="h-4 w-4 text-green-500" />;
+        return <Database className="h-4 w-4 text-success" />;
       case 'completed':
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+        return <CheckCircle2 className="h-4 w-4 text-success" />;
       case 'failed':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'cancelled':
-        return <XCircle className="h-4 w-4 text-gray-500" />;
+        return <XCircle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -346,7 +346,7 @@ export function IndexingProgressPanel() {
 
     if (indexingState.currentIndexingStage === 'chunking') {
       return (
-        <Badge variant="outline" className="gap-1 border-blue-500 text-blue-500">
+        <Badge variant="outline" className="gap-1 border-info text-info">
           <Loader2 className="h-3 w-3 animate-spin" />
           {t('indexing.status.chunking')}
         </Badge>
@@ -355,7 +355,7 @@ export function IndexingProgressPanel() {
 
     if (indexingState.currentIndexingStage === 'indexing') {
       return (
-        <Badge variant="outline" className="gap-1 border-green-500 text-green-500">
+        <Badge variant="outline" className="gap-1 border-success text-success">
           <Database className="h-3 w-3 animate-pulse" />
           {t('indexing.status.indexing')}
         </Badge>
@@ -364,7 +364,7 @@ export function IndexingProgressPanel() {
 
     if (indexingState.completedDocuments === indexingState.totalDocuments && indexingState.totalDocuments > 0) {
       return (
-        <Badge variant="outline" className="gap-1 border-green-500 text-green-500">
+        <Badge variant="outline" className="gap-1 border-success text-success">
           <CheckCircle2 className="h-3 w-3" />
           {t('indexing.status.completed')}
         </Badge>
@@ -500,9 +500,9 @@ export function IndexingProgressPanel() {
 
             {/* Error state */}
             {doc.stage === 'failed' && doc.error && (
-              <div className="mb-2 p-2 bg-red-500/10 border border-red-500/20 rounded text-xs">
-                <p className="text-red-500 font-medium mb-1">{t('indexing.error')}</p>
-                <p className="text-red-400">{doc.error}</p>
+              <div className="mb-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-xs">
+                <p className="text-destructive font-medium mb-1">{t('indexing.error')}</p>
+                <p className="text-destructive/80">{doc.error}</p>
               </div>
             )}
 

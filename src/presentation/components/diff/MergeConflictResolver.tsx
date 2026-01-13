@@ -169,7 +169,7 @@ export function MergeConflictResolver({
 
   if (!currentConflict) {
     return (
-      <div className="p-8 text-center text-slate-500">
+      <div className="p-8 text-center text-muted-foreground">
         {t('diff.noConflicts', 'No conflicts to resolve')}
       </div>
     );
@@ -190,12 +190,12 @@ export function MergeConflictResolver({
       tabIndex={0}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex items-center justify-between px-4 py-3 bg-muted text-foreground border-b border-border">
         <div className="flex items-center gap-4">
-          <h2 className="font-semibold text-sm text-slate-700 dark:text-slate-300">
+          <h2 className="font-semibold text-sm text-foreground">
             {t('diff.resolveConflicts', 'Resolve Conflicts')}
           </h2>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-muted-foreground">
             {currentIndex + 1} / {conflicts.length}
           </span>
         </div>
@@ -206,7 +206,7 @@ export function MergeConflictResolver({
             type="button"
             onClick={goToPrevious}
             disabled={currentIndex === 0}
-            className="px-3 py-1 text-xs font-medium rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            className="px-3 py-1 text-xs font-medium rounded bg-secondary text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted transition-colors"
             aria-label={t('diff.previousConflict', 'Previous conflict')}
           >
             {t('diff.previous', 'Previous')}
@@ -215,7 +215,7 @@ export function MergeConflictResolver({
             type="button"
             onClick={goToNext}
             disabled={currentIndex === conflicts.length - 1}
-            className="px-3 py-1 text-xs font-medium rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+            className="px-3 py-1 text-xs font-medium rounded bg-secondary text-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted transition-colors"
             aria-label={t('diff.nextConflict', 'Next conflict')}
           >
             {t('diff.next', 'Next')}
@@ -226,8 +226,8 @@ export function MergeConflictResolver({
       {/* Content area */}
       <div className={`flex gap-4 p-4 ${stackLayout ? 'flex-col' : ''}`}>
         {/* Current changes */}
-        <div className={`border border-slate-200 dark:border-slate-800 rounded ${stackLayout ? 'w-full' : 'flex-1'}`}>
-          <div className="px-3 py-2 bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-slate-800 font-semibold text-sm text-slate-700 dark:text-slate-300">
+        <div className={`border border-border rounded ${stackLayout ? 'w-full' : 'flex-1'}`}>
+          <div className="px-3 py-2 bg-muted border-b border-border font-semibold text-sm text-foreground">
             {t('diff.currentChanges', 'Current Changes')}
           </div>
           <div className="p-4 max-h-96 overflow-auto">
@@ -243,8 +243,8 @@ export function MergeConflictResolver({
         </div>
 
         {/* Incoming changes */}
-        <div className={`border border-slate-200 dark:border-slate-800 rounded ${stackLayout ? 'w-full' : 'flex-1'}`}>
-          <div className="px-3 py-2 bg-slate-50 dark:bg-slate-900/30 border-b border-slate-200 dark:border-slate-800 font-semibold text-sm text-slate-700 dark:text-slate-300">
+        <div className={`border border-border rounded ${stackLayout ? 'w-full' : 'flex-1'}`}>
+          <div className="px-3 py-2 bg-muted border-b border-border font-semibold text-sm text-foreground">
             {t('diff.incomingChanges', 'Incoming Changes')}
           </div>
           <div className="p-4 max-h-96 overflow-auto">
@@ -261,7 +261,7 @@ export function MergeConflictResolver({
       </div>
 
       {/* Resolution controls */}
-      <div className="px-4 py-3 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+      <div className="px-4 py-3 bg-muted border-t border-border">
         <div className="flex items-center justify-between">
           {/* Choice buttons */}
           <div className="flex items-center gap-2">
@@ -270,8 +270,8 @@ export function MergeConflictResolver({
               onClick={() => handleChoiceChange('current')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 currentChoice === 'current'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                  ? 'bg-info text-info-foreground'
+                  : 'bg-secondary text-foreground hover:bg-muted'
               }`}
             >
               {t('diff.keepCurrent', 'Keep Current')}
@@ -281,8 +281,8 @@ export function MergeConflictResolver({
               onClick={() => handleChoiceChange('incoming')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 currentChoice === 'incoming'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                  ? 'bg-info text-info-foreground'
+                  : 'bg-secondary text-foreground hover:bg-muted'
               }`}
             >
               {t('diff.acceptIncoming', 'Accept Incoming')}
@@ -292,8 +292,8 @@ export function MergeConflictResolver({
               onClick={() => handleChoiceChange('base')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 currentChoice === 'base'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                  ? 'bg-info text-info-foreground'
+                  : 'bg-secondary text-foreground hover:bg-muted'
               }`}
             >
               {t('diff.useBase', 'Use Base')}
@@ -303,8 +303,8 @@ export function MergeConflictResolver({
               onClick={() => handleChoiceChange('manual')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 currentChoice === 'manual'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                  ? 'bg-info text-info-foreground'
+                  : 'bg-secondary text-foreground hover:bg-muted'
               }`}
             >
               {t('diff.manualEdit', 'Manual Edit')}
@@ -317,7 +317,7 @@ export function MergeConflictResolver({
               <button
                 type="button"
                 onClick={onCancel}
-                className="px-4 py-2 text-sm font-medium rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                className="px-4 py-2 text-sm font-medium rounded bg-secondary text-foreground hover:bg-muted transition-colors"
               >
                 {t('common.cancel', 'Cancel')}
               </button>
@@ -326,7 +326,7 @@ export function MergeConflictResolver({
               type="button"
               onClick={handleResolve}
               disabled={resolutions.size < conflicts.length}
-              className="px-4 py-2 text-sm font-medium rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded bg-success text-success-foreground hover:bg-success/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {t('diff.resolveAll', 'Resolve All')}
             </button>
@@ -338,7 +338,7 @@ export function MergeConflictResolver({
           <textarea
             value={manualEdit}
             onChange={(e) => handleManualEditChange(e.target.value)}
-            className="mt-3 w-full h-32 px-3 py-2 font-mono text-sm border border-slate-300 dark:border-slate-700 rounded bg-background text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-3 w-full h-32 px-3 py-2 font-mono text-sm border border-border rounded bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-info"
             placeholder={t('diff.manualEditPlaceholder', 'Enter resolved content...')}
             aria-label={t('diff.manualEditLabel', 'Manual edit content')}
           />

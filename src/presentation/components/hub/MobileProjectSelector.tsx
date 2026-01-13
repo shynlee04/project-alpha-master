@@ -119,11 +119,11 @@ export function MobileProjectSelector({
     return (
         <div className={cn('bg-card border-2 border-border rounded-none p-4', className)}>
             {/* Desktop Required Notice */}
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-none p-4 mb-6">
+            <div className="bg-warning/10 border border-warning/30 rounded-none p-4 mb-6">
                 <div className="flex items-start gap-3">
-                    <Monitor className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+                    <Monitor className="h-5 w-5 text-warning shrink-0 mt-0.5" />
                     <div>
-                        <h3 className="font-semibold text-amber-500 text-sm">
+                        <h3 className="font-semibold text-warning text-sm">
                             {t('mobile.desktopRequired', 'Desktop Browser Required')}
                         </h3>
                         <p className="text-xs text-muted-foreground mt-1">

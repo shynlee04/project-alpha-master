@@ -10,6 +10,7 @@
 import type { WorkspaceBindings, Project as DomainProject, LayoutConfig } from '@/domain/entities/project';
 import type { WorkspaceType } from '@/domain/entities/workspace';
 import type { FsaPermissionState } from '@/infrastructure/filesystem';
+import type { StorageHandleMetadata } from '@/infrastructure/filesystem/handle-types';
 
 // ============================================================================
 // PROJECT ENTITY TYPES
@@ -23,13 +24,19 @@ export type { LayoutConfig };
 /**
  * Core project metadata (Infrastructure Layer)
  *
- * Extends Domain Project entity with infrastructure-specific fields:
- * - fsaHandle (FileSystemDirectoryHandle)
- * - lastKnownPermissionState (FsaPermissionState)
+ * PS-04: Changed from fsaHandle (FileSystemDirectoryHandle - UNSERIALIZABLE)
+ *        to storageMetadata (StorageHandleMetadata - SERIALIZABLE)
+ *
+ * The FileSystemDirectoryHandle cannot be persisted to IndexedDB (causes DataCloneError).
+ * Instead, we store metadata about the handle and restore it with user interaction.
  */
 export interface Project extends DomainProject {
-  /** FSA handle for directory access restoration (optional, only for 'fsa' storage type) */
-  fsaHandle?: FileSystemDirectoryHandle | null;
+  /** Storage type: 'fsa' for desktop, 'indexeddb' for mobile */
+  storageType: 'fsa' | 'indexeddb';
+  
+  /** Serializable handle metadata (NOT the actual FileSystemDirectoryHandle!) */
+  storageMetadata?: StorageHandleMetadata | null;
+  
   /** Last known permission state for faster dashboard load */
   lastKnownPermissionState?: FsaPermissionState;
 }
@@ -41,12 +48,13 @@ export interface Project extends DomainProject {
 /**
  * Input for creating a new project
  * FS-03: Added workspaceType for project ID namespacing
+ * PS-04: Replaced fsaHandle with storageMetadata
  */
 export interface CreateProjectInput {
   name: string;
   folderPath: string;
   storageType?: 'indexeddb' | 'fsa';  // Defaults to 'fsa' for backward compatibility
-  fsaHandle?: FileSystemDirectoryHandle | null;  // Required for 'fsa', null for 'indexeddb'
+  storageMetadata?: StorageHandleMetadata | null;  // PS-04: Serializable metadata instead of handle
   workspaceType?: WorkspaceType;  // FS-03: Workspace context for namespaced project IDs
   autoSync?: boolean;
   layoutState?: LayoutConfig;
@@ -59,12 +67,13 @@ export interface CreateProjectInput {
 
 /**
  * Input for updating an existing project (all fields optional)
+ * PS-04: Replaced fsaHandle with storageMetadata
  */
 export interface UpdateProjectInput {
   name?: string;
   folderPath?: string;
   storageType?: 'indexeddb' | 'fsa';
-  fsaHandle?: FileSystemDirectoryHandle | null;
+  storageMetadata?: StorageHandleMetadata | null;  // PS-04: Serializable metadata
   lastOpened?: Date;
   autoSync?: boolean;
   layoutState?: LayoutConfig;
@@ -101,6 +110,7 @@ export interface ProjectState {
 /**
  * Project CRUD methods
  * FS-03: Updated createProject to include workspaceType parameter
+ * PS-04: Changed restoreProjectHandle to return HandleRestoreResult
  */
 export interface ProjectMethods {
   createProject: (input: CreateProjectInput) => string;
@@ -110,7 +120,7 @@ export interface ProjectMethods {
   getProject: (projectId: string) => Project | undefined;
   getAllProjects: () => Project[];
   getActiveProject: () => Project | null;
-  restoreProjectHandle: (projectId: string) => Promise<FileSystemDirectoryHandle | null>;
+  restoreProjectHandle: (projectId: string) => Promise<import('@/infrastructure/filesystem/handle-types').HandleRestoreResult>;
 }
 
 /**

@@ -24,14 +24,14 @@ export interface MetadataDisplayProps {
  */
 function hashToColor(concept: string): string {
     const colors = [
-        'bg-blue-500/20 text-blue-300 border-blue-500/30',
-        'bg-green-500/20 text-green-300 border-green-500/30',
+        'bg-info/20 text-info border-info/30',
+        'bg-success/20 text-success border-success/30',
         'bg-purple-500/20 text-purple-300 border-purple-500/30',
-        'bg-orange-500/20 text-orange-300 border-orange-500/30',
+        'bg-warning/20 text-warning border-warning/30',
         'bg-pink-500/20 text-pink-300 border-pink-500/30',
         'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
-        'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
-        'bg-red-500/20 text-red-300 border-red-500/30',
+        'bg-warning/40 text-warning border-warning/30',
+        'bg-destructive/20 text-destructive border-destructive/30',
     ];
 
     // Simple hash function
@@ -65,7 +65,7 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
     }
 
     return (
-        <div className="border-t border-border-dark bg-surface-darker" role="region" aria-label={t('knowledge.metadata.title')}>
+        <div className="border-t border-border bg-secondary" role="region" aria-label={t('knowledge.metadata.title')}>
             {/* AI-analyzed badge */}
             {source.metadataExtracted && (
                 <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border-b border-primary/20" role="status" aria-label={t('knowledge.metadata.aiAnalyzed')}>
@@ -87,7 +87,7 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
 
             {/* Summary */}
             {source.summary && (
-                <div className="p-4 border-b border-border-dark">
+                <div className="p-4 border-b border-border">
                     <h3 id="metadata-summary" className="text-sm font-medium text-foreground mb-2">{t('knowledge.metadata.summary')}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed" aria-labelledby="metadata-summary">
                         {source.summary}
@@ -97,7 +97,7 @@ export function MetadataDisplay({ source }: MetadataDisplayProps) {
 
             {/* Key Concepts */}
             {source.keyConcepts && source.keyConcepts.length > 0 && (
-                <div className="p-4 border-b border-border-dark">
+                <div className="p-4 border-b border-border">
                     <h3 id="metadata-concepts" className="text-sm font-medium text-foreground mb-2">{t('knowledge.metadata.concepts')}</h3>
                     <div className="flex flex-wrap gap-2" role="list" aria-labelledby="metadata-concepts">
                         {source.keyConcepts.map((concept, index) => (

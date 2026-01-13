@@ -54,9 +54,9 @@ export const StorageUsageCard: React.FC<StorageUsageCardProps> = ({
 
   // Determine progress bar color based on usage
   const getProgressColor = () => {
-    if (percentageUsed < 50) return 'bg-green-500';
-    if (percentageUsed < 80) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (percentageUsed < 50) return 'bg-success';
+    if (percentageUsed < 80) return 'bg-warning';
+    return 'bg-destructive';
   };
 
   return (

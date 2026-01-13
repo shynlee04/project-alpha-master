@@ -32,11 +32,11 @@ export function DatabaseIndexingIndicator({
     const getStatusIcon = () => {
         switch (status) {
             case 'running':
-                return <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                return <Loader2 className="w-4 h-4 animate-spin text-info" />
             case 'completed':
-                return <CheckCircle2 className="w-4 h-4 text-green-500" />
+                return <CheckCircle2 className="w-4 h-4 text-success" />
             case 'error':
-                return <XCircle className="w-4 h-4 text-red-500" />
+                return <XCircle className="w-4 h-4 text-destructive" />
             default:
                 return <Database className="w-4 h-4 text-muted-foreground" />
         }

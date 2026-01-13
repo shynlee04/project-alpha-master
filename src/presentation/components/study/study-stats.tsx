@@ -87,7 +87,7 @@ export function StudyStatsDisplay({
 
         {/* Correct/Incorrect */}
         <div className="bg-card border border-border rounded-none p-4 text-center">
-          <div className="text-3xl font-bold text-green-500">{stats.correct}</div>
+          <div className="text-3xl font-bold text-success">{stats.correct}</div>
           <div className="text-sm text-muted-foreground mt-1">
             {t('study.stats.correct')}
           </div>
@@ -95,7 +95,7 @@ export function StudyStatsDisplay({
 
         {/* Streak */}
         <div className="bg-card border border-border rounded-none p-4 text-center">
-          <div className="text-3xl font-bold text-orange-500">
+          <div className="text-3xl font-bold text-warning">
             {streakEmoji} {stats.streak}
           </div>
           <div className="text-sm text-muted-foreground mt-1">
@@ -115,10 +115,10 @@ export function StudyStatsDisplay({
               if (count === 0) return null;
               const percentage = (count / stats.cardsStudied) * 100;
               const colors: Record<string, string> = {
-                again: 'bg-red-500',
-                hard: 'bg-orange-500',
-                good: 'bg-green-500',
-                easy: 'bg-blue-500',
+                again: 'bg-destructive',
+                hard: 'bg-warning',
+                good: 'bg-success',
+                easy: 'bg-info',
               };
 
               return (

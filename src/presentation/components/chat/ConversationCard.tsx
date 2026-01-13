@@ -246,8 +246,8 @@ export function ConversationCard({
             type="button"
             onClick={handleArchiveToggle}
             className={cn(
-              'p-1 rounded-sm border-2 text-slate-500 border-slate-600',
-              'hover:bg-slate-700 transition-colors'
+              'p-1 rounded-sm border-2 text-muted-foreground border-border',
+              'hover:bg-muted transition-colors'
             )}
             title={status === 'archived' ? t('chat.history.unarchive') : t('chat.history.archive')}
           >
@@ -263,8 +263,8 @@ export function ConversationCard({
             type="button"
             onClick={handleRename}
             className={cn(
-              'p-1 rounded-sm border-2 text-slate-500 border-slate-600',
-              'hover:bg-slate-700 transition-colors'
+              'p-1 rounded-sm border-2 text-muted-foreground border-border',
+              'hover:bg-muted transition-colors'
             )}
             title={t('chat.history.rename')}
           >
@@ -276,8 +276,8 @@ export function ConversationCard({
             type="button"
             onClick={handleDelete}
             className={cn(
-              'p-1 rounded-sm border-2 text-red-400 border-red-600',
-              'hover:bg-red-900/30 transition-colors'
+              'p-1 rounded-sm border-2 text-destructive border-destructive',
+              'hover:bg-destructive/20 transition-colors'
             )}
             title={t('chat.history.delete')}
           >
@@ -288,7 +288,7 @@ export function ConversationCard({
 
       {/* Last message preview */}
       {preview && (
-        <p className="text-xs text-slate-400 font-mono mb-2 line-clamp-2">
+        <p className="text-xs text-muted-foreground font-mono mb-2 line-clamp-2">
           {preview}
         </p>
       )}

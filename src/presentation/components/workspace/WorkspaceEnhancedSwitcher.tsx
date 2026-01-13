@@ -53,7 +53,7 @@ const WORKSPACE_METADATA: Record<
     label: 'IDE',
     icon: Laptop,
     description: 'Full development environment',
-    color: 'bg-blue-500',
+    color: 'bg-info',
   },
   knowledge: {
     label: 'Knowledge',
@@ -65,13 +65,13 @@ const WORKSPACE_METADATA: Record<
     label: 'Study',
     icon: GraduationCap,
     description: 'Focused study mode',
-    color: 'bg-green-500',
+    color: 'bg-success',
   },
   notes: {
     label: 'Notes',
     icon: FileText,
     description: 'Quick note-taking',
-    color: 'bg-yellow-500',
+    color: 'bg-warning',
   },
 };
 
@@ -211,7 +211,7 @@ export function WorkspaceEnhancedSwitcher({
             </div>
 
             {!isAvailable && (
-              <p className="text-xs text-red-500">
+              <p className="text-xs text-destructive">
                 {t('workspace.switcher.agentNotAvailable')}
               </p>
             )}
@@ -261,10 +261,10 @@ export function WorkspaceEnhancedSwitcher({
             <div className="flex items-center gap-2">
               <span className="font-medium">{metadata.label}</span>
               {isActive && (
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4 text-success" />
               )}
               {!isAvailable && (
-                <XCircle className="w-4 h-4 text-red-500" />
+                <XCircle className="w-4 h-4 text-destructive" />
               )}
             </div>
             {!compact && (
@@ -323,11 +323,11 @@ export function WorkspaceEnhancedSwitcher({
         <div className="px-2 pt-2">
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-success" />
               <span>{t('workspace.switcher.legend.available')}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <XCircle className="w-3.5 h-3.5 text-red-500" />
+              <XCircle className="w-3.5 h-3.5 text-destructive" />
               <span>{t('workspace.switcher.legend.unavailable')}</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -366,8 +366,8 @@ export function WorkspaceBadge({ workspace, agent, className }: WorkspaceBadgePr
       className={cn(
         'gap-1.5',
         isAvailable
-          ? 'bg-green-500/20 text-green-500 border-green-500/30'
-          : 'bg-red-500/20 text-red-500 border-red-500/30',
+          ? 'bg-success/20 text-success border-success/30'
+          : 'bg-destructive/20 text-destructive border-destructive/30',
         className
       )}
     >

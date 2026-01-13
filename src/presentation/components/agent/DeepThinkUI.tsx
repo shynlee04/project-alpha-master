@@ -96,8 +96,8 @@ export function DeepThinkUI({
             <div className="flex items-center gap-3">
               {/* Animated brain icon */}
               <div className="relative w-12 h-12">
-                <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-75" />
-                <div className="relative w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
+                <div className="absolute inset-0 bg-info rounded-full animate-ping opacity-75" />
+                <div className="relative w-12 h-12 bg-info rounded-full flex items-center justify-center text-info-foreground font-bold">
                   🧠
                 </div>
               </div>
@@ -121,7 +121,7 @@ export function DeepThinkUI({
             </div>
             <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
               <div
-                className="bg-blue-500 h-full transition-all duration-300 ease-out"
+                className="bg-info h-full transition-all duration-300 ease-out"
                 style={{ width: `${reasoningProgress}%` }}
               />
             </div>
@@ -134,19 +134,19 @@ export function DeepThinkUI({
           <div className="space-y-2">
             {reasoningProgress >= 20 && (
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-green-500">✓</span>
+                <span className="text-success">✓</span>
                 <span>{t('deepThink.step.analyzing')}</span>
               </div>
             )}
             {reasoningProgress >= 50 && (
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-green-500">✓</span>
+                <span className="text-success">✓</span>
                 <span>{t('deepThink.step.comparing')}</span>
               </div>
             )}
             {reasoningProgress >= 80 && (
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-green-500">✓</span>
+                <span className="text-success">✓</span>
                 <span>{t('deepThink.step.synthesizing')}</span>
               </div>
             )}
@@ -194,7 +194,7 @@ export function DeepThinkUI({
           {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 text-xl">
+              <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center text-success text-xl">
                 ✅
               </div>
               <div>
@@ -239,7 +239,7 @@ export function DeepThinkUI({
               </summary>
               <div className="px-4 py-2 space-y-2 border-t">
                 {result.reasoningSteps.map((step) => (
-                  <div key={step.step} className="pl-4 border-l-2 border-blue-500">
+                  <div key={step.step} className="pl-4 border-l-2 border-info">
                     <p className="text-sm font-semibold">{step.description}</p>
                     <p className="text-sm text-muted-foreground">{step.thought}</p>
                   </div>

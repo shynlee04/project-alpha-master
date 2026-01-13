@@ -21,19 +21,19 @@ interface QuizResultsProps {
  * Grade color mapping
  */
 const GRADE_COLORS = {
-  A: 'text-green-500',
+  A: 'text-success',
   B: 'text-lime-500',
-  C: 'text-yellow-500',
+  C: 'text-warning',
   D: 'text-orange-500',
-  F: 'text-red-500',
+  F: 'text-destructive',
 };
 
 const GRADE_BG_COLORS = {
-  A: 'bg-green-500/20',
+  A: 'bg-success/20',
   B: 'bg-lime-500/20',
-  C: 'bg-yellow-500/20',
+  C: 'bg-warning/20',
   D: 'bg-orange-500/20',
-  F: 'bg-red-500/20',
+  F: 'bg-destructive/20',
 };
 
 /**
@@ -91,7 +91,7 @@ export function QuizResults({ result, quiz, onReview, onRetake, onExit }: QuizRe
               strokeDasharray={`${(result.percentage / 100) * 440} 440`}
               className={cn(
                 'transition-all duration-1000 ease-out',
-                result.percentage >= 70 ? 'text-success' : result.percentage >= 50 ? 'text-yellow-500' : 'text-error'
+                result.percentage >= 70 ? 'text-success' : result.percentage >= 50 ? 'text-warning' : 'text-destructive'
               )}
               style={{
                 strokeDasharray: `${(result.percentage / 100) * 440} 440`,

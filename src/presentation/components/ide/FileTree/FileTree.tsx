@@ -240,7 +240,7 @@ export function FileTree({
   // Error state
   if (error) {
     return (
-      <div className={`h-full flex flex-col items-center justify-center text-red-400 p-4 ${className}`}>
+      <div className={`h-full flex flex-col items-center justify-center text-destructive p-4 ${className}`}>
         <AlertCircle size={32} className="mb-2" />
         <p className="text-sm text-center">{error}</p>
       </div>
@@ -267,13 +267,13 @@ export function FileTree({
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {fileSyncCounts.total > 0 && (
             <>
-              <span title={t('status.pendingFiles')} className="text-amber-400">
+              <span title={t('status.pendingFiles')} className="text-warning">
                 {fileSyncCounts.pending} {t('status.pending')}
               </span>
-              <span title={t('status.errorFiles')} className="text-red-400">
+              <span title={t('status.errorFiles')} className="text-destructive">
                 {fileSyncCounts.error} {t('status.error')}
               </span>
-              <span title={t('status.syncedFiles')} className="text-emerald-400">
+              <span title={t('status.syncedFiles')} className="text-success">
                 {fileSyncCounts.synced} {t('status.synced')}
               </span>
             </>

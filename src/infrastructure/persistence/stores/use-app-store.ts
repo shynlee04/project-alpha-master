@@ -32,7 +32,7 @@ import {
 } from './agents/slices';
 
 // Import provider slices (split into 3 slices to meet 300-line limit)
-import { createProviderCrudSlice } from './providers/provider-crud-slice';
+import { createProviderCrudSlice, INITIAL_PROVIDERS } from './providers/provider-crud-slice';
 import { createProviderModelsSlice } from './providers/provider-models-slice';
 import { createProviderUtilsSlice } from './providers/provider-utils-slice';
 
@@ -191,12 +191,11 @@ export const useAppStore = create<AppState>()(
         }
 
         // Ensure all built-in providers exist (merge, don't replace)
-        const { INITIAL_PROVIDERS } = require('./providers/provider-crud-slice');
-        const existingIds = new Set(state.providers?.map(p => p.id) || []);
-        const missingProviders = INITIAL_PROVIDERS.filter(p => !existingIds.has(p.id));
+        const existingIds = new Set(state.providers?.map((p: { id: string }) => p.id) || []);
+        const missingProviders = INITIAL_PROVIDERS.filter((p: { id: string }) => !existingIds.has(p.id));
 
         if (missingProviders.length > 0) {
-          console.log('[AppStore] Adding missing built-in providers:', missingProviders.map(p => p.id));
+          console.log('[AppStore] Adding missing built-in providers:', missingProviders.map((p: { id: string }) => p.id));
           state.providers = [...(state.providers || []), ...missingProviders];
         }
 

@@ -134,9 +134,9 @@ export function FileChangeDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {hasConflict ? (
-              <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
+              <AlertTriangle className="h-5 w-5 text-warning" />
             ) : (
-              <FileText className="h-5 w-5 text-blue-600 dark:text-blue-500" />
+              <FileText className="h-5 w-5 text-info" />
             )}
             {t('fileWatcher.dialog.title', 'File Changed Externally')}
           </DialogTitle>
@@ -174,9 +174,9 @@ export function FileChangeDialog({
             </div>
 
             {hasConflict && (
-              <div className="flex items-center gap-2 p-2 rounded bg-yellow-50 dark:bg-yellow-950 border-2 border-yellow-200 dark:border-yellow-900">
-                <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-500 flex-shrink-0" />
-                <span className="text-xs text-yellow-900 dark:text-yellow-200">
+              <div className="flex items-center gap-2 p-2 rounded bg-warning/10 border-2 border-warning/30">
+                <AlertTriangle className="h-4 w-4 text-warning flex-shrink-0" />
+                <span className="text-xs text-warning">
                   {t('fileWatcher.dialog.unsavedChangesWarning', 'You have unsaved changes that will be lost if you reload.')}
                 </span>
               </div>
@@ -222,7 +222,7 @@ export function FileChangeDialog({
             disabled={isProcessing}
             className={cn(
               'flex-1',
-              hasConflict && 'bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-600'
+              hasConflict && 'bg-warning hover:bg-warning/80 text-warning-foreground border-warning'
             )}
           >
             <RefreshCw className={cn('h-4 w-4 mr-1', isProcessing && 'animate-spin')} />
@@ -268,13 +268,13 @@ export function FileChangeToast({
         <div className={cn(
           'rounded p-1',
           hasConflict
-            ? 'bg-yellow-100 dark:bg-yellow-900'
-            : 'bg-blue-100 dark:bg-blue-900'
+            ? 'bg-warning/20'
+            : 'bg-info/20'
         )}>
           {hasConflict ? (
-            <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-500" />
+            <AlertTriangle className="h-4 w-4 text-warning" />
           ) : (
-            <FileText className="h-4 w-4 text-blue-600 dark:text-blue-500" />
+            <FileText className="h-4 w-4 text-info" />
           )}
         </div>
 
@@ -287,7 +287,7 @@ export function FileChangeToast({
             {t(`fileWatcher.changes.${changeType}`, changeType)}
           </p>
           {hasConflict && (
-            <p className="text-xs text-yellow-600 dark:text-yellow-500 mt-1">
+            <p className="text-xs text-warning mt-1">
               {t('fileWatcher.conflictDetected', 'Conflict: Unsaved changes')}
             </p>
           )}

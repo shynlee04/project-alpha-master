@@ -124,7 +124,7 @@ function tokenizeLine(line: string, _language?: string): ReactElement {
         const stringMatch = remaining.match(/^(['"`])(?:(?!\1)[^\\]|\\.)*\1/);
         if (stringMatch) {
             parts.push(
-                <span key={index++} className="text-green-400">
+                <span key={index++} className="text-success">
                     {stringMatch[0]}
                 </span>
             );
@@ -136,7 +136,7 @@ function tokenizeLine(line: string, _language?: string): ReactElement {
         const commentMatch = remaining.match(/^\/\/.*$/) || remaining.match(/^\/\*[\s\S]*?\*\//);
         if (commentMatch) {
             parts.push(
-                <span key={index++} className="text-gray-500 italic">
+                <span key={index++} className="text-muted-foreground italic">
                     {commentMatch[0]}
                 </span>
             );
@@ -169,14 +169,14 @@ function tokenizeLine(line: string, _language?: string): ReactElement {
             } else if (word[0] === word[0].toUpperCase() && /^[A-Z]/.test(word)) {
                 // PascalCase (likely type/class)
                 parts.push(
-                    <span key={index++} className="text-yellow-400">
+                    <span key={index++} className="text-warning">
                         {word}
                     </span>
                 );
             } else if (remaining.slice(word.length).match(/^\s*\(/)) {
                 // Function call
                 parts.push(
-                    <span key={index++} className="text-blue-400">
+                    <span key={index++} className="text-info">
                         {word}
                     </span>
                 );
@@ -191,7 +191,7 @@ function tokenizeLine(line: string, _language?: string): ReactElement {
         const opMatch = remaining.match(/^[=<>!+\-*/%&|^~?:;,.()\[\]{}]+/);
         if (opMatch) {
             parts.push(
-                <span key={index++} className="text-gray-400">
+                <span key={index++} className="text-muted-foreground">
                     {opMatch[0]}
                 </span>
             );
@@ -289,7 +289,7 @@ export function CodeBlock({
                 'shadow-md',
                 'transition-all duration-200',
                 // Accepted state
-                accepted && 'border-green-500/50 bg-green-500/5',
+                accepted && 'border-success/50 bg-success/5',
                 className
             )}
         >
@@ -346,7 +346,7 @@ export function CodeBlock({
                         className={cn(
                             'p-1 rounded-none transition-all',
                             'hover:bg-primary/20 active:translate-y-[1px]',
-                            copied ? 'text-green-500' : 'text-muted-foreground hover:text-foreground'
+                            copied ? 'text-success' : 'text-muted-foreground hover:text-foreground'
                         )}
                         aria-label={t('chat.codeBlock.copy', 'Copy')}
                     >
@@ -417,9 +417,9 @@ export function CodeBlock({
                             className={cn(
                                 'flex items-center gap-1 px-2 py-1',
                                 'text-xs font-mono font-semibold',
-                                'bg-red-500/10 text-red-500 border border-red-500/30',
+                                'bg-destructive/10 text-destructive border border-destructive/30',
                                 'rounded-none shadow-sm',
-                                'hover:bg-red-500/20 active:translate-y-[1px] active:shadow-none',
+                                'hover:bg-destructive/20 active:translate-y-[1px] active:shadow-none',
                                 'transition-all duration-150'
                             )}
                             aria-label={t('chat.codeBlock.reject', 'Reject')}
@@ -435,9 +435,9 @@ export function CodeBlock({
                             className={cn(
                                 'flex items-center gap-1 px-2 py-1',
                                 'text-xs font-mono font-semibold',
-                                'bg-green-500/10 text-green-500 border border-green-500/30',
+                                'bg-success/10 text-success border border-success/30',
                                 'rounded-none shadow-sm',
-                                'hover:bg-green-500/20 active:translate-y-[1px] active:shadow-none',
+                                'hover:bg-success/20 active:translate-y-[1px] active:shadow-none',
                                 'transition-all duration-150'
                             )}
                             aria-label={t('chat.codeBlock.accept', 'Accept')}
@@ -451,9 +451,9 @@ export function CodeBlock({
 
             {/* Accepted state indicator */}
             {accepted && (
-                <div className="flex items-center justify-center gap-2 px-3 py-2 bg-green-500/10 border-t border-green-500/30">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-xs font-mono font-semibold text-green-500">
+                <div className="flex items-center justify-center gap-2 px-3 py-2 bg-success/10 border-t border-success/30">
+                    <CheckCircle className="w-4 h-4 text-success" />
+                    <span className="text-xs font-mono font-semibold text-success">
                         {t('chat.codeBlock.accepted', 'Accepted')}
                     </span>
                 </div>

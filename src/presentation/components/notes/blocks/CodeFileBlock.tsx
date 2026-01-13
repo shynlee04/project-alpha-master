@@ -202,7 +202,7 @@ export const CodeFileBlock = createReactBlockSpec(
             </div>
             <div className="code-file-block__actions">
               {copied ? (
-                <Check size={14} className="text-green-500" />
+                <Check size={14} className="text-success" />
               ) : (
                 <button
                   type="button"

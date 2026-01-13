@@ -209,20 +209,20 @@ export function FileTreeItem({
                     <div className="ml-auto flex items-center gap-1 shrink-0">
                         {isSynced && (
                             <span title="Synced">
-                                <Check size={14} className="text-emerald-400" />
+                                <Check size={14} className="text-success" />
                             </span>
                         )}
 
                         {isPending && (
                             <span title="Pending">
-                                <Clock size={14} className="text-amber-400" />
+                                <Clock size={14} className="text-warning" />
                             </span>
                         )}
 
                         {isError && (
                             <button
                                 type="button"
-                                className="text-red-400 hover:text-red-300 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+                                className="text-destructive hover:text-destructive/80 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-destructive"
                                 aria-label={fileSyncStatus.errorMessage || 'Sync error'}
                                 title={fileSyncStatus.errorMessage || 'Sync error'}
                                 onClick={(e) => {
@@ -253,7 +253,7 @@ export function FileTreeItem({
                     className="pl-10 pr-3 py-2 text-xs text-foreground bg-card/60 border-b border-border/40"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <div className="text-red-300 break-words">
+                    <div className="text-destructive break-words">
                         {fileSyncStatus?.errorMessage ?? 'Unknown error'}
                     </div>
                     <div className="mt-2 flex items-center gap-2" role="group" aria-label="Error actions">

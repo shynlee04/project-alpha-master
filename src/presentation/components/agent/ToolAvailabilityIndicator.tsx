@@ -156,11 +156,11 @@ export function ToolAvailabilityIndicator({
   const getStatusIcon = (status: ToolAvailabilityStatus) => {
     switch (status) {
       case 'available':
-        return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+        return <CheckCircle2 className="w-4 h-4 text-success" />;
       case 'blocked':
-        return <XCircle className="w-4 h-4 text-red-500" />;
+        return <XCircle className="w-4 h-4 text-destructive" />;
       case 'unknown':
-        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+        return <AlertTriangle className="w-4 h-4 text-warning" />;
     }
   };
 
@@ -169,7 +169,7 @@ export function ToolAvailabilityIndicator({
     return (
       <div className={cn('text-sm text-muted-foreground', className)}>
         <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-yellow-500" />
+          <AlertTriangle className="w-4 h-4 text-warning" />
           <span>{t('agent.toolAvailability.noAgentSelected')}</span>
         </div>
       </div>
@@ -181,10 +181,10 @@ export function ToolAvailabilityIndicator({
     const { summary } = toolAvailability;
     const badgeColor =
       summary.percentage === 100
-        ? 'bg-green-500/20 text-green-500 border-green-500/30'
+        ? 'bg-success/20 text-success border-success/30'
         : summary.percentage >= 50
-        ? 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30'
-        : 'bg-red-500/20 text-red-500 border-red-500/30';
+        ? 'bg-warning/20 text-warning border-warning/30'
+        : 'bg-destructive/20 text-destructive border-destructive/30';
 
     return (
       <Tooltip
@@ -226,8 +226,8 @@ export function ToolAvailabilityIndicator({
           className={cn(
             'text-xs',
             summary.percentage === 100
-              ? 'bg-green-500/20 text-green-500 border-green-500/30'
-              : 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30'
+              ? 'bg-success/20 text-success border-success/30'
+              : 'bg-warning/20 text-warning border-warning/30'
           )}
         >
           {summary.available}/{summary.total} ({summary.percentage}%)
@@ -237,7 +237,7 @@ export function ToolAvailabilityIndicator({
       {/* Available Tools */}
       {available.length > 0 && (
         <div className="space-y-2">
-          <div className="text-xs font-medium text-green-500 uppercase tracking-wide">
+          <div className="text-xs font-medium text-success uppercase tracking-wide">
             {t('agent.toolAvailability.available')} ({available.length})
           </div>
           <div className="flex flex-wrap gap-2">
@@ -251,8 +251,8 @@ export function ToolAvailabilityIndicator({
                   variant="outline"
                   className={cn(
                     'cursor-help',
-                    'bg-green-500/20 text-green-500 border-green-500/30',
-                    'hover:bg-green-500/30'
+                    'bg-success/20 text-success border-success/30',
+                    'hover:bg-success/30'
                   )}
                 >
                   {getStatusIcon(tool.status)}
@@ -267,7 +267,7 @@ export function ToolAvailabilityIndicator({
       {/* Blocked Tools */}
       {blocked.length > 0 && (
         <div className="space-y-2">
-          <div className="text-xs font-medium text-red-500 uppercase tracking-wide">
+          <div className="text-xs font-medium text-destructive uppercase tracking-wide">
             {t('agent.toolAvailability.blocked')} ({blocked.length})
           </div>
           <div className="flex flex-wrap gap-2">
@@ -286,8 +286,8 @@ export function ToolAvailabilityIndicator({
                   variant="outline"
                   className={cn(
                     'cursor-help',
-                    'bg-red-500/20 text-red-500 border-red-500/30',
-                    'hover:bg-red-500/30'
+                    'bg-destructive/20 text-destructive border-destructive/30',
+                    'hover:bg-destructive/30'
                   )}
                 >
                   {getStatusIcon(tool.status)}

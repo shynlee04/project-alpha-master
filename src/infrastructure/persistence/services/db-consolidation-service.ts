@@ -10,7 +10,7 @@
  */
 
 import Dexie from 'dexie';
-import { dexieDB } from '../dexie-db';
+import { db } from '../dexie-db';
 import type {
   FlashcardRecord,
   FlashcardSetRecord,
@@ -119,7 +119,7 @@ async function consolidateFlashcards(): Promise<number> {
         createdAt: card.createdAt,
         updatedAt: Date.now(),
       };
-      await dexieDB.flashcards.put(record);
+      await db.flashcards.put(record);
       count++;
     }
 
@@ -137,7 +137,7 @@ async function consolidateFlashcards(): Promise<number> {
         createdAt: set.createdAt,
         updatedAt: set.updatedAt || Date.now(),
       };
-      await dexieDB.flashcardSets.put(record);
+      await db.flashcardSets.put(record);
       count++;
     }
 
@@ -189,7 +189,7 @@ async function consolidateStudy(): Promise<number> {
         ratings: session.ratings || '[]',
         completed: session.completed || false,
       };
-      await dexieDB.studySessions.put(record);
+      await db.studySessions.put(record);
       count++;
     }
 
@@ -204,7 +204,7 @@ async function consolidateStudy(): Promise<number> {
         srsData: card.srsData || '{}',
         lastRating: card.lastRating,
       };
-      await dexieDB.studyCards.put(record);
+      await db.studyCards.put(record);
       count++;
     }
 
@@ -257,7 +257,7 @@ async function consolidateQuizzes(): Promise<number> {
         createdAt: quiz.createdAt,
         updatedAt: quiz.updatedAt || Date.now(),
       };
-      await dexieDB.quizzes.put(record);
+      await db.quizzes.put(record);
       count++;
     }
 
@@ -277,7 +277,7 @@ async function consolidateQuizzes(): Promise<number> {
         sourceIds: q.sourceIds || [],
         createdAt: q.createdAt,
       };
-      await dexieDB.quizQuestions.put(record);
+      await db.quizQuestions.put(record);
       count++;
     }
 

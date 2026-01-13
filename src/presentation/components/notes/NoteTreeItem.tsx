@@ -133,7 +133,7 @@ export function NoteTreeItem({
                     onClick={handleFavoriteToggle}
                     className={`
                         flex-shrink-0 p-0.5 rounded hover:bg-accent/50 transition-colors
-                        ${node.note.isFavorite ? 'text-yellow-500 fill-yellow-500' : 'text-muted-foreground'}
+                        ${node.note.isFavorite ? 'text-warning fill-warning' : 'text-muted-foreground'}
                     `}
                     aria-label={node.note.isFavorite ? t('notes.unfavorite', 'Unfavorite') : t('notes.favorite', 'Favorite')}
                     aria-pressed={node.note.isFavorite}

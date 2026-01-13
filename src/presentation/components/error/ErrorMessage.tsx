@@ -56,10 +56,10 @@ export interface ErrorMessageProps {
  */
 function getSeverityStyles(severity: ErrorSeverity) {
     const styles = {
-        info: 'bg-blue-500/10 border-blue-500/30 text-blue-100',
-        warning: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-100',
-        error: 'bg-error-500/10 border-error-500/30 text-error-100',
-        critical: 'bg-destructive/10 border-destructive/30 text-destructive-100',
+        info: 'bg-info/10 border-info/30 text-info',
+        warning: 'bg-warning/10 border-warning/30 text-warning',
+        error: 'bg-destructive/10 border-destructive/30 text-destructive',
+        critical: 'bg-destructive/10 border-destructive/30 text-destructive',
     }
     return styles[severity]
 }

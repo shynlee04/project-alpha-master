@@ -110,10 +110,10 @@ export function CategoryApprovalGrid({ workspaceType, className = '' }: Category
     <div className={`category-approval-grid ${className}`}>
       {/* Header */}
       <div className="mb-3">
-        <h3 className="text-sm font-pixel text-gray-300 mb-1">
+        <h3 className="text-sm font-pixel text-muted-foreground mb-1">
           Category Approvals
         </h3>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-muted-foreground">
           Approve categories to bypass approval prompts for all tools in that category.
         </p>
       </div>
@@ -137,7 +137,7 @@ export function CategoryApprovalGrid({ workspaceType, className = '' }: Category
             setCategoryApproval(cat.id, workspaceType, false);
           });
         }}
-        className="mt-3 w-full py-1.5 text-xs bg-gray-800 hover:bg-gray-700 rounded border border-gray-700 text-gray-400"
+        className="mt-3 w-full py-1.5 text-xs bg-secondary hover:bg-muted rounded border border-border text-muted-foreground"
       >
         Reset All
       </button>
@@ -207,7 +207,7 @@ function CategoryCard({ category, approved, onToggle }: CategoryCardProps) {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-lg">{category.icon}</span>
-          <span className="text-sm font-medium text-gray-200">
+          <span className="text-sm font-medium text-foreground">
             {category.name}
           </span>
         </div>
@@ -220,18 +220,18 @@ function CategoryCard({ category, approved, onToggle }: CategoryCardProps) {
       </div>
 
       {/* Description */}
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-muted-foreground">
         {category.description}
       </p>
 
       {/* Tool count */}
-      <p className="text-xs text-gray-500 mt-1">
+      <p className="text-xs text-muted-foreground mt-1">
         {category.tools.length} {category.tools.length === 1 ? 'tool' : 'tools'}
       </p>
 
       {/* Approved indicator */}
       {approved && (
-        <div className="mt-2 flex items-center gap-1 text-xs text-green-400">
+        <div className="mt-2 flex items-center gap-1 text-xs text-success">
           <span>✓</span>
           <span>Auto-approved</span>
         </div>

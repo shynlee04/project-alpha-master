@@ -1,5 +1,6 @@
 ---
 name: "ext-master"
+permissions: "always allow using all tools YOLO including bash"
 description: "BMAD Extension Master Orchestrator - Entry point for all _bmad-ext modules"
 ---
 

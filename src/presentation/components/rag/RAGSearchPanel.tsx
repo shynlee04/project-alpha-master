@@ -248,7 +248,7 @@ function IndexStatusBadge({
 
   if (status === 'ready' && documentCount > 0) {
     return (
-      <span className="text-xs px-2 py-0.5 bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20 rounded-none">
+      <span className="text-xs px-2 py-0.5 bg-success/10 text-success border border-success/20 rounded-none">
         {t('rag.index.status.ready', 'Index Ready')}
       </span>
     );
@@ -293,7 +293,7 @@ function SearchResultCard({
           </h4>
           {/* P2-8: Show "NOTE" badge for notes indexed from Notes workspace */}
           {result.document.metadata?.sourceType === 'note' && (
-            <span className="text-xs px-1.5 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-none font-medium">
+            <span className="text-xs px-1.5 py-0.5 bg-info/10 text-info border border-info/20 rounded-none font-medium">
               NOTE
             </span>
           )}

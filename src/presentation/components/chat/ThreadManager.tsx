@@ -268,20 +268,20 @@ export function ThreadManager({
                             e.stopPropagation();
                             handleSaveEdit();
                           }}
-                          className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900 rounded-none"
+                          className="p-1.5 hover:bg-success/20 rounded-none"
                           title="Save"
                         >
-                          <Check className="w-4 h-4 text-green-600" />
+                          <Check className="w-4 h-4 text-success" />
                         </button>
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleCancelEdit();
                           }}
-                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded-none"
+                          className="p-1.5 hover:bg-destructive/20 rounded-none"
                           title="Cancel"
                         >
-                          <X className="w-4 h-4 text-red-600" />
+                          <X className="w-4 h-4 text-destructive" />
                         </button>
                       </>
                     ) : (
@@ -311,10 +311,10 @@ export function ThreadManager({
                             e.stopPropagation();
                             handleDeleteClick(thread.id);
                           }}
-                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900 rounded-none"
+                          className="p-1.5 hover:bg-destructive/20 rounded-none"
                           title="Delete"
                         >
-                          <Trash2 className="w-4 h-4 text-red-600" />
+                          <Trash2 className="w-4 h-4 text-destructive" />
                         </button>
                       </>
                     )}
@@ -364,10 +364,10 @@ export function ThreadManager({
                     e.stopPropagation();
                     unarchiveThread(thread.id);
                   }}
-                  className="p-1.5 hover:bg-green-100 dark:hover:bg-green-900 rounded-none"
+                  className="p-1.5 hover:bg-success/20 rounded-none"
                   title="Unarchive"
                 >
-                  <Folder className="w-4 h-4 text-green-600" />
+                  <Folder className="w-4 h-4 text-success" />
                 </button>
               </div>
             ))}

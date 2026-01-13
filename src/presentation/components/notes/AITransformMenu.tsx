@@ -378,7 +378,7 @@ export function AITransformMenu({ editor }: AITransformMenuProps) {
 
                 {/* No agent warning */}
                 {!hasAgent && (
-                    <div className="flex items-center gap-1 px-2 text-xs text-amber-600 dark:text-amber-400">
+                    <div className="flex items-center gap-1 px-2 text-xs text-warning">
                         <AlertCircle className="w-3 h-3" />
                         <span>{t('notes.ai.noAgentSelected', 'No agent')}</span>
                     </div>

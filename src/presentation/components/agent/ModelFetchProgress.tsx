@@ -103,7 +103,7 @@ export function ModelFetchProgress({ providerId, providerName, onFetch, onRetry 
       case 'loading':
         return (
           <div className="flex items-center gap-3">
-            <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
+            <Loader2 className="h-4 w-4 text-info animate-spin" />
             <span className="text-sm">{t('modelFetch.loading', { provider: providerName })}</span>
           </div>
         );
@@ -111,10 +111,10 @@ export function ModelFetchProgress({ providerId, providerName, onFetch, onRetry 
       case 'success':
         return (
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <CheckCircle2 className="h-4 w-4 text-success" />
             <div className="flex items-center gap-2">
               <span className="text-sm">{t('modelFetch.success')}</span>
-              <Badge variant="outline" className="border-green-500 text-green-500">
+              <Badge variant="outline" className="border-success text-success">
                 {modelCount} {t('modelFetch.models')}
               </Badge>
             </div>
@@ -134,11 +134,11 @@ export function ModelFetchProgress({ providerId, providerName, onFetch, onRetry 
         return (
           <div className="space-y-2">
             <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-red-500 mt-0.5" />
+              <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-red-500">{t('modelFetch.error')}</p>
+                <p className="text-sm font-medium text-destructive">{t('modelFetch.error')}</p>
                 {error && (
-                  <p className="text-xs text-red-400 mt-1">{error}</p>
+                  <p className="text-xs text-destructive mt-1">{error}</p>
                 )}
               </div>
             </div>

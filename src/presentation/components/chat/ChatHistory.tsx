@@ -303,9 +303,9 @@ export function ChatHistory({
       </div>
 
       {/* Search Bar */}
-      <div className="p-3 border-b-2 border-slate-700">
+      <div className="p-3 border-b-2 border-border">
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
             value={searchQuery}
@@ -313,9 +313,9 @@ export function ChatHistory({
             placeholder={t('chat.history.searchPlaceholder', 'Search conversations...')}
             className={cn(
               'pl-9 pr-8 py-2 rounded-sm border-2',
-              'bg-slate-800 border-slate-600 text-slate-200',
-              'placeholder:text-slate-500',
-              'focus:border-blue-500 focus:outline-none',
+              'bg-card border-border text-foreground',
+              'placeholder:text-muted-foreground',
+              'focus:border-primary focus:outline-none',
               'font-mono text-sm',
               'shadow-md'
             )}
@@ -324,7 +324,7 @@ export function ChatHistory({
             <button
               type="button"
               onClick={handleClearSearch}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
@@ -333,7 +333,7 @@ export function ChatHistory({
       </div>
 
       {/* Filter Buttons */}
-      <div className="flex items-center gap-1 p-2 border-b-2 border-slate-700 overflow-x-auto">
+      <div className="flex items-center gap-1 p-2 border-b-2 border-border overflow-x-auto">
         <FilterButton
           active={activeFilter === 'all'}
           onClick={() => handleSetFilter('all')}
@@ -369,7 +369,7 @@ export function ChatHistory({
       {/* Conversation List */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {sortedConversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-500">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <p className="font-mono text-sm">
               {searchQuery
                 ? t('chat.history.noSearchResults', 'No conversations found')

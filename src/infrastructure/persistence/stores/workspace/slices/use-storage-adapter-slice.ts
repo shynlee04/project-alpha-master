@@ -26,6 +26,7 @@ import {
   type SetStateAction,
 } from 'react';
 import { LocalFSAdapter } from '@/infrastructure/filesystem';
+import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import { SyncManager } from '@/infrastructure/sync';
 import type {
   SyncStatus,
@@ -54,7 +55,7 @@ export interface UseStorageAdapterSliceOptions {
   setExclusionPatterns: Dispatch<SetStateAction<string[]>>;
 
   // Refs from loader slice
-  localAdapterRef: RefObject<LocalFSAdapter | null>;
+  localAdapterRef: RefObject<LocalFSAdapter | UnifiedStorageAdapter | null>;
 }
 
 /**
@@ -227,9 +228,9 @@ export function useStorageAdapterSlice({
 
         await syncManager.syncToWebContainer();
 
-        // Bridge to Notes
+        // Bridge to Notes (only for LocalFSAdapter, not UnifiedStorageAdapter)
         const pid = options?.projectId || projectMetadata?.id;
-        if (pid && adapter) {
+        if (pid && adapter && adapter instanceof LocalFSAdapter) {
           noteFolderBridge.syncFromAdapter(pid, adapter)
             .catch((err: unknown) => console.error('[StorageAdapterSlice] Note bridge sync failed:', err));
         }

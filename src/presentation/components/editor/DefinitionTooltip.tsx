@@ -63,7 +63,7 @@ export function DefinitionTooltip({
         }}
       >
         {/* Tooltip header */}
-        <div className="bg-slate-800 text-slate-100 px-3 py-2 rounded-t border-b border-slate-700">
+        <div className="bg-secondary text-secondary-foreground px-3 py-2 rounded-t border-b border-border">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               {/* Symbol icon */}
@@ -77,7 +77,7 @@ export function DefinitionTooltip({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-slate-300"
+                className="text-muted-foreground"
               >
                 {/* Simple icon based on kind */}
                 {getSymbolIconForKind(primaryDefinition.kind)}
@@ -90,14 +90,14 @@ export function DefinitionTooltip({
             </div>
 
             {/* Symbol kind badge */}
-            <span className="text-xs bg-slate-700 px-2 py-0.5 rounded">
+            <span className="text-xs bg-muted px-2 py-0.5 rounded">
               {primaryDefinition.kind}
             </span>
           </div>
         </div>
 
         {/* Tooltip body */}
-        <div className="bg-slate-900 text-slate-100 px-3 py-2">
+        <div className="bg-card text-card-foreground px-3 py-2">
           {/* Definition location */}
           <div className="flex items-center justify-between text-xs mb-2">
             <div className="flex items-center gap-1">
@@ -111,17 +111,17 @@ export function DefinitionTooltip({
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-slate-400"
+                className="text-muted-foreground"
               >
                 <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
                 <polyline points="13 2 13 9 20 9" />
               </svg>
-              <span className="text-slate-400 font-mono">
+              <span className="text-muted-foreground font-mono">
                 {getShortFilePath(primaryDefinition.filePath)}
               </span>
             </div>
 
-            <span className="text-slate-500 font-mono">
+            <span className="text-muted-foreground font-mono">
               Ln {primaryDefinition.line}, Col {primaryDefinition.column}
             </span>
           </div>
@@ -129,17 +129,17 @@ export function DefinitionTooltip({
           {/* Definition type badges */}
           <div className="flex items-center gap-2 mb-2">
             {definition.isLocal && (
-              <span className="text-xs bg-blue-900 text-blue-300 px-2 py-0.5 rounded">
+              <span className="text-xs bg-info/20 text-info px-2 py-0.5 rounded">
                 Local
               </span>
             )}
             {definition.isBuiltIn && (
-              <span className="text-xs bg-purple-900 text-purple-300 px-2 py-0.5 rounded">
+              <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded">
                 Built-in
               </span>
             )}
             {definition.isThirdParty && (
-              <span className="text-xs bg-orange-900 text-orange-300 px-2 py-0.5 rounded">
+              <span className="text-xs bg-warning/20 text-warning px-2 py-0.5 rounded">
                 Third-party
               </span>
             )}
@@ -148,8 +148,8 @@ export function DefinitionTooltip({
           {/* Preview content */}
           {previewContent && (
             <div className="mt-2">
-              <div className="text-xs text-slate-500 mb-1">Preview:</div>
-              <pre className="bg-slate-950 text-slate-300 p-2 rounded text-xs overflow-x-auto font-mono">
+              <div className="text-xs text-muted-foreground mb-1">Preview:</div>
+              <pre className="bg-muted text-foreground p-2 rounded text-xs overflow-x-auto font-mono">
                 {previewContent}
               </pre>
             </div>
@@ -157,20 +157,20 @@ export function DefinitionTooltip({
 
           {/* Multiple definitions warning */}
           {definition.definitions.length > 1 && (
-            <div className="mt-2 text-xs text-slate-400">
+            <div className="mt-2 text-xs text-muted-foreground">
               +{definition.definitions.length - 1} more definitions
             </div>
           )}
         </div>
 
         {/* Tooltip footer with actions */}
-        <div className="bg-slate-800 text-slate-100 px-3 py-2 rounded-b border-t border-slate-700 flex gap-2">
+        <div className="bg-secondary text-secondary-foreground px-3 py-2 rounded-b border-t border-border flex gap-2">
           {/* Go to definition button */}
           {onNavigate && !definition.isBuiltIn && !definition.isThirdParty && (
             <button
               type="button"
               onClick={() => onNavigate(primaryDefinition)}
-              className="flex-1 flex items-center justify-center gap-1 text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition-colors"
+              className="flex-1 flex items-center justify-center gap-1 text-xs bg-info hover:bg-info/80 text-info-foreground px-2 py-1 rounded transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -194,7 +194,7 @@ export function DefinitionTooltip({
             <button
               type="button"
               onClick={() => onFindReferences(primaryDefinition)}
-              className="flex-1 flex items-center justify-center gap-1 text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded transition-colors"
+              className="flex-1 flex items-center justify-center gap-1 text-xs bg-muted hover:bg-muted/80 text-muted-foreground px-2 py-1 rounded transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

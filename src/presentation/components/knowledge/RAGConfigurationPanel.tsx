@@ -117,7 +117,7 @@ export function RAGConfigurationPanel({
       {/* Test Result */}
       {testResult !== null && (
         <div className={`flex items-center gap-2 p-3 rounded-md ${
-          testResult ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100' : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100'
+          testResult ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
         }`}>
           {testResult ? (
             <>

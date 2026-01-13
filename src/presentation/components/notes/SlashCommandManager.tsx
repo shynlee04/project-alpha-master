@@ -527,7 +527,7 @@ export function SlashCommandManager() {
                             className="p-1"
                         >
                             {formData.enableRefinement ? (
-                                <ToggleRight className="w-6 h-6 text-green-500" />
+                                <ToggleRight className="w-6 h-6 text-success" />
                             ) : (
                                 <ToggleLeft className="w-6 h-6 text-muted-foreground" />
                             )}
@@ -584,7 +584,7 @@ export function SlashCommandManager() {
                                     title={command.isEnabled ? 'Disable' : 'Enable'}
                                 >
                                     {command.isEnabled ? (
-                                        <ToggleRight className="w-4 h-4 text-green-500" />
+                                        <ToggleRight className="w-4 h-4 text-success" />
                                     ) : (
                                         <ToggleLeft className="w-4 h-4" />
                                     )}

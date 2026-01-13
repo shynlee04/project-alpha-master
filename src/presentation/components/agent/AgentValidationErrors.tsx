@@ -43,10 +43,10 @@ export function AgentValidationErrors({ errors, className = '' }: AgentValidatio
 
   if (errors.length === 0) {
     return (
-      <div className={`agent-validation-errors p-3 bg-green-500/10 border border-green-500/20 rounded-lg ${className}`}>
+      <div className={`agent-validation-errors p-3 bg-success/10 border border-success/20 rounded-lg ${className}`}>
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-green-500" />
-          <span className="text-sm text-green-700 dark:text-green-400">
+          <CheckCircle2 className="h-4 w-4 text-success" />
+          <span className="text-sm text-success">
             {t('validation.valid')}
           </span>
         </div>
@@ -55,10 +55,10 @@ export function AgentValidationErrors({ errors, className = '' }: AgentValidatio
   }
 
   return (
-    <div className={`agent-validation-errors p-3 bg-red-500/10 border border-red-500/20 rounded-lg ${className}`}>
+    <div className={`agent-validation-errors p-3 bg-destructive/10 border border-destructive/20 rounded-lg ${className}`}>
       <div className="flex items-center gap-2 mb-2">
-        <AlertCircle className="h-4 w-4 text-red-500" />
-        <h4 className="text-sm font-semibold text-red-700 dark:text-red-400">
+        <AlertCircle className="h-4 w-4 text-destructive" />
+        <h4 className="text-sm font-semibold text-destructive">
           {t('validation.title', { count: errors.length })}
         </h4>
       </div>
@@ -75,8 +75,8 @@ export function AgentValidationErrors({ errors, className = '' }: AgentValidatio
             <span
               className={
                 error.severity === 'error'
-                  ? 'text-red-600 dark:text-red-400'
-                  : 'text-yellow-600 dark:text-yellow-400'
+                  ? 'text-destructive'
+                  : 'text-warning'
               }
             >
               {error.message}

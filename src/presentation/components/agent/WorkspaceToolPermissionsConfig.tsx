@@ -99,7 +99,7 @@ export function WorkspaceToolPermissionsConfig({
             {/* Header */}
             <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-blue-500" />
+                    <Shield className="w-5 h-5 text-info" />
                     <h3 className="text-lg font-semibold">Workspace Tool Permissions</h3>
                 </div>
                 <p className="text-sm text-muted-foreground">

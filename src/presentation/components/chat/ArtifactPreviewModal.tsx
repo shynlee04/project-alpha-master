@@ -120,14 +120,14 @@ function tokenizeLine(line: string): React.ReactNode {
   while (remaining.length > 0) {
     const stringMatch = remaining.match(/^(['"`])(?:(?!\1)[^\\]|\\.)*\1/)
     if (stringMatch) {
-      parts.push(<span key={index++} className="text-green-400">{stringMatch[0]}</span>)
+      parts.push(<span key={index++} className="text-success">{stringMatch[0]}</span>)
       remaining = remaining.slice(stringMatch[0].length)
       continue
     }
 
     const commentMatch = remaining.match(/^\/\/.*$/) || remaining.match(/^\/\*[\s\S]*?\*\//)
     if (commentMatch) {
-      parts.push(<span key={index++} className="text-gray-500 italic">{commentMatch[0]}</span>)
+      parts.push(<span key={index++} className="text-muted-foreground italic">{commentMatch[0]}</span>)
       remaining = remaining.slice(commentMatch[0].length)
       continue
     }
@@ -145,7 +145,7 @@ function tokenizeLine(line: string): React.ReactNode {
       if (keywords.includes(word)) {
         parts.push(<span key={index++} className="text-purple-400 font-semibold">{word}</span>)
       } else if (word[0] === word[0].toUpperCase() && /^[A-Z]/.test(word)) {
-        parts.push(<span key={index++} className="text-yellow-400">{word}</span>)
+        parts.push(<span key={index++} className="text-warning">{word}</span>)
       } else {
         parts.push(<span key={index++}>{word}</span>)
       }
@@ -155,7 +155,7 @@ function tokenizeLine(line: string): React.ReactNode {
 
     const opMatch = remaining.match(/^[=<>!+\-*/%&|^~?:;,.()\[\]{}]+/)
     if (opMatch) {
-      parts.push(<span key={index++} className="text-gray-400">{opMatch[0]}</span>)
+      parts.push(<span key={index++} className="text-muted-foreground">{opMatch[0]}</span>)
       remaining = remaining.slice(opMatch[0].length)
       continue
     }
@@ -320,7 +320,7 @@ export const ArtifactPreviewModal = memo(function ArtifactPreviewModal({
               className={cn(
                 'p-2 rounded-none transition-all',
                 'hover:bg-primary/20 active:translate-y-[1px]',
-                copied ? 'text-green-500' : 'text-muted-foreground hover:text-foreground'
+                copied ? 'text-success' : 'text-muted-foreground hover:text-foreground'
               )}
               title={t('chat.codeBlock.copy', 'Copy')}
             >
@@ -377,8 +377,8 @@ export const ArtifactPreviewModal = memo(function ArtifactPreviewModal({
               onClick={onClose}
               className={cn(
                 'p-2 rounded-none transition-all',
-                'hover:bg-red-500/20 active:translate-y-[1px]',
-                'text-muted-foreground hover:text-red-500'
+                'hover:bg-destructive/20 active:translate-y-[1px]',
+                'text-muted-foreground hover:text-destructive'
               )}
               title={`${t('common.close', 'Close')} (Esc)`}
             >

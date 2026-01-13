@@ -358,20 +358,20 @@ export function PromptImportDialog({ open, onOpenChange, onImport }: PromptImpor
                             setInputText(e.target.value);
                             setError(null);
                         }}
-                        placeholder={isVi 
-                            ? 'Dán JSON hoặc viagen://prompt/... link tại đây' 
+                        placeholder={isVi
+                            ? 'Dán JSON hoặc viagen://prompt/... link tại đây'
                             : 'Paste JSON or viagen://prompt/... link here'}
                         className={cn(
                             'w-full h-[200px] p-3 text-sm font-mono',
                             'bg-[var(--muted)] border-2 rounded-none resize-none',
                             'focus:outline-none focus:ring-2 focus:ring-[var(--ring)]',
-                            error ? 'border-red-500' : 'border-[var(--border)]'
+                            error ? 'border-destructive' : 'border-[var(--border)]'
                         )}
                     />
-                    
+
                     {/* Error Message */}
                     {error && (
-                        <div className="flex items-center gap-2 mt-2 text-sm text-red-500">
+                        <div className="flex items-center gap-2 mt-2 text-sm text-destructive">
                             <AlertCircle className="h-4 w-4" />
                             {error}
                         </div>

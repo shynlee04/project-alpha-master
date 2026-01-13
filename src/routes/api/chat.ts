@@ -154,6 +154,7 @@ function getTools() {
  * route registration in the generated route tree.
  */
 export const Route = createFileRoute('/api/chat')({
+    // @ts-expect-error TanStack Start server.handlers types not fully exported in @tanstack/react-router 1.147.0
     server: {
         handlers: {
             /**

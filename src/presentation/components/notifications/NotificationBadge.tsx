@@ -160,7 +160,7 @@ export function NotificationBadge({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative rounded-sm p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800 transition-colors',
+        'relative rounded-sm p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors',
         className
       )}
       aria-label={t('notifications.unreadCount', '{{count}} unread notifications', { count })}
@@ -253,7 +253,7 @@ export function NotificationBadgeDot({
       type="button"
       onClick={onClick}
       className={cn(
-        'relative rounded-sm p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-800 transition-colors',
+        'relative rounded-sm p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors',
         className
       )}
       aria-label={t('notifications.unreadCount', '{{count}} unread notifications', { count })}

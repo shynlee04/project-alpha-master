@@ -183,11 +183,11 @@ export function StudyFilePicker({
     const getMaterialIcon = (type: StudyMaterial['type']) => {
         switch (type) {
             case 'pdf':
-                return <BookOpen className="w-4 h-4 text-red-500" />;
+                return <BookOpen className="w-4 h-4 text-destructive" />;
             case 'quiz':
-                return <FileText className="w-4 h-4 text-blue-500" />;
+                return <FileText className="w-4 h-4 text-info" />;
             case 'markdown':
-                return <ScrollText className="w-4 h-4 text-green-500" />;
+                return <ScrollText className="w-4 h-4 text-success" />;
         }
     };
 
@@ -257,9 +257,9 @@ export function StudyFilePicker({
                             </Button>
                         </div>
                     ) : (
-                        <div className="flex items-center justify-between p-4 border rounded-lg bg-blue-500/10">
+                        <div className="flex items-center justify-between p-4 border rounded-lg bg-info/10">
                             <div className="flex items-center gap-2">
-                                <FolderOpen className="w-5 h-5 text-blue-500" />
+                                <FolderOpen className="w-5 h-5 text-info" />
                                 <div>
                                     <p className="font-medium">Directory Mounted (Read-Only)</p>
                                     <p className="text-sm text-muted-foreground">
@@ -267,7 +267,7 @@ export function StudyFilePicker({
                                     </p>
                                 </div>
                             </div>
-                            <Badge variant="outline" className="bg-blue-500/20 text-blue-500">
+                            <Badge variant="outline" className="bg-info/20 text-info">
                                 Read-Only
                             </Badge>
                         </div>

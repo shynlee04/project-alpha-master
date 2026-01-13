@@ -19,9 +19,9 @@ interface QuizStartScreenProps {
  * Difficulty badge colors
  */
 const DIFFICULTY_COLORS = {
-  easy: 'bg-green-500/20 text-green-400 border-green-500/30',
-  medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  hard: 'bg-red-500/20 text-red-400 border-red-500/30',
+  easy: 'bg-success/20 text-success border-success/30',
+  medium: 'bg-warning/20 text-warning border-warning/30',
+  hard: 'bg-destructive/20 text-destructive border-destructive/30',
 };
 
 /**
@@ -106,9 +106,9 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
                     <div
                       className={cn(
                         'h-full transition-all duration-300',
-                        difficulty === 'easy' && 'bg-green-500',
-                        difficulty === 'medium' && 'bg-yellow-500',
-                        difficulty === 'hard' && 'bg-red-500'
+                        difficulty === 'easy' && 'bg-success',
+                        difficulty === 'medium' && 'bg-warning',
+                        difficulty === 'hard' && 'bg-destructive'
                       )}
                       style={{ width: `${percentage}%` }}
                     />

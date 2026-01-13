@@ -218,7 +218,7 @@ export function PromptSuggestionsPanel({
                     <Button
                         variant="ghost"
                         size="sm"
-                        className={`h-6 w-6 p-0 ${isEnabled ? 'text-green-500' : 'text-muted-foreground'}`}
+                        className={`h-6 w-6 p-0 ${isEnabled ? 'text-success' : 'text-muted-foreground'}`}
                         onClick={toggleEnabled}
                         title={isEnabled
                             ? t('notes.suggestions.enabled', 'Suggestions enabled')

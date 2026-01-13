@@ -26,6 +26,7 @@
 import type { AppState } from './types';
 import { useMigrationState } from './providers/use-migration-state';
 import type { MigrationState } from './providers/use-migration-state';
+import { INITIAL_PROVIDERS } from './providers/provider-crud-slice';
 
 /**
  * Current schema version
@@ -93,14 +94,13 @@ const MIGRATIONS: Migration[] = [
     version: 2,
     description: 'Add Groq, Mistral AI, and Chutes.ai providers',
     migrate: (state) => {
-      const { INITIAL_PROVIDERS } = require('./providers/provider-crud-slice');
-      const existingIds = new Set(state.providers.map(p => p.id));
+      const existingIds = new Set(state.providers.map((p: { id: string }) => p.id));
 
       // Add any missing built-in providers
-      const missingProviders = INITIAL_PROVIDERS.filter(p => !existingIds.has(p.id));
+      const missingProviders = INITIAL_PROVIDERS.filter((p: { id: string }) => !existingIds.has(p.id));
 
       if (missingProviders.length > 0) {
-        console.log('[SchemaMigration] v2: Adding missing providers:', missingProviders.map(p => p.id));
+        console.log('[SchemaMigration] v2: Adding missing providers:', missingProviders.map((p: { id: string }) => p.id));
         state.providers = [...state.providers, ...missingProviders];
       } else {
         console.log('[SchemaMigration] v2: All built-in providers already present');

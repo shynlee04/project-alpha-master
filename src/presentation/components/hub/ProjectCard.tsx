@@ -174,7 +174,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
       {/* Status (Desktop only) */}
       <div className="col-span-3 md:col-span-2 hidden md:block">
-        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase font-pixel bg-green-500/10 text-green-500 border border-green-500/30 rounded-none">
+        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] uppercase font-pixel bg-green-500/10 text-success border border-green-500/30 rounded-none">
           <CheckCircle2 className="w-3 h-3" />
           ACTIVE
         </span>

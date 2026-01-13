@@ -30,13 +30,13 @@ interface LinkageProposalsPanelProps {
 function getLinkageTypeColor(type: LinkageProposal['linkageType']): string {
   switch (type) {
     case 'conceptual':
-      return 'bg-blue-500/20 text-blue-300 border-blue-500';
+      return 'bg-info/20 text-info border-info';
     case 'sequential':
-      return 'bg-green-500/20 text-green-300 border-green-500';
+      return 'bg-success/20 text-success border-success';
     case 'contrastive':
       return 'bg-purple-500/20 text-purple-300 border-purple-500';
     default:
-      return 'bg-gray-500/20 text-gray-300 border-gray-500';
+      return 'bg-muted text-muted-foreground border-border';
   }
 }
 
@@ -73,7 +73,7 @@ function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
   const displayRationale = aiRationale ?? proposal.rationale;
 
   return (
-    <div className="bg-gray-900/90 border border-gray-700 rounded p-3 mb-2 hover:border-gray-600 transition-colors">
+    <div className="bg-card/90 border border-border rounded p-3 mb-2 hover:border-border transition-colors">
       {/* Header: Type + Confidence */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
@@ -97,18 +97,18 @@ function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
       </div>
 
       {/* Label */}
-      <div className="text-white font-medium mb-2 text-sm">
+      <div className="text-foreground font-medium mb-2 text-sm">
         {proposal.suggestedLabel}
       </div>
 
       {/* Rationale (AI or heuristic) */}
-      <div className="text-gray-400 text-xs mb-3">
+      <div className="text-muted-foreground text-xs mb-3">
         {displayRationale}
       </div>
 
       {/* Enhanced data: Entities/Keywords */}
       {isEnhanced && (entities || keywords) && (
-        <div className="text-xs text-gray-500 mb-3 space-y-1">
+        <div className="text-xs text-muted-foreground mb-3 space-y-1">
           {entities && entities.length > 0 && (
             <div>
               <span className="font-semibold">{t('canvas.linkage.entities')}: </span>
@@ -128,7 +128,7 @@ function ProposalCard({ proposal, onAccept, onDismiss }: ProposalCardProps) {
 
       {/* Evidence */}
       {proposal.evidence.length > 0 && !isEnhanced && (
-        <div className="text-xs text-gray-500 mb-3">
+        <div className="text-xs text-muted-foreground mb-3">
           <span className="font-semibold">{t('canvas.linkage.evidence')}: </span>
           {proposal.evidence.slice(0, 3).join(', ')}
           {proposal.evidence.length > 3 && '...'}
@@ -237,10 +237,10 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
       style={{ top: 80, left: 16, width: 320, maxHeight: 'calc(100vh - 120px)' }}
     >
       {/* Header */}
-      <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-3">
+      <div className="bg-card/95 border border-border rounded-lg p-3">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <h3 className="text-white font-semibold text-sm">
+            <h3 className="text-foreground font-semibold text-sm">
               {t('canvas.linkage.title')}
             </h3>
             <PixelBadge size="sm" variant="default">
@@ -250,7 +250,7 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
           <div className="flex gap-1">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-gray-400 hover:text-white text-xs px-2 py-1"
+              className="text-muted-foreground hover:text-foreground text-xs px-2 py-1"
               aria-label={isExpanded ? t('common.collapse') : t('common.expand')}
             >
               {isExpanded ? '▼' : '▶'}
@@ -258,7 +258,7 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
             <button
               onClick={handleRAGEnhancement}
               disabled={isEnhancing || nodes.length < 2}
-              className="flex items-center gap-1 text-gray-400 hover:text-white text-xs px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Enhance with AI"
               title="Enhance proposals with RAG embeddings and AI"
             >
@@ -270,7 +270,7 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
             </button>
             <button
               onClick={clearProposals}
-              className="text-gray-400 hover:text-white text-xs px-2 py-1"
+              className="text-muted-foreground hover:text-foreground text-xs px-2 py-1"
               aria-label={t('common.clear')}
             >
               ✕
@@ -286,8 +286,8 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
                 onClick={() => setFilter('all')}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
                   filter === 'all'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t('canvas.linkage.filter.all')} ({totalCount})
@@ -296,8 +296,8 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
                 onClick={() => setFilter('conceptual')}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
                   filter === 'conceptual'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t('canvas.linkage.filter.conceptual')} ({linkageProposals.filter(p => p.linkageType === 'conceptual').length})
@@ -306,8 +306,8 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
                 onClick={() => setFilter('sequential')}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
                   filter === 'sequential'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t('canvas.linkage.filter.sequential')} ({linkageProposals.filter(p => p.linkageType === 'sequential').length})
@@ -316,8 +316,8 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
                 onClick={() => setFilter('contrastive')}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
                   filter === 'contrastive'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {t('canvas.linkage.filter.contrastive')} ({linkageProposals.filter(p => p.linkageType === 'contrastive').length})
@@ -327,7 +327,7 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
             {/* Scrollable proposals list */}
             <div className="overflow-y-auto pr-1" style={{ maxHeight: 'calc(100vh - 280px)' }}>
               {proposalCount === 0 ? (
-                <div className="text-gray-500 text-xs text-center py-4">
+                <div className="text-muted-foreground text-xs text-center py-4">
                   {t('canvas.linkage.no_proposals')}
                 </div>
               ) : (
@@ -344,7 +344,7 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
 
             {/* Bulk actions */}
             {proposalCount > 1 && (
-              <div className="mt-3 pt-3 border-t border-gray-700">
+              <div className="mt-3 pt-3 border-t border-border">
                 <div className="flex gap-2">
                   <Button
                     size="sm"

@@ -75,19 +75,19 @@ export const BatchApprovalBar: React.FC<BatchApprovalBarProps> = ({
         <div className={cn(
             'flex items-center justify-between gap-3 p-3 border-b',
             hasHighRisk
-                ? 'bg-red-500/10 border-red-500/30'
-                : 'bg-yellow-500/10 border-yellow-500/30',
+                ? 'bg-destructive/10 border-destructive/30'
+                : 'bg-warning/10 border-warning/30',
             className
         )}>
             {/* Left: Summary */}
             <div className="flex items-center gap-3 min-w-0">
                 <div className={cn(
                     'flex items-center justify-center w-8 h-8 rounded',
-                    hasHighRisk ? 'bg-red-500/20' : 'bg-yellow-500/20'
+                    hasHighRisk ? 'bg-destructive/20' : 'bg-warning/20'
                 )}>
                     <AlertTriangle className={cn(
                         'w-4 h-4',
-                        hasHighRisk ? 'text-red-400' : 'text-yellow-400'
+                        hasHighRisk ? 'text-destructive' : 'text-warning'
                     )} />
                 </div>
 
@@ -110,17 +110,17 @@ export const BatchApprovalBar: React.FC<BatchApprovalBarProps> = ({
                 {/* Risk badges */}
                 <div className="hidden sm:flex items-center gap-1.5">
                     {riskSummary.high > 0 && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-red-500/20 text-red-400 rounded">
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-destructive/20 text-destructive rounded">
                             {riskSummary.high} {t('agent.risk.high')}
                         </span>
                     )}
                     {riskSummary.medium > 0 && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-yellow-500/20 text-yellow-400 rounded">
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-warning/20 text-warning rounded">
                             {riskSummary.medium} {t('agent.risk.medium')}
                         </span>
                     )}
                     {riskSummary.low > 0 && (
-                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-500/20 text-green-400 rounded">
+                        <span className="px-1.5 py-0.5 text-[10px] font-medium bg-success/20 text-success rounded">
                             {riskSummary.low} {t('agent.risk.low')}
                         </span>
                     )}
@@ -151,8 +151,8 @@ export const BatchApprovalBar: React.FC<BatchApprovalBarProps> = ({
                             onClick={onRejectAll}
                             className={cn(
                                 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium',
-                                'border border-red-500/30 rounded-none',
-                                'text-red-400 hover:bg-red-500/10',
+                                'border border-destructive/30 rounded-none',
+                                'text-destructive hover:bg-destructive/10',
                                 'transition-colors'
                             )}
                         >
@@ -168,7 +168,7 @@ export const BatchApprovalBar: React.FC<BatchApprovalBarProps> = ({
                                 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium',
                                 'bg-primary text-primary-foreground rounded-none',
                                 'hover:bg-primary/90 transition-colors',
-                                hasHighRisk && 'ring-2 ring-red-500/50'
+                                hasHighRisk && 'ring-2 ring-destructive/50'
                             )}
                         >
                             <CheckCircle className="w-3.5 h-3.5" />

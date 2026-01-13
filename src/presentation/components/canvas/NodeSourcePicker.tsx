@@ -191,7 +191,7 @@ export function NodeSourcePicker({
       {/* Selection count */}
       <div
         className={`text-xs text-center py-1 ${
-          selectedIds.length < minSelection ? 'text-red-500' : 'text-muted-foreground'
+          selectedIds.length < minSelection ? 'text-destructive' : 'text-muted-foreground'
         }`}
       >
         {selectedIds.length < minSelection ? (

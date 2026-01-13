@@ -64,25 +64,25 @@ const TRUST_LEVEL_CONFIG: Record<ToolTrustLevel, {
     auto: {
         label: 'Auto-allow',
         icon: ShieldCheck,
-        color: 'text-green-400',
-        bgColor: 'bg-green-500/10',
-        borderColor: 'border-green-500/30',
+        color: 'text-success',
+        bgColor: 'bg-success/10',
+        borderColor: 'border-success/30',
         description: 'Execute immediately without approval',
     },
     prompt: {
         label: 'Prompt each time',
         icon: ShieldQuestion,
-        color: 'text-yellow-400',
-        bgColor: 'bg-yellow-500/10',
-        borderColor: 'border-yellow-500/30',
+        color: 'text-warning',
+        bgColor: 'bg-warning/10',
+        borderColor: 'border-warning/30',
         description: 'Show approval dialog before execution',
     },
     block: {
         label: 'Block',
         icon: ShieldAlert,
-        color: 'text-red-400',
-        bgColor: 'bg-red-500/10',
-        borderColor: 'border-red-500/30',
+        color: 'text-destructive',
+        bgColor: 'bg-destructive/10',
+        borderColor: 'border-destructive/30',
         description: 'Never execute this tool',
     },
 };
@@ -243,7 +243,7 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
         const Icon = config.icon;
 
         return (
-            <div key={tool.id} className="flex items-center justify-between p-3 border border-border-dark rounded bg-surface-darker/50">
+            <div key={tool.id} className="flex items-center justify-between p-3 border border-border rounded bg-card/50">
                 <div className="flex items-center gap-3">
                     <div className={cn(
                         'p-2 rounded',
@@ -276,19 +276,19 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
                     <SelectContent className="rounded-none">
                         <SelectItem value="auto">
                             <div className="flex items-center gap-2">
-                                <ShieldCheck className="w-4 h-4 text-green-400" />
+                                <ShieldCheck className="w-4 h-4 text-success" />
                                 <span>{t('agents.permissions.auto', 'Auto-allow')}</span>
                             </div>
                         </SelectItem>
                         <SelectItem value="prompt">
                             <div className="flex items-center gap-2">
-                                <ShieldQuestion className="w-4 h-4 text-yellow-400" />
+                                <ShieldQuestion className="w-4 h-4 text-warning" />
                                 <span>{t('agents.permissions.prompt', 'Prompt each time')}</span>
                             </div>
                         </SelectItem>
                         <SelectItem value="block">
                             <div className="flex items-center gap-2">
-                                <ShieldAlert className="w-4 h-4 text-red-400" />
+                                <ShieldAlert className="w-4 h-4 text-destructive" />
                                 <span>{t('agents.permissions.block', 'Block')}</span>
                             </div>
                         </SelectItem>
@@ -352,17 +352,17 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
             {/* Summary */}
             <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1">
-                    <ShieldCheck className="w-4 h-4 text-green-400" />
+                    <ShieldCheck className="w-4 h-4 text-success" />
                     <span className="text-muted-foreground">{counts.auto}</span>
                     <span className="text-muted-foreground">{t('agents.permissions.autoCount', 'Auto')}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <ShieldQuestion className="w-4 h-4 text-yellow-400" />
+                    <ShieldQuestion className="w-4 h-4 text-warning" />
                     <span className="text-muted-foreground">{counts.prompt}</span>
                     <span className="text-muted-foreground">{t('agents.permissions.promptCount', 'Prompt')}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <ShieldAlert className="w-4 h-4 text-red-400" />
+                    <ShieldAlert className="w-4 h-4 text-destructive" />
                     <span className="text-muted-foreground">{counts.block}</span>
                     <span className="text-muted-foreground">{t('agents.permissions.blockCount', 'Blocked')}</span>
                 </div>
@@ -377,11 +377,11 @@ export const ToolPermissionsConfig: React.FC<ToolPermissionsConfigProps> = ({
             {/* Info Box */}
             <div className={cn(
                 'p-4 rounded border',
-                'bg-blue-500/10',
-                'border-blue-500/30'
+                'bg-info/10',
+                'border-info/30'
             )}>
                 <div className="flex items-start gap-3">
-                    <ShieldQuestion className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                    <ShieldQuestion className="w-5 h-5 text-info flex-shrink-0 mt-0.5" />
                     <div className="space-y-1">
                         <p className="text-sm font-medium text-foreground">
                             {t('agents.permissions.info.title', 'About Tool Permissions')}

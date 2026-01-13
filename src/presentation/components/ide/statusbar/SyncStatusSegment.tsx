@@ -94,13 +94,13 @@ export function SyncStatusSegment({ onRetry }: SyncStatusSegmentProps) {
     const getTextColor = () => {
         switch (status) {
             case 'synced':
-                return 'text-emerald-400';
+                return 'text-success';
             case 'error':
-                return 'text-red-400';
+                return 'text-destructive';
             case 'syncing':
-                return 'text-yellow-400';
+                return 'text-warning';
             default:
-                return 'text-white/60';
+                return 'text-foreground/60';
         }
     };
 

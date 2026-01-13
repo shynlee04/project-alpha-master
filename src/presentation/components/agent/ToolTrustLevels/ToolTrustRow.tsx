@@ -24,17 +24,17 @@ const TRUST_LEVEL_DESCRIPTIONS: Record<
 > = {
     auto: {
         label: 'Auto-Execute',
-        color: 'bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20',
+        color: 'bg-success/10 text-success border-success/20',
         icon: Shield,
     },
     prompt: {
         label: 'Require Approval',
-        color: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20',
+        color: 'bg-warning/10 text-warning border-warning/20',
         icon: ShieldAlert,
     },
     block: {
         label: 'Blocked',
-        color: 'bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20',
+        color: 'bg-destructive/10 text-destructive border-destructive/20',
         icon: ShieldX,
     },
 }
@@ -79,9 +79,9 @@ export function ToolTrustRow({ tool, onTrustLevelChange }: ToolTrustRowProps) {
                     {Object.entries(TRUST_LEVEL_DESCRIPTIONS).map(([level, config]) => (
                         <SelectItem key={level} value={level}>
                             <div className="flex items-center gap-2">
-                                {level === 'auto' && <Shield className="w-4 h-4 text-green-600" />}
-                                {level === 'prompt' && <ShieldAlert className="w-4 h-4 text-yellow-600" />}
-                                {level === 'block' && <ShieldX className="w-4 h-4 text-red-600" />}
+                                {level === 'auto' && <Shield className="w-4 h-4 text-success" />}
+                                {level === 'prompt' && <ShieldAlert className="w-4 h-4 text-warning" />}
+                                {level === 'block' && <ShieldX className="w-4 h-4 text-destructive" />}
                                 {config.label}
                             </div>
                         </SelectItem>

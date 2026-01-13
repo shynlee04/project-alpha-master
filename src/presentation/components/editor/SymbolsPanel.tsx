@@ -95,9 +95,9 @@ export function SymbolsPanel({
     if (!showVisibility || !visibility) return null;
 
     const badges = {
-      public: 'bg-green-900 text-green-300',
-      private: 'bg-red-900 text-red-300',
-      protected: 'bg-yellow-900 text-yellow-300',
+      public: 'bg-success/20 text-success',
+      private: 'bg-destructive/20 text-destructive',
+      protected: 'bg-warning/20 text-warning',
     };
 
     return (
@@ -110,22 +110,22 @@ export function SymbolsPanel({
   // Get symbol kind color
   const getKindColor = (kind: SymbolKind): string => {
     const colors: Record<SymbolKind, string> = {
-      function: 'text-blue-400',
-      method: 'text-blue-400',
+      function: 'text-info',
+      method: 'text-info',
       class: 'text-purple-400',
       interface: 'text-purple-400',
       type: 'text-cyan-400',
       variable: 'text-orange-400',
-      constant: 'text-yellow-400',
+      constant: 'text-warning',
       enum: 'text-pink-400',
-      namespace: 'text-green-400',
-      module: 'text-green-400',
-      constructor: 'text-blue-400',
+      namespace: 'text-success',
+      module: 'text-success',
+      constructor: 'text-info',
       property: 'text-orange-400',
       enumMember: 'text-pink-400',
       struct: 'text-purple-400',
     };
-    return colors[kind] || 'text-slate-400';
+    return colors[kind] || 'text-muted-foreground';
   };
 
   if (!visible) {
@@ -134,32 +134,32 @@ export function SymbolsPanel({
 
   return (
     <div
-      className="symbols-panel flex flex-col bg-slate-900 border-l border-slate-800"
+      className="symbols-panel flex flex-col bg-card border-l border-border"
       style={{ height: maxHeight, maxHeight }}
     >
       {/* Panel header */}
-      <div className="px-3 py-2 border-b border-slate-800">
+      <div className="px-3 py-2 border-b border-border">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Package className="w-4 h-4 text-slate-400" />
-            <h3 className="text-sm font-semibold text-slate-200">
+            <Package className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-semibold text-foreground">
               {t('navigation.symbols', 'Symbols')}
             </h3>
           </div>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-muted-foreground">
             {outline.reduce((count, node) => count + countSymbols(node), 0)}
           </span>
         </div>
 
         {/* Search input */}
         <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500" />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('navigation.searchSymbols', 'Search symbols...')}
-            className="w-full pl-7 pr-2 py-1 text-xs bg-slate-950 border border-slate-700 rounded text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-600"
+            className="w-full pl-7 pr-2 py-1 text-xs bg-muted border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-info"
           />
         </div>
       </div>
@@ -167,7 +167,7 @@ export function SymbolsPanel({
       {/* Symbols tree */}
       <div className="flex-1 overflow-auto p-2">
         {filteredOutline.length === 0 ? (
-          <div className="text-center text-slate-500 text-xs py-4">
+          <div className="text-center text-muted-foreground text-xs py-4">
             {searchQuery
               ? t('navigation.noSymbolsFound', 'No symbols found')
               : t('navigation.noSymbols', 'No symbols in file')}
@@ -225,7 +225,7 @@ function SymbolTreeNode({
     <div>
       {/* Node row */}
       <div
-        className="flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 cursor-pointer transition-colors"
+        className="flex items-center gap-1 px-2 py-1 rounded hover:bg-muted cursor-pointer transition-colors"
         style={{ paddingLeft }}
         onClick={() => {
           if (hasChildren && !readOnly) {
@@ -242,7 +242,7 @@ function SymbolTreeNode({
               e.stopPropagation();
               if (!readOnly) onToggle();
             }}
-            className="flex-shrink-0 w-4 h-4 flex items-center justify-center text-slate-500 hover:text-slate-300"
+            className="flex-shrink-0 w-4 h-4 flex items-center justify-center text-muted-foreground hover:text-foreground"
           >
             {expanded ? (
               <ChevronDown className="w-3 h-3" />
@@ -271,7 +271,7 @@ function SymbolTreeNode({
         </svg>
 
         {/* Symbol name */}
-        <span className="flex-1 text-xs font-mono text-slate-300 truncate">
+        <span className="flex-1 text-xs font-mono text-foreground truncate">
           {node.name}
         </span>
 

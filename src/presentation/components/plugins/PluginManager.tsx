@@ -138,7 +138,7 @@ function PluginListItem({ plugin, isProcessing, onToggleActivation, onUninstall 
             <span>•</span>
             <span className={cn(
               'capitalize',
-              isActivated ? 'text-green-600' : 'text-muted-foreground'
+              isActivated ? 'text-success' : 'text-muted-foreground'
             )}>
               {plugin.state}
             </span>

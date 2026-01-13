@@ -275,15 +275,15 @@ export function SyncStatusPanel() {
   const getStatusIcon = (status: SyncStatus) => {
     switch (status) {
       case 'idle':
-        return <Clock className="h-4 w-4 text-gray-400" />;
+        return <Clock className="h-4 w-4 text-muted-foreground" />;
       case 'pending':
-        return <Clock className="h-4 w-4 text-yellow-500" />;
+        return <Clock className="h-4 w-4 text-warning" />;
       case 'in-progress':
-        return <RefreshCw className="h-4 w-4 text-orange-500 animate-spin" />;
+        return <RefreshCw className="h-4 w-4 text-warning animate-spin" />;
       case 'completed':
-        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+        return <CheckCircle2 className="h-4 w-4 text-success" />;
       case 'failed':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
     }
   };
 
@@ -302,7 +302,7 @@ export function SyncStatusPanel() {
 
     if (syncState.inProgressCount > 0) {
       return (
-        <Badge variant="outline" className="gap-1 border-orange-500 text-orange-500">
+        <Badge variant="outline" className="gap-1 border-warning text-warning">
           <RefreshCw className="h-3 w-3 animate-spin" />
           {t('sync.status.syncing', { count: syncState.inProgressCount })}
         </Badge>
@@ -311,7 +311,7 @@ export function SyncStatusPanel() {
 
     if (syncState.pendingCount > 0) {
       return (
-        <Badge variant="outline" className="gap-1 border-yellow-500 text-yellow-500">
+        <Badge variant="outline" className="gap-1 border-warning text-warning">
           <Clock className="h-3 w-3" />
           {t('sync.status.pending', { count: syncState.pendingCount })}
         </Badge>
@@ -319,7 +319,7 @@ export function SyncStatusPanel() {
     }
 
     return (
-      <Badge variant="outline" className="gap-1 border-green-500 text-green-500">
+      <Badge variant="outline" className="gap-1 border-success text-success">
         <CheckCircle2 className="h-3 w-3" />
         {t('sync.status.synced')}
       </Badge>

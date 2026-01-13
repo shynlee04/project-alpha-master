@@ -33,14 +33,14 @@ function getChangeTypeClasses(type: ChangeType): string {
 
   switch (type) {
     case ChangeType.ADDED:
-      return `${baseClasses} bg-green-900/30 text-green-300 dark:bg-green-950/50 dark:text-green-400`;
+      return `${baseClasses} bg-success/20 text-success`;
     case ChangeType.REMOVED:
-      return `${baseClasses} bg-red-900/30 text-red-300 dark:bg-red-950/50 dark:text-red-400`;
+      return `${baseClasses} bg-destructive/20 text-destructive`;
     case ChangeType.MODIFIED:
-      return `${baseClasses} bg-yellow-900/30 text-yellow-300 dark:bg-yellow-950/50 dark:text-yellow-400`;
+      return `${baseClasses} bg-warning/20 text-warning`;
     case ChangeType.UNCHANGED:
     default:
-      return `${baseClasses} text-slate-700 dark:text-slate-300`;
+      return `${baseClasses} text-foreground`;
   }
 }
 
@@ -110,7 +110,7 @@ export function LineDiff({
   if (viewMode === 'unified') {
     return (
       <div
-        className={`flex items-stretch border-b border-slate-200 dark:border-slate-800 ${className}`}
+        className={`flex items-stretch border-b border-border ${className}`}
         role="row"
         aria-label={`${type} line ${oldLineNumber || newLineNumber}`}
       >
@@ -118,7 +118,7 @@ export function LineDiff({
           <>
             {/* Old line number */}
             <div
-              className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-slate-400 dark:text-slate-600 select-none border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30"
+              className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-muted-foreground select-none border-r border-border bg-muted"
               aria-hidden="true"
             >
               {getLineNumberDisplay(type, oldLineNumber, 'old')}
@@ -126,7 +126,7 @@ export function LineDiff({
 
             {/* New line number */}
             <div
-              className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-slate-400 dark:text-slate-600 select-none border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30"
+              className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-muted-foreground select-none border-r border-border bg-muted"
               aria-hidden="true"
             >
               {getLineNumberDisplay(type, newLineNumber, 'new')}
@@ -147,7 +147,7 @@ export function LineDiff({
   // Side-by-side view shows separate columns for old and new
   return (
     <div
-      className={`flex items-stretch border-b border-slate-200 dark:border-slate-800 ${className}`}
+      className={`flex items-stretch border-b border-border ${className}`}
       role="row"
       aria-label={`${type} line ${oldLineNumber || newLineNumber}`}
     >
@@ -155,7 +155,7 @@ export function LineDiff({
         <>
           {/* Old line number */}
           <div
-            className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-slate-400 dark:text-slate-600 select-none border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30"
+            className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-muted-foreground select-none border-r border-border bg-muted"
             aria-hidden="true"
           >
             {getLineNumberDisplay(type, oldLineNumber, 'old')}
@@ -163,7 +163,7 @@ export function LineDiff({
 
           {/* New line number */}
           <div
-            className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-slate-400 dark:text-slate-600 select-none border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/30"
+            className="w-12 flex-shrink-0 px-2 py-0 text-right text-xs text-muted-foreground select-none border-r border-border bg-muted"
             aria-hidden="true"
           >
             {getLineNumberDisplay(type, newLineNumber, 'new')}

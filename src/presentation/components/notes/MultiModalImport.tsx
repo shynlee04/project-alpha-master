@@ -292,10 +292,10 @@ export function MultiModalImport({ onContentReady }: MultiModalImportProps) {
 
             {/* Error State */}
             {error && (
-              <div className="flex items-start gap-3 p-4 bg-red-900/20 border border-red-800 rounded-md">
-                <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-4 bg-destructive/10 border border-destructive rounded-md">
+                <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="text-sm text-red-400">{error}</p>
+                  <p className="text-sm text-destructive">{error}</p>
                 </div>
               </div>
             )}

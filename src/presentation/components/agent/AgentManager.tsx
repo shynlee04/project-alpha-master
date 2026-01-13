@@ -270,7 +270,7 @@ export function AgentManager({
               disabled={disabled}
             >
               {capabilities.isDefault ? (
-                <Check className="h-3.5 w-3.5 text-green-500" />
+                <Check className="h-3.5 w-3.5 text-success" />
               ) : (
                 <Shield className="h-3.5 w-3.5" />
               )}

@@ -32,9 +32,9 @@ function FlashcardCard({
 }) {
   const { t } = useTranslation();
   const difficultyColors = {
-    easy: 'bg-green-100 text-green-800 border-green-300',
-    medium: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-    hard: 'bg-red-100 text-red-800 border-red-300',
+    easy: 'bg-success/20 text-success border-success/30',
+    medium: 'bg-warning/20 text-warning border-warning/30',
+    hard: 'bg-destructive/20 text-destructive border-destructive/30',
   };
 
   return (
@@ -50,53 +50,53 @@ function FlashcardCard({
       >
         {/* Front of card */}
         <div
-          className="absolute w-full h-full backface-hidden bg-white border-2 border-gray-200 rounded-none p-6 shadow-md"
+          className="absolute w-full h-full backface-hidden bg-card border-2 border-border rounded-none p-6 shadow-md"
           style={{ backfaceVisibility: 'hidden' }}
         >
           <div className="flex items-start justify-between mb-4">
-            <span className="text-xs font-medium text-gray-500">{t('flashcards.preview.questionNumber', { number: index + 1 })}</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('flashcards.preview.questionNumber', { number: index + 1 })}</span>
             <span
               className={`px-2 py-1 text-xs font-medium rounded-full border ${difficultyColors[card.difficulty]}`}
             >
               {card.difficulty}
             </span>
           </div>
-          <p className="text-lg font-medium text-gray-900">{card.question}</p>
-          <p className="text-sm text-gray-500 mt-4">{t('flashcards.preview.clickToReveal')}</p>
+          <p className="text-lg font-medium text-foreground">{card.question}</p>
+          <p className="text-sm text-muted-foreground mt-4">{t('flashcards.preview.clickToReveal')}</p>
         </div>
 
         {/* Back of card */}
         <div
-          className="absolute w-full h-full backface-hidden bg-gray-50 border-2 border-gray-200 rounded-none p-6 shadow-md"
+          className="absolute w-full h-full backface-hidden bg-secondary border-2 border-border rounded-none p-6 shadow-md"
           style={{
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
           }}
         >
           <div className="flex items-start justify-between mb-4">
-            <span className="text-xs font-medium text-gray-500">{t('flashcards.preview.answer')}</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('flashcards.preview.answer')}</span>
             {onEdit && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onEdit(index, card);
                 }}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-info hover:text-info/80"
               >
                 {t('flashcards.preview.edit')}
               </button>
             )}
           </div>
-          <p className="text-lg font-medium text-gray-900">{card.answer}</p>
+          <p className="text-lg font-medium text-foreground">{card.answer}</p>
           {card.topic && (
             <div className="mt-4 flex flex-wrap gap-1">
-              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-none">
+              <span className="px-2 py-1 text-xs bg-info/20 text-info rounded-none">
                 {card.topic}
               </span>
             </div>
           )}
           {card.sourceIds.length > 0 && (
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-muted-foreground mt-2">
               Sources: {card.sourceIds.map((id) => `[${id}]`).join(', ')}
             </p>
           )}
@@ -148,25 +148,25 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">{t('flashcards.preview.title')}</h2>
-        <p className="text-gray-600 mt-1">
+        <h2 className="text-2xl font-bold text-foreground">{t('flashcards.preview.title')}</h2>
+        <p className="text-muted-foreground mt-1">
           {t('flashcards.preview.description')}
         </p>
       </div>
 
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-none p-4">
-          <p className="text-sm text-blue-600">{t('flashcards.preview.totalCards')}</p>
-          <p className="text-2xl font-bold text-blue-900">{preview.totalCards}</p>
+        <div className="bg-info/10 border border-info/30 rounded-none p-4">
+          <p className="text-sm text-info">{t('flashcards.preview.totalCards')}</p>
+          <p className="text-2xl font-bold text-info">{preview.totalCards}</p>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-none p-4">
-          <p className="text-sm text-green-600">{t('flashcards.preview.topics')}</p>
-          <p className="text-2xl font-bold text-green-900">{preview.topics.length}</p>
+        <div className="bg-success/10 border border-success/30 rounded-none p-4">
+          <p className="text-sm text-success">{t('flashcards.preview.topics')}</p>
+          <p className="text-2xl font-bold text-success">{preview.topics.length}</p>
         </div>
-        <div className="bg-purple-50 border border-purple-200 rounded-none p-4">
-          <p className="text-sm text-purple-600">{t('flashcards.preview.sources')}</p>
-          <p className="text-2xl font-bold text-purple-900">{preview.sourcesUsed.length}</p>
+        <div className="bg-purple-500/10 border border-purple-500/30 rounded-none p-4">
+          <p className="text-sm text-purple-400">{t('flashcards.preview.sources')}</p>
+          <p className="text-2xl font-bold text-purple-300">{preview.sourcesUsed.length}</p>
         </div>
       </div>
 
@@ -174,12 +174,12 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
       <div className="mb-6">
         <div className="flex flex-wrap gap-2 mb-2">
           {preview.topics.map((topic) => (
-            <span key={topic} className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-none">
+            <span key={topic} className="px-3 py-1 text-sm bg-info/20 text-info rounded-none">
               {topic}
             </span>
           ))}
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Sources: {preview.sourcesUsed.map((id) => `[${id}]`).join(', ')}
         </p>
       </div>
@@ -200,7 +200,7 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
 
       {/* Remaining cards notice */}
       {remainingCount > 0 && (
-        <p className="text-center text-gray-500 mb-6">
+        <p className="text-center text-muted-foreground mb-6">
           And {remainingCount} more card{remainingCount > 1 ? 's' : ''}...
         </p>
       )}
@@ -209,13 +209,13 @@ export function FlashcardPreview({ preview, onApprove, onDiscard, onEditCard }: 
       <div className="flex justify-center gap-4">
         <button
           onClick={onDiscard}
-          className="px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-none hover:bg-gray-200 transition-colors"
+          className="px-6 py-3 bg-secondary text-secondary-foreground font-medium rounded-none hover:bg-muted transition-colors"
         >
           {t('flashcards.preview.discard')}
         </button>
         <button
           onClick={() => onApprove(editedCards)}
-          className="px-6 py-3 bg-blue-600 text-white font-medium rounded-none hover:bg-blue-700 transition-colors"
+          className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-none hover:bg-primary/90 transition-colors"
         >
           {t('flashcards.preview.saveAll', { count: editedCards.length })}
         </button>
@@ -231,11 +231,11 @@ export function FlashcardPreviewLoading() {
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       <div className="animate-pulse">
-        <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+        <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+        <div className="h-4 bg-muted rounded w-1/2 mb-8"></div>
         <div className="grid grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-64 bg-gray-200 rounded-none"></div>
+            <div key={i} className="h-64 bg-muted rounded-none"></div>
           ))}
         </div>
       </div>
@@ -250,7 +250,7 @@ export function FlashcardPreviewEmpty() {
   const { t } = useTranslation();
   return (
     <div className="w-full max-w-4xl mx-auto p-6 text-center">
-      <p className="text-gray-500">{t('flashcards.preview.empty')}</p>
+      <p className="text-muted-foreground">{t('flashcards.preview.empty')}</p>
     </div>
   );
 }

@@ -97,13 +97,13 @@ export function AgentStatusSegment() {
     const getTextColor = () => {
         switch (agentStatus) {
             case 'thinking':
-                return 'text-blue-400';
+                return 'text-info';
             case 'executing':
-                return 'text-yellow-400';
+                return 'text-warning';
             case 'error':
-                return 'text-red-400';
+                return 'text-destructive';
             default:
-                return 'text-white/60';
+                return 'text-foreground/60';
         }
     };
 

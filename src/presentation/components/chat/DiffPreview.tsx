@@ -187,14 +187,14 @@ const LANGUAGE_MAP: Record<string, string> = {
  * Line type styling
  */
 const LINE_STYLES = {
-    add: 'bg-green-500/10 border-l-2 border-green-500',
-    remove: 'bg-red-500/10 border-l-2 border-red-500',
+    add: 'bg-success/10 border-l-2 border-success',
+    remove: 'bg-destructive/10 border-l-2 border-destructive',
     unchanged: '',
 };
 
 const LINE_PREFIX_STYLES = {
-    add: 'text-green-400',
-    remove: 'text-red-400',
+    add: 'text-success',
+    remove: 'text-destructive',
     unchanged: 'text-muted-foreground/50',
 };
 
@@ -340,8 +340,8 @@ export function DiffPreview({
                 {/* Content */}
                 <span className={cn(
                     'flex-1 px-2',
-                    line.type === 'add' && 'text-green-300',
-                    line.type === 'remove' && 'text-red-300',
+                    line.type === 'add' && 'text-success',
+                    line.type === 'remove' && 'text-destructive',
                     line.type === 'unchanged' && 'text-muted-foreground'
                 )}>
                     {line.content || ' '}
@@ -377,12 +377,12 @@ export function DiffPreview({
 
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1 text-[10px] font-mono">
-                        <Plus className="w-3 h-3 text-green-500" />
-                        <span className="text-green-500">{stats.additions}</span>
+                        <Plus className="w-3 h-3 text-success" />
+                        <span className="text-success">{stats.additions}</span>
                     </div>
                     <div className="flex items-center gap-1 text-[10px] font-mono">
-                        <Minus className="w-3 h-3 text-red-500" />
-                        <span className="text-red-500">{stats.deletions}</span>
+                        <Minus className="w-3 h-3 text-destructive" />
+                        <span className="text-destructive">{stats.deletions}</span>
                     </div>
                 </div>
             </div>

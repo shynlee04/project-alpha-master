@@ -187,10 +187,10 @@ export function MessageSearch({
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="p-3 border-b-2 border-slate-700 space-y-2">
+        <div className="p-3 border-b-2 border-border space-y-2">
           {/* Role Filter */}
           <div className="space-y-1">
-            <label className="font-mono text-xs text-slate-400">
+            <label className="font-mono text-xs text-muted-foreground">
               {t('chat.search.filterByRole', 'Filter by role:')}
             </label>
             <div className="flex gap-1">
@@ -216,7 +216,7 @@ export function MessageSearch({
 
           {/* Date Range Filter */}
           <div className="space-y-1">
-            <label className="font-mono text-xs text-slate-400">
+            <label className="font-mono text-xs text-muted-foreground">
               {t('chat.search.filterByDate', 'Filter by date:')}
             </label>
             <div className="flex gap-1">
@@ -224,7 +224,7 @@ export function MessageSearch({
                 type="date"
                 className={cn(
                   'flex-1 px-2 py-1 rounded-sm border-2',
-                  'bg-slate-800 border-slate-600 text-slate-200',
+                  'bg-card border-border text-foreground',
                   'font-mono text-xs'
                 )}
                 onChange={(e) => {
@@ -237,12 +237,12 @@ export function MessageSearch({
                   }));
                 }}
               />
-              <span className="text-slate-500">-</span>
+              <span className="text-muted-foreground">-</span>
               <Input
                 type="date"
                 className={cn(
                   'flex-1 px-2 py-1 rounded-sm border-2',
-                  'bg-slate-800 border-slate-600 text-slate-200',
+                  'bg-card border-border text-foreground',
                   'font-mono text-xs'
                 )}
                 onChange={(e) => {
@@ -263,14 +263,14 @@ export function MessageSearch({
       {/* Search Results */}
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {!query || query.trim().length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-500">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <Search className="h-8 w-8 mb-2" />
             <p className="font-mono text-sm">
               {t('chat.search.enterQuery', 'Enter a search query to find messages')}
             </p>
           </div>
         ) : searchResults.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-500">
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <p className="font-mono text-sm">
               {t('chat.search.noResults', 'No messages found')}
             </p>
@@ -289,7 +289,7 @@ export function MessageSearch({
         {/* Result count */}
         {query && searchResults.length > 0 && (
           <div className="px-2 py-1 text-center">
-            <span className="font-mono text-xs text-slate-500">
+            <span className="font-mono text-xs text-muted-foreground">
               {t('chat.search.resultCount', '{{count}} results', { count: searchResults.length })}
             </span>
           </div>
@@ -370,8 +370,8 @@ function MessageSearchResultCard({ result, conversationTitle, onJump }: MessageS
               'px-1.5 py-0.5 rounded-sm text-[10px] font-mono font-bold',
               'border-2',
               isUser
-                ? 'bg-blue-900/40 text-blue-300 border-blue-600'
-                : 'bg-purple-900/40 text-purple-300 border-purple-600'
+                ? 'bg-info/40 text-info border-info'
+                : 'bg-purple-400/40 text-purple-400 border-purple-400'
             )}
           >
             {isUser ? (
@@ -383,7 +383,7 @@ function MessageSearchResultCard({ result, conversationTitle, onJump }: MessageS
           </span>
 
           {/* Conversation title */}
-          <span className="text-xs text-slate-400 font-mono truncate max-w-[150px]">
+          <span className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">
             {conversationTitle}
           </span>
         </div>

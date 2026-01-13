@@ -127,7 +127,7 @@ export function SourceContextMenu({
                 {onSynthesize && (
                     <DropdownMenuItem
                         onClick={() => onSynthesize(source)}
-                        className="rounded-none cursor-pointer text-green-500 focus:text-green-500"
+                        className="rounded-none cursor-pointer text-success focus:text-success"
                     >
                         <Brain className="w-4 h-4 mr-2" />
                         Synthesize

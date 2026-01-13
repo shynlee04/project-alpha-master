@@ -109,20 +109,20 @@ export function NotificationPermissionBanner() {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-50 sm:left-auto sm:right-4 sm:max-w-sm">
-      <div className="rounded-sm border-2 border-yellow-700 bg-yellow-950 p-4 shadow-lg">
+      <div className="rounded-sm border-2 border-warning bg-warning/95 p-4 shadow-lg">
         <div className="flex items-start gap-3">
           <div className="flex-1">
-            <p className="text-sm font-semibold text-yellow-100">
+            <p className="text-sm font-semibold text-warning-foreground">
               {t('notifications.permissionDenied.title', 'Notifications Blocked')}
             </p>
-            <p className="mt-1 text-xs text-yellow-200">
+            <p className="mt-1 text-xs text-warning-foreground/80">
               {t('notifications.permissionDenied.message', 'Enable notifications in your browser settings to receive updates.')}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setDismissed(true)}
-            className="flex-shrink-0 rounded-sm p-1 text-yellow-300 hover:text-yellow-100 hover:bg-yellow-900 transition-colors"
+            className="flex-shrink-0 rounded-sm p-1 text-warning-foreground hover:text-warning-foreground hover:bg-warning/80 transition-colors"
             aria-label={t('notifications.dismiss', 'Dismiss')}
           >
             ×

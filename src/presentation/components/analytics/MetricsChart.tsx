@@ -435,7 +435,7 @@ export function StatCard({ label, value, unit, trend, className }: StatCardProps
         <div
           className={cn(
             'text-xs font-mono mt-1',
-            trend.isPositive ? 'text-green-500' : 'text-red-500'
+            trend.isPositive ? 'text-success' : 'text-destructive'
           )}
         >
           {trend.isPositive ? '+' : ''}

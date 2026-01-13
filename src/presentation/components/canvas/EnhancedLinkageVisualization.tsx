@@ -31,27 +31,27 @@ export interface EnhancedLinkageVisualizationProps {
 function getConfidenceBadge(confidence: number) {
   if (confidence >= 0.85) {
     return {
-      color: 'text-green-500',
-      bgColor: 'bg-green-500/10',
-      borderColor: 'border-green-500/20',
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+      borderColor: 'border-success/20',
       icon: <CheckCircle size={16} />,
       label: 'High',
       pattern: 'solid',
     };
   } else if (confidence >= 0.70) {
     return {
-      color: 'text-yellow-500',
-      bgColor: 'bg-yellow-500/10',
-      borderColor: 'border-yellow-500/20',
+      color: 'text-warning',
+      bgColor: 'bg-warning/10',
+      borderColor: 'border-warning/20',
       icon: <CheckCircle size={16} />,
       label: 'Medium',
       pattern: 'dashed',
     };
   } else {
     return {
-      color: 'text-red-500',
-      bgColor: 'bg-red-500/10',
-      borderColor: 'border-red-500/20',
+      color: 'text-destructive',
+      bgColor: 'bg-destructive/10',
+      borderColor: 'border-destructive/20',
       icon: <XCircle size={16} />,
       label: 'Low',
       pattern: 'dotted',

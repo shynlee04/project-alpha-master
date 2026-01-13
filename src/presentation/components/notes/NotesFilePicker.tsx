@@ -180,9 +180,9 @@ export function NotesFilePicker({
                             </Button>
                         </div>
                     ) : (
-                        <div className="flex items-center justify-between p-4 border rounded-lg bg-green-500/10">
+                        <div className="flex items-center justify-between p-4 border rounded-lg bg-success/10">
                             <div className="flex items-center gap-2">
-                                <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                <CheckCircle2 className="w-5 h-5 text-success" />
                                 <div>
                                     <p className="font-medium">Directory Mounted</p>
                                     <p className="text-sm text-muted-foreground">
@@ -190,7 +190,7 @@ export function NotesFilePicker({
                                     </p>
                                 </div>
                             </div>
-                            <Badge variant="outline" className="bg-green-500/20 text-green-500">
+                            <Badge variant="outline" className="bg-success/20 text-success">
                                 Active
                             </Badge>
                         </div>

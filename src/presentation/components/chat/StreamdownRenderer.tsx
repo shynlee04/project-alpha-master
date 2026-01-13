@@ -90,12 +90,12 @@ function MermaidDiagram({ code }: { code: string }) {
         return (
             <div className={cn(
                 'my-4 p-4 rounded-sm border-2',
-                'border-amber-600 bg-amber-900/20 text-amber-300',
+                'border-warning bg-warning/20 text-warning',
                 'font-mono text-xs'
             )}>
                 <div className="font-bold mb-2">⚠️ Diagram Error</div>
                 <pre className="whitespace-pre-wrap">{error}</pre>
-                <pre className="mt-2 p-2 bg-slate-800 rounded text-slate-400 text-[10px]">
+                <pre className="mt-2 p-2 bg-muted rounded text-muted-foreground text-[10px]">
                     {code}
                 </pre>
             </div>
@@ -171,7 +171,7 @@ function StreamdownRendererComponent({
             className={cn(
                 'streamdown-container prose prose-sm dark:prose-invert max-w-none',
                 'prose-headings:font-mono prose-headings:font-bold',
-                'prose-code:font-mono prose-code:text-sm prose-code:bg-slate-800 prose-code:px-1 prose-code:rounded',
+                'prose-code:font-mono prose-code:text-sm prose-code:bg-muted prose-code:px-1 prose-code:rounded',
                 'prose-pre:bg-transparent prose-pre:p-0',
                 'prose-a:text-primary prose-a:no-underline hover:prose-a:underline',
                 'prose-table:border-collapse',

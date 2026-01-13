@@ -76,15 +76,15 @@ export function ScheduledTasksDialog({ open, onOpenChange }: ScheduledTasksDialo
   const getCategoryColor = (category: ScheduledTask['category']) => {
     switch (category) {
       case 'maintenance':
-        return 'text-blue-500'
+        return 'text-info'
       case 'backup':
-        return 'text-green-500'
+        return 'text-success'
       case 'sync':
         return 'text-purple-500'
       case 'automation':
-        return 'text-orange-500'
+        return 'text-warning'
       default:
-        return 'text-gray-500'
+        return 'text-muted-foreground'
     }
   }
 
@@ -148,9 +148,9 @@ export function ScheduledTasksDialog({ open, onOpenChange }: ScheduledTasksDialo
                           {task.lastRun && (
                             <div className="flex items-center gap-1">
                               {task.lastError ? (
-                                <XCircle className="w-3 h-3 text-red-500" />
+                                <XCircle className="w-3 h-3 text-destructive" />
                               ) : (
-                                <CheckCircle className="w-3 h-3 text-green-500" />
+                                <CheckCircle className="w-3 h-3 text-success" />
                               )}
                               <span>
                                 {t('scheduler.lastRun', { defaultValue: 'Last run' })}: {formatDateTime(task.lastRun)}
@@ -162,14 +162,14 @@ export function ScheduledTasksDialog({ open, onOpenChange }: ScheduledTasksDialo
                               {t('scheduler.runCount', { defaultValue: 'Runs' })}: {task.runCount}
                             </span>
                             {task.failureCount > 0 && (
-                              <span className="text-red-500">
+                              <span className="text-destructive">
                                 ({t('scheduler.failures', { defaultValue: 'failures' })}: {task.failureCount})
                               </span>
                             )}
                           </div>
                         </div>
                         {task.lastError && (
-                          <div className="mt-2 text-xs text-red-500 bg-red-500/10 p-2 rounded">
+                          <div className="mt-2 text-xs text-destructive bg-destructive/10 p-2 rounded">
                             {task.lastError}
                           </div>
                         )}

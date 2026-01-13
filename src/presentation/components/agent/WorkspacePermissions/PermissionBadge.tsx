@@ -30,8 +30,8 @@ export interface PermissionBadgeProps {
  */
 export function PermissionBadge({ enabled, children }: PermissionBadgeProps) {
     const config = enabled
-        ? 'bg-green-500/20 text-green-500 border-green-500/30'
-        : 'bg-red-500/20 text-red-500 border-red-500/30'
+        ? 'bg-green-500/20 text-success border-green-500/30'
+        : 'bg-red-500/20 text-destructive border-red-500/30'
 
     const Icon = enabled ? Check : X
 

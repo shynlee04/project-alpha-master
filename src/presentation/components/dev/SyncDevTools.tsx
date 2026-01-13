@@ -48,14 +48,14 @@ export function SyncDevTools() {
       <div className="flex flex-col gap-2">
         <button
           onClick={() => mockSyncEmit()}
-          className="px-3 py-2 text-xs bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+          className="px-3 py-2 text-xs bg-success hover:bg-success/80 text-success-foreground rounded transition-colors"
         >
           Test Sync Success (10 files, 5s)
         </button>
 
         <button
           onClick={() => mockSyncError()}
-          className="px-3 py-2 text-xs bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
+          className="px-3 py-2 text-xs bg-destructive hover:bg-destructive/80 text-destructive-foreground rounded transition-colors"
         >
           Test Sync Error (Network failure)
         </button>
@@ -63,14 +63,14 @@ export function SyncDevTools() {
         <div className="flex gap-2">
           <button
             onClick={() => mockSyncCustom({ total: 5, duration: 2000 })}
-            className="flex-1 px-3 py-2 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+            className="flex-1 px-3 py-2 text-xs bg-info hover:bg-info/80 text-info-foreground rounded transition-colors"
           >
             Quick (5 files)
           </button>
 
           <button
             onClick={() => mockSyncCustom({ total: 20, duration: 5000 })}
-            className="flex-1 px-3 py-2 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+            className="flex-1 px-3 py-2 text-xs bg-info hover:bg-info/80 text-info-foreground rounded transition-colors"
           >
             Slow (20 files)
           </button>
@@ -85,7 +85,7 @@ export function SyncDevTools() {
               errorMessage: 'Permission denied: Read access required',
             })
           }
-          className="px-3 py-2 text-xs bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors"
+          className="px-3 py-2 text-xs bg-warning hover:bg-warning/80 text-warning-foreground rounded transition-colors"
         >
           Test Partial Failure (50 files → fail at 20%)
         </button>

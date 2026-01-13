@@ -81,12 +81,12 @@ export const ProjectCountCard: React.FC<ProjectCountCardProps> = ({
         {/* Active Projects */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <Activity className="h-3 w-3 text-green-500" />
+            <Activity className="h-3 w-3 text-success" />
             <span className="text-sm text-muted-foreground">
               {t('hub.dashboard.active', 'Active')}
             </span>
           </div>
-          <span className="text-base font-mono font-semibold text-green-500">
+          <span className="text-base font-mono font-semibold text-success">
             {activeProjects}
           </span>
         </div>

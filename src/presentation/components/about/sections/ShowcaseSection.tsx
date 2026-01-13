@@ -60,9 +60,9 @@ export function ShowcaseSection() {
 
                         <div className="absolute top-0 left-0 w-full h-8 bg-muted/80 border-b border-border flex items-center px-4 gap-2">
                             <div className="flex gap-1.5">
-                                <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                                <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                                <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                                <div className="w-3 h-3 rounded-full bg-destructive/50" />
+                                <div className="w-3 h-3 rounded-full bg-warning/50" />
+                                <div className="w-3 h-3 rounded-full bg-success/50" />
                             </div>
                             <div className="ml-4 w-64 h-4 rounded-md bg-background/50" />
                         </div>

@@ -230,7 +230,7 @@ export function AIPromptDialog() {
                         </div>
                     )}
                     {!activeAgent && (
-                        <div className="flex items-center gap-2 mt-2 text-sm text-amber-600 dark:text-amber-400">
+                        <div className="flex items-center gap-2 mt-2 text-sm text-warning">
                             <Bot className="w-4 h-4" />
                             <span>{t('notes.ai.noAgentSelected', 'No agent selected. Please select an agent.')}</span>
                         </div>
@@ -348,7 +348,7 @@ export function AIPromptDialog() {
                                 {/* Context stats bar */}
                                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                     {contextPreview.isEmpty ? (
-                                        <span className="text-amber-600 dark:text-amber-400">
+                                        <span className="text-warning">
                                             {t('notes.ai.noContextAvailable', 'No context available for this mode')}
                                         </span>
                                     ) : (
@@ -370,13 +370,13 @@ export function AIPromptDialog() {
 
                                 {/* Large context warning */}
                                 {contextPreview.isVeryLarge && (
-                                    <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-2 rounded border border-amber-200 dark:border-amber-800">
+                                    <div className="flex items-center gap-2 text-xs text-warning bg-warning/10 p-2 rounded border border-warning/30">
                                         <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                                         <span>{t('notes.ai.veryLargeContext', 'Very large context may increase cost and response time')}</span>
                                     </div>
                                 )}
                                 {contextPreview.isLarge && !contextPreview.isVeryLarge && (
-                                    <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
+                                    <div className="flex items-center gap-2 text-xs text-info">
                                         <FileText className="w-3 h-3" />
                                         <span>{t('notes.ai.largeContext', 'Large context - may take longer to process')}</span>
                                     </div>

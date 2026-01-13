@@ -228,7 +228,7 @@ export function TaskEditor({ open, task, onClose }: TaskEditorProps) {
               id="cron-expression"
               type="text"
               className={`mt-1 w-full px-3 py-2 border rounded-[4px] bg-[var(--background)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--ring)] ${
-                validationError ? 'border-red-500' : 'border-[var(--border)]'
+                validationError ? 'border-destructive' : 'border-[var(--border)]'
               }`}
               value={cronExpression}
               onChange={(e) => {
@@ -241,7 +241,7 @@ export function TaskEditor({ open, task, onClose }: TaskEditorProps) {
               {scheduleDescription}
             </div>
             {validationError && (
-              <div className="mt-1 text-sm text-red-500">
+              <div className="mt-1 text-sm text-destructive">
                 {validationError}
               </div>
             )}

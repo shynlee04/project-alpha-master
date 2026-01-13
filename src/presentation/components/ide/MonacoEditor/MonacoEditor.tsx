@@ -647,14 +647,14 @@ export const MonacoEditor = React.memo(function MonacoEditor({
 
             {/* S-029: Diff mode toggle button */}
             {originalContent && (
-                <div className="px-2 py-1 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-slate-400">
+                <div className="px-2 py-1 bg-muted border-b border-border flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
                         {t('diff.diffMode', 'Diff Mode')}
                     </span>
                     <button
                         type="button"
                         onClick={() => onDiffModeToggle?.(!diffMode)}
-                        className="px-3 py-1 text-xs font-medium rounded bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                        className="px-3 py-1 text-xs font-medium rounded-none bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
                         aria-label={t('diff.toggleDiffMode', 'Toggle diff mode (Cmd+D)')}
                     >
                         {diffMode ? t('diff.editMode', 'Edit Mode') : t('diff.diffMode', 'Diff Mode')}
@@ -685,7 +685,7 @@ export const MonacoEditor = React.memo(function MonacoEditor({
                     onChange={handleEditorChange}
                     onMount={handleEditorMount}
                     loading={
-                        <div className="h-full flex items-center justify-center text-slate-500">
+                        <div className="h-full flex items-center justify-center text-muted-foreground">
                             <span className="animate-pulse">{t('editor.loading')}</span>
                         </div>
                     }

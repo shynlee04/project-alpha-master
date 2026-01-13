@@ -87,12 +87,13 @@ function validateRequest(body: unknown): FlashcardGenerationRequest | null {
  * TanStack Start Server Route
  */
 export const Route = createFileRoute('/api/flashcards/generate')({
+  // @ts-expect-error TanStack Start server.handlers types not fully exported in @tanstack/react-router 1.147.0
   server: {
     handlers: {
       /**
        * POST handler - generate flashcards from sources
        */
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           // Parse request body
           const body = await request.json().catch(() => null);

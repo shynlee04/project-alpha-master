@@ -67,7 +67,7 @@ function BlockLoadingContent({ state, className }: BlockLoadingContentProps) {
                 <div className="flex items-center gap-2">
                     <div className="relative">
                         <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                        <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-amber-400 animate-pulse" />
+                        <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-warning animate-pulse" />
                     </div>
                     <span className="text-sm font-medium text-foreground">
                         {state.commandName}

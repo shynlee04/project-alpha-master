@@ -4,11 +4,15 @@
  * @governance EPIC-CP-1.1
  *
  * Project lifecycle management operations with Dexie persistence.
+ *
+ * @story PS-04 - Handle Persistence Architecture
+ * - Uses handle-persistence.ts instead of fsaHandleManager
+ * - Stores storageMetadata instead of fsaHandle
  */
 
 import { StateCreator } from 'zustand';
 import { db } from '@/infrastructure/persistence/dexie-db';
-import { fsaHandleManager } from '@/lib/filesystem/fsa-handle-manager';
+import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import type {
   Project,
   CreateProjectInput,
@@ -16,6 +20,7 @@ import type {
   ProjectState,
   ProjectMethods,
 } from './project-types';
+import type { HandleRestoreResult } from '@/infrastructure/filesystem/handle-types';
 
 /**
  * Generate unique project ID with workspace namespace
@@ -65,6 +70,7 @@ export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 's
 
 /**
  * Convert Dexie ProjectRecord to Zustand Project
+ * PS-04: Now uses storageMetadata instead of fsaHandle
  */
 export function fromRecord(record: any): Project {
   return {
@@ -72,7 +78,7 @@ export function fromRecord(record: any): Project {
     name: record.name,
     folderPath: record.folderPath || record.path,
     storageType: record.storageType || 'fsa',  // Default to 'fsa' for legacy records
-    fsaHandle: null,  // Not stored in Dexie (requires user permission)
+    storageMetadata: null,  // Not stored in Dexie (requires user permission, store in fsaHandles table)
     lastOpened: new Date(record.lastOpened),
     createdAt: new Date(record.createdAt),
     autoSync: true,  // Default value
@@ -105,7 +111,7 @@ export const createProjectCrudSlice: StateCreator<
       name: input.name,
       folderPath: input.folderPath,
       storageType,
-      fsaHandle: input.fsaHandle ?? null,
+      storageMetadata: input.storageMetadata ?? null,
       lastOpened: now,
       createdAt: now,
       autoSync: input.autoSync ?? true,
@@ -129,14 +135,17 @@ export const createProjectCrudSlice: StateCreator<
 
     // Persist to Dexie (async, non-blocking)
     // FS-03: Pass workspaceType for proper isolation
-    db.projects.put(toRecord(project, workspaceType)).catch((error) => {
-      console.error('[ProjectStore] Failed to persist project to Dexie:', error);
+    db.projects.put(toRecord(project, workspaceType)).catch((error: unknown) => {
+      const err = error as Error;
+      console.error('[ProjectStore] Failed to persist project to Dexie:', err.message);
     });
 
-    // Persist FSA handle only for 'fsa' storage type (indexeddb projects don't need handles)
-    if (storageType === 'fsa' && input.fsaHandle) {
-      fsaHandleManager.persistHandle(input.fsaHandle, projectId, workspaceType).catch((error) => {
-        console.error('[ProjectStore] Failed to persist FSA handle:', error);
+    // Persist FSA handle metadata only for 'fsa' storage type (indexeddb projects don't need handles)
+    // PS-04: Store metadata, not the handle itself
+    if (storageType === 'fsa' && input.storageMetadata) {
+      handlePersistenceService.persistHandle(projectId, null as any, workspaceType).catch((error: unknown) => {
+        const err = error as Error;
+        console.error('[ProjectStore] Failed to persist FSA handle metadata:', err.message);
       });
     }
 
@@ -169,8 +178,9 @@ export const createProjectCrudSlice: StateCreator<
     // Persist to Dexie (async, non-blocking)
     // FS-03: Extract workspace type from project ID for proper isolation
     const workspaceType = extractWorkspaceType(projectId);
-    db.projects.put(toRecord(updated, workspaceType)).catch((error) => {
-      console.error('[ProjectStore] Failed to update project in Dexie:', error);
+    db.projects.put(toRecord(updated, workspaceType)).catch((error: unknown) => {
+      const err = error as Error;
+      console.error('[ProjectStore] Failed to update project in Dexie:', err.message);
     });
   },
 
@@ -188,8 +198,15 @@ export const createProjectCrudSlice: StateCreator<
     });
 
     // Delete from Dexie (async, non-blocking)
-    db.projects.delete(projectId).catch((error) => {
-      console.error('[ProjectStore] Failed to delete project from Dexie:', error);
+    db.projects.delete(projectId).catch((error: unknown) => {
+      const err = error as Error;
+      console.error('[ProjectStore] Failed to delete project from Dexie:', err.message);
+    });
+
+    // Also delete stored handle metadata
+    handlePersistenceService.deleteHandle(projectId).catch((error: unknown) => {
+      const err = error as Error;
+      console.error('[ProjectStore] Failed to delete handle metadata:', err.message);
     });
   },
 
@@ -229,38 +246,39 @@ export const createProjectCrudSlice: StateCreator<
   },
 
   // Restore FSA handle for a project (called when accessing project after reload)
-  restoreProjectHandle: async (projectId: string) => {
+  // PS-04: Now returns HandleRestoreResult instead of just the handle
+  restoreProjectHandle: async (projectId: string): Promise<HandleRestoreResult> => {
     const project = get().projects[projectId];
     if (!project) {
       console.warn('[ProjectStore] Project not found:', projectId);
-      return null;
+      return {
+        success: false,
+        handle: null,
+        error: 'Project not found',
+        requiresUserInteraction: true,
+      };
     }
 
-    // If handle already exists, return it
-    if (project.fsaHandle) {
-      return project.fsaHandle;
-    }
-
-    // Attempt to restore handle from storage
+    // If storage metadata exists, attempt restoration
     console.log('[ProjectStore] Attempting to restore FSA handle for project:', projectId);
-    const handle = await fsaHandleManager.restoreHandle(projectId);
+    const result = await handlePersistenceService.restoreHandle(projectId);
 
-    if (handle) {
-      // Update the project with the restored handle
+    if (result.success && result.handle) {
+      // Update the project with the restored metadata
       set((state) => ({
         projects: {
           ...state.projects,
           [projectId]: {
             ...state.projects[projectId],
-            fsaHandle: handle,
+            storageMetadata: result.restoredFromMetadata,
           },
         },
       }));
       console.log('[ProjectStore] FSA handle restored successfully for project:', projectId);
-    } else {
-      console.warn('[ProjectStore] Failed to restore FSA handle for project:', projectId);
+    } else if (!result.requiresUserInteraction) {
+      console.warn('[ProjectStore] Failed to restore FSA handle for project:', projectId, result.error);
     }
 
-    return handle;
+    return result;
   },
 });

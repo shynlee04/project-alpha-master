@@ -234,9 +234,9 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                     <p className="font-medium">{WORKSPACE_NAMES[workspaceType]}</p>
                     <p className="text-sm text-muted-foreground">
                       {binding.isAvailable ? (
-                        <span className="text-green-500">Available</span>
+                        <span className="text-success">Available</span>
                       ) : (
-                        <span className="text-red-500">Not Available</span>
+                        <span className="text-destructive">Not Available</span>
                       )}
                     </p>
                   </div>
@@ -281,8 +281,8 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                     }
                     className={`px-3 py-1.5 text-sm rounded border ${
                       binding.isAvailable
-                        ? 'bg-green-500 text-white border-green-500'
-                        : 'bg-red-500 text-white border-red-500'
+                        ? 'bg-success text-success-foreground border-success'
+                        : 'bg-destructive text-destructive-foreground border-destructive'
                     }`}
                   >
                     {binding.isAvailable ? 'Enabled' : 'Disabled'}
@@ -325,7 +325,7 @@ export function WorkspacePermissionManager({ agentId }: WorkspacePermissionManag
                           !binding?.isAvailable
                             ? 'opacity-50 cursor-not-allowed bg-muted'
                             : permitted
-                            ? 'bg-green-500 text-white border-green-500'
+                            ? 'bg-success text-success-foreground border-success'
                             : 'border-border hover:bg-muted'
                         }`}
                       >

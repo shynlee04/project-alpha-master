@@ -1,38 +1,62 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.1 - CORRECT-COURSE ACTIVATED
+# BMM WORKFLOW STATUS v2.3 - CORRECT-COURSE PHASE 2 (SURVIVAL - Handle Persistence)
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.1.0"
-last_updated: "2026-01-14T23:00:00+07:00"
-updated_by: "EXCALIBUR - Team A PROVIDER WIRING COMPLETED (REVIEW)"
-previous_version: "_bmad-output/.archive/2026-01-09/workflow-history/bmm-workflow-status-v1-ARCHIVED.yaml"
+schema_version: "2.3.0"
+last_updated: "2026-01-15T18:00:00+07:00"
+updated_by: "EXCALIBUR - Added PS-04/PS-05/PS-06 for Critical User Issues"
+previous_version: "bmm-workflow-status-v2.2.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 45  # Improved - Provider wiring complete (Groq, Mistral, chutes.ai, Gemini 3.0)
+health_score: 60  # Same - Critical issues identified, fix in progress
 context_ttl: "24h"
 current_phase: "CORRECT-COURSE"
 
 # PHASE GUIDANCE
 phase_guidance: |
-  CORRECT-COURSE WORKFLOW ACTIVE:
-  - CC-01 and CC-02 run in PARALLEL (Team A + Team B)
-  - CC-03 through CC-06 are BLOCKED until Phase 1 complete
-  - All stories must be TESTED before claiming complete
-  - Delete more code than added (net reduction expected)
-
+  CORRECT-COURSE PHASE 2 - SURVIVAL (Handle Persistence & VFS):
+  Focus on fixing CRITICAL user-reported issues:
+  
+  1. URI-01: Handle Persistence (PS-04) - CRITICAL
+     - Projects don't persist on browser refresh
+     - FileSystemDirectoryHandle can't be serialized
+     - Solution: Store metadata, restore on demand
+  
+  2. URI-02: VFS Tree Structure (PS-05) - CRITICAL
+     - Folders-in-folders not displayed
+     - Currently using flat hash map
+     - Solution: Implement hierarchical VFS
+  
+  3. URI-03: Hot Reactive Sync (PS-02-B) - HIGH
+     - External file changes not detected
+     - watch() exists but disconnected
+     - Solution: Connect to UI
+  
+  4. URI-04: RAG Infrastructure (PS-06) - MEDIUM
+     - No semantic search capability
+     - Solution: Chunking + Embedding + Index services
+  
+  Team B Priority Order: PS-02-A → PS-04 → PS-02-B → PS-05 → PS-06
+  Team A continues: BYOK-02 → BYOK-04
+  
 # TEAMS
 teams:
   - id: "Team A"
     name: "BYOK & Agent Infrastructure Squad"
     focus: "CC-02 (BYOK) → CC-03 (Chat) → CC-05 (Agent/LLM)"
     assigned_epic: "EPIC-CC-02"
+    current_story: "BYOK-02"
+    status: "READY"
+    
   - id: "Team B"
-    name: "Project Space & Notes Squad"
-    focus: "CC-01 (Project Space) → CC-04 (Notes) → CC-06 (Type Safety)"
+    name: "Project Space & Storage Squad"  
+    focus: "CC-01 (Project Space) → Storage Routing → Hot Reactive Sync"
     assigned_epic: "EPIC-CC-01"
+    current_story: "PS-02-A (Platform Routing)"
+    status: "READY"
 
 # NUMBERING RULES
 numbering:
@@ -53,56 +77,73 @@ limits:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "correct-course-2026-01-14"
+  id: "correct-course-2026-01-15"
   status: "ACTIVE"
-  epic: "EPIC-CC-02"
-  story: "BYOK-02"
-  started_at: "2026-01-14T23:30:00+07:00"
+  epic: "EPIC-CC-01"
+  story: "PS-02-A"
+  started_at: "2026-01-15T10:00:00+07:00"
   completed_at: null
-  team: "Team A"
+  team: "Team B"
   story_status: "READY"
-  story_summary: "Add Zod Validation Schemas for Credentials"
+  story_summary: "Platform Detection & Storage Routing"
+  
+  # TypeScript fixes completed this session
+  session_fixes:
+    - id: "TS-FIX-01"
+      description: "Add FileChangeCallback export to sync-result-types.ts"
+      status: "COMPLETED"
+    - id: "TS-FIX-02"
+      description: "Add video modality to buildRequestPayload"
+      status: "COMPLETED"
+    - id: "TS-FIX-03"
+      description: "Fix dexieDB → db ESM import"
+      status: "COMPLETED"
+    - id: "TS-FIX-04"
+      description: "Fix require() → ES imports for INITIAL_PROVIDERS"
+      status: "COMPLETED"
+    - id: "TS-FIX-05"
+      description: "Add @ts-expect-error for TanStack server.handlers"
+      status: "COMPLETED"
+    - id: "TS-FIX-06"
+      description: "Fix implicit any types in schema-migrations.ts"
+      status: "COMPLETED"
   
   completed_stories:
     - id: "PS-01"
       name: "Split useWorkspaceFileSystem God Store"
       completed_at: "2026-01-14T21:30:00+07:00"
       result: "571 lines → 119 lines orchestrator + 3 focused slices"
+    - id: "TS-CLEAN"
+      name: "TypeScript Zero Errors"
+      completed_at: "2026-01-15T11:00:00+07:00"
+      result: "19 errors → 0 errors, app runs successfully"
+    - id: "FSA-ADAPTER"
+      name: "Create FSAStorageAdapter"
+      completed_at: "2026-01-15T11:30:00+07:00"
+      result: "New adapter with watch() + SHA-256 hashing"
+      files:
+        - "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+        - "src/infrastructure/filesystem/index.ts"
+        - "src/infrastructure/sync/core/sync-result-types.ts"
     - id: "PRV-WIRING"
       name: "Wire All Providers with TanStack AI SDK"
       completed_at: "2026-01-14T23:00:00+07:00"
       result: "Groq, Mistral, chutes.ai adapters created + Gemini 3.0 models + video/audio support"
       status: "REVIEW"
-      files:
-        - "src/lib/agent/providers/groq-adapter.ts"
-        - "src/lib/agent/providers/mistral-adapter.ts"
-        - "src/lib/agent/providers/chutes-adapter.ts"
-        - "src/lib/agent/providers/gemini-adapter.ts (updated)"
-        - "src/lib/agent/providers/provider-adapter.ts (updated)"
-        - "src/lib/agent/providers/types.ts (updated)"
-        - "src/lib/agent/multimodal/message-builder.ts (extended)"
-        - "src/lib/agent/memory/insight-extractor.ts (extended)"
-      report: "_bmad-output/wiring/provider-wiring-report-2026-01-14.md"
     - id: "BYOK-01"
       name: "Split Provider Credentials God Slice"
       completed_at: "2026-01-14T23:30:00+07:00"
       result: "396 lines → 48 lines orchestrator + vault-slice (134) + crud-slice (397)"
-      files:
-        - "src/infrastructure/persistence/stores/providers/credentials/vault-slice.ts"
-        - "src/infrastructure/persistence/stores/providers/credentials/crud-slice.ts"
-        - "src/infrastructure/persistence/stores/providers/credentials/index.ts"
-        - "src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts (refactored)"
-        - "src/infrastructure/persistence/stores/providers/index.ts (updated)"
       team: "Team A"
 
 parallel_workflows:
-  - id: "cc-01-project-space-2026-01-14"
+  - id: "cc-01-project-space-2026-01-15"
     status: "ACTIVE"
     epic: "EPIC-CC-01"
-    story: "PS-02"
+    story: "PS-02-A"
     team: "Team B"
-    story_summary: "Create StorageAdapter Domain Interface"
-    started_at: "2026-01-14T19:00:00+07:00"
+    story_summary: "Platform Detection & Storage Routing"
+    started_at: "2026-01-15T12:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
@@ -116,29 +157,189 @@ active_epics:
   - id: "EPIC-CC-01"
     name: "Project Space Foundation"
     status: "IN_PROGRESS"
-    progress: 20
-    stories_total: 5
-    stories_done: 1
+    progress: 28  # Adjusted for new critical stories
+    stories_total: 10
+    stories_done: 3
     priority: "P0"
     team: "Team B"
     blocked_by: null
-    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-01-project-space-foundation-2026-01-14.yaml"
+    adr: "ADR-032"
+    user_reported_issues:
+      - id: "URI-01"
+        description: "Project IDs not persistent - need to open folder every time"
+        severity: "CRITICAL"
+        target_story: "PS-04"
+      - id: "URI-02"
+        description: "Folders in folders not displayed - flat structure only"
+        severity: "CRITICAL"
+        target_story: "PS-05"
+      - id: "URI-03"
+        description: "External file changes not detected - watch() disconnected"
+        severity: "HIGH"
+        target_story: "PS-02-B"
+      - id: "URI-04"
+        description: "No RAG indexing for semantic search"
+        severity: "MEDIUM"
+        target_story: "PS-06"
     stories:
+      # Completed Stories
       - id: "PS-01"
         name: "Split useWorkspaceFileSystem God Store"
         status: "COMPLETED"
-      - id: "PS-02"
-        name: "Create StorageAdapter Domain Interface"
-        status: "READY"
-      - id: "PS-03"
-        name: "Consolidate Dexie Databases"
-        status: "BLOCKED_BY_PS-02"
+        effort: "4h"
+        result: "571 lines → 119 lines orchestrator + 3 focused slices"
+      - id: "TS-CLEAN"
+        name: "TypeScript Zero Errors"
+        status: "COMPLETED"
+        effort: "3h"
+        result: "19 errors → 0 errors, app runs successfully"
+      - id: "FSA-ADAPTER"
+        name: "Create FSAStorageAdapter with watch()"
+        status: "COMPLETED"
+        effort: "6h"
+        result: "New adapter with watch() + SHA-256 hashing + polling"
+        files:
+          - "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+      
+      # In Progress Stories
+      - id: "PS-02-A"
+        name: "Platform Detection & Storage Routing"
+        status: "IN_PROGRESS"
+        effort: "4h"
+        priority: "P0"
+        description: |
+          Create platform detection and route:
+          - Desktop → FSA (File System Access API)
+          - Mobile → IDB (IndexedDB via Dexie)
+          - WebContainer → for IDE preview only
+        depends_on: ["FSA-ADAPTER"]
+        subtasks:
+          - "Create usePlatformDetection() hook"
+          - "Create StorageAdapterFactory"
+          - "Route Desktop→FSA, Mobile→IDB"
+      
+      # Blocked Stories (Dependencies on PS-02-A)
+      - id: "PS-02-B"
+        name: "Hot Reactive Sync Integration"
+        status: "BLOCKED_BY_PS-02-A"
+        effort: "4h"
+        priority: "P0"
+        addresses_issue: "URI-03"
+        description: |
+          Connect FSAStorageAdapter.watch() to:
+          - Monaco for external file change detection
+          - Sync status indicators
+          - Permission boundary enforcement
+        depends_on: ["PS-02-A"]
+        subtasks:
+          - "Create useVFSSyncSlice for watch→UI connection"
+          - "Create SyncStatusIndicator component"
+          - "Connect file change events to React state"
+      
+      # NEW: Critical Stories for User-Reported Issues
       - id: "PS-04"
-        name: "Fix Domain→Infrastructure Import Violation"
-        status: "BLOCKED_BY_PS-02"
+        name: "Handle Persistence Architecture"
+        status: "READY"
+        effort: "6h"
+        priority: "P0"
+        addresses_issue: "URI-01"
+        description: |
+          Fix projects not persisting on browser refresh.
+          
+          PROBLEM: FileSystemDirectoryHandle is NOT serializable to IndexedDB.
+          Users report: "One click to space ID or creation of file system ID is very inconsistent"
+          
+          SOLUTION: Store handle METADATA (not the handle itself), restore on demand.
+          
+          Deliverables:
+          - Create handle-persistence.ts service
+          - Store: handleId, directoryName, lastAccessTime, permissionGranted
+          - Implement restoreHandle() with user interaction
+          - Update Project entity to use storageMetadata instead of fsaHandle
+        depends_on: ["FSA-ADAPTER"]
+        files:
+          - "src/infrastructure/filesystem/handle-persistence.ts (NEW)"
+          - "src/infrastructure/filesystem/handle-types.ts (NEW)"
+          - "src/infrastructure/persistence/stores/project/project-handler-service.ts (NEW)"
+        acceptance_criteria:
+          - "Projects persist after browser refresh"
+          - "Clicking project prompts for folder access (if needed)"
+          - "No DataCloneError when saving to IndexedDB"
+          - "FileSystemDirectoryHandle never stored directly"
+      
       - id: "PS-05"
-        name: "Add Content Hashing for Sync"
+        name: "Virtual File System Tree Structure"
         status: "BLOCKED_BY_PS-04"
+        effort: "8h"
+        priority: "P0"
+        addresses_issue: "URI-02"
+        description: |
+          Fix folders-in-folders not displaying. Currently using flat hash map.
+          
+          PROBLEM: FSAStorageAdapter.fileHashes is a Map<string, FileHashEntry>
+          which loses hierarchy. FileTree component can't show nested structure.
+          
+          SOLUTION: Implement Virtual File System (VFS) with tree + flatMap.
+          
+          Deliverables:
+          - Create VFS node structure (path, name, kind, children, depth)
+          - Implement VFSBuilder.buildTree() from file list
+          - Implement VFSBuilder.applyChange() for created/modified/deleted
+          - Integrate VFS into FSAStorageAdapter
+          - Add file caching layer for performance
+        depends_on: ["PS-04"]
+        files:
+          - "src/domain/storage/IVirtualFileSystem.ts (NEW)"
+          - "src/infrastructure/filesystem/vfs-builder.ts (NEW)"
+          - "src/infrastructure/filesystem/file-cache.ts (NEW)"
+        acceptance_criteria:
+          - "FileTree shows nested folder structure"
+          - "Exclusion patterns work (node_modules, .git)"
+          - "File changes update tree in <2s"
+          - "Cache hit rate >70% for repeated reads"
+      
+      - id: "PS-06"
+        name: "RAG Index Infrastructure"
+        status: "BLOCKED_BY_PS-05"
+        effort: "8h"
+        priority: "P1"
+        addresses_issue: "URI-04"
+        description: |
+          Implement RAG infrastructure for semantic search.
+          
+          PROBLEM: No file indexing, embedding, or vector search.
+          Users can't do semantic search like "Show me auth code".
+          
+          SOLUTION: Create chunking, embedding, and index services.
+          
+          Deliverables:
+          - Create ChunkingService for semantic text splitting
+          - Create EmbeddingService (mock for now, Gemini API later)
+          - Create IndexService for file indexing and search
+          - Integrate with note-folder-bridge.ts for auto-indexing
+        depends_on: ["PS-05"]
+        files:
+          - "src/domain/services/rag/chunking-service.ts (NEW)"
+          - "src/domain/services/rag/embedding-service.ts (NEW)"
+          - "src/domain/services/rag/index-service.ts (NEW)"
+        acceptance_criteria:
+          - "Files can be indexed for RAG"
+          - "Text content splits into semantic chunks"
+          - "Search returns relevant results"
+          - "Index survives browser refresh"
+      
+      # Legacy Consolidation (Moved down, depends on PS-02-B)
+      - id: "PS-03"
+        name: "Consolidate Legacy Sync Code"
+        status: "BLOCKED_BY_PS-02-B"
+        effort: "4h"
+        priority: "P1"
+        description: |
+          Delete/archive:
+          - src/lib/filesync/ (re-exports only)
+          - src/lib/sync/ → merge into infrastructure/sync/
+          - Broken file watcher in src/lib/watcher/
+        depends_on: ["PS-02-B"]
 
   - id: "EPIC-CC-02"
     name: "BYOK Cleanup"
@@ -150,17 +351,16 @@ active_epics:
     team: "Team A"
     blocked_by: null
     parallel_with: "EPIC-CC-01"
-    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-02-byok-cleanup-2026-01-14.yaml"
     stories:
       - id: "BYOK-01"
         name: "Split Provider Credentials God Slice"
         status: "COMPLETED"
       - id: "BYOK-02"
         name: "Add Zod Validation Schemas"
-        status: "BLOCKED_BY_BYOK-01"
+        status: "READY"
       - id: "BYOK-03"
         name: "Archive Legacy Migration Code"
-        status: "BLOCKED_BY_BYOK-01"
+        status: "BLOCKED_BY_BYOK-02"
       - id: "BYOK-04"
         name: "Add projectId to Tool Execution Logs"
         status: "READY"
@@ -174,7 +374,6 @@ active_epics:
     priority: "P1"
     team: "Team A"
     blocked_by: "EPIC-CC-01"
-    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-03-chat-flow-2026-01-14.yaml"
 
   - id: "EPIC-CC-04"
     name: "Notes Refactoring"
@@ -185,192 +384,128 @@ active_epics:
     priority: "P1"
     team: "Team B"
     blocked_by: "EPIC-CC-01"
-    sprint_file: "_bmad-output/sprint-artifacts/epic-cc-04-notes-refactor-2026-01-14.yaml"
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # SUPERSEDED EPICS (Not properly tested - replaced by Correct-Course)
-  # ═══════════════════════════════════════════════════════════════════════════
-
-  - id: "EPIC-45"
-    name: "Chat State & Project Foundation"
-    status: "SUPERSEDED"
-    progress: 100
-    stories_total: 5
-    stories_done: 5
-    priority: "P0"
-    team: "Team A"
-    notes: "Code written but NOT tested - superseded by CC-01, CC-03"
-    superseded_by: "EPIC-CC-01, EPIC-CC-03"
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # TEAM B: Notes AI (Parallel Work)
-  # ═══════════════════════════════════════════════════════════════════════════
-
-  - id: "EPIC-41"
-    name: "AI Provider Foundation"
-    status: "COMPLETED"
-    progress: 100
-    stories_total: 8
-    stories_done: 8
-    priority: "P0"
-    completed_at: "2026-01-13T03:38:00+07:00"
-    sprint_file: "notes-ai-sprint-2026-01-13.yaml"
-
-  - id: "EPIC-42"
-    name: "Context-Aware Block AI"
-    status: "COMPLETED"
-    progress: 100
-    stories_total: 10
-    stories_done: 10
-    priority: "P1"
-    sprint_file: "notes-ai-sprint-2026-01-13.yaml"
-
-  - id: "EPIC-43"
-    name: "Prompt Engineering Hub"
-    status: "COMPLETED"
-    progress: 100
-    stories_total: 8
-    stories_done: 8
-    priority: "P1"
-    blocked_by: null
-    completed_at: "2026-01-13T22:10:00+07:00"
-
-  - id: "EPIC-44"
-    name: "Multimodal Rich Content"
-    status: "COMPLETED"
-    progress: 100
-    stories_total: 12
-    stories_done: 12
-    priority: "P2"
-    blocked_by: null
-    team: "Team B"
-    completed_at: "2026-01-14T14:00:00+07:00"
-    stories:
-      - id: "44-01"
-        name: "AI Image Generation Block"
-        status: "COMPLETED"
-        completed_at: "2026-01-13T23:45:00+07:00"
-      - id: "44-02"
-        name: "AI Vision Understanding Block"
-        status: "COMPLETED"
-        completed_at: "2026-01-13T23:59:00+07:00"
-      - id: "44-03"
-        name: "Sequential Storyboard Block"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T00:30:00+07:00"
-      - id: "44-04"
-        name: "Video Understanding Block"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T02:30:00+07:00"
-      - id: "44-05"
-        name: "Text-to-Speech Block"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T03:00:00+07:00"
-      - id: "44-06"
-        name: "Interactive HTML Artifact Block"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T04:30:00+07:00"
-      - id: "44-07"
-        name: "Video Generation Block (Experimental)"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T11:35:00+07:00"
-      - id: "44-08"
-        name: "PowerPoint/Slides Export"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T12:15:00+07:00"
-      - id: "44-09"
-        name: "Chart/Diagram Generation"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T12:45:00+07:00"
-      - id: "44-10"
-        name: "Sequential Transformation Pipeline"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T13:15:00+07:00"
-      - id: "44-11"
-        name: "Artifact Gallery and Management"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T13:45:00+07:00"
-        file: "src/presentation/components/notes/blocks/ArtifactGalleryBlock.tsx"
-      - id: "44-12"
-        name: "Multi-step Generation with Blur Animation"
-        status: "COMPLETED"
-        completed_at: "2026-01-14T14:00:00+07:00"
-        file: "src/presentation/components/notes/blocks/MultiStepGenerationBlock.tsx"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# BLOCKED/PAUSED EPICS
+# ARCHITECTURE DECISIONS (Quick Reference)
 # ═══════════════════════════════════════════════════════════════════════════
 
-blocked_epics: []
-  # EPIC-38 UNBLOCKED - EPIC-FS is now 100% complete (2026-01-12)
+architecture:
+  storage_strategy:
+    desktop: "File System Access API (FSA)"
+    mobile: "IndexedDB via Dexie"
+    preview: "WebContainer (StackBlitz)"
+    
+  key_files:
+    fsa_adapter: "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+    domain_interface: "src/domain/interfaces/storage-adapter.interface.ts"
+    workspace_hook: "src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts"
+    
+  adr_documents:
+    - "ADR-032: Clean Storage Architecture (2026-01-15)"
+    - "ADR-031: Chat System Unification"
+    - "ADR-030: Multimodal Integration"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# EPIC ORDERING (Enforced)
+# NEXT ACTIONS (Immediate)
 # ═══════════════════════════════════════════════════════════════════════════
 
-epic_ordering:
-  rule: "Epic N cannot start before Epic N-1 is 80% complete"
-  current_order:
-    # Team A: Chat Remediation (Sequential dependency)
-    - "EPIC-46"    # P1 - Space-Aware Agent Orchestration (READY - EPIC-45 complete)
-    - "EPIC-47"    # P1 - Workspace-Aware Artifacts (blocked by EPIC-46)
-
-    # Team B: Parallel work (no dependency on Team A)
-    - "EPIC-39"    # P1 - 8-bit Design (67% done)
-    - "EPIC-38"    # UNBLOCKED - Architecture Extension
-
-  complete:
-    - "EPIC-44"    # Multimodal Rich Content - 2026-01-14 (JUST COMPLETED!)
-    - "EPIC-45"    # Chat State & Project Foundation - 2026-01-14
-    - "EPIC-43"    # Prompt Engineering Hub - 2026-01-13
-    - "EPIC-41"    # AI Provider Foundation - 2026-01-13
-    - "EPIC-42"    # Context-Aware Block AI - 2026-01-13
-    - "EPIC-FS"    # File System - 2026-01-12
-    - "EPIC-STORE" # Store Consolidation - 2026-01-12
-    - "EPIC-UX"    # UX Remediation - 2026-01-09
-    - "EPIC-40"    # Multimodal - 2026-01-10
-    - "EPIC-30"    # Stability - 2026-01-05
-    - "EPIC-31"    # State Management - 2026-01-04
-    - "Phase-1"    # Foundation - 2026-01-08
-    - "Phase-1.5"  # Stabilization - 2026-01-09
+next_actions:
+  team_a:
+    story: "BYOK-02"
+    task: "Add Zod validation schemas for credentials"
+    files:
+      - "src/infrastructure/persistence/stores/providers/credentials/schemas.ts"
+      - "src/infrastructure/persistence/stores/providers/credentials/vault-slice.ts"
+      
+  team_b:
+    # Priority order based on user-reported issues
+    story: "PS-02-A"
+    task: "Complete platform detection and storage routing"
+    priority: "1"
+    files:
+      - "src/infrastructure/filesystem/platform-detection.ts (NEW)"
+      - "src/infrastructure/filesystem/storage-adapter-factory.ts (NEW)"
+      
+    story: "PS-04"  # NEW - CRITICAL
+    task: "Implement handle persistence architecture"
+    priority: "1"
+    user_issue: "URI-01 - Projects don't persist on refresh"
+    files:
+      - "src/infrastructure/filesystem/handle-persistence.ts (NEW)"
+      - "src/infrastructure/filesystem/handle-types.ts (NEW)"
+      - "src/infrastructure/persistence/stores/project/project-handler-service.ts (NEW)"
+    acceptance:
+      - "Projects persist after browser refresh"
+      - "Clicking project prompts for folder access"
+      - "No DataCloneError when saving to IndexedDB"
+      
+    story: "PS-02-B"
+    task: "Connect watch() to UI for hot reactive sync"
+    priority: "2"
+    user_issue: "URI-03 - External file changes not detected"
+    files:
+      - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts (NEW)"
+      - "src/presentation/components/workspace/sync-status-indicator.tsx (NEW)"
+      
+    story: "PS-05"  # NEW - CRITICAL
+    task: "Implement VFS tree structure for nested folders"
+    priority: "2"
+    user_issue: "URI-02 - Folders in folders not displayed"
+    files:
+      - "src/domain/storage/IVirtualFileSystem.ts (NEW)"
+      - "src/infrastructure/filesystem/vfs-builder.ts (NEW)"
+      - "src/infrastructure/filesystem/file-cache.ts (NEW)"
+    acceptance:
+      - "FileTree shows nested folder structure"
+      - "Exclusion patterns work"
+      - "File changes update tree in <2s"
+      
+    story: "PS-06"  # NEW - MEDIUM
+    task: "Implement RAG index infrastructure"
+    priority: "3"
+    user_issue: "URI-04 - No semantic search"
+    files:
+      - "src/domain/services/rag/chunking-service.ts (NEW)"
+      - "src/domain/services/rag/embedding-service.ts (NEW)"
+      - "src/domain/services/rag/index-service.ts (NEW)"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SPRINT STATUS LINKS (Never Inline Stories)
+# USER-REPORTED ISSUES TRACKING
 # ═══════════════════════════════════════════════════════════════════════════
 
-sprint_links:
-  master: "_bmad-output/sprint-artifacts/sprint-status.yaml"
-  story_index: "_bmad-output/sprint-artifacts/stories/STORY-INDEX.md"
-  active_sprints:
-    - "_bmad-output/sprint-artifacts/epic-45-chat-state-2026-01-14.yaml"    # Team A
-    - "_bmad-output/sprint-artifacts/epic-46-space-aware-2026-01-14.yaml"    # Team A
-    - "_bmad-output/sprint-artifacts/epic-47-artifacts-2026-01-14.yaml"     # Team A
-    - "_bmad-output/sprint-artifacts/notes-ai-sprint-2026-01-13.yaml"        # Team B
-    - "_bmad-output/sprint-artifacts/phase-2-sprint-status-2026-01-09.yaml"
-    - "_bmad-output/sprint-artifacts/phase-1.5-sprint-status-2026-01-09.yaml"
-    - "_bmad-output/sprint-artifacts/phase-3-marketing-sprint-2026-01-09.yaml"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# GOVERNANCE REFERENCE
-# ═══════════════════════════════════════════════════════════════════════════
-
-governance:
-  checklists: "_bmad/modules/governance/checklists/"
-  cycles: "_bmad/modules/governance/cycles/"
-  regulation: "_bmad-output/governance/sprint-regulation.md"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# HISTORY (Links Only - Never Inline)
-# ═══════════════════════════════════════════════════════════════════════════
-
-history:
-  archive_location: "_bmad-output/.archive/workflow-history/"
-  rotation_policy: "weekly"
-  last_rotation: "2026-01-09"
-  archived_content:
-    - "ralph_loop_iterations"
-    - "notes_remediation_module"
-    - "project_workspace_binding"
-    - "implementation_phases"
-    - "phase_0_stories"
-    - "bmb_integration"
+user_reported_issues:
+  - id: "URI-01"
+    description: "Project IDs not persistent - need to open folder every time"
+    severity: "CRITICAL"
+    reported_by: "User (via PROMPT.md)"
+    target_epic: "EPIC-CC-01"
+    target_story: "PS-04"
+    status: "READY"
+    workaround: "None - must re-open folder each session"
+    
+  - id: "URI-02"
+    description: "Folders in folders not displayed - flat structure only"
+    severity: "CRITICAL"
+    reported_by: "User (via PROMPT.md)"
+    target_epic: "EPIC-CC-01"
+    target_story: "PS-05"
+    status: "BLOCKED_BY_PS-04"
+    workaround: "Limited folder navigation"
+    
+  - id: "URI-03"
+    description: "External file changes not detected - watch() disconnected"
+    severity: "HIGH"
+    reported_by: "User (via PROMPT.md)"
+    target_epic: "EPIC-CC-01"
+    target_story: "PS-02-B"
+    status: "BLOCKED_BY_PS-02-A"
+    workaround: "Manual refresh required"
+    
+  - id: "URI-04"
+    description: "No RAG indexing for semantic search"
+    severity: "MEDIUM"
+    reported_by: "User (via PROMPT.md)"
+    target_epic: "EPIC-CC-01"
+    target_story: "PS-06"
+    status: "BLOCKED_BY_PS-05"
+    workaround: "Use keyword search only"

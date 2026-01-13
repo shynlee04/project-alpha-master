@@ -263,7 +263,7 @@ export function ProviderSettings() {
                                                         <div className="flex items-center justify-between gap-2">
                                                             <span>{model.name}</span>
                                                             {model.isFree && (
-                                                                <span className="text-xs text-green-500">(Free)</span>
+                                                                <span className="text-xs text-success">(Free)</span>
                                                             )}
                                                             {model.contextLength && (
                                                                 <span className="text-xs text-muted-foreground">
@@ -277,7 +277,7 @@ export function ProviderSettings() {
                                                 ))}
                                                 {/* Custom model option for OpenAI-compatible providers */}
                                                 {['groq', 'mistral', 'chutes', 'openai-compatible'].includes(provider.type) && (
-                                                    <SelectItem value={CUSTOM_MODEL_VALUE} className="font-mono text-xs text-blue-500">
+                                                    <SelectItem value={CUSTOM_MODEL_VALUE} className="font-mono text-xs text-info">
                                                         + {t('providers.models.custom')}
                                                     </SelectItem>
                                                 )}

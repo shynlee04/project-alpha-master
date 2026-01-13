@@ -97,6 +97,13 @@ export function buildRequestPayload(modality: ModalityType, input: string): Requ
         audio_b64: input,
         language: null,
       };
+
+    case 'video':
+      // Video modality - placeholder for future video processing
+      return {
+        model: '',
+        prompt: input,
+      };
   }
 }
 

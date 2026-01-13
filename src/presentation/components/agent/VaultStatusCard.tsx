@@ -125,12 +125,12 @@ export function VaultStatusCard({ className = '' }: VaultStatusCardProps) {
       return <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />;
     }
     if (vaultStatus.isInitialized && vaultStatus.keyCount > 0) {
-      return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      return <CheckCircle2 className="h-4 w-4 text-success" />;
     }
     if (vaultStatus.isInitialized) {
       return <Lock className="h-4 w-4 text-muted-foreground" />;
     }
-    return <AlertCircle className="h-4 w-4 text-amber-500" />;
+    return <AlertCircle className="h-4 w-4 text-warning" />;
   };
 
   const getVaultStatusText = () => {
@@ -162,10 +162,10 @@ export function VaultStatusCard({ className = '' }: VaultStatusCardProps) {
 
       {/* Migration Status */}
       {migrationNeeded && (
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded p-3 flex items-start gap-3">
-          <Info className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+        <div className="bg-warning/10 border border-warning/30 rounded p-3 flex items-start gap-3">
+          <Info className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-amber-600 dark:text-amber-500">
+            <p className="text-sm font-medium text-warning">
               Migration Available
             </p>
             <p className="text-xs text-muted-foreground mt-1">
@@ -177,10 +177,10 @@ export function VaultStatusCard({ className = '' }: VaultStatusCardProps) {
 
       {/* Migration Progress */}
       {migrationMessage && (
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3 flex items-start gap-3">
-          <RefreshCw className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0 animate-spin" />
+        <div className="bg-info/10 border border-info/30 rounded p-3 flex items-start gap-3">
+          <RefreshCw className="h-4 w-4 text-info mt-0.5 flex-shrink-0 animate-spin" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-blue-600 dark:text-blue-500">
+            <p className="text-sm font-medium text-info">
               {migrationMessage}
             </p>
           </div>

@@ -190,6 +190,32 @@ export {
 
 export { useLiveQuery } from 'dexie-react-hooks';
 
+export {
+  useFileSyncStatusStore,
+  setFileSyncPending,
+  setFileSyncSynced,
+  setFileSyncError,
+  clearFileSyncStatus,
+  clearAllFileSyncStatuses,
+  fileSyncStatusStore,
+  fileSyncCountsStore,
+  type FileSyncStatus,
+  type FileSyncCounts,
+  type SyncProgress,
+} from './file-sync';
+
+export {
+  getNoteExecutionContext,
+  formatNoteContextForPrompt,
+  hasActiveNote,
+  getActiveNoteId,
+  getActiveNote,
+  createNoteContextError,
+  type NoteExecutionContext,
+  type NoteSelection,
+  type NoteContextError,
+} from './notes';
+
 // ============================================================================
 // TYPES
 // ============================================================================

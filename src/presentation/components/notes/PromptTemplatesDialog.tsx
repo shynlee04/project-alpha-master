@@ -209,10 +209,10 @@ export function PromptTemplatesDialog({ open, onOpenChange }: PromptTemplatesDia
                                 {isVi ? template.titleVi : template.title}
                             </h4>
                             {template.featured && (
-                                <Star className="h-3 w-3 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                                <Star className="h-3 w-3 text-warning fill-warning flex-shrink-0" />
                             )}
                             {isImported && (
-                                <Check className="h-3 w-3 text-green-500 flex-shrink-0" />
+                                <Check className="h-3 w-3 text-success flex-shrink-0" />
                             )}
                         </div>
                         <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 mt-1">
@@ -303,7 +303,7 @@ export function PromptTemplatesDialog({ open, onOpenChange }: PromptTemplatesDia
                                     <span className="text-[var(--muted-foreground)]">-</span>
                                     <span>{isVi ? variable.labelVi || variable.label : variable.label}</span>
                                     {variable.required && (
-                                        <span className="text-red-500 text-xs">*</span>
+                                        <span className="text-destructive text-xs">*</span>
                                     )}
                                 </div>
                             ))}

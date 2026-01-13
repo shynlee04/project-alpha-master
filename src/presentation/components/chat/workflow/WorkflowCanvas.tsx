@@ -120,7 +120,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
                         e.stopPropagation();
                         onDelete();
                     }}
-                    className="p-1 rounded-none hover:bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100"
+                    className="p-1 rounded-none hover:bg-red-500/10 text-destructive opacity-0 group-hover:opacity-100"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>

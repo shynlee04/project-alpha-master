@@ -181,7 +181,7 @@ export function CitationSidebar({
             className="border-2 bg-background hover:bg-surface text-foreground rounded-none text-xs"
           >
             {copiedFormat === 'apa' ? (
-              <Check size={14} className="mr-1 text-green-600" />
+              <Check size={14} className="mr-1 text-success" />
             ) : (
               <Copy size={14} className="mr-1" />
             )}
@@ -195,7 +195,7 @@ export function CitationSidebar({
             className="border-2 bg-background hover:bg-surface text-foreground rounded-none text-xs"
           >
             {copiedFormat === 'mla' ? (
-              <Check size={14} className="mr-1 text-green-600" />
+              <Check size={14} className="mr-1 text-success" />
             ) : (
               <Copy size={14} className="mr-1" />
             )}
@@ -209,7 +209,7 @@ export function CitationSidebar({
             className="border-2 bg-background hover:bg-surface text-foreground rounded-none text-xs"
           >
             {copiedFormat === 'chicago' ? (
-              <Check size={14} className="mr-1 text-green-600" />
+              <Check size={14} className="mr-1 text-success" />
             ) : (
               <Copy size={14} className="mr-1" />
             )}

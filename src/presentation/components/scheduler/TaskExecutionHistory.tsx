@@ -114,24 +114,24 @@ export function TaskExecutionHistory({ open, taskId, onClose }: TaskExecutionHis
                 <div className="flex items-center gap-2">
                   {log.status === 'running' && (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
-                      <span className="text-blue-500">
+                      <Loader2 className="w-4 h-4 animate-spin text-info" />
+                      <span className="text-info">
                         {t('scheduler.status.running', { defaultValue: 'Running' })}
                       </span>
                     </>
                   )}
                   {log.status === 'success' && (
                     <>
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      <span className="text-green-500">
+                      <CheckCircle className="w-4 h-4 text-success" />
+                      <span className="text-success">
                         {t('scheduler.status.success', { defaultValue: 'Success' })}
                       </span>
                     </>
                   )}
                   {log.status === 'failure' && (
                     <>
-                      <XCircle className="w-4 h-4 text-red-500" />
-                      <span className="text-red-500">
+                      <XCircle className="w-4 h-4 text-destructive" />
+                      <span className="text-destructive">
                         {t('scheduler.status.failure', { defaultValue: 'Failed' })}
                       </span>
                     </>
@@ -140,7 +140,7 @@ export function TaskExecutionHistory({ open, taskId, onClose }: TaskExecutionHis
                 <div className="font-mono text-xs">
                   {formatDuration(log.duration)}
                 </div>
-                <div className="text-xs text-red-500 truncate" title={log.error}>
+                <div className="text-xs text-destructive truncate" title={log.error}>
                   {log.error || '-'}
                 </div>
               </div>

@@ -63,7 +63,7 @@ export function WorkflowStepEditor() {
             {/* Validation errors */}
             {Object.keys(errors).length > 0 && (
                 <div className="mt-4 p-3 rounded bg-red-500/10 border border-red-500/20">
-                    <p className="text-sm font-medium text-red-400 mb-1">
+                    <p className="text-sm font-medium text-destructive mb-1">
                         {t('chat.workflow.validationErrors')}
                     </p>
                     <ul className="text-xs text-red-300 space-y-1">

@@ -42,12 +42,12 @@ const WORKSPACE_CONFIG: Record<
   ide: {
     icon: '💻',
     labelKey: 'hub.workspaceBinding.workspaces.ide',
-    color: 'text-blue-400',
+    color: 'text-info',
   },
   notes: {
     icon: '📝',
     labelKey: 'hub.workspaceBinding.workspaces.notes',
-    color: 'text-green-400',
+    color: 'text-success',
   },
   knowledge: {
     icon: '📚',
@@ -57,7 +57,7 @@ const WORKSPACE_CONFIG: Record<
   study: {
     icon: '🎓',
     labelKey: 'hub.workspaceBinding.workspaces.study',
-    color: 'text-amber-400',
+    color: 'text-warning',
   },
 } as const;
 

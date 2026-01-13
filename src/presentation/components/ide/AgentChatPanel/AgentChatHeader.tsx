@@ -30,12 +30,12 @@ const WORKSPACE_CONFIG: Record<
     ide: {
         icon: '💻',
         labelKey: 'hub.workspaceBinding.workspaces.ide',
-        color: 'text-blue-400',
+        color: 'text-info',
     },
     notes: {
         icon: '📝',
         labelKey: 'hub.workspaceBinding.workspaces.notes',
-        color: 'text-green-400',
+        color: 'text-success',
     },
     knowledge: {
         icon: '📚',
@@ -45,7 +45,7 @@ const WORKSPACE_CONFIG: Record<
     study: {
         icon: '🎓',
         labelKey: 'hub.workspaceBinding.workspaces.study',
-        color: 'text-amber-400',
+        color: 'text-warning',
     },
 };
 
@@ -162,7 +162,7 @@ export function AgentChatHeader({
                     {toolsAvailable && (
                         <TruncatedText
                             text="TOOLS READY"
-                            className="text-[10px] text-green-400 font-pixel max-w-[80px]"
+                            className="text-[10px] text-success font-pixel max-w-[80px]"
                         />
                     )}
                 </div>
@@ -248,7 +248,7 @@ export function AgentChatHeader({
                         className="text-[10px] cursor-pointer text-muted-foreground flex items-center gap-1"
                         title="Enhance prompts before sending"
                     >
-                        <Sparkles className="w-3 h-3 text-yellow-500" />
+                        <Sparkles className="w-3 h-3 text-warning" />
                         <span className="hidden md:inline">Enhance</span>
                     </Label>
                 </div>
@@ -262,7 +262,7 @@ export function AgentChatHeader({
                 <button
                     onClick={onCaptureDebugSession}
                     title="Capture Debug Session to Knowledge workspace"
-                    className="text-xs text-orange-400 hover:text-orange-300 transition-colors px-2 py-1 flex items-center gap-1 hidden sm:flex"
+                    className="text-xs text-warning hover:text-warning/80 transition-colors px-2 py-1 flex items-center gap-1 hidden sm:flex"
                 >
                     <Bug className="w-3 h-3" />
                     <span className="hidden lg:inline">Capture</span>

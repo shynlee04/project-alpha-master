@@ -81,7 +81,7 @@ const ExportButton = memo(function ExportButton({
         'hover:bg-primary/20 active:translate-y-[1px]',
         'focus:outline-none focus:ring-1 focus:ring-primary',
         'text-muted-foreground hover:text-foreground disabled:opacity-50',
-        copied && 'text-green-500'
+        copied && 'text-success'
       )}
       aria-label={ariaLabel}
       title={ariaLabel}

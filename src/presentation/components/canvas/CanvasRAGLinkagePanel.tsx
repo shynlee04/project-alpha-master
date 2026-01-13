@@ -199,15 +199,15 @@ export function CanvasRAGLinkagePanel({
             <span className="text-muted-foreground">{t('canvas.linkage.total', 'Total')}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-medium text-green-500">{stats.high}</span>
+            <span className="font-medium text-success">{stats.high}</span>
             <span className="text-muted-foreground">{t('canvas.linkage.high', 'High')}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-medium text-yellow-500">{stats.medium}</span>
+            <span className="font-medium text-warning">{stats.medium}</span>
             <span className="text-muted-foreground">{t('canvas.linkage.medium', 'Medium')}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="font-medium text-red-500">{stats.low}</span>
+            <span className="font-medium text-destructive">{stats.low}</span>
             <span className="text-muted-foreground">{t('canvas.linkage.low', 'Low')}</span>
           </div>
         </div>

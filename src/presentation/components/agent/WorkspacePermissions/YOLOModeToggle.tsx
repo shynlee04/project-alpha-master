@@ -93,11 +93,11 @@ export function YOLOModeToggle({ className = '' }: YOLOModeToggleProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-pixel text-yellow-400">
+          <span className="text-sm font-pixel text-warning">
             ⚡ YOLO Mode
           </span>
           {yoloMode.enabled && (
-            <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">
+            <span className="text-xs px-2 py-0.5 bg-warning/20 text-warning rounded">
               Active
             </span>
           )}
@@ -111,17 +111,17 @@ export function YOLOModeToggle({ className = '' }: YOLOModeToggleProps) {
       </div>
 
       {/* Description */}
-      <p className="text-xs text-gray-400 mb-2">
+      <p className="text-xs text-muted-foreground mb-2">
         Bypass all tool approval prompts. Auto-disables after 24 hours.
       </p>
 
       {/* Warning when active */}
       {yoloMode.enabled && timeRemaining && (
-        <div className="p-2 bg-yellow-500/10 border border-yellow-500/30 rounded mb-2">
-          <p className="text-xs text-yellow-300 mb-1">
+        <div className="p-2 bg-warning/10 border border-warning/30 rounded mb-2">
+          <p className="text-xs text-warning mb-1">
             ⚠️ All tools will execute without approval!
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted-foreground">
             Expires in: {timeRemaining}
           </p>
         </div>
@@ -130,23 +130,23 @@ export function YOLOModeToggle({ className = '' }: YOLOModeToggleProps) {
       {/* Confirmation Dialog */}
       {showConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-[var(--color-overlay)] z-50 p-4">
-          <div className="bg-gray-900 border border-yellow-500/50 rounded-lg p-4 max-w-sm w-full">
-            <h3 className="text-lg font-pixel text-yellow-400 mb-2">
+          <div className="bg-card border border-warning/50 rounded-lg p-4 max-w-sm w-full">
+            <h3 className="text-lg font-pixel text-warning mb-2">
               ⚡ Enable YOLO Mode?
             </h3>
-            <p className="text-sm text-gray-300 mb-4">
+            <p className="text-sm text-foreground mb-4">
               This will allow all tools to execute without your approval. Are you sure?
             </p>
             <div className="flex gap-2 justify-end">
               <button
                 onClick={handleCancelEnable}
-                className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 rounded border border-gray-700"
+                className="px-3 py-1.5 text-sm bg-secondary hover:bg-muted rounded border border-border"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmEnable}
-                className="px-3 py-1.5 text-sm bg-yellow-600 hover:bg-yellow-500 text-black rounded font-bold"
+                className="px-3 py-1.5 text-sm bg-warning hover:bg-warning/90 text-warning-foreground rounded font-bold"
               >
                 Enable YOLO
               </button>

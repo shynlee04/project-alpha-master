@@ -89,7 +89,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
             onClick={onSelect}
             className={`p-4 rounded-none border-2 cursor-pointer transition-all
                 ${isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}
-                ${paletteItem?.color || 'bg-gray-500'} bg-[var(--muted)]`}
+                ${paletteItem?.color || 'bg-muted'} bg-[var(--muted)]`}
         >
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ function WorkflowStepItem({ step, isSelected, onSelect, onDelete }: WorkflowStep
                         e.stopPropagation();
                         onDelete();
                     }}
-                    className="p-1 rounded hover:bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100"
+                    className="p-1 rounded hover:bg-destructive/10 text-destructive opacity-0 group-hover:opacity-100"
                 >
                     <Trash2 className="w-4 h-4" />
                 </button>
@@ -366,11 +366,11 @@ export function WorkflowBuilder({ onSave, onExecute, className = '' }: WorkflowB
 
                     {/* Validation errors */}
                     {Object.keys(errors).length > 0 && (
-                        <div className="mt-4 p-3 rounded bg-red-500/10 border border-red-500/20">
-                            <p className="text-sm font-medium text-red-400 mb-1">
+                        <div className="mt-4 p-3 rounded bg-destructive/10 border border-destructive/20">
+                            <p className="text-sm font-medium text-destructive mb-1">
                                 {t('chat.workflow.validationErrors')}
                             </p>
-                            <ul className="text-xs text-red-300 space-y-1">
+                            <ul className="text-xs text-destructive/80 space-y-1">
                                 {Object.values(errors).map((error, i) => (
                                     <li key={i}>• {error}</li>
                                 ))}

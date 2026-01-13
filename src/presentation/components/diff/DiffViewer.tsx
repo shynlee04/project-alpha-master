@@ -185,8 +185,8 @@ export function DiffViewer({
     return (
       <div className="flex gap-4 overflow-auto" style={{ maxHeight: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight }}>
         {/* Old content panel */}
-        <div className="flex-1 overflow-auto border border-slate-200 dark:border-slate-800" ref={oldPanelRef}>
-          <div className="sticky top-0 px-4 py-2 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-semibold text-sm">
+        <div className="flex-1 overflow-auto border border-border" ref={oldPanelRef}>
+          <div className="sticky top-0 px-4 py-2 bg-muted border-b border-border font-semibold text-sm">
             {fileName || t('diff.oldContent', 'Original')}
           </div>
           <div className="inline-block min-w-full">
@@ -202,8 +202,8 @@ export function DiffViewer({
         </div>
 
         {/* New content panel */}
-        <div className="flex-1 overflow-auto border border-slate-200 dark:border-slate-800" ref={newPanelRef}>
-          <div className="sticky top-0 px-4 py-2 bg-slate-100 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-semibold text-sm">
+        <div className="flex-1 overflow-auto border border-border" ref={newPanelRef}>
+          <div className="sticky top-0 px-4 py-2 bg-muted border-b border-border font-semibold text-sm">
             {fileName || t('diff.newContent', 'Modified')}
           </div>
           <div className="inline-block min-w-full">
@@ -230,7 +230,7 @@ export function DiffViewer({
         {diff.lines.map((line, index) => (
           <div
             key={`linebyline-${index}`}
-            className="border-b border-slate-200 dark:border-slate-800"
+            className="border-b border-border"
           >
             {line.type === ChangeType.MODIFIED ? (
               // Modified lines show both old and new
@@ -262,27 +262,27 @@ export function DiffViewer({
   return (
     <div className={`flex flex-col bg-background ${className}`}>
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-100 dark:bg-slate-900 border border-b-0 border-slate-200 dark:border-slate-800 rounded-t-lg">
+      <div className="flex items-center justify-between px-4 py-2 bg-muted border border-b-0 border-border rounded-t-lg">
         {/* File name and stats */}
         <div className="flex items-center gap-4">
           {fileName && (
-            <span className="font-semibold text-sm text-slate-700 dark:text-slate-300">
+            <span className="font-semibold text-sm text-foreground">
               {fileName}
             </span>
           )}
           <div className="flex items-center gap-3 text-xs">
             {stats.additions > 0 && (
-              <span className="text-green-600 dark:text-green-400">
+              <span className="text-success">
                 +{stats.additions}
               </span>
             )}
             {stats.deletions > 0 && (
-              <span className="text-red-600 dark:text-red-400">
+              <span className="text-destructive">
                 -{stats.deletions}
               </span>
             )}
             {stats.modifications > 0 && (
-              <span className="text-yellow-600 dark:text-yellow-400">
+              <span className="text-warning">
                 ~{stats.modifications}
               </span>
             )}
@@ -299,8 +299,8 @@ export function DiffViewer({
                 onClick={() => setSyncScroll(!syncScroll)}
                 className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                   syncScroll
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
                 aria-label={t('diff.toggleSyncScroll', 'Toggle synced scrolling')}
               >
@@ -309,14 +309,14 @@ export function DiffViewer({
             )}
 
             {/* View mode buttons */}
-            <div className="flex border border-slate-300 dark:border-slate-700 rounded overflow-hidden">
+            <div className="flex border border-border rounded overflow-hidden">
               <button
                 type="button"
                 onClick={() => handleViewModeChange('unified')}
                 className={`px-3 py-1 text-xs font-medium transition-colors ${
                   viewMode === 'unified'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
                 aria-label={t('diff.unifiedView', 'Unified view')}
               >
@@ -327,8 +327,8 @@ export function DiffViewer({
                 onClick={() => handleViewModeChange('side-by-side')}
                 className={`px-3 py-1 text-xs font-medium transition-colors ${
                   viewMode === 'side-by-side'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
                 aria-label={t('diff.sideBySideView', 'Side-by-side view')}
               >
@@ -339,8 +339,8 @@ export function DiffViewer({
                 onClick={() => handleViewModeChange('line-by-line')}
                 className={`px-3 py-1 text-xs font-medium transition-colors ${
                   viewMode === 'line-by-line'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'
+                    ? 'bg-info text-info-foreground'
+                    : 'bg-secondary text-foreground hover:bg-muted'
                 }`}
                 aria-label={t('diff.lineByLineView', 'Line-by-line view')}
               >
@@ -352,7 +352,7 @@ export function DiffViewer({
       </div>
 
       {/* Content area */}
-      <div className="border border-t-0 border-slate-200 dark:border-slate-800 rounded-b-lg overflow-hidden">
+      <div className="border border-t-0 border-border rounded-b-lg overflow-hidden">
         {viewMode === 'unified' && renderUnifiedView()}
         {viewMode === 'side-by-side' && renderSideBySideView()}
         {viewMode === 'line-by-line' && renderLineByLineView()}

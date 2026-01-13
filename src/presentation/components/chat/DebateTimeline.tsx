@@ -51,17 +51,17 @@ export interface DebateTimelineLoadingProps {
 const PERSONA_INFO: Record<DebatePersona, { name: string; color: string; icon: string }> = {
     [DebatePersona.OPTIMIST]: {
         name: 'optimist',
-        color: 'text-green-400',
+        color: 'text-success',
         icon: '🌟',
     },
     [DebatePersona.SKEPTIC]: {
         name: 'skeptic',
-        color: 'text-orange-400',
+        color: 'text-warning',
         icon: '🔍',
     },
     [DebatePersona.EXPERT]: {
         name: 'expert',
-        color: 'text-blue-400',
+        color: 'text-info',
         icon: '🎓',
     },
     [DebatePersona.DEVILS_ADVOCATE]: {
@@ -71,13 +71,13 @@ const PERSONA_INFO: Record<DebatePersona, { name: string; color: string; icon: s
     },
     [DebatePersona.SYNTHESIZER]: {
         name: 'synthesizer',
-        color: 'text-cyan-400',
+        color: 'text-info',
         icon: '🔄',
     },
 };
 
 function getPersonaInfo(persona: DebatePersona) {
-    return PERSONA_INFO[persona] || { name: persona, color: 'text-gray-400', icon: '💬' };
+    return PERSONA_INFO[persona] || { name: persona, color: 'text-muted-foreground', icon: '💬' };
 }
 
 // ============================================================================
@@ -175,7 +175,7 @@ export function DebateTimeline({
             {/* Synthesis Card */}
             <div className="p-4 rounded-none border bg-card">
                 <div className="flex items-start gap-3 mb-3">
-                    <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
+                    <CheckCircle2 className="w-5 h-5 text-success mt-0.5" />
                     <div className="flex-1">
                         <p className="text-sm font-medium mb-1">{t('chat.debate.synthesis.title')}</p>
                         <p className="text-sm">{synthesis.answer}</p>
@@ -195,7 +195,7 @@ export function DebateTimeline({
                         <ul className="space-y-1">
                             {synthesis.consensusPoints.map((point, i) => (
                                 <li key={i} className="text-sm flex items-start gap-2">
-                                    <span className="text-green-500">✓</span>
+                                    <span className="text-success">✓</span>
                                     <span>{point}</span>
                                 </li>
                             ))}
@@ -212,7 +212,7 @@ export function DebateTimeline({
                         <ul className="space-y-1">
                             {synthesis.openQuestions.map((question, i) => (
                                 <li key={i} className="text-sm flex items-start gap-2">
-                                    <AlertTriangle className="w-3 h-3 text-yellow-500 mt-1" />
+                                    <AlertTriangle className="w-3 h-3 text-warning mt-1" />
                                     <span>{question}</span>
                                 </li>
                             ))}
@@ -227,14 +227,14 @@ export function DebateTimeline({
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => handleFeedback(true)}
-                                className="p-2 rounded hover:bg-green-500/10 transition-colors"
+                                className="p-2 rounded hover:bg-success/10 transition-colors"
                                 aria-label="Helpful"
                             >
                                 <ThumbsUp className="w-4 h-4" />
                             </button>
                             <button
                                 onClick={() => handleFeedback(false)}
-                                className="p-2 rounded hover:bg-red-500/10 transition-colors"
+                                className="p-2 rounded hover:bg-destructive/10 transition-colors"
                                 aria-label="Not helpful"
                             >
                                 <ThumbsDown className="w-4 h-4" />
@@ -254,7 +254,7 @@ export function DebateTimeline({
                                 key={i}
                                 className={`p-2 rounded-none border cursor-pointer transition-colors ${
                                     selectedAgreement === i
-                                        ? 'bg-yellow-500/10 border-yellow-500/30'
+                                        ? 'bg-warning/10 border-warning/30'
                                         : 'bg-muted/30 hover:bg-muted/50'
                                 }`}
                                 onClick={() => setSelectedAgreement(selectedAgreement === i ? null : i)}
@@ -264,10 +264,10 @@ export function DebateTimeline({
                                     <span
                                         className={`text-xs px-2 py-0.5 rounded ${
                                             disagreement.severity === 'high'
-                                                ? 'bg-red-500/20 text-red-400'
+                                                ? 'bg-destructive/20 text-destructive'
                                                 : disagreement.severity === 'medium'
-                                                  ? 'bg-yellow-500/20 text-yellow-400'
-                                                  : 'bg-blue-500/20 text-blue-400'
+                                                  ? 'bg-warning/20 text-warning'
+                                                  : 'bg-info/20 text-info'
                                         }`}
                                     >
                                         {disagreement.severity}

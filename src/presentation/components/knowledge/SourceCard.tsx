@@ -192,7 +192,7 @@ export function SourceCard({ source, isActive = false, onSelect }: SourceCardPro
                         )}
                         {/* KSI Module: Synthesis badge */}
                         {isSynthesized && (
-                            <span className="text-xs text-green-500" title={t('knowledge.synthesis.synthesized')}>
+                            <span className="text-xs text-success" title={t('knowledge.synthesis.synthesized')}>
                                 🧠
                             </span>
                         )}

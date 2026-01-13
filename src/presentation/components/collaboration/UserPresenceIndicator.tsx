@@ -42,9 +42,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = 'md' }) => {
   };
 
   const statusColors = {
-    online: 'bg-green-500',
-    idle: 'bg-yellow-500',
-    offline: 'bg-gray-400',
+    online: 'bg-success',
+    idle: 'bg-warning',
+    offline: 'bg-muted-foreground',
   };
 
   // Generate avatar from initials or use image

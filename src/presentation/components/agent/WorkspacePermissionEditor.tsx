@@ -130,9 +130,9 @@ const WORKSPACE_TYPES: WorkspaceType[] = ['ide', 'knowledge', 'study', 'notes'];
  * Trust level options for select dropdown
  */
 const TRUST_LEVELS: { value: ToolTrustLevel; label: string; color: string }[] = [
-  { value: 'auto', label: 'Auto-approve', color: 'bg-green-500/20 text-green-500 border-green-500/30' },
-  { value: 'prompt', label: 'Ask First', color: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' },
-  { value: 'block', label: 'Blocked', color: 'bg-red-500/20 text-red-500 border-red-500/30' },
+  { value: 'auto', label: 'Auto-approve', color: 'bg-success/20 text-success border-success/30' },
+  { value: 'prompt', label: 'Ask First', color: 'bg-warning/20 text-warning border-warning/30' },
+  { value: 'block', label: 'Blocked', color: 'bg-destructive/20 text-destructive border-destructive/30' },
 ];
 
 /**
@@ -463,15 +463,15 @@ export function PermissionOverviewBadge({ className, workspaceType }: Permission
   return (
     <div className={cn('flex items-center gap-2', className)}>
       <div className="flex items-center gap-1 text-xs">
-        <div className="w-2 h-2 rounded-full bg-green-500" />
+        <div className="w-2 h-2 rounded-full bg-success" />
         <span className="text-muted-foreground">{counts.auto} Auto</span>
       </div>
       <div className="flex items-center gap-1 text-xs">
-        <div className="w-2 h-2 rounded-full bg-yellow-500" />
+        <div className="w-2 h-2 rounded-full bg-warning" />
         <span className="text-muted-foreground">{counts.prompt} Prompt</span>
       </div>
       <div className="flex items-center gap-1 text-xs">
-        <div className="w-2 h-2 rounded-full bg-red-500" />
+        <div className="w-2 h-2 rounded-full bg-destructive" />
         <span className="text-muted-foreground">{counts.block} Blocked</span>
       </div>
     </div>

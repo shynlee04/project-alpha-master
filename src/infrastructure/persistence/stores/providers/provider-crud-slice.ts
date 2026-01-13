@@ -26,7 +26,7 @@ import type { ProviderConfig } from './types';
  * Initial providers (built-in providers)
  * These are the default providers available on first load.
  */
-const INITIAL_PROVIDERS: ProviderConfig[] = [
+export const INITIAL_PROVIDERS: ProviderConfig[] = [
   {
     id: 'openrouter',
     name: 'OpenRouter',

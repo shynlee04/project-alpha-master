@@ -155,7 +155,7 @@ export function ApiKeyInputSection({
                         {isTestingConnection ? (
                             <Loader2 className="w-3 h-3 animate-spin" />
                         ) : connectionStatus === 'success' ? (
-                            <CheckCircle2 className="w-3 h-3 text-green-600" aria-hidden="true" />
+                            <CheckCircle2 className="w-3 h-3 text-success" aria-hidden="true" />
                         ) : connectionStatus === 'error' ? (
                             <XCircle className="w-3 h-3 text-destructive" aria-hidden="true" />
                         ) : (

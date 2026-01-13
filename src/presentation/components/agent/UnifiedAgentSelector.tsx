@@ -68,15 +68,15 @@ export interface UnifiedAgentSelectorProps {
 function getStatusColor(status: AgentData['status']): string {
   switch (status) {
     case 'online':
-      return 'bg-green-500 shadow-colored-success';
+      return 'bg-success shadow-colored-success';
     case 'busy':
-      return 'bg-yellow-500 shadow-colored-warning';
+      return 'bg-warning shadow-colored-warning';
     case 'offline':
-      return 'bg-slate-500';
+      return 'bg-muted-foreground';
     case 'error':
-      return 'bg-red-500 shadow-colored-error';
+      return 'bg-destructive shadow-colored-error';
     default:
-      return 'bg-slate-500';
+      return 'bg-muted-foreground';
   }
 }
 
@@ -343,7 +343,7 @@ export function UnifiedAgentSelector({
                   'h-2.5 w-2.5 rounded-none',
                   getStatusColor(activeAgent.status)
                 )} />
-                <span className="text-xs font-bold text-slate-100">
+                <span className="text-xs font-bold text-foreground">
                   {activeAgent.name}
                 </span>
               </>
@@ -381,7 +381,7 @@ export function UnifiedAgentSelector({
             )} />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-slate-100 truncate">
+                <span className="text-sm font-bold text-foreground truncate">
                   {agent.name}
                 </span>
                 {agent.status === 'online' && (
@@ -390,7 +390,7 @@ export function UnifiedAgentSelector({
                   </Badge>
                 )}
               </div>
-              <div className="text-[10px] text-slate-400 truncate">
+              <div className="text-[10px] text-muted-foreground truncate">
                 {agent.modelId?.split('/').pop() || agent.modelId}
               </div>
             </div>

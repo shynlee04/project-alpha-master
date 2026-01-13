@@ -51,8 +51,8 @@ export function MarkdownExportDialog({
 
         <div className="space-y-4">
           {/* Info Message */}
-          <div className="flex items-start gap-3 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <Info className="w-5 h-5 text-blue-500 mt-0.5" />
+          <div className="flex items-start gap-3 p-4 bg-info/10 border border-info/20 rounded-lg">
+            <Info className="w-5 h-5 text-info mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium mb-1">Export via File Sync</p>
               <p className="text-sm text-muted-foreground">
@@ -66,8 +66,8 @@ export function MarkdownExportDialog({
           </div>
 
           {/* Notes Count Info */}
-          <div className="p-3 bg-zinc-800/50 rounded-md">
-            <div className="text-sm text-zinc-400">
+          <div className="p-3 bg-muted rounded-md">
+            <div className="text-sm text-muted-foreground">
               Total notes: {notes.length}
             </div>
           </div>

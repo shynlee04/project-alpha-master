@@ -195,15 +195,15 @@ function getIntentInfo(intent: IntentType): IntentInfo {
             return {
                 label: 'Coding',
                 icon: <Code2 {...{ className: 'w-4 h-4' }} />,
-                bgColor: 'bg-blue-500/20',
-                textColor: 'text-blue-500',
+                bgColor: 'bg-info/20',
+                textColor: 'text-info',
             };
         case 'research':
             return {
                 label: 'Research',
                 icon: <Search {...{ className: 'w-4 h-4' }} />,
-                bgColor: 'bg-green-500/20',
-                textColor: 'text-green-500',
+                bgColor: 'bg-success/20',
+                textColor: 'text-success',
             };
         case 'writing':
             return {
@@ -217,8 +217,8 @@ function getIntentInfo(intent: IntentType): IntentInfo {
             return {
                 label: 'General',
                 icon: <MessageSquare {...{ className: 'w-4 h-4' }} />,
-                bgColor: 'bg-gray-500/20',
-                textColor: 'text-gray-500',
+                bgColor: 'bg-muted-foreground/20',
+                textColor: 'text-muted-foreground',
             };
     }
 }

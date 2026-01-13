@@ -131,7 +131,7 @@ export function DatabaseRecoveryDialog({ onRecoveryComplete: _ }: DatabaseRecove
             <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
                 <DialogHeader>
                     <div className="flex items-center gap-2">
-                        <Database className="h-5 w-5 text-orange-500" />
+                        <Database className="h-5 w-5 text-warning" />
                         <DialogTitle>Database Recovery Required</DialogTitle>
                     </div>
                     <DialogDescription className="pt-2">
@@ -156,8 +156,8 @@ export function DatabaseRecoveryDialog({ onRecoveryComplete: _ }: DatabaseRecove
                     </Alert>
 
                     {/* Warning about data loss */}
-                    <div className="rounded-md border border-orange-500/50 bg-orange-500/10 p-3">
-                        <p className="text-sm font-medium text-orange-600 dark:text-orange-400 mb-1">
+                    <div className="rounded-md border border-warning/50 bg-warning/10 p-3">
+                        <p className="text-sm font-medium text-warning mb-1">
                             ⚠️ Data Loss Warning
                         </p>
                         <p className="text-xs text-muted-foreground">
@@ -195,7 +195,7 @@ export function DatabaseRecoveryDialog({ onRecoveryComplete: _ }: DatabaseRecove
                     <Button
                         onClick={handleRecover}
                         disabled={isRecovering}
-                        className="bg-orange-600 hover:bg-orange-700"
+                        className="bg-warning hover:bg-warning/80"
                     >
                         {isRecovering ? (
                             <>

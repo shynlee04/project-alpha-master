@@ -81,9 +81,9 @@ function ChunkBoundaryBadge({ index, tokenCount, type }: { index: number; tokenC
             case 'figure':
                 return 'text-purple-400 border-purple-400';
             case 'table':
-                return 'text-blue-400 border-blue-400';
+                return 'text-info border-info';
             case 'code':
-                return 'text-green-400 border-green-400';
+                return 'text-success border-success';
             default:
                 return 'text-primary border-border-dark';
         }

@@ -86,7 +86,7 @@ export function FilePermissionRow({
             {/* Mount Status */}
             <div className="flex items-center gap-2">
                 {permission.mounted ? (
-                    <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
+                    <Badge variant="outline" className="bg-green-500/10 text-success border-green-500/20">
                         <FolderOpen className="w-3 h-3 mr-1" />
                         Mounted
                     </Badge>

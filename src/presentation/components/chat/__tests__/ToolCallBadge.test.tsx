@@ -65,7 +65,7 @@ describe('ToolCallBadge', () => {
 
             const badge = screen.getByRole('button');
             expect(badge).toBeTruthy();
-            expect(badge.className).toContain('text-green-500');
+            expect(badge.className).toContain('text-success');
         });
 
         it('should render with error status', () => {
@@ -73,7 +73,7 @@ describe('ToolCallBadge', () => {
 
             const badge = screen.getByRole('button');
             expect(badge).toBeTruthy();
-            expect(badge.className).toContain('text-red-500');
+            expect(badge.className).toContain('text-destructive');
         });
 
         it('should display duration when provided and status is success', () => {

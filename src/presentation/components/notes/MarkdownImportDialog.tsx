@@ -136,7 +136,7 @@ export function MarkdownImportDialog({
             <input
               type="checkbox"
               id="overwrite-existing"
-              className="rounded border-zinc-600 bg-zinc-800 text-accent-primary focus:ring-accent-primary"
+              className="rounded border-border bg-card text-primary focus:ring-primary"
             />
             <Label htmlFor="overwrite-existing" className="text-sm cursor-pointer">
               {t("notes.import.overwrite")}
@@ -155,9 +155,9 @@ export function MarkdownImportDialog({
 
           {/* Success State */}
           {status === "success" && importResult && (
-            <div className="flex items-center gap-2 p-3 bg-green-900/20 border border-green-800 rounded-md">
-              <Check className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-green-400">
+            <div className="flex items-center gap-2 p-3 bg-success/20 border border-success/30 rounded-md">
+              <Check className="w-5 h-5 text-success" />
+              <span className="text-sm text-success">
                 {t("notes.import.success", { count: importResult.importedCount })}
               </span>
             </div>
@@ -165,9 +165,9 @@ export function MarkdownImportDialog({
 
           {/* Error State */}
           {status === "error" && error && (
-            <div className="flex items-center gap-2 p-3 bg-red-900/20 border border-red-800 rounded-md">
-              <AlertCircle className="w-5 h-5 text-red-500" />
-              <span className="text-sm text-red-400">{error}</span>
+            <div className="flex items-center gap-2 p-3 bg-destructive/20 border border-destructive/30 rounded-md">
+              <AlertCircle className="w-5 h-5 text-destructive" />
+              <span className="text-sm text-destructive">{error}</span>
             </div>
           )}
 

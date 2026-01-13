@@ -32,10 +32,10 @@ import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
  * Workspace configuration for display
  */
 const WORKSPACE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
-  ide: { icon: '💻', label: 'IDE', color: 'text-blue-400' },
+  ide: { icon: '💻', label: 'IDE', color: 'text-info' },
   knowledge: { icon: '📚', label: 'Knowledge', color: 'text-purple-400' },
-  study: { icon: '🎓', label: 'Study', color: 'text-amber-400' },
-  notes: { icon: '📝', label: 'Notes', color: 'text-green-400' },
+  study: { icon: '🎓', label: 'Study', color: 'text-warning' },
+  notes: { icon: '📝', label: 'Notes', color: 'text-success' },
 };
 
 /**
@@ -246,7 +246,7 @@ export function AgentWorkspaceSwitchingFeedback({
             {transitionState.phase !== 'complete' ? (
               <Loader2 className="w-5 h-5 text-primary animate-spin" aria-hidden="true" />
             ) : (
-              <CheckCircle className="w-5 h-5 text-green-500" aria-hidden="true" />
+              <CheckCircle className="w-5 h-5 text-success" aria-hidden="true" />
             )}
 
             {/* Transition Label */}

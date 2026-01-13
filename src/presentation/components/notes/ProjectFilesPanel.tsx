@@ -357,8 +357,8 @@ export function ProjectFilesPanel({ onNoteImported }: ProjectFilesPanelProps = {
                 <DialogContent className="max-w-3xl max-h-[80vh] overflow-hidden">
                     <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                         <div className="flex items-center gap-2">
-                            {preview.fileType === 'image' && <FileImage className="w-5 h-5 text-blue-500" />}
-                            {preview.fileType === 'pdf' && <FileText className="w-5 h-5 text-red-500" />}
+                            {preview.fileType === 'image' && <FileImage className="w-5 h-5 text-info" />}
+                            {preview.fileType === 'pdf' && <FileText className="w-5 h-5 text-destructive" />}
                             {preview.fileType === 'other' && <FileText className="w-5 h-5 text-muted-foreground" />}
                             <DialogTitle className="text-base font-medium">
                                 {preview.fileName}

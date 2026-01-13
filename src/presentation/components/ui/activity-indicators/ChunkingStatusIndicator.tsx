@@ -32,11 +32,11 @@ export function ChunkingStatusIndicator({
     const getStatusIcon = () => {
         switch (status) {
             case 'running':
-                return <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+                return <Loader2 className="w-4 h-4 animate-spin text-warning" />
             case 'completed':
-                return <CheckCircle2 className="w-4 h-4 text-green-500" />
+                return <CheckCircle2 className="w-4 h-4 text-success" />
             case 'error':
-                return <XCircle className="w-4 h-4 text-red-500" />
+                return <XCircle className="w-4 h-4 text-destructive" />
             default:
                 return <Scissors className="w-4 h-4 text-muted-foreground" />
         }

@@ -36,9 +36,9 @@ export function ContactSection() {
                 className="w-full max-w-2xl"
             >
                 <div className="flex items-center gap-2 mb-8 justify-center">
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                    <div className="w-3 h-3 rounded-full bg-destructive" />
+                    <div className="w-3 h-3 rounded-full bg-warning" />
+                    <div className="w-3 h-3 rounded-full bg-success" />
                     <span className="ml-2 font-mono text-sm text-muted-foreground">{t('about.contact.terminal.title')}</span>
                 </div>
 
@@ -74,7 +74,7 @@ export function ContactSection() {
                             className="flex items-center gap-2 px-4 py-2 border border-border rounded-md hover:bg-muted transition-colors"
                         >
                             <span className="font-mono">{email}</span>
-                            {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                            {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
                         </button>
 
                         <a

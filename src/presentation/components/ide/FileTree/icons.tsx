@@ -80,18 +80,19 @@ const ICON_COMPONENTS: Record<FileIconType, LucideIcon> = {
 
 /**
  * Color classes for different icon types
+ * Pink, cyan, and purple are kept for special syntax highlighting distinction
  */
 const ICON_COLORS: Record<FileIconType, string> = {
-    typescript: 'text-blue-400',
-    javascript: 'text-yellow-400',
+    typescript: 'text-info',
+    javascript: 'text-warning',
     css: 'text-pink-400',
-    json: 'text-orange-400',
-    markdown: 'text-slate-400',
-    html: 'text-orange-500',
+    json: 'text-warning',
+    markdown: 'text-muted-foreground',
+    html: 'text-warning',
     image: 'text-purple-400',
     folder: 'text-cyan-400',
     'folder-open': 'text-cyan-300',
-    default: 'text-slate-400',
+    default: 'text-muted-foreground',
 };
 
 /**

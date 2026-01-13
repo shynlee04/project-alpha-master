@@ -50,9 +50,9 @@ const STATUS_ICONS: Record<PromptStatus, React.ComponentType<{ className?: strin
 };
 
 const STATUS_COLORS: Record<PromptStatus, string> = {
-    success: 'text-green-500',
-    error: 'text-red-500',
-    cancelled: 'text-yellow-500',
+    success: 'text-success',
+    error: 'text-destructive',
+    cancelled: 'text-warning',
 };
 
 // ============================================================================
@@ -156,7 +156,7 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
                 </div>
             </div>
             <div className="text-center">
-                <div className="text-lg font-bold text-green-500">
+                <div className="text-lg font-bold text-success">
                     {analytics.successRate}%
                 </div>
                 <div className="text-xs text-[var(--muted-foreground)]">
@@ -173,8 +173,8 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
             </div>
             <div className="text-center">
                 <div className="flex items-center justify-center">
-                    {analytics.recentTrend === 'up' && <TrendingUp className="h-5 w-5 text-green-500" />}
-                    {analytics.recentTrend === 'down' && <TrendingDown className="h-5 w-5 text-red-500" />}
+                    {analytics.recentTrend === 'up' && <TrendingUp className="h-5 w-5 text-success" />}
+                    {analytics.recentTrend === 'down' && <TrendingDown className="h-5 w-5 text-destructive" />}
                     {analytics.recentTrend === 'stable' && <Minus className="h-5 w-5 text-[var(--muted-foreground)]" />}
                 </div>
                 <div className="text-xs text-[var(--muted-foreground)]">
@@ -213,7 +213,7 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
                         
                         {/* Favorite */}
                         {entry.isFavorite && (
-                            <Star className="h-3 w-3 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                            <Star className="h-3 w-3 text-warning fill-warning flex-shrink-0" />
                         )}
                         
                         {/* Time */}
@@ -267,7 +267,7 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
                         
                         {/* Error message */}
                         {entry.errorMessage && (
-                            <div className="text-xs text-red-500 bg-red-500/10 p-2 rounded-none border border-red-500/20">
+                            <div className="text-xs text-destructive bg-destructive/10 p-2 rounded-none border border-destructive/20">
                                 {entry.errorMessage}
                             </div>
                         )}
@@ -304,7 +304,7 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-xs text-red-500 rounded-none"
+                                className="text-xs text-destructive rounded-none"
                                 onClick={() => deleteEntry(entry.id)}
                             >
                                 <Trash2 className="h-3 w-3 mr-1" />
@@ -379,11 +379,11 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
                             className={cn(
                                 'flex items-center gap-1 px-2 py-1 text-xs rounded-none border',
                                 showFavoritesOnly
-                                    ? 'bg-yellow-500/20 border-yellow-500 text-yellow-600'
+                                    ? 'bg-warning/20 border-warning text-warning'
                                     : 'bg-[var(--muted)] border-[var(--border)]'
                             )}
                         >
-                            <Star className={cn('h-3 w-3', showFavoritesOnly && 'fill-yellow-500')} />
+                            <Star className={cn('h-3 w-3', showFavoritesOnly && 'fill-warning')} />
                             {isVi ? 'Chỉ yêu thích' : 'Favorites only'}
                         </button>
                     </div>
@@ -418,7 +418,7 @@ export function PromptHistoryPanel({ className, showAnalytics = true }: PromptHi
                     <Button
                         size="sm"
                         variant="ghost"
-                        className="text-xs text-red-500 rounded-none"
+                        className="text-xs text-destructive rounded-none"
                         onClick={() => {
                             if (confirm(isVi ? 'Xóa tất cả lịch sử?' : 'Clear all history?')) {
                                 clearHistory();

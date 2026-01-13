@@ -57,11 +57,11 @@ export function RAGAutoIndexingIndicator({
     const getStatusIcon = () => {
         switch (status) {
             case 'running':
-                return <Loader2 className="w-4 h-4 animate-spin text-blue-500" />
+                return <Loader2 className="w-4 h-4 animate-spin text-info" />
             case 'completed':
-                return <CheckCircle2 className="w-4 h-4 text-green-500" />
+                return <CheckCircle2 className="w-4 h-4 text-success" />
             case 'error':
-                return <XCircle className="w-4 h-4 text-red-500" />
+                return <XCircle className="w-4 h-4 text-destructive" />
             default:
                 return <FileText className="w-4 h-4 text-muted-foreground" />
         }
@@ -74,9 +74,9 @@ export function RAGAutoIndexingIndicator({
             case 'embedding':
                 return <Loader2 className="w-3 h-3 animate-spin text-purple-500" />
             case 'indexing':
-                return <CheckCircle2 className="w-3 h-3 text-blue-500" />
+                return <CheckCircle2 className="w-3 h-3 text-info" />
             case 'removing':
-                return <XCircle className="w-3 h-3 text-orange-500" />
+                return <XCircle className="w-3 h-3 text-warning" />
             default:
                 return null
         }

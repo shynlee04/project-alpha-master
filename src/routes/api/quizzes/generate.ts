@@ -66,12 +66,13 @@ function errorResponse(message: string, details?: any, status: number = 500) {
  * TanStack Start Server Route
  */
 export const Route = createFileRoute('/api/quizzes/generate')({
+  // @ts-expect-error TanStack Start server.handlers types not fully exported in @tanstack/react-router 1.147.0
   server: {
     handlers: {
       /**
        * POST handler - generate quiz from sources
        */
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           // Parse request body
           const body = await request.json();

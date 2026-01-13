@@ -40,7 +40,7 @@ export function ConnectionTestButton({
                 {isTesting ? (
                     <Loader2 className="w-3 h-3 animate-spin" />
                 ) : status === 'success' ? (
-                    <CheckCircle2 className="w-3 h-3 text-green-600" />
+                    <CheckCircle2 className="w-3 h-3 text-success" />
                 ) : status === 'error' ? (
                     <XCircle className="w-3 h-3 text-destructive" />
                 ) : (

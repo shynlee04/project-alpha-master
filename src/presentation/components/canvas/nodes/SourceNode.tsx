@@ -30,14 +30,14 @@ const getContentTypeIcon = (contentType: string) => {
 const getContentTypeColor = (contentType: string): string => {
   switch (contentType) {
     case 'pdf':
-      return '#ef4444'; // Red for PDF
+      return 'hsl(var(--destructive))'; // Red for PDF
     case 'url':
-      return '#3b82f6'; // Blue for URL
+      return 'hsl(var(--info))'; // Blue for URL
     case 'markdown':
     case 'text':
-      return '#22c55e'; // Green for text/markdown
+      return 'hsl(var(--success))'; // Green for text/markdown
     default:
-      return '#6b7280'; // Gray default
+      return 'hsl(var(--muted-foreground))'; // Gray default
   }
 };
 
@@ -48,10 +48,10 @@ const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
   return (
     <div
       className={`
-        min-w-[200px] max-w-[300px] bg-gray-900 border-2 rounded-none overflow-hidden
+        min-w-[200px] max-w-[300px] bg-card border-2 rounded-none overflow-hidden
         transition-all duration-200
-        ${selected ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-700'}
-        hover:border-gray-600
+        ${selected ? 'border-info shadow-lg shadow-info/20' : 'border-border'}
+        hover:border-muted-foreground
       `}
       draggable={false}
     >
@@ -59,12 +59,12 @@ const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
       <Handle
         type="target"
         position={Position.Top}
-        className="!bg-blue-500 !w-3 !h-3 !border-2 !border-gray-900"
+        className="!bg-info !w-3 !h-3 !border-2 !border-card"
       />
 
       {/* Header with type icon */}
       <div
-        className="flex items-center gap-2 px-3 py-2 border-b border-gray-700"
+        className="flex items-center gap-2 px-3 py-2 border-b border-border"
         style={{ backgroundColor: `${typeColor}20` }}
       >
         <span style={{ color: typeColor }}>{getContentTypeIcon(contentType)}</span>
@@ -78,11 +78,11 @@ const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
 
       {/* Title */}
       <div className="px-3 py-2">
-        <h3 className="text-sm font-semibold text-gray-100 line-clamp-2 leading-tight">
+        <h3 className="text-sm font-semibold text-foreground line-clamp-2 leading-tight">
           {title}
         </h3>
         {excerpt && (
-          <p className="mt-1 text-xs text-gray-400 line-clamp-2">{excerpt}</p>
+          <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{excerpt}</p>
         )}
       </div>
 
@@ -90,7 +90,7 @@ const SourceNodeComponent = ({ data, selected }: SourceNodeProps) => {
       <Handle
         type="source"
         position={Position.Bottom}
-        className="!bg-blue-500 !w-3 !h-3 !border-2 !border-gray-900"
+        className="!bg-info !w-3 !h-3 !border-2 !border-card"
       />
     </div>
   );

@@ -37,8 +37,8 @@ export function SkillsUniverse() {
     const getCategoryColor = (cat: string) => {
         switch (cat) {
             case 'agentic': return 'bg-primary text-primary-foreground';
-            case 'frontend': return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
-            case 'backend': return 'bg-green-500/20 text-green-400 border-green-500/50';
+            case 'frontend': return 'bg-blue-500/20 text-info border-blue-500/50';
+            case 'backend': return 'bg-green-500/20 text-success border-green-500/50';
             default: return 'bg-muted text-muted-foreground';
         }
     };

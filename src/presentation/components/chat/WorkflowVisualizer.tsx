@@ -79,38 +79,38 @@ function StepNode({ data }: { data: StepNodeData }) {
 const STEP_INFO: Record<StepType, { icon: string; borderColor: string; bgColor: string }> = {
     [StepType.SEND_MESSAGE]: {
         icon: '💬',
-        borderColor: 'border-blue-500',
-        bgColor: 'bg-blue-50 dark:bg-blue-950',
+        borderColor: 'border-info',
+        bgColor: 'bg-info/10',
     },
     [StepType.ROUTE]: {
         icon: '🔀',
         borderColor: 'border-purple-500',
-        bgColor: 'bg-purple-50 dark:bg-purple-950',
+        bgColor: 'bg-purple-500/10',
     },
     [StepType.BRANCH]: {
         icon: '🔀',
-        borderColor: 'border-orange-500',
-        bgColor: 'bg-orange-50 dark:bg-orange-950',
+        borderColor: 'border-warning',
+        bgColor: 'bg-warning/10',
     },
     [StepType.DEBATE]: {
         icon: '🗣️',
-        borderColor: 'border-green-500',
-        bgColor: 'bg-green-50 dark:bg-green-950',
+        borderColor: 'border-success',
+        bgColor: 'bg-success/10',
     },
     [StepType.EXPANSION]: {
         icon: '📋',
         borderColor: 'border-cyan-500',
-        bgColor: 'bg-cyan-50 dark:bg-cyan-950',
+        bgColor: 'bg-cyan-500/10',
     },
     [StepType.INPUT]: {
         icon: '📝',
-        borderColor: 'border-yellow-500',
-        bgColor: 'bg-yellow-50 dark:bg-yellow-950',
+        borderColor: 'border-warning',
+        bgColor: 'bg-warning/10',
     },
     [StepType.END]: {
         icon: '🏁',
-        borderColor: 'border-gray-500',
-        bgColor: 'bg-gray-50 dark:bg-gray-950',
+        borderColor: 'border-muted',
+        bgColor: 'bg-muted',
     },
 };
 

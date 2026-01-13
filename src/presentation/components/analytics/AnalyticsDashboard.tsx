@@ -413,7 +413,7 @@ export function AnalyticsDashboard() {
                 onClick={() => setShowConfirmDelete(true)}
                 variant="outline"
                 className={cn(
-                  'rounded-none border-2 border-red-500 text-red-500 shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                  'rounded-none border-2 border-red-500 text-destructive shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
                   isMobile && 'min-h-[44px]'
                 )}
                 disabled={isExporting}

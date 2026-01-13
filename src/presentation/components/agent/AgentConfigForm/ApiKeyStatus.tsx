@@ -40,7 +40,7 @@ export function ApiKeyStatus({ providerId, hasApiKey, isCheckingKey }: ApiKeySta
                     {!isOptional && <span className="text-destructive">*</span>}
                 </Label>
                 {hasApiKey ? (
-                    <CheckCircle2 className="w-3 h-3 text-green-600" />
+                    <CheckCircle2 className="w-3 h-3 text-success" />
                 ) : (
                     <XCircle className="w-3 h-3 text-destructive" />
                 )}

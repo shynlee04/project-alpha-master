@@ -37,21 +37,21 @@ export function TempProjectBanner({
 
   return (
     <div
-      className={`w-full bg-amber-500/10 border-b border-amber-500/30 px-4 py-2 flex items-center justify-between gap-3 ${className}`}
+      className={`w-full bg-warning/10 border-b border-warning/30 px-4 py-2 flex items-center justify-between gap-3 ${className}`}
     >
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {/* Icon */}
-        <AlertCircle className="h-4 w-4 text-amber-500 flex-shrink-0" />
+        <AlertCircle className="h-4 w-4 text-warning flex-shrink-0" />
 
         {/* Message */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0">
-          <span className="text-sm font-medium text-amber-600 dark:text-amber-400 truncate">
+          <span className="text-sm font-medium text-warning truncate">
             {name}
           </span>
-          <span className="text-xs text-amber-500/70 hidden sm:inline">
+          <span className="text-xs text-warning/70 hidden sm:inline">
             •
           </span>
-          <span className="text-xs text-amber-500/70">
+          <span className="text-xs text-warning/70">
             Created {timeAgo} • {platform === 'mobile' ? 'Mobile' : 'Desktop'} view
           </span>
         </div>
@@ -60,15 +60,15 @@ export function TempProjectBanner({
       {/* Platform Icon + Upgrade CTA */}
       <div className="flex items-center gap-2 flex-shrink-0">
         {platform === 'mobile' ? (
-          <Smartphone className="h-4 w-4 text-amber-500" />
+          <Smartphone className="h-4 w-4 text-warning" />
         ) : (
-          <Monitor className="h-4 w-4 text-amber-500" />
+          <Monitor className="h-4 w-4 text-warning" />
         )}
 
         {platform === 'desktop' && onUpgradeClick && (
           <button
             onClick={onUpgradeClick}
-            className="text-xs px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-md font-medium transition-colors flex items-center gap-1.5"
+            className="text-xs px-3 py-1.5 bg-warning hover:bg-warning/80 text-warning-foreground rounded-md font-medium transition-colors flex items-center gap-1.5"
           >
             <FolderOpen className="h-3 w-3" />
             <span>Select Folder</span>
@@ -103,16 +103,16 @@ export function TempProjectBannerCompact({
 }: { tempProject: TempProjectMetadata; className?: string }) {
   return (
     <div
-      className={`w-full bg-amber-500/10 border-b border-amber-500/30 px-3 py-1.5 flex items-center gap-2 ${className}`}
+      className={`w-full bg-warning/10 border-b border-warning/30 px-3 py-1.5 flex items-center gap-2 ${className}`}
     >
-      <AlertCircle className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
-      <span className="text-xs text-amber-600 dark:text-amber-400 truncate flex-1">
+      <AlertCircle className="h-3.5 w-3.5 text-warning flex-shrink-0" />
+      <span className="text-xs text-warning truncate flex-1">
         {tempProject.name}
       </span>
       {tempProject.platform === 'mobile' ? (
-        <Smartphone className="h-3 w-3 text-amber-500 flex-shrink-0" />
+        <Smartphone className="h-3 w-3 text-warning flex-shrink-0" />
       ) : (
-        <Monitor className="h-3 w-3 text-amber-500 flex-shrink-0" />
+        <Monitor className="h-3 w-3 text-warning flex-shrink-0" />
       )}
     </div>
   );

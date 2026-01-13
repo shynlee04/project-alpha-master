@@ -44,7 +44,7 @@ export const WORKSPACE_CONFIGS: WorkspaceConfig[] = [
     label: 'IDE',
     icon: Monitor,
     description: 'Code execution, file operations, debugging',
-    color: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20',
+    color: 'bg-info/10 text-info border-info/20',
   },
   {
     type: 'knowledge',
@@ -58,7 +58,7 @@ export const WORKSPACE_CONFIGS: WorkspaceConfig[] = [
     label: 'Study',
     icon: GraduationCap,
     description: 'Review, memorization, assessment',
-    color: 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
+    color: 'bg-success/10 text-success border-success/20',
   },
   {
     type: 'notes',
@@ -242,7 +242,7 @@ export function AgentWorkspaceBindingConfig({
               {/* Status Indicator */}
               <div className="flex items-center gap-1">
                 {isChecked ? (
-                  <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                  <div className="flex items-center gap-1 text-xs text-success">
                     <Check className="w-3 h-3" aria-hidden="true" />
                     {!compact && <span>Active</span>}
                   </div>

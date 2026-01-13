@@ -64,14 +64,14 @@ export function AgentCreationSuccess({
   };
 
   return (
-    <div className="agent-creation-success fixed bottom-4 right-4 max-w-md p-4 bg-green-500 text-white rounded-lg shadow-lg animate-in slide-in-from-bottom">
+    <div className="agent-creation-success fixed bottom-4 right-4 max-w-md p-4 bg-success text-success-foreground rounded-lg shadow-lg animate-in slide-in-from-bottom">
       {/* Dismiss button */}
       <button
         onClick={() => {
           setShowTooltip(false);
           onDismiss();
         }}
-        className="absolute top-2 right-2 p-1 hover:bg-green-600 rounded"
+        className="absolute top-2 right-2 p-1 hover:bg-success/80 rounded"
       >
         <X className="h-4 w-4" />
       </button>
@@ -83,7 +83,7 @@ export function AgentCreationSuccess({
           <h4 className="font-semibold text-sm mb-1">
             {t('agentCreated.title')}
           </h4>
-          <p className="text-xs text-green-100">
+          <p className="text-xs text-success-foreground/90">
             {t('agentCreated.message', { agent: agentName })}
           </p>
         </div>
@@ -91,14 +91,14 @@ export function AgentCreationSuccess({
 
       {/* Tutorial tooltip */}
       {showTooltip && (
-        <div className="p-3 bg-green-600/50 rounded border border-green-400/50">
+        <div className="p-3 bg-success/80 rounded border border-success/60">
           <div className="flex items-start gap-2 mb-2">
-            <Lightbulb className="h-4 w-4 flex-shrink-0 mt-0.5 text-yellow-300" />
+            <Lightbulb className="h-4 w-4 flex-shrink-0 mt-0.5 text-warning" />
             <div className="text-xs">
-              <p className="font-medium text-green-100 mb-1">
+              <p className="font-medium text-success-foreground/90 mb-1">
                 {t('agentCreated.tip.title')}
               </p>
-              <p className="text-green-100">
+              <p className="text-success-foreground/90">
                 {t('agentCreated.tip.message')}
               </p>
             </div>
@@ -110,7 +110,7 @@ export function AgentCreationSuccess({
               variant="secondary"
               size="sm"
               onClick={handleConfigureTools}
-              className="h-7 text-xs bg-white text-green-700 hover:bg-green-50"
+              className="h-7 text-xs bg-background text-success hover:bg-success/10"
             >
               {t('agentCreated.configureTools')}
             </Button>
@@ -118,7 +118,7 @@ export function AgentCreationSuccess({
               variant="ghost"
               size="sm"
               onClick={() => setShowTooltip(false)}
-              className="h-7 text-xs text-green-100 hover:text-white hover:bg-green-600"
+              className="h-7 text-xs text-success-foreground/90 hover:text-success-foreground hover:bg-success/80"
             >
               {t('agentCreated.dismiss')}
             </Button>

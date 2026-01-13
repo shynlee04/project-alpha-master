@@ -226,9 +226,9 @@ export function KnowledgeMobileLayoutWithState({
               >
                 <div className="flex items-start justify-between">
                   <div className={`p-2 rounded-none ${
-                    source.type === 'pdf' ? 'bg-red-500/20 text-red-500' :
-                    source.type === 'url' ? 'bg-blue-500/20 text-blue-500' :
-                    'bg-green-500/20 text-green-500'
+                    source.type === 'pdf' ? 'bg-destructive/20 text-destructive' :
+                    source.type === 'url' ? 'bg-info/20 text-info' :
+                    'bg-success/20 text-success'
                   }`}>
                     {source.type === 'pdf' && <FileText className="w-5 h-5" />}
                     {source.type === 'url' && <Share2 className="w-5 h-5" />}
@@ -309,9 +309,9 @@ export function KnowledgeMobileLayoutWithState({
                 className="p-4 bg-card border border-border rounded-none touch-target-min flex items-center gap-3"
               >
                 <div className={`p-2 rounded-none ${
-                  source.type === 'pdf' ? 'bg-red-500/20 text-red-500' :
-                  source.type === 'url' ? 'bg-blue-500/20 text-blue-500' :
-                  'bg-green-500/20 text-green-500'
+                  source.type === 'pdf' ? 'bg-destructive/20 text-destructive' :
+                  source.type === 'url' ? 'bg-info/20 text-info' :
+                  'bg-success/20 text-success'
                 }`}>
                   {source.type === 'pdf' && <FileText className="w-5 h-5" />}
                   {source.type === 'url' && <Share2 className="w-5 h-5" />}
