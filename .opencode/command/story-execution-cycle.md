@@ -5,7 +5,7 @@
 
 **Workflow ID**: `story-execution-cycle`
 **Parent**: light-theme-sprint-workflow
-**Purpose**: Execute a single story from creation to completion
+**description**: Execute a single story from creation to completion
 **Duration**: Varies by story (2-6 hours typical)
 **Agents**: SM Agent and Dev Agent (alternating)
 

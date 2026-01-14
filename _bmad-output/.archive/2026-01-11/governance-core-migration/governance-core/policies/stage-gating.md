@@ -1,6 +1,6 @@
 # Stage Gating Policy
 
-**Purpose:** Prevent premature implementation of advanced Agent/AI/RAG/Multimodality features
+**description:** Prevent premature implementation of advanced Agent/AI/RAG/Multimodality features
 
 **Created:** 2026-01-10
 **Status:** Active

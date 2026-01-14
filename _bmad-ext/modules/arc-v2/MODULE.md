@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 Fresh architecture remediation module designed to address the systemic issues in Project Alpha:
 
@@ -71,7 +71,7 @@ Fresh architecture remediation module designed to address the systemic issues in
 
 ### Connects To (_bmad-ext/)
 
-| Component | Path | Purpose |
+| Component | Path | description |
 |-----------|------|---------|
 | Loop State | `state/LOOP_STATE.yaml` | Track remediation progress |
 | Artifact Registry | `state/ARTIFACT_REGISTRY.yaml` | Register scan outputs |
@@ -241,7 +241,7 @@ cat _bmad-ext/modules/arc-v2/workflows/diagnostic-first.md
 
 ### Active Agents (Ready for Deployment)
 
-| Agent | Domain | Purpose | Status |
+| Agent | Domain | description | Status |
 |-------|--------|---------|--------|
 | `context-validator.md` | All | Pre-execution prompt validation | ✅ Ready |
 | `domain-scanner.md` | All | 6-domain targeted scanning | ✅ Ready |

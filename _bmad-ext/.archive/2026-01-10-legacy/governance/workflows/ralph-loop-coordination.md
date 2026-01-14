@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 Establishes a canonical protocol for coordinating Ralph Loop state updates between:
 1. **BMAD Master** - Updates after cycle completion

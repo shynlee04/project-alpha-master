@@ -315,7 +315,7 @@ Work through each issue systematically:
 ### 🔧 FIXING: Missing {filename}
 
 **Required File:** {path}
-**Purpose:** {why it's needed}
+**description:** {why it's needed}
 
 **Option 1:** Re-run Build
 - Sidecar may not have been created completely

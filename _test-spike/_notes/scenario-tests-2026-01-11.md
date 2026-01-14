@@ -13,7 +13,7 @@ This document describes the test scenarios for the Test-Spike Harness. Each scen
 
 ### 1. Agent Tool Execution Test
 
-**Purpose:** Validate that tools are invoked correctly and permissions are enforced.
+**description:** Validate that tools are invoked correctly and permissions are enforced.
 
 **Test Cases:**
 
@@ -64,7 +64,7 @@ export class AgentToolExecutionRunner {
 
 ### 2. Filesystem CRUD Test
 
-**Purpose:** Validate filesystem operations with permission profiles.
+**description:** Validate filesystem operations with permission profiles.
 
 **Test Matrix:**
 
@@ -117,7 +117,7 @@ export class FilesystemCRUDRunner {
 
 ### 3. State Management Test
 
-**Purpose:** Validate state snapshot and restore functionality.
+**description:** Validate state snapshot and restore functionality.
 
 **Test Cases:**
 
@@ -177,7 +177,7 @@ export class StateManagementRunner {
 
 ### 4. Prompt and Mode Testing
 
-**Purpose:** Validate prompt versions and mode switching.
+**description:** Validate prompt versions and mode switching.
 
 **Test Matrix:**
 

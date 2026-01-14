@@ -507,7 +507,7 @@ pnpm dev && lighthouse http://localhost:3000 --output=json
 
 ## Appendix: Key File References
 
-| File | Purpose | Relevant Lines |
+| File | description | Relevant Lines |
 |------|---------|----------------|
 | `src/routes/__root.tsx` | Root layout, provider initialization | 1-113 |
 | `src/presentation/components/common/AppInitializer.tsx` | App startup initialization | 39-116 |

@@ -34,7 +34,7 @@ This report documents the comprehensive research phase for configuring Google Ge
 
 #### Existing Gemini Implementation Files
 
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `src/lib/agent/providers/gemini-adapter.ts` | Gemini adapter wrapper | **HAS ISSUES** |
 | `src/lib/agent/tools/voice-output-tool.ts` | Gemini TTS integration | Partial |

@@ -76,7 +76,7 @@ The presentation layer contains all React components, custom hooks, and route de
 
 **Workspace Types:**
 
-| Workspace | Purpose | Tool Focus |
+| Workspace | description | Tool Focus |
 |-----------|---------|------------|
 | `ide` | Code development | Files, terminal, search |
 | `knowledge` | Knowledge synthesis | RAG, PDF, images, web |

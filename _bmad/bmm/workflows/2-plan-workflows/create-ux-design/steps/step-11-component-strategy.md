@@ -75,7 +75,7 @@ For each custom component needed, design thoroughly:
 **For each custom component:**
 "**[Component Name] Design:**
 
-**Purpose:** What does this component do for users?
+**description:** What does this component do for users?
 **Content:** What information or data does it display?
 **Actions:** What can users do with this component?
 **States:** What different states does it have? (default, hover, active, disabled, error, etc.)
@@ -93,7 +93,7 @@ Create detailed specifications for each component:
 ```markdown
 ### [Component Name]
 
-**Purpose:** [Clear purpose statement]
+**description:** [Clear description statement]
 **Usage:** [When and how to use]
 **Anatomy:** [Visual breakdown of parts]
 **States:** [All possible states with descriptions]

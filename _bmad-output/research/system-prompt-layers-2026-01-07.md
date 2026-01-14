@@ -442,7 +442,7 @@ graph TD
 
 ### Missing Sources
 
-| Missing Source | Intended Layer | Purpose | Impact |
+| Missing Source | Intended Layer | description | Impact |
 |---------------|---------------|---------|--------|
 | User custom instructions | Layer 4 | Personalization | High |
 | Workspace-specific rules | Layer 3 | Environment adaptation | Medium |

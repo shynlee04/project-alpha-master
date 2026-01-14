@@ -24,7 +24,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 **MANDATORY RESEARCH GATE** - Research and planning before implementation. Developer agent responsibility. This is the v2.0 "plan before code" innovation.
 
@@ -46,7 +46,7 @@ story={story_key}    # Story key (required)
 
 **Use MCP Tools:**
 
-| Tool | Purpose | Query Pattern |
+| Tool | description | Query Pattern |
 |------|---------|---------------|
 | **Context7** | Official docs | `resolve-library-id` → `get-library-docs` |
 | **DeepWiki** | GitHub patterns | `ask_question` with repo-specific query |
@@ -92,7 +92,7 @@ story={story_key}    # Story key (required)
   - Option B: {pros/cons}
 
 #### File Changes:
-| File | Action | Purpose |
+| File | Action | description |
 |------|--------|---------|
 | src/lib/x.ts | Create | New utility |
 | src/lib/y.ts | Modify | Add feature |

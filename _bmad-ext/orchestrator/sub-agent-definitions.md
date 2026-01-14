@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0  
 **Created**: 2026-01-11  
-**Purpose**: Define specialized sub-agents for validation, context gathering, investigation, and research
+**description**: Define specialized sub-agents for validation, context gathering, investigation, and research
 
 ---
 
@@ -41,7 +41,7 @@ agent:
   type: "shared_service"
   version: "1.0.0"
   
-  purpose: "Comprehensive quality scanning for code, architecture, and security"
+  description: "Comprehensive quality scanning for code, architecture, and security"
   
   capabilities:
     - "health_assessment"
@@ -79,7 +79,7 @@ agent:
   type: "sub_agent"
   version: "1.0.0"
   
-  purpose: "Fix TypeScript compilation errors systematically"
+  description: "Fix TypeScript compilation errors systematically"
   
   workflow: "typescript-fix-cycle"
   
@@ -114,7 +114,7 @@ agent:
   type: "sub_agent"
   version: "1.0.0"
   
-  purpose: "Split oversized React components into focused modules"
+  description: "Split oversized React components into focused modules"
   
   workflow: "component-split-cycle"
   
@@ -153,7 +153,7 @@ agent:
   type: "sub_agent"
   version: "2.0.0"
   
-  purpose: "Scan and map domain-specific code for context gathering"
+  description: "Scan and map domain-specific code for context gathering"
   
   workflow: "domain-scan-cycle"
   
@@ -195,7 +195,7 @@ agent:
   type: "sub_agent"
   version: "2.0.0"
   
-  purpose: "Validate context freshness and relevance"
+  description: "Validate context freshness and relevance"
   
   workflow: "context-validate-cycle"
   
@@ -229,7 +229,7 @@ agent:
   type: "sub_agent"
   version: "1.0.0"
   
-  purpose: "Map user journeys for context in UX workflows"
+  description: "Map user journeys for context in UX workflows"
   
   workflow: "journey-map-cycle"
   
@@ -266,7 +266,7 @@ agent:
   type: "enhanced_agent"
   version: "1.0.0"
   
-  purpose: "Deep analysis of requirements, patterns, and issues"
+  description: "Deep analysis of requirements, patterns, and issues"
   
   investigation_types:
     - "requirements_gap"
@@ -306,7 +306,7 @@ agent:
   type: "enhanced_agent"
   version: "1.0.0"
   
-  purpose: "Architecture analysis and remediation planning"
+  description: "Architecture analysis and remediation planning"
   
   investigation_types:
     - "state_boundary"

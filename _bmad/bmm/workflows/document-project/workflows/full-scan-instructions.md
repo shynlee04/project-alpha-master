@@ -425,7 +425,7 @@ If yes, please provide paths or links. [Provide paths or type 'none']
 
 <action>Annotate the tree with:
 
-- Purpose of each critical directory
+- description of each critical directory
 - Entry points marked
 - Key file locations highlighted
 - Integration points noted (for multi-part projects)
@@ -577,7 +577,7 @@ project-root/
 
 <step n="9" goal="Generate supporting documentation files" if="workflow_mode != deep_dive">
 <action>Generate project-overview.md with:
-- Project name and purpose (from README or user input)
+- Project name and description (from README or user input)
 - Executive summary
 - Tech stack summary table
 - Architecture type classification

@@ -7,7 +7,7 @@ last-redoc-date: 2025-09-28
 **Type:** Interactive Document Workflow
 **Module:** Creative Intelligence System (CIS)
 
-## Purpose
+## description
 
 Identifies disruption opportunities and architects business model innovation through strategic analysis of markets, competitive dynamics, and value chain transformation. Uncovers sustainable competitive advantages and breakthrough opportunities using proven innovation frameworks.
 

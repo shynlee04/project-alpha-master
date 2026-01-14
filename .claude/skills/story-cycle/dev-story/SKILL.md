@@ -21,7 +21,7 @@ triggers:
 
 # Step 06: Develop Story - Enhanced with Deep Analysis
 
-**Purpose**: Implement story using TDD (Red-Green-Refactor) cycle with **ENFORCED** grep/glob context loading, architectural conflict detection, and systematic code analysis.
+**description**: Implement story using TDD (Red-Green-Refactor) cycle with **ENFORCED** grep/glob context loading, architectural conflict detection, and systematic code analysis.
 
 ## Critical Change (v2.0)
 
@@ -226,8 +226,8 @@ implementation_with_evidence:
 - Files Grepped: {count}
 - Files Read: {count}
 - Key Files Analyzed:
-  - {file}:{line} - {purpose}
-  - {file}:{line} - {purpose}
+  - {file}:{line} - {description}
+  - {file}:{line} - {description}
 
 ### Architectural Conflict Detection
 - Clean Architecture: ✅ COMPLIANT

@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0  
 **Created**: 2026-01-11  
-**Purpose**: Define how modules communicate and hand off work to each other
+**description**: Define how modules communicate and hand off work to each other
 
 ---
 

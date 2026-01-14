@@ -24,7 +24,7 @@ Initialize research-trigger by understanding what research is needed and why.
 
 Greet by `{user_name}` and welcome to Research-Trigger workflow.
 
-**Purpose**: "We'll conduct research to validate your approach and ensure you're making informed decisions."
+**description**: "We'll conduct research to validate your approach and ensure you're making informed decisions."
 
 ### 2. Load Expert-Analysis Output
 

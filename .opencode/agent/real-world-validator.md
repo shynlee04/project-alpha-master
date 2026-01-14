@@ -239,7 +239,7 @@ real_api_testing:
 
 ```yaml
 playwright_automation:
-  purpose: "Cross-browser end-to-end testing"
+  description: "Cross-browser end-to-end testing"
 
   browsers:
     chrome:
@@ -390,7 +390,7 @@ visual_regression:
 
 ```yaml
 performance_testing:
-  purpose: "Measure actual performance, not synthetic"
+  description: "Measure actual performance, not synthetic"
 
   metrics:
     load_time:
@@ -433,7 +433,7 @@ performance_testing:
 
 ```yaml
 cross_platform_testing:
-  purpose: "Verify cross-platform integration works correctly"
+  description: "Verify cross-platform integration works correctly"
 
   test_scenarios:
     1. "Create story in .claude"

@@ -224,7 +224,7 @@ while (searchIndex < searchLower.length && labelIndex < labelLower.length) {
 
 **File**: [src/presentation/components/ide/FeatureSearch.tsx]
 
-**Purpose**: Search across IDE features and settings
+**description**: Search across IDE features and settings
 
 ---
 
@@ -232,7 +232,7 @@ while (searchIndex < searchLower.length && labelIndex < labelLower.length) {
 
 **File**: [src/presentation/components/ide/QuickActionsMenu.tsx]
 
-**Purpose**: Quick access to frequently used actions
+**description**: Quick access to frequently used actions
 
 ---
 

@@ -24,7 +24,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 Recovery handler when story is stuck or validation fails. Triggered when:
 - Story exceeds 2x timebox estimate

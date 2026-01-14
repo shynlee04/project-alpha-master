@@ -5,7 +5,7 @@
 
 **Workflow ID**: `sprint-planning-workflow`
 **Parent**: light-theme-sprint-workflow
-**Purpose**: Plan and prepare the Light Theme sprint
+**description**: Plan and prepare the Light Theme sprint
 **Duration**: 2-3 hours
 **Agent**: SM Agent
 

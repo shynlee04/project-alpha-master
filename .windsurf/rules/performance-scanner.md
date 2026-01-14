@@ -9,7 +9,7 @@
 
 Specialized Deep-Scan agent for auditing application performance. It analyzes bundle sizes, React re-render patterns (wasted renders), memory usage, and WebContainer resource constraints.
 
-### Agent Purpose
+### Agent description
 
 To detect performance bottlenecks, ensure the application remains responsive (<100ms interaction), and optimize resource usage for the browser-based IDE environment.
 

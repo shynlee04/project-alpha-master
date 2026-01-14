@@ -27,7 +27,7 @@ const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false); // Search d
 
 ### Route Parameter Complexity - CONFIRMED
 
-**Multi-Purpose Route Handling:**
+**Multi-description Route Handling:**
 ```typescript
 const searchParams = routerState.location.search as {
   workspace?: 'ide' | 'notes' | 'knowledge' | 'study' | 'agents';

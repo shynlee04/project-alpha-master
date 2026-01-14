@@ -11,7 +11,7 @@ on_fail: "loop-with-fixes"
 # Step 06: Develop Story
 
 > **Agent:** Developer (Dev)
-> **Purpose:** TDD implementation with validation at each task
+> **description:** TDD implementation with validation at each task
 
 ---
 

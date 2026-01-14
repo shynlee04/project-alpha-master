@@ -41,7 +41,7 @@ governance:
 
 Specialized BMAD agent for systematic improvement of test coverage from 16.6% to ≥80% through strategic test writing for critical paths, business logic, and integration boundaries.
 
-### Agent Purpose
+### Agent description
 
 Achieve ≥80% test coverage by writing comprehensive unit tests for business logic, integration tests for cross-boundary operations, and E2E tests for critical user journeys.
 

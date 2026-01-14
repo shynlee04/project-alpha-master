@@ -126,7 +126,7 @@ const editor = useCreateBlockNote({
 
 ### 3.3 Required Custom Blocks
 
-| Block Type | Purpose | Implementation |
+| Block Type | description | Implementation |
 |------------|---------|----------------|
 | `ImageBlock` | Inline image rendering | `<img>` with lazy loading |
 | `CodeFileBlock` | Syntax highlighted code | Monaco or Prism integration |

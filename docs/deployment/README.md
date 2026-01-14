@@ -71,7 +71,7 @@ pnpm build
 
 ## Configuration Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | [netlify.toml](../netlify.toml) | Netlify build configuration and headers |
 | [.github/workflows/ci.yml](../.github/workflows/ci.yml) | CI pipeline (tests, type check) |
@@ -104,7 +104,7 @@ dist/
 
 Via-Gent requires specific security headers for WebContainer support:
 
-| Header | Value | Purpose |
+| Header | Value | description |
 |--------|-------|---------|
 | `Cross-Origin-Opener-Policy` | `same-origin` | WebContainer isolation |
 | `Cross-Origin-Embedder-Policy` | `require-corp` | Cross-origin resource handling |

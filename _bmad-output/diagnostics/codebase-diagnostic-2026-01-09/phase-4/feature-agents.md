@@ -8,7 +8,7 @@
 
 ## 1. Entry Points
 
-| Route | File | Purpose | Entry Method |
+| Route | File | description | Entry Method |
 |-------|------|---------|--------------|
 | `/agents` | `src/routes/agents.tsx` | Agent management center - lists agents, allows creation/editing | TanStack Router `createFileRoute` |
 | `/settings` | `src/routes/settings.tsx` | Settings page with Agent Configuration section, Provider Settings, Vault Status | TanStack Router `createFileRoute` |
@@ -77,7 +77,7 @@ ProviderConfigDialog (main provider configuration - 433 lines)
 
 **File**: `src/infrastructure/persistence/stores/use-app-store.ts`
 
-| Slice | Purpose | State | Actions |
+| Slice | description | State | Actions |
 |-------|---------|-------|---------|
 | **Agent CRUD Slice** | Agent lifecycle operations | `agents: AgentData[]` | `addAgent()`, `updateAgent()`, `removeAgent()`, `setActiveAgent()` |
 | **Agent Workspace Bindings Slice** | Workspace availability | `workspaceBindings: WorkspaceBinding[]` | `updateWorkspaceBinding()`, `getAgentsForWorkspace()` |
@@ -92,7 +92,7 @@ ProviderConfigDialog (main provider configuration - 433 lines)
 
 **File**: `src/infrastructure/persistence/stores/permissions/tool-permission-store.ts`
 
-| Property | Type | Purpose |
+| Property | Type | description |
 |----------|------|---------|
 | `trustLevels` | `Record<string, Record<WorkspaceType, ToolTrustLevel>>` | Per-tool, per-workspace trust levels |
 | `defaultTrustLevel` | `ToolTrustLevel` | Default trust level for new tools ('prompt') |
@@ -191,7 +191,7 @@ Plaintext API key for LLM provider
 
 ### 4.5 LocalStorage Keys (Vault Security)
 
-| Key | Purpose | Security |
+| Key | description | Security |
 |-----|---------|----------|
 | `vg_ek_v3` | Encrypted master key | Wrapped with AES-KW |
 | `vg_salt_v3` | PBKDF2 salt | Used for key derivation |
@@ -208,7 +208,7 @@ Plaintext API key for LLM provider
 
 **File**: `src/infrastructure/persistence/dexie-db.ts`
 
-| Table | Type | Purpose | Agent-Related Fields |
+| Table | Type | description | Agent-Related Fields |
 |-------|------|---------|---------------------|
 | `credentials` | `CredentialsTable` | Encrypted API keys | `providerId`, `encrypted`, `iv`, `workspaceId` |
 | `providerConfigs` | `PersistedStateTable` | Provider configuration | `key: providerId`, `value: ProviderConfig` |
@@ -470,7 +470,7 @@ interface ToolPermissionState {
 
 ### 11.1 Event Types
 
-| Event | Emitter | Payload | Purpose |
+| Event | Emitter | Payload | description |
 |-------|---------|---------|---------|
 | `AGENT_CREATED` | `agent-events-slice` | `{ agentId, agentName, workspaceType }` | Notify other workspaces |
 | `AGENT_DELETED` | `agent-events-slice` | `{ agentId, workspaceType }` | Notify other workspaces |

@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Module:** bmb (BMAD Builder)
-**Purpose:** Definitive guide for creating BMAD workflow step files
+**description:** Definitive guide for creating BMAD workflow step files
 
 ---
 
@@ -48,7 +48,7 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 | Field           | Required  | Description                       |
 | --------------- | --------- | --------------------------------- |
 | `name`          | Yes       | Step identifier (kebab-case)      |
-| `description`   | Yes       | One-line summary of step purpose  |
+| `description`   | Yes       | One-line summary of step description  |
 | `outputFile`    | Yes       | Where results are documented      |
 | Task references | As needed | Paths to external workflows/tasks |
 

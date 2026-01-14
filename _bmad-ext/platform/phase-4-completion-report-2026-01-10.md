@@ -16,7 +16,7 @@ The platform wrapper is now implemented, providing a clean adapter layer between
 
 ### Specification Documents (3 files, 1,226 lines)
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `claude-code-concept-mapping.md` | 403 | Maps Claude Code concepts to BMAD |
 | `platform-wrapper-spec.md` | 823 | Wrapper architecture and implementation plan |
@@ -24,7 +24,7 @@ The platform wrapper is now implemented, providing a clean adapter layer between
 
 ### Hook Implementations (5 files, 793 lines)
 
-| Hook | Lines | Event | Purpose |
+| Hook | Lines | Event | description |
 |------|-------|-------|---------|
 | `session-start.yaml` | 127 | SessionStart | Load config, verify state |
 | `user-prompt-submit.yaml` | 214 | UserPromptSubmit | Enrich context, prevent overflow |
@@ -44,7 +44,7 @@ The platform wrapper is now implemented, providing a clean adapter layer between
 
 ### 1. Concept Mapping Document
 
-**Purpose:** Bridge Claude Code 2026 concepts with BMAD architecture
+**description:** Bridge Claude Code 2026 concepts with BMAD architecture
 
 **Key Mappings:**
 - **Skills** ↔ BMAD Standards (with auto-invocation)
@@ -56,7 +56,7 @@ The platform wrapper is now implemented, providing a clean adapter layer between
 
 ### 2. Platform Wrapper Specification
 
-**Purpose:** Define how the wrapper translates between Claude Code and BMAD
+**description:** Define how the wrapper translates between Claude Code and BMAD
 
 **Architecture Components:**
 1. **Skill Adapter** - Converts standards to Skills with frontmatter
@@ -107,7 +107,7 @@ The platform wrapper is now implemented, providing a clean adapter layer between
 
 ### 4. Command Registry
 
-**Purpose:** Single source of truth for all BMAD commands
+**description:** Single source of truth for all BMAD commands
 
 **Structure:**
 - 80+ commands organized by priority and category

@@ -22,7 +22,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 Validate story file is 100% complete before proceeding to context creation. Story Manager (SM) agent responsibility.
 

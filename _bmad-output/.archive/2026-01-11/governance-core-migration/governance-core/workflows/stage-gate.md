@@ -1,6 +1,6 @@
 # Stage Gate - Development Stage Enforcement
 
-**Purpose:** Enforce stage-gated development for Agent/AI/RAG/Multimodality features
+**description:** Enforce stage-gated development for Agent/AI/RAG/Multimodality features
 
 **Workflow Type:** Gate / Progress Tracker
 

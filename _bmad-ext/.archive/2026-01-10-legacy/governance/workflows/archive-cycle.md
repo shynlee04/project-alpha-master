@@ -3,7 +3,7 @@
 **Workflow ID**: `@bmad/modules/governance/workflows/archive-cycle`
 **Version**: 1.0.0
 **Created**: 2026-01-06
-**Purpose**: Automated archiving of expired artifacts with orphan detection
+**description**: Automated archiving of expired artifacts with orphan detection
 
 ---
 

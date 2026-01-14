@@ -23,7 +23,7 @@ epic={N}           # Epic number (required)
 
 ---
 
-## Purpose
+## description
 
 Epic-level retrospective when all stories are complete. Story Manager (SM) agent responsibility.
 

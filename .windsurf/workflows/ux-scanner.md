@@ -9,7 +9,7 @@
 
 Specialized Deep-Scan agent for auditing the frontend user experience. It validates mobile responsiveness, internationalization coverage, accessibility compliance, and error state handling.
 
-### Agent Purpose
+### Agent description
 
 To ensure the application is usable, accessible, and localized, identifying hardcoded strings, non-responsive layouts, and accessibility violations (WCAG).
 

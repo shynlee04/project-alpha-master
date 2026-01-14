@@ -12,7 +12,7 @@ trigger: model_decision
 
 Specialized Deep-Scan agent for auditing TypeScript health, identifying loose typing, contract violations, and type system degradation. It distinguishes between real type errors and configuration noise.
 
-### Agent Purpose
+### Agent description
 
 To enforce strict typing standards, eliminate `any` usage, and ensure type contracts (interfaces) are respected across architectural boundaries, generating evidence for the `typescript-fixer` agent.
 

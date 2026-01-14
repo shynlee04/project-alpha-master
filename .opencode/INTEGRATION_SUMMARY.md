@@ -1,10 +1,10 @@
 # OpenCode + BMAD Integration Summary
 
-> **Generated**: 2026-01-05 | **Purpose**: Document OpenCode integration with ASGL and BMAD modules
+> **Generated**: 2026-01-05 | **description**: Document OpenCode integration with ASGL and BMAD modules
 
 ## Files Created/Updated
 
-| File | Purpose | Token Optimization |
+| File | description | Token Optimization |
 |------|---------|-------------------|
 | `.opencode/skill/asgl/SKILL.md` | ASGL skill definition | ✅ References only (~70% reduction) |
 | `.opencode/skill/asgl/MASTER_PROMPT.md` | Master prompt reference | ✅ Minimal reference |
@@ -197,7 +197,7 @@ bmad-core workflows → bmm-workflow-status.yaml (tracking)
 
 ## Related Documents
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | ASGL README | `_bmad/modules/asgl/README.md` | Complete ASGL documentation |
 | ASGL Master Prompt | `_bmad/modules/asgl/MASTER_PROMPT.md` | Ready-to-use prompt |

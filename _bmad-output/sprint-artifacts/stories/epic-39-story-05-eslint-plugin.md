@@ -200,7 +200,7 @@ export const noTransparency: Rule.RuleModule = {
 
 ## Dependencies
 
-| Dependency | Purpose | Status |
+| Dependency | description | Status |
 |------------|---------|--------|
 | ESLint 8.x or 9.x | Rule framework | Already installed |
 | @typescript-eslint/typescript-estree | AST parsing | Already installed |
@@ -212,7 +212,7 @@ export const noTransparency: Rule.RuleModule = {
 
 ### Files to Create
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `eslint-plugin-8bit-design/package.json` | Package metadata |
 | `eslint-plugin-8bit-design/tsconfig.json` | TypeScript config |
@@ -224,7 +224,7 @@ export const noTransparency: Rule.RuleModule = {
 
 ### Files to Modify
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `eslint.config.mjs` | Add plugin and configure rules |
 
@@ -273,7 +273,7 @@ The plugin should be integrated into CI:
 
 ### Existing Code
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `eslint.config.mjs` | Existing ESLint configuration |
 | `agent-os/standards/frontend/css.md` | 8-bit design system rules |

@@ -26,7 +26,7 @@ triggers:
 
 # BMAD Orchestrator Skill
 
-**Purpose**: Orchestrate the BMAD framework - load agents, manage workflows, track progress, and coordinate autonomous development cycles.
+**description**: Orchestrate the BMAD framework - load agents, manage workflows, track progress, and coordinate autonomous development cycles.
 
 ## Activation Triggers
 
@@ -70,7 +70,7 @@ Use this skill when:
 
 ## Available Agents
 
-| Agent | Location | Purpose |
+| Agent | Location | description |
 |-------|----------|---------|
 | bmad-master | `_bmad/core/agents/bmad-master.md` | Master orchestrator |
 | architect | `_bmad/bmm/agents/architect.md` | System design |
@@ -80,7 +80,7 @@ Use this skill when:
 
 ## Available Workflows
 
-| Workflow | Location | Purpose |
+| Workflow | Location | description |
 |----------|----------|---------|
 | Main Loop | `_bmad/modules/asgl/workflows/main-loop.md` | Autonomous sprint loop |
 | Spec Writing | `_bmad/bmm/workflows/2-plan-workflows/` | Spec generation |

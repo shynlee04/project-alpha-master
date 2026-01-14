@@ -72,7 +72,7 @@ interface VideoGenerationBlockProps {
 
 ### Dependencies
 
-| Package | Version | Purpose |
+| Package | Version | description |
 |---------|---------|---------|
 | `@google/genai` | latest | Google GenAI SDK for Veo API |
 

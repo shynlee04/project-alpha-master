@@ -24,7 +24,7 @@
 
 ### Files Created
 
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | `SyncedBlock.tsx` | Synced block component with global registry | 295 |
 | `SyncedBlock.css` | Visual indicators and unsync dialog styles | 201 |

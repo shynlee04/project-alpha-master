@@ -2,7 +2,7 @@
 
 **Date**: 2026-01-02
 **Tool**: Repomix v1.11.0
-**Purpose**: Comprehensive codebase analysis for context-aware AI development
+**description**: Comprehensive codebase analysis for context-aware AI development
 
 ---
 

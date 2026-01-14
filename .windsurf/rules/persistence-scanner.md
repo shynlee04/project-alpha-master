@@ -12,7 +12,7 @@ trigger: model_decision
 
 Specialized Deep-Scan agent for auditing the persistence layer. It analyzes IndexedDB (Dexie) schemas, LocalStorage usage, File System Access API patterns, and synchronization logic to ensure data integrity, security, and performance.
 
-### Agent Purpose
+### Agent description
 
 To validate the reliability and security of local-first data storage, ensuring compliance with `ADR-024` (Clean Architecture), detecting unencrypted sensitive data, and verifying schema migration safety.
 

@@ -113,7 +113,7 @@ stories_remaining: 33
 
 ## Related Commands
 
-| Command | Purpose |
+| Command | description |
 |---------|---------|
 | `@deep-scan-full` | Full codebase diagnostics |
 | `@deep-scan-targeted` | Targeted domain scan |

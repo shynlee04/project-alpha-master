@@ -43,7 +43,7 @@ index.ts
 
 **File:** `src/presentation/components/study/StudyPage.tsx`
 
-**Purpose:** Main study workspace container
+**description:** Main study workspace container
 
 **Features Enabled:**
 - Quiz mode selection
@@ -60,7 +60,7 @@ index.ts
 
 **File:** `src/presentation/components/study/flashcard.tsx`
 
-**Purpose:** Flashcard study interface
+**description:** Flashcard study interface
 
 **Features Enabled:**
 - Front/back card display
@@ -74,7 +74,7 @@ index.ts
 
 **File:** `src/presentation/components/study/QuizContainer.tsx`
 
-**Purpose:** Quiz taking interface
+**description:** Quiz taking interface
 
 **Features Enabled:**
 - Question display
@@ -89,7 +89,7 @@ index.ts
 
 **File:** `src/presentation/components/study/study-stats.tsx`
 
-**Purpose:** Study statistics dashboard
+**description:** Study statistics dashboard
 
 **Features Enabled:**
 - Cards studied
@@ -103,7 +103,7 @@ index.ts
 
 **File:** `src/presentation/components/study/QuizResults.tsx`
 
-**Purpose:** Quiz results display
+**description:** Quiz results display
 
 **Features Enabled:**
 - Score display

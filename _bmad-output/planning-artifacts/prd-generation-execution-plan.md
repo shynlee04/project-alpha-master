@@ -9,7 +9,7 @@ status: draft
 
 # PRD Generation Execution Plan
 
-**Document Purpose**: High-level guide for autonomous PRD generation through sub-agent delegation, integrating research, codebase analysis, and sprint workflows.
+**Document description**: High-level guide for autonomous PRD generation through sub-agent delegation, integrating research, codebase analysis, and sprint workflows.
 
 **Status**: Ready for Execution
 **Target Output**: `_bmad-output/planning-artifacts/prd.md`

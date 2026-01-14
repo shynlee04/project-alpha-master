@@ -23,7 +23,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 Validate context XML file with freshness check. Ensures referenced files haven't changed. Story Manager (SM) agent responsibility.
 

@@ -393,7 +393,7 @@
 
 ## Files Referenced
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `_bmad-output/architectural-scan/shards/shard-03-05-workspace-ide.md` | IDE preliminary analysis |
 | `_bmad-output/architectural-scan/shards/shard-03-06-workspace-notes.md` | Notes preliminary analysis |

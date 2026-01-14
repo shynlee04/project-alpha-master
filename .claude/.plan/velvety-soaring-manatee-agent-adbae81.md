@@ -24,7 +24,7 @@
 
 **Location**: `src/lib/workspace/file-sync-status-store.ts` (555 lines)
 
-**Purpose**: Centralized Zustand store for file sync status tracking
+**description**: Centralized Zustand store for file sync status tracking
 
 **State Schema**:
 ```typescript
@@ -455,7 +455,7 @@ useEffect(() => {
 
 ### 5.2 Database Table Duplication ⚠️
 
-**Two tables for similar purpose**:
+**Two tables for similar description**:
 1. `fileSyncStatus` (PersistedStateTable) - Used by Zustand
 2. `syncStatus` (SyncStatusTable) - NOT used, has richer schema
 
@@ -711,7 +711,7 @@ Based on user journey requirements (Story 54-2 - AC1):
 
 ### 11.1 Core Files (8 files)
 
-| File | Lines | Purpose | Status |
+| File | Lines | description | Status |
 |------|-------|---------|--------|
 | `src/lib/workspace/file-sync-status-store.ts` | 555 | Zustand store | ✅ Production-ready |
 | `src/infrastructure/persistence/dexie-db-session-types.ts` | 167 | DB schema | ⚠️ Unused table |
@@ -724,7 +724,7 @@ Based on user journey requirements (Story 54-2 - AC1):
 
 ### 11.2 Component Files (7 files)
 
-| File | Lines | Purpose | Status |
+| File | Lines | description | Status |
 |------|-------|---------|--------|
 | `src/presentation/components/ui/activity-indicators/SyncStatusIndicator.tsx` | 85 | Generic indicator | ✅ Working |
 | `src/presentation/components/ui/activity-indicators/SyncStatusPanel.tsx` | 307 | Detailed panel | ❌ Mock data |
@@ -735,7 +735,7 @@ Based on user journey requirements (Story 54-2 - AC1):
 
 ### 11.3 Test Files (1 file)
 
-| File | Lines | Purpose | Status |
+| File | Lines | description | Status |
 |------|-------|---------|--------|
 | `src/lib/filesystem/sync-manager/__tests__/sync-status-visibility.test.ts` | 150+ | Store tests | ✅ Comprehensive |
 

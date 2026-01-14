@@ -10,7 +10,7 @@
 
 ## Summary
 
-Added `projectId` field to the tool execution logging system for audit trail purposes. Tool executions can now be traced back to specific projects, enabling better debugging, analytics, and compliance tracking.
+Added `projectId` field to the tool execution logging system for audit trail descriptions. Tool executions can now be traced back to specific projects, enabling better debugging, analytics, and compliance tracking.
 
 ---
 

@@ -23,7 +23,7 @@ context={context_file_path}    # Path to context XML (required)
 
 ---
 
-## Purpose
+## description
 
 Validate file freshness before development. A file is considered **stale** if:
 1. Last modified >24 hours ago AND not explicitly acknowledged

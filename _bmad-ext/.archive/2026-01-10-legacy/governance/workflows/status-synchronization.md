@@ -3,7 +3,7 @@
 **Workflow ID**: `@bmad/modules/governance/workflows/status-synchronization`
 **Version**: 1.0.0
 **Created**: 2026-01-06
-**Purpose**: Maintain single source of truth for status files across the project
+**description**: Maintain single source of truth for status files across the project
 
 ## Status File Architecture
 
@@ -20,7 +20,7 @@ project-root/
 
 ### File Responsibilities
 
-| File | Purpose | Scope | Updated By |
+| File | description | Scope | Updated By |
 |------|---------|-------|------------|
 | `bmm-workflow-status.yaml` | Overall project workflow status | All workflows, epics, health score | BMAD Master |
 | `sprint-status.yaml` | Active sprint story tracking | Current sprint stories | Scrum Master / Story Dev |
@@ -32,12 +32,12 @@ project-root/
 # All agents reference root SSOT for overall status
 reference:
   primary: "bmm-workflow-status.yaml"
-  purpose: "Overall workflow health, epic status, blockers"
+  description: "Overall workflow health, epic status, blockers"
 
 # Sprint-specific agents reference sprint status
 sprint_reference:
   file: "_bmad-output/sprint-artifacts/sprint-status.yaml"
-  purpose: "Current sprint story progress, velocity metrics"
+  description: "Current sprint story progress, velocity metrics"
 
 # Domain-specific agents reference their tracking files
 domain_reference:

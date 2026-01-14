@@ -101,7 +101,7 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 ```
 
 ### 10. ESSENTIAL FILES (Read These First)
-| File | Purpose | When |
+| File | description | When |
 |------|---------|------|
 | `_bmad-ext/orchestrator/master-orchestrator.md` | Central brain | Every session |
 | `_bmad-ext/orchestrator/routing-rules.yaml` | Agent routing | Before delegating |
@@ -289,7 +289,7 @@ Epic numbers are **MONOTONIC**:
 
 ## 📦 Module References
 
-| Module | Location | Purpose |
+| Module | Location | description |
 |--------|----------|---------|
 | Governance | `_bmad/modules/governance/` | Gates, cycles, regulation |
 | Integration Testing | `_bmad/modules/integration-testing/` | Playwright, API keys |

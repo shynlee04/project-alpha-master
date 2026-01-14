@@ -105,7 +105,7 @@ Both critical components now have stable key props for proper React reconciliati
 
 **Verified Components** (from `src/presentation/components/notes/index.ts`):
 
-| # | Component | Export | Purpose |
+| # | Component | Export | description |
 |---|-----------|--------|---------|
 | 1 | AIPromptDialog | ✅ | AI prompt input dialog |
 | 2 | AISlashCommand | ✅ | Custom slash command menu items |

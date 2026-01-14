@@ -22,7 +22,7 @@ triggers:
 
 # Step 01: Create Story - Enhanced with Epic Expansion
 
-**Purpose**: Create story file from epic backlog with DEEP epic understanding, cross-impact analysis, and comprehensive research requirements.
+**description**: Create story file from epic backlog with DEEP epic understanding, cross-impact analysis, and comprehensive research requirements.
 
 ## Problem Statement (Why v2.0)
 
@@ -299,8 +299,8 @@ From **EPIC-{N}: {epic_name}**
   - Existing patterns to follow or avoid
 
 ### External Resources
-- [ ] {url} - {purpose}
-- [ ] {url} - {purpose}
+- [ ] {url} - {description}
+- [ ] {url} - {description}
 
 ## Architecture Patterns (Expanded)
 

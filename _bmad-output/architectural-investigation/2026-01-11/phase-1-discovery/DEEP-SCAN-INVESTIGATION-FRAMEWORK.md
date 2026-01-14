@@ -21,14 +21,14 @@
 ## 2. File Inventory - Critical Files
 
 ### 2.1 Store Layer
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `src/infrastructure/persistence/stores/chat/unified-chat-store.ts` | New unified store (source of truth) | ACTIVE |
 | `src/infrastructure/persistence/stores/conversation/useConversationStore.ts` | Legacy facade (maps to UnifiedChatStore) | MIGRATING |
 | `src/infrastructure/persistence/stores/chat/slices/` | Store slices (metadata, threads, messages, tools, context) | ACTIVE |
 
 ### 2.2 Thread Management Components
-| File | Purpose | Integration Status |
+| File | description | Integration Status |
 |------|---------|-------------------|
 | `src/presentation/components/chat/ThreadManager.tsx` | Thread CRUD UI (never rendered) | NOT INTEGRATED |
 | `src/presentation/hooks/useThreadManager.ts` | Hook for ThreadManager (uses UnifiedChatStore) | UNUSED |

@@ -43,12 +43,12 @@ The EPIC-STORE analysis claimed:
 
 **File**: `src/infrastructure/persistence/stores/chat/unified-chat-store.ts`
 - **Lines**: 448 (not 550+)
-- **Purpose**: Compose slices, provide persistence, expose types
+- **description**: Compose slices, provide persistence, expose types
 - **Content**: Mostly boilerplate (Zustand setup, persist configuration, re-exports)
 
 ### Slice Architecture (Already Implemented)
 
-| Slice File | Lines | Purpose | Status |
+| Slice File | Lines | description | Status |
 |------------|-------|---------|--------|
 | `chat-metadata-slice.ts` | ~150 | Conversation CRUD | ✅ Proper |
 | `thread-management-slice.ts` | ~170 | Thread hierarchy/lifecycle | ✅ STORE-09 target |

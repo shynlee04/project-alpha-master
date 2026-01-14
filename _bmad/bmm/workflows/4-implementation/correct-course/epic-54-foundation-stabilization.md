@@ -9,7 +9,7 @@
 
 ---
 
-## Purpose
+## description
 
 Autonomous stabilization workflow that systematically eliminates P0/P1 risks using existing architecture-remediation agents. Executes as iterative cycle: analyze → dispatch agent → validate → next risk.
 
@@ -86,19 +86,19 @@ agents:
 workflows:
   eliminate-god-stores:
     location: "_bmad/modules/architecture-remediation/workflows/eliminate-god-stores.md"
-    purpose: Refactor god stores (>300 lines) into modular slices (≤120 lines)
+    description: Refactor god stores (>300 lines) into modular slices (≤120 lines)
 
   state-consolidation-cycle:
     location: "_bmad/modules/architecture-remediation/workflows/state-consolidation-cycle.md"
-    purpose: Migrate duplicate stores to canonical location with facades
+    description: Migrate duplicate stores to canonical location with facades
 
   normalize-components:
     location: "_bmad/modules/architecture-remediation/workflows/normalize-components.md"
-    purpose: Split god components into focused modules
+    description: Split god components into focused modules
 
   workspace-file-system-e2e:
     location: "_bmad/modules/architecture-remediation/workflows/workspace-file-system-e2e.md"
-    purpose: End-to-end file system sync with quota handling
+    description: End-to-end file system sync with quota handling
 ```
 
 ---

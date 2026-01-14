@@ -346,7 +346,7 @@ event_queue:
 ```yaml
 sub_agent_types:
   validator:
-    purpose: "Validate code, artifacts, or decisions"
+    description: "Validate code, artifacts, or decisions"
     agents:
       - "quality-scanner"  # Shared service
       - "typescript-fixer"
@@ -358,7 +358,7 @@ sub_agent_types:
       - "Scan for security issues"
       
   context_gatherer:
-    purpose: "Gather relevant context for workflows"
+    description: "Gather relevant context for workflows"
     agents:
       - "domain-scanner"  # From arc-v2
       - "context-validator"  # From arc-v2
@@ -369,7 +369,7 @@ sub_agent_types:
       - "Gather relevant files"
       
   investigator:
-    purpose: "Deep investigation of issues or patterns"
+    description: "Deep investigation of issues or patterns"
     agents:
       - "analyst-ext"
       - "architect-ext"
@@ -380,7 +380,7 @@ sub_agent_types:
       - "Trace context poisoning source"
       
   researcher:
-    purpose: "Internet-based research for tech decisions"
+    description: "Internet-based research for tech decisions"
     agents:
       - "analyst-ext"  # With research capability
     output_format: "research_findings"

@@ -104,7 +104,7 @@ Given that feature description, do this:
       ```markdown
       # Specification Quality Checklist: [FEATURE NAME]
       
-      **Purpose**: Validate specification completeness and quality before proceeding to planning
+      **description**: Validate specification completeness and quality before proceeding to planning
       **Created**: [DATE]
       **Feature**: [Link to spec.md]
       

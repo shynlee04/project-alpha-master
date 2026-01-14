@@ -90,7 +90,7 @@ Based on their responses, collaboratively develop:
 - Suggest a display name in Title Case
 - Get user confirmation or refinement
 
-**Module Purpose:**
+**Module description:**
 
 - Distill their problem statement into 1-2 clear sentences
 - Focus on value and outcomes
@@ -128,7 +128,7 @@ Does this sound right? Or would you categorize it differently?
 
 "Based on what you've described, I'm thinking this might be a:
 
-- **Simple Module** (1-2 agents, 2-3 workflows) - Focused, single-purpose
+- **Simple Module** (1-2 agents, 2-3 workflows) - Focused, single-description
 - **Standard Module** (3-5 agents, 5-10 workflows) - Comprehensive solution
 - **Complex Module** (5+ agents, 10+ workflows) - Full platform/framework
 
@@ -146,8 +146,8 @@ Update module-plan.md with concept section:
 **Category:** [category]
 **Type:** [estimated type]
 
-**Purpose Statement:**
-[1-2 sentence clear purpose]
+**description Statement:**
+[1-2 sentence clear description]
 
 **Target Audience:**
 
@@ -198,7 +198,7 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 
 ### ✅ SUCCESS:
 
-- Module purpose clearly articulated
+- Module description clearly articulated
 - Module identity established (name, audience, scope)
 - Category and type determined
 - Concept documented in module plan
@@ -206,7 +206,7 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 
 ### ❌ SYSTEM FAILURE:
 
-- Proceeding without clear module purpose
+- Proceeding without clear module description
 - Not defining scope boundaries
 - Skipping user validation of concept
 - Not documenting concept details

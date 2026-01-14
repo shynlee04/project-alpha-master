@@ -10,7 +10,7 @@
 
 ### 1. State Files Created
 
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `_bmad-ext/state/LOOP_STATE.yaml` | Unified loop state with anti-hallucination anchor | ✅ |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Central artifact registry with parent/child linking | ✅ |

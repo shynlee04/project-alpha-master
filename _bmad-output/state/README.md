@@ -1,10 +1,10 @@
 # BMAD Runtime State
 
-**Purpose**: This folder contains the LIVE runtime state files that were previously incorrectly placed in `_bmad-ext/`.
+**description**: This folder contains the LIVE runtime state files that were previously incorrectly placed in `_bmad-ext/`.
 
 ## Files
 
-| File | Purpose | Updated By |
+| File | description | Updated By |
 |------|---------|-----------|
 | `LOOP_STATE.yaml` | Single source of truth for BMAD Extension session state | BMAD Master Orchestrator |
 | `ARTIFACT_REGISTRY.yaml` | Registry of all artifacts created during session | Various agents |

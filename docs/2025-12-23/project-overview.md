@@ -115,7 +115,7 @@ Via-gent aims to democratize software development by providing a fully-featured 
 
 ### Core Technologies
 
-| Technology | Version | Purpose |
+| Technology | Version | description |
 |------------|---------|---------|
 | **React** | 19.2.3 | UI Framework |
 | **TypeScript** | 5.x | Type Safety |
@@ -128,7 +128,7 @@ Via-gent aims to democratize software development by providing a fully-featured 
 
 ### UI Libraries
 
-| Library | Purpose |
+| Library | description |
 |---------|---------|
 | **Radix UI** | Accessible Components |
 | **Tailwind CSS** | Styling |
@@ -138,7 +138,7 @@ Via-gent aims to democratize software development by providing a fully-featured 
 
 ### State Management
 
-| Library | Purpose | Status |
+| Library | description | Status |
 |---------|---------|--------|
 | **TanStack Store** | Reactive State | Current |
 | **React Context** | State Propagation | Current |
@@ -146,14 +146,14 @@ Via-gent aims to democratize software development by providing a fully-featured 
 
 ### Persistence
 
-| Library | Purpose | Status |
+| Library | description | Status |
 |---------|---------|--------|
 | **Dexie.js** | IndexedDB Wrapper | Current (Migrating) |
 | **idb** | IndexedDB Promise Wrapper | Legacy (Removing) |
 
 ### Internationalization
 
-| Library | Purpose |
+| Library | description |
 |---------|---------|
 | **i18next** | Translation Framework |
 | **react-i18next** | React Integration |
@@ -161,7 +161,7 @@ Via-gent aims to democratize software development by providing a fully-featured 
 
 ### Observability
 
-| Library | Purpose |
+| Library | description |
 |---------|---------|
 | **Sentry** | Error Tracking |
 | **EventEmitter3** | Event System |
@@ -290,7 +290,7 @@ Git Push → CI/CD (GitHub Actions) → Build → Test → Deploy to Netlify
 
 ### Security Headers
 
-| Header | Value | Purpose |
+| Header | Value | description |
 |--------|-------|---------|
 | **Cross-Origin-Opener-Policy** | same-origin | WebContainer COOP |
 | **Cross-Origin-Embedder-Policy** | require-corp | WebContainer COEP |
@@ -403,7 +403,7 @@ The architecture prioritizes user privacy and data ownership by keeping code on 
 
 ## Document References
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | **Architecture** | [`architecture.md`](./architecture.md) | Detailed system architecture |
 | **Data & Contracts** | [`data-and-contracts.md`](./data-and-contracts.md) | Data models and API contracts |

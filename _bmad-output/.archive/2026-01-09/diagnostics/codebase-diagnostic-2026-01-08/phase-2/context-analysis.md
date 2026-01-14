@@ -114,7 +114,7 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
 
 ### All Context Files Found
 
-| File | Lines | Purpose | Status |
+| File | Lines | description | Status |
 |------|-------|---------|--------|
 | `ProjectContext.tsx` | 374 | Cross-workspace project state | 🟡 Large |
 | `unified-workspace-provider.tsx` | TBD | Unified workspace context | 🟡 Needs analysis |
@@ -143,7 +143,7 @@ function getEnabledWorkspaces(bindings: Record<string, boolean>): WorkspaceId[] 
 }
 ```
 
-**Purpose**: Derive available workspaces from project configuration
+**description**: Derive available workspaces from project configuration
 
 ### 3.2 Workspace Switching
 
@@ -413,7 +413,7 @@ function AgentConfigDialog() {
 
 **Example**: Workspace state exists in both ProjectContext and useWorkspaceStore
 
-**Impact**: Low - they serve different purposes (UI vs persistence)
+**Impact**: Low - they serve different descriptions (UI vs persistence)
 
 **Recommendation**: Document distinction clearly in code comments
 

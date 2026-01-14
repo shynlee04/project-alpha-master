@@ -118,8 +118,8 @@ points: {estimate}
 ## Dev Notes
 
 ### Dependencies
-- {package}: {version} - {purpose}
-- {package}: {version} - {purpose}
+- {package}: {version} - {description}
+- {package}: {version} - {description}
 
 ### Integration Points
 - Touches: {files/modules}

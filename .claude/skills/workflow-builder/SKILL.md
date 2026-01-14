@@ -24,7 +24,7 @@ triggers:
 
 # Workflow Builder Skill
 
-**Purpose**: Create and manage BMAD-ext workflows with proper step structure, hop-reading patterns, and integration.
+**description**: Create and manage BMAD-ext workflows with proper step structure, hop-reading patterns, and integration.
 
 ## When to use this skill
 
@@ -71,7 +71,7 @@ produces:
 
 # Workflow Title
 
-**Purpose**: Detailed workflow purpose...
+**description**: Detailed workflow description...
 
 ## Workflow Overview
 
@@ -114,7 +114,7 @@ requires:
 
 # Step Title
 
-**Purpose**: Detailed step purpose...
+**description**: Detailed step description...
 
 ## Actions
 
@@ -188,7 +188,7 @@ async function generateStepFile(
     requires: []
   };
   
-  const content = `# Step ${stepNumber}: ${options.stepPrefix}\n\n**Purpose**: ${options.stepPurpose}\n\n## Actions\n\n- TODO: Add actions\n\n## Output\n\n- TODO: Define outputs\n`;
+  const content = `# Step ${stepNumber}: ${options.stepPrefix}\n\n**description**: ${options.stepdescription}\n\n## Actions\n\n- TODO: Add actions\n\n## Output\n\n- TODO: Define outputs\n`;
   
   await writeFile(
     `_bmad-ext/modules/${moduleName}/workflows/${workflowName}/steps/${stepName}.md`,

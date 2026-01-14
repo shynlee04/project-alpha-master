@@ -125,7 +125,7 @@ SOURCE INGESTION          CHUNKING & EMBEDDING          INDEXING & STORAGE
 
 ## 3. State Sources
 
-| Store/Hook | Location | Purpose | Usage in Knowledge |
+| Store/Hook | Location | description | Usage in Knowledge |
 |------------|----------|---------|-------------------|
 | **useRAGStore** | `src/infrastructure/persistence/stores/rag/rag-store.ts` | RAG state management | `indexMetadata`, `indexStatus` |
 | **useSynthesisStore** | `src/infrastructure/persistence/stores/synthesis-store.ts` | Synthesis results | `synthesisResults`, `generationStatus` |
@@ -136,7 +136,7 @@ SOURCE INGESTION          CHUNKING & EMBEDDING          INDEXING & STORAGE
 
 ### Database Tables (Knowledge-Specific)
 
-| Table | Record Type | Purpose | Hub Usage |
+| Table | Record Type | description | Hub Usage |
 |-------|-------------|---------|-----------|
 | **sources** | `SourceRecord` | Imported content (PDF/URL/Text) | Not directly (workspace detached) |
 | **collections** | `CollectionRecord` | Source grouping | Not directly |
@@ -366,7 +366,7 @@ const results = await hybridSearch(query, {
 
 ### External Dependencies
 
-| Dependency | Version | Purpose | Browser Support |
+| Dependency | Version | description | Browser Support |
 |------------|---------|---------|-----------------|
 | **@orama/orama** | Latest | Vector search (WASM) | Modern browsers |
 | **@orama/plugin-data-persistence** | Latest | IndexedDB persistence | Modern browsers |

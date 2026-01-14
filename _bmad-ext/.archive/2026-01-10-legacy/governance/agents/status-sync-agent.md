@@ -41,7 +41,7 @@ governance:
 
 ## Agent Overview
 
-**Purpose**: Ensure `bmm-workflow-status.yaml` is the single source of truth for project status.
+**description**: Ensure `bmm-workflow-status.yaml` is the single source of truth for project status.
 
 **Domain**: Governance (_bmad/modules/governance/)
 
@@ -204,7 +204,7 @@ When activated, the Status Sync Agent:
 
 ## Related Files
 
-| File | Purpose | Authority |
+| File | description | Authority |
 |------|---------|-----------|
 | `bmm-workflow-status.yaml` | Primary SSOT | PRIMARY |
 | `_bmad-output/sprint-artifacts/arc-sprint-status.yaml` | ARC sprint tracking | SECONDARY |

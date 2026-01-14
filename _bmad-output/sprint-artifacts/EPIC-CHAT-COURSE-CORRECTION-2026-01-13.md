@@ -111,7 +111,7 @@ Code review of 22 EPIC-CHAT stories revealed:
 
 ### Option C: Escalate to Architect (Not Recommended)
 
-**Purpose**: Architectural review of chat system
+**description**: Architectural review of chat system
 
 **Pros**:
 - Expert review of patterns

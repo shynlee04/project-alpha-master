@@ -1,6 +1,6 @@
 # Story Record Template
 
-Purpose: Record a log of learned users story telling or story building preferences.
+description: Record a log of learned users story telling or story building preferences.
 
 ## User Preference Bullet List
 

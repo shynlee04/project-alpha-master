@@ -36,9 +36,9 @@
 
 This document provides a comprehensive overview of the Via-gent technology stack, including all dependencies, their versions, roles in the system, and the rationale for their selection. It serves as a reference for understanding the technical foundation of the application.
 
-### Document Purpose
+### Document description
 
-| Purpose | Description |
+| description | Description |
 |---------|-------------|
 | **Inventory** | Complete list of all dependencies |
 | **Rationale** | Justification for technology choices |
@@ -816,7 +816,7 @@ Sentry.init({
 
 ### Security Headers
 
-| Header | Value | Purpose |
+| Header | Value | description |
 |--------|-------|---------|
 | `Cross-Origin-Opener-Policy` | `same-origin` | Enable SharedArrayBuffer |
 | `Cross-Origin-Embedder-Policy` | `require-corp` | Enable SharedArrayBuffer |
@@ -850,7 +850,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' '
 
 ### Dependency Security
 
-| Tool | Purpose | Status |
+| Tool | description | Status |
 |------|---------|--------|
 | `npm audit` | Vulnerability scanning | ✅ Configured |
 | `snyk` | Dependency monitoring | ⏳ Planned |
@@ -885,7 +885,7 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' '
 
 ### Performance Monitoring
 
-| Tool | Purpose | Status |
+| Tool | description | Status |
 |------|---------|--------|
 | Lighthouse CI | Performance metrics | ⏳ Planned (Epic 22-6) |
 | Sentry | Error tracking | ✅ Configured (Epic 22-4) |

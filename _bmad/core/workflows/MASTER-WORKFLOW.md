@@ -1,6 +1,6 @@
 # BMAD Master Workflow - Autonomous Execution
 # Version: 4.0.0 - Ralph Loop Integration
-# Purpose: Master orchestration workflow for autonomous BMAD execution
+# description: Master orchestration workflow for autonomous BMAD execution
 
 ## WORKFLOW PHASES
 
@@ -41,7 +41,7 @@ next_cycle: "[instructions for next cycle]"
 
 ## STATE FILE LOCATIONS
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `.claude/ralph-loop.local.md` | Loop control & iteration |
 | `_bmad/modules/asgl/LOOP_STATE.yaml` | Sprint & story state |

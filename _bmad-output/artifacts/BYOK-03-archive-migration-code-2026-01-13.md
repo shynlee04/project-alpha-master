@@ -10,7 +10,7 @@
 
 ## Summary
 
-The API key migration code (part of ADR-001: Provider Store Consolidation) has been **archived** and marked as **historical infrastructure**. The code remains in place for rollback support and audit purposes, with clear documentation of its historical status.
+The API key migration code (part of ADR-001: Provider Store Consolidation) has been **archived** and marked as **historical infrastructure**. The code remains in place for rollback support and audit descriptions, with clear documentation of its historical status.
 
 ---
 
@@ -35,10 +35,10 @@ Instead of removing the code, we:
 ## Files Created
 
 ### 1. `_bmad-ext/.archive/providers/api-key-migration-2026-01-13/README.md`
-**Purpose:** Documentation of the migration system and why it's preserved
+**description:** Documentation of the migration system and why it's preserved
 
 **Contents:**
-- Purpose and rationale for preservation
+- description and rationale for preservation
 - Timeline of the migration
 - Key design decisions
 - Active references in the codebase

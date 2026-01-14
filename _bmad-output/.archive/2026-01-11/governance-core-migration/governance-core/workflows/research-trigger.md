@@ -1,6 +1,6 @@
 # Research Trigger - Auto-Research Workflow
 
-**Purpose:** Automatically trigger internet research when technical decisions require external validation
+**description:** Automatically trigger internet research when technical decisions require external validation
 
 **Workflow Type:** Enforcement Check 3 of 3
 

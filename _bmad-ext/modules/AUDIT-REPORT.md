@@ -48,7 +48,7 @@ After comprehensive auditing of all `_bmad-ext/modules/` directories, I've ident
 ### ⚠️ governance-core/ - NEEDS ARCHIVING
 
 **Status**: DEPRECATED
-**Purpose**: Was meant to consolidate governance, but created another duplicate
+**description**: Was meant to consolidate governance, but created another duplicate
 
 **Issues**:
 1. Duplicates most of `governance/` module

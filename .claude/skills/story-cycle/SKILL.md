@@ -36,7 +36,7 @@ triggers:
 
 # Story Development Cycle v2.0
 
-**Purpose**: Complete iterative cycle for developing stories from backlog to done with strict governance, research protocols, and document handoff procedures.
+**description**: Complete iterative cycle for developing stories from backlog to done with strict governance, research protocols, and document handoff procedures.
 
 ## When to use this skill
 
@@ -80,7 +80,7 @@ triggers:
 
 This master skill loads the following step-specific sub-skills:
 
-| Step | Skill | Purpose | Agent |
+| Step | Skill | description | Agent |
 |------|-------|---------|-------|
 | 01 | [create-story](./create-story/SKILL.md) | Create story from epic | SM |
 | 02 | [validate-story](./validate-story/SKILL.md) | Validate story 100% | SM |
@@ -94,7 +94,7 @@ This master skill loads the following step-specific sub-skills:
 
 ## Utility Skills
 
-| Utility | Skill | Purpose |
+| Utility | Skill | description |
 |---------|-------|---------|
 | Stale Check | [stale-check](./utils/stale-check/SKILL.md) | File freshness validation |
 | Correct Course | [correct-course](./utils/correct-course/SKILL.md) | Recovery handler |
@@ -162,7 +162,7 @@ If validation fails:
 
 Every story MUST include research using MCP tools:
 
-| Tool | Purpose | Query Pattern |
+| Tool | description | Query Pattern |
 |------|---------|---------------|
 | **Context7** | Official docs | `resolve-library-id` → `get-library-docs` |
 | **DeepWiki** | GitHub patterns | `ask_repository` with repo-specific query |

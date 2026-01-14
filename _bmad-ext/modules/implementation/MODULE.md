@@ -11,7 +11,7 @@ description: "BMAD Extension Implementation Module v2.0 - Story execution and bu
 
 # Implementation Module v2.0
 
-**Purpose**: Execute development work through story-cycle (new features) and correct-course (bug fixes/remediation) workflows with **v2.0 enhancements**.
+**description**: Execute development work through story-cycle (new features) and correct-course (bug fixes/remediation) workflows with **v2.0 enhancements**.
 
 ## v2.0 Key Improvements
 
@@ -71,7 +71,7 @@ description: "BMAD Extension Implementation Module v2.0 - Story execution and bu
 
 ### 1. Story-Cycle Workflow v2.0
 
-**Purpose**: Execute stories from assignment to completion with **deep analysis**, **evidence-based validation**, and **real code verification**.
+**description**: Execute stories from assignment to completion with **deep analysis**, **evidence-based validation**, and **real code verification**.
 
 **v2.0 Enhancements**:
 - **Step 1 (Init)**: Deep project analysis via grep/glob
@@ -108,7 +108,7 @@ description: "BMAD Extension Implementation Module v2.0 - Story execution and bu
 
 ### 2. Correct-Course Workflow
 
-**Purpose**: Categorize and execute bug fixes and remediation work
+**description**: Categorize and execute bug fixes and remediation work
 
 **Entry Point**:
 - Governance approval for remediation

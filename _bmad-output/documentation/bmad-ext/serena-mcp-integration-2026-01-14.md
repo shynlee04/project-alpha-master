@@ -69,7 +69,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 ## Available Tools
 
 ### Code Navigation Tools
-| Tool | Purpose | Example Use |
+| Tool | description | Example Use |
 |------|---------|-------------|
 | `find_symbol` | Search for symbols by name | `find_symbol Project` |
 | `find_referencing_symbols` | Find references to symbol | `find_referencing_symbols useProjectStore` |
@@ -77,7 +77,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 | `list_dir` | List directory contents | `list_dir src/presentation/components` |
 
 ### Code Editing Tools
-| Tool | Purpose | Example Use |
+| Tool | description | Example Use |
 |------|---------|-------------|
 | `insert_after_symbol` | Insert code after symbol | `insert_after_symbol ProjectStore.initialize` |
 | `insert_before_symbol` | Insert code before symbol | `insert_before_symbol ProjectStore.cleanup` |
@@ -87,7 +87,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 | `create_text_file` | Create new file | `create_text_file src/utils/new-util.ts` |
 
 ### Project Management Tools
-| Tool | Purpose | Example Use |
+| Tool | description | Example Use |
 |------|---------|-------------|
 | `activate_project` | Activate project context | `activate_project /path/to/project` |
 | `onboarding` | Project structure analysis | `onboarding` |
@@ -95,7 +95,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 | `execute_shell_command` | Run shell commands | `execute_shell_command "npm test"` |
 
 ### Memory Tools
-| Tool | Purpose | Example Use |
+| Tool | description | Example Use |
 |------|---------|-------------|
 | `write_memory` | Store project memory | `write_memory project-architecture Current architecture decisions` |
 | `read_memory` | Retrieve memory | `read_memory project-architecture` |

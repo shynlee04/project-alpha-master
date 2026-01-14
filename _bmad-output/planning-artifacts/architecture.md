@@ -280,7 +280,7 @@ src/infrastructure/persistence/stores/{domain}/
 ### 6.1 Persistence Layer
 
 **Dexie Tables:**
-| Table | Purpose | Access |
+| Table | description | Access |
 |-------|---------|--------|
 | conversations | Conversation threads | Frequent |
 | messages | Chat messages | Frequent |
@@ -332,7 +332,7 @@ src/infrastructure/persistence/stores/{domain}/
 
 ### 8.1 Routes
 
-| Pattern | File | Purpose |
+| Pattern | File | description |
 |---------|------|---------|
 | `/ide/:projectId` | IDE workspace | Code execution |
 | `/knowledge/:projectId` | Knowledge workspace | RAG/search |
@@ -407,7 +407,7 @@ src/infrastructure/persistence/stores/{domain}/
 
 ## Appendix B: Related Documents
 
-| Document | Purpose |
+| Document | description |
 |----------|---------|
 | `epics.md` | Epic and story definitions |
 | `RESEARCH-RAG-AGENT-AUTO-SWITCHING-2026-01-11.md` | Detailed research findings |

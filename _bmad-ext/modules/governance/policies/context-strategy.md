@@ -1,13 +1,13 @@
 ---
 name: "context-strategy"
 type: "governance-policy"
-purpose: "Define context gathering and application strategy"
+description: "Define context gathering and application strategy"
 version: "1.0.0"
 ---
 
 # Context Strategy Policy
 
-**Purpose**: Define how context is gathered, packaged, and applied to prevent context poisoning.
+**description**: Define how context is gathered, packaged, and applied to prevent context poisoning.
 
 ## Context Gathering Philosophy
 
@@ -18,14 +18,14 @@ version: "1.0.0"
 ```yaml
 context_first_hook:
   step_1_scan:
-    purpose: "Identify what context is needed"
+    description: "Identify what context is needed"
     actions:
       - "Identify relevant domains"
       - "Determine scan depth"
       - "List context slices needed"
 
   step_2_contextualize:
-    purpose: "Gather and package context"
+    description: "Gather and package context"
     actions:
       - "Run identified scanners"
       - "Gather entity context"

@@ -7,7 +7,7 @@
 
 ---
 
-## Document Purpose
+## Document description
 
 This is the **single source of truth** for the Correct-Course Architectural Remediation. All discussion findings, decisions, and research are consolidated here. This document is iteratively updated as planning progresses.
 

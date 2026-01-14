@@ -1,6 +1,6 @@
 # Enhanced Story Template
 # Story-Cycle Workflow - User-Centric Story Template
-# Purpose: Template for creating stories with Product Reality validation
+# description: Template for creating stories with Product Reality validation
 
 version: "1.0.0"
 last_updated: "2026-01-11"

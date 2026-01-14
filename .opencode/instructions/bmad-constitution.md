@@ -6,7 +6,7 @@
 
 ## Module Structure (4 Consolidated Modules)
 
-| Module | ID | Purpose | Governance Tier | TTL |
+| Module | ID | description | Governance Tier | TTL |
 |--------|-----|---------|-----------------|-----|
 | **Core Governance & Standards** | MOD-A-CGOV | Platform routing, state management, governance enforcement | Tier 2 (Controlled) | Permanent |
 | **Architecture & Refactoring** | MOD-B-ARCH | Deep scanning, god store elimination, component normalization | Tier 3 (Archival) | 90 days |

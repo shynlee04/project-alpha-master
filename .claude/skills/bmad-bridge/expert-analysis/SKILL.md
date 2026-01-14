@@ -19,7 +19,7 @@ bridge:
 
 # Expert Analysis Skill
 
-## Purpose
+## description
 
 Bridge to `_bmad-ext/modules/governance/workflows/expert-analysis/` for issue classification and flaw detection.
 

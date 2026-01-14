@@ -191,7 +191,7 @@ Team A's next focus:
 - 14 files still importing from deprecated location
 
 ### Store Location Mapping
-| Location | Status | Lines | Purpose |
+| Location | Status | Lines | description |
 |----------|--------|-------|---------|
 | `src/infrastructure/persistence/stores/project/` | ✅ CANONICAL | ~1,651 | Real Dexie persistence |
 | `src/lib/workspace/project-store/` | ⚠️ DEPRECATED | ~663 | STUBS - NO PERSISTENCE! |

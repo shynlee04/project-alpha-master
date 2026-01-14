@@ -13,7 +13,7 @@ Via-gent uses **Zustand v5** for client state management with **Dexie** (Indexed
 
 ## Technology Stack
 
-| Technology | Purpose | Version |
+| Technology | description | Version |
 |------------|---------|---------|
 | Zustand | Client state management | v5 |
 | Dexie | IndexedDB wrapper | v4.2+ |
@@ -91,7 +91,7 @@ export const useSetSomeData = () => useSomeStore((s) => s.setData);
 
 **Location:** `src/infrastructure/persistence/stores/agents/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `agent-crud-slice.ts` | Agent CRUD operations | ≤120 | ✅ |
 | `agent-workspace-bindings-slice.ts` | Workspace filtering | ≤120 | ✅ |
@@ -107,7 +107,7 @@ export const useSetSomeData = () => useSomeStore((s) => s.setData);
 
 **Location:** `src/infrastructure/persistence/stores/providers/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `provider-crud-slice.ts` | Provider CRUD | ≤120 | ✅ |
 | `provider-models-slice.ts` | Model fetching, caching | ≤120 | ✅ |
@@ -121,7 +121,7 @@ export const useSetSomeData = () => useSomeStore((s) => s.setData);
 
 **Location:** `src/infrastructure/persistence/stores/conversation/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `conversation-metadata-slice.ts` | Thread CRUD | ≤120 | ✅ |
 | `message-crud-slice.ts` | Message operations | ≤120 | ✅ |
@@ -142,7 +142,7 @@ export const useSetSomeData = () => useSomeStore((s) => s.setData);
 
 **Location:** `src/infrastructure/persistence/stores/project/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `project-crud-slice.ts` | Project CRUD | ≤120 | ✅ |
 | `project-workspace-bindings-slice.ts` | WB-1 bindings | ≤120 | ✅ |
@@ -156,7 +156,7 @@ export const useSetSomeData = () => useSomeStore((s) => s.setData);
 
 **Location:** `src/infrastructure/persistence/stores/rag/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `rag-index-slice.ts` | Indexing operations | ≤120 | ✅ |
 | `rag-search-slice.ts` | Vector search | ≤120 | ✅ |
@@ -170,7 +170,7 @@ export const useSetSomeData = () => useSomeStore((s) => s.setData);
 
 **Location:** `src/infrastructure/persistence/stores/ide/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `ide-editor-slice.ts` | Editor state | ≤120 | ✅ |
 | `ide-terminal-slice.ts` | Terminal state | ≤120 | ✅ |

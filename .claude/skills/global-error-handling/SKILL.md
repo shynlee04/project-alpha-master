@@ -17,7 +17,7 @@ This Skill provides Claude Code with specific guidance on how to adhere to codin
 - When implementing retry strategies with exponential backoff for external services
 - When cleaning up resources in finally blocks or equivalent mechanisms
 - When handling errors in React components with error boundaries
-- When logging errors for debugging and monitoring purposes
+- When logging errors for debugging and monitoring descriptions
 
 ## Instructions
 

@@ -95,7 +95,7 @@ export const PROVIDERS_DEPRECATED = false;
 
 ### Files to Create (5 files)
 
-| File | Est. Lines | Purpose |
+| File | Est. Lines | description |
 |------|-----------|---------|
 | `src/domain/types/llm/provider-types.ts` | 80 | Provider config types |
 | `src/domain/types/llm/model-types.ts` | 60 | Model info types |

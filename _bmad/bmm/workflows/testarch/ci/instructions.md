@@ -130,7 +130,7 @@ Note: This is typically a one-time setup per repo; run it any time after the tes
        run: npm run test:e2e -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
    ```
 
-   **Purpose:** Splits tests into N parallel jobs for faster execution (target: <10 min per shard)
+   **description:** Splits tests into N parallel jobs for faster execution (target: <10 min per shard)
 
 4. **Add Burn-In Loop**
 
@@ -167,7 +167,7 @@ Note: This is typically a one-time setup per repo; run it any time after the tes
            retention-days: 30
    ```
 
-   **Purpose:** Runs tests multiple times to catch non-deterministic failures before they reach main branch.
+   **description:** Runs tests multiple times to catch non-deterministic failures before they reach main branch.
 
    **When to run:**
    - On pull requests to main/develop
@@ -198,7 +198,7 @@ Note: This is typically a one-time setup per repo; run it any time after the tes
        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
    ```
 
-   **Purpose:** Reduces CI execution time by 2-5 minutes per run.
+   **description:** Reduces CI execution time by 2-5 minutes per run.
 
 6. **Configure Artifact Collection**
 
@@ -235,7 +235,7 @@ Note: This is typically a one-time setup per repo; run it any time after the tes
        command: npm run test:e2e
    ```
 
-   **Purpose:** Handles transient failures (network issues, race conditions)
+   **description:** Handles transient failures (network issues, race conditions)
 
 8. **Configure Notifications** (Optional)
 
@@ -295,7 +295,7 @@ Note: This is typically a one-time setup per repo; run it any time after the tes
 10. **Generate Documentation**
 
     **CI README** (`docs/ci.md`):
-    - Pipeline stages and purpose
+    - Pipeline stages and description
     - How to run locally
     - Debugging failed CI runs
     - Secrets and environment variables needed
@@ -459,7 +459,7 @@ git diff --name-only HEAD~1
 
 ### Local CI Mirror
 
-**Purpose:** Debug CI failures locally
+**description:** Debug CI failures locally
 
 **Usage:**
 

@@ -130,7 +130,7 @@ if (!result.success && result.conflict?.hasConflict) {
 - `notes:default-notes` - Notes workspace default project
 - `knowledge:proj_1704787200000_xyz789def` - Knowledge workspace project
 
-**Purpose**: Cross-workspace isolation prevents ID conflicts when same folder opened in different workspaces.
+**description**: Cross-workspace isolation prevents ID conflicts when same folder opened in different workspaces.
 
 **Code Location**: `src/infrastructure/persistence/stores/project/project-crud-slice.ts` (lines 26-46)
 
@@ -164,7 +164,7 @@ function extractWorkspaceType(projectId: string): 'ide' | 'knowledge' | 'study' 
 - **Agent Operations**: `AgentFileOperation` with approval check
 - **Unified Interface**: `FileSystemService.crud()`
 
-**Purpose**: Prevent race conditions when users and agents modify same file simultaneously.
+**description**: Prevent race conditions when users and agents modify same file simultaneously.
 
 ### Mobile Considerations (Planned - Phase 2)
 
@@ -245,7 +245,7 @@ import { NoteEditor } from './NoteEditor';
 
 ## Module Structure (4 Consolidated Modules)
 
-| Module | ID | Purpose | Governance Tier | TTL |
+| Module | ID | description | Governance Tier | TTL |
 |--------|-----|---------|-----------------|-----|
 | **Core Governance & Standards** | MOD-A-CGOV | Platform routing, state management, governance enforcement | Tier 2 (Controlled) | Permanent |
 | **Architecture & Refactoring** | MOD-B-ARCH | Deep scanning, god store elimination, component normalization | Tier 3 (Archival) | 90 days |
@@ -325,7 +325,7 @@ import { NoteEditor } from './NoteEditor';
 | 3 | Archival | 90 days | If <90 days old | Archive if stale |
 | 4 | Ephemeral | 24 hours | If <24h & validated | Ignore if stale |
 
-**Purpose**: Prevent context poisoning through rigorous artifact filtering
+**description**: Prevent context poisoning through rigorous artifact filtering
 
 ## Time-Boxing Enforcement
 
@@ -409,7 +409,7 @@ Each module has comprehensive documentation in `MANIFEST.md`:
 > **⚠️ AUTHORITATIVE**: These documents are the single source of truth for all architectural decisions.
 > Any confusion about file locations, data flow, or cross-dependencies should be resolved by consulting these documents.
 
-| Document | Purpose | Location |
+| Document | description | Location |
 |----------|---------|----------|
 | **Platform Architecture** | 5-layer architecture, canonical file locations, contracts | `_bmad-output/architecture/platform-architecture-definitive-2026-01-04.md` |
 | **Data Flow Visual** | Visual diagrams for all layer interactions, sync lifecycles, RAG pipeline | `_bmad-output/architecture/data-flow-visual-2026-01-04.md` |
@@ -635,7 +635,7 @@ The Agentic Workflow Engine enables users to create, visualize, execute, and per
 **Status:** ✅ ACTIVE  
 **Role:** Loop orchestrator (INVOKES modules, does NOT replace them)
 
-### Purpose
+### description
 
 - **Loop Orchestration**: Manage autonomous development cycles
 - **Governance Enforcement**: Keep AGENTS.md updated per frequency
@@ -678,7 +678,7 @@ The Agentic Workflow Engine enables users to create, visualize, execute, and per
 
 **Module Location**: `_bmad/modules/deep-scan/`
 **Status**: ✅ ACTIVE
-**Purpose**: Comprehensive architectural diagnostics & evidence-based auditing.
+**description**: Comprehensive architectural diagnostics & evidence-based auditing.
 
 **Key Capabilities**:
 - **9 Specialized Scanners**: State, Types, Architecture, Persistence, Agent/RAG, UX, Workspace, Security, Performance.
@@ -1072,7 +1072,7 @@ The Knowledge Synthesis Station research phase has been completed by @bmad-bmm-a
 
 ### Technology Stack Validated
 
-| Component | Technology | Purpose |
+| Component | Technology | description |
 |-----------|------------|---------|
 | Vector Store | Orama WASM | Local-first vector search |
 | LLM Orchestration | TanStack AI + Gemini 2.0/2.5 | Query orchestration |
@@ -1112,7 +1112,7 @@ See: `_bmad-output/research-artifacts/implementation-playbook-2025-12-31.md` for
 
 The following governance documents define project direction and constraints:
 
-| Document | Purpose |
+| Document | description |
 |----------|---------|
 | `_bmad-output/project-planning-artifacts/architecture.md` | System architecture decisions |
 | `_bmad-output/project-planning-artifacts/prd.md` | Product requirements definition |
@@ -1155,7 +1155,7 @@ For two AI agent teams, follow the strategy in `_bmad-output/project-planning-ar
 
 These documents provide historical context and lessons learned. Reference them to avoid repeating past issues:
 
-| Document | Purpose |
+| Document | description |
 |----------|---------|
 | `_bmad-output/docs/architecture-analysis-2025-12-28.md` | System architecture analysis |
 | `_bmad-output/docs/development-patterns-conventions-2025-12-28.md` | Coding patterns and conventions |
@@ -2579,7 +2579,7 @@ INFRASTRUCTURE (Persistence + Events)
 #### 1. ApiKeyInputSection (185 lines)
 **Location**: `/src/presentation/components/agent/ApiKeyInputSection.tsx`
 
-**Purpose**: API key input with connection testing and validation
+**description**: API key input with connection testing and validation
 
 **Features**:
 - Password masking input with visibility toggle
@@ -2629,7 +2629,7 @@ import { ApiKeyInputSection } from '@/presentation/components/agent';
 #### 2. useAgentFormValidation Hook (268 lines)
 **Location**: `/src/presentation/components/agent/hooks/useAgentFormValidation.ts`
 
-**Purpose**: Custom React hook for agent form validation with Zod schemas
+**description**: Custom React hook for agent form validation with Zod schemas
 
 **Features**:
 - Declarative Zod schema validation
@@ -2709,7 +2709,7 @@ function MyAgentForm() {
 #### 3. AgentImportExport (175 lines)
 **Location**: `/src/presentation/components/agent/AgentImportExport.tsx`
 
-**Purpose**: JSON export/import functionality for agent configurations
+**description**: JSON export/import functionality for agent configurations
 
 **Features**:
 - Export all agents to JSON file (browser download)
@@ -2756,7 +2756,7 @@ function AgentManagement() {
 #### 4. AgentBasicConfig (323 lines)
 **Location**: `/src/presentation/components/agent/AgentBasicConfig.tsx`
 
-**Purpose**: Basic agent configuration fields (name, description, provider, model)
+**description**: Basic agent configuration fields (name, description, provider, model)
 
 **Features**:
 - Agent name input (required)
@@ -2961,7 +2961,7 @@ function MyForm() {
 **Location**: `/src/presentation/components/common/hooks/useUnsavedChangesWarning.ts`
 **Location**: `/src/presentation/components/common/UnsavedChangesDialog.tsx`
 
-**Purpose**: Prevents accidental data loss by warning users before navigating away with unsaved changes
+**description**: Prevents accidental data loss by warning users before navigating away with unsaved changes
 
 **Features**:
 - Browser native beforeunload event handling
@@ -3065,7 +3065,7 @@ removeProvider: async (id) => {
 
 ### December 2025 Pattern Compliance
 
-✅ **Single Responsibility Principle**: Each component has one clear purpose
+✅ **Single Responsibility Principle**: Each component has one clear description
 ✅ **Component Size Limit**: New components under 120 lines (docs excluded)
 ✅ **Max Functions Per Module**: 3 functions maximum to prevent god classes
 ✅ **Composition Over Inheritance**: Breaking complex UI into composable parts
@@ -3112,7 +3112,7 @@ export type { UnsavedChangesDialogProps } from '../common/UnsavedChangesDialog';
 #### 5. WorkspaceToolPermissionsConfig (Phase 2 - COMPLETE)
 **Location**: `/src/presentation/components/agent/WorkspacePermissions/`
 
-**Purpose**: Workspace-specific tool permission configuration with grid UI
+**description**: Workspace-specific tool permission configuration with grid UI
 
 **Components Created** (7 components + 1 hook, 45% reduction):
 1. **PermissionBadge.tsx** (44 lines) - Status badge showing enabled/disabled
@@ -3147,7 +3147,7 @@ import { WorkspaceToolPermissionsConfig } from '@/presentation/components/agent'
 #### 6. ToolTrustLevelManager (Phase 3 - COMPLETE)
 **Location**: `/src/presentation/components/agent/ToolTrustLevels/`
 
-**Purpose**: Global tool trust level configuration with localStorage persistence
+**description**: Global tool trust level configuration with localStorage persistence
 
 **Components Created** (3 components + 1 hook, 66% reduction):
 1. **TrustLevelLegend.tsx** (57 lines) - Legend display
@@ -3188,7 +3188,7 @@ import { ToolTrustLevelManager } from '@/presentation/components/agent';
 #### 7. Event Activity Indicators (Cycle 17 - COMPLETE)
 **Location**: `/src/presentation/components/ui/activity-indicators/`
 
-**Purpose**: Real-time progress feedback for long-running operations (user journey gap)
+**description**: Real-time progress feedback for long-running operations (user journey gap)
 
 **Components Created** (4 indicators, 84 lines each):
 1. **DatabaseIndexingIndicator.tsx** - Database indexing progress
@@ -3224,7 +3224,7 @@ const [indexingState, setIndexingState] = useState({
 #### 8. Hook Integration - Phase 5 (COMPLETE ✅)
 **Location**: `/src/presentation/components/agent/hooks/`
 
-**Purpose**: Extract form logic into reusable hooks following December 2025 Zustand patterns
+**description**: Extract form logic into reusable hooks following December 2025 Zustand patterns
 
 **Achievements**:
 - ✅ **139 lines eliminated** (496 → 357 lines, 28% reduction)

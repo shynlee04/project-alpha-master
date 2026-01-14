@@ -70,7 +70,7 @@ workspaceBindings.{knowledge|notes|study}
 
 ## Phase 1: Comprehensive Workspace Scan (NEW - Required)
 
-**Purpose**: Before fixing, we need to find ALL related issues across ALL workspaces
+**description**: Before fixing, we need to find ALL related issues across ALL workspaces
 
 ### 1.1 Scan All Workspace Components
 
@@ -164,7 +164,7 @@ issues:
 
 **File**: `src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts` (NEW)
 
-**Purpose**: Unified project access with storage-aware filtering
+**description**: Unified project access with storage-aware filtering
 
 ```typescript
 interface UseWorkspaceProjectsOptions {
@@ -292,7 +292,7 @@ const { projects, activeProject, setActiveProject, isLoading } = useWorkspacePro
 
 **File**: `src/presentation/components/project/ProjectSelector.tsx` (NEW)
 
-**Purpose**: Reusable project selector for all workspaces
+**description**: Reusable project selector for all workspaces
 
 ```typescript
 interface ProjectSelectorProps {
@@ -1298,7 +1298,7 @@ Tool: read
 00503| 
 00504| ## Artifacts Produced
 00505| 
-00506| | Artifact | Location | Purpose |
+00506| | Artifact | Location | description |
 00507| |----------|----------|---------|
 00508| | Story File | `{sprint_artifacts}/{story}.md` | Requirements, tracking, dev record |
 00509| | Context XML | `{sprint_artifacts}/{story}-context.xml` | Developer context, research |
@@ -1384,7 +1384,7 @@ Tool: read
 00004| # Shared across Claude Code and Open Code platforms
 00005| # Single source of truth for session state, agent coordination, and handoffs
 00006| #
-00007| # Purpose:
+00007| # description:
 00008| #   - Track active agent and workflow across platforms
 00009| #   - Enable cross-platform handoffs with full context preservation
 00010| #   - Maintain session continuity during platform switches
@@ -1682,7 +1682,7 @@ Tool: write
 ```json
 {
   "filePath": "/Users/apple/Documents/coding-projects/project-alpha-master/_bmad/modules/asgl/workspace-remediation/MANIFEST.yaml",
-  "content": "# ASGL Workspace Remediation Module Manifest\n# Module: _bmad/modules/asgl/workspace-remediation/\n# Version: 1.0.0\n# Status: ACTIVE\n\nmodule:\n  id: \"asgl-workspace-remediation\"\n  name: \"Workspace Storage Remediation\"\n  description: \"Coordinates comprehensive fix for storage type architecture and user journey issues across all workspaces\"\n  governance_tier: \"Tier 2 (Controlled)\"\n  ttl: \"permanent\"\n\nentry_point: \"workflow.md\"\n\nworkflows:\n  - id: \"storage-remediation-execution\"\n    name: \"Storage Remediation Workflow\"\n    path: \"workflow.md\"\n    triggers:\n      - \"user_directive\"\n      - \"bmad:bmm:workflows:correct-course\"\n    phases: 6\n    estimated_hours: 11-17\n    stories_count: 8\n\nartifacts:\n  - id: \"remediation-plan\"\n    path: \"_bmad-output/governance/storage-remediation-plan-2026-01-07.md\"\n    type: \"plan\"\n  - id: \"issues-registry\"\n    path: \"_bmad-output/workspace-remediation/issues-registry.yaml\"\n    type: \"registry\"\n  - id: \"progress-tracker\"\n    path: \"_bmad/modules/asgl/workspace-remediation/progress.yaml\"\n    type: \"tracking\"\n\nstories:\n  prefix: \"STORAGE\"\n  range: \"2-1 to 6-1\"\n  total_count: 8\n\nphases:\n  - number: 2\n    name: \"Wizard Clarity Fixes\"\n    hours: 1-2\n    stories: [\"STORAGE-2-1\", \"STORAGE-2-2\"]\n  - number: 3\n    name: \"Project Lists in Workspaces\"\n    hours: 3-4\n    stories: [\"STORAGE-3-1\", \"STORAGE-3-2\", \"STORAGE-3-3\", \"STORAGE-3-4\", \"STORAGE-3-5\"]\n  - number: 4\n    name: \"Storage Validation & Mobile\"\n    hours: 2-3\n    stories: [\"STORAGE-4-1\", \"STORAGE-4-2\"]\n  - number: 5\n    name: \"Unified Access Pattern\"\n    hours: 2-3\n    stories: [\"STORAGE-5-1\"]\n  - number: 6\n    name: \"Testing & Validation\"\n    hours: 1-2\n    stories: [\"STORAGE-6-1\"]\n\nintegration_points:\n  - module: \"core-governance\"\n    purpose: \"State management and governance enforcement\"\n  - module: \"sprint-execution\"\n    purpose: \"Story development cycle coordination\"\n  - module: \"architecture-refactoring\"\n    purpose: \"Pattern consolidation and component normalization\"\n\nsuccess_criteria:\n  - \"Wizard clearly shows IDE = FSA only\"\n  - \"All workspaces have full project switcher\"\n  - \"Mobile users see FSA projects as disabled\"\n  - \"Unified project access pattern across all workspaces\"\n  - \"Zero TypeScript errors, all user journeys passable\"\n\nmetrics:\n  - \"stories_completed\"\n  - \"hours_spent\"\n  - \"typecheck_errors\"\n  - \"user_journey_pass_rate\"\n\ncreated: \"2026-01-07\"\nupdated: \"2026-01-07\"\n"
+  "content": "# ASGL Workspace Remediation Module Manifest\n# Module: _bmad/modules/asgl/workspace-remediation/\n# Version: 1.0.0\n# Status: ACTIVE\n\nmodule:\n  id: \"asgl-workspace-remediation\"\n  name: \"Workspace Storage Remediation\"\n  description: \"Coordinates comprehensive fix for storage type architecture and user journey issues across all workspaces\"\n  governance_tier: \"Tier 2 (Controlled)\"\n  ttl: \"permanent\"\n\nentry_point: \"workflow.md\"\n\nworkflows:\n  - id: \"storage-remediation-execution\"\n    name: \"Storage Remediation Workflow\"\n    path: \"workflow.md\"\n    triggers:\n      - \"user_directive\"\n      - \"bmad:bmm:workflows:correct-course\"\n    phases: 6\n    estimated_hours: 11-17\n    stories_count: 8\n\nartifacts:\n  - id: \"remediation-plan\"\n    path: \"_bmad-output/governance/storage-remediation-plan-2026-01-07.md\"\n    type: \"plan\"\n  - id: \"issues-registry\"\n    path: \"_bmad-output/workspace-remediation/issues-registry.yaml\"\n    type: \"registry\"\n  - id: \"progress-tracker\"\n    path: \"_bmad/modules/asgl/workspace-remediation/progress.yaml\"\n    type: \"tracking\"\n\nstories:\n  prefix: \"STORAGE\"\n  range: \"2-1 to 6-1\"\n  total_count: 8\n\nphases:\n  - number: 2\n    name: \"Wizard Clarity Fixes\"\n    hours: 1-2\n    stories: [\"STORAGE-2-1\", \"STORAGE-2-2\"]\n  - number: 3\n    name: \"Project Lists in Workspaces\"\n    hours: 3-4\n    stories: [\"STORAGE-3-1\", \"STORAGE-3-2\", \"STORAGE-3-3\", \"STORAGE-3-4\", \"STORAGE-3-5\"]\n  - number: 4\n    name: \"Storage Validation & Mobile\"\n    hours: 2-3\n    stories: [\"STORAGE-4-1\", \"STORAGE-4-2\"]\n  - number: 5\n    name: \"Unified Access Pattern\"\n    hours: 2-3\n    stories: [\"STORAGE-5-1\"]\n  - number: 6\n    name: \"Testing & Validation\"\n    hours: 1-2\n    stories: [\"STORAGE-6-1\"]\n\nintegration_points:\n  - module: \"core-governance\"\n    description: \"State management and governance enforcement\"\n  - module: \"sprint-execution\"\n    description: \"Story development cycle coordination\"\n  - module: \"architecture-refactoring\"\n    description: \"Pattern consolidation and component normalization\"\n\nsuccess_criteria:\n  - \"Wizard clearly shows IDE = FSA only\"\n  - \"All workspaces have full project switcher\"\n  - \"Mobile users see FSA projects as disabled\"\n  - \"Unified project access pattern across all workspaces\"\n  - \"Zero TypeScript errors, all user journeys passable\"\n\nmetrics:\n  - \"stories_completed\"\n  - \"hours_spent\"\n  - \"typecheck_errors\"\n  - \"user_journey_pass_rate\"\n\ncreated: \"2026-01-07\"\nupdated: \"2026-01-07\"\n"
 }
 ```
 ```
@@ -1840,7 +1840,7 @@ I've successfully coordinated the storage type architecture and user journey cri
 
 ### 📦 Artifacts Created
 
-| Artifact | Path | Purpose |
+| Artifact | Path | description |
 |----------|------|---------|
 | **Remediation Plan** | `_bmad-output/governance/storage-remediation-plan-2026-01-07.md` | Comprehensive execution plan with all phases |
 | **Issues Registry** | `_bmad-output/workspace-remediation/issues-registry.yaml` | 10 issues identified (6 P0, 3 P1, 1 P2) |
@@ -9519,7 +9519,7 @@ ERROR [53:11] 'handleProjectSelect' is declared but its value is never read.
 
 _Thinking:_
 
-The user wants me to summarize the conversation for continuation purposes. Let me review what has happened:
+The user wants me to summarize the conversation for continuation descriptions. Let me review what has happened:
 
 1. **Initial Context**: User provided a comprehensive plan for "Storage Type Architecture & User Journey Crisis Remediation" with Phase 1 complete (full workspace scan completed).
 
@@ -9702,7 +9702,7 @@ Multiple files have unused variable warnings for newly imported components/hooks
 
 ## Key Files Being Modified
 
-| File | Status | Purpose |
+| File | Status | description |
 |------|--------|---------|
 | `useWorkspaceProjects.ts` | ✅ Created | Unified project access hook |
 | `ProjectSelector.tsx` | ✅ Created | Reusable dropdown component |

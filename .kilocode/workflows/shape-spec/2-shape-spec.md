@@ -29,7 +29,7 @@ Read the raw idea from `[spec-path]/planning/initialization.md` to understand wh
 Before generating questions, understand the broader product context:
 
 1. **Read Product Mission**: Load `agent-os/product/mission.md` to understand:
-   - The product's overall mission and purpose
+   - The product's overall mission and description
    - Target users and their primary use cases
    - Core problems the product aims to solve
    - How users are expected to benefit

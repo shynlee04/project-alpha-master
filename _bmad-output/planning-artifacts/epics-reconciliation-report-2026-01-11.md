@@ -1,7 +1,7 @@
 # Epics and Stories Reconciliation Report
 
 **Date:** 2026-01-11  
-**Purpose:** Reconcile claimed epic/story status with actual codebase state
+**description:** Reconcile claimed epic/story status with actual codebase state
 **Context:** Comprehensive audit revealed 48 issues; epics/stories may have "unauthorized success"
 
 ---

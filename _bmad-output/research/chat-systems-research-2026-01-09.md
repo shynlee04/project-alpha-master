@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This project contains **TWO distinct chat systems** that operate independently but serve overlapping purposes. The user's description of "unsolicited chat systems" refers to these two parallel implementations that coexist in the codebase.
+This project contains **TWO distinct chat systems** that operate independently but serve overlapping descriptions. The user's description of "unsolicited chat systems" refers to these two parallel implementations that coexist in the codebase.
 
 ---
 

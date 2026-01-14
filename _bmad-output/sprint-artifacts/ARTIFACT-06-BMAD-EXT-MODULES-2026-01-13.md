@@ -9,7 +9,7 @@
 
 **This IS:**
 - ✅ Evidence-based investigation of _bmad-ext/modules
-- ✅ Module purposes and relationships documented
+- ✅ Module descriptions and relationships documented
 - ✅ Governance and workflow modules analyzed
 - ✅ Agent definitions extracted
 
@@ -23,14 +23,14 @@
 ## MODULE INVENTORY
 
 ### Core Modules
-| Module | Purpose | Related To |
+| Module | description | Related To |
 |--------|---------|------------|
 | arc-v2 | Architecture remediation v2.0 | All workspaces |
 | governance | Unified governance framework | All workspaces |
 | workspace-architect | File system architecture | All workspaces |
 
 ### Governance Modules (agent-rag)
-| Module | Purpose | Related To |
+| Module | description | Related To |
 |--------|---------|------------|
 | conversation-threads-governance | Conversation thread management | Chat, Notes |
 | multimodality-governance | Input/output multimodality | Chat, Notes |
@@ -44,7 +44,7 @@
 
 **File:** `_bmad-ext/modules/arc-v2/MODULE.md`
 
-**Purpose:** 6-domain architecture model for systematic issues
+**description:** 6-domain architecture model for systematic issues
 
 **Key Features:**
 - Domains: Persistence, Sync, State, Routing, Agents, RAG, UX
@@ -70,7 +70,7 @@
 
 **File:** `_bmad-ext/modules/governance/MODULE.md`
 
-**Purpose:** Unified governance for all extension layer
+**description:** Unified governance for all extension layer
 
 **Key Features:**
 - 4-tier TTL system for document management
@@ -90,7 +90,7 @@
 
 **File:** `_bmad-ext/modules/arc-v2/agents/workspace-architect.md`
 
-**Purpose:** File system and architecture remediation
+**description:** File system and architecture remediation
 
 **Key Features:**
 - Maintains 4-layer clean architecture (Core, Domain, Infrastructure, Presentation)
@@ -111,7 +111,7 @@
 
 **File:** `_bmad-ext/modules/governance/agent-rag/conversation-threads.md`
 
-**Purpose:** Centralize and govern user-agent conversation threads
+**description:** Centralize and govern user-agent conversation threads
 
 **Key Features:**
 - Prevents scattered conversations across multiple files
@@ -132,7 +132,7 @@
 
 **File:** `_bmad-ext/modules/governance/agent-rag/multimodality-governance.md`
 
-**Purpose:** Govern input/output multimodality across workspaces
+**description:** Govern input/output multimodality across workspaces
 
 **Key Features:**
 - Tracks supported input/output types per workspace (text, image, audio, video, file)
@@ -154,7 +154,7 @@
 
 **File:** `_bmad-ext/modules/governance/agent-rag/rag-context-governance.md`
 
-**Purpose:** Govern RAG indexing, entity context, and conversation threads
+**description:** Govern RAG indexing, entity context, and conversation threads
 
 **Key Features:**
 - Prevents context poisoning from stale artifacts
@@ -175,7 +175,7 @@
 
 **File:** `_bmad-ext/modules/governance/agent-rag/staging-by-phase.md`
 
-**Purpose:** Govern feature unlocking by phase rather than sprint
+**description:** Govern feature unlocking by phase rather than sprint
 
 **Key Features:**
 - 5 phases of feature rollout: foundation, consolidation, execution, remediation, enhancement
@@ -197,7 +197,7 @@
 
 **File:** `_bmad-ext/modules/governance/agent-rag/tools-governance.md`
 
-**Purpose:** Track and govern tool CRUD operations
+**description:** Track and govern tool CRUD operations
 
 **Key Features:**
 - Registers all tools and their CRUD operations
@@ -215,7 +215,7 @@
 
 ## AGENT SUMMARY
 
-| Agent | Purpose | Module |
+| Agent | description | Module |
 |-------|---------|---------|
 | workspace-architect | File system architecture | arc-v2 |
 | context-validator | Validates context freshness | governance |
@@ -228,7 +228,7 @@
 
 ## WORKFLOW SUMMARY
 
-| Workflow | Purpose | Module |
+| Workflow | description | Module |
 |----------|---------|--------|
 | diagnostic-first | Scan before plan | arc-v2 |
 | domain-remediation | Targeted fixes | arc-v2 |
@@ -250,7 +250,7 @@
 ## DELIVERABLES STATUS
 
 - ✅ All _bmad-ext modules catalogued
-- ✅ Module purposes documented
+- ✅ Module descriptions documented
 - ✅ Agent inventory created
 - ✅ Workflow inventory created
 - ✅ Relationships mapped

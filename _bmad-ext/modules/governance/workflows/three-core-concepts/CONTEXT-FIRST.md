@@ -1,7 +1,7 @@
 # Governance Workflow - Context-First
 
 **Workflow Type**: Core Concept (1 of 3)  
-**Purpose**: Auto-transform human dev prompts with accurate, comprehensive context  
+**description**: Auto-transform human dev prompts with accurate, comprehensive context  
 **Triggered By**: 
 - User prompt submission
 - Session initialization
@@ -10,7 +10,7 @@
 
 ---
 
-## Purpose
+## description
 
 The **Context-First** workflow is the **foundation** of all governance. Before any work can begin, the system must:
 
@@ -31,7 +31,7 @@ This prevents:
 
 ### Step 1: Gather Context
 
-**Purpose**: Determine scan scope and load relevant slices
+**description**: Determine scan scope and load relevant slices
 
 ```yaml
 context_first_step_1:
@@ -106,7 +106,7 @@ domains:
 
 ### Step 2: Contextualize Prompt
 
-**Purpose**: Analyze user's request and map to relevant areas
+**description**: Analyze user's request and map to relevant areas
 
 ```yaml
 context_first_step_2:
@@ -152,7 +152,7 @@ context_first_step_2:
 
 ### Step 3: Extend Coverage
 
-**Purpose**: Extend the scope to include related but not-obvious areas
+**description**: Extend the scope to include related but not-obvious areas
 
 ```yaml
 context_first_step_3:
@@ -196,7 +196,7 @@ context_first_step_3:
 
 ### Step 4: Transform Prompt
 
-**Purpose**: Create an improved prompt with accurate, comprehensive context
+**description**: Create an improved prompt with accurate, comprehensive context
 
 ```yaml
 context_first_step_4:
@@ -283,7 +283,7 @@ Implement refresh token support in the authentication service.
 
 ### Step 5: Initialize Session
 
-**Purpose**: Start new session with accurate context in LOOP_STATE
+**description**: Start new session with accurate context in LOOP_STATE
 
 ```yaml
 context_first_step_5:

@@ -27,7 +27,7 @@ triggers:
 
 # BMAD-EXT ARC-v2 Bridge
 
-**Purpose**: Gateway to Architecture Remediation v2 with diagnostic-first approach, 6-domain model, and platform-aware strategies.
+**description**: Gateway to Architecture Remediation v2 with diagnostic-first approach, 6-domain model, and platform-aware strategies.
 
 ## Module Overview
 
@@ -81,7 +81,7 @@ triggers:
 
 ### 1. Context Validator
 
-**Purpose**: Pre-execution prompt validation and relevance scoring
+**description**: Pre-execution prompt validation and relevance scoring
 
 **Triggers**:
 - User mentions architecture, refactoring, stores, routing
@@ -95,7 +95,7 @@ triggers:
 
 ### 2. Domain Scanner
 
-**Purpose**: 6-domain targeted scanning
+**description**: 6-domain targeted scanning
 
 **Domains**:
 - PERSISTENCE: Dexie/IndexedDB, quota, schema
@@ -107,7 +107,7 @@ triggers:
 
 ### 3. Store Refactorer
 
-**Purpose**: Zustand store splitting and state management optimization
+**description**: Zustand store splitting and state management optimization
 
 **Triggers**:
 - Store > 120 lines
@@ -122,7 +122,7 @@ triggers:
 
 ### 4. Component Splitter
 
-**Purpose**: React component splitting and normalization
+**description**: React component splitting and normalization
 
 **Triggers**:
 - Component > 300 lines
@@ -136,7 +136,7 @@ triggers:
 
 ### 5. Workspace Architect
 
-**Purpose**: File system and architecture specialist
+**description**: File system and architecture specialist
 
 **Triggers**:
 - File in wrong layer
@@ -153,7 +153,7 @@ triggers:
 
 ### Diagnostic-First Workflow
 
-**Purpose**: Always scan before plan - the core ARC workflow
+**description**: Always scan before plan - the core ARC workflow
 
 **Steps**:
 1. Identify target domain(s)

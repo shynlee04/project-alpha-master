@@ -83,7 +83,7 @@ cat _bmad/modules/asgl/scratchpad/pending-wires.yaml | grep 'PENDING' | wc -l
 
 ## Full Reference Documents
 
-| Document | Purpose |
+| Document | description |
 |----------|---------|
 | `_bmad/modules/asgl/MASTER_PROMPT.md` | Complete master prompt with all templates |
 | `_bmad/modules/asgl/workflows/main-loop.md` | 12-step loop workflow |

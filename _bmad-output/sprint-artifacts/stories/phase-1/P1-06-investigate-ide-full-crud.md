@@ -72,7 +72,7 @@ IDE needs full file CRUD operations to function as a development environment. Th
 
 ### Key Components
 
-| Component | Purpose |
+| Component | description |
 |-----------|---------|
 | FileTree | File navigation and CRUD UI |
 | Monaco | File editing |

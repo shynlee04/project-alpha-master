@@ -15,7 +15,7 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 
 # STEP GOAL
 
-Validate that the agent's persona (role, tone, expertise, principles, constraints) is well-defined, consistent, and aligned with its purpose.
+Validate that the agent's persona (role, tone, expertise, principles, constraints) is well-defined, consistent, and aligned with its description.
 
 ## MANDATORY EXECUTION RULES
 
@@ -40,13 +40,13 @@ Perform these checks systematically:
 1. **Required Fields Existence**
    - [ ] role: Present, clear, and specific
    - [ ] tone: Present and appropriate to role
-   - [ ] expertise: Present and relevant to agent's purpose
+   - [ ] expertise: Present and relevant to agent's description
    - [ ] principles: Present as array, not empty (if applicable)
    - [ ] constraints: Present as array, not empty (if applicable)
 
 2. **Content Quality - Role**
    - [ ] Role is specific (not generic like "assistant")
-   - [ ] Role aligns with agent's purpose and menu items
+   - [ ] Role aligns with agent's description and menu items
    - [ ] Role is achievable within LLM capabilities
    - [ ] Role scope is appropriate (not too broad/narrow)
 
@@ -88,7 +88,7 @@ Organize your report into three sections:
 ```
 ✓ Role is specific and well-defined
 ✓ Tone clearly articulated and appropriate
-✓ Expertise aligns with agent purpose
+✓ Expertise aligns with agent description
 ✓ Principles are actionable and clear
 ```
 
@@ -144,7 +144,7 @@ Display: "**Select an Option:** [A] Advanced Elicitation [F] Fix Findings [P] Pa
 
 **DO NOT:**
 - Validate metadata properties in this step
-- Question the agent's core purpose (that's for earlier steps)
+- Question the agent's core description (that's for earlier steps)
 - Suggest additional menu items
 - Modify fields beyond persona
 

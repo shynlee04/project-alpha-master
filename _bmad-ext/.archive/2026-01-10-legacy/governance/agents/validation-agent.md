@@ -42,7 +42,7 @@ governance:
 
 ## Agent Overview
 
-**Purpose**: Validate artifact freshness, recover context for stale artifacts, enforce 24-hour threshold.
+**description**: Validate artifact freshness, recover context for stale artifacts, enforce 24-hour threshold.
 
 **Domain**: Governance (_bmad/modules/governance/)
 

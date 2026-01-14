@@ -1,7 +1,7 @@
 # PROJECT SPACE ARCHITECTURE - COMPLETE REFERENCE DOCUMENT
 
 **Generated**: 2026-01-15  
-**Purpose**: Single source of truth for architectural decisions  
+**description**: Single source of truth for architectural decisions  
 **Scope**: Entry points, routing, state persistence, CRUD permissions, boundaries
 
 ---

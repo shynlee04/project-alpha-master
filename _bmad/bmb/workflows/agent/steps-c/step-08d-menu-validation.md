@@ -14,7 +14,7 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 
 # STEP GOAL
 
-Validate that the agent's menu (commands/tools) follows BMAD patterns, is well-structured, properly documented, and aligns with the agent's persona and purpose.
+Validate that the agent's menu (commands/tools) follows BMAD patterns, is well-structured, properly documented, and aligns with the agent's persona and description.
 
 ## MANDATORY EXECUTION RULES
 
@@ -61,7 +61,7 @@ Perform these checks systematically:
    - [ ] Descriptions help users understand when to use
 
 5. **Alignment Checks**
-   - [ ] Menu items align with agent's role/purpose
+   - [ ] Menu items align with agent's role/description
    - [ ] Menu items are supported by agent's expertise
    - [ ] Menu items fit within agent's constraints
    - [ ] Menu items are appropriate for target users

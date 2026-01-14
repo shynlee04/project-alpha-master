@@ -6,7 +6,7 @@ This folder contains a complete reference implementation of a **BMAD Simple Agen
 
 **Agent Name:** Inkwell Von Comitizen
 **Type:** Simple Agent (Standalone)
-**Purpose:** Transform commit messages into art with multiple writing styles
+**description:** Transform commit messages into art with multiple writing styles
 
 This reference demonstrates:
 
@@ -109,7 +109,7 @@ This personality is maintained across ALL commands through the persona definitio
 
 **Perfect for:**
 
-- Single-purpose tools (calculators, converters, analyzers)
+- Single-description tools (calculators, converters, analyzers)
 - Tasks that don't need external data
 - Utilities that can be completely self-contained
 - Quick operations with embedded logic

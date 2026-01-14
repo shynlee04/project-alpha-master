@@ -1,13 +1,13 @@
 ---
 name: "gating-policy"
 type: "governance-policy"
-purpose: "Define gating policy for workflow transitions"
+description: "Define gating policy for workflow transitions"
 version: "1.0.0"
 ---
 
 # Gating Policy
 
-**Purpose**: Define when gates are required, how they're evaluated, and what happens on failure.
+**description**: Define when gates are required, how they're evaluated, and what happens on failure.
 
 ## Gate Philosophy
 
@@ -191,7 +191,7 @@ metrics:
 
 ```yaml
 governance_gate:
-  purpose: "Ensure governance checks before development"
+  description: "Ensure governance checks before development"
   strict: true
 
   criteria:
@@ -210,7 +210,7 @@ governance_gate:
 
 ```yaml
 done_gate:
-  purpose: "Ensure quality before marking complete"
+  description: "Ensure quality before marking complete"
   strict: true
 
   criteria:

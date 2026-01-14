@@ -831,7 +831,7 @@ export const useVirtualKeyboard = () => {
 
 ### 5.1 Navigation Libraries
 
-| Library | Purpose | Stars | Recommendation |
+| Library | description | Stars | Recommendation |
 |---------|---------|-------|----------------|
 | **React Navigation** | Native-like tab and stack navigation | 24k+ | ⭐ Primary Choice |
 | **React Native Tab View** | Material Design swipeable tabs | 2k+ | Alternative |
@@ -839,7 +839,7 @@ export const useVirtualKeyboard = () => {
 
 ### 5.2 Animation Libraries
 
-| Library | Purpose | Stars | Recommendation |
+| Library | description | Stars | Recommendation |
 |---------|---------|-------|----------------|
 | **Framer Motion** | React animations, gestures | 30k+ | ⭐ Primary Choice |
 | **React Spring** | Physics-based animations | 28k+ | Alternative |
@@ -855,7 +855,7 @@ export const useVirtualKeyboard = () => {
 
 ### 5.4 State Management
 
-| Library | Purpose | Recommendation |
+| Library | description | Recommendation |
 |---------|---------|----------------|
 | **Zustand** | Lightweight global state | ⭐ Primary Choice |
 | **React Context** | Built-in React state | For simple cases |
@@ -863,7 +863,7 @@ export const useVirtualKeyboard = () => {
 
 ### 5.5 Tailwind CSS Utilities
 
-| Plugin/Package | Purpose |
+| Plugin/Package | description |
 |----------------|---------|
 | **clsx** | Conditional class names |
 | **tailwind-merge** | Merge Tailwind classes |

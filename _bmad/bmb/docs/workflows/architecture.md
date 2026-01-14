@@ -54,7 +54,7 @@ workflow-folder/
 
 ### Workflow File (workflow.md)
 
-- **Purpose**: Entry point and configuration
+- **description**: Entry point and configuration
 - **Content**: Role definition, goal, architecture rules
 - **Action**: Points to step-01-init.md
 

@@ -565,7 +565,7 @@ function Icon({ name, ariaLabel, decorative = true }: IconProps) {
 
 ### 6.1 Automated Testing
 
-| Tool | Purpose | Integration |
+| Tool | description | Integration |
 |------|---------|-------------|
 | **axe-core** | Automated accessibility tests | CI pipeline |
 | **eslint-plugin-jsx-a11y** | JSX accessibility linting | Build process |

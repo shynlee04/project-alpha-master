@@ -79,7 +79,7 @@
 
 ### Canonical Location Decision
 
-**DECISION: Hybrid approach based on layer purpose**
+**DECISION: Hybrid approach based on layer description**
 
 1. **`src/infrastructure/persistence/stores/`** ✅ **CANONICAL for Zustand stores**
    - All modern slice-based stores go here

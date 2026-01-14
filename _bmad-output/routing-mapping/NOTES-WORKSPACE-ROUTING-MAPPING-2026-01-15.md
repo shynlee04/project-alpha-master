@@ -2,7 +2,7 @@
 
 **Document ID**: `NOTES-ROUTING-MAPPING-2026-01-15`  
 **Created**: 2026-01-15  
-**Purpose**: Test routing scenarios for notes workspace entry points
+**description**: Test routing scenarios for notes workspace entry points
 
 ---
 
@@ -567,7 +567,7 @@ const storageType = formData.storageType;  // User selection
 
 ## Related Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/routes/notes.lazy.tsx` | Browser mode route |
 | `src/routes/notes.$projectId.lazy.tsx` | Project-specific route |

@@ -66,7 +66,7 @@ I've already created workflow folders and README.md files for each agent's workf
 
 **Each workflow folder contains a README.md with:**
 
-- Purpose and description
+- description and description
 - Trigger code from agent menu
 - Key steps outline
 - Expected outputs
@@ -83,7 +83,7 @@ For each workflow README file:
 Reading the README.md from: [workflow-folder]/README.md
 
 **Current Plan:**
-[Purpose]
+[description]
 [Trigger]
 [Key Steps]
 [Expected Output]
@@ -92,7 +92,7 @@ Reading the README.md from: [workflow-folder]/README.md
 How does this plan look? Should we:
 
 - Keep it as is
-- Modify the purpose
+- Modify the description
 - Adjust the steps
 - Change the expected output"
 
@@ -111,7 +111,7 @@ Ensure each README has:
 ```markdown
 # [Workflow Name]
 
-## Purpose
+## description
 
 [Clear, concise description of what this workflow accomplishes]
 
@@ -210,7 +210,7 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 ### ✅ SUCCESS:
 
 - All workflow README files reviewed with user
-- Each workflow plan has clear purpose and steps
+- Each workflow plan has clear description and steps
 - Workflow-agent mappings verified
 - README files updated based on feedback
 - Clear implementation guidance provided

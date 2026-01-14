@@ -4,7 +4,7 @@
 
 ---
 
-## Purpose
+## description
 
 End-to-end UI verification - ensure the implementation **actually works** from a user perspective. This is not about code coverage, but about **observable behavior**.
 

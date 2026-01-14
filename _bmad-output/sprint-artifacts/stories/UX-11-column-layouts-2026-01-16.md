@@ -23,7 +23,7 @@
 
 ### Files Created
 
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | `ColumnBlock.tsx` | Multi-column block component | 353 |
 | `ColumnBlock.css` | Responsive styling | 333 |

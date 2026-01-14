@@ -10,7 +10,7 @@ updated: "2026-01-11"
 
 **Version**: 2.0.0
 **Status**: ACTIVE
-**Purpose**: Module creation with full extension layer integration
+**description**: Module creation with full extension layer integration
 
 ## Why Enhanced Version
 
@@ -202,7 +202,7 @@ status: "PENDING"
 
 ## Context
 - Module Name: {module_name}
-- Purpose: {module_purpose}
+- description: {module_description}
 - Created by: module-builder-ext
 
 ## Handoff Data

@@ -42,7 +42,7 @@
 
 ### 1.2 UI/STATE STORES (In-Memory Only)
 
-| Store | Location | Purpose | Persistence |
+| Store | Location | description | Persistence |
 |-------|----------|---------|-------------|
 | **useIDEStore** | `persistence/stores/ide/` | IDE state | localStorage (useIdeStatePersistence) |
 | **useEditorTabsStore** | `persistence/stores/editor-tabs/` | Editor tabs | localStorage |
@@ -58,7 +58,7 @@
 
 ### 1.3 AGENT TOOL STORES (In-Memory)
 
-| Store | Location | Purpose |
+| Store | Location | description |
 |-------|----------|---------|
 | **useToolPermissionStore** | `persistence/stores/permissions/` | Tool permissions (not persisted) |
 | **usePromptEnhancementStore** | `persistence/prompt-enhancement-store.ts` | Prompt enhancement |

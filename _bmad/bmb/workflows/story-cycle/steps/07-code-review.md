@@ -11,7 +11,7 @@ on_fail: "loop-to-06"
 # Step 07: Code Review
 
 > **Agent:** Code Reviewer (or Dev with fresh context)
-> **Purpose:** Multi-agent review to catch issues before story done
+> **description:** Multi-agent review to catch issues before story done
 
 ---
 

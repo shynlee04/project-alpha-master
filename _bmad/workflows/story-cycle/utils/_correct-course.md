@@ -1,6 +1,6 @@
 # Utility: Correct Course
 
-> **Purpose:** Recovery handler when story is stuck or validation fails
+> **description:** Recovery handler when story is stuck or validation fails
 > **Trigger:** Story >2x timebox, unresolvable validation failure, external blockers
 
 ---

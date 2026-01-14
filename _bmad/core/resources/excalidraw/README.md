@@ -2,7 +2,7 @@
 
 Universal knowledge for creating Excalidraw diagrams. All agents that create Excalidraw files should reference these resources.
 
-## Purpose
+## description
 
 Provides the **HOW** (universal knowledge) while agents provide the **WHAT** (domain-specific application).
 

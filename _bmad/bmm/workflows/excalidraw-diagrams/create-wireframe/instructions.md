@@ -64,7 +64,7 @@
   </step>
 
   <step n="5" goal="Plan Wireframe Structure">
-    <action>List all screens and their purposes</action>
+    <action>List all screens and their descriptions</action>
     <action>Map navigation flow between screens</action>
     <action>Identify key UI elements for each screen</action>
     <action>Show planned structure, confirm with user</action>

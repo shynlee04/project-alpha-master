@@ -2,7 +2,7 @@
 
 **Created**: 2026-01-11
 **Version**: 1.0.0
-**Purpose**: Unified view of all `_bmad-ext/modules/` with hierarchy, phases, and cross-references
+**description**: Unified view of all `_bmad-ext/modules/` with hierarchy, phases, and cross-references
 
 ---
 
@@ -49,17 +49,17 @@ PHASE 4: IMPLEMENTATION
 
 **Phase**: 0 (Governance Foundation)
 **Status**: ACTIVE (v2.0)
-**Purpose**: Unified self-governance, artifact lifecycle, context filtering
+**description**: Unified self-governance, artifact lifecycle, context filtering
 
 #### Integration Points
 
-| Reads From | Path | Purpose |
+| Reads From | Path | description |
 |------------|------|---------|
 | LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` | Session state, anchor |
 | ARTIFACT_REGISTRY | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking |
 | Workflow Status | `bmm-workflow-status.yaml` | Story progress |
 
-| Writes To | Path | Purpose |
+| Writes To | Path | description |
 |-----------|------|---------|
 | LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` | Governance updates |
 | AGENTS.md | Project root | Governance section |
@@ -106,7 +106,7 @@ Load: "_bmad-ext/modules/governance/workflows/context-first/workflow.md"
 
 **Phase**: 0 (Governance Foundation)
 **Status**: DEPRECATED (merge into governance/)
-**Purpose**: Duplicate of governance - to be archived
+**description**: Duplicate of governance - to be archived
 
 #### Issues
 
@@ -131,17 +131,17 @@ Archive entire module, move useful hooks to:
 
 **Phase**: 0 (Governance Foundation - Special)
 **Status**: ACTIVE
-**Purpose**: Architecture Remediation v2 - Diagnostic-first approach
+**description**: Architecture Remediation v2 - Diagnostic-first approach
 
 #### Integration Points
 
-| Reads From | Path | Purpose |
+| Reads From | Path | description |
 |------------|------|---------|
 | LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` | Track remediation |
 | ARTIFACT_REGISTRY | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Register scans |
 | Routing Rules | `_bmad-ext/orchestrator/routing-rules.yaml` | Route stories |
 
-| Writes To | Path | Purpose |
+| Writes To | Path | description |
 |-----------|------|---------|
 | Scan Results | `_bmad-output/scans/{domain}-scan-{date}.yaml` | Evidence |
 | Remediation Plans | `_bmad-output/remediations/` | Plans |
@@ -196,17 +196,17 @@ Execute: 7-step workflow
 
 **Phase**: 2 (Sprint Planning)
 **Status**: ACTIVE
-**Purpose**: Enhanced sprint planning with cohesion and reality validation
+**description**: Enhanced sprint planning with cohesion and reality validation
 
 #### Integration Points
 
-| Reads From | Path | Purpose |
+| Reads From | Path | description |
 |------------|------|---------|
 | BMAD Sprint Planning | `_bmad/bmm/workflows/4-implementation/sprint-planning/` | Original workflow |
 | Epics | `_bmad-output/planning-artifacts/epics.md` | Epic definitions |
 | Story Files | `_bmad-output/sprint-artifacts/stories/` | Story details |
 
-| Writes To | Path | Purpose |
+| Writes To | Path | description |
 |-----------|------|---------|
 | Sprint Status | `sprint-status.yaml` | Enhanced status |
 | Cohesion Report | `_bmad-output/sprint-artifacts/cohesion-report-{date}.md` | Analysis |
@@ -262,17 +262,17 @@ Execute: Generate status
 
 **Phase**: 4 (Implementation)
 **Status**: ACTIVE
-**Purpose**: Story execution and bug fix workflows
+**description**: Story execution and bug fix workflows
 
 #### Integration Points
 
-| Reads From | Path | Purpose |
+| Reads From | Path | description |
 |------------|------|---------|
 | Sprint Status | `sprint-status.yaml` | Story assignment |
 | Governance Report | `_bmad-output/governance/` | Issue level |
 | Story Files | `_bmad-output/sprint-artifacts/stories/` | Context |
 
-| Writes To | Path | Purpose |
+| Writes To | Path | description |
 |-----------|------|---------|
 | Sprint Status | `sprint-status.yaml` | Update progress |
 | Story Completion | `_bmad-output/sprint-artifacts/stories/{story_id}-done.md` | Summary |

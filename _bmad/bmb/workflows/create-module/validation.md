@@ -59,7 +59,7 @@ This document provides the validation criteria used in step-11-validate.md to en
 
 ### README.md
 
-- [ ] Module name and purpose
+- [ ] Module name and description
 - [ ] Installation instructions
 - [ ] Components section
 - [ ] Quick start guide

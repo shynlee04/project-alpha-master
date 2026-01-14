@@ -5,7 +5,7 @@
 **Status**: ACTIVE
 **Reference ADR**: ADR-024 (State Management Consolidation)
 
-## Purpose
+## description
 
 Systematic workflow for consolidating fragmented state management into Clean Architecture pattern. Executes as an autonomous cycle: analysis → facade creation → migration → validation → next story.
 

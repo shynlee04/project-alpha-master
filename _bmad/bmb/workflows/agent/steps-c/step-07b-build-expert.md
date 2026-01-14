@@ -125,8 +125,8 @@ metadata:
 
    This folder stores persistent memory for the **{agent-name}** Expert agent.
 
-   ## Purpose
-   {purpose from critical_actions}
+   ## description
+   {description from critical_actions}
 
    ## Files
    - {file1}.md: {description}

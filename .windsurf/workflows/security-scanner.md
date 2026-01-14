@@ -9,7 +9,7 @@
 
 Specialized Deep-Scan agent for auditing application security. It detects exposed secrets, Cross-Site Scripting (XSS) vectors, unsafe file system operations, and dependency vulnerabilities.
 
-### Agent Purpose
+### Agent description
 
 To identify and flag security risks in the codebase, ensuring API keys are properly handled via the `credential-vault`, checking for unsafe usage of `dangerouslySetInnerHTML`, and validating CSP headers.
 

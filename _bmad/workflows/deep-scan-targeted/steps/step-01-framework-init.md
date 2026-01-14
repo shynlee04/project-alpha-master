@@ -47,7 +47,7 @@ Initialize a **targeted deep-scan diagnostic framework** for course correction b
 ## 🔍 TARGETED SCAN DOMAINS
 
 ### Domain 1: State Management Layer
-**Purpose**: Scan all Zustand stores for god patterns, circular deps, missing exports
+**description**: Scan all Zustand stores for god patterns, circular deps, missing exports
 
 **Target Files**:
 ```
@@ -74,7 +74,7 @@ src/infrastructure/persistence/stores/
 ---
 
 ### Domain 2: Routing & Navigation Layer
-**Purpose**: Scan all route definitions for consistency, error boundaries, redirect logic
+**description**: Scan all route definitions for consistency, error boundaries, redirect logic
 
 **Target Files**:
 ```
@@ -101,7 +101,7 @@ src/routes/
 ---
 
 ### Domain 3: Workspace Access Layer
-**Purpose**: Scan workspace entry points for temp project creation, binding logic
+**description**: Scan workspace entry points for temp project creation, binding logic
 
 **Target Files**:
 ```
@@ -126,7 +126,7 @@ src/lib/workspace/
 ---
 
 ### Domain 4: BYOK & Vault Layer
-**Purpose**: Scan provider configuration, credential storage, key management
+**description**: Scan provider configuration, credential storage, key management
 
 **Target Files**:
 ```
@@ -152,7 +152,7 @@ src/infrastructure/persistence/stores/providers/
 ---
 
 ### Domain 5: Error Boundary Layer
-**Purpose**: Scan entire codebase for error boundary coverage
+**description**: Scan entire codebase for error boundary coverage
 
 **Target Pattern**:
 ```bash

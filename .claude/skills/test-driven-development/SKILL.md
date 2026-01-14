@@ -278,7 +278,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 - Tests added "later"
 - Rationalizing "just this once"
 - "I already manually tested it"
-- "Tests after achieve the same purpose"
+- "Tests after achieve the same description"
 - "It's about spirit not ritual"
 - "Keep as reference" or "adapt existing code"
 - "Already spent X hours, deleting is wasteful"

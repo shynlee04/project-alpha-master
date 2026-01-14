@@ -80,7 +80,7 @@ Based on:
 
 ### Meal Prep Efficiency:
 
-- Multi-purpose ingredients (e.g., spinach for salads AND smoothies)
+- Multi-description ingredients (e.g., spinach for salads AND smoothies)
 - Batch prep staples (grains, proteins)
 - Versatile seasonings
 

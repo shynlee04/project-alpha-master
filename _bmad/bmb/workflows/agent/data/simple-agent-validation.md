@@ -92,7 +92,7 @@ Validate Simple agents meet BMAD quality standards.
 
 - [ ] No broken references or missing files
 - [ ] Indentation is consistent
-- [ ] Agent purpose is clear from reading persona
+- [ ] Agent description is clear from reading persona
 - [ ] Agent name/title are descriptive
 - [ ] Icon emoji is appropriate
 

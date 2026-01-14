@@ -57,7 +57,7 @@ The Study workspace is a **spaced repetition learning platform** with flashcard 
 
 **Implementation**: `src/lib/study/srs-types.ts` (258 lines)
 
-**Purpose**: Implements the SuperMemo SM-2 algorithm for optimized flashcard scheduling
+**description**: Implements the SuperMemo SM-2 algorithm for optimized flashcard scheduling
 
 **Features**:
 - 4 rating levels: `again`, `hard`, `good`, `easy`
@@ -287,7 +287,7 @@ const result = await generator.generateFromContent(content, sourceId, {
 
 **4 Slices**:
 
-| Slice | File | Purpose | Lines |
+| Slice | File | description | Lines |
 |-------|------|---------|-------|
 | Database | `study-database-slice.ts` | Dexie IndexedDB, initialization | ~100 |
 | Session | `study-session-slice.ts` | SRS data, session CRUD | ~120 |
@@ -406,7 +406,7 @@ function StudyWorkspace() {
 
 ### Presentation Components (11 files)
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `StudyPage.tsx` | 390 | Main orchestrator with 3-tab layout |
 | `QuizContainer.tsx` | 180 | Quiz flow manager |
@@ -421,7 +421,7 @@ function StudyWorkspace() {
 
 ### Library Files (8 files)
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `srs-types.ts` | 258 | SM-2 algorithm, SRS types |
 | `quiz-types.ts` | 151 | Zod schemas for quizzes |
@@ -431,7 +431,7 @@ function StudyWorkspace() {
 
 ### Store Slices (4 files)
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `study-database-slice.ts` | Dexie IndexedDB, persistence |
 | `study-session-slice.ts` | Session CRUD, SRS data |

@@ -45,7 +45,7 @@ Extract API definitions from code, not just documentation. Compare documented be
 
 Provide comprehensive API documentation:
 
-- **API Inventory**: All endpoints/methods with purpose
+- **API Inventory**: All endpoints/methods with description
 - **Authentication**: How to authenticate, token types, scopes
 - **Endpoints**: Detailed documentation for each endpoint
   - Method and path

@@ -12,7 +12,7 @@ trigger: model_decision
 
 Specialized Deep-Scan agent for validating high-level architectural patterns. It enforces the 4-layer architecture (Presentation, Application, Domain, Infrastructure), detects god components, and identifies forbidden dependency paths.
 
-### Agent Purpose
+### Agent description
 
 To ensure the codebase adheres to the strict 4-layer architecture defined in `AGENTS.md`, identifying structural erosion, boundary violations, and oversized components that threaten maintainability.
 

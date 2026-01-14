@@ -1,7 +1,7 @@
 # COMPLETE STATE & PERSISTENCE INVENTORY
 
 **Generated**: 2026-01-15  
-**Purpose**: All-in-one inventory of state management, persistence, and data storage mechanisms  
+**description**: All-in-one inventory of state management, persistence, and data storage mechanisms  
 **Scope**: Everything that holds state or persists data
 
 ---
@@ -21,7 +21,7 @@
 
 ## 1.1 Main Database
 
-| Database | Class | Location | Tables | Purpose |
+| Database | Class | Location | Tables | description |
 |----------|-------|----------|--------|---------|
 | **ViaGentDatabase** | `dexie-db-class.ts:90` | infrastructure/persistence/ | 25+ tables | Main application database |
 
@@ -54,7 +54,7 @@
 
 ## 1.2 Secondary Databases (SEPARATE from ViaGentDatabase!)
 
-| Database | Class | Location | Tables | Purpose |
+| Database | Class | Location | Tables | description |
 |----------|-------|----------|--------|---------|
 | **FlashcardDatabase** | `flashcard-db.ts:42` | stores/flashcard/ | 5+ tables | Flashcard SRS data |
 | **StudyDatabase** | `study-database-slice.ts:40` | stores/study/ | 4+ tables | Study session data |
@@ -224,7 +224,7 @@
 
 # 3. REACT CONTEXT PROVIDERS
 
-| Context | File | Purpose |嵌套? |
+| Context | File | description |嵌套? |
 |---------|------|---------|------|
 | **ProjectContext** | lib/workspace/ProjectContext.tsx | Project state | No |
 | **WorkspaceContext** | infrastructure/persistence/stores/workspace/workspace-provider-slice.ts | Workspace state | Yes |
@@ -242,7 +242,7 @@
 
 ## 4.1 Critical localStorage Keys
 
-| Key | File | Purpose | Should be Dexie? |
+| Key | File | description | Should be Dexie? |
 |-----|------|---------|-----------------|
 | **viagent-sidebar-panel** | IconSidebar.tsx | Sidebar panel | ✅ YES |
 | **viagent-sidebar-collapsed** | IconSidebar.tsx | Collapsed state | ✅ YES |
@@ -283,7 +283,7 @@
 
 ## 5.1 Custom Dexie Storage Adapters
 
-| Adapter | File | Purpose |
+| Adapter | File | description |
 |---------|------|---------|
 | **createDexieStorage** | dexie-storage.ts | Zustand → Dexie |
 | **createJSONStorage** | dexie-storage.ts | JSON wrapper for Dexie |
@@ -291,7 +291,7 @@
 
 ## 5.2 Custom Persistence Functions
 
-| Function | File | Purpose |
+| Function | File | description |
 |----------|------|---------|
 | **persistConversation** | conversation-store.ts | Debounced conversation save |
 | **saveIDEState** | ide-state-storage.ts | IDE state with custom schema |

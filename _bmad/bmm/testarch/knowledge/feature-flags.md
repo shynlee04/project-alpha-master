@@ -658,7 +658,7 @@ const FLAG_LIFECYCLE_CHECKLIST = `
 
 - [ ] **Code Paths**: Both enabled/disabled states implemented
 - [ ] **Tests**: Both variations tested in CI
-- [ ] **Documentation**: Flag purpose documented in code/PR
+- [ ] **Documentation**: Flag description documented in code/PR
 - [ ] **Telemetry**: Analytics events instrumented
 - [ ] **Error Handling**: Graceful degradation on flag service failure
 

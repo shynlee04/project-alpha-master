@@ -207,7 +207,7 @@ stories:
 ```markdown
 ## Rule 9: Sprint Tracking for ARC Module
 
-**Purpose**: Track Architecture Remediation sprint progress with skills coordination.
+**description**: Track Architecture Remediation sprint progress with skills coordination.
 
 **Tracking File**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
 

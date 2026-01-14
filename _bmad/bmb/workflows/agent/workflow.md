@@ -49,7 +49,7 @@ This uses **step-file architecture** for disciplined execution:
 
 This workflow supports three modes:
 
-| Mode | Purpose | Entry Point | Output |
+| Mode | description | Entry Point | Output |
 |------|---------|-------------|--------|
 | **Create** | Build new agent from scratch | `steps-c/step-01-brainstorm.md` | New `.agent.yaml` file |
 | **Edit** | Modify existing agent | `steps-e/e-01-load-existing.md` | Updated `.agent.yaml` file |

@@ -109,7 +109,7 @@ Based on structure analysis, Phase 1 should focus on:
 
 ## Data Files Generated
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `file-inventory.md` | ~180 | Complete file inventory |
 | `dependency-graph.md` | ~200 | Import dependency analysis |

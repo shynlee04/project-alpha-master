@@ -93,7 +93,7 @@ interface ProjectMetadata {
 }
 ```
 **Indexes**: `id`, `name`, `lastOpened`, `storageType`, `createdAt`, `updatedAt`
-**Purpose**: Single source of truth for project configuration
+**description**: Single source of truth for project configuration
 
 #### keyValuePairs
 ```typescript
@@ -105,7 +105,7 @@ interface KeyValuePair {
 }
 ```
 **Indexes**: `key`, `timestamp`
-**Purpose**: Zustand persist middleware storage backend
+**description**: Zustand persist middleware storage backend
 
 #### fileMetadata
 ```typescript
@@ -119,7 +119,7 @@ interface FileMetadataEntry {
 }
 ```
 **Indexes**: `projectId`, `filePath`, `lastModified`, `fileSize`
-**Purpose**: Metadata cache for faster file sync
+**description**: Metadata cache for faster file sync
 
 #### fsaHandles
 ```typescript
@@ -132,7 +132,7 @@ interface FSAHandleEntry {
 }
 ```
 **Indexes**: `projectId`, `handleType`
-**Purpose**: Instant permission restore on page reload
+**description**: Instant permission restore on page reload
 
 #### toolExecutionLogs
 ```typescript
@@ -149,7 +149,7 @@ interface ToolExecutionLogEntry {
 }
 ```
 **Indexes**: `id`, `toolId`, `timestamp`, `status`
-**Purpose**: Tool execution audit trail
+**description**: Tool execution audit trail
 
 ---
 

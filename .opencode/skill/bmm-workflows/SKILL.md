@@ -1,6 +1,6 @@
 # BMM Workflows Integration - OpenCode Skill
 
-> **Master**: `_bmad/bmm/workflows/` | **Version**: 1.0.0 | **Purpose**: Access BMAD workflow definitions
+> **Master**: `_bmad/bmm/workflows/` | **Version**: 1.0.0 | **description**: Access BMAD workflow definitions
 
 ## Workflow Directory Structure
 
@@ -182,7 +182,7 @@ This skill uses **minimal references**. Full workflow definitions are in `_bmad/
 
 ## Related Skills
 
-| Skill | Purpose |
+| Skill | description |
 |-------|---------|
 | `story-cycle` | Complete 9-step story development workflow |
 | `bmad-core-integration` | Agent access and routing |

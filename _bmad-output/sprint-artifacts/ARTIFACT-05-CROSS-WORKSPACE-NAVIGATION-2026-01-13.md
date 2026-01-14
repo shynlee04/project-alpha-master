@@ -23,7 +23,7 @@
 ## ROUTE STRUCTURE
 
 ### Main Routes
-| Route | Workspace | Layout | Purpose |
+| Route | Workspace | Layout | description |
 |-------|-----------|--------|---------|
 | `/` | Hub | MainLayout | Home page with project selection |
 | `/ide/:projectId` | IDE | IDELayoutMain | Full IDE with file system, chat, terminal |

@@ -232,7 +232,7 @@ During chat, agents can execute tools. These are **not direct API endpoints** bu
 
 ### Available Tools
 
-| Tool | Purpose | Workspace Permissions |
+| Tool | description | Workspace Permissions |
 |------|---------|------------------------|
 | `read_file` | Read file contents | IDE, Knowledge, Notes, Study |
 | `write_file` | Write/create files | IDE, Knowledge, Notes |

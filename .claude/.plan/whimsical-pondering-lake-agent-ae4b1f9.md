@@ -2,7 +2,7 @@
 
 **Date**: 2026-01-04  
 **Author**: Architecture Remediation Planning Session  
-**Purpose**: Comprehensive plan for implementing dedicated sprint tracking for the ARC module  
+**description**: Comprehensive plan for implementing dedicated sprint tracking for the ARC module  
 **Status**: DRAFT - Awaiting Approval
 
 ---
@@ -381,7 +381,7 @@ priority: P0
 
 ## Research Requirements
 
-| Tool | Query | Purpose |
+| Tool | Query | description |
 |------|-------|---------|
 | Context7 | Dexie.js database schema patterns | Official Dexie patterns |
 | Context7 | Zustand v5 slice composition | Zustand best practices |
@@ -573,7 +573,7 @@ Update epic-tracking.md and governance rules to reflect new sprint tracking capa
 
 ### ARC Sprint Status
 - **Location**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
-- **Purpose**: Dedicated tracking for Architecture Remediation epics
+- **description**: Dedicated tracking for Architecture Remediation epics
 - **Update Frequency**: After every story phase completion
 
 ### Story File Creation

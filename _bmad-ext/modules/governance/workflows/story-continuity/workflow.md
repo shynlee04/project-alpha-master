@@ -10,7 +10,7 @@ created: "2026-01-11"
 
 # Story Continuity Checker
 
-**Purpose**: Validate story continuity with actual code checks before/after each story execution
+**description**: Validate story continuity with actual code checks before/after each story execution
 
 **Key Principle**: Stories take 1-4 hours average. 2-3 epics per day is normal.
 

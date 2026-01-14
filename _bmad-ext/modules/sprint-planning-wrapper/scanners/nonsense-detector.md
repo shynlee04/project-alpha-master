@@ -1,6 +1,6 @@
 # Nonsense Detector
 # Sprint-Planning Wrapper - Scanner Module
-# Purpose: Spot "Dual Chat" type issues - contradictory, duplicate, or orphan features
+# description: Spot "Dual Chat" type issues - contradictory, duplicate, or orphan features
 
 version: "1.0.0"
 last_updated: "2026-01-11"

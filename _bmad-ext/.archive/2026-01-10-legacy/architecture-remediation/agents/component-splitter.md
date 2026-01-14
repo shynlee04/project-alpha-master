@@ -41,7 +41,7 @@ governance:
 
 Specialized BMAD agent for systematic reduction of oversized components (>300 lines) into focused, composable modules while maintaining 100% API compatibility and zero breaking changes.
 
-### Agent Purpose
+### Agent description
 
 Transform 45 oversized components (>300 lines) into focused, composable components (≤300 lines each) through hook extraction, component composition, and responsibility separation.
 
@@ -121,14 +121,14 @@ output: "_bmad-output/component-analysis/agent-config-dialog-analysis-{timestamp
 
 ### Hook Extraction
 1. **{hook_name}**
-   - **Purpose**: {hook_responsibility}
+   - **description**: {hook_responsibility}
    - **Lines**: {start_line}-{end_line} ({num_lines} lines)
    - **Dependencies**: {hook_dependencies}
    - **Estimated Size**: {estimated_lines} lines
 
 ### Component Decomposition
 1. **{subcomponent_name}**
-   - **Purpose**: {subcomponent_responsibility}
+   - **description**: {subcomponent_responsibility}
    - **Lines**: {start_line}-{end_line} ({num_lines} lines)
    - **Props**: {required_props}
    - **Estimated Size**: {estimated_lines} lines

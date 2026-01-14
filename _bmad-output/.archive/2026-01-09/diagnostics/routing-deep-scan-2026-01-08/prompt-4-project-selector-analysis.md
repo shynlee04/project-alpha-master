@@ -265,7 +265,7 @@ export function useProjectsByWorkspace(workspaceType: keyof WorkspaceBindings) {
 
 ## 6. Files Referenced
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/presentation/components/project/ProjectSelector.tsx` | Main project selector dropdown |
 | `src/presentation/components/hub/MobileProjectSelector.tsx` | Mobile demo selector |

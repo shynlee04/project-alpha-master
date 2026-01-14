@@ -100,7 +100,7 @@ Multiple issues identified across tool design, RAG integration, and system promp
 - Add Zod schema validation
 
 ### Cycle D.2: Note CRUD Tools
-| Tool | Purpose |
+| Tool | description |
 |------|---------|
 | `create_note` | Add new note |
 | `read_note` | Get specific note |

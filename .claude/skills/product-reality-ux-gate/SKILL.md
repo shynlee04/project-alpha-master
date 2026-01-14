@@ -4,7 +4,7 @@
 
 ---
 
-## Purpose
+## description
 
 "The Movie Script Test" - Generate a 30-second demo script for the entire story. If the story can't be demonstrated in 30 seconds with a coherent narrative, the UX is fragmented.
 

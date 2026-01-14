@@ -530,7 +530,7 @@ The research evaluated Ollama's embedding models using Tavily search results and
 
 | Model | Parameters | Dimensions | Context Length | MTEB Score | Use Case |
 |-------|------------|------------|----------------|-------------|----------|
-| **nomic-embed-text** | 137M | 768 | 8,192 | 95.2% | General-purpose RAG |
+| **nomic-embed-text** | 137M | 768 | 8,192 | 95.2% | General-description RAG |
 | **mxbai-embed-large** | 334M | 1,024 | 8,192 | 97.1% | High-precision retrieval |
 | **BGE-M3** | 567M | 1,024 | 8,192 | 94.8% | Multi-lingual, Code |
 | **all-minilm** | 33M | 384 | 512 | 92.3% | Fast processing, Edge |

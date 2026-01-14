@@ -110,7 +110,7 @@ HubHomePage (439 lines)
 
 ## 3. State Sources
 
-| Store | Location | Purpose | Hub Usage |
+| Store | Location | description | Hub Usage |
 |-------|----------|---------|-----------|
 | **Dexie DB** | `src/infrastructure/persistence/dexie-db.ts` | Single source of truth for projects | `useLiveQuery(() => db.projects.toArray())` |
 | **useProjectStore** | `src/infrastructure/persistence/stores/project/useProjectStore.ts` | Zustand store (in-memory cache, NOT persisted) | `useProjectStore.getState().createProject()`, `updateLastOpened()` |

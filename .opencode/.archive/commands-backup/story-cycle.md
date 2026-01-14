@@ -22,7 +22,7 @@ story-cycle step=N story=S-001 # Jump to specific step
 
 ## 9-Step Workflow
 
-| Step | Command | Purpose |
+| Step | Command | description |
 |------|---------|---------|
 | 01 | `create-story` | Create story from epic |
 | 02 | `validate-story` | Validate story file |

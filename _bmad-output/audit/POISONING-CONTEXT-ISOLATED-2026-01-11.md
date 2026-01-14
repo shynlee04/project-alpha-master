@@ -1,6 +1,6 @@
 # Poisoning Context Isolation Report
 **Date:** 2026-01-11
-**Purpose:** Quarantine all poisoning context sources to prevent contamination
+**description:** Quarantine all poisoning context sources to prevent contamination
 **Status:** ACTIVE - Use only approved sources
 
 ---
@@ -238,7 +238,7 @@ _ref: _bmad-ext/agents/  # CORRECT - active implementation
 
 ### Architecture
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | BMAD Architecture SSOT | `_bmad-output/architecture/BMAD-ARCHITECTURE-SSOT-2026-01-11.md` | ONLY authoritative ADR source |
 | True Use Cases | `_bmad-output/architecture/TRUE-USE-CASES-2026-01-11.md` | Ground truth implementation |
@@ -246,21 +246,21 @@ _ref: _bmad-ext/agents/  # CORRECT - active implementation
 
 ### Epics and Stories
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | Remediated Epics | `_bmad-output/architecture/EPICS-REMEDIATED-2026-01-11.md` | ONLY epic/story source |
 | Story Index | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` | Story tracking |
 
 ### Sprint Planning
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` | ONLY sprint status |
 | Remediated Sprint Plan | `_bmad-output/sprint-artifacts/sprint-plan-REMEDIATED-2026-01-11.md` | Chronological sprints |
 
 ### Remediation
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | Poisoning Context | `_bmad-output/architecture/POISONING-CONTEXT-2026-01-11.md` | Detailed poisoning analysis |
 | Epic/Story Remediation | `_bmad-output/architecture/EPIC-STORY-REMEDIATION-2026-01-11.md` | Remediation phases |

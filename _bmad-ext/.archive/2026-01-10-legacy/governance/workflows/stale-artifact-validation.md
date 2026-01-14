@@ -4,7 +4,7 @@
 **Version**: 2.0.0
 **Created**: 2026-01-06
 **Updated**: 2026-01-06
-**Purpose**: HARD-WIRED stale artifact detection → auto context recovery → user approval gate
+**description**: HARD-WIRED stale artifact detection → auto context recovery → user approval gate
 **Enforcement**: PRE-EXECUTION HOOK (Claude Code + OpenCode)
 
 ---

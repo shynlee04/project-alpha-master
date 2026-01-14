@@ -23,7 +23,7 @@ A local-first, AI-powered development environment where users can:
 ## Technology Stack
 
 ### Core Framework
-| Technology | Version | Purpose |
+| Technology | Version | description |
 |------------|---------|---------|
 | React | 19.2.3 | UI Framework |
 | TanStack Router | 1.144.0 | File-based routing |
@@ -32,7 +32,7 @@ A local-first, AI-powered development environment where users can:
 | TypeScript | Latest | Language |
 
 ### State & Persistence
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | Zustand | v5 client state management |
 | Dexie | IndexedDB wrapper |
@@ -40,7 +40,7 @@ A local-first, AI-powered development environment where users can:
 | Event Emitter 3 | Event bus |
 
 ### UI Components
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | Radix UI | Headless component primitives |
 | Tailwind CSS v4 | Utility-first styling |
@@ -50,14 +50,14 @@ A local-first, AI-powered development environment where users can:
 | cmdk | Command palette |
 
 ### Editor & Terminal
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | Monaco Editor | Code editor (VS Code core) |
 | XTerm.js | Terminal emulation |
 | @xterm/addon-fit | Terminal resize |
 
 ### AI Integration
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | TanStack AI | LLM abstraction layer |
 | Anthropic SDK | Claude API |
@@ -65,33 +65,33 @@ A local-first, AI-powered development environment where users can:
 | @xenova/transformers | Client-side embeddings |
 
 ### Web Container
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | @webcontainer/api | StackBlitz WebContainer |
 | isomorphic-git | Git operations in browser |
 
 ### Vector & Search
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | Orama | WASM vector database |
 | Orama Plugin Data Persistence | Vector persistence |
 
 ### Testing
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | Vitest | Unit testing |
 | Playwright | E2E testing |
 | @testing-library/react | Component testing |
 
 ### Internationalization
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | i18next | i18n framework |
 | react-i18next | React bindings |
 | i18next-browser-languagedetector | Language detection |
 
 ### Observability
-| Technology | Purpose |
+| Technology | description |
 |------------|---------|
 | Sentry React | Error tracking |
 

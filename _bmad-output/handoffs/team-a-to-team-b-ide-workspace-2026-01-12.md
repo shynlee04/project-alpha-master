@@ -4,7 +4,7 @@
 # Created: 2026-01-12T06:00:00+07:00
 # From: Team A
 # To: Team B
-# Purpose: ReactNodeViewRenderer Error Resolution Handoff
+# description: ReactNodeViewRenderer Error Resolution Handoff
 ---
 
 ## Summary
@@ -109,7 +109,7 @@ ReactNodeViewRenderer 'Cannot find node position' Error
 
 ### Files Team A Modified (Reference)
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/routes/notes.lazy.tsx` | Default note creation with proper Block structure |
 | `src/lib/utils/mobile-error-handling.ts` | Mobile redirect function |

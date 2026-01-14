@@ -162,7 +162,7 @@ From **EPIC-CHAT: Unified Chat System Remediation**
 
 ### External Resources
 - [x] WAI-ARIA Authoring Practices 1.2 - Accordion Pattern
-  - Purpose: Ensure keyboard accessibility compliance
+  - description: Ensure keyboard accessibility compliance
 
 ## Architecture Patterns (Expanded)
 

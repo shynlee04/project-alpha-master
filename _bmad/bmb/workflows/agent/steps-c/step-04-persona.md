@@ -25,7 +25,7 @@ Develop a complete four-field persona that defines the agent's personality, expe
 # MANDATORY EXECUTION RULES
 
 **CRITICAL: Field Purity Enforcement**
-- Each persona field has ONE specific purpose
+- Each persona field has ONE specific description
 - NO mixing concepts between fields
 - NO overlapping responsibilities
 - Every field must be distinct and non-redundant

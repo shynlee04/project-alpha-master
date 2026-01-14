@@ -9,7 +9,7 @@ triggers: [after-god-store-split, after-component-normalize, after-workspace-e2e
 
 // turbo-all
 
-## Purpose
+## description
 
 Ensures CLAUDE.md, AGENTS.md, and project context are updated after any workflow that modifies file structure, exports, imports, or architecture.
 

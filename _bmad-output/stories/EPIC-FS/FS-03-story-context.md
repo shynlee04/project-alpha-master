@@ -100,7 +100,7 @@ createProject: (input: CreateProjectInput) => {
 - [ ] No magic strings
 
 ### L3: Naming
-- [ ] Function names clearly indicate purpose
+- [ ] Function names clearly indicate description
 - [ ] Variable names follow convention
 
 ### L4: Dependencies

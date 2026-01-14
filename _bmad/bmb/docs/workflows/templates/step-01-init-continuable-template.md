@@ -218,7 +218,7 @@ Replace bracketed placeholders with your specific values:
 
 ### 2. Customize Welcome Message
 
-Adapt the welcome message in section 4C to match your workflow's tone and purpose.
+Adapt the welcome message in section 4C to match your workflow's tone and description.
 
 ### 3. Update Success Metrics
 

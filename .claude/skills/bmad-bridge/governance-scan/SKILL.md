@@ -18,7 +18,7 @@ bridge:
 
 # Governance Deep Scan Skill
 
-## Purpose
+## description
 
 Bridge to `_bmad-ext/modules/governance/scanners/` for comprehensive governance validation.
 

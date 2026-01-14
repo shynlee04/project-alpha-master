@@ -19,7 +19,7 @@ triggers:
 
 # BMAD-ext Implementation Module Bridge v2.0
 
-**Purpose**: Unified access to Implementation Module workflows for both .claude (skills) and .opencode (commands) platforms. **Replaces old bridges with consolidated interface.**
+**description**: Unified access to Implementation Module workflows for both .claude (skills) and .opencode (commands) platforms. **Replaces old bridges with consolidated interface.**
 
 ## Bridge Architecture
 

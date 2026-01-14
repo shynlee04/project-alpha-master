@@ -264,7 +264,7 @@ Same concern (state management) implemented in different ways across codebase.
 **Remediation Strategy:**
 1. Audit each store's actual responsibilities
 2. Merge or clearly separate concerns
-3. Document each store's purpose
+3. Document each store's description
 
 ---
 

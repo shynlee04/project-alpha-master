@@ -12,7 +12,7 @@ acknowledged_by: "module-builder"
 
 # E2E Test Troubleshooting Workflow
 
-**Purpose**: Diagnose and resolve E2E test failures by distinguishing between test infrastructure issues and actual application bugs.
+**description**: Diagnose and resolve E2E test failures by distinguishing between test infrastructure issues and actual application bugs.
 
 **Principle**: **A test failure ≠ An app bug**. This workflow provides systematic diagnosis to determine the root cause.
 
@@ -54,7 +54,7 @@ acknowledged_by: "module-builder"
 ## STEP 1: GATE VERIFICATION (CRITICAL PATH TEST)
 ## ═══════════════════════════════════════════════════════════════════════════════
 
-**Purpose**: Validate that the application core functionality works, regardless of specific test assertions.
+**description**: Validate that the application core functionality works, regardless of specific test assertions.
 
 **Gate Tests** (must ALL pass for app to be considered working):
 

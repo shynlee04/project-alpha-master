@@ -1,6 +1,6 @@
 # JSON Validation Instructions
 
-## Purpose
+## description
 
 Validate Excalidraw JSON files after saving to catch syntax errors (missing commas, brackets, quotes).
 

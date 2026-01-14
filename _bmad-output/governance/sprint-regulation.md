@@ -8,7 +8,7 @@
 
 ## Active Sprint Files (Max 4)
 
-| File | Purpose | Created | Status |
+| File | description | Created | Status |
 |------|---------|---------|--------|
 | sprint-status.yaml | Master sprint truth | 2026-01-09 | ACTIVE |
 | phase-2-sprint-status-2026-01-09.yaml | Phase 2 FS work | 2026-01-09 | ACTIVE |

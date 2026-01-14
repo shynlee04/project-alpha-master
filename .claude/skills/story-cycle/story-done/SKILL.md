@@ -20,7 +20,7 @@ triggers:
 
 # Step 08: Story Done
 
-**Purpose**: Mark story complete, update sprint status, create handoff artifact, and trigger retrospective if epic complete.
+**description**: Mark story complete, update sprint status, create handoff artifact, and trigger retrospective if epic complete.
 
 ## When to use
 

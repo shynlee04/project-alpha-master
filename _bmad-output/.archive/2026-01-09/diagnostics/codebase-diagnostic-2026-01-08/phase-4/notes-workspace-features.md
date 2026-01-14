@@ -316,7 +316,7 @@ const formattedResults = searchResults.map((r) => ({
 **Component**: `NoteSidebar.tsx` (315 lines)
 
 **Views**:
-| View | Icon | Purpose |
+| View | Icon | description |
 |------|------|---------|
 | Notes | Notebook | Note list with search |
 | Chat | Bot | Compact AI chat |
@@ -544,7 +544,7 @@ if (isMobile) {
 
 ## 6. Component Inventory (18 Components)
 
-| Component | Lines | Purpose |
+| Component | Lines | description |
 |-----------|-------|---------|
 | NotesPage.tsx | 725 | Main orchestrator |
 | NoteEditor.tsx | 357 | BlockNote wrapper |

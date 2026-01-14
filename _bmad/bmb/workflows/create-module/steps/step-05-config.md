@@ -145,9 +145,9 @@ module_version:
 
 ### 4. Design Configuration for Your Module
 
-"**Based on your module's purpose, consider these potential configurations:"
+"**Based on your module's description, consider these potential configurations:"
 
-[Suggest relevant configurations based on module type and purpose]
+[Suggest relevant configurations based on module type and description]
 
 "**Which of these apply to your module?**
 - [Present options relevant to the specific module]
@@ -165,14 +165,14 @@ Update module-plan.md with configuration section:
 
 1. **[field_name]**
    - Type: [INTERACTIVE/STATIC]
-   - Purpose: [what it controls]
+   - description: [what it controls]
    - Default: [default value]
    - Input Type: [text/single-select/multi-select]
    - Prompt: [user prompt if interactive]
 
 2. **[field_name]**
    - Type: [INTERACTIVE/STATIC]
-   - Purpose: [what it controls]
+   - description: [what it controls]
    - Default: [default value]
    - Input Type: [text/single-select/multi-select]
    - Prompt: [user prompt if interactive]

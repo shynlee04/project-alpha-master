@@ -75,7 +75,7 @@ Target: `{target_workflow_name}`
 
 **Reference Standard:** Analysis based on `{intentSpectrum}`
 
-This step will help ensure your workflow's approach to LLM guidance is intentional and appropriate for its purpose..."
+This step will help ensure your workflow's approach to LLM guidance is intentional and appropriate for its description..."
 
 ### 2. Spectrum Position Analysis
 
@@ -101,7 +101,7 @@ Provide specific evidence from the workflow analysis:
 **C. Workflow Type Analysis:**
 "**Workflow Type Analysis:**
 
-- **Primary Purpose:** {workflow's main goal}
+- **Primary description:** {workflow's main goal}
 - **User Expectations:** {What users likely expect from this workflow}
 - **Success Factors:** {What makes this workflow successful}
 - **Risk Level:** {Compliance, safety, or risk considerations}"
@@ -110,14 +110,14 @@ Provide specific evidence from the workflow analysis:
 
 **A. Expert Recommendation:**
 "**My Professional Recommendation:**
-Based on the workflow's purpose, user needs, and implementation, I recommend positioning this workflow as:
+Based on the workflow's description, user needs, and implementation, I recommend positioning this workflow as:
 
 **[Highly Intent-Based / Balanced Middle / Highly Prescriptive]**"
 
 **B. Recommendation Rationale:**
 "**Reasoning for Recommendation:**
 
-- **Purpose Alignment:** {Why this position best serves the workflow's goals}
+- **description Alignment:** {Why this position best serves the workflow's goals}
 - **User Experience:** {How this positioning enhances user interaction}
 - **Risk Management:** {How this position addresses any compliance or safety needs}
 - **Success Optimization:** {Why this approach will lead to better outcomes}"
@@ -199,7 +199,7 @@ Append to {complianceReportFile}:
 
 **Recommended Position:** [Professional recommendation]
 **Reasoning:** [Detailed rationale for recommendation]
-**Workflow Type Considerations:** [Specific to this workflow's purpose]
+**Workflow Type Considerations:** [Specific to this workflow's description]
 
 ### User Decision
 

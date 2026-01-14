@@ -4,7 +4,7 @@
 
 ## Available Utilities
 
-| Utility | File | Purpose |
+| Utility | File | description |
 |---------|------|---------|
 | **Stale Check** | `_stale-check.md` | Validate file freshness before development |
 | **Correct Course** | `_correct-course.md` | Recovery handler when story is stuck |

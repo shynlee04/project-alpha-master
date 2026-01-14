@@ -81,7 +81,7 @@ The project currently implements a **2-layer agent system** inspired by Roo Code
 **Layer 1: Tool Constitution (Hidden, Always Sent)**
 - Location: [`src/lib/agent/system-prompt.ts`](src/lib/agent/system-prompt.ts)
 - Constant: `TOOL_CONSTITUTION`
-- Purpose: Defines rules for tool usage, safety boundaries, and execution constraints
+- description: Defines rules for tool usage, safety boundaries, and execution constraints
 - Always included in system prompt, never shown to user
 - Content: Tool safety rules, file operation constraints, error handling protocols
 
@@ -91,7 +91,7 @@ The project currently implements a **2-layer agent system** inspired by Roo Code
   - `MODE_SOLO_DEV`: Quick Flow Solo Dev persona
   - `MODE_CODE`: Code executor persona
 - Properties: `cognitivePhase`, `persona`, `communicationStyle`, `rules`
-- Purpose: Defines agent's cognitive approach, personality, and interaction patterns
+- description: Defines agent's cognitive approach, personality, and interaction patterns
 - User can select mode via UI
 - Included in system prompt as: "You are in MODE_SOLO_DEV mode..."
 
@@ -151,7 +151,7 @@ export const DEFAULT_AGENT_CONFIG: AgentConfig = {
 **Credential Vault:**
 - Location: [`src/lib/agent/providers/credential-vault.ts`](src/lib/agent/providers/credential-vault.ts)
 - Storage: IndexedDB via Dexie
-- Purpose: Secure storage of API keys
+- description: Secure storage of API keys
 - Features: Per-provider credential management, encryption, retrieval
 
 ### 1.4 Agent Tools and Facades
@@ -166,7 +166,7 @@ export const DEFAULT_AGENT_CONFIG: AgentConfig = {
 
 **Agent Tool Facades:**
 - Location: [`src/lib/agent/facades/`](src/lib/agent/facades/)
-- Purpose: Abstract WebContainer operations for safe agent interactions
+- description: Abstract WebContainer operations for safe agent interactions
 - Key Facades:
   - [`AgentFileTools`](src/lib/agent/facades/file-tools.ts): File operations
   - [`AgentTerminalTools`](src/lib/agent/facades/terminal-tools.ts): Terminal operations
@@ -255,7 +255,7 @@ export const DEFAULT_AGENT_CONFIG: AgentConfig = {
 
 **Agentic Loop Limitation:**
 - **maxIterations(3)**: Currently enforced in [`useAgentChatWithTools.ts`](src/lib/agent/hooks/use-agent-chat-with-tools.ts)
-- **Purpose**: Temporary safety measure during MVP-3/MVP-4 validation
+- **description**: Temporary safety measure during MVP-3/MVP-4 validation
 - **Impact**: Agents terminate after 3 tool execution iterations to prevent infinite loops
 - **Future**: Complete agentic loop with state tracking, iteration UI, and intelligent termination planned for Epic 29
 - **Reference**: See [`_bmad-output/epics/epic-29-agentic-execution-loop.md`](_bmad-output/epics/epic-29-agentic-execution-loop.md)
@@ -412,7 +412,7 @@ Based on research from Tavily, Exa, and industry best practices for 2025:
     - Use appropriate error handling for all operations
     
     # Tool Usage Guidelines
-    - Use tools for their intended purpose (read for inspection, write for modifications)
+    - Use tools for their intended description (read for inspection, write for modifications)
     - Prefer read operations over write operations when possible
     - Use list operations to understand structure before acting
     - Execute commands with proper working directory context
@@ -451,7 +451,7 @@ Based on research from Tavily, Exa, and industry best practices for 2025:
 
 **Layer 3: Context/Prompt Injection Layer**
 - **Status**: ❌ Not Implemented
-- **Purpose**: Inject dynamic context from RAG, project state, or user preferences
+- **description**: Inject dynamic context from RAG, project state, or user preferences
 - **Use Cases**:
   - RAG context: "Here's relevant documentation from your knowledge base..."
   - Project state: "Current project state: 3 files open, 2 active threads..."
@@ -463,7 +463,7 @@ Based on research from Tavily, Exa, and industry best practices for 2025:
 
 **Layer 4: Task-Specific Instructions Layer**
 - **Status**: ❌ Not Implemented
-- **Purpose**: Provide per-task guidance or constraints
+- **description**: Provide per-task guidance or constraints
 - **Use Cases**:
   - Security constraints: "For this task, do not access files outside the project directory..."
   - Performance requirements: "Generate efficient code, avoid unnecessary computations..."
@@ -475,7 +475,7 @@ Based on research from Tavily, Exa, and industry best practices for 2025:
 
 **Layer 5: Hidden System Directives Layer**
 - **Status**: ❌ Not Implemented
-- **Purpose**: Enforce system-wide rules, compliance, or orchestration constraints
+- **description**: Enforce system-wide rules, compliance, or orchestration constraints
 - **Use Cases**:
   - Safety rules: "Never execute commands that could damage the system..."
   - Compliance rules: "Ensure all code changes follow security policies..."
@@ -548,7 +548,7 @@ User Request → ChatPanel
 
 **Chatflow:**
 - **Definition**: Dynamic composition of agent definition layers at API request time
-- **Purpose**: Enable per-request agent customization without hardcoding
+- **description**: Enable per-request agent customization without hardcoding
 - **Components**: System prompt builder, layer composer, prompt injector
 - **Current State**: Not implemented - uses static 2-layer system
 
@@ -569,7 +569,7 @@ User Request → ChatPanel
 
 **1. System Prompt Composer**
 - **Location**: New file: `src/lib/agent/chatflow/system-prompt-composer.ts`
-- **Purpose**: Dynamically compose system prompt from multiple layers
+- **description**: Dynamically compose system prompt from multiple layers
 - **Interface**:
   ```typescript
   interface SystemPromptComposer {
@@ -585,7 +585,7 @@ User Request → ChatPanel
 
 **2. Layer Registry**
 - **Location**: New file: `src/lib/agent/chatflow/layer-registry.ts`
-- **Purpose**: Central registry of available layers
+- **description**: Central registry of available layers
 - **Interface**:
   ```typescript
   interface LayerDefinition {
@@ -607,7 +607,7 @@ User Request → ChatPanel
 
 **3. Prompt Context Manager**
 - **Location**: New file: `src/lib/agent/chatflow/prompt-context-manager.ts`
-- **Purpose**: Track and provide context for layer composition
+- **description**: Track and provide context for layer composition
 - **Interface**:
   ```typescript
   interface PromptContext {
@@ -626,7 +626,7 @@ User Request → ChatPanel
 
 **4. API Endpoint Enhancement**
 - **Location**: Modify [`src/routes/api/chat.ts`](src/routes/api/chat.ts)
-- **Purpose**: Support chatflow composition at request time
+- **description**: Support chatflow composition at request time
 - **Interface Changes**:
   ```typescript
   // Add new request body structure
@@ -644,7 +644,7 @@ User Request → ChatPanel
 
 **5. Agent Configuration UI Enhancements**
 - **Location**: Modify [`src/components/agent/AgentConfigDialog.tsx`](src/components/agent/AgentConfigDialog.tsx)
-- **Purpose**: Expose chatflow configuration options
+- **description**: Expose chatflow configuration options
 - **Features**:
   - Layer selector UI
   - Custom layer creation interface
@@ -656,7 +656,7 @@ User Request → ChatPanel
 
 **New Stores Required:**
 - **Location**: New file: `src/stores/chatflow-store.ts`
-- **Purpose**: Persist chatflow configuration and state
+- **description**: Persist chatflow configuration and state
 - **Interface**:
   ```typescript
   interface ChatflowStore {

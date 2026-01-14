@@ -29,7 +29,7 @@ This document identifies orphaned, unused, and unclear files across the codebase
 **Analysis:**
 - Found in test files only
 - No production consumers
-- Purpose: Auto-restore conversation state
+- description: Auto-restore conversation state
 
 **Status:** Orphaned from production code
 
@@ -51,12 +51,12 @@ This document identifies orphaned, unused, and unclear files across the codebase
 - Potential redundancy with file watching in other stores
 - Unclear ownership
 
-**Status:** Unclear purpose
+**Status:** Unclear description
 
 **Recommendation:**
 1. Audit actual usage via `grep -r "file-watcher-store" src/`
 2. If redundant: Merge into appropriate store
-3. If needed: Document purpose and consumers
+3. If needed: Document description and consumers
 
 ---
 
@@ -69,7 +69,7 @@ This document identifies orphaned, unused, and unclear files across the codebase
 **Analysis:**
 - Zero production consumers
 - Zero test consumers
-- Purpose unclear from name
+- description unclear from name
 
 **Status:** Fully orphaned
 

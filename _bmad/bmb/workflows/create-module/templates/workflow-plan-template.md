@@ -15,7 +15,7 @@ Copy the content from step-07-workflows.md when creating workflow plans. The tem
 
 ## Required Sections
 
-- Purpose
+- description
 - Requirements (User Inputs, Prerequisites, Dependencies)
 - Proposed Steps
 - Expected Outputs

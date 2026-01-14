@@ -94,7 +94,7 @@ Save to: `phase-1/journey-hub-to-notes.md`
 **File:** src/lib/workspace/workspace-access-helper.tsx
 
 **Hooks Used:**
-| Hook | Purpose | Dependencies | Risk |
+| Hook | description | Dependencies | Risk |
 
 **Status Flow:**
 [loading] → query db.projects

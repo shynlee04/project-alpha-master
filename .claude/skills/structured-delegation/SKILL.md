@@ -51,7 +51,7 @@ Before delegating, verify:
 ### Phase 2: Delegation
 The handoff payload must include:
 
-| Field | Purpose | Required? |
+| Field | description | Required? |
 |-------|---------|-----------|
 | `handoff_id` | Unique UUID for this delegation | ✅ Yes |
 | `parent_id` | Parent handoff for chaining | ✅ Yes* |

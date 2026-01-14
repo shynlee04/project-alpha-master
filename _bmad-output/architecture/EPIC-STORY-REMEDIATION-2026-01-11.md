@@ -1,6 +1,6 @@
 # Epic and Story Remediation Plan
 **Date:** 2026-01-11
-**Purpose:** Remediate epics and stories based on true architecture
+**description:** Remediate epics and stories based on true architecture
 **Status:** ACTIVE - Iterative Phases
 
 ---

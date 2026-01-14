@@ -1,6 +1,6 @@
 # Poisoning Context Report
 **Date:** 2026-01-11
-**Purpose:** Identify and document false/poisoning context for removal
+**description:** Identify and document false/poisoning context for removal
 **Status:** ACTIVE - Remediation Required
 
 ---

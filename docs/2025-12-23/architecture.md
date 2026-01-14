@@ -167,7 +167,7 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### IDE Components
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`MonacoEditor`](../src/components/ide/) | Code editing with syntax highlighting | `src/components/ide/` |
 | [`XTerminal`](../src/components/ide/) | Terminal emulation | `src/components/ide/` |
@@ -177,14 +177,14 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### Layout Components
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`IDELayout`](../src/components/layout/) | Main IDE layout with resizable panels | `src/components/layout/` |
 | [`IDEHeaderBar`](../src/components/layout/) | Top navigation bar | `src/components/layout/` |
 
 #### UI Components
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`Toast`](../src/components/ui/) | Toast notifications | `src/components/ui/` |
 
@@ -192,7 +192,7 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### State Management
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1) | Centralized workspace state | `src/lib/workspace/` |
 | [`useWorkspaceState`](../src/lib/workspace/hooks/useWorkspaceState.ts:1) | Workspace state hook | `src/lib/workspace/hooks/` |
@@ -201,7 +201,7 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### Event Coordination
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`WorkspaceEventEmitter`](../src/lib/events/workspace-events.ts:47) | Event bus | `src/lib/events/` |
 | [`useEventBusEffects`](../src/lib/workspace/hooks/useEventBusEffects.ts:1) | Event side effects | `src/lib/workspace/hooks/` |
@@ -210,7 +210,7 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### File System
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`LocalFSAdapter`](../src/lib/filesystem/local-fs-adapter.ts:1) | File System Access API wrapper | `src/lib/filesystem/` |
 | [`SyncManager`](../src/lib/filesystem/sync-manager.ts:71) | File sync coordination | `src/lib/filesystem/` |
@@ -218,7 +218,7 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### WebContainer
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`WebContainer Manager`](../src/lib/webcontainer/manager.ts:1) | WebContainer lifecycle | `src/lib/webcontainer/` |
 | [`boot()`](../src/lib/webcontainer/manager.ts:65) | Initialize WebContainer | `src/lib/webcontainer/manager.ts` |
@@ -229,14 +229,14 @@ Via-gent follows a layered architecture pattern with clear separation of concern
 
 #### Persistence
 
-| Component | Purpose | Location |
+| Component | description | Location |
 |-----------|---------|----------|
 | [`Dexie Database`](../src/lib/state/dexie-db.ts:133) | IndexedDB wrapper | `src/lib/state/` |
 | [`ProjectStore`](../src/lib/workspace/project-store.ts:1) | Project metadata operations | `src/lib/workspace/` |
 
 #### Browser APIs
 
-| API | Purpose |
+| API | description |
 |-----|---------|
 | **File System Access API** | Local file system access |
 | **IndexedDB** | Client-side persistence |
@@ -395,7 +395,7 @@ Via-gent currently uses a hybrid approach combining React Context and TanStack S
 
 ### State Variables
 
-| State | Type | Purpose |
+| State | Type | description |
 |-------|------|---------|
 | `projectMetadata` | `ProjectMetadata \| null` | Current project information |
 | `directoryHandle` | `FileSystemDirectoryHandle \| null` | FSA handle for directory access |
@@ -644,7 +644,7 @@ res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
 res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
 ```
 
-**Purpose:** Enable SharedArrayBuffer for WebContainer performance.
+**description:** Enable SharedArrayBuffer for WebContainer performance.
 
 #### File System Access API
 
@@ -656,7 +656,7 @@ type FsaPermissionState = 'granted' | 'denied' | 'prompt' | 'unknown';
 const handle = await window.showDirectoryPicker({ mode: 'readwrite' });
 ```
 
-**Purpose:** User grants explicit permission to access local files.
+**description:** User grants explicit permission to access local files.
 
 ### WebContainer Security
 

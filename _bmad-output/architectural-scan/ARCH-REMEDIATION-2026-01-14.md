@@ -113,7 +113,7 @@ The architecture is **salvageable** but requires **systematic refactoring** acro
 
 #### B.1 Context Provider Inventory
 
-| Provider | Purpose | Consumers | Re-render Risk |
+| Provider | description | Consumers | Re-render Risk |
 |----------|---------|-----------|----------------|
 | **ToastContext** | Toast notifications | 3+ | LOW |
 | **ProjectContext** | Cross-workspace project state | 5+ | MEDIUM |
@@ -134,7 +134,7 @@ The architecture is **salvageable** but requires **systematic refactoring** acro
 
 #### B.3 Event System Architecture
 
-| Event Bus | Purpose | Events | Usage |
+| Event Bus | description | Events | Usage |
 |-----------|---------|--------|-------|
 | **crossWorkspaceEventBus** | Cross-workspace sync | 15+ event types | Global state |
 | **eventBus** | IDE workspace events | 50+ event types | Local workspace |
@@ -156,7 +156,7 @@ The architecture is **salvageable** but requires **systematic refactoring** acro
 
 #### C.2 Storage Adapters
 
-| Adapter | Purpose | Status |
+| Adapter | description | Status |
 |---------|---------|--------|
 | **FSAAdapter** | File System Access (Desktop) | ACTIVE |
 | **IDBAdapter** | IndexedDB (All platforms) | ACTIVE |
@@ -229,7 +229,7 @@ The architecture is **salvageable** but requires **systematic refactoring** acro
 
 #### F.1 Layer Assessment
 
-| Layer | Purpose | Correct? | Violations |
+| Layer | description | Correct? | Violations |
 |-------|---------|----------|------------|
 | **Domain** | Business entities, value objects | Partially | Imports Infrastructure |
 | **Application** | Orchestration services | Partially | Leaks domain types |

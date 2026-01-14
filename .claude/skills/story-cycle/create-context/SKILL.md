@@ -20,7 +20,7 @@ triggers:
 
 # Step 03: Create Context
 
-**Purpose**: Build context XML for story development with all relevant files, research findings, and implementation guidance.
+**description**: Build context XML for story development with all relevant files, research findings, and implementation guidance.
 
 ## When to use
 
@@ -107,7 +107,7 @@ READ: .claude/rules/governance-rules.md
     <files_to_create>
       <file>
         <path>{path/to/file.ts}</path>
-        <purpose>{purpose}</purpose>
+        <description>{description}</description>
       </file>
     </files_to_create>
     <files_to_modify>

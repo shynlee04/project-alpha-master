@@ -7,7 +7,7 @@
 
 ---
 
-## Purpose
+## description
 
 Govern file structure, naming conventions, and change registration:
 - All new files must be registered with metadata
@@ -51,7 +51,7 @@ interface FileRegistrationReport {
 **Thresholds:**
 - `registration_required`: true (for all new files)
 - `change_log_grace_period_minutes`: 5
-- `required_metadata`: ["author", "purpose", "related_domain"]
+- `required_metadata`: ["author", "description", "related_domain"]
 
 ---
 
@@ -182,7 +182,7 @@ post_workflow_hooks:
 ```typescript
 function checkFileRegistration(filePath: string): RegistrationStatus {
   const metadata = readFileMetadata(filePath);
-  const required = ["author", "purpose", "created_at", "related_domain"];
+  const required = ["author", "description", "created_at", "related_domain"];
   const missing = required.filter(f => !metadata[f]);
 
   if (missing.length > 0) {
@@ -398,7 +398,7 @@ steps:
     action: register-files
     required_metadata:
       - author
-      - purpose
+      - description
       - related_domain
     grace_period_minutes: 5
 

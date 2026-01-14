@@ -259,7 +259,7 @@ rollback:
 
 This handoff includes the following artifacts:
 
-| Artifact | Location | Purpose |
+| Artifact | Location | description |
 |----------|----------|---------|
 | Course Correction | `EPIC-COURSE-CORRECTION-EXTENSION-2026-01-12.md` | Full epic definitions |
 | Sprint Status | `sprint-status.yaml` (updated) | Epic and story tracking |

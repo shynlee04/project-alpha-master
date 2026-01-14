@@ -68,7 +68,7 @@ Update {moduleReadmeFile} with comprehensive content:
 ````markdown
 # {module_display_name}
 
-{module_purpose}
+{module_description}
 
 ## Overview
 
@@ -92,7 +92,7 @@ bmad install {module_name}
 
 ### Workflows ({workflow_count})
 
-[List planned workflows with purposes]
+[List planned workflows with descriptions]
 
 ### Tasks ({task_count})
 
@@ -157,7 +157,7 @@ The module can be configured in `_bmad/{module_name}/config.yaml`
 
 ### Example 1: [Primary Use Case]
 
-[Step-by-step example of using the module for its main purpose]
+[Step-by-step example of using the module for its main description]
 
 1. Start the agent
 2. Provide input
@@ -220,7 +220,7 @@ Created by {user_name} on [creation date]
 
 I've generated a comprehensive README that includes:
 
-✅ **Overview** - Clear purpose and value proposition
+✅ **Overview** - Clear description and value proposition
 ✅ **Installation** - Simple install command
 ✅ **Components** - List of agents and workflows
 ✅ **Quick Start** - Getting started guide

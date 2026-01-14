@@ -1,6 +1,6 @@
 # Context First - Two-Step Hook Workflow
 
-**Purpose:** Enforce context gathering before any work proceeds
+**description:** Enforce context gathering before any work proceeds
 
 **Workflow Type:** Enforcement Check 1 of 3
 

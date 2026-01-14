@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 The Core Governance & Standards module is the central authority for all governance enforcement, platform routing, and state management across the BMAD framework. It serves as the foundation for autonomous operation with near 0% human interference.
 

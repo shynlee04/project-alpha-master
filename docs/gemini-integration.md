@@ -210,7 +210,7 @@ testGoogleApiKey(apiKey: Promise<{ valid: boolean; error?: string }>
 
 ## Files Modified
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/lib/agent/providers/gemini-adapter.ts` | Core adapter with geminiText pattern |
 | `src/domain/services/universal-provider-registry.ts` | Built-in Google provider |

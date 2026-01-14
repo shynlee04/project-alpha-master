@@ -112,7 +112,7 @@ You: @deep-scan-orchestrator Run full scan
 
 ### Agent Reference
 
-| Agent | Mode | Purpose |
+| Agent | Mode | description |
 |-------|------|---------|
 | `bmad-master` | Primary | Central orchestrator with full autonomy |
 | `bmad-sprint-manager` | Primary | Sprint planning and execution |

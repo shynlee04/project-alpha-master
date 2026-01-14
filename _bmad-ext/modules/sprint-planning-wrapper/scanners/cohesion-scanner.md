@@ -1,6 +1,6 @@
 # Cohesion Scanner
 # Sprint-Planning Wrapper - Scanner Module
-# Purpose: Detect fragmented UX, "Dual Chat" type issues, and narrative incoherence
+# description: Detect fragmented UX, "Dual Chat" type issues, and narrative incoherence
 
 version: "1.0.0"
 last_updated: "2026-01-11"

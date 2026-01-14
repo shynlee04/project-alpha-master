@@ -74,16 +74,16 @@ context_loading_required:
   # Step 1c: Read key files for understanding
   read_files:
     - path: "src/presentation/components/{Component}/{Component}.tsx"
-      purpose: "Understand existing component structure"
+      description: "Understand existing component structure"
       
     - path: "src/infrastructure/persistence/stores/{Store}/{Store}.ts"
-      purpose: "Understand store patterns"
+      description: "Understand store patterns"
       
     - path: "src/domain/types/{Type}.ts"
-      purpose: "Understand type definitions"
+      description: "Understand type definitions"
       
     - path: "src/routes/{route}/route.ts"
-      purpose: "Understand routing"
+      description: "Understand routing"
 ```
 
 ### 2. Architectural Conflict Detection (REQUIRED)
@@ -205,22 +205,22 @@ implementation_approach:
   layered_architecture_enforcement:
     domain_layer:
       files: "src/domain/{types,services}/"
-      purpose: "Business logic and type definitions"
+      description: "Business logic and type definitions"
       must_follow: "domain models standards"
       
     infrastructure_layer:
       files: "src/infrastructure/{persistence,sync}/"
-      purpose: "Data persistence and sync"
+      description: "Data persistence and sync"
       must_follow: "Dexie patterns"
       
     presentation_layer:
       files: "src/presentation/{components,hooks}/"
-      purpose: "UI components and state hooks"
+      description: "UI components and state hooks"
       must_follow: "8-bit design, component standards"
       
     routes_layer:
       files: "src/routes/"
-      purpose: "Route definitions"
+      description: "Route definitions"
       must_follow: "TanStack Router patterns"
 
   quality_requirements:
@@ -341,7 +341,7 @@ contextLoaded:
   filesRead: {count}
   keyFilesAnalyzed:
     - file: "{path}"
-      purpose: "{description}"
+      description: "{description}"
       lines: "{N}"
 
 # Architectural Conflict Detection
@@ -368,7 +368,7 @@ acceptanceCriteriaProgress:
 
 # Files Changed
 filesModified: [{path, changes_summary}]
-filesCreated: [{path, purpose}]
+filesCreated: [{path, description}]
 filesDeleted: [{path, reason}]
 
 # Tests Written

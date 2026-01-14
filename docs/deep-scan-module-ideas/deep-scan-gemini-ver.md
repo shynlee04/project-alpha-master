@@ -263,7 +263,7 @@ This framework orchestrates **multiple specialized scanning agents** that operat
 
 ### Output Artifacts (Complete Set)
 
-| Artifact | Agent | Purpose |
+| Artifact | Agent | description |
 |----------|-------|---------|
 | `store-inventory.md` | 1 | Store classification, persistence keys |
 | `store-cross-dependencies.md` | 1 | Circular import chains |

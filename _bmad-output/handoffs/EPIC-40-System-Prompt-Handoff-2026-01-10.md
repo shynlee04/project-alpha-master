@@ -169,7 +169,7 @@ const { sendMessage, messages, toolCalls, pendingApprovals, approveToolCall, rej
 | `src/domain/tools/note/types.ts` | Added generic `NoteOperationResult<T>` | ⚠️ Needs implementations updated |
 
 ### New Types Introduced
-| Type | Location | Purpose |
+| Type | Location | description |
 |------|----------|---------|
 | `AgentMode` | `@/domain/tools/tool-definition` | `'coding' \| 'knowledge' \| 'orchestrator'` |
 | `AgentModeConfig` | `system-prompt.ts` | `{ id, name, icon, prompt }` - Legacy format |

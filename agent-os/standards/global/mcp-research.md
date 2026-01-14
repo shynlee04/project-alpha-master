@@ -16,7 +16,7 @@ _Standards for conducting research using Model Context Protocol (MCP) tools. Thi
 
 ### 1.1 Available MCP Servers
 
-| MCP Server | Purpose | Use When |
+| MCP Server | description | Use When |
 |------------|---------|----------|
 | **Context7** | Official documentation queries | Library APIs, framework patterns, official guides |
 | **Deepwiki** | Semantic tech stack questions | Architecture decisions, repo wikis, TanStack/WebContainer |

@@ -124,7 +124,7 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 ```
 
 ### 10. ESSENTIAL FILES (Read These First)
-| File | Purpose | When |
+| File | description | When |
 |------|---------|------|
 | `_bmad-ext/orchestrator/master-orchestrator.md` | Central brain | Every session |
 | `_bmad-ext/orchestrator/routing-rules.yaml` | Agent routing | Before delegating |
@@ -280,7 +280,7 @@ import { formatDate } from './utils';
 
 ### Key Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/infrastructure/persistence/file-adapters/` | FSA/IDB adapters |
 | `src/infrastructure/persistence/stores/note-store.ts` | Notes state |

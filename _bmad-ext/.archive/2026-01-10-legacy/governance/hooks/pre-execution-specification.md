@@ -3,7 +3,7 @@
 **Workflow ID**: `@bmad/modules/governance/hooks/pre-execution`
 **Version**: 1.0.0
 **Created**: 2026-01-06
-**Purpose**: HARD-WIRED artifact freshness validation BEFORE any workflow execution
+**description**: HARD-WIRED artifact freshness validation BEFORE any workflow execution
 **Enforcement**: PRE-EXECUTION HOOK (Claude Code + OpenCode)
 
 ---
@@ -62,7 +62,7 @@ HARD_WIRED_STOP_CONDITION:
 # ============================================================
 # Claude Code Pre-Execution Hook - Stale Artifact Validation
 # ============================================================
-# Purpose: HARD-WIRED check for stale artifacts before ANY execution
+# description: HARD-WIRED check for stale artifacts before ANY execution
 # Triggered: Before every user message is sent to Claude
 # Blocks: Workflow execution until user approves stale context
 # ============================================================
@@ -270,7 +270,7 @@ main "$@"
 # ============================================================
 # OpenCode Pre-Execution Hook - Stale Artifact Validation
 # ============================================================
-# Purpose: HARD-WIRED check for stale artifacts before ANY execution
+# description: HARD-WIRED check for stale artifacts before ANY execution
 # Triggered: Before every user message is sent to OpenCode
 # Blocks: Workflow execution until user approves stale context
 # ============================================================

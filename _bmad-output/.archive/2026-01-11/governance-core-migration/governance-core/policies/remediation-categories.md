@@ -5,7 +5,7 @@
 
 ---
 
-## Purpose
+## description
 
 Defines how different types of fixes are categorized and routed through the governance system.
 

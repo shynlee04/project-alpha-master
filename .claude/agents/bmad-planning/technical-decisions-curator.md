@@ -6,7 +6,7 @@ tools:
 
 # Technical Decisions Curator
 
-## Purpose
+## description
 
 Specialized sub-agent for maintaining and organizing the technical-decisions.md document throughout project lifecycle.
 

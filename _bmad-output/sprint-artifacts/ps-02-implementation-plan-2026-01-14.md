@@ -339,7 +339,7 @@ pnpm build              # Expected: Build succeeds
 
 ## 📦 Files to Create
 
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | `adapters/__tests__/storage-adapter.test.ts` | Interface compliance tests | 100 |
 | `adapters/__tests__/factory.test.ts` | Factory pattern tests | 80 |

@@ -2,7 +2,7 @@
 
 **Created**: 2026-01-11
 **Version**: 1.0.0
-**Purpose**: Complete integration of BMAD-ext modules with Claude Code
+**description**: Complete integration of BMAD-ext modules with Claude Code
 
 ## Overview
 
@@ -54,7 +54,7 @@ _bmad-ext/
 
 ### 1. BMAD-EXT Bridge Master (bmad-ext-bridge/SKILL.md)
 
-**Purpose**: Unified gateway to all BMAD-ext modules
+**description**: Unified gateway to all BMAD-ext modules
 
 **Provides**:
 - Module status dashboard
@@ -70,7 +70,7 @@ _bmad-ext/
 
 ### 2. Module Builder (module-builder/SKILL.md)
 
-**Purpose**: Create and manage BMAD-ext modules
+**description**: Create and manage BMAD-ext modules
 
 **Capabilities**:
 - Generate module structure from templates
@@ -87,7 +87,7 @@ _bmad-ext/
 
 ### 3. Workflow Builder (workflow-builder/SKILL.md)
 
-**Purpose**: Create and manage BMAD-ext workflows
+**description**: Create and manage BMAD-ext workflows
 
 **Capabilities**:
 - Generate workflow structure
@@ -104,7 +104,7 @@ _bmad-ext/
 
 ### 4. Agent Builder (agent-builder/SKILL.md)
 
-**Purpose**: Create and manage BMAD-ext agents
+**description**: Create and manage BMAD-ext agents
 
 **Capabilities**:
 - Generate agent structure

@@ -507,7 +507,7 @@ agent-os/
 
 ### Root-Level Configuration
 
-| File | Purpose | Technology |
+| File | description | Technology |
 |------|---------|------------|
 | [`package.json`](package.json:1) | Dependencies, scripts, metadata | npm/pnpm |
 | [`vite.config.ts`](vite.config.ts:1) | Build configuration, plugins, headers | Vite |
@@ -528,7 +528,7 @@ agent-os/
 
 ### Application Entrypoints
 
-| Location | Type | Purpose |
+| Location | Type | description |
 |----------|------|---------|
 | [`src/router.tsx`](src/router.tsx:1) | Router factory | TanStack Router initialization |
 | [`src/routes/__root.tsx`](src/routes/__root.tsx:1) | Root route | App shell with providers |
@@ -537,7 +537,7 @@ agent-os/
 
 ### Library Entrypoints
 
-| Location | Type | Purpose |
+| Location | Type | description |
 |----------|------|---------|
 | [`src/lib/webcontainer/manager.ts`](src/lib/webcontainer/manager.ts:1) | WebContainer manager | Singleton WebContainer lifecycle |
 | [`src/lib/filesystem/sync-manager.ts`](src/lib/filesystem/sync-manager.ts:1) | Sync manager | File synchronization orchestration |

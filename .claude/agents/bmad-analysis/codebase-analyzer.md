@@ -41,8 +41,8 @@ Start with high-level structure discovery using file patterns and directory orga
 
 Provide structured analysis with:
 
-- **Project Overview**: Purpose, domain, primary technologies
-- **Directory Structure**: Annotated tree with purpose of each major directory
+- **Project Overview**: description, domain, primary technologies
+- **Directory Structure**: Annotated tree with description of each major directory
 - **Technology Stack**: Languages, frameworks, databases, tools with versions
 - **Architecture Patterns**: Identified patterns with examples and locations
 - **Key Components**: Entry points, core modules, critical services

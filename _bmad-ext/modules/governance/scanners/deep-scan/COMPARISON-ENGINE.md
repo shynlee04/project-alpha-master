@@ -1,7 +1,7 @@
 # Governance Deep Scan - Comparison Engine
 
 **Scanner Type**: Core Engine  
-**Purpose**: Compare artifacts/documents against actual codebase to detect staleness and drift  
+**description**: Compare artifacts/documents against actual codebase to detect staleness and drift  
 **Triggered By**: 
 - Governance cycle execution
 - Artifact creation/update
@@ -10,7 +10,7 @@
 
 ---
 
-## Purpose
+## description
 
 The Comparison Engine is the **core mechanism** that makes governance meaningful. Without it, governance is just checking timestamps. With it, governance can:
 
@@ -115,7 +115,7 @@ comparison_step_3:
 
 ### Method 1: Structural Comparison
 
-**Purpose**: Check if file/folder structure matches documentation
+**description**: Check if file/folder structure matches documentation
 
 ```yaml
 structural_comparison:
@@ -143,7 +143,7 @@ structural_comparison:
 
 ### Method 2: Semantic Comparison
 
-**Purpose**: Check if code behavior matches documented behavior
+**description**: Check if code behavior matches documented behavior
 
 ```yaml
 semantic_comparison:
@@ -167,7 +167,7 @@ semantic_comparison:
 
 ### Method 3: Contract Comparison
 
-**Purpose**: Check if API contracts match implementation
+**description**: Check if API contracts match implementation
 
 ```yaml
 contract_comparison:
@@ -191,7 +191,7 @@ contract_comparison:
 
 ### Method 4: State Comparison
 
-**Purpose**: Check if state management matches documented patterns
+**description**: Check if state management matches documented patterns
 
 ```yaml
 state_comparison:

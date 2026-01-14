@@ -198,7 +198,7 @@ When receiving context (code tree, screenshots, epic/stories):
 ## 🔗 ESSENTIAL REFERENCES
 
 ### Files to Read (Use `@read`)
-| Command | Purpose |
+| Command | description |
 |---------|---------|
 | `@read bmm-workflow-status.yaml` | Sprint status |
 | `@read AGENTS.md` | Project governance |

@@ -111,7 +111,7 @@ Shows menu and waits for user input:
 
 ## LOOP_STATE Hierarchy
 
-| Level | File | Purpose |
+| Level | File | description |
 |-------|------|---------|
 | **Grandparent** | `LOOP_STATE-grandparent.yaml` | Strategic: sprint, quarterly goals |
 | **Parent** | `LOOP_STATE-parent.yaml` | Tactical: epics, course correction |

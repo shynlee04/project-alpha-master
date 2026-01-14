@@ -320,7 +320,7 @@ DEFER NOTE: This is NOT MVP. Defer to Phase 4 (Type Safety) after core BYOK work
 
 ### 5.1 Files to CREATE
 
-| File | Purpose | Lines | Story |
+| File | description | Lines | Story |
 |------|---------|-------|-------|
 | `domain/schemas/credential-schemas.ts` | Zod schemas for key validation | 50 | BYOK-02 |
 | `infrastructure/persistence/stores/providers/credentials/crud-slice.ts` | Focused CRUD operations | 100 | BYOK-02 |
@@ -345,7 +345,7 @@ DEFER NOTE: This is NOT MVP. Defer to Phase 4 (Type Safety) after core BYOK work
 
 ### 5.4 Files to REFERENCE (No Changes)
 
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `credential-vault.ts` | Core encryption - working correctly | ✅ |
 | `credential-encryption.ts` | AES-256-GCM - working correctly | ✅ |

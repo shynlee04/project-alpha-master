@@ -31,7 +31,7 @@ The system prompt is split into TWO layers:
 
 ## Layer 1: Orchestrator System Prompt
 
-### Purpose
+### description
 - **Not an executor** - it's a router/classifier
 - Analyzes 4 context sources for mode scoring
 - Responds conversationally about mode choice

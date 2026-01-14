@@ -18,7 +18,7 @@
 
 ## Quick Reference
 
-| Category | Technology | Purpose |
+| Category | Technology | description |
 |----------|------------|---------|
 | **Frontend** | React 19, TanStack Router | Routing, UI |
 | **State** | Zustand v5, Dexie | Client state, IndexedDB |
@@ -80,7 +80,7 @@
 
 ## Workspaces
 
-| Workspace | Purpose | Status |
+| Workspace | description | Status |
 |-----------|---------|--------|
 | **IDE** | Code editing, terminal, file tree | Production |
 | **Knowledge** | RAG, document synthesis, canvas | Production |

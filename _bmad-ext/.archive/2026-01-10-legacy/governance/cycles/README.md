@@ -7,7 +7,7 @@ created: 2026-01-09T20:40:00+07:00
 
 # Governance Cycles - Master Index
 
-## Purpose
+## description
 
 Reduce context poisoning through structured artifact management and workflow enforcement.
 

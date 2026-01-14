@@ -50,7 +50,7 @@ partyModeWorkflow: '{project-root}/_bmad/core/workflows/party-mode/workflow.md'
 
 ## STEP GOAL:
 
-To design the component architecture for the module, determining what agents, workflows, and tasks are needed to fulfill the module's purpose.
+To design the component architecture for the module, determining what agents, workflows, and tasks are needed to fulfill the module's description.
 
 ## COMPONENT PLANNING PROCESS:
 
@@ -58,7 +58,7 @@ To design the component architecture for the module, determining what agents, wo
 
 "Now that we have a clear module concept, let's plan the components that will bring it to life.
 
-Based on your module's purpose and scope, we'll design:
+Based on your module's description and scope, we'll design:
 
 - **Agents** - The AI personas that will help users
 - **Workflows** - The step-by-step processes for accomplishing tasks
@@ -68,7 +68,7 @@ Based on your module's purpose and scope, we'll design:
 
 "**Agent Architecture:**
 
-Think about the different roles or perspectives needed to accomplish your module's goals. Each agent should have a clear, distinct purpose."
+Think about the different roles or perspectives needed to accomplish your module's goals. Each agent should have a clear, distinct description."
 
 Reference agent examples for patterns
 Load and browse agent examples: {agent_examples_path}
@@ -119,7 +119,7 @@ Workflows are the step-by-step processes that users will follow to accomplish sp
 
 **Example Workflow Patterns:**
 
-"For your module's purpose, consider these potential workflows:
+"For your module's description, consider these potential workflows:
 
 1. **[Primary Workflow Name]** - Main workflow for core functionality
 2. **[Supporting Workflow 1]** - For specific use case
@@ -181,29 +181,29 @@ Update module-plan.md with component section:
 
 ### Agents (N planned)
 
-1. **[Agent Name]** - [Brief purpose]
+1. **[Agent Name]** - [Brief description]
    - Type: [Primary/Specialist/Utility]
    - Role: [Specific role description]
 
-2. **[Agent Name]** - [Brief purpose]
+2. **[Agent Name]** - [Brief description]
    - Type: [Primary/Specialist/Utility]
    - Role: [Specific role description]
 
 ### Workflows (N planned)
 
-1. **[Workflow Name]** - [Purpose]
+1. **[Workflow Name]** - [description]
    - Type: [Document/Action/Interactive]
    - Primary user: [Who uses this]
    - Key output: [What it produces]
 
-2. **[Workflow Name]** - [Purpose]
+2. **[Workflow Name]** - [description]
    - Type: [Document/Action/Interactive]
    - Primary user: [Who uses this]
    - Key output: [What it produces]
 
 ### Tasks (N planned)
 
-1. **[Task Name]** - [Single-purpose function]
+1. **[Task Name]** - [Single-description function]
    - Used by: [Which workflows/agents]
 
 ### Component Integration
@@ -248,14 +248,14 @@ Display: **Select an Option:** [A] Advanced Elicitation [P] Party Mode [C] Conti
 ### ✅ SUCCESS:
 
 - Component architecture planned and documented
-- Agent types and purposes clearly defined
+- Agent types and descriptions clearly defined
 - Workflow requirements identified
 - Integration patterns established
 - Development priority set (MVP vs enhancements)
 
 ### ❌ SYSTEM FAILURE:
 
-- Planning components without module purpose context
+- Planning components without module description context
 - Not considering BMAD patterns and examples
 - Over-engineering (too many components)
 - Under-planning (missing essential components)

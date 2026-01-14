@@ -11,7 +11,7 @@ on_fail: "trigger-correct-course"
 # Step 05: Pre-Planning Gate (NEW)
 
 > **Agent:** Developer (Dev)
-> **Purpose:** Research and validation BEFORE any code is written
+> **description:** Research and validation BEFORE any code is written
 > **v2.0 Innovation:** This is the "plan before you code" gate that prevents context mismatches
 
 ---
@@ -116,7 +116,7 @@ Grep.search({
 {brief_description_of_implementation_approach}
 
 ### Files to Create
-- [ ] {path/to/new_file.ts} - {purpose}
+- [ ] {path/to/new_file.ts} - {description}
 
 ### Files to Modify
 - [ ] {path/to/existing_file.ts} - {change_summary}

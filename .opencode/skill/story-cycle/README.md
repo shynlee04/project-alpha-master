@@ -141,7 +141,7 @@ Before running any step:
 
 Every story **MUST** include research using MCP tools:
 
-| Tool | Purpose | Query Pattern |
+| Tool | description | Query Pattern |
 |------|---------|---------------|
 | **Context7** | Official docs | `resolve-library-id` → `get-library-docs` |
 | **DeepWiki** | GitHub patterns | `ask_question` with repo-specific query |
@@ -191,7 +191,7 @@ Every story **MUST** include research using MCP tools:
 
 ## Output Artifacts
 
-| Artifact | Location | Purpose |
+| Artifact | Location | description |
 |----------|----------|---------|
 | Story File | `{sprint_artifacts}/{story}.md` | Requirements, tracking |
 | Context XML | `{sprint_artifacts}/{story}-context.xml` | Developer context |

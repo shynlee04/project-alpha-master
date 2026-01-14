@@ -10,7 +10,7 @@ orchestrator: @bmad-core-bmad-master
 # Formal PRD Workflow Plan
 ## BMAD Planning Cycle - Phase 1 of 4
 
-> **Purpose**: Define the formal `bmad-bmm-workflows-create-prd.md` workflow specification
+> **description**: Define the formal `bmad-bmm-workflows-create-prd.md` workflow specification
 > **Context**: Course correction after brownfield docs proved unreliable
 > **Integration**: Must align with sprint-status.yaml and sprint-planning workflow
 

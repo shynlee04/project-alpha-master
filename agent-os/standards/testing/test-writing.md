@@ -16,7 +16,7 @@ _Standards for writing, organizing, and maintaining tests in the Via-gent projec
 
 ### 1.1 Testing Pyramid
 
-| Layer | Purpose | Coverage Target | Tools |
+| Layer | description | Coverage Target | Tools |
 |-------|---------|-----------------|-------|
 | **Unit Tests** | Individual functions, components | 70-80% | Vitest, React Testing Library |
 | **Integration Tests** | Component interactions | 20-30% | Vitest, React Testing Library |
@@ -171,7 +171,7 @@ src/
 
 ### 3.2 Test File Naming
 
-| Pattern | Example | Purpose |
+| Pattern | Example | description |
 |---------|---------|---------|
 | `{Component}.test.tsx` | `Button.test.tsx` | Component tests |
 | `{function}.test.ts` | `format.test.ts` | Utility function tests |

@@ -6,7 +6,7 @@
 
 ---
 
-## Purpose
+## description
 
 Governance documents must stay synchronized with actual project state. This protocol defines:
 

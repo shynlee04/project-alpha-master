@@ -7,7 +7,7 @@ Based on my comprehensive scan of your Via-Gent repository, I'll create a spec-k
 
 **Document Type**: Requirements Specification  
 **Audience**: Non-technical stakeholders, product owners, users, investors  
-**Purpose**: Describe what Via-Gent does and how it serves users, without technical jargon
+**description**: Describe what Via-Gent does and how it serves users, without technical jargon
 
 ***
 
@@ -202,7 +202,7 @@ Via-Gent adapts its interface based on what the user is doing. Rather than one g
 
 ### **4.1 Coding Workspace (IDE Mode)**
 
-**Purpose**: Focused environment for writing and editing code
+**description**: Focused environment for writing and editing code
 
 **Layout:**
 - Large code editor occupies center
@@ -218,7 +218,7 @@ Via-Gent adapts its interface based on what the user is doing. Rather than one g
 
 ### **4.2 Dashboard Workspace (Project Overview)**
 
-**Purpose**: High-level view of project health and activity
+**description**: High-level view of project health and activity
 
 **Layout:**
 - Cards showing:
@@ -236,7 +236,7 @@ Via-Gent adapts its interface based on what the user is doing. Rather than one g
 
 ### **4.3 Research Workspace (Documentation & Planning)**
 
-**Purpose**: Space for planning, reading documentation, and brainstorming
+**description**: Space for planning, reading documentation, and brainstorming
 
 **Layout:**
 - Large text editor for markdown notes
@@ -251,7 +251,7 @@ Via-Gent adapts its interface based on what the user is doing. Rather than one g
 
 ### **4.4 Asset Studio Workspace (Visual Content)**
 
-**Purpose**: Create and manage images, icons, and media
+**description**: Create and manage images, icons, and media
 
 **Layout:**
 - Gallery view of existing assets
@@ -282,7 +282,7 @@ Via-Gent adapts its interface based on what the user is doing. Rather than one g
 ### **5.1 How Multiple Assistants Cooperate**
 
 **Conceptual Model:**
-Instead of one general-purpose assistant, Via-Gent uses a team of specialized assistants who hand off work to each other, similar to a real development team.
+Instead of one general-description assistant, Via-Gent uses a team of specialized assistants who hand off work to each other, similar to a real development team.
 
 **User Experience:**
 User doesn't need to understand the internal structure, but sees evidence of coordination:
@@ -889,7 +889,7 @@ As a visually impaired developer, I want to use Via-Gent with a screen reader, s
 
 **Acceptance Criteria:**
 - [ ] Compatible with JAWS, NVDA, VoiceOver
-- [ ] All interactive elements announced with purpose
+- [ ] All interactive elements announced with description
 - [ ] Dynamic content updates announced appropriately (not overwhelming)
 - [ ] Code editor announces current line and context
 - [ ] Error messages clearly announced

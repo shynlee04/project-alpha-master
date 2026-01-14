@@ -1,7 +1,7 @@
 # Governance Scanner - Agent/AI/RAG/Multi-modality Ecosystem
 
 **Scanner Type**: Critical Governance Area  
-**Purpose**: Govern agent tools, RAG context, multi-modality, and stage-gated feature unlocking  
+**description**: Govern agent tools, RAG context, multi-modality, and stage-gated feature unlocking  
 **Triggered By**: 
 - Agent tool usage
 - RAG context creation/modification
@@ -30,14 +30,14 @@ This is the **MOST CRITICAL** governance area because:
 
 ## 1. Tool Usage Governance
 
-### Purpose
+### description
 Track and approve all tool usage by agents before execution.
 
 ### Scanner: Tool Usage Tracker
 
 ```yaml
 tool_usage_scanner:
-  purpose: "Track and validate agent tool usage"
+  description: "Track and validate agent tool usage"
   
   triggers:
     - "agent_attempts_tool_call"
@@ -134,14 +134,14 @@ tool_usage_policy:
 
 ## 2. RAG Context Governance
 
-### Purpose
+### description
 Govern RAG context creation, management, and quality.
 
 ### Scanner: RAG Context Validator
 
 ```yaml
 rag_context_scanner:
-  purpose: "Validate RAG context quality and management"
+  description: "Validate RAG context quality and management"
   
   triggers:
     - "rag_index_created"
@@ -228,14 +228,14 @@ rag_quality_standards:
 
 ## 3. Multi-modality Governance
 
-### Purpose
+### description
 Govern multi-modality input/output handling.
 
 ### Scanner: Multi-modality Validator
 
 ```yaml
 multimodality_scanner:
-  purpose: "Validate multi-modality inputs and outputs"
+  description: "Validate multi-modality inputs and outputs"
   
   triggers:
     - "multimodal_input_received"
@@ -319,7 +319,7 @@ multimodality_rules:
 
 ## 4. Stage-Gating for Agent/AI Features
 
-### Purpose
+### description
 Ensure agent/AI features are unlocked progressively, not all at once.
 
 ### Stage Definitions

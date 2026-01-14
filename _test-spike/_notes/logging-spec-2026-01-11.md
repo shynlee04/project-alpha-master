@@ -151,7 +151,7 @@ export class MetricsCollector {
 
 ## Log File Locations
 
-| Log Type | Location | Purpose |
+| Log Type | Location | description |
 |----------|----------|---------|
 | Human | `_test-spike/_notes/run-log.txt` | Developer debugging |
 | JSON | `_test-spike/_notes/run-log.json` | Analysis, parsing |

@@ -22,7 +22,7 @@ Conduct holistic discovery of what the user wants to create, documenting a compr
 2. **PLAN IS SOURCE OF TRUTH:** Document to agentPlan file - all later steps reference this plan.
 3. **NO RE-ASKING:** Later steps MUST read from plan, not re-ask questions.
 4. **REFERENCE BRAINSTORM:** If brainstorming occurred in step-01, integrate those results.
-5. **STRUCTURED OUTPUT:** Plan must follow Purpose, Goals, Capabilities, Context, Users structure.
+5. **STRUCTURED OUTPUT:** Plan must follow description, Goals, Capabilities, Context, Users structure.
 6. **LANGUAGE ALIGNMENT:** Continue using {language} if configured in step-01.
 
 # EXECUTION PROTOCOLS
@@ -38,7 +38,7 @@ Before starting discovery:
 
 Guide the user through holistic discovery covering:
 
-1. **Purpose:** What problem does this agent solve? Why does it need to exist?
+1. **description:** What problem does this agent solve? Why does it need to exist?
 2. **Goals:** What should this agent accomplish? What defines success?
 3. **Capabilities:** What specific abilities should it have? What tools/skills?
 4. **Context:** Where will it be used? What's the environment/setting?
@@ -57,7 +57,7 @@ Document findings to agentPlan file using this structure:
 ```markdown
 # Agent Plan: {agent_name}
 
-## Purpose
+## description
 [Clear, concise statement of why this agent exists]
 
 ## Goals
@@ -90,7 +90,7 @@ After documentation, present menu:
 # CONTEXT BOUNDARIES
 
 **DISCOVER:**
-- Agent purpose and problem domain
+- Agent description and problem domain
 - Success metrics and goals
 - Required capabilities and tools
 - Usage context and environment
@@ -117,11 +117,11 @@ After documentation, present menu:
 2. **Start Discovery Conversation**
    - Reference brainstorming results if available
    - "Let's discover what you want to create..."
-   - Explore purpose, goals, capabilities, context, users
+   - Explore description, goals, capabilities, context, users
 
 3. **Document Plan**
    - Create agentPlan file
-   - Structure with Purpose, Goals, Capabilities, Context, Users
+   - Structure with description, Goals, Capabilities, Context, Users
    - Ensure completeness and clarity
 
 4. **Present Completion Menu**
@@ -139,7 +139,7 @@ After documentation, present menu:
 
 **THIS STEP IS COMPLETE WHEN:**
 - agentPlan file exists with complete structure
-- All five sections (Purpose, Goals, Capabilities, Context, Users) populated
+- All five sections (description, Goals, Capabilities, Context, Users) populated
 - User confirms accuracy via menu selection
 - Either continuing to next step or invoking optional workflows
 
@@ -157,7 +157,7 @@ After documentation, present menu:
 - User explicitly chooses to continue or invokes optional workflow
 
 **FAILURE:**
-- Unable to extract coherent purpose or goals
+- Unable to extract coherent description or goals
 - User cannot articulate basic requirements
 - Plan sections remain incomplete or vague
 - User requests restart

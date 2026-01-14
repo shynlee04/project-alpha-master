@@ -21,7 +21,7 @@ Dedicated BMAD module for systematic execution of Project Alpha's course correct
 
 **Decision**: ✅ IMMEDIATE COURSE CORRECTION APPROVED
 
-## Module Purpose
+## Module description
 
 Execute systematic 8-week stabilization plan across 5 phases:
 
@@ -336,7 +336,7 @@ P3: # Low - Nice to have
 ## Module Workflows
 
 ### 1. Eliminate God Stores (workflows/eliminate-god-stores.md)
-**Purpose**: Systematic refactoring of 69 god stores into modular slices
+**description**: Systematic refactoring of 69 god stores into modular slices
 **Steps**:
 1. Analyze store dependencies and identify circular references
 2. Extract focused slices (≤120 lines each)
@@ -346,7 +346,7 @@ P3: # Low - Nice to have
 6. Update documentation
 
 ### 2. Normalize Components (workflows/normalize-components.md)
-**Purpose**: Reduce 45 components >300 lines to ≤300 lines
+**description**: Reduce 45 components >300 lines to ≤300 lines
 **Steps**:
 1. Identify composition opportunities
 2. Extract custom hooks for complex logic
@@ -356,7 +356,7 @@ P3: # Low - Nice to have
 6. Update documentation
 
 ### 3. Fix TypeScript Errors (workflows/fix-typescript-errors.md)
-**Purpose**: Reduce 1,172 TypeScript errors to <10
+**description**: Reduce 1,172 TypeScript errors to <10
 **Steps**:
 1. Categorize errors by type and severity
 2. Batch-fix common patterns (50-100 errors per session)
@@ -365,7 +365,7 @@ P3: # Low - Nice to have
 5. Update error tracking
 
 ### 4. Improve Test Coverage (workflows/improve-test-coverage.md)
-**Purpose**: Increase test coverage from 16.6% to ≥80%
+**description**: Increase test coverage from 16.6% to ≥80%
 **Steps**:
 1. Identify untested critical paths
 2. Write unit tests for business logic
@@ -376,7 +376,7 @@ P3: # Low - Nice to have
 ## Module Artifacts
 
 ### 1. Epic Tracking (artifacts/epic-tracking.md)
-**Purpose**: Real-time dashboard of epic progress across all phases
+**description**: Real-time dashboard of epic progress across all phases
 **Contents**:
 - Epic status (TODO, IN_PROGRESS, DONE)
 - Story completion counts
@@ -384,7 +384,7 @@ P3: # Low - Nice to have
 - Health score improvements
 
 ### 2. Validation Gates (artifacts/validation-gates.md)
-**Purpose**: Acceptance criteria checklists for all epics and stories
+**description**: Acceptance criteria checklists for all epics and stories
 **Contents**:
 - Pre-validation checklist (before starting work)
 - Completion checklist (before marking done)

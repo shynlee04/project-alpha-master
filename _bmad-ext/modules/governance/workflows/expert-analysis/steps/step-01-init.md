@@ -25,7 +25,7 @@ Initialize expert-analysis by loading context-first output and understanding the
 
 Greet by `{user_name}` and welcome to Expert-Analysis workflow.
 
-**Purpose**: "We'll analyze your development request against the actual codebase to catch potential issues before you begin."
+**description**: "We'll analyze your development request against the actual codebase to catch potential issues before you begin."
 
 ### 2. Load Context-First Output
 

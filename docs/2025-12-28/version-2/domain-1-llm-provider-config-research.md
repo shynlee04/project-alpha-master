@@ -53,7 +53,7 @@ This research artifact documents the current implementation, state propagation p
 
 #### File: `src/lib/agent/providers/provider-adapter.ts`
 
-**Purpose:** Factory for creating TanStack AI adapters for different LLM providers
+**description:** Factory for creating TanStack AI adapters for different LLM providers
 
 **Key Components:**
 - `ProviderAdapterFactory` class with adapter caching
@@ -86,7 +86,7 @@ export class ProviderAdapterFactory {
 
 #### File: `src/lib/agent/providers/model-registry.ts`
 
-**Purpose:** Fetches and caches available AI models from provider APIs
+**description:** Fetches and caches available AI models from provider APIs
 
 **Key Components:**
 - `ModelRegistry` class with 5-minute cache TTL
@@ -122,7 +122,7 @@ export class ModelRegistry {
 
 #### File: `src/lib/agent/providers/credential-vault.ts`
 
-**Purpose:** Secure storage of API keys using Web Crypto API
+**description:** Secure storage of API keys using Web Crypto API
 
 **Key Components:**
 - `CredentialVault` class with AES-GCM encryption
@@ -161,7 +161,7 @@ export class CredentialVault {
 
 #### File: `src/stores/agents-store.ts`
 
-**Purpose:** Zustand store with localStorage persistence for agent configurations
+**description:** Zustand store with localStorage persistence for agent configurations
 
 **Key Components:**
 - `useAgentsStore` hook with persist middleware
@@ -222,7 +222,7 @@ export const useAgentsStore = create<AgentsState>()(
 
 #### File: `src/hooks/useAgents.ts`
 
-**Purpose:** React hook wrapping Zustand store with memoized callbacks
+**description:** React hook wrapping Zustand store with memoized callbacks
 
 **Key Components:**
 - `useAgents()` hook returning agents, CRUD functions, loading state
@@ -266,7 +266,7 @@ export function useAgents() {
 
 #### File: `src/components/agent/AgentConfigDialog.tsx`
 
-**Purpose:** Extensible agent configuration dialog with multi-provider support
+**description:** Extensible agent configuration dialog with multi-provider support
 
 **Key Components:**
 - Form validation with Zod schema
@@ -351,7 +351,7 @@ const AgentConfigDialog = ({ open, onOpenChange, agent }: AgentConfigDialogProps
 
 #### File: `src/components/chat/AgentSelector.tsx`
 
-**Purpose:** Dropdown for selecting AI agents in chat interface
+**description:** Dropdown for selecting AI agents in chat interface
 
 **Key Components:**
 - Dropdown with agent list

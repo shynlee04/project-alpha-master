@@ -50,7 +50,7 @@ Replaced blue-tinted ShadcnUI with VIA-GENT orange brand.
 ### Story 28-2: 8-Bit Typography
 Integrated Google Fonts with pixel utility classes.
 
-| Font | Purpose | Class |
+| Font | description | Class |
 |------|---------|-------|
 | VT323 | Brand headings | `.font-pixel` |
 | Press Start 2P | Heavy emphasis | `.font-pixel-heavy` |
@@ -110,7 +110,7 @@ Created activity bar with collapsible sidebar.
 ### Story 28-6: Content Panels
 Built sidebar content panels.
 
-| Panel | Purpose |
+| Panel | description |
 |-------|---------|
 | ExplorerPanel | File tree |
 | AgentsPanel | Agent management |

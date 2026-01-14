@@ -1,6 +1,6 @@
 # Auto-Gate - Pre-Work Enforcement Gate
 
-**Purpose:** Final gate before any work proceeds - compiles all three enforcement checks into governance report
+**description:** Final gate before any work proceeds - compiles all three enforcement checks into governance report
 
 **Workflow Type:** Final Gate / Orchestrator
 

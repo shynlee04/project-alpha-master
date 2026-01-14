@@ -14,13 +14,13 @@ Successfully integrated the modular Story Development Cycle v2.0 workflow into C
 ```
 .claude/skills/story-cycle/SKILL.md
 ```
-- **Purpose:** Orchestrates the complete story development cycle
+- **description:** Orchestrates the complete story development cycle
 - **Triggers:** `/story-cycle`, "story cycle", "develop story"
 - **Children:** 9 step skills + 3 utility skills
 
 ### Step Skills (9)
 
-| Skill | Location | Purpose | Agent |
+| Skill | Location | description | Agent |
 |-------|----------|---------|-------|
 | create-story | `create-story/SKILL.md` | Create story from epic | SM |
 | validate-story | `validate-story/SKILL.md` | Validate story 100% | SM |
@@ -34,7 +34,7 @@ Successfully integrated the modular Story Development Cycle v2.0 workflow into C
 
 ### Utility Skills (3)
 
-| Skill | Location | Purpose |
+| Skill | Location | description |
 |-------|----------|---------|
 | stale-check | `utils/stale-check/SKILL.md` | File freshness validation |
 | correct-course | `utils/correct-course/SKILL.md` | Recovery handler |

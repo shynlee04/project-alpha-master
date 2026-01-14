@@ -6,7 +6,7 @@ type: technical
 author: "Antigravity (BMAD Research Workflow)"
 version: 1.0
 sprint: phase-3-marketing-sprint-2026-01-09
-purpose: "Prepare context for /bmad-bmm-workflows-create-tech-spec"
+description: "Prepare context for /bmad-bmm-workflows-create-tech-spec"
 ---
 
 # 🔬 Marketing Workspace: Technical Research Report
@@ -34,7 +34,7 @@ This technical research validates the feasibility of the Marketing Workspace fea
 
 ### 2.1 SDKs Already Installed
 
-| Package | Version | Purpose | Used By |
+| Package | Version | description | Used By |
 |---------|---------|---------|---------|
 | `@tanstack/ai` | 0.2.0 | Core AI SDK | `/src/routes/api/chat.ts` |
 | `@tanstack/ai-react` | 0.2.0 | React hooks (useChat) | `/src/lib/agent/hooks/` |
@@ -337,16 +337,16 @@ src/workspaces/marketing/
 credentials:
   gemini:
     key: "AIza..."
-    purpose: "Text and Image generation"
+    description: "Text and Image generation"
   
   # New for Marketing Workspace
   google-cloud-tts:
     key: "service-account-json"
-    purpose: "Vietnamese voiceover"
+    description: "Vietnamese voiceover"
   
   replicate:
     key: "r8_..."
-    purpose: "Background removal"
+    description: "Background removal"
 ```
 
 ---

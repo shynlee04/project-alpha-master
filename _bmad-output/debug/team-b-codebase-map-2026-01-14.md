@@ -75,7 +75,7 @@ src/
 
 #### Store Architecture
 
-| File | Lines | Purpose | Issue |
+| File | Lines | description | Issue |
 |------|--------|---------|-------|
 | `note-store.ts` | 39 | Aggregator | ✅ Small, clean |
 | `note-navigation-store.ts` | ~80 | Scroll positions | ✅ Focused |
@@ -108,9 +108,9 @@ src/
 | `AISlashCommand.tsx` | 1146 | 🚨 CRITICAL | 16+ commands + logic |
 | `NotesPage.tsx` | 876 | 🚨 LARGE | 7 responsibilities |
 | `ProjectFilesPanel.tsx` | ~300 | ⚠️ BORDERLINE | Mixed concerns |
-| `AIPromptDialog.tsx` | ~150 | ✅ OK | Single purpose |
-| `NoteList.tsx` | ~200 | ✅ OK | Single purpose |
-| `NoteItem.tsx` | ~100 | ✅ OK | Single purpose |
+| `AIPromptDialog.tsx` | ~150 | ✅ OK | Single description |
+| `NoteList.tsx` | ~200 | ✅ OK | Single description |
+| `NoteItem.tsx` | ~100 | ✅ OK | Single description |
 
 **Critical Issues**:
 
@@ -189,7 +189,7 @@ src/
 
 #### Stores
 
-| File | Lines | Purpose | Assessment |
+| File | Lines | description | Assessment |
 |------|--------|---------|------------|
 | `ide-store.ts` | ~200 | IDE panel states, project context | ✅ Well-structured |
 
@@ -215,7 +215,7 @@ src/
 
 #### Stores
 
-| File | Lines | Purpose | Assessment |
+| File | Lines | description | Assessment |
 |------|--------|---------|------------|
 | `project-store.ts` | ~50 | Project CRUD | ✅ Small |
 | [project slices] | ~50 each | Project layout, permissions, utils | ✅ Focused |
@@ -279,7 +279,7 @@ src/infrastructure/filesystem/
 
 #### Stores
 
-| File | Lines | Purpose | Assessment |
+| File | Lines | description | Assessment |
 |------|--------|---------|------------|
 | `snippet-store.ts` | ~50 | Snippet CRUD | ✅ Small |
 | [snippet slices] | ~50 each | CRUD, export, filtering, utils | ✅ Focused |
@@ -296,7 +296,7 @@ src/infrastructure/filesystem/
 
 #### Stores
 
-| File | Lines | Purpose | Assessment |
+| File | Lines | description | Assessment |
 |------|--------|---------|------------|
 | `workflow-builder-store.ts` | ~100 | Workflow CRUD | ✅ Medium |
 | [workflow slices] | ~50 each | CRUD, persistence, validation, utilities | ✅ Focused |
@@ -845,7 +845,7 @@ lib/storage/
 
 **What I Deliver**:
 1. ✅ **Complete File Inventory**: 1721 files with size analysis
-2. ✅ **Responsibility Matrix**: Every file categorized by domain and purpose
+2. ✅ **Responsibility Matrix**: Every file categorized by domain and description
 3. ✅ **Dependency Graph**: Clear frontend → store → service → agent → tool → backend flow
 4. ✅ **Issue Classification**: P0/P1/P2 severity levels
 5. ✅ **Root Cause Analysis**: Why AI commands broken, why crashes occur

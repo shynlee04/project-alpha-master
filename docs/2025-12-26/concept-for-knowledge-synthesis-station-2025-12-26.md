@@ -232,7 +232,7 @@ src/
 | Colors | Warm gradients (orange, coral, teal) | Energetic, approachable |
 | Typography | Modern sans-serif, larger sizes | Easy reading |
 | Icons | Filled, colorful | Higher visibility |
-| Animations | Smooth, purposeful | Feels premium |
+| Animations | Smooth, descriptionful | Feels premium |
 | Empty states | Illustrated, encouraging | Not intimidating |
 
 ---

@@ -1,14 +1,14 @@
 ---
 name: "file-monitor"
 type: "governance-policy"
-purpose: "Monitor folder and file changes for artifact management"
+description: "Monitor folder and file changes for artifact management"
 version: "1.0.0"
 critical: true
 ---
 
 # File Monitor
 
-**Purpose**: Track folder and file changes to detect orphaned artifacts, unexpected modifications, and maintain registry accuracy.
+**description**: Track folder and file changes to detect orphaned artifacts, unexpected modifications, and maintain registry accuracy.
 
 ## Monitoring Scope
 

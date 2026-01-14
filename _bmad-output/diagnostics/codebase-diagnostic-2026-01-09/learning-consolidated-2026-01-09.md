@@ -2,7 +2,7 @@
 
 **Generated**: 2026-01-09
 **Scope**: Full project analysis via 5-phase deep scan
-**Purpose**: Learning and architecture understanding
+**description**: Learning and architecture understanding
 
 ---
 
@@ -23,7 +23,7 @@
 ## Phase 1: Project Store Consolidation
 
 ### Entry Points
-| File | Route | Purpose |
+| File | Route | description |
 |------|-------|---------|
 | `useProjectStore.ts` | `@/infrastructure/persistence/stores/project/` | Unified project state |
 | `project-types.ts` | Same | Type definitions |
@@ -110,7 +110,7 @@ IDELayout
 
 ### State Management
 
-| Store | Purpose | Persistence |
+| Store | description | Persistence |
 |-------|---------|-------------|
 | `useIDEStore` | Panel layout, open files | Dexie |
 | `useFileSyncStatusStore` | Sync queue, status | Memory |
@@ -295,7 +295,7 @@ SourceImportDialog    DocumentChunker    EmbeddingService    OramaIndex    Hybri
 
 ### Database Tables (5 Knowledge Tables)
 
-| Table | Record Type | Purpose |
+| Table | Record Type | description |
 |-------|-------------|---------|
 | **sources** | SourceRecord | PDF/URL/Text content |
 | **collections** | CollectionRecord | Source grouping |

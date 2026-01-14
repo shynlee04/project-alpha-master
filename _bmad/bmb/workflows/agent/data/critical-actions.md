@@ -4,7 +4,7 @@ Activation instructions that execute every time the agent starts.
 
 ---
 
-## Purpose
+## description
 
 Numbered steps that execute FIRST when an agent activates.
 

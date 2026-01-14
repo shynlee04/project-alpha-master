@@ -87,7 +87,7 @@ sourceImportPipeline.importImage(file, options);
 
 **Implementation**: `src/lib/knowledge/synthesis-service.ts` (314 lines)
 
-**Purpose**: Analyzes source documents using Gemini AI to generate structured frontmatter
+**description**: Analyzes source documents using Gemini AI to generate structured frontmatter
 
 **Features**:
 - JSON structured output validation with Zod
@@ -221,7 +221,7 @@ const indexingOperation = useRAGStore((s) => s.indexingOperation);
 
 ### Presentation Components (24 files)
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `KnowledgePage.tsx` | 710 | Main orchestrator |
 | `SynthesisDialog.tsx` | 220 | Flashcard/quiz generation dialog |
@@ -312,7 +312,7 @@ const indexingOperation = useRAGStore((s) => s.indexingOperation);
 
 ### RAG Components (7 files)
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `RAGSearchPanel.tsx` | 325 | Search interface |
 | `RAGChatPanel.tsx` | ~200 | RAG-powered chat |

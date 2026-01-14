@@ -494,7 +494,7 @@ All audit criteria passed:
 
 ## Appendix A: File References
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | [credential-vault.ts](src/lib/agent/providers/credential-vault.ts) | 535 | Main vault implementation |
 | [credential-encryption.ts](src/lib/agent/providers/credential-encryption.ts) | 367 | Crypto operations |

@@ -72,7 +72,7 @@ The hook runs automatically on every prompt. No manual action needed.
 
 ## Files Created
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `.opencode/hooks/pre-request-governance.yaml` | Main hook documentation |
 | `.opencode/commands/bmad-governance-check.md` | OpenCode command |

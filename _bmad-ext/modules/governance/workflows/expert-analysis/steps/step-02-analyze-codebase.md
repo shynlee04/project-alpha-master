@@ -58,7 +58,7 @@ For each target file, document:
 ```yaml
 {filename}:
   type: component|store|hook|util|api
-  purpose: {what it does}
+  description: {what it does}
   patterns: {patterns used}
   dependencies: [imports/uses]
   state_management: {if applicable}

@@ -21,7 +21,7 @@ triggers:
 
 # Module Builder Skill
 
-**Purpose**: Create and manage BMAD-ext modules with proper structure, frontmatter, and integration points.
+**description**: Create and manage BMAD-ext modules with proper structure, frontmatter, and integration points.
 
 ## When to use this skill
 
@@ -82,7 +82,7 @@ integrates_with:
 
 # Module Title
 
-**Purpose**: Detailed module purpose...
+**description**: Detailed module description...
 
 ## Module Overview
 
@@ -217,7 +217,7 @@ async function validateModuleCompliance(moduleName: string): Promise<ValidationR
 
 ### Governance Module (Phase 0)
 
-**Purpose**: Self-governance, artifact lifecycle, context filtering
+**description**: Self-governance, artifact lifecycle, context filtering
 
 **Structure**:
 ```
@@ -241,7 +241,7 @@ governance/
 
 ### Architecture Remediation Module (Phase 0 - Special)
 
-**Purpose**: Architecture refactoring, god-store elimination, component normalization
+**description**: Architecture refactoring, god-store elimination, component normalization
 
 **Structure**:
 ```
@@ -264,7 +264,7 @@ arc-v2/
 
 ### Sprint Planning Wrapper (Phase 2)
 
-**Purpose**: Enhanced sprint planning with cohesion validation
+**description**: Enhanced sprint planning with cohesion validation
 
 **Structure**:
 ```
@@ -285,7 +285,7 @@ sprint-planning-wrapper/
 
 ### Implementation Module (Phase 4)
 
-**Purpose**: Story execution, bug fixes, remediation
+**description**: Story execution, bug fixes, remediation
 
 **Structure**:
 ```

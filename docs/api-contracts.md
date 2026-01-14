@@ -6,7 +6,7 @@ Server-side API routes and client-side interfaces for the Via-gent project.
 
 ### `/api/chat`
 
-**Purpose**: AI chat endpoint with streaming responses
+**description**: AI chat endpoint with streaming responses
 
 **Method**: `POST`
 
@@ -52,7 +52,7 @@ interface ChatRequest {
 
 **Location**: `src/lib/agent/hooks/use-agent-chat-with-tools.ts`
 
-**Purpose**: React hook for AI chat with tool execution
+**description**: React hook for AI chat with tool execution
 
 **Usage**:
 ```typescript
@@ -68,13 +68,13 @@ const { messages, sendMessage, approvalRequests } = useAgentChatWithTools({
 
 **Location**: `src/lib/agent/hooks/use-prompt-enhancer.ts`
 
-**Purpose**: AI-powered prompt enhancement for agent interactions
+**description**: AI-powered prompt enhancement for agent interactions
 
 ### `useWorkspaceState`
 
 **Location**: `src/lib/workspace/hooks/useWorkspaceState.ts`
 
-**Purpose**: Workspace state management with persistence
+**description**: Workspace state management with persistence
 
 ## File System Operations
 
@@ -96,7 +96,7 @@ const { messages, sendMessage, approvalRequests } = useAgentChatWithTools({
 
 **Location**: `src/lib/filesystem/sync-manager.ts`
 
-**Purpose**: Bi-directional sync between Local FS and WebContainer
+**description**: Bi-directional sync between Local FS and WebContainer
 
 **Sync Flow**:
 ```
@@ -147,7 +147,7 @@ interface ProviderAdapter {
 
 **Location**: `src/lib/agent/providers/model-registry.ts`
 
-**Purpose**: Registry of available AI models with capabilities
+**description**: Registry of available AI models with capabilities
 
 ## State Stores
 

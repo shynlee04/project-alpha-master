@@ -11,7 +11,7 @@ on_fail: "notify-and-pause"
 # Step 08: Story Done
 
 > **Agent:** Story Manager (SM)
-> **Purpose:** Finalize story, update governance, determine next action
+> **description:** Finalize story, update governance, determine next action
 
 ---
 

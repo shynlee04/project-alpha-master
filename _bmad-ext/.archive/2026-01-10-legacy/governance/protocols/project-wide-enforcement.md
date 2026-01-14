@@ -3,7 +3,7 @@
 **Protocol ID**: GOV-ENFORCE-001
 **Version**: 1.0.0
 **Created**: 2026-01-06
-**Purpose**: Define how governance is enforced across all agents, modules, workflows
+**description**: Define how governance is enforced across all agents, modules, workflows
 **Scope**: Entire BMAD framework
 
 ---

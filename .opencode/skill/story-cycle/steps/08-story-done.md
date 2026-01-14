@@ -24,7 +24,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 Complete story, update all tracking files, and prepare handoff. Story Manager (SM) agent responsibility.
 

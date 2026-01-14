@@ -46,7 +46,7 @@ Read: agentCompilation
 Read: criticalActions
 ```
 
-**Purpose**: Understand the expert agent structure that serves as the Module agent baseline
+**description**: Understand the expert agent structure that serves as the Module agent baseline
 
 **Validation**: Confirm expert template has all required sections (name, description, persona, instructions, tools, skills, etc.)
 
@@ -68,7 +68,7 @@ Read: agentPlan (using dynamic path)
 Bash: mkdir -p {agentBuildOutput}
 ```
 
-**Purpose**: Ensure output directory exists for the module agent
+**description**: Ensure output directory exists for the module agent
 
 ## ASSEMBLY PHASE
 

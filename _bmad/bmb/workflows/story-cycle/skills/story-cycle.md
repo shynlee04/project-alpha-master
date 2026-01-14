@@ -65,7 +65,7 @@ Example: `/story-cycle step=5 story=3-1-implement-feature`
 
 ## Step Files
 
-| Step | File | Purpose | Agent |
+| Step | File | description | Agent |
 |------|------|---------|-------|
 | 01 | `01-create-story.md` | Create story from epic | SM |
 | 02 | `02-validate-story.md` | Validate story 100% | SM |
@@ -81,7 +81,7 @@ Example: `/story-cycle step=5 story=3-1-implement-feature`
 
 ## Utilities
 
-| Utility | File | Purpose |
+| Utility | File | description |
 |----------|------|---------|
 | Stale Check | `utils/_stale-check.md` | File freshness validation |
 | Correct Course | `utils/_correct-course.md` | Recovery handler |

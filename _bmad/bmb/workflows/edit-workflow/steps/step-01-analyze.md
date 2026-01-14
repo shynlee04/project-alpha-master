@@ -19,7 +19,7 @@ analysisTemplate: '{workflow_path}/templates/workflow-analysis.md'
 
 ## STEP GOAL:
 
-To load and deeply understand the target workflow, including its structure, purpose, and potential improvement areas.
+To load and deeply understand the target workflow, including its structure, description, and potential improvement areas.
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -121,7 +121,7 @@ Based on what the user wants to edit:
 
 #### Content Analysis
 
-- Understand purpose and user journey
+- Understand description and user journey
 - Evaluate instruction style (intent-based vs prescriptive)
 - Review menu patterns and user interaction points
 - Check variable consistency across files
@@ -144,7 +144,7 @@ Check against best practices:
 
 Share your analysis with the user in a conversational way:
 
-- What this workflow accomplishes (purpose and value)
+- What this workflow accomplishes (description and value)
 - How it's structured (type, steps, interaction pattern)
 - Format type (new standalone vs legacy)
 - Initial findings related to their stated goals

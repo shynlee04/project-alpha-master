@@ -7,7 +7,7 @@
 
 ---
 
-## Purpose
+## description
 
 This workflow defines a **strictly regulated, traceable, checklist-validated** development cycle that prevents:
 - Implementation without proper planning/context

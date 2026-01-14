@@ -5,25 +5,24 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-18T11:00:00+07:00"
+last_updated: "2026-01-18T11:30:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION STATE
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: "epic-cc-arc-week3-2026-01-18"
-  start_time: "2026-01-18T11:00:00+07:00"
-  last_activity: "2026-01-18T11:00:00+07:00"
+  id: "epic-cc-arc-week3-2026-01-18-v2"
+  start_time: "2026-01-18T11:30:00+07:00"
+  last_activity: "2026-01-18T11:30:00+07:00"
   platform: "claude-code"
   agent: "RALPH-LOOP-V5"
   orchestrator_team: "Team B"
-  iteration: 8
+  iteration: 9
   max_iterations: 0
   status: "EPIC-CC-ARC-WEEK3-TEAM-B-ORCHESTRATING"
-  team: "Team B (Storage Contract Squad) - Week 1-2 complete, Week 3 in progress"
+  team: "Team B (Storage Contract Squad) - Week 1-2 complete, Week 3 starting"
   ralph_loop_version: "5.0.0"
-  ralph_loop_config: ".claude/ralph-loop.local.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CURRENT CONTEXT
@@ -32,13 +31,13 @@ session:
 current:
   epic_id: "EPIC-CC-ARC"
   epic_name: "Correct-Course Architectural Remediation"
-  story_id: "ARC-B12"
-  story_title: "External change conflict resolution UI"
+  story_id: "ARC-B08"
+  story_title: "File tree exclusion patterns configuration"
   team: "Team B"
   phase: "B"
   week: 3
   workflow: "story-cycle"
-  step: "COMPLETED"
+  step: "01-INIT"
   status: "in_progress"
   sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
   adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
@@ -60,30 +59,6 @@ prior_completed:
   - "ARC-B12: External change conflict resolution UI (2026-01-18)"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# COMPLETED IN THIS SESSION
-# ═══════════════════════════════════════════════════════════════════════════
-
-completed_this_session:
-  - story_id: "ARC-B12"
-    title: "External change conflict resolution UI"
-    completed_at: "2026-01-18T10:30:00+07:00"
-    files_created:
-      - "src/presentation/components/notes/MarkdownSyncConflictDialog.tsx (280 lines)"
-      - "src/presentation/hooks/useMarkdownSyncConflict.ts (175 lines)"
-    files_modified:
-      - "src/presentation/components/notes/index.ts"
-      - "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
-    acceptance_criteria:
-      - "Conflict dialog with keep local/keep external/merge options ✅"
-      - "Auto-reload if local clean ✅"
-      - "TypeScript: 0 errors ✅"
-    notes: |
-      Created MarkdownSyncConflictDialog component with visual diff preview,
-      useMarkdownSyncConflictDialog hook for state management,
-      useMarkdownSyncConflict hook for sync service integration.
-      Full i18n support, 8-bit design compliant.
-
-# ═══════════════════════════════════════════════════════════════════════════
 # PENDING STORIES (Phase B - Week 3)
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -93,9 +68,10 @@ pending_stories:
     effort: "3h"
     priority: "P1"
     dependencies: ["ARC-B05"]
-    status: "TODO"
+    status: "IN_PROGRESS"
     description: |
       Configure exclusion patterns: node_modules, .git, .next, etc.
+      User-configurable patterns stored in .viagent/config.json
     acceptance_criteria:
       - "Default exclusions applied"
       - "User can configure additional patterns"
@@ -137,10 +113,11 @@ pending_stories:
 # ═══════════════════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent_timestamp: "2026-01-18T11:00:00+07:00"
+  human_intent_timestamp: "2026-01-18T11:30:00+07:00"
   staleness_threshold_hours: 4
   last_human_message: "Stop hook feedback: load @bmad-core-master-agent start the loop first by looking as @PROMPT then load agents, sub-agents as you progress cycles of workflows, modules, following strict BMAD framework and what has written at @CLAUDE.md, keep updating sprint-status and workflow-status as u are team B"
   intent_summary: "Execute EPIC-CC-ARC Week 3 stories for Team B with full BMAD framework traceability, update sprint-status and workflow-status iteratively"
+  conversation_id: "2026-01-18-session-b"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERRORS
@@ -191,3 +168,5 @@ artifacts:
   workflow_status: "bmm-workflow-status.yaml"
   adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
   loop_state: "_bmad-ext/state/LOOP_STATE.yaml"
+  story_cycle_workflow: "_bmad-ext/modules/implementation/workflows/story-cycle/"
+

@@ -122,7 +122,7 @@ Orchestrate all 7 quality scanners systematically:
 ```yaml
 scanner_suite:
   state_scanner:
-    purpose: "God store detection (>300 lines)"
+    description: "God store detection (>300 lines)"
     trigger: "On every remediation cycle"
     output: "artifacts/state-scan-report.md"
     metrics:
@@ -132,7 +132,7 @@ scanner_suite:
       - "Test coverage per store"
 
   architecture_scanner:
-    purpose: "Layer violations, god components"
+    description: "Layer violations, god components"
     trigger: "On every remediation cycle"
     output: "artifacts/architecture-scan-report.md"
     metrics:
@@ -142,7 +142,7 @@ scanner_suite:
       - "Nesting depth violations"
 
   ux_scanner:
-    purpose: "Hardcoded strings, accessibility issues"
+    description: "Hardcoded strings, accessibility issues"
     trigger: "On every remediation cycle"
     output: "artifacts/ux-scan-report.md"
     metrics:
@@ -152,7 +152,7 @@ scanner_suite:
       - "ARIA violations"
 
   security_scanner:
-    purpose: "Secret leaks, XSS vulnerabilities"
+    description: "Secret leaks, XSS vulnerabilities"
     trigger: "On every remediation cycle"
     output: "artifacts/security-scan-report.md"
     metrics:
@@ -162,7 +162,7 @@ scanner_suite:
       - "Input validation gaps"
 
   performance_scanner:
-    purpose: "Bundle bloat, render waste"
+    description: "Bundle bloat, render waste"
     trigger: "Weekly"
     output: "artifacts/performance-scan-report.md"
     metrics:
@@ -172,7 +172,7 @@ scanner_suite:
       - "Large component warnings"
 
   types_scanner:
-    purpose: "Type safety enforcement"
+    description: "Type safety enforcement"
     trigger: "On every remediation cycle"
     output: "artifacts/types-scan-report.md"
     metrics:
@@ -182,7 +182,7 @@ scanner_suite:
       - "TypeScript error count (test files - non-blocking)"
 
   workspace_scanner:
-    purpose: "Cross-workspace integration issues"
+    description: "Cross-workspace integration issues"
     trigger: "On workspace file system changes"
     output: "artifacts/workspace-scan-report.md"
     metrics:
@@ -561,19 +561,19 @@ agent_coordination:
 
   specialist_agents:
     store_refactorer:
-      purpose: "God store elimination"
+      description: "God store elimination"
       trigger: "state_scanner detects >300 lines"
 
     component_splitter:
-      purpose: "Component normalization"
+      description: "Component normalization"
       trigger: "architecture_scanner detects >300 lines"
 
     typescript_fixer:
-      purpose: "TypeScript error resolution"
+      description: "TypeScript error resolution"
       trigger: "types_scanner detects errors"
 
     workspace_architect:
-      purpose: "Workspace file system E2E"
+      description: "Workspace file system E2E"
       trigger: "workspace_scanner detects issues"
 
   handoff_protocol:

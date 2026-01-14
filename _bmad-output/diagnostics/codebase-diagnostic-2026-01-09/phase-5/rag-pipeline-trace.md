@@ -61,11 +61,11 @@ STAGE 5: SEARCH                      STAGE 6: SYNTHESIS
 
 ## Stage 1: Source Import
 
-**Purpose**: Ingest content from PDF, URL, or plain text into the knowledge base.
+**description**: Ingest content from PDF, URL, or plain text into the knowledge base.
 
 ### Files
 
-| File | Location | Purpose | Lines |
+| File | Location | description | Lines |
 |------|----------|---------|-------|
 | **SourceImportDialog.tsx** | `src/presentation/components/knowledge/` | UI dialog for source import | 274 |
 | **source-import.ts** | `src/lib/knowledge/` | Pipeline orchestrator | 192 |
@@ -129,11 +129,11 @@ this.emitEvent(DomainEventType.SOURCE_ADDED, {
 
 ## Stage 2: Chunking
 
-**Purpose**: Split long content into smaller chunks for effective retrieval.
+**description**: Split long content into smaller chunks for effective retrieval.
 
 ### Files
 
-| File | Location | Purpose | Lines |
+| File | Location | description | Lines |
 |------|----------|---------|-------|
 | **document-chunker.ts** | `src/lib/rag/` | Core chunking logic | 573 |
 | **chunk-strategies.ts** | `src/lib/rag/` | Strategy factory | 51 |
@@ -240,11 +240,11 @@ emitProgress(stage: string, progress: number, total: number, message: string) {
 
 ## Stage 3: Embedding
 
-**Purpose**: Convert text chunks into vector embeddings for semantic search.
+**description**: Convert text chunks into vector embeddings for semantic search.
 
 ### Files
 
-| File | Location | Purpose | Lines |
+| File | Location | description | Lines |
 |------|----------|---------|-------|
 | **embedding-service.ts** | `src/lib/rag/` | Hybrid local/cloud embeddings | 533 |
 | **transformers-loader.ts** | `src/lib/rag/` | Transformers.js model loader | 355 |
@@ -371,11 +371,11 @@ async function embedBatch(texts: string[]): Promise<number[][]> {
 
 ## Stage 4: Indexing
 
-**Purpose**: Store and index embeddings for fast retrieval.
+**description**: Store and index embeddings for fast retrieval.
 
 ### Files
 
-| File | Location | Purpose | Lines |
+| File | Location | description | Lines |
 |------|----------|---------|-------|
 | **orama-index.ts** | `src/lib/rag/` | Orama WASM index management | 645 |
 | **incremental-indexing-service.ts** | `src/lib/rag/` | Incremental indexing | 646 |
@@ -503,11 +503,11 @@ export async function saveIndex(projectId: string): Promise<void> {
 
 ## Stage 5: Search
 
-**Purpose**: Retrieve relevant chunks using hybrid vector + full-text search.
+**description**: Retrieve relevant chunks using hybrid vector + full-text search.
 
 ### Files
 
-| File | Location | Purpose | Lines |
+| File | Location | description | Lines |
 |------|----------|---------|-------|
 | **hybrid-retriever.ts** | `src/lib/rag/` | Weighted hybrid search | 498 |
 
@@ -608,11 +608,11 @@ export interface HybridSearchResult {
 
 ## Stage 6: Synthesis
 
-**Purpose**: Generate AI-structured frontmatter for knowledge organization.
+**description**: Generate AI-structured frontmatter for knowledge organization.
 
 ### Files
 
-| File | Location | Purpose | Lines |
+| File | Location | description | Lines |
 |------|----------|---------|-------|
 | **synthesis-service.ts** | `src/lib/knowledge/` | Gemini AI synthesis | 314 |
 
@@ -768,7 +768,7 @@ export const useRAGStore = create<RAGStoreState>()(
 
 ### Slice Breakdown
 
-| Slice | File | Purpose | Est. Lines |
+| Slice | File | description | Est. Lines |
 |-------|------|---------|------------|
 | **Index Slice** | rag-index-slice.ts | Index CRUD, metadata | 120 |
 | **Search Slice** | rag-search-slice.ts | Search state, results | 120 |

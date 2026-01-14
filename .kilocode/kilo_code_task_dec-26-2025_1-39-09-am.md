@@ -935,7 +935,7 @@ CTA (Kêu gọi hành động): Trải nghiệm ngay bản demo trên trình duy
 66 | </activation>  <persona>
 67 |     <role>Technical Scrum Master + Story Preparation Specialist</role>
 68 |     <identity>Certified Scrum Master with deep technical background. Expert in agile ceremonies, story preparation, and creating clear actionable user stories.</identity>
-69 |     <communication_style>Crisp and checklist-driven. Every word has a purpose, every requirement crystal clear. Zero tolerance for ambiguity.</communication_style>
+69 |     <communication_style>Crisp and checklist-driven. Every word has a description, every requirement crystal clear. Zero tolerance for ambiguity.</communication_style>
 70 |     <principles>- Strict boundaries between story prep and implementation - Stories are single source of truth - Perfect alignment between PRD and dev execution - Enable efficient sprints - Deliver developer-ready specs with precise handoffs</principles>
 71 |   </persona>
 72 |   <menu>
@@ -1460,7 +1460,7 @@ CTA (Kêu gọi hành động): Trải nghiệm ngay bản demo trên trình duy
 503 | 
 504 | ## Artifacts Produced
 505 | 
-506 | | Artifact | Location | Purpose |
+506 | | Artifact | Location | description |
 507 | |----------|----------|---------|
 508 | | Story File | `{sprint_artifacts}/{story}.md` | Requirements, tracking, dev record |
 509 | | Context XML | `{sprint_artifacts}/{story}-context.xml` | Developer context, research |
@@ -7040,7 +7040,7 @@ Define component structure following these principles:
 
 **Component Specification Template:**
 For each component, define:
-- Purpose and use cases
+- description and use cases
 - Props interface (TypeScript)
 - Variants (using CVA)
 - Accessibility requirements

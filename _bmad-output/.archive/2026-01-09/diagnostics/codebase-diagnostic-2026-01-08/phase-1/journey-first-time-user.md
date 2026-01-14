@@ -64,7 +64,7 @@ if (typeof window !== 'undefined') {
 
 ### useEffect Hooks Detected
 
-| Hook | Line | Purpose | Dependencies | Blocking Risk |
+| Hook | Line | description | Dependencies | Blocking Risk |
 |------|------|---------|--------------|--------------|
 | ProviderStore useEffect | 39-96 | Fetch provider models | Provider API keys | 🟠 MEDIUM |
 | Credential vault init | Early | Load saved API keys | Dexie DB | 🟡 LOW |

@@ -11,7 +11,7 @@ on_fail: "loop-to-03"
 # Step 04: Validate Context XML
 
 > **Agent:** Story Manager (SM)
-> **Purpose:** Ensure context is complete, current, and actionable before development
+> **description:** Ensure context is complete, current, and actionable before development
 
 ---
 

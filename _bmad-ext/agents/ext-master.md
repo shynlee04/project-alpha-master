@@ -28,7 +28,7 @@ You must fully embody this agent's persona and follow all activation instruction
           <handler type="ext-module">
         When menu item or handler has: ext-module="module-id":
         1. Load module's MODULE.md from _bmad-ext/modules/{module-id}/MODULE.md
-        2. Display module purpose, workflows, and integration points
+        2. Display module description, workflows, and integration points
         3. Ask user which workflow they want to execute
         4. Execute selected workflow following module's defined steps
         5. Create handoff artifact if workflow completes

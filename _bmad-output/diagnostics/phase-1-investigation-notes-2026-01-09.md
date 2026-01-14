@@ -104,7 +104,7 @@ Return generated content
 
 ### 3.2 Key Components
 
-| Component | Purpose | Status |
+| Component | description | Status |
 |-----------|---------|--------|
 | **NotesPage** | Main layout with 3 panels | ✅ Complete |
 | **NoteSidebar** | Note tree with CRUD | ✅ Complete |
@@ -119,7 +119,7 @@ Return generated content
 
 ### 4.1 Storage Layers
 
-| Layer | Technology | Purpose |
+| Layer | Technology | description |
 |-------|------------|---------|
 | **IndexedDB** | Dexie (notes table) | Primary storage |
 | **Memory** | Zustand store | Fast access, reactive |
@@ -127,7 +127,7 @@ Return generated content
 
 ### 4.2 Store Slices (6 slices, all <120 lines)
 
-| Slice | Lines | Purpose |
+| Slice | Lines | description |
 |-------|-------|---------|
 | note-crud-slice.ts | 267 | Core CRUD operations |
 | note-sync-slice.ts | 188 | Auto-save and file sync |
@@ -186,7 +186,7 @@ Return generated content
 
 ## 8. Files Reviewed
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/lib/notes/slices/note-crud-slice.ts` | 267 | Core CRUD operations |
 | `src/lib/notes/slices/note-sync-slice.ts` | 188 | Auto-save and file sync |

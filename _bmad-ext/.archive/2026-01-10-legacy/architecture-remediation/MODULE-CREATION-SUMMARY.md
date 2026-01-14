@@ -5,7 +5,7 @@
 **Created**: 2026-01-03
 **Status**: ✅ COMPLETE - READY FOR EXECUTION
 
-## Module Purpose
+## Module description
 
 Systematic execution of 8-week course correction plan to fix critical technical debt and improve platform health from **3.8/10** to **8.8/10**.
 
@@ -47,9 +47,9 @@ _bmad/modules/architecture-remediation/
 
 ### 1. README.md (Module Overview)
 
-**Purpose**: Comprehensive module documentation
+**description**: Comprehensive module documentation
 **Contents**:
-- Module purpose and scope
+- Module description and scope
 - 8-week stabilization plan (Phase 0-3)
 - Critical success factors
 - Success criteria (quantitative + qualitative)
@@ -160,7 +160,7 @@ _bmad/modules/architecture-remediation/
 ### 3. Workflows
 
 #### Workflow 1: Eliminate God Stores (`workflows/eliminate-god-stores.md`)
-**Purpose**: Systematic refactoring of god stores into modular slices
+**description**: Systematic refactoring of god stores into modular slices
 **Steps**:
 1. Store Analysis (2-3 hours) - Identify slice boundaries
 2. Slice Extraction (4-8 hours) - Create focused slices (≤120 lines)
@@ -188,7 +188,7 @@ _bmad/modules/architecture-remediation/
 ### 4. Configuration Files
 
 #### Config 1: Thresholds (`config/thresholds.yaml`)
-**Purpose**: Define quality thresholds for all refactoring activities
+**description**: Define quality thresholds for all refactoring activities
 
 **Threshold Categories**:
 1. **Store Thresholds**
@@ -233,7 +233,7 @@ _bmad/modules/architecture-remediation/
 ---
 
 #### Config 2: Priorities (`config/priorities.yaml`)
-**Purpose**: Categorize all remediation tasks by priority (P0/P1/P2/P3)
+**description**: Categorize all remediation tasks by priority (P0/P1/P2/P3)
 
 **Priority Definitions**:
 - **P0: CRITICAL** - Data loss, platform failure, security risk (immediate, 1-2 weeks)
@@ -274,7 +274,7 @@ _bmad/modules/architecture-remediation/
 ### 5. Tracking Artifacts
 
 #### Artifact 1: Epic Tracking (`artifacts/epic-tracking.md`)
-**Purpose**: Real-time epic progress dashboard
+**description**: Real-time epic progress dashboard
 
 **Contents**:
 - Health score trend (current: 3.8/10, target: 8.8/10)
@@ -291,7 +291,7 @@ _bmad/modules/architecture-remediation/
 ---
 
 #### Artifact 2: Validation Gates (`artifacts/validation-gates.md`)
-**Purpose**: Acceptance criteria checklists for all epics and stories
+**description**: Acceptance criteria checklists for all epics and stories
 
 **Gate Categories**:
 1. **Pre-Validation Gates** (Before starting work)

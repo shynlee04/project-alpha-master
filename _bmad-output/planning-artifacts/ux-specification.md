@@ -293,7 +293,7 @@ spacing-24: 6rem     /* 96px */
 **Animation Principles:**
 1. **8-bit Themed**: Snappy, pixel-perfect transitions (no easing on hover)
 2. **Reduced Motion Support**: Honor `prefers-reduced-motion` media query
-3. **Purposeful Motion**: Every animation serves a functional purpose
+3. **descriptionful Motion**: Every animation serves a functional description
 4. **Performance**: Use CSS transforms (not position changes) for 60fps
 
 **Reduced Motion:**
@@ -1448,7 +1448,7 @@ useEffect(() => {
 **8-Bit Animation Style:**
 - Snappy: Short durations (150-300ms)
 - Linear easing: No easing on hover state
-- Purposeful: Every transition communicates state change
+- descriptionful: Every transition communicates state change
 - Performance: Use `transform` and `opacity` (GPU-accelerated)
 
 **Transition Examples:**

@@ -69,7 +69,7 @@ The industry has converged on **"RAG + Agents"** not "RAG vs Agents". This is ca
 - Combination = powerful knowledge management
 
 **Industry Tool Set for Note Agents**:
-| Tool | Purpose |
+| Tool | description |
 |------|---------|
 | `search_notes` | Semantic search (RAG) |
 | `create_note` | Add new note |

@@ -75,7 +75,7 @@ project-alpha-master/
 
 ### `/src/presentation/components` (468 files)
 
-**Purpose:** UI layer - React components for all workspaces
+**description:** UI layer - React components for all workspaces
 
 **Key Subdirectories:**
 - `ide/` - Monaco editor, terminal, file tree, agent panel
@@ -88,7 +88,7 @@ project-alpha-master/
 
 ### `/src/infrastructure/persistence/stores`
 
-**Purpose:** Zustand state management with Dexie IndexedDB persistence
+**description:** Zustand state management with Dexie IndexedDB persistence
 
 **Key Stores by Domain:**
 - `agents/` - Agent CRUD, workspace bindings, selection, events
@@ -106,7 +106,7 @@ project-alpha-master/
 
 ### `/src/domain`
 
-**Purpose:** Business logic - no framework dependencies
+**description:** Business logic - no framework dependencies
 
 **Key Files:**
 - `entities/agent.ts` - Agent entity with workspace bindings
@@ -116,7 +116,7 @@ project-alpha-master/
 
 ### `/src/lib`
 
-**Purpose:** Legacy utilities - being consolidated into infrastructure
+**description:** Legacy utilities - being consolidated into infrastructure
 
 **Status:** Migration in progress
 - `state/` → Migrating to `infrastructure/persistence/stores/`
@@ -124,7 +124,7 @@ project-alpha-master/
 
 ### `/src/routes`
 
-**Purpose:** TanStack Router file-based routing
+**description:** TanStack Router file-based routing
 
 **API Endpoints:**
 - `api/chat.ts` - Chat completion endpoint
@@ -212,7 +212,7 @@ presentation/components/
 
 ## Configuration Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `vite.config.ts` | Vite build configuration, COOP/COEP headers for WebContainer |
 | `tsconfig.json` | TypeScript compiler options |

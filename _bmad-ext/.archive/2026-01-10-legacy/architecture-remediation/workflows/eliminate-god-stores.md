@@ -3,7 +3,7 @@
 **Workflow ID**: `@bmad/modules/architecture-remediation/workflows/eliminate-god-stores`
 **Version**: 1.0.0
 **Created**: 2026-01-03
-**Purpose**: Systematic refactoring of god stores into modular slices
+**description**: Systematic refactoring of god stores into modular slices
 
 ## Workflow Overview
 

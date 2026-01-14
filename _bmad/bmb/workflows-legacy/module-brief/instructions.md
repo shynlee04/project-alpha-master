@@ -109,7 +109,7 @@ Categorize workflows:
 
 For each workflow, define:
 
-- Purpose (one sentence)
+- description (one sentence)
 - Input → Process → Output
 - Complexity (simple/standard/complex)
 

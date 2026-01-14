@@ -44,7 +44,7 @@ Use this checklist to validate module edits meet BMAD Core standards.
 
 ### Agent Content
 
-- [ ] Each agent has clear role and purpose
+- [ ] Each agent has clear role and description
 - [ ] Agents reference workflows correctly
 - [ ] Agent workflow paths are valid
 - [ ] Agents load module config correctly (if needed)
@@ -86,7 +86,7 @@ Use this checklist to validate module edits meet BMAD Core standards.
 
 ### Module README
 
-- [ ] Module README describes purpose clearly
+- [ ] Module README describes description clearly
 - [ ] README lists all agents with descriptions
 - [ ] README lists all workflows with descriptions
 - [ ] README includes installation instructions (if applicable)
@@ -95,7 +95,7 @@ Use this checklist to validate module edits meet BMAD Core standards.
 ### Workflow READMEs
 
 - [ ] Each workflow has its own README.md
-- [ ] Workflow READMEs explain purpose
+- [ ] Workflow READMEs explain description
 - [ ] Workflow READMEs list inputs/outputs
 - [ ] Workflow READMEs include usage examples
 
@@ -136,7 +136,7 @@ Use this checklist to validate module edits meet BMAD Core standards.
 - [ ] No broken file references
 - [ ] No duplicate content across files
 - [ ] Consistent naming conventions throughout
-- [ ] Module purpose is clear from README alone
+- [ ] Module description is clear from README alone
 
 ## Integration Checks
 
@@ -147,7 +147,7 @@ Use this checklist to validate module edits meet BMAD Core standards.
 
 ## User Experience
 
-- [ ] Module purpose is immediately clear
+- [ ] Module description is immediately clear
 - [ ] Agents have intuitive names
 - [ ] Workflows have descriptive names
 - [ ] Menu items are logically organized

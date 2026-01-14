@@ -221,7 +221,7 @@ Present the design for review:
 
 Append to {workflowPlanFile}:
 
-- Complete step outline with names and purposes
+- Complete step outline with names and descriptions
 - Flow diagram or sequence description
 - Interaction patterns
 - File structure requirements

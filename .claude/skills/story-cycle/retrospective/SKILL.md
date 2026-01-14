@@ -20,7 +20,7 @@ triggers:
 
 # Step 09: Epic Retrospective
 
-**Purpose**: Create epic retrospective document after all stories in epic are complete. Captures lessons learned, improvements, and action items.
+**description**: Create epic retrospective document after all stories in epic are complete. Captures lessons learned, improvements, and action items.
 
 ## When to use
 

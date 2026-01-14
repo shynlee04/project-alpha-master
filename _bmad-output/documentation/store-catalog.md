@@ -73,7 +73,7 @@ export const useAppStore = create<AppState>()(
 
 **Location:** `src/infrastructure/persistence/stores/agents/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `agent-crud-slice.ts` | Agent CRUD operations | ≤120 | ✅ |
 | `agent-workspace-bindings-slice.ts` | Workspace filtering | ≤120 | ✅ |
@@ -91,7 +91,7 @@ export const useAppStore = create<AppState>()(
 
 **Location:** `src/infrastructure/persistence/stores/providers/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `provider-crud-slice.ts` | Provider CRUD | ≤120 | ✅ |
 | `provider-models-slice.ts` | Model fetching, caching | ≤120 | ✅ |
@@ -107,7 +107,7 @@ export const useAppStore = create<AppState>()(
 
 **Location:** `src/infrastructure/persistence/stores/conversation/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `conversation-metadata-slice.ts` | Thread CRUD | ≤120 | ✅ |
 | `message-crud-slice.ts` | Message operations | ≤120 | ✅ |
@@ -130,7 +130,7 @@ export const useAppStore = create<AppState>()(
 
 **Location:** `src/infrastructure/persistence/stores/project/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `project-crud-slice.ts` | Project CRUD | ≤120 | ✅ |
 | `project-workspace-bindings-slice.ts` | WB-1 bindings | ≤120 | ✅ |
@@ -146,7 +146,7 @@ export const useAppStore = create<AppState>()(
 
 **Location:** `src/infrastructure/persistence/stores/rag/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `rag-index-slice.ts` | Indexing operations | ≤120 | ✅ |
 | `rag-search-slice.ts` | Vector search | ≤120 | ✅ |
@@ -162,7 +162,7 @@ export const useAppStore = create<AppState>()(
 
 **Location:** `src/infrastructure/persistence/stores/ide/`
 
-| Store | Purpose | Lines | Status |
+| Store | description | Lines | Status |
 |-------|---------|-------|--------|
 | `ide-editor-slice.ts` | Editor state | ≤120 | ✅ |
 | `ide-terminal-slice.ts` | Terminal state | ≤120 | ✅ |
@@ -177,7 +177,7 @@ export const useAppStore = create<AppState>()(
 
 ## Other Stores
 
-| Domain | Store | Purpose |
+| Domain | Store | description |
 |--------|-------|---------|
 | **Canvas** | `canvas-store.ts` | Canvas state (5 slices) |
 | **Editor** | `editor-tabs-store.ts` | Tab management (3 slices) |
@@ -289,7 +289,7 @@ const addAgent = useAgentsStore((s) => s.addAgent);
 
 **Location:** `src/lib/events/cross-workspace-event-bus.ts`
 
-| Event | Purpose |
+| Event | description |
 |-------|---------|
 | `AGENT_CONFIG_CHANGE` | Agent created/updated/deleted |
 | `FILE_CHANGE` | File created/modified/deleted |

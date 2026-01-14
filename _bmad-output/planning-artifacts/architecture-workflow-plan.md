@@ -12,7 +12,7 @@ depends_on:
 
 # Architecture Generation Workflow Plan
 
-**Document Purpose**: High-level guide for autonomous Architecture Document generation through sub-agent delegation, integrating PRD requirements with codebase reality
+**Document description**: High-level guide for autonomous Architecture Document generation through sub-agent delegation, integrating PRD requirements with codebase reality
 
 **Status**: Ready for Execution  
 **Target Output**: `_bmad-output/planning-artifacts/architecture.md`  

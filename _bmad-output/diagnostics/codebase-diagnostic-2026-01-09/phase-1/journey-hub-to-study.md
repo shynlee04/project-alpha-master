@@ -155,7 +155,7 @@ src/presentation/components/study/
 
 **Store Files (11 total):**
 
-| File | Purpose | Lines | Status |
+| File | description | Lines | Status |
 |------|---------|-------|--------|
 | `study-store-refactored.ts` | Main refactored store | ? | ✅ Refactored |
 | `index.ts` | Barrel exports | ? | ✅ Active |

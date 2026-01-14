@@ -6,7 +6,7 @@
 
 ---
 
-## Purpose
+## description
 
 This directory contains the **API Key to Vault Migration** code that was part of 
 **ADR-001: Provider Store Consolidation**. This migration was a security-critical 
@@ -39,7 +39,7 @@ New developers may need to understand:
 
 ## Archived Files
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `migrate-api-keys-to-vault.ts` | ~389 | Main migration logic |
 | `migration-backup.ts` | ~550 | 3-layer backup system |

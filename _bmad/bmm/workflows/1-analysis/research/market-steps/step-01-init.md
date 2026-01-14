@@ -65,7 +65,7 @@ Gather any clarifications needed:
 
 - "Are there specific customer segments or aspects of {{research_topic}} we should prioritize?"
 - "Should we focus on specific geographic regions or global market?"
-- "Is this for market entry, expansion, product development, or other business purpose?"
+- "Is this for market entry, expansion, product development, or other business description?"
 - "Any competitors or market segments you specifically want us to analyze?"
 
 ### 3. Document Initial Scope

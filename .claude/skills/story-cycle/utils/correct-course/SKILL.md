@@ -20,7 +20,7 @@ triggers:
 
 # Utility: Correct Course
 
-**Purpose**: Recovery handler when story is stuck, validation fails repeatedly, or external blockers appear.
+**description**: Recovery handler when story is stuck, validation fails repeatedly, or external blockers appear.
 
 ## When to Trigger
 

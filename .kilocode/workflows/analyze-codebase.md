@@ -94,7 +94,7 @@ Based on all the discovered information above, create a comprehensive analysis t
 
 ## 2. Detailed Directory Structure Analysis
 For each major directory, explain:
-- Purpose and role in the application
+- description and role in the application
 - Key files and their functions
 - How it connects to other parts
 

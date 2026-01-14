@@ -20,7 +20,7 @@ triggers:
 
 # Step 05: Pre-Planning Gate (NEW)
 
-**Purpose**: v2.0 innovation - mandatory research and validation BEFORE any code is written. This prevents context mismatches and wrong patterns.
+**description**: v2.0 innovation - mandatory research and validation BEFORE any code is written. This prevents context mismatches and wrong patterns.
 
 ## When to use
 
@@ -119,7 +119,7 @@ Grep.search({
 {brief_description_of_implementation_approach}
 
 ### Files to Create
-- [ ] {path/to/new_file.ts} - {purpose}
+- [ ] {path/to/new_file.ts} - {description}
 
 ### Files to Modify
 - [ ] {path/to/existing_file.ts} - {change_summary}

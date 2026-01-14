@@ -1,14 +1,14 @@
 ---
 name: "multimodality-governance"
 type: "governance-policy"
-purpose: "Govern input/output multimodality across workspaces"
+description: "Govern input/output multimodality across workspaces"
 version: "1.0.0"
 critical: true
 ---
 
 # Multimodality Governance
 
-**Purpose**: Track and govern multimodal input/output handling across different workspaces to prevent inconsistency.
+**description**: Track and govern multimodal input/output handling across different workspaces to prevent inconsistency.
 
 ## Problem Statement
 

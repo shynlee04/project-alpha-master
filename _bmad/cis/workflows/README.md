@@ -13,7 +13,7 @@ Five interactive workflows facilitating creative and strategic processes through
 
 ### [Brainstorming](./brainstorming)
 
-**Purpose:** Interactive ideation using 36 techniques across 7 categories
+**description:** Interactive ideation using 36 techniques across 7 categories
 
 **Approach:** Master facilitation with "Yes, and..." methodology
 
@@ -23,7 +23,7 @@ Five interactive workflows facilitating creative and strategic processes through
 
 ### [Design Thinking](./design-thinking)
 
-**Purpose:** Human-centered design through five phases
+**description:** Human-centered design through five phases
 
 **Process:** Empathize → Define → Ideate → Prototype → Test
 
@@ -33,7 +33,7 @@ Five interactive workflows facilitating creative and strategic processes through
 
 ### [Innovation Strategy](./innovation-strategy)
 
-**Purpose:** Identify disruption opportunities and business model innovation
+**description:** Identify disruption opportunities and business model innovation
 
 **Frameworks:** Jobs-to-be-Done, Blue Ocean Strategy, Value Chain Analysis
 
@@ -43,7 +43,7 @@ Five interactive workflows facilitating creative and strategic processes through
 
 ### [Problem Solving](./problem-solving)
 
-**Purpose:** Systematic challenge resolution
+**description:** Systematic challenge resolution
 
 **Methods:** TRIZ, Theory of Constraints, Systems Thinking, Root Cause Analysis
 
@@ -53,7 +53,7 @@ Five interactive workflows facilitating creative and strategic processes through
 
 ### [Storytelling](./storytelling)
 
-**Purpose:** Craft compelling narratives
+**description:** Craft compelling narratives
 
 **Frameworks:** Hero's Journey, Three-Act Structure, Story Brand (25 total)
 
@@ -100,7 +100,7 @@ agent cis/brainstorming-coach
 
 Edit `/_bmad/cis/config.yaml`:
 
-| Setting                | Purpose                 | Default            |
+| Setting                | description                 | Default            |
 | ---------------------- | ----------------------- | ------------------ |
 | output_folder          | Result storage location | ./creative-outputs |
 | user_name              | Session participant     | User               |

@@ -6,7 +6,7 @@
 
 ---
 
-## Purpose
+## description
 
 This document traces the **original problem statement** against our planning document to identify:
 1. What we've addressed ✅
@@ -86,7 +86,7 @@ This document traces the **original problem statement** against our planning doc
 
 **Store File Inventory (from find)**:
 
-| Location | Count | Purpose | Canonical? |
+| Location | Count | description | Canonical? |
 |----------|-------|---------|------------|
 | `src/lib/workspace/project-store/` | 7 files | Project CRUD | ❌ STUB |
 | `src/lib/workspace/file-sync-status-store/` | 6 files | Sync status | ❌ DUPLICATE |

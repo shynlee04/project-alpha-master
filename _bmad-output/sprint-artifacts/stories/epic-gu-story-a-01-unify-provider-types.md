@@ -109,7 +109,7 @@ export const PROVIDERS_DEPRECATED = false;
 
 ## Files to Create
 
-| File | Purpose | Est. Lines |
+| File | description | Est. Lines |
 |------|---------|-----------|
 | `src/domain/types/llm/provider-types.ts` | Provider config types | 80 |
 | `src/domain/types/llm/model-types.ts` | Model info types | 60 |
@@ -185,7 +185,7 @@ export const PROVIDERS_DEPRECATED = false;
 ## Implementation Summary (2026-01-09)
 
 ### Files Created (664 lines total)
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/domain/types/llm/provider-types.ts` | 201 | Provider config types |
 | `src/domain/types/llm/model-types.ts` | 126 | Model info types |

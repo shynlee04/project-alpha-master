@@ -21,7 +21,7 @@ triggers:
 
 # Step 07: Code Review - Enhanced with Deep Analysis
 
-**Purpose**: Multi-agent code review with ACTUAL CODE analysis, HTML output validation, journey walking, and requirements mapping. **EVIDENCE BEFORE ASSERTION** - be extremely skeptical.
+**description**: Multi-agent code review with ACTUAL CODE analysis, HTML output validation, journey walking, and requirements mapping. **EVIDENCE BEFORE ASSERTION** - be extremely skeptical.
 
 ## Critical Change (v2.0)
 

@@ -133,7 +133,7 @@ OUTPUT FORMAT:
 **File:** src/lib/workspace/workspace-access-helper.tsx
 
 **Hooks Used:**
-| Hook | Purpose | Dependencies | Risk |
+| Hook | description | Dependencies | Risk |
 |------|---------|--------------|------|
 
 **Status Flow:**

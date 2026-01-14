@@ -44,7 +44,7 @@ Save to: `phase-4/feature-notes.md`
 ## Notes Feature Analysis
 
 ### Component Inventory
-| Component | Lines | Purpose | Complexity |
+| Component | Lines | description | Complexity |
 |-----------|-------|---------|------------|
 
 ### State Dependencies

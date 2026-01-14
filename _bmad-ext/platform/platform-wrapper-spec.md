@@ -38,7 +38,7 @@ The platform wrapper translates between Claude Code's native mechanisms (Skills,
 
 ## 2. Skill Adapter
 
-### Purpose
+### description
 Convert BMAD standards into Claude Code Skills with proper frontmatter and auto-invocation.
 
 ### File Structure
@@ -141,7 +141,7 @@ _updated: 2026-01-10
 
 ## 3. Hook Adapter
 
-### Purpose
+### description
 Map BMAD events to Claude Code hooks for session lifecycle management.
 
 ### Hook Definitions
@@ -332,7 +332,7 @@ Safe session termination with state preserved.
 
 ## 4. Command Router
 
-### Purpose
+### description
 Replace scattered `.claude/commands/` files with a single hierarchical index.
 
 ### Command Index Structure
@@ -518,7 +518,7 @@ aliases:
 
 ## 5. Agent Unification
 
-### Purpose
+### description
 Standardize agent definitions across BMAD with consistent frontmatter.
 
 ### Agent Template
@@ -553,7 +553,7 @@ triggers:
 category: implementation
 priority: 50
 context: fork  # Run in isolated context
-agent: general-purpose
+agent: general-description
 
 # Skills (pre-loaded at agent startup)
 skills:

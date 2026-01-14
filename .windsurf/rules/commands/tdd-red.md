@@ -94,7 +94,7 @@ Generate failing tests using Task tool with subagent_type="unit-testing::test-au
 ## Output Requirements
 
 - Complete test files with imports
-- Documentation of test purpose
+- Documentation of test description
 - Commands to run and verify failures
 - Metrics: test count, coverage areas
 - Next steps for green phase"

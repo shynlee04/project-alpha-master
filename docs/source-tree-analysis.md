@@ -231,7 +231,7 @@ src/components/chat/
 
 ## Entry Points
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/router.tsx` | TanStack Router configuration |
 | `src/routeTree.gen.ts` | Auto-generated route tree |

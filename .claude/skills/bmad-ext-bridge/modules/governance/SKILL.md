@@ -23,7 +23,7 @@ triggers:
 
 # BMAD-EXT Governance Bridge
 
-**Purpose**: Gateway to BMAD-ext governance module with 4-tier TTL system, self-governance triggers, and artifact lifecycle management.
+**description**: Gateway to BMAD-ext governance module with 4-tier TTL system, self-governance triggers, and artifact lifecycle management.
 
 ## Module Overview
 
@@ -63,7 +63,7 @@ Before any development work, the system performs:
 
 ### 1. Context-First Workflow
 
-**Purpose**: Gather relevant context and auto-transform user prompt
+**description**: Gather relevant context and auto-transform user prompt
 
 **Steps**:
 1. Scan active artifacts
@@ -75,7 +75,7 @@ Before any development work, the system performs:
 
 ### 2. Expert Analysis Workflow
 
-**Purpose**: Define bug/error level and compare with codebase
+**description**: Define bug/error level and compare with codebase
 
 **Steps**:
 1. Analyze issue description
@@ -87,7 +87,7 @@ Before any development work, the system performs:
 
 ### 3. Research Trigger Workflow
 
-**Purpose**: Internet-based validation for technology choices
+**description**: Internet-based validation for technology choices
 
 **Steps**:
 1. Identify research topics
@@ -99,7 +99,7 @@ Before any development work, the system performs:
 
 ### 4. Correct-Course Workflow
 
-**Purpose**: Recovery workflow when story is stuck or validation fails
+**description**: Recovery workflow when story is stuck or validation fails
 
 **Steps**:
 1. Receive report

@@ -9,7 +9,7 @@
 
 ---
 
-## Purpose
+## description
 
 Systematically eliminate technical debt through deep scanning, prioritized remediation, and validated improvements. This workflow orchestrates the full remediation cycle from problem identification to health score validation.
 
@@ -35,7 +35,7 @@ phases:
 
 ## Phase 1: Deep-Scan Execution
 
-**Purpose**: Run all 7 quality scanners to identify technical debt
+**description**: Run all 7 quality scanners to identify technical debt
 
 ```yaml
 deep_scan_phase:
@@ -45,7 +45,7 @@ deep_scan_phase:
   scanners:
     # Priority: P0 (always run first)
     1. security_scanner:
-       purpose: "Secret leaks, XSS vulnerabilities"
+       description: "Secret leaks, XSS vulnerabilities"
        trigger: "Every remediation cycle"
        file: ".claude/agents/deep-scan-security-scanner.md"
        output: "artifacts/security-scan-report.md"
@@ -53,14 +53,14 @@ deep_scan_phase:
 
     # Can run in parallel with security_scanner
     2. state_scanner:
-       purpose: "God store detection (>300 lines)"
+       description: "God store detection (>300 lines)"
        trigger: "Every remediation cycle"
        file: ".claude/agents/deep-scan-state-scanner.md"
        output: "artifacts/state-scan-report.md"
        critical_issues: ["god_stores_500plus", "god_stores_300plus"]
 
     3. architecture_scanner:
-       purpose: "God components, layer violations"
+       description: "God components, layer violations"
        trigger: "Every remediation cycle"
        file: ".claude/agents/deep-scan-architecture-scanner.md"
        output: "artifacts/architecture-scan-report.md"
@@ -68,14 +68,14 @@ deep_scan_phase:
 
     # Run after primary issues addressed
     4. types_scanner:
-       purpose: "Type safety enforcement"
+       description: "Type safety enforcement"
        trigger: "Every remediation cycle"
        file: ".claude/agents/deep-scan-types-scanner.md"
        output: "artifacts/types-scan-report.md"
        critical_issues: ["typescript_errors_code", "any_types", "type_suppressions"]
 
     5. ux_scanner:
-       purpose: "i18n compliance, accessibility"
+       description: "i18n compliance, accessibility"
        trigger: "Every remediation cycle"
        file: ".claude/agents/deep-scan-ux-scanner.md"
        output: "artifacts/ux-scan-report.md"
@@ -83,14 +83,14 @@ deep_scan_phase:
 
     # Weekly only (not every cycle)
     6. performance_scanner:
-       purpose: "Bundle bloat, render waste"
+       description: "Bundle bloat, render waste"
        trigger: "Weekly"
        file: ".claude/agents/deep-scan-performance-scanner.md"
        output: "artifacts/performance-scan-report.md"
        critical_issues: ["bundle_bloat", "render_waste", "missing_lazy_loading"]
 
     7. workspace_scanner:
-       purpose: "Cross-workspace integration"
+       description: "Cross-workspace integration"
        trigger: "On workspace changes"
        file: ".claude/agents/deep-scan-workspace-scanner.md"
        output: "artifacts/workspace-scan-report.md"
@@ -143,7 +143,7 @@ execution_order:
 
 ## Phase 2: Analysis & Prioritization
 
-**Purpose**: Aggregate findings, prioritize by health impact, generate remediation plan
+**description**: Aggregate findings, prioritize by health impact, generate remediation plan
 
 ```yaml
 analysis_phase:
@@ -252,7 +252,7 @@ remediation_plan_example:
 
 ## Phase 3: Remediation Execution
 
-**Purpose**: Execute prioritized fixes via specialist agents
+**description**: Execute prioritized fixes via specialist agents
 
 ```yaml
 remediation_phase:
@@ -379,7 +379,7 @@ handoff_template:
 
 ## Phase 4: Validation & Verification
 
-**Purpose**: Verify improvements, re-scan to validate health score increase
+**description**: Verify improvements, re-scan to validate health score increase
 
 ```yaml
 validation_phase:
@@ -454,12 +454,12 @@ validation_phase:
 
 ## Phase 5: Documentation & AGENTS.md Update
 
-**Purpose**: Document architecture decisions, update AGENTS.md with new patterns
+**description**: Document architecture decisions, update AGENTS.md with new patterns
 
 ```yaml
 documentation_phase:
   duration: "30-60 minutes"
-  purpose: "Preserve knowledge and update project documentation"
+  description: "Preserve knowledge and update project documentation"
 
   architecture_decision_records:
     when_to_create:

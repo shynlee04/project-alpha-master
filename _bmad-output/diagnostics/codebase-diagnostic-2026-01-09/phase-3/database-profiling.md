@@ -26,7 +26,7 @@ The Via-gent project uses Dexie.js as its primary IndexedDB abstraction layer wi
 
 ## Database Tables Overview
 
-| Table | Primary Key | Indexes | Purpose |
+| Table | Primary Key | Indexes | description |
 |-------|-------------|---------|---------|
 | `projects` | `id` | lastOpened, name | Project metadata |
 | `ideState` | `projectId` | - | IDE panel/layout state |

@@ -9,7 +9,7 @@
 
 Specialized Deep-Scan agent for exhaustive auditing of state management architectures. It identifies god stores, circular dependencies, persistence risks, and fragmentation issues, generating audit-grade evidence blocks for the remediation pipeline.
 
-### Agent Purpose
+### Agent description
 
 To provide a definitive, evidence-based inventory of all state management patterns in the codebase, identifying violations of the Clean Architecture and Zustand v5 standards defined in `AGENTS.md` and `ADR-024`.
 

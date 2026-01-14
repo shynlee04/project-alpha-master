@@ -122,7 +122,7 @@ Mobile variants:
 
 ## 3. State Sources Table
 
-| Store | Location | Persistence | Purpose |
+| Store | Location | Persistence | description |
 |-------|----------|-------------|---------|
 | **useIDEStore** | `infrastructure/persistence/stores/ide/useIDEStore.ts` | Dexie (ideState table) | Editor state, panels, terminal tabs, file tree |
 | **useProjectStore** | `infrastructure/persistence/stores/project/useProjectStore.ts` | Dexie (projects table) | Project CRUD, workspace bindings, permissions |
@@ -266,7 +266,7 @@ XTerminal.tsx
 
 ### Dexie Database Schema (ViaGentDatabase)
 
-| Table | KeyPath | Indexes | Purpose |
+| Table | KeyPath | Indexes | description |
 |-------|---------|---------|---------|
 | **projects** | `id` | `lastOpened`, `name` | Project metadata |
 | **ideState** | `projectId` | - | IDE layout state persistence |
@@ -279,7 +279,7 @@ XTerminal.tsx
 
 ### Key Database Helper Functions
 
-| Function | Location | Purpose |
+| Function | Location | description |
 |----------|----------|---------|
 | `getDb()` | `dexie-db.ts:249-264` | Get singleton database instance |
 | `getIDEState(projectId)` | `dexie-db.ts:295-297` | Get persisted IDE state |
@@ -340,7 +340,7 @@ if (!dbOpenPromise) {
 
 ## 7. Dependencies on Other Features Table
 
-| Dependency | Type | Location | Purpose | Status |
+| Dependency | Type | Location | description | Status |
 |------------|------|----------|---------|--------|
 | **WebContainer API** | External | `@webcontainer/api` | Browser-based Node.js runtime | ✅ Required |
 | **Monaco Editor** | External | `@monaco-editor/react` | Code editor | ✅ Required |

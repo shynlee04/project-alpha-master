@@ -20,7 +20,7 @@ _Standards for writing effective, maintainable code comments in the Via-gent pro
 |-----------|-------------|---------|
 | **Explain Why, Not What** | Comments should explain intent, not repeat code | ❌ `// Increment counter` → ✅ `// Prevent race condition by serializing file operations` |
 | **Document Complexity** | Comment non-obvious logic, algorithms, or workarounds | Complex sync logic, async race conditions |
-| **Maintain Narrative** | Comments should tell a story about the code's purpose | Flow of data, state transitions, business rules |
+| **Maintain Narrative** | Comments should tell a story about the code's description | Flow of data, state transitions, business rules |
 | **Temporal Relevance** | Document historical decisions and future intentions | `// TODO: Remove when WebContainer adds native support` |
 
 ### 1.2 When to Comment

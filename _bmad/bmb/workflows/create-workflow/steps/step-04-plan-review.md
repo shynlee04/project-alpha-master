@@ -81,7 +81,7 @@ Load and present from {workflowPlanFile}:
 
 **1. Project Overview:**
 
-- [Present workflow purpose, user type, module from plan]
+- [Present workflow description, user type, module from plan]
 
 **2. Workflow Requirements:**
 
@@ -103,7 +103,7 @@ Load and present from {workflowPlanFile}:
 
 "**Detailed Review:**
 
-**A. Workflow Scope and Purpose**
+**A. Workflow Scope and description**
 
 - Is the workflow goal clearly defined?
 - Are the boundaries appropriate?

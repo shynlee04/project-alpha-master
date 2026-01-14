@@ -279,7 +279,7 @@ The agent CRUD path has been fully traced:
 
 ## 9. Files Reviewed
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/lib/filesystem/file-ops.ts` | 348 | User file operations |
 | `src/lib/filesystem/dir-ops.ts` | 186 | Directory operations |

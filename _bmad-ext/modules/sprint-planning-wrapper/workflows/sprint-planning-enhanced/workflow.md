@@ -1,7 +1,7 @@
 ---
 name: "sprint-planning-enhanced"
 type: "implementation-workflow"
-purpose: "Wrap BMAD sprint-planning with cohesion validation and auto gatekeeping"
+description: "Wrap BMAD sprint-planning with cohesion validation and auto gatekeeping"
 version: "1.0.0"
 phase: "4.5"
 wrapper_for: "_bmad/bmm/workflows/4-implementation/sprint-planning"
@@ -9,7 +9,7 @@ wrapper_for: "_bmad/bmm/workflows/4-implementation/sprint-planning"
 
 # Sprint-Planning Enhanced Workflow
 
-**Purpose**: Wrap the existing BMAD `sprint-planning` workflow with auto gatekeeping, looping, automation, and handoff work.
+**description**: Wrap the existing BMAD `sprint-planning` workflow with auto gatekeeping, looping, automation, and handoff work.
 
 ## Critical Insight
 
@@ -24,7 +24,7 @@ Sprints fail due to **Cohesion & Reality** issues, not just Logic & Order. This 
 workflow:
   name: "sprint-planning-enhanced"
   phase: "4.5"
-  purpose: "Enhanced sprint planning with Product Reality validation"
+  description: "Enhanced sprint planning with Product Reality validation"
 
   entry:
     required: "Epic files in planning artifacts"
@@ -67,7 +67,7 @@ dependency_conflicts: []
 
 ## Steps Overview
 
-| Step | Name | Purpose | Output |
+| Step | Name | description | Output |
 |------|------|---------|--------|
 | 1 | Discover Epics | Scan for epic files | Epic list |
 | 2 | Generate Status | Run BMAD sprint-planning | Baseline sprint-status.yaml |

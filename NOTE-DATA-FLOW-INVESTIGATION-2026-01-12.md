@@ -540,7 +540,7 @@ Store project context within BlockNote block metadata for audit trail.
 
 ## 7. Files Involved
 
-| File | Purpose | Issues |
+| File | description | Issues |
 |------|---------|--------|
 | `src/lib/notes/note-crud-slice.ts` | CRUD operations | CP-01, CP-02, CP-03 |
 | `src/lib/notes/note-store-refactored.ts` | Zustand store composition | Store design |

@@ -1,14 +1,14 @@
 ---
 name: "artifact-scanner"
 type: "governance-scanner"
-purpose: "Scan documents and artifacts with staleness detection + code validation"
+description: "Scan documents and artifacts with staleness detection + code validation"
 version: "1.1.0"
 updated: "2026-01-11"
 ---
 
 # Artifact Scanner (Updated)
 
-**Purpose**: Scan all governance documents and artifacts to detect staleness, inconsistencies, and orphaned files.
+**description**: Scan all governance documents and artifacts to detect staleness, inconsistencies, and orphaned files.
 
 **Enhanced**: Now integrates with actual code validation (TypeScript + Vitest) for story continuity.
 

@@ -33,7 +33,7 @@ Based on user's direct instructions:
 
 - Search for relevant files using glob/grep
 - Identify the specific files that need changes
-- Note file locations and purposes
+- Note file locations and descriptions
 
 ### 2. Find Relevant Patterns
 

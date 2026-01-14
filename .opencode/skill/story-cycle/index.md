@@ -96,7 +96,7 @@ All skill files contain **minimal references** to the master workflow in `_bmad/
 
 ## Related Skills
 
-| Skill | Purpose |
+| Skill | description |
 |-------|---------|
 | `bmm-workflows` | BMM workflow integration |
 | `bmad-core-integration` | Agent access and routing |

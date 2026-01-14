@@ -377,7 +377,7 @@ export class LocalFSAdapterWrapper implements StorageAdapter {
 
 ### Files to Create
 
-| Path | Purpose |
+| Path | description |
 |------|---------|
 | `src/lib/filesystem/localfs-wrapper.ts` | Backward compatibility wrapper |
 | `src/lib/filesystem/types/localfs-compat.ts` | Deprecated type aliases |

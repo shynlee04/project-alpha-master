@@ -18,7 +18,7 @@
 ## Agent Architecture
 
 - [ ] At least one agent is defined
-- [ ] Each agent has a clear role and purpose
+- [ ] Each agent has a clear role and description
 - [ ] Agent personalities are defined (if using personality themes)
 - [ ] Agent interactions are mapped (for multi-agent modules)
 - [ ] Key commands for each agent are listed
@@ -26,7 +26,7 @@
 ## Workflow Ecosystem
 
 - [ ] Core workflows (2-3) are identified
-- [ ] Each workflow has clear purpose
+- [ ] Each workflow has clear description
 - [ ] Workflow complexity is assessed
 - [ ] Input/output for workflows is defined
 - [ ] Workflow categories are logical

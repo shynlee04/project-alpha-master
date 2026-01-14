@@ -113,7 +113,7 @@ Added feature documentation:
 
 ## BlockNote APIs Used
 
-| API | Purpose | Documentation Source |
+| API | description | Documentation Source |
 |-----|---------|----------------------|
 | `SideMenuController` | Enables drag handle on block hover | BlockNote React docs |
 | `useSelectedBlocks(editor)` | Gets array of currently selected blocks | BlockNote React hooks |

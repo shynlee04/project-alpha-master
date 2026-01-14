@@ -1,14 +1,14 @@
 ---
 name: "tools-governance"
 type: "governance-policy"
-purpose: "Track and govern tool CRUD operations to prevent unintended state changes"
+description: "Track and govern tool CRUD operations to prevent unintended state changes"
 version: "1.0.0"
 critical: true
 ---
 
 # Tools Governance
 
-**Purpose**: Track and govern tool CRUD operations to prevent unintended state changes from agent actions.
+**description**: Track and govern tool CRUD operations to prevent unintended state changes from agent actions.
 
 ## Problem Statement
 

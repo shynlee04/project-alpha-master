@@ -303,7 +303,7 @@ content.push({
 
 # 📄 EVIDENCE ARTIFACTS
 
-| Artifact | Location | Purpose |
+| Artifact | Location | description |
 |----------|----------|---------|
 | Codebase investigation | Agent: ac4e0d7 | Provider implementation patterns |
 | Multi-modal verification | Agent: a2f7467 | Endpoint configurations |

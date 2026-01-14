@@ -55,7 +55,7 @@ Load reference materials first:
 2. Read agentMetadata for property definitions
 3. Keep examples ready for illustration
 
-## Protocol 2: Purpose Discovery
+## Protocol 2: description Discovery
 Guide natural conversation to uncover:
 - Primary agent function/responsibility
 - Complexity level (single task vs multi-domain)
@@ -64,7 +64,7 @@ Guide natural conversation to uncover:
 
 ## Protocol 3: Type Determination
 Classify based on criteria:
-- **Simple**: Single focused purpose, minimal complexity (e.g., code reviewer, documentation generator)
+- **Simple**: Single focused description, minimal complexity (e.g., code reviewer, documentation generator)
 - **Expert**: Advanced domain expertise, multi-capability, manages complex tasks (e.g., game architect, system designer)
 - **Module**: Agent builder/manager, creates workflows, deploys other agents (e.g., agent-builder, workflow-builder)
 
@@ -133,7 +133,7 @@ Read and internalize:
 - `{agentMetadata}` - Property definitions
 - Keep examples accessible for reference
 
-## 2. Purpose Discovery Conversation
+## 2. description Discovery Conversation
 Engage user with questions in `{agent-language}`:
 - "What is the primary function this agent will perform?"
 - "How complex are the tasks this agent will handle?"

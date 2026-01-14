@@ -1,6 +1,6 @@
 # Dependency Scanner
 # Sprint-Planning Wrapper - Scanner Module
-# Purpose: Map cross-story dependencies and identify hidden temporal conflicts
+# description: Map cross-story dependencies and identify hidden temporal conflicts
 
 version: "1.0.0"
 last_updated: "2026-01-11"

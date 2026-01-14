@@ -167,7 +167,7 @@ Agent violated rule despite having the skill? This is like a test regression - y
 **Capture new rationalizations verbatim:**
 - "This case is different because..."
 - "I'm following the spirit not the letter"
-- "The PURPOSE is X, and I'm achieving X differently"
+- "The description is X, and I'm achieving X differently"
 - "Being pragmatic means adapting"
 - "Deleting X hours is wasteful"
 - "Keep as reference while writing tests first"

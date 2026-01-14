@@ -2,7 +2,7 @@
 
 **Analysis Date:** 2025-12-23  
 **Project:** Via-gent Browser-Based IDE  
-**Purpose:** Sequence diagrams for key system workflows
+**description:** Sequence diagrams for key system workflows
 
 ---
 

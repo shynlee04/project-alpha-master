@@ -503,7 +503,7 @@ Output file: `{sprint_artifacts}/epic-{N}-retrospective.md`
 
 ## Artifacts Produced
 
-| Artifact | Location | Purpose |
+| Artifact | Location | description |
 |----------|----------|---------|
 | Story File | `{sprint_artifacts}/{story}.md` | Requirements, tracking, dev record |
 | Context XML | `{sprint_artifacts}/{story}-context.xml` | Developer context, research |

@@ -1,7 +1,7 @@
 # Governance Workflow - Research
 
 **Workflow Type**: Core Concept (3 of 3)  
-**Purpose**: Internet-based validation for tech choices, scenarios, and trade-offs  
+**description**: Internet-based validation for tech choices, scenarios, and trade-offs  
 **Triggered By**: 
 - Agent-expert decision (modify or investigate)
 - User request for tech evaluation
@@ -10,7 +10,7 @@
 
 ---
 
-## Purpose
+## description
 
 The **Research** workflow ensures that technical decisions are **validated against real-world evidence** rather than assumptions. It:
 
@@ -31,7 +31,7 @@ This prevents:
 
 ### Step 1: Identify Research Topics
 
-**Purpose**: Extract what needs to be researched from user's request
+**description**: Extract what needs to be researched from user's request
 
 ```yaml
 research_step_1:
@@ -79,7 +79,7 @@ research_step_1:
 
 ### Step 2: Conduct Internet Search
 
-**Purpose**: Search for real-world evidence and best practices
+**description**: Search for real-world evidence and best practices
 
 ```yaml
 research_step_2:
@@ -121,7 +121,7 @@ research_step_2:
 
 ### Step 3: Evaluate Evidence
 
-**Purpose**: Weight tech choices against criteria
+**description**: Weight tech choices against criteria
 
 ```yaml
 research_step_3:
@@ -164,7 +164,7 @@ research_step_3:
 
 ### Step 4: Provide Advice
 
-**Purpose**: Generate actionable recommendations and warnings
+**description**: Generate actionable recommendations and warnings
 
 ```yaml
 research_step_4:

@@ -16,7 +16,7 @@
 
 ### Content Characteristics
 
-- **Purpose**: {{workflowPurpose}}
+- **description**: {{workflowdescription}}
 - **Instruction Style**: {{instructionStyle}}
 - **User Interaction**: {{interactionPattern}}
 - **Complexity**: {{complexityLevel}}

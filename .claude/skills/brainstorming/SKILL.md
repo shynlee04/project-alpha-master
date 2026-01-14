@@ -18,7 +18,7 @@ Start by understanding the current project context, then ask questions one at a 
 - Ask questions one at a time to refine the idea
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+- Focus on understanding: description, constraints, success criteria
 
 **Exploring approaches:**
 - Propose 2-3 different approaches with trade-offs

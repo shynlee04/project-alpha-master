@@ -527,7 +527,7 @@ EPIC-54 is complete when ALL of the following are met:
 
 ### Critical Files for Implementation
 
-| File Path | Purpose |
+| File Path | description |
 |-----------|---------|
 | `_bmad-output/sprint-artifacts/sprint-status.yaml` | Sprint tracking |
 | `_bmad/modules/architecture-remediation/config/thresholds.yaml` | Size limits reference |

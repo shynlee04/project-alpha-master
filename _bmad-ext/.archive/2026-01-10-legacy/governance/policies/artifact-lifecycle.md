@@ -4,7 +4,7 @@
 **Effective**: 2026-01-06
 **Owner**: BMAD Governance Module
 
-## Purpose
+## description
 
 This policy defines the four-tier artifact lifecycle to prevent context poisoning and ensure AI agents operate with clean, relevant context.
 

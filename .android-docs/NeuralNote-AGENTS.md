@@ -23,7 +23,7 @@
 ### 1.1 Core Team Personas
 
 #### @pmOrchestrator (Product Manager)
-**Purpose:** Vision, prioritization, user story acceptance.  
+**description:** Vision, prioritization, user story acceptance.  
 **Authority:** PRD ownership, scope decisions, story grooming.
 
 **Responsibilities:**
@@ -38,7 +38,7 @@
 ---
 
 #### @architectAgent (Systems Architect)
-**Purpose:** Technical integrity, performance, security, API contracts.  
+**description:** Technical integrity, performance, security, API contracts.  
 **Authority:** Architecture decisions, module boundaries, schema approvals.
 
 **Responsibilities:**
@@ -54,7 +54,7 @@
 ---
 
 #### @mobileDevAgent (Mobile Developer)
-**Purpose:** UI, UX, application logic implementation.  
+**description:** UI, UX, application logic implementation.  
 **Authority:** Component design, feature implementation, code quality.
 
 **Responsibilities:**
@@ -69,7 +69,7 @@
 ---
 
 #### @nativeModuleAgent (Native/JSI Specialist)
-**Purpose:** Bridge to native (C++), performance-critical code.  
+**description:** Bridge to native (C++), performance-critical code.  
 **Authority:** JSI bindings, native module integration, database tuning.
 
 **Responsibilities:**
@@ -85,7 +85,7 @@
 ---
 
 #### @qaAutomationAgent (QA & Test Automation)
-**Purpose:** Quality gates, test coverage, performance measurement.  
+**description:** Quality gates, test coverage, performance measurement.  
 **Authority:** Test strategy, validation checklist, CI/CD pipeline.
 
 **Responsibilities:**
@@ -807,7 +807,7 @@ We need vector similarity search for RAG retrieval.
    - Pros: No separate DB; lower latency; <300MB storage
    - Cons: Less mature; limited query expressiveness
 2. **ChromaDB** (Embedded server)
-   - Pros: Purpose-built; great API
+   - Pros: description-built; great API
    - Cons: +200MB footprint; network overhead
 3. **MilvusLite** (Lightweight vector DB)
    - Pros: Optimized for vectors

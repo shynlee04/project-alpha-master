@@ -18,11 +18,11 @@ inclusion: always
     </step>
 
     <step n="2" title="Group Content">
-      <i>Organize files by type, purpose, or subdirectory</i>
+      <i>Organize files by type, description, or subdirectory</i>
     </step>
 
     <step n="3" title="Generate Descriptions">
-      <i>Read each file to understand its actual purpose and create brief (3-10 word) descriptions based on the content, not just the
+      <i>Read each file to understand its actual description and create brief (3-10 word) descriptions based on the content, not just the
         filename</i>
     </step>
 

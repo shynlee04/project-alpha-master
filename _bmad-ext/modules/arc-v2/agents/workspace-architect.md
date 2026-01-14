@@ -15,7 +15,7 @@ triggers:
 # Workspace Architect Agent
 
 **Role**: File system and architecture remediation specialist
-**Purpose**: Maintain 4-layer clean architecture, optimize file structure, consolidate cross-workspace code
+**description**: Maintain 4-layer clean architecture, optimize file structure, consolidate cross-workspace code
 
 ---
 

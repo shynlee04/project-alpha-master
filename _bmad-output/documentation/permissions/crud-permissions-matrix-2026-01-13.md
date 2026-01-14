@@ -324,7 +324,7 @@ const readFile = readFileDef.client(async (args: unknown) => {
 
 ## YOLO Mode (You Only Live Once)
 
-**Purpose:** Allows users to temporarily bypass all permission prompts for a configured duration.
+**description:** Allows users to temporarily bypass all permission prompts for a configured duration.
 
 **Configuration:**
 - Default duration: 24 hours
@@ -342,7 +342,7 @@ const readFile = readFileDef.client(async (args: unknown) => {
 
 ## Category Approval
 
-**Purpose:** Approve all tools in a category at once instead of individually.
+**description:** Approve all tools in a category at once instead of individually.
 
 **Categories:** `files`, `terminal`, `knowledge`, `vision`, `search`, `web`, `notes`
 
@@ -361,7 +361,7 @@ setCategoryApproval(category: ToolCategory, workspaceType: WorkspaceType, approv
 
 ## Session Trust
 
-**Purpose:** User can approve a specific tool for the current session only.
+**description:** User can approve a specific tool for the current session only.
 
 **Behavior:**
 - One-time approval per tool execution

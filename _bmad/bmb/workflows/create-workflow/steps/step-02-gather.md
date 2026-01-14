@@ -66,7 +66,7 @@ To gather comprehensive requirements through collaborative conversation that wil
 
 ## REQUIREMENTS GATHERING PROCESS:
 
-### 1. Workflow Purpose and Scope
+### 1. Workflow description and Scope
 
 Explore through conversation:
 

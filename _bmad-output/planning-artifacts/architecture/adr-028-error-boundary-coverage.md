@@ -57,7 +57,7 @@ Implement comprehensive error boundary strategy with three-tier error handling:
 
 #### Tier 1: Recovery (Local)
 
-**Purpose**: Automatic retry and fallback for transient errors
+**description**: Automatic retry and fallback for transient errors
 
 **Pattern**: Component-level error boundaries with retry capability
 
@@ -118,7 +118,7 @@ export class ErrorBoundary extends React.Component<
 
 #### Tier 2: Degradation (Feature-Level)
 
-**Purpose**: Graceful feature reduction when errors occur
+**description**: Graceful feature reduction when errors occur
 
 **Pattern**: Feature-level error boundaries with degraded UI
 
@@ -156,7 +156,7 @@ function ChatPanelFallback() {
 
 #### Tier 3: Notification (Application-Level)
 
-**Purpose**: User notification and support ticket creation
+**description**: User notification and support ticket creation
 
 **Pattern**: Global error handler with user communication
 

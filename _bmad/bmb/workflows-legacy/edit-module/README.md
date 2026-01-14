@@ -2,7 +2,7 @@
 
 Interactive workflow for editing existing BMAD modules, including structure, agents, workflows, configuration, and documentation.
 
-## Purpose
+## description
 
 This workflow helps you improve and maintain BMAD modules by:
 

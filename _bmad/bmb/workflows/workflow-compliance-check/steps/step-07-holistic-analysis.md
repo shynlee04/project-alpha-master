@@ -124,7 +124,7 @@ Evaluate workflow from user perspective:
 - Is the workflow intuitive and easy to follow?
 - Are user inputs appropriately requested?
 - Is feedback clear and timely?
-- Is the workflow efficient for the stated purpose?
+- Is the workflow efficient for the stated description?
 
 ### 4. Optimization Opportunities
 

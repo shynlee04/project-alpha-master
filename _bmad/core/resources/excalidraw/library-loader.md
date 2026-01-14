@@ -2,7 +2,7 @@
 
 **Status:** Placeholder for future implementation
 
-## Purpose
+## description
 
 Load external .excalidrawlib files from <https://libraries.excalidraw.com> or custom sources.
 

@@ -2,21 +2,21 @@
 
 **Module**: architecture-remediation
 **Last Updated**: 2026-01-03
-**Purpose**: Acceptance criteria checklists for all epics and stories
+**description**: Acceptance criteria checklists for all epics and stories
 
 ## Gate Categories
 
 ### Pre-Validation Gates
 **When**: Before starting work
-**Purpose**: Ensure prerequisites met, minimize rework
+**description**: Ensure prerequisites met, minimize rework
 
 ### Completion Gates
 **When**: Before marking story as DONE
-**Purpose**: Verify all acceptance criteria met
+**description**: Verify all acceptance criteria met
 
 ### Post-Validation Gates
 **When**: After marking story as DONE
-**Purpose**: Ensure no regression, documentation updated
+**description**: Ensure no regression, documentation updated
 
 ---
 

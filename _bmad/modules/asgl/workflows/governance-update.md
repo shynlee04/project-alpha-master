@@ -13,7 +13,7 @@ triggers:
 
 **Module**: `asgl`  
 **Workflow ID**: `governance-update`  
-**Purpose**: Keep governance documents up-to-date with project state
+**description**: Keep governance documents up-to-date with project state
 
 ---
 
@@ -149,7 +149,7 @@ targets:
 create_if_missing:
   template: "config/governance.yaml → child_agents_md.template"
   contents:
-    - "Layer purpose"
+    - "Layer description"
     - "Key directories"
     - "File conventions"
     - "Import rules"
@@ -223,13 +223,13 @@ output:
 > **Last Updated**: {date}
 > **Session**: {session_id}
 
-## Layer Purpose
+## Layer description
 
-{purpose_description}
+{description_description}
 
 ## Key Directories
 
-| Directory | Purpose | File Count |
+| Directory | description | File Count |
 |-----------|---------|------------|
 {directory_table}
 
@@ -252,8 +252,8 @@ output:
 ## Dependencies
 
 This layer depends on:
-- `{dep_1}` - {purpose}
-- `{dep_2}` - {purpose}
+- `{dep_1}` - {description}
+- `{dep_2}` - {description}
 
 ## Dependents
 

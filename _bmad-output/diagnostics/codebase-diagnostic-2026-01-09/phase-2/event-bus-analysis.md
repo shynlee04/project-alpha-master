@@ -6,7 +6,7 @@
 
 ## Event Bus Types Identified
 
-| Bus Type | File | Purpose |
+| Bus Type | File | description |
 |----------|------|---------|
 | **Global Event Bus** | `lib/events/global-event-bus.ts` | App-wide events |
 | **Cross-Workspace Event Bus** | `lib/events/cross-workspace-event-bus.ts` | Workspace communication |
@@ -32,7 +32,7 @@
 
 ### Workspace Event Bus
 
-| Event | Purpose |
+| Event | description |
 |-------|---------|
 | `file:modified` | File change in workspace |
 | `file:deleted` | File deletion in workspace |

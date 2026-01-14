@@ -111,7 +111,7 @@
 
 ### Smoke Tests (<5 min)
 
-**Purpose**: Fast feedback, catch build-breaking issues
+**description**: Fast feedback, catch build-breaking issues
 
 - [ ] {scenario} (30s)
 - [ ] {scenario} (45s)
@@ -121,7 +121,7 @@
 
 ### P0 Tests (<10 min)
 
-**Purpose**: Critical path validation
+**description**: Critical path validation
 
 - [ ] {scenario} (E2E)
 - [ ] {scenario} (API)
@@ -131,7 +131,7 @@
 
 ### P1 Tests (<30 min)
 
-**Purpose**: Important feature coverage
+**description**: Important feature coverage
 
 - [ ] {scenario} (API)
 - [ ] {scenario} (Component)
@@ -140,7 +140,7 @@
 
 ### P2/P3 Tests (<60 min)
 
-**Purpose**: Full regression coverage
+**description**: Full regression coverage
 
 - [ ] {scenario} (Unit)
 - [ ] {scenario} (API)
@@ -170,8 +170,8 @@
 
 **Tooling:**
 
-- {tool} for {purpose}
-- {tool} for {purpose}
+- {tool} for {description}
+- {tool} for {description}
 
 **Environment:**
 

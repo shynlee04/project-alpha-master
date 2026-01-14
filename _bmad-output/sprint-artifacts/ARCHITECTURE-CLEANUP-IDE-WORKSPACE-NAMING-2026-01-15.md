@@ -111,7 +111,7 @@ handle                ← TOO VAGUE
 
 # Project storage
 fsaHandles (table)    ← WRONG - implementation detail
-storageMetadata       ← BETTER - describes purpose
+storageMetadata       ← BETTER - describes description
 
 # Workspace vs Type  
 workspace/            ← CONFUSING - is this the CONTAINER or TYPE?

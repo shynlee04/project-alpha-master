@@ -9,7 +9,7 @@ Based on comprehensive codebase analysis, this report identifies the root causes
 ### 1. Project Concept Ambiguity (Root Cause #1)
 
 #### Current State
-The "Project" entity (`src/infrastructure/persistence/stores/project/project-types.ts`) serves multiple conflicting purposes:
+The "Project" entity (`src/infrastructure/persistence/stores/project/project-types.ts`) serves multiple conflicting descriptions:
 
 ```typescript
 export interface Project {

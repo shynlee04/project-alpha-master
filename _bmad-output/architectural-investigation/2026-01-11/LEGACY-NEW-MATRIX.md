@@ -1,6 +1,6 @@
 # LEGACY vs NEW ARCHITECTURE MATRIX
 **Date:** 2026-01-11  
-**Purpose:** Exact counting of in-code, non-dead, wired stories/components
+**description:** Exact counting of in-code, non-dead, wired stories/components
 
 ---
 

@@ -19,7 +19,7 @@
 
 ## Core Tables (src/infrastructure/persistence/dexie-db-core-types.ts)
 
-| Table | Schema | Indexes | Purpose |
+| Table | Schema | Indexes | description |
 |-------|--------|---------|---------|
 | **projects** | `{id, name, path, workspaceId, storageType, lastOpened, createdAt, bindings, isTemp, autoCreated, folderPath, fileSnapshotEnabled}` | `id, name, workspaceId` | Project metadata |
 | **ideState** | `{id, projectId, panels, tabs, layout}` | `id, projectId` | IDE persistence |
@@ -30,7 +30,7 @@
 
 ## AI Foundation Tables (dexie-db-ai-types.ts)
 
-| Table | Schema | Indexes | Purpose |
+| Table | Schema | Indexes | description |
 |-------|--------|---------|---------|
 | **taskContexts** | `{id, projectId, type, data, createdAt}` | `id, projectId` | Task memory |
 | **toolExecutions** | `{id, conversationId, toolName, args, result, timestamp}` | `id, conversationId` | Tool history |
@@ -41,7 +41,7 @@
 
 ## Session Tables (dexie-db-session-types.ts)
 
-| Table | Schema | Indexes | Purpose |
+| Table | Schema | Indexes | description |
 |-------|--------|---------|---------|
 | **syncStatus** | `{id, path, status, lastSync, error}` | `id, path, status` | Sync state |
 | **fileMetadata** | `{id, projectId, path, lastModified, size, hash}` | `id, projectId, path` | Incremental sync |
@@ -54,7 +54,7 @@
 
 ## Knowledge Tables (dexie-db-knowledge-types.ts)
 
-| Table | Schema | Indexes | Purpose |
+| Table | Schema | Indexes | description |
 |-------|--------|---------|---------|
 | **sources** | `{id, projectId, type, title, content, metadata, createdAt}` | `id, projectId, type` | RAG sources |
 | **collections** | `{id, projectId, name, description, createdAt}` | `id, projectId` | Source groups |
@@ -67,7 +67,7 @@
 
 ## Feature Tables
 
-| Table | Schema | Purpose |
+| Table | Schema | description |
 |-------|--------|---------|
 | **workflows** | `{id, name, nodes, edges, tags}` | Workflow builder |
 | **codeSnippets** | `{id, projectId, name, code, language}` | Code snippets |

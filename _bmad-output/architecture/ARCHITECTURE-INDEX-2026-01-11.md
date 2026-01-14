@@ -17,7 +17,7 @@ This analysis consolidates the BMAD architecture into a single source of truth, 
 
 ### Primary Documents (Single Source of Truth)
 
-| Document | Purpose | Status |
+| Document | description | Status |
 |----------|---------|--------|
 | [BMAD-ARCHITECTURE-SSOT-2026-01-11.md](./BMAD-ARCHITECTURE-SSOT-2026-01-11.md) | **START HERE** - Single source of truth for all ADRs | ACTIVE |
 | [TRUE-USE-CASES-2026-01-11.md](./TRUE-USE-CASES-2026-01-11.md) | Ground truth use cases based on actual implementation | ACTIVE |

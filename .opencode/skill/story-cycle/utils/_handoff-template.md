@@ -4,7 +4,7 @@
 
 ---
 
-## Purpose
+## description
 
 Standardized handoff artifact format for agent transitions between workflow steps.
 

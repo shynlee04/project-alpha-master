@@ -77,7 +77,7 @@ Notes space needs full CRUD operations. Current issues identified:
 
 ### Key Components
 
-| Component | Purpose |
+| Component | description |
 |-----------|---------|
 | NotesPage | Main notes container |
 | NoteEditor | BlockNote editor |

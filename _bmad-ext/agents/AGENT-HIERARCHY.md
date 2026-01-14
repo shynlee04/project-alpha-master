@@ -52,7 +52,7 @@ The BMAD agent system organizes agents into a hierarchy with:
 
 ## Main Agents (7)
 
-| ID | Agent | Purpose | Wrapped From | Sub-Agents |
+| ID | Agent | description | Wrapped From | Sub-Agents |
 |----|-------|---------|--------------|------------|
 | **MA-01** | dev-ext | Feature implementation, bug fixes | `_bmad/bmm/agents/dev.md` | tea-ext (testing) |
 | **MA-02** | architect-ext | System design, architecture decisions | `_bmad/bmm/agents/architect.md` | (none yet) |
@@ -75,7 +75,7 @@ The BMAD agent system organizes agents into a hierarchy with:
 
 Shared services are NOT counted as main agents - they are infrastructure available to all agents.
 
-| ID | Service | Purpose | Available To |
+| ID | Service | description | Available To |
 |----|---------|---------|--------------|
 | **SS-01** | quality-scanner | Aggregates 10 domain scanners | All agents (via skill invocation) |
 
@@ -109,7 +109,7 @@ sub_agent_limits:
 
 ### Sub-Agent to Main Mapping
 
-| Sub-Agent | Parent Main | Purpose |
+| Sub-Agent | Parent Main | description |
 |-----------|-------------|---------|
 | **tea-ext** | dev-ext | Test engineering, test strategy |
 | **pm** | product-management-ext | Product management, roadmap |

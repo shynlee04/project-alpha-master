@@ -52,7 +52,7 @@ interface ProjectMetadata {
 }
 ```
 
-**Purpose:** Stores project information for persistence and display.
+**description:** Stores project information for persistence and display.
 
 **Constraints:**
 - `id`: UUID v4 format
@@ -81,7 +81,7 @@ interface WorkspaceState {
 }
 ```
 
-**Purpose:** Central workspace state managed by [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1).
+**description:** Central workspace state managed by [`WorkspaceContext`](../src/lib/workspace/WorkspaceContext.tsx:1).
 
 **Constraints:**
 - `projectMetadata`: Null when no project is open
@@ -103,7 +103,7 @@ interface LayoutConfig {
 }
 ```
 
-**Purpose:** Stores IDE layout and UI state.
+**description:** Stores IDE layout and UI state.
 
 **Constraints:**
 - `openFiles`: Array of file paths relative to project root
@@ -123,7 +123,7 @@ interface SyncProgress {
 }
 ```
 
-**Purpose:** Tracks file sync progress for UI display.
+**description:** Tracks file sync progress for UI display.
 
 **Constraints:**
 - `current`: 0 ≤ current ≤ total
@@ -165,7 +165,7 @@ class ViaGentDatabase extends Dexie {
 | `lastOpened` | `Date` | Indexed | ISO 8601 |
 | `createdAt` | `Date` | Indexed | ISO 8601 |
 
-**Purpose:** Stores project metadata for persistence.
+**description:** Stores project metadata for persistence.
 
 **Indexes:**
 - Primary: `id`
@@ -198,7 +198,7 @@ db.projects.where('name').equals(name).first();
 | `chatVisible` | `boolean` | - | Chat panel visibility |
 | `updatedAt` | `Date` | Indexed | ISO 8601 |
 
-**Purpose:** Stores IDE layout state per project.
+**description:** Stores IDE layout state per project.
 
 **Indexes:**
 - Primary: `projectId`
@@ -226,7 +226,7 @@ db.ideState.put({ projectId, ...state });
 | `createdAt` | `Date` | Indexed | ISO 8601 |
 | `updatedAt` | `Date` | Indexed | ISO 8601 |
 
-**Purpose:** Stores AI chat conversation history.
+**description:** Stores AI chat conversation history.
 
 **Indexes:**
 - Primary: `id`
@@ -257,7 +257,7 @@ db.conversations.get(conversationId);
 | `createdAt` | `Date` | Indexed | ISO 8601 |
 | `updatedAt` | `Date` | Indexed | ISO 8601 |
 
-**Purpose:** Stores AI agent task context for LangGraph orchestration.
+**description:** Stores AI agent task context for LangGraph orchestration.
 
 **Indexes:**
 - Primary: `id`
@@ -283,7 +283,7 @@ type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'failed' | 'cancelle
 | `duration` | `number` | - | Execution time (ms) |
 | `createdAt` | `Date` | Indexed | ISO 8601 |
 
-**Purpose:** Records tool execution history for debugging and auditing.
+**description:** Records tool execution history for debugging and auditing.
 
 **Indexes:**
 - Primary: `id`

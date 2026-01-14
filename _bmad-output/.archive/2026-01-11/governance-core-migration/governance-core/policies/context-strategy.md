@@ -5,7 +5,7 @@
 
 ---
 
-## Purpose
+## description
 
 Defines the strategy for progressive context loading to minimize token usage while maximizing relevance.
 

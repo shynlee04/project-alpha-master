@@ -9,7 +9,7 @@
 
 ---
 
-## Purpose
+## description
 
 Execute production-grade end-to-end testing with real APIs, real browsers, and comprehensive validation. Zero mocks - all tests use actual services to validate true functionality.
 
@@ -36,7 +36,7 @@ phases:
 
 ## Phase 1: Deploy to Staging
 
-**Purpose**: Deploy feature to staging environment for testing
+**description**: Deploy feature to staging environment for testing
 
 ```yaml
 deploy_to_staging_phase:
@@ -72,7 +72,7 @@ deploy_to_staging_phase:
 
 ## Phase 2: Load Production API Keys
 
-**Purpose**: Load real API keys from config (NEVER use mocks)
+**description**: Load real API keys from config (NEVER use mocks)
 
 ```yaml
 load_production_keys_phase:
@@ -142,7 +142,7 @@ load_production_keys_phase:
 
 ## Phase 3: Execute User Journeys (Playwright MCP)
 
-**Purpose**: Simulate real user interactions with browser automation
+**description**: Simulate real user interactions with browser automation
 
 ```yaml
 browser_automation_phase:
@@ -259,7 +259,7 @@ browser_automation_phase:
 
 ## Phase 4: Validate Real API Calls
 
-**Purpose**: Test with real production APIs (NO MOCKS)
+**description**: Test with real production APIs (NO MOCKS)
 
 ```yaml
 real_api_validation_phase:
@@ -361,7 +361,7 @@ real_api_validation_phase:
 
 ## Phase 5: Visual Regression Testing
 
-**Purpose**: Compare screenshots with multimodal AI to detect unintended changes
+**description**: Compare screenshots with multimodal AI to detect unintended changes
 
 ```yaml
 visual_regression_phase:
@@ -464,7 +464,7 @@ visual_regression_phase:
 
 ## Phase 6: Generate Test Report
 
-**Purpose**: Create comprehensive test report with all findings
+**description**: Create comprehensive test report with all findings
 
 ```yaml
 test_report_generation_phase:

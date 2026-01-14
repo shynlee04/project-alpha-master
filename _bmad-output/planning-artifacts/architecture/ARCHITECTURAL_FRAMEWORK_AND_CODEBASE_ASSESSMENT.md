@@ -60,7 +60,7 @@ After comprehensive investigation across FSA, IndexedDB, BlockNote, and State Ma
 
 #### STORAGE LAYER (Files That MUST Be Unified)
 
-| File | Lines | Purpose | Issue |
+| File | Lines | description | Issue |
 |------|-------|---------|-------|
 | `infrastructure/sync/adapters/adapter-factory.ts` | 146 | Creates FSA/IDB adapters | OK |
 | `infrastructure/sync/adapters/fsa-adapter-core.ts` | 292 | FSA implementation | OK |
@@ -74,7 +74,7 @@ After comprehensive investigation across FSA, IndexedDB, BlockNote, and State Ma
 
 #### NOTES LAYER (Files That Handle Note CRUD)
 
-| File | Lines | Purpose | Issue |
+| File | Lines | description | Issue |
 |------|-------|---------|-------|
 | `lib/notes/note-store-refactored.ts` | 206 | Unified store | OK (slice pattern) |
 | `lib/notes/slices/note-crud-slice.ts` | 333 | CRUD operations | **TOO LONG** |
@@ -85,7 +85,7 @@ After comprehensive investigation across FSA, IndexedDB, BlockNote, and State Ma
 
 #### PROJECT LAYER (Files That Handle Projects)
 
-| File | Lines | Purpose | Issue |
+| File | Lines | description | Issue |
 |------|-------|---------|-------|
 | `infrastructure/persistence/stores/project/project-crud-slice.ts` | 215 | Project CRUD | OK (slice pattern) |
 | `lib/workspace/project-store.ts` | 78 | **FACADE** | Should remove |
@@ -94,7 +94,7 @@ After comprehensive investigation across FSA, IndexedDB, BlockNote, and State Ma
 
 #### STATE MANAGEMENT (Zustand Stores)
 
-| File | Lines | Purpose | Issue |
+| File | Lines | description | Issue |
 |------|-------|---------|-------|
 | `infrastructure/persistence/stores/use-app-store.ts` | 368 | 8 slices | OK |
 | `infrastructure/persistence/stores/conversation/useConversationStore.ts` | 496 | **GOD STORE** | CRITICAL |

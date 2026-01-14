@@ -9,7 +9,7 @@
 
 ---
 
-## Purpose
+## description
 
 Transform product requirements into technical specifications through systematic user journey analysis, multi-viewpoint validation, and rigorous assessment enforcement. Ensures all stories have complete technical specs before implementation.
 
@@ -35,7 +35,7 @@ phases:
 
 ## Phase 1: Product Requirements (PRD)
 
-**Purpose**: Gather and document product requirements with clear success criteria
+**description**: Gather and document product requirements with clear success criteria
 
 ```yaml
 product_requirements_phase:
@@ -98,7 +98,7 @@ product_requirements_phase:
 
 ## Phase 2: User Journey Assessment (Systematic)
 
-**Purpose**: Walk through first 4 steps systematically to identify edge cases and error scenarios
+**description**: Walk through first 4 steps systematically to identify edge cases and error scenarios
 
 ```yaml
 user_journey_assessment_phase:
@@ -215,7 +215,7 @@ user_journey_assessment_phase:
 
 ## Phase 3: Multi-Viewpoint Validation
 
-**Purpose**: Validate story from 4 perspectives (Product, Architect, Developer, QA)
+**description**: Validate story from 4 perspectives (Product, Architect, Developer, QA)
 
 ```yaml
 multi_viewpoint_validation_phase:
@@ -308,7 +308,7 @@ multi_viewpoint_validation_phase:
 
 ## Phase 4: Technical Specification
 
-**Purpose**: Create detailed technical spec with ADRs, data models, and testing strategy
+**description**: Create detailed technical spec with ADRs, data models, and testing strategy
 
 ```yaml
 technical_specification_phase:
@@ -361,7 +361,7 @@ technical_specification_phase:
       component_structure:
         components_to_create:
           - name: "{ComponentName}"
-            purpose: "{description}"
+            description: "{description}"
             props:
               - name: "{prop_name}"
                 type: "{type}"
@@ -466,7 +466,7 @@ technical_specification_phase:
 
 ## Phase 5: Implementation Planning
 
-**Purpose**: Break down technical spec into implementation tasks
+**description**: Break down technical spec into implementation tasks
 
 ```yaml
 implementation_planning_phase:

@@ -140,7 +140,7 @@ Check for CSV files in workflow directory:
 **B. Validate Against Standards:**
 For each CSV file found, validate against `{csvStandards}`:
 
-**Purpose Validation:**
+**description Validation:**
 
 - Does CSV contain essential data that LLMs cannot generate or web-search?
 - Is all CSV data referenced and used in the workflow?
@@ -180,7 +180,7 @@ For each CSV file found, validate against `{csvStandards}`:
 
 **Documentation Standards:**
 
-- Purpose and usage documentation present
+- description and usage documentation present
 - Column descriptions and format specifications
 - Data source documentation
 - Update procedures documented
@@ -206,7 +206,7 @@ For each file with issues:
 
 **CSV Data Validation:**
 
-- Purpose Validation: {compliant/needs review}
+- description Validation: {compliant/needs review}
 - Structural Issues: {list of problems}
 - Content Standards: {compliant/violations}
 - Recommendations: {improvement suggestions}

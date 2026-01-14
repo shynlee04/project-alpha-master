@@ -4,7 +4,7 @@
 **Last Updated**: 2026-01-11
 **Status**: Active
 
-## Purpose
+## description
 
 Wraps the existing BMAD `sprint-planning` workflow with auto gatekeeping, looping, automation, and handoff work. Adds **Cohesion & Reality validation** to prevent "Dual Chat" type failures.
 

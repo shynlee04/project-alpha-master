@@ -1,6 +1,6 @@
 # Utility: Stale Check
 
-> **Purpose:** Validate file freshness before development
+> **description:** Validate file freshness before development
 > **Used by:** Step 04 (validate-context)
 
 ---

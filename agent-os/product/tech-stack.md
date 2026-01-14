@@ -7,7 +7,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Framework & Runtime
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **Application Framework** | TanStack Start | 1.142.0 | Full-stack React meta-framework with SSR/SPA modes |
 | **Router** | TanStack Router | 1.141.8 | File-based routing, type-safe navigation |
@@ -21,7 +21,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Frontend
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **UI Library** | React | 19.2.3 | Component-based UI |
 | **Build Tool** | Vite | 7.3.0 | Fast HMR, optimized builds |
@@ -38,7 +38,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Browser APIs & Client-Side Runtime
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **Node.js in Browser** | WebContainers | 1.6.1 (@webcontainer/api) | Sandboxed Node.js execution |
 | **Local Filesystem** | File System Access API | native | Read/write user's local files |
@@ -54,7 +54,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## AI Integration
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **AI Framework** | TanStack AI | 0.1.0 | ⬆️ Streaming responses, tool calls (stable release) |
 | **AI React Hooks** | @tanstack/ai-react | 0.1.0 | useChat, useCompletion hooks |
@@ -69,7 +69,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Localization
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **I18n Framework** | react-i18next | 15.3.0 | React integration for internationalization |
 | **Core Library** | i18next | 23.10.1 | Translation management |
@@ -80,7 +80,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Testing & Quality
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **Test Framework** | Vitest | 3.2.4 | Fast unit/integration testing |
 | **Testing Library** | @testing-library/react | 16.3.1 | Component testing utilities |
@@ -93,7 +93,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Monitoring & Performance
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **Error Monitoring** | @sentry/react | latest | 🆕 Runtime error tracking |
 | **Performance Metrics** | web-vitals | 5.1.0 | 🆕 Core Web Vitals tracking |
@@ -104,7 +104,7 @@ Complete technology stack for Via-Gent, validated against 2025 best practices.
 
 ## Deployment & Infrastructure
 
-| Category | Technology | Version | Purpose |
+| Category | Technology | Version | description |
 |----------|------------|---------|---------|
 | **Hosting** | Netlify | - | Static + SSR hosting |
 | **Build Plugin** | @netlify/vite-plugin-tanstack-start | 1.2.5 | Optimized Netlify builds |

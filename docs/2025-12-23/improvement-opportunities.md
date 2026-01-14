@@ -777,7 +777,7 @@ Standardize on single event bus instance with typed event definitions.
 
 ## Appendix: File References
 
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | [`src/lib/state/dexie-db.ts`](../src/lib/state/dexie-db.ts:1) | New Dexie.js persistence | 243 |
 | [`src/lib/workspace/project-store.ts`](../src/lib/workspace/project-store.ts:1) | Legacy persistence | 375 |

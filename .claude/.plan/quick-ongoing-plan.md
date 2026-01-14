@@ -123,7 +123,7 @@ Phase 3: Module Harmonization
 Objective: Align _bmad modules with .claude structure, eliminate duplication Dependencies: Phase 2 complete
 Cycle 3.1: Module Consolidation (10 → 4)
 Output: 4 strategic modules
-From	To	Purpose
+From	To	description
 core-governance/, governance/, asgl/	Module A: Orchestration Core	Loop coordination, governance, context management
 architecture-remediation/, architecture-refactoring/, quality/	Module B: Architecture	Deep scan, remediation, refactoring, quality scanners
 sprint-execution/, BMM agents	Module C: Sprint Execution	Development workflows, stories, implementation

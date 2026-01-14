@@ -2,7 +2,7 @@
 
 **Version**: 1.0.0
 **Created**: 2026-01-11
-**Purpose**: Enable OpenCode to use the BMAD Extension Layer
+**description**: Enable OpenCode to use the BMAD Extension Layer
 
 ## Overview
 
@@ -49,7 +49,7 @@ OpenCode integrates with the extension layer via:
 
 ### State Files (Extension Layer)
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `_bmad-ext/state/LOOP_STATE.yaml` | Global session state |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking |
@@ -57,7 +57,7 @@ OpenCode integrates with the extension layer via:
 
 ### Core Modules
 
-| Module | Path | Purpose |
+| Module | Path | description |
 |--------|------|---------|
 | Orchestrator | `_bmad-ext/orchestrator/master-orchestrator.md` | Central orchestration |
 | Governance | `_bmad-ext/modules/governance/MODULE.md` | Self-governance |
@@ -125,7 +125,7 @@ OpenCode integrates with the extension layer via:
 
 OpenCode recognizes these agent types from the extension layer:
 
-| Agent Type | Path | Purpose |
+| Agent Type | Path | description |
 |------------|------|---------|
 | `bmad-orchestrator` | `_bmad-ext/orchestrator/master-orchestrator.md` | Central coordination |
 | `module-builder-ext` | `_bmad-ext/agents/module-builder-ext.md` | Module creation |
@@ -199,7 +199,7 @@ artifacts:
 
 OpenCode and Claude Code share the same extension layer:
 
-| Platform | State File | Purpose |
+| Platform | State File | description |
 |----------|-----------|---------|
 | OpenCode | `_bmad-ext/state/LOOP_STATE.yaml` | Shared session state |
 | Claude Code | `_bmad-ext/state/LOOP_STATE.yaml` | Shared session state |

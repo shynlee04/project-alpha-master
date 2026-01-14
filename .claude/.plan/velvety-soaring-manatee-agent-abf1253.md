@@ -38,7 +38,7 @@
 **Problem**: Two separate sync modules with unclear boundaries:
 
 #### `src/lib/filesystem/` (Core Sync Layer)
-- **Purpose**: Local FS ↔ WebContainer sync for IDE workspace
+- **description**: Local FS ↔ WebContainer sync for IDE workspace
 - **Files**: 41 TypeScript files (2,487 total lines)
 - **Key Components**:
   - `sync-manager/` - Modular sync manager (7 files, 1,091 lines)
@@ -47,7 +47,7 @@
   - `file-snapshot-store.ts` - IndexedDB caching (509 lines)
 
 #### `src/lib/filesync/` (Workspace Sync Services)
-- **Purpose**: Abstract FileSyncService interface for all workspaces
+- **description**: Abstract FileSyncService interface for all workspaces
 - **Files**: 14 files (2,487 total lines)
 - **Key Components**:
   - `file-sync-service.ts` - Abstract interface (154 lines)

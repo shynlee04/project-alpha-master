@@ -250,7 +250,7 @@ onThreadSelect?: (threadId: string) => void
 ## TWO-TIER ARCHITECTURE
 
 ### Tier 1: IconSidebar (Activity Bar)
-- **Purpose:** Global navigation across IDE
+- **description:** Global navigation across IDE
 - **Panels:** Explorer, Agents, Search, Terminal, Git, Settings, About
 - **State:** React Context + LocalStorage persistence
 - **Workspace:** Workspace-agnostic

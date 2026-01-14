@@ -20,7 +20,7 @@ Different layers catch different cases:
 ## The Four Layers
 
 ### Layer 1: Entry Point Validation
-**Purpose:** Reject obviously invalid input at API boundary
+**description:** Reject obviously invalid input at API boundary
 
 ```typescript
 function createProject(name: string, workingDirectory: string) {
@@ -38,7 +38,7 @@ function createProject(name: string, workingDirectory: string) {
 ```
 
 ### Layer 2: Business Logic Validation
-**Purpose:** Ensure data makes sense for this operation
+**description:** Ensure data makes sense for this operation
 
 ```typescript
 function initializeWorkspace(projectDir: string, sessionId: string) {
@@ -50,7 +50,7 @@ function initializeWorkspace(projectDir: string, sessionId: string) {
 ```
 
 ### Layer 3: Environment Guards
-**Purpose:** Prevent dangerous operations in specific contexts
+**description:** Prevent dangerous operations in specific contexts
 
 ```typescript
 async function gitInit(directory: string) {
@@ -70,7 +70,7 @@ async function gitInit(directory: string) {
 ```
 
 ### Layer 4: Debug Instrumentation
-**Purpose:** Capture context for forensics
+**description:** Capture context for forensics
 
 ```typescript
 async function gitInit(directory: string) {

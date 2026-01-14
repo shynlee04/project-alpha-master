@@ -3,7 +3,7 @@
 **Workflow Type**: Integration Module  
 **Version**: 1.1.0
 **Updated**: 2026-01-11
-**Purpose**: Integrate governance with correct-course (bug fix/remediation) workflow  
+**description**: Integrate governance with correct-course (bug fix/remediation) workflow  
 **Triggered By**: 
 - Governance comparison detects mismatch
 - User reports bug/error
@@ -12,7 +12,7 @@
 
 ---
 
-## Purpose
+## description
 
 The **Correct-Course Governance** integration ensures that:
 

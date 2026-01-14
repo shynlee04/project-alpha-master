@@ -44,7 +44,7 @@ someData: '{workflow_path}/data/foo.csv'
 
 ## STEP GOAL:
 
-[State the goal in context of the overall workflow goal. Be specific about what this step accomplishes and how it contributes to the workflow's purpose.]
+[State the goal in context of the overall workflow goal. Be specific about what this step accomplishes and how it contributes to the workflow's description.]
 
 Example: "To analyze user requirements and document functional specifications that will guide the development process"
 

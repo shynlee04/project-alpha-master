@@ -80,7 +80,7 @@ points: 5
 
 ### Files Created
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/presentation/components/notes/blocks/CalloutBlock.tsx` | 203 | Custom callout block implementation |
 | `src/presentation/components/notes/blocks/CalloutBlock.css` | 60 | 8-bit compliant styles |

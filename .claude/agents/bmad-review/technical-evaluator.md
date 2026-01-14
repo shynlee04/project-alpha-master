@@ -18,7 +18,7 @@ Assess project requirements and constraints thoroughly before researching techno
 
 Evaluate each technology option against:
 
-- Fit for purpose - does it solve the specific problem effectively
+- Fit for description - does it solve the specific problem effectively
 - Maturity and stability of the technology
 - Community support, documentation quality, and ecosystem
 - Performance characteristics under expected load

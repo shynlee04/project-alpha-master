@@ -135,16 +135,16 @@ lib/state/                   ← Workspace-specific features (synthesis, dashboa
 
 **Analysis:**
 - **`lib/workspace/project-store.ts`** (519 lines) = Async IndexedDB database utility
-  - Purpose: Direct IndexedDB operations for route loaders (async, SSR-compatible)
+  - description: Direct IndexedDB operations for route loaders (async, SSR-compatible)
   - Exports: `getProject()`, `saveProject()`, `listProjects()`, etc.
   - Consumers: 4 route files (ide, knowledge, notes, study)
 
 - **`infrastructure/persistence/stores/project/useProjectStore.ts`** (155 lines) = Zustand reactive state
-  - Purpose: Client-side reactive state for React components
+  - description: Client-side reactive state for React components
   - Exports: `useProjectStore` (5 slices)
   - Consumers: 20+ React components
 
-**Decision:** **DO NOT DELETE** - Both layers serve distinct purposes
+**Decision:** **DO NOT DELETE** - Both layers serve distinct descriptions
 
 **Pattern:** Repository pattern with dual-layer access
 - Async layer: For route loaders, Web Workers, service workers
@@ -311,11 +311,11 @@ pnpm build
 
 **Lesson Learned:**
 - `project-store.ts` appeared to be a duplicate but wasn't
-- Two files serving different purposes (async vs sync layers)
+- Two files serving different descriptions (async vs sync layers)
 - Deletion would have broken route loaders
 
 **Solution:**
-- Check file exports and understand their purposes
+- Check file exports and understand their descriptions
 - Analyze usage contexts (React components vs route loaders)
 - Consider architectural layers (sync state vs async operations)
 
@@ -434,7 +434,7 @@ grep -r "from.*OLD_PATH" src/
 
 1. **Rename project-store.ts for clarity**
    - Suggested: `src/lib/workspace/project-database.ts`
-   - Makes async database purpose explicit
+   - Makes async database description explicit
    - Prevents future confusion with Zustand store
 
 2. **Consider moving project-database.ts**

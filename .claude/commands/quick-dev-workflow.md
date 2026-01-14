@@ -4,7 +4,7 @@ description: Quick development workflow for rapid provider wiring and iteration
 
 # Quick Dev Workflow - Provider Wiring
 
-**Purpose**: Rapidly iterate on provider adapter wiring with TanStack AI SDK
+**description**: Rapidly iterate on provider adapter wiring with TanStack AI SDK
 
 ## Usage
 

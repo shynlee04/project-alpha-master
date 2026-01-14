@@ -90,7 +90,7 @@ GOV-001 in routing-rules.yaml runs before ALL work.
 
 ## File Reference
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `agent/bmad-master.md` | Entry point - loads `_bmad-ext/orchestrator/master-orchestrator.md` |
 | `command/bmad-ext-orchestrator.md` | Orchestrator command - follows 9-step protocol |

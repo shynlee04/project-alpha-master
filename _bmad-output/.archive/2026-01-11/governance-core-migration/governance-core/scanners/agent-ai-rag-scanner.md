@@ -7,7 +7,7 @@
 
 ---
 
-## Purpose
+## description
 
 Govern the most heavy-weight and complex ecosystem in the project:
 - Agents with CRUD tools

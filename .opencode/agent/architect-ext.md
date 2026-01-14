@@ -1,5 +1,3 @@
-# _bmad-ext/agents/architect-ext.md
-
 ---
 name: "architect-ext"
 description: "Enhanced Architect Agent with orchestration hooks"

@@ -81,7 +81,7 @@ Now let's plan your activation behavior..."
 ## Protocol 3: Activation Planning
 Guide user through decision:
 
-1. **Explain critical_actions Purpose**
+1. **Explain critical_actions description**
    - What they are: autonomous triggers the agent can execute
    - When they're useful: proactive capabilities, workflows, utilities
    - When they're unnecessary: simple assistants, pure responders

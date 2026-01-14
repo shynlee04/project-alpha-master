@@ -477,7 +477,7 @@ Tests Required:
 
 ### 5.1 Files to CREATE
 
-| File | Purpose | Lines | Story |
+| File | description | Lines | Story |
 |------|---------|-------|-------|
 | `presentation/hooks/use-conversation.ts` | Conversation hook | 50 | CHAT-01 |
 | `presentation/hooks/use-thread.ts` | Thread hook | 50 | CHAT-02 |

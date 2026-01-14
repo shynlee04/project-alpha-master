@@ -1,6 +1,6 @@
 # Expert Analysis - Codebase Comparison Workflow
 
-**Purpose:** Compare user request against actual codebase to detect flaws and determine appropriate response
+**description:** Compare user request against actual codebase to detect flaws and determine appropriate response
 
 **Workflow Type:** Enforcement Check 2 of 3
 

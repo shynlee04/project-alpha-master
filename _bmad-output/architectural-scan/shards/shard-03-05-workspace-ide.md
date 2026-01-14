@@ -369,7 +369,7 @@ Tests Required:
 
 ### 5.1 Files to CREATE
 
-| File | Purpose | Lines | Story |
+| File | description | Lines | Story |
 |------|---------|-------|-------|
 | `presentation/components/ide/MonacoEditor/hooks/use-monaco-editor.ts` | Editor instance management | 100 | IDE-01 |
 | `presentation/components/ide/MonacoEditor/hooks/use-code-intelligence.ts` | IntelliSense | 80 | IDE-01 |

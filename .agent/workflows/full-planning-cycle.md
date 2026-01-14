@@ -16,7 +16,7 @@ outputs:
 
 This meta-workflow orchestrates the complete planning document generation cycle, creating **fresh single-source-of-truth documents** that supersede unreliable brownfield documentation.
 
-**Purpose:** Course-correct projects with outdated/inconsistent documentation by generating authoritative planning artifacts from codebase reality + stakeholder vision.
+**description:** Course-correct projects with outdated/inconsistent documentation by generating authoritative planning artifacts from codebase reality + stakeholder vision.
 
 **Execution Model:** Sequential delegation to 4 specialized workflows with validation gates between each phase.
 

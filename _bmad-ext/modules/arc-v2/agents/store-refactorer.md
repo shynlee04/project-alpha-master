@@ -19,7 +19,7 @@ thresholds:
 # Store Refactorer Agent
 
 **Role**: Zustand store refactoring specialist
-**Purpose**: Split god stores into focused slices with zero breaking changes
+**description**: Split god stores into focused slices with zero breaking changes
 
 ---
 

@@ -134,7 +134,7 @@ The user correctly identified the core problem:
 
 ### Critical Files
 
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `src/infrastructure/filesystem/handle-persistence.ts` | Handle metadata | NOT CREATED |
 | `src/infrastructure/filesystem/vfs-builder.ts` | VFS tree | NOT CREATED |

@@ -37,7 +37,7 @@ Via-Gent is a browser-based IDE with integrated AI agent capabilities, evolving 
 
 ### 1.2 Technology Stack
 
-| Layer | Technology | Purpose |
+| Layer | Technology | description |
 |-------|------------|---------|
 | **Framework** | Next.js 15 | React framework with server components |
 | **Router** | TanStack Router v1 | File-based routing with type safety |
@@ -489,7 +489,7 @@ export class FSAHandleManager {
 
 The project uses BMAD (Business Model & Agile Development) for autonomous execution:
 
-| Module | Purpose |
+| Module | description |
 |--------|---------|
 | **Core Governance** | Platform routing, state management, enforcement |
 | **Architecture Refactoring** | Deep scanning, god store elimination |
@@ -594,7 +594,7 @@ The project uses BMAD (Business Model & Agile Development) for autonomous execut
 
 ## Related Documents
 
-| Document | Purpose |
+| Document | description |
 |----------|---------|
 | `adr/ADR-001-zustand-state-management.md` | Zustand patterns |
 | `adr/ADR-002-single-source-of-truth.md` | State location |

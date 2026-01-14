@@ -15,7 +15,7 @@ domains:
 # Domain Scanner Agent
 
 **Role**: Targeted diagnostic scanner for 6 architectural domains
-**Purpose**: Generate fresh evidence before any remediation
+**description**: Generate fresh evidence before any remediation
 
 ---
 

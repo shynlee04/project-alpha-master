@@ -51,7 +51,7 @@ RenameDialog.tsx
 
 **File:** `src/presentation/components/knowledge/KnowledgePage.tsx`
 
-**Purpose:** Main knowledge workspace container
+**description:** Main knowledge workspace container
 
 **Features Enabled:**
 - Source management (add, import, organize)
@@ -69,7 +69,7 @@ RenameDialog.tsx
 
 **File:** `src/presentation/components/knowledge/SourceCardGrid.tsx`
 
-**Purpose:** Grid display of knowledge sources
+**description:** Grid display of knowledge sources
 
 **Features Enabled:**
 - Card-based source display
@@ -83,7 +83,7 @@ RenameDialog.tsx
 
 **File:** `src/presentation/components/knowledge/CollectionManager.tsx`
 
-**Purpose:** Manage knowledge collections
+**description:** Manage knowledge collections
 
 **Features Enabled:**
 - Create/edit/delete collections
@@ -96,7 +96,7 @@ RenameDialog.tsx
 
 **File:** `src/presentation/components/knowledge/SourceContextMenu.tsx`
 
-**Purpose:** Context menu for source cards
+**description:** Context menu for source cards
 
 **Features Enabled:**
 - View source details
@@ -110,7 +110,7 @@ RenameDialog.tsx
 
 **File:** `src/presentation/components/knowledge/RAGConfigurationPanel.tsx`
 
-**Purpose:** Configure RAG settings
+**description:** Configure RAG settings
 
 **Features Enabled:**
 - Embedding model selection

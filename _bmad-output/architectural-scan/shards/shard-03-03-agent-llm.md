@@ -497,7 +497,7 @@ Tests Required:
 
 ### 5.1 Files to CREATE
 
-| File | Purpose | Lines | Story |
+| File | description | Lines | Story |
 |------|---------|-------|-------|
 | `lib/knowledge/synthesis/synthesis-service.ts` | Synthesis orchestration | 100 | AGENT-03 |
 | `lib/knowledge/import/import-service.ts` | Source import orchestration | 80 | AGENT-03 |

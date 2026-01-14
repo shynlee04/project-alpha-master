@@ -24,7 +24,7 @@ triggers:
 
 # BMAD-EXT Bridge Master Skill
 
-**Purpose**: Unified gateway to all BMAD-ext modules with hop-reading patterns, module coordination, and cross-module workflows.
+**description**: Unified gateway to all BMAD-ext modules with hop-reading patterns, module coordination, and cross-module workflows.
 
 ## When to use this skill
 

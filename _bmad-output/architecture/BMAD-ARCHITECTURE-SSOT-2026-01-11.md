@@ -89,7 +89,7 @@ _bmad-ext/
 **Rationale:** Workspace abstraction elegantly handles multi-client scenarios without separate implementations.
 
 **Workspace Types:**
-| Workspace | Purpose | Tool Focus |
+| Workspace | description | Tool Focus |
 |-----------|---------|------------|
 | `ide` | Code development | Files, terminal, search |
 | `knowledge` | Knowledge synthesis | RAG, PDF, images, web |
@@ -110,7 +110,7 @@ _bmad-ext/
 **Decision:** Agents operate in modes, with tools restricted by mode.
 
 **Agent Modes:**
-| Mode | Purpose | Example Tools |
+| Mode | description | Example Tools |
 |------|---------|---------------|
 | `coding` | Development-focused | read_file, write_file, terminal |
 | `knowledge` | RAG and synthesis | synthesize, processPDF |

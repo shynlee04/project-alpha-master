@@ -11,7 +11,7 @@ on_fail: "loop-to-01"
 # Step 02: Validate Story File
 
 > **Agent:** Story Manager (SM)
-> **Purpose:** Ensure story file meets 100% quality standards before proceeding
+> **description:** Ensure story file meets 100% quality standards before proceeding
 
 ---
 

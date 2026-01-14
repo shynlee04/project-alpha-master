@@ -13,7 +13,7 @@ This exploration identifies core agentic components in the Project Alpha codebas
 ## 1. Tool Registry Components
 
 ### Core Files
-| File Path | Purpose | Exports | Dependencies |
+| File Path | description | Exports | Dependencies |
 |-----------|---------|---------|--------------|
 | [`src/domain/tools/tool-definition.ts`](src/domain/tools/tool-definition.ts) | Tool registry types, metadata, filter config | `ToolMetadata`, `ToolFilterConfig`, `RegisteredTool`, `IToolRegistry`, `AgentMode`, `ToolExecutionSide`, `createToolMetadata()`, `createRegisteredTool()` | `@tanstack/ai`, `WorkspaceType`, `ToolTrustLevel`, `ToolCategory`, `ToolRiskLevel` |
 | [`src/domain/tools/tool-permissions.ts`](src/domain/tools/tool-permissions.ts) | Permission types and categories | `ToolTrustLevel`, `ToolCategory`, `ToolRiskLevel` | None (pure types) |
@@ -47,14 +47,14 @@ interface IToolRegistry {
 ## 2. Agent Execution Layer
 
 ### Core Files
-| File Path | Purpose | Key Functions | State Management |
+| File Path | description | Key Functions | State Management |
 |-----------|---------|---------------|------------------|
 | [`src/domain/entities/agent.ts`](src/domain/entities/agent.ts) | Agent entity with business logic | `isAvailableIn()`, `isDefaultFor()`, `canExecuteTool()`, `getEnabledToolsFor()`, `withUpdates()` | Immutable class pattern with validation |
 | [`src/domain/services/agent-orchestration-service.ts`](src/domain/services/agent-orchestration-service.ts) | Stateless agent business logic | `selectAgentForWorkspace()`, `validateAgentConfiguration()`, `needsReselection()`, `getAgentsWithTools()` | Stateless service |
 | [`src/domain/services/agent-workspace-utils.ts`](src/domain/services/agent-workspace-utils.ts) | Workspace-aware utilities | `isAgentAvailableIn()`, `isAgentDefaultFor()`, `getAgentsForWorkspace()`, `getDefaultAgentForWorkspace()` | Pure functions |
 
 ### Agent Store Architecture
-| File Path | Purpose | Slice Pattern |
+| File Path | description | Slice Pattern |
 |-----------|---------|---------------|
 | [`src/infrastructure/persistence/stores/agents/agent-selection-store.ts`](src/infrastructure/persistence/stores/agents/agent-selection-store.ts) | Agent CRUD operations | Slice pattern |
 | [`src/infrastructure/persistence/stores/agents/slices/agent-selection-actions.ts`](src/infrastructure/persistence/stores/agents/slices/agent-selection-actions.ts) | Agent selection actions | Slice pattern |
@@ -62,7 +62,7 @@ interface IToolRegistry {
 | [`src/infrastructure/persistence/stores/agents/slices/agent-validation-slice.ts`](src/infrastructure/persistence/stores/agents/slices/agent-validation-slice.ts) | Agent validation logic | Slice pattern |
 
 ### Agent Tool Execution
-| File Path | Purpose | Key Methods |
+| File Path | description | Key Methods |
 |-----------|---------|------------|
 | [`src/infrastructure/persistence/stores/chat/slices/tool-execution-slice.ts`](src/infrastructure/persistence/stores/chat/slices/tool-execution-slice.ts) | Tool call tracking and approval | `createToolCall()`, `updateToolCall()`, `approveToolCall()`, `denyToolCall()`, `autoApproveToolCall()` |
 
@@ -87,7 +87,7 @@ interface AgentProps {
 ## 3. Filesystem & Permissions
 
 ### Permission System Architecture
-| File Path | Purpose | Permission Checks | CRUD Operations |
+| File Path | description | Permission Checks | CRUD Operations |
 |-----------|---------|-------------------|-----------------|
 | [`src/infrastructure/persistence/stores/permissions/tool-permission-store.ts`](src/infrastructure/persistence/stores/permissions/tool-permission-store.ts) | Workspace-scoped tool permissions | `setTrustLevel()`, `getTrustLevel()`, `isYOLOActive()`, `isCategoryApproved()` | Zustand persist with Dexie storage |
 | [`src/infrastructure/persistence/stores/permissions/types.ts`](src/infrastructure/persistence/stores/permissions/types.ts) | Permission state interfaces | `ToolPermissionState`, `YOLOMode`, `CategoryApprovalState` | Type definitions |
@@ -101,7 +101,7 @@ interface AgentProps {
 - **Category Approvals**: Workspace-specific category-level approval
 
 ### Value Objects
-| File Path | Purpose |
+| File Path | description |
 |-----------|---------|
 | [`src/domain/value-objects/workspace-binding.ts`](src/domain/value-objects/workspace-binding.ts) | Agent workspace binding |
 | [`src/domain/value-objects/tool-permission.ts`](src/domain/value-objects/tool-permission.ts) | Tool permission binding |
@@ -112,7 +112,7 @@ interface AgentProps {
 ## 4. Backend Routes
 
 ### Current State
-| Route | Purpose | Handler | Required For |
+| Route | description | Handler | Required For |
 |-------|---------|---------|--------------|
 | `api/index.js` | API entry point | Basic index | Basic routing |
 
@@ -129,7 +129,7 @@ interface AgentProps {
 
 ## 5. Shared Domain Services
 
-| Service | Location | Purpose | Agent Dependencies |
+| Service | Location | description | Agent Dependencies |
 |---------|----------|---------|-------------------|
 | `AgentOrchestrationService` | [`src/domain/services/agent-orchestration-service.ts`](src/domain/services/agent-orchestration-service.ts) | Agent selection and validation | Stateless, uses Agent entity |
 | `agent-workspace-utils` | [`src/domain/services/agent-workspace-utils.ts`](src/domain/services/agent-workspace-utils.ts) | Workspace-aware agent utilities | Pure functions, no deps |
@@ -138,7 +138,7 @@ interface AgentProps {
 | `UniversalAdapterFactory` | [`src/domain/services/universal-adapter-factory.ts`](src/domain/services/universal-adapter-factory.ts) | Provider adapter creation | Uses provider registry |
 
 ### State Stores
-| Store | Location | Purpose |
+| Store | Location | description |
 |-------|----------|---------|
 | `useToolPermissionStore` | [`src/infrastructure/persistence/stores/permissions/tool-permission-store.ts`](src/infrastructure/persistence/stores/permissions/tool-permission-store.ts) | Permission trust levels |
 | `useAgentSelectionStore` | [`src/infrastructure/persistence/stores/agents/agent-selection-store.ts`](src/infrastructure/persistence/stores/agents/agent-selection-store.ts) | Agent CRUD |

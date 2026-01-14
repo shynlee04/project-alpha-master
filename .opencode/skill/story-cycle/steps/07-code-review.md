@@ -24,7 +24,7 @@ focus={area}         # Optional focus area
 
 ---
 
-## Purpose
+## description
 
 Multi-agent code review with quality gates. Developer/Reviewer agent responsibility.
 

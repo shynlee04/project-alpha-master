@@ -14,7 +14,7 @@ fi
 ```
 
 Gather from user the following required information:
-- **Product Idea**: Core concept and purpose (required)
+- **Product Idea**: Core concept and description (required)
 - **Key Features**: Minimum 3 features with descriptions
 - **Target Users**: At least 1 user segment with use cases
 - **Tech stack**: Confirmation or info regarding the product's tech stack choices

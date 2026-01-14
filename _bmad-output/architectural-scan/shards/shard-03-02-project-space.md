@@ -428,7 +428,7 @@ Tests Required:
 
 ### 5.1 Files to CREATE
 
-| File | Purpose | Lines | Story |
+| File | description | Lines | Story |
 |------|---------|-------|-------|
 | `domain/interfaces/storage-adapter.ts` | Storage abstraction interface | 80 | PS-03 |
 | `infrastructure/persistence/stores/workspace/file-loader-slice.ts` | Project loading only | 100 | PS-01, PS-02 |
@@ -456,7 +456,7 @@ Tests Required:
 
 ### 5.4 Files to REFERENCE (No Changes)
 
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `workspace-store.ts` | Workspace state - may need refactor | ⚠️ |
 

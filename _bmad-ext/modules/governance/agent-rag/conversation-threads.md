@@ -1,14 +1,14 @@
 ---
 name: "conversation-threads-governance"
 type: "governance-policy"
-purpose: "Centralize and govern user-agent conversation threads"
+description: "Centralize and govern user-agent conversation threads"
 version: "1.0.0"
 critical: true
 ---
 
 # Conversation Threads Governance
 
-**Purpose**: Centralize user-agent conversation threads to prevent scattered context and enable proper continuity.
+**description**: Centralize user-agent conversation threads to prevent scattered context and enable proper continuity.
 
 ## Problem Statement
 
@@ -29,7 +29,7 @@ All conversations must be registered:
 conversation_registry:
   - thread_id: "{uuid}"
     title: "{conversation topic}"
-    purpose: "{why this conversation exists}"
+    description: "{why this conversation exists}"
     participants: [agents and users involved]
     status: "{active|paused|completed|archived}"
     created_at: "{timestamp}"
@@ -64,7 +64,7 @@ thread_template:
     workflow: "{current workflow}"
 
   context:
-    purpose: "{one-sentence goal}"
+    description: "{one-sentence goal}"
     background: [{reference to relevant context}]
     constraints: [limitations or requirements]
 
@@ -150,7 +150,7 @@ handoff_protocol:
     timestamp: "{timestamp}"
 
     summary:
-      purpose: "{what was being worked on}"
+      description: "{what was being worked on}"
       accomplished: [key achievements]
       decisions: [decisions made]
 
@@ -171,7 +171,7 @@ quality_checks:
   completeness:
     - thread_id_exists: true
     - participants_listed: true
-    - purpose_defined: true
+    - description_defined: true
     - conversation_recorded: true
 
   consistency:

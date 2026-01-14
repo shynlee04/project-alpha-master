@@ -1,14 +1,14 @@
 ---
 name: "correct-course"
 type: "implementation-workflow"
-purpose: "Categorize and execute bug fixes and remediation work"
+description: "Categorize and execute bug fixes and remediation work"
 version: "1.0.0"
 phase: "4"
 ---
 
 # Correct-Course Workflow
 
-**Purpose**: Receive governance report, categorize issue type, and route to appropriate remediation sub-workflow.
+**description**: Receive governance report, categorize issue type, and route to appropriate remediation sub-workflow.
 
 ## Workflow Definition
 
@@ -16,7 +16,7 @@ phase: "4"
 workflow:
   name: "correct-course"
   phase: 4
-  purpose: "Bug fixes and remediation"
+  description: "Bug fixes and remediation"
 
   entry:
     required: "governance report with issue level"
@@ -45,7 +45,7 @@ status: "in_progress"
 
 ## Steps Overview
 
-| Step | Name | Purpose | Output |
+| Step | Name | description | Output |
 |------|------|---------|--------|
 | 1 | Receive Report | Get governance report with categorization | Report loaded |
 | 2 | Categorize | Confirm issue type, select sub-workflow | Category confirmed |

@@ -104,7 +104,7 @@ _bmad-output/planning-artifacts/ux-specification.md
 
 ### Required Reading
 
-| Document | Location | Purpose |
+| Document | Location | description |
 |----------|----------|---------|
 | **PRD** | `_bmad-output/planning-artifacts/prd.md` | Product requirements, features |
 | **Market Research** | `_bmad-output/planning-artifacts/market-research.md` | Competitive UX analysis |
@@ -113,7 +113,7 @@ _bmad-output/planning-artifacts/ux-specification.md
 
 ### Design Assets
 
-| Asset | Location | Purpose |
+| Asset | Location | description |
 |-------|----------|---------|
 | **Design Tokens CSS** | `src/styles/design-tokens.css` | CSS custom properties |
 | **Design Tokens TS** | `src/styles/design-tokens.ts` | TypeScript constants |

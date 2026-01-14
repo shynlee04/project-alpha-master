@@ -40,7 +40,7 @@ Existing (7 modules):
 ### Target Structure (4 Modules)
 
 #### **Module A: Core Governance & Standards**
-**Purpose**: Tier 1 & 2 management, enforcement, platform routing
+**description**: Tier 1 & 2 management, enforcement, platform routing
 **Components**:
 - Constitution enforcement (READ-ONLY validation)
 - AGENTS.md as single source of truth
@@ -58,7 +58,7 @@ Existing (7 modules):
 ---
 
 #### **Module B: Architecture & Refactoring**
-**Purpose**: Deep scan, remediation, normalization, god store elimination
+**description**: Deep scan, remediation, normalization, god store elimination
 **Components**:
 - All quality scanners (state, architecture, UX, security, performance)
 - Store refactoring workflows
@@ -75,7 +75,7 @@ Existing (7 modules):
 ---
 
 #### **Module C: Sprint & Feature Execution**
-**Purpose**: Stories, epics, active dev cycles, BMM workflows
+**description**: Stories, epics, active dev cycles, BMM workflows
 **Components**:
 - All BMM agents (analyst, architect, dev, pm, sm, tea, tech-writer, ux-designer)
 - Sprint planning workflows
@@ -93,7 +93,7 @@ Existing (7 modules):
 ---
 
 #### **Module D: Integration & Testing**
-**Purpose**: Cross-platform sync, real-world testing, validation
+**description**: Cross-platform sync, real-world testing, validation
 **Components**:
 - Browser automation (Playwright, ChromeDev MCP)
 - Real API testing (Gemini, OpenRouter - NO MOCKS)
@@ -459,7 +459,7 @@ loop_detection:
 ```yaml
 mcp_servers:
   playwright:
-    purpose: "Cross-browser end-to-end testing"
+    description: "Cross-browser end-to-end testing"
     capabilities:
       - "Chrome, Firefox, Safari, Edge"
       - "Visual regression screenshots"
@@ -467,7 +467,7 @@ mcp_servers:
       - "Local storage testing"
 
   chromedev:
-    purpose: "Chrome DevTools Protocol debugging"
+    description: "Chrome DevTools Protocol debugging"
     capabilities:
       - "Performance profiling"
       - "Memory leak detection"
@@ -528,7 +528,7 @@ visual_testing:
 api_keys:
   gemini:
     key: "USER_PROVIDED_KEY"  # Replace with actual key
-    purpose: "Real AI model testing"
+    description: "Real AI model testing"
     quota:
       max_requests_per_day: 1000
       current_usage: 0
@@ -540,7 +540,7 @@ api_keys:
 
   openrouter:
     key: "USER_PROVIDED_KEY"  # Replace with actual key
-    purpose: "Multi-model routing testing"
+    description: "Multi-model routing testing"
     quota:
       max_requests_per_day: 500
       current_usage: 0

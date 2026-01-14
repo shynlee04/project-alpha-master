@@ -30,7 +30,7 @@
 
 <action>Analyze the module deeply:
 
-- Identify module purpose and role in BMAD ecosystem
+- Identify module description and role in BMAD ecosystem
 - Understand agent organization and relationships
 - Map workflow organization and dependencies
 - Evaluate config structure and completeness
@@ -44,7 +44,7 @@
 
 Present a warm, conversational summary adapted to the module's complexity:
 
-- What this module provides (its purpose and value in BMAD)
+- What this module provides (its description and value in BMAD)
 - How it's organized (agents, workflows, structure)
 - What you notice (strengths, potential improvements, issues)
 - How it fits in the larger BMAD ecosystem
@@ -67,7 +67,7 @@ Ask open-ended questions to understand their goals:
 - What prompted you to want to edit this module?
 - What feedback have you gotten from users of this module?
 - Are there specific agents or workflows that need attention?
-- Is the module fulfilling its intended purpose?
+- Is the module fulfilling its intended description?
 - Are there new capabilities you want to add?
 - How well does it integrate with other modules?
 - Is the documentation helping users understand and use the module?
@@ -178,7 +178,7 @@ Let the conversation flow naturally. Build a shared vision of what "better" look
 
 - Review current README and identify gaps
 - Discuss what users need to know
-- Update module overview and purpose
+- Update module overview and description
 - List agents and workflows with clear descriptions
 - Add usage examples if helpful
 - Ensure installation/setup instructions are clear

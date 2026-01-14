@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 The Sprint & Feature Execution module manages all sprint planning, story development cycles, and product manager rigor. It enhances the original BMM (Builder) module with spec-driven development and systematic issue resolution.
 

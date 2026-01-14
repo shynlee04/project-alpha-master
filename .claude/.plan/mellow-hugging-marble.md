@@ -234,7 +234,7 @@ This is the **skeleton/frame** that guides all stabilization work. It contains:
 
 ## Files to Modify (During Execution)
 
-| File | Purpose | Phase |
+| File | description | Phase |
 |------|---------|-------|
 | `.claude/rules/governance-rules.md` | Add stabilization rules | STAB-24 |
 | `.eslintrc.cjs` | Add import path rules | STAB-24 |
@@ -246,7 +246,7 @@ This is the **skeleton/frame** that guides all stabilization work. It contains:
 
 ## Files Created (So Far)
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `_bmad/modules/architecture-remediation/config/master-plan-foundation-stabilization.yaml` | **Master plan skeleton** - framework for all phases |
 | `/Users/apple/.claude/plans/mellow-hugging-marble.md` | This implementation plan |
@@ -255,7 +255,7 @@ This is the **skeleton/frame** that guides all stabilization work. It contains:
 
 ## Critical Files Referenced
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `_bmad-output/sprint-artifacts/sprint-status.yaml` | Source of truth for epic status |
 | `_bmad/modules/architecture-remediation/config/priorities.yaml` | P0-P3 definitions |
@@ -310,7 +310,7 @@ User Action → Local FS (Source of Truth) → SyncManager → WebContainer (Mir
 
 ### Domain 2: Workspaces
 
-| Workspace | Purpose | Key Features |
+| Workspace | description | Key Features |
 |-----------|---------|--------------|
 | **ide** | Code development, debugging | Files, terminals, chat, IDE state |
 | **knowledge** | Knowledge synthesis, RAG | PDF/URL import, vector search, collections |

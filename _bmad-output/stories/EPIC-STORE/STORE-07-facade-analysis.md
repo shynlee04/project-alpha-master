@@ -33,7 +33,7 @@ The EPIC-STORE analysis claimed:
 
 ### Architecture
 
-| File | Lines | Consumers | Purpose | Status |
+| File | Lines | Consumers | description | Status |
 |------|-------|-----------|---------|--------|
 | `note-store.ts` | 40 | 11 active | Main barrel export (facade) | **KEEP** - Necessary |
 | `note-store-facade.ts` | 29 | **0** | Duplicate facade | **DELETED** - Dead code |
@@ -66,7 +66,7 @@ src/presentation/components/ide/AgentChatPanel/AgentChatToolFacades.tsx
 
 The `note-store-refactored.ts` contains 7 well-organized slices:
 
-| Slice | Lines | Purpose |
+| Slice | Lines | description |
 |-------|-------|---------|
 | note-crud-slice | 120 | CRUD operations |
 | note-metadata-slice | 100 | Favorite, move, ordering |

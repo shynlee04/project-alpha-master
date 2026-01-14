@@ -236,7 +236,7 @@ readOnly?: boolean
 ## STATE MANAGEMENT ARCHITECTURE
 
 ### Note Store Slices (7 total)
-| Slice | Purpose | File |
+| Slice | description | File |
 |-------|---------|------|
 | CRUD | Note create/read/update/delete | note-crud-slice.ts |
 | Metadata | Title, tags, favorites | note-metadata-slice.ts |
@@ -247,7 +247,7 @@ readOnly?: boolean
 | UI | UI state (sidebar, etc.) | note-ui-slice.ts |
 
 ### Additional Stores
-| Store | Purpose |
+| Store | description |
 |-------|---------|
 | note-navigation-store.ts | Search, favorites, tree expansion |
 | ai-prompt-store.ts | AI dialog state and context mode |

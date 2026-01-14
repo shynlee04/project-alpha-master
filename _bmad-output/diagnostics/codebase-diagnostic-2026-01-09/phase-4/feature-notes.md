@@ -84,7 +84,7 @@ MainLayout
 
 ### Component List
 
-| Component | File | Lines | Purpose |
+| Component | File | Lines | description |
 |-----------|------|-------|---------|
 | NotesPage | `NotesPage.tsx` | 725 | Main page orchestrator |
 | NoteSidebar | `NoteSidebar.tsx` | 315 | Left panel with navigation |
@@ -155,7 +155,7 @@ interface NoteStoreState {
 
 ### Selector Hooks
 
-| Hook | Purpose | Pattern |
+| Hook | description | Pattern |
 |------|---------|---------|
 | `useActiveNote()` | Get active note record | Individual selectors (prevents infinite loops) |
 | `useNoteSaveStatus()` | Get save status indicator | Single selector |
@@ -165,7 +165,7 @@ interface NoteStoreState {
 
 ### Other State Sources
 
-| Store | Purpose | Usage |
+| Store | description | Usage |
 |-------|---------|-------|
 | `useIDEStore` | Panel collapse state, chat visibility | `panelCollapsed['notes-sidebar']`, `chatVisible` |
 | `useNoteNavigationStore` | Search query, favorites filter | `searchQuery`, `showFavoritesOnly` |
@@ -222,7 +222,7 @@ interface NoteRecord {
 
 ### Indexes
 
-| Index | Purpose |
+| Index | description |
 |-------|---------|
 | `id` | Primary key |
 | `projectId` | Query notes by project |
@@ -262,7 +262,7 @@ interface NoteRecord {
 
 ### BlockNote Editor
 
-| Dependency | Version | Purpose |
+| Dependency | Version | description |
 |------------|---------|---------|
 | `@blocknote/core` | Latest | Core editor logic |
 | `@blocknote/react` | Latest | React integration |
@@ -272,7 +272,7 @@ interface NoteRecord {
 
 ### AI Integration
 
-| Module | Purpose | Dependency |
+| Module | description | Dependency |
 |--------|---------|------------|
 | `note-ai-service.ts` | AI content generation, transformation | Gemini API |
 | `ai-prompt-store.ts` | Prompt templates and state | Zustand |
@@ -281,7 +281,7 @@ interface NoteRecord {
 
 ### File System
 
-| Service | Purpose | Dependency |
+| Service | description | Dependency |
 |---------|---------|------------|
 | `NotesFileSyncService` | Markdown file sync | File System Access API |
 | `NoteFolderBridge` | Local folder bridge | `@/lib/filesystem` |
@@ -289,7 +289,7 @@ interface NoteRecord {
 
 ### Cross-Workspace Events
 
-| Event Bus | Purpose | Usage |
+| Event Bus | description | Usage |
 |-----------|---------|-------|
 | `eventBus` | Domain events | `KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED`, `NOTES_RAG_INDEX_REQUESTED` |
 | `useStoreEvent` | Store events | `FILE_SAVED` for IDE sync |

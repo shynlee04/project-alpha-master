@@ -14,7 +14,7 @@ This document defines the complete technology stack for the Via-gent (Project Al
 
 ## Core Runtime
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | React | 19.2.3 | UI rendering, hooks, concurrent features | https://react.dev |
 | TypeScript | 5.9.3 | Type safety, strict mode | https://www.typescriptlang.org |
@@ -24,7 +24,7 @@ This document defines the complete technology stack for the Via-gent (Project Al
 
 ## State Management
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | Zustand | 5.0.9 | Client-side state management | https://zustand.docs.pmnd.rs |
 | Dexie.js | 4.2.1 | IndexedDB wrapper for persistence | https://dexie.org |
@@ -93,7 +93,7 @@ export const db = new ViaGentDB();
 
 ## AI & Chat
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | TanStack AI | 0.2.0 | AI orchestration, SSE streaming | https://tanstack.com/ai |
 | @tanstack/ai-openai | 0.2.0 | OpenRouter/OpenAI adapter | https://tanstack.com/ai |
@@ -113,7 +113,7 @@ const adapter = providerAdapterFactory.createAdapter('openrouter', {
 
 ## IDE Components
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | Monaco Editor | 0.55.1 | Code editor with syntax highlighting | https://microsoft.github.io/monaco-editor |
 | @monaco-editor/react | - | React wrapper for Monaco | https://github.com/suren-atoyan/monaco-react |
@@ -143,7 +143,7 @@ class WebContainerManager {
 
 ## Styling & UI
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | Tailwind CSS | 4.1.18 | Utility-first CSS | https://tailwindcss.com |
 | @tailwindcss/vite | - | Vite plugin for Tailwind | https://tailwindcss.com |
@@ -187,7 +187,7 @@ export function cn(...inputs: ClassValue[]) {
 
 ## UI Components
 
-| Technology | Purpose | Documentation |
+| Technology | description | Documentation |
 |------------|---------|---------------|
 | Radix UI Primitives | Headless accessible components | https://www.radix-ui.com/primitives |
 | lucide-react | Icon library | https://lucide.dev |
@@ -207,7 +207,7 @@ import * as Switch from '@radix-ui/react-switch';
 
 ## Internationalization
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | i18next | - | Translation framework | https://www.i18next.com |
 | i18next-browser-languagedetector | - | Auto-detect browser language | https://github.com/i18next/i18next-browser-languagedetector |
@@ -231,14 +231,14 @@ function Component() {
 
 ## File System
 
-| Technology | Purpose | Documentation |
+| Technology | description | Documentation |
 |------------|---------|---------------|
 | File System Access API | Browser-native file operations | https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API |
 | isomorphic-git | Git operations in browser | https://isomorphic-git.org |
 
 ## Monitoring & Observability
 
-| Technology | Purpose | Documentation |
+| Technology | description | Documentation |
 |------------|---------|---------------|
 | @sentry/react | Error tracking | https://docs.sentry.io |
 
@@ -286,7 +286,7 @@ export default defineConfig({
 
 ## Testing
 
-| Technology | Version | Purpose | Documentation |
+| Technology | Version | description | Documentation |
 |------------|---------|---------|---------------|
 | Vitest | 4.0.16 | Test runner | https://vitest.dev |
 | @testing-library/react | - | React component testing | https://testing-library.com |
@@ -295,7 +295,7 @@ export default defineConfig({
 
 ## Package Manager
 
-| Technology | Version | Purpose |
+| Technology | Version | description |
 |------------|---------|---------|
 | pnpm | - | Fast, disk-efficient package manager |
 

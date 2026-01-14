@@ -119,7 +119,7 @@ class AgentToolBinding {
 
 The IndexedDB database is organized into separate type files by domain:
 
-| File | Tables | Purpose |
+| File | Tables | description |
 |------|--------|---------|
 | `dexie-db-core-types.ts` | Projects, IDEState, Conversations, FileSnapshots | Core project data |
 | `dexie-db-ai-types.ts` | TaskContext, ToolExecution, Credentials, ConversationThreads | AI orchestration |

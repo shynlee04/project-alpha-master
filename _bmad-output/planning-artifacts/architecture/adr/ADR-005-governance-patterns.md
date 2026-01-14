@@ -37,7 +37,7 @@ BMAD Core Master
 
 ### Context Filtering (4-Tier TTL System)
 
-| Tier | Name | TTL | Purpose |
+| Tier | Name | TTL | description |
 |------|------|-----|---------|
 | 1 | Unchangeable | Permanent | Constitution, AGENTS.md |
 | 2 | Controlled | Permanent | Core governance documents |

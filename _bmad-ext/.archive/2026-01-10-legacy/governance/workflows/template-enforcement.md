@@ -5,7 +5,7 @@
 **Version**: 1.0
 **Created**: 2026-01-06
 
-## Purpose
+## description
 
 Enforces read-only governance on BMAD template modules. Templates should be referenced, not modified directly by agents.
 
@@ -14,7 +14,7 @@ Enforces read-only governance on BMAD template modules. Templates should be refe
 The following modules are **READ-ONLY TEMPLATES**:
 
 ### asgl (Autonomous Sprint Governance Layer)
-**Purpose**: Orchestration template for autonomous development cycles
+**description**: Orchestration template for autonomous development cycles
 **Path**: `_bmad/modules/asgl/`
 **Protected Files**:
 - `MASTER_PROMPT.md`
@@ -23,7 +23,7 @@ The following modules are **READ-ONLY TEMPLATES**:
 - `workflows/governance-update.md`
 
 ### architecture-remediation
-**Purpose**: Remediation workflows and agents
+**description**: Remediation workflows and agents
 **Path**: `_bmad/modules/architecture-remediation/`
 **Protected Files**:
 - All workflow definitions

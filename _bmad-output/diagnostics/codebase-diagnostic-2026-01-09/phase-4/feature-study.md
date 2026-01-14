@@ -73,7 +73,7 @@ StudyPage (src/presentation/components/study/StudyPage.tsx)
 
 ### Zustand Stores
 
-| Store | Location | Purpose |
+| Store | Location | description |
 |-------|----------|---------|
 | `useFlashcardStore` | `src/infrastructure/persistence/stores/flashcard-store.ts` | Flashcard CRUD |
 | `useQuizStore` | `src/infrastructure/persistence/stores/study/quiz-store.ts` | Quiz CRUD |
@@ -184,7 +184,7 @@ function isCardDue(srsData: SRSData): boolean {
 
 **File**: `src/lib/study/quiz-session.ts` (Lines 68-165)
 
-| Function | Purpose |
+| Function | description |
 |----------|---------|
 | `createQuizSession(quiz)` | Initialize session |
 | `selectAnswer(session, question, selectedIndex, timeSpent)` | Record answer |
@@ -203,7 +203,7 @@ function isCardDue(srsData: SRSData): boolean {
 
 **Dexie Database**: `FlashcardDB`
 
-| Table | Indexes | Purpose |
+| Table | Indexes | description |
 |-------|---------|---------|
 | `flashcards` | `id, topic, difficulty, createdAt, *sourceIds` | Individual cards |
 | `flashcardSets` | `id, name, createdAt, updatedAt, *cardIds` | Card groupings |
@@ -241,7 +241,7 @@ interface FlashcardSetRecord {
 
 **Dexie Database**: `ProjectAlphaQuizDB` (v2)
 
-| Table | Indexes | Purpose |
+| Table | Indexes | description |
 |-------|---------|---------|
 | `quizzes` | `id, workspaceId, title, createdAt, topic, *sourceIds` | Quiz metadata |
 | `quizQuestions` | `id, workspaceId, quizId, difficulty, topic, *sourceIds` | Questions |
@@ -337,7 +337,7 @@ interface QuizSettings {
 
 ### Store Dependencies
 
-| Store | Imports From | Purpose |
+| Store | Imports From | description |
 |-------|--------------|---------|
 | `useFlashcardStore` | `@/infrastructure/persistence/stores/flashcard/*` | Flashcard CRUD |
 | `useQuizStore` | `@/infrastructure/persistence/stores/study/quiz/*` | Quiz CRUD |
@@ -357,7 +357,7 @@ interface QuizSettings {
 
 ### Components
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/presentation/components/study/StudyPage.tsx` | 390 | Main page |
 | `src/presentation/components/study/flashcard.tsx` | 291 | Flashcard UI |
@@ -372,7 +372,7 @@ interface QuizSettings {
 
 ### Library Logic
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/lib/study/srs-types.ts` | 258 | SRS algorithm |
 | `src/lib/study/quiz-types.ts` | 151 | Quiz type definitions |
@@ -382,7 +382,7 @@ interface QuizSettings {
 
 ### Persistence
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `src/infrastructure/persistence/stores/flashcard/flashcard-db.ts` | 78 | Flashcard DB |
 | `src/infrastructure/persistence/stores/study/quiz/quiz-db.ts` | 90 | Quiz DB |

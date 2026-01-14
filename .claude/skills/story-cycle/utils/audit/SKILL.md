@@ -20,7 +20,7 @@ triggers:
 
 # Utility: Audit Checkpoint
 
-**Purpose**: Quality audit checkpoint for story artifacts - verifies completeness, documentation, and compliance with standards.
+**description**: Quality audit checkpoint for story artifacts - verifies completeness, documentation, and compliance with standards.
 
 ## When to use
 

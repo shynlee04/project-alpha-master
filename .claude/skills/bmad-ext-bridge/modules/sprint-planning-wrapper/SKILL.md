@@ -23,7 +23,7 @@ triggers:
 
 # BMAD-EXT Sprint-Planning Wrapper Bridge
 
-**Purpose**: Gateway to enhanced sprint planning with cohesion validation, dependency mapping, reality gates, and auto gatekeeping.
+**description**: Gateway to enhanced sprint planning with cohesion validation, dependency mapping, reality gates, and auto gatekeeping.
 
 ## Module Overview
 
@@ -72,7 +72,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 1: Discover Epics
 
-**Purpose**: Scan for epic files in planning artifacts
+**description**: Scan for epic files in planning artifacts
 
 **Actions**:
 1. Scan `_bmad-output/planning-artifacts/epics.md`
@@ -82,7 +82,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 2: Generate Status
 
-**Purpose**: Run BMAD sprint-planning workflow to generate baseline
+**description**: Run BMAD sprint-planning workflow to generate baseline
 
 **Actions**:
 1. Invoke BMAD sprint-planning workflow
@@ -92,7 +92,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 3: Cohesion Check ← NEW
 
-**Purpose**: Validate sprint cohesion, detect fragmentation
+**description**: Validate sprint cohesion, detect fragmentation
 
 **Actions**:
 1. Generate 30-second demo script for entire sprint
@@ -107,7 +107,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 4: Dependency Map ← NEW
 
-**Purpose**: Map cross-story dependencies, find conflicts
+**description**: Map cross-story dependencies, find conflicts
 
 **Actions**:
 1. Identify explicit dependencies (listed in stories)
@@ -122,7 +122,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 5: Reality Validation ← NEW
 
-**Purpose**: Generate 30-second demo script for entire sprint
+**description**: Generate 30-second demo script for entire sprint
 
 **Actions**:
 1. Create user journey script
@@ -134,7 +134,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 6: Gatekeeping
 
-**Purpose**: Auto-validation with loop-back on failures
+**description**: Auto-validation with loop-back on failures
 
 **Actions**:
 1. Check cohesion score (must meet threshold)
@@ -149,7 +149,7 @@ The original `sprint-planning` workflow generates `sprint-status.yaml` from epic
 
 ### Step 7: Handoff
 
-**Purpose**: Prepare enhanced context for story-cycle execution
+**description**: Prepare enhanced context for story-cycle execution
 
 **Actions**:
 1. Update `sprint-status.yaml` with enhancement flags

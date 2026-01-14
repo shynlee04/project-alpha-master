@@ -89,7 +89,7 @@ Example: `story-cycle step=5 story=3-1-implement-feature`
 
 **Step Files** (linked from `steps/`):
 
-| Step | File | Purpose | Agent |
+| Step | File | description | Agent |
 |------|------|---------|-------|
 | 01 | `01-create-story.md` | Create story from epic | SM |
 | 02 | `02-validate-story.md` | Validate story 100% | SM |
@@ -167,7 +167,7 @@ _bmad-output/sprint-artifacts/
 
 Every story **MUST** include research using MCP tools:
 
-| Tool | Purpose | Query Pattern |
+| Tool | description | Query Pattern |
 |------|---------|---------------|
 | **Context7** | Official docs | `resolve-library-id` → `get-library-docs` |
 | **DeepWiki** | GitHub patterns | `ask_question` with repo-specific query |
@@ -295,7 +295,7 @@ This skill uses **minimal references**. Full workflow definitions are in `_bmad/
 
 ## Related Skills
 
-| Skill | Purpose |
+| Skill | description |
 |-------|---------|
 | `bmm-workflows` | BMM workflow integration |
 | `bmad-core-integration` | Agent access and routing |

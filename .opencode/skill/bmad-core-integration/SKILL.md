@@ -1,6 +1,6 @@
 # BMAD Core Integration - OpenCode Skill
 
-> **Master Document**: `_bmad/bmm/` | **Purpose**: Connect to BMAD core workflows and agents
+> **Master Document**: `_bmad/bmm/` | **description**: Connect to BMAD core workflows and agents
 
 ## Overview
 
@@ -54,7 +54,7 @@ _bmad/
 
 ## BMM Agents Reference
 
-| Agent | Path | Purpose |
+| Agent | Path | description |
 |-------|------|---------|
 | **analyst** | `_bmad/bmm/agents/analyst.md` | Requirements analysis, research |
 | **architect** | `_bmad/bmm/agents/architect.md` | System design, ADRs |
@@ -135,7 +135,7 @@ This skill uses **references only**. Full workflow definitions are in `_bmad/bmm
 
 ## Related Skills
 
-| Skill | Purpose |
+| Skill | description |
 |-------|---------|
 | `asgl` | Autonomous loop orchestration |
 | `architecture-remediation` | God store/component refactoring |

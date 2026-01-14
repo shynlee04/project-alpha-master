@@ -96,7 +96,7 @@ This document maps the TRUE use cases based on actual codebase implementation, c
 - Same tools available across clients (workspace-scoped)
 
 **Workspace Types:**
-| Workspace | Purpose | Client Support |
+| Workspace | description | Client Support |
 |-----------|---------|----------------|
 | `ide` | Code development | Desktop (primary), Mobile (limited) |
 | `knowledge` | Knowledge synthesis | Both (responsive UI) |
@@ -264,7 +264,7 @@ Thread (root)
 - Mode switching is MANUAL, not automatic
 
 **Agent Modes:**
-| Mode | Purpose | Tools |
+| Mode | description | Tools |
 |------|---------|-------|
 | `coding` | Development | read_file, write_file, terminal, search |
 | `knowledge` | RAG/synthesis | synthesize, processPDF, processImage |

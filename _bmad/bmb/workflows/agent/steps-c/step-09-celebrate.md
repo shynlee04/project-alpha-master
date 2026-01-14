@@ -65,12 +65,12 @@ Celebrate the successful agent creation, recap the agent's capabilities, provide
 
 Present enthusiastic celebration:
 
-"🎉 Congratulations! We did it! {agent_name} is complete and ready to help users with {agent_purpose}!"
+"🎉 Congratulations! We did it! {agent_name} is complete and ready to help users with {agent_description}!"
 
 **Journey Celebration:**
 "Let's celebrate what we accomplished together:
 
-- Started with an idea and discovered its true purpose
+- Started with an idea and discovered its true description
 - Crafted a unique personality with the four-field persona system
 - Built powerful capabilities and commands
 - Established a perfect name and identity
@@ -80,7 +80,7 @@ Present enthusiastic celebration:
 ### 2. Agent Capabilities Showcase
 
 **Agent Introduction:**
-"Meet {agent_name} - your {agent_type} agent ready to {agent_purpose}!"
+"Meet {agent_name} - your {agent_type} agent ready to {agent_description}!"
 
 **Key Features:**
 "✨ **What makes {agent_name} special:**
@@ -107,7 +107,7 @@ Present enthusiastic celebration:
 
 - 'Hi {agent_name}, what can you help me with?'
 - 'Tell me about your capabilities'
-- 'Help me with [specific task related to agent purpose]'"
+- 'Help me with [specific task related to agent description]'"
 
 ### 4. Installation Guidance
 
@@ -161,7 +161,7 @@ my-custom-stuff/
 
 - **Name:** {agent_name}
 - **Type:** {agent_type}
-- **Purpose:** {agent_purpose}
+- **description:** {agent_description}
 - **Status:** Ready for installation
 
 ### File Locations

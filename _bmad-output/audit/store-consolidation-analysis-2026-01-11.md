@@ -231,7 +231,7 @@ src/lib/filesystem/file-snapshot-store.ts → stores/filesystem/
 
 **Recommendation:**
 - If used only in tests: Move to test fixtures
-- If intended for production: Implement and document purpose
+- If intended for production: Implement and document description
 
 ---
 
@@ -241,7 +241,7 @@ src/lib/filesystem/file-snapshot-store.ts → stores/filesystem/
 
 **Usage:** Minimal (1-2 consumers)
 
-**Status:** Unclear purpose, possible redundancy
+**Status:** Unclear description, possible redundancy
 
 **Recommendation:**
 - Audit actual usage

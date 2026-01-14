@@ -16,7 +16,7 @@ _Standards for styling the Via-gent IDE using Tailwind CSS v4, CSS custom proper
 
 ### 1.1 Technology Stack
 
-| Technology | Version | Purpose |
+| Technology | Version | description |
 |------------|---------|---------|
 | **Tailwind CSS** | 4.1.18 | Utility-first CSS framework |
 | **CSS Custom Properties** | Level 3 | Design tokens, theming |

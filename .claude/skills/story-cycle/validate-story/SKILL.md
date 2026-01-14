@@ -20,7 +20,7 @@ triggers:
 
 # Step 02: Validate Story
 
-**Purpose**: Validate story file is 100% complete before proceeding to context creation.
+**description**: Validate story file is 100% complete before proceeding to context creation.
 
 ## When to use
 

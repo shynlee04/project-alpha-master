@@ -28,9 +28,9 @@
 
 This document provides a comprehensive roadmap for Via-gent development, including remediation of technical debt, architecture modernization, and innovation initiatives. The roadmap is organized by quarters and aligned with strategic priorities.
 
-### Document Purpose
+### Document description
 
-| Purpose | Description |
+| description | Description |
 |---------|-------------|
 | **Planning** | Strategic development roadmap |
 | **Prioritization** | Clear sequence of initiatives |

@@ -37,7 +37,7 @@ npm install -D @seontechnologies/playwright-utils
 
 ### Core Testing Utilities
 
-| Utility                    | Purpose                                    | Test Context  |
+| Utility                    | description                                    | Test Context  |
 | -------------------------- | ------------------------------------------ | ------------- |
 | **api-request**            | Typed HTTP client with schema validation   | API tests     |
 | **network-recorder**       | HAR record/playback for offline testing    | UI tests      |

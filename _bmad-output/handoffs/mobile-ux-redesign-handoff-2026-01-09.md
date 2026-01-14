@@ -707,7 +707,7 @@ export function MobileDetection({ mobileOnly, desktopOnly, children }: MobileDet
 
 ## 10. Dependencies Required
 
-| Package | Version | Purpose |
+| Package | Version | description |
 |---------|---------|---------|
 | `framer-motion` | ^11.0.0 | Animations |
 | `lucide-react` | ^0.300.0 | Icons |

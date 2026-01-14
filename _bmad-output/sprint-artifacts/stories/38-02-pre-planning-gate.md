@@ -98,7 +98,7 @@ src/lib/filesystem/             ← FACADE LAYER
 
 ### Files Analyzed
 
-| File | Lines | Purpose | Move Required |
+| File | Lines | description | Move Required |
 |------|-------|---------|---------------|
 | `local-fs-adapter.ts` | 180 | Main adapter class | ✓ YES |
 | `file-ops.ts` | 348 | File operations | ✓ YES |

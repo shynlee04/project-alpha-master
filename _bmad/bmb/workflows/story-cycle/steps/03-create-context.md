@@ -160,7 +160,7 @@ Create: `{sprint_artifacts}/{story_key}-context.xml`
   <!-- DEPENDENCIES -->
   <dependencies>
     <dependency name="{package_name}" version="{version}" type="runtime|dev|peer">
-      <purpose>{why_its_needed}</purpose>
+      <description>{why_its_needed}</description>
       <import_style>{named|default|namespace}</import_style>
     </dependency>
   </dependencies>
@@ -183,7 +183,7 @@ Create: `{sprint_artifacts}/{story_key}-context.xml`
     <framework>{jest|vitest|playwright}</framework>
     <coverage>{minimum_coverage_%</coverage>
     <fixtures>
-      <fixture name="{fixture_name}" purpose="{mock_data}" />
+      <fixture name="{fixture_name}" description="{mock_data}" />
     </fixtures>
   </test_requirements>
 

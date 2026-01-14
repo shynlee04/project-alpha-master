@@ -2,7 +2,7 @@
 
 **Date:** 2026-01-11  
 **Status:** ✅ IMPLEMENTED  
-**Purpose:** Prevent 400 provider errors by checking governance document consistency before AI requests
+**description:** Prevent 400 provider errors by checking governance document consistency before AI requests
 
 ---
 

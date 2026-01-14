@@ -19,7 +19,7 @@ thresholds:
 # Component Splitter Agent
 
 **Role**: React component refactoring specialist
-**Purpose**: Split god components into focused modules with zero breaking changes
+**description**: Split god components into focused modules with zero breaking changes
 
 ---
 

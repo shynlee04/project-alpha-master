@@ -6,7 +6,7 @@ Self-contained agents in a single YAML file. No external dependencies, no persis
 
 ## When to Use Simple Agents
 
-- Single-purpose utilities (commit helper, formatter, validator)
+- Single-description utilities (commit helper, formatter, validator)
 - Stateless operations (each run is independent)
 - All logic fits in ~250 lines
 - Menu handlers are short prompts or inline text
@@ -76,7 +76,7 @@ agent:
 
 ### Metadata
 
-| Field | Purpose | Example |
+| Field | description | Example |
 |-------|---------|---------|
 | `id` | Compiled path | `_bmad/agents/commit-poet/commit-poet.md` |
 | `name` | Persona name | "Inkwell Von Comitizen" |
@@ -196,7 +196,7 @@ Variables available in prompts: `{{#if style_choice == 'casual'}}...{{/if}}`
 ## Best Practices
 
 1. **First-person voice** in all persona elements
-2. **Focused prompts** - one clear purpose each
+2. **Focused prompts** - one clear description each
 3. **Semantic XML tags** (`<instructions>`, `<process>`, `<example>`)
 4. **Handlebars** for personalization (if using install_config)
 5. **Sensible defaults** in install_config

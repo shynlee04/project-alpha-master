@@ -41,7 +41,7 @@ When this command is used, execute the following task:
 
       <smart-selection>
         <i>1. Analyze context: Content type, complexity, stakeholder needs, risk level, creative potential</i>
-        <i>2. Parse descriptions: Understand each method's purpose from the rich descriptions in CSV</i>
+        <i>2. Parse descriptions: Understand each method's description from the rich descriptions in CSV</i>
         <i>3. Select 5 methods: Choose methods that best match the context based on their descriptions</i>
         <i>4. Balance approach: Include mix of foundational and specialized techniques as appropriate</i>
       </smart-selection>

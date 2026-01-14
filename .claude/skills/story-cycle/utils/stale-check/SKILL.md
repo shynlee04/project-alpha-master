@@ -20,7 +20,7 @@ triggers:
 
 # Utility: Stale Check
 
-**Purpose**: Validate file freshness to ensure context artifacts are up-to-date before using them for development.
+**description**: Validate file freshness to ensure context artifacts are up-to-date before using them for development.
 
 ## When to use
 

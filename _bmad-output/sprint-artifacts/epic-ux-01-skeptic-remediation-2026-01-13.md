@@ -43,7 +43,7 @@ This epic addresses the critical UX issues identified in the comprehensive skept
 
 ## RELATED ARTIFACTS
 
-| Artifact | Location | Purpose |
+| Artifact | Location | description |
 |----------|----------|---------|
 | Full Audit Report | `_bmad-output/audit/UX-AUDIT-COMPLETE-2026-01-13.md` | Complete findings |
 | Toast Audit | `_bmad-output/audit/toast-system-audit-2026-01-13.md` | Toast findings |

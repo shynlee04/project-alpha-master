@@ -21,7 +21,7 @@
 ## 1. Store Layer - Chat (Unified Store - Source of Truth)
 
 ### 1.1 Core Store
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `unified-chat-store.ts` | Main store combining all slices | ACTIVE |
 | `unified-chat-types.ts` | Type definitions | ACTIVE |
@@ -29,7 +29,7 @@
 | `chat-settings-store.ts` | Chat settings | ACTIVE |
 
 ### 1.2 Slices
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | `slices/chat-metadata-slice.ts` | Conversation CRUD | ~120 |
 | `slices/thread-management-slice.ts` | Thread CRUD | ~150 |
@@ -50,14 +50,14 @@
 ## 2. Store Layer - Conversation (Legacy Facade)
 
 ### 2.1 Core Facade
-| File | Purpose | Status | Deprecation |
+| File | description | Status | Deprecation |
 |------|---------|--------|-------------|
 | `useConversationStore.ts` | Facade to UnifiedChatStore | ACTIVE | 2026-02-01 |
 | `conversation-store.ts` | Re-exports facade | ACTIVE | Same as above |
 | `index.ts` | Public exports | ACTIVE | - |
 
 ### 2.2 Slices (Legacy)
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | `conversation-metadata-slice.ts` | Metadata (deprecated) | DELEGATES |
 | `thread-management-slice.ts` | Threads (deprecated) | DELEGATES |
@@ -67,7 +67,7 @@
 | `conversation-events-slice.ts` | Events | ACTIVE |
 
 ### 2.3 Types & Migration
-| File | Purpose |
+| File | description |
 |------|---------|
 | `conversation-types.ts` | Legacy type definitions |
 | `types.ts` | Extended types |
@@ -80,7 +80,7 @@
 ## 3. Presentation Components
 
 ### 3.1 Thread Management (CRITICAL - Integration Gap)
-| File | Purpose | Integration | Notes |
+| File | description | Integration | Notes |
 |------|---------|-------------|-------|
 | `ThreadManager.tsx` | Full CRUD UI | ❌ NOT USED | Built for UnifiedChatStore |
 | `ThreadCard.tsx` | Simple list item | ✅ ACTIVE | Used by ChatPanelWrapper |
@@ -123,14 +123,14 @@
 ## 4. Hooks
 
 ### 4.1 Thread Management Hooks
-| File | Purpose | Usage |
+| File | description | Usage |
 |------|---------|-------|
 | `useThreadManager.ts` | Thread CRUD hook | ❌ UNUSED - Only used by ThreadManager |
 | `useAgentChatMessages.ts` | Message management | ACTIVE |
 | `useAgentChatArtifacts.ts` | Artifact handling | ACTIVE |
 
 ### 4.2 Other Hooks
-| File | Purpose |
+| File | description |
 |------|---------|
 | `useChatHistory.ts` | Chat history |
 | `useAgentChatApproval.ts` | Tool approvals |
@@ -141,20 +141,20 @@
 ## 5. Library/Logic Layer
 
 ### 5.1 Chat Logic
-| File | Purpose |
+| File | description |
 |------|---------|
 | `lib/chat/context-window-manager.ts` | Context window |
 | `lib/chat/title-generator.ts` | Title generation |
 | `lib/chat/message-search.ts` | Message search |
 
 ### 5.2 Agent Integration
-| File | Purpose |
+| File | description |
 |------|---------|
 | `lib/agent/hooks/use-agent-chat-with-tools.ts` | Agent with tools |
 | `lib/agent/memory/conversation-memory.ts` | Memory management |
 
 ### 5.3 Event/State Sync
-| File | Purpose |
+| File | description |
 |------|---------|
 | `lib/events/use-chat-event-bridge.ts` | Event bridge |
 | `lib/events/use-chat-state-sync.ts` | State sync |

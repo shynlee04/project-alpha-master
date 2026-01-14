@@ -107,15 +107,15 @@ acceptance_criteria:
   
 files_to_create:
   - path: "src/lib/agent/tools/unified/adapters/file-system-adapter.ts"
-    purpose: "FileAdapter implementation for IDE workspace"
+    description: "FileAdapter implementation for IDE workspace"
     lines_estimate: 80
     
   - path: "src/lib/agent/tools/unified/adapters/note-service-adapter.ts"
-    purpose: "NoteService implementation for Notes workspace"
+    description: "NoteService implementation for Notes workspace"
     lines_estimate: 100
     
   - path: "src/lib/agent/tools/workspace-context.ts"
-    purpose: "Context provider for workspace-aware tool execution"
+    description: "Context provider for workspace-aware tool execution"
     lines_estimate: 60
     
 files_to_modify:
@@ -257,7 +257,7 @@ acceptance_criteria:
 
 files_to_create:
   - path: "src/lib/agent/tools/tool-context-factory.ts"
-    purpose: "Factory for creating workspace-aware tool contexts"
+    description: "Factory for creating workspace-aware tool contexts"
     lines_estimate: 120
 
 files_to_modify:
@@ -305,15 +305,15 @@ acceptance_criteria:
 
 files_to_create:
   - path: "e2e/tools/unified-read.spec.ts"
-    purpose: "E2E tests for read tool"
+    description: "E2E tests for read tool"
     lines_estimate: 80
     
   - path: "e2e/tools/unified-write.spec.ts"
-    purpose: "E2E tests for write tool"
+    description: "E2E tests for write tool"
     lines_estimate: 80
     
   - path: "e2e/tools/unified-list.spec.ts"
-    purpose: "E2E tests for list tool"
+    description: "E2E tests for list tool"
     lines_estimate: 60
 
 testing:
@@ -350,15 +350,15 @@ acceptance_criteria:
 
 files_to_create:
   - path: "e2e/multimodal/ai-image-block.spec.ts"
-    purpose: "E2E test for image generation"
+    description: "E2E test for image generation"
     lines_estimate: 60
     
   - path: "e2e/multimodal/ai-vision-block.spec.ts"
-    purpose: "E2E test for vision understanding"
+    description: "E2E test for vision understanding"
     lines_estimate: 60
     
   - path: "e2e/multimodal/tts-block.spec.ts"
-    purpose: "E2E test for text-to-speech"
+    description: "E2E test for text-to-speech"
     lines_estimate: 50
 
 testing:

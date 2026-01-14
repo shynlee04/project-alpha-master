@@ -36,27 +36,27 @@ This command executes the ADO research synchronization workflow, orchestrating m
 ADO orchestrates these MCP tools (as configured):
 
 #### DeepWiki
-- **Purpose**: Research GitHub repositories
+- **description**: Research GitHub repositories
 - **Best for**: Understanding codebase patterns, similar implementations
 - **Output**: Repository analysis, code patterns, architectural decisions
 
 #### Context7
-- **Purpose**: Pull official documentation
+- **description**: Pull official documentation
 - **Best for**: API references, framework guides, library documentation
 - **Output**: Official docs, API specifications, best practices
 
 #### Tavily
-- **Purpose**: Multi-source semantic search
+- **description**: Multi-source semantic search
 - **Best for**: Community solutions, Stack Overflow, technical articles
 - **Output**: Community knowledge, practical solutions, real-world examples
 
 #### Repomix
-- **Purpose**: Packed repository analysis
+- **description**: Packed repository analysis
 - **Best for**: Analyzing complete codebases, understanding structure
 - **Output**: Codebase overview, file structure, implementation patterns
 
 #### Serena
-- **Purpose**: Codebase navigation and refactoring
+- **description**: Codebase navigation and refactoring
 - **Best for**: Understanding existing codebase, finding code patterns
 - **Output**: Code references, symbol analysis, refactoring suggestions
 

@@ -41,7 +41,7 @@ References to _bmad/ (not duplication):
 
 ## Phase 1: Core Dispatcher (AGENT-COORDINATOR.md)
 
-**Purpose**: Intent detection → Route to appropriate BMAD module/agent
+**description**: Intent detection → Route to appropriate BMAD module/agent
 
 ### File Structure
 ```markdown
@@ -86,7 +86,7 @@ Route to @bmad/{module}/{agent} based on user request:
 
 ## Phase 2: Skill Proxy (bmad-orchestrator/SKILL.md)
 
-**Purpose**: Skill entry point that references BMAD workflows
+**description**: Skill entry point that references BMAD workflows
 
 ### File Structure
 ```yaml
@@ -123,7 +123,7 @@ context_files:
 
 ## Phase 3: Handoff Protocol (agent-handoff.md)
 
-**Purpose**: Standardized handoff between agents
+**description**: Standardized handoff between agents
 
 ### File Structure
 ```markdown
@@ -171,7 +171,7 @@ task: {brief_description}
 
 ## Phase 4: State Management (state-management.md + AGENT-STATE.yaml)
 
-**Purpose**: Centralized conversation state tracking
+**description**: Centralized conversation state tracking
 
 ### AGENT-STATE.yaml Template
 ```yaml
@@ -427,7 +427,7 @@ route_to mappings:
 ## File Creation Summary
 
 ### New Files to Create
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | `.claude/AGENT-COORDINATOR.md` | Core dispatcher | ~100 |
 | `.claude/skills/bmad-orchestrator/SKILL.md` | Skill entry | ~50 |

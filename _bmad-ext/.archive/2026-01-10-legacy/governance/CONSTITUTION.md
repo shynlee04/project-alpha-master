@@ -345,7 +345,7 @@ Options: [1] Prioritize Team-A  [2] Prioritize Team-B  [3] Merge coordinate
 
 ### Active Modules (Consolidated to 4)
 
-| Module | Purpose | Status |
+| Module | description | Status |
 |--------|---------|--------|
 | `governance` | Artifact lifecycle, naming, validation | ACTIVE |
 | `architecture-remediation` | God store/component elimination | ACTIVE |
@@ -418,7 +418,7 @@ governance:
 
 **Location**: `.claude/ralph-loop.local.md`
 
-**Purpose**: Auto-generated state file tracking cycle progress
+**description**: Auto-generated state file tracking cycle progress
 
 **Update Matrix**:
 

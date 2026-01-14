@@ -1,14 +1,14 @@
 ---
 name: "agent-rag-scanner"
 type: "governance-scanner"
-purpose: "Agent/AI/RAG ecosystem analysis - MOST CLUSTER-PRONE area"
+description: "Agent/AI/RAG ecosystem analysis - MOST CLUSTER-PRONE area"
 version: "1.0.0"
 critical: true
 ---
 
 # Agent/AI/RAG Scanner
 
-**Purpose**: Analyze the Agent/AI/RAG ecosystem to prevent clustering from tools, CRUD operations, RAG context, and multimodality issues.
+**description**: Analyze the Agent/AI/RAG ecosystem to prevent clustering from tools, CRUD operations, RAG context, and multimodality issues.
 
 ## Why This Scanner is CRITICAL
 

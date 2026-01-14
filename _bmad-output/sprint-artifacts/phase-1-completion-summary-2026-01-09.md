@@ -47,7 +47,7 @@ All 12 stories have been successfully implemented. The IDE and Notes workspaces 
 
 ### Files Created
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/lib/workspace/temp-project.ts` | Temp project auto-creation |
 | `src/presentation/components/workspace/TempProjectBanner.tsx` | Temp project UI indicator |

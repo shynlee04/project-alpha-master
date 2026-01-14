@@ -59,7 +59,7 @@ Implement strict Clean Architecture compliance with the following rules:
 
 #### Layer 1: Core (src/core/)
 
-**Purpose**: Enterprise-wide business rules, entities, and value objects
+**description**: Enterprise-wide business rules, entities, and value objects
 
 **Contents**:
 - Domain entities (`Agent.ts`, `Conversation.ts`, `Provider.ts`, `Tool.ts`)
@@ -77,7 +77,7 @@ Implement strict Clean Architecture compliance with the following rules:
 
 #### Layer 2: Domain (src/domain/)
 
-**Purpose**: Application business rules, use cases, and services
+**description**: Application business rules, use cases, and services
 
 **Contents**:
 - Use cases (business workflows)
@@ -94,7 +94,7 @@ Implement strict Clean Architecture compliance with the following rules:
 
 #### Layer 3: Infrastructure (src/infrastructure/)
 
-**Purpose**: External concerns, framework integration, and concrete implementations
+**description**: External concerns, framework integration, and concrete implementations
 
 **Contents**:
 - Database implementations (Dexie)
@@ -112,7 +112,7 @@ Implement strict Clean Architecture compliance with the following rules:
 
 #### Layer 4: Presentation (src/presentation/)
 
-**Purpose**: UI components, hooks, and user-facing logic
+**description**: UI components, hooks, and user-facing logic
 
 **Contents**:
 - React components

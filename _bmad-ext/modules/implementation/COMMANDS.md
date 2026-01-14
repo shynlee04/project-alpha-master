@@ -18,7 +18,7 @@ updated: "2026-01-12"
 
 ## Quick Reference
 
-| Command | Alias | Purpose |
+| Command | Alias | description |
 |---------|-------|---------|
 | `@implementation:story-cycle` | `@impl:sc` | Start full story development cycle |
 | `@implementation:create-story` | `@impl:cs` | Create new story from epic |
@@ -37,7 +37,7 @@ updated: "2026-01-12"
 ## Story-Cycle Commands
 
 ### @implementation:story-cycle
-**Purpose**: Start or continue the full story development cycle
+**description**: Start or continue the full story development cycle
 
 **Usage**:
 ```bash
@@ -72,7 +72,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:create-story
-**Purpose**: Create a new story file from epic backlog with deep analysis
+**description**: Create a new story file from epic backlog with deep analysis
 
 **Usage**:
 ```bash
@@ -91,7 +91,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:dev-story
-**Purpose**: Implement story with TDD and enforced grep/glob analysis
+**description**: Implement story with TDD and enforced grep/glob analysis
 
 **Usage**:
 ```bash
@@ -110,7 +110,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:code-review
-**Purpose**: Review implementation with real code analysis
+**description**: Review implementation with real code analysis
 
 **Usage**:
 ```bash
@@ -128,7 +128,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:story-done
-**Purpose**: Mark story complete and update sprint status
+**description**: Mark story complete and update sprint status
 
 **Usage**:
 ```bash
@@ -147,7 +147,7 @@ updated: "2026-01-12"
 ## Validation Commands
 
 ### @implementation:validate-story
-**Purpose**: Validate story file is 100% complete
+**description**: Validate story file is 100% complete
 
 **Usage**:
 ```bash
@@ -158,7 +158,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:create-context
-**Purpose**: Create context XML for story development
+**description**: Create context XML for story development
 
 **Usage**:
 ```bash
@@ -169,7 +169,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:validate-context
-**Purpose**: Validate context XML and run stale check
+**description**: Validate context XML and run stale check
 
 **Usage**:
 ```bash
@@ -180,7 +180,7 @@ updated: "2026-01-12"
 ---
 
 ### @implementation:pre-planning
-**Purpose**: Research and planning gate before implementation
+**description**: Research and planning gate before implementation
 
 **Usage**:
 ```bash
@@ -193,7 +193,7 @@ updated: "2026-01-12"
 ## Recovery Commands
 
 ### @implementation:correct-course
-**Purpose**: Recovery workflow when story is stuck
+**description**: Recovery workflow when story is stuck
 
 **Usage**:
 ```bash
@@ -225,7 +225,7 @@ updated: "2026-01-12"
 ## Epic Commands
 
 ### @implementation:retrospective
-**Purpose**: Epic retrospective after all stories complete
+**description**: Epic retrospective after all stories complete
 
 **Usage**:
 ```bash

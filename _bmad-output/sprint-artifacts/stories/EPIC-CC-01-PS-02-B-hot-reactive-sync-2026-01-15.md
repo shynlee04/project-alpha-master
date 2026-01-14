@@ -130,7 +130,7 @@ Integration Points:
 
 ### New Files to Create
 
-| File | Purpose | Lines (est.) |
+| File | description | Lines (est.) |
 |------|---------|--------------|
 | `src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts` | VFS sync Zustand slice | 200 |
 | `src/presentation/components/workspace/sync/SyncStatusIndicator.tsx` | Sync status badge | 100 |
@@ -151,7 +151,7 @@ Integration Points:
 
 ### Files to Reference
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/infrastructure/filesystem/fsa-storage-adapter.ts` | watch() implementation |
 | `src/infrastructure/filesystem/StorageAdapterFactory.ts` | Adapter creation |

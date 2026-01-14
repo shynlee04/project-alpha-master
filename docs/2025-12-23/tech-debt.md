@@ -26,9 +26,9 @@
 
 This document provides a comprehensive register of technical debt in the Via-gent codebase. Each debt item is categorized, assessed for risk, and includes a remediation strategy. This register serves as a living document to track technical debt and guide prioritization for future development efforts.
 
-### Document Purpose
+### Document description
 
-| Purpose | Description |
+| description | Description |
 |---------|-------------|
 | **Inventory** | Complete list of technical debt items |
 | **Assessment** | Risk and impact evaluation |

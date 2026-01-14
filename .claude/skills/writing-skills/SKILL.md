@@ -143,7 +143,7 @@ Concrete results
 
 ### 1. Rich Description Field
 
-**Purpose:** Claude reads description to decide which skills to load for a given task. Make it answer: "Should I read this skill right now?"
+**description:** Claude reads description to decide which skills to load for a given task. Make it answer: "Should I read this skill right now?"
 
 **Format:** Start with "Use when..." to focus on triggering conditions
 
@@ -515,7 +515,7 @@ Make it easy for agents to self-check when rationalizing:
 
 - Code before test
 - "I already manually tested it"
-- "Tests after achieve the same purpose"
+- "Tests after achieve the same description"
 - "It's about spirit not ritual"
 - "This is different because..."
 

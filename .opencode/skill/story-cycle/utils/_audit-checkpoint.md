@@ -23,7 +23,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 Cross-cutting audit protocol that can be invoked at any point in the workflow to verify quality gates.
 

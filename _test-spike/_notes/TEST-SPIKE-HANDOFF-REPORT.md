@@ -169,7 +169,7 @@ All mirrored code includes inline documentation about its origin:
 ```typescript
 // MIRRORED FROM: src/domain/tools/tool-definition.ts
 // COPIED: 2026-01-11
-// PURPOSE: Tool definition schema for agent tool execution
+// description: Tool definition schema for agent tool execution
 ```
 
 ---
@@ -222,7 +222,7 @@ All mirrored code includes inline documentation about its origin:
 
 ## Documentation Output
 
-| Document | Path | Purpose |
+| Document | Path | description |
 |----------|------|---------|
 | Codebase Exploration | [`_test-spike/_notes/codebase-exploration-2026-01-11.md`](_test-spike/_notes/codebase-exploration-2026-01-11.md) | Core components identified |
 | Directory Structure | [`_test-spike/_notes/directory-structure-2026-01-11.md`](_test-spike/_notes/directory-structure-2026-01-11.md) | Directory layout |

@@ -1,6 +1,6 @@
 # Provider Wiring Report - 2026-01-14
 
-**Purpose**: Comprehensive report of provider adapter wiring using TanStack AI SDK
+**description**: Comprehensive report of provider adapter wiring using TanStack AI SDK
 
 **Date**: 2026-01-14
 
@@ -26,7 +26,7 @@ All provider adapters have been successfully wired using TanStack AI SDK package
 
 ### 1. `/src/lib/agent/providers/groq-adapter.ts`
 
-**Purpose**: Adapter for Groq API using `@tanstack/ai-openai`
+**description**: Adapter for Groq API using `@tanstack/ai-openai`
 
 **Key Features**:
 - OpenAI-compatible adapter using `createOpenaiChat`
@@ -40,7 +40,7 @@ All provider adapters have been successfully wired using TanStack AI SDK package
 - llava-v1.5-7b (Vision, 4096 context)
 - llava-v1.5-13b (Vision, 4096 context)
 - deepseek-r1-distill-llama-70b (Reasoning)
-- llama-3.3-70b-versatile (General purpose)
+- llama-3.3-70b-versatile (General description)
 - llama-3.1-8b-instant (Low latency)
 - llama-3.2-1b-preview (Lightweight)
 - gemma2-9b-it (Versatile)
@@ -52,7 +52,7 @@ All provider adapters have been successfully wired using TanStack AI SDK package
 
 ### 2. `/src/lib/agent/providers/mistral-adapter.ts`
 
-**Purpose**: Adapter for Mistral AI API using `@tanstack/ai-openai`
+**description**: Adapter for Mistral AI API using `@tanstack/ai-openai`
 
 **Key Features**:
 - OpenAI-compatible adapter using `createOpenaiChat`
@@ -77,7 +77,7 @@ All provider adapters have been successfully wired using TanStack AI SDK package
 
 ### 3. `/src/lib/agent/providers/chutes-adapter.ts`
 
-**Purpose**: Multi-modality provider with specialized endpoints
+**description**: Multi-modality provider with specialized endpoints
 
 **Key Features**:
 - OpenAI-compatible LLM endpoint: `https://llm.chutes.ai/v1`
@@ -109,7 +109,7 @@ Image:
 
 ### 4. `/.claude/commands/quick-dev-workflow.md`
 
-**Purpose**: Command for rapid provider wiring iteration
+**description**: Command for rapid provider wiring iteration
 
 **Usage**: `/quick-dev-workflow`
 
@@ -255,7 +255,7 @@ export type ModalityType = 'text' | 'image' | 'audio' | 'video' | 'tts' | 'stt';
 
 ## TanStack AI SDK Packages Used
 
-| Package | Version | Purpose |
+| Package | Version | description |
 |---------|---------|---------|
 | `@tanstack/ai` | ^0.2.2 | Core AI SDK |
 | `@tanstack/ai-react` | ^0.2.2 | React integration |

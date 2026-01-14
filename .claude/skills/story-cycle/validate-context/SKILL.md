@@ -20,7 +20,7 @@ triggers:
 
 # Step 04: Validate Context + Stale Check
 
-**Purpose**: Validate context XML is complete and run stale check to ensure all referenced files are current.
+**description**: Validate context XML is complete and run stale check to ensure all referenced files are current.
 
 ## When to use
 

@@ -12,7 +12,7 @@
 
 ---
 
-## Purpose
+## description
 
 **Adaptive Governance + Correct-Course**: An ongoing capability (not a one-time project) that:
 
@@ -178,7 +178,7 @@ _bmad-ext/modules/governance-core/workflows/correct-course.yaml
 
 ### Connects To (_bmad-ext/)
 
-| Component | Path | Purpose |
+| Component | Path | description |
 |-----------|------|---------|
 | Loop State | `state/LOOP_STATE.yaml` | Track governance decisions, staleness checking |
 | Artifact Registry | `state/ARTIFACT_REGISTRY.yaml` | Validate artifact freshness |

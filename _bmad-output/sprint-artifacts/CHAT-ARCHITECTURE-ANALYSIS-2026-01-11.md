@@ -76,7 +76,7 @@ export function mapStoreMessages(storeMessages: any[]): ChatMessage[] {
 }
 ```
 
-- **Purpose:** Bridges between incompatible message types
+- **description:** Bridges between incompatible message types
 - **Issue:** Adds complexity, potential data loss
 
 ## Architecture Conflicts

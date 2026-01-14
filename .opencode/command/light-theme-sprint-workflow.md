@@ -4,7 +4,7 @@
 ## Workflow Overview
 
 **Workflow ID**: `light-theme-sprint-workflow`
-**Purpose**: Orchestrate the complete Light Theme Design System implementation sprint
+**description**: Orchestrate the complete Light Theme Design System implementation sprint
 **Duration**: 4 weeks (28 days)
 **Stories**: 23 user stories
 **Total Hours**: 88 hours

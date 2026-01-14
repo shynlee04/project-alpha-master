@@ -1,14 +1,14 @@
 ---
 name: "story-cycle"
 type: "implementation-workflow"
-purpose: "Execute stories from assignment to completion with deep analysis, evidence-based validation, and real code verification"
+description: "Execute stories from assignment to completion with deep analysis, evidence-based validation, and real code verification"
 version: "2.0.0"
 phase: "4"
 ---
 
 # Story-Cycle Workflow v2.0
 
-**Purpose**: Execute development stories from assignment through completion with **deep analysis**, **evidence-based validation**, and **real code verification**.
+**description**: Execute development stories from assignment through completion with **deep analysis**, **evidence-based validation**, and **real code verification**.
 
 ## v2.0 Critical Insight
 
@@ -28,7 +28,7 @@ workflow:
   name: "story-cycle"
   phase: 4
   version: "2.0.0"
-  purpose: "Execute stories with deep analysis + evidence-based validation"
+  description: "Execute stories with deep analysis + evidence-based validation"
 
   entry:
     required: "governance approval + story assignment"
@@ -62,7 +62,7 @@ workflow:
 workflow:
   name: "story-cycle"
   phase: 4
-  purpose: "Execute stories with sprint tracking + Product Reality validation"
+  description: "Execute stories with sprint tracking + Product Reality validation"
 
   entry:
     required: "governance approval + story assignment"
@@ -99,7 +99,7 @@ status: "in_progress"
 
 ## Steps Overview v2.0
 
-| Step | Name | Purpose | v2.0 Enhancement |
+| Step | Name | description | v2.0 Enhancement |
 |------|------|---------|------------------|
 | 1 | **Init** | Load story context, verify prerequisites | **+ Deep project analysis** |
 | 1a | **User Journey** | The Movie Script Test (Code-Verified) | **+ State machine walk** |

@@ -17,7 +17,7 @@ Added runtime validation for API credentials using Zod v4. All credentials are n
 ## Files Created
 
 ### 1. `src/infrastructure/persistence/stores/providers/credentials/schemas.ts`
-**Purpose:** Zod validation schemas for API keys
+**description:** Zod validation schemas for API keys
 
 **Exports:**
 - `apiKeySchema` - Base API key validation (20-200 chars)

@@ -29,9 +29,9 @@ The EPIC-STORE analysis claimed:
   impact: "State synchronization issues"
 ```
 
-This analysis was **incorrect**. The two stores serve **orthogonal purposes**:
+This analysis was **incorrect**. The two stores serve **orthogonal descriptions**:
 
-| Store | Purpose | Domain | Consumers | Storage |
+| Store | description | Domain | Consumers | Storage |
 |-------|---------|--------|-----------|---------|
 | `useNoteNavigationStore` | Tree hierarchy state | Notes workspace | 3 components | note-navigation-storage |
 | `useNavigationStore` | IDE panel state | IDE-wide | **0 consumers** | via-gent-navigation-storage |
@@ -40,7 +40,7 @@ This analysis was **incorrect**. The two stores serve **orthogonal purposes**:
 
 #### useNoteNavigationStore (`src/lib/notes/note-navigation-store.ts`)
 
-**Purpose**: Manages note tree UI state
+**description**: Manages note tree UI state
 
 **State**:
 - `expandedNodes: Set<string>` - Which tree nodes are expanded/collapsed
@@ -58,7 +58,7 @@ This analysis was **incorrect**. The two stores serve **orthogonal purposes**:
 
 #### useNavigationStore (`src/infrastructure/persistence/stores/navigation-store.ts`)
 
-**Purpose**: IDE-wide panel navigation (originally intended)
+**description**: IDE-wide panel navigation (originally intended)
 
 **State**:
 - `activePanel: string | null` - Currently active panel
@@ -102,7 +102,7 @@ This analysis was **incorrect**. The two stores serve **orthogonal purposes**:
 ```yaml
 CONFLICT-05:
   status: "FALSE_POSITIVE"
-  finding: "Stores serve orthogonal purposes - no overlap"
+  finding: "Stores serve orthogonal descriptions - no overlap"
   useNoteNavigationStore: "Keep - actively used for tree state"
   useNavigationStore: "Investigate - may be dead code (0 consumers)"
 ```

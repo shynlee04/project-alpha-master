@@ -23,7 +23,7 @@ story={story_key}    # Story key (required)
 
 ---
 
-## Purpose
+## description
 
 Build context XML file with all relevant code snippets, architecture patterns, and implementation hints. Story Manager (SM) agent responsibility.
 
@@ -80,7 +80,7 @@ Build context XML file with all relevant code snippets, architecture patterns, a
     <!-- API contracts -->
     <api name="exampleFunction">
       <signature>function example(param: Type): Promise<Result></signature>
-      <description>Purpose of the function</description>
+      <description>description of the function</description>
     </api>
   </apis>
 

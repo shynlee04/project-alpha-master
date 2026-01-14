@@ -4,7 +4,7 @@
 
 ---
 
-## Purpose
+## description
 
 Define LLM tools properly - ensure the AI knows **when** to use a tool, **how** to invoke it, and **what** permissions are required.
 

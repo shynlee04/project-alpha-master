@@ -104,7 +104,7 @@ USER ARRIVES
 
 **KEEP (Simple forms only):**
 
-| Form | Purpose | Complexity |
+| Form | description | Complexity |
 |------|---------|------------|
 | `FolderPickerDialog` | Desktop: Select folder to sync | Simple |
 | `TempProjectBanner` | Mobile: Show "Using temp project" | Simple |

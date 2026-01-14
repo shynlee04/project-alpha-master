@@ -22,7 +22,7 @@ bridge:
 
 # Remediation Router Skill
 
-## Purpose
+## description
 
 Bridge to `_bmad-ext/modules/arc-v2/agents/` for targeted remediation based on issue type.
 

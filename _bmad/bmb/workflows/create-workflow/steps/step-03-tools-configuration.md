@@ -193,11 +193,11 @@ Append to {workflowPlanFile}:
 
 ### Memory Systems
 
-- **Sidecar File**: [included/excluded] - Purpose: [state management needs]
+- **Sidecar File**: [included/excluded] - description: [state management needs]
 
 ### External Integrations
 
-- [List selected external tools with purposes]
+- [List selected external tools with descriptions]
 
 ### Installation Requirements
 

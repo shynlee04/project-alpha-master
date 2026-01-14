@@ -5,7 +5,7 @@
 **Version**: 1.0
 **Created**: 2026-01-06
 
-## Purpose
+## description
 
 Automated daily cycle that enforces the 5-day active retention policy, archives expired artifacts, and maintains clean context for AI agents.
 

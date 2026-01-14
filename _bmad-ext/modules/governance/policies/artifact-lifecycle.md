@@ -1,13 +1,13 @@
 ---
 name: "artifact-lifecycle"
 type: "governance-policy"
-purpose: "Define artifact lifecycle from creation to archival"
+description: "Define artifact lifecycle from creation to archival"
 version: "1.0.0"
 ---
 
 # Artifact Lifecycle Policy
 
-**Purpose**: Define the complete lifecycle of governance artifacts from creation to archival.
+**description**: Define the complete lifecycle of governance artifacts from creation to archival.
 
 ## Lifecycle Stages
 

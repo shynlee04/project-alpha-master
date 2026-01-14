@@ -23,7 +23,7 @@ story={N}          # Story number (optional, auto-increments)
 
 ---
 
-## Purpose
+## description
 
 Create a new story file from epic backlog. Story Manager (SM) agent responsibility.
 

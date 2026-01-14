@@ -4,7 +4,7 @@
 
 ---
 
-## Purpose
+## description
 
 This document maps Claude Code 2026 native concepts to BMAD framework architecture, enabling the platform wrapper to translate between the two systems efficiently.
 
@@ -54,7 +54,7 @@ allowed-tools:
 
 ## 2. Hooks ↔ BMAD Events
 
-| Claude Code Hook | BMAD Event Equivalent | Purpose | Current Status |
+| Claude Code Hook | BMAD Event Equivalent | description | Current Status |
 |------------------|----------------------|---------|----------------|
 | `SessionStart` | Loop initialization | Load config, verify state | ✅ Implemented |
 | `SessionEnd` | Loop termination | Cleanup, state save | ❌ Missing |
@@ -128,7 +128,7 @@ skills:
   - global-coding-style
   - testing-test-writing
 context: fork  # Runs in isolated context
-agent: general-purpose  # Default sub-agent type
+agent: general-description  # Default sub-agent type
 allowed-tools:
   - Edit
   - Read
@@ -279,7 +279,7 @@ triggers: [keyword list]
 
 # Execution control
 context: [fork|current]
-agent: [general-purpose|Explore|Plan|custom]
+agent: [general-description|Explore|Plan|custom]
 skills: [skill list]
 allowed-tools: [tool list]
 

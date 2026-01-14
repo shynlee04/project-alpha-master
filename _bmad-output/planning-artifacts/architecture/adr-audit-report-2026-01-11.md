@@ -1,7 +1,7 @@
 # ADR Audit Report - 2026-01-11
 
 **Date:** 2026-01-11  
-**Purpose:** Audit all ADRs for accuracy and mark false/overstated ADRs
+**description:** Audit all ADRs for accuracy and mark false/overstated ADRs
 
 ---
 
@@ -288,7 +288,7 @@ This audit evaluates all Architecture Decision Records against the comprehensive
 
 ## Files Referenced
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `_bmad-output/audit/comprehensive-codebase-audit-2026-01-11.md` | Main audit report |
 | `_bmad-output/planning-artifacts/architecture/adr-029-clean-architecture-layer-compliance.md` | ADR being audited |

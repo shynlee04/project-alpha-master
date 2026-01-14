@@ -69,7 +69,7 @@ Validate Module agents meet BMAD quality standards.
 ## Module-Specific Quality
 
 - [ ] Agent extends module capabilities (not redundant with existing agents)
-- [ ] Agent has clear purpose within module ecosystem
+- [ ] Agent has clear description within module ecosystem
 - [ ] Compare with reference: `security-engineer.agent.yaml` (BMM module example)
 
 ---

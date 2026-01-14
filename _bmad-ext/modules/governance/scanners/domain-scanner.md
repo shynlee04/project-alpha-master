@@ -1,13 +1,13 @@
 ---
 name: "domain-scanner"
 type: "governance-scanner"
-purpose: "Domain-specific analysis to understand codebase organization"
+description: "Domain-specific analysis to understand codebase organization"
 version: "1.0.0"
 ---
 
 # Domain Scanner
 
-**Purpose**: Analyze the codebase to identify domain boundaries, responsibilities, and relationships.
+**description**: Analyze the codebase to identify domain boundaries, responsibilities, and relationships.
 
 ## Scan Scope
 

@@ -288,7 +288,7 @@ function updateNote(note: Note, updates: Partial<Note>): Note {
 
 Every entity must be documented with:
 
-1. **JSDoc comment** explaining purpose
+1. **JSDoc comment** explaining description
 2. **Field descriptions** for all properties
 3. **@example** for complex types
 4. **Related types** and services

@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 The Integration & Testing module provides real-world testing capabilities with production-grade rigor. It focuses on cross-platform integration testing, browser automation, and real API validation (NO MOCKS allowed).
 
@@ -232,14 +232,14 @@ api_keys:
 ### 1. API Keys Configuration
 **File**: `config/api-keys-prod.yaml`
 **Git Status**: `.gitignore` entry required (NEVER commit to git)
-**Purpose**: User-provided production keys for real-world testing
+**description**: User-provided production keys for real-world testing
 
 **Structure**:
 ```yaml
 api_keys:
   gemini:
     key: "YOUR_GEMINI_API_KEY_HERE"  # Replace with actual key
-    purpose: "Real AI model testing"
+    description: "Real AI model testing"
     provider: "Google"
     quota: {...}
     cost_tracking: {...}
@@ -248,7 +248,7 @@ api_keys:
 
   openrouter:
     key: "YOUR_OPENROUTER_API_KEY_HERE"  # Replace with actual key
-    purpose: "Multi-model routing testing"
+    description: "Multi-model routing testing"
     provider: "OpenRouter"
     quota: {...}
     cost_tracking: {...}
@@ -276,7 +276,7 @@ security:
 ```yaml
 mcp_servers:
   playwright:
-    purpose: "Cross-browser end-to-end testing"
+    description: "Cross-browser end-to-end testing"
     capabilities:
       - "Chrome, Firefox, Safari, Edge"
       - "Visual regression screenshots"
@@ -284,7 +284,7 @@ mcp_servers:
       - "Local storage testing"
 
   chromedev:
-    purpose: "Chrome DevTools Protocol debugging"
+    description: "Chrome DevTools Protocol debugging"
     capabilities:
       - "Performance profiling"
       - "Memory leak detection"
@@ -292,7 +292,7 @@ mcp_servers:
       - "JavaScript execution tracing"
 
   zai-mcp-server:
-    purpose: "Multimodal visual analysis"
+    description: "Multimodal visual analysis"
     capabilities:
       - "UI screenshot comparison"
       - "Data visualization analysis"

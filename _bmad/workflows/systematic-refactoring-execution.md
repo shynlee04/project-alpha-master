@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 Orchestrate the execution of course correction epics with strict validation gates to prevent regression and ensure quality during the 8-week systematic remediation plan.
 
@@ -55,7 +55,7 @@ Orchestrate the execution of course correction epics with strict validation gate
 
 ## Stage 1: PRE-EXECUTION GATE
 
-### Purpose
+### description
 Establish baseline metrics and safety nets before beginning remediation work.
 
 ### Checklist
@@ -162,7 +162,7 @@ pnpm list --depth=0 > _bmad-output/snapshots/pre-remediation-dependencies.txt
 
 ## Stage 2: EPIC EXECUTION
 
-### Purpose
+### description
 Execute individual stories within an epic with systematic validation.
 
 ### Per-Story Workflow
@@ -294,7 +294,7 @@ grep -r "export.*from" src/ | grep -v "test.ts" | wc -l
 - {file-2}: {change description}
 
 ### Files Created
-- {file-new}: {purpose}
+- {file-new}: {description}
 
 ### Test Results
 - Tests Passing: X/Y
@@ -330,7 +330,7 @@ grep -r "export.*from" src/ | grep -v "test.ts" | wc -l
 
 ## Stage 3: POST-STORY VALIDATION GATE
 
-### Purpose
+### description
 Ensure story completion doesn't break existing functionality.
 
 ### Validation Checklist
@@ -403,7 +403,7 @@ fi
 
 ## Stage 4: POST-EPIC VALIDATION GATE
 
-### Purpose
+### description
 Verify epic completion and measure improvements.
 
 ### Epic Completion Checklist
@@ -512,7 +512,7 @@ pnpm test -- --coverage --silent | grep "All files" >> epic-metrics.txt
 
 ## Stage 5: POST-PHASE VALIDATION GATE
 
-### Purpose
+### description
 Verify phase completion and measure overall health score improvement.
 
 ### Phase Completion Checklist

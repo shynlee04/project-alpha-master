@@ -1,7 +1,7 @@
 # Governance Workflow - Agent as Expert
 
 **Workflow Type**: Core Concept (2 of 3)  
-**Purpose**: Expert analysis of bugs/errors/features against actual codebase  
+**description**: Expert analysis of bugs/errors/features against actual codebase  
 **Triggered By**: 
 - Context-first workflow completion
 - Bug/error report filing
@@ -10,7 +10,7 @@
 
 ---
 
-## Purpose
+## description
 
 The **Agent-as-Expert** workflow transforms the agent from a passive executor to an **active expert consultant** who:
 
@@ -31,7 +31,7 @@ This prevents:
 
 ### Step 1: Define Level
 
-**Purpose**: Categorize the issue by severity, complexity, and impact
+**description**: Categorize the issue by severity, complexity, and impact
 
 ```yaml
 agent_expert_step_1:
@@ -76,7 +76,7 @@ agent_expert_step_1:
 
 ### Step 2: Load Codebase Reality
 
-**Purpose**: Load actual code to compare against user's approach
+**description**: Load actual code to compare against user's approach
 
 ```yaml
 agent_expert_step_2:
@@ -117,7 +117,7 @@ agent_expert_step_2:
 
 ### Step 3: Compare & Contrast
 
-**Purpose**: Analyze user's approach against actual codebase
+**description**: Analyze user's approach against actual codebase
 
 ```yaml
 agent_expert_step_3:
@@ -159,7 +159,7 @@ agent_expert_step_3:
 
 ### Step 4: Detect Flaws
 
-**Purpose**: Identify problematic patterns in user's approach
+**description**: Identify problematic patterns in user's approach
 
 ```yaml
 agent_expert_step_4:
@@ -202,7 +202,7 @@ agent_expert_step_4:
 
 ### Step 5: Make Decision
 
-**Purpose**: Recommend proceed, modify, or block
+**description**: Recommend proceed, modify, or block
 
 ```yaml
 agent_expert_step_5:

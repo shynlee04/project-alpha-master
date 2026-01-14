@@ -1,13 +1,13 @@
 ---
 name: "archiving-policy"
 type: "governance-policy"
-purpose: "Define artifact archival procedures to maintain clean workspace"
+description: "Define artifact archival procedures to maintain clean workspace"
 version: "1.0.0"
 ---
 
 # Archiving Policy
 
-**Purpose**: Define when and how to archive artifacts to maintain a clean, working workspace.
+**description**: Define when and how to archive artifacts to maintain a clean, working workspace.
 
 ## When to Archive
 
@@ -74,7 +74,7 @@ archive_structure:
 
   legacy_archives:
     pattern: "legacy/{date}/"
-    purpose: "Old module structures before refactoring"
+    description: "Old module structures before refactoring"
 ```
 
 ## Archive Process

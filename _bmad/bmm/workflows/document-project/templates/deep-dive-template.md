@@ -10,7 +10,7 @@
 
 {{target_description}}
 
-**Purpose:** {{target_purpose}}
+**description:** {{target_description}}
 **Key Responsibilities:** {{responsibilities}}
 **Integration Points:** {{integration_summary}}
 
@@ -20,7 +20,7 @@
 
 ### {{file_path}}
 
-**Purpose:** {{purpose}}
+**description:** {{description}}
 **Lines of Code:** {{loc}}
 **File Type:** {{file_type}}
 
@@ -268,7 +268,7 @@
 {{#each reusable_utilities}}
 
 - **{{utility_name}}** (`{{utility_path}}`)
-  - Purpose: {{utility_purpose}}
+  - description: {{utility_description}}
   - How to Use: {{usage_example}}
     {{/each}}
 

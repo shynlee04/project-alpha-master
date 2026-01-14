@@ -13,7 +13,7 @@ trigger: model_decision
 
 The conductor of the Quality module (formerly Deep-Scan). It aggregates evidence from all 9 scanning agents, deduplicates findings, prioritizes risks based on severity and impact, and generates the Master Risk Register and Remediation Backlog.
 
-### Agent Purpose
+### Agent description
 
 To transform raw technical findings into actionable architectural intelligence, providing a clear "State of the Union" for the codebase and feeding the architecture remediation pipeline.
 

@@ -1,6 +1,6 @@
 # Utility: Handoff Template
 
-> **Purpose:** Standard format for agent-to-agent handoff artifacts
+> **description:** Standard format for agent-to-agent handoff artifacts
 > **Usage:** Generated at end of each phase
 
 ---
@@ -28,10 +28,10 @@ Every handoff artifact follows this structure:
 
 ## Artifacts Created
 
-| File | Location | Purpose |
+| File | Location | description |
 |------|----------|---------|
-| {artifact_1} | {path} | {purpose} |
-| {artifact_2} | {path} | {purpose} |
+| {artifact_1} | {path} | {description} |
+| {artifact_2} | {path} | {description} |
 
 ---
 
@@ -252,10 +252,10 @@ For quick agent switches without creating files:
 
 ### Persistent Handoffs
 - Location: `{sprint_artifacts}/handoffs/{story_key}-{phase}-handoff.md`
-- Purpose: Audit trail, replay capability
+- description: Audit trail, replay capability
 - Retention: Per sprint retention policy
 
 ### Ephemeral Handoffs
 - Location: In chat context only
-- Purpose: Quick agent switching
+- description: Quick agent switching
 - Retention: Current conversation only

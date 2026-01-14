@@ -26,25 +26,25 @@
 ## Artifacts Prepared
 
 ### Design Documents
-| File | Status | Purpose |
+| File | Status | description |
 |------|--------|---------|
 | `_bmad-output/phase3-synthesis/centralized-system-prompt-design-2026-01-10.md` | ✅ | 5-layer prompt architecture |
 | `_bmad-output/planning-artifacts/architecture/adr/ADR-032-agent-chat-self-switching-orchestrator-2026-01-10.md` | ✅ | Architecture decision record |
 
 ### Sprint Planning
-| File | Status | Purpose |
+| File | Status | description |
 |------|--------|---------|
 | `_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md` | ✅ | Sprint plan (9 stories, Team A) |
 | `_bmad-output/bmm-workflow-status.yaml` | ✅ | Workflow: EPIC-40 active |
 | `_bmad-output/sprint-artifacts/sprint-status.yaml` | ✅ | EPIC-40 tracking added |
 
 ### Ralph Loop Coordination
-| File | Status | Purpose |
+| File | Status | description |
 |------|--------|---------|
 | `.claude/LOOP_STATE-child.yaml` | ✅ | Operational level tracking |
 
 ### Governance (Read & Understood)
-| Checklist | Purpose |
+| Checklist | description |
 |-----------|---------|
 | `_bmad/modules/governance/checklists/story-start-gate.yaml` | 5 gates before story start |
 | `_bmad/modules/governance/checklists/story-done-gate.yaml` | 5 gates before story done |
@@ -57,27 +57,27 @@
 ## 9 Stories in EPIC-40
 
 ### Phase 1: Foundation (4 hours)
-| ID | Story | Purpose |
+| ID | Story | description |
 |----|-------|---------|
 | 40-01 | Create Centralized Tool Registry | Single source of truth for tools |
 | 40-03 | Implement Tool Permission Filtering | Filter by permission/mode/workspace |
 
 ### Phase 2: Context Injection (5 hours)
-| ID | Story | Purpose |
+| ID | Story | description |
 |----|-------|---------|
 | 40-02 | Create Mode Classifier | Analyze 4 context sources, auto-select mode |
 | 40-04 | Implement Workspace Context Injection | Inject workspace state into prompt |
 | 40-05 | Implement Document Context Injection | Inject active document context |
 
 ### Phase 3: Centralized Prompt (6 hours)
-| ID | Story | Purpose |
+| ID | Story | description |
 |----|-------|---------|
 | 40-06 | Create Prompt Layer System | 5-layer architecture |
 | 40-07 | Implement Agent Mode Prompts | CODING/KNOWLEDGE/ORCHESTRATOR modes |
 | 40-08 | Integrate All Context Layers | Full context injection pipeline |
 
 ### Phase 4: Integration (6 hours)
-| ID | Story | Purpose |
+| ID | Story | description |
 |----|-------|---------|
 | 40-09 | End-to-End Integration | Wire everything together |
 

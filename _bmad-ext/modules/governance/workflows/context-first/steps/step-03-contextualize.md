@@ -38,7 +38,7 @@ Context Slices Available:
 
 For each context slice, gather:
 - **File path**: Full path to relevant file
-- **Purpose**: Why this context is relevant
+- **description**: Why this context is relevant
 - **Key content**: Brief summary of what it contains
 - **Relationships**: How it connects to the request
 
@@ -51,11 +51,11 @@ context_package:
   depth: {depth level}
   primary_context:
     - file: {path}
-      purpose: {why relevant}
+      description: {why relevant}
       summary: {brief}
   secondary_context:
     - file: {path}
-      purpose: {why relevant}
+      description: {why relevant}
       summary: {brief}
   relationships:
     - {from} -> {to}: {relationship type}
@@ -79,7 +79,7 @@ Create transformed prompt that:
 {Summarize context gathered from scan}
 
 ## Relevant Files
-{List key files with their purpose}
+{List key files with their description}
 
 ## Relationships
 {Describe key relationships found}

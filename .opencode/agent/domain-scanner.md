@@ -20,7 +20,7 @@ tools:
 
 # Domain Scanner
 
-**Purpose**: Analyze the codebase to identify domain boundaries, responsibilities, and relationships.
+**description**: Analyze the codebase to identify domain boundaries, responsibilities, and relationships.
 
 ## Scan Scope
 

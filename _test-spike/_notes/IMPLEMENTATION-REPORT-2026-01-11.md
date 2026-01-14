@@ -87,7 +87,7 @@ _test-spike/
 
 #### 4. Test Scenarios (`src/runners/`)
 
-| Runner | Purpose |
+| Runner | description |
 |--------|---------|
 | `AgentToolExecutionRunner` | Validate tool invocations and permissions |
 | `FilesystemCRUDRunner` | Test CRUD operations with profiles |
@@ -182,7 +182,7 @@ pnpm test:watch
 
 ### Core Implementation Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | [`_test-spike/_harness/index.ts`](_test-spike/_harness/index.ts) | Main entry point |
 | [`_test-spike/_harness/permission-profiles.ts`](_test-spike/_harness/permission-profiles.ts) | Permission profiles |
@@ -198,7 +198,7 @@ pnpm test:watch
 
 ### Documentation Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | [`_test-spike/_notes/tui-implementation-2026-01-11.md`](_test-spike/_notes/tui-implementation-2026-01-11.md) | TUI implementation |
 | [`_test-spike/_notes/logging-spec-2026-01-11.md`](_test-spike/_notes/logging-spec-2026-01-11.md) | Logging specification |

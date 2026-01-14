@@ -16,7 +16,7 @@ _Standards for creating, composing, and maintaining React components in the Via-
 
 ### 1.1 Component Categories
 
-| Category | Location | Purpose | Examples |
+| Category | Location | description | Examples |
 |----------|----------|---------|----------|
 | **Feature Components** | `src/components/{feature}/` | Business logic, user journeys | ChatConversation, AgentConfigDialog |
 | **UI Primitives** | `src/components/ui/` | Base, reusable, dumb components | Button, Dialog, Input |

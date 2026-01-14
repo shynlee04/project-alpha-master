@@ -2,7 +2,7 @@
 
 **Date:** 2026-01-11  
 **Status:** APPROVED  
-**Purpose:** Establish sensible epic/story numbering that doesn't "sound like bullshit"
+**description:** Establish sensible epic/story numbering that doesn't "sound like bullshit"
 
 ---
 

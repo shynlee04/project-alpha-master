@@ -20,7 +20,7 @@ This document analyzes the current provider architecture and proposes a universa
 
 ### Existing Files
 
-| File | Purpose | Issues |
+| File | description | Issues |
 |------|---------|--------|
 | `src/lib/agent/providers/types.ts` | Provider configurations | Single hardcoded `openai-compatible` entry |
 | `src/lib/agent/providers/provider-adapter.ts` | Adapter factory | No per-modality endpoint support |
@@ -340,7 +340,7 @@ export class UniversalAdapter {
 
 ### New Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/domain/types/llm/modality-types.ts` | Modality type definitions |
 | `src/domain/types/llm/universal-provider-types.ts` | Universal provider types |

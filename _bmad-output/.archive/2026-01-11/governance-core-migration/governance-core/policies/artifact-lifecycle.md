@@ -5,7 +5,7 @@
 
 ---
 
-## Purpose
+## description
 
 Defines the lifecycle of governance artifacts, their freshness requirements, and validation processes.
 
@@ -125,7 +125,7 @@ check:
 
 ### When Creating Artifacts
 
-1. **Define Category**: Tier 1-4 based on purpose
+1. **Define Category**: Tier 1-4 based on description
 2. **Set Owner**: Person or role responsible
 3. **Set Validation**: How to verify freshness
 4. **Register**: Add to ARTIFACT_REGISTRY.yaml

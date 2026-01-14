@@ -1,6 +1,6 @@
 # Utility: Audit Checkpoint
 
-> **Purpose:** Cross-cutting audit to ensure quality and compliance
+> **description:** Cross-cutting audit to ensure quality and compliance
 > **Trigger:** After each major phase, or manually via `/audit {story_key}`
 
 ---

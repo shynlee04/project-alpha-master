@@ -10,7 +10,7 @@
 
 ### 1. Enhanced Agent Template Created
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | `_template-enhanced-agent.md` | 347 | Template for all enhanced agents |
 

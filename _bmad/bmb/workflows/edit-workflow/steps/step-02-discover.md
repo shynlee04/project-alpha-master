@@ -131,7 +131,7 @@ Explore:
 - Is it too rigid or too loose?
 - Should certain steps be more adaptive?
 - Do some steps need more specificity?
-- Does the style match the workflow's purpose?
+- Does the style match the workflow's description?
 
 ### 6. Dive Deeper into Focus Areas
 

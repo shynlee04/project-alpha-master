@@ -5,7 +5,7 @@
 **Created**: 2026-01-11
 **Updated**: 2026-01-11
 
-## Purpose
+## description
 
 Unified governance module that consolidates all self-governance, artifact management, context filtering, and stale document detection. This is the **single source of truth** for all extension layer governance.
 

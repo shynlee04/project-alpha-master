@@ -42,7 +42,7 @@ agents:
 
 ### What Architecture Provides
 
-| Pattern | Purpose | User Impact |
+| Pattern | description | User Impact |
 |---------|---------|-------------|
 | Event-driven sync | Cross-workspace state coherence | DISABLED (infinite loop) |
 | Unified AI service | Consistent AI across workspaces | NOT WIRED to vault |

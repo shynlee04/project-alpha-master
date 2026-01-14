@@ -7,7 +7,7 @@ last_updated: 2026-01-07
 
 # ASGL - Autonomous Self-Governing Loop Orchestrator
 
-**Purpose**: Orchestrate autonomous development cycles using the BMAD framework with multi-level loop governance.
+**description**: Orchestrate autonomous development cycles using the BMAD framework with multi-level loop governance.
 
 ## Quick Start
 
@@ -28,7 +28,7 @@ Invoke the BMAD Master Orchestrator:
 
 ## State Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `.claude/ralph-loop.local.md` | Project-local loop control (active, iteration, max) |
 | `_bmad/modules/asgl/LOOP_STATE-grandparent.yaml` | Strategic: sprint, quarterly goals |

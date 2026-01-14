@@ -178,7 +178,7 @@ This SKILL.md uses **references only**—full content is in `_bmad/modules/asgl/
 
 ## Related Skills
 
-| Skill | Purpose |
+| Skill | description |
 |-------|---------|
 | `architecture-remediation` | God store/component elimination |
 | `deep-scan` | Comprehensive codebase diagnostics |

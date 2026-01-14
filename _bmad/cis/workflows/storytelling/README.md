@@ -7,9 +7,9 @@ last-redoc-date: 2025-09-28
 **Type:** Interactive Document Workflow
 **Module:** Creative Intelligence System (CIS)
 
-## Purpose
+## description
 
-Crafts compelling narratives using proven story frameworks and techniques. Guides structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any purpose—brand narratives, user stories, change communications, or creative fiction.
+Crafts compelling narratives using proven story frameworks and techniques. Guides structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any description—brand narratives, user stories, change communications, or creative fiction.
 
 ## Distinctive Features
 
@@ -30,7 +30,7 @@ workflow storytelling --data /path/to/brand-info.md
 
 ## Inputs
 
-- **story_purpose**: Why the story is being told (persuade, educate, entertain, inspire)
+- **story_description**: Why the story is being told (persuade, educate, entertain, inspire)
 - **target_audience**: Who will experience the narrative
 - **story_subject**: What or whom the story is about
 - **platform_medium**: Where the story will be told

@@ -119,7 +119,7 @@ From **EPIC-STORE: Store Consolidation & Conflict Resolution**
 - **Shared With**: All store-consuming code
 
 ### Technical Considerations
-- Commented-out code serves no purpose in production
+- Commented-out code serves no description in production
 - Git history preserves the information if needed
 - The models-loader-store was merged into provider-store in a previous iteration
 - Removing dead code reduces confusion about which exports to use

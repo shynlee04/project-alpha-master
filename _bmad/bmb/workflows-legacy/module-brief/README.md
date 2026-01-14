@@ -94,7 +94,7 @@ module-brief/
 
 **Workflow Ecosystem Design**
 
-- Categorize workflows by purpose and complexity:
+- Categorize workflows by description and complexity:
   - **Core Workflows**: Essential value-delivery functions (2-3)
   - **Feature Workflows**: Specialized capabilities (3-5)
   - **Utility Workflows**: Supporting operations (1-3)

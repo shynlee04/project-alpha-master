@@ -126,7 +126,7 @@ const handleWorkspaceSwitch = async (workspace: WorkspaceType) => {
 
 **File**: `src/presentation/components/agent/AgentWorkspaceSwitchingFeedback.tsx`
 
-**Purpose**: Shows visual feedback during workspace transitions
+**description**: Shows visual feedback during workspace transitions
 
 **Features**:
 - Loading indicator during transition

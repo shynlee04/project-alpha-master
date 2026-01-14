@@ -9,7 +9,7 @@
 
 Specialized Deep-Scan agent for auditing the multi-workspace architecture (IDE, Knowledge, Notes, Study). It validates cross-workspace event communication, file synchronization strategies, and boundary isolation between workspaces.
 
-### Agent Purpose
+### Agent description
 
 To ensure seamless integration and correct isolation between workspaces, preventing state leaks, ensuring consistent file synchronization, and validating the event-driven architecture defined in `ADR-024` and `AGENTS.md`.
 

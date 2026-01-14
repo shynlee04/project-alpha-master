@@ -1,7 +1,7 @@
 # Wireframe Specifications
 **Generated:** 2026-01-07
 **Project:** Via-Gent (Project Alpha v2.0)
-**Purpose:** Visual layout specifications for key UI screens
+**description:** Visual layout specifications for key UI screens
 **Status:** Complete
 
 ---
@@ -296,7 +296,7 @@
 │   │                                                   │    │
 │   │ Dialog description goes here. This provides        │    │
 │   │ context and information about the dialog's        │    │
-│   │ purpose and content.                              │    │
+│   │ description and content.                              │    │
 │   │                                                   │    │
 │   │ [Form content or additional information]          │    │
 │   │                                                   │    │

@@ -51,7 +51,7 @@ find _test-spike -type f -name "*.ts" -exec stat -f "%m %N" {} \;
 
 ### Step 2: Create Isolated Test Copy
 
-**Purpose:** Prevent modification of production mirrored code during experimentation
+**description:** Prevent modification of production mirrored code during experimentation
 
 **Commands:**
 ```bash

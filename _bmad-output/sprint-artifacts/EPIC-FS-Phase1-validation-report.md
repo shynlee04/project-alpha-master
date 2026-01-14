@@ -149,7 +149,7 @@ function extractWorkspaceType(projectId: string): 'ide' | 'knowledge' | 'study' 
 |-------|------|--------|-------|
 | L1 | State Integrity | ✅ PASS | All project IDs follow namespace format |
 | L2 | Code Hygiene | ✅ PASS | Proper typing for workspace types |
-| L3 | Naming | ✅ PASS | Function names clearly indicate purpose |
+| L3 | Naming | ✅ PASS | Function names clearly indicate description |
 | L4 | Dependencies | ✅ PASS | No circular dependencies |
 | L5 | Integration | ✅ PASS | createProject generates namespaced IDs |
 | L6 | Architecture | ✅ PASS | Infrastructure layer only |

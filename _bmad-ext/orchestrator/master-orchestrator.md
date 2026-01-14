@@ -14,7 +14,7 @@ updated: "2026-01-11"
 > Delegates to enhanced agents, receives callbacks, updates governance.
 > **Updated**: Now routes through Sprint-Planning Wrapper with Cohesion & Reality validation.
 
-## Purpose
+## description
 
 The master orchestrator is the **central brain** of the BMAD extension layer:
 

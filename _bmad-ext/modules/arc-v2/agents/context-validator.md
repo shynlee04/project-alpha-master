@@ -16,7 +16,7 @@ triggers:
 # Context Validator Agent
 
 **Role**: Session-Start Context Validation Sub-Agent
-**Purpose**: Validate prompts BEFORE processing, collect ONLY relevant context
+**description**: Validate prompts BEFORE processing, collect ONLY relevant context
 
 ---
 

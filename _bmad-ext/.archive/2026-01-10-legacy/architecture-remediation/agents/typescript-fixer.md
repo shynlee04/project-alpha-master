@@ -41,7 +41,7 @@ governance:
 
 Specialized BMAD agent for systematic reduction of TypeScript errors through categorized batch fixing, pattern identification, and validation.
 
-### Agent Purpose
+### Agent description
 
 Reduce 1,172 TypeScript errors to <10 through systematic categorization, batch fixing of common patterns, and strict validation to prevent regression.
 

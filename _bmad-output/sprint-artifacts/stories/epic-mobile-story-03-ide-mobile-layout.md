@@ -239,7 +239,7 @@ const BOTTOM_NAV_TABS = [
 
 ### Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `src/presentation/components/layout/MobileIDELayout.tsx` | Reference implementation |
 | `src/presentation/components/notes/NotesMobileLayout.tsx` | Pattern reference |

@@ -68,11 +68,11 @@ Define non-functional requirements that specify quality attributes for the produ
 
 ## NON-FUNCTIONAL REQUIREMENTS SEQUENCE:
 
-### 1. Explain NFR Purpose and Scope
+### 1. Explain NFR description and Scope
 
 Start by clarifying what NFRs are and why we're selective:
 
-**NFR Purpose:**
+**NFR description:**
 NFRs define HOW WELL the system must perform, not WHAT it must do. They specify quality attributes like performance, security, scalability, etc.
 
 **Selective Approach:**

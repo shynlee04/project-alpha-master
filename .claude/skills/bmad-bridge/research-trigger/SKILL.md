@@ -19,7 +19,7 @@ bridge:
 
 # Research Trigger Skill
 
-## Purpose
+## description
 
 Bridge to `_bmad-ext/modules/governance/workflows/research-trigger/` for internet-based tech validation.
 

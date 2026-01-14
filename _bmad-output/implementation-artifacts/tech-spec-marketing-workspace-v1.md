@@ -168,7 +168,7 @@ export const useMarketingStore = create<MarketingState>()(
 
 ### Files to Reference
 
-| File | Purpose | Pattern to Follow |
+| File | description | Pattern to Follow |
 |------|---------|-------------------|
 | `/src/routes/notes.lazy.tsx` | Route definition | Lazy loading with ErrorBoundary |
 | `/src/presentation/components/notes/NotesPage.tsx` | Complex workspace | 3-panel layout, stores, events |
@@ -519,7 +519,7 @@ campaign-{timestamp}.zip
 ### Dependencies
 
 **Existing (No install needed):**
-| Package | Version | Purpose |
+| Package | Version | description |
 |---------|---------|---------|
 | `@tanstack/ai` | 0.2.0 | Core AI SDK |
 | `@tanstack/ai-react` | 0.2.0 | useChat hook |
@@ -529,7 +529,7 @@ campaign-{timestamp}.zip
 | `zustand` | - | State management |
 
 **New (Install required):**
-| Package | Purpose | Install |
+| Package | description | Install |
 |---------|---------|---------|
 | `@google-cloud/text-to-speech` | Vietnamese TTS | `npm i @google-cloud/text-to-speech` |
 | `jszip` | ZIP generation | `npm i jszip` (check if exists) |

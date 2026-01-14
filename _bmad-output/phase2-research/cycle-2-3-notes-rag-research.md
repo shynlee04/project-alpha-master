@@ -89,7 +89,7 @@
 
 Based on research, note-taking AI agents need these core tools:
 
-| Tool | Purpose | Industry Pattern |
+| Tool | description | Industry Pattern |
 |------|---------|------------------|
 | `search_notes` | Semantic search over notes | RAG retrieval |
 | `create_note` | Add new notes | CRUD operation |

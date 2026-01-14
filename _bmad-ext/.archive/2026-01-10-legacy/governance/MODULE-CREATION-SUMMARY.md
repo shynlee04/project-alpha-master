@@ -1,7 +1,7 @@
 # Governance Module
 
 **Created**: 2026-01-06
-**Purpose**: Artifact lifecycle management, status synchronization, template enforcement
+**description**: Artifact lifecycle management, status synchronization, template enforcement
 **Status**: Active
 
 ## Module Overview

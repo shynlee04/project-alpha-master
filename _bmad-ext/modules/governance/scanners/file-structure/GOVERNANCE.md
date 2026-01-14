@@ -1,7 +1,7 @@
 # Governance Scanner - File Structure and Artifact Management
 
 **Scanner Type**: Governance Enforcement  
-**Purpose**: Track file/folder changes, enforce naming conventions, manage artifacts systematically  
+**description**: Track file/folder changes, enforce naming conventions, manage artifacts systematically  
 **Triggered By**: 
 - File creation
 - File modification
@@ -12,7 +12,7 @@
 
 ---
 
-## Purpose
+## description
 
 **File Structure Governance** ensures that:
 
@@ -36,7 +36,7 @@
 
 ```yaml
 file_structure_scanner:
-  purpose: "Track and validate all file/folder changes"
+  description: "Track and validate all file/folder changes"
   
   triggers:
     - "file_created"

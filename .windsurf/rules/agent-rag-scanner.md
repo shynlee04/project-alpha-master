@@ -12,7 +12,7 @@ trigger: model_decision
 
 Specialized Deep-Scan agent for auditing the AI Agent ecosystem. It validates tool permission safety, RAG pipeline efficiency, prompt management architectures, and model registry integrity.
 
-### Agent Purpose
+### Agent description
 
 To ensure the safety, reliability, and performance of the AI agent system, detecting permission bypasses, prompt injection risks, and RAG retrieval bottlenecks in the `src/lib/agent` domain.
 

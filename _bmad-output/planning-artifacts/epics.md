@@ -381,7 +381,7 @@ EPIC-06 (RAG Enhancement) [PARALLEL - Independent]
 
 ### Output Files
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `architecture.md` | Authority for architecture decisions |
 | `epics.md` | This file - epic and story definitions |

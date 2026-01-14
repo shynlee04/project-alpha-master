@@ -40,7 +40,7 @@ test_patterns: []
 
 ### Files to Reference
 
-| File | Purpose |
+| File | description |
 | ---- | ------- |
 
 {files_table}

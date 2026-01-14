@@ -13,7 +13,7 @@ continual: true
 **Module**: `asgl`  
 **Workflow ID**: `main-loop`  
 **Version**: 2.0.0  
-**Purpose**: Orchestrate (not replace) existing modules in autonomous loops
+**description**: Orchestrate (not replace) existing modules in autonomous loops
 
 ---
 

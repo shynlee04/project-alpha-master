@@ -8,7 +8,7 @@
 
 ---
 
-## Purpose
+## description
 
 The Architecture & Refactoring module consolidates quality assurance, technical debt remediation, and codebase normalization capabilities. It provides deep scanning, comprehensive diagnostics, and systematic remediation workflows.
 

@@ -8,7 +8,7 @@ phase: "pre-remediation"
 
 # Diagnostic-First Workflow
 
-**Purpose**: Ensure all remediation is evidence-based
+**description**: Ensure all remediation is evidence-based
 **Rule**: No code changes without fresh (<4 hours) scan results
 
 ---

@@ -1,6 +1,6 @@
 # Correct Course - Adaptive Governance Instructions
 
-**Purpose:** Execute three enforcement checks before any work proceeds
+**description:** Execute three enforcement checks before any work proceeds
 
 **Critical Distinction:**
 - This is NOT BMAD's sprint correct-course (which modifies epics/stories)

@@ -65,7 +65,7 @@ When this command is used, execute the following task:
     </step>
 
     <step n="6" title="Handle Original Document">
-      <critical>Keeping both the original and sharded versions defeats the purpose of sharding and can cause confusion</critical>
+      <critical>Keeping both the original and sharded versions defeats the description of sharding and can cause confusion</critical>
       <action>Present user with options for the original document:</action>
 
       <ask>What would you like to do with the original document `[source-document-name]`?
@@ -73,7 +73,7 @@ When this command is used, execute the following task:
         Options:
         [d] Delete - Remove the original (recommended - shards can always be recombined)
         [m] Move to archive - Move original to a backup/archive location
-        [k] Keep - Leave original in place (NOT recommended - defeats sharding purpose)
+        [k] Keep - Leave original in place (NOT recommended - defeats sharding description)
 
         Your choice (d/m/k):</ask>
 

@@ -254,7 +254,7 @@ onThreadSelect?: (threadId: string) => void
 ## STATE MANAGEMENT
 
 ### Stores Used
-| Store | Purpose | Access Pattern |
+| Store | description | Access Pattern |
 |-------|---------|----------------|
 | useConversationStore | Message/thread persistence | useShallow selector |
 | useAgentSelection | Agent management per workspace | Direct access |

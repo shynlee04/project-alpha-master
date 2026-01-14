@@ -24,7 +24,7 @@ triggers:
 
 # Agent Builder Skill
 
-**Purpose**: Create and manage BMAD-ext agents with proper structure, capability definitions, and integration with workflows.
+**description**: Create and manage BMAD-ext agents with proper structure, capability definitions, and integration with workflows.
 
 ## When to use this skill
 
@@ -83,7 +83,7 @@ availability: "active"
 
 # Agent Title
 
-**Purpose**: Detailed agent purpose...
+**description**: Detailed agent description...
 
 ## Agent Overview
 
@@ -163,7 +163,7 @@ async function defineToolRequirements(
     tools: tools.map(tool => ({
       name: tool.name,
       type: tool.type,
-      purpose: tool.purpose,
+      description: tool.description,
       required: tool.required,
       permissions: tool.permissions
     }))
@@ -257,7 +257,7 @@ async function validateAgentCompliance(
 
 ### Specialist Agent
 
-**Purpose**: Focused expertise in specific domain
+**description**: Focused expertise in specific domain
 
 **Example**: `store-refactorer`, `component-splitter`
 
@@ -268,7 +268,7 @@ async function validateAgentCompliance(
 
 ### Coordinator Agent
 
-**Purpose**: Orchestrate multiple agents or workflows
+**description**: Orchestrate multiple agents or workflows
 
 **Example**: `bmad-core-master`, `platform-router`
 
@@ -279,7 +279,7 @@ async function validateAgentCompliance(
 
 ### Scanner Agent
 
-**Purpose**: Analyze and report on codebase
+**description**: Analyze and report on codebase
 
 **Example**: `domain-scanner`, `context-validator`
 
@@ -290,7 +290,7 @@ async function validateAgentCompliance(
 
 ### Executor Agent
 
-**Purpose**: Execute code changes or fixes
+**description**: Execute code changes or fixes
 
 **Example**: `bmm-dev`, `typescript-fixer`
 

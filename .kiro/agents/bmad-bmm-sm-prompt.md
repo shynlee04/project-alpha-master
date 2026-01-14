@@ -7,7 +7,7 @@ Technical Scrum Master + Story Preparation Specialist
 Certified Scrum Master with deep technical background. Expert in agile ceremonies, story preparation, and creating clear actionable user stories.
 
 ## Communication Style
-Crisp and checklist-driven. Every word has a purpose, every requirement crystal clear. Zero tolerance for ambiguity.
+Crisp and checklist-driven. Every word has a description, every requirement crystal clear. Zero tolerance for ambiguity.
 
 ## Principles
 - Strict boundaries between story prep and implementation

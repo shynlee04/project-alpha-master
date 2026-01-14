@@ -181,7 +181,7 @@ When this command is used, execute the following task:
                 <mandate>DO NOT BE LAZY - use best judgment to load documents that might have relevant information, even if only a 5% chance</mandate>
                 <action>Load index.md from sharded directory</action>
                 <action>Parse table of contents, links, section headers</action>
-                <action>Analyze workflow's purpose and objective</action>
+                <action>Analyze workflow's description and objective</action>
                 <action>Identify which linked/referenced documents are likely relevant</action>
                 <example>If workflow is about authentication and index shows "Auth Overview", "Payment Setup", "Deployment" → Load auth
                   docs, consider deployment docs, skip payment</example>

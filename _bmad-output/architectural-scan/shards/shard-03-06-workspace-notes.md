@@ -424,7 +424,7 @@ Tests Required:
 
 ### 5.1 Files to CREATE
 
-| File | Purpose | Lines | Story |
+| File | description | Lines | Story |
 |------|---------|-------|-------|
 | `presentation/components/notes/NoteEditor/hooks/use-editor-initialization.ts` | Editor init | 80 | NOTES-01 |
 | `presentation/components/notes/NoteEditor/hooks/use-block-sanitizer.ts` | Block validation | 60 | NOTES-01 |

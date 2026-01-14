@@ -6,7 +6,7 @@ tools:
 
 # User Journey Mapper
 
-## Purpose
+## description
 
 Specialized sub-agent for creating comprehensive user journey maps that bridge requirements to epic planning.
 

@@ -1,14 +1,14 @@
 ---
 name: "staging-by-phase-governance"
 type: "governance-policy"
-purpose: "Govern feature unlocking by phase rather than sprint"
+description: "Govern feature unlocking by phase rather than sprint"
 version: "1.0.0"
 critical: true
 ---
 
 # Staging by Phase Governance
 
-**Purpose**: Govern feature rollout using phased stages instead of sprint-based unlocking to prevent premature complexity.
+**description**: Govern feature rollout using phased stages instead of sprint-based unlocking to prevent premature complexity.
 
 ## Problem Statement
 
@@ -27,7 +27,7 @@ Sprint-based feature unlocking causes:
 ```yaml
 phases:
   - name: "phase-0-foundation"
-    purpose: "Governance and scanning infrastructure"
+    description: "Governance and scanning infrastructure"
     status: "{locked|unlocked|complete}"
     prerequisites: []
     features:
@@ -49,7 +49,7 @@ phases:
       - "Stale artifacts poisoning context"
 
   - name: "phase-1-consolidation"
-    purpose: "Merge legacy governance, establish workflows"
+    description: "Merge legacy governance, establish workflows"
     status: "{locked|unlocked|complete}"
     prerequisites: [phase-0-foundation]
     features:
@@ -69,7 +69,7 @@ phases:
       - "Workflow status inconsistent"
 
   - name: "phase-2-execution"
-    purpose: "Story execution and development workflows"
+    description: "Story execution and development workflows"
     status: "{locked|unlocked|complete}"
     prerequisites: [phase-1-consolidation]
     features:
@@ -89,7 +89,7 @@ phases:
       - "Tests not connected to stories"
 
   - name: "phase-3-remediation"
-    purpose: "Correct-course and architectural fixes"
+    description: "Correct-course and architectural fixes"
     status: "{locked|unlocked|complete}"
     prerequisites: [phase-2-execution]
     features:
@@ -111,7 +111,7 @@ phases:
       - "Agents not properly configured"
 
   - name: "phase-4-enhancement"
-    purpose: "Advanced features and optimizations"
+    description: "Advanced features and optimizations"
     status: "{locked|unlocked|complete}"
     prerequisites: [phase-3-remediation]
     features:

@@ -196,7 +196,7 @@ created: "2026-01-10"
 updated: "2026-01-10"
 status: "ACTIVE"
 
-purpose: |
+description: |
   Extension layer that wraps BMAD core without modifying it.
   BMAD core (_bmad/) can be updated independently.
   All customizations live here and are preserved.
@@ -1197,7 +1197,7 @@ This appendix documents ALL existing BMAD components to ensure the extension lay
 
 These are the standard BMAD v6 agents that will be **wrapped** (not modified) by the extension layer:
 
-| # | Agent | Path | Purpose | Workflows Attached |
+| # | Agent | Path | description | Workflows Attached |
 |---|-------|------|---------|-------------------|
 | 1 | **analyst** | `_bmad/bmm/agents/analyst.md` | Requirements analysis, story breakdown | analyze-requirements, competitive-research |
 | 2 | **architect** | `_bmad/bmm/agents/architect.md` | System design, ADRs, tech specs | create-architecture, create-tech-spec |

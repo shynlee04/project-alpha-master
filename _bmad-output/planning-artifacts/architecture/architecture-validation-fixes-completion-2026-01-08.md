@@ -117,7 +117,7 @@ All 4 critical validation issues identified in Phase 4 have been successfully re
 
 1. **Component Scan Correction**:
    - File: `_bmad-output/planning-artifacts/architecture/component-scan-correction.yaml`
-   - Purpose: Traceable evidence of all line count corrections
+   - description: Traceable evidence of all line count corrections
    - Contains: Before/after comparisons, verification method, validation status
 
 2. **Updated architecture.md**:
@@ -127,7 +127,7 @@ All 4 critical validation issues identified in Phase 4 have been successfully re
 
 3. **Completion Report** (this document):
    - File: `_bmad-output/planning-artifacts/architecture/architecture-validation-fixes-completion-2026-01-08.md`
-   - Purpose: Handoff documentation with all changes verified
+   - description: Handoff documentation with all changes verified
 
 ---
 

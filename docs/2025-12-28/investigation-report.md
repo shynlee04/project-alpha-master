@@ -27,7 +27,7 @@ This report synthesizes findings from a comprehensive investigation into the Via
 
 #### Provider Infrastructure Files
 
-| File | Purpose | Status |
+| File | description | Status |
 |------|---------|--------|
 | [`src/lib/agent/providers/types.ts`](file:///Users/apple/Documents/coding-projects/project-alpha-master/src/lib/agent/providers/types.ts) | Provider types, configs, model definitions | ✅ Implemented |
 | [`src/lib/agent/providers/credential-vault.ts`](file:///Users/apple/Documents/coding-projects/project-alpha-master/src/lib/agent/providers/credential-vault.ts) | Encrypted API key storage (AES-GCM) | ✅ Implemented |

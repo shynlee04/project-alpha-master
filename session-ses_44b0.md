@@ -163,7 +163,7 @@ Tool: read
 00130| 
 00131| ### New Files to Create
 00132| 
-00133| | File | Purpose | Lines (est.) |
+00133| | File | description | Lines (est.) |
 00134| |------|---------|--------------|
 00135| | `src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts` | VFS sync Zustand slice | 200 |
 00136| | `src/presentation/components/workspace/sync/SyncStatusIndicator.tsx` | Sync status badge | 100 |
@@ -184,7 +184,7 @@ Tool: read
 00151| 
 00152| ### Files to Reference
 00153| 
-00154| | File | Purpose |
+00154| | File | description |
 00155| |------|---------|
 00156| | `src/infrastructure/filesystem/fsa-storage-adapter.ts` | watch() implementation |
 00157| | `src/infrastructure/filesystem/StorageAdapterFactory.ts` | Adapter creation |
@@ -5566,7 +5566,7 @@ All phases completed. Let me provide a summary of what was accomplished.
 
 ### Files Modified
 
-| File | Purpose |
+| File | description |
 |------|---------|
 | `useMonacoEditorEventSubscriptions.ts` | Fixed projectId, crossWorkspaceEventBus subscription |
 | `use-vfs-sync-slice.ts` | Added completeWatchCycle, StatusBar bridge |

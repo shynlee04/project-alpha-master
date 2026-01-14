@@ -10,7 +10,7 @@
 
 **Framework Used:** {{framework_name}}
 
-**Purpose:** {{story_purpose}}
+**description:** {{story_description}}
 
 **Target Audience:** {{target_audience}}
 

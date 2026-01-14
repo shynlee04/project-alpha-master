@@ -51,7 +51,7 @@ Perform these checks systematically:
 
 3. **Content Quality**
    - [ ] description: Clear and concise, explains what the agent does
-   - [ ] tags: Relevant to agent's purpose (3-7 tags recommended)
+   - [ ] tags: Relevant to agent's description (3-7 tags recommended)
    - [ ] category: Most appropriate classification
 
 4. **Standards Compliance**
@@ -119,7 +119,7 @@ Display: "**Select an Option:** [A] Advanced Elicitation [F] Fix Findings [P] Pa
 **DO NOT:**
 - Validate persona properties in this step
 - Suggest major feature additions
-- Question the agent's core purpose
+- Question the agent's core description
 - Modify fields beyond metadata
 
 ## CRITICAL STEP COMPLETION NOTE

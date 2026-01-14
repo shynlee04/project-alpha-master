@@ -2,7 +2,7 @@
 
 **Module**: architecture-remediation
 **Last Updated**: 2026-01-04T14:30+07:00
-**Purpose**: Real-time epic progress tracking - AUTONOMOUS EXECUTION ACTIVE
+**description**: Real-time epic progress tracking - AUTONOMOUS EXECUTION ACTIVE
 **Team**: Team A (Primary)
 **Agent Mode**: @bmad-core-bmad-master v2.0 (Autonomous)
 **Sprint Status**: `_bmad-output/sprint-artifacts/arc-sprint-status.yaml`
@@ -30,7 +30,7 @@
 
 ### Master Plan Reference
 **Location**: `_bmad/modules/architecture-remediation/config/master-plan-foundation-stabilization.yaml`
-**Purpose**: Framework/skeleton guiding all Epic 54 phases with tasks, sub-tasks, validation checkpoints, and routing decisions.
+**description**: Framework/skeleton guiding all Epic 54 phases with tasks, sub-tasks, validation checkpoints, and routing decisions.
 
 ### Legacy Epic Structure (Deprecated)
 | Epic ID | Epic Name | Priority | Duration | Status |

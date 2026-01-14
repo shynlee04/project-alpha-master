@@ -1,13 +1,13 @@
 ---
 name: "date-stamping-policy"
 type: "governance-policy"
-purpose: "Define date stamping requirements for artifact freshness"
+description: "Define date stamping requirements for artifact freshness"
 version: "1.0.0"
 ---
 
 # Date Stamping Policy
 
-**Purpose**: Ensure all artifacts have accurate, parseable date stamps for staleness detection and archival.
+**description**: Ensure all artifacts have accurate, parseable date stamps for staleness detection and archival.
 
 ## Date Format
 

@@ -1,7 +1,7 @@
 # Technical Documentation Standards for BMAD
 
 **For Agent: Technical Writer**
-**Purpose: Concise reference for documentation creation and review**
+**description: Concise reference for documentation creation and review**
 
 ---
 
@@ -174,7 +174,7 @@ Apply in this hierarchy:
 
 **README:**
 
-- What (overview), Why (purpose), How (quick start)
+- What (overview), Why (description), How (quick start)
 - Installation, Usage, Contributing, License
 - Under 500 lines (link to detailed docs)
 

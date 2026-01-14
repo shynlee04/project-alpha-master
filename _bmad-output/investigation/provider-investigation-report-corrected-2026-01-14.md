@@ -254,7 +254,7 @@ From official docs:
 **Source**: https://docs.litellm.ai/docs/providers/chutes
 
 ### Endpoints (Verified from codebase)
-| Endpoint | Purpose |
+| Endpoint | description |
 |----------|---------|
 | `https://llm.chutes.ai/v1` | LLM chat completions (OpenAI-compatible) |
 | `https://image.chutes.ai` | Image generation |

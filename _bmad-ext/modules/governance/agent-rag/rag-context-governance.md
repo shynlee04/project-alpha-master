@@ -1,14 +1,14 @@
 ---
 name: "rag-context-governance"
 type: "governance-policy"
-purpose: "Govern RAG indexing, entity context, and conversation threads"
+description: "Govern RAG indexing, entity context, and conversation threads"
 version: "1.0.0"
 critical: true
 ---
 
 # RAG Context Governance
 
-**Purpose**: Govern RAG (Retrieval-Augmented Generation) indexing, entity context management, and prevent context poisoning.
+**description**: Govern RAG (Retrieval-Augmented Generation) indexing, entity context management, and prevent context poisoning.
 
 ## Problem Statement
 

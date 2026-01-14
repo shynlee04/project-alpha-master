@@ -814,7 +814,7 @@ Each sub-cycle should create a completion artifact with:
 - {file-path}: {changes made}
 
 ## Files Created
-- {file-path}: {purpose}
+- {file-path}: {description}
 
 ## Acceptance Criteria
 - [x] {criterion 1}

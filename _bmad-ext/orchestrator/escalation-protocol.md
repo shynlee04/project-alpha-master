@@ -148,7 +148,7 @@ steps:
 
   3. Delegate to Alternative Agent:
      agent: "{alternative_agent}"
-     purpose: "consult and provide guidance"
+     description: "consult and provide guidance"
 
   4. Process Consultation Result:
      - If guidance received: pass to original agent

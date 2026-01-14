@@ -65,4 +65,4 @@
 
 ---
 
-**Medical Disclaimer:** This nutrition plan is for educational purposes only and is not medical advice. Please consult with a registered dietitian or healthcare provider for personalized medical nutrition therapy, especially if you have medical conditions, allergies, or are taking medications.
+**Medical Disclaimer:** This nutrition plan is for educational descriptions only and is not medical advice. Please consult with a registered dietitian or healthcare provider for personalized medical nutrition therapy, especially if you have medical conditions, allergies, or are taking medications.

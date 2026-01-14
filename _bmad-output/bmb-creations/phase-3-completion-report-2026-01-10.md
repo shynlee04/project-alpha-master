@@ -10,7 +10,7 @@
 
 ### 1. Orchestrator Files Created (5 files, 2,569 lines)
 
-| File | Lines | Purpose |
+| File | Lines | description |
 |------|-------|---------|
 | [master-orchestrator.md](_bmad-ext/orchestrator/master-orchestrator.md) | 799 | SINGLE entry point for autonomous development |
 | [delegation-protocol.md](_bmad-ext/orchestrator/delegation-protocol.md) | 449 | Handoff artifact lifecycle |

@@ -253,7 +253,7 @@ first_4_steps_critical:
 
 ```yaml
 multi_viewpoint_validation:
-  purpose: "Validate stories from multiple perspectives for completeness"
+  description: "Validate stories from multiple perspectives for completeness"
 
   viewpoints:
     product_manager:
@@ -495,19 +495,19 @@ agent_coordination:
 
   bmm_agents:
     bmm_analyst:
-      purpose: "Requirements analysis"
+      description: "Requirements analysis"
       trigger: "Story accepted for sprint"
 
     bmm_architect:
-      purpose: "Technical spec creation"
+      description: "Technical spec creation"
       trigger: "After user journey assessment approved"
 
     bmm_dev:
-      purpose: "Feature implementation"
+      description: "Feature implementation"
       trigger: "After spec created"
 
     bmm_sm:
-      purpose: "Story creation and tracking"
+      description: "Story creation and tracking"
       trigger: "Story approved for sprint"
 
   handoff_protocol:

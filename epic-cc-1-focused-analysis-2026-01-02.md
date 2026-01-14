@@ -1,7 +1,7 @@
 # Epic CC-1 (Conversation Consolidation) - Focused Codebase Analysis
 
 ## Generated: 2026-01-02
-## Purpose: Safe implementation guide for conversation consolidation
+## description: Safe implementation guide for conversation consolidation
 
 ---
 

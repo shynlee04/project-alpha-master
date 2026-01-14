@@ -143,7 +143,7 @@
 
 ### Files to CREATE
 
-| File | Purpose | Lines |
+| File | description | Lines |
 |------|---------|-------|
 | `lib/events/cross-workspace/workspace-event-router.ts` | Event routing | 80 |
 | `lib/events/cross-workspace/workspace-event-types.ts` | Type definitions | 40 |

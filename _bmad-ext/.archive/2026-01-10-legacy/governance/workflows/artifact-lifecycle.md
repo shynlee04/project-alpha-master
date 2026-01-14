@@ -3,7 +3,7 @@
 **Workflow ID**: `@bmad/modules/governance/workflows/artifact-lifecycle`
 **Version**: 1.0.0
 **Created**: 2026-01-06
-**Purpose**: Define four-tier artifact governance with retention policies and archiving
+**description**: Define four-tier artifact governance with retention policies and archiving
 
 ---
 
@@ -11,7 +11,7 @@
 
 ### Tier 1: The Unchangeable (Standards)
 
-**Purpose**: Constitutional documents that define how development happens
+**description**: Constitutional documents that define how development happens
 
 **Location**: `agent-os/standards/global/`
 
@@ -45,7 +45,7 @@ agent_action:
 
 ### Tier 2: Strictly Controlled (SSOT)
 
-**Purpose**: Single Source of Truth for project governance
+**description**: Single Source of Truth for project governance
 
 **Location**: Root level and `agent-os/`
 
@@ -89,7 +89,7 @@ version_history:
 
 ### Tier 3: Medium-live Artifacts
 
-**Purpose**: Sprint-level artifacts with medium-term relevance
+**description**: Sprint-level artifacts with medium-term relevance
 
 **Location**: `_bmad-output/sprint-artifacts/YYYY-MM/`
 
@@ -131,7 +131,7 @@ tags: ["sprint", "planning"]
 
 ### Tier 4: Short-live Artifacts
 
-**Purpose**: Story-level artifacts with immediate relevance
+**description**: Story-level artifacts with immediate relevance
 
 **Location**: `_bmad-output/handoffs/YYYY-MM-DD/`
 

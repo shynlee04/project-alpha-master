@@ -7,7 +7,7 @@ updated: 2026-01-08
 
 # Auto-Rerun Stale Artifacts Skill
 
-**Purpose**: Automatically detect and rerun stale validation, check, scan, and diagnostic artifacts.
+**description**: Automatically detect and rerun stale validation, check, scan, and diagnostic artifacts.
 
 ## Activation Triggers
 

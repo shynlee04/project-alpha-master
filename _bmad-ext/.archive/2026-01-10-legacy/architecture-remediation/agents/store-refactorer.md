@@ -41,7 +41,7 @@ governance:
 
 Specialized BMAD agent for systematic elimination of god stores and refactoring into modular, maintainable slices following Zustand v5 best practices.
 
-### Agent Purpose
+### Agent description
 
 Transform 69 god stores (>300 lines) into focused, single-responsibility slices (≤120 lines each) while maintaining 100% backwards compatibility and zero breaking changes.
 

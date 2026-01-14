@@ -1,13 +1,13 @@
 ---
 name: "naming-convention"
 type: "governance-policy"
-purpose: "Enforce consistent artifact naming conventions"
+description: "Enforce consistent artifact naming conventions"
 version: "1.0.0"
 ---
 
 # Naming Convention Policy
 
-**Purpose**: Enforce consistent naming across all governance artifacts to prevent confusion and enable reliable automation.
+**description**: Enforce consistent naming across all governance artifacts to prevent confusion and enable reliable automation.
 
 ## General Principles
 
@@ -91,7 +91,7 @@ template:
   example: "template-story.md"
 
 checklist:
-  pattern: "checklist-{purpose}.yaml"
+  pattern: "checklist-{description}.yaml"
   example: "checklist-story-done.yaml"
 ```
 

@@ -235,7 +235,7 @@ Load `./step-03-technique-execution.md`
 ## SUCCESS METRICS:
 
 ✅ Progressive flow designed with natural creative progression
-✅ Each phase matched to appropriate technique type and purpose
+✅ Each phase matched to appropriate technique type and description
 ✅ Clear journey map with timing and transition points
 ✅ Customization options provided for user control
 ✅ Systematic benefits explained clearly
@@ -243,7 +243,7 @@ Load `./step-03-technique-execution.md`
 
 ## FAILURE MODES:
 
-❌ Techniques not properly matched to phase purposes
+❌ Techniques not properly matched to phase descriptions
 ❌ Missing clear transitions between journey phases
 ❌ Not explaining the value of systematic progression
 ❌ No customization options for user preferences

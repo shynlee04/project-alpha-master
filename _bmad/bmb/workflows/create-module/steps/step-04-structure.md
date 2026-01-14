@@ -139,7 +139,7 @@ Create initial README.md with basic structure:
 ````markdown
 # {module_display_name}
 
-{module_purpose}
+{module_description}
 
 ## Installation
 

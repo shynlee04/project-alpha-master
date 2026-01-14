@@ -73,11 +73,11 @@ This step will generate content and present choices:
 
 ## FUNCTIONAL REQUIREMENTS SYNTHESIS SEQUENCE:
 
-### 1. Understand FR Purpose and Usage
+### 1. Understand FR description and Usage
 
 Start by explaining the critical role of functional requirements:
 
-**Purpose:**
+**description:**
 FRs define WHAT capabilities the product must have. They are the complete inventory of user-facing and system capabilities that deliver the product vision.
 
 **Critical Properties:**

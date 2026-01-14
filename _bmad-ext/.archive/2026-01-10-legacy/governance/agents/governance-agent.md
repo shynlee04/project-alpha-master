@@ -42,7 +42,7 @@ governance:
 
 ## Agent Overview
 
-**Purpose**: Enforce BMAD governance constitution across all agents, workflows, and artifacts.
+**description**: Enforce BMAD governance constitution across all agents, workflows, and artifacts.
 
 **Domain**: Governance (_bmad/modules/governance/)
 
@@ -64,7 +64,7 @@ The Governance Agent is activated when:
 
 ## Workflows Managed
 
-| Workflow ID | Path | Purpose |
+| Workflow ID | Path | description |
 |-------------|------|---------|
 | `artifact-lifecycle` | `workflows/artifact-lifecycle.md` | Four-tier artifact management |
 | `naming-enforcement` | `workflows/naming-enforcement.md` | Naming convention validation |
@@ -231,7 +231,7 @@ team_conflict_detection:
 
 **Location**: `_bmad/modules/governance/scratchpad/artifact-registry.yaml`
 
-**Purpose**: Track all artifacts with metadata for validation and lineage
+**description**: Track all artifacts with metadata for validation and lineage
 
 **Structure**:
 ```yaml
