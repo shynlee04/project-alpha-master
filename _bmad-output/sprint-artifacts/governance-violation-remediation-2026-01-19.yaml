@@ -1,0 +1,296 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# GOVERNANCE VIOLATION REMEDIATION PLAN
+# ═══════════════════════════════════════════════════════════════════════════════
+# 
+# Generated: 2026-01-19T14:00:00+07:00
+# Status: CRITICAL - Immediate action required
+# Mode: ZERO TOLERANCE
+# Gatekeeper: BMAD Master Orchestrator
+# 
+# This document tracks VERIFIED violations vs claimed completions
+# ═══════════════════════════════════════════════════════════════════════════════
+
+audit_summary:
+  conducted_at: "2026-01-19T14:00:00+07:00"
+  auditor: "BMAD Master Orchestrator (3 parallel deep-scan agents)"
+  
+  team_b_violations:
+    claimed_remediated: 9
+    actually_remediated: 4
+    false_claims: 5
+    violation_rate: "55.5%"
+    
+  team_a_violations:
+    claimed_remediated: 0
+    actually_remediated: 3
+    false_claims: 0
+    violation_rate: "0% (honest - didn't claim work)"
+    
+  uncommitted_changes: 33
+  commit_discipline: "FAILED - Teams working without committing"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFIED STILL INFECTED (Must Fix Now)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+verified_infections:
+
+  # ---------------------------------------------------------------------------
+  # HIGH PRIORITY - State Management
+  # ---------------------------------------------------------------------------
+  
+  - id: "STATE-003"
+    title: "workspace-store uses localStorage instead of Dexie"
+    severity: "P0"
+    claimed_status: "REMEDIATED"
+    actual_status: "STILL_INFECTED"
+    team: "B"
+    
+    file: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+    line: 174
+    evidence: |
+      persist({...}, { name: 'workspace-state' })
+      No `storage: createJSONStorage()` option specified.
+      Defaults to localStorage instead of IndexedDB per ADR-033.
+      
+    required_fix: |
+      Add storage option:
+      ```typescript
+      import { createJSONStorage } from 'zustand/middleware';
+      import { createDexieStorage } from '@/infrastructure/persistence/zustand-dexie-storage';
+      
+      persist({...}, {
+        name: 'workspace-state',
+        storage: createJSONStorage(() => createDexieStorage('workspace-state')),
+      })
+      ```
+      
+    validation:
+      - "Application > Local Storage: 'workspace-state' NOT present"
+      - "Application > IndexedDB: workspace state visible"
+      
+  # ---------------------------------------------------------------------------
+  # HIGH PRIORITY - Routing  
+  # ---------------------------------------------------------------------------
+  
+  - id: "ROUTE-002"
+    title: "ide.tsx uses window.location instead of TanStack Router"
+    severity: "P1"
+    claimed_status: "PENDING"
+    actual_status: "STILL_INFECTED"
+    team: "A"
+    
+    file: "src/routes/ide.tsx"
+    line: 114
+    evidence: |
+      const isOnChildRoute = window.location.pathname !== '/ide';
+      Direct DOM access causes hydration issues and is non-idiomatic.
+      
+    required_fix: |
+      Use TanStack Router hooks:
+      ```typescript
+      import { useMatchRoute } from '@tanstack/react-router';
+      
+      const matchRoute = useMatchRoute();
+      const isOnChildRoute = !!matchRoute({ to: '/ide/$projectId', fuzzy: true });
+      ```
+      
+    validation:
+      - "grep 'window.location' src/routes/ide.tsx returns 0 results"
+      
+  - id: "PLAT-001"
+    title: "Temp project button visible on desktop"
+    severity: "P0"
+    claimed_status: "PENDING"
+    actual_status: "STILL_INFECTED"
+    team: "A"
+    
+    file: "src/routes/ide.tsx"
+    lines: "140-146"
+    evidence: |
+      Desktop shows "⚡ Quick IDE (Temp Project)" button.
+      ADR-033 D1: Desktop MUST use FSA (folder picker).
+      
+    required_fix: |
+      Remove temp project button on desktop:
+      ```typescript
+      const platform = getPlatformContract();
+      
+      {/* Only show temp project on mobile/fallback */}
+      {!platform.canAccessFSA && (
+        <button onClick={() => handleCreateTemp(navigate)}>
+          ⚡ Quick IDE (Temp Project)
+        </button>
+      )}
+      ```
+      
+    validation:
+      - "Desktop /ide: No 'Temp Project' button visible"
+      - "Only 'Select Project Folder' and 'Browse Projects' shown on desktop"
+      
+  # ---------------------------------------------------------------------------
+  # MEDIUM PRIORITY - FSA Handle
+  # ---------------------------------------------------------------------------
+  
+  - id: "FSA-003"
+    title: "handleData set to null for Chrome < 129"
+    severity: "P1"
+    claimed_status: "REMEDIATED"
+    actual_status: "PARTIAL"
+    team: "B"
+    
+    file: "src/infrastructure/filesystem/handle-persistence.ts"
+    lines: "189-191"
+    evidence: |
+      handleData = isStructuredCloneSupported() ? structuredClone(handle) : null
+      Chrome 122-128 users get handleData=null, breaking silent restore.
+      
+    required_fix: |
+      For Chrome 122-128, store handle metadata and rely on persistent permission ID:
+      The current implementation is CORRECT for the browser capability.
+      Chrome 122-128 CANNOT store handles (no structuredClone support).
+      The "silent restore" for these versions uses showDirectoryPicker({ id: projectId })
+      which works when user granted "Allow on every visit".
+      
+      DECISION: Mark as ACCEPTABLE LIMITATION (not a bug).
+      Document in ADR-034 that Chrome 129+ is required for true silent restore.
+      
+    validation:
+      - "Document limitation in ADR-034"
+      - "Add user-facing message explaining Chrome 129+ recommended"
+      
+  - id: "FSA-002"
+    title: "restoreHandle still prompts on Chrome 122-128"
+    severity: "P1"
+    claimed_status: "REMEDIATED"
+    actual_status: "PARTIAL"
+    team: "B"
+    
+    file: "src/infrastructure/filesystem/handle-persistence.ts"
+    lines: "337-344"
+    evidence: |
+      Chrome 122-128 uses showDirectoryPicker({ id: projectId }) which MAY prompt
+      if user didn't choose "Allow on every visit".
+      
+    required_fix: |
+      ACCEPTABLE LIMITATION - Chrome 122-128 behavior is browser-imposed.
+      The implementation correctly attempts silent restore first.
+      Prompting is expected when user chose "Allow this time" only.
+      
+    validation:
+      - "Document in user guide"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VERIFIED REMEDIATED (No Action Needed)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+verified_remediated:
+  
+  - id: "FSA-001"
+    title: "handle storage DataCloneError prevented"
+    file: "src/infrastructure/filesystem/handle-persistence.ts"
+    evidence: "Lines 189-191: Conditional structuredClone prevents DataCloneError"
+    
+  - id: "FSA-007"
+    title: "handle in ProjectContext"
+    file: "src/lib/workspace/ProjectContext.tsx"
+    evidence: "Lines 52-62: fsaHandle state and setFsaHandle function exist"
+    
+  - id: "FSA-009"
+    title: "duplicate handle manager deleted"
+    file: "src/lib/filesystem/fsa-handle-manager.ts"
+    evidence: "File archived to _bmad-ext/.archive/, original deleted from git"
+    
+  - id: "ROUTE-001"
+    title: "platform guard in ide.tsx beforeLoad"
+    file: "src/routes/ide.tsx"
+    evidence: "Lines 40-62: getPlatformContract() check with redirect"
+    
+  - id: "ROUTE-003"
+    title: "no double fetch in ide.$projectId.tsx"
+    file: "src/routes/ide.$projectId.tsx"
+    evidence: "beforeLoad=platform only, loader=data only (lines 87-124)"
+    
+  - id: "STATE-011"
+    title: "project-crud-slice prevents null handle persistence"
+    file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+    evidence: "Line 154: Conditional check prevents null storage"
+    
+  - id: "PLAT-002"
+    title: "notes browser-mode is correct by design"
+    file: "src/routes/notes.lazy.tsx"
+    evidence: "Browser-mode for /notes is intentional per ADR-033"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IMMEDIATE ACTION ITEMS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+action_items:
+  
+  critical:
+    - id: "FIX-001"
+      infection: "STATE-003"
+      action: "Add Dexie storage to workspace-store"
+      assignee: "Team B"
+      estimated_hours: 1
+      blocks: ["User symptom SYM-07 (getting kicked out)"]
+      
+    - id: "FIX-002"
+      infection: "PLAT-001"
+      action: "Hide temp project button on desktop"
+      assignee: "Team A"
+      estimated_hours: 0.5
+      blocks: ["User symptom SYM-01 (temp project on desktop)"]
+      
+  high:
+    - id: "FIX-003"
+      infection: "ROUTE-002"
+      action: "Replace window.location with useMatchRoute"
+      assignee: "Team A"
+      estimated_hours: 0.5
+      blocks: ["Hydration issues, SSR compatibility"]
+      
+  documentation:
+    - id: "DOC-001"
+      infection: "FSA-002, FSA-003"
+      action: "Document Chrome 129+ requirement for silent restore"
+      assignee: "Gatekeeper"
+      estimated_hours: 0.5
+      
+  commit_discipline:
+    - id: "COMMIT-001"
+      action: "Commit all 33 uncommitted changes with proper messages"
+      assignee: "Gatekeeper"
+      estimated_hours: 0.5
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GOVERNANCE ENFORCEMENT
+# ═══════════════════════════════════════════════════════════════════════════════
+
+enforcement:
+  
+  new_rules:
+    - "NO status change to REMEDIATED without Gatekeeper validation"
+    - "ALL commits must include [TEAM-X] prefix (e.g., [TEAM-B] fix: ...)"
+    - "Uncommitted work older than 2 hours = auto-escalation"
+    - "False claim rate > 30% = team work review required"
+    
+  team_b_action:
+    status: "UNDER_REVIEW"
+    reason: "55.5% false claim rate"
+    required: "Team B must provide evidence before any future REMEDIATED claims"
+    
+  team_a_status:
+    status: "GOOD_STANDING"
+    reason: "Honest claims, did not overclaim"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# NEXT STEPS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+next_steps:
+  1: "Execute FIX-001, FIX-002, FIX-003 in parallel"
+  2: "Commit all changes with proper tags"
+  3: "Run TypeScript check (must be 0 errors)"
+  4: "Re-run governance audit to verify fixes"
+  5: "Update LOOP_STATE with accurate infection counts"

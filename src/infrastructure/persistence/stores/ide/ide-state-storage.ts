@@ -3,6 +3,7 @@
  * @module infrastructure/persistence/stores/ide/ide-state-storage
  * @governance EPIC-CP-1
  * @created 2026-01-06
+ * @updated 2026-01-19 - STATE-002 Fix: Project-scoped hydration
  *
  * Custom Zustand StateStorage adapter for IDE workspace state.
  *
@@ -11,8 +12,13 @@
  *
  * SOLUTION: Custom adapter that:
  * - Writes IDEStateRecord structure (projectId as key)
- * - Reads state scoped to current projectId
+ * - Reads state scoped to current projectId (FIXED STATE-002)
  * - Handles null projectId (no state to persist)
+ *
+ * STATE-002 FIX: Use sessionStorage to track current projectId for hydration
+ * - When setting projectId, also store in sessionStorage
+ * - During hydration, read projectId from sessionStorage first
+ * - Query ideState by projectId for correct project-scoped restore
  *
  * @see dexie-db-migrations.ts line 147: ideState: 'projectId, updatedAt'
  */
@@ -21,6 +27,12 @@ import type { StateStorage } from 'zustand/middleware';
 import type { IDEStateRecord } from '@/infrastructure/persistence/dexie-db';
 import type { CombinedIDEState } from './ide-types';
 import { getDb } from '@/infrastructure/persistence/dexie-db';
+
+/**
+ * SessionStorage key for current projectId (used during hydration)
+ * This allows the storage adapter to know which project to hydrate during store creation
+ */
+const CURRENT_PROJECT_ID_KEY = 'viagent_current_ide_project';
 
 /**
  * Module-level reference to the store's getState function.
@@ -39,6 +51,39 @@ let hasWarnedMissingProject = false;
  */
 export function setIDEStoreRef(getState: () => CombinedIDEState): void {
   getIDEStoreState = getState;
+}
+
+/**
+ * Get current projectId from sessionStorage for hydration.
+ * This is needed because during store creation, getIDEStoreState is not yet available.
+ */
+function getProjectIdForHydration(): string | null {
+  try {
+    if (typeof sessionStorage !== 'undefined') {
+      return sessionStorage.getItem(CURRENT_PROJECT_ID_KEY);
+    }
+  } catch {
+    // sessionStorage may not be available
+  }
+  return null;
+}
+
+/**
+ * Set current projectId in sessionStorage for hydration.
+ * Called when user navigates to an IDE project.
+ */
+export function setProjectIdForHydration(projectId: string | null): void {
+  try {
+    if (typeof sessionStorage !== 'undefined') {
+      if (projectId) {
+        sessionStorage.setItem(CURRENT_PROJECT_ID_KEY, projectId);
+      } else {
+        sessionStorage.removeItem(CURRENT_PROJECT_ID_KEY);
+      }
+    }
+  } catch {
+    // sessionStorage may not be available
+  }
 }
 
 /**
@@ -77,17 +122,31 @@ export function createIDEStateStorage(): StateStorage {
           return null;
         }
 
-        const record = await db.ideState
-          .orderBy('updatedAt')
-          .reverse()
-          .first();
+        // FIX STATE-002: Try to get projectId from sessionStorage for scoped hydration
+        const projectId = getProjectIdForHydration();
+        
+        let record: IDEStateRecord | undefined;
+        
+        if (projectId) {
+          // We know which project to hydrate - query by projectId directly
+          record = await db.ideState.get(projectId);
+          console.debug(`[IDEStateStorage] Hydrating state for project: ${projectId}`);
+        } else {
+          // No projectId in sessionStorage - this is first visit or session lost
+          // Fall back to most recent state (original behavior for backward compatibility)
+          record = await db.ideState
+            .orderBy('updatedAt')
+            .reverse()
+            .first();
+          console.debug(`[IDEStateStorage] No projectId in session, hydrating most recent state`);
+        }
 
         if (!record) {
           console.debug('[IDEStateStorage] No persisted state found (first run or cleared)');
           return null;
         }
 
-        console.debug(`[IDEStateStorage] Hydrating most recent state for project: ${record.projectId}`, {
+        console.debug(`[IDEStateStorage] Hydrated state for project: ${record.projectId}`, {
           openFilesCount: record.openFiles.length,
           activeFile: record.activeFile,
           updatedAt: record.updatedAt,
@@ -116,7 +175,10 @@ export function createIDEStateStorage(): StateStorage {
 
         // Parse the persisted state (now includes projectId at top level)
         const state = JSON.parse(value) as Partial<CombinedIDEState>;
-        const projectId = state.projectId;
+        const projectId = state.projectId ?? null;
+
+        // FIX STATE-002: Store projectId in sessionStorage for hydration
+        setProjectIdForHydration(projectId);
 
         // No projectId = don't persist empty state
         if (!projectId) {

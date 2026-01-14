@@ -29,16 +29,16 @@ export type { LayoutConfig };
  *
  * The FileSystemDirectoryHandle cannot be persisted to IndexedDB (causes DataCloneError).
  * Instead, we store metadata about the handle and restore it with user interaction.
+ *
+ * FSA-010 REMEDIATION: Permission state is now sourced from FSAHandleRecord only.
+ * lastKnownPermissionState was removed - use handlePersistenceService.getPermissionStatus() instead.
  */
 export interface Project extends DomainProject {
   /** Storage type: 'fsa' for desktop, 'indexeddb' for mobile */
   storageType: 'fsa' | 'indexeddb';
-  
+
   /** Serializable handle metadata (NOT the actual FileSystemDirectoryHandle!) */
   storageMetadata?: StorageHandleMetadata | null;
-  
-  /** Last known permission state for faster dashboard load */
-  lastKnownPermissionState?: FsaPermissionState;
 }
 
 // ============================================================================
@@ -73,6 +73,7 @@ export interface CreateProjectInput {
  * Input for updating an existing project (all fields optional)
  * PS-04: Replaced fsaHandle with storageMetadata
  * ARC-D03: workspaceBindings replaces bindings
+ * FSA-010: lastKnownPermissionState removed - permission state is in FSAHandleRecord
  */
 export interface UpdateProjectInput {
   name?: string;
@@ -83,7 +84,6 @@ export interface UpdateProjectInput {
   autoSync?: boolean;
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
-  lastKnownPermissionState?: FsaPermissionState;
   // ARC-D03: New canonical field
   workspaceBindings?: WorkspaceBindings;
   // Deprecated: Use workspaceBindings instead
@@ -157,13 +157,15 @@ export interface ProjectUtilsMethods {
 
 /**
  * Project permissions methods
+ * FSA-010: Permission state is now sourced from FSAHandleRecord via handlePersistenceService
+ * All methods are async since they query Dexie for permission state
  */
 export interface ProjectPermissionsMethods {
-  updateProjectPermission: (projectId: string, permissionState: FsaPermissionState) => void;
-  getProjectPermission: (projectId: string) => FsaPermissionState | undefined;
-  getProjectsWithPermission: (permissionState: FsaPermissionState) => Project[];
+  updateProjectPermission: (projectId: string, permissionState: FsaPermissionState) => Promise<void>;
+  getProjectPermission: (projectId: string) => Promise<FsaPermissionState | undefined>;
+  getProjectsWithPermission: (permissionState: FsaPermissionState) => Promise<Project[]>;
   checkProjectPermission: (projectId: string) => Promise<FsaPermissionState>;
-  invalidateProjectPermission: (projectId: string) => void;
+  invalidateProjectPermission: (projectId: string) => Promise<void>;
 }
 
 /**

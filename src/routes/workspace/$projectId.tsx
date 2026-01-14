@@ -12,6 +12,8 @@
   * - Uses loader to fetch project BEFORE render (no flash of null state)
   * - Calls setProjectId to sync IDE store
   * - WorkspaceSwitcher in header allows switching to other workspaces
+  *
+  * ROUTE-005 FIX: Added platform guard for IDE access.
   */
 
 import { lazy, Suspense, useEffect } from 'react'
@@ -22,6 +24,7 @@ import { getProject } from '@/infrastructure/persistence/stores/project'
 import { useProjectStore } from '@/infrastructure/persistence/stores/project'
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types'
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide'
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract'
 
 // Lazy load IDELayout to reduce initial bundle size
 const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayoutMain').then(m => ({ default: m.IDELayout })))
@@ -74,22 +77,38 @@ async function getProjectWithRetry(
 
 export const Route = createFileRoute('/workspace/$projectId')({
     ssr: false,
-    // FIX-2026-01-06: Use loader to fetch project BEFORE component renders
-    // FIX-2026-01-13: Added retry logic for timing issues
-    loader: async ({ params }) => {
-        console.log('[WorkspaceRoute] Loading project:', params.projectId);
+
+    // ROUTE-005 FIX: Add platform guard before project fetch
+    beforeLoad: async ({ params, location }) => {
+        // Platform validation - Mobile users cannot access IDE (redirect to Notes)
+        const platform = getPlatformContract();
+        if (!platform.canAccessIDE) {
+            console.warn('[WorkspaceRoute] Mobile/tablet access denied to IDE, redirecting to Notes');
+            throw redirect({
+                to: '/notes/$projectId',
+                params: { projectId: params.projectId },
+                search: { reason: 'mobile-not-supported' }
+            });
+        }
+
+        // Project fetch with retry
         const project = await getProjectWithRetry(params.projectId);
 
         if (!project) {
             console.error('[WorkspaceRoute] CRITICAL: Project not found after retry:', params.projectId);
             console.error('[WorkspaceRoute] Available projects:', Object.keys(useProjectStore.getState().projects));
-            // Redirect to hub if project not found
             throw redirect({ to: '/hub' });
         }
 
         console.log('[WorkspaceRoute] Project found:', { id: project.id, name: project.name });
         return { project };
     },
+
+    // Loader returns empty - project already fetched in beforeLoad
+    loader: () => {
+        return {};
+    },
+
     component: ProjectWorkspace,
 })
 

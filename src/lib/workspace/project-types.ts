@@ -24,6 +24,10 @@ export interface LayoutConfig {
  *
  * Core project information that can be persisted to IndexedDB.
  * This is a domain type with NO dependencies on persistence or store layers.
+ *
+ * FSA-010 REMEDIATION NOTE: lastKnownPermissionState is deprecated.
+ * Permission state should now be sourced from FSAHandleRecord.permissionStatus.
+ * This field is kept for backward compatibility with legacy code.
  */
 export interface ProjectMetadata {
     /** UUID v4 or generated ID */
@@ -43,7 +47,7 @@ export interface ProjectMetadata {
     layoutState?: LayoutConfig;
     /** Custom exclusion patterns for sync (glob syntax) */
     exclusionPatterns?: string[];
-    /** Story 13-5: Last known permission state for faster dashboard load */
+    /** @deprecated FSA-010: Permission state is now in FSAHandleRecord.permissionStatus */
     lastKnownPermissionState?: FsaPermissionState;
     /** Story WB-1: Workspace binding configuration */
     workspaceBindings?: WorkspaceBindings;

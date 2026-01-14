@@ -4,7 +4,8 @@
  * @governance EPIC-CP-1.3
  *
  * FSA permission state management for projects.
- * Provides cached permission checking for faster dashboard loads.
+ * FSA-010 REMEDIATION: Permission state is now sourced from FSAHandleRecord only.
+ * No more lastKnownPermissionState in Project - use handlePersistenceService instead.
  *
  * PS-04: Uses handlePersistenceService instead of direct fsaHandle access.
  */
@@ -22,41 +23,46 @@ export const createProjectPermissionsSlice: StateCreator<
   [],
   [],
   ProjectPermissionsMethods
-> = (set, get) => ({
-  // Update project's cached permission state
-  updateProjectPermission: (projectId: string, permissionState: FsaPermissionState) => {
-    const existing = get().projects[projectId];
-    if (!existing) {
-      console.warn('[ProjectStore] Project not found:', projectId);
-      return;
+> = (_set, get) => ({
+  // Update project's permission state via handlePersistenceService
+  // FSA-010: Now updates FSAHandleRecord.permissionStatus, not Project.lastKnownPermissionState
+  updateProjectPermission: async (projectId: string, permissionState: FsaPermissionState) => {
+    // Update the FSAHandleRecord in Dexie (single source of truth)
+    await handlePersistenceService.updatePermissionStatus(projectId, permissionState);
+  },
+
+  // Get permission state from FSAHandleRecord (single source of truth)
+  // FSA-010: No longer reads from Project.lastKnownPermissionState
+  getProjectPermission: async (projectId: string) => {
+    return handlePersistenceService.getPermissionStatus(projectId);
+  },
+
+  // Filter projects by permission state (requires checking each project's handle)
+  // FSA-010: Uses handlePersistenceService.getPermissionStatus() for each project
+  getProjectsWithPermission: async (permissionState: FsaPermissionState) => {
+    const projects = Object.values(get().projects);
+    const result: typeof projects = [];
+
+    for (const project of projects) {
+      if (project.storageType === 'indexeddb') {
+        // IndexedDB projects always have 'granted' permission
+        if (permissionState === 'granted') {
+          result.push(project);
+        }
+        continue;
+      }
+
+      // FSA projects: check FSAHandleRecord
+      const status = await handlePersistenceService.getPermissionStatus(project.id);
+      if (status === permissionState) {
+        result.push(project);
+      }
     }
 
-    set((state) => ({
-      projects: {
-        ...state.projects,
-        [projectId]: {
-          ...existing,
-          lastKnownPermissionState: permissionState,
-        },
-      },
-    }));
+    return result;
   },
 
-  // Get cached permission state for project
-  getProjectPermission: (projectId: string) => {
-    const project = get().projects[projectId];
-    return project?.lastKnownPermissionState;
-  },
-
-  // Filter projects by permission state
-  getProjectsWithPermission: (permissionState: FsaPermissionState) => {
-    const projects = Object.values(get().projects);
-    return projects.filter(
-      (p) => p.lastKnownPermissionState === permissionState
-    );
-  },
-
-  // Check actual permission state from FSA handle and update cache
+  // Check actual permission state from FSA handle
   // PS-04: Uses handlePersistenceService to restore handle
   checkProjectPermission: async (projectId: string): Promise<FsaPermissionState> => {
     const project = get().projects[projectId];
@@ -66,10 +72,7 @@ export const createProjectPermissionsSlice: StateCreator<
 
     // IndexedDB projects have auto-granted permission (no FSA handle needed)
     if (project.storageType === 'indexeddb') {
-      const state: FsaPermissionState = 'granted';
-      // Update cache
-      (get() as any).updateProjectPermission(projectId, state);
-      return state;
+      return 'granted';
     }
 
     // FSA projects: try to restore handle via handlePersistenceService
@@ -79,55 +82,26 @@ export const createProjectPermissionsSlice: StateCreator<
       // Handle restoration failed - determine state based on failure reason
       if (result.requiresUserInteraction) {
         // User needs to re-select the folder
-        const state: FsaPermissionState = 'prompt';
-        (get() as any).updateProjectPermission(projectId, state);
-        return state;
+        return 'prompt';
       }
       // Silent failure - permission denied
-      const state: FsaPermissionState = 'denied';
-      (get() as any).updateProjectPermission(projectId, state);
-      return state;
+      return 'denied';
     }
 
-    // Handle restored successfully - check actual permission
+    // Handle restored successfully
     if (result.handle) {
-      try {
-        // Get actual permission state from the handle
-        // PS-04: We can't easily check permission on restored handle without user interaction
-        // For now, assume 'granted' if restoration succeeded
-        const state: FsaPermissionState = 'granted';
-        (get() as any).updateProjectPermission(projectId, state);
-        return state;
-      } catch (error) {
-        console.error('[ProjectStore] Failed to check permission:', error);
-        const state: FsaPermissionState = 'denied';
-        (get() as any).updateProjectPermission(projectId, state);
-        return state;
-      }
+      return 'granted';
     }
 
     // No handle returned
-    const finalState: FsaPermissionState = 'denied';
-    (get() as any).updateProjectPermission(projectId, finalState);
-    return finalState;
+    return 'denied';
   },
 
-  // Clear cached permission state
-  invalidateProjectPermission: (projectId: string) => {
-    const existing = get().projects[projectId];
-    if (!existing) {
-      console.warn('[ProjectStore] Project not found:', projectId);
-      return;
-    }
-
-    set((state) => ({
-      projects: {
-        ...state.projects,
-        [projectId]: {
-          ...existing,
-          lastKnownPermissionState: undefined,
-        },
-      },
-    }));
+  // Clear cached permission state - no-op now that we use FSAHandleRecord as source
+  // FSA-010: Permission state is in FSAHandleRecord, no local cache to clear
+  invalidateProjectPermission: async (projectId: string) => {
+    // Permission state is now in FSAHandleRecord, not in Project
+    // Just update the Dexie record to 'prompt' to force re-verification
+    await handlePersistenceService.updatePermissionStatus(projectId, 'prompt');
   },
 });

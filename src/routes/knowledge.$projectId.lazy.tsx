@@ -12,24 +12,24 @@
   * - WorkspaceSwitcher in header allows switching to IDE/Notes/Study
   *
   * @epic Future: Knowledge Synthesis Station
+  *
+  * ROUTE-012 FIX: Changed from createLazyFileRoute to createFileRoute
+  * to support loader pattern instead of useEffect fetch.
   */
 
-import { useEffect, useState } from 'react';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/infrastructure/persistence/stores/project';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
 
 // ============================================================================
 // Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
 // ============================================================================
 
-/**
-  * Retry getting a project with exponential backoff
-  * Handles timing issues between project creation and route guard execution
-  */
 async function getProjectWithRetry(
   projectId: string,
   maxRetries: number = 3,
@@ -38,7 +38,6 @@ async function getProjectWithRetry(
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    // Try getting from Zustand store first (fastest)
     const fromStore = useProjectStore.getState().getProject(projectId);
     if (fromStore) {
       if (attempt > 1) {
@@ -47,7 +46,6 @@ async function getProjectWithRetry(
       return fromStore as Project;
     }
 
-    // Fallback to facade (handles Dexie lookup)
     try {
       const fromFacade = await getProject(projectId);
       if (fromFacade) {
@@ -58,7 +56,7 @@ async function getProjectWithRetry(
     }
 
     if (attempt < maxRetries) {
-      const delayMs = baseDelayMs * Math.pow(2, attempt - 1); // Exponential backoff
+      const delayMs = baseDelayMs * Math.pow(2, attempt - 1);
       console.log(`[KnowledgeRoute] Project not found, attempt ${attempt}/${maxRetries}, retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
@@ -67,6 +65,35 @@ async function getProjectWithRetry(
   console.error(`[KnowledgeRoute] Project not found after ${maxRetries} attempts:`, projectId, lastError);
   return null;
 }
+
+// ============================================================================
+// Route Definition (ROUTE-012 FIX: Using createFileRoute for loader pattern)
+// ============================================================================
+
+export const Route = createFileRoute('/knowledge/$projectId')({
+  ssr: false,
+
+  // ROUTE-012 FIX: Use beforeLoad to fetch project BEFORE component renders
+  beforeLoad: async ({ params }) => {
+    const project = await getProjectWithRetry(params.projectId);
+    if (!project) {
+      console.error('[KnowledgeRoute] Project not found:', params.projectId);
+      throw redirect({ to: '/hub' });
+    }
+    return { project };
+  },
+
+  // Loader returns empty - project already fetched in beforeLoad
+  loader: () => {
+    return {};
+  },
+
+  component: () => (
+    <ErrorBoundary>
+      <KnowledgeWorkspace />
+    </ErrorBoundary>
+  ),
+});
 
 // Placeholder component (Knowledge workspace not implemented yet)
 function KnowledgePlaceholder() {
@@ -85,49 +112,20 @@ function KnowledgePlaceholder() {
   );
 }
 
-/**
-  * Route definition with ErrorBoundary protection
-  * @courseCorrection Story A-2 - Add ErrorBoundary to workspace routes
-  * @added 2026-01-07
-  */
-export const Route = createLazyFileRoute('/knowledge/$projectId')({
-  component: () => (
-    <ErrorBoundary>
-      <KnowledgeWorkspace />
-    </ErrorBoundary>
-  ),
-});
-
 function KnowledgeWorkspace() {
-  const { projectId } = Route.useParams();
-  const [project, setProject] = useState<Project | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const { projectId: _projectId } = Route.useParams();
+  const { project } = Route.useLoaderData();
 
+  // Set projectId in IDE store when component mounts
   useEffect(() => {
-    getProjectWithRetry(projectId)
-      .then((p) => {
-        setProject(p as Project | null);
-        if (!p) {
-          setLoadError(`Project not found: ${projectId}`);
-        }
-      })
-      .catch((error) => {
-        setLoadError(error.message);
-      });
-  }, [projectId]);
-
-  if (loadError) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-background text-foreground">
-        <div className="text-center text-destructive">
-          <p>{loadError}</p>
-        </div>
-      </div>
-    );
-  }
+    if (_projectId) {
+      useIDEStore.getState().setProjectId(_projectId);
+      console.log('[KnowledgeRoute] Project ID set in store:', _projectId);
+    }
+  }, [_projectId]);
 
   return (
-    <ProjectProvider project={project} workspace="knowledge">
+    <ProjectProvider project={project as Project | null} workspace="knowledge">
       <KnowledgePlaceholder />
     </ProjectProvider>
   );

@@ -34,7 +34,10 @@ import {
 import { saveProject, generateProjectId } from '@/infrastructure/persistence/stores/project';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
-import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
+import {
+  serializeHandle,
+  handlePersistenceService,
+} from '@/infrastructure/filesystem/handle-persistence';
 
 /**
  * File operations slice configuration
@@ -257,6 +260,7 @@ export function useFileOpsSlice({
 
   /**
    * Restore access for 'prompt' state handles
+   * FSA-010: Permission state updated in FSAHandleRecord, not in Project
    */
   const restoreAccess = useCallback(async (): Promise<void> => {
     if (!directoryHandle) {
@@ -267,14 +271,23 @@ export function useFileOpsSlice({
     const result = await restorePermission(directoryHandle);
     setPermissionState(result);
 
+    // FSA-010: Update permission state in FSAHandleRecord (single source of truth)
     if (projectMetadata) {
+      await handlePersistenceService.updatePermissionStatus(projectMetadata.id, result);
+
+      // Update the project's storageMetadata with new access time
+      // Preserve existing handleId, directoryName, workspaceId, kind
       const updatedProject: ProjectMetadata = {
         ...projectMetadata,
-        lastKnownPermissionState: result,
+        storageMetadata: projectMetadata.storageMetadata
+          ? {
+              ...projectMetadata.storageMetadata,
+              lastAccessTime: Date.now(),
+              permissionGranted: result === 'granted',
+            }
+          : undefined,
       };
-      if (updatedProject.storageMetadata) { // PS-04: Check storageMetadata instead of fsaHandle
-        await saveProject(updatedProject);
-      }
+      await saveProject(updatedProject);
       setProjectMetadata(updatedProject);
     }
 

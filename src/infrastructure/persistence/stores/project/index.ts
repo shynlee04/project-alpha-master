@@ -128,16 +128,34 @@ export async function listActiveProjects(): Promise<Project[]> {
 /**
  * Facade: List projects with permission state
  *
+ * FSA-010 REMEDIATION: Permission state now sourced from FSAHandleRecord.
+ * Uses handlePersistenceService.getPermissionStatus() for each project.
+ *
  * @deprecated Use useProjectStore with permission checking
  */
 export async function listProjectsWithPermission(): Promise<ProjectWithPermission[]> {
   const state = useProjectStore.getState();
   const projects = state.getAllProjects();
 
-  return projects.map((project) => ({
-    ...project,
-    permissionState: project.lastKnownPermissionState ?? 'unknown',
-  })) as ProjectWithPermission[];
+  // Get permission state from FSAHandleRecord for each project
+  const results = await Promise.all(
+    projects.map(async (project) => {
+      let permissionState: FsaPermissionState = 'unknown';
+
+      if (project.storageType === 'indexeddb') {
+        permissionState = 'granted';
+      } else {
+        permissionState = (await state.getProjectPermission(project.id)) ?? 'unknown';
+      }
+
+      return {
+        ...project,
+        permissionState,
+      } as ProjectWithPermission;
+    })
+  );
+
+  return results;
 }
 
 /**

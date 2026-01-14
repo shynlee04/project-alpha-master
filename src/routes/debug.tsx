@@ -3,7 +3,7 @@
  * Access at: http://localhost:3000/debug
  */
 
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { db } from '@/infrastructure/persistence/dexie-db';
 
@@ -13,6 +13,7 @@ export const Route = createFileRoute('/debug')({
 });
 
 function DebugPage() {
+    const navigate = useNavigate();
     const [output, setOutput] = useState<string[]>([]);
     const [clearing, setClearing] = useState(false);
 
@@ -88,7 +89,7 @@ function DebugPage() {
             log('Redirecting to Hub in 2 seconds...');
 
             setTimeout(() => {
-                window.location.href = '/hub';
+                navigate({ to: '/hub' });
             }, 2000);
 
         } catch (error) {

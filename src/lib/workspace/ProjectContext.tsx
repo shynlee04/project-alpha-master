@@ -19,6 +19,16 @@ import type { Project } from '@/infrastructure/persistence/stores/project/projec
 import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
 
 // ============================================================================
+// FSA Handle Type
+// ============================================================================
+
+/**
+ * FSA Handle type alias for clarity
+ * Represents a FileSystemDirectoryHandle for FSA storage operations
+ */
+export type FsaHandle = FileSystemDirectoryHandle | null;
+
+// ============================================================================
 // Constants
 // ============================================================================
 
@@ -34,6 +44,10 @@ const DEFAULT_WORKSPACE: WorkspaceId = 'ide';
 
 /**
  * Value provided by ProjectContext
+ * 
+ * FIX-2026-01-19: Added fsaHandle for FSA-007 (no handle in ProjectContext)
+ * The FSA handle is stored in context so StorageAdapterFactory can access it
+ * without requiring handle at factory creation time (FSA-006 fix).
  */
 export interface ProjectContextValue {
   /** Current project metadata */
@@ -42,6 +56,10 @@ export interface ProjectContextValue {
   currentWorkspace: WorkspaceId;
   /** All enabled workspaces for this project */
   enabledWorkspaces: WorkspaceId[];
+  /** FSA handle for File System Access storage (FSA-007: Add handle to ProjectContext) */
+  fsaHandle: FsaHandle;
+  /** Set FSA handle when user grants permission (FSA-006: Get handle from context) */
+  setFsaHandle: (handle: FileSystemDirectoryHandle | null) => void;
   /** Switch to different workspace (preserves project state) */
   switchWorkspace: (workspace: WorkspaceId) => void;
   /** Navigate to a different workspace with options */
@@ -218,6 +236,36 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
   const navigate = useNavigate();
 
   // ---------------------------------------------------------------------
+  // FSA Handle State (FSA-006: Store handle for StorageAdapterFactory access)
+  // ---------------------------------------------------------------------
+
+  /** FSA handle for File System Access storage operations */
+  const [fsaHandle, setFsaHandle] = React.useState<FileSystemDirectoryHandle | null>(null);
+
+  /**
+   * Clear FSA handle on project switch or unmount
+   * This ensures stale handles are not reused when switching projects
+   */
+  React.useEffect(() => {
+    // Clear handle when project changes
+    if (project?.id) {
+      console.log(`[ProjectProvider] Project changed to: ${project.id}, clearing FSA handle`);
+      setFsaHandle(null);
+    }
+  }, [project?.id]);
+
+  /**
+   * Cleanup: Clear handle when provider unmounts
+   * Prevents memory leaks and ensures handle is released properly
+   */
+  React.useEffect(() => {
+    return () => {
+      console.log('[ProjectProvider] Provider unmounting, clearing FSA handle');
+      setFsaHandle(null);
+    };
+  }, []);
+
+  // ---------------------------------------------------------------------
   // Derived State
   // ---------------------------------------------------------------------
 
@@ -355,7 +403,7 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
   );
 
   // ---------------------------------------------------------------------
-  // Context Value
+  // Context Value (FSA-006: Include fsaHandle and setFsaHandle)
   // ---------------------------------------------------------------------
 
   const value: ProjectContextValue = React.useMemo(
@@ -363,10 +411,12 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
       project,
       currentWorkspace: workspace,
       enabledWorkspaces,
+      fsaHandle,
+      setFsaHandle,
       switchWorkspace,
       navigateToWorkspace,
     }),
-    [project, workspace, enabledWorkspaces, switchWorkspace, navigateToWorkspace]
+    [project, workspace, enabledWorkspaces, fsaHandle, switchWorkspace, navigateToWorkspace]
   );
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;

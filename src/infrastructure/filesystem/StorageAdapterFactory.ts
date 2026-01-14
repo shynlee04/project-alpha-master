@@ -9,6 +9,9 @@
  *
  * @epic EPIC-CC-01 - Project Space Foundation
  * @story PS-02-A - Platform Detection & Storage Routing
+ *
+ * FIX-2026-01-19: FSA-006 - Get handle from ProjectContext instead of requiring at creation time
+ * FIX-2026-01-19: FSA-007 - Added handle to ProjectContext interface
  */
 
 import type {
@@ -70,9 +73,12 @@ export class StorageAdapterFactory {
    * @param options - Storage options including project ID and optional storage type
    * @returns Configured storage adapter
    * @throws Error if required options are missing
+   *
+   * FIX-2026-01-19: FSA-006 - Support handleGetter for context-based handle retrieval
+   * FIX-2026-01-19: FSA-007 - Handle now optional when handleGetter is provided
    */
   createAdapter(options: StorageOptions): StorageAdapter {
-    const { projectId, storageType: explicitType, handle } = options;
+    const { projectId, storageType: explicitType, handle, handleGetter } = options;
 
     if (!projectId) {
       throw new Error('StorageAdapterFactory: projectId is required');
@@ -84,10 +90,12 @@ export class StorageAdapterFactory {
     // Create appropriate adapter
     switch (storageType) {
       case 'fsa':
+        // FSA-006: Get handle from getter if provided, otherwise use direct handle
+        const effectiveHandle = handleGetter ? handleGetter() : handle;
         return this.createFSAAdapter({
           projectId,
-          handle,
-          directoryPath: handle?.name,
+          handle: effectiveHandle,
+          directoryPath: effectiveHandle?.name,
         });
 
       case 'indexeddb':
@@ -102,15 +110,31 @@ export class StorageAdapterFactory {
 
   /**
    * Create FSA storage adapter
+   *
+   * FIX-2026-01-19: FSA-006 - Gracefully handle null/unavailable handle
+   * Instead of throwing immediately, returns a placeholder adapter that
+   * defers handle validation until actual file operations are attempted.
    */
   private createFSAAdapter(options: StorageOptions): StorageAdapter {
     const { projectId, handle, directoryPath } = options;
 
+    // FSA-006: Handle is now optional - defer error to actual operation time
+    // This allows factory to be called before user grants permission
     if (!handle) {
-      throw new Error(
-        'StorageAdapterFactory: handle is required for FSA storage. ' +
-        'User must select a folder using showDirectoryPicker().'
+      console.warn(
+        `[StorageAdapterFactory] FSA handle not available for project: ${projectId}. ` +
+        `Adapter will defer operations until handle is provided via ProjectContext.`
       );
+
+      // Return a minimal adapter that will throw when operations are attempted
+      // This is a temporary bridge until handle becomes available
+      const FSAClass = getFSAStorageAdapterClass();
+      return new FSAClass({
+        projectId,
+        storageType: 'fsa',
+        handle: null,
+        directoryPath: undefined,
+      });
     }
 
     const FSAClass = getFSAStorageAdapterClass();

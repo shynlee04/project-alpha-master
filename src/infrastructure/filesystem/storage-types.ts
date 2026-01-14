@@ -73,14 +73,18 @@ export interface StorageCapabilities {
 
 /**
  * Options for creating a storage adapter
+ * 
+ * FIX-2026-01-19: FSA-006 - handle is now optional, use handleGetter for context-based retrieval
  */
 export interface StorageOptions {
   /** Project ID for the storage */
   projectId: string;
   /** Requested storage type */
   storageType?: StorageType;
-  /** FSA handle (required for FSA type) */
-  handle?: FileSystemDirectoryHandle;
+  /** FSA handle (deprecated: use handleGetter instead for FSA-006 fix) */
+  handle?: FileSystemDirectoryHandle | null;
+  /** Function to get FSA handle from context (FSA-006: Get handle from ProjectContext) */
+  handleGetter?: FsaHandleGetter;
   /** Initial directory path */
   directoryPath?: string;
 }
@@ -106,3 +110,25 @@ export interface FactoryConfig {
   /** Custom platform info (for testing) */
   customPlatform?: PlatformInfo;
 }
+
+/**
+ * FSA Handle Getter Function (FSA-006: Get handle from ProjectContext)
+ * 
+ * This function type is used to lazily retrieve the FSA handle from context
+ * instead of requiring it at factory creation time. This solves the issue
+ * where handle is only available after user grants permission.
+ * 
+ * @returns The FSA handle or null if not yet available
+ * 
+ * @example
+ * ```typescript
+ * // In route loader or component:
+ * const { fsaHandle } = useProjectContext();
+ * 
+ * const adapter = StorageAdapterFactory.createAdapter({
+ *   projectId,
+ *   handleGetter: () => fsaHandle,
+ * });
+ * ```
+ */
+export type FsaHandleGetter = () => FileSystemDirectoryHandle | null;

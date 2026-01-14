@@ -17,7 +17,8 @@
  */
 
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 import { useShallow } from 'zustand/react/shallow';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from './workspace-types';
@@ -172,10 +173,13 @@ export const useWorkspaceStore = create<WorkspaceState>()(
     }),
     {
       name: 'workspace-state',
-      // Persist only essential fields
+      // FIXED STATE-003: Use Dexie storage instead of localStorage per ADR-033
+      // Uses providerConfigs table which stores { key, state } records
+      storage: createJSONStorage(() => createDexieStorage('providerConfigs')),
+      // Persist only currentWorkspace globally (currentProjectId is project-scoped)
+      // NOTE: currentProjectId removed from persistence - it's managed per-project
       partialize: (state) => ({
         currentWorkspace: state.currentWorkspace,
-        currentProjectId: state.currentProjectId,
       }),
       onRehydrateStorage: () => {
         console.log('[WorkspaceStore] Hydration starting...');

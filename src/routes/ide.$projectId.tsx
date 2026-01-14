@@ -82,12 +82,13 @@ const IDELayout = lazy(() =>
 export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,
   
-  // P0 FIX: Route guards for platform validation (storage type is OK for desktop)
+  // P0 FIX: Route guards for platform validation ONLY (ADR-033 D12, ADR-034 D12)
+  // beforeLoad should NOT fetch project data - loader is the correct place
   beforeLoad: async ({ params }) => {
     const { projectId } = params;
     console.log('[IDERoute] beforeLoad called for project:', projectId);
 
-    // Check 1: Mobile users cannot access IDE (audit violation - ABSOLUTE)
+    // Check: Mobile users cannot access IDE (audit violation - ABSOLUTE)
     // Using PlatformContract for consistent detection (ADR-033 D1)
     const platform = getPlatformContract();
     if (!platform.canAccessIDE) {
@@ -99,36 +100,27 @@ export const Route = createFileRoute('/ide/$projectId')({
       });
     }
 
-    // Check 2: Fetch project with retry logic (FIX-2026-01-13: Handle timing issues)
-    console.log('[IDERoute] Looking up project:', projectId);
-    const project = await getProjectWithRetry(projectId);
+    // P0 FIX: Project loading should ONLY happen in loader (ADR-034 D12)
+    // beforeLoad is for platform guards ONLY - do NOT fetch project data here
+    // This eliminates the double-fetch anti-pattern
 
-    if (!project) {
-      console.error('[IDERoute] CRITICAL: Project not found after retry:', projectId);
-      console.error('[IDERoute] Available projects:', Object.keys(useProjectStore.getState().projects));
-      throw redirect({ to: '/hub' });
-    }
-
-    console.log('[IDERoute] Project found:', { id: project.id, name: project.name });
-
-    // Check 3: Desktop users can access IDE with ANY storage type
-    // (FSA gets full file system features, IndexDB gets browser storage features)
-    // No redirect - let desktop users use IDE regardless of storage type
-
-    console.log('[IDERoute] Route guard passed:', { projectId });
-    return { project };
+    console.log('[IDERoute] Route guard passed (platform validated):', { projectId });
+    // Note: Project data is loaded via loader, not beforeLoad
   },
   
-  // Loader: Fetch project metadata for ProjectProvider (FIX-2026-01-13: Use retry logic)
+  // Loader: Fetch project data ONCE (ADR-034 D12 - Use loader only for data fetch)
   loader: async ({ params }) => {
     console.log('[IDERoute.loader] Loading project:', params.projectId);
     const project = await getProjectWithRetry(params.projectId);
-    console.log('[IDERoute.loader] Project result:', project ? {
-      id: project.id,
-      name: project.name,
-      bindings: (project as any).workspaceBindings || (project as any).bindings,
-    } : 'NULL');
-    return { project: project || undefined };
+    
+    if (!project) {
+      console.error('[IDERoute.loader] CRITICAL: Project not found after retry:', params.projectId);
+      console.error('[IDERoute.loader] Available projects:', Object.keys(useProjectStore.getState().projects));
+      throw redirect({ to: '/hub' });
+    }
+    
+    console.log('[IDERoute.loader] Project found:', { id: project.id, name: project.name });
+    return { project };
   },
   component: () => (
     <ErrorBoundary>
@@ -144,15 +136,15 @@ function IDEWorkspace() {
   // Set projectId in IDE store AND workspace store when component mounts
   // Using getState() to avoid infinite loop (selector returns new fn reference each render)
   // FIX-2026-01-09: Also set workspaceStore.currentProjectId to trigger useWorkspaceFileSystem load
-  // FIX-2026-01-13: FSA handle restoration is now handled in useFileLoaderSlice, not here
+  // FSA-008 FIX: FSA handle restoration is handled by ProjectProvider (fsaHandle in ProjectContext)
+  // useFileLoaderSlice manages its own local directoryHandle state for IndexedDB projects
   useEffect(() => {
     if (_projectId) {
       useIDEStore.getState().setProjectId(_projectId);
       useWorkspaceStore.getState().setCurrentProject(_projectId);
       console.log('[IDERoute] Project ID set in IDE store & workspace store:', _projectId);
-      // NOTE: FSA handle restoration is now handled by useFileLoaderSlice when it detects
-      // an FSA project. This prevents race conditions and ensures the handle is properly
-      // connected to the workspace context.
+      // FSA handle is provided by ProjectContext - no action needed here
+      // ProjectProvider sets fsaHandle when user grants permission (FSA-006, FSA-007)
     }
   }, [_projectId]);
 

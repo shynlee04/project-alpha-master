@@ -28,11 +28,41 @@ interface PermissionCapableHandle extends FileSystemDirectoryHandle {
 }
 
 /**
+ * Detect Chrome 129+ with structuredClone support for FileSystemDirectoryHandle.
+ * 
+ * Chrome 129+ introduced the ability to serialize/deserialize FileSystemDirectoryHandle
+ * via structuredClone(), which allows the handle to be stored in IndexedDB and
+ * restored without requiring the user to re-select the directory.
+ * 
+ * @returns true if browser supports structuredClone for FileSystemDirectoryHandle
+ */
+function isStructuredCloneSupported(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof navigator !== 'undefined' &&
+    'structuredClone' in window &&
+    navigator.userAgent.includes('Chrome/129')
+  );
+}
+
+/**
  * Serialize FileSystemDirectoryHandle for storage.
- * Note: Full handle serialization is limited by the API - we store key metadata
- * for re-requesting permission on return visits.
+ * 
+ * In Chrome 129+: Uses structuredClone to serialize the full handle
+ * In older browsers: Stores only metadata (kind, name) for re-requesting permissions
  */
 function serializeHandle(handle: FileSystemDirectoryHandle): unknown {
+  // Chrome 129+ can serialize the full handle via structuredClone
+  if (isStructuredCloneSupported()) {
+    try {
+      return structuredClone(handle);
+    } catch {
+      // Fallback to metadata if structuredClone fails
+      console.warn('[FSA] structuredClone failed, falling back to metadata');
+    }
+  }
+  
+  // Fallback: Store only key metadata for re-requesting permission
   return {
     kind: handle.kind,
     name: handle.name,
@@ -41,23 +71,44 @@ function serializeHandle(handle: FileSystemDirectoryHandle): unknown {
 
 /**
  * Deserialize handle data back to a FileSystemDirectoryHandle.
- * Note: The original handle cannot be restored - this creates a new handle
- * at the same path that can be used to re-request permissions.
+ * 
+ * Chrome 129+: Returns the actual handle (stored via structuredClone)
+ * Older browsers: Returns null (handle cannot be reconstructed from metadata alone)
+ * 
+ * @param data - Serialized handle data from storage
+ * @returns The deserialized FileSystemDirectoryHandle or null if not supported
  */
 function deserializeHandle(data: unknown): FileSystemDirectoryHandle | null {
   if (!data || typeof data !== 'object') {
     return null;
   }
 
+  // Chrome 129+: Data is a full serialized handle
+  if (isStructuredCloneSupported()) {
+    try {
+      const handle = structuredClone(data as FileSystemDirectoryHandle);
+      // Verify it's a valid handle with expected methods
+      if (handle && typeof (handle as FileSystemDirectoryHandle).kind === 'string' &&
+          typeof (handle as FileSystemDirectoryHandle).name === 'string' &&
+          typeof (handle as PermissionCapableHandle).queryPermission === 'function') {
+        return handle as FileSystemDirectoryHandle;
+      }
+    } catch {
+      console.warn('[FSA] Failed to deserialize handle via structuredClone');
+    }
+  }
+
   const handleData = data as { kind?: string; name?: string };
+  
+  // Verify it's directory metadata
   if (handleData.kind !== 'directory' || !handleData.name) {
     return null;
   }
 
-  // Note: FileSystemDirectoryHandle cannot be fully reconstructed from data.
-  // The actual handle must be obtained via showDirectoryPicker again.
-  // This serialized data is stored for reference and path display purposes.
-  return null; // Placeholder - actual handle requires user interaction
+  // Older browsers: Cannot reconstruct handle from metadata alone
+  // The actual handle must be obtained via showDirectoryPicker again
+  // This serialized data is stored for reference and path display purposes only
+  return null;
 }
 
 /**

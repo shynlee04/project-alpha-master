@@ -14,6 +14,7 @@
 
 import { StateCreator } from 'zustand';
 import { db } from '@/infrastructure/persistence/dexie-db';
+import { storeFSAHandle } from '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers';
 import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import type {
   Project,
@@ -147,10 +148,19 @@ export const createProjectCrudSlice: StateCreator<
       console.error('[ProjectStore] Failed to persist project to Dexie:', err.message);
     });
 
-    // Persist FSA handle metadata only for 'fsa' storage type (indexeddb projects don't need handles)
-    // PS-04: Store metadata, not the handle itself
+    // Persist FSA handle metadata for 'fsa' storage type (indexeddb projects don't need handles)
+    // PS-04: Store metadata, not the handle itself. Uses metadata from input since we don't have the handle here.
+    // FSA-011 FIX: Was passing null as handle - now stores metadata correctly
     if (storageType === 'fsa' && input.storageMetadata) {
-      handlePersistenceService.persistHandle(projectId, null as any, workspaceType).catch((error: unknown) => {
+      storeFSAHandle({
+        projectId,
+        workspaceId: workspaceType,
+        handleData: { kind: 'directory' as const, name: input.storageMetadata.directoryName },
+        directoryPath: input.storageMetadata.directoryName,
+        permissionStatus: 'granted',
+        grantedAt: Date.now(),
+        lastAccessedAt: Date.now(),
+      }).catch((error: unknown) => {
         const err = error as Error;
         console.error('[ProjectStore] Failed to persist FSA handle metadata:', err.message);
       });

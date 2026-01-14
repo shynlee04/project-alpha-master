@@ -8,188 +8,279 @@
     ".opencode/instructions/governance-rules.md",
     ".opencode/instructions/agent-behavior.md"
   ],
-  // BMAD Agent Configuration (Official OpenCode Format),
+
+  // BMAD Agent Configuration (Official OpenCode Format)
   "agent": {
     // === PRIMARY AGENTS ===
     "bmad-master": {
-      "description": "BMAD Master Orchestrator - Autonomous Mode",
+      "description": "BMAD Master Orchestrator - Entry point for all _bmad-ext modules with full handoff protocol",
       "mode": "primary",
       "model": "minimax/MiniMax-M2.1",
       "temperature": 0.3,
       "prompt": "{file:agent/bmad-master.md}",
+      "maxSteps": 100,
       "tools": {
         "write": true,
         "edit": true,
-        "bash": true
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "task": true
       },
       "permission": {
         "edit": "allow",
         "bash": "allow",
-        "task": "allow"
+        "task": {
+          "*": "allow"
+        }
       }
     },
-    "ext-master": {
-      "description": "BMAD Extension Master Orchestrator - Entry point for all _bmad-ext modules",
+
+    // === DISABLED DEFAULT AGENTS (hidden with no tools) ===
+    "build": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    "plan": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    "general": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    "explore": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    // === PRIMARY AGENTS ===
+    "bmad-master": {
+      "description": "BMAD Master Orchestrator - Entry point for all _bmad-ext modules with full handoff protocol",
       "mode": "primary",
       "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.2,
-      "prompt": "{file:agent/ext-master.md}",
+      "temperature": 0.3,
+      "prompt": "{file:agent/bmad-master.md}",
+      "maxSteps": 100,
       "tools": {
         "write": true,
         "edit": true,
-        "bash": true
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "task": true
       },
       "permission": {
         "edit": "allow",
         "bash": "allow",
-        "task": "allow"
+        "task": {
+          "*": "allow"
+        }
       }
     },
-    "ext-master-enhanced": {
-      "description": "Event-Driven Workflow Orchestrator - Sub-agent delegation, event bus",
-      "mode": "primary",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.2,
-      "prompt": "{file:agent/ext-master-enhanced.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "allow",
-        "task": "allow"
-      }
-    },
-    // === SUBAGENTS (Enhanced Agents) ===
+
+    // === SUBAGENTS (BMAD Enhanced Agents) ===
     "dev-ext": {
-      "description": "Senior Software Engineer - executes delegated development tasks",
+      "description": "Senior Software Engineer - executes delegated development tasks with full handoff protocol",
       "mode": "subagent",
       "model": "minimax/MiniMax-M2.1",
       "temperature": 0.2,
       "prompt": "{file:agent/dev-ext.md}",
+      "maxSteps": 50,
       "tools": {
         "write": true,
         "edit": true,
-        "bash": true
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "allow"
-      }
-    },
-    "architect-ext": {
-      "description": "Software Architect & System Designer - Clean Architecture, DDD, ADRs",
-      "mode": "subagent",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.1,
-      "prompt": "{file:agent/architect-ext.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": false
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "ask"
-      }
-    },
-    "ux-designer-ext": {
-      "description": "UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing",
-      "mode": "subagent",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.3,
-      "prompt": "{file:agent/ux-designer-ext.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": false
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "ask"
-      }
-    },
-    "tech-writer-ext": {
-      "description": "Technical Writer - API docs, user guides, architecture documentation",
-      "mode": "subagent",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.2,
-      "prompt": "{file:agent/tech-writer-ext.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": false
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "deny"
-      }
-    },
-    "analyst-ext": {
-      "description": "Business Analyst - Requirements gathering, user story breakdown, competitive analysis",
-      "mode": "subagent",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.2,
-      "prompt": "{file:agent/analyst-ext.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": false
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "deny"
-      }
-    },
-    "tea-ext": {
-      "description": "Test Engineer & QA Specialist - Test strategy, automation (Vitest, Playwright), TDD",
-      "mode": "subagent",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.1,
-      "prompt": "{file:agent/tea-ext.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true
-      },
-      "permission": {
-        "edit": "allow",
-        "bash": "allow"
-      }
-    },
-    "module-builder-ext": {
-      "description": "Enhanced Module Builder - LOOP_STATE integration, ARTIFACT_REGISTRY registration",
-      "mode": "subagent",
-      "model": "minimax/MiniMax-M2.1",
-      "temperature": 0.2,
-      "prompt": "{file:agent/module-builder-ext.md}",
-      "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
       },
       "permission": {
         "edit": "allow",
         "bash": "allow",
-        "task": "allow"
+        "task": {
+          "*": "deny",
+          "tea-ext": "allow"
+        }
+      }
+    },
+    "architect-ext": {
+      "description": "Software Architect & System Designer - Clean Architecture, DDD, ADRs with handoff protocol",
+      "mode": "subagent",
+      "model": "minimax/MiniMax-M2.1",
+      "temperature": 0.1,
+      "prompt": "{file:agent/architect-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "ux-designer-ext": {
+      "description": "UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing with handoff protocol",
+      "mode": "subagent",
+      "model": "minimax/MiniMax-M2.1",
+      "temperature": 0.3,
+      "prompt": "{file:agent/ux-designer-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "tech-writer-ext": {
+      "description": "Technical Writer - API docs, user guides, architecture documentation with handoff protocol",
+      "mode": "subagent",
+      "model": "minimax/MiniMax-M2.1",
+      "temperature": 0.2,
+      "prompt": "{file:agent/tech-writer-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "analyst-ext": {
+      "description": "Business Analyst - Requirements gathering, user story breakdown, competitive analysis with handoff protocol",
+      "mode": "subagent",
+      "model": "minimax/MiniMax-M2.1",
+      "temperature": 0.2,
+      "prompt": "{file:agent/analyst-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "tea-ext": {
+      "description": "Test Engineer & QA Specialist - Test strategy, automation (Vitest, Playwright), TDD with handoff protocol",
+      "mode": "subagent",
+      "model": "minimax/MiniMax-M2.1",
+      "temperature": 0.1,
+      "prompt": "{file:agent/tea-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "deny"
+        }
       }
     },
     "product-management-ext": {
-      "description": "Product Management & Scrum Master - Backlog, stories, sprints, stakeholders",
+      "description": "Product Management & Scrum Master - Backlog, stories, sprints, stakeholders with handoff protocol",
       "mode": "subagent",
       "model": "minimax/MiniMax-M2.1",
       "temperature": 0.2,
       "prompt": "{file:agent/product-management-ext.md}",
+      "maxSteps": 30,
       "tools": {
         "write": true,
         "edit": true,
-        "bash": false
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
       },
       "permission": {
         "edit": "allow",
-        "bash": "ask"
+        "bash": "ask",
+        "task": {
+          "*": "deny"
+        }
       }
     },
     "deep-scan-orchestrator": {
@@ -198,17 +289,25 @@
       "model": "minimax/MiniMax-M2.1",
       "temperature": 0.1,
       "prompt": "{file:agent/deep-scan-orchestrator.md}",
+      "maxSteps": 20,
       "tools": {
         "write": true,
         "edit": true,
-        "bash": true
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
       },
       "permission": {
         "edit": "ask",
-        "bash": "ask"
+        "bash": "ask",
+        "task": {
+          "*": "deny"
+        }
       }
     }
   },
+
   // Custom commands for BMAD workflows
   "command": {
     "bmad-sprint": {
@@ -220,13 +319,13 @@
     "bmad-governance": {
       "description": "Run governance validation and enforcement",
       "template": "Run governance validation:\n\n1. Check AGENTS.md for current policies\n2. Validate against context-filter.yaml\n3. Enforce time-boxing rules\n4. Update governance documents if needed\n5. Report violations",
-      "agent": "ext-master",
+      "agent": "bmad-master",
       "model": "minimax/MiniMax-M2.1"
     },
     "bmad-refactor": {
       "description": "Execute architecture remediation workflows",
       "template": "Execute architecture refactoring:\n\n$ARGUMENTS\n\nAvailable workflows:\n- eliminate-god-stores: Split oversized stores into slices\n- normalize-components: Split oversized components\n- workspace-file-system-e2e: Implement workspace E2E\n- knowledge-sync-strategy: Implement knowledge sync\n- notes-sync-strategy: Implement notes sync\n\nLoad context from _bmad-ext/modules/architecture-remediation/",
-      "agent": "architect-ext",
+      "agent": "bmad-master",
       "model": "minimax/MiniMax-M2.1"
     },
     "bmad-scan": {
@@ -238,7 +337,7 @@
     "story-cycle": {
       "description": "Execute complete story development cycle v2.0",
       "template": "Execute story development cycle:\n\n$ARGUMENTS\n\n9-Step Workflow:\n1. Create Story - Create story file from epic\n2. Validate Story - Validate story file 100%\n3. Create Context - Build context XML\n4. Validate Context - Validate with freshness check\n5. Pre-Planning - **NEW v2.0** Research gate\n6. Dev Story - TDD implementation\n7. Code Review - Multi-agent review\n8. Story Done - Complete story\n9. Retrospective - Epic-level review\n\nLoad context from _bmad-ext/modules/sprint-planning/\n\nExamples:\n- story-cycle (start new story)\n- story-cycle continue S-001 (continue existing)\n- dev-story story=S-001 (jump to implementation)\n- code-review story=S-001 (run code review)",
-      "agent": "dev-ext",
+      "agent": "bmad-master",
       "model": "minimax/MiniMax-M2.1"
     },
     "create-story": {
@@ -256,7 +355,7 @@
     "code-review": {
       "description": "Run code review on completed implementation",
       "template": "Execute code review:\n\n$ARGUMENTS\n\nRequired: story={story_key}\nOptional: focus={area}\n\nChecklist:\n- Design compliance (4-layer architecture)\n- Code quality (TypeScript, no any)\n- UI/UX (8-bit design, no glassmorphism)\n- Testing (≥80% coverage)\n- Documentation\n\nLoads: _bmad-ext/modules/governance/",
-      "agent": "dev-ext",
+      "agent": "bmad-master",
       "model": "minimax/MiniMax-M2.1"
     },
     "correct-course": {
@@ -266,26 +365,31 @@
       "model": "minimax/MiniMax-M2.1"
     }
   },
-  // Tool permissions for BMAD workflows
+
+  // Global tool permissions
   "tools": {
     "write": true,
     "edit": true,
     "bash": true,
     "glob": true,
     "grep": true,
-    "read": true
+    "read": true,
+    "task": true
   },
-  // Permission controls
+
+  // Global permission controls
   "permission": {
     "edit": "allow",
     "bash": "allow",
     "webfetch": "allow"
   },
+
   // Context compaction settings
   "compaction": {
     "auto": true,
     "prune": true
   },
+
   // File watcher ignore patterns
   "watcher": {
     "ignore": [
@@ -297,11 +401,13 @@
       ".DS_Store"
     ]
   },
+
   // TUI settings
   "tui": {
     "scroll_speed": 2,
     "diff_style": "stacked"
   },
+
   // Server settings
   "server": {
     "port": 4096,

@@ -18,13 +18,14 @@
  * Original functionality preserved with PHASE_1_DETACHMENT marker.
  */
 
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate, useMatchRoute } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { Code2, FolderOpen, Plus } from 'lucide-react';
 import { getOrCreateTempProject } from '@/lib/workspace/temp-project';
 import { FolderPickerDialog } from '@/presentation/components/workspace';
 import { useState } from 'react';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 
 // Lazy load IDELayout
 import { lazy, Suspense } from 'react';
@@ -36,6 +37,29 @@ const IDELayout = lazy(() =>
 
 export const Route = createFileRoute('/ide')({
   ssr: false,
+  beforeLoad: async ({ location }) => {
+    console.log('[ide.tsx] beforeLoad called for route:', location.href);
+    
+    // Platform validation (ADR-033 D1: Mobile cannot access IDE)
+    const platform = getPlatformContract();
+    console.log('[ide.tsx] Platform detection:', {
+      deviceType: platform.deviceType,
+      canAccessIDE: platform.canAccessIDE,
+      canAccessFSA: platform.canAccessFSA,
+      canRunTerminal: platform.canRunTerminal,
+    });
+    
+    if (!platform.canAccessIDE) {
+      console.warn('[ide.tsx] Mobile/tablet/desktop-without-FSA detected, redirecting to /hub');
+      throw redirect({
+        to: '/hub',
+        search: { reason: 'mobile-not-supported' }
+      });
+    }
+    
+    // Allow navigation to continue
+    return;
+  },
   component: () => (
     <ErrorBoundary>
       <IDEWorkspace />
@@ -84,11 +108,15 @@ function IDESkeleton() {
  */
 function IDEWorkspace() {
   const navigate = useNavigate();
+  const matchRoute = useMatchRoute();
   const [showFolderPicker, setShowFolderPicker] = useState(false);
-
-  // Check if we're on a child route like /ide/$projectId
-  const isOnChildRoute = window.location.pathname !== '/ide';
-
+  
+  // Platform detection (PLAT-001: Only show temp project on mobile/fallback)
+  const platform = getPlatformContract();
+  
+  // Check if we're on a child route like /ide/$projectId (ROUTE-002 fix)
+  const isOnChildRoute = !!matchRoute({ to: '/ide/$projectId', fuzzy: true });
+  
   // Render child route content if on child route
   if (isOnChildRoute) {
     return (
@@ -99,7 +127,7 @@ function IDEWorkspace() {
       </MainLayout>
     );
   }
-
+  
   // Show project selector for /ide route
   return (
     <MainLayout>
@@ -113,13 +141,16 @@ function IDEWorkspace() {
             </p>
           </div>
           <div className="flex flex-col gap-3 w-full">
-            <button
-              onClick={() => handleCreateTemp(navigate)}
-              className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium flex items-center justify-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              ⚡ Quick IDE (Temp Project)
-            </button>
+            {/* PLAT-001: Only show temp project on mobile/fallback (when FSA not available) */}
+            {!platform.canAccessFSA && (
+              <button
+                onClick={() => handleCreateTemp(navigate)}
+                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium flex items-center justify-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                ⚡ Quick IDE (Temp Project)
+              </button>
+            )}
             <button
               onClick={() => setShowFolderPicker(true)}
               className="w-full px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 font-medium flex items-center justify-center gap-2"

@@ -577,63 +577,54 @@ architecture:
 
 next_actions:
   team_a:
-    story: "BYOK-02"
+    current_story: "BYOK-02"
     task: "Add Zod validation schemas for credentials"
     files:
       - "src/infrastructure/persistence/stores/providers/credentials/schemas.ts"
       - "src/infrastructure/persistence/stores/providers/credentials/vault-slice.ts"
-      
+
   team_b:
+    current_sprint: "ADR-034-INFECTION-REMEDIATION"
+    status: "WAITING_FOR_USER_CONFIRMATION"
+
     # Priority order based on user-reported issues
-    story: "PS-02-A"
-    task: "Complete platform detection and storage routing"
-    priority: "1"
-    files:
-      - "src/infrastructure/filesystem/platform-detection.ts (NEW)"
-      - "src/infrastructure/filesystem/storage-adapter-factory.ts (NEW)"
-      
-    story: "PS-04"  # NEW - CRITICAL
-    task: "Implement handle persistence architecture"
-    priority: "1"
-    user_issue: "URI-01 - Projects don't persist on refresh"
-    files:
-      - "src/infrastructure/filesystem/handle-persistence.ts (NEW)"
-      - "src/infrastructure/filesystem/handle-types.ts (NEW)"
-      - "src/infrastructure/persistence/stores/project/project-handler-service.ts (NEW)"
-    acceptance:
-      - "Projects persist after browser refresh"
-      - "Clicking project prompts for folder access"
-      - "No DataCloneError when saving to IndexedDB"
-      
-    story: "PS-02-B"
-    task: "Connect watch() to UI for hot reactive sync"
-    priority: "2"
-    user_issue: "URI-03 - External file changes not detected"
-    files:
-      - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts (NEW)"
-      - "src/presentation/components/workspace/sync-status-indicator.tsx (NEW)"
-      
-    story: "PS-05"  # NEW - CRITICAL
-    task: "Implement VFS tree structure for nested folders"
-    priority: "2"
-    user_issue: "URI-02 - Folders in folders not displayed"
-    files:
-      - "src/domain/storage/IVirtualFileSystem.ts (NEW)"
-      - "src/infrastructure/filesystem/vfs-builder.ts (NEW)"
-      - "src/infrastructure/filesystem/file-cache.ts (NEW)"
-    acceptance:
-      - "FileTree shows nested folder structure"
-      - "Exclusion patterns work"
-      - "File changes update tree in <2s"
-      
-    story: "PS-06"  # NEW - MEDIUM
-    task: "Implement RAG index infrastructure"
-    priority: "3"
-    user_issue: "URI-04 - No semantic search"
-    files:
-      - "src/domain/services/rag/chunking-service.ts (NEW)"
-      - "src/domain/services/rag/embedding-service.ts (NEW)"
-      - "src/domain/services/rag/index-service.ts (NEW)"
+    priority_1_stories:
+      - id: "PS-02-A"
+        task: "Complete platform detection and storage routing"
+        files:
+          - "src/infrastructure/filesystem/platform-detection.ts (NEW)"
+          - "src/infrastructure/filesystem/storage-adapter-factory.ts (NEW)"
+      - id: "PS-04"
+        task: "Implement handle persistence architecture"
+        user_issue: "URI-01 - Projects don't persist on refresh"
+        files:
+          - "src/infrastructure/filesystem/handle-persistence.ts (NEW)"
+          - "src/infrastructure/filesystem/handle-types.ts (NEW)"
+          - "src/infrastructure/persistence/stores/project/project-handler-service.ts (NEW)"
+
+    priority_2_stories:
+      - id: "PS-02-B"
+        task: "Connect watch() to UI for hot reactive sync"
+        user_issue: "URI-03 - External file changes not detected"
+        files:
+          - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts (NEW)"
+          - "src/presentation/components/workspace/sync-status-indicator.tsx (NEW)"
+      - id: "PS-05"
+        task: "Implement VFS tree structure for nested folders"
+        user_issue: "URI-02 - Folders in folders not displayed"
+        files:
+          - "src/domain/storage/IVirtualFileSystem.ts (NEW)"
+          - "src/infrastructure/filesystem/vfs-builder.ts (NEW)"
+          - "src/infrastructure/filesystem/file-cache.ts (NEW)"
+
+    priority_3_stories:
+      - id: "PS-06"
+        task: "Implement RAG index infrastructure"
+        user_issue: "URI-04 - No semantic search"
+        files:
+          - "src/domain/services/rag/chunking-service.ts (NEW)"
+          - "src/domain/services/rag/embedding-service.ts (NEW)"
+          - "src/domain/services/rag/index-service.ts (NEW)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # USER-REPORTED ISSUES TRACKING

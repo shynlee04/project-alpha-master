@@ -16,14 +16,13 @@
   * @story 26-2 Client-Side Embedding Pipeline
   * @story 26-3 "Ask My Notes" RAG Tool
   * @story 26-4 Inline AI Magic
-  * 
-  * @note createLazyFileRoute only supports component, errorComponent, 
-  *       pendingComponent, notFoundComponent. beforeLoad/loader not supported.
-  *       Notes is accessible on ALL platforms per ADR-033, no guard needed.
+  *
+  * ROUTE-004 FIX: Changed from createLazyFileRoute to createFileRoute
+  * to support loader pattern instead of useEffect fetch.
   */
 
-import { useEffect, useState, useRef } from 'react';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
@@ -32,16 +31,13 @@ import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
-import type { NotesSearchParams } from './notes.$projectId';
+
+type NotesSearchParams = { reason?: "mobile-not-supported" | undefined };
 
 // ============================================================================
 // Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
 // ============================================================================
 
-/**
-  * Retry getting a project with exponential backoff
-  * Handles timing issues between project creation and route guard execution
-  */
 async function getProjectWithRetry(
   projectId: string,
   maxRetries: number = 3,
@@ -50,7 +46,6 @@ async function getProjectWithRetry(
   let lastError: Error | null = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    // Try getting from Zustand store first (fastest)
     const fromStore = useProjectStore.getState().getProject(projectId);
     if (fromStore) {
       if (attempt > 1) {
@@ -59,7 +54,6 @@ async function getProjectWithRetry(
       return fromStore as Project;
     }
 
-    // Fallback to facade (handles Dexie lookup)
     try {
       const fromFacade = await getProject(projectId);
       if (fromFacade) {
@@ -70,7 +64,7 @@ async function getProjectWithRetry(
     }
 
     if (attempt < maxRetries) {
-      const delayMs = baseDelayMs * Math.pow(2, attempt - 1); // Exponential backoff
+      const delayMs = baseDelayMs * Math.pow(2, attempt - 1);
       console.log(`[NotesRoute] Project not found, attempt ${attempt}/${maxRetries}, retrying in ${delayMs}ms...`);
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
@@ -81,12 +75,28 @@ async function getProjectWithRetry(
 }
 
 // ============================================================================
-// Route Definition (Lazy - only component options allowed)
+// Route Definition (ROUTE-004 FIX: Using createFileRoute for loader pattern)
 // ============================================================================
 
-export const Route = createLazyFileRoute('/notes/$projectId')({
-  // Notes accessible on ALL platforms per ADR-033 - no beforeLoad guard needed
-  // Project lookup handled in component via useEffect with retry logic
+export const Route = createFileRoute('/notes/$projectId')({
+  ssr: false,
+
+  // ROUTE-004 FIX: Use loader only for data fetching (NOT beforeLoad per ADR-034 D12)
+  loader: async ({ params }) => {
+    const { projectId } = params;
+    console.log('[notes.$projectId] Loader called for project:', projectId);
+
+    // Fetch project data with retry logic
+    const project = await getProjectWithRetry(projectId, 3, 50);
+    if (!project) {
+      console.error('[notes.$projectId] Project not found:', projectId);
+      throw redirect({ to: '/hub' });
+    }
+
+    console.log('[notes.$projectId] Project loaded successfully:', project.id);
+    return { project };
+  },
+
   component: () => (
     <ErrorBoundary>
       <NotesWorkspace />
@@ -96,10 +106,8 @@ export const Route = createLazyFileRoute('/notes/$projectId')({
 
 function NotesWorkspace() {
   const { projectId: _projectId } = Route.useParams();
+  const { project } = Route.useLoaderData();
   const search = Route.useSearch() as NotesSearchParams;
-  const [project, setProject] = useState<Project | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const toastShownRef = useRef(false);
 
   // ARC-A04: Show toast when redirected from IDE (mobile users)
@@ -113,26 +121,7 @@ function NotesWorkspace() {
     }
   }, [search?.reason]);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setLoadError(null);
-
-    getProjectWithRetry(_projectId)
-      .then((p) => {
-        if (p) {
-          setProject(p as Project);
-        } else {
-          setLoadError(`Project not found: ${_projectId}`);
-        }
-      })
-      .catch((error) => {
-        setLoadError(error.message);
-      })
-      .finally(() => setIsLoading(false));
-  }, [_projectId]);
-
   // Set projectId in IDE store when component mounts
-  // Using getState() to avoid infinite loop (selector returns new ref each render)
   useEffect(() => {
     if (_projectId) {
       useIDEStore.getState().setProjectId(_projectId);
@@ -140,37 +129,8 @@ function NotesWorkspace() {
     }
   }, [_projectId]);
 
-  // FIX TB-14: Show loading state while project is being fetched
-  // This prevents NotesPage from seeing project=null and falling back to 'default'
-  if (isLoading) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground">Loading project...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // FIX TB-14: If project not found after loading, show error
-  if (!project || loadError) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-sm text-destructive">
-            {loadError || `Project not found: ${_projectId}`}
-          </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            Available: {Object.keys(useProjectStore.getState().projects).join(', ') || 'none'}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <ProjectProvider project={project} workspace="notes">
+    <ProjectProvider project={project as Project | null} workspace="notes">
       <NotesPage />
     </ProjectProvider>
   );

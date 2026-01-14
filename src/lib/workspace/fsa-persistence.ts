@@ -23,7 +23,7 @@
  * ```
  */
 
-import { fsaHandleManager } from '@/lib/filesystem/fsa-handle-manager';
+import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { CreateProjectInput } from '@/infrastructure/persistence/stores/project';
 import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project';
@@ -153,7 +153,7 @@ export async function createProjectFromFolder(
   const projectId = useProjectStore.getState().createProject(projectInput);
 
   // Explicitly persist FSA handle for instant re-grant on next visit
-  await fsaHandleManager.persistHandle(handle, projectId, 'ide');
+  await handlePersistenceService.persistHandle(projectId, handle, 'ide');
 
   // ARC-B10: Initialize .viagent/ metadata folder
   try {
@@ -197,12 +197,13 @@ export async function createProjectFromFolder(
  * Returns null if silent re-grant fails.
  */
 export async function restoreFolderHandle(projectId: string): Promise<FileSystemDirectoryHandle | null> {
-  return await fsaHandleManager.restoreHandle(projectId);
+  const result = await handlePersistenceService.restoreHandle(projectId);
+  return result.handle;
 }
 
 /**
  * Check if a project folder can be silently restored
  */
 export async function canRestoreFolder(projectId: string): Promise<boolean> {
-  return await fsaHandleManager.canSilentRestore(projectId);
+  return await handlePersistenceService.canSilentRestore(projectId);
 }

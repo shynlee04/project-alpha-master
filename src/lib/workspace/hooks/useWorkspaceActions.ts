@@ -20,7 +20,10 @@ import type { useWorkspaceState } from './useWorkspaceState';
 import type { useSyncOperations } from './useSyncOperations';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceRedirect } from '@/lib/utils/mobile-error-handling';
-import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
+import {
+  serializeHandle,
+  handlePersistenceService,
+} from '@/infrastructure/filesystem/handle-persistence';
 
 type WorkspaceStateReturn = ReturnType<typeof useWorkspaceState>;
 type SyncOperationsReturn = ReturnType<typeof useSyncOperations>;
@@ -258,6 +261,8 @@ export function useWorkspaceActions(
      * Story 13-5: Restore access to a project folder.
      * Called when user clicks "Restore Access" button for handles with 'prompt' state.
      * This gives users control over when the permission dialog appears.
+     *
+     * FSA-010: Permission state updated in FSAHandleRecord, not in Project.lastKnownPermissionState
      */
     const restoreAccess = useCallback(async (): Promise<void> => {
         if (!directoryHandle) {
@@ -268,11 +273,20 @@ export function useWorkspaceActions(
         const result = await restorePermission(directoryHandle);
         setPermissionState(result);
 
-        // Persist the new state to ProjectStore
+        // FSA-010: Update permission state in FSAHandleRecord (single source of truth)
         if (projectMetadata) {
+            await handlePersistenceService.updatePermissionStatus(projectMetadata.id, result);
+
+            // Update the project's storageMetadata with new access time
             const updatedProject: ProjectMetadata = {
                 ...projectMetadata,
-                lastKnownPermissionState: result,
+                storageMetadata: projectMetadata.storageMetadata
+                    ? {
+                        ...projectMetadata.storageMetadata,
+                        lastAccessTime: Date.now(),
+                        permissionGranted: result === 'granted',
+                    }
+                    : undefined,
             };
             await saveProject(updatedProject);
             setProjectMetadata(updatedProject);

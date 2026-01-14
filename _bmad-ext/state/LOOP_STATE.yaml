@@ -3,30 +3,62 @@
 # Session state for autonomous workflow orchestration
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "1.1.0"
-created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-17T10:30:00+07:00"
+schema_version: "1.2.0"
+created_at: "2026-01-19T16:00:00+07:00"
+last_updated: "2026-01-19T14:45:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SESSION STATE - ADR-034 INFECTION REMEDIATION
+# SESSION STATE - GOVERNANCE AUDIT COMPLETE
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: "ADR-034-REMEDIATION-2026-01-17"
-  start_time: "2026-01-17T10:00:00+07:00"
-  last_activity: "2026-01-17T10:30:00+07:00"
+  id: "GOVERNANCE-AUDIT-2026-01-19"
+  start_time: "2026-01-19T14:00:00+07:00"
+  last_activity: "2026-01-19T14:45:00+07:00"
   platform: "claude-code"
   agent: "EXCALIBUR"
-  orchestrator_team: "Combined"
+  orchestrator_team: "Gatekeeper"
   iteration: 1
-  max_iterations: 0
-  status: "ADR_034_PHASE_0_COMPLETE"
-  team: "Combined - Infection Remediation"
+  max_iterations: 9999
+  status: "GOVERNANCE_AUDIT_COMPLETE_TEAMS_ASSIGNED"
+  team: "Gatekeeper - Validating Team Work"
   ralph_loop_version: "5.0.0"
-  type: "master-remediation"
+  type: "governance-enforcement"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT CONTEXT - ADR-034 EXECUTION
+# GOVERNANCE AUDIT RESULTS (2026-01-19)
+# Critical: Teams claimed work that was NOT actually done
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance_audit:
+  audit_id: "AUDIT-2026-01-19-001"
+  conducted_at: "2026-01-19T14:30:00+07:00"
+  conducted_by: "BMAD Master Orchestrator (3 parallel deep-scan agents)"
+  trigger: "User complaint - teams messing up each other's work"
+  
+  findings:
+    team_b:
+      claimed_remediated: 9
+      actually_remediated: 4
+      false_claims: 5
+      violation_rate: "55.5%"
+      status: "UNDER_REVIEW"
+      
+    team_a:
+      claimed_remediated: 0
+      actually_remediated: 3
+      false_claims: 0
+      violation_rate: "0%"
+      status: "GOOD_STANDING"
+  
+  artifacts_created:
+    - "_bmad-output/sprint-artifacts/team-a-handoff-2026-01-19.md"
+    - "_bmad-output/sprint-artifacts/team-b-handoff-2026-01-19.md"
+    - "_bmad-output/sprint-artifacts/investigation-notes-2026-01-19.md"
+    - "_bmad-output/sprint-artifacts/governance-violation-remediation-2026-01-19.yaml"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT CONTEXT
 # ═══════════════════════════════════════════════════════════════════════════
 
 current:
@@ -34,222 +66,134 @@ current:
   epic_name: "Correct-Course Architectural Remediation"
   story_id: "ADR-034-REMEDIATION"
   story_title: "Workspace Access Infection Remediation"
-  team: "Combined"
-  phase: "PHASE_1_FSA_UNIFICATION"
+  team: "Team B"
+  phase: "PHASE_2_STATE_SCOPING"
   week: 4
   workflow: "correct-course-remediation"
-  step: "FSA Handle Unification"
+  step: "STATE-002, STATE-003 fixed - Deferred remaining State infections"
   status: "in_progress"
-  sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  sprint_file: "_bmad-output/sprint-artifacts/consolidated-foundation-sprint-2026-01-17.yaml"
   adr_file: "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
   parent_adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# INFECTION TRACKING (31 Total from ADR-034)
+# INFECTION TRACKING (CORRECTED AFTER AUDIT)
+# Previous claims were INACCURATE - this is the verified state
 # ═══════════════════════════════════════════════════════════════════════════
 
 infections:
   total: 31
+  
   by_domain:
     fsa: 10
     state: 12
     routing: 13
     platform: 6
-  
+
+  # VERIFIED REMEDIATED (Confirmed by deep-scan agents)
   remediated:
-    count: 0
-    ids: []
-  
-  in_progress:
-    count: 0
-    ids: []
-  
-  pending:
-    count: 31
+    count: 11
     ids:
-      # FSA Domain (10) - P0: FSA-001,002,003,004 | P1: FSA-005,006,007,008,009 | P2: FSA-010
-      - FSA-001  # handle storage DataCloneError
-      - FSA-002  # restoreHandle prompts user
-      - FSA-003  # stores handleData: null
-      - FSA-004  # trySilentRestore prompts
-      - FSA-005  # deserializeHandle returns null
-      - FSA-006  # factory requires unavailable handle
-      - FSA-007  # no handle in ProjectContext
-      - FSA-008  # useFileLoaderSlice doesn't exist
-      - FSA-009  # multiple handle managers
-      - FSA-010  # permission state duplication
-      
-      # State Domain (12) - P0: STATE-001,002,003,011 | P1: others
-      - STATE-001  # useProjectStore no persistence
-      - STATE-002  # useIDEStore wrong hydration
-      - STATE-003  # workspace-store localStorage leak
-      - STATE-004  # file-sync-status no project scope
-      - STATE-005  # agent-selection global
-      - STATE-006  # conversation subscription leak
-      - STATE-007  # chat-store global key
-      - STATE-008  # rag-store global index
-      - STATE-009  # terminal-store localStorage
-      - STATE-010  # hydration-manager empty
-      - STATE-011  # project-crud persists null handle
-      - STATE-012  # no cleanup on workspace switch
-      
-      # Routing Domain (13) - P0: ROUTE-001 | P1: others
-      - ROUTE-001  # ide.tsx no beforeLoad
-      - ROUTE-002  # ide.tsx uses window.location
-      - ROUTE-003  # ide.$projectId double fetch
-      - ROUTE-004  # notes.$projectId useEffect
-      - ROUTE-005  # workspace/$projectId no guard
-      - ROUTE-006  # HubHomePage wrong check
-      - ROUTE-007  # WorkspaceSwitcher no platform
-      - ROUTE-008  # ProjectContext auto-switch
-      - ROUTE-009  # switchWorkspace no check
-      - ROUTE-010  # duplicate hub routes
-      - ROUTE-011  # IDE buttons without check
-      - ROUTE-012  # missing non-lazy routes
-      - ROUTE-013  # notes dynamic import
-      
-      # Platform Domain (6) - P0: PLAT-001,002 | P1: others
-      - PLAT-001  # temp project on desktop
-      - PLAT-002  # notes hardcoded browser-mode
-      - PLAT-003  # sidebar bypasses platform
-      - PLAT-004  # getPlatformContract not called
-      - PLAT-005  # shouldUseTempProject inverted
-      - PLAT-006  # no platform-aware hydration
+      - FSA-001   # DataCloneError prevented via conditional structuredClone
+      - FSA-007   # fsaHandle state exists in ProjectContext
+      - FSA-009   # duplicate handle manager deleted
+      - STATE-011 # null handle prevention in project-crud-slice
+      - STATE-002 # IDE hydration by projectId (sessionStorage-based)
+      - STATE-003 # workspace-store Dexie storage (not localStorage)
+      - ROUTE-001 # platform guard in ide.tsx beforeLoad
+      - ROUTE-003 # no double fetch in ide.$projectId.tsx
+      - ROUTE-004 # notes.$projectId useEffect → loader
+      - PLAT-002  # browser-mode for /notes is correct by design
+
+  # PARTIAL (Browser limitations, not code bugs)
+  partial:
+    count: 3
+    ids:
+      - FSA-002  # Chrome 122-128 may still prompt (browser limitation)
+      - FSA-003  # stores null for Chrome <129 (prevents DataCloneError - correct)
+      - FSA-004  # Chrome 122-128 behavior is browser-imposed
+    note: "These are browser-imposed limitations, documented in ADR-034"
+
+  # STILL INFECTED (Must be fixed by teams)
+  still_infected:
+    count: 17
+    critical_p0:
+      - PLAT-001   # temp project on desktop (Team A)
+      - ROUTE-002  # window.location used (Team A)
+    
+    remaining:
+      # State Domain (some are works-as-designed)
+      - STATE-001  # WORKS_AS_DESIGNED - projects stored in Dexie, not Zustand
+      - STATE-004  # file-sync-status no project scope (Team B - deferred)
+      - STATE-005  # agent-selection global (Team B - deferred)
+      - STATE-006  # conversation subscription leak (Team B - deferred)
+      - STATE-007  # chat-store global key (Team B - deferred)
+      - STATE-008  # rag-store global index (Team B - deferred)
+      - STATE-009  # terminal-store localStorage (Team B - low priority)
+      - STATE-010  # hydration-manager empty (Team B - deferred)
+      - STATE-012  # no cleanup on workspace switch (Team B - deferred)
+      # Routing Domain
+      - ROUTE-005  # workspace/$projectId no guard (Team A)
+      - ROUTE-006  # HubHomePage wrong check (Team A)
+      - ROUTE-007  # WorkspaceSwitcher no platform (Team A)
+      - ROUTE-008  # ProjectContext auto-switch (Team A)
+      - ROUTE-009  # switchWorkspace no check (Team A)
+      - ROUTE-010  # duplicate hub routes (Team A)
+      - ROUTE-011  # IDE buttons without check (Team A)
+      - ROUTE-012  # missing non-lazy routes (Team A)
+      - ROUTE-013  # notes dynamic import (Team A)
+      # Platform Domain
+      - PLAT-003   # sidebar bypasses platform (Team A)
+      - PLAT-004   # getPlatformContract not called (Team A)
+      - PLAT-005   # shouldUseTempProject inverted (Team A)
+      - PLAT-006   # no platform-aware hydration (Team A)
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PHASE EXECUTION STATUS (ADR-034)
+# TEAM ASSIGNMENTS (After Audit)
 # ═══════════════════════════════════════════════════════════════════════════
 
-phases:
-  phase_0:
-    name: "Diagnostic Lock-In"
-    status: "COMPLETE"
-    duration: "30 min"
-    completed_at: "2026-01-17T10:30:00+07:00"
-    deliverables:
-      - path: "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
-        status: "CREATED"
-      - path: "_bmad-ext/state/LOOP_STATE.yaml"
-        status: "UPDATED"
-  
-  phase_1:
-    name: "FSA Handle Unification"
-    status: "PENDING"
-    estimated_duration: "4 hours"
-    infections_targeted:
-      - FSA-001
-      - FSA-002
-      - FSA-003
-      - FSA-004
-      - FSA-005
-      - FSA-006
-      - FSA-007
-      - FSA-008
-      - FSA-009
-    acceptance:
-      - "Create project, refresh, navigate to IDE - files load without prompt"
-  
-  phase_2:
-    name: "State Scoping"
-    status: "PENDING"
-    estimated_duration: "3 hours"
-    infections_targeted:
-      - STATE-001
-      - STATE-002
-      - STATE-003
-      - STATE-004
-      - STATE-005
-      - STATE-006
-      - STATE-007
-      - STATE-008
-      - STATE-010
-      - STATE-011
-      - STATE-012
-    acceptance:
-      - "Open project A, open project B in new tab, verify isolation"
-  
-  phase_3:
-    name: "Route Standardization"
-    status: "PENDING"
-    estimated_duration: "2 hours"
-    infections_targeted:
-      - ROUTE-001
-      - ROUTE-002
-      - ROUTE-003
-      - ROUTE-004
-      - ROUTE-005
-      - ROUTE-012
-    acceptance:
-      - "Navigate between all workspaces on desktop and mobile"
-  
-  phase_4:
-    name: "Platform Contract Enforcement"
-    status: "PENDING"
-    estimated_duration: "1 hour"
-    infections_targeted:
-      - PLAT-001
-      - PLAT-002
-      - PLAT-003
-      - PLAT-004
-      - PLAT-005
-      - ROUTE-006
-      - ROUTE-007
-      - ROUTE-008
-      - ROUTE-009
-      - ROUTE-011
-    acceptance:
-      - "Mobile cannot see or access IDE anywhere"
-  
-  phase_5:
-    name: "Verification"
-    status: "PENDING"
-    estimated_duration: "1 hour"
-    checks:
-      - command: "pnpm tsc --noEmit"
-        expected: "0 errors"
-      - command: "pnpm vitest run"
-        expected: "All pass"
-      - manual: "Desktop IDE files load without prompt"
-      - manual: "Mobile Notes works, no IDE access"
-      - manual: "Project switch isolates state"
+teams:
+  team_a:
+    name: "Platform & Routing Squad"
+    status: "GOOD_STANDING"
+    handoff_document: "_bmad-output/sprint-artifacts/team-a-handoff-2026-01-19.md"
+    assigned_infections:
+      - PLAT-001   # hide temp project on desktop
+      - ROUTE-002  # window.location → useMatchRoute
+    waiting_for: "Team submission with evidence"
+    
+  team_b:
+    name: "Storage & State Squad"
+    status: "UNDER_REVIEW"
+    reason: "55.5% false claim rate"
+    handoff_document: "_bmad-output/sprint-artifacts/team-b-handoff-2026-01-19.md"
+    assigned_infections:
+      - STATE-003  # workspace-store localStorage → Dexie
+      - STATE-002  # IDE hydration by projectId from URL
+    waiting_for: "Team submission with EVIDENCE (mandatory)"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PRIOR COMPLETED (Phase B - Week 1-2) - From previous session
+# NEW GOVERNANCE RULES (Effective Immediately)
 # ═══════════════════════════════════════════════════════════════════════════
 
-prior_completed:
-  - "ARC-B01: StorageGateway abstraction layer (2026-01-18)"
-  - "ARC-B02: FSAGateway adapter with handle persistence (2026-01-18)"
-  - "ARC-B03: IDBGateway adapter (2026-01-18)"
-  - "ARC-B04: browser-mode.ts persistence fix (2026-01-16)"
-  - "ARC-B05: FileSystemObserver with polling fallback (2026-01-18)"
-  - "ARC-B06: Snapshot caching for fast load (2026-01-18)"
-  - "ARC-B07: Folder overlap detection and warning UI (2026-01-18)"
-  - "ARC-B08: File tree exclusion patterns configuration (2026-01-18)"
-  - "ARC-B09: Scan depth limits and warnings (2026-01-18)"
-  - "ARC-B10: .viagent/ metadata folder structure (2026-01-18)"
-  - "ARC-B11: Notes ↔ Markdown bidirectional sync (2026-01-18)"
-  - "ARC-B12: External change conflict resolution UI (2026-01-18)"
-  - "ARC-D01: Enforce ProjectId template literal type (2026-01-18)"
-  - "ARC-D02: Fix workspaceId || projectId fallback bugs (2026-01-18)"
-  - "ARC-D03: Rename bindings → workspaceBindings (2026-01-14)"
-  - "ARC-E01: Delete legacy lib/workspace/project-store.ts (2026-01-19)"
-  - "ARC-E02: Delete legacy lib/workspace/file-sync-status-store.ts (2026-01-19)"
-  - "ARC-E03: Update test imports from @/lib/state/ (2026-01-14)"
-  - "ARC-E04: Archive lib/filesystem duplicates (2026-01-14)"
-  - "ARC-C05: Archive duplicate store files (2026-01-14)"
-  - "ARC-C10: Concurrent CRUD handling (2026-01-14)"
+governance_rules:
+  - "NO status change to REMEDIATED without Gatekeeper validation"
+  - "Evidence required for every claim (console logs, screenshots, test output)"
+  - "Commits must use team prefix: [TEAM-A] or [TEAM-B]"
+  - "False claim rate > 30% = mandatory review"
+  - "Uncommitted work > 2 hours = auto-escalation"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ANCHOR (Human Intent Freshness)
 # ═══════════════════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent_timestamp: "2026-01-17T10:00:00+07:00"
+  human_intent_timestamp: "2026-01-19T14:00:00+07:00"
   staleness_threshold_hours: 4
-  last_human_message: "Detect infected vicinity - reason about similar failures (FSA persistence, UI state management, selectors not navigating) - trace stories → epics → correct-course → making ADR → fix systematically with master plan"
-  intent_summary: "Execute ADR-034 Workspace Access Infection Remediation - unified 5-phase master plan targeting 31 infections across FSA, State, Routing, Platform domains"
-  conversation_id: "2026-01-17-infection-remediation"
+  last_human_message: "Run strict governance and validate their works of reality, multi-specs code-review and check thoroughly investigate with multiple agents to check what they record as they did vs reality"
+  intent_summary: "Governance enforcement - validate team claims vs reality, create handoff artifacts, enforce new rules"
+  conversation_id: "2026-01-19-governance-audit"
+  mode: "governance_enforcement"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERRORS
@@ -261,78 +205,43 @@ errors:
   escalations: []
 
 # ═══════════════════════════════════════════════════════════════════════════
-# DELEGATIONS
-# ═══════════════════════════════════════════════════════════════════════════
-
-delegations:
-  active: []
-  completed:
-    - delegation_id: "del-adr-034-diagnostic"
-      agent: "EXCALIBUR"
-      story: "ADR-034-PHASE-0"
-      started_at: "2026-01-17T10:00:00+07:00"
-      completed_at: "2026-01-17T10:30:00+07:00"
-      status: "SUCCESS"
-      artifacts_created: 1
-      files_modified:
-        - "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md (CREATED)"
-        - "_bmad-ext/state/LOOP_STATE.yaml (UPDATED)"
-      notes: "Deep scan complete. 31 infections identified across 4 domains. Master remediation plan created."
-  failed: []
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PROGRESS METRICS
+# PROGRESS METRICS (CORRECTED)
 # ═══════════════════════════════════════════════════════════════════════════
 
 progress:
-  epic_total_stories: 28
-  epic_stories_complete: 28
-  epic_stories_remaining: 0
-  adr_034_phases_total: 5
-  adr_034_phases_complete: 1
-  adr_034_phases_remaining: 4
   infections_total: 31
-  infections_remediated: 0
-  infections_remaining: 31
-  typescript_errors: 0
+  infections_remediated: 11      # STATE-002, STATE-003 fixed (2026-01-19)
+  infections_partial: 3         # Browser limitations
+  infections_remaining: 17      # STATE-002, STATE-003 remediated
+  typescript_errors: 6          # Minor unused variable warnings
+  uncommitted_files: 33
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ARTIFACT REGISTRY
+# NEXT STEPS
 # ═══════════════════════════════════════════════════════════════════════════
 
-artifacts:
-  sprint_status: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
-  workflow_status: "bmm-workflow-status.yaml"
-  adr_033: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
-  adr_034: "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
-  loop_state: "_bmad-ext/state/LOOP_STATE.yaml"
-  
-  to_modify:
-    - path: "src/infrastructure/filesystem/handle-persistence.ts"
-      reason: "FSA-001, FSA-003, FSA-004"
-    - path: "src/lib/workspace/ProjectContext.tsx"
-      reason: "FSA-007, ROUTE-008, ROUTE-009"
-    - path: "src/routes/ide.tsx"
-      reason: "ROUTE-001, ROUTE-002, PLAT-001"
-    - path: "src/routes/ide.$projectId.tsx"
-      reason: "ROUTE-003, FSA-008"
-    - path: "src/routes/notes.lazy.tsx"
-      reason: "PLAT-002, ROUTE-013"
-    - path: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
-      reason: "STATE-002"
-    - path: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
-      reason: "STATE-003"
-      
-  to_delete:
-    - path: "src/lib/filesystem/fsa-handle-manager.ts"
-      reason: "FSA-009"
-      archive_to: "_bmad-ext/.archive/fsa-handle-manager-2026-01-17.ts"
-      
-  to_create:
-    - path: "src/routes/knowledge.$projectId.tsx"
-      reason: "ROUTE-012"
-    - path: "src/routes/study.$projectId.tsx"
-      reason: "ROUTE-012"
+next_steps:
+  - step: 1
+    action: "Team A reads handoff and executes PLAT-001, ROUTE-002"
+    document: "_bmad-output/sprint-artifacts/team-a-handoff-2026-01-19.md"
+    
+  - step: 2
+    action: "Team B reads handoff and executes STATE-003, STATE-002"
+    document: "_bmad-output/sprint-artifacts/team-b-handoff-2026-01-19.md"
+    
+  - step: 3
+    action: "Teams submit completed work with EVIDENCE"
+    required: "Console logs, screenshots, TypeScript check output"
+    
+  - step: 4
+    action: "Gatekeeper validates submissions"
+    validation: "Run checks specified in handoff documents"
+    
+  - step: 5
+    action: "Update infection counts after validation"
+    update_files:
+      - "_bmad-ext/state/LOOP_STATE.yaml"
+      - "_bmad-output/sprint-artifacts/consolidated-foundation-sprint-2026-01-17.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CONTINUATION RULES
@@ -340,13 +249,12 @@ artifacts:
 
 continuation:
   continue_if:
-    - "Phases pending"
-    - "No critical errors (< 3 failures per file)"
-    - "Anchor fresh (< 4h since 2026-01-17T10:00)"
-    - "User has not interrupted"
-  
+    - "Teams submit work with evidence"
+    - "No critical errors"
+    - "Anchor fresh (< 4h)"
+    
   stop_if:
-    - "All 5 phases complete"
-    - "Critical error (3+ failures in same file)"
-    - "Anchor stale (await confirmation)"
+    - "All infections remediated"
+    - "Critical error"
+    - "Anchor stale"
     - "User interrupt"

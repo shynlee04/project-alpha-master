@@ -9,6 +9,11 @@
  *
  * Problem: FileSystemDirectoryHandle cannot be serialized to IndexedDB.
  * Solution: Store serializable metadata, request new handle on restoration.
+ *
+ * Chrome 122+ Enhancement: Silent restore from stored handle with persistent permissions.
+ * - If user granted "Allow on every visit" permission, handle can be restored by ID
+ * - No user prompt required when permission is already granted
+ * - Fall back to prompt ONLY if handle is truly unavailable (revoked, deleted)
  */
 
 import type {
@@ -30,6 +35,77 @@ import {
   getAllValidFSAHandles,
 } from '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers';
 import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db-types';
+
+// ============================================================================
+// Chrome 129+ Structured Clone Support Detection
+// ============================================================================
+
+/**
+ * Check if the browser supports structuredClone for FileSystemDirectoryHandle.
+ * Chrome 129+ added support for cloning FileSystemDirectoryHandle objects,
+ * which allows us to store the actual handle in IndexedDB instead of just metadata.
+ *
+ * This is critical for the "instant restore" feature - with structuredClone support,
+ * we can persist the handle and restore it on page reload without user prompt.
+ *
+ * @returns true if browser supports structuredClone for handles (Chrome 129+)
+ */
+export function isStructuredCloneSupported(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    'structuredClone' in window &&
+    navigator.userAgent.includes('Chrome/129')
+  );
+}
+
+/**
+ * Chrome versions that support persistent FSA permissions without prompting.
+ * Chrome 122+ allows restoring handles by ID without user interaction when
+ * the user previously granted "Allow on every visit" permission.
+ */
+const CHROME_VERSIONS_WITH_PERSISTENT_PERMISSION = [
+  122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
+];
+
+/**
+ * Check if the current browser supports persistent FSA permissions.
+ * Chrome 122+ with "Allow on every visit" permission allows silent handle
+ * restoration without user prompt when using the same handle ID.
+ *
+ * @returns true if browser supports silent handle restoration
+ */
+export function isPersistentPermissionSupported(): boolean {
+  if (typeof window === 'undefined' || !navigator.userAgent) {
+    return false;
+  }
+
+  const chromeMatch = navigator.userAgent.match(/Chrome\/(\d+)/);
+  if (!chromeMatch) {
+    return false;
+  }
+
+  const version = parseInt(chromeMatch[1], 10);
+  return CHROME_VERSIONS_WITH_PERSISTENT_PERMISSION.includes(version);
+}
+
+/**
+ * Check if we can attempt silent restore for a given record.
+ * Silent restore works when:
+ * 1. FSA API is supported
+ * 2. Browser supports persistent permissions (Chrome 122+)
+ * 3. Permission status is 'granted'
+ *
+ * @param record - FSA handle record from Dexie
+ * @returns true if silent restore should be attempted
+ */
+export function canAttemptSilentRestore(record: FSAHandleRecord): boolean {
+  return (
+    isFSASupported() &&
+    isPersistentPermissionSupported() &&
+    record.permissionStatus === 'granted' &&
+    !!record.directoryPath
+  );
+}
 
 // ============================================================================
 // Handle Metadata Service
@@ -88,11 +164,18 @@ export class HandlePersistenceService {
   }
 
   /**
-   * Store handle metadata for a project
+   * Store handle for a project.
+   *
+   * Chrome 129+ Enhancement: If structuredClone is supported, we store the
+   * actual FileSystemDirectoryHandle in Dexie. This enables true "instant restore"
+   * without any user prompt on page reload.
+   *
+   * For older browsers: Store only metadata (directory name, permissions).
+   * The handle must be requested from user on restoration.
    *
    * @param projectId - The project ID
    * @param handle - The FSA directory handle
-   * @param workspaceId - Workspace context
+   * @param workspaceId - Workspace context (default: 'ide')
    */
   async persistHandle(
     projectId: string,
@@ -101,18 +184,28 @@ export class HandlePersistenceService {
   ): Promise<void> {
     const metadata = serializeHandle(handle, workspaceId);
 
+    // Chrome 129+ support: Store actual handle when structuredClone is available
+    // This enables true "instant restore" without user prompt on page reload
+    const handleData = isStructuredCloneSupported()
+      ? structuredClone(handle) // Chrome 129+: Store actual handle
+      : null; // Older browsers: Store metadata only (avoid DataCloneError)
+
     // Store in Dexie using existing helper (converts to FSAHandleRecord)
     await storeFSAHandle({
       projectId,
       workspaceId,
-      handleData: null, // We DON'T store the actual handle!
+      handleData,
       directoryPath: metadata.directoryName,
       permissionStatus: 'granted',
       grantedAt: Date.now(),
       lastAccessedAt: Date.now(),
     });
 
-    console.log(`[HandlePersistence] Persisted metadata for project: ${projectId}`);
+    console.log(
+      `[HandlePersistence] Persisted ${
+        isStructuredCloneSupported() ? 'handle' : 'metadata'
+      } for project: ${projectId}`
+    );
   }
 
   /**
@@ -154,12 +247,15 @@ export class HandlePersistenceService {
 
     // Try silent restore first (if enabled)
     if (this.config.enableSilentRestore) {
+      let silentRestoreAttempted = false;
+
       try {
+        silentRestoreAttempted = true;
         const handle = await this.trySilentRestore(projectId, record);
         if (handle) {
           // Update last accessed timestamp
           await updateFSAHandlePermission(projectId, 'granted');
-          
+
           return {
             success: true,
             handle,
@@ -178,40 +274,141 @@ export class HandlePersistenceService {
         console.warn(`[HandlePersistence] Silent restore failed: ${error}`);
         // Continue to user prompt fallback
       }
+
+      // Silent restore was attempted but failed - pass this info to prompt
+      if (silentRestoreAttempted) {
+        return this.promptUserForHandle(projectId, record, true);
+      }
     }
 
-    // Fall back to user prompt
-    return this.promptUserForHandle(projectId, record);
+    // Silent restore not enabled or not attempted
+    return this.promptUserForHandle(projectId, record, false);
   }
 
   /**
-   * Try to restore handle silently (without user prompt)
+   * Try to restore handle silently (without user prompt).
+   *
+   * Strategy for Chrome 122+ with persistent permissions:
+   * 1. If permission already granted in record: try to restore by handle ID
+   * 2. The showDirectoryPicker({ id: projectId }) call will NOT prompt
+   *    if user previously granted "Allow on every visit" permission
+   * 3. If handle is truly unavailable (revoked, deleted): return null
+   *    to trigger fallback to user prompt
+   *
+   * @param projectId - The project ID (used as handle ID)
+   * @param record - FSA handle record from Dexie
+   * @returns Restored handle or null if silent restore not possible
    */
   private async trySilentRestore(
     projectId: string,
-    _record: FSAHandleRecord  // Unused but kept for clarity
+    record: FSAHandleRecord
   ): Promise<FileSystemDirectoryHandle | null> {
-    if (!isFSAAvailable()) {
+    if (!isFSASupported()) {
+      console.log('[HandlePersistence] FSA not supported, cannot silent restore');
       return null;
     }
 
-    try {
-      // Some browsers may persist handles across sessions
-      // Try to get the handle by ID
-      const handle = await window.showDirectoryPicker({ id: projectId });
-      return handle;
-    } catch (error) {
-      // Silent restore failed - this is expected in most browsers
+    // Chrome 129+ with structuredClone: Restore from stored handleData (truly silent)
+    // This is the BEST case - we have the actual handle stored, no prompt needed
+    if (isStructuredCloneSupported() && record.handleData) {
+      console.log(
+        `[HandlePersistence] Chrome 129+ detected, restoring handle from structuredClone for project: ${projectId}`
+      );
+      try {
+        // structuredClone can restore the actual FileSystemDirectoryHandle
+        const handle = structuredClone(record.handleData) as FileSystemDirectoryHandle;
+        console.log(`[HandlePersistence] Handle restored from structuredClone for project: ${projectId}`);
+        return handle;
+      } catch (error) {
+        console.warn(`[HandlePersistence] Failed to restore handle from structuredClone: ${error}`);
+        // Continue to other restoration methods
+      }
+    }
+
+    // Chrome 122-128: Try persistent permission restoration
+    // This may prompt user if they chose "Allow this time" instead of "Allow on every visit"
+    if (isPersistentPermissionSupported()) {
+      // Check if we have a granted permission record
+      if (record.permissionStatus === 'granted') {
+        console.log(
+          `[HandlePersistence] Chrome 122-128 detected, attempting silent restore for project: ${projectId}`
+        );
+
+        try {
+          // In Chrome 122+, if the user granted "Allow on every visit" permission,
+          // showDirectoryPicker with the same ID will restore the handle WITHOUT prompting.
+          // However, if user chose "Allow this time", this WILL prompt.
+          const handle = await window.showDirectoryPicker({
+            id: projectId,
+            mode: 'readwrite',
+          });
+
+          console.log(
+            `[HandlePersistence] Silent restore successful for project: ${projectId}`
+          );
+          return handle;
+        } catch (error: unknown) {
+          const err = error as { name?: string; message?: string };
+
+          // Handle is truly unavailable - permission was revoked or handle deleted
+          if (err.name === 'NotAllowedError') {
+            console.warn(
+              `[HandlePersistence] Permission revoked or handle deleted for project: ${projectId}`
+            );
+            // Update permission status to reflect the actual state
+            await updateFSAHandlePermission(projectId, 'denied');
+            return null;
+          }
+
+          // AbortError means user cancelled (shouldn't happen in silent mode,
+          // but handle gracefully anyway)
+          if (err.name === 'AbortError') {
+            console.warn(
+              `[HandlePersistence] Silent restore aborted for project: ${projectId}`
+            );
+            return null;
+          }
+
+          // Other errors - fall back to user prompt
+          console.warn(
+            `[HandlePersistence] Silent restore failed: ${err.message || err.name}`
+          );
+          return null;
+        }
+      }
+
+      // Permission not granted yet - cannot silent restore
+      console.log(
+        `[HandlePersistence] Permission not granted (status: ${record.permissionStatus}), skipping silent restore`
+      );
       return null;
     }
+
+    // Pre-Chrome 122: Silent restore is not supported
+    // The browser doesn't persist handles across sessions without prompting
+    console.log(
+      `[HandlePersistence] Browser doesn't support persistent permissions, skipping silent restore`
+    );
+    return null;
   }
 
   /**
-   * Prompt user to select a directory handle
+   * Prompt user to select a directory handle.
+   *
+   * This is called when:
+   * 1. No stored handle metadata exists
+   * 2. Silent restore failed (handle revoked, deleted, or browser doesn't support)
+   * 3. Permission was previously denied
+   *
+   * @param projectId - The project ID
+   * @param record - FSA handle record from Dexie (optional, for context)
+   * @param silentRestoreFailed - Whether silent restore was attempted and failed
+   * @returns HandleRestoreResult with handle or null
    */
   private async promptUserForHandle(
     projectId: string,
-    record: FSAHandleRecord
+    record?: FSAHandleRecord,
+    silentRestoreFailed: boolean = false
   ): Promise<HandleRestoreResult> {
     if (!isFSAAvailable()) {
       return {
@@ -222,50 +419,67 @@ export class HandlePersistenceService {
       };
     }
 
+    // Build context-aware error message
+    let contextMessage = '';
+    if (silentRestoreFailed && record) {
+      if (record.permissionStatus === 'denied') {
+        contextMessage = 'Permission was previously denied. ';
+      } else if (record.permissionStatus === 'dismissed') {
+        contextMessage = 'Previous permission request was cancelled. ';
+      } else {
+        contextMessage =
+          'Previous handle is no longer available (revoked or deleted). ';
+      }
+    }
+
     try {
-      // Show directory picker
+      // Show directory picker with context-aware prompt
       const handle = await window.showDirectoryPicker({
         mode: 'readwrite',
         startIn: 'documents',
       });
 
-      // Verify it's the same directory (by name)
-      if (handle.name === record.directoryPath) {
-        // Update permission status
-        await updateFSAHandlePermission(projectId, 'granted');
-        
+      // Verify it's the same directory (by name) if we have a record
+      const expectedPath = record?.directoryPath;
+      if (expectedPath && handle.name !== expectedPath) {
+        // Different directory selected - inform user
+        console.warn(
+          `[HandlePersistence] User selected different directory: "${handle.name}" != "${expectedPath}"`
+        );
         return {
-          success: true,
-          handle,
+          success: false,
+          handle: null,
+          error: `Selected directory "${handle.name}" does not match expected "${expectedPath}". Please select the correct folder to continue.`,
           requiresUserInteraction: true,
-          restoredFromMetadata: {
-            handleId: record.projectId,
-            directoryName: handle.name,
-            lastAccessTime: Date.now(),
-            permissionGranted: true,
-            workspaceId: record.workspaceId,
-            kind: 'directory',
-          },
         };
       }
 
-      // Different directory selected
+      // Update permission status
+      await updateFSAHandlePermission(projectId, 'granted');
+
       return {
-        success: false,
-        handle: null,
-        error: `Selected directory "${handle.name}" does not match expected "${record.directoryPath}"`,
+        success: true,
+        handle,
         requiresUserInteraction: true,
+        restoredFromMetadata: {
+          handleId: projectId,
+          directoryName: handle.name,
+          lastAccessTime: Date.now(),
+          permissionGranted: true,
+          workspaceId: record?.workspaceId ?? 'ide',
+          kind: 'directory',
+        },
       };
     } catch (error: unknown) {
       const err = error as { name?: string; message?: string };
-      
+
       if (err.name === 'AbortError') {
         // User cancelled
         await updateFSAHandlePermission(projectId, 'dismissed');
         return {
           success: false,
           handle: null,
-          error: 'User cancelled directory selection',
+          error: `${contextMessage}Permission request was cancelled. The project cannot access files without your permission.`,
           requiresUserInteraction: true,
         };
       }
@@ -276,7 +490,7 @@ export class HandlePersistenceService {
         return {
           success: false,
           handle: null,
-          error: 'Permission denied',
+          error: `${contextMessage}Permission was denied. Please grant access to the project folder to continue.`,
           requiresUserInteraction: true,
         };
       }
@@ -284,7 +498,7 @@ export class HandlePersistenceService {
       return {
         success: false,
         handle: null,
-        error: err.message || 'Unknown error',
+        error: err.message || `${contextMessage}Unknown error occurred while requesting folder access.`,
         requiresUserInteraction: true,
       };
     }
