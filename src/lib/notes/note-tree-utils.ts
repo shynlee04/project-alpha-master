@@ -13,7 +13,7 @@ import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 /**
  * Tree node structure
  */
-export interface TreeNode {
+export interface NoteTreeNode {
     id: string;
     note: NoteRecord;
     children: TreeNode[];

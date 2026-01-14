@@ -12,11 +12,11 @@ import { useTranslation } from 'react-i18next';
 import { ChevronRight, Star } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { useNoteStore } from '@/lib/notes/note-store';
-import type { TreeNode } from '@/lib/notes/note-tree-utils';
+import type { NoteTreeNode } from '@/lib/notes/note-tree-utils';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 
 interface NoteTreeItemProps {
-    node: TreeNode;
+    node: NoteTreeNode;
     isActive: boolean;
     onNoteSelect: (noteId: string) => void;
     level?: number;

@@ -82,15 +82,14 @@ current_workflow:
   id: "epic-cc-arc-week3-2026-01-19"
   status: "PHASE_E_IN_PROGRESS"
   epic: "EPIC-CC-ARC"
-  story: "ARC-E01"
-  started_at: "2026-01-19T16:00:00+07:00"
-  completed_at: "2026-01-19T18:00:00+07:00"
+  story: "ARC-E03"
+  started_at: "2026-01-19T18:30:00+07:00"
   team: "Team B (Orchestrator)"
-  story_status: "COMPLETED"
-  story_summary: "Delete legacy lib/workspace/project-store.ts - consolidate all imports to canonical location"
-  depends_on: "ARC-D03 ✅"
+  story_status: "IN_PROGRESS"
+  story_summary: "Delete lib/state/ directory (verify empty, remove if no remaining imports)"
+  depends_on: "ARC-E02 ✅"
   phase_e_in_progress: true
-  team_b_complete: true  # All Team B stories complete!
+  team_b_complete: false  # ARC-E03, E04 remaining
   
   # TypeScript fixes completed this session
   session_fixes:
@@ -200,6 +199,16 @@ current_workflow:
         - "src/lib/workspace/workspace-types.ts"
         - "src/lib/workspace/index.ts (barrel re-export)"
         - "src/lib/workspace/project-store.ts (DELETED)"
+    - id: "ARC-E02"
+      name: "Delete legacy lib/workspace/file-sync-status-store.ts"
+      completed_at: "2026-01-19T18:30:00+07:00"
+      result: "2 files migrated, facade file deleted, subdirectory index.ts used for imports. Build: SUCCESS (4m 15s)"
+      team: "Team B"
+      adr_reference: "ADR-033 Clean Architecture - Single Source of Truth"
+      files_modified:
+        - "src/lib/workspace/index.ts (barrel re-export)"
+        - "src/presentation/components/ui/activity-indicators/SyncStatusPanel.tsx (import path)"
+        - "src/lib/workspace/file-sync-status-store.ts (DELETED - was a facade)"
 
 parallel_workflows:
   - id: "cc-01-project-space-2026-01-15"

@@ -199,10 +199,11 @@ export {
   clearAllFileSyncStatuses,
   fileSyncStatusStore,
   fileSyncCountsStore,
+  type FileSyncState,
   type FileSyncStatus,
   type FileSyncCounts,
   type SyncProgress,
-} from './file-sync';
+} from '@/lib/workspace/file-sync-status-store';
 
 export {
   getNoteExecutionContext,
