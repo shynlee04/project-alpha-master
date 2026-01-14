@@ -8,6 +8,7 @@
  */
 
 import { StateCreator } from 'zustand';
+import { db } from '@/infrastructure/persistence/dexie-db';
 import type {
   WorkspaceBindings,
   ValidationResult,
@@ -51,8 +52,12 @@ export const createProjectBindingsSlice: StateCreator<
       projects: { ...state.projects, [projectId]: updated },
     }));
 
-    // Persist to Dexie
-    // TODO: Add Dexie persistence
+    // Persist to Dexie (async, non-blocking)
+    // ARC-C06: Added Dexie persistence for bindings updates
+    db.projects.update(projectId, { bindings: updated.bindings }).catch((error: unknown) => {
+      const err = error as Error;
+      console.error('[ProjectStore] Failed to persist bindings to Dexie:', err.message);
+    });
   },
 
   // Get project bindings

@@ -229,9 +229,84 @@ export interface ViagentFileTreeSnapshot {
   scanDurationMs: number;
 }
 
+/**
+ * File tree scan configuration
+ *
+ * @remarks
+ * Configures how file tree scanning behaves.
+ */
+export interface ViagentScanConfig {
+  /** Maximum scan depth (default: 20, max: 50) */
+  maxDepth: number;
+
+  /** Depth at which to show warning (default: 15) */
+  warningDepth: number;
+
+  /** Maximum number of files to scan (default: 50000) */
+  maxFiles: number;
+
+  /** Whether to show scan progress */
+  showProgress: boolean;
+}
+
+/**
+ * ViaGent user configuration
+ *
+ * @remarks
+ * Stored in .viagent/config.json.
+ * Contains user-configurable settings for file tree and workspace behavior.
+ *
+ * **ARC-B08**: File tree exclusion patterns configuration
+ */
+export interface ViagentConfig {
+  /** Metadata schema version */
+  version: ViagentVersion;
+
+  /** Project ID this config belongs to */
+  projectId: string;
+
+  /** File tree exclusion patterns (user-configurable) */
+  exclusionPatterns: string[];
+
+  /** File tree scan configuration */
+  scan: ViagentScanConfig;
+
+  /** Last updated timestamp (ISO 8601) */
+  updatedAt: string;
+}
+
 // ============================================================================
 // Constants
 // ============================================================================
+
+/**
+ * Default exclusion patterns for file tree scanning
+ *
+ * @remarks
+ * These patterns are always applied. Users can add more via config.json.
+ */
+export const DEFAULT_EXCLUSION_PATTERNS: readonly string[] = [
+  'node_modules',
+  '.git',
+  '.next',
+  'dist',
+  'build',
+  'coverage',
+  '.cache',
+  '.turbo',
+  'out',
+  '.viagent',
+] as const;
+
+/**
+ * Default file tree scan configuration
+ */
+export const DEFAULT_SCAN_CONFIG: ViagentScanConfig = {
+  maxDepth: 20,
+  warningDepth: 15,
+  maxFiles: 50000,
+  showProgress: true,
+} as const;
 
 /**
  * ViaGent metadata folder name
@@ -259,6 +334,9 @@ export const VIAGENT_FILES = {
 
   /** User preferences (optional) */
   PREFERENCES: 'preferences.json',
+
+  /** User-configurable settings (exclusion patterns, scan limits, etc.) */
+  CONFIG: 'config.json',
 } as const;
 
 /**
@@ -339,16 +417,38 @@ export function createInitialFileTreeSnapshot(projectId: string): ViagentFileTre
     fileCount: 0,
     directoryCount: 0,
     maxDepth: 0,
-    exclusionPatterns: [
-      'node_modules',
-      '.git',
-      '.next',
-      'dist',
-      'build',
-      '.viagent',
-    ],
+    exclusionPatterns: [...DEFAULT_EXCLUSION_PATTERNS],
     createdAt: new Date().toISOString(),
     isStale: true,
     scanDurationMs: 0,
+  };
+}
+
+/**
+ * Create default user configuration
+ *
+ * @param projectId - Project ID
+ * @param customExclusionPatterns - Optional custom exclusion patterns to add
+ * @returns Default user configuration
+ *
+ * @remarks
+ * **ARC-B08**: Creates default config with default exclusion patterns.
+ * Users can add custom patterns via settings UI.
+ */
+export function createDefaultConfig(
+  projectId: string,
+  customExclusionPatterns: string[] = []
+): ViagentConfig {
+  const mergedPatterns = new Set([
+    ...DEFAULT_EXCLUSION_PATTERNS,
+    ...customExclusionPatterns,
+  ]);
+
+  return {
+    version: CURRENT_VERSION,
+    projectId,
+    exclusionPatterns: Array.from(mergedPatterns),
+    scan: { ...DEFAULT_SCAN_CONFIG },
+    updatedAt: new Date().toISOString(),
   };
 }

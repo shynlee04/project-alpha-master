@@ -14,12 +14,11 @@ description: |
   - "duplicate detection", "evidence synthesis"
 
   Loads full configuration from: _bmad/modules/deep-scan/agents/evidence-synthesizer.md
-color: "#FF00FF"
-model: MiniMaxAI/MiniMax-M2.1
+model: MiniMax/MiniMax-M2.1
 temperature: 0.1
 tools:
-  write: "md, xml, yaml, json"
-  edit:  "md, xml, yaml, json"
+  write_md_json_yaml_xml: true
+  edit_md_json_yaml_xml: true
   bash:  true
   read:  true
   mcp: true

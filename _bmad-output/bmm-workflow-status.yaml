@@ -5,271 +5,165 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 workflow:
-  id: epic-40-agent-chat-remediation-2026-01-10
-  name: "EPIC-40: Agent Chat Self-Switching & Tool Registry"
-  version: "1.0.0"
-  framework: "BMAD V6 Story-Cycle"
+  id: epic-cc-arc-week3-2026-01-18
+  name: "EPIC-CC-ARC: Correct-Course Architectural Remediation - Week 3"
+  version: "2.0.0"
+  framework: "BMAD Extension Layer v2.0"
 
   # Current Phase
-  current_phase: sprint_ready
-  phase_started_at: "2026-01-10T10:00:00+07:00"
+  current_phase: "phase_d_entity_standardization"
+  phase_started_at: "2026-01-18T11:30:00+07:00"
 
   # Sprint Context
-  sprint_id: epic-40-agent-chat-remediation-2026-01-10
-  sprint_name: "EPIC-40: Agent Chat Self-Switching & Tool Registry"
-  sprint_status: "ready_for_execution"
-  sprint_file: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
+  sprint_id: epic-cc-arc-week3-2026-01-18
+  sprint_name: "EPIC-CC-ARC Week 3: Phase D - Entity Standardization"
+  sprint_status: "in_progress"
+  sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # EPIC STATUS
 # ═══════════════════════════════════════════════════════════════════════════
 
 epics:
-  EPIC-PRV:
-    id: "EPIC-PRV"
-    name: "Universal OpenAI-Compatible Provider System"
-    priority: "P0-CRITICAL"
-    status: "ready_for_sprint"
-    total_stories: 6
-    completed_stories: 0
-    description: "Dynamic provider registration with per-modality endpoints and test playground UI"
-    epic_file: "_bmad-output/epics/EPIC-PRV-universal-openai-compatible-provider-2026-01-11.md"
-    tech_spec: "_bmad-output/planning-artifacts/tech-spec-universal-openai-compatible-provider-2026-01-11.md"
-    quick_dev: "_bmad-output/planning-artifacts/quick-dev-provider-playground-2026-01-11.md"
-
-    targets:
-      A:
-        name: "Foundation Types"
-        status: "ready"
-        stories_planned: 1
-        completed_stories: 0
-        stories:
-          PRV-01:
-            title: "Domain Types for Universal Provider"
-            status: "not_started"
-            file: "stories/PRV-01-domain-types.md"
-      B:
-        name: "Registry & Adapter"
-        status: "ready"
-        stories_planned: 2
-        completed_stories: 0
-        depends_on: "A"
-        stories:
-          PRV-02:
-            title: "Provider Registry Service"
-            status: "not_started"
-            file: "stories/PRV-02-registry-service.md"
-          PRV-03:
-            title: "Universal Adapter Factory"
-            status: "not_started"
-            file: "stories/PRV-03-adapter-factory.md"
-      C:
-        name: "Backend & UI"
-        status: "ready"
-        stories_planned: 2
-        completed_stories: 0
-        depends_on: "B"
-        stories:
-          PRV-04:
-            title: "Backend API Endpoints"
-            status: "not_started"
-            file: "stories/PRV-04-backend-api.md"
-          PRV-05:
-            title: "Test Playground UI"
-            status: "not_started"
-            file: "stories/PRV-05-test-playground.md"
-      D:
-        name: "Integration"
-        status: "ready"
-        stories_planned: 1
-        completed_stories: 0
-        depends_on: "C"
-        stories:
-          PRV-06:
-            title: "Integration & E2E Tests"
-            status: "not_started"
-            file: "stories/PRV-06-integration-tests.md"
-
-  EPIC-40:
-    id: "EPIC-40"
-    name: "Agent Chat Self-Switching Orchestrator"
-    priority: "P0-CRITICAL"
-    status: "ready"
-    total_stories: 9
-    completed_stories: 0
-    description: "Implement centralized system prompt with context-aware mode selection and tool registry"
-    sprint_file: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
-    adr_file: "_bmad-output/planning-artifacts/architecture/adr/ADR-032-agent-chat-self-switching-orchestrator-2026-01-10.md"
-
-    targets:
-      A:
-        name: "Foundation"
-        status: "ready"
-        stories_planned: 2
-        completed_stories: 0
-        current_story: null
-        stories:
-          "40-01":
-            title: "Create Centralized Tool Registry"
-            status: "not_started"
-          "40-03":
-            title: "Update Context Threshold to 65%"
-            status: "not_started"
-      B:
-        name: "Registry Integration"
-        status: "ready"
-        stories_planned: 3
-        completed_stories: 0
-        depends_on: "A"
-        stories:
-          "40-02":
-            title: "Implement Mode Classifier"
-            status: "not_started"
-          "40-04":
-            title: "Create Note CRUD Tool Definitions"
-            status: "not_started"
-          "40-05":
-            title: "Wire search_notes to Tool Registry"
-            status: "not_started"
-      C:
-        name: "Server Integration"
-        status: "ready"
-        stories_planned: 2
-        completed_stories: 0
-        depends_on: "B"
-        stories:
-          "40-06":
-            title: "Update Server-Side getTools() with Registry"
-            status: "not_started"
-          "40-07":
-            title: "Implement Prompt Orchestrator"
-            status: "not_started"
-      D:
-        name: "Testing & Validation"
-        status: "ready"
-        stories_planned: 2
-        completed_stories: 0
-        depends_on: "C"
-        stories:
-          "40-08":
-            title: "Integrate Self-Switching with useAgentChatWithTools"
-            status: "not_started"
-          "40-09":
-            title: "E2E Testing for Self-Switching Agent"
-            status: "not_started"
-
-  EPIC-GU:
-    id: "EPIC-GU"
-    name: "Grand Unification Refactor"
+  EPIC-CC-ARC:
+    id: "EPIC-CC-ARC"
+    name: "Correct-Course Architectural Remediation"
     priority: "P0-CRITICAL"
     status: "in_progress"
-    total_stories: 1
-    completed_stories: 1
-    description: "Unify LLM/Agent config, File System, and Chat/Thread systems"
+    total_stories: 28
+    completed_stories: 19
+    description: "Fix architectural debt, enforce storage contract, standardize entity naming"
+    adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
 
-    targets:
-      A:
-        name: "LLM & Agent Config Unification"
-        status: "in_progress"
-        stories_planned: 1
-        completed_stories: 1
-        current_story: null
-        stories:
-          GU-A-01:
-            title: "Unify Provider Type Definitions"
-            status: "done"
-            completed_at: "2026-01-09T09:30:00+07:00"
-            code_review_grade: "A- (93/100)"
-      B:
-        name: "File System Unification"
-        status: "backlog"
-        stories_planned: 0
-      C:
-        name: "Chat & Thread Unification"
-        status: "backlog"
-        stories_planned: 0
+    # Phase A: Identity & Routing (Team A - COMPLETE)
+    phase_a:
+      name: "Identity & Routing"
+      status: "complete"
+      stories_completed: 6
+      stories:
+        - "ARC-A01: getPlatformContract() service - DONE"
+        - "ARC-A02: Route guards implementation - DONE"
+        - "ARC-A03: useWorkspaceAccess hook fix - DONE"
+        - "ARC-A04: Mobile → Notes redirect - DONE"
+        - "ARC-A05: Hub card click data contract - DONE"
+        - "ARC-A06: Post-creation redirect logic - DONE"
+
+    # Phase B: Storage Contract (Team B - COMPLETE)
+    phase_b:
+      name: "Storage Contract"
+      status: "complete"
+      stories_completed: 12
+      stories:
+        - "ARC-B01: StorageGateway abstraction layer - DONE"
+        - "ARC-B02: FSAGateway adapter - DONE"
+        - "ARC-B03: IDBGateway adapter - DONE"
+        - "ARC-B04: browser-mode.ts persistence fix - DONE"
+        - "ARC-B05: FileSystemObserver with polling fallback - DONE"
+        - "ARC-B06: FileTreeScanner snapshot caching - DONE"
+        - "ARC-B07: Folder overlap detection - DONE"
+        - "ARC-B10: .viagent/ metadata folder - DONE"
+        - "ARC-B11: MarkdownSyncService - DONE"
+        - "ARC-B12: MarkdownSyncConflictDialog - DONE"
+        - "ARC-B08: File tree exclusion patterns - TODO (Week 3)"
+        - "ARC-B09: Scan depth limits - TODO (Week 3)"
+
+    # Phase C: State & Persistence (Team A - IN PROGRESS)
+    phase_c:
+      name: "State & Persistence"
+      status: "in_progress"
+      stories_completed: 3
+      stories_total: 10
+      stories:
+        - "ARC-C01: Consolidate Project Store - DONE"
+        - "ARC-C02: Facade re-exports - DONE"
+        - "ARC-C03: Fix saveProject STUB - DONE"
+        - "ARC-C04: Persist-first pattern - TODO"
+        - "ARC-C05: Archive duplicate stores - TODO"
+        - "ARC-C06: Audit STUB implementations - TODO"
+        - "ARC-C07: Dependency graph analysis - TODO"
+        - "ARC-C08: Fix race conditions - TODO"
+        - "ARC-C09: Permission model - TODO"
+        - "ARC-C10: Optimistic locking - TODO"
+
+    # Phase D: Entity Standardization (Team B - IN PROGRESS)
+    phase_d:
+      name: "Entity Standardization"
+      status: "in_progress"
+      stories_completed: 1
+      stories_total: 4
+      current_story: "ARC-B09"
+      stories:
+        - "ARC-B08: File tree exclusion patterns - DONE (3h, P1)"
+        - "ARC-B09: Scan depth limits - TODO (2h, P1)"
+        - "ARC-D01: ProjectId template literal type - TODO (3h, P1)"
+        - "ARC-D02: workspaceId || projectId fallback bugs - TODO (4h, P1)"
+
+    # Phase E: File Tree Cleanup (Both Teams - PENDING)
+    phase_e:
+      name: "File Tree Cleanup"
+      status: "pending"
+      stories_completed: 1
+      stories_total: 4
+      stories:
+        - "ARC-E01: Delete dead .bak files - TODO"
+        - "ARC-E02: Archive project-store/ - DONE"
+        - "ARC-E03: Archive lib/filesystem/ duplicates - TODO"
+        - "ARC-E04: Update imports to canonical paths - TODO"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # STORY CYCLE STATE
 # ═══════════════════════════════════════════════════════════════════════════
 
 story_cycle:
-  current_story: null
-  current_epic: "EPIC-40"
-  current_step: "sprint_ready"
+  current_story: "ARC-B09"
+  current_epic: "EPIC-CC-ARC"
+  current_phase: "phase_d_entity_standardization"
+  current_step: "story_start"
   step_status: "ready"
 
-  # EPIC-40 Sprint Planning Steps
-  "01-course-correction":
-    status: "completed"
-    completed_at: "2026-01-10T09:00:00+07:00"
-    output_artifact: "_bmad-output/phase3-synthesis/centralized-system-prompt-design-2026-01-10.md"
-
-  "02-adr-creation":
-    status: "completed"
-    completed_at: "2026-01-10T09:30:00+07:00"
-    output_artifact: "_bmad-output/planning-artifacts/architecture/adr/ADR-032-agent-chat-self-switching-orchestrator-2026-01-10.md"
-
-  "03-sprint-planning":
-    status: "completed"
-    completed_at: "2026-01-10T10:00:00+07:00"
-    output_artifact: "_bmad-output/sprint-artifacts/epic-40-agent-chat-remediation-sprint-2026-01-10.md"
-
-  # Previous Story Cycle (EPIC-GU Story GU-A-01)
-  previous_cycle:
-    story: "GU-A-01"
-    epic: "EPIC-GU"
-    completed_at: "2026-01-09T09:30:00+07:00"
-    code_review_grade: "A- (93/100)"
+  team:
+    orchestrator: "EXCALIBUR (ext-master-enhanced v2.0.0)"
+    team_id: "Team B"
+    team_name: "Storage Contract Squad"
+    current_focus: "Phase D: Entity Standardization"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# COMPLETED SPRINTS
+# TEAM ASSIGNMENTS
 # ═══════════════════════════════════════════════════════════════════════════
 
-completed_sprints:
-  - id: phase-3-synthesis-2026-01-10
-    name: "Phase 3: Agent Chat Synthesis & Course Correction"
-    completed_at: "2026-01-10T09:30:00+07:00"
-    stories_completed: 0
-    effort_hours: 4
-    status: "COMPLETE"
-    type: "course_correction"
+teams:
+  - id: "Team A"
+    name: "Identity & Routing Squad"
+    focus: "Phase C (State & Persistence)"
+    current_phase: "C"
+    current_story: "ARC-C04"
+    status: "active"
 
-  - id: phase-1.5-notes-ai-foundation-2026-01-09
-    name: "Phase 1.5: Notes & AI Foundation"
-    completed_at: "2026-01-09T23:30:00+07:00"
-    stories_completed: 5
-    effort_hours: 12
-    status: "COMPLETE"
+  - id: "Team B"
+    name: "Storage Contract Squad"
+    focus: "Phase D (Entity Standardization)"
+    current_phase: "D"
+    current_story: "ARC-B08"
+    status: "active"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # AGENT COORDINATION
 # ═══════════════════════════════════════════════════════════════════════════
 
 agents:
-  coordinator: "bmad-core-bmad-master"
-  current_agent: "bmad-bmm-architect"
+  coordinator: "EXCALIBUR (ext-master-enhanced)"
+  current_agent: "dev-ext"
+  target_agent: "dev-ext"
 
-  sub_agents:
-    bmad-bmm-pm:
-      role: "Product Manager"
-      responsibilities: ["story-creation", "sprint-planning"]
-      status: "standby"
-
-    bmad-bmm-architect:
-      role: "Architect"
-      responsibilities: ["pre-planning", "technical-design"]
-      status: "active"
-
-    bmad-bmm-dev:
-      role: "Developer"
-      responsibilities: ["implementation", "testing"]
-      status: "standby"
-
-    code-reviewer:
-      role: "Code Reviewer"
-      responsibilities: ["validation", "quality-gates"]
-      status: "standby"
+  routing:
+    current_story: "ARC-B08"
+    story_type: "feature_development"
+    rule_id: "DEV-001"
+    workflow: "story-cycle"
+    agent: "dev-ext"
+    priority: "high"
+    timeout_minutes: 60
 
 # ═══════════════════════════════════════════════════════════════════════════
 # MCP SERVERS STATUS
@@ -279,29 +173,28 @@ mcp_servers:
   context7:
     status: "available"
     purpose: "Official documentation queries"
-
   deepwiki:
     status: "available"
     purpose: "GitHub semantic search"
-
   tavily:
     status: "available"
     purpose: "Web research"
-
+  exa:
+    status: "available"
+    purpose: "Web search"
   repomix:
     status: "available"
     purpose: "Local codebase analysis"
+  github:
+    status: "available"
+    purpose: "GitHub operations"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # TIMESTAMPS
 # ═══════════════════════════════════════════════════════════════════════════
 
 timestamps:
-  created_at: "2026-01-09T23:45:00+07:00"
-  last_updated: "2026-01-10T10:00:00+07:00"
-  phase_1_5_completed: "2026-01-09T23:30:00+07:00"
-  phase_3_synthesis_completed: "2026-01-10T09:30:00+07:00"
-  grand_unification_started: "2026-01-09T23:45:00+07:00"
-  gu_a_01_completed: "2026-01-09T09:30:00+07:00"
-  code_review_completed: "2026-01-09T09:25:00+07:00"
-  epic_40_sprint_planning_completed: "2026-01-10T10:00:00+07:00"
+  created_at: "2026-01-18T11:30:00+07:00"
+  last_updated: "2026-01-18T11:30:00+07:00"
+  phase_d_started: "2026-01-18T11:30:00+07:00"
+  arc_b08_started: "2026-01-18T11:30:00+07:00"

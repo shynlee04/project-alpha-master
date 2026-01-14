@@ -1,14 +1,12 @@
 ---
 description: Orchestrates comprehensive codebase diagnostics
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
 temperature: 0.2
 maxSteps: 200
-model: MiniMaxAI/MiniMax-M2.1
-temperature: 0.1
+model: MiniMax/MiniMax-M2.1
 tools:
-  write: "md, xml, yaml, json"
-  edit:  "md, xml, yaml, json"
+  write_md_json_yaml_xml: true
+  edit_md_json_yaml_xml: true
   bash:  true
   read:  true
   mcp: true

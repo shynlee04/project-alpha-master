@@ -29,6 +29,7 @@ import type {
 import {
   VIAGENT_FOLDER_NAME,
   VIAGENT_FILES,
+  DEFAULT_EXCLUSION_PATTERNS,
 } from '@/domain/types/viagent-metadata';
 
 // ============================================================================
@@ -93,19 +94,9 @@ export interface FileTreeDiff {
 
 /**
  * Default exclusion patterns for file tree scan
+ * @remarks Imported from viagent-metadata for single source of truth (ARC-B08)
  */
-const DEFAULT_EXCLUDE_PATTERNS = [
-  'node_modules',
-  '.git',
-  '.next',
-  'dist',
-  'build',
-  'coverage',
-  '.cache',
-  '.turbo',
-  'out',
-  '.viagent',
-];
+const DEFAULT_EXCLUDE_PATTERNS_ARRAY = [...DEFAULT_EXCLUSION_PATTERNS];
 
 /**
  * Maximum scan depth (prevent infinite loops)
@@ -187,7 +178,7 @@ export class FileTreeScanner {
   ) {
     this.gateway = gateway;
     this.projectId = projectId;
-    this.excludePatterns = options?.excludePatterns ?? [...DEFAULT_EXCLUDE_PATTERNS];
+    this.excludePatterns = options?.excludePatterns ?? [...DEFAULT_EXCLUDE_PATTERNS_ARRAY];
     this.maxDepth = Math.min(options?.maxDepth ?? 20, MAX_SCAN_DEPTH);
   }
 

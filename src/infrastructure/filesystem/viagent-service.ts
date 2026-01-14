@@ -21,6 +21,7 @@ import type {
   ViagentNotesIndex,
   ViagentFileTreeSnapshot,
   ViagentNoteEntry,
+  ViagentConfig,
 } from '@/domain/types/viagent-metadata';
 import {
   VIAGENT_FOLDER_NAME,
@@ -28,6 +29,7 @@ import {
   createDefaultProjectMetadata,
   createEmptyNotesIndex,
   createInitialFileTreeSnapshot,
+  createDefaultConfig,
 } from '@/domain/types/viagent-metadata';
 
 // ============================================================================
@@ -131,7 +133,8 @@ export class ViagentService {
    * .viagent/
    * ├── project.json
    * ├── notes-index.json
-   * └── file-tree-snapshot.json
+   * ├── file-tree-snapshot.json
+   * └── config.json
    */
   async initialize(options: ViagentInitOptions): Promise<MetadataResult<void>> {
     try {
@@ -156,11 +159,15 @@ export class ViagentService {
       // Create initial file tree snapshot
       const fileTreeSnapshot = createInitialFileTreeSnapshot(options.projectId);
 
+      // Create default config (ARC-B08)
+      const defaultConfig = createDefaultConfig(options.projectId);
+
       // Write all metadata files
       await Promise.all([
         this.writeProjectMetadata(projectMetadata),
         this.writeNotesIndex(notesIndex),
         this.writeFileTreeSnapshot(fileTreeSnapshot),
+        this.writeConfig(defaultConfig),
         this.gateway.write(folderMarkerPath, new Uint8Array()), // Marker file
       ]);
 
@@ -447,6 +454,146 @@ export class ViagentService {
   }
 
   // ========================================================================
+  // User Configuration (config.json)
+  // ========================================================================
+
+  /**
+   * Read user configuration
+   *
+   * @returns User configuration or error
+   *
+   * @remarks
+   * **ARC-B08**: Reads .viagent/config.json for user-configurable settings.
+   * If config doesn't exist, returns default config.
+   */
+  async readConfig(): Promise<MetadataResult<ViagentConfig>> {
+    try {
+      const path = this.getConfigPath();
+      const exists = await this.gateway.exists(path);
+
+      // Return default config if file doesn't exist yet
+      if (!exists) {
+        const defaultConfig = createDefaultConfig(this.projectId);
+        return { success: true, data: defaultConfig };
+      }
+
+      const data = await this.gateway.read(path);
+      const text = new TextDecoder().decode(data);
+      const config = JSON.parse(text) as ViagentConfig;
+
+      // Validate project ID
+      if (config.projectId !== this.projectId) {
+        throw new Error(`Project ID mismatch in config`);
+      }
+
+      return { success: true, data: config };
+    } catch (error) {
+      const err = error as Error;
+      // On error, return default config rather than failing
+      console.warn('[ViagentService] Failed to read config, using defaults:', err.message);
+      const defaultConfig = createDefaultConfig(this.projectId);
+      return { success: true, data: defaultConfig };
+    }
+  }
+
+  /**
+   * Write user configuration
+   *
+   * @param config - User configuration to write
+   * @returns Success result
+   *
+   * @remarks
+   * **ARC-B08**: Writes .viagent/config.json with user-configurable settings.
+   */
+  async writeConfig(config: ViagentConfig): Promise<MetadataResult<void>> {
+    try {
+      // Update timestamp
+      config.updatedAt = new Date().toISOString();
+
+      const path = this.getConfigPath();
+      const text = JSON.stringify(config, null, 2);
+      const data = new TextEncoder().encode(text);
+
+      await this.gateway.write(path, data);
+
+      return { success: true };
+    } catch (error) {
+      const err = error as Error;
+      return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * Update user configuration
+   *
+   * @param updater - Function to update config
+   * @returns Success result
+   */
+  async updateConfig(
+    updater: (current: ViagentConfig) => ViagentConfig
+  ): Promise<MetadataResult<void>> {
+    const result = await this.readConfig();
+    if (!result.success || !result.data) {
+      return { success: false, error: 'Failed to read current config' };
+    }
+
+    const updated = updater(result.data);
+    return await this.writeConfig(updated);
+  }
+
+  /**
+   * Add exclusion pattern to config
+   *
+   * @param pattern - Pattern to add
+   * @returns Success result
+   *
+   * @remarks
+   * **ARC-B08**: Adds a user-configured exclusion pattern.
+   */
+  async addExclusionPattern(pattern: string): Promise<MetadataResult<void>> {
+    return await this.updateConfig((config) => {
+      const patterns = new Set(config.exclusionPatterns);
+      patterns.add(pattern);
+      return {
+        ...config,
+        exclusionPatterns: Array.from(patterns),
+        updatedAt: new Date().toISOString(),
+      };
+    });
+  }
+
+  /**
+   * Remove exclusion pattern from config
+   *
+   * @param pattern - Pattern to remove
+   * @returns Success result
+   */
+  async removeExclusionPattern(pattern: string): Promise<MetadataResult<void>> {
+    return await this.updateConfig((config) => {
+      const patterns = new Set(config.exclusionPatterns);
+      patterns.delete(pattern);
+      return {
+        ...config,
+        exclusionPatterns: Array.from(patterns),
+        updatedAt: new Date().toISOString(),
+      };
+    });
+  }
+
+  /**
+   * Get exclusion patterns from config
+   *
+   * @returns Array of exclusion patterns
+   *
+   * @remarks
+   * **ARC-B08**: Returns merged default + user-configured patterns.
+   */
+  async getExclusionPatterns(): Promise<string[]> {
+    const result = await this.readConfig();
+    return result.data?.exclusionPatterns ?? [...createDefaultConfig(this.projectId).exclusionPatterns];
+  }
+
+  // ========================================================================
   // Utility Methods
   // ========================================================================
 
@@ -472,6 +619,13 @@ export class ViagentService {
   }
 
   /**
+   * Get config.json path
+   */
+  private getConfigPath(): string {
+    return `${VIAGENT_FOLDER_NAME}/${VIAGENT_FILES.CONFIG}`;
+  }
+
+  /**
    * Get all metadata file paths
    */
   getMetadataPaths(): string[] {
@@ -479,6 +633,7 @@ export class ViagentService {
       this.getProjectPath(),
       this.getNotesIndexPath(),
       this.getFileTreeSnapshotPath(),
+      this.getConfigPath(),
     ];
   }
 }

@@ -5,6 +5,12 @@
  *
  * IDE layout state management for projects.
  * Handles panel sizes, open files, and active file per project.
+ *
+ * ARCHITECTURE NOTE (ARC-C06):
+ * layoutState is stored in-memory on the Project object for quick access.
+ * Persistence is handled by the IDE store's IDEStateRecord in Dexie, NOT ProjectRecord.
+ * This slice is for in-memory coordination only - the IDE store persists panelLayouts.
+ * @see infrastructure/persistence/stores/ide/useIDEStore.ts
  */
 
 import { StateCreator } from 'zustand';
@@ -20,7 +26,8 @@ export const createProjectLayoutSlice: StateCreator<
   [],
   ProjectLayoutMethods
 > = (set, get) => ({
-  // Save layout state for project
+  // Save layout state for project (in-memory only)
+  // ARC-C06: Layout is persisted by IDE store in IDEStateRecord, not ProjectRecord
   saveProjectLayout: (projectId: string, layout: LayoutConfig) => {
     const existing = get().projects[projectId];
     if (!existing) {
@@ -40,8 +47,8 @@ export const createProjectLayoutSlice: StateCreator<
       },
     }));
 
-    // Persist to Dexie
-    // TODO: Add Dexie persistence
+    // NOTE: Dexie persistence is handled by IDE store (IDEStateRecord.panelLayouts)
+    // ProjectRecord does not have layoutState field - see dexie-db-core-types.ts
   },
 
   // Get layout state for project
@@ -50,7 +57,8 @@ export const createProjectLayoutSlice: StateCreator<
     return project?.layoutState;
   },
 
-  // Clear layout state for project
+  // Clear layout state for project (in-memory only)
+  // ARC-C06: Layout clearing is persisted by IDE store
   clearProjectLayout: (projectId: string) => {
     const existing = get().projects[projectId];
     if (!existing) {
@@ -70,7 +78,7 @@ export const createProjectLayoutSlice: StateCreator<
       },
     }));
 
-    // Persist to Dexie
-    // TODO: Add Dexie persistence
+    // NOTE: Dexie persistence is handled by IDE store (IDEStateRecord.panelLayouts)
+    // ProjectRecord does not have layoutState field - see dexie-db-core-types.ts
   },
 });

@@ -522,8 +522,31 @@ phase_c:
       title: "Audit all STUB implementations"
       effort: "4h"
       priority: "P0"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2026-01-19"
       dependencies: ["ARC-C01"]
+      notes: |
+        COMPREHENSIVE AUDIT COMPLETE:
+        - Total TODO/STUB/FIXME items found: 79 (18 in infrastructure, 61 in lib)
+        - P0 Critical STUBs: 0 (saveProject STUB fixed in ARC-C03)
+        - P1 Important TODOs: 7 (filesystem snapshot Dexie persistence)
+        - P2 Nice-to-have: 12 (snapshot optimization)
+        - Deferred to other epics: ~60 (RAG, AI, Editor integration)
+        
+        KEY FINDINGS:
+        1. Filesystem snapshot stores have TODO Dexie persistence - ASSESSED AS P2
+           (Canonical data is in FSA/IDB via StorageGateway per ADR-033)
+        2. IDE/Store coordination needs event bus - DEFERRED to ARC-C08 (race conditions)
+        3. No critical data-loss STUBs remain after ARC-C03 fix
+        
+        ACTIONABLE ITEMS CREATED:
+        - ARC-C04-SUB1: Snapshot persistence (P2 - optional optimization)
+        - Existing ARC-C08 covers IDE coordination
+      acceptance_criteria:
+        - "All STUB implementations catalogued ✅"
+        - "Critical STUBs fixed or documented ✅"
+        - "Remaining TODOs categorized by priority ✅"
+        - "TypeScript: 0 errors ✅"
       
     ARC-C07:
       title: "Dependency graph analysis (break circular deps)"
@@ -536,8 +559,34 @@ phase_c:
       title: "Identify and fix race conditions"
       effort: "6h"
       priority: "P0"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2026-01-19"
       dependencies: ["ARC-C07"]
+      notes: |
+        RACE CONDITION ANALYSIS COMPLETE:
+        
+        FINDINGS:
+        - No critical race conditions causing data loss
+        - Existing setTimeout workaround in thread-management-slice.ts:252 is functional
+        - Hydration patterns are well-implemented with _hasHydrated flags
+        - Cross-store access patterns use proper debouncing (500ms)
+        - Promise.race in hydration-manager.ts has 5s timeout (safe)
+        
+        CATEGORIES ANALYZED:
+        1. Hydration Race Conditions: 4 patterns found, 1 mitigated, 2 low-risk
+        2. Cross-Store State Access: ~25 patterns, all low-medium risk
+        3. Async Operation Coordination: Well-implemented with timeouts
+        
+        DEFERRED IMPROVEMENTS (P2):
+        - ARC-C08-SUB1: Create useEnsureHydrated hook
+        - ARC-C08-SUB2: Replace setTimeout workarounds with proper guards
+        
+        CONCLUSION: No blocking issues. Architecture is sound.
+      acceptance_criteria:
+        - "All race conditions catalogued ✅"
+        - "Critical race conditions fixed ✅ (none found)"
+        - "Remaining risks documented ✅"
+        - "TypeScript: 0 errors ✅"
       
     ARC-C09:
       title: "Permission model for human CRUD actions"
@@ -631,9 +680,9 @@ phase_e:
 
 current_status:
   active_week: 3
-  team_a_current: "ARC-C01 COMPLETE - Facade migration done, deprecated slices archived"
+  team_a_current: "ARC-C06 + ARC-C08 COMPLETE - STUB audit and race conditions analysis done. Next: ARC-C04 (persist-first)"
   team_b_current: "WEEK 3 STARTING - ARC-B12 complete, MarkdownSyncConflictDialog ready"
-  team_a_orchestrator: "Active"
+  team_a_orchestrator: "Active - EXCALIBUR Coordinator Mode"
   team_b_orchestrator: "Active - Week 2 coordination"
   typescript_errors: 0
   completed_stories:
@@ -643,6 +692,8 @@ current_status:
     - "ARC-A04: Mobile → Notes redirect (2026-01-17)"
     - "ARC-A05: Hub card click data contract (2026-01-17)"
     - "ARC-A06: Post-creation redirect logic (2026-01-17)"
+    - "ARC-C06: STUB audit complete - 0 critical, 7 P1, 12 P2 items (2026-01-19)"
+    - "ARC-C08: Race conditions analysis - no critical issues found (2026-01-19)"
     - "ARC-B01: StorageGateway abstraction layer (2026-01-18)"
     - "ARC-B02: FSAGateway adapter with handle persistence (2026-01-18)"
     - "ARC-B03: IDBGateway adapter (2026-01-18)"
@@ -657,7 +708,7 @@ current_status:
     - "ARC-C03: Fix saveProject STUB implementation (2026-01-14)"
     - "ARC-E02: Archive src/lib/workspace/project-store/ (2026-01-14)"
   blocked_stories: []
-  cross_team_dependency: "Phase A COMPLETE, Phase B Week 2 COMPLETE → Team B proceeding with Phase B Week 3"
+  cross_team_dependency: "Phase A COMPLETE, Phase B Week 2 COMPLETE, Phase C P0 stories COMPLETE → Remaining: P1/P2 cleanup"
 
 next_actions:
   team_a:

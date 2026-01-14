@@ -15,8 +15,8 @@ decision_making: "AUTONOMOUS_WITH_PRODUCTION_KEYS"
 mode: subagent
 temperature: 0.3
 tools:
-  write: "md, xml, yaml, json"
-  edit:  "md, xml, yaml, json"
+  write_md_json_yaml_xml: true
+  edit_md_json_yaml_xml: true
   bash:  true
   read:  true
   mcp: true

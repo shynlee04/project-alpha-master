@@ -4,7 +4,7 @@ type: "governance-scanner"
 description: "Domain-specific analysis to understand codebase organization"
 version: "1.0.0"
 mode: subagent
-model: MiniMaxAI/MiniMax-M2.1
+model: MiniMax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: false

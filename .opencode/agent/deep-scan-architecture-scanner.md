@@ -14,12 +14,11 @@ description: |
   - 4-layer architecture validation
 
   Loads full configuration from: _bmad/modules/deep-scan/agents/architecture-scanner.md
-color: "#008000"
-model: MiniMaxAI/MiniMax-M2.1
+model: MiniMax/MiniMax-M2.1
 temperature: 0.1
 tools:
-  write: "md, xml, yaml, json"
-  edit:  "md, xml, yaml, json"
+  write_md_json_yaml_xml: true
+  edit_md_json_yaml_xml: true
   bash:  true
   read:  true
   mcp: true
