@@ -13,12 +13,17 @@ import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 /**
  * Tree node structure
  */
-export interface NoteTreeNode {
+export interface TreeNode {
     id: string;
     note: NoteRecord;
     children: TreeNode[];
     level: number;
 }
+
+/**
+ * @deprecated Use TreeNode instead - kept for backward compatibility
+ */
+export type NoteTreeNode = TreeNode;
 
 /**
  * Build a tree structure from flat notes array

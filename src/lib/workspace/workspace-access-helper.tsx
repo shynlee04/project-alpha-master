@@ -316,8 +316,9 @@ export function useWorkspaceAccess(
     setIsEnabling(true);
     try {
       // Enable workspace binding for most recent project
-      const bindings = { ...(mostRecentProject.bindings || {}), [workspace]: true };
-      await db.projects.update(mostRecentProject.id, { bindings });
+      // ARC-D03: Use workspaceBindings (new field), fallback to bindings (legacy) for migration
+      const workspaceBindings = { ...(mostRecentProject.workspaceBindings || mostRecentProject.bindings || {}), [workspace]: true };
+      await db.projects.update(mostRecentProject.id, { workspaceBindings });
       navigate({ to: `/${workspace}/$projectId`, params: { projectId: mostRecentProject.id } });
     } catch (error) {
       console.error('[useWorkspaceAccess] Failed to enable workspace:', error);

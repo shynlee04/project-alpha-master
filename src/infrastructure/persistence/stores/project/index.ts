@@ -26,6 +26,7 @@ export type {
   UpdateProjectInput,
   ValidationResult,
   ProjectStats,
+  LayoutConfig,
 } from './project-types';
 
 export type {
@@ -42,7 +43,7 @@ export type {
 // These provide the async API that some parts of the codebase still use
 // ============================================================================
 
-import { useProjectStore } from './useProjectStore';
+import { useProjectStore, resetProjectStore } from './useProjectStore';
 import type { Project } from './project-types';
 import type { FsaPermissionState } from '@/infrastructure/filesystem';
 
