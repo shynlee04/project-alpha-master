@@ -18,7 +18,8 @@
 import { useState, useEffect, useRef, type RefObject, type Dispatch, type SetStateAction } from 'react';
 import { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
-import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+// ARC-E04: Use canonical path for type
+import type { FsaPermissionState } from '@/infrastructure/filesystem';
 import { getProject, type ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 import { useWorkspaceStore } from '../workspace-store';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';

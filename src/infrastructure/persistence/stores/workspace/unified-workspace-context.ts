@@ -32,7 +32,8 @@ import type { WorkspaceType } from '@/domain/entities/workspace';
 
 // Import types from canonical sources for internal use
 import type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
-import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+// ARC-E04: Use canonical path for type (re-exported via infrastructure/filesystem)
+import type { FsaPermissionState } from '@/infrastructure/filesystem';
 import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 
 // Import file system infrastructure types for refs
@@ -47,7 +48,8 @@ export type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 
 // Re-export types from their canonical sources
 export type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
-export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+// ARC-E04: Re-export from canonical path
+export type { FsaPermissionState } from '@/infrastructure/filesystem';
 export type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 
 /**

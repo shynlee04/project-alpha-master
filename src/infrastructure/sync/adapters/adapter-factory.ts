@@ -13,7 +13,8 @@
 import { IDBAdapter } from './idb-adapter-core.js';
 import { FSAAdapter } from './fsa-adapter-core.js';
 import type { StorageAdapter } from '../core/sync-result-types.js';
-import type { ProjectMetadata } from '@/lib/workspace/project-types';
+// ARC-E04: Use canonical path for ProjectMetadata (re-exported as alias)
+import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 
 // ============================================================================
 // Types

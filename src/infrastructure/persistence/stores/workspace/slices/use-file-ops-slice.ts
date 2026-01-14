@@ -21,8 +21,10 @@ import { useNavigate } from '@tanstack/react-router';
 import { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import { SyncManager } from '@/infrastructure/sync';
-import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
+// ARC-E04: Use canonical path for type (re-exported via infrastructure)
+import type { FsaPermissionState } from '@/infrastructure/filesystem';
 import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
+// NOTE: Functions remain in lib/filesystem until migrated
 import {
   getPermissionState,
   ensureReadWritePermission,
