@@ -1,7 +1,7 @@
 ---
 description: Real-world testing specialist - production API tests, browser automation, visual regression
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.3
 tools:
   write: true

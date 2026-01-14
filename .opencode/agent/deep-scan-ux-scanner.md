@@ -1,7 +1,7 @@
 ---
 description: UX & accessibility diagnostics - i18n violations, accessibility issues, responsive failures
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

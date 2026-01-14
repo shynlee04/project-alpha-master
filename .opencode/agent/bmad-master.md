@@ -85,3 +85,7 @@ Executes full autonomous cycle without menu:
 
 **Token Savings**: ~30,000 tokens per load (97% reduction)
 **Last Updated**: 2026-01-14
+
+---
+## subtask2 Orchestration
+Use `return:` and `parallel:` in .opencode/command/*.md for multi-agent workflows.

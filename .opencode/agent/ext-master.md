@@ -91,3 +91,7 @@ ext-master
 
 **Token Savings**: ~29,500 tokens per load (96% reduction)
 **Last Updated**: 2026-01-14
+
+---
+## subtask2 Orchestration
+Use `return:` and `parallel:` in .opencode/command/*.md for multi-agent workflows.

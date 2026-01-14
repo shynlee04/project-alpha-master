@@ -1,5 +1,7 @@
 ---
-description: 'Run governance enforcement and update governance documents'
+ description: 'Run governance enforcement and update governance documents'
+ subtask: true
+ return: ["Update LOOP_STATE.yaml with findings", "Generate governance report"]
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS:

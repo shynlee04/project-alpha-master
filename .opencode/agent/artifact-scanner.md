@@ -1,7 +1,7 @@
 ---
 description: Artifact scanner - staleness detection, orphaned files, code validation
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

@@ -1,7 +1,7 @@
 ---
 description: File synchronization specialist - sync strategies, conflict resolution, offline-first
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

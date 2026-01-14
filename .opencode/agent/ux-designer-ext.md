@@ -1,7 +1,7 @@
 ---
 description: UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.3
 tools:
   write: true

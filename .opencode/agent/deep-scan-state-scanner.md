@@ -1,7 +1,7 @@
 ---
 description: State management diagnostics - god stores, circular dependencies, Zustand v5 compliance
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

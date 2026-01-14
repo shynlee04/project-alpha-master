@@ -1,5 +1,7 @@
 ---
-description: Run governance enforcement after structural changes
+ description: Run governance enforcement after structural changes
+ subtask: true
+ return: ["/bmad-governance-check validate all files", "Update AGENTS.md if violations found"]
 ---
 
 # Governance Enforcement

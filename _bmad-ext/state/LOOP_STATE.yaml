@@ -3,47 +3,218 @@
 # Session state for autonomous workflow orchestration
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-14T21:00:00+07:00"
+last_updated: "2026-01-17T10:30:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SESSION STATE
+# SESSION STATE - ADR-034 INFECTION REMEDIATION
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: "p0-state-fixes-2026-01-14"
-  start_time: "2026-01-14T20:00:00+07:00"
-  last_activity: "2026-01-14T21:00:00+07:00"
+  id: "ADR-034-REMEDIATION-2026-01-17"
+  start_time: "2026-01-17T10:00:00+07:00"
+  last_activity: "2026-01-17T10:30:00+07:00"
   platform: "claude-code"
   agent: "EXCALIBUR"
   orchestrator_team: "Combined"
-  iteration: 2
+  iteration: 1
   max_iterations: 0
-  status: "P0_USESHALLOW_FIXES_APPLIED"
-  team: "All Teams - State management fixes"
+  status: "ADR_034_PHASE_0_COMPLETE"
+  team: "Combined - Infection Remediation"
   ralph_loop_version: "5.0.0"
+  type: "master-remediation"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT CONTEXT
+# CURRENT CONTEXT - ADR-034 EXECUTION
 # ═══════════════════════════════════════════════════════════════════════════
 
 current:
   epic_id: "EPIC-CC-ARC"
   epic_name: "Correct-Course Architectural Remediation"
-  story_id: "COMPLETE"
-  story_title: "All phases completed"
+  story_id: "ADR-034-REMEDIATION"
+  story_title: "Workspace Access Infection Remediation"
   team: "Combined"
-  phase: "ALL"
+  phase: "PHASE_1_FSA_UNIFICATION"
   week: 4
-  workflow: "correct-course"
-  step: "COMPLETE"
-  status: "completed"
+  workflow: "correct-course-remediation"
+  step: "FSA Handle Unification"
+  status: "in_progress"
   sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
-  adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+  adr_file: "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
+  parent_adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PRIOR COMPLETED (Phase B - Week 1-2)
+# INFECTION TRACKING (31 Total from ADR-034)
+# ═══════════════════════════════════════════════════════════════════════════
+
+infections:
+  total: 31
+  by_domain:
+    fsa: 10
+    state: 12
+    routing: 13
+    platform: 6
+  
+  remediated:
+    count: 0
+    ids: []
+  
+  in_progress:
+    count: 0
+    ids: []
+  
+  pending:
+    count: 31
+    ids:
+      # FSA Domain (10) - P0: FSA-001,002,003,004 | P1: FSA-005,006,007,008,009 | P2: FSA-010
+      - FSA-001  # handle storage DataCloneError
+      - FSA-002  # restoreHandle prompts user
+      - FSA-003  # stores handleData: null
+      - FSA-004  # trySilentRestore prompts
+      - FSA-005  # deserializeHandle returns null
+      - FSA-006  # factory requires unavailable handle
+      - FSA-007  # no handle in ProjectContext
+      - FSA-008  # useFileLoaderSlice doesn't exist
+      - FSA-009  # multiple handle managers
+      - FSA-010  # permission state duplication
+      
+      # State Domain (12) - P0: STATE-001,002,003,011 | P1: others
+      - STATE-001  # useProjectStore no persistence
+      - STATE-002  # useIDEStore wrong hydration
+      - STATE-003  # workspace-store localStorage leak
+      - STATE-004  # file-sync-status no project scope
+      - STATE-005  # agent-selection global
+      - STATE-006  # conversation subscription leak
+      - STATE-007  # chat-store global key
+      - STATE-008  # rag-store global index
+      - STATE-009  # terminal-store localStorage
+      - STATE-010  # hydration-manager empty
+      - STATE-011  # project-crud persists null handle
+      - STATE-012  # no cleanup on workspace switch
+      
+      # Routing Domain (13) - P0: ROUTE-001 | P1: others
+      - ROUTE-001  # ide.tsx no beforeLoad
+      - ROUTE-002  # ide.tsx uses window.location
+      - ROUTE-003  # ide.$projectId double fetch
+      - ROUTE-004  # notes.$projectId useEffect
+      - ROUTE-005  # workspace/$projectId no guard
+      - ROUTE-006  # HubHomePage wrong check
+      - ROUTE-007  # WorkspaceSwitcher no platform
+      - ROUTE-008  # ProjectContext auto-switch
+      - ROUTE-009  # switchWorkspace no check
+      - ROUTE-010  # duplicate hub routes
+      - ROUTE-011  # IDE buttons without check
+      - ROUTE-012  # missing non-lazy routes
+      - ROUTE-013  # notes dynamic import
+      
+      # Platform Domain (6) - P0: PLAT-001,002 | P1: others
+      - PLAT-001  # temp project on desktop
+      - PLAT-002  # notes hardcoded browser-mode
+      - PLAT-003  # sidebar bypasses platform
+      - PLAT-004  # getPlatformContract not called
+      - PLAT-005  # shouldUseTempProject inverted
+      - PLAT-006  # no platform-aware hydration
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE EXECUTION STATUS (ADR-034)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phases:
+  phase_0:
+    name: "Diagnostic Lock-In"
+    status: "COMPLETE"
+    duration: "30 min"
+    completed_at: "2026-01-17T10:30:00+07:00"
+    deliverables:
+      - path: "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
+        status: "CREATED"
+      - path: "_bmad-ext/state/LOOP_STATE.yaml"
+        status: "UPDATED"
+  
+  phase_1:
+    name: "FSA Handle Unification"
+    status: "PENDING"
+    estimated_duration: "4 hours"
+    infections_targeted:
+      - FSA-001
+      - FSA-002
+      - FSA-003
+      - FSA-004
+      - FSA-005
+      - FSA-006
+      - FSA-007
+      - FSA-008
+      - FSA-009
+    acceptance:
+      - "Create project, refresh, navigate to IDE - files load without prompt"
+  
+  phase_2:
+    name: "State Scoping"
+    status: "PENDING"
+    estimated_duration: "3 hours"
+    infections_targeted:
+      - STATE-001
+      - STATE-002
+      - STATE-003
+      - STATE-004
+      - STATE-005
+      - STATE-006
+      - STATE-007
+      - STATE-008
+      - STATE-010
+      - STATE-011
+      - STATE-012
+    acceptance:
+      - "Open project A, open project B in new tab, verify isolation"
+  
+  phase_3:
+    name: "Route Standardization"
+    status: "PENDING"
+    estimated_duration: "2 hours"
+    infections_targeted:
+      - ROUTE-001
+      - ROUTE-002
+      - ROUTE-003
+      - ROUTE-004
+      - ROUTE-005
+      - ROUTE-012
+    acceptance:
+      - "Navigate between all workspaces on desktop and mobile"
+  
+  phase_4:
+    name: "Platform Contract Enforcement"
+    status: "PENDING"
+    estimated_duration: "1 hour"
+    infections_targeted:
+      - PLAT-001
+      - PLAT-002
+      - PLAT-003
+      - PLAT-004
+      - PLAT-005
+      - ROUTE-006
+      - ROUTE-007
+      - ROUTE-008
+      - ROUTE-009
+      - ROUTE-011
+    acceptance:
+      - "Mobile cannot see or access IDE anywhere"
+  
+  phase_5:
+    name: "Verification"
+    status: "PENDING"
+    estimated_duration: "1 hour"
+    checks:
+      - command: "pnpm tsc --noEmit"
+        expected: "0 errors"
+      - command: "pnpm vitest run"
+        expected: "All pass"
+      - manual: "Desktop IDE files load without prompt"
+      - manual: "Mobile Notes works, no IDE access"
+      - manual: "Project switch isolates state"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIOR COMPLETED (Phase B - Week 1-2) - From previous session
 # ═══════════════════════════════════════════════════════════════════════════
 
 prior_completed:
@@ -61,44 +232,33 @@ prior_completed:
   - "ARC-B12: External change conflict resolution UI (2026-01-18)"
   - "ARC-D01: Enforce ProjectId template literal type (2026-01-18)"
   - "ARC-D02: Fix workspaceId || projectId fallback bugs (2026-01-18)"
-  - "ARC-D03: Rename bindings → workspaceBindings (2026-01-14) - CORRECTED: Fixed workspace-access-helper.tsx:319-320 bug"
+  - "ARC-D03: Rename bindings → workspaceBindings (2026-01-14)"
   - "ARC-E01: Delete legacy lib/workspace/project-store.ts (2026-01-19)"
-  - "ARC-E02: Delete legacy lib/workspace/file-sync-status-store.ts (2026-01-19) - Status: Single file deleted, directory remains as canonical modular implementation"
-  - "ARC-E03: Update test imports from @/lib/state/ (2026-01-14) - FIXED: 36+ test mocks + 1 runtime import now use canonical paths"
-  - "ARC-E04: Archive lib/filesystem duplicates (2026-01-14) - Only path-guard.ts archived, most files unique"
-  - "ARC-C05: Archive duplicate store files (2026-01-14) - Analysis: No true duplicates found"
-  - "ARC-C10: Concurrent CRUD handling (2026-01-14) - Analysis: Current architecture sufficient for MVP"
-
-# ═══════════════════════════════════════════════════════════════════════════
-# PENDING STORIES (Phase E - Week 3)
-# ═══════════════════════════════════════════════════════════════════════════
-
-pending_stories: []
-  # All EPIC-CC-ARC stories completed as of 2026-01-14
+  - "ARC-E02: Delete legacy lib/workspace/file-sync-status-store.ts (2026-01-19)"
+  - "ARC-E03: Update test imports from @/lib/state/ (2026-01-14)"
+  - "ARC-E04: Archive lib/filesystem duplicates (2026-01-14)"
+  - "ARC-C05: Archive duplicate store files (2026-01-14)"
+  - "ARC-C10: Concurrent CRUD handling (2026-01-14)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ANCHOR (Human Intent Freshness)
 # ═══════════════════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent_timestamp: "2026-01-14T00:00:00+07:00"
+  human_intent_timestamp: "2026-01-17T10:00:00+07:00"
   staleness_threshold_hours: 4
-  last_human_message: "Stop hook feedback: load @bmad-core-master-agent start the loop first by looking as @PROMPT then load agents, sub-agents as you progress cycles of workflows, modules, following strict BMAD framework and what has written at @CLAUDE.md, keep updating sprint-status and workflow-status as u are team B"
-  intent_summary: "Execute EPIC-CC-ARC Week 3 stories for Team B with full BMAD framework traceability, update sprint-status and workflow-status iteratively"
-  conversation_id: "2026-01-14-session-b-complete"
+  last_human_message: "Detect infected vicinity - reason about similar failures (FSA persistence, UI state management, selectors not navigating) - trace stories → epics → correct-course → making ADR → fix systematically with master plan"
+  intent_summary: "Execute ADR-034 Workspace Access Infection Remediation - unified 5-phase master plan targeting 31 infections across FSA, State, Routing, Platform domains"
+  conversation_id: "2026-01-17-infection-remediation"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERRORS
 # ═══════════════════════════════════════════════════════════════════════════
 
 errors:
-  count: 0  # All audit findings from 2026-01-14 have been corrected
+  count: 0
   last_error: null
   escalations: []
-  # Historical corrections made:
-  # - ARC-D03: Fixed workspace-access-helper.tsx:319 (was writing to 'bindings' instead of 'workspaceBindings')
-  # - ARC-E02: Clarified - file-sync-status-store/ directory is canonical modular code (single legacy file was deleted)
-  # - ARC-E03: Fixed 36+ test mocks + 1 runtime import from @/lib/state/ to canonical paths
 
 # ═══════════════════════════════════════════════════════════════════════════
 # DELEGATIONS
@@ -107,62 +267,17 @@ errors:
 delegations:
   active: []
   completed:
-    - delegation_id: "del-audit-fix-001"
-      agent: "EXCALIBUR-TEAM-B-ORCHESTRATOR"
-      story: "AUDIT_FIX"
-      started_at: "2026-01-14T12:00:00+07:00"
-      completed_at: "2026-01-14T12:36:00+07:00"
+    - delegation_id: "del-adr-034-diagnostic"
+      agent: "EXCALIBUR"
+      story: "ADR-034-PHASE-0"
+      started_at: "2026-01-17T10:00:00+07:00"
+      completed_at: "2026-01-17T10:30:00+07:00"
       status: "SUCCESS"
-      artifacts_created: 0
+      artifacts_created: 1
       files_modified:
-        - "src/lib/workspace/workspace-access-helper.tsx (ARC-D03 fix)"
-        - "src/infrastructure/events/index.ts (ARC-E03 fix)"
-        - "src/lib/notes/__tests__/note-store.test.ts (ARC-E03 fix)"
-        - "src/presentation/components/hub/__tests__/HubHomePage.test.tsx (ARC-E03 fix)"
-        - "src/presentation/components/rag/__tests__/RAGChatPanel.test.tsx (ARC-E03 fix)"
-        - "src/presentation/components/rag/__tests__/RAGSearchPanel.test.tsx (ARC-E03 fix)"
-        - "src/lib/knowledge/__tests__/source-import.test.ts (ARC-E03 fix)"
-        - "src/infrastructure/persistence/stores/agents-store.test.ts (ARC-E03 fix)"
-        - "src/lib/workspace/__tests__/session-snapshot.test.ts (ARC-E03 fix)"
-        - "src/infrastructure/persistence/stores/conversation/* (ARC-E03 fix)"
-        - "src/presentation/components/knowledge/* (ARC-E03 fix)"
-        - "src/presentation/components/agent/* (ARC-E03 fix)"
-        - "_bmad-ext/state/LOOP_STATE.yaml (updated)"
-      notes: "Fixed 3 audit findings: ARC-D03 bug, ARC-E02 clarification, ARC-E03 imports"
-    - delegation_id: "del-arc-d03-001"
-      agent: "dev-ext"
-      story: "ARC-D03"
-      started_at: "2026-01-19T14:00:00+07:00"
-      completed_at: "2026-01-19T16:00:00+07:00"
-      status: "SUCCESS"
-      artifacts_created: 25
-      files_modified:
-        - "src/domain/entities/project.ts"
-        - "src/infrastructure/persistence/dexie-db-core-types.ts"
-        - "src/infrastructure/persistence/stores/project/project-types.ts"
-        - "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
-        - "src/infrastructure/persistence/stores/project/project-bindings-slice.ts"
-        - "src/infrastructure/persistence/stores/project/migrate-bindings.ts"
-        - "src/domain/entities/__tests__/project.test.ts"
-        - "src/lib/settings/settings-serializer.ts"
-        - "src/lib/settings/settings-importer.ts"
-        - "src/lib/workspace/project-store.ts"
-        - "src/lib/workspace/browser-mode.ts"
-        - "src/lib/workspace/hooks/useWorkspaceActions.ts"
-        - "src/lib/workspace/ProjectContext.tsx"
-        - "src/lib/workspace/temp-project.ts"
-        - "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
-        - "src/presentation/components/hub/useWorkspaceBindingState.ts"
-        - "src/presentation/components/hub/ProjectCard.tsx"
-        - "src/presentation/components/hub/useDashboardMetrics.ts"
-        - "src/presentation/components/hub/ProjectPickerDialog.tsx"
-        - "src/presentation/components/hub/HubHomePage.tsx"
-        - "src/presentation/components/project/ProjectsPage.tsx"
-        - "src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts"
-        - "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
-        - "src/routes/notes.lazy.tsx"
-        - "src/routes/debug.tsx"
-        - "src/lib/workspace/workspace-access-helper.tsx"
+        - "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md (CREATED)"
+        - "_bmad-ext/state/LOOP_STATE.yaml (UPDATED)"
+      notes: "Deep scan complete. 31 infections identified across 4 domains. Master remediation plan created."
   failed: []
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -173,23 +288,65 @@ progress:
   epic_total_stories: 28
   epic_stories_complete: 28
   epic_stories_remaining: 0
-  team_a_total_stories: 10
-  team_a_stories_complete: 10
-  team_a_stories_remaining: 0
-  team_b_total_stories: 18
-  team_b_stories_complete: 18
-  team_b_stories_remaining: 0
-  stories_completed_this_session: 4
-  artifacts_created_this_session: 2
+  adr_034_phases_total: 5
+  adr_034_phases_complete: 1
+  adr_034_phases_remaining: 4
+  infections_total: 31
+  infections_remediated: 0
+  infections_remaining: 31
   typescript_errors: 0
 
 # ═══════════════════════════════════════════════════════════════════════════
-# ARTIFACT REGISTRY REFERENCES
+# ARTIFACT REGISTRY
 # ═══════════════════════════════════════════════════════════════════════════
 
 artifacts:
   sprint_status: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
   workflow_status: "bmm-workflow-status.yaml"
-  adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+  adr_033: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+  adr_034: "_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md"
   loop_state: "_bmad-ext/state/LOOP_STATE.yaml"
-  story_cycle_workflow: "_bmad-ext/modules/implementation/workflows/story-cycle/"
+  
+  to_modify:
+    - path: "src/infrastructure/filesystem/handle-persistence.ts"
+      reason: "FSA-001, FSA-003, FSA-004"
+    - path: "src/lib/workspace/ProjectContext.tsx"
+      reason: "FSA-007, ROUTE-008, ROUTE-009"
+    - path: "src/routes/ide.tsx"
+      reason: "ROUTE-001, ROUTE-002, PLAT-001"
+    - path: "src/routes/ide.$projectId.tsx"
+      reason: "ROUTE-003, FSA-008"
+    - path: "src/routes/notes.lazy.tsx"
+      reason: "PLAT-002, ROUTE-013"
+    - path: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
+      reason: "STATE-002"
+    - path: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+      reason: "STATE-003"
+      
+  to_delete:
+    - path: "src/lib/filesystem/fsa-handle-manager.ts"
+      reason: "FSA-009"
+      archive_to: "_bmad-ext/.archive/fsa-handle-manager-2026-01-17.ts"
+      
+  to_create:
+    - path: "src/routes/knowledge.$projectId.tsx"
+      reason: "ROUTE-012"
+    - path: "src/routes/study.$projectId.tsx"
+      reason: "ROUTE-012"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONTINUATION RULES
+# ═══════════════════════════════════════════════════════════════════════════
+
+continuation:
+  continue_if:
+    - "Phases pending"
+    - "No critical errors (< 3 failures per file)"
+    - "Anchor fresh (< 4h since 2026-01-17T10:00)"
+    - "User has not interrupted"
+  
+  stop_if:
+    - "All 5 phases complete"
+    - "Critical error (3+ failures in same file)"
+    - "Anchor stale (await confirmation)"
+    - "User interrupt"

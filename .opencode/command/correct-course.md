@@ -1,5 +1,7 @@
 ---
-description: 'Categorize and execute bug fixes and remediation work - receives governance report, routes to appropriate sub-workflow'
+ description: 'Categorize and execute bug fixes and remediation work - receives governance report, routes to appropriate sub-workflow'
+ subtask: true
+ return: ["/bmad-bmm-dev-story continue from fix", "Run governance validation"]
 ---
 
 IT IS CRITICAL THAT YOU FOLLOW THESE STEPS - while staying in character as the current agent persona:

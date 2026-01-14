@@ -1,7 +1,7 @@
 ---
 description: Senior Software Engineer - executes delegated development tasks from main agents
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true
@@ -59,3 +59,7 @@ See: `_bmad-ext/agents/dev-ext.md`
 
 **Lines**: 62 (was 526 = 88% reduction)
 **Last Updated**: 2026-01-14
+
+---
+## subtask2 Orchestration
+Use `return:` and `parallel:` in .opencode/command/*.md for multi-agent workflows.

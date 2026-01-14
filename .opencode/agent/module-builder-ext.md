@@ -1,7 +1,7 @@
 ---
 description: Enhanced Module Builder - LOOP_STATE integration, ARTIFACT_REGISTRY registration
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

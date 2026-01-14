@@ -1,3 +1,8 @@
+---
+ subtask: true
+ return: ["/code-review validate output", "Run tests and fix failures"]
+---
+
 # Command: dev-story
 
 > **Skill**: `.opencode/skill/story-cycle/steps/06-dev-story.md` | **Master**: `_bmad/bmb/workflows/story-cycle/steps/06-dev-story.md`

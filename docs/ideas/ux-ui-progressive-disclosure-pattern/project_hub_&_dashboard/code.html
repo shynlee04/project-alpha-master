@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Project Hub (Dark Mode)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#f97316", // Orange
+                        "primary-hover": "#ea580c",
+                        "background": "#050505", // Deepest black/gray
+                        "card": "#121212", // Surface
+                        "card-hover": "#1a1a1a",
+                        "border": "#333333", // Distinct border
+                        "border-focus": "#525252",
+                        "accent": "#262626",
+                    },
+                    fontFamily: {
+                        display: ["JetBrains Mono", "monospace"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    boxShadow: {
+                        'pixel': '4px 4px 0px 0px #000000', // Hard black pixel shadow
+                        'pixel-sm': '2px 2px 0px 0px #000000',
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px",
+                        'sm': '0px',
+                        'md': '0px',
+                        'lg': '0px',
+                        'full': '0px', // Force squareness for 8-bit feel
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        :root {
+            color-scheme: dark;
+        }
+        body {
+            background-color: #050505;}::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+            border-left: 1px solid #333;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border: 2px solid #050505;}
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f97316;
+        }
+    </style>
+</head>
+<body class="bg-background text-gray-300 font-body antialiased h-screen w-full flex overflow-hidden selection:bg-primary selection:text-black">
+<aside class="w-16 flex-shrink-0 flex flex-col border-r border-border bg-card z-20 shadow-[4px_0_0_0_#00000050]">
+<div class="h-16 flex items-center justify-center border-b border-border bg-card">
+<div class="w-10 h-10 bg-primary flex items-center justify-center text-black font-bold text-xl shadow-pixel border border-black hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all cursor-pointer font-display">
+            V
+        </div>
+</div>
+<nav class="flex-1 flex flex-col items-center gap-6 py-6">
+<button class="w-10 h-10 flex items-center justify-center text-primary bg-accent border border-primary shadow-pixel-sm" title="Hub">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors border border-transparent" title="IDE">
+<span class="material-symbols-outlined">code</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors border border-transparent" title="Notes">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors border border-transparent" title="Study">
+<span class="material-symbols-outlined">school</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors border border-transparent" title="Chat">
+<span class="material-symbols-outlined">chat_bubble</span>
+</button>
+</nav>
+<div class="pb-6 flex flex-col items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors border border-transparent" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 bg-gradient-to-tr from-purple-900 to-primary border border-border cursor-pointer hover:border-white transition-colors"></div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full bg-background relative">
+<header class="h-16 border-b border-border flex items-center justify-between px-6 bg-card shrink-0">
+<div class="flex items-center gap-4">
+<h1 class="text-xl font-display font-bold text-white tracking-tight uppercase">Project Hub</h1>
+<span class="px-2 py-0.5 text-xs font-mono bg-primary text-black border border-primary font-bold shadow-[2px_2px_0_0_#000]">BETA</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative group">
+<span class="absolute left-3 top-2.5 text-gray-500 material-symbols-outlined text-sm">search</span>
+<input class="pl-9 pr-4 py-2 bg-background border border-border text-sm focus:ring-0 focus:border-primary w-64 font-mono transition-all text-gray-300 placeholder-gray-600 focus:shadow-pixel-sm" placeholder="Search projects..." type="text"/>
+</div>
+<button class="flex items-center gap-2 bg-primary hover:bg-primary-hover text-black px-4 py-2 text-sm font-bold border border-black shadow-pixel active:translate-y-[2px] active:translate-x-[2px] active:shadow-none transition-all uppercase font-display tracking-wide">
+<span class="material-symbols-outlined text-sm font-bold">add</span>
+                New Project
+            </button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-6 md:p-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-card border border-border p-5 shadow-pixel relative group hover:border-blue-500 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-900/20 text-blue-500 border border-blue-900">
+<span class="material-symbols-outlined">code</span>
+</div>
+<span class="text-xs font-mono text-gray-500 uppercase">Active</span>
+</div>
+<div class="text-3xl font-display font-bold text-white mb-1">12</div>
+<div class="text-sm text-gray-500">Repositories Synced</div>
+<div class="absolute bottom-0 left-0 h-1 bg-blue-500 w-full transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<div class="bg-card border border-border p-5 shadow-pixel relative group hover:border-emerald-500 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-emerald-900/20 text-emerald-500 border border-emerald-900">
+<span class="material-symbols-outlined">auto_fix_high</span>
+</div>
+<span class="text-xs font-mono text-gray-500 uppercase">Weekly</span>
+</div>
+<div class="text-3xl font-display font-bold text-white mb-1">84%</div>
+<div class="text-sm text-gray-500">AI Assistance Rate</div>
+<div class="absolute bottom-0 left-0 h-1 bg-emerald-500 w-full transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<div class="bg-card border border-border p-5 shadow-pixel relative group hover:border-purple-500 transition-colors">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-purple-900/20 text-purple-500 border border-purple-900">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<span class="text-xs font-mono text-gray-500 uppercase">Focus</span>
+</div>
+<div class="text-3xl font-display font-bold text-white mb-1">4.2h</div>
+<div class="text-sm text-gray-500">Avg. Daily Session</div>
+<div class="absolute bottom-0 left-0 h-1 bg-purple-500 w-full transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+<div class="flex items-center gap-px bg-border p-[1px] shadow-pixel-sm">
+<button class="px-4 py-2 bg-card text-sm font-medium text-primary hover:bg-accent transition-colors font-display uppercase tracking-wider">
+                    Recent
+                </button>
+<button class="px-4 py-2 bg-background text-gray-500 hover:text-white hover:bg-card transition-colors text-sm font-medium font-display uppercase tracking-wider">
+                    Favorites
+                </button>
+<button class="px-4 py-2 bg-background text-gray-500 hover:text-white hover:bg-card transition-colors text-sm font-medium font-display uppercase tracking-wider">
+                    Archived
+                </button>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-9 h-9 flex items-center justify-center text-gray-500 hover:text-white hover:border hover:border-gray-500 transition-all border border-transparent" title="List View">
+<span class="material-symbols-outlined">view_list</span>
+</button>
+<button class="w-9 h-9 flex items-center justify-center text-primary bg-accent border border-primary shadow-pixel-sm transition-all" title="Grid View">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+<div class="group bg-card border border-border hover:border-primary transition-all cursor-pointer flex flex-col h-64 relative shadow-pixel active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+<div class="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-black border border-white">
+<button class="text-white flex items-center justify-center"><span class="material-symbols-outlined text-lg">more_horiz</span></button>
+</div>
+<div class="h-24 w-full bg-accent border-b border-border flex items-center justify-center overflow-hidden relative">
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 8px 8px;"></div>
+<span class="material-symbols-outlined text-4xl text-gray-600 absolute">terminal</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-2 h-2 bg-green-500 shadow-[0_0_5px_#22c55e]"></div>
+<span class="text-xs uppercase tracking-wider font-mono text-green-500">Active Session</span>
+</div>
+<h3 class="text-lg font-bold text-white font-display mb-1 group-hover:text-primary transition-colors">Via-Gent Core</h3>
+<p class="text-sm text-gray-500 line-clamp-2 mb-4 font-mono">Main application logic for the agent workflow engine.</p>
+<div class="mt-auto flex items-center justify-between text-xs font-mono text-gray-600 border-t border-border pt-3">
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 uppercase"><span class="material-symbols-outlined text-[12px]">javascript</span> TS/React</span>
+</div>
+<span>Edited 2m ago</span>
+</div>
+</div>
+</div>
+<div class="group bg-card border border-border hover:border-primary transition-all cursor-pointer flex flex-col h-64 relative shadow-pixel active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+<div class="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-black border border-white">
+<button class="text-white flex items-center justify-center"><span class="material-symbols-outlined text-lg">more_horiz</span></button>
+</div>
+<div class="h-24 w-full bg-[#1e1b4b] border-b border-border flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-20" style="background: repeating-linear-gradient(45deg, #000, #000 10px, transparent 10px, transparent 20px);"></div>
+<span class="material-symbols-outlined text-4xl text-indigo-400 absolute">api</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-3 h-2"></div>
+<h3 class="text-lg font-bold text-white font-display mb-1 group-hover:text-primary transition-colors">Stitch Design System</h3>
+<p class="text-sm text-gray-500 line-clamp-2 mb-4 font-mono">Component library and documentation site.</p>
+<div class="mt-auto flex items-center justify-between text-xs font-mono text-gray-600 border-t border-border pt-3">
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 uppercase"><span class="material-symbols-outlined text-[12px]">css</span> Tailwind</span>
+</div>
+<span>Edited 4h ago</span>
+</div>
+</div>
+</div>
+<div class="group bg-card border border-border hover:border-primary transition-all cursor-pointer flex flex-col h-64 relative shadow-pixel active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+<div class="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-black border border-white">
+<button class="text-white flex items-center justify-center"><span class="material-symbols-outlined text-lg">more_horiz</span></button>
+</div>
+<div class="h-24 w-full bg-[#064e3b] border-b border-border flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-20" style="background-image: linear-gradient(0deg, transparent 24%, #000 25%, #000 26%, transparent 27%, transparent 74%, #000 75%, #000 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #000 25%, #000 26%, transparent 27%, transparent 74%, #000 75%, #000 76%, transparent 77%, transparent); background-size: 30px 30px;"></div>
+<span class="material-symbols-outlined text-4xl text-emerald-400 absolute">dataset</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-3 h-2"></div>
+<h3 class="text-lg font-bold text-white font-display mb-1 group-hover:text-primary transition-colors">Data Pipeline v2</h3>
+<p class="text-sm text-gray-500 line-clamp-2 mb-4 font-mono">Optimization of the ingestion worker nodes.</p>
+<div class="mt-auto flex items-center justify-between text-xs font-mono text-gray-600 border-t border-border pt-3">
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 uppercase"><span class="material-symbols-outlined text-[12px]">data_object</span> Python</span>
+</div>
+<span>Edited 1d ago</span>
+</div>
+</div>
+</div>
+<div class="group bg-card border border-border hover:border-primary transition-all cursor-pointer flex flex-col h-64 relative shadow-pixel active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+<div class="absolute top-2 right-2 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 bg-black border border-white">
+<button class="text-white flex items-center justify-center"><span class="material-symbols-outlined text-lg">more_horiz</span></button>
+</div>
+<div class="h-24 w-full bg-[#431407] border-b border-border flex items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-20" style="background: repeating-linear-gradient(-45deg, #000, #000 5px, transparent 5px, transparent 10px);"></div>
+<span class="material-symbols-outlined text-4xl text-orange-400 absolute">rocket_launch</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<div class="mb-3 h-2"></div>
+<h3 class="text-lg font-bold text-white font-display mb-1 group-hover:text-primary transition-colors">Landing Page 2024</h3>
+<p class="text-sm text-gray-500 line-clamp-2 mb-4 font-mono">Marketing site refresh. A/B testing new copy.</p>
+<div class="mt-auto flex items-center justify-between text-xs font-mono text-gray-600 border-t border-border pt-3">
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 uppercase"><span class="material-symbols-outlined text-[12px]">html</span> Astro</span>
+</div>
+<span>Edited 3d ago</span>
+</div>
+</div>
+</div>
+<button class="group bg-background border-2 border-dashed border-border hover:border-primary hover:bg-card transition-all cursor-pointer flex flex-col h-64 items-center justify-center gap-3">
+<div class="w-12 h-12 bg-card group-hover:bg-primary group-hover:text-black text-gray-500 flex items-center justify-center transition-colors border border-border group-hover:border-black shadow-pixel-sm">
+<span class="material-symbols-outlined text-2xl">add</span>
+</div>
+<span class="text-sm font-bold text-gray-500 group-hover:text-primary transition-colors font-display uppercase tracking-wider">Create Project</span>
+</button>
+</div>
+</div>
+</main>
+<aside class="w-14 border-l border-border bg-card z-10 hidden lg:flex flex-col items-center py-4 gap-6 shadow-[-4px_0_0_0_#00000050]">
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors relative group" title="Notifications">
+<span class="material-symbols-outlined text-xl">notifications</span>
+<div class="absolute top-2 right-2 w-2 h-2 bg-primary border border-black"></div>
+<div class="absolute right-full mr-3 px-3 py-1 bg-black text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-border font-mono shadow-pixel-sm pointer-events-none">Activity Feed</div>
+</button>
+<div class="w-8 h-[1px] bg-border"></div>
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors relative group" title="Team">
+<span class="material-symbols-outlined text-xl">group</span>
+<div class="absolute right-full mr-3 px-3 py-1 bg-black text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-border font-mono shadow-pixel-sm pointer-events-none">Team Members</div>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors relative group" title="Deployments">
+<span class="material-symbols-outlined text-xl">cloud_queue</span>
+<div class="absolute right-full mr-3 px-3 py-1 bg-black text-xs text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-border font-mono shadow-pixel-sm pointer-events-none">Deployments</div>
+</button>
+<div class="mt-auto">
+<button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-white hover:bg-accent hover:border hover:border-border transition-colors" title="Expand">
+<span class="material-symbols-outlined text-xl">keyboard_double_arrow_left</span>
+</button>
+</div>
+</aside>
+
+</body></html>

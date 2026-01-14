@@ -1,7 +1,7 @@
 ---
 description: Component refactoring specialist - breaks god components into focused modules
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

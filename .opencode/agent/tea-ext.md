@@ -1,7 +1,7 @@
 ---
 description: Test Engineer & QA Specialist - Test strategy, automation (Vitest, Playwright), TDD
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

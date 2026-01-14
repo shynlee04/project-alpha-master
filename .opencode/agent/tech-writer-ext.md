@@ -1,7 +1,7 @@
 ---
 description: Technical Writer - API docs, user guides, architecture documentation
 mode: subagent
-model: minimax/MiniMax-M2.14
+model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true
