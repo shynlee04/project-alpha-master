@@ -5,7 +5,7 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-19T18:00:00+07:00"
+last_updated: "2026-01-14T12:36:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION STATE
@@ -61,18 +61,19 @@ prior_completed:
   - "ARC-B12: External change conflict resolution UI (2026-01-18)"
   - "ARC-D01: Enforce ProjectId template literal type (2026-01-18)"
   - "ARC-D02: Fix workspaceId || projectId fallback bugs (2026-01-18)"
-  - "ARC-D03: Rename bindings → workspaceBindings (2026-01-19)"
+  - "ARC-D03: Rename bindings → workspaceBindings (2026-01-14) - CORRECTED: Fixed workspace-access-helper.tsx:319-320 bug"
   - "ARC-E01: Delete legacy lib/workspace/project-store.ts (2026-01-19)"
-  - "ARC-E02: Delete legacy lib/workspace/file-sync-status-store.ts (2026-01-19)"
-  - "ARC-E03: Delete lib/state/ directory (2026-01-19)"
-  - "ARC-E04: Consolidate file tree implementations (2026-01-19)"
+  - "ARC-E02: Delete legacy lib/workspace/file-sync-status-store.ts (2026-01-19) - Status: Single file deleted, directory remains as canonical modular implementation"
+  - "ARC-E03: Update test imports from @/lib/state/ (2026-01-14) - FIXED: 36+ test mocks + 1 runtime import now use canonical paths"
+  # ARC-E04: File tree consolidation - PENDING analysis
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PENDING STORIES (Phase E - Week 3)
 # ═══════════════════════════════════════════════════════════════════════════
 
 pending_stories:
-  # Phase E COMPLETE - All Team B stories done
+  # Remaining: ARC-E04 (Team B) + 10 Team A stories
+  - "ARC-E04: Consolidate file tree implementations (analysis pending)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ANCHOR (Human Intent Freshness)
@@ -90,9 +91,13 @@ anchor:
 # ═══════════════════════════════════════════════════════════════════════════
 
 errors:
-  count: 0
+  count: 0  # All audit findings from 2026-01-14 have been corrected
   last_error: null
   escalations: []
+  # Historical corrections made:
+  # - ARC-D03: Fixed workspace-access-helper.tsx:319 (was writing to 'bindings' instead of 'workspaceBindings')
+  # - ARC-E02: Clarified - file-sync-status-store/ directory is canonical modular code (single legacy file was deleted)
+  # - ARC-E03: Fixed 36+ test mocks + 1 runtime import from @/lib/state/ to canonical paths
 
 # ═══════════════════════════════════════════════════════════════════════════
 # DELEGATIONS
@@ -101,6 +106,28 @@ errors:
 delegations:
   active: []
   completed:
+    - delegation_id: "del-audit-fix-001"
+      agent: "EXCALIBUR-TEAM-B-ORCHESTRATOR"
+      story: "AUDIT_FIX"
+      started_at: "2026-01-14T12:00:00+07:00"
+      completed_at: "2026-01-14T12:36:00+07:00"
+      status: "SUCCESS"
+      artifacts_created: 0
+      files_modified:
+        - "src/lib/workspace/workspace-access-helper.tsx (ARC-D03 fix)"
+        - "src/infrastructure/events/index.ts (ARC-E03 fix)"
+        - "src/lib/notes/__tests__/note-store.test.ts (ARC-E03 fix)"
+        - "src/presentation/components/hub/__tests__/HubHomePage.test.tsx (ARC-E03 fix)"
+        - "src/presentation/components/rag/__tests__/RAGChatPanel.test.tsx (ARC-E03 fix)"
+        - "src/presentation/components/rag/__tests__/RAGSearchPanel.test.tsx (ARC-E03 fix)"
+        - "src/lib/knowledge/__tests__/source-import.test.ts (ARC-E03 fix)"
+        - "src/infrastructure/persistence/stores/agents-store.test.ts (ARC-E03 fix)"
+        - "src/lib/workspace/__tests__/session-snapshot.test.ts (ARC-E03 fix)"
+        - "src/infrastructure/persistence/stores/conversation/* (ARC-E03 fix)"
+        - "src/presentation/components/knowledge/* (ARC-E03 fix)"
+        - "src/presentation/components/agent/* (ARC-E03 fix)"
+        - "_bmad-ext/state/LOOP_STATE.yaml (updated)"
+      notes: "Fixed 3 audit findings: ARC-D03 bug, ARC-E02 clarification, ARC-E03 imports"
     - delegation_id: "del-arc-d03-001"
       agent: "dev-ext"
       story: "ARC-D03"

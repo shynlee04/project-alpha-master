@@ -46,7 +46,7 @@ vi.mock('@/presentation/components/ui/select', () => ({
     SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
 }));
 
-vi.mock('@/lib/state/provider-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/providers', () => ({
     useProviderStore: vi.fn(),
 }));
 

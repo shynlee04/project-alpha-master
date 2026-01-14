@@ -2,7 +2,7 @@ import type { ThreadMessage } from '../types';
 import { MessageWithId } from '../message-crud-slice';
 import { createTestConversationStore } from './test-helper';
 
-vi.mock('@/lib/state/dexie-storage', () => ({
+vi.mock('@/infrastructure/persistence/dexie-storage', () => ({
   createDexieStorage: () => ({
     getItem: vi.fn(),
     setItem: vi.fn(),

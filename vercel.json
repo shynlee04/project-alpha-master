@@ -7,6 +7,9 @@
       "destination": "/api/index.js"
     }
   ],
+  "git": {
+    "deploymentEnabled": false
+  },
   "buildCommand": "pnpm build:vercel",
   "outputDirectory": "dist/client",
   "functions": {

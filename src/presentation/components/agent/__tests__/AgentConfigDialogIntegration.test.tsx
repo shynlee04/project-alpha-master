@@ -86,7 +86,7 @@ vi.mock('@/lib/agent/providers/model-registry', () => ({
 }))
 
 // Mock provider store
-vi.mock('@/lib/state/provider-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/providers', () => ({
     useProviderStore: () => ({
         providers: [],
         addProvider: vi.fn(),

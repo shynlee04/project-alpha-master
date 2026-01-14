@@ -10,7 +10,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 // Mock store
-vi.mock('@/lib/state/provider-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/providers', () => ({
     useProviderStore: vi.fn(),
 }));
 

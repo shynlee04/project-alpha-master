@@ -2,7 +2,7 @@ import { ConversationMetadataWithId } from '../conversation-metadata-slice';
 import { createTestConversationStore } from './test-helper';
 
 // Mock Dexie Storage to behave synchronously/in-memory for tests
-vi.mock('@/lib/state/dexie-storage', () => ({
+vi.mock('@/infrastructure/persistence/dexie-storage', () => ({
   createDexieStorage: () => ({
     getItem: vi.fn(),
     setItem: vi.fn(),

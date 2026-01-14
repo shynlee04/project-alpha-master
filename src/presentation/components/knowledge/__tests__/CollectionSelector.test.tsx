@@ -11,7 +11,7 @@ import { useKnowledgeStore } from '@/infrastructure/persistence/stores/knowledge
 import type { Collection } from '@/infrastructure/persistence/dexie-db';
 
 // Mock knowledge store
-vi.mock('@/lib/state/knowledge-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/knowledge/knowledge-store', () => ({
     useKnowledgeStore: vi.fn(),
 }));
 

@@ -15,7 +15,7 @@ const mockSetSearchQuery = vi.fn();
 const mockPerformSearch = vi.fn();
 const mockSetSearchMode = vi.fn();
 
-vi.mock('@/lib/state/rag-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/rag/rag-store', () => ({
   useRAGStore: vi.fn((selector) => {
     const state = {
       searchQuery: 'test query',

@@ -51,7 +51,7 @@ export function initializeEventSystem(): void {
 function registerStoreReferences(orchestrator: StateOrchestrator): void {
   // Workspace store
   try {
-    const { useWorkspaceStore } = require('@/lib/state/workspace-store');
+    const { useWorkspaceStore } = require('@/infrastructure/persistence/stores/workspace/workspace-store');
     orchestrator.registerStore('workspaceStore', useWorkspaceStore);
   } catch (error) {
     console.warn('[EventSystem] Workspace store not available:', error);

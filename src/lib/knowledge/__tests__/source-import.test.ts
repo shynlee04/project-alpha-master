@@ -18,7 +18,7 @@ vi.mock('pdfjs-dist', () => ({
 }));
 
 // Mock IndexedDB
-vi.mock('@/lib/state/dexie-db', () => ({
+vi.mock('@/infrastructure/persistence/dexie-db', () => ({
     db: {
         sources: {
             put: vi.fn(),

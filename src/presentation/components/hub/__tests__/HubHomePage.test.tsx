@@ -56,7 +56,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 // Mock db
-vi.mock('@/lib/state/dexie-db', () => ({
+vi.mock('@/infrastructure/persistence/dexie-db', () => ({
   db: {
     projects: {
       toArray: vi.fn().mockResolvedValue([]),

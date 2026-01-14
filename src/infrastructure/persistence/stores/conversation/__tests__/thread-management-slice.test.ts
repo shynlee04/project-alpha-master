@@ -1,7 +1,7 @@
 import { ThreadWithId } from '../thread-management-slice';
 import { createTestConversationStore } from './test-helper';
 
-vi.mock('@/lib/state/dexie-storage', () => ({
+vi.mock('@/infrastructure/persistence/dexie-storage', () => ({
   createDexieStorage: () => ({
     getItem: vi.fn(),
     setItem: vi.fn(),

@@ -21,7 +21,7 @@ import {
 } from '../useConversationStore';
 
 // Mock Dexie Storage
-vi.mock('@/lib/state/dexie-storage', () => ({
+vi.mock('@/infrastructure/persistence/dexie-storage', () => ({
   createDexieStorage: () => ({
     getItem: vi.fn(),
     setItem: vi.fn(),

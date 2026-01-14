@@ -21,7 +21,7 @@ import {
 } from '../session-snapshot';
 
 // Mock the IDE store
-vi.mock('@/lib/state/ide-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/ide', () => ({
     useIDEStore: {
         getState: vi.fn(() => ({
             openFiles: ['src/main.ts', 'src/app.tsx'],
@@ -375,7 +375,7 @@ describe('SessionSnapshotManager', () => {
 
     describe('restoreSession', () => {
         it('should restore IDE state from snapshot', async () => {
-            const { useIDEStore } = await import('@/lib/state/ide-store');
+            const { useIDEStore } = await import('@/infrastructure/persistence/stores/ide');
             const mockSetExpandedPaths = vi.fn();
             const mockSetActiveFile = vi.fn();
             const mockSetActiveFileScrollTop = vi.fn();

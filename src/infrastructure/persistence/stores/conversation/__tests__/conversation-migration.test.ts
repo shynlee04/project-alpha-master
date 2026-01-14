@@ -11,7 +11,7 @@ import { useConversationStore } from '../useConversationStore';
 import type { WorkspaceType } from '@/core/entities/Conversation';
 
 // Mock Dexie Storage to behave synchronously/in-memory for tests
-vi.mock('@/lib/state/dexie-storage', () => ({
+vi.mock('@/infrastructure/persistence/dexie-storage', () => ({
     createDexieStorage: () => ({
         getItem: vi.fn(),
         setItem: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock('@/lib/state/dexie-storage', () => ({
 }));
 
 // Mock legacy conversation store
-vi.mock('@/lib/state/conversation-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/conversation/conversation-store', () => ({
     useLegacyConversationStore: {
         getState: vi.fn(),
     },
@@ -45,7 +45,7 @@ describe('Conversation Migration', () => {
     describe('Migration with empty old data', () => {
         it('should complete successfully with zero counts', async () => {
             // Mock: No legacy data exists
-            vi.doMock('@/lib/state/conversation-store', () => ({
+            vi.doMock('@/infrastructure/persistence/stores/conversation/conversation-store', () => ({
                 getLegacyConversationData: async () => null,
             }));
 

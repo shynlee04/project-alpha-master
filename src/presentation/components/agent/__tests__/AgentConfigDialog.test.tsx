@@ -67,7 +67,7 @@ vi.mock('@/presentation/components/ui/switch', () => ({
     Switch: (props: any) => <input type="checkbox" {...props} />,
 }))
 
-vi.mock('@/lib/state/provider-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/providers', () => ({
     useProviderStore: () => ({
         providers: [],
         addProvider: vi.fn(),

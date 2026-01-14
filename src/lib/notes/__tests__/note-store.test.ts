@@ -13,7 +13,7 @@ import { generateNoteId, DEFAULT_NOTE_BLOCKS } from '../types';
 // Mock Dexie database
 const mockNotes: Map<string, { id: string; projectId: string; title: string; blocks: unknown[]; isFavorite: boolean; order: number; createdAt: number; updatedAt: number; parentId?: string; emoji?: string }> = new Map();
 
-vi.mock('@/lib/state/dexie-db', () => ({
+vi.mock('@/infrastructure/persistence/dexie-db', () => ({
     db: {
         notes: {
             where: vi.fn(() => ({
@@ -41,7 +41,7 @@ vi.mock('@/lib/state/dexie-db', () => ({
 }));
 
 // Mock Dexie storage
-vi.mock('@/lib/state/dexie-storage', () => ({
+vi.mock('@/infrastructure/persistence/dexie-storage', () => ({
     createDexieStorage: vi.fn(() => ({
         getItem: vi.fn(() => null),
         setItem: vi.fn(),
@@ -157,7 +157,7 @@ describe('Story 26-1: Note Store', () => {
         });
 
         it('persists note to Dexie on create', async () => {
-            const { db } = await import('@/lib/state/dexie-db');
+            const { db } = await import('@/infrastructure/persistence/dexie-db');
             const store = useNoteStore.getState();
 
             await store.createNote({ title: 'Test Note' });
@@ -167,7 +167,7 @@ describe('Story 26-1: Note Store', () => {
         });
 
         it('persists note updates to Dexie', async () => {
-            const { db } = await import('@/lib/state/dexie-db');
+            const { db } = await import('@/infrastructure/persistence/dexie-db');
             const store = useNoteStore.getState();
 
             const noteId = await store.createNote();
@@ -207,7 +207,7 @@ describe('Story 26-1: Note Store', () => {
         });
 
         it('deletes note and removes from Dexie', async () => {
-            const { db } = await import('@/lib/state/dexie-db');
+            const { db } = await import('@/infrastructure/persistence/dexie-db');
             const store = useNoteStore.getState();
 
             const noteId = await store.createNote();
@@ -269,7 +269,7 @@ describe('Story 26-1: Note Store', () => {
         });
 
         it('handles save errors gracefully', async () => {
-            const { db } = await import('@/lib/state/dexie-db');
+            const { db } = await import('@/infrastructure/persistence/dexie-db');
 
             // Mock error
             vi.mocked(db.notes.update).mockRejectedValueOnce(new Error('Save failed'));

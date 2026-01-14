@@ -11,7 +11,7 @@ import { RAGChatPanel } from '../RAGChatPanel';
 import type { ChatMessage, Citation } from '@/lib/rag/types';
 
 // Mock the rag-store
-vi.mock('@/lib/state/rag-store', () => ({
+vi.mock('@/infrastructure/persistence/stores/rag/rag-store', () => ({
   useRAGStore: vi.fn((selector) => {
     const state = {
       chatMessages: mockMessages,
