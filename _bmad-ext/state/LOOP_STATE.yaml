@@ -5,7 +5,7 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-19T16:00:00+07:00"
+last_updated: "2026-01-19T18:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION STATE
@@ -20,8 +20,8 @@ session:
   orchestrator_team: "Team B"
   iteration: 1
   max_iterations: 0
-  status: "EPIC-CC-ARC-PHASE-D-COMPLETED"
-  team: "Team B (Storage Contract Squad) - Phase D complete, moving to Phase E"
+  status: "EPIC-CC-ARC-PHASE-E-IN-PROGRESS"
+  team: "Team B (Storage Contract Squad) - Phase E in progress"
   ralph_loop_version: "5.0.0"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -31,10 +31,10 @@ session:
 current:
   epic_id: "EPIC-CC-ARC"
   epic_name: "Correct-Course Architectural Remediation"
-  story_id: "ARC-D03"
-  story_title: "Rename bindings → workspaceBindings"
+  story_id: "ARC-E01"
+  story_title: "Delete legacy lib/workspace/project-store.ts"
   team: "Team B"
-  phase: "D"
+  phase: "E"
   week: 3
   workflow: "correct-course"
   step: "COMPLETE"
@@ -62,26 +62,13 @@ prior_completed:
   - "ARC-D01: Enforce ProjectId template literal type (2026-01-18)"
   - "ARC-D02: Fix workspaceId || projectId fallback bugs (2026-01-18)"
   - "ARC-D03: Rename bindings → workspaceBindings (2026-01-19)"
+  - "ARC-E01: Delete legacy lib/workspace/project-store.ts (2026-01-19)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # PENDING STORIES (Phase E - Week 3)
 # ═══════════════════════════════════════════════════════════════════════════
 
 pending_stories:
-  - story_id: "ARC-E01"
-    title: "Delete legacy lib/workspace/project-store.ts"
-    effort: "2h"
-    priority: "P1"
-    dependencies: ["ARC-D03"]
-    status: "READY"
-    phase: "E"
-    description: |
-      Delete archived project-store.ts file, consolidate all imports to canonical location.
-    acceptance_criteria:
-      - "lib/workspace/project-store.ts deleted"
-      - "All imports updated to use infrastructure/persistence/stores/project/project-store.ts"
-      - "TypeScript: 0 errors"
-
   - story_id: "ARC-E02"
     title: "Delete legacy lib/workspace/file-sync-status-store.ts"
     effort: "1h"
@@ -195,8 +182,8 @@ progress:
   epic_stories_remaining: 13
   team_b_total_stories: 16
   team_b_stories_complete: 15
-  team_b_stories_remaining: 1
-  stories_completed_this_session: 1
+  team_b_stories_remaining: 0
+  stories_completed_this_session: 2
   artifacts_created_this_session: 0
   typescript_errors: 0
 

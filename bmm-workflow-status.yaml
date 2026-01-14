@@ -3,7 +3,7 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.5.0"
-last_updated: "2026-01-19T16:00:00+07:00"
+last_updated: "2026-01-19T18:00:00+07:00"
 updated_by: "BMAD Master - Team B Orchestrator"
 previous_version: "bmm-workflow-status-v2.5.yaml"
 
@@ -80,16 +80,17 @@ limits:
 
 current_workflow:
   id: "epic-cc-arc-week3-2026-01-19"
-  status: "PHASE_D_COMPLETE"
+  status: "PHASE_E_IN_PROGRESS"
   epic: "EPIC-CC-ARC"
-  story: "ARC-D03"
-  started_at: "2026-01-19T14:00:00+07:00"
-  completed_at: "2026-01-19T16:00:00+07:00"
+  story: "ARC-E01"
+  started_at: "2026-01-19T16:00:00+07:00"
+  completed_at: "2026-01-19T18:00:00+07:00"
   team: "Team B (Orchestrator)"
   story_status: "COMPLETED"
-  story_summary: "Rename bindings → workspaceBindings per ADR-033 Decision D4 (Entity Naming Convention)"
-  depends_on: "ARC-D02 ✅"
-  phase_d_complete: true
+  story_summary: "Delete legacy lib/workspace/project-store.ts - consolidate all imports to canonical location"
+  depends_on: "ARC-D03 ✅"
+  phase_e_in_progress: true
+  team_b_complete: true  # All Team B stories complete!
   
   # TypeScript fixes completed this session
   session_fixes:
@@ -175,6 +176,30 @@ current_workflow:
         - "src/routes/notes.lazy.tsx"
         - "src/routes/debug.tsx"
         - "src/lib/workspace/workspace-access-helper.tsx"
+    - id: "ARC-E01"
+      name: "Delete legacy lib/workspace/project-store.ts"
+      completed_at: "2026-01-19T18:00:00+07:00"
+      result: "16 files migrated, legacy file deleted, facade integrated into canonical index.ts. Build: SUCCESS (12.61s)"
+      team: "Team B"
+      adr_reference: "ADR-033 Clean Architecture - Single Source of Truth"
+      files_modified:
+        - "src/infrastructure/persistence/stores/project/index.ts (facade integrated)"
+        - "src/routes/ide.$projectId.tsx"
+        - "src/routes/notes.$projectId.lazy.tsx"
+        - "src/routes/study.$projectId.lazy.tsx"
+        - "src/routes/workspace/$projectId.tsx"
+        - "src/routes/knowledge.$projectId.lazy.tsx"
+        - "src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts"
+        - "src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts"
+        - "src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts"
+        - "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+        - "src/lib/workspace/browser-mode.ts"
+        - "src/lib/workspace/temp-project.ts"
+        - "src/lib/workspace/hooks/useWorkspaceActions.ts"
+        - "src/lib/workspace/hooks/useWorkspaceState.ts"
+        - "src/lib/workspace/workspace-types.ts"
+        - "src/lib/workspace/index.ts (barrel re-export)"
+        - "src/lib/workspace/project-store.ts (DELETED)"
 
 parallel_workflows:
   - id: "cc-01-project-space-2026-01-15"
