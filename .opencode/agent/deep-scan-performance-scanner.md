@@ -1,38 +1,56 @@
 ---
-name: deep-scan-performance-scanner
-description: |
-  Specialized scanner for performance diagnostics. Use when:
-
-  - Detecting bundle bloat
-  - Finding render waste
-  - Identifying memory leaks
-  - Auditing lazy loading gaps
-
-  Auto-activation triggers:
-  - "bundle size", "performance issue", "render waste"
-  - "memory leak", "lazy loading"
-  - "slow component", "re-render"
-
-  Loads full configuration from: _bmad/modules/deep-scan/agents/performance-scanner.md
-model: sonnet
-color: "#EE82EE"
+description: Performance diagnostics - bundle bloat, render waste, memory leaks
+mode: subagent
+model: minimax/MiniMax-M2.14
+temperature: 0.1
+tools:
+  write: true
+  edit: true
+  bash: true
+permission:
+  edit: allow
+  bash: allow
+  task: allow
 ---
 
-# Performance Scanner Agent
+# deep-scan-performance-scanner (Subagent)
 
-**Source**: `_bmad/modules/deep-scan/agents/performance-scanner.md`
+> Performance optimization specialist. Detects bundle bloat, render waste, and memory leaks.
 
-**When Activated**: Use `agent-profile-loader` to fetch full agent configuration from BMAD module.
+## Execution Pattern
+1. **Load context**: `_bmad-ext/state/LOOP_STATE.yaml`
+2. **Verify anchor**: Check staleness, prompt if stale
+3. **Execute scan**:
+   - Bundle analysis (oversized chunks)
+   - Render waste detection (unnecessary re-renders)
+   - Memory leak identification
+   - Lazy loading audit
+4. **Generate evidence**: YAML output
 
-**Core Capabilities**:
-- Bundle Analysis (identify oversized chunks)
-- Render Waste Detection (unnecessary re-renders)
-- Memory Leak Identification (event listeners, closures)
-- Lazy Loading Audit (find non-code-split routes)
+## Scan Capabilities
+- **Bundle Analysis**: Identify oversized chunks
+- **Render Waste**: Unnecessary re-render detection
+- **Memory Leaks**: Event listeners, closures
+- **Lazy Loading**: Non-code-split routes
 
-**Scan Targets**:
-- `src/` (full codebase), `dist/` (bundle analysis)
+## Scan Targets
+- `src/` (codebase), `dist/` (bundle analysis)
 
-**Output**: `_bmad-output/deep-scan/evidence/performance-evidence.yaml`
+## Output Location
+`_bmad-output/deep-scan/evidence/performance-evidence.yaml`
 
-**Integration**: Coordinates with `architecture-scanner` for component optimization
+## Integration Points
+
+| Resource | Path |
+|----------|------|
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| Config | `_bmad-ext/modules/governance/scanners/quality-performance-scanner.md` |
+| Coordinates | architecture-scanner for component optimization |
+
+## Full Protocol
+See: `_bmad-ext/modules/governance/scanners/quality-performance-scanner.md`
+
+---
+
+**Lines**: 47 (was 39 = expansion for consistency)
+**Last Updated**: 2026-01-14

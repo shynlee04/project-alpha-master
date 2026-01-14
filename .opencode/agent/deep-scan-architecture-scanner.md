@@ -1,54 +1,56 @@
 ---
-name: deep-scan-architecture-scanner
-description: |
-  Specialized scanner for architecture diagnostics. Use when:
-
-  - Detecting layer violations
-  - Finding god components
-  - Identifying feature coupling
-  - Auditing clean architecture compliance
-
-  Auto-activation triggers:
-  - "layer violation", "god component", "architecture"
-  - "feature coupling", "clean architecture"
-  - 4-layer architecture validation
-
-  Loads full configuration from: _bmad/modules/deep-scan/agents/architecture-scanner.md
-model: minimax/MiniMax-M2.1
+description: Architecture diagnostics - layer violations, god components, feature coupling
+mode: subagent
+model: minimax/MiniMax-M2.14
 temperature: 0.1
 tools:
-  write_md_json_yaml_xml: true
-  edit_md_json_yaml_xml: true
-  bash:  true
-  read:  true
-  mcp: true
-  glob: true
-  grep: true
-  list: true
-  search: true
-  serena mcp: true
-  repomix mcp: true
-  tavily mcp: true
-  context7 mcp: true
-  deepwiki mcp: true
-  tanstack mcp: true
+  write: true
+  edit: true
+  bash: true
+permission:
+  edit: allow
+  bash: allow
+  task: allow
 ---
 
-# Architecture Scanner Agent
+# deep-scan-architecture-scanner (Subagent)
 
-**Source**: `_bmad/modules/deep-scan/agents/architecture-scanner.md`
+> Architecture diagnostics specialist. Detects layer violations, god components, and coupling issues.
 
-**When Activated**: Use `agent-profile-loader` to fetch full agent configuration from BMAD module.
+## Execution Pattern
+1. **Load context**: `_bmad-ext/state/LOOP_STATE.yaml`, scan targets
+2. **Verify anchor**: Check staleness, prompt if stale
+3. **Execute scan**:
+   - Layer violation detection (Core→Domain→Infrastructure→Presentation)
+   - God component analysis (>300 lines)
+   - Feature coupling analysis
+   - Import graph generation
+4. **Generate evidence**: YAML output to `_bmad-output/deep-scan/evidence/`
 
-**Core Capabilities**:
-- Layer Violation Detection (Core→Domain→Infrastructure→Presentation)
-- God Component Analysis (>300 lines components)
-- Feature Coupling Analysis (cross-feature dependencies)
-- Import Graph Generation (dependency visualization)
+## Scan Capabilities
+- **Layer Violations**: Detect 4-layer architecture violations
+- **God Components**: Identify components >300 lines
+- **Feature Coupling**: Cross-feature dependency analysis
+- **Import Graph**: Dependency visualization
 
-**Scan Targets**:
+## Scan Targets
 - `src/` (full codebase)
 
-**Output**: `_bmad-output/deep-scan/evidence/architecture-evidence.yaml`
+## Output Location
+`_bmad-output/deep-scan/evidence/architecture-evidence.yaml`
 
-**Integration**: Coordinates with all scanners for architecture validation
+## Integration Points
+
+| Resource | Path |
+|----------|------|
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| Config | `_bmad-ext/modules/governance/scanners/quality-architecture-scanner.md` |
+| Coordinates | All scanners for architecture validation |
+
+## Full Protocol
+See: `_bmad-ext/modules/governance/scanners/quality-architecture-scanner.md`
+
+---
+
+**Lines**: 48 (was 55 = 13% reduction)
+**Last Updated**: 2026-01-14

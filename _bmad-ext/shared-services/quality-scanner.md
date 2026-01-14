@@ -3,7 +3,7 @@
 ---
 name: "quality-scanner-ext"
 description: "Enhanced Quality Scanner Agent with orchestration hooks"
-wraps: "_bmad/modules/quality/scanners/"
+wraps: "_bmad-ext/modules/governance/scanners/quality-*.md"
 version: "1.0.0"
 ---
 
@@ -11,12 +11,12 @@ version: "1.0.0"
 
 > Wraps the BMAD quality module scanners with orchestration capabilities.
 >
-> **Core Module**: `_bmad/modules/quality/scanners/`
+> **Core Module**: `_bmad-ext/modules/governance/scanners/`
 >
-> **Note**: This agent aggregates the 10 quality scanners:
-> - agent-rag-scanner, architecture-scanner, evidence-synthesizer
-> - performance-scanner, persistence-scanner, security-scanner
-> - state-scanner, types-scanner, ux-scanner, workspace-scanner
+> **Note**: This agent aggregates the 10 quality scanners (all with `quality-` prefix):
+> - quality-agent-permissions-scanner, quality-architecture-scanner, quality-evidence-synthesizer
+> - quality-performance-scanner, quality-persistence-scanner, quality-security-scanner
+> - quality-state-scanner, quality-types-scanner, quality-ux-scanner, quality-workspace-scanner
 
 ---
 
@@ -75,7 +75,7 @@ steps:
 
   2. Execute Scanners:
      for_each: "selected_scanners"
-     load: "_bmad/modules/quality/scanners/{scanner}.md"
+     load: "_bmad-ext/modules/governance/scanners/quality-{scanner}.md"
      execute: "scan_protocol"
      capture:
        - findings

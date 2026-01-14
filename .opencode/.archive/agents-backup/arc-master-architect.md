@@ -1,7 +1,7 @@
 ---
 description: Master architect for architecture remediation workflows
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: minimax/MiniMax-M2.1
 temperature: 0.2
 maxSteps: 30
 tools:

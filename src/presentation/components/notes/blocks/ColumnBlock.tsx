@@ -245,7 +245,6 @@ export const ColumnBlock = createReactBlockSpec(
                         `column-block--${columnCount}-cols`,
                         `column-block--align-${textAlignment}`
                     )}
-                    contentEditable={false}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
@@ -313,7 +312,7 @@ export const ColumnBlock = createReactBlockSpec(
                     </div>
 
                     {/* Empty state hint */}
-                    {(!props.block.content || props.block.content.length === 0) && (
+                    {(!props.block.content || (Array.isArray(props.block.content) && props.block.content.length === 0)) && (
                         <div className="column-block__empty-hint">
                             <Columns size={24} className="text-muted-foreground" />
                             <p className="text-sm text-muted-foreground">

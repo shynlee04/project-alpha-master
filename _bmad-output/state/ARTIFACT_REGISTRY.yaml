@@ -1,31 +1,142 @@
-# ARTIFACT_REGISTRY - BMAD Extension Artifact Tracking
-# Version: 1.0.0
-# Last Updated: 2026-01-11T10:00:00Z
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# BMAD ARTIFACT REGISTRY
+# Single Source of Truth for All Generated Artifacts
+# CANONICAL LOCATION: _bmad-output/state/
+# ═══════════════════════════════════════════════════════════════════════════
 
-# All artifacts registered in the system
-artifacts: []
+schema_version: "1.0.0"
+created_at: "2026-01-18T11:30:00+07:00"
+last_updated: "2026-01-14T19:00:00+07:00"
+source: "Merged from _bmad-ext/state/ARTIFACT_REGISTRY.yaml"
 
-# Handoff artifacts
-handoffs: []
+registry:
+  # Planning Artifacts
+  - id: "adr-033"
+    type: "adr"
+    name: "ADR-033: Correct-Course Architectural Remediation"
+    path: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+    parent_id: null
+    created_at: "2026-01-16T00:00:00+07:00"
+    status: "approved"
 
-# Scan results
-scans: []
+  - id: "epic-cc-arc-sprint"
+    type: "sprint"
+    name: "EPIC-CC-ARC Sprint Artifacts"
+    path: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+    parent_id: "adr-033"
+    created_at: "2026-01-17T08:00:00+07:00"
+    status: "active"
 
-# Governance reports
-governance_reports: []
+  - id: "master-plan-consolidation"
+    type: "planning"
+    name: "BMAD Master Plan: Platform Consolidation & Migration"
+    path: "_bmad-output/planning-artifacts/MASTER-PLAN-Consolidation-2026-01-14.md"
+    parent_id: "adr-033"
+    created_at: "2026-01-14T18:45:00+07:00"
+    status: "draft"
 
-# Sprint artifacts
-sprint_artifacts: []
+  - id: "phase-1-completion-report"
+    type: "phase-report"
+    name: "Phase 1 Completion Report: Critical Cleanup"
+    path: "_bmad-output/phase-reports/PHASE-1-COMPLETION-REPORT-2026-01-14.md"
+    parent_id: "master-plan-consolidation"
+    created_at: "2026-01-14T18:45:00+07:00"
+    status: "complete"
 
-# Story artifacts
-story_artifacts: []
+  - id: "phase-2-completion-report"
+    type: "phase-report"
+    name: "Phase 2 Completion Report: Module Consolidation"
+    path: "_bmad-output/phase-reports/PHASE-2-COMPLETION-REPORT-2026-01-14.md"
+    parent_id: "master-plan-consolidation"
+    created_at: "2026-01-14T19:00:00+07:00"
+    status: "complete"
 
-# Remediation artifacts
-remediation_artifacts: []
+  - id: "consolidated-bmad-module-spec"
+    type: "specification"
+    name: "BMAD Consolidated Module Specification"
+    path: "_bmad-output/planning-artifacts/CONSOLIDATED-BMAD-MODULE-SPECIFICATION-2026-01-14.md"
+    parent_id: "master-plan-consolidation"
+    created_at: "2026-01-14T19:00:00+07:00"
+    status: "future"
 
-# Statistics
-stats:
-  total_artifacts: 0
-  pending_handoffs: 0
-  stale_artifacts: 0
-  last_registered_at: null
+  # Implementation Artifacts
+  - id: "arc-b11-implementation"
+    type: "implementation"
+    name: "ARC-B11: MarkdownSyncService"
+    story_id: "ARC-B11"
+    path: "src/infrastructure/filesystem/markdown-sync-service.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T00:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-b12-implementation"
+    type: "implementation"
+    name: "ARC-B12: MarkdownSyncConflictDialog"
+    story_id: "ARC-B12"
+    path: "src/presentation/components/notes/MarkdownSyncConflictDialog.tsx"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T00:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-b08-implementation"
+    type: "implementation"
+    name: "ARC-B08: File Tree Exclusion Patterns Configuration"
+    story_id: "ARC-B08"
+    path: "src/domain/types/viagent-metadata.ts, src/infrastructure/filesystem/viagent-service.ts, src/infrastructure/filesystem/file-tree-scanner.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T12:30:00+07:00"
+    status: "complete"
+
+  - id: "arc-b09-implementation"
+    type: "implementation"
+    name: "ARC-B09: Scan Depth Limits and Warnings"
+    story_id: "ARC-B09"
+    path: "src/domain/types/viagent-metadata.ts, src/infrastructure/filesystem/file-tree-scanner.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T14:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-d01-implementation"
+    type: "implementation"
+    name: "ARC-D01: ProjectId Template Literal Type"
+    story_id: "ARC-D01"
+    path: "src/domain/types/project-ids.ts, src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T15:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-d02-implementation"
+    type: "implementation"
+    name: "ARC-D02: workspaceId || projectId Fallback Bug Fix"
+    story_id: "ARC-D02"
+    path: "src/infrastructure/persistence/stores/flashcard/flashcard-db.ts, src/infrastructure/persistence/stores/flashcard/slices/flashcard-operations-slice.ts, src/infrastructure/persistence/stores/flashcard/slices/flashcard-persistence-slice.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T16:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-d03-implementation"
+    type: "implementation"
+    name: "ARC-D03: Rename bindings → workspaceBindings (ADR-033 Decision D4)"
+    story_id: "ARC-D03"
+    path: "25 files renamed: domain entity, dexie schema, project store, components, routes"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-19T16:00:00+07:00"
+    status: "complete"
+    adr_reference: "ADR-033 Decision D4: Entity Naming Convention"
+
+# Session Tracking
+sessions:
+  - id: "excalibur-epic-cc-arc-2026-01-18"
+    orchestrator: "EXCALIBUR (ext-master-enhanced v2.0.0)"
+    team: "Team B (Storage Contract Squad)"
+    epic: "EPIC-CC-ARC"
+    started_at: "2026-01-18T11:30:00+07:00"
+    status: "active"
+
+  - id: "morgan-module-builder-2026-01-14"
+    orchestrator: "Morgan (Module Creation Master)"
+    team: "Framework Consolidation"
+    epic: "BMAD Platform Integration"
+    started_at: "2026-01-14T18:00:00+07:00"
+    status: "active"

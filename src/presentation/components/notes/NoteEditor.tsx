@@ -499,25 +499,34 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
 
             // Known BlockNote block types for validation
             const knownBlockTypes = new Set([
+                // Standard BlockNote blocks
                 'heading', 'paragraph', 'bulletListItem', 'numberedListItem',
                 'checkListItem', 'codeBlock', 'quote', 'callout', 'toggle',
-                'table', 'image', 'codeFile', 'fileAttachment', 'divider',
+                'toggleListItem', 'table', 'image', 'divider', 'audio', 'video', 'file',
+                // Custom content blocks
+                'codeFile', 'fileAttachment',
                 'aiImage', 'aiVision', 'storyboard', 'videoAnalysis',
                 'ttsBlock', 'artifactBlock', 'videoGeneration', 'slidesExport',
                 'chartDiagram', 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-                'reference', // UX-10: Block references
-                'column', // UX-11: Column layouts
-                'synced' // UX-12: Synced blocks
+                // UX-10/11/12: Container blocks with content: "inline"
+                'reference', // UX-10: Block references (content: "none")
+                'column',    // UX-11: Column layouts (content: "inline")
+                'synced',    // UX-12: Synced blocks (content: "inline")
             ]);
 
             // Blocks with content: "none" spec should NOT have content property
+            // IMPORTANT: column, synced, and callout have content: "inline" - they MUST be excluded
+            // See BlockSpec definitions in blocks/*.tsx files
             const noContentBlockTypes = new Set([
                 'image', 'codeFile', 'fileAttachment', 'aiImage', 'aiVision',
                 'storyboard', 'videoAnalysis', 'ttsBlock', 'artifactBlock',
                 'videoGeneration', 'slidesExport', 'chartDiagram',
                 'transformPipeline', 'artifactGallery', 'multiStepGeneration',
-                'reference', // UX-10: Reference blocks use contentSnapshot prop instead of content
-                // 'column', // UX-11: Has inline content - NOT a no-content block
+                'reference', // UX-10: Has content: "none" - uses contentSnapshot prop
+                // EXCLUDED (content: "inline" blocks):
+                // 'callout', // UX-09: Has content: "inline" - uses contentRef
+                // 'column',  // UX-11: Has content: "inline" - uses contentRef
+                // 'synced',  // UX-12: Has content: "inline" - uses contentRef
             ]);
 
             // Recursive function to validate and sanitize block structure

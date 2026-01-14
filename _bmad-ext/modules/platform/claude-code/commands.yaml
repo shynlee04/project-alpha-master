@@ -1,0 +1,171 @@
+# BMAD CLI Commands for Claude Code
+
+> **File:** `_bmad-ext/modules/platform/claude-code/commands.yaml`
+> **Version:** 1.0.0 | **Date:** 2026-01-14T10:35:00+07:00
+
+## Audit Commands
+
+### `audit:ui`
+Run comprehensive UI/UX violation scan.
+
+**Usage:**
+```bash
+audit:ui
+```
+
+**Output:** `_bmad-output/audit/ui-scan-results.md`
+
+**Scans:**
+- Layout violations (nested panels, split-inside-split)
+- Z-index violations (arbitrary values)
+- Mobile responsiveness (hardcoded pixel widths)
+- Portal overlay checks
+
+---
+
+### `audit:dead`
+Detect dead code and unused files.
+
+**Usage:**
+```bash
+audit:dead
+```
+
+**Output:** `_bmad-output/audit/dead-code-report.md`
+
+**Uses:** `npx knip`
+
+---
+
+### `audit:arch`
+Run full architecture audit.
+
+**Usage:**
+```bash
+audit:arch
+```
+
+**Output:** `_bmad-output/audit/architecture-audit.md`
+
+---
+
+### `audit:links`
+Validate all cross-references and links.
+
+**Usage:**
+```bash
+audit:links
+```
+
+**Output:** `_bmad-output/audit/link-validation.md`
+
+---
+
+### `audit:guardrails`
+Check guardrail compliance.
+
+**Usage:**
+```bash
+audit:guardrails --component <component-name>
+```
+
+**Output:** `_bmad-output/audit/guardrail-compliance.md`
+
+---
+
+## BMAD Workflow Commands
+
+### `bmad:status`
+Show current workflow and sprint status.
+
+**Usage:**
+```bash
+bmad:status
+```
+
+---
+
+### `bmad:delegate <agent>`
+Delegate task to specific BMAD agent.
+
+**Usage:**
+```bash
+bmad:delegate analyst   # Delegate to analyst agent
+bmad:delegate architect # Delegate to architect agent
+bmad:delegate dev       # Delegate to dev agent
+```
+
+---
+
+### `bmad:story-create <title>`
+Create new story with context.
+
+**Usage:**
+```bash
+bmad:story-create "Implement user authentication"
+```
+
+---
+
+### `bmad:story-cycle`
+Start story development cycle.
+
+**Usage:**
+```bash
+bmad:story-cycle --story-id <id>
+```
+
+---
+
+### `bmad:correct-course`
+Trigger correct-course workflow.
+
+**Usage:**
+```bash
+bmad:correct-course --trigger <reason>
+```
+
+---
+
+### `bmad:sprint-plan`
+Run sprint planning wrapper.
+
+**Usage:**
+```bash
+bmad:sprint-plan --epic <epic-id>
+```
+
+---
+
+## Quick Reference
+
+| Command | Description |
+|---------|-------------|
+| `audit:ui` | UI/UX violation scan |
+| `audit:dead` | Dead code detection |
+| `audit:arch` | Architecture audit |
+| `bmad:status` | Show workflow status |
+| `bmad:delegate <agent>` | Delegate to agent |
+| `bmad:story-cycle` | Run story cycle |
+| `dev:check` | TypeScript + tests |
+
+---
+
+## Integration with CLAUDE.md
+
+Add to `CLAUDE.md`:
+
+```markdown
+## BMAD Commands
+- `audit:ui` - Scan UI/UX violations
+- `audit:dead` - Detect dead code
+- `audit:arch` - Run architecture audit
+- `bmad:status` - Show workflow status
+- `bmad:delegate <agent>` - Delegate to BMAD agent
+- `bmad:story-cycle` - Run story development cycle
+
+## Essential Files
+- See: `_bmad-ext/modules/CONSOLIDATED-BMAD-MODULE-2026-01-14.md`
+- See: `_bmad-ext/orchestrator/master-orchestrator.md`
+- See: `_bmad-ext/state/LOOP_STATE.yaml`
+```

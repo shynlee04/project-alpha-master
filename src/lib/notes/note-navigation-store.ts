@@ -12,6 +12,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 
 /**
  * Navigation state for note tree
@@ -192,11 +193,12 @@ export function useFavoritesFilter(): boolean {
 
 /**
  * 45-05: Hook to get scroll position methods
+ * ⚠️ CRITICAL FIX (2026-01-14): Uses useShallow to prevent infinite loops
  */
 export function useNoteScrollPosition() {
-    return useNoteNavigationStore((state) => ({
+    return useNoteNavigationStore(useShallow((state) => ({
         setNoteScrollPosition: state.setNoteScrollPosition,
         getNoteScrollPosition: state.getNoteScrollPosition,
         clearNoteScrollPosition: state.clearNoteScrollPosition,
-    }));
+    })));
 }

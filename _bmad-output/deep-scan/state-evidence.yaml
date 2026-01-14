@@ -1,0 +1,263 @@
+# Deep Scan Findings Report
+# Scan Date: 2026-01-14
+# Scanner: State Scanner Agent v2.0
+# Scope: State Management, Persistence, Hot Reload, Routing
+
+summary:
+  critical_count: 8
+  high_count: 18
+  medium_count: 12
+  total_issues: 38
+
+p0_critical:
+  - id: STATE-001
+    title: Missing useShallow for Multi-Selector Hooks
+    file: src/infrastructure/persistence/stores/workspace/workspace-store.ts
+    lines: 199-215
+    severity: P0
+    impact: Components re-render on ANY state change due to new object references
+    recommendation: Wrap selectors with useShallow from zustand/react/shallow
+    code_snippet: |
+      # BEFORE (problematic)
+      export function useWorkspaceContext() {
+        return useWorkspaceStore((state) => ({
+          currentWorkspace: state.currentWorkspace,
+          currentProjectId: state.currentProjectId,
+          isTransitioning: state.isTransitioning,
+        }));
+      }
+      
+      # AFTER (fixed)
+      import { useShallow } from 'zustand/react/shallow';
+      export function useWorkspaceContext() {
+        return useWorkspaceStore(useShallow((state) => ({
+          currentWorkspace: state.currentWorkspace,
+          currentProjectId: state.currentProjectId,
+          isTransitioning: state.isTransitioning,
+        })));
+      }
+
+  - id: STATE-002
+    title: Stale Closure in setTimeout Callback
+    file: src/infrastructure/persistence/stores/workspace/workspace-store.ts
+    lines: 114-119
+    severity: P0
+    impact: Transition state loses actual previous workspace value
+    recommendation: Remove setTimeout or use proper state setter function
+
+  - id: STATE-003
+    title: Cross-Slice Call Without Type Safety
+    file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+    line: 234
+    severity: P0
+    impact: Silent runtime failure if updateLastOpened doesn't exist
+    recommendation: Use proper type intersection or event bus for cross-store communication
+
+  - id: PERSIST-001
+    title: Dexie Migration v20 - Primary Key Schema Change
+    file: src/infrastructure/persistence/dexie-db-migrations.ts
+    lines: 728-827
+    severity: P0
+    impact: Migration failures for users with existing IndexedDB data
+    recommendation: Add explicit recovery logic with try-catch and rollback
+
+  - id: PERSIST-002
+    title: Unhandled Promise Rejections in Critical Paths
+    file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+    lines: 145-156, 188-191, 208-211, 214-217
+    severity: P0
+    impact: Data loss on page refresh if Dexie write fails
+    recommendation: Implement retry with exponential backoff
+
+  - id: HOTRELOAD-001
+    title: Event Bus Ref Without Stable Identity
+    file: src/lib/workspace/hooks/useEventBusEffects.ts
+    lines: 54-67
+    severity: P0
+    impact: Unnecessary re-subscriptions and potential memory leaks
+    recommendation: Use useCallback for handlers and stable refs
+
+  - id: ROUTING-001
+    title: IDE Route Missing Comprehensive Error Handling
+    file: src/routes/ide.$projectId.tsx
+    lines: 104-109
+    severity: P0
+    impact: Users redirected without explanation when project not found
+    recommendation: Return error state with user-friendly message
+
+  - id: ROUTING-002
+    title: Mobile Redirect Loses Context
+    file: src/routes/ide.$projectId.tsx
+    lines: 93-100
+    severity: P0
+    impact: Mobile users redirected without understanding why
+    recommendation: Preserve more context in redirect parameters
+
+p1_high:
+  - id: STATE-004
+    title: Multiple Selectors Causing Unnecessary Re-renders
+    files:
+      - src/presentation/components/layout/IDELayoutMain.tsx
+      - src/presentation/components/notes/NoteEditor.tsx
+    severity: P1
+    recommendation: Use useShallow for all multi-value selectors
+
+  - id: STATE-005
+    title: Dynamic Selector Array in Dependency Array
+    file: src/presentation/components/layout/IDELayoutMain.tsx
+    lines: 186-190
+    severity: P1
+    recommendation: Debounce or use stable reference for persistence
+
+  - id: PERSIST-003
+    title: FSA Handle Restoration Race Condition
+    file: src/infrastructure/filesystem/handle-persistence.ts
+    lines: 124-185
+    severity: P1
+    recommendation: Add locking mechanism for concurrent restore requests
+
+  - id: PERSIST-004
+    title: LocalStorage Fallback for Dexie Errors
+    file: src/infrastructure/persistence/stores/file-watcher-store.ts
+    line: 227
+    severity: P1
+    recommendation: Use Dexie storage for all persisted state
+
+  - id: PERSIST-005
+    title: Missing Error Handling in FSA Gateway
+    file: src/infrastructure/filesystem/fsa-gateway.ts
+    line: 396
+    severity: P1
+    recommendation: Add retry with proper error notification
+
+  - id: PERSIST-006
+    title: Incomplete Error Recovery in Dexie Operations
+    file: src/infrastructure/persistence/dexie-db.ts
+    lines: 260-276
+    severity: P1
+    recommendation: Add comprehensive error recovery for all IndexedDB errors
+
+  - id: HOTRELOAD-002
+    title: Missing Cleanup in setTimeout for Workspace Transition
+    file: src/infrastructure/persistence/stores/workspace/workspace-store.ts
+    lines: 114-119
+    severity: P1
+    recommendation: Clear timeout in cleanup function
+
+  - id: HOTRELOAD-003
+    title: Event Bus Memory Leak in UseEffect
+    file: src/lib/workspace/hooks/useEventBusEffects.ts
+    lines: 60-66
+    severity: P1
+    recommendation: Use stable handler references with useRef
+
+  - id: ROUTING-003
+    title: No Loading State in Lazy Route Components
+    files:
+      - src/routes/notes.$projectId.lazy.tsx
+      - src/routes/study.$projectId.lazy.tsx
+      - src/routes/knowledge.$projectId.lazy.tsx
+    severity: P1
+    recommendation: Add Suspense boundary with loading state
+
+  - id: ROUTING-004
+    title: Duplicate getProjectWithRetry Implementation
+    files:
+      - src/routes/ide.$projectId.tsx
+      - src/routes/notes.$projectId.lazy.tsx
+      - src/routes/study.$projectId.lazy.tsx
+    severity: P1
+    recommendation: Extract to shared utility in src/lib/workspace/
+
+  - id: ROUTING-005
+    title: Route Guards Missing on Several Routes
+    files:
+      - src/routes/knowledge.$projectId.lazy.tsx
+      - src/routes/study.$projectId.lazy.tsx
+    severity: P1
+    recommendation: Add beforeLoad guards for project validation
+
+p2_medium:
+  - id: STATE-006
+    title: Project Store Line Count Borderline
+    file: src/infrastructure/persistence/stores/project/project-crud-slice.ts
+    lines: 292
+    severity: P2
+    recommendation: Consider splitting into multiple focused slices
+
+  - id: STATE-007
+    title: Missing Error Boundary on Some Routes
+    files:
+      - src/routes/workspace/$projectId.tsx
+      - src/routes/knowledge.$projectId.lazy.tsx
+    severity: P2
+    recommendation: Wrap routes with ErrorBoundary
+
+  - id: PERSIST-007
+    title: Inconsistent Error Handling Patterns
+    files: Throughout codebase
+    severity: P2
+    recommendation: Standardize error handling with shared handler
+
+  - id: PERSIST-008
+    title: No Validation Before Dexie Operations
+    files:
+      - src/infrastructure/persistence/stores/project/project-crud-slice.ts
+      - src/infrastructure/persistence/dexie-db.ts
+    severity: P2
+    recommendation: Add input validation before DB operations
+
+  - id: HOTRELOAD-004
+    title: No Global Error Handler for Event Bus
+    file: src/infrastructure/events/event-bus.ts
+    severity: P2
+    recommendation: Add error boundary in emit method
+
+  - id: ROUTING-006
+    title: No Route Transition Loading States
+    files: All route files
+    severity: P2
+    recommendation: Add pendingComponent with loading indicator
+
+  - id: ROUTING-007
+    title: Missing Type Safety for Route Params
+    files:
+      - src/routes/notes.$projectId.tsx
+      - src/routes/ide.$projectId.tsx
+    severity: P2
+    recommendation: Use Zod validation for route params
+
+recommendations:
+  immediate:
+    - Add useShallow to multi-selector hooks
+    - Fix setTimeout stale closure
+    - Add type safety to cross-slice calls
+    - Enhance Dexie migration error recovery
+    - Implement retry logic for persistence failures
+    - Add context to route redirects
+  
+  short_term:
+    - Audit all useShallow usage across codebase
+    - Add FSA handle restoration locking
+    - Standardize Dexie storage for all persisted state
+    - Implement comprehensive error recovery
+    - Extract shared project lookup utility
+    - Add route guards to remaining routes
+  
+  long_term:
+    - Refactor project-crud-slice into focused slices
+    - Standardize error handling patterns
+    - Add validation before DB operations
+    - Implement event bus error boundary
+    - Add loading states for route transitions
+    - Add type safety for route params
+
+evidence_files:
+  - _bmad-output/deep-scan/state-evidence.yaml
+  - _bmad-output/deep-scan/state-store-analysis.json
+  - _bmad-output/deep-scan/persistence-analysis.json
+  - _bmad-output/deep-scan/routing-analysis.json
+
+generated: 2026-01-14T10:30:00Z
+scanner_version: 2.0.0
+next_scan: 2026-01-28

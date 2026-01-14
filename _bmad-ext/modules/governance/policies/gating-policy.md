@@ -3,6 +3,7 @@ name: "gating-policy"
 type: "governance-policy"
 description: "Define gating policy for workflow transitions"
 version: "1.0.0"
+lastUpdated: "2026-01-14"
 ---
 
 # Gating Policy

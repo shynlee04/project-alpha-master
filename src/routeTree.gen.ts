@@ -29,6 +29,7 @@ import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as SpikeUxRedesign20260114RouteImport } from './routes/_spike.ux-redesign-2026-01-14'
 import { Route as __debug_ProviderPlaygroundRouteImport } from './routes/$__debug__.provider-playground'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
 import { Route as ApiProvidersIdRouteImport } from './routes/api/providers.$id'
@@ -165,6 +166,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpikeUxRedesign20260114Route = SpikeUxRedesign20260114RouteImport.update({
+  id: '/_spike/ux-redesign-2026-01-14',
+  path: '/ux-redesign-2026-01-14',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const __debug_ProviderPlaygroundRoute =
   __debug_ProviderPlaygroundRouteImport.update({
     id: '/$__debug__/provider-playground',
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
   '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/ux-redesign-2026-01-14': typeof SpikeUxRedesign20260114Route
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
   '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/ux-redesign-2026-01-14': typeof SpikeUxRedesign20260114Route
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
@@ -275,6 +283,7 @@ export interface FileRoutesById {
   '/notes': typeof NotesLazyRouteWithChildren
   '/study': typeof StudyLazyRouteWithChildren
   '/$__debug__/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/_spike/ux-redesign-2026-01-14': typeof SpikeUxRedesign20260114Route
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/$__debug_/provider-playground'
+    | '/ux-redesign-2026-01-14'
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/$__debug_/provider-playground'
+    | '/ux-redesign-2026-01-14'
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/notes'
     | '/study'
     | '/$__debug__/provider-playground'
+    | '/_spike/ux-redesign-2026-01-14'
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
@@ -402,6 +414,7 @@ export interface RootRouteChildren {
   NotesLazyRoute: typeof NotesLazyRouteWithChildren
   StudyLazyRoute: typeof StudyLazyRouteWithChildren
   __debug_ProviderPlaygroundRoute: typeof __debug_ProviderPlaygroundRoute
+  SpikeUxRedesign20260114Route: typeof SpikeUxRedesign20260114Route
   ApiChatRoute: typeof ApiChatRoute
   ApiProviderTestRoute: typeof ApiProviderTestRoute
   ApiProvidersRoute: typeof ApiProvidersRouteWithChildren
@@ -575,6 +588,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_spike/ux-redesign-2026-01-14': {
+      id: '/_spike/ux-redesign-2026-01-14'
+      path: '/ux-redesign-2026-01-14'
+      fullPath: '/ux-redesign-2026-01-14'
+      preLoaderRoute: typeof SpikeUxRedesign20260114RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/$__debug__/provider-playground': {
       id: '/$__debug__/provider-playground'
       path: '/$__debug_/provider-playground'
@@ -707,6 +727,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotesLazyRoute: NotesLazyRouteWithChildren,
   StudyLazyRoute: StudyLazyRouteWithChildren,
   __debug_ProviderPlaygroundRoute: __debug_ProviderPlaygroundRoute,
+  SpikeUxRedesign20260114Route: SpikeUxRedesign20260114Route,
   ApiChatRoute: ApiChatRoute,
   ApiProviderTestRoute: ApiProviderTestRoute,
   ApiProvidersRoute: ApiProvidersRouteWithChildren,

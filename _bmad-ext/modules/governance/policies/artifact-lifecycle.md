@@ -3,6 +3,7 @@ name: "artifact-lifecycle"
 type: "governance-policy"
 description: "Define artifact lifecycle from creation to archival"
 version: "1.0.0"
+lastUpdated: "2026-01-14"
 ---
 
 # Artifact Lifecycle Policy

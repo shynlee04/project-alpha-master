@@ -1,38 +1,56 @@
 ---
-name: deep-scan-workspace-scanner
-description: |
-  Specialized scanner for workspace integration diagnostics. Use when:
-
-  - Detecting cross-workspace leaks
-  - Finding event isolation violations
-  - Identifying shared state pollution
-  - Auditing workspace switching safety
-
-  Auto-activation triggers:
-  - "workspace leak", "cross-workspace pollution"
-  - "event isolation", "workspace switching"
-  - "shared state", "workspace context"
-
-  Loads full configuration from: _bmad/modules/deep-scan/agents/workspace-scanner.md
-model: sonnet
-color: "#FFFF00"
+description: Workspace integration diagnostics - cross-workspace leaks, event isolation
+mode: subagent
+model: minimax/MiniMax-M2.14
+temperature: 0.1
+tools:
+  write: true
+  edit: true
+  bash: true
+permission:
+  edit: allow
+  bash: allow
+  task: allow
 ---
 
-# Workspace Scanner Agent
+# deep-scan-workspace-scanner (Subagent)
 
-**Source**: `_bmad/modules/deep-scan/agents/workspace-scanner.md`
+> Workspace isolation specialist. Detects cross-workspace leaks and event isolation violations.
 
-**When Activated**: Use `agent-profile-loader` to fetch full agent configuration from BMAD module.
+## Execution Pattern
+1. **Load context**: `_bmad-ext/state/LOOP_STATE.yaml`
+2. **Verify anchor**: Check staleness, prompt if stale
+3. **Execute scan**:
+   - Cross-workspace leak detection
+   - Event isolation audit
+   - Shared state pollution analysis
+   - Workspace switching validation
+4. **Generate evidence**: YAML output
 
-**Core Capabilities**:
-- Cross-Workspace Leak Detection (state bleeding between workspaces)
-- Event Isolation Audit (verify workspace event boundaries)
-- Shared State Analysis (identify pollution risks)
-- Workspace Switching Validation (ensure clean transitions)
+## Scan Capabilities
+- **Cross-Workspace Leaks**: State bleeding between workspaces
+- **Event Isolation**: Verify workspace event boundaries
+- **Shared State**: Identify pollution risks
+- **Switching Safety**: Ensure clean transitions
 
-**Scan Targets**:
+## Scan Targets
 - `src/workspaces/`, `src/lib/workspace/`, `src/infrastructure/events/`
 
-**Output**: `_bmad-output/deep-scan/evidence/workspace-evidence.yaml`
+## Output Location
+`_bmad-output/deep-scan/evidence/workspace-evidence.yaml`
 
-**Integration**: Coordinates with `state-scanner`, `architecture-scanner`
+## Integration Points
+
+| Resource | Path |
+|----------|------|
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| Config | `_bmad-ext/modules/governance/scanners/quality-workspace-scanner.md` |
+| Coordinates | state-scanner, architecture-scanner |
+
+## Full Protocol
+See: `_bmad-ext/modules/governance/scanners/quality-workspace-scanner.md`
+
+---
+
+**Lines**: 49 (was 39 = expansion for consistency)
+**Last Updated**: 2026-01-14

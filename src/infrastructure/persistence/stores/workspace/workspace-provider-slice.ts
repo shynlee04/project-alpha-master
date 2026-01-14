@@ -11,6 +11,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 import type { WorkspaceType } from './workspace-types';
 
 /**
@@ -166,28 +167,29 @@ export const useWorkspaceProviderStore = create<WorkspaceProviderState>()(
 
 /**
  * Hook to get workspace provider preference
- *
- * @param workspace - The workspace type
+ * ⚠️ CRITICAL FIX (2026-01-14): Uses useShallow to prevent infinite loops
+ * @param workspace - The workspace to get preference for
  * @returns The workspace's provider preference
  */
 export function useWorkspaceProviderPreference(workspace: WorkspaceType) {
-  return useWorkspaceProviderStore((state) => ({
+  return useWorkspaceProviderStore(useShallow((state) => ({
     preference: state.workspaceProviders[workspace] || { ...DEFAULT_WORKSPACE_PREFERENCE },
     setProviderId: (providerId: string | null) => state.setWorkspaceProvider(workspace, providerId),
     setFallbackChain: (fallbacks: string[] | null) => state.setWorkspaceFallbackChain(workspace, fallbacks),
     setStrictMode: (strict: boolean) => state.setWorkspaceStrictMode(workspace, strict),
     clearPreference: () => state.clearWorkspaceProvider(workspace),
-  }));
+  })));
 }
 
 /**
  * Hook to get all workspace provider preferences
+ * ⚠️ CRITICAL FIX (2026-01-14): Uses useShallow to prevent infinite loops
  */
 export function useAllWorkspaceProviderPreferences() {
-  return useWorkspaceProviderStore((state) => ({
+  return useWorkspaceProviderStore(useShallow((state) => ({
     workspaceProviders: state.workspaceProviders,
     setWorkspaceProvider: state.setWorkspaceProvider,
     clearWorkspaceProvider: state.clearWorkspaceProvider,
     resetAll: state.resetAllWorkspaceProviders,
-  }));
+  })));
 }

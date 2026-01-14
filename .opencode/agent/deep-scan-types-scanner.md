@@ -1,38 +1,56 @@
 ---
-name: deep-scan-types-scanner
-description: |
-  Specialized scanner for TypeScript diagnostics. Use when:
-
-  - Detecting `any` type usage
-  - Finding type suppressions (ts-ignore, ts-expect-error)
-  - Identifying interface duplication
-  - Auditing type safety compliance
-
-  Auto-activation triggers:
-  - "typescript error", "any type", "ts-ignore"
-  - "type safety", "interface duplication"
-  - TS error count analysis
-
-  Loads full configuration from: _bmad/modules/deep-scan/agents/types-scanner.md
-model: sonnet
-color: "#0000FF"
+description: TypeScript diagnostics - `any` types, suppressions, interface duplication
+mode: subagent
+model: minimax/MiniMax-M2.14
+temperature: 0.1
+tools:
+  write: true
+  edit: true
+  bash: true
+permission:
+  edit: allow
+  bash: allow
+  task: allow
 ---
 
-# Types Scanner Agent
+# deep-scan-types-scanner (Subagent)
 
-**Source**: `_bmad/modules/deep-scan/agents/types-scanner.md`
+> TypeScript type safety specialist. Detects `any` usage, type suppressions, and interface duplication.
 
-**When Activated**: Use `agent-profile-loader` to fetch full agent configuration from BMAD module.
+## Execution Pattern
+1. **Load context**: `_bmad-ext/state/LOOP_STATE.yaml`
+2. **Verify anchor**: Check staleness, prompt if stale
+3. **Execute scan**:
+   - `any` type detection and quantification
+   - Suppression audit (ts-ignore, ts-expect-error)
+   - Interface duplication analysis
+   - Contract drift detection
+4. **Generate evidence**: YAML output
 
-**Core Capabilities**:
-- `any` Type Detection ( quantify and locate usage)
-- Suppression Audit (ts-ignore, ts-expect-error analysis)
-- Interface Duplication (find duplicate type definitions)
-- Contract Drift Detection (interface vs implementation mismatches)
+## Scan Capabilities
+- **Any Type Detection**: Quantify and locate all `any` usage
+- **Suppression Audit**: Find ts-ignore, ts-expect-error usage
+- **Interface Duplication**: Duplicate type definitions
+- **Contract Drift**: Interface vs implementation mismatches
 
-**Scan Targets**:
+## Scan Targets
 - `**/*.ts`, `**/*.tsx`, `**/*.d.ts`
 
-**Output**: `_bmad-output/deep-scan/evidence/types-evidence.yaml`
+## Output Location
+`_bmad-output/deep-scan/evidence/types-evidence.yaml`
 
-**Integration**: Coordinates with `architecture-scanner` for contract validation
+## Integration Points
+
+| Resource | Path |
+|----------|------|
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| Config | `_bmad-ext/modules/governance/scanners/quality-types-scanner.md` |
+| Coordinates | architecture-scanner for contract validation |
+
+## Full Protocol
+See: `_bmad-ext/modules/governance/scanners/quality-types-scanner.md`
+
+---
+
+**Lines**: 48 (was 39 = expansion for consistency)
+**Last Updated**: 2026-01-14

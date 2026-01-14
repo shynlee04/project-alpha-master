@@ -1,96 +1,57 @@
 ---
-name: "domain-scanner"
-type: "governance-scanner"
-description: "Domain-specific analysis to understand codebase organization"
-version: "1.0.0"
+description: Domain analysis - identifies domain boundaries, responsibilities, relationships
 mode: subagent
-model: minimax/MiniMax-M2.1
+model: minimax/MiniMax-M2.14
 temperature: 0.1
 tools:
   write: false
-  edit:  false
-  bash:  true
-  read:  true
-  mcp:   true
-  hook: true
+  edit: false
+  bash: true
+permission:
+  edit: deny
+  bash: allow
+  task: allow
 ---
 
+# domain-scanner (Subagent)
 
----
-
-# Domain Scanner
-
-**description**: Analyze the codebase to identify domain boundaries, responsibilities, and relationships.
+> Analyze codebase to identify domain boundaries, responsibilities, and relationships.
 
 ## Scan Scope
-
-- **Source Directories**:
-  - `src/` - Main source code
-  - `src/presentation/` - UI components
-  - `src/domain/` - Business logic
-  - `src/infrastructure/` - External interfaces
-
-- **Target**: Identify domain-specific components and their boundaries
+- **Source Directories**: `src/presentation/`, `src/domain/`, `src/infrastructure/`
+- **Target**: Identify domain-specific components and boundaries
 
 ## Scan Process
+1. **Domain discovery**: Map structural layers to responsibilities
+2. **Boundary detection**: Identify cross-domain coupling points
+3. **Classification**: Shared vs domain-specific code
+4. **Output**: Domain analysis with boundary clarity assessment
 
-### 1. Domain Discovery
+## Domain Layers
+- **presentation**: UI components, hooks
+- **domain**: Business logic, types, services
+- **infrastructure**: Persistence, sync, events
 
-```yaml
-domain_analysis:
-  structural:
-    - layer: "presentation"
-      path: "src/presentation/"
-      responsibility: "UI components, hooks"
-    - layer: "domain"
-      path: "src/domain/"
-      responsibility: "Business logic, types, services"
-    - layer: "infrastructure"
-      path: "src/infrastructure/"
-      responsibility: "Persistence, sync, events"
-
-  domain_specific:
-    - name: "{domain}"
-      components: [list]
-      services: [list]
-      types: [list]
-      cross_domain_dependencies: [list]
-```
-
-### 2. Boundary Detection
-
-Identify:
-- Which components belong to which domain
-- Cross-domain coupling points
-- Shared vs domain-specific code
-
-### 3. Output Format
-
+## Output Format
 ```yaml
 domain_scan_results:
-  scan_date: "{date}"
-
-  domains:
-    - name: "{domain}"
-      components: [count]
-      services: [list]
-      types: [list]
-      boundaries: {clear|blurred}
-
-  cross_domain_coupling:
-    - from: "{domain}"
-      to: "{domain}"
-      strength: "{tight|loose}"
-      components: [list]
-
-  concerns:
-    - type: "boundary_violation|mixed_concerns|god_object"
-      location: "{file}"
-      severity: "{level}"
+  domains: [{name, components, services, boundaries}]
+  cross_domain_coupling: [{from, to, strength, components}]
+  concerns: [{type, location, severity}]
 ```
 
-## Integration
+## Integration Points
 
-**Used By**: context-first workflow (Step 2)
+| Resource | Path |
+|----------|------|
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| Used By | context-first workflow (Step 2) |
+| Output | Domain analysis in context package |
 
-**Output**: Domain analysis included in context package
+## Full Protocol
+See: `_bmad-ext/modules/governance/scanners/quality-architecture-scanner.md`
+
+---
+
+**Lines**: 50 (was 97 = 48% reduction)
+**Last Updated**: 2026-01-14

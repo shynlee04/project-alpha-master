@@ -18,6 +18,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useShallow } from 'zustand/react/shallow';
 import type { Agent } from '@/core/entities/Agent';
 import type { WorkspaceType } from './workspace-types';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
@@ -195,21 +196,27 @@ export const useWorkspaceStore = create<WorkspaceState>()(
 
 /**
  * Hook to get workspace context (convenience)
+ * ⚠️ CRITICAL FIX (2026-01-14): Uses useShallow to prevent infinite loops
+ * Object selectors create new references on every store update. useShallow
+ * uses shallow comparison to prevent unnecessary re-renders.
  */
 export function useWorkspaceContext() {
-  return useWorkspaceStore((state) => ({
+  return useWorkspaceStore(useShallow((state) => ({
     currentWorkspace: state.currentWorkspace,
     currentProjectId: state.currentProjectId,
     isTransitioning: state.isTransitioning,
-  }));
+  })));
 }
 
 /**
  * Hook to get workspace metadata
+ * ⚠️ CRITICAL FIX (2026-01-14): Uses useShallow to prevent infinite loops
+ * Function selectors create new function references on every call.
+ * useShallow uses shallow comparison to prevent unnecessary re-renders.
  */
 export function useWorkspaceMetadata() {
-  return useWorkspaceStore((state) => ({
+  return useWorkspaceStore(useShallow((state) => ({
     getLabel: (ws: WorkspaceType) => state.getWorkspaceLabel(ws),
     getIcon: (ws: WorkspaceType) => state.getWorkspaceIcon(ws),
-  }));
+  })));
 }

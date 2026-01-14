@@ -1,7 +1,7 @@
 ---
 description: Product manager agent for sprint execution and story development
 mode: primary
-model: anthropic/claude-sonnet-4-20250514
+model: minimax/MiniMax-M2.1
 temperature: 0.3
 maxSteps: 25
 tools:

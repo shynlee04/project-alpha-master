@@ -198,7 +198,6 @@ export const SyncedBlock = createReactBlockSpec(
                         "synced-block",
                         `synced-block--align-${props.block.props.textAlignment || "left"}`
                     )}
-                    contentEditable={false}
                 >
                     {/* Sync Indicator Header */}
                     <div className="synced-block__header">

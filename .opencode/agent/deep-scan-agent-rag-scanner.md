@@ -1,55 +1,56 @@
 ---
-name: deep-scan-agent-rag-scanner
-description: |
-  Specialized scanner for AI Agent & RAG diagnostics. Use when:
-
-  - Detecting tool permission bypasses
-  - Finding prompt injection risks
-  - Identifying RAG pipeline issues
-  - Auditing agent tool safety
-
-  Auto-activation triggers:
-  - "tool permission", "agent security", "rag pipeline"
-  - "prompt injection", "agent tool"
-  - "citation safety", "context window"
-
-  Loads full configuration from: _bmad/modules/deep-scan/agents/agent-rag-scanner.md
+description: AI Agent & RAG diagnostics - tool permissions, prompt injection, RAG pipeline safety
 mode: subagent
-model: minimax/MiniMax-M2.1
+model: minimax/MiniMax-M2.14
 temperature: 0.1
 tools:
-  write_md_json_yaml_xml: true
-  edit_md_json_yaml_xml: true
-  bash:  true
-  read:  true
-  mcp: true
-  glob: true
-  grep: true
-  list: true
-  search: true
-  serena mcp: true
-  repomix mcp: true
-  tavily mcp: true
-  context7 mcp: true
-  deepwiki mcp: true
-  tanstack mcp: true
+  write: true
+  edit: true
+  bash: true
+permission:
+  edit: allow
+  bash: allow
+  task: allow
 ---
 
-# Agent/RAG Scanner Agent
+# deep-scan-agent-rag-scanner (Subagent)
 
-**Source**: `_bmad/modules/deep-scan/agents/agent-rag-scanner.md`
+> AI Agent and RAG specialist. Detects tool permission bypasses, prompt injection risks, and RAG pipeline issues.
 
-**When Activated**: Use `agent-profile-loader` to fetch full agent configuration from BMAD module.
+## Execution Pattern
+1. **Load context**: `_bmad-ext/state/LOOP_STATE.yaml`
+2. **Verify anchor**: Check staleness, prompt if stale
+3. **Execute scan**:
+   - Tool permission audit (detect permission bypasses)
+   - Prompt safety analysis (identify injection vectors)
+   - RAG pipeline validation (chunking, embedding, retrieval)
+   - Citation verification (check for hallucination risks)
+4. **Generate evidence**: YAML output
 
-**Core Capabilities**:
-- Tool Permission Audit (detect permission bypasses)
-- Prompt Safety Analysis (identify injection vectors)
-- RAG Pipeline Validation (chunking, embedding, retrieval)
-- Citation Verification (check for hallucination risks)
+## Scan Capabilities
+- **Tool Permission Audit**: Detect permission bypasses
+- **Prompt Safety**: Identify injection vectors
+- **RAG Pipeline**: Chunking, embedding, retrieval validation
+- **Citation Verification**: Check for hallucination risks
 
-**Scan Targets**:
+## Scan Targets
 - `src/lib/agent/`, `src/components/agent/`, `src/lib/rag/`
 
-**Output**: `_bmad-output/deep-scan/evidence/agent-rag-evidence.yaml`
+## Output Location
+`_bmad-output/deep-scan/evidence/agent-rag-evidence.yaml`
 
-**Integration**: Coordinates with `security-scanner`, `types-scanner`
+## Integration Points
+
+| Resource | Path |
+|----------|------|
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| Config | `_bmad-ext/modules/governance/scanners/quality-agent-permissions-scanner.md` |
+| Coordinates | security-scanner, types-scanner |
+
+## Full Protocol
+See: `_bmad-ext/modules/governance/scanners/quality-agent-permissions-scanner.md`
+
+---
+
+**Lines**: 51 (was 56 = 9% reduction for consistency)
+**Last Updated**: 2026-01-14

@@ -3,6 +3,7 @@ name: "context-strategy"
 type: "governance-policy"
 description: "Define context gathering and application strategy"
 version: "1.0.0"
+lastUpdated: "2026-01-14"
 ---
 
 # Context Strategy Policy
