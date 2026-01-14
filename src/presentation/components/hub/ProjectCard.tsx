@@ -84,10 +84,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   // Hover state for quick-open buttons
   const [isHovered, setIsHovered] = useState(false);
 
-  // Get enabled workspaces from bindings
+  // Get enabled workspaces from workspaceBindings (ARC-D03)
   const boundWorkspaces = useMemo(
-    () => getEnabledWorkspaces(project.bindings),
-    [project.bindings]
+    () => getEnabledWorkspaces(project.workspaceBindings),
+    [project.workspaceBindings]
   );
 
   // Listen to workspace project update events

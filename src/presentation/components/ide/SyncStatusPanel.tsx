@@ -387,7 +387,7 @@ export function SyncStatusPanel() {
 
               {/* Progress bar */}
               {operation.status === 'in-progress' && (
-                <div className="mt-1.5 h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="mt-1.5 h-1.5 bg-muted rounded-none overflow-hidden">
                   <div
                     className="h-full bg-[var(--info)] transition-all duration-300"
                     style={{ width: `${operation.progress}%` }}

@@ -3,7 +3,7 @@ description: Orchestrates comprehensive codebase diagnostics
 mode: subagent
 temperature: 0.2
 maxSteps: 200
-model: MiniMax/MiniMax-M2.1
+model: minimax/MiniMax-M2.1
 tools:
   write_md_json_yaml_xml: true
   edit_md_json_yaml_xml: true

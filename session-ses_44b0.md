@@ -6,7 +6,7 @@
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 12.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 12.6s)
 
 _Thinking:_
 
@@ -834,7 +834,7 @@ function IDEWorkspace(): import("/Users/apple/Documents/coding-projects/project-
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 18.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 18.8s)
 
 _Thinking:_
 
@@ -985,7 +985,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.5s)
 
 _Thinking:_
 
@@ -1199,7 +1199,7 @@ interface StatusBarProps extends React.HTMLAttributes<HTMLElement> {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 13.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 13.0s)
 
 _Thinking:_
 
@@ -1744,7 +1744,7 @@ type CombinedIDEState = IDEEditorState & IDEExplorerState & IDELayoutState & IDE
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 18.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 18.4s)
 
 _Thinking:_
 
@@ -1776,7 +1776,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 14.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 14.3s)
 
 _Thinking:_
 
@@ -1806,7 +1806,7 @@ ERROR [89:11] 'projectId' is declared but its value is never read.
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 18.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 18.0s)
 
 _Thinking:_
 
@@ -1827,7 +1827,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.4s)
 
 _Thinking:_
 
@@ -1885,7 +1885,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 20.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 20.3s)
 
 _Thinking:_
 
@@ -1906,7 +1906,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.9s)
 
 _Thinking:_
 
@@ -2239,7 +2239,7 @@ interface StatusBarState {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 20.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 20.6s)
 
 _Thinking:_
 
@@ -2262,7 +2262,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.9s)
 
 _Thinking:_
 
@@ -2350,7 +2350,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 14.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 14.7s)
 
 _Thinking:_
 
@@ -2371,7 +2371,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 14.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 14.3s)
 
 _Thinking:_
 
@@ -2493,7 +2493,7 @@ interface VFSSyncActions {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 20.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 20.8s)
 
 _Thinking:_
 
@@ -2525,7 +2525,7 @@ ERROR [335:52] Argument of type '{ syncState: "idle" | "syncing" | "error" | "pe
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 10.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 10.5s)
 
 _Thinking:_
 
@@ -2683,7 +2683,7 @@ interface VFSSyncActions {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 21.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 21.5s)
 
 _Thinking:_
 
@@ -2716,7 +2716,7 @@ ERROR [354:52] Argument of type '{ syncState: "idle" | "syncing" | "error" | "pe
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 19.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 19.4s)
 
 _Thinking:_
 
@@ -2746,7 +2746,7 @@ ERROR [108:11] Property 'completeWatchCycle' is missing in type '{ syncState: "i
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.8s)
 
 _Thinking:_
 
@@ -2773,7 +2773,7 @@ Found 1 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 10.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 10.3s)
 
 _Thinking:_
 
@@ -2801,7 +2801,7 @@ Found 2 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.9s)
 
 _Thinking:_
 
@@ -2960,7 +2960,7 @@ interface VFSSyncActions {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 20.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 20.7s)
 
 _Thinking:_
 
@@ -2985,7 +2985,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 10.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 10.7s)
 
 _Thinking:_
 
@@ -3094,7 +3094,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 19.2s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 19.2s)
 
 _Thinking:_
 
@@ -3120,7 +3120,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 22.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 22.6s)
 
 _Thinking:_
 
@@ -3152,7 +3152,7 @@ ERROR [27:10] Module '"@/lib/utils/platform-detection"' has no exported member '
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.5s)
 
 _Thinking:_
 
@@ -3318,7 +3318,7 @@ Found 100 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.5s)
 
 _Thinking:_
 
@@ -3343,7 +3343,7 @@ Error: oldString and newString must be different
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.0s)
 
 _Thinking:_
 
@@ -3405,7 +3405,7 @@ function IDEWorkspace(): import("/Users/apple/Documents/coding-projects/project-
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.2s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.2s)
 
 _Thinking:_
 
@@ -3571,7 +3571,7 @@ function formatBandwidthCost(kilobytes: number): string  // [offset=142,limit=6]
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 12.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 12.0s)
 
 _Thinking:_
 
@@ -3803,7 +3803,7 @@ interface StorageCapabilities {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 19.2s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 19.2s)
 
 _Thinking:_
 
@@ -3834,7 +3834,7 @@ ERROR [40:32] 'location' is declared but its value is never read.
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.6s)
 
 _Thinking:_
 
@@ -3911,7 +3911,7 @@ function IDEWorkspace(): import("/Users/apple/Documents/coding-projects/project-
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.3s)
 
 _Thinking:_
 
@@ -3932,7 +3932,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.6s)
 
 _Thinking:_
 
@@ -4012,7 +4012,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.1s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.1s)
 
 _Thinking:_
 
@@ -4070,7 +4070,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 15.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 15.0s)
 
 _Thinking:_
 
@@ -4104,7 +4104,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.4s)
 
 _Thinking:_
 
@@ -4215,7 +4215,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.1s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.1s)
 
 _Thinking:_
 
@@ -4255,7 +4255,7 @@ Tool: glob
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.4s)
 
 _Thinking:_
 
@@ -4453,7 +4453,7 @@ const STORAGE_TYPES: readonly [{ readonly value: "indexeddb"; readonly labelKey:
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 18.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 18.0s)
 
 _Thinking:_
 
@@ -4618,7 +4618,7 @@ interface WizardFormData {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 22.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 22.6s)
 
 _Thinking:_
 
@@ -4651,7 +4651,7 @@ ERROR [20:1] 'isFSASupported' is declared but its value is never read.
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 17.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 17.0s)
 
 _Thinking:_
 
@@ -4681,7 +4681,7 @@ ERROR [102:9] 'availableStorageTypes' is declared but its value is never read.
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 17.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 17.0s)
 
 _Thinking:_
 
@@ -4702,7 +4702,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 12.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 12.9s)
 
 _Thinking:_
 
@@ -4723,7 +4723,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.9s)
 
 _Thinking:_
 
@@ -4832,7 +4832,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.4s)
 
 _Thinking:_
 
@@ -4962,7 +4962,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 22.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 22.4s)
 
 _Thinking:_
 
@@ -5012,7 +5012,7 @@ ERROR [541:5] Map keys must be unique
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.3s)
 
 _Thinking:_
 
@@ -5120,7 +5120,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 29.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 29.9s)
 
 _Thinking:_
 
@@ -5170,7 +5170,7 @@ ERROR [541:5] Map keys must be unique
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.6s)
 
 _Thinking:_
 
@@ -5217,7 +5217,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.5s)
 
 _Thinking:_
 
@@ -5267,7 +5267,7 @@ ERROR [541:5] Map keys must be unique
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.9s)
 
 _Thinking:_
 
@@ -5376,7 +5376,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 16.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 16.0s)
 
 _Thinking:_
 
@@ -5533,7 +5533,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 14.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 14.5s)
 
 _Thinking:_
 
@@ -5598,7 +5598,7 @@ fun fuck is that as a desktop user - in noway I can access ide
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 40.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 40.4s)
 
 _Thinking:_
 
@@ -5685,7 +5685,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 12.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 12.3s)
 
 _Thinking:_
 
@@ -5713,7 +5713,7 @@ if they have no created project have them create and no option for choosing --> 
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 26.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 26.8s)
 
 _Thinking:_
 
@@ -5862,7 +5862,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 20.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 20.9s)
 
 _Thinking:_
 
@@ -6094,7 +6094,7 @@ function useFileTreeEventSubscriptions(eventBus: WorkspaceEventEmitter | undefin
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 12.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 12.8s)
 
 _Thinking:_
 
@@ -6275,7 +6275,7 @@ function useFileTreeEventSubscriptions(eventBus: WorkspaceEventEmitter | undefin
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 16.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 16.6s)
 
 _Thinking:_
 
@@ -6385,7 +6385,7 @@ function IDEWorkspace(): import("/Users/apple/Documents/coding-projects/project-
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 10.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 10.6s)
 
 _Thinking:_
 
@@ -6424,7 +6424,7 @@ Found 3 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 10.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 10.4s)
 
 _Thinking:_
 
@@ -6536,7 +6536,7 @@ Found 52 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 12.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 12.4s)
 
 _Thinking:_
 
@@ -6630,7 +6630,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 13.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 13.0s)
 
 _Thinking:_
 
@@ -6693,7 +6693,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.9s)
 
 _Thinking:_
 
@@ -6736,7 +6736,7 @@ Found 5 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.7s)
 
 _Thinking:_
 
@@ -6804,7 +6804,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 416.1s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 416.1s)
 
 ---
 
@@ -6814,7 +6814,7 @@ I got disconnected please continue
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 16.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 16.7s)
 
 _Thinking:_
 
@@ -6906,7 +6906,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 5.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 5.3s)
 
 _Thinking:_
 
@@ -7009,7 +7009,7 @@ function IDEWorkspace(): import("/Users/apple/Documents/coding-projects/project-
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 5.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 5.7s)
 
 _Thinking:_
 
@@ -7115,7 +7115,7 @@ function IDEHeaderBar({
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.4s)
 
 _Thinking:_
 
@@ -7289,7 +7289,7 @@ interface PermissionOverlayProps {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 18.1s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 18.1s)
 
 _Thinking:_
 
@@ -7335,7 +7335,7 @@ ERROR [115:75] Property 'fileSystem' does not exist on type 'WorkspaceState'.
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 5.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 5.5s)
 
 _Thinking:_
 
@@ -7381,7 +7381,7 @@ Found 10 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 5.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 5.6s)
 
 _Thinking:_
 
@@ -7439,7 +7439,7 @@ Found 28 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.5s)
 
 _Thinking:_
 
@@ -7567,7 +7567,7 @@ interface FileLoaderSliceResult {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.0s)
 
 _Thinking:_
 
@@ -7639,7 +7639,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.0s)
 
 _Thinking:_
 
@@ -7669,7 +7669,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 5.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 5.6s)
 
 _Thinking:_
 
@@ -7749,7 +7749,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.0s)
 
 _Thinking:_
 
@@ -7780,7 +7780,7 @@ No files found
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 8.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 8.3s)
 
 _Thinking:_
 
@@ -7821,7 +7821,7 @@ No files found
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.5s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.5s)
 
 _Thinking:_
 
@@ -7923,7 +7923,7 @@ function IDEHeaderBar({
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 39.1s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 39.1s)
 
 _Thinking:_
 
@@ -7972,7 +7972,7 @@ src/routes/ide.$projectId.tsx(115,75): error TS2339: Property 'fileSystem' does 
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.2s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.2s)
 
 _Thinking:_
 
@@ -8046,7 +8046,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 10.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 10.6s)
 
 _Thinking:_
 
@@ -8067,7 +8067,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 17.4s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 17.4s)
 
 _Thinking:_
 
@@ -8096,7 +8096,7 @@ src/presentation/components/layout/MobileIDELayout.tsx(191,102): error TS2345: A
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 5.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 5.9s)
 
 _Thinking:_
 
@@ -8259,7 +8259,7 @@ Found 100 matches
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 14.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 14.9s)
 
 _Thinking:_
 
@@ -8375,7 +8375,7 @@ interface UseIDEFileHandlersResult {
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 16.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 16.8s)
 
 _Thinking:_
 
@@ -8410,7 +8410,7 @@ ERROR [114:28] Conversion of type 'LocalFSAdapter | UnifiedStorageAdapter' to ty
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.3s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.3s)
 
 _Thinking:_
 
@@ -8478,7 +8478,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.9s)
 
 _Thinking:_
 
@@ -8499,7 +8499,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 6.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 6.7s)
 
 _Thinking:_
 
@@ -8557,7 +8557,7 @@ Tool: read
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.8s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.8s)
 
 _Thinking:_
 
@@ -8670,7 +8670,7 @@ function MobileIDELayout(): React.JSX.Element  // [offset=104,limit=224]
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 9.9s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 9.9s)
 
 _Thinking:_
 
@@ -8691,7 +8691,7 @@ Tool: edit
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 54.7s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 54.7s)
 
 _Thinking:_
 
@@ -8712,7 +8712,7 @@ Tool: bash
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 7.0s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 7.0s)
 
 _Thinking:_
 
@@ -8787,7 +8787,7 @@ Tool: todowrite
 
 ---
 
-## Assistant (Ext-Master-Enhanced · MiniMax-M2.1 · 11.6s)
+## Assistant (Ext-Master-Enhanced · minimax/MiniMax-M2.1 · 11.6s)
 
 _Thinking:_
 

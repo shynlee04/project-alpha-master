@@ -86,7 +86,7 @@ export function QuizQuestionView({
       </div>
 
       {/* Progress Bar */}
-      <div className="h-1.5 bg-muted rounded-full overflow-hidden mb-6">
+      <div className="h-1.5 bg-muted rounded-none overflow-hidden mb-6">
         <div
           className="h-full bg-primary transition-all duration-300"
           style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}

@@ -36,8 +36,8 @@ import type {
 import { createWorkspaceEventBus } from '@/lib/events/workspace-events';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import { noteFolderBridge } from '@/infrastructure/sync/bridges/note-folder-bridge';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
-import { saveProject } from '@/lib/workspace/project-store';
+import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
+import { saveProject } from '@/infrastructure/persistence/stores/project';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 

@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import { getProject } from '@/lib/workspace/project-store';
+import { getProject } from '@/infrastructure/persistence/stores/project';
 import { useNoteStore } from '@/lib/notes';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
@@ -64,7 +64,7 @@ function NotesWorkspaceDefault() {
                     createdAt: new Date(),
                     lastOpened: new Date(),
                     autoSync: false,
-                    bindings: { notes: true, knowledge: true },
+                    workspaceBindings: { notes: true, knowledge: true }, // ARC-D03
                     tags: [],
                     isTemp: true,
                     isBrowserMode: true, // 45-04: Special flag for browser mode

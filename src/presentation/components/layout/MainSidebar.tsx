@@ -75,7 +75,7 @@ const navItemVariants = cva(
 );
 
 const mobileSidebarVariants = cva(
-  'fixed inset-y-0 left-0 z-50 h-screen w-[320px] bg-sidebar border-r-2 border-border transition-transform duration-300 ease-in-out shadow-2xl',
+  'fixed inset-y-0 left-0 z-50 h-screen w-[320px] bg-sidebar border-r-2 border-border transition-transform duration-300 ease-in-out shadow-pixel',
   {
     variants: {
       open: {

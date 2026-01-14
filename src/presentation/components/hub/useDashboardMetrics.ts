@@ -119,12 +119,12 @@ export function useDashboardMetrics({
           }
         }
 
-        // Workspace distribution (based on bindings)
-        if (project.bindings) {
-          if (project.bindings.ide) ideWorkspaceCount++;
-          if (project.bindings.knowledge) knowledgeWorkspaceCount++;
-          if (project.bindings.notes) notesWorkspaceCount++;
-          if (project.bindings.study) studyWorkspaceCount++;
+        // Workspace distribution (based on workspaceBindings) - ARC-D03
+        if (project.workspaceBindings) {
+          if (project.workspaceBindings.ide) ideWorkspaceCount++;
+          if (project.workspaceBindings.knowledge) knowledgeWorkspaceCount++;
+          if (project.workspaceBindings.notes) notesWorkspaceCount++;
+          if (project.workspaceBindings.study) studyWorkspaceCount++;
         }
       }
     }

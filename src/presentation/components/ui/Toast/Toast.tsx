@@ -59,7 +59,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     return (
         <div
             className={`
-                flex items-center gap-3 px-4 py-3 rounded-[4px] border shadow-lg
+                flex items-center gap-3 px-4 py-3 rounded-[4px] border shadow-pixel
                 transition-all duration-150 ease-out
                 ${variantStyles[toast.variant]}
                 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'}

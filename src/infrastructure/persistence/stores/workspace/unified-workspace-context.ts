@@ -33,7 +33,7 @@ import type { WorkspaceType } from '@/domain/entities/workspace';
 // Import types from canonical sources for internal use
 import type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
+import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 
 // Import file system infrastructure types for refs
 import type { LocalFSAdapter } from '@/infrastructure/filesystem';
@@ -48,7 +48,7 @@ export type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 // Re-export types from their canonical sources
 export type { SyncStatus, SyncProgress } from '@/infrastructure/sync/types';
 export type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-export type { ProjectMetadata } from '@/lib/workspace/project-store';
+export type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 
 /**
  * Workspace state (from OLD WorkspaceProvider)

@@ -14,7 +14,7 @@ description: |
   - 4-layer architecture validation
 
   Loads full configuration from: _bmad/modules/deep-scan/agents/architecture-scanner.md
-model: MiniMax/MiniMax-M2.1
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write_md_json_yaml_xml: true

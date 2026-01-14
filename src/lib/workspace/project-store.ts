@@ -81,7 +81,7 @@ export async function saveProject(project: Project): Promise<boolean> {
         storageType: project.storageType,
         storageMetadata: project.storageMetadata,
         autoSync: project.autoSync,
-        bindings: project.bindings,
+        workspaceBindings: project.workspaceBindings, // ARC-D03: Renamed from bindings
         description: project.description,
         tags: project.tags,
       });
@@ -96,7 +96,7 @@ export async function saveProject(project: Project): Promise<boolean> {
         storageType: project.storageType,
         storageMetadata: project.storageMetadata,
         autoSync: project.autoSync,
-        bindings: project.bindings,
+        workspaceBindings: project.workspaceBindings, // ARC-D03: Renamed from bindings
         description: project.description,
         tags: project.tags,
       });

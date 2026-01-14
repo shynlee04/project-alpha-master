@@ -59,7 +59,7 @@ function toProject(record: ProjectRecord): Project {
     storageType: record.storageType || 'indexeddb',
     lastOpened: record.lastOpened,
     createdAt: record.createdAt,
-    bindings: record.bindings as Project['bindings'] || {},
+    workspaceBindings: record.workspaceBindings || record.bindings || {}, // ARC-D03
     autoSync: true, // Default value not stored in DB
     tags: [], // Default value not stored in DB
     fileSnapshotEnabled: record.fileSnapshotEnabled,

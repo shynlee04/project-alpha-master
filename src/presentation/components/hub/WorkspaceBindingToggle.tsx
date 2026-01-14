@@ -86,7 +86,7 @@ export function WorkspaceBindingToggle({
 
   // Compute derived value with useMemo (only recalculates when dependencies change)
   const isEnabled = useMemo(() => {
-    return projects[projectId]?.bindings?.[workspace] === true;
+    return projects[projectId]?.workspaceBindings?.[workspace] === true; // ARC-D03
   }, [projects, projectId, workspace]);
 
   const [isPending, setIsPending] = useState(false);

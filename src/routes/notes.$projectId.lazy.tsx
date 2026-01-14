@@ -27,7 +27,7 @@ import { createLazyFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import { getProject } from '@/lib/workspace/project-store';
+import { getProject } from '@/infrastructure/persistence/stores/project';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';

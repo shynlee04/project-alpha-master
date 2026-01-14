@@ -3,7 +3,7 @@
  */
 
 import { useState, useRef } from 'react';
-import type { ProjectMetadata } from '../project-store';
+import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 import type { LocalFSAdapter, SyncManager, SyncProgress } from '../../filesystem';
 import { EXTENDED_DEFAULT_PATTERNS } from '../../filesystem/exclusion-config';
 import type { FsaPermissionState } from '../../filesystem/permission-lifecycle';

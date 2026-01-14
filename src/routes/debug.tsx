@@ -36,7 +36,7 @@ function DebugPage() {
             for (const p of projects) {
                 log(`  📁 ID: ${p.id}`);
                 log(`     Name: ${p.name}`);
-                log(`     Bindings: ${JSON.stringify(p.bindings)}`);
+                log(`     Bindings: ${JSON.stringify(p.workspaceBindings || p.bindings)}`);
                 log(`     LastOpened: ${p.lastOpened}`);
                 log('');
             }

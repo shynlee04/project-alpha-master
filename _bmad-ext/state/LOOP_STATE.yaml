@@ -5,23 +5,23 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-18T11:30:00+07:00"
+last_updated: "2026-01-19T16:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION STATE
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: "epic-cc-arc-week3-2026-01-19-team-a"
-  start_time: "2026-01-19T10:00:00+07:00"
-  last_activity: "2026-01-19T10:15:00+07:00"
+  id: "epic-cc-arc-week3-2026-01-19-team-b"
+  start_time: "2026-01-19T14:00:00+07:00"
+  last_activity: "2026-01-19T16:00:00+07:00"
   platform: "claude-code"
-  agent: "EXCALIBUR-TEAM-A-COORDINATOR"
-  orchestrator_team: "Team A"
+  agent: "EXCALIBUR-TEAM-B-ORCHESTRATOR"
+  orchestrator_team: "Team B"
   iteration: 1
   max_iterations: 0
-  status: "EPIC-CC-ARC-WEEK3-TEAM-A-ORCHESTRATING"
-  team: "Team A (Identity & Routing Squad) - Phase C execution"
+  status: "EPIC-CC-ARC-PHASE-D-COMPLETED"
+  team: "Team B (Storage Contract Squad) - Phase D complete, moving to Phase E"
   ralph_loop_version: "5.0.0"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -31,10 +31,10 @@ session:
 current:
   epic_id: "EPIC-CC-ARC"
   epic_name: "Correct-Course Architectural Remediation"
-  story_id: "ARC-C09"
-  story_title: "Permission model for human CRUD actions"
-  team: "Team A"
-  phase: "C"
+  story_id: "ARC-D03"
+  story_title: "Rename bindings → workspaceBindings"
+  team: "Team B"
+  phase: "D"
   week: 3
   workflow: "correct-course"
   step: "COMPLETE"
@@ -54,70 +54,84 @@ prior_completed:
   - "ARC-B05: FileSystemObserver with polling fallback (2026-01-18)"
   - "ARC-B06: Snapshot caching for fast load (2026-01-18)"
   - "ARC-B07: Folder overlap detection and warning UI (2026-01-18)"
+  - "ARC-B08: File tree exclusion patterns configuration (2026-01-18)"
+  - "ARC-B09: Scan depth limits and warnings (2026-01-18)"
   - "ARC-B10: .viagent/ metadata folder structure (2026-01-18)"
   - "ARC-B11: Notes ↔ Markdown bidirectional sync (2026-01-18)"
   - "ARC-B12: External change conflict resolution UI (2026-01-18)"
+  - "ARC-D01: Enforce ProjectId template literal type (2026-01-18)"
+  - "ARC-D02: Fix workspaceId || projectId fallback bugs (2026-01-18)"
+  - "ARC-D03: Rename bindings → workspaceBindings (2026-01-19)"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PENDING STORIES (Phase B - Week 3)
+# PENDING STORIES (Phase E - Week 3)
 # ═══════════════════════════════════════════════════════════════════════════
 
 pending_stories:
-  - story_id: "ARC-B08"
-    title: "File tree exclusion patterns configuration"
-    effort: "3h"
-    priority: "P1"
-    dependencies: ["ARC-B05"]
-    status: "IN_PROGRESS"
-    description: |
-      Configure exclusion patterns: node_modules, .git, .next, etc.
-      User-configurable patterns stored in .viagent/config.json
-    acceptance_criteria:
-      - "Default exclusions applied"
-      - "User can configure additional patterns"
-      - "Patterns stored in .viagent/config.json"
-      - "TypeScript: 0 errors"
-
-  - story_id: "ARC-B09"
-    title: "Scan depth limits and warnings"
+  - story_id: "ARC-E01"
+    title: "Delete legacy lib/workspace/project-store.ts"
     effort: "2h"
     priority: "P1"
-    dependencies: ["ARC-B08"]
-    status: "TODO"
+    dependencies: ["ARC-D03"]
+    status: "READY"
+    phase: "E"
     description: |
-      Limit scan depth to 20, warn at 15, max 50k files
+      Delete archived project-store.ts file, consolidate all imports to canonical location.
     acceptance_criteria:
-      - "Max depth 20 enforced"
-      - "Warning at depth 15"
-      - "Max 50k files enforced"
+      - "lib/workspace/project-store.ts deleted"
+      - "All imports updated to use infrastructure/persistence/stores/project/project-store.ts"
       - "TypeScript: 0 errors"
 
-  - story_id: "ARC-D01"
-    title: "Enforce ProjectId template literal type"
+  - story_id: "ARC-E02"
+    title: "Delete legacy lib/workspace/file-sync-status-store.ts"
+    effort: "1h"
+    priority: "P1"
+    dependencies: ["ARC-E01"]
+    status: "TODO"
+    phase: "E"
+    description: |
+      Delete archived file-sync-status-store.ts file.
+    acceptance_criteria:
+      - "File deleted"
+      - "TypeScript: 0 errors"
+
+  - story_id: "ARC-E03"
+    title: "Delete lib/state/ directory (deprecated imports)"
+    effort: "1h"
+    priority: "P2"
+    dependencies: ["ARC-E02"]
+    status: "TODO"
+    phase: "E"
+    description: |
+      Remove deprecated lib/state/ directory if empty.
+    acceptance_criteria:
+      - "Directory deleted or verified empty"
+      - "No broken imports"
+
+  - story_id: "ARC-E04"
+    title: "Consolidate file tree implementations"
     effort: "3h"
     priority: "P1"
-    dependencies: ["ARC-C01"]
+    dependencies: ["ARC-B09"]
     status: "TODO"
-    phase: "D"
-
-  - story_id: "ARC-D02"
-    title: "Fix workspaceId || projectId fallback bugs"
-    effort: "4h"
-    priority: "P1"
-    dependencies: ["ARC-D01"]
-    status: "TODO"
-    phase: "D"
+    phase: "E"
+    description: |
+      Consolidate duplicate file tree implementations into single source of truth.
+    acceptance_criteria:
+      - "One canonical file tree implementation"
+      - "All imports use canonical location"
+      - "TypeScript: 0 errors"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ANCHOR (Human Intent Freshness)
 # ═══════════════════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent_timestamp: "2026-01-18T11:30:00+07:00"
+  human_intent_timestamp: "2026-01-19T14:00:00+07:00"
   staleness_threshold_hours: 4
   last_human_message: "Stop hook feedback: load @bmad-core-master-agent start the loop first by looking as @PROMPT then load agents, sub-agents as you progress cycles of workflows, modules, following strict BMAD framework and what has written at @CLAUDE.md, keep updating sprint-status and workflow-status as u are team B"
   intent_summary: "Execute EPIC-CC-ARC Week 3 stories for Team B with full BMAD framework traceability, update sprint-status and workflow-status iteratively"
-  conversation_id: "2026-01-18-session-b"
+  conversation_id: "2026-01-19-session-b-arc-d03"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERRORS
@@ -135,13 +149,40 @@ errors:
 delegations:
   active: []
   completed:
-    - delegation_id: "del-arc-b12-001"
+    - delegation_id: "del-arc-d03-001"
       agent: "dev-ext"
-      story: "ARC-B12"
-      started_at: "2026-01-18T09:00:00+07:00"
-      completed_at: "2026-01-18T10:30:00+07:00"
+      story: "ARC-D03"
+      started_at: "2026-01-19T14:00:00+07:00"
+      completed_at: "2026-01-19T16:00:00+07:00"
       status: "SUCCESS"
-      artifacts_created: 2
+      artifacts_created: 25
+      files_modified:
+        - "src/domain/entities/project.ts"
+        - "src/infrastructure/persistence/dexie-db-core-types.ts"
+        - "src/infrastructure/persistence/stores/project/project-types.ts"
+        - "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        - "src/infrastructure/persistence/stores/project/project-bindings-slice.ts"
+        - "src/infrastructure/persistence/stores/project/migrate-bindings.ts"
+        - "src/domain/entities/__tests__/project.test.ts"
+        - "src/lib/settings/settings-serializer.ts"
+        - "src/lib/settings/settings-importer.ts"
+        - "src/lib/workspace/project-store.ts"
+        - "src/lib/workspace/browser-mode.ts"
+        - "src/lib/workspace/hooks/useWorkspaceActions.ts"
+        - "src/lib/workspace/ProjectContext.tsx"
+        - "src/lib/workspace/temp-project.ts"
+        - "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
+        - "src/presentation/components/hub/useWorkspaceBindingState.ts"
+        - "src/presentation/components/hub/ProjectCard.tsx"
+        - "src/presentation/components/hub/useDashboardMetrics.ts"
+        - "src/presentation/components/hub/ProjectPickerDialog.tsx"
+        - "src/presentation/components/hub/HubHomePage.tsx"
+        - "src/presentation/components/project/ProjectsPage.tsx"
+        - "src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts"
+        - "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+        - "src/routes/notes.lazy.tsx"
+        - "src/routes/debug.tsx"
+        - "src/lib/workspace/workspace-access-helper.tsx"
   failed: []
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -150,13 +191,13 @@ delegations:
 
 progress:
   epic_total_stories: 28
-  epic_stories_complete: 22
-  epic_stories_remaining: 6
-  team_a_total_stories: 15
-  team_a_stories_complete: 14
-  team_a_stories_remaining: 1
-  stories_completed_this_session: 6
-  artifacts_created_this_session: 3
+  epic_stories_complete: 15
+  epic_stories_remaining: 13
+  team_b_total_stories: 16
+  team_b_stories_complete: 15
+  team_b_stories_remaining: 1
+  stories_completed_this_session: 1
+  artifacts_created_this_session: 0
   typescript_errors: 0
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -169,4 +210,3 @@ artifacts:
   adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
   loop_state: "_bmad-ext/state/LOOP_STATE.yaml"
   story_cycle_workflow: "_bmad-ext/modules/implementation/workflows/story-cycle/"
-

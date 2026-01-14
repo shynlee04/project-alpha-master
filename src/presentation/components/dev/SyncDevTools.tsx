@@ -136,7 +136,7 @@ export function SyncDevTools() {
   };
 
   return (
-    <div className="fixed top-20 right-4 z-[100] bg-background border border-border rounded-lg shadow-lg p-4 w-80">
+    <div className="fixed top-20 right-4 z-[100] bg-background border border-border rounded-none shadow-pixel p-4 w-80">
       <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
         <span className="text-yellow-500">⚙️</span>
         Sync Dev Tools

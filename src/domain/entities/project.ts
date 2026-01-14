@@ -74,8 +74,8 @@ export interface Project {
   exclusionPatterns?: string[];
 
   // Workspace configuration
-  /** Workspace binding configuration (IDE, Knowledge, Notes, Study) */
-  bindings: WorkspaceBindings;
+  /** Workspace binding configuration (IDE, Knowledge, Notes, Study) - ARC-D03: Renamed from bindings */
+  workspaceBindings: WorkspaceBindings;
 
   // Feature flags
   /** File snapshot feature flag */

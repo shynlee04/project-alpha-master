@@ -17,7 +17,7 @@
 import { useEffect, useState } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import { getProject } from '@/lib/workspace/project-store';
+import { getProject } from '@/infrastructure/persistence/stores/project';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { ErrorBoundary } from '@/presentation/components/error';

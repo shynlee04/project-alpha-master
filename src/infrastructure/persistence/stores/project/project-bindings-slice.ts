@@ -1,6 +1,6 @@
 /**
  * @fileoverview Project Bindings Slice
- * @module infrastructure/persistence/stores/project/project-bindings-slice
+ * @module infrastructure/persistence/stores/project/project-workspaceBindings-slice
  * @governance EPIC-CP-1.2
  *
  * Workspace binding management for projects.
@@ -22,29 +22,29 @@ export const createProjectBindingsSlice: StateCreator<
   [],
   ProjectBindingMethods
 > = (set, get) => ({
-  // Update project workspace bindings
-  updateProjectBindings: async (projectId: string, bindings: WorkspaceBindings) => {
+  // Update project workspace workspaceBindings
+  updateProjectBindings: async (projectId: string, workspaceBindings: WorkspaceBindings) => {
     const existing = get().projects[projectId];
     if (!existing) {
       console.warn('[ProjectStore] Project not found:', projectId);
       return;
     }
 
-    console.log('[ProjectStore] Updating bindings for project:', projectId, bindings);
+    console.log('[ProjectStore] Updating workspaceBindings for project:', projectId, workspaceBindings);
 
-    // Validate bindings (cross-slice call)
-    const validation = (get() as any).validateBindings(bindings);
+    // Validate workspaceBindings (cross-slice call)
+    const validation = (get() as any).validateBindings(workspaceBindings);
     if (!validation.isValid) {
-      console.error('[ProjectStore] Invalid bindings:', validation.errors);
+      console.error('[ProjectStore] Invalid workspaceBindings:', validation.errors);
       throw new Error(validation.errors.join(', '));
     }
 
-    // Merge bindings with existing project
+    // Merge workspaceBindings with existing project
     const updated = {
       ...existing,
-      bindings: {
-        ...existing.bindings,
-        ...bindings,
+      workspaceBindings: {
+        ...existing.workspaceBindings,
+        ...workspaceBindings,
       },
     };
 
@@ -53,26 +53,26 @@ export const createProjectBindingsSlice: StateCreator<
     }));
 
     // Persist to Dexie (async, non-blocking)
-    // ARC-C06: Added Dexie persistence for bindings updates
-    db.projects.update(projectId, { bindings: updated.bindings }).catch((error: unknown) => {
+    // ARC-C06: Added Dexie persistence for workspaceBindings updates
+    db.projects.update(projectId, { workspaceBindings: updated.workspaceBindings }).catch((error: unknown) => {
       const err = error as Error;
-      console.error('[ProjectStore] Failed to persist bindings to Dexie:', err.message);
+      console.error('[ProjectStore] Failed to persist workspaceBindings to Dexie:', err.message);
     });
   },
 
-  // Get project bindings
+  // Get project workspaceBindings
   getProjectBindings: (projectId: string) => {
     const project = get().projects[projectId];
-    return project?.bindings || null;
+    return project?.workspaceBindings || null;
   },
 
-  // Validate bindings configuration
-  validateBindings: (bindings: WorkspaceBindings): ValidationResult => {
+  // Validate workspaceBindings configuration
+  validateBindings: (workspaceBindings: WorkspaceBindings): ValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
 
     // Rule: At least one workspace must be enabled
-    const enabledCount = Object.values(bindings).filter(Boolean).length;
+    const enabledCount = Object.values(workspaceBindings).filter(Boolean).length;
     if (enabledCount === 0) {
       errors.push('At least one workspace must be enabled');
     }
@@ -84,7 +84,7 @@ export const createProjectBindingsSlice: StateCreator<
 
     // Rule: Validate workspace keys
     const validWorkspaces = ['ide', 'knowledge', 'notes', 'study'];
-    const invalidKeys = Object.keys(bindings).filter(
+    const invalidKeys = Object.keys(workspaceBindings).filter(
       key => !validWorkspaces.includes(key)
     );
     if (invalidKeys.length > 0) {
@@ -100,30 +100,30 @@ export const createProjectBindingsSlice: StateCreator<
 
   // Get enabled workspaces for project
   getEnabledWorkspaces: (projectId: string) => {
-    const bindings = (get() as any).getProjectBindings(projectId);
-    if (!bindings) return [];
+    const workspaceBindings = (get() as any).getProjectBindings(projectId);
+    if (!workspaceBindings) return [];
 
-    return Object.entries(bindings)
+    return Object.entries(workspaceBindings)
       .filter(([_, enabled]) => enabled === true)
       .map(([workspace]) => workspace as keyof WorkspaceBindings);
   },
 
   // Get default workspace for project
   getDefaultWorkspace: (projectId: string) => {
-    const bindings = (get() as any).getProjectBindings(projectId);
-    if (!bindings) return 'ide';
+    const workspaceBindings = (get() as any).getProjectBindings(projectId);
+    if (!workspaceBindings) return 'ide';
 
     // Priority: IDE > Knowledge > Notes > Study
     const priority: (keyof WorkspaceBindings)[] = ['ide', 'knowledge', 'notes', 'study'];
 
     for (const workspace of priority) {
-      if (bindings[workspace]) {
+      if (workspaceBindings[workspace]) {
         return workspace;
       }
     }
 
     // Fallback to first enabled workspace
-    const firstEnabled = Object.entries(bindings).find(([_, enabled]) => enabled);
+    const firstEnabled = Object.entries(workspaceBindings).find(([_, enabled]) => enabled);
     return (firstEnabled?.[0] || 'ide') as keyof WorkspaceBindings;
   },
 });

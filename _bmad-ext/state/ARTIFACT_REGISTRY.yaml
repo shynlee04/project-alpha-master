@@ -63,6 +63,34 @@ registry:
     created_at: "2026-01-18T14:00:00+07:00"
     status: "complete"
 
+  - id: "arc-d01-implementation"
+    type: "implementation"
+    name: "ARC-D01: ProjectId Template Literal Type"
+    story_id: "ARC-D01"
+    path: "src/domain/types/project-ids.ts, src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T15:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-d02-implementation"
+    type: "implementation"
+    name: "ARC-D02: workspaceId || projectId Fallback Bug Fix"
+    story_id: "ARC-D02"
+    path: "src/infrastructure/persistence/stores/flashcard/flashcard-db.ts, src/infrastructure/persistence/stores/flashcard/slices/flashcard-operations-slice.ts, src/infrastructure/persistence/stores/flashcard/slices/flashcard-persistence-slice.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T16:00:00+07:00"
+    status: "complete"
+
+  - id: "arc-d03-implementation"
+    type: "implementation"
+    name: "ARC-D03: Rename bindings → workspaceBindings (ADR-033 Decision D4)"
+    story_id: "ARC-D03"
+    path: "25 files renamed: domain entity, dexie schema, project store, components, routes"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-19T16:00:00+07:00"
+    status: "complete"
+    adr_reference: "ADR-033 Decision D4: Entity Naming Convention"
+
 # Session Tracking
 sessions:
   - id: "excalibur-epic-cc-arc-2026-01-18"

@@ -110,7 +110,7 @@ export const createProjectUtilsSlice: StateCreator<
     const projects = Object.values(get().projects);
 
     return projects.filter((project) => {
-      const binding = project.bindings[workspaceType as keyof WorkspaceBindings];
+      const binding = project.workspaceBindings[workspaceType as keyof WorkspaceBindings];
       return binding === true;
     });
   },
@@ -121,7 +121,7 @@ export const createProjectUtilsSlice: StateCreator<
 
     // Find most recently opened project with this workspace enabled
     const projectsWithWorkspace = projects
-      .filter((project) => project.bindings[workspaceType as keyof WorkspaceBindings] === true)
+      .filter((project) => project.workspaceBindings[workspaceType as keyof WorkspaceBindings] === true)
       .sort((a, b) => {
         const timeA = a.lastOpened ? new Date(a.lastOpened).getTime() : 0;
         const timeB = b.lastOpened ? new Date(b.lastOpened).getTime() : 0;
@@ -144,8 +144,8 @@ export const createProjectUtilsSlice: StateCreator<
     };
 
     projects.forEach((project) => {
-      (Object.keys(project.bindings) as WorkspaceType[]).forEach((workspace) => {
-        if (project.bindings[workspace as keyof WorkspaceBindings] === true) {
+      (Object.keys(project.workspaceBindings) as WorkspaceType[]).forEach((workspace) => {
+        if (project.workspaceBindings[workspace as keyof WorkspaceBindings] === true) {
           projectsByWorkspace[workspace]++;
         }
       });

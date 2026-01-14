@@ -262,9 +262,9 @@ export function useWorkspaceAccess(
     };
   }, [workspace]);
   
-  // Filter projects by workspace binding
+  // Filter projects by workspace binding (ARC-D03: workspaceBindings)
   const workspaceProjects = allProjects.filter((project) => {
-    const bindings = project.bindings || {};
+    const bindings = project.workspaceBindings || project.bindings || {};
     return bindings[workspace] === true;
   });
   

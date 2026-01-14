@@ -102,7 +102,7 @@ export function QuizStartScreen({ quiz, onStart, onExit }: QuizStartScreenProps)
                   {t(`quizzes.difficulty.${difficulty}`)}
                 </div>
                 <div className="flex-1">
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-2 bg-muted rounded-none overflow-hidden">
                     <div
                       className={cn(
                         'h-full transition-all duration-300',

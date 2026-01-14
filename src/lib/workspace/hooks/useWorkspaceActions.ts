@@ -9,7 +9,7 @@ import {
     type ProjectMetadata,
     saveProject,
     generateProjectId
-} from '../project-store';
+} from '@/infrastructure/persistence/stores/project';
 import {
     getPermissionState,
     ensureReadWritePermission,
@@ -109,7 +109,7 @@ export function useWorkspaceActions(
                 lastOpened: new Date(),
                 autoSync,
                 createdAt: new Date(),
-                bindings: { ide: true, knowledge: true, notes: true, study: true },
+                workspaceBindings: { ide: true, knowledge: true, notes: true, study: true }, // ARC-D03
                 tags: [],
             };
             await saveProject(project);
@@ -175,7 +175,7 @@ export function useWorkspaceActions(
                 lastOpened: new Date(),
                 autoSync: true,
                 createdAt: new Date(),
-                bindings: { ide: true, knowledge: true, notes: true, study: true },
+                workspaceBindings: { ide: true, knowledge: true, notes: true, study: true }, // ARC-D03
                 tags: [],
             };
             await saveProject(project);

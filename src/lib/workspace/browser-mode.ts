@@ -12,7 +12,7 @@
  *   if (isBrowserModeProject(project)) { ... }
  */
 
-import { getProject } from '@/lib/workspace/project-store';
+import { getProject } from '@/infrastructure/persistence/stores/project';
 // FIX-2026-01-14: Use infrastructure store which has REAL Dexie persistence
 // The lib/workspace version is a STUB that doesn't persist
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
@@ -60,7 +60,7 @@ export async function getOrCreateBrowserModeProject(): Promise<Project | null> {
         lastOpened: new Date(),
         createdAt: new Date(existingRecord.createdAt),
         autoSync: false,
-        bindings: existingRecord.bindings || { notes: true, knowledge: true },
+        workspaceBindings: existingRecord.workspaceBindings || { notes: true, knowledge: true }, // ARC-D03
         tags: [],
         isBrowserMode: true,
         isTemp: true,
@@ -86,7 +86,7 @@ export async function getOrCreateBrowserModeProject(): Promise<Project | null> {
       createdAt: now,
       lastOpened: now,
       autoSync: false,
-      bindings: { notes: true, knowledge: true, ide: false, study: false },
+      workspaceBindings: { notes: true, knowledge: true, ide: false, study: false }, // ARC-D03
       tags: [],
       isBrowserMode: true, // Special flag for browser mode
       isTemp: true, // Temporary/auto-created project
@@ -103,7 +103,7 @@ export async function getOrCreateBrowserModeProject(): Promise<Project | null> {
       storageType: 'indexeddb' as const,
       lastOpened: now,
       createdAt: now,
-      bindings: browserProjectData.bindings,
+      workspaceBindings: browserProjectData.workspaceBindings, // ARC-D03
       isTemp: true,
       isBrowserMode: true,
       autoCreated: true,

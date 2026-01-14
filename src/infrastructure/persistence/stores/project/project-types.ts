@@ -49,6 +49,7 @@ export interface Project extends DomainProject {
  * Input for creating a new project
  * FS-03: Added workspaceType for project ID namespacing
  * PS-04: Replaced fsaHandle with storageMetadata
+ * ARC-D03: workspaceBindings replaces bindings
  */
 export interface CreateProjectInput {
   name: string;
@@ -59,6 +60,9 @@ export interface CreateProjectInput {
   autoSync?: boolean;
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
+  // ARC-D03: New canonical field
+  workspaceBindings?: WorkspaceBindings;
+  // Deprecated: Use workspaceBindings instead
   bindings?: WorkspaceBindings;
   fileSnapshotEnabled?: boolean;
   description?: string;
@@ -68,6 +72,7 @@ export interface CreateProjectInput {
 /**
  * Input for updating an existing project (all fields optional)
  * PS-04: Replaced fsaHandle with storageMetadata
+ * ARC-D03: workspaceBindings replaces bindings
  */
 export interface UpdateProjectInput {
   name?: string;
@@ -79,6 +84,9 @@ export interface UpdateProjectInput {
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
   lastKnownPermissionState?: FsaPermissionState;
+  // ARC-D03: New canonical field
+  workspaceBindings?: WorkspaceBindings;
+  // Deprecated: Use workspaceBindings instead
   bindings?: WorkspaceBindings;
   fileSnapshotEnabled?: boolean;
   description?: string;

@@ -75,7 +75,7 @@ export function FolderOverlapWarningDialog({
       }}
     >
       <div
-        className={`bg-background border-2 rounded-lg shadow-lg max-w-md w-full p-6 ${
+        className={`bg-background border-2 rounded-none shadow-pixel max-w-md w-full p-6 ${
           isBlocking
             ? 'border-[var(--destructive)]'
             : 'border-[var(--warning)]'

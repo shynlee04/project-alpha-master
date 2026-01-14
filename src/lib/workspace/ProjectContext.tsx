@@ -77,7 +77,7 @@ export interface ProjectProviderProps {
  * @returns Array of enabled workspace IDs
  */
 function getEnabledWorkspaces(
-  bindings: Project['bindings']
+  bindings: Project['workspaceBindings'] // ARC-D03: Renamed from bindings
 ): WorkspaceId[] {
   if (!bindings) return [];
 

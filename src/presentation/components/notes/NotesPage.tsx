@@ -548,8 +548,8 @@ export const NotesPage = React.memo(function NotesPage() {
                 {/* S-007: Import Progress Overlay */}
                 {/* FS-04: Fixed backdrop styling - use semi-transparent background instead of solid bg-card */}
                 {isImportingFiles && (
-                    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-                        <div className="bg-card border border-border rounded-none p-6 max-w-sm w-full mx-4 shadow-lg">
+                    <div className="fixed inset-0 bg-background z-50 flex items-center justify-center">
+                        <div className="bg-card border border-border rounded-none p-6 max-w-sm w-full mx-4 shadow-pixel">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
                                 <h3 className="font-semibold">Importing Notes</h3>
@@ -563,7 +563,7 @@ export const NotesPage = React.memo(function NotesPage() {
                                         <span>{importProgress.current} / {importProgress.total}</span>
                                         <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
                                     </div>
-                                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                                    <div className="w-full bg-muted rounded-none h-2 overflow-hidden">
                                         <div
                                             className="bg-primary h-full transition-all duration-300"
                                             style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
@@ -676,8 +676,8 @@ export const NotesPage = React.memo(function NotesPage() {
             {/* S-007: Import Progress Overlay */}
             {/* FS-04: Fixed backdrop styling - use semi-transparent background instead of solid bg-card */}
             {isImportingFiles && (
-                <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-                    <div className="bg-card border border-border rounded-none p-6 max-w-md w-full mx-4 shadow-lg">
+                <div className="fixed inset-0 bg-background z-50 flex items-center justify-center">
+                    <div className="bg-card border border-border rounded-none p-6 max-w-md w-full mx-4 shadow-pixel">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full" />
                             <h3 className="font-semibold">Importing Notes</h3>
@@ -691,7 +691,7 @@ export const NotesPage = React.memo(function NotesPage() {
                                     <span>{importProgress.current} / {importProgress.total} files</span>
                                     <span>{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
                                 </div>
-                                <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                                <div className="w-full bg-muted rounded-none h-2 overflow-hidden">
                                     <div
                                         className="bg-primary h-full transition-all duration-300"
                                         style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}

@@ -3,7 +3,7 @@
  * @module lib/workspace/workspace-types
  */
 
-import type { ProjectMetadata } from './project-store';
+import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 import type { LocalFSAdapter, SyncManager, SyncProgress } from '../filesystem';
 import type { FsaPermissionState } from '../filesystem/permission-lifecycle';
 import type { WorkspaceEventEmitter } from '../events';

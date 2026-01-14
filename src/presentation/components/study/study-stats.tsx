@@ -126,7 +126,7 @@ export function StudyStatsDisplay({
                   <span className="w-16 text-sm capitalize">
                     {t(`study.rating.${rating}`)}
                   </span>
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-muted rounded-none overflow-hidden">
                     <div
                       className={cn('h-full transition-all duration-500', colors[rating])}
                       style={{ width: `${percentage}%` }}

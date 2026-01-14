@@ -8,6 +8,8 @@
  * @story PS-04 - Handle Persistence Architecture
  * - Uses handle-persistence.ts instead of fsaHandleManager
  * - Stores storageMetadata instead of fsaHandle
+ *
+ * **ARC-D01**: ProjectId template literal type - Uses domain types for compile-time safety
  */
 
 import { StateCreator } from 'zustand';
@@ -21,34 +23,39 @@ import type {
   ProjectMethods,
 } from './project-types';
 import type { HandleRestoreResult } from '@/infrastructure/filesystem/handle-types';
+import {
+  ProjectId,
+  WorkspaceType,
+  isValidProjectId,
+  extractWorkspaceType as domainExtractWorkspaceType,
+} from '@/domain/types/project-ids';
 
 /**
  * Generate unique project ID with workspace namespace
- * FS-03: Project IDs now include workspace type for cross-workspace isolation
+ * **ARC-D01**: Returns typed ProjectId for compile-time safety
  * Format: {workspace}:proj_{timestamp}_{random}
  * Example: ide:proj_1704787200000_abc123xyz
+ *
+ * @param workspaceType - Workspace type for namespace
+ * @returns Validated ProjectId string
  */
-function generateProjectId(workspaceType: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'): string {
+function generateProjectId(workspaceType: WorkspaceType = 'ide'): ProjectId {
   const randomPart = Math.random().toString(36).substring(2, 11);
-  return `${workspaceType}:proj_${Date.now()}_${randomPart}`;
+  const id = `${workspaceType}:proj_${Date.now()}_${randomPart}` as ProjectId;
+  
+  // Runtime validation (should never fail if code is correct)
+  if (!isValidProjectId(id)) {
+    throw new Error(`Generated invalid ProjectId: ${id}`);
+  }
+  
+  return id;
 }
 
 /**
- * Extract workspace type from a namespaced project ID
- * FS-03: Parse project ID to get workspace context
- * @returns Workspace type or 'ide' as default for legacy non-namespaced IDs
+ * Re-export domain extractWorkspaceType for convenience
+ * **ARC-D01**: Uses domain-level function for ProjectId parsing
  */
-function extractWorkspaceType(projectId: string): 'ide' | 'knowledge' | 'study' | 'notes' {
-  const parts = projectId.split(':');
-  if (parts.length === 2) {
-    const workspaceType = parts[0];
-    if (workspaceType === 'ide' || workspaceType === 'knowledge' || workspaceType === 'study' || workspaceType === 'notes') {
-      return workspaceType;
-    }
-  }
-  // Legacy non-namespaced IDs default to 'ide'
-  return 'ide';
-}
+export { extractWorkspaceType } from '@/domain/types/project-ids';
 
 /**
  * Convert Zustand Project to Dexie ProjectRecord for persistence
@@ -63,7 +70,7 @@ export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 's
     folderPath: project.folderPath,
     lastOpened: project.lastOpened,
     createdAt: project.createdAt,
-    bindings: project.bindings,
+    workspaceBindings: project.workspaceBindings, // ARC-D03: Renamed from bindings
     fileSnapshotEnabled: project.fileSnapshotEnabled,
   };
 }
@@ -82,7 +89,7 @@ export function fromRecord(record: any): Project {
     lastOpened: new Date(record.lastOpened),
     createdAt: new Date(record.createdAt),
     autoSync: true,  // Default value
-    bindings: record.bindings || {},
+    workspaceBindings: record.workspaceBindings || record.bindings || {}, // ARC-D03: fallback for legacy
     fileSnapshotEnabled: record.fileSnapshotEnabled,
     tags: [],  // Default empty array
   };
@@ -115,7 +122,7 @@ export const createProjectCrudSlice: StateCreator<
       lastOpened: now,
       createdAt: now,
       autoSync: input.autoSync ?? true,
-      bindings: input.bindings ?? {
+      workspaceBindings: input.workspaceBindings ?? input.bindings ?? { // ARC-D03
         ide: true,
         knowledge: true,
         notes: true,
@@ -177,7 +184,7 @@ export const createProjectCrudSlice: StateCreator<
 
     // Persist to Dexie (async, non-blocking)
     // FS-03: Extract workspace type from project ID for proper isolation
-    const workspaceType = extractWorkspaceType(projectId);
+    const workspaceType = domainExtractWorkspaceType(projectId);
     db.projects.put(toRecord(updated, workspaceType)).catch((error: unknown) => {
       const err = error as Error;
       console.error('[ProjectStore] Failed to update project in Dexie:', err.message);

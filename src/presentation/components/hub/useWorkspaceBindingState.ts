@@ -64,14 +64,14 @@ export function useWorkspaceBindingState(
   // State: initial workspace selection (radio buttons)
   const [initialWorkspace, setInitialWorkspace] = useState<WorkspaceId>('ide');
 
-  // Initialize state from project's existing bindings
+  // Initialize state from project's existing workspaceBindings (ARC-D03)
   useEffect(() => {
-    if (project?.bindings) {
-      setBindings(project.bindings);
+    if (project?.workspaceBindings) {
+      setBindings(project.workspaceBindings);
 
       // Set initial workspace to first enabled workspace, default to 'ide'
       const firstEnabled = WORKSPACES.find(
-        (ws) => project.bindings?.[ws.id] === true
+        (ws) => project.workspaceBindings?.[ws.id] === true
       );
       setInitialWorkspace((firstEnabled?.id as WorkspaceId) || 'ide');
     }

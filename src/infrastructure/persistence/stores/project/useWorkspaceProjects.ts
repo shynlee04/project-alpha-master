@@ -84,8 +84,8 @@ export function useWorkspaceProjects({
   const filteredProjects = useMemo(() => {
     return allProjects.filter((project) => {
       // 1. Check workspace binding
-      // Binding can be boolean true or string 'true' (legacy)
-      const binding = project.bindings?.[workspaceType];
+      // Binding can be boolean true or string 'true' (legacy) - ARC-D03: workspaceBindings
+      const binding = project.workspaceBindings?.[workspaceType] || (project as any).bindings?.[workspaceType];
       const isBound = binding === true || String(binding) === 'true';
 
       if (!isBound) return false;

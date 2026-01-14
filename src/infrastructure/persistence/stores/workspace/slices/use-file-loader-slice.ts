@@ -19,7 +19,7 @@ import { useState, useEffect, useRef, type RefObject, type Dispatch, type SetSta
 import { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-import { getProject, type ProjectMetadata } from '@/lib/workspace/project-store';
+import { getProject, type ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 import { useWorkspaceStore } from '../workspace-store';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 

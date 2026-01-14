@@ -141,7 +141,7 @@ export function importSettings(
           lastOpened: p.lastOpened.toISOString(),
           createdAt: p.createdAt.toISOString(),
           autoSync: p.autoSync,
-          bindings: p.bindings,
+          workspaceBindings: p.workspaceBindings, // ARC-D03: Renamed from bindings
           tags: p.tags,
         })),
         providers: Array.from(currentProviders.values()).map(p => ({

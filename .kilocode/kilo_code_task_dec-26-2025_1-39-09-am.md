@@ -59396,7 +59396,7 @@ $1.27
 # Current Mode
 <slug>bmad-core-bmad-master</slug>
 <name>🎯 BMAD Master Orchestrator</name>
-<model>minimax/minimax-m2.1</model>
+<model>minimax/MiniMax-M2.1</model>
 <tool_format>native</tool_format>
 <role>You are the BMAD Master Orchestrator - the primary coordinator and strategic director.
 You delegate context-isolated sub-tasks, manage workflow status, assign work to specialized agents,
@@ -60578,7 +60578,7 @@ $1.30
 # Current Mode
 <slug>bmad-core-bmad-master</slug>
 <name>🎯 BMAD Master Orchestrator</name>
-<model>minimax/minimax-m2.1</model>
+<model>minimax/MiniMax-M2.1</model>
 <tool_format>native</tool_format>
 <role>You are the BMAD Master Orchestrator - the primary coordinator and strategic director.
 You delegate context-isolated sub-tasks, manage workflow status, assign work to specialized agents,

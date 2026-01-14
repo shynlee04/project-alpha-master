@@ -1,6 +1,7 @@
 /**
  * @fileoverview Project Entity Tests
  * @module core/entities/__tests__
+ * @governance ARC-D03: Updated to use workspaceBindings (renamed from bindings)
  */
 
 import { describe, it, expect } from 'vitest';
@@ -17,7 +18,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: true,
-        bindings: {
+        workspaceBindings: {
           ide: true,
           knowledge: false,
           notes: true,
@@ -31,7 +32,7 @@ describe('Project Entity', () => {
       expect(project.folderPath).toBe('/path/to/project');
       expect(project.storageType).toBe('fsa');
       expect(project.autoSync).toBe(true);
-      expect(project.bindings).toBeDefined();
+      expect(project.workspaceBindings).toBeDefined();
       expect(project.tags).toEqual([]);
     });
 
@@ -44,7 +45,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: false,
-        bindings: { ide: true },
+        workspaceBindings: { ide: true },
         tags: [],
         description: 'A project with optional fields',
         fileSnapshotEnabled: true,
@@ -69,7 +70,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: true,
-        bindings: { ide: true },
+        workspaceBindings: { ide: true },
         tags: [],
       });
 
@@ -81,7 +82,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: true,
-        bindings: { ide: true },
+        workspaceBindings: { ide: true },
         tags: [],
       });
 
@@ -97,7 +98,7 @@ describe('Project Entity', () => {
         folderPath: '/path/to/new/project',
         storageType: 'fsa',
         autoSync: true,
-        bindings: { ide: true },
+        workspaceBindings: { ide: true },
         tags: [],
         // Note: id, createdAt, lastOpened are NOT required here
       };
@@ -121,7 +122,7 @@ describe('Project Entity', () => {
           activeFile: 'index.ts',
         },
         exclusionPatterns: ['node_modules', '.git'],
-        bindings: {
+        workspaceBindings: {
           ide: true,
           knowledge: true,
           notes: true,
@@ -137,10 +138,10 @@ describe('Project Entity', () => {
 
       expect(createParams.layoutState).toBeDefined();
       expect(createParams.exclusionPatterns).toEqual(['node_modules', '.git']);
-      expect(createParams.bindings.ide).toBe(true);
-      expect(createParams.bindings.knowledge).toBe(true);
-      expect(createParams.bindings.notes).toBe(true);
-      expect(createParams.bindings.study).toBe(true);
+      expect(createParams.workspaceBindings.ide).toBe(true);
+      expect(createParams.workspaceBindings.knowledge).toBe(true);
+      expect(createParams.workspaceBindings.notes).toBe(true);
+      expect(createParams.workspaceBindings.study).toBe(true);
       expect(createParams.fileSnapshotEnabled).toBe(true);
       expect(createParams.description).toBe('A complete project');
       expect(createParams.tags).toEqual(['typescript', 'web']);
@@ -182,7 +183,7 @@ describe('Project Entity', () => {
     it('should allow updating workspace bindings', () => {
       const updateParams: ProjectUpdateParams = {
         id: 'project-789',
-        bindings: {
+        workspaceBindings: {
           ide: true,
           knowledge: true,
           notes: false,
@@ -191,10 +192,10 @@ describe('Project Entity', () => {
       };
 
       expect(updateParams.id).toBe('project-789');
-      expect(updateParams.bindings?.ide).toBe(true);
-      expect(updateParams.bindings?.knowledge).toBe(true);
-      expect(updateParams.bindings?.notes).toBe(false);
-      expect(updateParams.bindings?.study).toBe(false);
+      expect(updateParams.workspaceBindings?.ide).toBe(true);
+      expect(updateParams.workspaceBindings?.knowledge).toBe(true);
+      expect(updateParams.workspaceBindings?.notes).toBe(false);
+      expect(updateParams.workspaceBindings?.study).toBe(false);
     });
   });
 
@@ -211,7 +212,7 @@ describe('Project Entity', () => {
           lastOpened: new Date(),
           createdAt: new Date(),
           autoSync: true,
-          bindings: { ide: true },
+          workspaceBindings: { ide: true },
           tags: [],
         });
 
@@ -228,7 +229,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: true,
-        bindings: { ide: true },
+        workspaceBindings: { ide: true },
         tags: [],
         deleted: false,
       });
@@ -241,7 +242,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: true,
-        bindings: { ide: true },
+        workspaceBindings: { ide: true },
         tags: [],
         deleted: true,
         deletedAt: new Date('2026-01-08'),
@@ -262,7 +263,7 @@ describe('Project Entity', () => {
         lastOpened: new Date(),
         createdAt: new Date(),
         autoSync: false,
-        bindings: { notes: true },
+        workspaceBindings: { notes: true },
         tags: [],
         isTemp: true,
         autoCreated: true,
@@ -270,7 +271,7 @@ describe('Project Entity', () => {
 
       expect(tempProject.isTemp).toBe(true);
       expect(tempProject.autoCreated).toBe(true);
-      expect(tempProject.bindings.notes).toBe(true);
+      expect(tempProject.workspaceBindings.notes).toBe(true);
     });
   });
 });

@@ -272,7 +272,7 @@ export const ApprovalOverlay: React.FC<ApprovalOverlayProps> = ({
                     riskConfig.borderColor,
                     'approval-overlay',
                     isExiting ? 'scale-out' : 'scale-in',
-                    'shadow-2xl'
+                    'shadow-pixel'
                 )}
             >
                 {/* Risk Level Indicator */}

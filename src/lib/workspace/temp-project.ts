@@ -19,7 +19,7 @@
  * ```
  */
 
-import { saveProject, getProject } from '@/lib/workspace/project-store';
+import { saveProject, getProject } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/domain/entities/project';
 import { isDesktopPlatform } from '@/lib/utils/platform-detection';
 
@@ -105,7 +105,7 @@ async function createTempProject(): Promise<Project> {
     createdAt: now,
     autoSync: false, // No sync for temp projects
     fileSnapshotEnabled: false,
-    bindings: {}, // Empty bindings for temp project
+    workspaceBindings: {}, // Empty workspaceBindings for temp project (ARC-D03)
     tags: [], // No tags for temp project
     isTemp: true, // Mark as temp project
     autoCreated: true, // Mark as auto-created

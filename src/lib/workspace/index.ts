@@ -6,7 +6,7 @@
  * Story 3-8: Workspace Context (centralized state)
  */
 
-// Story 3-7: Project Store
+// Story 3-7: Project Store (ARC-E01: Migrated to canonical location)
 export {
     saveProject,
     getProject,
@@ -22,7 +22,7 @@ export {
     type ProjectMetadata,
     type ProjectWithPermission,
     type LayoutConfig,
-} from './project-store';
+} from '@/infrastructure/persistence/stores/project';
 
 // WorkspaceId type from core types
 export type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';

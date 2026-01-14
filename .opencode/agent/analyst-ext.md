@@ -3,7 +3,7 @@ name: "analyst-ext"
 description: "Enhanced Analyst Agent with orchestration hooks"
 wraps: "_bmad/bmm/agents/analyst.md"
 mode: subagent
-model: MiniMax/MiniMax-M2.1
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: false

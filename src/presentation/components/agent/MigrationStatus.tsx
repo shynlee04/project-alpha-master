@@ -43,7 +43,7 @@ export function MigrationStatus(): React.ReactElement | null {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--color-overlay)]">
-      <div className="bg-surface border border-border rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl">
+      <div className="bg-surface border border-border rounded-none p-6 max-w-md w-full mx-4 shadow-pixel">
         {/* Loading indicator */}
         <div className="flex items-center justify-center mb-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
@@ -65,9 +65,9 @@ export function MigrationStatus(): React.ReactElement | null {
 
           {/* Progress bar */}
           {phase !== 'error' && (
-            <div className="w-full bg-muted rounded-full h-2 mb-4">
+            <div className="w-full bg-muted rounded-none h-2 mb-4">
               <div
-                className="bg-primary h-2 rounded-full transition-all duration-300"
+                className="bg-primary h-2 rounded-none transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>

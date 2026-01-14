@@ -284,7 +284,7 @@ export function CodeBlock({
             className={cn(
                 // Base container - 8-bit pixel aesthetic
                 'relative overflow-hidden',
-                'border border-border bg-background/80',
+                'border border-border bg-background',
                 'rounded-none',
                 'shadow-md',
                 'transition-all duration-200',

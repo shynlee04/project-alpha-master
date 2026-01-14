@@ -32,7 +32,8 @@ export interface SerializableProject {
     activeFile?: string | null;
   };
   exclusionPatterns?: string[];
-  bindings: {
+  workspaceBindings: {
+    // ARC-D03: Renamed from bindings
     ide?: boolean;
     knowledge?: boolean;
     notes?: boolean;
@@ -160,7 +161,7 @@ function sanitizeProject(project: Project): SerializableProject {
     autoSync: project.autoSync,
     layoutState: project.layoutState,
     exclusionPatterns: project.exclusionPatterns,
-    bindings: project.bindings,
+    workspaceBindings: project.workspaceBindings, // ARC-D03: Renamed from bindings
     fileSnapshotEnabled: project.fileSnapshotEnabled,
     description: project.description,
     tags: project.tags,

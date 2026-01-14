@@ -99,7 +99,8 @@ export function markMigrationComplete(timestamp: number): void {
  * @param bindings - Project's current workspace bindings
  * @returns true if at least one workspace is disabled
  */
-export function needsMigration(bindings: WorkspaceBindings): boolean {
+export function needsMigration(bindings: WorkspaceBindings | undefined): boolean {
+  if (!bindings) return true; // No bindings = needs migration
   return Object.values(bindings).some((value) => value !== true);
 }
 
@@ -135,15 +136,16 @@ export async function migrateWorkspaceBindings(): Promise<MigrationResult> {
   const migratedProjectIds: string[] = [];
 
   // Step 3: Filter projects needing migration
+  // ARC-D03: Check both workspaceBindings (new) and bindings (legacy)
   const projectsNeedingMigration = allProjects.filter((project) =>
-    needsMigration(project.bindings)
+    needsMigration(project.workspaceBindings || (project as any).bindings)
   );
 
-  // Step 4: Update each project's bindings
+  // Step 4: Update each project's workspaceBindings (ARC-D03)
   for (const project of projectsNeedingMigration) {
-    // Update bindings via store
+    // Update workspaceBindings via store (using new field name)
     state.updateProject(project.id, {
-      bindings: DEFAULT_BINDINGS_ALL_ENABLED,
+      workspaceBindings: DEFAULT_BINDINGS_ALL_ENABLED,
     });
     migratedProjectIds.push(project.id);
   }
@@ -187,8 +189,9 @@ export function checkMigrationEligibility(): MigrationEligibility {
 
   const state = getProjectStoreState();
   const allProjects = Object.values(state.projects || {});
+  // ARC-D03: Check both workspaceBindings (new) and bindings (legacy)
   const projectsNeedingMigration = allProjects
-    .filter((project) => needsMigration(project.bindings))
+    .filter((project) => needsMigration(project.workspaceBindings || (project as any).bindings))
     .map((project) => project.id);
 
   return {

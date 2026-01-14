@@ -8,13 +8,15 @@ import Dexie from 'dexie';
 
 /**
  * IndexedDB record types for flashcard persistence
+ *
+ * **ARC-D02**: Removed workspaceId field - projectId is the single source of truth
+ * per ADR-033 Decision D4. Workspace context is derived from projectId.
  */
 export interface FlashcardRecord {
   id: string;
-  workspaceId: string;
   question: string;
   answer: string;
-  difficulty: 'easy' | 'medium' | 'hard'; // Fixed: Match FlashcardDifficulty from lib/knowledge/types
+  difficulty: 'easy' | 'medium' | 'hard'; // Match FlashcardDifficulty from lib/knowledge/types
   topic: string;
   projectId: string;
   sourceIds: string[];
@@ -23,7 +25,6 @@ export interface FlashcardRecord {
 
 export interface FlashcardSetRecord {
   id: string;
-  workspaceId: string;
   name: string;
   description?: string;
   cardIds: string[];

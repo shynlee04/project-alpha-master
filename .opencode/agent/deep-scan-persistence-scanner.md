@@ -15,7 +15,7 @@ description: |
 
   Loads full configuration from: _bmad/modules/deep-scan/agents/persistence-scanner.md
 color: "#FFA500"
-model: MiniMax/MiniMax-M2.1
+model: minimax/MiniMax-M2.1
 mode: subagent
 temperature: 0.1
 tools:

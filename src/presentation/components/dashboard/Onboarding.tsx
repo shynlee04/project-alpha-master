@@ -35,7 +35,7 @@ export function Onboarding() {
 
     return (
         <>
-            <div className="relative group overflow-hidden rounded-none bg-card border border-border p-8 mb-8 shadow-2xl transition-all hover:border-primary/30 hover:shadow-primary/10">
+            <div className="relative group overflow-hidden rounded-none bg-card border border-border p-8 mb-8 shadow-pixel transition-all hover:border-primary/30 hover:shadow-primary/10">
                 {/* Background Effects - 8-bit style solid orbs */}
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-primary/20 to-warning/20 rounded-none -translate-y-1/2 translate-x-1/2 group-hover:opacity-100 transition-opacity duration-700 opacity-70" />
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10" />

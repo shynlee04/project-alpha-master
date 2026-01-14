@@ -587,7 +587,7 @@ ${debugData.tags.map(tag => `\`${tag}\``).join(', ')}
 
                 {/* Canvas Preview */}
                 <div className="h-[300px] border-b border-border relative">
-                    <div className="absolute top-2 left-2 z-10 bg-background/80 p-1 px-2 rounded text-xs font-mono text-muted-foreground border border-border">
+                    <div className="absolute top-2 left-2 z-10 bg-background p-1 px-2 rounded-none text-xs font-mono text-muted-foreground border border-border">
                         {t('knowledge.canvas.preview')}
                     </div>
                     <Suspense fallback={

@@ -86,18 +86,18 @@ epics:
         - "ARC-C09: Permission model - TODO"
         - "ARC-C10: Optimistic locking - TODO"
 
-    # Phase D: Entity Standardization (Team B - IN PROGRESS)
+    # Phase D: Entity Standardization (Team B - COMPLETE!)
     phase_d:
       name: "Entity Standardization"
-      status: "in_progress"
-      stories_completed: 2
+      status: "complete"
+      stories_completed: 4
       stories_total: 4
-      current_story: "ARC-D01"
+      current_story: "COMPLETE"
       stories:
         - "ARC-B08: File tree exclusion patterns - DONE (3h, P1)"
         - "ARC-B09: Scan depth limits - DONE (2h, P1)"
-        - "ARC-D01: ProjectId template literal type - TODO (3h, P1)"
-        - "ARC-D02: workspaceId || projectId fallback bugs - TODO (4h, P1)"
+        - "ARC-D01: ProjectId template literal type - DONE (3h, P1)"
+        - "ARC-D02: workspaceId || projectId fallback bugs - DONE (4h, P1)"
 
     # Phase E: File Tree Cleanup (Both Teams - PENDING)
     phase_e:
@@ -116,9 +116,9 @@ epics:
 # ═══════════════════════════════════════════════════════════════════════════
 
 story_cycle:
-  current_story: "ARC-D01"
+  current_story: "ARC-D03"
   current_epic: "EPIC-CC-ARC"
-  current_phase: "phase_d_entity_standardization"
+  current_phase: "phase_e_file_tree_cleanup"
   current_step: "story_start"
   step_status: "ready"
 

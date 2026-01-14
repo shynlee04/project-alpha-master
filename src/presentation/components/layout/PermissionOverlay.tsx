@@ -48,8 +48,8 @@ export function PermissionOverlay({
     };
 
     return (
-        <div className="absolute inset-0 bg-background/90 z-50 flex items-center justify-center">
-            <div className="bg-card p-8 rounded-lg text-center max-w-md border border-border shadow-2xl">
+        <div className="absolute inset-0 bg-background z-50 flex items-center justify-center">
+            <div className="bg-card p-8 rounded-none text-center max-w-md border border-border shadow-pixel">
                 <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/15 rounded-full flex items-center justify-center">
                     <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         {hasExistingProject ? (

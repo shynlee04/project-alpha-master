@@ -22,14 +22,14 @@ import { LocalFSAdapter } from '@/infrastructure/filesystem';
 import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import { SyncManager } from '@/infrastructure/sync';
 import type { FsaPermissionState } from '@/lib/filesystem/permission-lifecycle';
-import type { ProjectMetadata } from '@/lib/workspace/project-store';
+import type { ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 import {
   getPermissionState,
   ensureReadWritePermission,
   saveDirectoryHandleReference,
   restorePermission,
 } from '@/lib/filesystem/permission-lifecycle';
-import { saveProject, generateProjectId } from '@/lib/workspace/project-store';
+import { saveProject, generateProjectId } from '@/infrastructure/persistence/stores/project';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
@@ -149,7 +149,7 @@ export function useFileOpsSlice({
         lastOpened: new Date(),
         autoSync,
         createdAt: new Date(),
-        bindings: { ide: true, knowledge: true, notes: true, study: true },
+        workspaceBindings: { ide: true, knowledge: true, notes: true, study: true }, // ARC-D03
         tags: [],
       };
       await saveProject(project);
@@ -218,7 +218,7 @@ export function useFileOpsSlice({
         lastOpened: new Date(),
         autoSync: true,
         createdAt: new Date(),
-        bindings: { ide: true, knowledge: true, notes: true, study: true },
+        workspaceBindings: { ide: true, knowledge: true, notes: true, study: true }, // ARC-D03
         tags: [],
       };
       await saveProject(project);

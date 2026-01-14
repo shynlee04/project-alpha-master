@@ -30,10 +30,9 @@ export type WorkspaceId = 'ide' | 'knowledge' | 'study' | 'notes';
 /**
  * Project metadata stored in IndexedDB
  *
- * NOTE: bindings property may contain either:
- * - New format: WorkspaceBindings with boolean values (true/false)
- * - Legacy format: Record<string, string> with string values ('true'/'false')
- * Runtime code handles both formats for backwards compatibility
+ * NOTE: ARC-D03: workspaceBindings is the new canonical field name.
+ * bindings is kept for backward compatibility with existing IndexedDB data.
+ * Runtime code handles both fields for backwards compatibility.
  *
  * PERSIST-S002: Added workspaceId for cross-workspace isolation
  */
@@ -45,7 +44,10 @@ export interface ProjectRecord {
     storageType?: 'indexeddb' | 'fsa'; // Storage backend type for project
     lastOpened: Date;
     createdAt: Date;
-    bindings?: WorkspaceBindings | Record<string, string>;  // Union type for backwards compatibility
+    // ARC-D03: New canonical field (preferred)
+    workspaceBindings?: WorkspaceBindings;
+    // Legacy field (kept for backward compatibility - migrated to workspaceBindings)
+    bindings?: WorkspaceBindings | Record<string, string>;
     folderPath?: string;
     fileSnapshotEnabled?: boolean;
     // NS-2026-01-07: Temp project support for standalone Notes access

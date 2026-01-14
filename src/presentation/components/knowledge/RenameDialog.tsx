@@ -108,7 +108,7 @@ export function RenameDialog({
     return (
         <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onCancel()}>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-background/80 z-50" />
+                <Dialog.Overlay className="fixed inset-0 bg-background z-50" />
                 <Dialog.Content
                     className={cn(
                         'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50',

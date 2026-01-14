@@ -119,7 +119,7 @@ export function DeepThinkUI({
               <span>{t('deepThink.reasoning')}</span>
               <span>{reasoningProgress}%</span>
             </div>
-            <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-muted rounded-none h-2 overflow-hidden">
               <div
                 className="bg-info h-full transition-all duration-300 ease-out"
                 style={{ width: `${reasoningProgress}%` }}

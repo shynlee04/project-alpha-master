@@ -355,7 +355,7 @@ export function DiffPreview({
             className={cn(
                 // Base container - 8-bit pixel aesthetic
                 'overflow-hidden',
-                'border border-border bg-background/80',
+                'border border-border bg-background',
                 'rounded-none',
                 'shadow-md',
                 className

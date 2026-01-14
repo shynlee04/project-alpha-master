@@ -105,7 +105,7 @@ function TokenCounter({ tokensUsed, maxTokens = 128000, className }: TokenCounte
                 </span>
             </div>
             {/* Progress bar */}
-            <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+            <div className="h-1 w-full bg-muted rounded-none overflow-hidden">
                 <div
                     className={cn(
                         'h-full transition-all duration-300 ease-out',
@@ -159,8 +159,8 @@ function BlockLoadingContent({ state, className }: BlockLoadingContentProps) {
             className={cn(
                 // Position absolute over the block
                 'absolute inset-0 z-20',
-                // Background with blur
-                'bg-background/60 backdrop-blur-sm',
+                // Solid background (8-bit design - no transparency)
+                'bg-background',
                 // Flex center
                 'flex items-center justify-center',
                 // Animation
@@ -168,7 +168,7 @@ function BlockLoadingContent({ state, className }: BlockLoadingContentProps) {
                 className
             )}
         >
-            <div className="flex flex-col items-center gap-3 px-4 py-3 bg-card border-2 border-primary/20 shadow-lg min-w-[200px]">
+            <div className="flex flex-col items-center gap-3 px-4 py-3 bg-card border-2 border-primary/20 shadow-pixel min-w-[200px]">
                 {/* Header: Spinner with sparkle icon and command name */}
                 <div className="flex items-center gap-2 w-full">
                     <div className="relative">

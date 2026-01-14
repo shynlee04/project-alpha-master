@@ -216,8 +216,8 @@ export const HubHomePage: React.FC = () => {
     if (!project) return;
 
     // Navigate directly to the first available workspace
-    // Priority: ide > knowledge > notes > study
-    const bindings = project.bindings as WorkspaceBindings | Record<string, string> | undefined;
+    // Priority: ide > knowledge > notes > study (ARC-D03: workspaceBindings)
+    const bindings = project.workspaceBindings || project.bindings as WorkspaceBindings | Record<string, string> | undefined;
 
     // Handle both new format (boolean) and legacy format (string)
     const isEnabled = (value: boolean | string | undefined): boolean => {

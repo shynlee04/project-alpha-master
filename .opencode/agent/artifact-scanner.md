@@ -5,7 +5,7 @@ description: "Scan documents and artifacts with staleness detection + code valid
 version: "1.1.0"
 updated: "2026-01-11"
 mode: subagent
-model: MiniMax/MiniMax-M2.1
+model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: false

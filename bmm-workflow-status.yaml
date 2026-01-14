@@ -3,7 +3,7 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.5.0"
-last_updated: "2026-01-18T11:30:00+07:00"
+last_updated: "2026-01-19T16:00:00+07:00"
 updated_by: "BMAD Master - Team B Orchestrator"
 previous_version: "bmm-workflow-status-v2.5.yaml"
 
@@ -79,16 +79,17 @@ limits:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "epic-cc-arc-week3-2026-01-18"
-  status: "ACTIVE"
+  id: "epic-cc-arc-week3-2026-01-19"
+  status: "PHASE_D_COMPLETE"
   epic: "EPIC-CC-ARC"
-  story: "ARC-B08"
-  started_at: "2026-01-18T11:30:00+07:00"
-  completed_at: null
+  story: "ARC-D03"
+  started_at: "2026-01-19T14:00:00+07:00"
+  completed_at: "2026-01-19T16:00:00+07:00"
   team: "Team B (Orchestrator)"
-  story_status: "IN_PROGRESS"
-  story_summary: "File tree exclusion patterns configuration - default exclusions + user configurable patterns in .viagent/config.json"
-  depends_on: "ARC-B05 ✅"
+  story_status: "COMPLETED"
+  story_summary: "Rename bindings → workspaceBindings per ADR-033 Decision D4 (Entity Naming Convention)"
+  depends_on: "ARC-D02 ✅"
+  phase_d_complete: true
   
   # TypeScript fixes completed this session
   session_fixes:
@@ -141,6 +142,39 @@ current_workflow:
       completed_at: "2026-01-14T23:30:00+07:00"
       result: "396 lines → 48 lines orchestrator + vault-slice (134) + crud-slice (397)"
       team: "Team A"
+    - id: "ARC-D03"
+      name: "Rename bindings → workspaceBindings"
+      completed_at: "2026-01-19T16:00:00+07:00"
+      result: "25 files updated: domain entity, dexie schema, stores, components, routes. TypeScript: 0 errors"
+      team: "Team B"
+      adr_reference: "ADR-033 Decision D4"
+      files_modified:
+        - "src/domain/entities/project.ts"
+        - "src/infrastructure/persistence/dexie-db-core-types.ts"
+        - "src/infrastructure/persistence/stores/project/project-types.ts"
+        - "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        - "src/infrastructure/persistence/stores/project/project-bindings-slice.ts"
+        - "src/infrastructure/persistence/stores/project/migrate-bindings.ts"
+        - "src/domain/entities/__tests__/project.test.ts"
+        - "src/lib/settings/settings-serializer.ts"
+        - "src/lib/settings/settings-importer.ts"
+        - "src/lib/workspace/project-store.ts"
+        - "src/lib/workspace/browser-mode.ts"
+        - "src/lib/workspace/hooks/useWorkspaceActions.ts"
+        - "src/lib/workspace/ProjectContext.tsx"
+        - "src/lib/workspace/temp-project.ts"
+        - "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
+        - "src/presentation/components/hub/useWorkspaceBindingState.ts"
+        - "src/presentation/components/hub/ProjectCard.tsx"
+        - "src/presentation/components/hub/useDashboardMetrics.ts"
+        - "src/presentation/components/hub/ProjectPickerDialog.tsx"
+        - "src/presentation/components/hub/HubHomePage.tsx"
+        - "src/presentation/components/project/ProjectsPage.tsx"
+        - "src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts"
+        - "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+        - "src/routes/notes.lazy.tsx"
+        - "src/routes/debug.tsx"
+        - "src/lib/workspace/workspace-access-helper.tsx"
 
 parallel_workflows:
   - id: "cc-01-project-space-2026-01-15"
