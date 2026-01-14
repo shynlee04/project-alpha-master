@@ -54,6 +54,15 @@ registry:
     created_at: "2026-01-18T12:30:00+07:00"
     status: "complete"
 
+  - id: "arc-b09-implementation"
+    type: "implementation"
+    name: "ARC-B09: Scan Depth Limits and Warnings"
+    story_id: "ARC-B09"
+    path: "src/domain/types/viagent-metadata.ts, src/infrastructure/filesystem/file-tree-scanner.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-18T14:00:00+07:00"
+    status: "complete"
+
 # Session Tracking
 sessions:
   - id: "excalibur-epic-cc-arc-2026-01-18"

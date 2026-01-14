@@ -31,8 +31,8 @@ session:
 current:
   epic_id: "EPIC-CC-ARC"
   epic_name: "Correct-Course Architectural Remediation"
-  story_id: "ARC-C08"
-  story_title: "Race conditions analysis"
+  story_id: "ARC-C09"
+  story_title: "Permission model for human CRUD actions"
   team: "Team A"
   phase: "C"
   week: 3
@@ -150,13 +150,13 @@ delegations:
 
 progress:
   epic_total_stories: 28
-  epic_stories_complete: 14
-  epic_stories_remaining: 14
-  team_b_total_stories: 13
-  team_b_stories_complete: 10
-  team_b_stories_remaining: 3
-  stories_completed_this_session: 1
-  artifacts_created_this_session: 2
+  epic_stories_complete: 22
+  epic_stories_remaining: 6
+  team_a_total_stories: 15
+  team_a_stories_complete: 14
+  team_a_stories_remaining: 1
+  stories_completed_this_session: 6
+  artifacts_created_this_session: 3
   typescript_errors: 0
 
 # ═══════════════════════════════════════════════════════════════════════════

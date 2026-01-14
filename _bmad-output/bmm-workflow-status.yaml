@@ -90,12 +90,12 @@ epics:
     phase_d:
       name: "Entity Standardization"
       status: "in_progress"
-      stories_completed: 1
+      stories_completed: 2
       stories_total: 4
-      current_story: "ARC-B09"
+      current_story: "ARC-D01"
       stories:
         - "ARC-B08: File tree exclusion patterns - DONE (3h, P1)"
-        - "ARC-B09: Scan depth limits - TODO (2h, P1)"
+        - "ARC-B09: Scan depth limits - DONE (2h, P1)"
         - "ARC-D01: ProjectId template literal type - TODO (3h, P1)"
         - "ARC-D02: workspaceId || projectId fallback bugs - TODO (4h, P1)"
 
@@ -116,7 +116,7 @@ epics:
 # ═══════════════════════════════════════════════════════════════════════════
 
 story_cycle:
-  current_story: "ARC-B09"
+  current_story: "ARC-D01"
   current_epic: "EPIC-CC-ARC"
   current_phase: "phase_d_entity_standardization"
   current_step: "story_start"
@@ -157,7 +157,7 @@ agents:
   target_agent: "dev-ext"
 
   routing:
-    current_story: "ARC-B08"
+    current_story: "ARC-D01"
     story_type: "feature_development"
     rule_id: "DEV-001"
     workflow: "story-cycle"

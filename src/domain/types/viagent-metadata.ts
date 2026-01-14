@@ -227,6 +227,18 @@ export interface ViagentFileTreeSnapshot {
 
   /** Scan duration in milliseconds */
   scanDurationMs: number;
+
+  /**
+   * **ARC-B09**: Whether file count limit was reached during scan
+   * @remarks When true, scan was truncated before completion
+   */
+  limitReached?: boolean;
+
+  /**
+   * **ARC-B09**: Actual file count before limit was reached
+   * @remarks When limitReached is true, this shows how many files were scanned
+   */
+  actualFileCount?: number;
 }
 
 /**

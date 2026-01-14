@@ -116,9 +116,8 @@ const WARNING_DEPTH = 15;
  * and log a warning. Projects exceeding this should use
  * more targeted scanning strategies.
  *
- * @todo Implement file count limiting in scanDirectory
+ * **ARC-B09**: File count limiting implemented in scanDirectory
  */
-// @ts-expect-error - Intentionally unused for future safety limit
 const MAX_FILE_COUNT = 50000;
 
 // ============================================================================
@@ -378,8 +377,9 @@ export class FileTreeScanner {
   private async scanFullPath(signal?: AbortSignal): Promise<ViagentFileTreeSnapshot> {
     const startTime = Date.now();
 
-    // Build root entry recursively
-    const root = await this.scanDirectory('.', 0, signal);
+    // Build root entry recursively with file count tracking
+    const scanContext = { fileCount: 0, maxFileCount: MAX_FILE_COUNT, limitReached: false };
+    const root = await this.scanDirectory('.', 0, signal, scanContext);
 
     // Collect statistics
     const stats = this.collectStats(root);
@@ -387,6 +387,11 @@ export class FileTreeScanner {
     // Check for depth warning
     if (stats.maxDepth >= WARNING_DEPTH) {
       console.warn(`[FileTreeScanner] Scan depth ${stats.maxDepth} approaching limit of ${this.maxDepth}`);
+    }
+
+    // Check for file count limit
+    if (scanContext.limitReached) {
+      console.warn(`[FileTreeScanner] File count limit ${MAX_FILE_COUNT} reached - scan truncated`);
     }
 
     const scanDurationMs = Date.now() - startTime;
@@ -402,6 +407,8 @@ export class FileTreeScanner {
       createdAt: new Date().toISOString(),
       isStale: false,
       scanDurationMs,
+      limitReached: scanContext.limitReached,
+      actualFileCount: scanContext.fileCount,
     };
   }
 
@@ -411,12 +418,14 @@ export class FileTreeScanner {
    * @param path - Directory path
    * @param currentDepth - Current depth
    * @param signal - AbortSignal for cancellation
+   * @param scanContext - Scan context for file count tracking
    * @returns Directory entry with children
    */
   private async scanDirectory(
     path: string,
     currentDepth: number,
-    signal?: AbortSignal
+    signal: AbortSignal | undefined,
+    scanContext: { fileCount: number; maxFileCount: number; limitReached: boolean }
   ): Promise<ViagentFileTreeEntry> {
     // Check for abort
     if (signal?.aborted) {
@@ -477,12 +486,46 @@ export class FileTreeScanner {
         continue;
       }
 
+      // **ARC-B09**: Check file count limit before processing
+      if (scanContext.limitReached) {
+        // Limit already reached in child call, stop adding more entries
+        break;
+      }
+
       if (entry.kind === 'directory') {
         // Recursively scan subdirectory
-        const dirEntry = await this.scanDirectory(entry.path, currentDepth + 1, signal);
+        const dirEntry = await this.scanDirectory(entry.path, currentDepth + 1, signal, scanContext);
         children.push(dirEntry);
+
+        // Stop if limit was reached in recursive call
+        if (scanContext.limitReached) {
+          break;
+        }
       } else {
-        // File entry
+        // File entry - check limit before adding
+        scanContext.fileCount++;
+        if (scanContext.fileCount >= scanContext.maxFileCount) {
+          scanContext.limitReached = true;
+          console.warn(`[FileTreeScanner] File count limit ${scanContext.maxFileCount} reached at ${entry.path}`);
+
+          // Still add this file (the one that hit the limit)
+          children.push({
+            path: entry.path,
+            kind: 'file',
+            size: entry.size,
+            lastModified: entry.lastModified,
+            isExcluded: false,
+          });
+
+          // Stop processing further files
+          break;
+        }
+
+        // Check for approaching limit (warn at 90%)
+        if (scanContext.fileCount === Math.floor(scanContext.maxFileCount * 0.9)) {
+          console.warn(`[FileTreeScanner] Approaching file count limit: ${scanContext.fileCount}/${scanContext.maxFileCount}`);
+        }
+
         children.push({
           path: entry.path,
           kind: 'file',
