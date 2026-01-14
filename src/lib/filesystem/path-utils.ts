@@ -19,7 +19,8 @@
  * ```
  */
 
-import { validatePath as validatePathInternal } from './path-guard';
+// ARC-E03: Import from infrastructure (canonical location)
+import { validatePath as validatePathInternal } from '@/infrastructure/filesystem/path-guard';
 
 /**
  * Validates a file/directory path to prevent security issues.

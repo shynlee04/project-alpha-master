@@ -543,8 +543,21 @@ phase_c:
       title: "Archive duplicate store files"
       effort: "2h"
       priority: "P1"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2026-01-14"
       dependencies: ["ARC-C02"]
+      notes: |
+        ANALYSIS COMPLETE:
+        - Analyzed all stores in lib/ vs infrastructure/persistence/stores/
+        - Found NO true duplicates requiring archival
+        - lib/ stores (notes, snippets, workflow, filesystem) are UNIQUE implementations
+        - project-store/ was already archived in ARC-E02
+        - Architecture correctly separates infrastructure (clean arch) from lib (legacy)
+      acceptance_criteria:
+        - "All lib/ stores analyzed ✅"
+        - "Duplicates identified ✅ (none found)"
+        - "Already-archived stores documented ✅"
+        - "TypeScript: 0 errors ✅"
       
     ARC-C06:
       title: "Audit all STUB implementations"
@@ -770,8 +783,33 @@ phase_e:
       title: "Archive src/lib/filesystem/ duplicates"
       effort: "1h"
       priority: "P1"
-      status: "TODO"
+      status: "DONE"
+      completed_at: "2026-01-14"
+      team: "Team A"
       dependencies: ["ARC-B01"]
+      notes: |
+        ANALYSIS AND CLEANUP COMPLETE:
+        - Analyzed 20+ files in lib/filesystem/ vs infrastructure/filesystem/
+        - Only 1 true duplicate found: path-guard.ts (identical 58 lines)
+        - Archived path-guard.ts to _bmad-ext/.archive/lib-filesystem-duplicates-2026-01-14/
+        - Fixed import in path-utils.ts to use infrastructure version
+        - Most lib/filesystem/ files are UNIQUE (permission-lifecycle, unified-storage-adapter, etc.)
+        - lib/filesystem/index.ts is already a FACADE with @deprecated annotations
+        
+        CRITICAL FINDINGS:
+        - infrastructure/filesystem/index.ts imports FROM lib/filesystem/permission-lifecycle
+        - 4+ infrastructure files import unified-storage-adapter from lib/
+        - Cannot delete lib/filesystem/ - actively used by infrastructure
+        
+        DEFERRED TO FUTURE EPIC:
+        - Move permission-lifecycle.ts to infrastructure/
+        - Move unified-storage-adapter.ts to infrastructure/
+        - Update all imports
+      acceptance_criteria:
+        - "Identical duplicate archived (path-guard.ts) ✅"
+        - "Import fixed to use infrastructure version ✅"
+        - "Dependencies documented ✅"
+        - "TypeScript: 0 errors ✅"
       
     ARC-E04:
       title: "Update all imports to canonical paths"
@@ -785,11 +823,11 @@ phase_e:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_status:
-  active_week: 3
-  team_a_current: "ARC-C09 COMPLETE - Permission model documented. Next: ARC-C10 (P2) or ARC-E03/E04 (cleanup)"
-  team_b_current: "WEEK 3 - ARC-B08, B09, D01, D02, D03 remaining"
+  active_week: 4
+  team_a_current: "ARC-C05 + ARC-E03 COMPLETE - P1 cleanup done. Remaining: ARC-C10 (P2), ARC-E04 (P2)"
+  team_b_current: "COMPLETE - All Team B stories done"
   team_a_orchestrator: "Active - EXCALIBUR Coordinator Mode"
-  team_b_orchestrator: "Active - Week 3 coordination"
+  team_b_orchestrator: "Complete - All stories done"
   typescript_errors: 0
   completed_stories:
     - "ARC-A01: getPlatformContract() service (2026-01-17)"
