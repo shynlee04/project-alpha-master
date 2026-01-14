@@ -10,8 +10,8 @@
  * - Infrastructure layer provides implementations
  * - Presentation layer depends only on interfaces
  *
- * @epic EPIC-CC-01 - Project Space Foundation
- * @story PS-02 - Create StorageAdapter Domain Interface
+ * @epic EPIC-CC-ARC - Correct-Course Architectural Remediation
+ * @story ARC-B01 - Create StorageGateway Interface
  */
 
 // ============================================================================
@@ -38,3 +38,16 @@ export type {
   StorageType,
   CreateStorageAdapterOptions,
 } from './file-operations-adapter.interface';
+
+// ============================================================================
+// Storage Gateway Interface (ARC-B01)
+// ============================================================================
+
+export type {
+  StorageGateway,
+  StorageGatewayFactory,
+  FileEntry,
+  FileChangeEvent as GatewayFileChangeEvent,
+  FileChangeCallback as GatewayFileChangeCallback,
+  WatchHandle,
+} from './storage-gateway.interface';

@@ -24,7 +24,7 @@ import type { Project } from '@/infrastructure/persistence/stores/project/projec
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store';
 import { ErrorBoundary } from '@/presentation/components/error';
-import { isMobileDevice } from '@/infrastructure/filesystem/platform-detection';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 
 // ============================================================================
 // Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
@@ -88,8 +88,10 @@ export const Route = createFileRoute('/ide/$projectId')({
     console.log('[IDERoute] beforeLoad called for project:', projectId);
 
     // Check 1: Mobile users cannot access IDE (audit violation - ABSOLUTE)
-    if (isMobileDevice()) {
-      console.warn('[IDERoute] Mobile access denied to IDE, redirecting to Notes');
+    // Using PlatformContract for consistent detection (ADR-033 D1)
+    const platform = getPlatformContract();
+    if (!platform.canAccessIDE) {
+      console.warn('[IDERoute] Mobile/tablet access denied to IDE, redirecting to Notes');
       throw redirect({
         to: '/notes/$projectId',
         params: { projectId },

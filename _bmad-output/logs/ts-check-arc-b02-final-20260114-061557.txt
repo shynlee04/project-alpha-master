@@ -1,0 +1,12 @@
+src/infrastructure/filesystem/fsa-gateway.ts(65,3): error TS2578: Unused '@ts-expect-error' directive.
+src/infrastructure/filesystem/fsa-gateway.ts(107,26): error TS2552: Cannot find name 'FileSystemObserver'. Did you mean 'FileSystemError'?
+src/infrastructure/filesystem/fsa-gateway.ts(251,17): error TS6133: 'handle' is declared but its value is never read.
+src/infrastructure/filesystem/fsa-gateway.ts(345,7): error TS2578: Unused '@ts-expect-error' directive.
+src/infrastructure/filesystem/fsa-gateway.ts(352,7): error TS2578: Unused '@ts-expect-error' directive.
+src/infrastructure/filesystem/fsa-gateway.ts(374,7): error TS2578: Unused '@ts-expect-error' directive.
+src/infrastructure/filesystem/fsa-gateway.ts(404,7): error TS2578: Unused '@ts-expect-error' directive.
+src/infrastructure/filesystem/fsa-gateway.ts(584,17): error TS2393: Duplicate function implementation.
+src/infrastructure/filesystem/fsa-gateway.ts(654,24): error TS6133: 'handle' is declared but its value is never read.
+src/infrastructure/filesystem/fsa-gateway.ts(667,3): error TS2393: Duplicate function implementation.
+src/routes/notes.$projectId.lazy.tsx(81,3): error TS2353: Object literal may only specify known properties, and 'beforeLoad' does not exist in type 'LazyRouteOptions'.
+src/routes/notes.$projectId.lazy.tsx(105,20): error TS7031: Binding element 'params' implicitly has an 'any' type.

@@ -25,6 +25,8 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-core-types';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 import { ProjectCreationWizard } from './ProjectCreationWizard';
 import { ProjectCard } from '@/presentation/components/hub/ProjectCard';
 import { WorkspaceBindingDialog } from '@/presentation/components/hub/WorkspaceBindingDialog';
@@ -148,11 +150,19 @@ export const ProjectsPage: React.FC = () => {
     toast.success(t('projects.created', 'Project created successfully'), {
       description: t('projects.createdDesc', 'Your project is ready to use'),
     });
-    // Navigate to IDE with the new project
-    navigate({
-      to: '/ide/$projectId',
-      params: { projectId }
-    });
+    
+    // ARC-A06: Platform-aware redirect after project creation
+    // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
+    const project = useProjectStore.getState().getProject(projectId);
+    const platform = getPlatformContract();
+    
+    if (platform.canAccessIDE && project?.storageType === 'fsa') {
+      // Desktop with FSA: Navigate to IDE (full file system access)
+      navigate({ to: '/ide/$projectId', params: { projectId } });
+    } else {
+      // Mobile OR Desktop with IndexedDB: Navigate to Notes
+      navigate({ to: '/notes/$projectId', params: { projectId } });
+    }
   };
 
   const handleOpenProject = (projectId: string) => {

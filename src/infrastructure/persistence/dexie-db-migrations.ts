@@ -1012,4 +1012,88 @@ export function registerMigrations(db: Dexie): void {
             logDexieMigration(22, 'ux-13-saved-blocks', 'completed',
                 'Schema created for saved blocks table. Users can now save and reuse blocks.');
         });
+
+        // Schema version 23: ARC-B03 - IDBGateway File Storage
+        // Adds idbFiles table for mobile/tablet file storage (IndexedDB-based)
+        db.version(23).stores({
+            // Core tables with workspaceId (unchanged from v22)
+            projects: 'id, workspaceId, lastOpened, name',
+            ideState: 'projectId, workspaceId, updatedAt',
+            conversations: 'id, projectId, workspaceId, updatedAt',
+
+            // AI tables (unchanged)
+            taskContexts: 'id, projectId, workspaceId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, workspaceId, toolName, status, [taskId+status]',
+            credentials: 'providerId, workspaceId, createdAt',
+            threads: 'id, projectId, workspaceId, updatedAt, [projectId+updatedAt]',
+
+            // State tables (unchanged)
+            providerConfigs: 'id, workspaceId, updatedAt',
+            agentConfigs: 'id, workspaceId, updatedAt',
+            conversationState: 'id, workspaceId, updatedAt',
+            ragState: 'id, workspaceId, updatedAt',
+
+            // Sync tables (unchanged)
+            syncStatus: 'id, workspaceId, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileSyncStatus: 'id, workspaceId, updatedAt',
+
+            // File tables (unchanged)
+            fileMetadata: '[projectId+workspaceId+path], projectId, workspaceId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, workspaceId, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, workspaceId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, workspaceId, createdAt, expiresAt, [projectId+createdAt]',
+
+            // File snapshot tables (unchanged)
+            fileSnapshots: 'projectId, workspaceId, path, [projectId+workspaceId+path]',
+            fileContentCache: '[projectId+workspaceId+path]',
+
+            // Knowledge tables (unchanged)
+            sources: 'id, projectId, workspaceId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, workspaceId, name, createdAt, [projectId+name]',
+            synthesisResults: 'id, workspaceId, createdAt',
+            oramaIndexes: 'projectId, workspaceId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, workspaceId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, workspaceId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+
+            // Other tables (unchanged)
+            workflows: 'id, workspaceId, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+            codeSnippets: 'id, workspaceId, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+            savedBlocks: 'id, workspaceId, blockType, category, isFavorite, tags, createdAt, updatedAt, lastUsedAt, useCount, [workspaceId+blockType], [workspaceId+isFavorite], [workspaceId+category], [workspaceId+tags]',
+
+            // Plugin tables (unchanged)
+            plugins: 'id, workspaceId, source, state, installedAt, [source], [state], [installedAt]',
+            pluginSettings: 'pluginId, workspaceId, updatedAt',
+            pluginMarketplace: 'id, workspaceId, category, cachedAt, expiresAt, [category], [cachedAt]',
+            pluginStorage: 'id, pluginId, workspaceId, [pluginId]',
+
+            // Study tables (unchanged)
+            flashcards: 'id, workspaceId, projectId, topic, difficulty, createdAt, *sourceIds',
+            flashcardSets: 'id, workspaceId, projectId, name, createdAt, updatedAt, *cardIds',
+            studySessions: 'id, workspaceId, projectId, startTime, completed',
+            studyCards: 'id, workspaceId, cardId, sessionId',
+            quizzes: 'id, workspaceId, projectId, title, createdAt, *sourceIds',
+            quizQuestions: 'id, workspaceId, quizId, difficulty, topic, *sourceIds',
+
+            // ========================================================================
+            // NEW: IDB Files Table (ARC-B03)
+            // ========================================================================
+
+            // idbFiles: IndexedDB-based file storage for mobile/tablet
+            // Uses compound key [projectId+path] for unique file identification
+            idbFiles: '[projectId+path], projectId, kind, lastModified, [projectId+kind]',
+        }).upgrade(async () => {
+            logDexieMigration(23, 'arc-b03-idb-gateway', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(23)) {
+                logDexieMigration(23, 'arc-b03-idb-gateway', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            // No data migration needed - this is a new feature for mobile/tablet
+            markMigrationApplied(23);
+
+            logDexieMigration(23, 'arc-b03-idb-gateway', 'completed',
+                'Schema created for idbFiles table. Mobile/tablet projects can now store files in IndexedDB.');
+        });
 }

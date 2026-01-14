@@ -18,6 +18,7 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings, CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';
@@ -134,32 +135,19 @@ export const HubHomePage: React.FC = () => {
       duration: 3000,
     });
 
-    // Get the project to determine where to navigate based on storage type and bindings
+    // ARC-A06: Platform-aware redirect after project creation
+    // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
     const project = useProjectStore.getState().getProject(projectId);
     if (!project) return;
-
-    // For indexeddb storage, navigate to the first available workspace (not IDE)
-    if (project.storageType === 'indexeddb') {
-      const bindings = project.bindings || {};
-      // Priority: Knowledge → Notes → Study
-      if (bindings.knowledge) {
-        navigate({ to: '/knowledge/$projectId', params: { projectId } });
-      } else if (bindings.notes) {
-        navigate({ to: '/notes/$projectId', params: { projectId } });
-      } else if (bindings.study) {
-        navigate({ to: '/study/$projectId', params: { projectId } });
-      } else {
-        // Fallback to hub with toast
-        toast.info(t('hub.noWorkspaceBindings', 'No workspace enabled for this project. Enable at least one workspace to access your project.'), {
-          duration: 5000,
-        });
-      }
+    
+    const platform = getPlatformContract();
+    
+    if (platform.canAccessIDE && project.storageType === 'fsa') {
+      // Desktop with FSA: Navigate to IDE (full file system access)
+      navigate({ to: '/ide/$projectId', params: { projectId } });
     } else {
-      // For fsa storage, navigate to IDE (full file system access)
-      navigate({
-        to: '/ide/$projectId',
-        params: { projectId }
-      });
+      // Mobile OR Desktop with IndexedDB: Navigate to Notes
+      navigate({ to: '/notes/$projectId', params: { projectId } });
     }
   };
 

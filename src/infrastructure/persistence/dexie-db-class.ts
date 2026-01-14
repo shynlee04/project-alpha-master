@@ -75,6 +75,14 @@ import type {
     QuizQuestionsTable,
 } from './dexie-db-study-types';
 
+// ============================================================================
+// ARC-B03: IDBGateway File Storage Types
+// ============================================================================
+
+import type {
+    IDBFilesTable,
+} from './dexie-db-idb-file-types';
+
 // Import migrations
 import { registerMigrations } from './dexie-db-migrations';
 
@@ -204,6 +212,12 @@ export class ViaGentDatabase extends Dexie {
     studyCards!: StudyCardsTable;
     quizzes!: QuizzesTable;
     quizQuestions!: QuizQuestionsTable;
+
+    // ========================================================================
+    // ARC-B03: IDBGateway File Storage (Mobile/Tablet)
+    // ========================================================================
+
+    idbFiles!: IDBFilesTable;
 
     // ========================================================================
     // Constructor

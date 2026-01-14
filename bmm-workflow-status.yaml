@@ -1,62 +1,65 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.4 - CORRECT-COURSE (Architectural Remediation Planning)
+# BMM WORKFLOW STATUS v2.5 - EPIC-CC-ARC (Architectural Remediation Execution)
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.4.0"
-last_updated: "2026-01-16T16:00:00+07:00"
-updated_by: "BMAD Master - Correct-Course Phase 6 (Awaiting Authorization)"
-previous_version: "bmm-workflow-status-v2.3.yaml"
+schema_version: "2.5.0"
+last_updated: "2026-01-17T08:00:00+07:00"
+updated_by: "BMAD Master - Sprint Planning Complete"
+previous_version: "bmm-workflow-status-v2.4.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 60  # Lowered - Foundation collapse identified, remediation planned
+health_score: 70  # Improved - ADR-033 approved, sprint planning complete, execution starting
 context_ttl: "24h"
-current_phase: "CORRECT-COURSE-PLANNING"
+current_phase: "EPIC-CC-ARC-WEEK1"
 
 # PHASE GUIDANCE
 phase_guidance: |
-  CORRECT-COURSE ARCHITECTURAL REMEDIATION - PHASE 6 (AWAITING AUTHORIZATION):
+  EPIC-CC-ARC - ARCHITECTURAL REMEDIATION EXECUTION (WEEK 1):
   
-  CRITICAL: Foundation collapse identified. Notes/IDE non-functional due to:
-  1. D1: Broken routing (useWorkspaceAccess returns empty) - PARTIALLY FIXED
-  2. D2: Storage contract violation (FSA vs IndexedDB decided per-call)
-  3. D3: State fragmentation (59 store files, STUB implementations)
-  4. D4: Entity naming collision (project vs workspace)
-  5. D5: Database silos (11 separate IndexedDB databases)
-  6. D6: File tree pollution (duplicate stores in lib/ and infrastructure/)
+  ADR-033 APPROVED: All decisions finalized. Sprint planning complete.
   
-  COMPLETED TODAY:
-  - Fixed useWorkspaceAccess hook (workspace-access-helper.tsx)
-  - Fixed browser-mode.ts direct Dexie persistence
-  - Fixed 10 TypeScript errors (AITransformMenu, ReplacementPreviewDialog)
-  - Created comprehensive remediation plan
-  - Updated CLAUDE.md with architectural boundaries
-  - Updated AGENTS.md with file tree governance
+  WEEK 1 FOCUS:
+  - Team A: Phase A (Identity & Routing) - ARC-A01, A02, A04, A05, A06
+  - Team B: Phase B (Storage Contract) - ARC-B01, B02, B07, B10
   
-  AWAITING USER DECISION:
-  1. Storage Architecture: Cross-workspace projects (Option B) or per-workspace?
-  2. Mobile IDE Access: Hard block or read-only preview?
-  3. Database Consolidation Timing: Now or after routing stable?
+  ALREADY COMPLETED (Phase 0):
+  - ✅ ARC-A03: useWorkspaceAccess hook fixed
+  - ✅ ARC-B04: browser-mode.ts persistence fixed
+  - ✅ TypeScript: 0 errors
   
-  PLAN DOCUMENT: _bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md
+  KEY DECISIONS (from ADR-033):
+  - Desktop → FSA automatically (no user choice)
+  - Mobile/Tablet → IndexedDB automatically
+  - Notes on FSA Desktop → Real .md files in /project/notes/
+  - IDE → Desktop only (mobile blocked)
+  
+  INTEGRATION POINT:
+  - ARC-A01 (getPlatformContract) must complete before ARC-B01 (StorageGateway)
+  
+  ADR: _bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md
   
 # TEAMS
 teams:
   - id: "Team A"
-    name: "BYOK & Agent Infrastructure Squad"
-    focus: "CC-02 (BYOK) → CC-03 (Chat) → CC-05 (Agent/LLM)"
-    assigned_epic: "EPIC-CC-02"
-    current_story: "BYOK-02"
-    status: "READY"
+    name: "Identity & Routing Squad"
+    focus: "EPIC-CC-ARC Phase A (Routing) → Phase C (State)"
+    assigned_epic: "EPIC-CC-ARC"
+    assigned_phase: "A"
+    current_story: "ARC-A01"
+    status: "ACTIVE"
+    week_1_stories: ["ARC-A01", "ARC-A02", "ARC-A04", "ARC-A05", "ARC-A06"]
     
   - id: "Team B"
-    name: "Project Space & Storage Squad"  
-    focus: "CC-01 (Project Space) → Storage Routing → Hot Reactive Sync"
-    assigned_epic: "EPIC-CC-01"
-    current_story: "PS-02-A (Platform Routing)"
-    status: "READY"
+    name: "Storage Contract Squad"  
+    focus: "EPIC-CC-ARC Phase B (Storage) → Phase D (Entity)"
+    assigned_epic: "EPIC-CC-ARC"
+    assigned_phase: "B"
+    current_story: "ARC-B01"
+    status: "ACTIVE"
+    week_1_stories: ["ARC-B01", "ARC-B02", "ARC-B07", "ARC-B10"]
 
 # NUMBERING RULES
 numbering:
@@ -77,15 +80,16 @@ limits:
 # ═══════════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "correct-course-2026-01-15"
+  id: "epic-cc-arc-week1-2026-01-17"
   status: "ACTIVE"
-  epic: "EPIC-CC-01"
-  story: "PS-02-A"
-  started_at: "2026-01-15T10:00:00+07:00"
+  epic: "EPIC-CC-ARC"
+  story: "ARC-B01"
+  started_at: "2026-01-17T12:00:00+07:00"
   completed_at: null
-  team: "Team B"
-  story_status: "READY"
-  story_summary: "Platform Detection & Storage Routing"
+  team: "Team B (Orchestrator)"
+  story_status: "BLOCKED_BY_ARC-A01"
+  story_summary: "Create StorageGateway abstraction layer - awaiting PlatformContract from Team A"
+  depends_on: "ARC-A01 (Team A)"
   
   # TypeScript fixes completed this session
   session_fixes:
@@ -208,7 +212,7 @@ active_epics:
         files:
           - "src/infrastructure/filesystem/fsa-storage-adapter.ts"
       
-       - id: "PS-02-A"
+      - id: "PS-02-A"
         name: "Platform Detection & Storage Routing"
         status: "COMPLETED"
         effort: "4h"
@@ -231,29 +235,29 @@ active_epics:
           - WebContainer → UnifiedStorageAdapter (preview only)
           TypeScript: 0 errors ✅
       
-       # PS-02-B: Hot Reactive Sync - NOW IN PROGRESS (bugs fixed 2026-01-15)
-       - id: "PS-02-B"
-         name: "Hot Reactive Sync Integration"
-         status: "IN_PROGRESS"
-         effort: "4h"
-         priority: "P0"
-         completed_at: "2026-01-15T22:00:00+07:00"
-         addresses_issue: "URI-03"
-         description: |
-           Connect FSAStorageAdapter.watch() to:
-           - Monaco for external file change detection
-           - Sync status indicators
-           - Permission boundary enforcement
-         result: |
-           - Fixed projectId bug (was hardcoded, now uses useProjectId())
-           - Connected VFS sync slice to StatusBar store
-           - Monaco subscribes to crossWorkspaceEventBus for external changes
-         files:
-           - "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts"
-           - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
+      # PS-02-B: Hot Reactive Sync - NOW IN PROGRESS (bugs fixed 2026-01-15)
+      - id: "PS-02-B"
+        name: "Hot Reactive Sync Integration"
+        status: "IN_PROGRESS"
+        effort: "4h"
+        priority: "P0"
+        completed_at: "2026-01-15T22:00:00+07:00"
+        addresses_issue: "URI-03"
+        description: |
+          Connect FSAStorageAdapter.watch() to:
+          - Monaco for external file change detection
+          - Sync status indicators
+          - Permission boundary enforcement
+        result: |
+          - Fixed projectId bug (was hardcoded, now uses useProjectId())
+          - Connected VFS sync slice to StatusBar store
+          - Monaco subscribes to crossWorkspaceEventBus for external changes
+        files:
+          - "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts"
+          - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
 
-       # Audit Fix Stories (P0 - Critical UX)
-       - id: "AUDIT-P0-01"
+      # Audit Fix Stories (P0 - Critical UX)
+      - id: "AUDIT-P0-01"
          name: "Add Route Guards for Platform & Storage Type"
          status: "COMPLETED"
          effort: "2h"

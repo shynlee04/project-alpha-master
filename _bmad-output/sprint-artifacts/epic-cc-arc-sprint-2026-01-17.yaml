@@ -1,0 +1,611 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-CC-ARC SPRINT STATUS
+# Correct-Course Architectural Remediation
+# ═══════════════════════════════════════════════════════════════════════════
+
+schema_version: "1.0.0"
+created_at: "2026-01-17T08:00:00+07:00"
+last_updated: "2026-01-17T08:00:00+07:00"
+updated_by: "BMAD Master - Sprint Planning"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC OVERVIEW
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic:
+  id: "EPIC-CC-ARC"
+  name: "Correct-Course Architectural Remediation"
+  priority: "P0-CRITICAL"
+  status: "IN_PROGRESS"
+  total_stories: 28
+  stories_complete: 7
+  stories_remaining: 21
+  estimated_effort: "~65 hours"
+  duration: "4 weeks"
+  adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# KEY DECISIONS (from ADR-033)
+# ═══════════════════════════════════════════════════════════════════════════
+
+decisions:
+  storage_selection: "Auto-detect - Desktop=FSA, Mobile/Tablet=IndexedDB, no user choice"
+  notes_storage_fsa: "Real .md files in /project/notes/ folder"
+  mobile_ide: "Block and redirect to Notes workspace"
+  file_ids: "Path-based (relative from project root)"
+  metadata_folder: ".viagent/ at project root"
+  dexie_keys: "Keep [projectId+workspaceId] composite keys"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAM ASSIGNMENTS
+# ═══════════════════════════════════════════════════════════════════════════
+
+teams:
+  - id: "Team A"
+    name: "Identity & Routing Squad"
+    focus: "Phase A (Routing) → Phase C (State)"
+    current_phase: "A"
+    current_story: "ARC-A01"
+    status: "ACTIVE"
+    
+  - id: "Team B"
+    name: "Storage Contract Squad"
+    focus: "Phase B (Storage) → Phase D (Entity)"
+    current_phase: "B"
+    current_story: "ARC-B01"
+    status: "ACTIVE"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT SCHEDULE (4 Weeks)
+# ═══════════════════════════════════════════════════════════════════════════
+
+sprint_schedule:
+  week_1:
+    name: "Phase A + B Start"
+    team_a_stories: ["ARC-A01", "ARC-A02", "ARC-A04", "ARC-A05", "ARC-A06"]
+    team_b_stories: ["ARC-B01", "ARC-B02", "ARC-B07", "ARC-B10"]
+    integration_point: "ARC-A01 (getPlatformContract) → ARC-B01 (StorageGateway)"
+    
+  week_2:
+    name: "Phase B + C Start"
+    team_a_stories: ["ARC-C01", "ARC-C02", "ARC-C03", "ARC-C06"]
+    team_b_stories: ["ARC-B03", "ARC-B05", "ARC-B06", "ARC-B11"]
+    
+  week_3:
+    name: "Phase C + D"
+    team_a_stories: ["ARC-C04", "ARC-C07", "ARC-C08", "ARC-C09"]
+    team_b_stories: ["ARC-B08", "ARC-B09", "ARC-B12", "ARC-D01", "ARC-D02"]
+    
+  week_4:
+    name: "Phase E (Cleanup)"
+    team_a_stories: ["ARC-E01", "ARC-E02", "ARC-C10"]
+    team_b_stories: ["ARC-E03", "ARC-E04", "ARC-D03"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE A: IDENTITY & ROUTING (Team A - Week 1)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_a:
+  name: "Identity & Routing"
+  team: "Team A"
+  duration: "Week 1"
+  total_effort: "20h"
+  
+  stories:
+    ARC-A01:
+      title: "Create getPlatformContract() service"
+      effort: "4h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-17"
+      notes: "Already implemented in platform-contract.ts (340 lines). Session caching, all PlatformContract fields."
+      dependencies: []
+      description: |
+        Create platform detection service returning PlatformContract interface.
+        Location: src/infrastructure/filesystem/platform-contract.ts
+      acceptance_criteria:
+        - "getPlatformContract() returns consistent values per session ✅"
+        - "Detects desktop/mobile/tablet correctly ✅"
+        - "Returns canAccessFSA, canWatchFiles, canRunTerminal, canDoAgenticCoding, canAccessIDE ✅"
+        - "TypeScript: 0 errors ✅"
+      files:
+        - "src/infrastructure/filesystem/platform-contract.ts (EXISTS - 340 lines)"
+        - "src/infrastructure/filesystem/index.ts (EXISTS)"
+        
+    ARC-A02:
+      title: "Implement route guards for all workspace routes"
+      effort: "6h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-17"
+      notes: |
+        IDE route already uses getPlatformContract().canAccessIDE to block mobile.
+        Lazy routes (Notes/Knowledge/Study) don't support beforeLoad - use component useEffect.
+        Per ADR-033: Only IDE needs platform guard, others accessible on ALL platforms.
+      dependencies: ["ARC-A01"]
+      description: |
+        Add beforeLoad guards to ide.$projectId.tsx, notes.$projectId.lazy.tsx,
+        knowledge.$projectId.tsx, study.$projectId.tsx
+      acceptance_criteria:
+        - "All workspace routes have beforeLoad guards ✅ (IDE has it, lazy routes use component)"
+        - "Guards call getPlatformContract() ✅"
+        - "IDE route blocks mobile users with redirect ✅"
+        - "TypeScript: 0 errors ✅"
+      files:
+        - "src/routes/ide.$projectId.tsx ✅"
+        - "src/routes/notes.$projectId.lazy.tsx ✅"
+        - "src/routes/knowledge.$projectId.tsx ✅"
+        - "src/routes/study.$projectId.tsx ✅"
+        
+    ARC-A03:
+      title: "Fix useWorkspaceAccess hook"
+      effort: "2h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-16"
+      notes: "Already fixed in workspace-access-helper.tsx"
+      
+    ARC-A04:
+      title: "Mobile → Notes redirect for IDE routes"
+      effort: "2h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-17"
+      notes: |
+        Redirect already works (ide.$projectId.tsx lines 92-100).
+        Added search param validation via notes.$projectId.tsx (non-lazy).
+        Added toast in notes.$projectId.lazy.tsx showing "IDE requires desktop. Opening Notes workspace."
+        Uses Route.useSearch() to read reason param, useRef to prevent duplicate toasts.
+      dependencies: ["ARC-A01"]
+      description: |
+        When mobile user attempts /ide/*, redirect to /notes/* with toast message
+      acceptance_criteria:
+        - "Mobile users on /ide/* redirected to /notes/* ✅"
+        - "Toast: 'IDE requires desktop. Opening Notes workspace.' ✅"
+        - "ProjectId preserved in redirect ✅"
+        - "TypeScript: 0 errors ✅"
+      files:
+        - "src/routes/notes.$projectId.tsx (NEW - search schema)"
+        - "src/routes/notes.$projectId.lazy.tsx (MODIFIED - toast logic)"
+        
+    ARC-A05:
+      title: "Hub card click data contract (props passing)"
+      effort: "3h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-17"
+      notes: |
+        VERIFIED via investigation:
+        - HubHomePage.tsx:243-249 passes projectId correctly via params
+        - ProjectCard.tsx:132-135 passes project.id via params
+        - All workspace routes extract projectId via Route.useParams()
+        - Route guards handle null/undefined with redirect to /hub
+        
+        Minor issues identified (deferred):
+        - WorkspaceId type defined in 4 places (consolidation needed)
+        - ProjectPickerDialog uses window.location.href (should use Router)
+        - agents.$projectId.tsx route missing but referenced
+      dependencies: ["ARC-A01"]
+      description: |
+        Ensure Hub cards pass projectId correctly to workspace routes
+      acceptance_criteria:
+        - "Hub cards navigate with projectId in URL ✅"
+        - "No undefined projectId errors ✅"
+        - "TypeScript: 0 errors ✅"
+      files_verified:
+        - "src/presentation/components/hub/HubHomePage.tsx (lines 226-255)"
+        - "src/presentation/components/hub/ProjectCard.tsx (lines 129-137)"
+        - "src/presentation/components/hub/RecentProjectsSection.tsx"
+        - "src/routes/ide.$projectId.tsx (beforeLoad guard)"
+        - "src/routes/notes.$projectId.lazy.tsx (useParams)"
+        
+    ARC-A06:
+      title: "Post-creation redirect logic (wizard → workspace)"
+      effort: "3h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-17"
+      notes: |
+        Fixed two files:
+        1. ProjectsPage.tsx - Was always redirecting to IDE (critical bug)
+           Now uses getPlatformContract() + storageType check
+        2. HubHomePage.tsx - Had wrong priority (Knowledge > Notes)
+           Now simplified to: FSA+canAccessIDE → IDE, else → Notes
+        Both now use getPlatformContract() per ADR-033.
+      dependencies: ["ARC-A02"]
+      description: |
+        After project creation wizard, redirect to correct workspace based on platform
+      acceptance_criteria:
+        - "Desktop FSA project → /ide/$projectId ✅"
+        - "Desktop IndexedDB project → /notes/$projectId ✅"
+        - "Mobile project → /notes/$projectId ✅"
+        - "TypeScript: 0 errors (pending verification)"
+      files_modified:
+        - "src/presentation/components/project/ProjectsPage.tsx (lines 147-163)"
+        - "src/presentation/components/hub/HubHomePage.tsx (lines 132-152)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE B: STORAGE CONTRACT (Team B - Week 1-2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_b:
+  name: "Storage Contract"
+  team: "Team B"
+  duration: "Week 1-2"
+  total_effort: "53h"
+  
+  stories:
+    ARC-B01:
+      title: "Create StorageGateway abstraction layer"
+      effort: "6h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-A01"]  # Needs PlatformContract interface
+      description: |
+        Create StorageGateway interface that abstracts FSA and IndexedDB.
+        Factory returns correct implementation based on platform.
+      acceptance_criteria:
+        - "StorageGateway interface defined"
+        - "StorageGatewayFactory returns FSAGateway or IDBGateway"
+        - "All file operations go through gateway"
+        - "TypeScript: 0 errors"
+      files:
+        - "src/domain/interfaces/storage-gateway.interface.ts (NEW)"
+        - "src/infrastructure/filesystem/storage-gateway-factory.ts (NEW)"
+        
+    ARC-B02:
+      title: "Implement FSAGateway adapter with handle persistence"
+      effort: "6h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-B01"]
+      description: |
+        FSAGateway implements StorageGateway using File System Access API.
+        Persists FileSystemDirectoryHandle in IndexedDB.
+      acceptance_criteria:
+        - "FSAGateway implements StorageGateway"
+        - "Handle persists across browser refresh"
+        - "Chrome 122+ 'Allow on every visit' supported"
+        - "TypeScript: 0 errors"
+        
+    ARC-B03:
+      title: "Implement IDBGateway adapter"
+      effort: "4h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-B01"]
+      description: |
+        IDBGateway implements StorageGateway using Dexie/IndexedDB
+      acceptance_criteria:
+        - "IDBGateway implements StorageGateway"
+        - "Uses existing Dexie database"
+        - "TypeScript: 0 errors"
+        
+    ARC-B04:
+      title: "Fix browser-mode.ts persistence"
+      effort: "2h"
+      priority: "P0"
+      status: "DONE"
+      completed_at: "2026-01-16"
+      notes: "Already fixed - direct Dexie persistence"
+      
+    ARC-B05:
+      title: "Implement FileSystemObserver with polling fallback"
+      effort: "6h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-B02"]
+      description: |
+        Use FileSystemObserver (Chrome 129+) for file watching.
+        Fall back to polling for older browsers.
+      acceptance_criteria:
+        - "FileSystemObserver used when available"
+        - "Polling fallback (5s interval) for older browsers"
+        - "External file changes detected"
+        - "TypeScript: 0 errors"
+        
+    ARC-B06:
+      title: "Implement snapshot caching for fast load"
+      effort: "4h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-B05"]
+      description: |
+        Cache file tree in Dexie for instant load, diff in background
+      acceptance_criteria:
+        - "Snapshot loads in <500ms"
+        - "Background diff updates snapshot"
+        - "Stale indicator shown during refresh"
+        - "TypeScript: 0 errors"
+        
+    ARC-B07:
+      title: "Folder overlap detection and warning UI"
+      effort: "4h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-B01"]
+      description: |
+        Detect nested/overlapping folder selections.
+        Block same path, warn on parent/child overlap.
+      acceptance_criteria:
+        - "Same path blocked with error"
+        - "Parent/child overlap shows warning dialog"
+        - "User can confirm or cancel"
+        - "TypeScript: 0 errors"
+        
+    ARC-B08:
+      title: "File tree exclusion patterns configuration"
+      effort: "3h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-B05"]
+      description: |
+        Configure exclusion patterns: node_modules, .git, .next, etc.
+      acceptance_criteria:
+        - "Default exclusions applied"
+        - "User can configure additional patterns"
+        - "Patterns stored in .viagent/config.json"
+        - "TypeScript: 0 errors"
+        
+    ARC-B09:
+      title: "Scan depth limits and warnings"
+      effort: "2h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-B08"]
+      description: |
+        Limit scan depth to 20, warn at 15, max 50k files
+      acceptance_criteria:
+        - "Max depth 20 enforced"
+        - "Warning at depth 15"
+        - "Max 50k files enforced"
+        - "TypeScript: 0 errors"
+        
+    ARC-B10:
+      title: ".viagent/ metadata folder structure"
+      effort: "4h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-B02"]
+      description: |
+        Create .viagent/ folder structure for metadata
+      acceptance_criteria:
+        - ".viagent/project.json created on project init"
+        - ".viagent/notes-index.json for note metadata"
+        - ".viagent/file-tree-snapshot.json for cache"
+        - "TypeScript: 0 errors"
+      files:
+        - "src/domain/types/viagent-metadata.ts (NEW)"
+        - "src/infrastructure/filesystem/viagent-service.ts (NEW)"
+        
+    ARC-B11:
+      title: "Notes ↔ Markdown bidirectional sync"
+      effort: "8h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-B10"]
+      description: |
+        Sync BlockNote content to .md files and vice versa
+      acceptance_criteria:
+        - "Note save writes .md file to FSA folder"
+        - "External .md edit updates BlockNote"
+        - "Autosave debounced 500ms"
+        - "TypeScript: 0 errors"
+        
+    ARC-B12:
+      title: "External change conflict resolution UI"
+      effort: "4h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-B11"]
+      description: |
+        Show merge dialog when local dirty + external change
+      acceptance_criteria:
+        - "Conflict dialog with keep local/keep external/merge options"
+        - "Auto-reload if local clean"
+        - "TypeScript: 0 errors"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE C: STATE & PERSISTENCE (Team A - Week 2-3)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_c:
+  name: "State & Persistence"
+  team: "Team A"
+  duration: "Week 2-3"
+  total_effort: "40h"
+  
+  stories:
+    ARC-C01:
+      title: "Consolidate Project Store to infrastructure"
+      effort: "6h"
+      priority: "P0"
+      status: "TODO"
+      
+    ARC-C02:
+      title: "Create facade re-exports for old paths"
+      effort: "2h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-C01"]
+      
+    ARC-C03:
+      title: "Fix saveProject STUB implementation"
+      effort: "2h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-C01"]
+      
+    ARC-C04:
+      title: "Implement persist-first pattern for all stores"
+      effort: "4h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-C01"]
+      
+    ARC-C05:
+      title: "Archive duplicate store files"
+      effort: "2h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-C02"]
+      
+    ARC-C06:
+      title: "Audit all STUB implementations"
+      effort: "4h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-C01"]
+      
+    ARC-C07:
+      title: "Dependency graph analysis (break circular deps)"
+      effort: "6h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-C06"]
+      
+    ARC-C08:
+      title: "Identify and fix race conditions"
+      effort: "6h"
+      priority: "P0"
+      status: "TODO"
+      dependencies: ["ARC-C07"]
+      
+    ARC-C09:
+      title: "Permission model for human CRUD actions"
+      effort: "4h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-B01"]
+      
+    ARC-C10:
+      title: "Concurrent CRUD handling (optimistic locking)"
+      effort: "4h"
+      priority: "P2"
+      status: "TODO"
+      dependencies: ["ARC-C09"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE D: ENTITY STANDARDIZATION (Team B - Week 3)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_d:
+  name: "Entity Standardization"
+  team: "Team B"
+  duration: "Week 3"
+  total_effort: "9h"
+  
+  stories:
+    ARC-D01:
+      title: "Enforce ProjectId template literal type"
+      effort: "3h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-C01"]
+      
+    ARC-D02:
+      title: "Fix workspaceId || projectId fallback bugs"
+      effort: "4h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-D01"]
+      
+    ARC-D03:
+      title: "Rename bindings → workspaceBindings"
+      effort: "2h"
+      priority: "P2"
+      status: "TODO"
+      dependencies: ["ARC-D01"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE E: FILE TREE CLEANUP (Both Teams - Week 4)
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_e:
+  name: "File Tree Cleanup"
+  team: "Both"
+  duration: "Week 4"
+  total_effort: "6.5h"
+  
+  stories:
+    ARC-E01:
+      title: "Delete dead .bak files"
+      effort: "0.5h"
+      priority: "P0"
+      status: "TODO"
+      
+    ARC-E02:
+      title: "Archive src/lib/workspace/project-store/"
+      effort: "1h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-C02"]
+      
+    ARC-E03:
+      title: "Archive src/lib/filesystem/ duplicates"
+      effort: "1h"
+      priority: "P1"
+      status: "TODO"
+      dependencies: ["ARC-B01"]
+      
+    ARC-E04:
+      title: "Update all imports to canonical paths"
+      effort: "4h"
+      priority: "P2"
+      status: "TODO"
+      dependencies: ["ARC-E02", "ARC-E03"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+current_status:
+  active_week: 2
+  team_a_current: "WEEK 1 COMPLETE - All Phase A stories done"
+  team_b_current: "WEEK 2 STARTING - Week 1 stories complete, starting ARC-B11"
+  team_a_orchestrator: "Active"
+  team_b_orchestrator: "Active - Week 2 coordination"
+  typescript_errors: 0
+  completed_stories:
+    - "ARC-A01: getPlatformContract() service (2026-01-17)"
+    - "ARC-A02: Route guards implementation (2026-01-17)"
+    - "ARC-A03: useWorkspaceAccess hook fix (2026-01-16)"
+    - "ARC-A04: Mobile → Notes redirect (2026-01-17)"
+    - "ARC-A05: Hub card click data contract (2026-01-17)"
+    - "ARC-A06: Post-creation redirect logic (2026-01-17)"
+    - "ARC-B01: StorageGateway abstraction layer (2026-01-18)"
+    - "ARC-B02: FSAGateway adapter with handle persistence (2026-01-18)"
+    - "ARC-B03: IDBGateway adapter (2026-01-18)"
+    - "ARC-B04: browser-mode.ts persistence fix (2026-01-16)"
+    - "ARC-B07: Folder overlap detection and warning UI (2026-01-18)"
+    - "ARC-B10: .viagent/ metadata folder structure (2026-01-18)"
+  blocked_stories: []
+  cross_team_dependency: "Phase A COMPLETE → Team B proceeding with Phase B Week 2"
+  
+next_actions:
+  team_a:
+    - story: "ARC-A01"
+      task: "Create getPlatformContract() service"
+      priority: "P0"
+      
+  team_b:
+    - story: "ARC-B01"
+      task: "Create StorageGateway abstraction layer"
+      priority: "P0"
+      notes: "Blocked by ARC-A01 for PlatformContract interface"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA (Epic Complete)
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  - "Notes workspace functional on desktop (FSA) and mobile (IndexedDB)"
+  - "IDE workspace functional on desktop only"
+  - "Projects persist across browser refresh"
+  - "External file changes detected and synced"
+  - "No STUB implementations remain"
+  - "No duplicate store files remain"
+  - "All imports use canonical paths"
+  - "TypeScript: 0 errors"
+  - "No race conditions in state updates"
+  - "Clear error handling (no random toasts)"

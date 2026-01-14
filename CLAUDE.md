@@ -1,11 +1,31 @@
 # CLAUDE.md - AI Agent Instructions
 
-> **Version:** 2.0.1 | **Updated:** 2026-01-11T07:00+07:00
+> **Version:** 2.1.0 | **Updated:** 2026-01-17T08:00+07:00
 
 ---
- **SERIOUS UPDATE** SKIP ALL INTEGRATED END2END TESTS AS THEY ARE SUPER RESOURCE-HEAVY AND WILL CRASH THE SYSTEM 
+**FOLLOWING ALL BMAD RULES AND GOVERNANVE** 
+
+There are alot and detail of each but these certain things are the most annoying shit that all agents must obey:
+
+- UX and UI following 8bit design, no transparent background **NO HARD CODED** CSS, beware of multi-pane, complex, stacked, layered, advanced ui ->> must responsive and must support portrait phone screen as desktop screen
+
+- Language strings NOT hardcoded - both translated to English and Vietnamese
+
+- Code tree, files modification, creation. removal (track, check and validate for overlapping, conflict) - start splitting code if about reaching thresold of 400 lines (500 and more are not accepted) - absolutely no God class
+
+- Keep structure and architecture aligned, refactored and orgnanized
+
+-  Never pass gatekeeping without evidence of success and validation
+
+- Debug intelligently, especially errors of types, schema and logic -- export to files (txt, log, md whatever) -> reason deeply, fix progressively -> once all completed then run tool check (do not wast resource)
+
+- There are two teams A and B - coordinate to the correct team assigned keep status updated
 
 - ALWAYS DRY-CHECK, DRY-DOUBLE-CHECK FOR SYNTEAX ERRORS BEFORE DECIDING TO RUN TOOLS OR TESTS. 
+
+- No more than 2 background tasks at a time, kill them before use new
+
+- MCP tools and servers are absolutely important to check and use often
 
 ## 🔴 NON-NEGOTIABLE BMAD RULES (Must Obey At All Times)
 
@@ -144,14 +164,11 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 
 | Date | Update |
 |------|--------|
-| 2026-01-11 | **NON-NEGOTIABLE BMAD RULES** added (10 rules from master-orchestrator.md) |
-| 2026-01-11 | Version 2.0.1 - Essential files table added |
+| 2026-01-17 | **ADR-033 APPROVED** - PlatformContract, StorageGateway, FSA folder structure added |
+| 2026-01-17 | Version 2.1.0 - EPIC-CC-ARC Sprint Planning complete, Week 1 execution starting |
+| 2026-01-16 | Fixed useWorkspaceAccess hook, browser-mode.ts persistence |
+| 2026-01-11 | NON-NEGOTIABLE BMAD RULES added (10 rules from master-orchestrator.md) |
 | 2026-01-09 | Governance Overhaul: 6-cycle context poison reduction |
-| 2026-01-09 | YAML files: 44 → 20 (55% reduction) |
-| 2026-01-09 | workflow-status.yaml compressed: 3,059 → 136 lines |
-| 2026-01-09 | Phase 2 sprint started: EPIC-FS + EPIC-39 |
-| 2026-01-08 | EPIC-38 completed (Architecture Remediation) |
-| 2026-01-08 | Phase 1.5 stabilization completed |
 
 ---
 
@@ -303,8 +320,91 @@ src/
 
 ## 🔒 ARCHITECTURAL BOUNDARIES (Non-Negotiable)
 
-> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
-> **Updated**: 2026-01-16
+> **Source**: ADR-033 - Correct-Course Architectural Remediation
+> **Updated**: 2026-01-17
+> **Status**: APPROVED - All decisions final
+
+### 🏛️ ADR-033 Key Decisions (NEVER DEVIATE)
+
+| Decision | Rule | Enforcement |
+|----------|------|-------------|
+| **D1: Platform Detection** | Auto-detect ONCE at app start. Desktop=FSA, Mobile=IndexedDB | Never check device type at call sites |
+| **D2: Storage Immutable** | Storage type set at project creation, never changes | Never decide FSA vs IndexedDB per operation |
+| **D3: IDE Desktop Only** | IDE workspace blocked on mobile/tablet | Always redirect mobile to Notes |
+| **D4: Notes on FSA** | Desktop notes save as `.md` files in `/project/notes/` | Same tech as IDE, bidirectional sync |
+| **D5: Persist First** | Write to DexieDB FIRST, then update Zustand | Never update Zustand without DB success |
+| **D6: Single Database** | Only `ViaGentDatabase` for all tables | Never create new Dexie databases |
+| **D7: Path-Based IDs** | File IDs are relative paths from project root | Never use UUIDs for file identity |
+| **D8: Metadata Folder** | `.viagent/` at project root for metadata | Never scatter metadata files |
+
+### PlatformContract Interface (Canonical)
+
+```typescript
+// ALWAYS use this interface - defined in ARC-A01
+interface PlatformContract {
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  storageType: 'fsa' | 'indexeddb';
+  canAccessFSA: boolean;        // Desktop only
+  canWatchFiles: boolean;       // Desktop with FSA
+  canRunTerminal: boolean;      // Desktop with WebContainer
+  canDoAgenticCoding: boolean;  // Desktop with FSA + Terminal
+  canAccessIDE: boolean;        // Desktop only
+}
+
+// ✅ CORRECT: Call once, use everywhere
+const platform = getPlatformContract();
+if (!platform.canAccessIDE) {
+  redirect({ to: '/notes/$projectId', params });
+}
+
+// ❌ WRONG: Check device type at call site
+if (navigator.userAgent.match(/mobile/i)) { ... }  // NEVER
+if (window.innerWidth < 768) { ... }  // NEVER for routing
+```
+
+### StorageGateway Pattern (Mandatory for Phase B)
+
+```typescript
+// ALWAYS use StorageGateway - defined in ARC-B01
+interface StorageGateway {
+  read(path: string): Promise<Uint8Array>;
+  write(path: string, data: Uint8Array): Promise<void>;
+  delete(path: string): Promise<void>;
+  list(path: string): Promise<FileEntry[]>;
+  exists(path: string): Promise<boolean>;
+  watch(callback: FileChangeCallback): () => void;
+}
+
+// ✅ CORRECT: Get gateway from factory
+const gateway = StorageGatewayFactory.create(project.storageType);
+await gateway.write('notes/welcome.md', content);
+
+// ❌ WRONG: Decide storage type at call site
+if (project.storageType === 'fsa') {
+  await fsaAdapter.write(...);
+} else {
+  await idbAdapter.write(...);
+}
+```
+
+### FSA Project Folder Structure (Standard)
+
+```
+/MyProject/                          ← FSA Project Root
+├── .viagent/                        ← ViaGent metadata (hidden)
+│   ├── project.json                 ← Project config (ID, name, bindings)
+│   ├── notes-index.json             ← Note metadata (titles, order, favorites)
+│   ├── file-tree-snapshot.json      ← Cached file tree for fast load
+│   └── rag-index/                   ← Local RAG vectors (optional)
+│
+├── notes/                           ← Notes workspace content
+│   ├── welcome.md                   ← Markdown files
+│   └── assets/                      ← Embedded assets
+│       └── image-abc123.png
+│
+├── src/                             ← Code (IDE workspace)
+└── docs/                            ← Viewable in Notes OR IDE
+```
 
 ### 6-Domain Architecture Contract
 

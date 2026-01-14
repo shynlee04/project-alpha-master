@@ -183,6 +183,25 @@
     "deepwiki": {
       "type": "streamable-http",
       "url": "https://mcp.deepwiki.com/sse"
+    },
+    "tanstack": {
+      "type": "streamable-http",
+      "url": "https://tanstack.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ts_bdd5ade6ba81622c4855582aaf830e44d337d22680decf9301b3cb95f950d92b"
+      },
+      "alwaysAllow": [
+        "list_libraries",
+        "get_doc",
+        "search_docs",
+        "get_npm_stats",
+        "list_npm_comparisons",
+        "compare_npm_packages",
+        "get_npm_package_downloads",
+        "search_showcases",
+        "get_showcase"
+      ],
+      "timeout": 300
     }
   }
 }

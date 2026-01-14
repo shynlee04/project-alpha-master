@@ -1,7 +1,7 @@
 # LOOP_STATE - BMAD Extension Global State
-# Version: 3.2.0
-# last_updated: "2026-01-16T20:00:00+07:00"
-# Status: CORRECT-COURSE ADR-033 APPROVED - READY FOR SPRINT PLANNING
+# Version: 3.3.0
+# last_updated: "2026-01-18T00:30:00+07:00"
+# Status: EPIC-CC-ARC WEEK 1 COMPLETE - WEEK 2 STARTING
 #
 # IMPORTANT: This file is the single source of truth for BMAD Extension Layer.
 # All agents must read this file at session start and update it at key points.
@@ -10,15 +10,16 @@
 # SESSION INFORMATION
 # ═══════════════════════════════════════════════════════════════════════════════
 session:
-  id: "correct-course-arc-2026-01-16"
-  start_time: "2026-01-16T14:00:00+07:00"
-  last_activity: "2026-01-16T20:00:00+07:00"
-  platform: "opencode"
-  agent: "BMAD-MASTER-ORCHESTRATOR"
-  iteration: 70
-  max_iterations: 100
-  status: "CORRECT-COURSE-ADR-APPROVED"
-  team: "Team A + Team B"
+  id: "epic-cc-arc-week2-2026-01-18"
+  start_time: "2026-01-18T00:00:00+07:00"
+  last_activity: "2026-01-18T00:30:00+07:00"
+  platform: "claude-code"
+  agent: "RALPH-LOOP-V5"
+  orchestrator_team: "Team B"
+  iteration: 2
+  max_iterations: 0
+  status: "EPIC-CC-ARC-WEEK2-TEAM-B-ORCHESTRATING"
+  team: "Team B (Storage Contract Squad) - Week 1 complete, Week 2 starting"
   ralph_loop_version: "5.0.0"
   ralph_loop_config: ".claude/ralph-loop.local.md"
 
@@ -26,46 +27,49 @@ session:
 # HUMAN INTENT ANCHOR (Anti-Hallucination)
 # ═══════════════════════════════════════════════════════════════════════════════
 anchor:
-  original_request: "Correct-Course Architectural Remediation - Foundation Collapse Recovery"
+  original_request: "Execute EPIC-CC-ARC Architectural Remediation - Week 2"
   intent_verified: true
-  last_verified_at: "2026-01-13T08:30:00+07:00"
+  last_verified_at: "2026-01-18T00:30:00+07:00"
   human_intent_summary: |
-    CORRECT-COURSE WORKFLOW ACTIVATED:
-    
-    PHASE 1 - PARALLEL (Team A + Team B):
-    - CC-01: Project Space Foundation (Team B) - 5-7 days - P0 READY
-    - CC-02: BYOK Cleanup (Team A) - 2-3 days - P0 READY
-    
-    PHASE 2 - SEQUENTIAL (After Phase 1):
-    - CC-03: Chat Flow Stabilization (Team A) - 3-5 days - P1 BLOCKED
-    - CC-04: Notes Refactoring (Team B) - 6-8 days - P1 BLOCKED
-    
-    PHASE 3 - SEQUENTIAL (After Phase 2):
-    - CC-05: Agent/LLM Infrastructure (Team A) - 6-8 days - P1 BLOCKED
-    - CC-06: Type Safety & Cleanup (Team B) - 4-5 days - P2 BLOCKED
-    
-    CRITICAL CONTEXT:
-    - EPIC-45/46/47 are UNTESTED/BROKEN - superseded by Correct-Course
-    - Previous governance health score (85) was FALSE - actual is ~35
-    - Total 67 issues found: 20 P0, 29 P1, 18 P2
-    - Estimated total effort: 29 days (6-8 weeks)
-  human_intent_timestamp: "2026-01-14T19:00:00+07:00"
-  conversation_id: "conv-2026-01-14-correct-course-activation"
+    EPIC-CC-ARC SPRINT EXECUTION (WEEK 2):
+
+    WEEK 1 COMPLETE - All 11 stories verified:
+    - Team A: ARC-A01, A02, A03, A04, A05, A06 (Identity & Routing)
+    - Team B: ARC-B01, B02, B03, B04, B07, B10 (Storage Contract)
+
+    WEEK 2 PRIORITY (UNBLOCKED):
+    - ARC-B11: Notes ↔ Markdown bidirectional sync (P0, 8h)
+    - ARC-B05: FileSystemObserver with polling fallback (P0, 6h)
+
+    KEY DECISIONS (from ADR-033):
+    - Desktop → FSA automatically (no user choice)
+    - Mobile/Tablet → IndexedDB automatically
+    - Notes on FSA Desktop → Real .md files in /project/notes/
+    - IDE → Desktop only (mobile blocked)
+    - File IDs → Path-based (relative from project root)
+
+    SPRINT FILE: _bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml
+    ADR: _bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md
+  human_intent_timestamp: "2026-01-18T00:00:00+07:00"
+  conversation_id: "conv-2026-01-18-epic-cc-arc-week2"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CURRENT WORK CONTEXT
 # ═══════════════════════════════════════════════════════════════════════════════
 current_work:
-  epic_id: "EPIC-ARCH-REMED"
-  epic_title: "Architectural Remediation - Storage, State, and AI Integration"
-  story_id: "PLAN-01"
-  story_title: "Strategic Planning Phase"
-  task_type: "planning"
-  step: "awaiting_approval"
-  governance_status: "strategic-plan-created"
-  team: "Team A + Team B (coordination required)"
-  phase: "foundation-stabilization"
-  next_story: "Phase 1.1: Storage Abstraction Layer (StorageGateway) - 2-3 days"
+  epic_id: "EPIC-CC-ARC"
+  epic_title: "Correct-Course Architectural Remediation"
+  story_id: "ARC-B11"
+  story_title: "Notes ↔ Markdown bidirectional sync"
+  task_type: "implementation"
+  step: "week2-execution"
+  governance_status: "story-starting"
+  team: "Team B (Storage Contract Squad)"
+  phase: "Phase B Continuation (Week 2)"
+  next_story: "ARC-B05: FileSystemObserver with polling fallback"
+
+  sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
 
   # EPIC-ARCH-REMED OVERVIEW:
   # Total Phases: 5 across 4-6 weeks
@@ -135,39 +139,24 @@ current_work:
   # - BYOK-03: Archive Migration - READY (BYOK-01 COMPLETE)
 
   stories_completed_this_session:
-    - "UX-01: Unified Z-Index Scale - 2026-01-15 (tokens created, egregious offenders fixed)"
-    - "UX-02: OverlayRoot for All Modals - 2026-01-15 (component created, app integrated, z-index tokens applied)"
-    - "UX-03: Multi-Block Selection - 2026-01-15 (SideMenuController, SelectionInfo component, drag handle enabled)"
-    - "UX-04: Block Drag-and-Drop - 2026-01-15 (native BlockNote drag-and-drop verified, no code changes needed)"
-    - "UX-05: Panel Flex Control - 2026-01-15 (custom 760-line implementation verified, already implemented)"
-    - "UX-06: Mobile Chat Accessibility - 2026-01-15 (SyncStatusPanel hidden on mobile via hidden md:block)"
-    - "UX-07: In-Block AI Generation UI - 2026-01-15 (InBlockAIPopup.tsx created, NoteEditor.tsx integrated, portal rendering)"
-    - "UX-08: Context Scope Selection - 2026-01-15 (added below_cursor mode, updated AIPromptDialog with ArrowDown icon)"
-    - "UX-09: Toggle and Callout Blocks - 2026-01-15 (CalloutBlock created, toggleListItem from defaults, slash menu integrated)"
-    - "UX-10: Block References - 2026-01-16 (ReferenceBlock.tsx created, ^blockId syntax, slash menu integrated, code review fixes applied)"
-    - "UX-11: Column Layouts - 2026-01-16 (ColumnBlock.tsx created, 12-column grid system, responsive design, slash menu integrated)"
-    - "UX-12: Synced Blocks - 2026-01-16 (SyncedBlock.tsx created, global sync registry, unsync functionality, slash menu integrated)"
-    - "UX-13: Database Backed Blocks - 2026-01-16 (SavedBlockRecord schema, Dexie migration v22, saved-blocks-store, SaveBlockDialog, slash menu integration)"
-    - "UX-14: Block Templates - 2026-01-14 (isTemplate field, templateIcon/color, saveAsTemplate method, SaveBlockDialog template toggle, Templates slash menu section)"
-    - "UX-15: Streaming Animations - 2026-01-16 (typing-bounce animation, TypingIndicator component, TokenCounter component, CharCounter component, BlockLoadingOverlay enhancements, use-streaming-ai integration with updateTypingState/updateCharCount)"
-    - "PS-01: Split useWorkspaceFileSystem God Store - 2026-01-13 (files created)"
-    - "BYOK-01: Split Provider Credentials Slice - 2026-01-13 (files created)"
-    - "PS-02: Create StorageAdapter Domain Interface - 2026-01-15 (interface exists, documented)"
-    - "BYOK-02: Add Zod Validation Schemas - 2026-01-13 (schemas.ts created, crud-slice updated)"
-    - "BYOK-03: Archive Legacy Migration Code - 2026-01-13 (archive created, headers added)"
-    - "BYOK-04: Add projectId to Tool Execution Logs - 2026-01-15 (interface updated, logger extended)"
+    - "ARC-A03: Fix useWorkspaceAccess hook - 2026-01-16 (already done)"
+    - "ARC-B04: Fix browser-mode.ts persistence - 2026-01-16 (already done)"
+    - "ARC-A01: Create getPlatformContract() service - 2026-01-17 (Team B cross-team)"
+    - "ARC-B01: Create StorageGateway abstraction layer - 2026-01-17 (Team B)"
+    - "ARC-B02: Implement FSAGateway adapter with handle persistence - 2026-01-17 (Team B)"
+    - "ARC-B03: Implement IDBGateway adapter - 2026-01-17 (Team B)"
+    - "ARC-B07: Folder overlap detection and warning UI - 2026-01-17 (Team B)"
+    - "ARC-B10: .viagent/ metadata folder structure - 2026-01-17 (Team B)"
 
   pending_stories:
-    # Team B (Project Space) - Sequential
-    - "PS-02: Create StorageAdapter Domain Interface - COMPLETE"
-    - "PS-03: Consolidate Dexie Databases - READY (was BLOCKED)"
-    - "PS-04: Fix Domain→Infrastructure Import - READY (was BLOCKED)"
-    - "PS-05: Add Content Hashing - BLOCKED_BY_PS-04"
+    # Team A (Week 1 - Identity & Routing)
+    - "ARC-A02: Implement route guards - READY (ARC-A01 complete)"
+    - "ARC-A04: Mobile → Notes redirect - READY (ARC-A01 complete)"
+    - "ARC-A05: Hub card click data contract - READY (ARC-A01 complete)"
+    - "ARC-A06: Post-creation redirect logic - BLOCKED_BY_ARC-A02"
 
-    # Team A (BYOK) - Parallel
-    - "BYOK-02: Add Zod Validation - COMPLETE"
-    - "BYOK-03: Archive Migration Code - COMPLETE"
-    - "BYOK-04: Add projectId to Tool Logs - COMPLETE (foundation only)"
+    # Team B (Week 2 - Phase B continuation)
+    - "ARC-B11: Notes ↔ Markdown bidirectional sync - READY (ARC-B10 complete)"
 
   # TECHNICAL DEBT TRACKING (Iteration 13 Review)
   technical_debt:
@@ -180,66 +169,24 @@ current_work:
       rationale: "Pure Team A work with no Team B dependencies, but Phase 2 requires Team B foundation first"
       recommended_action: "Complete as fast-follow when Team A resumes EPIC-CC-03"
   artifacts_created:
-    # Ralph Loop v4.0.0 - Story-Based Iterative Development
-    - ".claude/ralph-loop.local.md (v4.0.0 - Story-Cycle Integration)"
-    # EPIC-UX-01 Artifacts
-    - "_bmad-output/sprint-artifacts/UX-01-unified-z-index-scale-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/UX-02-overlay-root-unified-portals-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/UX-03-multi-block-selection-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/UX-05-panel-flex-control-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/UX-06-mobile-chat-accessibility-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/UX-07-in-block-ai-generation-ui-2026-01-15.md"
-    # Sprint artifacts
-    - "_bmad-output/sprint-artifacts/epic-cc-01-project-space-foundation-2026-01-14.yaml"
-    - "_bmad-output/sprint-artifacts/epic-cc-02-byok-cleanup-2026-01-14.yaml"
-    - "_bmad-output/sprint-artifacts/epic-cc-03-chat-flow-2026-01-14.yaml"
-    - "_bmad-output/sprint-artifacts/epic-cc-04-notes-refactor-2026-01-14.yaml"
-    - "_bmad-output/sprint-artifacts/epic-cc-05-agent-llm-2026-01-14.yaml"
-    - "_bmad-output/sprint-artifacts/epic-cc-06-type-safety-2026-01-14.yaml"
-    # Investigation artifacts
-    - "_bmad-output/architectural-scan/shards/ARCH-INDEX.md"
-    - "_bmad-output/team-b-investigations/consolidated-investigation-report-2026-01-14.md"
-    - "_bmad-output/sprint-artifacts/ps-02-implementation-plan-2026-01-14.md"
-    - "_bmad-output/sprint-artifacts/ps-02-change-log-2026-01-14.md"
-    # Recent artifacts
-    - "_bmad-output/routing-mapping/NOTES-WORKSPACE-ROUTING-MAPPING-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/PS02-IMPACT-ANALYSIS-2026-01-15.md"
-    - "_bmad-ext/.archive/storage/local-fs-adapter-facade-2026-01-15.ts"
-    - "_bmad-ext/.archive/storage/local-fs-adapter-impl-2026-01-15.ts"
-    - "_bmad-ext/.archive/providers/api-key-migration-2026-01-13/ (migration code archive)"
-    - "_bmad-output/artifacts/BYOK-02-zod-validation-schemas-2026-01-13.md"
-    - "_bmad-output/artifacts/BYOK-03-archive-migration-code-2026-01-13.md"
-    - "_bmad-output/artifacts/BYOK-04-projectid-tool-logs-2026-01-15.md"
-    # UX/UI Audit artifacts (Iteration 14 - 2026-01-15)
-    - "_bmad-output/audits/block-editor-panel-overhaul-audit-2026-01-15.md"
-    - "_bmad-output/sprint-artifacts/epic-ux-01-block-editor-panel-overhaul-2026-01-15.md"
-    # UX-08 Story Artifact
-    - "_bmad-output/sprint-artifacts/UX-08-context-scope-selection-2026-01-15.md"
-    # UX-09 Story Artifact
-    - "_bmad-output/sprint-artifacts/stories/UX-09-toggle-and-callout-blocks-2026-01-15.md"
-    # UX-10 Story Artifact
-    - "_bmad-output/sprint-artifacts/stories/UX-10-block-references-2026-01-16.md"
-    # UX-11 Story Artifact
-    - "_bmad-output/sprint-artifacts/stories/UX-11-column-layouts-2026-01-16.md"
-    # UX-12 Story Artifact
-    - "_bmad-output/sprint-artifacts/stories/UX-12-synced-blocks-2026-01-16.md"
-    # UX-13 Story Artifact
-    - "_bmad-output/planning-artifacts/ux-13-database-backed-blocks-2026-01-16.md"
-    # Architectural Remediation Planning Artifact
-    - "_bmad-output/planning-artifacts/architectural-remediation-strategic-plan-2026-01-16.md"
-  last_governance_update: "2026-01-16T15:00:00+07:00"
+    # EPIC-CC-ARC Sprint Artifacts
+    - "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+    - "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+    - "_bmad-output/planning-artifacts/correct-course-gap-analysis-2026-01-16.md"
+    - "_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md"
+  last_governance_update: "2026-01-17T08:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# GOVERNANCE STATE (Team A Initialized)
+# GOVERNANCE STATE (Sprint Execution Active)
 # ═══════════════════════════════════════════════════════════════════════════════
 governance:
-  last_check: "2026-01-15T14:00:00+07:00"
-  status: "ralph-loop-v4-story-based-initialized"
-  health_score: 80  # Ralph Loop v4.0 with Story-Cycle integration ready
+  last_check: "2026-01-18T00:30:00+07:00"
+  status: "epic-cc-arc-week2-team-b-orchestrating"
+  health_score: 95  # Week 1 complete, Week 2 starting
   stale_detected: false
   violations: []
-  typescript_errors: 0  # Will be validated before each implementation
-  notes: "Ralph Loop v4.0 initialized with BMAD Implementation Module v2.0 integration. Story-Cycle workflow with 6 quality gates: Deep Analysis, Journey Reality, Evidence, Architectural, Code Reality, Visual. EPIC-UX-01 ready for sprint planning validation."
+  typescript_errors: 0  # All Week 1 implementations verified: 0 errors
+  notes: "EPIC-CC-ARC Week 2 STARTING. Week 1 complete (11 stories verified). StorageGateway pattern fully implemented. .viagent/ metadata folder structure complete. Starting ARC-B11: Notes ↔ Markdown bidirectional sync."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SUPERSEDED ARTIFACTS (POISONED)
@@ -275,7 +222,7 @@ system:
   last_backup: "2026-01-13T00:00:00+07:00"
   extension_layer_active: true
   ralph_loop_active: true
-  active_team: "Team A"
+  active_team: "Team B (Orchestrator)"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # MCP SERVER STATUS

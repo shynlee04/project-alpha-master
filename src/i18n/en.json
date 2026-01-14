@@ -1908,5 +1908,15 @@
   "workspace.provider.clear": "Clear Preference",
   "workspace.provider.resetAll": "Reset All",
   "workspace.provider.providerSet": "Provider set for {{workspace}}",
-  "workspace.provider.providerCleared": "Provider cleared for {{workspace}}"
+  "workspace.provider.providerCleared": "Provider cleared for {{workspace}}",
+  "folderOverlap.block.title": "Folder Already in Use",
+  "folderOverlap.block.description": "This folder is already connected to a project.",
+  "folderOverlap.block.message": "Please select a different folder or use the existing project.",
+  "folderOverlap.block.close": "Close",
+  "folderOverlap.warning.title": "Folder Overlap Detected",
+  "folderOverlap.warning.description": "This folder overlaps with an existing project.",
+  "folderOverlap.warning.message": "You can still create this project, but be aware of potential file conflicts.",
+  "folderOverlap.warning.confirm": "Create Anyway",
+  "folderOverlap.overlappingProjects": "Overlapping Projects",
+  "folderOverlap.existing": "Existing"
 }

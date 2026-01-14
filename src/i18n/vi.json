@@ -1490,5 +1490,15 @@
   "workspace.provider.clear": "Xóa Ưu tiên",
   "workspace.provider.resetAll": "Đặt lại Tất cả",
   "workspace.provider.providerSet": "Đã đặt nhà cung cấp cho {{workspace}}",
-  "workspace.provider.providerCleared": "Đã xóa nhà cung cấp cho {{workspace}}"
+  "workspace.provider.providerCleared": "Đã xóa nhà cung cấp cho {{workspace}}",
+  "folderOverlap.block.title": "Thư mục Đang Được Sử Dụng",
+  "folderOverlap.block.description": "Thư mục này đã được kết nối với một dự án.",
+  "folderOverlap.block.message": "Vui lòng chọn một thư mục khác hoặc sử dụng dự án hiện có.",
+  "folderOverlap.block.close": "Đóng",
+  "folderOverlap.warning.title": "Phát hiện Trùng Lặp Thư mục",
+  "folderOverlap.warning.description": "Thư mục này trùng lặp với một dự án hiện có.",
+  "folderOverlap.warning.message": "Bạn vẫn có thể tạo dự án này, nhưng hãy lưu ý đến potential xung đột tệp.",
+  "folderOverlap.warning.confirm": "Vẫn Tạo",
+  "folderOverlap.overlappingProjects": "Dự án Trùng Lặp",
+  "folderOverlap.existing": "Đã có"
 }

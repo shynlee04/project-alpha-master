@@ -28,6 +28,8 @@ import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { CreateProjectInput } from '@/infrastructure/persistence/stores/project';
 import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project';
 import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
+import { FSAGateway } from '@/infrastructure/filesystem/fsa-gateway';
+import { initializeViagentFolder } from '@/infrastructure/filesystem/viagent-service';
 
 // ============================================================================
 // Types
@@ -115,10 +117,13 @@ export async function pickFolder(): Promise<FolderPickResult> {
 /**
  * Create a project from a selected folder handle
  *
+ * **ARC-B10**: Initialize .viagent/ metadata folder on project creation
+ *
  * This function:
  * 1. Creates a new project with 'fsa' storage type
  * 2. Persists the FSA handle via fsaHandleManager
- * 3. Returns the project ID for navigation
+ * 3. Initializes .viagent/ folder with metadata files (project.json, notes-index.json, file-tree-snapshot.json)
+ * 4. Returns the project ID for navigation
  */
 export async function createProjectFromFolder(
   handle: FileSystemDirectoryHandle,
@@ -149,6 +154,37 @@ export async function createProjectFromFolder(
 
   // Explicitly persist FSA handle for instant re-grant on next visit
   await fsaHandleManager.persistHandle(handle, projectId, 'ide');
+
+  // ARC-B10: Initialize .viagent/ metadata folder
+  try {
+    const gateway = new FSAGateway(handle);
+    const defaultBindings = {
+      ide: true,
+      knowledge: false,
+      notes: false,
+      study: false,
+    };
+    const bindings = options?.workspaceBindings ?? defaultBindings;
+    // Convert optional WorkspaceBindings to required { ide: boolean; knowledge: boolean; notes: boolean; study: boolean; }
+    const requiredBindings = {
+      ide: bindings.ide ?? defaultBindings.ide,
+      knowledge: bindings.knowledge ?? defaultBindings.knowledge,
+      notes: bindings.notes ?? defaultBindings.notes,
+      study: bindings.study ?? defaultBindings.study,
+    };
+    await initializeViagentFolder(gateway, {
+      projectId,
+      projectName: folderName,
+      storageType: 'fsa',
+      workspaceBindings: requiredBindings,
+    });
+    console.log('[FSA-Persistence] Initialized .viagent/ folder for project:', projectId);
+  } catch (error) {
+    const err = error as Error;
+    console.warn('[FSA-Persistence] Failed to initialize .viagent/ folder:', err.message);
+    // Don't fail project creation if metadata initialization fails
+    // User can still use the project, metadata will be created on next access
+  }
 
   console.log('[FSA-Persistence] Created project from folder:', projectId, folderName);
   return projectId;

@@ -1,11 +1,31 @@
 # AGENTS.md - Project Alpha Governance
 
-> **Version:** 2.1.0 | **Updated:** 2026-01-11T07:00+07:00 | **Health:** 90%
+> **Version:** 2.2.0 | **Updated:** 2026-01-17T08:00+07:00 | **Health:** 75%
 
 ---
-# **SERIOUS UPDATE** SKIP ALL INTEGRATED END2END TESTS AS THEY ARE SUPER RESOURCE-HEAVY AND WILL CRASH THE SYSTEM 
+#*FOLLOWING ALL BMAD RULES AND GOVERNANVE** 
+
+There are alot and detail of each but these certain things are the most annoying shit that all agents must obey:
+
+- UX and UI following 8bit design, no transparent background **NO HARD CODED** CSS, beware of multi-pane, complex, stacked, layered, advanced ui ->> must responsive and must support portrait phone screen as desktop screen
+
+- Language strings NOT hardcoded - both translated to English and Vietnamese
+
+- Code tree, files modification, creation. removal (track, check and validate for overlapping, conflict) - start splitting code if about reaching thresold of 400 lines (500 and more are not accepted) - absolutely no God class
+
+- Keep structure and architecture aligned, refactored and orgnanized
+
+-  Never pass gatekeeping without evidence of success and validation
+
+- Debug intelligently, especially errors of types, schema and logic -- export to files (txt, log, md whatever) -> reason deeply, fix progressively -> once all completed then run tool check (do not wast resource)
+
+- There are two teams A and B - coordinate to the correct team assigned keep status updated
 
 - ALWAYS DRY-CHECK, DRY-DOUBLE-CHECK FOR SYNTEAX ERRORS BEFORE DECIDING TO RUN TOOLS OR TESTS. 
+
+- No more than 2 background tasks at a time, kill them before use new
+
+- MCP tools and servers are absolutely important to check and use often
 
 ## 🔴 NON-NEGOTIABLE BMAD RULES (Must Obey At All Times)
 
@@ -114,7 +134,148 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | `_bmad-ext/orchestrator/escalation-protocol.md` | Failure handling | On failure |
 | `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
-| `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md` | Architectural remediation plan | Before any refactoring |
+| `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md` | **Master ADR for architecture** | Before any refactoring |
+| `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml` | Current sprint status | Check story assignments |
+
+---
+
+## 🏛️ ADR-033: ARCHITECTURAL DECISIONS (PERMANENT - NEVER DEVIATE)
+
+> **Source**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
+> **Status**: APPROVED - All decisions final
+> **Updated**: 2026-01-17
+
+### Platform & Storage Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Storage Type Selection** | Auto-detect, NO user choice | Desktop=FSA, Mobile=IndexedDB. Simplifies UX |
+| **Desktop Storage** | FSA (File System Access API) | Required for agentic coding |
+| **Mobile/Tablet Storage** | IndexedDB (Dexie) | FSA not supported on mobile |
+| **IDE Access** | Desktop only | FSA required for file CRUD |
+| **Mobile IDE Behavior** | Block and redirect to Notes | Clear UX boundary |
+
+### FSA & Handle Persistence
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Handle Storage** | Store `FileSystemDirectoryHandle` in IndexedDB | Chrome DevRel recommended |
+| **Permission Persistence** | Use Chrome 122+ "Allow on every visit" | Research confirmed |
+| **File Watching** | FileSystemObserver (129+), polling fallback | Native when available |
+| **Fast Load Strategy** | Snapshot in Dexie, diff in background | No waiting on rescan |
+
+### Notes Storage for FSA Desktop
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Notes Location** | FSA folder (`/project/notes/*.md`) | Same tech as IDE, reactive |
+| **Sync Direction** | Bidirectional (BlockNote ↔ Markdown) | External editor support |
+| **Conflict Resolution** | Merge dialog if local dirty + external change | User decides |
+| **Autosave Debounce** | 500ms | Balance responsiveness and I/O |
+
+### Project Structure
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Metadata Folder** | `.viagent/` at project root | Hidden, consistent |
+| **Notes Folder** | `/notes/` (configurable) | Separate from code |
+| **Assets Folder** | `/notes/assets/` | Embedded media |
+| **File IDs** | Path-based (relative from root) | FSA uses paths, debuggable |
+
+### Mobile Project Model
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Project Count** | Single default (`notes:browser-mode`) | Simpler for MVP |
+| **Desktop Without Project** | Must create/select project first | Consistent with FSA model |
+
+### Database Keys
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Composite Keys** | Keep `[projectId+workspaceId]` | Intentional isolation per workspace |
+
+### Nested Folder Rules
+
+| Scenario | Behavior |
+|----------|----------|
+| **Same path** | Block - cannot create duplicate |
+| **Child of existing** | Warn - allow if user confirms |
+| **Parent of existing** | Warn - allow if user confirms |
+| **Sibling** | Allow - no overlap |
+
+### File Discovery Limits
+
+| Setting | Default |
+|---------|---------|
+| **Max Depth** | 20 |
+| **Warn At Depth** | 15 |
+| **Max Files** | 50,000 |
+| **Max Total Size** | 500MB |
+
+### Default Exclusions
+
+```
+node_modules, .git, .next, .nuxt, dist, build, out,
+.cache, coverage, __pycache__, .venv, venv, .idea
+```
+
+### FSA Project Folder Structure (Canonical)
+
+```
+/MyProject/                          ← FSA Project Root
+├── .viagent/                        ← ViaGent metadata folder
+│   ├── project.json                 ← Project config (ID, name, bindings)
+│   ├── notes-index.json             ← Note metadata (titles, order, favorites)
+│   ├── file-tree-snapshot.json      ← Cached file tree for fast load
+│   └── rag-index/                   ← Local RAG vectors (optional)
+│       ├── chunks.json
+│       └── embeddings.bin
+│
+├── notes/                           ← Notes workspace content
+│   ├── welcome.md                   ← Markdown file
+│   └── assets/                      ← Embedded assets
+│       └── image-abc123.png
+│
+├── src/                             ← Code (IDE workspace)
+│   └── index.ts
+│
+└── docs/                            ← Viewable in Notes OR IDE
+    └── api.md
+```
+
+### PlatformContract Interface (Use This Everywhere)
+
+```typescript
+interface PlatformContract {
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  storageType: 'fsa' | 'indexeddb';
+  canAccessFSA: boolean;
+  canWatchFiles: boolean;
+  canRunTerminal: boolean;
+  canDoAgenticCoding: boolean;
+  canAccessIDE: boolean;
+}
+
+// Usage: Call ONCE, use everywhere
+const platform = getPlatformContract();
+```
+
+### StorageGateway Interface (Use This for All I/O)
+
+```typescript
+interface StorageGateway {
+  read(path: string): Promise<Uint8Array>;
+  write(path: string, data: Uint8Array): Promise<void>;
+  delete(path: string): Promise<void>;
+  list(path: string): Promise<FileEntry[]>;
+  exists(path: string): Promise<boolean>;
+  watch(callback: FileChangeCallback): () => void;
+}
+
+// Usage: Get from factory based on project.storageType
+const gateway = StorageGatewayFactory.create(project.storageType);
+```
 
 ---
 
@@ -300,13 +461,14 @@ EXCEPTIONAL DAYS:
 
 | Key | Value |
 |-----|-------|
-| **Current Phase** | IMPLEMENTATION |
-| **Active Epic** | EPIC-FS (28.6%) |
-| **Next Story** | FS-05 |
-| **Sprint** | phase-2-sprint-status-2026-01-09.yaml |
-| **Blocked Epic** | EPIC-38 (waiting on EPIC-FS) |
-| **Last Complete Epic** | EPIC-40: Multimodal Chat (100%) |
+| **Current Phase** | EPIC-CC-ARC Week 1 |
+| **Active Epic** | EPIC-CC-ARC (Architectural Remediation) |
+| **Team A Story** | ARC-A01: Create getPlatformContract() |
+| **Team B Story** | ARC-B01: Create StorageGateway (blocked by A01) |
+| **Sprint File** | `epic-cc-arc-sprint-2026-01-17.yaml` |
+| **ADR** | ADR-033 (APPROVED) |
 | **TypeScript Errors** | 0 ✅ |
+| **Completed Stories** | ARC-A03, ARC-B04 |
 
 ---
 
@@ -659,3 +821,67 @@ Based on my research, here's a comprehensive list of official documentation and 
 - Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
 - Prioritize iteration, insertion, updates on single-source of truth
 - When generating new files, isolate with new
+
+---
+
+## TanStack MCP Server (Official)
+
+**Critical Tool for TanStack Ecosystem Research** - Agents MUST use this for all TanStack documentation queries.
+
+### Configuration
+
+| Property | Value |
+|----------|-------|
+| **Server URL** | `https://tanstack.com/api/mcp` |
+| **API Key** | `ts_bdd5ade6ba81622c4855582aaf830e44d337d22680decf9301b3cb95f950d92b` |
+| **Transport** | Streamable HTTP |
+| **Auth** | OAuth (browser-based) |
+
+### Available Tools
+
+#### Documentation Tools
+
+| Tool | Description | Auth Required |
+|------|-------------|---------------|
+| `list_libraries` | List all TanStack libraries with versions and metadata | No |
+| `get_doc` | Fetch specific documentation page by library and path | No |
+| `search_docs` | Full-text search across all TanStack documentation | No |
+
+#### NPM Stats Tools
+
+| Tool | Description | Auth Required |
+|------|-------------|---------------|
+| `get_npm_stats` | Get aggregated download stats for TanStack or a library | No |
+| `list_npm_comparisons` | List preset package comparisons | No |
+| `compare_npm_packages` | Compare download stats for multiple packages | No |
+| `get_npm_package_downloads` | Get detailed historical downloads for a package | No |
+
+### Supported Libraries
+
+- **@tanstack/react-router**, `@tanstack/react-router-devtools`, `@tanstack/react-router-ssr-query`
+- **@tanstack/react-start**, `@tanstack/router-plugin`
+- **@tanstack/ai**, `@tanstack/ai-gemini**, `@tanstack/ai-react`
+- **@tanstack/store**, `@tanstack/react-devtools`
+- And all other TanStack packages
+
+### Usage Examples
+
+```typescript
+// Search for router documentation
+await search_docs({ query: "route params navigation" });
+
+// Get specific library info
+await list_libraries();
+
+// Get npm stats comparison
+await compare_npm_packages({
+  packages: ["@tanstack/react-router", "@tanstack/query"]
+});
+```
+
+### Integration Notes
+
+- AI assistants can access **current documentation** for all TanStack libraries
+- **Version-specific docs** available for exact versions in use
+- **Full-text search** across all TanStack documentation
+- Fetches directly from TanStack GitHub repositories for most current content

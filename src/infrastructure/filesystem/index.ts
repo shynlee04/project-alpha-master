@@ -89,3 +89,101 @@ export {
   createFSAStorageAdapter,
   getFSAStorageAdapter,
 } from './fsa-storage-adapter';
+
+// ============================================================================
+// Platform Contract (ARC-A01: getPlatformContract)
+// ============================================================================
+
+export {
+  getPlatformContract,
+  invalidatePlatformCache,
+  meetsPlatformRequirements,
+  getPlatformInfoForLogging,
+  type PlatformContract,
+  type DeviceType,
+  type StorageType,
+} from './platform-contract';
+
+// ============================================================================
+// Storage Gateway Factory (ARC-B01: StorageGateway abstraction)
+// ============================================================================
+
+export {
+  storageGatewayFactory,
+  createStorageGateway,
+  createFSAGateway,
+  createIDBGateway,
+  StorageGatewayFactoryImpl,
+} from './storage-gateway-factory';
+
+export type {
+  StorageGateway,
+  StorageGatewayFactory as IStorageGatewayFactory,
+} from '@/domain/interfaces/storage-gateway.interface';
+
+// ============================================================================
+// FSA Gateway (ARC-B02: FSAGateway implementation)
+// ============================================================================
+
+export { FSAGateway } from './fsa-gateway';
+
+// ============================================================================
+// IDB Gateway (ARC-B03: IDBGateway implementation)
+// ============================================================================
+
+export { IDBGateway } from './idb-gateway';
+
+// ============================================================================
+// .viagent/ Metadata Service (ARC-B10: Metadata folder structure)
+// ============================================================================
+
+export {
+  ViagentService,
+  createViagentService,
+  initializeViagentFolder,
+} from './viagent-service';
+
+export type {
+  ViagentInitOptions,
+  MetadataResult,
+} from './viagent-service';
+
+// Re-export from domain/types
+export {
+  VIAGENT_FOLDER_NAME,
+  VIAGENT_FILES,
+  CURRENT_VERSION,
+  createDefaultProjectMetadata,
+  createEmptyNotesIndex,
+  createInitialFileTreeSnapshot,
+} from '@/domain/types/viagent-metadata';
+
+export type {
+  ViagentProjectMetadata,
+  ViagentNotesIndex,
+  ViagentNoteEntry,
+  ViagentNoteFolder,
+  ViagentFileTreeSnapshot,
+  ViagentFileTreeEntry,
+  ViagentVersion,
+} from '@/domain/types/viagent-metadata';
+
+// ============================================================================
+// Markdown Sync Service (ARC-B11: Notes ↔ Markdown bidirectional sync)
+// ============================================================================
+
+export {
+  MarkdownSyncService,
+  createMarkdownSyncService,
+  noteToMarkdownString,
+  parseMarkdownFileContent,
+} from './markdown-sync-service';
+
+export type {
+  MarkdownMetadata,
+  ParsedMarkdownFile,
+  SyncDirection,
+  SyncConflictEvent,
+  SyncStats,
+  MarkdownSyncConfig,
+} from './markdown-sync-service';

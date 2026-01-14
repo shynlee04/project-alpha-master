@@ -16,10 +16,15 @@
   * @story 26-2 Client-Side Embedding Pipeline
   * @story 26-3 "Ask My Notes" RAG Tool
   * @story 26-4 Inline AI Magic
+  * 
+  * @note createLazyFileRoute only supports component, errorComponent, 
+  *       pendingComponent, notFoundComponent. beforeLoad/loader not supported.
+  *       Notes is accessible on ALL platforms per ADR-033, no guard needed.
   */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createLazyFileRoute } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/lib/workspace/project-store';
@@ -27,6 +32,7 @@ import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
+import type { NotesSearchParams } from './notes.$projectId';
 
 // ============================================================================
 // Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
@@ -74,7 +80,13 @@ async function getProjectWithRetry(
   return null;
 }
 
+// ============================================================================
+// Route Definition (Lazy - only component options allowed)
+// ============================================================================
+
 export const Route = createLazyFileRoute('/notes/$projectId')({
+  // Notes accessible on ALL platforms per ADR-033 - no beforeLoad guard needed
+  // Project lookup handled in component via useEffect with retry logic
   component: () => (
     <ErrorBoundary>
       <NotesWorkspace />
@@ -84,9 +96,22 @@ export const Route = createLazyFileRoute('/notes/$projectId')({
 
 function NotesWorkspace() {
   const { projectId: _projectId } = Route.useParams();
+  const search = Route.useSearch() as NotesSearchParams;
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const toastShownRef = useRef(false);
+
+  // ARC-A04: Show toast when redirected from IDE (mobile users)
+  useEffect(() => {
+    if (search?.reason === 'mobile-not-supported' && !toastShownRef.current) {
+      toastShownRef.current = true;
+      toast.info('IDE requires desktop. Opening Notes workspace.', {
+        duration: 4000,
+        id: 'mobile-redirect-toast',
+      });
+    }
+  }, [search?.reason]);
 
   useEffect(() => {
     setIsLoading(true);

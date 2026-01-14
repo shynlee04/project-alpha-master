@@ -24,6 +24,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
+import { Route as NotesProjectIdRouteImport } from './routes/notes.$projectId'
 import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
@@ -39,7 +40,6 @@ const StudyLazyRouteImport = createFileRoute('/study')()
 const NotesLazyRouteImport = createFileRoute('/notes')()
 const KnowledgeLazyRouteImport = createFileRoute('/knowledge')()
 const StudyProjectIdLazyRouteImport = createFileRoute('/study/$projectId')()
-const NotesProjectIdLazyRouteImport = createFileRoute('/notes/$projectId')()
 const KnowledgeProjectIdLazyRouteImport = createFileRoute(
   '/knowledge/$projectId',
 )()
@@ -121,13 +121,6 @@ const StudyProjectIdLazyRoute = StudyProjectIdLazyRouteImport.update({
 } as any).lazy(() =>
   import('./routes/study.$projectId.lazy').then((d) => d.Route),
 )
-const NotesProjectIdLazyRoute = NotesProjectIdLazyRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => NotesLazyRoute,
-} as any).lazy(() =>
-  import('./routes/notes.$projectId.lazy').then((d) => d.Route),
-)
 const KnowledgeProjectIdLazyRoute = KnowledgeProjectIdLazyRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
@@ -145,6 +138,13 @@ const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   path: '/webcontainer/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => NotesLazyRoute,
+} as any).lazy(() =>
+  import('./routes/notes.$projectId.lazy').then((d) => d.Route),
+)
 const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
@@ -216,10 +216,10 @@ export interface FileRoutesByFullPath {
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
-  '/notes/$projectId': typeof NotesProjectIdLazyRoute
   '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
@@ -247,10 +247,10 @@ export interface FileRoutesByTo {
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
-  '/notes/$projectId': typeof NotesProjectIdLazyRoute
   '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
@@ -279,10 +279,10 @@ export interface FileRoutesById {
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
   '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
-  '/notes/$projectId': typeof NotesProjectIdLazyRoute
   '/study/$projectId': typeof StudyProjectIdLazyRoute
   '/workspace/': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
@@ -312,10 +312,10 @@ export interface FileRouteTypes {
     | '/api/provider-test'
     | '/api/providers'
     | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/knowledge/$projectId'
-    | '/notes/$projectId'
     | '/study/$projectId'
     | '/workspace'
     | '/api/flashcards/generate'
@@ -343,10 +343,10 @@ export interface FileRouteTypes {
     | '/api/provider-test'
     | '/api/providers'
     | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/knowledge/$projectId'
-    | '/notes/$projectId'
     | '/study/$projectId'
     | '/workspace'
     | '/api/flashcards/generate'
@@ -374,10 +374,10 @@ export interface FileRouteTypes {
     | '/api/provider-test'
     | '/api/providers'
     | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
     | '/knowledge/$projectId'
-    | '/notes/$projectId'
     | '/study/$projectId'
     | '/workspace/'
     | '/api/flashcards/generate'
@@ -519,13 +519,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyProjectIdLazyRouteImport
       parentRoute: typeof StudyLazyRoute
     }
-    '/notes/$projectId': {
-      id: '/notes/$projectId'
-      path: '/$projectId'
-      fullPath: '/notes/$projectId'
-      preLoaderRoute: typeof NotesProjectIdLazyRouteImport
-      parentRoute: typeof NotesLazyRoute
-    }
     '/knowledge/$projectId': {
       id: '/knowledge/$projectId'
       path: '/$projectId'
@@ -546,6 +539,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/webcontainer/$'
       preLoaderRoute: typeof WebcontainerSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/notes/$projectId': {
+      id: '/notes/$projectId'
+      path: '/$projectId'
+      fullPath: '/notes/$projectId'
+      preLoaderRoute: typeof NotesProjectIdRouteImport
+      parentRoute: typeof NotesLazyRoute
     }
     '/ide/$projectId': {
       id: '/ide/$projectId'
@@ -643,11 +643,11 @@ const KnowledgeLazyRouteWithChildren = KnowledgeLazyRoute._addFileChildren(
 )
 
 interface NotesLazyRouteChildren {
-  NotesProjectIdLazyRoute: typeof NotesProjectIdLazyRoute
+  NotesProjectIdRoute: typeof NotesProjectIdRoute
 }
 
 const NotesLazyRouteChildren: NotesLazyRouteChildren = {
-  NotesProjectIdLazyRoute: NotesProjectIdLazyRoute,
+  NotesProjectIdRoute: NotesProjectIdRoute,
 }
 
 const NotesLazyRouteWithChildren = NotesLazyRoute._addFileChildren(
