@@ -1,7 +1,7 @@
 # LOOP_STATE - BMAD Extension Global State
 # Version: 3.3.0
-# last_updated: "2026-01-18T00:30:00+07:00"
-# Status: EPIC-CC-ARC WEEK 1 COMPLETE - WEEK 2 STARTING
+# last_updated: "2026-01-18T10:00:00+07:00"
+# Status: EPIC-CC-ARC WEEK 2 COMPLETE - WEEK 3 STARTING
 #
 # IMPORTANT: This file is the single source of truth for BMAD Extension Layer.
 # All agents must read this file at session start and update it at key points.
@@ -10,16 +10,16 @@
 # SESSION INFORMATION
 # ═══════════════════════════════════════════════════════════════════════════════
 session:
-  id: "epic-cc-arc-week2-2026-01-18"
-  start_time: "2026-01-18T00:00:00+07:00"
-  last_activity: "2026-01-18T00:30:00+07:00"
+  id: "epic-cc-arc-week3-2026-01-18"
+  start_time: "2026-01-18T10:00:00+07:00"
+  last_activity: "2026-01-18T10:00:00+07:00"
   platform: "claude-code"
   agent: "RALPH-LOOP-V5"
   orchestrator_team: "Team B"
-  iteration: 2
+  iteration: 8
   max_iterations: 0
-  status: "EPIC-CC-ARC-WEEK2-TEAM-B-ORCHESTRATING"
-  team: "Team B (Storage Contract Squad) - Week 1 complete, Week 2 starting"
+  status: "EPIC-CC-ARC-WEEK3-TEAM-B-ORCHESTRATING"
+  team: "Team B (Storage Contract Squad) - Week 1-2 complete, Week 3 in progress"
   ralph_loop_version: "5.0.0"
   ralph_loop_config: ".claude/ralph-loop.local.md"
 
@@ -59,14 +59,14 @@ anchor:
 current_work:
   epic_id: "EPIC-CC-ARC"
   epic_title: "Correct-Course Architectural Remediation"
-  story_id: "ARC-B11"
-  story_title: "Notes ↔ Markdown bidirectional sync"
+  story_id: "ARC-B06"
+  story_title: "File tree scanning service with snapshot caching"
   task_type: "implementation"
   step: "week2-execution"
-  governance_status: "story-starting"
+  governance_status: "story-complete"
   team: "Team B (Storage Contract Squad)"
   phase: "Phase B Continuation (Week 2)"
-  next_story: "ARC-B05: FileSystemObserver with polling fallback"
+  next_story: "ARC-C01: Consolidate Project Store (P1, 6h) - Team A"
 
   sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
   adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
@@ -147,16 +147,14 @@ current_work:
     - "ARC-B03: Implement IDBGateway adapter - 2026-01-17 (Team B)"
     - "ARC-B07: Folder overlap detection and warning UI - 2026-01-17 (Team B)"
     - "ARC-B10: .viagent/ metadata folder structure - 2026-01-17 (Team B)"
+    - "ARC-B11: Notes ↔ Markdown bidirectional sync - 2026-01-18 (Team B - Week 2)"
+    - "ARC-B05: FileSystemObserver with polling fallback - 2026-01-18 (Team B - Week 2)"
+    - "ARC-B06: File tree scanning service with snapshot caching - 2026-01-18 (Team B - Week 2)"
 
   pending_stories:
-    # Team A (Week 1 - Identity & Routing)
-    - "ARC-A02: Implement route guards - READY (ARC-A01 complete)"
-    - "ARC-A04: Mobile → Notes redirect - READY (ARC-A01 complete)"
-    - "ARC-A05: Hub card click data contract - READY (ARC-A01 complete)"
-    - "ARC-A06: Post-creation redirect logic - BLOCKED_BY_ARC-A02"
-
-    # Team B (Week 2 - Phase B continuation)
-    - "ARC-B11: Notes ↔ Markdown bidirectional sync - READY (ARC-B10 complete)"
+    # Team A (Week 2 - Phase C start)
+    - "ARC-C01: Consolidate Project Store - READY"
+    - "ARC-C02: Create facade re-exports - READY"
 
   # TECHNICAL DEBT TRACKING (Iteration 13 Review)
   technical_debt:
@@ -180,13 +178,13 @@ current_work:
 # GOVERNANCE STATE (Sprint Execution Active)
 # ═══════════════════════════════════════════════════════════════════════════════
 governance:
-  last_check: "2026-01-18T00:30:00+07:00"
+  last_check: "2026-01-18T10:00:00+07:00"
   status: "epic-cc-arc-week2-team-b-orchestrating"
-  health_score: 95  # Week 1 complete, Week 2 starting
+  health_score: 98  # Week 1 complete, ARC-B11, ARC-B05, ARC-B06 complete
   stale_detected: false
   violations: []
-  typescript_errors: 0  # All Week 1 implementations verified: 0 errors
-  notes: "EPIC-CC-ARC Week 2 STARTING. Week 1 complete (11 stories verified). StorageGateway pattern fully implemented. .viagent/ metadata folder structure complete. Starting ARC-B11: Notes ↔ Markdown bidirectional sync."
+  typescript_errors: 0  # All implementations verified: 0 errors
+  notes: "EPIC-CC-ARC Week 2 IN PROGRESS. Week 1 complete (11 stories). ARC-B11 complete: MarkdownSyncService created. ARC-B05 complete: Fixed handleToPath() with async BFS resolver for FileSystemObserver. ARC-B06 complete: FileTreeScanner created with snapshot caching (<500ms load, background refresh, stale indicator). Team B Week 2 (Phase B) ALL COMPLETE. Next: Team A Phase C stories (ARC-C01, ARC-C02)."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SUPERSEDED ARTIFACTS (POISONED)

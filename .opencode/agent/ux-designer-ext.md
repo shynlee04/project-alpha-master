@@ -1,5 +1,3 @@
-# _bmad-ext/agents/ux-designer-ext.md
-
 ---
 name: "ux-designer-ext"
 description: "Enhanced UX Designer Agent with orchestration hooks"

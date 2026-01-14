@@ -3,63 +3,62 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.5.0"
-last_updated: "2026-01-17T08:00:00+07:00"
-updated_by: "BMAD Master - Sprint Planning Complete"
-previous_version: "bmm-workflow-status-v2.4.yaml"
+last_updated: "2026-01-18T11:30:00+07:00"
+updated_by: "BMAD Master - Team B Orchestrator"
+previous_version: "bmm-workflow-status-v2.5.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═══════════════════════════════════════════════════════════════════════════
 
-health_score: 70  # Improved - ADR-033 approved, sprint planning complete, execution starting
+health_score: 85  # Week 1-2 complete, Week 3 starting
 context_ttl: "24h"
-current_phase: "EPIC-CC-ARC-WEEK1"
+current_phase: "EPIC-CC-ARC-WEEK3"
 
 # PHASE GUIDANCE
 phase_guidance: |
-  EPIC-CC-ARC - ARCHITECTURAL REMEDIATION EXECUTION (WEEK 1):
-  
-  ADR-033 APPROVED: All decisions finalized. Sprint planning complete.
-  
-  WEEK 1 FOCUS:
-  - Team A: Phase A (Identity & Routing) - ARC-A01, A02, A04, A05, A06
-  - Team B: Phase B (Storage Contract) - ARC-B01, B02, B07, B10
-  
-  ALREADY COMPLETED (Phase 0):
-  - ✅ ARC-A03: useWorkspaceAccess hook fixed
-  - ✅ ARC-B04: browser-mode.ts persistence fixed
+  EPIC-CC-ARC - ARCHITECTURAL REMEDIATION EXECUTION (WEEK 3):
+
+  ADR-033 APPROVED: All decisions finalized. Week 1-2 complete.
+
+  WEEK 1-2 COMPLETED:
+  - Team A: Phase A (Identity & Routing) - ARC-A01, A02, A04, A05, A06 ✅
+  - Team B: Phase B (Storage Contract) - ARC-B01-B12 ✅
+
+  WEEK 3 FOCUS:
+  - Team B: ARC-B08 (exclusion patterns), ARC-B09 (depth limits), ARC-D01, D02
+
+  KEY ACHIEVEMENTS:
+  - ✅ StorageGateway abstraction layer complete
+  - ✅ FSAGateway + IDBGateway with watch() and file tree scanning
+  - ✅ MarkdownSyncService with conflict resolution UI
   - ✅ TypeScript: 0 errors
-  
+
   KEY DECISIONS (from ADR-033):
   - Desktop → FSA automatically (no user choice)
   - Mobile/Tablet → IndexedDB automatically
   - Notes on FSA Desktop → Real .md files in /project/notes/
   - IDE → Desktop only (mobile blocked)
-  
-  INTEGRATION POINT:
-  - ARC-A01 (getPlatformContract) must complete before ARC-B01 (StorageGateway)
-  
+
   ADR: _bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md
-  
+
 # TEAMS
 teams:
   - id: "Team A"
     name: "Identity & Routing Squad"
-    focus: "EPIC-CC-ARC Phase A (Routing) → Phase C (State)"
+    focus: "EPIC-CC-ARC Phase A → Phase C (State)"
     assigned_epic: "EPIC-CC-ARC"
-    assigned_phase: "A"
-    current_story: "ARC-A01"
+    assigned_phase: "C"
+    current_story: "ARC-C04"
     status: "ACTIVE"
-    week_1_stories: ["ARC-A01", "ARC-A02", "ARC-A04", "ARC-A05", "ARC-A06"]
-    
+
   - id: "Team B"
-    name: "Storage Contract Squad"  
-    focus: "EPIC-CC-ARC Phase B (Storage) → Phase D (Entity)"
+    name: "Storage Contract Squad"
+    focus: "EPIC-CC-ARC Phase B → Phase D (Entity)"
     assigned_epic: "EPIC-CC-ARC"
-    assigned_phase: "B"
-    current_story: "ARC-B01"
+    assigned_phase: "B/D"
+    current_story: "ARC-B08"
     status: "ACTIVE"
-    week_1_stories: ["ARC-B01", "ARC-B02", "ARC-B07", "ARC-B10"]
 
 # NUMBERING RULES
 numbering:

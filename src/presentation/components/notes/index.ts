@@ -20,6 +20,10 @@ export { NoteStudyMenu } from './NoteStudyMenu';
 export { MarkdownImportDialog } from './MarkdownImportDialog';
 export { MarkdownExportDialog } from './MarkdownExportDialog';
 
+// ARC-B12: Markdown Sync Conflict Dialog
+export { MarkdownSyncConflictDialog, useMarkdownSyncConflictDialog } from './MarkdownSyncConflictDialog';
+export type { MarkdownSyncConflictDialogProps, MarkdownSyncConflictDialogState } from './MarkdownSyncConflictDialog';
+
 // NR-07/NR-08: Context Menu and Event System
 export { NoteContextMenu, NoteListItem } from './NoteContextMenu';
 

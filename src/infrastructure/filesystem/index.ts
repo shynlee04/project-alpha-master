@@ -187,3 +187,21 @@ export type {
   SyncStats,
   MarkdownSyncConfig,
 } from './markdown-sync-service';
+
+// ============================================================================
+// File Tree Scanner (ARC-B06: Snapshot caching for fast project load)
+// ============================================================================
+
+export {
+  FileTreeScanner,
+  createFileTreeScanner,
+  loadSnapshotFast,
+  loadWithAutoRefresh,
+} from './file-tree-scanner';
+
+export type {
+  FileTreeScanOptions,
+  FileTreeScanProgress,
+  FileTreeScanResult,
+  FileTreeDiff,
+} from './file-tree-scanner';

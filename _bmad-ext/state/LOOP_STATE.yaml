@@ -5,18 +5,25 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-17T14:00:00+07:00"
-last_updated: "2026-01-17T14:00:00+07:00"
+last_updated: "2026-01-18T11:00:00+07:00"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # SESSION STATE
 # ═══════════════════════════════════════════════════════════════════════════
 
 session:
-  id: "session-2026-01-17-team-a-arc"
-  started_at: "2026-01-17T14:00:00+07:00"
-  platform: "OpenCode"
-  agent: "EXCALIBUR"
-  mode: "correct-course"
+  id: "epic-cc-arc-week3-2026-01-18"
+  start_time: "2026-01-18T11:00:00+07:00"
+  last_activity: "2026-01-18T11:00:00+07:00"
+  platform: "claude-code"
+  agent: "RALPH-LOOP-V5"
+  orchestrator_team: "Team B"
+  iteration: 8
+  max_iterations: 0
+  status: "EPIC-CC-ARC-WEEK3-TEAM-B-ORCHESTRATING"
+  team: "Team B (Storage Contract Squad) - Week 1-2 complete, Week 3 in progress"
+  ralph_loop_version: "5.0.0"
+  ralph_loop_config: ".claude/ralph-loop.local.md"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CURRENT CONTEXT
@@ -24,73 +31,116 @@ session:
 
 current:
   epic_id: "EPIC-CC-ARC"
-  story_id: "PHASE_A_COMPLETE"
-  team: "Team A"
-  phase: "A"
+  epic_name: "Correct-Course Architectural Remediation"
+  story_id: "ARC-B12"
+  story_title: "External change conflict resolution UI"
+  team: "Team B"
+  phase: "B"
+  week: 3
   workflow: "story-cycle"
-  step: "week1_complete"
-  status: "phase_complete"
+  step: "COMPLETED"
+  status: "in_progress"
+  sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIOR COMPLETED (Phase B - Week 1-2)
+# ═══════════════════════════════════════════════════════════════════════════
+
+prior_completed:
+  - "ARC-B01: StorageGateway abstraction layer (2026-01-18)"
+  - "ARC-B02: FSAGateway adapter with handle persistence (2026-01-18)"
+  - "ARC-B03: IDBGateway adapter (2026-01-18)"
+  - "ARC-B04: browser-mode.ts persistence fix (2026-01-16)"
+  - "ARC-B05: FileSystemObserver with polling fallback (2026-01-18)"
+  - "ARC-B06: Snapshot caching for fast load (2026-01-18)"
+  - "ARC-B07: Folder overlap detection and warning UI (2026-01-18)"
+  - "ARC-B10: .viagent/ metadata folder structure (2026-01-18)"
+  - "ARC-B11: Notes ↔ Markdown bidirectional sync (2026-01-18)"
+  - "ARC-B12: External change conflict resolution UI (2026-01-18)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # COMPLETED IN THIS SESSION
 # ═══════════════════════════════════════════════════════════════════════════
 
 completed_this_session:
-  - story_id: "ARC-A04"
-    title: "Mobile → Notes redirect for IDE routes"
-    completed_at: "2026-01-17T14:00:00+07:00"
+  - story_id: "ARC-B12"
+    title: "External change conflict resolution UI"
+    completed_at: "2026-01-18T10:30:00+07:00"
     files_created:
-      - "src/routes/notes.$projectId.tsx"
+      - "src/presentation/components/notes/MarkdownSyncConflictDialog.tsx (280 lines)"
+      - "src/presentation/hooks/useMarkdownSyncConflict.ts (175 lines)"
     files_modified:
-      - "src/routes/notes.$projectId.lazy.tsx"
+      - "src/presentation/components/notes/index.ts"
       - "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
     acceptance_criteria:
-      - "Mobile users on /ide/* redirected to /notes/* ✅"
-      - "Toast: 'IDE requires desktop. Opening Notes workspace.' ✅"
-      - "ProjectId preserved in redirect ✅"
-      
-  - story_id: "ARC-A05"
-    title: "Hub card click data contract (props passing)"
-    completed_at: "2026-01-17T14:30:00+07:00"
-    files_verified:
-      - "src/presentation/components/hub/HubHomePage.tsx"
-      - "src/presentation/components/hub/ProjectCard.tsx"
-    notes: "Verified - no code changes needed, data contract correct"
-    acceptance_criteria:
-      - "Hub cards navigate with projectId in URL ✅"
-      - "No undefined projectId errors ✅"
-      
-  - story_id: "ARC-A06"
-    title: "Post-creation redirect logic (wizard → workspace)"
-    completed_at: "2026-01-17T15:00:00+07:00"
-    files_modified:
-      - "src/presentation/components/project/ProjectsPage.tsx"
-      - "src/presentation/components/hub/HubHomePage.tsx"
+      - "Conflict dialog with keep local/keep external/merge options ✅"
+      - "Auto-reload if local clean ✅"
+      - "TypeScript: 0 errors ✅"
     notes: |
-      Fixed critical bug in ProjectsPage (always redirected to IDE).
-      Both files now use getPlatformContract() + storageType per ADR-033.
-    acceptance_criteria:
-      - "Desktop FSA project → /ide/$projectId ✅"
-      - "Desktop IndexedDB project → /notes/$projectId ✅"
-      - "Mobile project → /notes/$projectId ✅"
+      Created MarkdownSyncConflictDialog component with visual diff preview,
+      useMarkdownSyncConflictDialog hook for state management,
+      useMarkdownSyncConflict hook for sync service integration.
+      Full i18n support, 8-bit design compliant.
 
-# Known Issues (Deferred)
-deferred_issues:
-  - id: "YAML-SYNTAX-001"
-    file: "bmm-workflow-status.yaml"
-    description: "Indentation inconsistencies causing YAML parse errors"
-    severity: "LOW"
-    impact: "Doesn't block sprint execution"
+# ═══════════════════════════════════════════════════════════════════════════
+# PENDING STORIES (Phase B - Week 3)
+# ═══════════════════════════════════════════════════════════════════════════
+
+pending_stories:
+  - story_id: "ARC-B08"
+    title: "File tree exclusion patterns configuration"
+    effort: "3h"
+    priority: "P1"
+    dependencies: ["ARC-B05"]
+    status: "TODO"
+    description: |
+      Configure exclusion patterns: node_modules, .git, .next, etc.
+    acceptance_criteria:
+      - "Default exclusions applied"
+      - "User can configure additional patterns"
+      - "Patterns stored in .viagent/config.json"
+      - "TypeScript: 0 errors"
+
+  - story_id: "ARC-B09"
+    title: "Scan depth limits and warnings"
+    effort: "2h"
+    priority: "P1"
+    dependencies: ["ARC-B08"]
+    status: "TODO"
+    description: |
+      Limit scan depth to 20, warn at 15, max 50k files
+    acceptance_criteria:
+      - "Max depth 20 enforced"
+      - "Warning at depth 15"
+      - "Max 50k files enforced"
+      - "TypeScript: 0 errors"
+
+  - story_id: "ARC-D01"
+    title: "Enforce ProjectId template literal type"
+    effort: "3h"
+    priority: "P1"
+    dependencies: ["ARC-C01"]
+    status: "TODO"
+    phase: "D"
+
+  - story_id: "ARC-D02"
+    title: "Fix workspaceId || projectId fallback bugs"
+    effort: "4h"
+    priority: "P1"
+    dependencies: ["ARC-D01"]
+    status: "TODO"
+    phase: "D"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ANCHOR (Human Intent Freshness)
 # ═══════════════════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent_timestamp: "2026-01-17T14:00:00+07:00"
+  human_intent_timestamp: "2026-01-18T11:00:00+07:00"
   staleness_threshold_hours: 4
-  last_human_message: "Continue with Team A coordination and correct-course protocol"
-  intent_summary: "Execute EPIC-CC-ARC Week 1 stories for Team A with full traceability"
+  last_human_message: "Stop hook feedback: load @bmad-core-master-agent start the loop first by looking as @PROMPT then load agents, sub-agents as you progress cycles of workflows, modules, following strict BMAD framework and what has written at @CLAUDE.md, keep updating sprint-status and workflow-status as u are team B"
+  intent_summary: "Execute EPIC-CC-ARC Week 3 stories for Team B with full BMAD framework traceability, update sprint-status and workflow-status iteratively"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # ERRORS
@@ -107,5 +157,37 @@ errors:
 
 delegations:
   active: []
-  completed: []
+  completed:
+    - delegation_id: "del-arc-b12-001"
+      agent: "dev-ext"
+      story: "ARC-B12"
+      started_at: "2026-01-18T09:00:00+07:00"
+      completed_at: "2026-01-18T10:30:00+07:00"
+      status: "SUCCESS"
+      artifacts_created: 2
   failed: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROGRESS METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+progress:
+  epic_total_stories: 28
+  epic_stories_complete: 14
+  epic_stories_remaining: 14
+  team_b_total_stories: 13
+  team_b_stories_complete: 10
+  team_b_stories_remaining: 3
+  stories_completed_this_session: 1
+  artifacts_created_this_session: 2
+  typescript_errors: 0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ARTIFACT REGISTRY REFERENCES
+# ═══════════════════════════════════════════════════════════════════════════
+
+artifacts:
+  sprint_status: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  workflow_status: "bmm-workflow-status.yaml"
+  adr: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+  loop_state: "_bmad-ext/state/LOOP_STATE.yaml"

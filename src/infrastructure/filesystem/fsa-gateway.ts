@@ -352,7 +352,7 @@ export class FSAGateway implements StorageGateway {
       // @ts-ignore - FileSystemObserver constructor is experimental
       this.watchObserver = new Observer(async (records: unknown[]) => {
         for (const record of records as { root: FileSystemHandle; changes: unknown[] }[]) {
-          const path = this.handleToPath(record.root);
+          const path = await this.handleToPath(record.root);
           if (!path) continue;
 
           for (const change of record.changes) {
@@ -650,11 +650,92 @@ export class FSAGateway implements StorageGateway {
 
   /**
    * Convert handle to relative path (for FileSystemObserver)
+   *
+   * @remarks
+   * FileSystemObserver provides handles but we need to map them to paths.
+   * Since FSA handles don't expose their path directly, we maintain a reverse
+   * mapping and resolve paths through the directory tree.
+   *
+   * For the observer's change records, the changes array contains relative
+   * paths from the observed directory, so we use those directly.
    */
-  private handleToPath(_handle: FileSystemHandle): string | null {
-    // For FileSystemObserver, we need to track the path ourselves
-    // This is a simplified implementation
-    return null; // TODO: Implement proper path tracking for observer
+  private async handleToPath(handle: FileSystemHandle): Promise<string | null> {
+    // If handle is our root directory, return empty string
+    if (handle === this.directoryHandle) {
+      return '';
+    }
+
+    // For nested handles, we need to resolve relative to root
+    return this.resolveHandlePath(handle);
+  }
+
+  /**
+   * Resolve a handle's path relative to the project root
+   *
+   * @remarks
+   * Performs a breadth-first search from the root to find the handle.
+   * This is expensive but necessary since FileSystemObserver only gives handles.
+   */
+  private async resolveHandlePath(targetHandle: FileSystemHandle): Promise<string | null> {
+    // For performance, use a queue-based BFS to find the handle
+    const queue: Array<{ handle: FileSystemHandle; path: string }> = [
+      { handle: this.directoryHandle, path: '' },
+    ];
+    const visited = new WeakSet<FileSystemHandle>([this.directoryHandle]);
+    const maxDepth = 50; // Prevent infinite loops in malformed trees
+    let depth = 0;
+
+    while (queue.length > 0 && depth < maxDepth) {
+      const current = queue.shift();
+      if (!current) break;
+
+      const { handle, path } = current;
+
+      if (handle === targetHandle) {
+        return path;
+      }
+
+      // Search children if this is a directory
+      try {
+        const dir = handle as FileSystemDirectoryHandle;
+        // @ts-expect-error - keys() is the correct method for iteration
+        for await (const name of dir.keys()) {
+          try {
+            // Try as file first
+            const childHandle = await dir.getFileHandle(name);
+            if (!visited.has(childHandle)) {
+              visited.add(childHandle);
+              queue.push({
+                handle: childHandle,
+                path: path ? `${path}/${name}` : name,
+              });
+            }
+          } catch {
+            // Not a file, try as directory
+            try {
+              const childHandle = await dir.getDirectoryHandle(name);
+              if (!visited.has(childHandle)) {
+                visited.add(childHandle);
+                queue.push({
+                  handle: childHandle,
+                  path: path ? `${path}/${name}` : name,
+                });
+              }
+            } catch {
+              // Skip inaccessible entries
+            }
+          }
+        }
+      } catch {
+        // Not a directory or inaccessible, skip
+      }
+
+      depth++;
+    }
+
+    // Handle not found in our tree
+    console.warn('[FSAGateway] Could not resolve path for handle in observer callback');
+    return null;
   }
 
   /**

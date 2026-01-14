@@ -452,7 +452,7 @@ export class MarkdownSyncService {
       return;
     }
 
-    const { path, kind } = event;
+    const { path } = event;
 
     // Only process markdown files in notes directory
     if (!path.startsWith(this.notesPath) || !path.endsWith('.md')) {

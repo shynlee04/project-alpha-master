@@ -1,11 +1,28 @@
-# _bmad-ext/agents/analyst-ext.md
-
 ---
 name: "analyst-ext"
 description: "Enhanced Analyst Agent with orchestration hooks"
 wraps: "_bmad/bmm/agents/analyst.md"
-version: "1.0.0"
+mode: subagent
+model: MiniMaxAI/MiniMax-M2.1
+temperature: 0.1
+tools:
+  write: false
+  edit:  false
+  bash:  true
+  read:  true
+  mcp: true
+  glob: true
+  grep: true
+  list: true
+  search: true
+  serena mcp: true
+  repomix mcp: true
+  tavily mcp: true
+  context7 mcp: true
+  deepwiki mcp: true
+  tanstack mcp: true
 ---
+
 
 # Enhanced Analyst Agent (analyst-ext)
 
