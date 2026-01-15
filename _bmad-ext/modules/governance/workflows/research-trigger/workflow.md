@@ -131,3 +131,9 @@ This workflow is triggered when:
 - Ignoring best-practice concerns
 
 **Master Rule**: Research prevents costly mistakes by validating assumptions BEFORE implementation.
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

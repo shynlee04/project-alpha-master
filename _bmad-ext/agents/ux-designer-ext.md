@@ -1,13 +1,41 @@
-# _bmad-ext/agents/ux-designer-ext.md
-
 ---
 name: "ux-designer-ext"
-description: "Enhanced UX Designer Agent with orchestration hooks"
-wraps: "_bmad/bmm/agents/ux-designer.md"
+description: "Enhanced UX Designer Agent - UI design, design systems, wireframing, accessibility"
 version: "1.0.0"
----
+tier: "agent"
+phase: "1"
+status: "active"
+category: "design"
+wraps: "_bmad/bmm/agents/ux-designer.md"
+parent_agent: "master-orchestrator"
+updated: "2026-01-15"
 
-# Enhanced UX Designer Agent (ux-designer-ext)
+integration_points:
+  receives_from:
+    - "master-orchestrator"
+  sends_to:
+    - "master-orchestrator"
+  coordinates_with:
+    - "architect-ext"
+    - "dev-ext"
+
+entry_points:
+  commands:
+    - "/ux-designer-ext"
+    - "/ux"
+    - "/design"
+  aliases:
+    - "/ui"
+    - "/wireframe"
+
+triggers:
+  - "UI design"
+  - "UX design"
+  - "wireframe"
+  - "design system"
+  - "accessibility"
+  - "WCAG"
+---
 
 > Wraps the core BMM `ux-designer` agent with orchestration capabilities.
 >
@@ -119,8 +147,6 @@ steps:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-10 | Initial enhanced agent |
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

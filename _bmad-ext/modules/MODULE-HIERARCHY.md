@@ -1,7 +1,31 @@
+---
+name: "MODULE-HIERARCHY"
+description: "BMAD-EXT Module Hierarchy - Phase map, cross-references, and workflow call chains"
+version: "1.1.0"
+tier: "foundation"
+phase: "0"
+status: "active"
+category: "documentation"
+entry_point: "/module-hierarchy"
+updated: "2026-01-15"
+
+integration_points:
+  reads_from: []
+  writes_to: []
+  invoked_by:
+    - "master-orchestrator"
+  hands_off_to: []
+
+triggers:
+  - "module hierarchy"
+  - "cross-reference"
+  - "workflow chain"
+---
+
 # BMAD Extension Module Hierarchy & Cross-Reference Map
 
 **Created**: 2026-01-11
-**Version**: 1.0.0
+**Version**: 1.1.0
 **description**: Unified view of all `_bmad-ext/modules/` with hierarchy, phases, and cross-references
 
 ---
@@ -16,16 +40,21 @@ PHASE 0: GOVERNANCE FOUNDATION
 │   ├── scanners/artifact-scanner.md
 │   └── workflows/context-first/
 │
-├── governance-core/                     ← DEPRECATED - Merge into governance/
-│   ├── workflows/correct-course.yaml
-│   ├── workflows/context-first.md
-│   ├── workflows/expert-analysis.md
-│   └── hooks/claude-code/
+├── governance-core/                     ← ✅ DEPRECATED - Archived 2026-01-14
+│   └── → Location: `_bmad-ext/.archive/deprecated/governance-core-2026-01-14/`
 │
 └── arc-v2/                              ← Architecture Remediation v2
     ├── agents/context-validator.md
     ├── agents/domain-scanner.md
     └── workflows/diagnostic-first.md
+
+PHASE 1-3: CORE PLANNING (NEW)
+└── bmad-core/                           ← BMAD Core Workflows (2026-01-15)
+    ├── workflows/brainstorming/         ← Creative ideation
+    ├── workflows/party-mode/            ← Rapid ideation
+    ├── workflows/create-product-brief/  ← Product definition
+    ├── workflows/prd/                   ← Requirements document
+    └── workflows/create-architecture/   ← System design
 
 PHASE 2: SPRINT PLANNING
 └── sprint-planning-wrapper/             ← Enhanced sprint planning
@@ -426,21 +455,150 @@ Refactoring Complete
 |-------|--------|------------|-------------|
 | 0 | governance/ | None | All subsequent phases |
 | 0 | arc-v2/ | governance/ | implementation/ (architectural) |
-| 2 | sprint-planning-wrapper/ | governance/ | implementation/ |
+| 1 | bmad-core/ | governance/ | sprint-planning-wrapper/ |
+| 2 | sprint-planning-wrapper/ | bmad-core/ + governance/ | implementation/ |
 | 4 | implementation/ | governance/ + sprint-planning/ | None (final) |
+
+## Module Boundaries (Phase 4 Update)
+
+See: `_bmad-ext/RESPONSIBILITY-MATRIX.md` for full boundaries.
+
+| Module | Phase | Responsibility | Boundaries |
+|--------|-------|----------------|------------|
+| **governance** | 0 | Self-governance, context validation | Validates context, doesn't execute |
+| **arc-v2** | 0 | Architecture scanning | Scans and plans, doesn't implement |
+| **bmad-core** | 1-3 | Ideation through architecture | Creates specs, doesn't implement |
+| **sprint-planning-wrapper** | 2 | Sprint planning | Plans sprints, doesn't implement |
+| **implementation** | 4 | Story execution | Implements, doesn't plan |
+
+### No Overlaps (Verified)
+
+- governance ≠ implementation: Categorization vs execution
+- arc-v2 ≠ governance: Architecture vs context validation
+- bmad-core ≠ implementation: Planning vs execution
+- sprint-planning-wrapper ≠ all: Pure planning function
+
+## New: BMAD-CORE Module (Phase 1-3)
+
+**Location**: `_bmad-ext/modules/bmad-core/`
+
+**Status**: ACTIVE (Created 2026-01-15)
+
+**Description**: Core BMAD workflow wrappers - brainstorming, party-mode, product-brief, PRD, architecture
+
+### Workflows
+
+| Workflow | Phase | Wraps | Entry Command |
+|----------|-------|-------|---------------|
+| `brainstorming` | 1 | None | `/brainstorming` |
+| `party-mode` | 1 | None | `/party-mode` |
+| `create-product-brief` | 1 | `_bmad/bmm/.../create-product-brief` | `/product-brief` |
+| `prd` | 2 | `_bmad/bmm/.../prd` | `/prd` |
+| `create-architecture` | 3 | `_bmad/bmm/.../create-architecture` | `/architecture` |
+
+### Integration Points
+
+| Reads From | Path |
+|------------|------|
+| BMAD workflows | `_bmad/bmm/workflows/{1-analysis,2-plan,3-solutioning}/` |
+| Planning artifacts | `_bmad-output/planning-artifacts/` |
+
+| Writes To | Path |
+|-----------|------|
+| Brainstorming | `_bmad-output/planning-artifacts/brainstorming/{date}/` |
+| Product Brief | `_bmad-output/planning-artifacts/product-brief/{date}/` |
+| PRD | `_bmad-output/planning-artifacts/prd/{date}/` |
+| Architecture | `_bmad-output/planning-artifacts/architecture/{date}/` |
+
+### Hands Off To
+
+- `sprint-planning-wrapper/` - After architecture complete
+- `governance/` - If issues detected
+
+---
+
+## Updated Workflow Call Chains
+
+### Path 1: New Feature Development (REVISED)
+
+```
+User Request
+    ↓
+governance/ (Phase 0)
+    ├─ context-first
+    ├─ expert-analysis
+    └─ research-trigger
+    ↓
+[ALLOW] → Governance Report
+    ↓
+bmad-core/ (Phase 1-3)
+    ├─ brainstorming → party-mode
+    ├─ create-product-brief
+    ├─ prd
+    └─ create-architecture
+    ↓
+sprint-planning-wrapper/ (Phase 2)
+    └─ 7-step enhanced sprint planning
+    ↓
+Sprint Status Updated
+    ↓
+implementation/ (Phase 4)
+    └─ story-cycle workflow
+    ↓
+Story Complete → Handoff to orchestrator
+```
+
+### Path 2: Bug Fix / Remediation (UNCHANGED)
+
+```
+Bug Report / User Request
+    ↓
+governance/ (Phase 0)
+    └─ correct-course
+    ↓
+[ALLOW] → Issue Level Categorized
+    ├─ Quick Patch → implementation/
+    ├─ Feature Fix → implementation/
+    └─ Architectural Conflict → arc-v2/
+    ↓
+[Appropriate Module] → Fix Complete → Handoff
+```
+
+### Path 3: Architecture Remediation (UNCHANGED)
+
+```
+Architecture Issue Detected
+    ↓
+arc-v2/ (Phase 0 - Special)
+    └─ diagnostic-first workflow
+    ├─ context-validator
+    ├─ domain-scanner
+    └─ remediation plan
+    ↓
+implementation/ (Phase 4)
+    └─ architectural-conflict sub-workflow
+    ↓
+Refactoring Complete
+```
 
 ---
 
 ## Next Actions
 
-1. **Consolidate governance modules** - Archive `governance-core/`, keep `governance/`
-2. **Create missing governance files** - `domains.yaml`, `context-strategy.md`, etc.
-3. **Fix arc-v2 references** - Either create missing files or remove references
-4. **Create missing story-cycle steps** - `step-05-review.md`, `step-06a-reality-check.md`, `step-06-done.md`
-5. **Verify hop-reading patterns** - Ensure all workflows use frontmatter-first approach
+1. ✅ **Consolidate governance modules** - COMPLETED: `governance-core/` and `platform/` archived (2026-01-15)
+2. ✅ **Create bmad-core module** - COMPLETED: 5 workflows created (2026-01-15)
+3. ✅ **Frontmatter standardization** - COMPLETED: 14 files updated (Phase 2)
+4. ✅ **Responsibility matrix** - COMPLETED: `_bmad-ext/RESPONSIBILITY-MATRIX.md`
+5. ✅ **Decision tree** - COMPLETED: `_bmad-ext/DECISION-TREE.md`
+6. **Create missing governance files** - `domains.yaml`, `context-strategy.md`, etc.
+7. **Fix arc-v2 references** - Either create missing files or remove references
+8. **Create missing story-cycle steps** - `step-05-review.md`, `step-06a-reality-check.md`, `step-06-done.md`
+9. **Verify hop-reading patterns** - Ensure all workflows use frontmatter-first approach
 
 ---
 
-**Document Version**: 1.0.0
+**Document Version**: 1.1.0
 **Created**: 2026-01-11
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)
 **Next Review**: After missing files are created

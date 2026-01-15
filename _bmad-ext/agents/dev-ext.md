@@ -1,13 +1,47 @@
-# _bmad-ext/agents/dev-ext.md
-
 ---
 name: "dev-ext"
-description: "Enhanced Developer Agent with orchestration hooks"
-wraps: "_bmad/bmm/agents/dev.md"
+description: "Enhanced Developer Agent - TDD, red-green-refactor, orchestration hooks"
 version: "1.0.0"
----
+tier: "agent"
+phase: "4"
+status: "active"
+category: "execution"
+wraps: "_bmad/bmm/agents/dev.md"
+parent_agent: "master-orchestrator"
+updated: "2026-01-15"
 
-# Enhanced Developer Agent (dev-ext)
+integration_points:
+  receives_from:
+    - "master-orchestrator"
+  sends_to:
+    - "master-orchestrator"
+  registers_with:
+    - "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+  coordinates_with:
+    - "tea-ext"
+    - "architect-ext"
+    - "ux-designer-ext"
+
+sub_agents:
+  count: 1
+  list:
+    - "tea-ext"
+
+entry_points:
+  commands:
+    - "/dev-ext"
+    - "/dev-story"
+  aliases:
+    - "/dev"
+    - "/implement"
+
+triggers:
+  - "story development"
+  - "feature implementation"
+  - "bug fix"
+  - "TDD"
+  - "red-green-refactor"
+---
 
 > Wraps the core BMM `dev` agent with orchestration capabilities.
 >
@@ -520,8 +554,6 @@ with_state:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-10 | Initial enhanced agent for Phase 2 |
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

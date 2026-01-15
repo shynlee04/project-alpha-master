@@ -1,13 +1,38 @@
-# _bmad-ext/agents/tea-ext.md
-
 ---
 name: "tea-ext"
-description: "Enhanced Test Engineer Agent with orchestration hooks"
-wraps: "_bmad/bmm/agents/tea.md"
+description: "Enhanced Test Engineer Agent - Test strategy, automation, TDD guidance"
 version: "1.0.0"
----
+tier: "agent"
+phase: "4"
+status: "active"
+category: "testing"
+wraps: "_bmad/bmm/agents/tea.md"
+parent_agent: "dev-ext"
+updated: "2026-01-15"
 
-# Enhanced Test Engineer Agent (tea-ext)
+integration_points:
+  receives_from:
+    - "dev-ext"
+  sends_to:
+    - "dev-ext"
+  coordinates_with:
+    - "dev-ext"
+
+entry_points:
+  commands:
+    - "/tea-ext"
+    - "/test"
+  aliases:
+    - "/testing"
+    - "/qa"
+
+triggers:
+  - "test strategy"
+  - "test automation"
+  - "TDD"
+  - "quality assurance"
+  - "test coverage"
+---
 
 > Wraps the core BMM `tea` agent with orchestration capabilities.
 >
@@ -105,8 +130,6 @@ steps:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-10 | Initial enhanced agent |
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

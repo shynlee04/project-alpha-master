@@ -5,12 +5,15 @@ name: "product-management-ext"
 description: "Enhanced Product Management Agent - Consolidates PM and SM roles"
 wraps: "_bmad/bmm/agents/pm.md" and "_bmad/bmm/agents/sm.md"
 version: "1.0.0"
+tier: "agent"
+phase: "4"
+status: "active"
+category: "execution"
+updated: "2026-01-10"
 consolidated_from:
   - "pm-ext"
   - "sm-ext"
 ---
-
-# Enhanced Product Management Agent (product-management-ext)
 
 > **Consolidation Note:** This agent consolidates `pm-ext` and `sm-ext` into a single
 > main agent with two sub-agents. This reduces the main agent count from 9 to 8.
@@ -485,3 +488,9 @@ The following agents have been archived and replaced by this consolidated agent:
 | 2026-01-10 | `sm-ext.md` | `product-management-ext.md` (sm sub-agent) |
 
 Archive location: `_bmad-ext/.archive/agents/`
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

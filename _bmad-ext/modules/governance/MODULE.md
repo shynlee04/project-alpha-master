@@ -1,11 +1,81 @@
-# BMAD Extension Layer - Unified Governance Module v2.1
+---
+name: "governance"
+description: "Unified governance module - context, artifact lifecycle, TTL enforcement"
+version: "2.1.0"
+tier: "module"
+phase: "0"
+status: "active"
+category: "foundation"
+entry_point: "/context-first"
+updated: "2026-01-15"
 
-**Version**: 2.1.0
-**Status**: ACTIVE
-**Created**: 2026-01-11
-**Updated**: 2026-01-11
+integration_points:
+  reads_from:
+    - "_bmad-ext/state/LOOP_STATE.yaml"
+    - "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+    - "bmm-workflow-status.yaml"
+  writes_to:
+    - "_bmad-ext/state/LOOP_STATE.yaml"
+    - "AGENTS.md"
+    - "_bmad-output/.archive/"
+  invoked_by:
+    - "master-orchestrator"
+    - ".claude/hooks/"
+    - "enhanced-agents"
 
-## description
+children:
+  type: "workflow"
+  count: 4
+  list:
+    - "context-first"
+    - "expert-analysis"
+    - "research-trigger"
+    - "correct-course"
+
+governance_features:
+  ttl_tiers:
+    tier1:
+      name: "constitution"
+      ttl: "permanent"
+      examples: ["CLAUDE.md", "AGENTS.md"]
+    tier2:
+      name: "controlled"
+      ttl: "on-demand"
+      examples: ["prd", "architecture.md"]
+    tier3:
+      name: "archival"
+      ttl: "90 days"
+      examples: ["scans", "research"]
+    tier4:
+      name: "ephemeral"
+      ttl: "24 hours"
+      examples: ["handoffs", "continuations"]
+  triggers:
+    - "on_session_start"
+    - "on_artifact_creation"
+    - "on_step_completion"
+    - "on_story_completion"
+    - "on_epic_completion"
+
+triggers:
+  - "governance"
+  - "self governance"
+  - "context first"
+  - "expert analysis"
+  - "research trigger"
+  - "correct course"
+
+entry_points:
+  commands:
+    - "/context-first"
+    - "/expert-analysis"
+    - "/research-trigger"
+    - "/correct-course"
+  aliases:
+    - "/ctx-first"
+    - "/exp-anal"
+    - "/res-trig"
+---
 
 Unified governance module that consolidates all self-governance, artifact management, context filtering, and stale document detection. This is the **single source of truth** for all extension layer governance.
 
@@ -172,10 +242,8 @@ If you have artifacts in the old modules:
 
 The old modules are now deprecated and will be archived in the next update.
 
-## Version History
+---
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 2.1.0 | 2026-01-11 | Added realistic timing governance |
-| 2.0.0 | 2026-01-11 | Consolidated from governance/ + governance-core/ |
-| 1.0.0 | 2026-01-10 | Initial governance module (now deprecated) |
+**Version**: 2.1.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

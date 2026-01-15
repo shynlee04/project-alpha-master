@@ -104,3 +104,9 @@ issue_categories:
 ## Location
 
 `_bmad-ext/modules/implementation/workflows/correct-course/`
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

@@ -1,0 +1,202 @@
+{
+  "scanner": "TypeScript Deep Scanner",
+  "scan_date": "2026-01-15T12:00:00Z",
+  "tsc_command": "pnpm tsc --noEmit",
+  "tsc_total_errors": 12,
+  "tsc_warnings": 0,
+  "summary": {
+    "phase1_findings": 3,
+    "phase2_findings": 6,
+    "high_severity": 3,
+    "medium_severity": 6,
+    "low_severity": 0
+  },
+  "findings": [
+    {
+      "file": "src/infrastructure/filesystem/handle-persistence.ts",
+      "line": 568,
+      "pattern": "as any",
+      "severity": "HIGH",
+      "context": "export const persistHandle = (projectId: string, handle: FileSystemDirectoryHandle, workspaceId?: string) =>\n  handlePersistenceService.persistHandle(projectId, handle, workspaceId as any);",
+      "recommendation": "The `persistHandle` method expects a `WorkspaceId` type ('ide' | 'knowledge' | 'study' | 'notes'), but receives an optional string. Fix: Either validate the input or pass `workspaceId` without casting if it's guaranteed to be valid at call sites. Better: Change signature to accept `WorkspaceId | undefined`.",
+      "code_snippet": "persistHandle(projectId: string, handle: FileSystemDirectoryHandle, workspaceId?: WorkspaceId)"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/project-crud-slice.ts",
+      "line": 83,
+      "pattern": "any (implicit parameter type)",
+      "severity": "HIGH",
+      "context": "export function fromRecord(record: any): Project {",
+      "recommendation": "Replace `any` with `ProjectRecord` interface from '@/infrastructure/persistence/dexie-db-core-types'. The function already accesses typed fields (record.id, record.name, etc.), so typing it properly would catch record shape mismatches.",
+      "code_snippet": "export function fromRecord(record: ProjectRecord): Project {"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/project-crud-slice.ts",
+      "line": 239,
+      "pattern": "as any",
+      "severity": "MEDIUM",
+      "context": "(get() as any).updateLastOpened(projectId);",
+      "recommendation": "Cross-slice communication between Zustand slices. The `updateLastOpened` method exists in utils slice but TypeScript can't see it through `get()`. Fix: Import the utils slice and call method directly: `projectUtilsSlice.updateLastOpened(projectId)`, or use a proper type assertion with combined state type.",
+      "code_snippet": "import { projectUtilsSlice } from './project-utils-slice';\n// Then call:\nprojectUtilsSlice.updateLastOpened(projectId);"
+    },
+    {
+      "file": "src/infrastructure/persistence/dexie-db-migrations.ts",
+      "line": 796,
+      "pattern": "as any",
+      "severity": "MEDIUM",
+      "context": "const table = (db as any)[tableKey];",
+      "recommendation": "Dynamic table access in migration code. While migrations are inherently dynamic, this could be improved by creating a proper table type mapping or using a generic helper. Acceptable for migration code but should be refactored to `db[tableKey as keyof ViaGentDatabase]` with proper validation.",
+      "code_snippet": "const tableKey = keyof ViaGentDatabase;\nconst table = db[tableKey];"
+    },
+    {
+      "file": "src/infrastructure/persistence/dexie-db-migrations.ts",
+      "line": 805,
+      "pattern": "as any",
+      "severity": "MEDIUM",
+      "context": "await table.update(record as any, { workspaceId: 'ide' });",
+      "recommendation": "Record type in migration is too broad. The `record` comes from `table.toArray()` which should be typed. Consider: `const record: { id?: string; workspaceId?: string }` or use a generic type parameter for table records.",
+      "code_snippet": "const record = { id?: string; workspaceId?: string; [key: string]: unknown };"
+    },
+    {
+      "file": "src/infrastructure/persistence/dexie-db-migrations.ts",
+      "line": 1281,
+      "pattern": "as any",
+      "severity": "MEDIUM",
+      "context": "await MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE(tx as any);",
+      "recommendation": "Migration function expects a Transaction type but receives `any`. The function signature should be updated to accept the proper Dexie Transaction type: `VersionChangeTransaction` or generic `Transaction`.",
+      "code_snippet": "import { Transaction } from 'dexie';\nawait MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE(tx as Transaction);"
+    },
+    {
+      "file": "src/infrastructure/persistence/dexie-db-migrations.ts",
+      "line": 1382,
+      "pattern": "as any",
+      "severity": "MEDIUM",
+      "context": "const db = tx.db as any;",
+      "recommendation": "Accessing `tx.db` in migration. Should be typed as `ViaGentDatabase` or at minimum Dexie's Database type. The migration context provides full database access, so proper typing would catch table access errors.",
+      "code_snippet": "const db = tx.db as ViaGentDatabase;"
+    },
+    {
+      "file": "src/infrastructure/persistence/dexie-db-migrations.ts",
+      "line": 1411,
+      "pattern": "any",
+      "severity": "LOW",
+      "context": "const updatedNotes = notesToUpdate.map((note: any) => ({",
+      "recommendation": "Note type should be imported from domain types. Using `any` loses type safety during migration. Replace with proper NoteRecord type or define inline interface for migration context.",
+      "code_snippet": "const updatedNotes = notesToUpdate.map((note: NoteRecord) => ({"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/hydration-manager.ts",
+      "line": 173,
+      "pattern": "any (comment only, no code issue)",
+      "severity": "LOW",
+      "context": "* without any user prompt on page reload.",
+      "recommendation": "This is a comment using 'any' as a pronoun, not a type. No action needed.",
+      "code_snippet": "N/A - comment only"
+    }
+  ],
+  "phase1_files": {
+    "handle-persistence.ts": {
+      "errors": 0,
+      "findings": 1,
+      "severity": "HIGH",
+      "status": "NEEDS_FIX"
+    },
+    "hydration-manager.ts": {
+      "errors": 0,
+      "findings": 0,
+      "status": "CLEAN"
+    },
+    "project-crud-slice.ts": {
+      "errors": 0,
+      "findings": 2,
+      "severity": "HIGH, MEDIUM",
+      "status": "NEEDS_FIX"
+    }
+  },
+  "phase2_files": {
+    "notes-file-sync-service.ts": {
+      "errors": 0,
+      "findings": 0,
+      "status": "CLEAN"
+    },
+    "use-markdown-sync-service.ts": {
+      "errors": 0,
+      "findings": 0,
+      "status": "CLEAN"
+    },
+    "dexie-db-migrations.ts": {
+      "errors": 0,
+      "findings": 5,
+      "severity": "MEDIUM, LOW",
+      "status": "ACCEPTABLE_MIGRATIONS"
+    },
+    "storage-gateway-factory.ts": {
+      "errors": 0,
+      "findings": 0,
+      "status": "CLEAN"
+    }
+  },
+  "pre_existing_errors": {
+    "total_errors": 12,
+    "details": [
+      {
+        "file": "src/infrastructure/persistence/services/db-consolidation-service.ts",
+        "line": 140,
+        "error": "Type 'FlashcardSetRecord' is not assignable to type 'FlashcardRecord'",
+        "severity": "HIGH",
+        "status": "PRE_EXISTING"
+      },
+      {
+        "file": "src/routes/_spike.ux-redesign-2026-01-14.tsx",
+        "lines": [37, 38, 150, 295],
+        "error": "Unused variables ('Eye', 'Menu', 'focusMode', 'helper')",
+        "severity": "LOW",
+        "status": "PRE_EXISTING_SPIKE"
+      },
+      {
+        "file": "src/routes/knowledge.$projectId.lazy.tsx",
+        "lines": [74, 77],
+        "error": "Invalid 'ssr' property, implicit 'any' type for 'params'",
+        "severity": "MEDIUM",
+        "status": "PRE_EXISTING"
+      },
+      {
+        "file": "src/routes/notes.$projectId.lazy.tsx",
+        "lines": [82, 85],
+        "error": "Invalid 'ssr' property, implicit 'any' type for 'params'",
+        "severity": "MEDIUM",
+        "status": "PRE_EXISTING"
+      },
+      {
+        "file": "src/routes/study.$projectId.lazy.tsx",
+        "lines": [74, 77],
+        "error": "Invalid 'ssr' property, implicit 'any' type for 'params'",
+        "severity": "MEDIUM",
+        "status": "PRE_EXISTING"
+      }
+    ]
+  },
+  "recommendations": {
+    "immediate_actions": [
+      "Fix handle-persistence.ts:568 - Change workspaceId parameter type to WorkspaceId | undefined",
+      "Fix project-crud-slice.ts:83 - Replace 'any' with 'ProjectRecord' from core types",
+      "Fix project-crud-slice.ts:239 - Use direct slice import instead of 'as any' cast"
+    ],
+    "phase2_actions": [
+      "Review dexie-db-migrations.ts type assertions - acceptable for migration code but could be improved",
+      "Consider creating migration-specific types to reduce 'any' usage",
+      "Document why migration code uses dynamic table access"
+    ],
+    "pre_existing_cleanup": [
+      "Fix db-consolidation-service.ts Flashcard type mismatch",
+      "Remove unused imports in _spike.ux-redesign-2026-01-14.tsx",
+      "Fix lazy route 'params' implicit any types (3 files)"
+    ]
+  },
+  "type_safety_score": {
+    "phase1": 66,
+    "phase2": 75,
+    "overall": 71,
+    "rationale": "Phase 1 has 2 HIGH severity issues, Phase 2 has acceptable migration code patterns. Overall good but needs 3 critical fixes."
+  }
+}

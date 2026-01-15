@@ -116,3 +116,9 @@ dependency_conflicts: []
 - **Config**: `_bmad-ext/modules/sprint-planning-wrapper/config/`
 - **Scanners**: `_bmad-ext/modules/sprint-planning-wrapper/scanners/`
 - **Consumes**: `_bmad/bmm/workflows/4-implementation/sprint-planning/`
+
+---
+
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

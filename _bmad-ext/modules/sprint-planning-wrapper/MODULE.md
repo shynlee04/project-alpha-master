@@ -1,10 +1,65 @@
+---
+name: "sprint-planning-wrapper"
+description: "Enhanced sprint planning - Cohesion validation, dependency mapping, reality validation"
+version: "1.1.0"
+tier: "module"
+phase: "2"
+status: "active"
+category: "planning"
+entry_point: "/sprint-planning"
+updated: "2026-01-15"
+
+integration_points:
+  reads_from:
+    - "_bmad/bmm/workflows/4-implementation/sprint-planning/"
+    - "_bmad-output/planning-artifacts/epics.md"
+    - "_bmad-output/sprint-artifacts/stories/"
+  writes_to:
+    - "sprint-status.yaml"
+    - "_bmad-output/sprint-artifacts/cohesion-report-{date}.md"
+    - "_bmad-output/sprint-artifacts/dependency-map.yaml"
+  invoked_by:
+    - "master-orchestrator"
+  hands_off_to:
+    - "implementation"
+
+children:
+  type: "workflow"
+  count: 1
+  list:
+    - "sprint-planning-enhanced"
+
+planning_features:
+  validation_gates:
+    - "cohesion-check"
+    - "dependency-map"
+    - "reality-validation"
+    - "nonsense-detector"
+  gate_rules:
+    cohesion_score_minimum: 70
+    max_dependency_depth: 5
+    reality_demo_timeout: 30
+    nonsense_threshold: 3
+
+triggers:
+  - "sprint planning"
+  - "plan sprint"
+  - "cohesion check"
+  - "dependency map"
+
+entry_points:
+  commands:
+    - "/sprint-planning"
+    - "/cohesion-check"
+    - "/dependency-map"
+  aliases:
+    - "/sprint"
+    - "/plan"
+---
+
 # Sprint-Planning Wrapper Module
 
-**Version**: 1.1.0
-**Last Updated**: 2026-01-11
-**Status**: Active
-
-## description
+## Description
 
 Wraps the existing BMAD `sprint-planning` workflow with auto gatekeeping, looping, automation, and handoff work. Adds **Cohesion & Reality validation** to prevent "Dual Chat" type failures.
 
@@ -209,9 +264,6 @@ cat workflows/sprint-planning-enhanced/workflow.md
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.1.0 | 2026-01-11 | Added realistic timing governance (5-15 min wrapper processing) |
-| 1.0.0 | 2026-01-11 | Initial Sprint-Planning Wrapper module |
+**Version**: 1.1.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

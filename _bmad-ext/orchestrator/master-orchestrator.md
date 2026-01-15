@@ -1,20 +1,68 @@
-# _bmad-ext/orchestrator/master-orchestrator.md
-
 ---
 name: "master-orchestrator"
 description: "Central orchestrator for all autonomous BMAD development"
 version: "1.1.0"
+tier: "orchestrator"
+status: "active"
 entry_point: true
-updated: "2026-01-11"
----
+category: "orchestration"
+updated: "2026-01-15"
 
-# Master Orchestrator
+integration_points:
+  reads_from:
+    - "bmm-workflow-status.yaml"
+    - "_bmad-ext/state/LOOP_STATE.yaml"
+    - "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+    - "_bmad-ext/orchestrator/routing-rules.yaml"
+  writes_to:
+    - "_bmad-ext/state/LOOP_STATE.yaml"
+    - "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+    - "_bmad-ext/state/DELEGATION_LOG.yaml"
+    - "bmm-workflow-status.yaml"
+    - "AGENTS.md"
+  spawns:
+    - "sprint-planning-wrapper"
+    - "dev-ext"
+    - "architect-ext"
+    - "analyst-ext"
+    - "product-management-ext"
+    - "tea-ext"
+    - "tech-writer-ext"
+    - "ux-designer-ext"
+    - "quality-scanner"
+  invokes_modules:
+    - "sprint-planning-wrapper"
+    - "implementation"
+    - "governance"
+    - "arc-v2"
+
+children:
+  type: "module"
+  count: 4
+  list:
+    - "governance"
+    - "arc-v2"
+    - "sprint-planning-wrapper"
+    - "implementation"
+
+triggers:
+  - "autonomous mode"
+  - "orchestrator"
+  - "bmad master"
+  - "asgl"
+
+entry_points:
+  commands:
+    - "/master-orchestrator"
+    - "/asgl"
+    - "/bmad-master"
+    - "/orchestrator"
+---
 
 > **SINGLE ENTRY POINT** for all autonomous BMAD development.
 > Delegates to enhanced agents, receives callbacks, updates governance.
-> **Updated**: Now routes through Sprint-Planning Wrapper with Cohesion & Reality validation.
 
-## description
+## Description
 
 The master orchestrator is the **central brain** of the BMAD extension layer:
 
@@ -833,9 +881,6 @@ product_reality_gates:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.1.0 | 2026-01-11 | Added Sprint-Planning Wrapper integration, Product Reality Gates |
-| 1.0.0 | 2026-01-10 | Initial orchestrator for Phase 3 |
+**Version**: 1.1.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

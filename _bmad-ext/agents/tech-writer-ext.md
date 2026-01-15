@@ -1,13 +1,39 @@
-# _bmad-ext/agents/tech-writer-ext.md
-
 ---
 name: "tech-writer-ext"
-description: "Enhanced Technical Writer Agent with orchestration hooks"
-wraps: "_bmad/bmm/agents/tech-writer.md"
+description: "Enhanced Technical Writer Agent - API docs, user guides, architecture documentation"
 version: "1.0.0"
----
+tier: "agent"
+phase: "4"
+status: "active"
+category: "documentation"
+wraps: "_bmad/bmm/agents/tech-writer.md"
+parent_agent: "master-orchestrator"
+updated: "2026-01-15"
 
-# Enhanced Technical Writer Agent (tech-writer-ext)
+integration_points:
+  receives_from:
+    - "master-orchestrator"
+  sends_to:
+    - "master-orchestrator"
+  coordinates_with:
+    - "dev-ext"
+    - "architect-ext"
+
+entry_points:
+  commands:
+    - "/tech-writer-ext"
+    - "/docs"
+  aliases:
+    - "/documentation"
+    - "/api-docs"
+
+triggers:
+  - "API documentation"
+  - "user guide"
+  - "architecture docs"
+  - "README"
+  - "contribution guide"
+---
 
 > Wraps the core BMM `tech-writer` agent with orchestration capabilities.
 >
@@ -113,8 +139,6 @@ steps:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-10 | Initial enhanced agent |
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

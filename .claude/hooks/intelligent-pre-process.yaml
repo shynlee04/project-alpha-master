@@ -1,0 +1,90 @@
+---
+name: intelligent-pre-process
+description: Smart pre-processing with intent detection and context-aware validation bypass
+when: UserPromptSubmit
+priority: 1
+once: false
+version: 3.0.0
+updated: 2026-01-16
+work_modes:
+  implementation:
+    keywords: [implement feature, write code, create component, add function, modify logic, fix bug, refactor, create store, create hook]
+    validation_required: [typescript_check, test_check, story_context]
+    validation_skip: []
+  planning:
+    keywords: [plan sprint, design architecture, create prd, write specification, estimate, roadmap, brainstorm, create product brief, create architecture]
+    validation_required: [story_context]
+    validation_skip: [typescript_check, test_check]
+  artifact_creation:
+    keywords: [create document, write documentation, create template, generate artifact, create story, create epic, create plan, create adr]
+    validation_required: []
+    validation_skip: [typescript_check, test_check, story_context]
+  reading:
+    keywords: [show me, what is, explain, read file, check status, view, list, grep, find, search]
+    validation_required: []
+    validation_skip: [typescript_check, test_check, story_context, artifact_validation]
+  analysis:
+    keywords: [analyze, review code, audit, scan, diagnose, check for issues, find problems]
+    validation_required: [typescript_check]
+    validation_skip: [test_check]
+validation_rules:
+  implementation_mode:
+    typescript: required
+    tests: required
+    story_context: required
+    loop_state: required
+  planning_mode:
+    typescript: skipped
+    tests: skipped
+    story_context: required
+    loop_state: check_freshness
+  artifact_mode:
+    typescript: skipped
+    tests: skipped
+    story_context: skipped
+    loop_state: anchor_only
+  reading_mode:
+    typescript: skipped
+    tests: skipped
+    story_context: skipped
+    loop_state: anchor_only
+    load_context_slice: yes
+  analysis_mode:
+    typescript: required
+    tests: skipped
+    story_context: skipped
+    loop_state: check_freshness
+bypass_keywords:
+  --no-ts: Skip TypeScript check
+  --no-test: Skip test execution
+  --no-validate: Skip all validation
+  --quick: Reading mode (skip all validation)
+  --plan: Planning mode (minimal validation)
+  --full: Implementation mode (full validation)
+examples:
+  - user_input: Implement feature X
+    mode: implementation
+    validation: Full
+  - user_input: Create PRD for feature Y
+    mode: planning
+    validation: Minimal
+  - user_input: Write documentation for API
+    mode: artifact_creation
+    validation: Skip
+  - user_input: Show me the current story status
+    mode: reading
+    validation: Skip
+  - user_input: Analyze the codebase for issues
+    mode: analysis
+    validation: TypeScript only
+anti_patterns:
+  - old_dumb: Run TypeScript for every request
+    new_smart: Only for implementation
+  - old_dumb: Run tests for planning tasks
+    new_smart: Skip tests for non-code tasks
+  - old_dumb: Block on stale context for reads
+    new_smart: Allow reads with warning
+  - old_dumb: Full governance for artifact creation
+    new_smart: Skip validation for artifacts
+  - old_dumb: Check story for every action
+    new_smart: Only check when relevant

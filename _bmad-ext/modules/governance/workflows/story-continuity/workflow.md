@@ -8,6 +8,11 @@ version: "1.0.0"
 created: "2026-01-11"
 ---
 
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)
+---
+
 # Story Continuity Checker
 
 **description**: Validate story continuity with actual code checks before/after each story execution

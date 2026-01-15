@@ -1,14 +1,65 @@
-# Architecture Remediation v2.0 (ARC-V2)
+---
+name: "arc-v2"
+description: "Architecture Remediation v2 - Diagnostic-first, 6-domain scanning, platform-aware strategies"
+version: "2.0.0"
+tier: "module"
+phase: "0"
+status: "active"
+category: "remediation"
+entry_point: "/diagnostic-first"
+updated: "2026-01-15"
 
-**Module ID**: `arc-v2`
-**Version**: 2.0.0
-**Created**: 2026-01-10
-**Status**: `ACTIVE`
-**Replaces**: `_bmad/modules/architecture-remediation/` (stale, poisoned context)
+integration_points:
+  reads_from:
+    - "_bmad-ext/state/LOOP_STATE.yaml"
+    - "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+    - "_bmad-ext/orchestrator/routing-rules.yaml"
+  writes_to:
+    - "_bmad-output/scans/{domain}-scan-{date}.yaml"
+    - "_bmad-output/remediations/"
+    - "_bmad-ext/state/LOOP_STATE.yaml"
+  invoked_by:
+    - "master-orchestrator"
+    - "governance"
 
+children:
+  type: "agent"
+  count: 5
+  list:
+    - "context-validator"
+    - "domain-scanner"
+    - "store-refactorer"
+    - "component-splitter"
+    - "typescript-fixer"
+
+architecture_domains:
+  domains: 6
+  list:
+    - "persistence"
+    - "sync"
+    - "state"
+    - "routing"
+    - "agents"
+    - "workspace"
+
+triggers:
+  - "architecture remediation"
+  - "diagnostic first"
+  - "scan architecture"
+  - "domain scan"
+
+entry_points:
+  commands:
+    - "/diagnostic-first"
+    - "/domain-scan"
+    - "/store-refactor"
+    - "/component-split"
+    - "/fix-typescript"
 ---
 
-## description
+# Architecture Remediation v2.0 (ARC-V2)
+
+## Description
 
 Fresh architecture remediation module designed to address the systemic issues in Project Alpha:
 
@@ -277,3 +328,9 @@ workspace_architect:
   coordinates_with:
     - domain-scanner (for analysis)
 ```
+
+---
+
+**Version**: 2.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

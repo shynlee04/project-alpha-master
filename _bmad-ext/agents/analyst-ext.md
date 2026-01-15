@@ -1,13 +1,39 @@
-# _bmad-ext/agents/analyst-ext.md
-
 ---
 name: "analyst-ext"
-description: "Enhanced Analyst Agent with orchestration hooks"
-wraps: "_bmad/bmm/agents/analyst.md"
+description: "Enhanced Analyst Agent - Requirements analysis, research, competitive analysis"
 version: "1.0.0"
----
+tier: "agent"
+phase: "1"
+status: "active"
+category: "analysis"
+wraps: "_bmad/bmm/agents/analyst.md"
+parent_agent: "master-orchestrator"
+updated: "2026-01-15"
 
-# Enhanced Analyst Agent (analyst-ext)
+integration_points:
+  receives_from:
+    - "master-orchestrator"
+  sends_to:
+    - "master-orchestrator"
+  coordinates_with:
+    - "product-management-ext"
+    - "tech-writer-ext"
+
+entry_points:
+  commands:
+    - "/analyst-ext"
+    - "/analyze"
+  aliases:
+    - "/analysis"
+    - "/requirements"
+
+triggers:
+  - "requirements analysis"
+  - "competitive analysis"
+  - "domain analysis"
+  - "research"
+  - "story breakdown"
+---
 
 > Wraps the core BMM `analyst` agent with orchestration capabilities.
 >
@@ -94,8 +120,6 @@ steps:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-10 | Initial enhanced agent |
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

@@ -1,13 +1,40 @@
-# _bmad-ext/agents/architect-ext.md
-
 ---
 name: "architect-ext"
-description: "Enhanced Architect Agent with orchestration hooks"
-wraps: "_bmad/bmm/agents/architect.md"
+description: "Enhanced Architect Agent - System design, ADRs, technical specifications"
 version: "1.0.0"
----
+tier: "agent"
+phase: "1"
+status: "active"
+category: "architecture"
+wraps: "_bmad/bmm/agents/architect.md"
+parent_agent: "master-orchestrator"
+updated: "2026-01-15"
 
-# Enhanced Architect Agent (architect-ext)
+integration_points:
+  receives_from:
+    - "master-orchestrator"
+  sends_to:
+    - "master-orchestrator"
+  coordinates_with:
+    - "dev-ext"
+    - "ux-designer-ext"
+
+entry_points:
+  commands:
+    - "/architect-ext"
+    - "/architecture"
+    - "/adr"
+  aliases:
+    - "/arch"
+    - "/design"
+
+triggers:
+  - "system design"
+  - "architecture"
+  - "technical specification"
+  - "ADR"
+  - "design review"
+---
 
 > Wraps the core BMM `architect` agent with orchestration capabilities.
 >
@@ -127,8 +154,6 @@ Creates architecture handoff artifact with:
 
 ---
 
-## Version History
-
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-10 | Initial enhanced agent |
+**Version**: 1.0.0
+**Last Updated**: 2026-01-15
+**Schema Version**: 1.0.0 (Frontmatter applied)

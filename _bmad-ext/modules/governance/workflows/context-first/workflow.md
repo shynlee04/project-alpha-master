@@ -209,3 +209,9 @@ post_story_completion:
 |---------|------|---------|
 | 1.1.0 | 2026-01-11 | Added story continuity check, code validation, timing governance |
 | 1.0.0 | 2026-01-11 | Initial context-first workflow |
+
+---
+
+**Version**: 1.1.0
+**Last Updated**: 2026-01-11
+**Schema Version**: 1.0.0 (Frontmatter applied)
