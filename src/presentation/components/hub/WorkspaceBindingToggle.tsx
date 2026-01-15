@@ -17,12 +17,11 @@
 import { useState, useMemo } from 'react';
 import { Switch } from '@/presentation/components/ui/switch';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+// CC-V2-A02: Import from canonical location
+import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
 
-// ============================================================================
-// Types
-// ============================================================================
-
-export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
+// Re-export for consumers
+export type { WorkspaceId };
 
 export interface WorkspaceBindingToggleProps {
   /** Project ID to update */

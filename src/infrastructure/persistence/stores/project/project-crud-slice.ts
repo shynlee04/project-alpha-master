@@ -14,7 +14,7 @@
 
 import { StateCreator } from 'zustand';
 import { db } from '@/infrastructure/persistence/dexie-db';
-import { storeFSAHandle } from '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers';
+// CC-V2-B03: Removed storeFSAHandle import - handle storage is now done in fsa-persistence.ts
 import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import type {
   Project,
@@ -148,23 +148,18 @@ export const createProjectCrudSlice: StateCreator<
       console.error('[ProjectStore] Failed to persist project to Dexie:', err.message);
     });
 
-    // Persist FSA handle metadata for 'fsa' storage type (indexeddb projects don't need handles)
-    // PS-04: Store metadata, not the handle itself. Uses metadata from input since we don't have the handle here.
-    // FSA-011 FIX: Was passing null as handle - now stores metadata correctly
-    if (storageType === 'fsa' && input.storageMetadata) {
-      storeFSAHandle({
-        projectId,
-        workspaceId: workspaceType,
-        handleData: { kind: 'directory' as const, name: input.storageMetadata.directoryName },
-        directoryPath: input.storageMetadata.directoryName,
-        permissionStatus: 'granted',
-        grantedAt: Date.now(),
-        lastAccessedAt: Date.now(),
-      }).catch((error: unknown) => {
-        const err = error as Error;
-        console.error('[ProjectStore] Failed to persist FSA handle metadata:', err.message);
-      });
-    }
+    // CC-V2-B03 FIX: REMOVED mock handle storage
+    // The actual FSA handle is persisted by fsa-persistence.ts via handlePersistenceService.persistHandle()
+    // which correctly uses structuredClone for Chrome 129+ to store the real FileSystemDirectoryHandle.
+    // Previous code was storing a mock object { kind: 'directory', name: '...' } which could not be restored.
+    // 
+    // Handle persistence flow:
+    // 1. createProjectFromFolder() in fsa-persistence.ts calls this createProject() method
+    // 2. This method creates project metadata in Zustand + Dexie
+    // 3. fsa-persistence.ts then calls handlePersistenceService.persistHandle(projectId, handle, 'ide')
+    // 4. handlePersistenceService stores actual handle with structuredClone (Chrome 129+)
+    //
+    // DO NOT add handle storage here - it will race with the real handle and overwrite it!
 
     return projectId;
   },

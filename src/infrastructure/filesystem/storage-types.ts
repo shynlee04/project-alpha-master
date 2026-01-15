@@ -72,6 +72,39 @@ export interface StorageCapabilities {
 }
 
 /**
+ * Platform Contract Interface (ADR-033 D1)
+ *
+ * Provides a unified contract for platform capabilities across the application.
+ * Used to make routing and storage decisions based on platform capabilities.
+ *
+ * @example
+ * ```typescript
+ * const platform = getPlatformContract();
+ * if (platform.canAccessFSA) {
+ *   // Desktop: Show FSA project picker
+ * } else {
+ *   // Mobile: Use browser-mode (IndexedDB)
+ * }
+ * ```
+ */
+export interface PlatformContract {
+  /** Device type: desktop, mobile, or tablet */
+  deviceType: PlatformType;
+  /** Optimal storage type for this platform */
+  storageType: StorageType;
+  /** Whether File System Access API is available */
+  canAccessFSA: boolean;
+  /** Whether file watching is supported (FileSystemObserver) */
+  canWatchFiles: boolean;
+  /** Whether terminal can be run (WebContainer) */
+  canRunTerminal: boolean;
+  /** Whether agentic coding is possible (FSA + Terminal) */
+  canDoAgenticCoding: boolean;
+  /** Whether IDE workspace is accessible */
+  canAccessIDE: boolean;
+}
+
+/**
  * Options for creating a storage adapter
  * 
  * FIX-2026-01-19: FSA-006 - handle is now optional, use handleGetter for context-based retrieval

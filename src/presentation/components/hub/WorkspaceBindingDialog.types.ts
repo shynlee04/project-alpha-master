@@ -8,9 +8,11 @@
  */
 
 import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
+// CC-V2-A02: Import from canonical location
+import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
 
-/** Workspace ID type for binding selections */
-export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
+// Re-export for convenience
+export type { WorkspaceId };
 
 /** Workspace configuration with icon and translation key */
 export interface WorkspaceConfig {

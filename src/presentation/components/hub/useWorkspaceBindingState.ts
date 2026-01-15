@@ -14,8 +14,8 @@
 
 import { useState, useEffect } from 'react';
 import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
-
-type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
+// CC-V2-A02: Import from canonical location
+import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
 
 const WORKSPACES: { id: WorkspaceId }[] = [
   { id: 'ide' },

@@ -27,16 +27,11 @@
  */
 
 import EventEmitter3 from 'eventemitter3';
-import type { WorkspaceType } from '@/core/entities/Workspace';
+// CC-V2-A02: Import from canonical location per ADR-035
+import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
 
-// ============================================================================
-// Types
-// ============================================================================
-
-/**
- * Workspace identifiers
- */
-export type WorkspaceId = WorkspaceType;
+// Re-export for consumers
+export type { WorkspaceId };
 
 /**
  * File change event payload

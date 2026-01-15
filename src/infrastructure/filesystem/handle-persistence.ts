@@ -51,11 +51,13 @@ import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db-type
  * @returns true if browser supports structuredClone for handles (Chrome 129+)
  */
 export function isStructuredCloneSupported(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    'structuredClone' in window &&
-    navigator.userAgent.includes('Chrome/129')
-  );
+  // CC-V2-B01: Fixed Chrome version check - was exact match 'Chrome/129', now >= 129
+  if (typeof window === 'undefined') return false;
+  if (!('structuredClone' in window)) return false;
+  
+  const match = navigator.userAgent.match(/Chrome\/(\d+)/);
+  const chromeVersion = match ? parseInt(match[1], 10) : 0;
+  return chromeVersion >= 129;  // Chrome 129+ supports structuredClone for FSA handles
 }
 
 /**

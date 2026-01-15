@@ -50,12 +50,14 @@ export class HydrationManager {
 
   /**
    * Extract projectId from URL
-   * Supports routes: /ide/{projectId} or /study/{projectId}
+   * CC-V2-B02: Fixed regex - was returning match[1] (workspace name), now returns match[2] (projectId)
+   * Supports routes: /ide/{projectId}, /study/{projectId}, /notes/{projectId}, /knowledge/{projectId}
    */
   private getProjectIdFromURL(): string | null {
     const pathname = window.location.pathname;
-    const match = pathname.match(/\/(ide|study)\/([a-f0-9-]+)/i);
-    return match ? match[1] : null;
+    // Updated regex to match proj_ prefix and any valid projectId format
+    const match = pathname.match(/\/(ide|study|notes|knowledge)\/([^/]+)/i);
+    return match ? match[2] : null;  // Return capture group 2 (projectId), not group 1 (workspace)
   }
 
   constructor() {

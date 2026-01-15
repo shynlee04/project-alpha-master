@@ -310,7 +310,7 @@ export function createPlatformDetector() {
 
 /**
  * Platform detector singleton
- * 
+ *
  * Use this for non-React code that needs platform detection.
  * For React components, use useCapabilityDetection() instead.
  */

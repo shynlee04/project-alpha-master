@@ -19,8 +19,8 @@ import { useProjectStore } from '@/infrastructure/persistence/stores/project/use
 import { db } from '@/infrastructure/persistence/dexie-db';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 
-/** Default browser mode project ID */
-export const BROWSER_MODE_PROJECT_ID = 'notes:browser-mode';
+/** Default browser mode project ID - CC-V2-A01: Changed to proj_ format per ADR-035 */
+export const BROWSER_MODE_PROJECT_ID = 'proj_browser-default';
 
 /** Browser mode project display name */
 export const BROWSER_MODE_DISPLAY_NAME = 'Browser Mode';

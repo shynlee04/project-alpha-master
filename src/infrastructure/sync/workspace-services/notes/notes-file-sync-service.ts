@@ -29,11 +29,13 @@ import {
 import { setupFileWatcher, type FileChangeTracker } from './note-file-watcher';
 import { syncNoteChanges } from './note-crud-operations';
 import { NoteFolderBridge } from './note-folder-bridge';
+import { registerFileSaveHandler, unregisterFileSaveHandler } from '@/lib/notes/slices/note-sync-slice';
 
 /**
  * Configuration for Notes file sync service
  */
 export interface NotesFileSyncConfig extends FileSyncConfig {
+    projectId: string;
     localAdapter: LocalFSAdapter;
     noteStore: NoteSyncStore;
     targetDirectory?: string;
@@ -56,11 +58,13 @@ export interface NotesFileSyncConfig extends FileSyncConfig {
  * - Frontmatter support for metadata preservation
  */
 export class NotesFileSyncService implements FileSyncService {
+    private readonly projectId: string;
     private localAdapter: LocalFSAdapter;
     private noteStore: NoteSyncStore;
     private state: NotesFileSyncState;
     private syncTimer?: ReturnType<typeof setInterval>;
     private cleanupFileWatcher?: () => void;
+    private bridgeInstance?: NoteFolderBridge;
 
     // FileSyncService interface methods (bound to state)
     declare readFile: (path: string) => Promise<string>;
@@ -72,6 +76,7 @@ export class NotesFileSyncService implements FileSyncService {
     declare mount: (source: FileSystemDirectoryHandle) => Promise<void>;
 
     constructor(config: NotesFileSyncConfig) {
+        this.projectId = config.projectId;
         this.localAdapter = config.localAdapter;
         this.noteStore = config.noteStore;
 
@@ -97,16 +102,21 @@ export class NotesFileSyncService implements FileSyncService {
 
         // Custom mount implementation to trigger bridge import
         // FIX-2026-01-06: Now properly handles import result instead of swallowing errors
+        // CC-V2-B04: Register bridge for auto-save functionality
         this.mount = async (source: FileSystemDirectoryHandle) => {
             // Mount the directory in the adapter
             await impl.mount(source);
 
             // Trigger initial import via bridge
             console.log('[NotesFileSyncService] Directory mounted, starting initial import...');
-            const bridge = new NoteFolderBridge(this.localAdapter, this.noteStore);
+            this.bridgeInstance = new NoteFolderBridge(this.localAdapter, this.noteStore);
+
+            // Register bridge for auto-save (CC-V2-B04)
+            registerFileSaveHandler(this.projectId, this.bridgeInstance);
+            console.log(`[NotesFileSyncService] Registered file save handler for project ${this.projectId}`);
 
             // Import with progress callback for potential UI updates
-            const result = await bridge.importDirectory('', (current, total, currentFile) => {
+            const result = await this.bridgeInstance.importDirectory('', (current, total, currentFile) => {
                 // Could emit progress events here for UI
                 console.log(`[NotesFileSyncService] Importing ${current}/${total}: ${currentFile}`);
             });
@@ -185,6 +195,11 @@ export class NotesFileSyncService implements FileSyncService {
     }
 
     async dispose(): Promise<void> {
+        // Unregister file save handler (CC-V2-B04)
+        if (this.projectId) {
+            unregisterFileSaveHandler(this.projectId);
+            console.log(`[NotesFileSyncService] Unregistered file save handler for project ${this.projectId}`);
+        }
         this.state.disposed = true;
         this.state.changeListeners.clear();
         if (this.syncTimer) {
@@ -256,7 +271,8 @@ export class NotesFileSyncService implements FileSyncService {
         rootPath?: string,
         onProgress?: (current: number, total: number, currentFile: string) => void
     ) {
-        const bridge = new NoteFolderBridge(this.localAdapter, this.noteStore);
+        // Reuse existing bridge if available, otherwise create new instance
+        const bridge = this.bridgeInstance || new NoteFolderBridge(this.localAdapter, this.noteStore);
         return bridge.importDirectory(rootPath || '', onProgress);
     }
 }

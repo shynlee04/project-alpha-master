@@ -218,7 +218,8 @@ export function createFSAGateway(directoryHandle: FileSystemDirectoryHandle): St
  *
  * @example
  * ```ts
- * const gateway = createIDBGateway('notes:browser-mode');
+ * // CC-V2-B05: Updated to use proj_ format per ADR-035
+ * const gateway = createIDBGateway('proj_browser-default');
  * ```
  */
 export function createIDBGateway(projectId: string): StorageGateway {
