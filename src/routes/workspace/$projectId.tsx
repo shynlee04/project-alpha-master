@@ -79,7 +79,7 @@ export const Route = createFileRoute('/workspace/$projectId')({
     ssr: false,
 
     // ROUTE-005 FIX: Add platform guard before project fetch
-    beforeLoad: async ({ params, location }) => {
+    beforeLoad: async ({ params }) => {
         // Platform validation - Mobile users cannot access IDE (redirect to Notes)
         const platform = getPlatformContract();
         if (!platform.canAccessIDE) {

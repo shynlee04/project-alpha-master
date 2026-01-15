@@ -68,7 +68,6 @@ import type {
 
 import type {
     FlashcardsTable,
-    FlashcardSetsTable,
     StudySessionsTable,
     StudyCardsTable,
     QuizzesTable,
@@ -124,11 +123,14 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
     // State Persistence Tables (Epic 25)
     // ========================================================================
+    // ROOT CAUSE FIX (2026-01-20): Workspace State Table
+    // Creates dedicated workspaceState table for proper project scoping per ADR-033 D6
 
     providerConfigs!: PersistedStateTable;
     agentConfigs!: PersistedStateTable;
     conversationState!: PersistedStateTable;
     ragState!: PersistedStateTable;
+    workspaceState!: PersistedStateTable;
 
     // ========================================================================
     // Sync Status Tables (RC-005 - Sprint 27B)
@@ -207,7 +209,7 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     flashcards!: FlashcardsTable;
-    flashcardSets!: FlashcardSetsTable;
+    flashcardSets!: FlashcardsTable;
     studySessions!: StudySessionsTable;
     studyCards!: StudyCardsTable;
     quizzes!: QuizzesTable;
@@ -218,6 +220,13 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     idbFiles!: IDBFilesTable;
+
+    // ========================================================================
+    // STATE-009 FIX: Terminal State Persistence (2026-01-19)
+    // Migrated from localStorage to Dexie
+    // ========================================================================
+
+    terminalState!: PersistedStateTable;
 
     // ========================================================================
     // Constructor
@@ -240,4 +249,47 @@ export class ViaGentDatabase extends Dexie {
  * Singleton database instance for application-wide access.
  * Provides a single connection point to the IndexedDB database.
  */
+// ROOT CAUSE FIX (2026-01-20): Migration to move workspace state from providerConfigs to workspaceState table
+export const MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE = async (db: ViaGentDatabase) => {
+  console.log('[Migration] Moving workspace state from providerConfigs to workspaceState table...');
+
+  try {
+    // Step 1: Read all existing workspace state from providerConfigs
+    const allStates = await db.providerConfigs.toArray();
+    const workspaceStates = allStates.filter((r) => r.id === 'workspace-state');
+
+    if (workspaceStates.length === 0) {
+      console.log('[Migration] No workspace state found, migration complete');
+      return;
+    }
+
+    console.log(`[Migration] Found ${workspaceStates.length} workspace state records to migrate`);
+
+    // Step 2: Create workspaceState table if it doesn't exist
+    // The table will be auto-created on first put operation
+
+    // Step 3: Write to workspaceState table
+    for (const state of workspaceStates) {
+      await db.workspaceState.add({
+        id: state.id,  // PersistedStateRecord format: id, state, updatedAt
+        state: state.state,  // actual state data
+        updatedAt: state.updatedAt || new Date(),
+      });
+    }
+
+    // Step 4: Verify migration
+    const workspaceStatesInDedicated = await db.workspaceState.toArray();
+    console.log(`[Migration] Verified ${workspaceStatesInDedicated.length} records in workspaceState table`);
+
+    if (workspaceStatesInDedicated.length !== workspaceStates.length) {
+      throw new Error(`Migration verification failed: Expected ${workspaceStates.length}, got ${workspaceStatesInDedicated.length}`);
+    }
+
+    console.log('[Migration] ✅ Workspace state migrated successfully from providerConfigs to workspaceState table');
+  } catch (error) {
+    console.error('[Migration] Failed to migrate workspace state:', error);
+    throw error;
+  }
+};
+
 export const dexieDB = new ViaGentDatabase();

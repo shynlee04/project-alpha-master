@@ -16,6 +16,7 @@
 import { create } from 'zustand';
 import type { StateCreator } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
 
 /**
  * Terminal tab state
@@ -296,12 +297,20 @@ export const createTerminalStore: StateCreator<TerminalState, [], []> = (set, ge
 /**
  * Terminal store with persistence
  */
+/**
+ * Terminal store with persistence
+ * 
+ * STATE-009 FIX (2026-01-19): Migrated from localStorage to Dexie storage
+ * - localStorage was causing workspace access infection
+ * - Dexie provides consistent persistence across all stores
+ * - Uses 'terminalState' table in ViaGentDatabase
+ */
 export const useTerminalStore = create<TerminalState>()(
   persist(
     createTerminalStore,
     {
       name: 'terminal-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createDexieStorage('terminalState')),
     }
   )
 );

@@ -1096,4 +1096,197 @@ export function registerMigrations(db: Dexie): void {
             logDexieMigration(23, 'arc-b03-idb-gateway', 'completed',
                 'Schema created for idbFiles table. Mobile/tablet projects can now store files in IndexedDB.');
         });
+
+        // Schema version 24: STATE-009 - Terminal State Persistence
+        // Migrates terminal settings from localStorage to Dexie
+        db.version(24).stores({
+            // Core tables with workspaceId (unchanged from v23)
+            projects: 'id, workspaceId, lastOpened, name',
+            ideState: 'projectId, workspaceId, updatedAt',
+            conversations: 'id, projectId, workspaceId, updatedAt',
+
+            // AI tables (unchanged)
+            taskContexts: 'id, projectId, workspaceId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, workspaceId, toolName, status, [taskId+status]',
+            credentials: 'providerId, workspaceId, createdAt',
+            threads: 'id, projectId, workspaceId, updatedAt, [projectId+updatedAt]',
+
+            // State tables (unchanged)
+            providerConfigs: 'id, workspaceId, updatedAt',
+            agentConfigs: 'id, workspaceId, updatedAt',
+            conversationState: 'id, workspaceId, updatedAt',
+            ragState: 'id, workspaceId, updatedAt',
+
+            // Sync tables (unchanged)
+            syncStatus: 'id, workspaceId, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileSyncStatus: 'id, workspaceId, updatedAt',
+
+            // File tables (unchanged)
+            fileMetadata: '[projectId+workspaceId+path], projectId, workspaceId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, workspaceId, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, workspaceId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, workspaceId, createdAt, expiresAt, [projectId+createdAt]',
+
+            // File snapshot tables (unchanged)
+            fileSnapshots: 'projectId, workspaceId, path, [projectId+workspaceId+path]',
+            fileContentCache: '[projectId+workspaceId+path]',
+
+            // Knowledge tables (unchanged)
+            sources: 'id, projectId, workspaceId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, workspaceId, name, createdAt, [projectId+name]',
+            synthesisResults: 'id, workspaceId, createdAt',
+            oramaIndexes: 'projectId, workspaceId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, workspaceId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, workspaceId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+
+            // Other tables (unchanged)
+            workflows: 'id, workspaceId, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+            codeSnippets: 'id, workspaceId, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+            savedBlocks: 'id, workspaceId, blockType, category, isFavorite, tags, createdAt, updatedAt, lastUsedAt, useCount, [workspaceId+blockType], [workspaceId+isFavorite], [workspaceId+category], [workspaceId+tags]',
+
+            // Plugin tables (unchanged)
+            plugins: 'id, workspaceId, source, state, installedAt, [source], [state], [installedAt]',
+            pluginSettings: 'pluginId, workspaceId, updatedAt',
+            pluginMarketplace: 'id, workspaceId, category, cachedAt, expiresAt, [category], [cachedAt]',
+            pluginStorage: 'id, pluginId, workspaceId, [pluginId]',
+
+            // Study tables (unchanged)
+            flashcards: 'id, workspaceId, projectId, topic, difficulty, createdAt, *sourceIds',
+            flashcardSets: 'id, workspaceId, projectId, name, createdAt, updatedAt, *cardIds',
+            studySessions: 'id, workspaceId, projectId, startTime, completed',
+            studyCards: 'id, workspaceId, cardId, sessionId',
+            quizzes: 'id, workspaceId, projectId, title, createdAt, *sourceIds',
+            quizQuestions: 'id, workspaceId, quizId, difficulty, topic, *sourceIds',
+
+            // IDB Files (unchanged from v23)
+            idbFiles: '[projectId+path], projectId, kind, lastModified, [projectId+kind]',
+
+            // ========================================================================
+            // NEW: Terminal State Table (STATE-009)
+            // ========================================================================
+
+            // terminalState: Terminal settings and tab state persistence
+            // Migrated from localStorage to Dexie for consistent storage strategy
+            terminalState: 'id, updatedAt',
+        }).upgrade(async () => {
+            logDexieMigration(24, 'state-009-terminal-state', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(24)) {
+                logDexieMigration(24, 'state-009-terminal-state', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            // Migrate existing localStorage data if present
+            try {
+                const localStorageData = localStorage.getItem('terminal-storage');
+                if (localStorageData) {
+                    console.log('[Dexie Migration v24] Found existing terminal settings in localStorage, will be migrated on first store access');
+                    // Note: Actual data migration happens automatically when Zustand hydrates
+                    // because the storage adapter will read from IndexedDB first (empty)
+                    // and localStorage data will be preserved until user closes tab
+                }
+            } catch {
+                // localStorage might not be available
+            }
+
+            markMigrationApplied(24);
+
+            logDexieMigration(24, 'state-009-terminal-state', 'completed',
+                'Schema created for terminalState table. Terminal settings now persist in IndexedDB.');
+        });
+
+        // ========================================================================
+        // ROOT CAUSE FIX (2026-01-20): Workspace State Table Migration
+        // Creates dedicated workspaceState table for proper project scoping per ADR-033 D6
+        // ========================================================================
+
+        db.version(25).stores({
+            // Core tables (unchanged from v24)
+            projects: 'id, workspaceId, lastOpened, name',
+            ideState: 'projectId, workspaceId, updatedAt',
+            conversations: 'id, projectId, workspaceId, updatedAt',
+
+            // AI tables (unchanged)
+            taskContexts: 'id, projectId, workspaceId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, workspaceId, toolName, status, [taskId+status]',
+            credentials: 'providerId, workspaceId, createdAt',
+            threads: 'id, projectId, workspaceId, updatedAt, [projectId+updatedAt]',
+
+            // State tables (UPDATED: Added workspaceState)
+            providerConfigs: 'id, workspaceId, updatedAt',
+            agentConfigs: 'id, workspaceId, updatedAt',
+            conversationState: 'id, workspaceId, updatedAt',
+            ragState: 'id, workspaceId, updatedAt',
+            workspaceState: 'id, workspaceId, updatedAt', // NEW: Dedicated workspace state table
+
+            // Sync tables (unchanged)
+            syncStatus: 'id, workspaceId, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            fileSyncStatus: 'id, workspaceId, updatedAt',
+
+            // File tables (unchanged)
+            fileMetadata: '[projectId+workspaceId+path], projectId, workspaceId, lastModified, syncedAt',
+            toolExecutionLogs: 'id, workspaceId, conversationId, messageId, toolName, timestamp, [conversationId+timestamp]',
+            fsaHandles: 'projectId, workspaceId, lastAccessedAt',
+            sessionSnapshots: 'id, projectId, workspaceId, createdAt, expiresAt, [projectId+createdAt]',
+
+            // File snapshot tables (unchanged)
+            fileSnapshots: 'projectId, workspaceId, path, [projectId+workspaceId+path]',
+            fileContentCache: '[projectId+workspaceId+path]',
+
+            // Knowledge tables (unchanged)
+            sources: 'id, projectId, workspaceId, type, createdAt, deleted, [projectId+type], [projectId+createdAt], [projectId+deleted]',
+            collections: 'id, projectId, workspaceId, name, createdAt, [projectId+name]',
+            synthesisResults: 'id, workspaceId, createdAt',
+            oramaIndexes: 'projectId, workspaceId, lastUpdated, schemaVersion',
+            embedding_models: 'modelId, workspaceId, name, version, quantization, downloadedAt',
+            notes: 'id, projectId, workspaceId, parentId, isFavorite, order, createdAt, updatedAt, [projectId+parentId], [projectId+isFavorite], [projectId+createdAt]',
+
+            // Other tables (unchanged)
+            workflows: 'id, workspaceId, name, createdAt, updatedAt, tags, [name], [createdAt], [updatedAt]',
+            codeSnippets: 'id, workspaceId, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+            savedBlocks: 'id, workspaceId, blockType, category, isFavorite, tags, createdAt, updatedAt, lastUsedAt, useCount, [workspaceId+blockType], [workspaceId+isFavorite], [workspaceId+category], [workspaceId+tags]',
+
+            // Plugin tables (unchanged)
+            plugins: 'id, workspaceId, source, state, installedAt, [source], [state], [installedAt]',
+            pluginSettings: 'pluginId, workspaceId, updatedAt',
+            pluginMarketplace: 'id, workspaceId, category, cachedAt, expiresAt, [category], [cachedAt]',
+            pluginStorage: 'id, pluginId, workspaceId, [pluginId]',
+
+            // Study tables (unchanged)
+            flashcards: 'id, workspaceId, projectId, topic, difficulty, createdAt, *sourceIds',
+            flashcardSets: 'id, workspaceId, projectId, name, createdAt, updatedAt, *cardIds',
+            studySessions: 'id, workspaceId, projectId, startTime, completed',
+            studyCards: 'id, workspaceId, cardId, sessionId',
+            quizzes: 'id, workspaceId, projectId, title, createdAt, *sourceIds',
+            quizQuestions: 'id, workspaceId, quizId, difficulty, topic, *sourceIds',
+
+            // IDB Files (unchanged from v24)
+            idbFiles: '[projectId+path], projectId, kind, lastModified, [projectId+kind]',
+
+            // Terminal State (unchanged from v24)
+            terminalState: 'id, updatedAt',
+        }).upgrade(async (tx) => {
+            logDexieMigration(25, 'workspace-state-table', 'started');
+
+            // Check if already applied (idempotency)
+            if (isMigrationApplied(25)) {
+                logDexieMigration(25, 'workspace-state-table', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            // Import and execute workspace state migration
+            try {
+                const { MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE } = await import('./dexie-db-class');
+                await MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE(tx as any);
+
+                markMigrationApplied(25);
+
+                logDexieMigration(25, 'workspace-state-table', 'completed',
+                    'Workspace state table created and data migrated from providerConfigs.');
+            } catch (error) {
+                logDexieMigration(25, 'workspace-state-table', 'failed', { error: String(error) });
+                throw error;
+            }
+        });
 }

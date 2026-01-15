@@ -17,6 +17,7 @@ import * as React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 
 // ============================================================================
 // FSA Handle Type
@@ -291,6 +292,9 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
    *
    * This handles UX flow: User switches from IDE to Notes, then returns to Hub,
    * clicks project → should open in Notes (last workspace), not IDE (default).
+   *
+   * ROUTE-008 Remediation: Added platform validation to prevent auto-switching
+   * to IDE on mobile/tablet (canAccessIDE = false).
    */
   React.useEffect(() => {
     if (!project?.id) return;
@@ -302,9 +306,19 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
 
     // Only auto-switch if last workspace is enabled
     if (enabledWorkspaces.includes(lastWorkspace)) {
+      // ROUTE-008: Platform validation - prevent IDE on mobile/tablet
+      const platform = getPlatformContract();
+      if (lastWorkspace === 'ide' && !platform.canAccessIDE) {
+        console.warn(
+          `[ProjectProvider] Cannot auto-switch to IDE on ${platform.deviceType}: ` +
+          `canAccessIDE=${platform.canAccessIDE}. Using default workspace.`
+        );
+        return; // Block IDE on mobile, don't auto-switch
+      }
+
       console.log(
         `[ProjectProvider] Auto-switching to last workspace: ${lastWorkspace} ` +
-        `(current: ${workspace} not enabled)`
+        `(current: ${workspace} not enabled, platform: ${platform.deviceType})`
       );
 
       navigate({
@@ -339,6 +353,7 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
    * - Navigates to new workspace route
    * - Preserves project context (no re-load)
    * - Persists preference to localStorage
+   * - ROUTE-008: Blocks IDE on mobile/tablet (platform.canAccessIDE check)
    */
   const switchWorkspace = React.useCallback(
     (newWorkspace: WorkspaceId) => {
@@ -355,7 +370,22 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
         return;
       }
 
-      console.log(`[ProjectProvider] Switching workspace: ${workspace} → ${newWorkspace}`);
+      // ROUTE-008: Platform validation - prevent IDE on mobile/tablet
+      const platform = getPlatformContract();
+      if (newWorkspace === 'ide' && !platform.canAccessIDE) {
+        console.warn(
+          `[ProjectProvider] Cannot switch to IDE on ${platform.deviceType}: ` +
+          `IDE requires desktop with File System Access support. ` +
+          `Current platform: canAccessIDE=${platform.canAccessIDE}, ` +
+          `canAccessFSA=${platform.canAccessFSA}, canRunTerminal=${platform.canRunTerminal}`
+        );
+        return; // Block IDE on mobile/tablet
+      }
+
+      console.log(
+        `[ProjectProvider] Switching workspace: ${workspace} → ${newWorkspace} ` +
+        `(platform: ${platform.deviceType})`
+      );
 
       navigate({
         to: `/${newWorkspace}/$projectId`,
@@ -373,6 +403,7 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
    * @param options - Navigation options (replace: boolean)
    *
    * Extended version of switchWorkspace with support for history.replace()
+   * ROUTE-008: Blocks IDE on mobile/tablet (platform.canAccessIDE check)
    */
   const navigateToWorkspace = React.useCallback(
     async (newWorkspace: WorkspaceId, options?: { replace?: boolean }) => {
@@ -388,9 +419,20 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
         return;
       }
 
+      // ROUTE-008: Platform validation - prevent IDE on mobile/tablet
+      const platform = getPlatformContract();
+      if (newWorkspace === 'ide' && !platform.canAccessIDE) {
+        console.warn(
+          `[ProjectProvider] Cannot navigate to IDE on ${platform.deviceType}: ` +
+          `IDE requires desktop with File System Access support. ` +
+          `Current platform: canAccessIDE=${platform.canAccessIDE}`
+        );
+        return; // Block IDE on mobile/tablet
+      }
+
       console.log(
         `[ProjectProvider] Navigating to workspace: ${workspace} → ${newWorkspace} ` +
-        `(replace: ${options?.replace ?? false})`
+        `(replace: ${options?.replace ?? false}, platform: ${platform.deviceType})`
       );
 
       await navigate({

@@ -1,7 +1,6 @@
 ---
 description: Senior Software Engineer - executes delegated development tasks with full handoff protocol
 mode: primary
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

@@ -22,7 +22,7 @@
   */
 
 import { useEffect, useRef } from 'react';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { redirect, createLazyFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
@@ -78,7 +78,7 @@ async function getProjectWithRetry(
 // Route Definition (ROUTE-004 FIX: Using createFileRoute for loader pattern)
 // ============================================================================
 
-export const Route = createFileRoute('/notes/$projectId')({
+export const Route = createLazyFileRoute('/notes/$projectId')({
   ssr: false,
 
   // ROUTE-004 FIX: Use loader only for data fetching (NOT beforeLoad per ADR-034 D12)

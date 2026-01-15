@@ -18,7 +18,7 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings, CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
-import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+import { getPlatformContract, getPlatformInfoForLogging } from '@/infrastructure/filesystem/platform-contract';
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';
@@ -141,12 +141,20 @@ export const HubHomePage: React.FC = () => {
     if (!project) return;
     
     const platform = getPlatformContract();
-    
-    if (platform.canAccessIDE && project.storageType === 'fsa') {
+
+    // Per ADR-033 D1: canAccessIDE already implies desktop with FSA
+    // No need for redundant project.storageType check
+    console.log('[HubHomePage] Platform detection:', getPlatformInfoForLogging());
+    console.log('[HubHomePage] Project storage type:', project.storageType);
+    console.log('[HubHomePage] canAccessIDE:', platform.canAccessIDE);
+
+    if (platform.canAccessIDE) {
       // Desktop with FSA: Navigate to IDE (full file system access)
+      console.log('[HubHomePage] Navigating to IDE workspace');
       navigate({ to: '/ide/$projectId', params: { projectId } });
     } else {
       // Mobile OR Desktop with IndexedDB: Navigate to Notes
+      console.log('[HubHomePage] Navigating to Notes workspace (IDE not available)');
       navigate({ to: '/notes/$projectId', params: { projectId } });
     }
   };

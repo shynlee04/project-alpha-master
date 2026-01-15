@@ -127,19 +127,17 @@ export function createIDEStateStorage(): StateStorage {
         
         let record: IDEStateRecord | undefined;
         
-        if (projectId) {
-          // We know which project to hydrate - query by projectId directly
-          record = await db.ideState.get(projectId);
-          console.debug(`[IDEStateStorage] Hydrating state for project: ${projectId}`);
-        } else {
-          // No projectId in sessionStorage - this is first visit or session lost
-          // Fall back to most recent state (original behavior for backward compatibility)
-          record = await db.ideState
-            .orderBy('updatedAt')
-            .reverse()
-            .first();
-          console.debug(`[IDEStateStorage] No projectId in session, hydrating most recent state`);
-        }
+         if (!projectId) {
+           // No projectId in sessionStorage - this is first visit or session lost
+           // ROOT CAUSE FIX (2026-01-20): Removed "most recent" fallback
+           // Workspace state must ONLY load by projectId (no cross-project contamination per ADR-033)
+           console.debug('[IDEStateStorage] No projectId in session, skipping hydration');
+           return null;
+         }
+
+         // We know which project to hydrate - query by projectId directly
+         record = await db.ideState.get(projectId);
+         console.debug(`[IDEStateStorage] Hydrating state for project: ${projectId}`);
 
         if (!record) {
           console.debug('[IDEStateStorage] No persisted state found (first run or cleared)');

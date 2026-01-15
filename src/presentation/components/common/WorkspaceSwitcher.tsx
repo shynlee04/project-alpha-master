@@ -19,6 +19,7 @@ import { useProjectContextSafe, type WorkspaceId } from '@/lib/workspace';
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import { cn } from '@/lib/utils';
 import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 
 // ============================================================================
 // Workspace Configuration
@@ -115,9 +116,24 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
    * - Agents store (filter by availability)
    * - Agent selection store (re-select if needed)
    * - Cross-workspace event bus (emit events)
+   *
+   * ROUTE-007: Platform validation added - blocks mobile/tablet from IDE
    */
   const handleWorkspaceSwitch = async (workspace: WorkspaceType) => {
     console.log('[WorkspaceSwitcher] Switching to workspace:', workspace);
+
+    // ROUTE-007: Platform validation - block mobile/tablet from IDE
+    if (workspace === 'ide') {
+      const platform = getPlatformContract();
+      if (!platform.canAccessIDE) {
+        console.warn('[WorkspaceSwitcher] IDE access denied on mobile/tablet. Platform:', {
+          deviceType: platform.deviceType,
+          canAccessIDE: platform.canAccessIDE,
+          canDoAgenticCoding: platform.canDoAgenticCoding,
+        });
+        return; // Don't switch - stay in current workspace
+      }
+    }
 
     try {
       // Use WorkspaceTransitionManager for coordinated state updates

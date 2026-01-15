@@ -18,7 +18,7 @@
   */
 
 import { useEffect } from 'react';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { redirect, createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import { getProject } from '@/infrastructure/persistence/stores/project';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project';
@@ -70,7 +70,7 @@ async function getProjectWithRetry(
 // Route Definition (ROUTE-012 FIX: Using createFileRoute for loader pattern)
 // ============================================================================
 
-export const Route = createFileRoute('/study/$projectId')({
+export const Route = createLazyFileRoute('/study/$projectId')({
   ssr: false,
 
   // ROUTE-012 FIX: Use beforeLoad to fetch project BEFORE component renders

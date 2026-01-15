@@ -1,7 +1,6 @@
 ---
 description: Business Analyst - Requirements gathering, user story breakdown, competitive analysis with handoff protocol
 mode: all
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true
