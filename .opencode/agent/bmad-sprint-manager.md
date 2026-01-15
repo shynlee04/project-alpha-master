@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Sprint manager for sprint planning, story development, and execution tracking
-mode: primary
-model: minimax/MiniMax-M2.1
+mode: all
 temperature: 0.3
 tools:
   write: true

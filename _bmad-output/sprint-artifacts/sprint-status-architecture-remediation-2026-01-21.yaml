@@ -1,0 +1,529 @@
+---
+# CORRECT-COURSE ARCHITECTURAL REMEDIATION SPRINT
+# ============================================================================
+
+sprint:
+  id: architecture-remediation-2026-01-21
+  name: "Correct-Course Architecture Remediation"
+  start_date: "2026-01-21T10:00:00+07:00"
+  status: "in_progress"
+  phase: "execution"
+
+  agent: "@bmad-master"
+  last_updated: "2026-01-22T08:00:00+07:00"
+
+  source_documents:
+    - "deep-architectural-analysis-2026-01-21.md"
+    - "epics.md (updated with EPIC-CC-01 through EPIC-CC-11)"
+
+  goals:
+    - Fix all user journey blockers identified in deep analysis
+    - Implement ADR-033, ADR-034, ADR-035 decisions
+    - Eliminate 31 infection points
+    - Verify all 7 user use cases work correctly
+    - Achieve ADR compliance 100%
+    - Complete Foundation Cleanup (Slash Commands, Threads, Chat Store)
+
+  summary:
+    epic_count: 11
+    story_count: 34
+    total_estimated_hours: 19
+    team_a_stories: 13
+    team_b_stories: 21
+
+# ============================================================================
+# EPIC STATUS MATRIX
+# ============================================================================
+
+epics:
+  "CC-01":
+    id: "EPIC-CC-01"
+    name: "Fix Hooks Error"
+    phase: "Phase 1"
+    priority: "P0"
+    status: "ready_for_dev"
+    story_count: 3
+    estimated_hours: 1
+    blocker: null
+    team: "A"
+    stories:
+      "CC-01-01":
+        title: "Remove useLiveQuery hook"
+        effort: "30m"
+        status: "completed"
+        completed_at: "2026-01-21T11:30:00+07:00"
+        assignee: "Team A"
+        result: "Removed useLiveQuery hook and showPicker state. Desktop shows picker directly, mobile loads browser-mode. TypeScript: 0 errors in modified file."
+      "CC-01-02":
+        title: "Create custom useFSAProjects() hook"
+        effort: "20m"
+        status: "pending"
+        assignee: "Team A"
+      "CC-01-03":
+        title: "Test Notes workspace"
+        effort: "10m"
+        status: "pending"
+        assignee: "Team A"
+
+  "CC-02":
+    id: "EPIC-CC-02"
+    name: "Fix Route Loading Race Condition"
+    phase: "Phase 2"
+    priority: "P0"
+    status: "ready_for_dev"
+    story_count: 4
+    estimated_hours: 2
+    blocker: "CC-01"
+    team: "A"
+    stories:
+      "CC-02-01":
+        title: "Create waitForHydration() function"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-01"
+        assignee: "Team A"
+      "CC-02-02":
+        title: "Update notes.$projectId loader"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-02-01"
+        assignee: "Team A"
+      "CC-02-03":
+        title: "Update ide.$projectId loader"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-02-01"
+        assignee: "Team A"
+      "CC-02-04":
+        title: "Query Dexie directly"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-02-01"
+        assignee: "Team A"
+
+  "CC-03":
+    id: "EPIC-CC-03"
+    name: "Fix FSA Handle Persistence"
+    phase: "Phase 3"
+    priority: "P0"
+    status: "ready_for_dev"
+    story_count: 5
+    estimated_hours: 3
+    blocker: "CC-02"
+    team: "B"
+    stories:
+      "CC-03-01":
+        title: "Implement Chrome 129 detection"
+        effort: "20m"
+        status: "pending"
+        assignee: "Team B"
+      "CC-03-02":
+        title: "Store actual FSA handle"
+        effort: "40m"
+        status: "pending"
+        depends_on: "CC-03-01"
+        assignee: "Team B"
+      "CC-03-03":
+        title: "Implement silent restore"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-03-02"
+        assignee: "Team B"
+      "CC-03-04":
+        title: "Add handle to ProjectContext"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-03-03"
+        assignee: "Team B"
+      "CC-03-05":
+        title: "Update StorageGatewayFactory"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-03-04"
+        assignee: "Team B"
+
+  "CC-04":
+    id: "EPIC-CC-04"
+    name: "Fix State Scoping"
+    phase: "Phase 4"
+    priority: "P1"
+    status: "ready_for_dev"
+    story_count: 4
+    estimated_hours: 2
+    blocker: "CC-03"
+    team: "A"
+    stories:
+      "CC-04-01":
+        title: "Add project scope to IDE store"
+        effort: "30m"
+        status: "pending"
+        assignee: "Team B"
+      "CC-04-02":
+        title: "Add project scope to workspace store"
+        effort: "30m"
+        status: "pending"
+        assignee: "Team A"
+      "CC-04-03":
+        title: "Use Dexie for workspace state"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-04-02"
+        assignee: "Team A"
+      "CC-04-04":
+        title: "Add cleanup on workspace switch"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-04-03"
+        assignee: "Team A"
+
+  "CC-05":
+    id: "EPIC-CC-05"
+    name: "Fix Platform Guards"
+    phase: "Phase 5"
+    priority: "P1"
+    status: "ready_for_dev"
+    story_count: 4
+    estimated_hours: 1
+    blocker: "CC-04"
+    team: "A"
+    stories:
+      "CC-05-01":
+        title: "Add guard to /ide route"
+        effort: "15m"
+        status: "pending"
+        assignee: "Team A"
+      "CC-05-02":
+        title: "Add guard to /ide/$projectId"
+        effort: "15m"
+        status: "pending"
+        depends_on: "CC-05-01"
+        assignee: "Team A"
+      "CC-05-03":
+        title: "Hide IDE icon on mobile"
+        effort: "15m"
+        status: "pending"
+        assignee: "Team B"
+      "CC-05-04":
+        title: "Add toast messages"
+        effort: "15m"
+        status: "pending"
+        depends_on: "CC-05-02"
+        assignee: "Team B"
+
+  "CC-06":
+    id: "EPIC-CC-06"
+    name: "Remove Temp Project"
+    phase: "Phase 6"
+    priority: "P1"
+    status: "ready_for_dev"
+    story_count: 3
+    estimated_hours: 1
+    blocker: "CC-05"
+    team: "B"
+    stories:
+      "CC-06-01":
+        title: "Remove temp project option"
+        effort: "20m"
+        status: "pending"
+        assignee: "Team B"
+      "CC-06-02":
+        title: "Remove browser DB option on desktop"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-06-01"
+        assignee: "Team A"
+      "CC-06-03":
+        title: "Add project list"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-06-02"
+        assignee: "Team A"
+
+  "CC-07":
+    id: "EPIC-CC-07"
+    name: "Fix Terminal Loading"
+    phase: "Phase 7"
+    priority: "P2"
+    status: "ready_for_dev"
+    story_count: 3
+    estimated_hours: 2
+    blocker: "CC-06"
+    team: "B"
+    stories:
+      "CC-07-01":
+        title: "Investigate WebContainer boot"
+        effort: "30m"
+        status: "pending"
+        assignee: "Team B"
+      "CC-07-02":
+        title: "Fix WebContainer config"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-07-01"
+        assignee: "Team B"
+      "CC-07-03":
+        title: "Add error feedback"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-07-02"
+        assignee: "Team B"
+
+  "CC-08":
+    id: "EPIC-CC-08"
+    name: "End-to-End Testing"
+    phase: "Phase 8"
+    priority: "P2"
+    status: "ready_for_dev"
+    story_count: 3
+    estimated_hours: 2
+    blocker: "CC-01 through CC-07"
+    team: "A"
+    stories:
+      "CC-08-01":
+        title: "Test desktop user journeys"
+        effort: "40m"
+        status: "pending"
+        depends_on: "All previous epics"
+        assignee: "Team A"
+      "CC-08-02":
+        title: "Test mobile user journeys"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-01 through CC-07"
+        assignee: "Team A"
+      "CC-08-03":
+        title: "Verify ADR compliance"
+        effort: "20m"
+        status: "pending"
+        depends_on: "CC-08-01, CC-08-02"
+        assignee: "Team B"
+
+  "CC-09":
+    id: "EPIC-CC-09"
+    name: "Slash Command Store Migration"
+    phase: "Foundation Cleanup"
+    priority: "P1"
+    status: "in_progress"
+    story_count: 2
+    estimated_hours: 2
+    blocker: null
+    team: "B"
+    stories:
+      "CC-09-01":
+        title: "Migrate slash-command-store to infrastructure"
+        effort: "1h"
+        status: "completed"
+        completed_at: "2026-01-21T13:00:00+07:00"
+        assignee: "Team B (dev-ext)"
+        description: "Move from lib/notes to infrastructure/persistence/stores/notes/slash-commands and switch to Dexie"
+        result: "Created new store at canonical location with Dexie persistence. Backward compatibility facade created. Old file preserved for Team A migration."
+      "CC-09-02":
+        title: "Update SlashCommandManager imports"
+        effort: "30m"
+        status: "pending"
+        depends_on: "CC-09-01"
+        assignee: "Team B"
+
+  "CC-10":
+    id: "EPIC-CC-10"
+    name: "Thread Persistence Migration"
+    phase: "Foundation Cleanup"
+    priority: "P1"
+    status: "completed"
+    story_count: 2
+    estimated_hours: 2
+    blocker: null
+    team: "B"
+    completed_at: "2026-01-22T08:00:00+07:00"
+    result: "Successfully migrated threads-store.ts to infrastructure with 9 functions. Single consumer (conversation-helpers.ts) updated. Legacy file archived. Zero breaking changes."
+    stories:
+      "CC-10-01":
+        title: "Extract saveThread to infrastructure"
+        effort: "1h"
+        status: "completed"
+        completed_at: "2026-01-22T08:00:00+07:00"
+        assignee: "Team B (dev-ext)"
+        description: "Create src/infrastructure/persistence/stores/conversation/persistence.ts"
+        result: "Created persistence module with 9 Dexie functions. Full type safety. ADR-033/ADR-035 compliant."
+      "CC-10-02":
+        title: "Update conversation-helpers.ts"
+        effort: "30m"
+        status: "completed"
+        completed_at: "2026-01-22T08:00:00+07:00"
+        depends_on: "CC-10-01"
+        assignee: "Team B (dev-ext)"
+        result: "Changed import from @/lib/workspace/threads-store to ./persistence. Zero breaking changes."
+
+  "CC-11":
+    id: "EPIC-CC-11"
+    name: "Unified Chat Store Refactor"
+    phase: "Foundation Cleanup"
+    priority: "P2"
+    status: "ready_for_dev"
+    story_count: 1
+    estimated_hours: 1
+    blocker: null
+    team: "B"
+    stories:
+      "CC-11-01":
+        title: "Extract chat persistence slice"
+        effort: "1h"
+        status: "pending"
+        assignee: "Team B"
+        description: "Move load/persist logic out of main store file"
+
+# ============================================================================
+# EXECUTION PLAN
+# ============================================================================
+
+execution_plan:
+  week_1:
+    focus: "Fix critical hooks and race conditions"
+    epics: ["CC-01", "CC-02"]
+    team: "A"
+    estimated_hours: 3
+    dependencies: []
+
+  week_1_foundation:
+    focus: "Foundation Cleanup (Parallel)"
+    epics: ["CC-09", "CC-10", "CC-11"]
+    team: "B"
+    estimated_hours: 5
+    dependencies: []
+
+  week_1_2:
+    focus: "Fix FSA handle and state scoping"
+    epics: ["CC-03", "CC-04"]
+    team: "B"
+    estimated_hours: 5
+    dependencies: ["CC-01", "CC-02"]
+
+  week_2:
+    focus: "Platform guards and temp project removal"
+    epics: ["CC-05", "CC-06"]
+    team: "A"
+    estimated_hours: 2
+    dependencies: ["CC-04"]
+
+  week_2_3:
+    focus: "Terminal loading fix"
+    epics: ["CC-07"]
+    team: "B"
+    estimated_hours: 2
+    dependencies: ["CC-06"]
+
+  week_3:
+    focus: "End-to-end testing and validation"
+    epics: ["CC-08"]
+    team: "A"
+    estimated_hours: 2
+    dependencies: ["CC-01 through CC-07"]
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+
+quality_gates:
+  epic_readiness:
+    - "[x] All epics have clear acceptance criteria"
+    - "[x] All stories have verification steps"
+    - "[x] Team assignments documented"
+    - "[x] Blocker chain validated"
+    - "[x] ADR compliance verified"
+    - "[x] Execution plan created"
+
+  story_completion_gates:
+    - "[x] Story requirements met"
+    - "[x] TypeScript errors: zero"
+    - "[x] Build passes: no warnings"
+    - "[x] Tests pass: new + existing"
+    - "[x] Code review passed"
+    - "[x] Governance compliance verified"
+
+# ============================================================================
+# NEXT ACTIONS
+# ============================================================================
+
+next_actions:
+  - "Begin EPIC-CC-01 Story 1 (CC-01-01)"
+  - "Execute story-cycle workflow for each story"
+  - "Update sprint status after each story completion"
+  - "Coordinate Team A and Team B parallel work"
+  - "Report progress after each epic completion"
+  - "Document lessons learned after sprint completion"
+
+# ============================================================================
+# ARTIFACTS
+# ============================================================================
+
+artifacts:
+  planning:
+    - "deep-architectural-analysis-2026-01-21.md"
+    - "epics.md (updated)"
+
+  sprint_tracking:
+    - "sprint-status-architecture-remediation-2026-01-21.yaml" # (this file)
+
+  stories:
+    directory: "_bmad-output/sprint-artifacts/stories/EPIC-CC-*/"
+    format: "{epic-id}-story-{story-id}-context.xml"
+
+# ============================================================================
+# METRICS
+# ============================================================================
+
+metrics:
+  total_epics: 11
+  total_stories: 34
+  total_estimated_hours: 19
+  team_a_stories: 13
+  team_b_stories: 21
+  parallel_execution: true
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+
+success_criteria:
+  user_journeys:
+    - "[ ] Returned Desktop - Notes works"
+    - "[ ] Returned Desktop - IDE works"
+    - "[ ] New Desktop - First Visit works"
+    - "[ ] New Mobile - First Visit works"
+    - "[ ] Returned Mobile - Notes works"
+    - "[ ] Returned Mobile - IDE properly blocked"
+
+  adr_compliance:
+    - "[ ] ADR-033 D1: Platform Detection implemented"
+    - "[ ] ADR-033 D2: FSA Handle Persistence implemented"
+    - "[ ] ADR-034 D11: State Scoping implemented"
+    - "[ ] ADR-034 D12: Route Loading implemented"
+    - "[ ] ADR-034 D13: Platform Guards implemented"
+    - "[ ] ADR-033 D5: Temp Project removed"
+
+  technical_metrics:
+    - "[ ] TypeScript errors: 0"
+    - "[ ] Console warnings: 0"
+    - "[ ] Route loading time: < 500ms"
+    - "[ ] FSA handle restoration time: < 100ms"
+
+  user_experience_metrics:
+    - "[ ] Notes workspace crash rate: 0%"
+    - "[ ] IDE workspace empty rate: 0%"
+    - "[ ] Project list availability: 100%"
+    - "[ ] Platform guard effectiveness: 100%"
+    - "[ ] User confusion rate: < 5%"
+
+# ============================================================================
+# DOCUMENT METADATA
+# ============================================================================
+
+document:
+  version: "1.0.0"
+  created: "2026-01-21T10:30:00+07:00"
+  author: "@bmad-master"
+  status: "planning_complete"
+  next_review: "2026-01-28"
+
+# *This document governs the Correct-Course Architecture Remediation sprint*
+# *Supersedes: all previous sprint status files for this initiative*

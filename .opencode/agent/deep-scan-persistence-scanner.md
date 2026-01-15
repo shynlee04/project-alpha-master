@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Persistence layer diagnostics - IndexedDB quota, unencrypted secrets, schema issues
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Event-Driven Workflow Orchestrator with Sub-Agent Delegation
 mode: primary
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 prompt: "{file:.opencode/agent/ext-master-enhanced.md}"
 tools:

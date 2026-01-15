@@ -1,4 +1,5 @@
 ---
+subtask: true
 description: Business Analyst - Requirements gathering, user story breakdown, competitive analysis with handoff protocol
 mode: all
 temperature: 0.2

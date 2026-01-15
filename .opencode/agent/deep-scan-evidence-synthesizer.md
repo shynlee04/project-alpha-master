@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Evidence synthesizer - aggregates findings, prioritizes risks, generates remediation backlog
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

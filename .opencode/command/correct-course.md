@@ -20,6 +20,68 @@ IT IS CRITICAL THAT YOU FOLLOW THESE STEPS - while staying in character as the c
 11. UPDATE bmm-workflow-status.yaml with resolution
 </steps>
 
+## Workflow for Story Registration and Completion
+
+When completing stories in this epic (CC-09: Slash Commands, CC-10: Thread Persistence, CC-11: God Store), you MUST:
+
+1. CREATE INDIVIDUAL STORY YAML FILES (not just status updates)
+   - Location: `_bmad-output/planning-artifacts/stories/EPIC-CC-{epic-id}/story-{story-id}.md`
+   - Include: context.xml, implementation-plan.md, handoff-report.md
+
+2. CONNECT STORIES TO THEIR EPIC IN SPRINT-STATUS.YAML
+   - Add to `epics.EPIC-CC-{epic-id}.stories` array
+   - Ensure proper EPIC ID linking
+
+3. UPDATE SPRINT-STATUS.YAML WITH RESOLUTION
+   - Add `resolution_artifact` for each story
+   - Update `current.step` appropriately
+   - Document completion in `completion_note`
+
+## Workflow for Story Completion
+
+```
+Step 1: Receive Report → Load governance report, verify issue level
+Step 2: Categorize → Confirm type (quick_patch / feature_fix / architectural)
+Step 3: Route → Execute sub-workflow OR create story file
+Step 4: Complete → Update status, create resolution artifact
+```
+
+## Execution Plan for This Track
+
+### Track 3: God Store Decomposition (CC-11)
+
+**Input**: `unified-chat-store.ts` (448 lines, God Store)
+
+**Steps**:
+1. CREATE story YAML: `_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-01.md`
+   - Title: "Extract Chat Persistence Slice"
+   - Epic: "EPIC-CC-11"
+   - Assignee: "Team B"
+   - Effort: 30 minutes
+   - Context: Reference Track 2 completion
+
+2. CREATE story YAML: `_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-02.md`
+   - Title: "Create Chat Persistence Module"
+   - Epic: "EPIC-CC-11"
+   - Assignee: "Team B"
+   - Effort: 30 minutes
+   - Dependencies: story-cc-11-01 (must complete first)
+
+3. EXECUTE sub-workflow: `story-cycle`
+
+4. UPDATE sprint-status.yaml:
+   - Add stories to `epics.EPIC-CC-11.stories`
+   - Set EPIC-CC-11 status to track progress
+
+5. WAIT for Story-Cycle workflow to complete and update final status
+
+## Output Required
+
+- Updated `bmm-workflow-status.yaml`
+- Individual story YAML files created
+- Resolution artifacts generated
+- Completion status updated
+
 ## Workflow Overview
 
 ```

@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Security diagnostics - secret leaks, XSS vulnerabilities, unsafe file operations
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

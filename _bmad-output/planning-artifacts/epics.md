@@ -414,5 +414,566 @@ EPIC-06 (RAG Enhancement) [PARALLEL - Independent]
 
 ---
 
+---
+
+## EPIC-CC-01: Fix Hooks Error (Phase 1)
+
+**Priority:** P0 (Critical)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/3 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 1  
+
+### Context
+Fix Notes workspace crash to unblock user journey. The hooks error is blocking all users from accessing Notes workspace on both desktop and mobile.
+
+**Reference:** Deep Architectural Analysis Part 1.2, 5.2.1, ADR-034 D11
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee |
+|----|-------|--------|----------|--------|----------|
+| CC-01-01 | Remove useLiveQuery hook | 30m | P0 | TODO | Team A |
+| CC-01-02 | Create custom useFSAProjects() hook | 20m | P0 | TODO | Team A |
+| CC-01-03 | Test Notes workspace (desktop + mobile) | 10m | P0 | TODO | Team A |
+
+### Story Details
+
+**CC-01-01: Remove useLiveQuery hook**
+- **Files:** `src/routes/notes.lazy.tsx`
+- **Changes:** Remove `useLiveQuery` hook from NotesWorkspaceDefault component
+- **Acceptance:**
+  - ✅ No conditional hook usage
+  - ✅ No hooks error in console
+  - ✅ Component renders without crash
+
+**CC-01-02: Create custom useFSAProjects() hook**
+- **Files:** Create `src/infrastructure/filesystem/use-fsa-projects.ts`
+- **Changes:** Create custom hook with proper hook usage pattern
+- **Acceptance:**
+  - ✅ Hook called at top level (no conditionals)
+  - ✅ Filters projects in render, not in hook
+  - ✅ Works with both FSA and IndexedDB
+
+**CC-01-03: Test Notes workspace**
+- **Files:** Manual testing
+- **Changes:** Verify Notes workspace loads on desktop + mobile
+- **Acceptance:**
+  - ✅ Desktop: Shows project picker
+  - ✅ Mobile: Auto-loads browser-mode project
+  - ✅ No console errors
+  - ✅ No "Rendered fewer hooks than expected" error
+
+### Dependencies
+- None (foundation work, can start immediately)
+
+### Total Effort
+**Estimated:** 1 hour  
+**Actual:** TBD  
+**Blocker:** None  
+
+---
+
+## EPIC-CC-02: Fix Route Loading Race Condition (Phase 2)
+
+**Priority:** P0 (Critical)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/4 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 2  
+**Blocker:** EPIC-CC-01 completion
+
+### Context
+Fix loader race condition with hydration. Routes are failing to load because they query Zustand before hydration completes.
+
+**Reference:** Deep Architectural Analysis Part 1.3, 5.2.2, ADR-034 D12
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-02-01 | Create waitForHydration() function | 30m | P0 | TODO | Team A | CC-01 |
+| CC-02-02 | Update notes.$projectId loader | 20m | P0 | TODO | Team A | CC-02-01 |
+| CC-02-03 | Update ide.$projectId loader | 20m | P0 | TODO | Team A | CC-02-01 |
+| CC-02-04 | Query Dexie directly | 20m | P0 | TODO | Team A | CC-02-01 |
+
+### Story Details
+
+**CC-02-01: Create waitForHydration() function**
+- **Files:** Create `src/infrastructure/persistence/hydration-utils.ts`
+- **Changes:** Create event-driven hydration wait function
+- **Acceptance:**
+  - ✅ Event-driven (not time-based)
+  - ✅ Subscribes to Zustand store
+  - ✅ Returns immediately if already hydrated
+
+**CC-02-02: Update notes.$projectId loader**
+- **Files:** `src/routes/notes.$projectId.lazy.tsx`
+- **Changes:** Add `await waitForHydration()` at loader start
+- **Acceptance:**
+  - ✅ Waits for hydration before querying Dexie
+  - ✅ No more redirects to hub
+  - ✅ Project loads correctly
+
+**CC-02-03: Update ide.$projectId loader**
+- **Files:** `src/routes/ide.$projectId.tsx`
+- **Changes:** Add `await waitForHydration()` at loader start
+- **Acceptance:**
+  - ✅ Waits for hydration before querying Dexie
+  - ✅ No more redirects to hub
+  - ✅ Project loads correctly
+
+**CC-02-04: Query Dexie directly**
+- **Files:** `src/routes/notes.$projectId.lazy.tsx`, `src/routes/ide.$projectId.tsx`
+- **Changes:** Remove `getProjectWithRetry()` facade, query `db.projects.get()` directly
+- **Acceptance:**
+  - ✅ Dexie queried directly (not Zustand)
+  - ✅ No retry logic needed
+  - ✅ Clean loader implementation
+
+### Dependencies
+- CC-02-01: All other stories depend on waitForHydration()
+
+### Total Effort
+**Estimated:** 2 hours  
+**Actual:** TBD  
+**Blocker:** EPIC-CC-01 (hooks error must be fixed first)
+
+---
+
+## EPIC-CC-03: Fix FSA Handle Persistence (Phase 3)
+
+**Priority:** P0 (Critical)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/5 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 3  
+**Blocker:** EPIC-CC-02 completion
+
+### Context
+Fix FSA handle storage and restoration. Currently handles are stored as `null` and users are prompted every time they navigate to IDE.
+
+**Reference:** Deep Architectural Analysis Part 3.2, 5.2.3, ADR-034 D10
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-03-01 | Implement Chrome 129 detection | 20m | P0 | TODO | Team B | - |
+| CC-03-02 | Store actual FSA handle | 40m | P0 | TODO | Team B | CC-03-01 |
+| CC-03-03 | Implement silent restore | 30m | P0 | TODO | Team B | CC-03-02 |
+| CC-03-04 | Add handle to ProjectContext | 20m | P0 | TODO | Team B | CC-03-03 |
+| CC-03-05 | Update StorageGatewayFactory | 30m | P0 | TODO | Team B | CC-03-04 |
+
+### Story Details
+
+**CC-03-01: Implement Chrome 129 detection**
+- **Files:** `src/infrastructure/filesystem/handle-persistence.ts`
+- **Changes:** Add `supportsStructuredClone()` detection
+- **Acceptance:**
+  - ✅ Detects Chrome 129+ support
+  - ✅ Falls back gracefully for older versions
+  - ✅ Feature flag for conditional logic
+
+**CC-03-02: Store actual FSA handle**
+- **Files:** `src/infrastructure/filesystem/handle-persistence.ts`
+- **Changes:** Store actual handle when `structuredClone` is available
+- **Acceptance:**
+  - ✅ Handle stored in IndexedDB (not null)
+  - ✅ Uses `structuredClone` when available
+  - ✅ Properly typed
+
+**CC-03-03: Implement silent restore**
+- **Files:** `src/infrastructure/filesystem/handle-persistence.ts`
+- **Changes:** Restore from stored handle without prompting user
+- **Acceptance:**
+  - ✅ No `showDirectoryPicker()` call
+  - ✅ Returns stored handle directly
+  - ✅ Fallback to prompt only if handle unavailable
+
+**CC-03-04: Add handle to ProjectContext**
+- **Files:** `src/presentation/components/common/ProjectContext.tsx`
+- **Changes:** Add FSA handle to context provider
+- **Acceptance:**
+  - ✅ Handle available via `useFSAHandle()` hook
+  - ✅ Provided to all children
+  - ✅ Type-safe
+
+**CC-03-05: Update StorageGatewayFactory**
+- **Files:** `src/infrastructure/filesystem/storage-gateway-factory.ts`
+- **Changes:** Get FSA handle from context, not Dexie
+- **Acceptance:**
+  - ✅ Factory reads from ProjectContext
+  - ✅ StorageGateway receives handle
+  - ✅ No redundant Dexie queries
+
+### Dependencies
+- Sequential: CC-03-01 → CC-03-02 → CC-03-03 → CC-03-04 → CC-03-05
+
+### Total Effort
+**Estimated:** 3 hours  
+**Actual:** TBD  
+**Blocker:** EPIC-CC-02 (race condition must be fixed first)
+
+---
+
+## EPIC-CC-04: Fix State Scoping (Phase 4)
+
+**Priority:** P1 (High)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/4 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 4  
+**Blocker:** EPIC-CC-03 completion
+
+### Context
+Fix state to be scoped by [projectId+workspaceId]. Currently state is global and cross-contaminates between projects.
+
+**Reference:** Deep Architectural Analysis Part 5.2.4, ADR-034 D11
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-04-01 | Add project scope to IDE store | 30m | P1 | TODO | Team B | - |
+| CC-04-02 | Add project scope to workspace store | 30m | P1 | TODO | Team A | - |
+| CC-04-03 | Use Dexie for workspace state | 30m | P1 | TODO | Team A | CC-04-02 |
+| CC-04-04 | Add cleanup on workspace switch | 30m | P1 | TODO | Team A | CC-04-03 |
+
+### Story Details
+
+**CC-04-01: Add project scope to IDE store**
+- **Files:** `src/infrastructure/persistence/stores/ide/useIDEStore.ts`
+- **Changes:** Hydrate current project with Dexie data
+- **Acceptance:**
+  - ✅ State scoped by [projectId+workspaceId]
+  - ✅ No cross-contamination
+  - ✅ Typed correctly
+
+**CC-04-02: Add project scope to workspace store**
+- **Files:** `src/infrastructure/persistence/stores/workspace/workspace-store.ts`
+- **Changes:** Use Dexie, not localStorage for persistence
+- **Acceptance:**
+  - ✅ Uses Dexie for project-specific data
+  - ✅ Scoped by [projectId+workspaceId]
+  - ✅ Composite key implementation
+
+**CC-04-03: Use Dexie for workspace state**
+- **Files:** Same as CC-04-02
+- **Changes:** Replace localStorage with Dexie queries
+- **Acceptance:**
+  - ✅ Direct Dexie queries
+  - ✅ Hot reactivity with Dexie hooks
+  - ✅ No manual serialization needed
+
+**CC-04-04: Add cleanup on workspace switch**
+- **Files:** All stores in `src/infrastructure/persistence/stores/`
+- **Changes:** Reset/scope-change handlers
+- **Acceptance:**
+  - ✅ State resets on workspace switch
+  - ✅ No stale data leaks
+  - ✅ Clean transitions
+
+### Dependencies
+- Sequential stories for consistency
+
+### Total Effort
+**Estimated:** 2 hours  
+**Actual:** TBD  
+**Blocker:** EPIC-CC-03 (FSA handle must be fixed first)
+
+---
+
+## EPIC-CC-05: Fix Platform Guards (Phase 5)
+
+**Priority:** P1 (High)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/4 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 5  
+**Blocker:** EPIC-CC-04 completion
+
+### Context
+Add platform guards to all routes. Currently mobile users can access IDE and there are no clear error messages.
+
+**Reference:** Deep Architectural Analysis Part 2.3, 5.2.5, ADR-034 D13
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-05-01 | Add guard to /ide route | 15m | P1 | TODO | Team A | - |
+| CC-05-02 | Add guard to /ide/$projectId | 15m | P1 | TODO | Team A | CC-05-01 |
+| CC-05-03 | Hide IDE icon on mobile | 15m | P1 | TODO | Team B | - |
+| CC-05-04 | Add toast messages | 15m | P1 | TODO | Team B | CC-05-02 |
+
+### Story Details
+
+**CC-05-01: Add guard to /ide route**
+- **Files:** `src/routes/ide.tsx`
+- **Changes:** Add `beforeLoad` guard checking `canAccessIDE`
+- **Acceptance:**
+  - ✅ Checks platform contract
+  - ✅ Mobile users blocked
+  - ✅ Redirects to Notes with reason
+
+**CC-05-02: Add guard to /ide/$projectId**
+- **Files:** `src/routes/ide.$projectId.tsx` (already has guard)
+- **Changes:** Verify and improve existing guard
+- **Acceptance:**
+  - ✅ Platform check works
+  - ✅ Redirect with reason
+  - ✅ Toast message shown
+
+**CC-05-03: Hide IDE icon on mobile**
+- **Files:** `src/presentation/components/common/MainSidebar.tsx`
+- **Changes:** Conditional rendering based on `deviceType`
+- **Acceptance:**
+  - ✅ IDE icon hidden on mobile/tablet
+  - ✅ Visible on desktop only
+  - ✅ No layout shifts
+
+**CC-05-04: Add toast messages**
+- **Files:** All route files with guards
+- **Changes:** Show explanation toast on redirect
+- **Acceptance:**
+  - ✅ Clear error message
+  - ✅ User understands why blocked
+  - ✅ Actionable suggestion
+
+### Dependencies
+- Can run in parallel
+
+### Total Effort
+**Estimated:** 1 hour  
+**Actual:** TBD  
+**Blocker:** EPIC-CC-04 (state scoping must be fixed first)
+
+---
+
+## EPIC-CC-06: Remove Temp Project (Phase 6)
+
+**Priority:** P1 (High)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/3 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 6  
+**Blocker:** EPIC-CC-05 completion
+
+### Context
+Remove temp project option (ADR-033 D5 violation). Currently users see "temp project" option and can create IndexedDB projects on desktop.
+
+**Reference:** Deep Architectural Analysis Part 2.2, 5.2.6, ADR-033 D5
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-06-01 | Remove temp project option | 20m | P1 | TODO | Team B | - |
+| CC-06-02 | Remove browser DB option on desktop | 20m | P1 | TODO | Team A | CC-06-01 |
+| CC-06-03 | Add project list | 20m | P1 | TODO | Team A | CC-06-02 |
+
+### Story Details
+
+**CC-06-01: Remove temp project option**
+- **Files:** `src/routes/ide.tsx`
+- **Changes:** Delete temp project logic entirely
+- **Acceptance:**
+  - ✅ No "temp project" option
+  - ✅ ADR-033 D5 compliance
+  - ✅ Clean route
+
+**CC-06-02: Remove browser DB option on desktop**
+- **Files:** `src/presentation/components/hub/ProjectPickerDialog.tsx`
+- **Changes:** Hide IndexedDB option when `canAccessFSA` is true
+- **Acceptance:**
+  - ✅ Desktop: FSA only
+  - ✅ Mobile: IndexedDB only
+  - ✅ Platform-respectful
+
+**CC-06-03: Add project list**
+- **Files:** Same as CC-06-02
+- **Changes:** Show list of existing projects with names
+- **Acceptance:**
+  - ✅ Users see project names
+  - ✅ No need to select folder blindly
+  - ✅ Search/filter capability
+
+### Dependencies
+- Sequential: CC-06-01 → CC-06-02 → CC-06-03
+
+### Total Effort
+**Estimated:** 1 hour  
+**Actual:** TBD  
+**Blocker:** EPIC-CC-05 (platform guards must be fixed first)
+
+---
+
+## EPIC-CC-07: Fix Terminal Loading (Phase 7)
+
+**Priority:** P2 (Medium)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/3 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 7  
+**Blocker:** EPIC-CC-06 completion
+
+### Context
+Fix WebContainer terminal boot. Currently terminal loads forever and shows no prompt.
+
+**Reference:** Deep Architectural Analysis Part 5.2.7
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-07-01 | Investigate WebContainer boot | 30m | P2 | TODO | Team B | - |
+| CC-07-02 | Fix WebContainer config | 30m | P2 | TODO | Team B | CC-07-01 |
+| CC-07-03 | Add error feedback | 20m | P2 | TODO | Team B | CC-07-02 |
+
+### Story Details
+
+**CC-07-01: Investigate WebContainer boot**
+- **Files:** `src/presentation/components/ide/IDELayout.tsx`
+- **Changes:** Debug and understand boot failure
+- **Acceptance:**
+  - ✅ Root cause identified
+  - ✅ Boot sequence documented
+  - ✅ Fix plan created
+
+**CC-07-02: Fix WebContainer config**
+- **Files:** Same as CC-07-01
+- **Changes:** Correct configuration based on investigation
+- **Acceptance:**
+  - ✅ Terminal boots successfully
+  - ✅ Shows prompt
+  - ✅ User can run commands
+
+**CC-07-03: Add error feedback**
+- **Files:** Same as CC-07-01
+- **Changes:** Show error message if boot fails
+- **Acceptance:**
+  - ✅ Clear error message
+  - ✅ User sees feedback
+  - ✅ No silent failures
+
+### Dependencies
+- Sequential: CC-07-01 → CC-07-02 → CC-07-03
+
+### Total Effort
+**Estimated:** 2 hours  
+**Actual:** TBD  
+**Blocker:** EPIC-CC-06 (temp project must be removed first)
+
+---
+
+## EPIC-CC-08: End-to-End Testing (Phase 8)
+
+**Priority:** P2 (Medium)  
+**Status:** READY_FOR_DEV  
+**Progress:** 0% (0/3 stories)  
+**Created:** 2026-01-21  
+**Source:** Deep Architectural Analysis Phase 8  
+**Blocker:** All previous epics completion
+
+### Context
+Verify all user journeys work correctly. This is the final validation that all fixes work together.
+
+**Reference:** Deep Architectural Analysis Part 5.3, 5.2.8
+
+### Stories
+
+| ID | Title | Effort | Priority | Status | Assignee | Depends On |
+|----|-------|--------|----------|--------|----------|------------|
+| CC-08-01 | Test desktop user journeys | 40m | P2 | TODO | Team A | CC-01 through CC-07 |
+| CC-08-02 | Test mobile user journeys | 30m | P2 | TODO | Team A | CC-01 through CC-07 |
+| CC-08-03 | Verify ADR compliance | 20m | P2 | TODO | Team B | CC-08-01, CC-08-02 |
+
+### Story Details
+
+**CC-08-01: Test desktop user journeys**
+- **Test Cases:**
+  1. Returned Desktop - Notes
+  2. Returned Desktop - IDE
+  3. Returned Desktop - Project Creation
+  4. New Desktop - First Visit
+- **Acceptance:**
+  - ✅ All test cases pass
+  - ✅ No console errors
+  - ✅ Clear UX flow
+
+**CC-08-02: Test mobile user journeys**
+- **Test Cases:**
+  1. New Mobile - First Visit
+  2. Returned Mobile - Notes
+  3. Returned Mobile - IDE Access Attempt
+- **Acceptance:**
+  - ✅ All test cases pass
+  - ✅ No console errors
+  - ✅ IDE properly blocked
+
+**CC-08-03: Verify ADR compliance**
+- **Check:**
+  1. ADR-033 D1: Platform Detection
+  2. ADR-033 D2: FSA Handle Persistence
+  3. ADR-034 D11: State Scoping
+  4. ADR-034 D12: Route Loading
+  5. ADR-034 D13: Platform Guards
+- **Acceptance:**
+  - ✅ All ADR decisions implemented
+  - ✅ No violations found
+  - ✅ Governance verified
+
+### Dependencies
+- Sequential: CC-08-01 → CC-08-02 → CC-08-03
+
+### Total Effort
+**Estimated:** 2 hours  
+**Actual:** TBD  
+**Blocker:** All previous epics (CC-01 through CC-07)
+
+---
+
+## Correct-Course Architectural Remediation Epics Summary
+
+### Overview
+
+This section defines 8 epics (EPIC-CC-01 through EPIC-CC-08) that implement the phases from the Deep Architectural Analysis (2026-01-21). These epics are designed to progressively fix all identified issues blocking user journeys.
+
+### Epic Status Matrix
+
+| Epic | Name | Priority | Status | Blocker |
+|------|------|----------|--------|----------|
+| EPIC-CC-01 | Fix Hooks Error | P0 | READY_FOR_DEV | None |
+| EPIC-CC-02 | Fix Route Loading Race Condition | P0 | READY_FOR_DEV | CC-01 |
+| EPIC-CC-03 | Fix FSA Handle Persistence | P0 | READY_FOR_DEV | CC-02 |
+| EPIC-CC-04 | Fix State Scoping | P1 | READY_FOR_DEV | CC-03 |
+| EPIC-CC-05 | Fix Platform Guards | P1 | READY_FOR_DEV | CC-04 |
+| EPIC-CC-06 | Remove Temp Project | P1 | READY_FOR_DEV | CC-05 |
+| EPIC-CC-07 | Fix Terminal Loading | P2 | READY_FOR_DEV | CC-06 |
+| EPIC-CC-08 | End-to-End Testing | P2 | READY_FOR_DEV | CC-01 through CC-07 |
+
+### Sequential Execution Plan
+
+```
+Week 1: EPIC-CC-01, EPIC-CC-02 (Team A focus)
+Week 1-2: EPIC-CC-03, EPIC-CC-04 (Team B focus)
+Week 2: EPIC-CC-05, EPIC-CC-06 (Team A + B parallel)
+Week 2-3: EPIC-CC-07 (Team B)
+Week 3: EPIC-CC-08 (Team A + B validation)
+```
+
+### Total Effort
+
+- **Epics:** 8
+- **Stories:** 29
+- **Estimated Total:** 12-14 hours
+- **Team Distribution:**
+  - Team A: 13 stories (~7 hours)
+  - Team B: 16 stories (~7 hours)
+  - Joint: 0 stories (2 hours)
+
+---
+
 *This document governs all feature development for Via-Gent*  
-*Supersedes: epics.md v1.0.0 (2026-01-08)*
+*Supersedes: epics.md v2.0.0 (2026-01-11)*

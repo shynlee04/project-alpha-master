@@ -334,6 +334,28 @@ See companion file: `correct-course-v2-sprint-2026-01-20.yaml`
 
 ---
 
+## Part 5: FOUNDATION CLEANUP (Parallel Tracks)
+
+**Team Assignment**: Team B (Foundation Squad)
+**Duration**: Week 1-2 (Parallel with Critical Fixes)
+
+### Track 1: Slash Command Store Migration (Data Safety)
+*   **Problem**: `src/lib/notes/slash-command-store.ts` uses localStorage (violation) and is in legacy path.
+*   **Fix**: Move to `src/infrastructure/persistence/stores/notes/slash-commands/`, switch to Dexie.
+*   **Value**: Prevents data loss (5MB limit), fixes architectural violation.
+
+### Track 2: Thread Persistence Migration (Mobile Safety)
+*   **Problem**: `conversation-helpers.ts` imports from legacy `threads-store.ts`.
+*   **Fix**: Extract `saveThread` logic to `src/infrastructure/persistence/stores/conversation/persistence.ts`.
+*   **Value**: Allows safe deletion of legacy code without breaking mobile chat history.
+
+### Track 3: Unified Chat Store Refactor (God Store)
+*   **Problem**: `unified-chat-store.ts` is too large and mixes concerns.
+*   **Fix**: Extract persistence logic to `chat-persistence-slice.ts`.
+*   **Value**: Improves maintainability and testability.
+
+---
+
 ## Decisions Summary
 
 ### New Decisions (This ADR)

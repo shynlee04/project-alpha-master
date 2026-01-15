@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Enhanced Module Builder - LOOP_STATE integration, ARTIFACT_REGISTRY registration
 mode: primary
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

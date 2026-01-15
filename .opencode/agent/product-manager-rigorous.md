@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Rigorous product manager - enforces systematic assessments, rejects superficial reviews
 mode: primary
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

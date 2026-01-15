@@ -5,7 +5,7 @@
 
 import { toast } from 'sonner';
 import type { ConversationState } from './conversation-types';
-import { saveThread } from '@/lib/workspace/threads-store';
+import { saveThread } from './persistence';
 import type { ConversationThread } from './types';
 import type { ConversationThreadRecord } from '../../dexie-db';
 

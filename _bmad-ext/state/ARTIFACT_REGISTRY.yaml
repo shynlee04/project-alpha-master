@@ -6,7 +6,7 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-18T11:30:00+07:00"
-last_updated: "2026-01-18T12:30:00+07:00"
+last_updated: "2026-01-21T13:00:00+07:00"
 
 registry:
   # Planning Artifacts
@@ -91,6 +91,26 @@ registry:
     status: "complete"
     adr_reference: "ADR-033 Decision D4: Entity Naming Convention"
 
+  - id: "cc-09-01-handoff"
+    type: "handoff"
+    name: "EPIC-CC-09 Track 1: Slash Command Store Migration"
+    story_id: "CC-09-01"
+    path: "_bmad-ext/.handoffs/inf-track-1-slash-commands.md"
+    parent_id: "epic-cc-09"
+    created_at: "2026-01-21T13:00:00+07:00"
+    status: "completed"
+    result: "Migrated slash-command-store to infrastructure with Dexie persistence and backward compatibility facade"
+
+  - id: "inf-track-2-archive"
+    type: "archive"
+    name: "threads-store.ts Migration to Infrastructure"
+    story_id: "EPIC-INF-02"
+    path: "_bmad-ext/.archive/threads-store-2026-01-22-legacy.ts"
+    parent_id: "epic-cc-arc-sprint"
+    created_at: "2026-01-22T08:00:00+07:00"
+    status: "archived"
+    reason: "Migrated to src/infrastructure/persistence/stores/conversation/persistence.ts"
+
 # Session Tracking
 sessions:
   - id: "excalibur-epic-cc-arc-2026-01-18"
@@ -99,3 +119,11 @@ sessions:
     epic: "EPIC-CC-ARC"
     started_at: "2026-01-18T11:30:00+07:00"
     status: "active"
+
+  - id: "adr-036"
+    type: "adr"
+    name: "ADR-036: Foundation Cleanup & Infrastructure Consolidation"
+    path: "_bmad-output/planning-artifacts/adr/ADR-036-foundation-cleanup-architecture-2026-01-21.md"
+    parent_id: "adr-033"
+    created_at: "2026-01-21T00:00:00+07:00"
+    status: "proposed"

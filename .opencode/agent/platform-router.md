@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Platform Router Service - Optimal platform selection for Claude Code vs OpenCode
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true

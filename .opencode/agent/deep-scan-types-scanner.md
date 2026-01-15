@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: TypeScript diagnostics - `any` types, suppressions, interface duplication
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Workspace integration diagnostics - cross-workspace leaks, event isolation
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

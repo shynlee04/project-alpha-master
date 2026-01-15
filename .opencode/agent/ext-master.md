@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: BMAD Extension Master Orchestrator - Entry point for all _bmad-ext modules
 mode: primary
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 prompt: "{file:.opencode/agent/ext-master.md}"
 tools:

@@ -9,7 +9,7 @@
   *
   * Route Pattern: /notes/$projectId
   * - ProjectProvider wraps NotesPage with project context
-  * - WorkspaceSwitcher in header allows switching to IDE/Knowledge/Study
+  * - WorkspaceSwitcher in header allow switching to IDE/Knowledge/Study
   *
   * @epic Epic-26 Intelligent Knowledge Base
   * @story 26-1 BlockNote Editor
@@ -17,8 +17,8 @@
   * @story 26-3 "Ask My Notes" RAG Tool
   * @story 26-4 Inline AI Magic
   *
-  * ROUTE-004 FIX: Changed from createLazyFileRoute to createFileRoute
-  * to support loader pattern instead of useEffect fetch.
+  * INF-03 FIX: Added waitForHydration() to fix race condition where
+  * loader runs before Zustand store hydration completes.
   */
 
 import { useEffect, useRef } from 'react';
@@ -26,73 +26,41 @@ import { redirect, createLazyFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import { getProject } from '@/infrastructure/persistence/stores/project';
-import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
+import { db } from '@/infrastructure/persistence/dexie-db';
+import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 
 type NotesSearchParams = { reason?: "mobile-not-supported" | undefined };
 
 // ============================================================================
-// Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
-// ============================================================================
-
-async function getProjectWithRetry(
-  projectId: string,
-  maxRetries: number = 3,
-  baseDelayMs: number = 50
-): Promise<Project | null> {
-  let lastError: Error | null = null;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const fromStore = useProjectStore.getState().getProject(projectId);
-    if (fromStore) {
-      if (attempt > 1) {
-        console.log(`[NotesRoute] Project found on attempt ${attempt}/${maxRetries}`);
-      }
-      return fromStore as Project;
-    }
-
-    try {
-      const fromFacade = await getProject(projectId);
-      if (fromFacade) {
-        return fromFacade as Project;
-      }
-    } catch (error) {
-      lastError = error as Error;
-    }
-
-    if (attempt < maxRetries) {
-      const delayMs = baseDelayMs * Math.pow(2, attempt - 1);
-      console.log(`[NotesRoute] Project not found, attempt ${attempt}/${maxRetries}, retrying in ${delayMs}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
-  }
-
-  console.error(`[NotesRoute] Project not found after ${maxRetries} attempts:`, projectId, lastError);
-  return null;
-}
-
-// ============================================================================
 // Route Definition (ROUTE-004 FIX: Using createFileRoute for loader pattern)
+// INF-03 FIX: Added waitForHydration() to fix race condition
 // ============================================================================
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
   ssr: false,
 
-  // ROUTE-004 FIX: Use loader only for data fetching (NOT beforeLoad per ADR-034 D12)
+  // INF-03 FIX: Use loader with waitForHydration per ADR-034 D12
   loader: async ({ params }) => {
     const { projectId } = params;
     console.log('[notes.$projectId] Loader called for project:', projectId);
 
-    // Fetch project data with retry logic
-    const project = await getProjectWithRetry(projectId, 3, 50);
-    if (!project) {
-      console.error('[notes.$projectId] Project not found:', projectId);
+    // ✅ INF-03 FIX: Wait for Zustand store hydration before querying
+    await waitForHydration();
+    console.log('[notes.$projectId] Hydration complete, querying Dexie...');
+
+    // ✅ INF-03 FIX: Query Dexie directly (not Zustand/getProject facade)
+    const record = await db.projects.get(projectId);
+    
+    if (!record) {
+      console.error('[notes.$projectId] Project not found in Dexie:', projectId);
       throw redirect({ to: '/hub' });
     }
 
+    // Convert record to Project type
+    const project = record as unknown as Project;
     console.log('[notes.$projectId] Project loaded successfully:', project.id);
     return { project };
   },

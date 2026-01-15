@@ -13,20 +13,22 @@ previous_version: "bmm-workflow-status-v2.5.yaml"
 
 health_score: 95  # Team B complete, TypeScript: 0 errors
 context_ttl: "24h"
-current_phase: "EPIC-CC-ARC-WEEK3"
-
-# PHASE GUIDANCE
-phase_guidance: |
-  EPIC-CC-ARC - ARCHITECTURAL REMEDIATION EXECUTION (WEEK 3):
-
-  ADR-033 APPROVED: All decisions finalized. Week 1-2 complete.
-
-  WEEK 1-2 COMPLETED:
-  - Team A: Phase A (Identity & Routing) - ARC-A01, A02, A04, A05, A06 ✅
-  - Team B: Phase B (Storage Contract) - ARC-B01-B12 ✅
-
-  WEEK 3 FOCUS:
-  - Team B: ARC-B08 (exclusion patterns), ARC-B09 (depth limits), ARC-D01, D02
+  current_phase: "EPIC-INF-01-CORRECT-COURSE"
+ 
+  # PHASE GUIDANCE
+  phase_guidance: |
+    EPIC-INF-01 - CORRECT-COURSE IMPLEMENTATION (Phase 0):
+ 
+    ADR-033 APPROVED: All decisions finalized.
+    
+    PHASE 0 - DIAGNOSTIC LOCK-IN:
+    - Purpose: Lock in session state before implementation
+    - Deep Architectural Analysis created (deep-architectural-analysis-2026-01-21.md)
+    - 31 ADR violations identified
+    - 8 phases planned (EPIC-INF-02 through EPIC-INF-08)
+    - Each phase: 2-4 stories (24-32 stories total)
+    
+    NEXT: Phase 1 - Fix Hooks Error (EPIC-INF-02)
 
   KEY ACHIEVEMENTS:
   - ✅ StorageGateway abstraction layer complete

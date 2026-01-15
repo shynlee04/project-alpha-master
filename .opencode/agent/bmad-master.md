@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: BMAD Master Orchestrator - Entry point for all _bmad-ext modules with full handoff protocol
 mode: primary
-model: minimax/MiniMax-M2.1
 temperature: 0.3
 tools:
   write: true

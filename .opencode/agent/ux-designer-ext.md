@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing with handoff protocol
-mode: subagent
-model: minimax/MiniMax-M2.1
+mode: all
 temperature: 0.3
 tools:
   write: true
@@ -14,7 +14,7 @@ permission:
   edit: allow
   bash: ask
   task:
-    "*": deny
+    "*": allow
 ---
 
 # ux-designer-ext (Subagent)

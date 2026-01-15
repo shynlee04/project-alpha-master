@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: AI Agent & RAG diagnostics - tool permissions, prompt injection, RAG pipeline safety
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: true

@@ -9,15 +9,12 @@ import { useEffect, useState, useRef } from 'react';
 import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import { useNoteStore } from '@/lib/notes';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
-import { ErrorBoundary } from '@/presentation/components/error';
 import { ProjectRegistry } from '@/domain/services';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-import { ProjectPickerDialog } from '@/presentation/components/hub/ProjectPickerDialog';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/infrastructure/persistence/dexie-db';
+import { useFSAProjects, useBrowserModeProject } from '@/infrastructure/persistence/stores/project/use-fsa-projects';
+import { ErrorBoundary } from '@/presentation/components/error';
 
 /**
  * Route definition with ErrorBoundary - Uses NotesPage with default project
@@ -38,95 +35,23 @@ function NotesWorkspaceDefault() {
   const navigate = useNavigate();
   const platform = getPlatformContract();
   const [project, setProject] = useState<Project | null>(null);
-  const [showPicker, setShowPicker] = useState(false);
   const welcomeNoteCreatedRef = useRef(false);
 
-  // Check for existing FSA projects with notes binding
-  const fsaProjects = useLiveQuery(async () => {
-    if (!platform.canAccessFSA) return [];
-    const allProjects = await db.projects.toArray();
-    return allProjects.filter(
-      (p) => p.storageType === 'fsa' && p.workspaceBindings?.notes === true
-    );
-  }, [platform.canAccessFSA]);
+  // ✅ ALWAYS call hooks at TOP LEVEL (no conditional)
+  const fsaProjects = useFSAProjects();
+  const browserProject = useBrowserModeProject();
 
-  useEffect(() => {
-    // CC-V2-A01: Desktop with FSA → show picker or recent projects
-    if (platform.canAccessFSA) {
-      // If we have FSA projects, show picker
-      if (fsaProjects && fsaProjects.length > 0) {
-        setShowPicker(true);
-      } else {
-        // No FSA projects - show picker to create one
-        setShowPicker(true);
-      }
-      return;
-    }
-
-    // Mobile/tablet → use browser-mode (IndexedDB)
-    import('@/lib/workspace/browser-mode').then(
-      async ({ getOrCreateBrowserModeProject, BROWSER_MODE_PROJECT_ID }) => {
-        const browserProject = await getOrCreateBrowserModeProject();
-
-        if (browserProject) {
-          setProject(browserProject);
-
-          if (!welcomeNoteCreatedRef.current) {
-            welcomeNoteCreatedRef.current = true;
-
-            const existingNotes = await db.notes
-              .where('projectId')
-              .equals(BROWSER_MODE_PROJECT_ID)
-              .count();
-
-            if (existingNotes === 0) {
-              const createNote = useNoteStore.getState().createNote;
-              const setActiveNote = useNoteStore.getState().setActiveNote;
-
-              const defaultNoteId = await createNote({
-                title: 'Welcome to Notes',
-                emoji: '👋',
-                blocks: [
-                  {
-                    id: crypto.randomUUID(),
-                    type: 'paragraph',
-                    content: [
-                      {
-                        type: 'text',
-                        text: 'Welcome to Notes! This is your default note.',
-                        styles: {},
-                      },
-                    ],
-                    props: {
-                      textAlignment: 'left',
-                      textColor: 'default',
-                      backgroundColor: 'default',
-                    },
-                    children: [],
-                  },
-                ] as unknown as import('@blocknote/core').Block[],
-              });
-
-              setActiveNote(defaultNoteId);
-            }
-          }
-        }
-      }
-    );
-  }, [platform.canAccessFSA, fsaProjects]);
-
-  // Desktop: Show project picker dialog
-  if (platform.canAccessFSA && showPicker) {
+  // CC-01-01: Desktop with FSA → show project picker directly
+  if (platform.canAccessFSA) {
     return (
       <div className="h-full flex items-center justify-center bg-background">
         <ProjectPickerDialog
           open={true}
           onOpenChange={(open) => {
-            if (!open && !project) {
+            if (!open) {
               // User closed picker without selecting - go to hub
               navigate({ to: '/' });
             }
-            setShowPicker(open);
           }}
           targetWorkspace="notes"
           onCreateNew={() => {
@@ -137,6 +62,58 @@ function NotesWorkspaceDefault() {
       </div>
     );
   }
+
+  // Mobile/tablet → use browser-mode (IndexedDB)
+  useEffect(() => {
+    if (!browserProject) return;
+
+    setProject(browserProject);
+
+    if (!welcomeNoteCreatedRef.current) {
+      welcomeNoteCreatedRef.current = true;
+
+      const checkAndCreateWelcomeNote = async () => {
+        const BROWSER_MODE_PROJECT_ID = 'proj_browser-default';
+        const existingNotes = await db.notes
+          .where('projectId')
+          .equals(BROWSER_MODE_PROJECT_ID)
+          .count();
+
+        if (existingNotes === 0) {
+          const createNote = useNoteStore.getState().createNote;
+          const setActiveNote = useNoteStore.getState().setActiveNote;
+
+          const defaultNoteId = await createNote({
+            title: 'Welcome to Notes',
+            emoji: '👋',
+            blocks: [
+              {
+                id: crypto.randomUUID(),
+                type: 'paragraph',
+                content: [
+                  {
+                    type: 'text',
+                    text: 'Welcome to Notes! This is your default note.',
+                    styles: {},
+                  },
+                ],
+                props: {
+                  textAlignment: 'left',
+                  textColor: 'default',
+                  backgroundColor: 'default',
+                },
+                children: [],
+              },
+            ] as unknown as import('@blocknote/core').Block[],
+          });
+
+          setActiveNote(defaultNoteId);
+        }
+      };
+
+      checkAndCreateWelcomeNote();
+    }
+  }, [browserProject]);
 
   // FS-02: Register project in ProjectRegistry to prevent cross-workspace conflicts
   useEffect(() => {

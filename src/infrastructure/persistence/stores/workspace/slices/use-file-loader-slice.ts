@@ -22,7 +22,8 @@ import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter'
 import type { FsaPermissionState } from '@/infrastructure/filesystem';
 import { getProject, type ProjectMetadata } from '@/infrastructure/persistence/stores/project';
 import { useWorkspaceStore } from '../workspace-store';
-import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+// INF-04-02: Use handlePersistenceService for handle restoration
+import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 
 /**
  * File loader slice configuration
@@ -30,6 +31,8 @@ import { useProjectStore } from '@/infrastructure/persistence/stores/project/use
 export interface UseFileLoaderSliceOptions {
   /** Initial project ID from route params */
   initialProjectId?: string | null;
+  /** Initial directory handle restored from persistence (INF-04-02) */
+  initialHandle?: FileSystemDirectoryHandle | null;
 }
 
 /**
@@ -63,6 +66,7 @@ export interface FileLoaderSliceResult {
  */
 export function useFileLoaderSlice({
   initialProjectId,
+  initialHandle,
 }: UseFileLoaderSliceOptions): FileLoaderSliceResult {
   // Get currentProjectId from workspace store for reactive loading
   const currentProjectId = useWorkspaceStore((s) => s.currentProjectId);
@@ -118,34 +122,43 @@ export function useFileLoaderSlice({
               console.error('[FileLoaderSlice] Failed to create UnifiedStorageAdapter:', err);
             }
           } else {
-            // FSA projects - restore handle via project store
-            // FIX-2026-01-13: Properly restore FSA handle and set directoryHandle state
+            // FSA projects - restore handle via handlePersistenceService
+            // INF-04-02: Use handlePersistenceService instead of projectStore.restoreProjectHandle
             console.log('[FileLoaderSlice] FSA project - attempting handle restoration for:', project.id);
             
             try {
-              const projectStore = useProjectStore.getState();
-              const result = await projectStore.restoreProjectHandle(project.id);
+              // INF-04-02: Use pre-restored handle if available, otherwise restore it
+              let restoredHandle: FileSystemDirectoryHandle | null = null;
               
-              if (!active) return; // Check if component is still mounted
+              if (initialHandle) {
+                console.log('[FileLoaderSlice] Using pre-restored handle from initialHandle');
+                restoredHandle = initialHandle;
+              } else {
+                // Restore handle via handlePersistenceService
+                const result = await handlePersistenceService.restoreHandle(project.id);
+                if (!active) return; // Check if component is still mounted
+                
+                if (result.success && result.handle) {
+                  console.log('[FileLoaderSlice] FSA handle restored successfully via handlePersistenceService');
+                  restoredHandle = result.handle;
+                } else if (result.requiresUserInteraction) {
+                  console.log('[FileLoaderSlice] FSA handle requires user interaction');
+                  setPermissionState('prompt');
+                } else {
+                  console.warn('[FileLoaderSlice] FSA handle restoration failed:', result.error);
+                  setPermissionState('prompt');
+                }
+              }
               
-              if (result.success && result.handle) {
-                console.log('[FileLoaderSlice] FSA handle restored successfully');
-                setDirectoryHandle(result.handle);
+              if (restoredHandle) {
+                setDirectoryHandle(restoredHandle);
                 setPermissionState('granted');
                 
                 // Create FSA adapter for this handle
                 const fsaAdapter = new LocalFSAdapter();
-                fsaAdapter.setDirectoryHandle(result.handle);
+                fsaAdapter.setDirectoryHandle(restoredHandle);
                 localAdapterRef.current = fsaAdapter;
                 console.log('[FileLoaderSlice] Created LocalFSAdapter for FSA project:', project.id);
-              } else if (result.requiresUserInteraction) {
-                console.log('[FileLoaderSlice] FSA handle requires user interaction');
-                // Set to 'prompt' to show the PermissionOverlay
-                setPermissionState('prompt');
-              } else {
-                console.warn('[FileLoaderSlice] FSA handle restoration failed:', result.error);
-                // Set to 'prompt' to allow user to manually restore
-                setPermissionState('prompt');
               }
             } catch (err) {
               console.error('[FileLoaderSlice] Failed to restore FSA handle:', err);
@@ -170,7 +183,7 @@ export function useFileLoaderSlice({
     };
     load();
     return () => { active = false; };
-  }, [currentProjectId, initialProjectId, projectMetadata?.id]);
+  }, [currentProjectId, initialProjectId, initialHandle, projectMetadata?.id]);
 
   return {
     // State

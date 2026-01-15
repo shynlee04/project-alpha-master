@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Technical Writer - API docs, user guides, architecture documentation with handoff protocol
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.2
 tools:
   write: true
@@ -14,7 +14,7 @@ permission:
   edit: allow
   bash: deny
   task:
-    "*": deny
+    "*": allow
 ---
 
 # tech-writer-ext (Subagent)

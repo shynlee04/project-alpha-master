@@ -1,7 +1,7 @@
 ---
+subtask: true
 description: Domain analysis - identifies domain boundaries, responsibilities, relationships
 mode: subagent
-model: minimax/MiniMax-M2.1
 temperature: 0.1
 tools:
   write: false

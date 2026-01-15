@@ -1,0 +1,6 @@
+
+> project-alpha@ lint /Users/apple/Documents/coding-projects/project-alpha-master
+> eslint src --ext .ts,.tsx --max-warnings 0
+
+sh: eslint: command not found
+ ELIFECYCLE  Command failed.
