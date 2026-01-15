@@ -1,9 +1,8 @@
-# Cross-Module Handoff Protocol
-
-**Version**: 1.0.0  
-**Created**: 2026-01-11  
-**description**: Define how modules communicate and hand off work to each other
-
+---
+Name: Cross-Module Handoff Protocol
+Description: Define how modules communicate and hand off work to each other
+Version: 1.0.0  
+Created: 2026-01-11  
 ---
 
 ## Overview

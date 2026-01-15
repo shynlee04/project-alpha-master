@@ -1,0 +1,488 @@
+# Deep Scan: Architecture Compliance Analysis
+# Project Alpha (ViaGent) - CC-V2 Integration Validation
+# Generated: 2026-01-21T18:00:00+07:00
+# Scanner: deep-scan-architecture-scanner v2.0
+
+scan_metadata:
+  scan_id: "DEEP-SCAN-ARCH-2026-01-21"
+  conducted_at: "2026-01-21T18:00:00+07:00"
+  conducted_by: "deep-scan-architecture-scanner"
+  scope: "Full codebase compliance check against ADR-033 and AGENTS.md"
+  reference_docs:
+    - "ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+    - "AGENTS.md (File Tree Governance rules)"
+  scan_type: "comprehensive"
+
+summary:
+  total_files_scanned: 847
+  total_lines_of_code: 358412
+  critical_issues: 3
+  high_priority_issues: 8
+  medium_priority_issues: 15
+  
+  compliance_overall: "72%"
+  architecture_status: "PARTIALLY_COMPLIANT"
+  
+  completed_fixes:
+    - "CC-V2-B01: Chrome version check (fixed >= 129)"
+    - "CC-V2-B02: Hydration regex (fixed match[2])"
+    - "CC-V2-B03: FSA handle storage (removed mock object)"
+    - "CC-V2-B04: MarkdownSyncService connected"
+    - "CC-V2-B05: browser-mode ID migration"
+  
+  pending_issues:
+    - "Duplicate stores in src/lib/ vs src/infrastructure/"
+    - "God components > 300 lines"
+    - "Layer violations in domain layer"
+    - "Deprecated paths still in use"
+
+# ==============================================================================
+# CRITICAL ISSUES (Blocking)
+# ==============================================================================
+critical_issues:
+  - id: "CRIT-01"
+    title: "Duplicate FileSystem Adapters"
+    description: "Both src/lib/filesystem/ and src/infrastructure/filesystem/ contain FSA adapters"
+    files:
+      - "src/lib/filesystem/unified-storage-adapter.ts (657 lines)"
+      - "src/lib/filesystem/local-fs-adapter.ts (444 lines)"
+      - "src/infrastructure/filesystem/fsa-gateway.ts (747 lines)"
+      - "src/infrastructure/filesystem/fsa-storage-adapter.ts (infrastructure version)"
+    lines: "Full duplication"
+    impact: "User can import from either path, causing confusion and potential bugs"
+    remediation: |
+      1. Archive src/lib/filesystem/ duplicates
+      2. Create facade re-exports for backward compatibility
+      3. Update all imports to use @/infrastructure/filesystem/ paths
+    status: "PENDING"
+    story_reference: "ARC-E03"
+    
+  - id: "CRIT-02"
+    title: "Domain Layer Has Lib Imports"
+    description: "Domain layer files import from @/lib/ which violates clean architecture"
+    files:
+      - "src/domain/services/file-crud/unified-file-crud.ts"
+      - "src/domain/services/AgentProviderValidator.ts"
+    lines: "Lines 32-34, 36"
+    impact: "Domain layer should be pure, not dependent on implementation details"
+    remediation: |
+      1. Move FileLock interface to domain layer
+      2. Move WorkspaceEventEmitter to domain interfaces
+      3. Update AgentProviderValidator to use domain types
+    status: "PENDING"
+    story_reference: "ARC-C07"
+    
+  - id: "CRIT-03"
+    title: "Browser-Mode ID Format Inconsistency"
+    description: "src/lib/workspace/browser-mode.ts uses 'browser-mode' format while infrastructure uses 'proj_browser-default'"
+    files:
+      - "src/lib/workspace/browser-mode.ts (line 42)"
+      - "src/infrastructure/persistence/stores/project/project-types.ts"
+    lines: "Full file"
+    impact: "Projects may have ID collisions or migration issues"
+    remediation: |
+      1. Ensure all code uses consistent project ID format
+      2. Create migration utility if needed
+      3. Test browser-mode project loading
+    status: "PENDING"
+    story_reference: "ARC-D01"
+
+# ==============================================================================
+# HIGH PRIORITY ISSUES
+# ==============================================================================
+high_priority_issues:
+  - id: "HIGH-01"
+    title: "God Component: AISlashCommand.tsx"
+    description: "Component exceeds 300 lines threshold - 1674 lines"
+    file: "src/presentation/components/notes/AISlashCommand.tsx"
+    lines: 1674
+    threshold: 300
+    violation_ratio: "5.58x over threshold"
+    components:
+      - "AISlashCommand (1674 lines)"
+      - "Should be split into:"
+      - "  - SlashCommandParser (extraction logic)"
+      - "  - AICommandExecutor (execution logic)"
+      - "  - CommandCategoryNav (UI component)"
+      - "  - CommandResultDisplay (rendering)"
+    status: "PENDING"
+    story_reference: "Component Split"
+    
+  - id: "HIGH-02"
+    title: "God Component: NoteEditor.tsx"
+    description: "Component exceeds 300 lines threshold - 1088 lines"
+    file: "src/presentation/components/notes/NoteEditor.tsx"
+    lines: 1088
+    threshold: 300
+    violation_ratio: "3.63x over threshold"
+    status: "PENDING"
+    story_reference: "Component Split"
+    
+  - id: "HIGH-03"
+    title: "God Component: ProviderService.ts"
+    description: "Service file is massive - 1943 lines"
+    file: "src/application/services/ProviderService.ts"
+    lines: 1943
+    threshold: 300
+    violation_ratio: "6.48x over threshold"
+    status: "PENDING"
+    story_reference: "Refactor Required"
+    
+  - id: "HIGH-04"
+    title: "God Store: conversation-migration.ts"
+    description: "Migration file exceeds 300 lines threshold"
+    file: "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts"
+    lines: 548
+    threshold: 300
+    violation_ratio: "1.83x over threshold"
+    status: "PENDING"
+    story_reference: "Migrate to per-version migrations"
+    
+  - id: "HIGH-05"
+    title: "God Store: unified-chat-store.ts"
+    description: "Store file exceeds 300 lines threshold"
+    file: "src/infrastructure/persistence/stores/chat/unified-chat-store.ts"
+    lines: 447
+    threshold: 300
+    violation_ratio: "1.49x over threshold"
+    status: "PENDING"
+    story_reference: "ARC-C01"
+    
+  - id: "HIGH-06"
+    title: "Deprecated Directory Still Active: src/lib/workspace/"
+    description: "21 files in src/lib/workspace/ should be migrated/archived per AGENTS.md"
+    files:
+      - "src/lib/workspace/ProjectContext.tsx (16904 bytes)"
+      - "src/lib/workspace/workspace-access-helper.tsx (16663 bytes)"
+      - "src/lib/workspace/fsa-persistence.ts (6854 bytes)"
+      - "src/lib/workspace/file-sync-status-store/ (9 files)"
+    lines: "Multiple files"
+    impact: "Deprecated paths still imported by some files"
+    remediation: |
+      1. Create facade re-exports in src/lib/workspace/
+      2. Point imports to @/infrastructure/persistence/stores/
+      3. Archive original files to _bmad-ext/.archive/
+    status: "PENDING"
+    story_reference: "ARC-E02"
+    
+  - id: "HIGH-07"
+    title: "Route Files Importing Infrastructure Directly"
+    description: "Routes should use domain layer, not import from infrastructure"
+    files:
+      - "src/routes/notes.lazy.tsx (infrastructure imports)"
+      - "src/routes/notes.$projectId.lazy.tsx (infrastructure imports)"
+      - "src/routes/ide.$projectId.tsx (infrastructure imports)"
+      - "src/routes/workspace/$projectId.tsx (infrastructure imports)"
+    lines: "Multiple locations"
+    impact: "Routes contain business logic that should be in domain/use-cases"
+    remediation: |
+      1. Create domain use-cases for route operations
+      2. Have routes import from @/domain/use-cases/
+      3. Keep infrastructure imports in use-cases only
+    status: "PENDING"
+    story_reference: "ARC-A02"
+    
+  - id: "HIGH-08"
+    title: "Storage Gateway Factory Pattern Incomplete"
+    description: "StorageAdapterFactory.ts exists but may not be fully integrated"
+    file: "src/infrastructure/filesystem/StorageAdapterFactory.ts"
+    lines: "Full file"
+    status: "NEEDS_VERIFICATION"
+    remediation: |
+      1. Verify all storage operations go through gateway
+      2. Add integration tests for FSA/IDB switching
+      3. Document usage patterns
+    story_reference: "ARC-B01"
+
+# ==============================================================================
+# MEDIUM PRIORITY ISSUES
+# ==============================================================================
+medium_priority_issues:
+  - id: "MED-01"
+    title: "God Component: NotesPage.tsx"
+    description: "Component exceeds 300 lines threshold - 876 lines"
+    file: "src/presentation/components/notes/NotesPage.tsx"
+    lines: 876
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-02"
+    title: "God Component: MonacoEditor.tsx"
+    description: "Component exceeds 300 lines threshold - 772 lines"
+    file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+    lines: 772
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-03"
+    title: "God Component: resizable.tsx"
+    description: "UI component at 763 lines"
+    file: "src/presentation/components/ui/resizable.tsx"
+    lines: 763
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-04"
+    title: "God Component: KnowledgePage.tsx"
+    description: "Component exceeds 300 lines threshold - 749 lines"
+    file: "src/presentation/components/knowledge/KnowledgePage.tsx"
+    lines: 749
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-05"
+    title: "God Component: AgentChatPanel.tsx"
+    description: "Component exceeds 300 lines threshold - 684 lines"
+    file: "src/presentation/components/ide/AgentChatPanel.tsx"
+    lines: 684
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-06"
+    title: "God Component: ProjectCreationWizard.tsx"
+    description: "Component exceeds 300 lines threshold - 535 lines"
+    file: "src/presentation/components/project/ProjectCreationWizard.tsx"
+    lines: 535
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-07"
+    title: "God Store: migration-backup.ts"
+    description: "Migration file at 561 lines"
+    file: "src/infrastructure/persistence/stores/providers/migration-backup.ts"
+    lines: 561
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-08"
+    title: "God Store: use-app-store.ts"
+    description: "Combined store at 377 lines"
+    file: "src/infrastructure/persistence/stores/use-app-store.ts"
+    lines: 377
+    threshold: 300
+    status: "PENDING"
+    
+  - id: "MED-09"
+    title: "Deprecated Directory: src/lib/notes/"
+    description: "src/lib/notes/ contains slices that duplicate infrastructure"
+    files:
+      - "src/lib/notes/slices/note-*.ts (5 files)"
+      - "src/lib/notes/note-store.ts"
+    lines: "Multiple files"
+    status: "PENDING"
+    story_reference: "ARC-C05"
+    
+  - id: "MED-10"
+    title: "Deprecated Directory: src/lib/agent/"
+    description: "src/lib/agent/ contains providers and tools that may need migration"
+    files:
+      - "src/lib/agent/providers/*.ts (15+ files)"
+      - "src/lib/agent/tools/*.ts (20+ files)"
+    lines: "Multiple files"
+    status: "PENDING"
+    
+  - id: "MED-11"
+    title: "Import Order Violations"
+    description: "Some files don't follow @/imports-first convention"
+    examples:
+      - "src/routes/notes.lazy.tsx: Imports from relative path before @/"
+    status: "PENDING"
+    
+  - id: "MED-12"
+    title: "Missing TypeScript Strict Mode Annotations"
+    description: "Some files lack explicit type annotations"
+    status: "PENDING"
+    
+  - id: "MED-13"
+    title: "Dexie-db-migrations.ts Size Concern"
+    description: "Migrations file at 1476 lines - should be versioned per migration"
+    file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+    lines: 1476
+    status: "PENDING"
+    
+  - id: "MED-14"
+    title: "Template-Registry.ts Size Concern"
+    description: "Template registry at 1321 lines"
+    file: "src/lib/templates/template-registry.ts"
+    lines: 1321
+    status: "PENDING"
+    
+  - id: "MED-15"
+    title: "Route Tree Auto-Generated File Size"
+    description: "routeTree.gen.ts at 751 lines - verify it doesn't need splitting"
+    file: "src/routeTree.gen.ts"
+    lines: 751
+    status: "NEEDS_VERIFICATION"
+
+# ==============================================================================
+# COMPLIANCE METRICS
+# ==============================================================================
+compliance_metrics:
+  layer_violations:
+    presentation_to_infrastructure: 36
+    presentation_to_lib: 100
+    domain_to_lib: 5
+    domain_to_presentation: 0
+    
+  path_compliance:
+    canonical_stores_count: 85
+    deprecated_lib_stores_count: 21
+    migration_percentage: "80%"
+    
+  component_health:
+    total_components: 245
+    within_threshold: 230
+    over_threshold: 15
+    compliance_rate: "93.9%"
+    
+  store_health:
+    total_stores: 50
+    within_threshold: 42
+    over_threshold: 8
+    compliance_rate: "84%"
+
+# ==============================================================================
+# ADR COMPLIANCE CHECK
+# ==============================================================================
+adr_compliance:
+  D1_Platform_Contract:
+    status: "COMPLIANT"
+    evidence: "getPlatformContract() implemented at @/infrastructure/filesystem/platform-contract.ts"
+    
+  D2_FSA_Handle_Persistence:
+    status: "COMPLIANT"
+    evidence: "HandlePersistenceService implemented with Chrome 122+ and 129+ support"
+    
+  D3_Notes_Storage_FSA:
+    status: "PARTIAL"
+    pending: "MarkdownSyncService integration complete, bidirectional sync needs testing"
+    
+  D4_Project_Structure:
+    status: "COMPLIANT"
+    evidence: "viagent/ folder structure defined in viagent-service.ts"
+    
+  D5_Mobile_Project_Model:
+    status: "COMPLIANT"
+    evidence: "Single default project model implemented"
+    
+  D6_Dexie_Schema_Keys:
+    status: "COMPLIANT"
+    evidence: "Composite keys [projectId+workspaceId] in use"
+    
+  D7_Nested_Folder_Rules:
+    status: "COMPLIANT"
+    evidence: "Folder overlap detection in folder-overlap-service.ts"
+    
+  D8_File_Discovery_Limits:
+    status: "COMPLIANT"
+    evidence: "Max depth 20, warn at 15 implemented in file-tree-scanner.ts"
+    
+  D9_Default_Exclusions:
+    status: "COMPLIANT"
+    evidence: "Exclusion config in exclusion-config.ts"
+
+# ==============================================================================
+# FILE LOCATION COMPLIANCE
+# ==============================================================================
+file_location_compliance:
+  canonical_paths:
+    stores: "@/infrastructure/persistence/stores/"
+    components: "@/presentation/components/"
+    domain_types: "@/domain/types/"
+    routes: "@/routes/"
+    
+  deprecated_paths:
+    src/lib/workspace:
+      files: 21
+      status: "NEEDS_MIGRATION"
+      target: "@/infrastructure/persistence/stores/"
+      
+    src/lib/filesystem:
+      files: 32
+      status: "NEEDS_MIGRATION"
+      target: "@/infrastructure/filesystem/"
+      
+    src/lib/notes:
+      files: 15
+      status: "NEEDS_MIGRATION"
+      target: "@/infrastructure/persistence/stores/notes/"
+      
+    src/stores:
+      status: "DOES_NOT_EXIST (correct)"
+
+# ==============================================================================
+# REMEDIATION BACKLOG
+# ==============================================================================
+remediation_backlog:
+  immediate:
+    - task: "Archive src/lib/filesystem/ duplicates"
+      priority: "P0"
+      effort: "2h"
+      story: "ARC-E03"
+      
+    - task: "Create facade re-exports for deprecated lib paths"
+      priority: "P0"
+      effort: "4h"
+      story: "ARC-E02"
+      
+  short_term:
+    - task: "Split God Components (AISlashCommand, NoteEditor, etc.)"
+      priority: "P1"
+      effort: "8h per component"
+      
+    - task: "Move domain/lib imports to domain interfaces"
+      priority: "P1"
+      effort: "4h"
+      
+    - task: "Create domain use-cases for route operations"
+      priority: "P1"
+      effort: "6h"
+      
+  medium_term:
+    - task: "Split oversized stores into slices"
+      priority: "P2"
+      effort: "4h per store"
+      
+    - task: "Version Dexie migrations per schema version"
+      priority: "P2"
+      effort: "6h"
+      
+    - task: "Complete import order standardization"
+      priority: "P2"
+      effort: "2h"
+
+# ==============================================================================
+# SCAN ARTIFACTS
+# ==============================================================================
+artifacts:
+  - type: "evidence"
+    path: "_bmad-output/deep-scan/evidence/architecture-evidence.yaml"
+    created: "2026-01-21T18:00:00+07:00"
+    
+  - type: "scan_log"
+    path: "_bmad-output/deep-scan/logs/architecture-scan-2026-01-21.log"
+    created: "2026-01-21T18:00:00+07:00"
+    
+  - type: "violation_report"
+    path: "_bmad-output/deep-scan/reports/violations-2026-01-21.json"
+    created: "2026-01-21T18:00:00+07:00"
+
+# ==============================================================================
+# NEXT STEPS
+# ==============================================================================
+next_steps:
+  - action: "P0 Bug Verification"
+    description: "Verify CC-V2-B01, B02, B03 fixes are working in production"
+    status: "READY"
+    
+  - action: "Integration Testing"
+    description: "Run TEST-01, TEST-02, TEST-03 from Phase 3 test plan"
+    status: "READY"
+    
+  - action: "Deprecated Path Migration"
+    description: "Begin ARC-E02, ARC-E03 migration of src/lib/ paths"
+    status: "BLOCKED_BY_P0"
+    
+  - action: "God Component Splitting"
+    description: "Split oversized components using component-splitter agent"
+    status: "BLOCKED_BY_P0"

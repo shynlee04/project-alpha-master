@@ -41,6 +41,9 @@ importers:
       '@nick-vi/opencode-type-inject':
         specifier: ^1.3.1
         version: 1.3.1(@opencode-ai/plugin@1.1.20)(typescript@5.9.3)
+      '@openspoon/subtask2':
+        specifier: ^0.2.9
+        version: 0.2.9(@opencode-ai/plugin@1.1.20)
       '@orama/orama':
         specifier: ^3.1.18
         version: 3.1.18
@@ -1547,6 +1550,14 @@ packages:
 
   '@opencode-ai/sdk@1.1.20':
     resolution: {integrity: sha512-OYzRFqf13y09TSiaQynsInpvJ2benk63NX+4HM7PbV85vYluGxRIB4j7CLCQUGojFmUz8+gOwiJ8+DDnv1h7lQ==}
+
+  '@opencode-ai/sdk@1.1.21':
+    resolution: {integrity: sha512-4M6lBjRPlPz99Rb5rS5ZqKrb0UDDxOT9VTG06JpNxvA7ynTd8C50ckc2NGzWtvjarmxfaAk1VeuBYN/cq2pIKQ==}
+
+  '@openspoon/subtask2@0.2.9':
+    resolution: {integrity: sha512-2/RlN7nYXmBfw0op6D552Gy528SSzQA5VPLVL6CBqqgM8j+eMPgMXwu87hloaLQHKQJV+rHTvnwfR41xwlvW6A==}
+    peerDependencies:
+      '@opencode-ai/plugin': ^1.0.216
 
   '@opentelemetry/api-logs@0.203.0':
     resolution: {integrity: sha512-9B9RU0H7Ya1Dx/Rkyc4stuBZSGVQF27WigitInx2QQoj6KUpEFYPKoWjdFTunJYxmXmh17HeBvbMa1EhGyPmqQ==}
@@ -9000,6 +9011,14 @@ snapshots:
       zod: 4.1.8
 
   '@opencode-ai/sdk@1.1.20': {}
+
+  '@opencode-ai/sdk@1.1.21': {}
+
+  '@openspoon/subtask2@0.2.9(@opencode-ai/plugin@1.1.20)':
+    dependencies:
+      '@opencode-ai/plugin': 1.1.20
+      '@opencode-ai/sdk': 1.1.21
+      yaml: 2.8.2
 
   '@opentelemetry/api-logs@0.203.0':
     dependencies:

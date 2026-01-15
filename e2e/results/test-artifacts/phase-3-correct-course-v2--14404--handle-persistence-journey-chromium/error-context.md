@@ -1,0 +1,68 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - img "Via-gent" [ref=e5]
+      - generic [ref=e6]: Via-gent
+    - navigation [ref=e7]:
+      - generic [ref=e8] [cursor=pointer]:
+        - img [ref=e9]
+        - generic [ref=e12]: Home
+      - generic [ref=e13] [cursor=pointer]:
+        - img [ref=e14]
+        - generic [ref=e16]: Projects
+      - generic [ref=e17] [cursor=pointer]:
+        - img [ref=e18]
+        - generic [ref=e26]: Knowledge
+      - generic [ref=e27] [cursor=pointer]:
+        - img [ref=e28]
+        - generic [ref=e30]: Notes
+      - generic [ref=e31] [cursor=pointer]:
+        - img [ref=e32]
+        - generic [ref=e34]: Study
+      - generic [ref=e35] [cursor=pointer]:
+        - img [ref=e36]
+        - generic [ref=e39]: Agents
+      - generic [ref=e40] [cursor=pointer]:
+        - img [ref=e41]
+        - generic [ref=e44]: Settings
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - button "Switch to Dark mode" [ref=e47]:
+          - img [ref=e48]
+        - button "EN-US" [ref=e50]:
+          - generic [ref=e51]: EN-US
+      - button "Collapse" [ref=e52]:
+        - img [ref=e53]
+  - main [ref=e55]:
+    - generic [ref=e56]:
+      - generic [ref=e58]:
+        - generic [ref=e59]:
+          - img [ref=e60]
+          - heading "Via-gent IDE" [level=2] [ref=e64]
+          - paragraph [ref=e65]: Create a quick temp project or select a project folder to start coding.
+        - generic [ref=e66]:
+          - button "Select Project Folder" [ref=e67]:
+            - img [ref=e68]
+            - text: Select Project Folder
+          - button "Browse Projects" [ref=e70]
+        - paragraph [ref=e71]: "Phase 1: Temp project auto-creates on mobile, folder picker on desktop"
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - img [ref=e76]
+          - generic [ref=e78]:
+            - heading "Select Project Folder" [level=2] [ref=e79]
+            - paragraph [ref=e80]: Choose a folder to use as your project workspace
+        - generic [ref=e81]:
+          - img [ref=e82]
+          - paragraph [ref=e84]: Your project files will be stored in this folder. You can grant permission to access the folder for this session only.
+        - generic [ref=e85]:
+          - button "Select Folder" [ref=e86]:
+            - img [ref=e87]
+            - text: Select Folder
+          - generic [ref=e89]:
+            - button "Cancel" [ref=e90]
+            - button "Use Temp Project" [ref=e91]
+```

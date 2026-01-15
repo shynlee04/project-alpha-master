@@ -1,228 +1,197 @@
-[
-  {"type":"directory","name":".","contents":[
-    {"type":"directory","name":"./agents","contents":[
-      {"type":"file","name":"./agents/AGENT-HIERARCHY.md"},
-      {"type":"file","name":"./agents/analyst-ext.md"},
-      {"type":"file","name":"./agents/architect-ext.md"},
-      {"type":"file","name":"./agents/dev-ext.md"},
-      {"type":"file","name":"./agents/ext-master-enhanced.md"},
-      {"type":"file","name":"./agents/ext-master.md"},
-      {"type":"file","name":"./agents/module-builder-ext.md"},
-      {"type":"file","name":"./agents/product-management-ext.md"},
-      {"type":"file","name":"./agents/tea-ext.md"},
-      {"type":"file","name":"./agents/tech-writer-ext.md"},
-      {"type":"file","name":"./agents/ux-designer-ext.md"}
-    ]},
-    {"type":"file","name":"./config.yaml"},
-    {"type":"directory","name":"./hooks"},
-    {"type":"directory","name":"./modules","contents":[
-      {"type":"directory","name":"./modules/arc-v2","contents":[
-        {"type":"directory","name":"./modules/arc-v2/agents","contents":[
-          {"type":"file","name":"./modules/arc-v2/agents/component-splitter.md"},
-          {"type":"file","name":"./modules/arc-v2/agents/context-validator.md"},
-          {"type":"file","name":"./modules/arc-v2/agents/domain-scanner.md"},
-          {"type":"file","name":"./modules/arc-v2/agents/store-refactorer.md"},
-          {"type":"file","name":"./modules/arc-v2/agents/workspace-architect.md"}
-        ]},
-        {"type":"file","name":"./modules/arc-v2/MODULE.md"},
-        {"type":"directory","name":"./modules/arc-v2/scanners"},
-        {"type":"directory","name":"./modules/arc-v2/workflows","contents":[
-          {"type":"file","name":"./modules/arc-v2/workflows/diagnostic-first.md"}
-        ]}
-      ]},
-      {"type":"file","name":"./modules/AUDIT-REPORT.md"},
-      {"type":"directory","name":"./modules/governance","contents":[
-        {"type":"directory","name":"./modules/governance/agent-rag","contents":[
-          {"type":"file","name":"./modules/governance/agent-rag/conversation-threads.md"},
-          {"type":"file","name":"./modules/governance/agent-rag/multimodality-governance.md"},
-          {"type":"file","name":"./modules/governance/agent-rag/rag-context-governance.md"},
-          {"type":"file","name":"./modules/governance/agent-rag/staging-by-phase.md"},
-          {"type":"file","name":"./modules/governance/agent-rag/tools-governance.md"}
-        ]},
-        {"type":"directory","name":"./modules/governance/artifacts","contents":[
-          {"type":"file","name":"./modules/governance/artifacts/archiving-policy.md"},
-          {"type":"file","name":"./modules/governance/artifacts/date-stamping-policy.md"},
-          {"type":"file","name":"./modules/governance/artifacts/file-monitor.md"},
-          {"type":"file","name":"./modules/governance/artifacts/naming-convention.md"},
-          {"type":"file","name":"./modules/governance/artifacts/registry.yaml"}
-        ]},
-        {"type":"directory","name":"./modules/governance/config","contents":[
-          {"type":"file","name":"./modules/governance/config/checklists.yaml"},
-          {"type":"file","name":"./modules/governance/config/domains.yaml"},
-          {"type":"file","name":"./modules/governance/config/gates.yaml"},
-          {"type":"file","name":"./modules/governance/config/retention-policy.yaml"}
-        ]},
-        {"type":"file","name":"./modules/governance/MODULE.md"},
-        {"type":"directory","name":"./modules/governance/policies","contents":[
-          {"type":"file","name":"./modules/governance/policies/artifact-lifecycle.md"},
-          {"type":"file","name":"./modules/governance/policies/context-strategy.md"},
-          {"type":"file","name":"./modules/governance/policies/gating-policy.md"}
-        ]},
-        {"type":"directory","name":"./modules/governance/scanners","contents":[
-          {"type":"directory","name":"./modules/governance/scanners/agent-ai-rag","contents":[
-            {"type":"file","name":"./modules/governance/scanners/agent-ai-rag/GOVERNANCE.md"}
-          ]},
-          {"type":"file","name":"./modules/governance/scanners/agent-rag-scanner.md"},
-          {"type":"file","name":"./modules/governance/scanners/artifact-scanner.md"},
-          {"type":"directory","name":"./modules/governance/scanners/deep-scan","contents":[
-            {"type":"file","name":"./modules/governance/scanners/deep-scan/COMPARISON-ENGINE.md"}
-          ]},
-          {"type":"file","name":"./modules/governance/scanners/domain-scanner.md"},
-          {"type":"directory","name":"./modules/governance/scanners/file-structure","contents":[
-            {"type":"file","name":"./modules/governance/scanners/file-structure/GOVERNANCE.md"}
-          ]}
-        ]},
-        {"type":"directory","name":"./modules/governance/workflows","contents":[
-          {"type":"directory","name":"./modules/governance/workflows/context-first","contents":[
-            {"type":"directory","name":"./modules/governance/workflows/context-first/steps","contents":[
-              {"type":"file","name":"./modules/governance/workflows/context-first/steps/step-01-scan.md"},
-              {"type":"file","name":"./modules/governance/workflows/context-first/steps/step-01b-continue.md"},
-              {"type":"file","name":"./modules/governance/workflows/context-first/steps/step-02-analyze.md"},
-              {"type":"file","name":"./modules/governance/workflows/context-first/steps/step-03-contextualize.md"},
-              {"type":"file","name":"./modules/governance/workflows/context-first/steps/step-04-transform.md"}
-            ]},
-            {"type":"file","name":"./modules/governance/workflows/context-first/workflow.md"}
-          ]},
-          {"type":"file","name":"./modules/governance/workflows/CORRECT-COURSE-GOVERNANCE.md"},
-          {"type":"directory","name":"./modules/governance/workflows/expert-analysis","contents":[
-            {"type":"directory","name":"./modules/governance/workflows/expert-analysis/steps","contents":[
-              {"type":"file","name":"./modules/governance/workflows/expert-analysis/steps/step-01-init.md"},
-              {"type":"file","name":"./modules/governance/workflows/expert-analysis/steps/step-02-analyze-codebase.md"},
-              {"type":"file","name":"./modules/governance/workflows/expert-analysis/steps/step-03-compare-approach.md"},
-              {"type":"file","name":"./modules/governance/workflows/expert-analysis/steps/step-04-recommend.md"}
-            ]},
-            {"type":"file","name":"./modules/governance/workflows/expert-analysis/workflow.md"}
-          ]},
-          {"type":"directory","name":"./modules/governance/workflows/research-trigger","contents":[
-            {"type":"directory","name":"./modules/governance/workflows/research-trigger/steps","contents":[
-              {"type":"file","name":"./modules/governance/workflows/research-trigger/steps/step-01-init.md"},
-              {"type":"file","name":"./modules/governance/workflows/research-trigger/steps/step-02-research.md"},
-              {"type":"file","name":"./modules/governance/workflows/research-trigger/steps/step-03-analyze.md"},
-              {"type":"file","name":"./modules/governance/workflows/research-trigger/steps/step-04-complete.md"}
-            ]},
-            {"type":"file","name":"./modules/governance/workflows/research-trigger/workflow.md"}
-          ]},
-          {"type":"directory","name":"./modules/governance/workflows/story-continuity","contents":[
-            {"type":"file","name":"./modules/governance/workflows/story-continuity/workflow.md"}
-          ]},
-          {"type":"directory","name":"./modules/governance/workflows/three-core-concepts","contents":[
-            {"type":"file","name":"./modules/governance/workflows/three-core-concepts/AGENT-EXPERT.md"},
-            {"type":"file","name":"./modules/governance/workflows/three-core-concepts/CONTEXT-FIRST.md"},
-            {"type":"file","name":"./modules/governance/workflows/three-core-concepts/RESEARCH.md"}
-          ]}
-        ]}
-      ]},
-      {"type":"directory","name":"./modules/implementation","contents":[
-        {"type":"file","name":"./modules/implementation/COMMANDS.md"},
-        {"type":"directory","name":"./modules/implementation/config","contents":[
-          {"type":"file","name":"./modules/implementation/config/agent-tool-spec-template.yaml"},
-          {"type":"file","name":"./modules/implementation/config/journey-validation-rules.yaml"}
-        ]},
-        {"type":"file","name":"./modules/implementation/MODULE.md"},
-        {"type":"directory","name":"./modules/implementation/templates","contents":[
-          {"type":"file","name":"./modules/implementation/templates/enhanced-story-context-template.xml"},
-          {"type":"file","name":"./modules/implementation/templates/enhanced-story-template.md"}
-        ]},
-        {"type":"directory","name":"./modules/implementation/workflows","contents":[
-          {"type":"directory","name":"./modules/implementation/workflows/correct-course","contents":[
-            {"type":"directory","name":"./modules/implementation/workflows/correct-course/steps","contents":[
-              {"type":"file","name":"./modules/implementation/workflows/correct-course/steps/step-01-receive-report.md"},
-              {"type":"file","name":"./modules/implementation/workflows/correct-course/steps/step-02-categorize.md"},
-              {"type":"file","name":"./modules/implementation/workflows/correct-course/steps/step-03-route.md"},
-              {"type":"file","name":"./modules/implementation/workflows/correct-course/steps/step-04-complete.md"}
-            ]},
-            {"type":"file","name":"./modules/implementation/workflows/correct-course/workflow.md"}
-          ]},
-          {"type":"directory","name":"./modules/implementation/workflows/story-cycle","contents":[
-            {"type":"directory","name":"./modules/implementation/workflows/story-cycle/steps","contents":[
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-01-init.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-01a-user-journey.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-02-validate.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-03-implement.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-03a-agent-tool-spec.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-04-test.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-05-review.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-06-done.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-06a-reality-check.md"},
-              {"type":"file","name":"./modules/implementation/workflows/story-cycle/steps/step-07-retrospective.md"}
-            ]},
-            {"type":"file","name":"./modules/implementation/workflows/story-cycle/workflow.md"}
-          ]}
-        ]}
-      ]},
-      {"type":"file","name":"./modules/MODULE-HIERARCHY.md"},
-      {"type":"directory","name":"./modules/sprint-planning-wrapper","contents":[
-        {"type":"directory","name":"./modules/sprint-planning-wrapper/config","contents":[
-          {"type":"file","name":"./modules/sprint-planning-wrapper/config/cohesion-patterns.yaml"},
-          {"type":"file","name":"./modules/sprint-planning-wrapper/config/gating-rules.yaml"}
-        ]},
-        {"type":"file","name":"./modules/sprint-planning-wrapper/MODULE.md"},
-        {"type":"directory","name":"./modules/sprint-planning-wrapper/scanners","contents":[
-          {"type":"file","name":"./modules/sprint-planning-wrapper/scanners/cohesion-scanner.md"},
-          {"type":"file","name":"./modules/sprint-planning-wrapper/scanners/dependency-scanner.md"},
-          {"type":"file","name":"./modules/sprint-planning-wrapper/scanners/nonsense-detector.md"}
-        ]},
-        {"type":"directory","name":"./modules/sprint-planning-wrapper/workflows","contents":[
-          {"type":"directory","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced","contents":[
-            {"type":"directory","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps","contents":[
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-01-discover-epics.md"},
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-02-generate-status.md"},
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-03-cohesion-check.md"},
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-04-dependency-map.md"},
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-05-reality-validation.md"},
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-06-gatekeeping.md"},
-              {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/steps/step-07-handoff.md"}
-            ]},
-            {"type":"file","name":"./modules/sprint-planning-wrapper/workflows/sprint-planning-enhanced/workflow.md"}
-          ]}
-        ]}
-      ]}
-    ]},
-    {"type":"directory","name":"./orchestrator","contents":[
-      {"type":"file","name":"./orchestrator/delegation-protocol.md"},
-      {"type":"file","name":"./orchestrator/escalation-protocol.md"},
-      {"type":"file","name":"./orchestrator/event-bus.yaml"},
-      {"type":"file","name":"./orchestrator/governance-auto-update.md"},
-      {"type":"file","name":"./orchestrator/master-orchestrator.md"},
-      {"type":"file","name":"./orchestrator/routing-rules.yaml"},
-      {"type":"file","name":"./orchestrator/sub-agent-definitions.md"}
-    ]},
-    {"type":"directory","name":"./platform","contents":[
-      {"type":"file","name":"./platform/claude-code-concept-mapping.md"},
-      {"type":"file","name":"./platform/phase-4-completion-report-2026-01-10.md"},
-      {"type":"file","name":"./platform/platform-wrapper-spec.md"}
-    ]},
-    {"type":"directory","name":"./prompts","contents":[
-      {"type":"file","name":"./prompts/perplexity-master-instruction-prompt.md"}
-    ]},
-    {"type":"directory","name":"./protocols","contents":[
-      {"type":"file","name":"./protocols/handoff.md"}
-    ]},
-    {"type":"file","name":"./README.md"},
-    {"type":"directory","name":"./schemas","contents":[
-      {"type":"file","name":"./schemas/handoff-artifact.schema.yaml"}
-    ]},
-    {"type":"directory","name":"./shared-services","contents":[
-      {"type":"file","name":"./shared-services/quality-scanner.md"}
-    ]},
-    {"type":"directory","name":"./state","contents":[
-      {"type":"file","name":"./state/ARTIFACT_REGISTRY.yaml"},
-      {"type":"file","name":"./state/LOOP_STATE.yaml"}
-    ]},
-    {"type":"file","name":"./tree.md"},
-    {"type":"directory","name":"./workflows","contents":[
-      {"type":"directory","name":"./workflows/governance-cycle","contents":[
-        {"type":"directory","name":"./workflows/governance-cycle/steps"}
-      ]},
-      {"type":"directory","name":"./workflows/remediation-cycle","contents":[
-        {"type":"directory","name":"./workflows/remediation-cycle/steps"},
-        {"type":"file","name":"./workflows/remediation-cycle/workflow.md"}
-      ]},
-      {"type":"directory","name":"./workflows/story-cycle","contents":[
-        {"type":"directory","name":"./workflows/story-cycle/steps"}
-      ]}
-    ]}
-  ]}
-,
-  {"type":"report","directories":54,"files":121}
-]
+Your user’s .npmrc file (${HOME}/.npmrc)
+has a `globalconfig` and/or a `prefix` setting, which are incompatible with nvm.
+Run `nvm use --delete-prefix v22.20.0 --silent` to unset it.
+> tree
+.
+├── agents
+│   ├── _template-enhanced-agent.md
+│   ├── AGENT-HIERARCHY.md
+│   ├── analyst-ext.md
+│   ├── architect-ext.md
+│   ├── dev-ext.md
+│   ├── ext-master-enhanced.md
+│   ├── ext-master.md
+│   ├── module-builder-ext.md
+│   ├── product-management-ext.md
+│   ├── tea-ext.md
+│   ├── tech-writer-ext.md
+│   └── ux-designer-ext.md
+├── config.yaml
+├── hooks
+├── modules
+│   ├── arc-v2
+│   │   ├── agents
+│   │   │   ├── component-splitter.md
+│   │   │   ├── context-validator.md
+│   │   │   ├── domain-scanner.md
+│   │   │   ├── store-refactorer.md
+│   │   │   └── workspace-architect.md
+│   │   ├── MODULE.md
+│   │   ├── scanners
+│   │   └── workflows
+│   │       └── diagnostic-first.md
+│   ├── AUDIT-REPORT.md
+│   ├── governance
+│   │   ├── agent-rag
+│   │   │   ├── conversation-threads.md
+│   │   │   ├── multimodality-governance.md
+│   │   │   ├── rag-context-governance.md
+│   │   │   ├── staging-by-phase.md
+│   │   │   └── tools-governance.md
+│   │   ├── artifacts
+│   │   │   ├── archiving-policy.md
+│   │   │   ├── date-stamping-policy.md
+│   │   │   ├── file-monitor.md
+│   │   │   ├── naming-convention.md
+│   │   │   └── registry.yaml
+│   │   ├── config
+│   │   │   ├── checklists.yaml
+│   │   │   ├── domains.yaml
+│   │   │   ├── gates.yaml
+│   │   │   └── retention-policy.yaml
+│   │   ├── MODULE.md
+│   │   ├── policies
+│   │   │   ├── artifact-lifecycle.md
+│   │   │   ├── context-strategy.md
+│   │   │   └── gating-policy.md
+│   │   ├── scanners
+│   │   │   ├── agent-ai-rag
+│   │   │   │   └── GOVERNANCE.md
+│   │   │   ├── agent-cluster-governance-scanner.md
+│   │   │   ├── artifact-scanner.md
+│   │   │   ├── deep-scan
+│   │   │   │   └── COMPARISON-ENGINE.md
+│   │   │   ├── domain-scanner.md
+│   │   │   ├── file-structure
+│   │   │   │   └── GOVERNANCE.md
+│   │   │   ├── quality-agent-permissions-scanner.md
+│   │   │   ├── quality-architecture-scanner.md
+│   │   │   ├── quality-context-scanner.md
+│   │   │   ├── quality-evidence-synthesizer.md
+│   │   │   ├── quality-performance-scanner.md
+│   │   │   ├── quality-persistence-scanner.md
+│   │   │   ├── quality-security-scanner.md
+│   │   │   ├── quality-state-scanner.md
+│   │   │   ├── quality-types-scanner.md
+│   │   │   ├── quality-ux-scanner.md
+│   │   │   └── quality-workspace-scanner.md
+│   │   └── workflows
+│   │       ├── context-first
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-scan.md
+│   │       │   │   ├── step-01b-continue.md
+│   │       │   │   ├── step-02-analyze.md
+│   │       │   │   ├── step-03-contextualize.md
+│   │       │   │   └── step-04-transform.md
+│   │       │   └── workflow.md
+│   │       ├── CORRECT-COURSE-GOVERNANCE.md
+│   │       ├── expert-analysis
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-init.md
+│   │       │   │   ├── step-02-analyze-codebase.md
+│   │       │   │   ├── step-03-compare-approach.md
+│   │       │   │   └── step-04-recommend.md
+│   │       │   └── workflow.md
+│   │       ├── research-trigger
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-init.md
+│   │       │   │   ├── step-02-research.md
+│   │       │   │   ├── step-03-analyze.md
+│   │       │   │   └── step-04-complete.md
+│   │       │   └── workflow.md
+│   │       ├── story-continuity
+│   │       │   └── workflow.md
+│   │       └── three-core-concepts
+│   │           ├── AGENT-EXPERT.md
+│   │           ├── CONTEXT-FIRST.md
+│   │           └── RESEARCH.md
+│   ├── implementation
+│   │   ├── COMMANDS.md
+│   │   ├── config
+│   │   │   ├── agent-tool-spec-template.yaml
+│   │   │   └── journey-validation-rules.yaml
+│   │   ├── MODULE.md
+│   │   ├── templates
+│   │   │   ├── enhanced-story-context-template.xml
+│   │   │   └── enhanced-story-template.md
+│   │   └── workflows
+│   │       ├── correct-course
+│   │       │   ├── steps
+│   │       │   │   ├── step-01-receive-report.md
+│   │       │   │   ├── step-02-categorize.md
+│   │       │   │   ├── step-03-route.md
+│   │       │   │   └── step-04-complete.md
+│   │       │   └── workflow.md
+│   │       └── story-cycle
+│   │           ├── steps
+│   │           │   ├── step-01-init.md
+│   │           │   ├── step-01a-user-journey.md
+│   │           │   ├── step-02-validate.md
+│   │           │   ├── step-03-implement.md
+│   │           │   ├── step-03a-agent-tool-spec.md
+│   │           │   ├── step-04-test.md
+│   │           │   ├── step-05-review.md
+│   │           │   ├── step-06-done.md
+│   │           │   ├── step-06a-reality-check.md
+│   │           │   └── step-07-retrospective.md
+│   │           └── workflow.md
+│   ├── MODULE-HIERARCHY.md
+│   ├── platform
+│   │   └── claude-code
+│   │       └── commands.yaml
+│   └── sprint-planning-wrapper
+│       ├── config
+│       │   ├── cohesion-patterns.yaml
+│       │   └── gating-rules.yaml
+│       ├── MODULE.md
+│       ├── scanners
+│       │   ├── cohesion-scanner.md
+│       │   ├── dependency-scanner.md
+│       │   └── nonsense-detector.md
+│       └── workflows
+│           └── sprint-planning-enhanced
+│               ├── steps
+│               │   ├── step-01-discover-epics.md
+│               │   ├── step-02-generate-status.md
+│               │   ├── step-03-cohesion-check.md
+│               │   ├── step-04-dependency-map.md
+│               │   ├── step-05-reality-validation.md
+│               │   ├── step-06-gatekeeping.md
+│               │   └── step-07-handoff.md
+│               └── workflow.md
+├── orchestrator
+│   ├── delegation-protocol.md
+│   ├── escalation-protocol.md
+│   ├── event-bus.yaml
+│   ├── governance-auto-update.md
+│   ├── master-orchestrator.md
+│   ├── routing-rules.yaml
+│   └── sub-agent-definitions.md
+├── platform
+│   ├── claude-code-concept-mapping.md
+│   ├── phase-4-completion-report-2026-01-10.md
+│   └── platform-wrapper-spec.md
+├── prompts
+│   └── perplexity-master-instruction-prompt.md
+├── protocols
+│   └── handoff.md
+├── README.md
+├── schemas
+│   └── handoff-artifact.schema.yaml
+├── shared-services
+│   └── quality-scanner.md
+├── state
+│   ├── ARTIFACT_REGISTRY.yaml
+│   └── LOOP_STATE.yaml
+├── tree.md
+└── workflows
+    ├── governance-cycle
+    │   └── steps
+    ├── remediation-cycle
+    │   ├── steps
+    │   └── workflow.md
+    └── story-cycle
+        └── steps
+
+56 directories, 134 files
+ ~/Doc/cod/project-alpha-master/_bmad-ext  dev *2 !38 ?9                      ok  10:17:33 PM 

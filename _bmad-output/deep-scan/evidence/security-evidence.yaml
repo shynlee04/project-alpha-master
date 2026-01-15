@@ -1,0 +1,297 @@
+# Security Deep Scan Evidence Report
+# Phase 1 Changes - Security Analysis
+---
+date: "2026-01-15"
+scanner: deep-scan-security-scanner
+scope: "Phase 1 FSA/Persistence Changes"
+status: COMPLETE
+---
+# Executive Summary
+metrics:
+  files_scanned: 6
+  total_lines: 1470
+  issues_found: 7
+  critical: 0
+  high: 0
+  medium: 3
+  low: 4
+  informational: 0
+---
+# Findings by Severity
+## HIGH Severity Issues (0)
+_No high-severity issues found._
+---
+## MEDIUM Severity Issues (3)
+### SEC-001: XSS via Unescaped Directory Names in Error Messages
+file: "src/infrastructure/filesystem/handle-persistence.ts"
+lines: [446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 484, 485, 491, 492, 493, 494, 495, 496, 503]
+description: |
+  Directory names from user-selected folders are included in error messages
+  without HTML/script escaping. While these are displayed in console logs and
+  error objects (not directly in DOM), the pattern could lead to XSS if error
+  messages are ever rendered in UI.
+vulnerable_code: |
+  // Line 446-456
+  const expectedPath = record?.directoryPath;
+  if (expectedPath && handle.name !== expectedPath) {
+    console.warn(
+      `[HandlePersistence] User selected different directory: "${handle.name}" != "${expectedPath}"`
+    );
+    return {
+      success: false,
+      handle: null,
+      error: `Selected directory "${handle.name}" does not match expected "${expectedPath}".`,
+      requiresUserInteraction: true,
+    };
+  }
+risk_assessment:
+  exploitability: Medium
+  impact: Low
+  likelihood: Low
+remediation: |
+  // Use escapeHtml utility for any UI-rendered error messages
+  function escapeHtml(str: string): string {
+    const div = globalThis.document?.createElement('div');
+    if (!div) return str; // SSR fallback
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  // When building error messages for UI:
+  error: `Selected directory "${escapeHtml(handle.name)}" does not match expected "${escapeHtml(expectedPath)}".`,
+evidence: |
+  - Console logging only (not DOM) - Current Impact: LOW
+  - Pattern established for future DOM rendering - Risk: MEDIUM
+severity: MEDIUM
+---
+### SEC-002: Input Validation Missing on projectId Parameters
+file: "src/infrastructure/filesystem/handle-persistence.ts"
+lines: [182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 512, 513, 514, 515, 520, 521, 522, 523, 524, 525, 530, 531, 532, 533, 534, 535, 555, 556, 557, 558, 559, 560]
+description: |
+  Multiple functions accept projectId as a string parameter without validation.
+  Project IDs are expected to follow a specific format, but this format is not
+  enforced at the API boundaries.
+affected_functions:
+  - persistHandle(projectId: string, ...)
+  - restoreHandle(projectId: string)
+  - deleteHandle(projectId: string)
+  - updatePermissionStatus(projectId: string, ...)
+  - getPermissionStatus(projectId: string)
+  - canSilentRestore(projectId: string)
+vulnerable_code: |
+  async persistHandle(
+    projectId: string,  // No validation
+    handle: FileSystemDirectoryHandle,
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'
+  ): Promise<void> {
+    const metadata = serializeHandle(handle, workspaceId);
+    // ... proceeds without projectId validation
+  }
+risk_assessment:
+  exploitability: Low
+  impact: Medium
+  likelihood: Low
+remediation: |
+  // Add validation function
+  function validateProjectId(projectId: string): projectId is string {
+    if (typeof projectId !== 'string' || projectId.length === 0) {
+      return false;
+    }
+    return true;
+  }
+  // Apply to all public methods
+  async persistHandle(
+    projectId: string,
+    handle: FileSystemDirectoryHandle,
+    workspaceId: WorkspaceType = 'ide'
+  ): Promise<void> {
+    if (!validateProjectId(projectId)) {
+      throw new Error(`Invalid projectId: ${projectId}`);
+    }
+  }
+evidence: |
+  - generateProjectId() in project-crud-slice.ts enforces format
+  - But external callers could pass invalid projectIds
+  - Dexie operations use projectId as primary key
+severity: MEDIUM
+---
+### SEC-003: Incomplete Dexie Query Parameterization
+file: "src/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers.ts"
+lines: [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 37, 38, 39, 40, 41, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 66, 67, 68, 69, 70, 71, 72, 73, 74, 81, 82, 83, 88, 89, 90, 97, 98, 99, 100, 101, 102]
+description: |
+  Dexie queries pass projectId directly without explicit type narrowing.
+  While Dexie provides some SQL injection protection through its query builder,
+  the code does not leverage TypeScript's type system to enforce projectId format.
+vulnerable_code: |
+  const existing = await db.fsaHandles.get(record.projectId);  // projectId is any string
+  await db.fsaHandles.put({
+    ...record,
+    createdAt: existing?.createdAt || now,
+    updatedAt: now,
+  });
+risk_assessment:
+  exploitability: Low
+  impact: Medium
+  likelihood: Low
+remediation: |
+  // Type guard for projectId
+  function isValidProjectId(id: string): id is typeof id {
+    return typeof id === 'string' && id.length > 0 && !id.includes('\0');
+  }
+  // In helper functions:
+  export async function getFSAHandle(
+    projectId: string
+  ): Promise<FSAHandleRecord | undefined> {
+    if (!isValidProjectId(projectId)) {
+      console.warn('[FSAHandleHelpers] Invalid projectId:', projectId);
+      return undefined;
+    }
+    return db.fsaHandles.get(projectId);
+  }
+evidence: |
+  - Dexie uses IndexedDB which has same-origin policy
+  - No direct SQL injection vector (IndexedDB NoSQL)
+  - Primary concern is data corruption, not injection
+severity: MEDIUM
+---
+## LOW Severity Issues (4)
+### SEC-004: Predictable Handle ID Generation
+file: "src/infrastructure/filesystem/handle-persistence.ts"
+lines: [120, 121]
+description: |
+  Handle ID generation uses Math.random() which is not cryptographically secure.
+code: |
+  export function generateHandleId(handle: FileSystemDirectoryHandle): string {
+    return `${handle.name}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+  }
+risk: LOW
+remediation: |
+  export function generateHandleId(handle: FileSystemDirectoryHandle): string {
+    const array = new Uint8Array(8);
+    crypto.getRandomValues(array);
+    const randomPart = Array.from(array, b => b.toString(36)).join('').slice(0, 8);
+    return `${handle.name}-${Date.now()}-${randomPart}`;
+  }
+severity: LOW
+---
+### SEC-005: Verbose Debug Logging Exposes Directory Structure
+file: "src/infrastructure/filesystem/handle-persistence.ts"
+lines: [206, 207, 208, 209, 210, 276, 316, 317, 318, 348, 349, 350, 448, 449, 450, 484, 485]
+description: |
+  Console.log statements include directory names and project paths. In development
+  this is useful, but these logs could expose sensitive directory structures if
+  accidentally left in production.
+risk: LOW
+remediation: |
+  const DEBUG = import.meta.env.DEV;
+  if (DEBUG) {
+    console.log(`[HandlePersistence] Persisted handle for project: ${projectId}`);
+  }
+severity: LOW
+---
+### SEC-006: Type Assertion Bypasses Type Safety in fromRecord()
+file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+lines: [83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97]
+description: |
+  fromRecord() function uses record: any parameter type, bypassing TypeScript's
+  type safety.
+risk: LOW
+remediation: |
+  import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-types';
+  export function fromRecord(record: ProjectRecord): Project {
+    if (!record.id || !record.name || !record.folderPath) {
+      console.error('[ProjectStore] Invalid project record:', record);
+      throw new Error('Invalid project record: missing required fields');
+    }
+  }
+severity: LOW
+---
+### SEC-007: Hydration URL Parsing Without Input Sanitization
+file: "src/infrastructure/persistence/stores/hydration-manager.ts"
+lines: [56, 57, 58, 59, 60, 61]
+description: |
+  Project ID is extracted from URL pathname without sanitization. While URL routing
+  is typically handled by TanStack Router, this direct parsing could be a concern
+  if routes are bypassed.
+risk: LOW
+remediation: |
+  private getProjectIdFromURL(): string | null {
+    const pathname = window.location.pathname;
+    const sanitized = pathname.replace(/[\x00-\x1f\x7f]/g, '');
+    const match = sanitized.match(/\/(ide|study|notes|knowledge)\/([^/]+)/i);
+    return match ? match[2] : null;
+  }
+severity: LOW
+---
+# Security Strengths (Positive Findings)
+good_practices:
+  - "No Secrets in Codebase: No API keys, tokens, or credentials found"
+  - "Proper FSA Handle Handling: Uses structuredClone for Chrome 129+"
+  - "Permission State Management: Clear permission states tracked"
+  - "IndexedDB Isolation: Workspace isolation via workspaceId field"
+  - "Chrome Version Detection: Proper feature detection before using capabilities"
+---
+# Recommendations Summary
+recommendations:
+  - priority: P2
+    issue: SEC-001
+    action: "Escape directory names in error messages if rendered to UI"
+  - priority: P2
+    issue: SEC-002
+    action: "Add projectId validation to public API methods"
+  - priority: P3
+    issue: SEC-003
+    action: "Add type guards for projectId in Dexie helpers"
+  - priority: P3
+    issue: SEC-004
+    action: "Use crypto.getRandomValues() for handle IDs"
+  - priority: P3
+    issue: SEC-005
+    action: "Use environment-based debug logging"
+  - priority: P3
+    issue: SEC-006
+    action: "Use proper types in fromRecord()"
+  - priority: P3
+    issue: SEC-007
+    action: "Sanitize URL-derived values"
+---
+# Conclusion
+overall_assessment: |
+  The Phase 1 FSA and persistence changes demonstrate good security fundamentals
+  with no critical or high-severity issues. The main areas for improvement are:
+  1. Input validation at API boundaries (MEDIUM priority)
+  2. Output encoding for any UI-rendered error messages (MEDIUM priority)
+  3. Debug logging hygiene (LOW priority)
+  
+  The codebase properly handles:
+  - Sensitive filesystem operations with appropriate permission flow
+  - No exposure of secrets or credentials
+  - Browser-level security features (structuredClone, same-origin policy)
+  
+  Overall Security Posture: ACCEPTABLE with recommended medium-priority improvements.
+security_posture: ACCEPTABLE
+---
+# Evidence Files
+evidence_files:
+  - file: handle-persistence.ts
+    lines: 575
+    purpose: "FSA handle persistence"
+  - file: hydration-manager.ts
+    lines: 322
+    purpose: "Store hydration coordination"
+  - file: project-crud-slice.ts
+    lines: 297
+    purpose: "Project CRUD operations"
+  - file: fsa-handle-helpers.ts
+    lines: 103
+    purpose: "Dexie helper functions"
+  - file: handle-types.ts
+    lines: 99
+    purpose: "Type definitions"
+  - file: dexie-db-session-types.ts
+    lines: 174
+    purpose: "Dexie type definitions"
+---
+# Metadata
+generated: "2026-01-15T10:30:00Z"
+scanner_version: "2.0.0"
+next_review: "2026-02-15"
