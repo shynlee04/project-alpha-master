@@ -165,10 +165,10 @@ $ grep -r "notes:browser-mode" src --include="*.ts"
 
 | Artifact | Location | Purpose |
 |----------|----------|---------|
-| Test Plan | `_bmad-output/test-artifacts/phase-3-integration-test-plan-2026-01-21.md` | Detailed test steps |
+| Test Plan | `_bmad-output/test-artifacts/phase-3-integration-test-plan-2026-01-15.md` | Detailed test steps |
 | Test Suite | `e2e/journeys/phase-3-correct-course-v2.spec.ts` | Playwright E2E tests |
-| Completion Report | `_bmad-output/test-artifacts/phase-3-completion-report-2026-01-21.md` | This document |
-| Governance Validation | `_bmad-output/reviews/GOVERNANCE-VALIDATION-CC-V2-PHASE2-2026-01-21.md` | Phase 2 validation |
+| Completion Report | `_bmad-output/test-artifacts/phase-3-completion-report-2026-01-15.md` | This document |
+| Governance Validation | `_bmad-output/reviews/GOVERNANCE-VALIDATION-CC-V2-PHASE2-2026-01-15.md` | Phase 2 validation |
 
 ---
 

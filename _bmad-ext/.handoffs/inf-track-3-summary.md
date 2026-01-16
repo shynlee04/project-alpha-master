@@ -204,7 +204,7 @@ modified:
 
 ```yaml
 modified:
-  - path: "_bmad-output/sprint-artifacts/sprint-status-architecture-remediation-2026-01-21.yaml"
+  - path: "_bmad-output/sprint-artifacts/sprint-status-architecture-remediation-2026-01-15.yaml"
     epic_id: "EPIC-CC-11"
     status: "ready_for_dev" → "completed"
     story_count: 1 → 3

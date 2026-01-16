@@ -1,6 +1,6 @@
 # ADR-035: Correct-Course v2 - Architecture Standardization
 
-**Date**: 2026-01-20
+**Date**: 2026-01-14
 **Status**: APPROVED - IMMEDIATE EXECUTION
 **Decision Makers**: User + BMAD Master Orchestrator
 **Supersedes**: ADR-033 (partial), ADR-034 (extends)
@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Deep-scan analysis on 2026-01-20 revealed that despite 90%+ claimed completion:
+Deep-scan analysis on 2026-01-14 revealed that despite 90%+ claimed completion:
 - **3 P0 bugs** block ALL user journeys
 - **Architecture boundaries** are undefined (Dexie used for 5 conflicting purposes)
 - **ID confusion** causes hydration failures (WorkspaceId vs ProjectId)
@@ -330,7 +330,7 @@ await handlePersistenceService.persistHandle(projectId, handle, 'ide');  // ✅ 
 
 ## Part 4: DETAILED SPRINT PLAN
 
-See companion file: `correct-course-v2-sprint-2026-01-20.yaml`
+See companion file: `correct-course-v2-sprint-2026-01-14.yaml`
 
 ---
 

@@ -1,7 +1,7 @@
 # Via-Gent Epics and Stories (Working Copy)
 
 **Version:** 2.2.0 (Phase 1 Updated - Team B Working Copy)
-**Date:** 2026-01-22
+**Date:** 2026-01-16
 **Status:** WORKING COPY - DO NOT MODIFY ORIGINAL
 **Related Documents:**
 - Original: `_bmad-output/planning-artifacts/epics.md`
@@ -11,7 +11,7 @@
 
 ---
 
-> **[UPDATED: 2026-01-22 - Team B Phase 1 Task 1.4]**
+> **[UPDATED: 2026-01-16 - Team B Phase 1 Task 1.4]**
 > This is a working copy of the epics document. Changes from the original are tracked in `epics-updates-summary.md`.
 
 ---
@@ -28,7 +28,7 @@
 | **EPIC-PS** | Project Space Foundation | 0% | P0 | PROPOSED |
 | **ARC Stories** | ADR-033 Remediation | See phases | P0 | IN_PROGRESS |
 
-> **[NOTE: 2026-01-22]** EPIC-01 through EPIC-06 have been **REMOVED** from this working copy. They are superseded by EPIC-CC series and ARC stories. See original document for historical reference.
+> **[NOTE: 2026-01-16]** EPIC-01 through EPIC-06 have been **REMOVED** from this working copy. They are superseded by EPIC-CC series and ARC stories. See original document for historical reference.
 
 ---
 
@@ -111,7 +111,7 @@
 
 ## EPIC-PS: Project Space Foundation (Alternative Naming)
 
-> **[NOTE: 2026-01-22]** This epic is an alternative name for EPIC-CC-01. See ADR-033 D1-D9 for canonical implementation.
+> **[NOTE: 2026-01-16]** This epic is an alternative name for EPIC-CC-01. See ADR-033 D1-D9 for canonical implementation.
 
 ### Stories (If Used Separately)
 
@@ -127,7 +127,7 @@
 
 ## ARC Stories: ADR-033 Architectural Remediation
 
-> **[ADDED: 2026-01-22]** ADR-033 stories for Correct-Course Architectural Remediation
+> **[ADDED: 2026-01-16]** ADR-033 stories for Correct-Course Architectural Remediation
 
 ### Phase A: Identity & Routing (Team A)
 
@@ -330,7 +330,7 @@
 
 ## ADR-034 Infection Registry
 
-> **[ADDED: 2026-01-22]** 31 infection points identified in ADR-034
+> **[ADDED: 2026-01-16]** 31 infection points identified in ADR-034
 
 ### Domain 1: FSA Handle Persistence (10 Issues)
 
@@ -473,7 +473,7 @@ Chrome 129 Detection [Standalone - can start immediately]
 
 ## Platform Guard Stories
 
-> **[ADDED: 2026-01-22]** Platform guards for all routes
+> **[ADDED: 2026-01-16]** Platform guards for all routes
 
 | Story ID | Route | Guard Type | Status |
 |----------|-------|------------|--------|
@@ -490,7 +490,7 @@ Chrome 129 Detection [Standalone - can start immediately]
 
 ## Chrome 129 Detection Story
 
-> **[ADDED: 2026-01-22]** Chrome 129 structured clone support
+> **[ADDED: 2026-01-16]** Chrome 129 structured clone support
 
 ### CC-07-01: Implement Chrome 129 detection
 
@@ -511,7 +511,7 @@ Chrome 129 Detection [Standalone - can start immediately]
 
 ## waitForHydration() Function Story
 
-> **[ADDED: 2026-01-22]** Route loading hydration wait utility
+> **[ADDED: 2026-01-16]** Route loading hydration wait utility
 
 ### CC-06-01: Create waitForHydration() function
 
@@ -531,7 +531,7 @@ Chrome 129 Detection [Standalone - can start immediately]
 
 ## State Scoping by [projectId+workspaceId]
 
-> **[ADDED: 2026-01-22]** State isolation per project and workspace
+> **[ADDED: 2026-01-16]** State isolation per project and workspace
 
 ### CC-08 Stories: State Scoping
 
@@ -546,7 +546,7 @@ Chrome 129 Detection [Standalone - can start immediately]
 
 ## Route Standardization (Loader Only Pattern)
 
-> **[ADDED: 2026-01-22]** Consistent TanStack Router patterns
+> **[ADDED: 2026-01-16]** Consistent TanStack Router patterns
 
 ### Standard Pattern:
 
@@ -587,7 +587,7 @@ loader: async () => { fetch project again... }
 ---
 
 **Document Version:** 2.2.0 (Working Copy)
-**Last Updated:** 2026-01-22
+**Last Updated:** 2026-01-16
 **Author:** Team B Phase 1 Analyst
 **Status:** WORKING COPY - FOR REVIEW
 

@@ -1,6 +1,6 @@
 # State Management Infection Scan - ADR-034 Domain 2 (UPDATED)
 
-**Date**: 2026-01-21
+**Date**: 2026-01-15
 **Status**: ✅ COMPLETE - All 12 infections investigated
 **Domain**: State Management (12 Infection Points)
 **Files Scanned: 12/12
@@ -255,7 +255,7 @@ export const useConversationStore = create<CombinedConversationState>((set, _get
 
 **Investigation Findings**: Already verified in initial scan - replaced with actual Dexie reads
 
-**Status**: ✅ RESOLVED (Fixed 2026-01-20)
+**Status**: ✅ RESOLVED (Fixed 2026-01-14)
 
 ---
 
@@ -311,7 +311,7 @@ export const useConversationStore = create<CombinedConversationState>((set, _get
 | STATE-007 | `unified-chat-store.ts` | Global storage key | ✅ Resolved | Uses Dexie table |
 | STATE-008 | `rag-store.ts` | Global indexMetadata | ✅ Resolved | Uses Dexie with scoping |
 | STATE-009 | `terminal-store.ts` | Uses localStorage | ✅ Resolved | Fixed 2026-01-19 |
-| STATE-010 | `hydration-manager.ts` | Empty hydrate | ✅ Resolved | Fixed 2026-01-20 |
+| STATE-010 | `hydration-manager.ts` | Empty hydrate | ✅ Resolved | Fixed 2026-01-14 |
 | STATE-011 | `project-crud-slice.ts` | persistHandle(null) | ✅ Resolved | Handle persisted separately |
 | STATE-012 | Multiple stores | No cleanup | ❓ Pending | Needs verification |
 

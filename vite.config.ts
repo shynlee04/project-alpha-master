@@ -209,6 +209,7 @@ const config = defineConfig(async () => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        '@/spike': path.resolve(__dirname, './routes-spike'),
       },
     },
     // Build configuration

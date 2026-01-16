@@ -1024,7 +1024,7 @@ export const useStore = create()(
   "id": 2,
   "name": "Sprint 2026-01-07",
   "estimated_start": "2026-01-07",
-  "estimated_finish": "2026-01-21",
+  "estimated_finish": "2026-01-15",
   "total_points": 240.5,
   "closed_points": 44.0,
   "user_stories": [

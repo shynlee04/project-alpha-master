@@ -3,7 +3,7 @@
 **Epic ID**: EPIC-CC-V2
 **Epic Name**: Correct-Course V2: Architecture Standardization
 **ADR**: ADR-035-correct-course-v2-architecture-standardization
-**Session**: CC-V2-2026-01-20
+**Session**: CC-V2-2026-01-14
 **Date Closed**: 2026-01-21T18:00:00+07:00
 **Status**: ✅ CLOSED
 **Governance**: ZERO_TOLERANCE
@@ -114,13 +114,13 @@ All fixes verified through static analysis using `grep` and file reads.
 
 | Artifact | Location |
 |----------|----------|
-| Sprint Plan | [_bmad-output/sprint-artifacts/correct-course-v2-sprint-2026-01-20.yaml](_bmad-output/sprint-artifacts/correct-course-v2-sprint-2026-01-20.yaml) |
-| ADR-035 | [_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md](_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md) |
-| Test Plan | [_bmad-output/test-artifacts/phase-3-integration-test-plan-2026-01-21.md](_bmad-output/test-artifacts/phase-3-integration-test-plan-2026-01-21.md) |
+| Sprint Plan | [_bmad-output/sprint-artifacts/correct-course-v2-sprint-2026-01-14.yaml](_bmad-output/sprint-artifacts/correct-course-v2-sprint-2026-01-14.yaml) |
+| ADR-035 | [_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-14.md](_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-14.md) |
+| Test Plan | [_bmad-output/test-artifacts/phase-3-integration-test-plan-2026-01-15.md](_bmad-output/test-artifacts/phase-3-integration-test-plan-2026-01-15.md) |
 | Test Suite | [e2e/journeys/phase-3-correct-course-v2.spec.ts](e2e/journeys/phase-3-correct-course-v2.spec.ts) |
-| Completion Report | [_bmad-output/test-artifacts/phase-3-completion-report-2026-01-21.md](_bmad-output/test-artifacts/phase-3-completion-report-2026-01-21.md) |
-| Governance Validation | [_bmad-output/reviews/GOVERNANCE-VALIDATION-CC-V2-PHASE2-2026-01-21.md](_bmad-output/reviews/GOVERNANCE-VALIDATION-CC-V2-PHASE2-2026-01-21.md) |
-| **Closure Report** | **[_bmad-output/sprint-artifacts/correct-course-v2-closure-2026-01-21.md](_bmad-output/sprint-artifacts/correct-course-v2-closure-2026-01-21.md)** |
+| Completion Report | [_bmad-output/test-artifacts/phase-3-completion-report-2026-01-15.md](_bmad-output/test-artifacts/phase-3-completion-report-2026-01-15.md) |
+| Governance Validation | [_bmad-output/reviews/GOVERNANCE-VALIDATION-CC-V2-PHASE2-2026-01-15.md](_bmad-output/reviews/GOVERNANCE-VALIDATION-CC-V2-PHASE2-2026-01-15.md) |
+| **Closure Report** | **[_bmad-output/sprint-artifacts/correct-course-v2-closure-2026-01-15.md](_bmad-output/sprint-artifacts/correct-course-v2-closure-2026-01-15.md)** |
 
 ---
 

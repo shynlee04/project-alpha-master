@@ -35,10 +35,12 @@ integration_points:
     - "architect-ext"
     - "ux-designer-ext"
 sub_agents:
-  count: 1
+  count: 4
   list:
     - "tea-ext"
-
+    - "explore"
+    - "analyst-ext"
+    - "architect-ext"
 entry_points:
   commands:
     - "/dev-ext"

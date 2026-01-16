@@ -26,7 +26,7 @@
 
 ### Finding 1: Team B Review Document is Stale
 
-**Evidence**: The review document `_bmad-output/reviews/TEAM-B-REVIEW-TEAM-A-CC-V2-2026-01-21.md` contains outdated code snapshots.
+**Evidence**: The review document `_bmad-output/reviews/TEAM-B-REVIEW-TEAM-A-CC-V2-2026-01-15.md` contains outdated code snapshots.
 
 **Root Cause**: Code reviews were generated against session snapshots, not fresh file contents. Team A applied fixes after the review was created.
 
@@ -102,7 +102,7 @@ export type { WorkspaceId };
 
 ### Immediate Actions
 
-1. **Archive stale review document**: Move `TEAM-B-REVIEW-TEAM-A-CC-V2-2026-01-21.md` to `_archive/`
+1. **Archive stale review document**: Move `TEAM-B-REVIEW-TEAM-A-CC-V2-2026-01-15.md` to `_archive/`
 2. **Update LOOP_STATE.yaml**: Set `next_steps` to integration testing
 3. **Proceed to Phase 3**: Integration testing (TEST-01, TEST-02, TEST-03)
 
@@ -128,7 +128,7 @@ export type { WorkspaceId };
 ```yaml
 artifact_id: "GOV-VAL-CC-V2-001"
 artifact_type: "validation"
-parent_id: "CC-V2-2026-01-20"
+parent_id: "CC-V2-2026-01-14"
 sequence_number: 1
 created_at: "2026-01-21T15:30:00+07:00"
 status: "ACTIVE"

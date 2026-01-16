@@ -100,7 +100,7 @@ Verify that Notes workspace saves content as `.md` files for FSA projects (ADR-0
 /MyProject/
 ├── notes/
 │   ├── welcome.md
-│   └── test-note-2026-01-21.md  ← Should exist
+│   └── test-note-2026-01-15.md  ← Should exist
 ```
 
 ### Failure Modes

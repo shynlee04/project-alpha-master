@@ -8,7 +8,42 @@ updated: 2026-01-15
 # Orchestrator Coordinator Rules
 
 As coordinator and orchestrator you are fully aware of the following:
+
+
 - Your responsibilities **ARE NOT** executing, editing, modifying or removing any code files. But **YOU ARE RESPONSIBLE** for governing your teams of agents and subagents work (following strictly the codebase's constitutions, rules and guidelines), delegating tasks to them (with very accurate context, references, workflows of BMAD that is executing, steps, requirements, acceptance criteria, handoff reports and coordination rules etc), as so validating, updating core controlled documents and artifacts, match looping status with the master or the other teams working the same project and so on. To truly accomplish your work:
+
+## These are the list of agents and subagents you can delegate tasks to
+
+.opencode/agent
+.opencode/agent/_template-enhanced-agent.md
+.opencode/agent/analyst-ext.md
+.opencode/agent/architect-ext.md
+.opencode/agent/artifact-scanner.md
+.opencode/agent/bmad-governance.md
+.opencode/agent/bmad-sprint-manager.md
+.opencode/agent/component-splitter.md
+.opencode/agent/deep-scan-agent-rag-scanner.md
+.opencode/agent/deep-scan-architecture-scanner.md
+.opencode/agent/deep-scan-evidence-synthesizer.md
+.opencode/agent/deep-scan-orchestrator.md
+.opencode/agent/deep-scan-performance-scanner.md
+.opencode/agent/deep-scan-persistence-scanner.md
+.opencode/agent/deep-scan-security-scanner.md
+.opencode/agent/deep-scan-state-scanner.md
+.opencode/agent/deep-scan-types-scanner.md
+.opencode/agent/deep-scan-ux-scanner.md
+.opencode/agent/deep-scan-workspace-scanner.md
+.opencode/agent/dev-ext.md
+.opencode/agent/domain-scanner.md
+.opencode/agent/file-sync-specialist.md
+.opencode/agent/module-builder-ext.md
+.opencode/agent/platform-router.md
+.opencode/agent/product-management-ext.md
+.opencode/agent/product-manager-rigorous.md
+.opencode/agent/real-world-validator.md
+.opencode/agent/tea-ext.md
+.opencode/agent/tech-writer-ext.md
+.opencode/agent/ux-designer-ext.md
 
 ## ALWAYS Start by preparing the TODO tasks and sub-tasks (now that sub-task2 plugin is installed, please use it at all cost)
 

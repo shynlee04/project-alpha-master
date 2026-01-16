@@ -1,9 +1,26 @@
-# CLAUDE.md - AI Agent Instructions
+# AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.1.0 | **Updated:** 2026-01-17T08:00+07:00
+> **Version:** 2.2.0 | **Updated:** 2026-01-17T08:00+07:00 | **Health:** 50%
+
+**MOST IMPORTANT** 
+
+-NO CONTEXT, FALSE CONTEXT WILL HALT ANY ON-GOING FLOW -
+
+
+- Always start first with pulling context, by reading, consuming relevant documents, using mcp servers, reading code files with grep, glob, search, list
+
+
+- Never pass any create new files (even document) without going through validation and gatekeeping - both code and documents
+
+- Do not use any documents for consumption if it does not have references, meta data links, nor yaml references - NEVER - these documents never pass
+
+- Never execute any tasks without plan
+
+- Never run anything withotu set up TODO list
+
 
 ---
-**FOLLOWING ALL BMAD RULES AND GOVERNANVE** 
+#*FOLLOWING ALL BMAD RULES AND GOVERNANVE** 
 
 There are alot and detail of each but these certain things are the most annoying shit that all agents must obey:
 
@@ -27,7 +44,84 @@ There are alot and detail of each but these certain things are the most annoying
 
 - MCP tools and servers are absolutely important to check and use often
 
+## 🚨 CRITICAL: ALWAYS Set Tool Constraints When Delegating to Sub-Agents
+
+**NEVER delegate without explicitly setting tool permissions!** This prevents sub-agents from overstepping their role boundaries.
+
+### Required Pattern for EVERY Delegation
+
+**Add this to EVERY task delegation prompt:**
+
+```markdown
+## Tool Constraints
+
+**CRITICAL**: This agent has LIMITED permissions:
+- write: [true/false] - What it can create
+- edit: [true/false] - Whether it can modify code files
+- bash: [true/false] - Whether it can run commands
+- task: true - Can delegate further if approved
+
+**Role Boundaries**:
+- [AGENT ROLE] - What it should do
+- [WHAT NOT TO DO] - Clear list of forbidden actions
+
+**Required Output**:
+- Report location: [path]
+- Success criteria: [list]
+- Timebox: [duration]
+```
+
+### Tool Permission Matrix (MEMORIZE THIS)
+
+| Agent Type | write | edit | bash | task | Notes |
+|-----------|--------|-------|-------|-------|--------|
+| **real-world-validator** | true | false | true (limited) | true | Tests ONLY (bash: browser automation + restart if stuck), writes reports (write), NEVER modifies code (edit: NO) |
+| **dev-ext** | true | true | true (limited) | true | Implementation, but NEVER without context and review |
+| **architect-ext** | false | true (design only) | false | true | Architecture docs, NOT code implementation |
+| **analyst-ext** | false | false | false | true | Research and analysis ONLY |
+| **tea-ext** | false | false | false | true | Test specifications, NOT implementation |
+| **ux-designer-ext** | false | false | false | true | UI/UX design, NOT coding |
+
+### MCP Server Usage (REQUIRED FOR RESEARCH)
+
+Agents MUST use MCP servers for official documentation:
+
+| Tool | When To Use | Examples |
+|-------|-------------|-----------|
+| **TanStack MCP** | All TanStack documentation queries | "Search: TanStack Router route registration manual" |
+| **websearch-prime** | Best practices, 2026 patterns | "React state management best practices 2026" |
+| **fetch_fetch** | Official docs, API references | "Fetch TanStack Router GitHub README" |
+
+### Validation Checklist (Check Before EVERY Delegation)
+
+- [ ] Tool permissions explicitly set in prompt
+- [ ] Role boundaries clearly defined in prompt
+- [ ] Output location specified in prompt
+- [ ] Evidence requirements stated in prompt
+- [ ] MCP server usage mentioned if research needed
+- [ ] Timebox specified in prompt
+- [ ] Success criteria documented in prompt
+
+### Consequence of NOT Setting Constraints
+
+**If sub-agent has unrestricted permissions, it may:**
+- Modify code files outside its scope (e.g., real-world-validator editing router.tsx)
+- Fix issues it should only report and document
+- Restart services and cause conflicts with other teams
+- Install/uninstall dependencies without approval
+- Overstep role boundaries (e.g., testing agent doing implementation)
+
+**Result**: Cascading failures, corrupted codebase, lost time, team coordination breakdown.
+
+### Memory Reference
+
+See `ext-master-constraints` memory file for complete templates and examples.
+
+---
+
 ## 🔴 NON-NEGOTIABLE BMAD RULES (Must Obey At All Times)
+
+## DO NOT RUN TYPESCRIPT check MANY TIMES --> IT IS BEST THAT YOU SAVE IT INTO TXT FILE -> ONLY ONCE ALL ERRORS ARE HANDLED CHECK WILL BE RUN AGAIN
 
 > **Source**: `_bmad-ext/orchestrator/master-orchestrator.md` | **Applies**: All platforms, workflows, iterations
 
@@ -81,8 +175,8 @@ See: `_bmad-ext/schemas/handoff-artifact.schema.yaml`
 
 ### 6. GOVERNANCE UPDATES (Auto-Maintained)
 **AFTER every 3 stories completed**, auto-update:
-- `AGENTS.md`
-- `CLAUDE.md` (this file)
+- `AGENTS.md` (this file)
+- `CLAUDE.md`
 - `bmm-workflow-status.yaml`
 - Sprint status files
 
@@ -132,240 +226,136 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | `_bmad-ext/orchestrator/escalation-protocol.md` | Failure handling | On failure |
 | `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
+| `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md` | **Master ADR for architecture** | Before any refactoring |
+| `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml` | Current sprint status | Check story assignments |
 
 ---
 
-## Context Loading Priority
+## 🏛️ ADR-033: ARCHITECTURAL DECISIONS (PERMANENT - NEVER DEVIATE)
 
-**Order of reading (most important first):**
-
-1. **This file** (CLAUDE.md) - Essential patterns (NON-NEGOTIABLE RULES above)
-2. **AGENTS.md** - Project state & navigation
-3. **bmm-workflow-status.yaml** - Current workflow
-4. **sprint-status.yaml** - Active sprint details
-5. **Story context** - Task-specific (e.g., `FS-05-context.xml`)
-6. **Relevant standards** - From `agent-os/standards/` (see below)
-
-### Mandatory Standards (Read Before Coding)
-
-| Standard | Path | When Required |
-|----------|------|---------------|
-| API | `agent-os/standards/backend/api.md` | Any server function |
-| Models | `agent-os/standards/backend/models.md` | New/modified entities |
-| Queries | `agent-os/standards/backend/queries.md` | Dexie operations |
-| Components | `agent-os/standards/frontend/components.md` | New/modified React |
-| CSS | `agent-os/standards/frontend/css.md` | Any styling |
-| Coding Style | `agent-os/standards/global/coding-style.md` | All code |
-| Testing | `agent-os/standards/testing/test-writing.md` | Tests |
-
----
-
-## 📅 Recent Updates (Rolling 7 days)
-
-| Date | Update |
-|------|--------|
-| 2026-01-17 | **ADR-033 APPROVED** - PlatformContract, StorageGateway, FSA folder structure added |
-| 2026-01-17 | Version 2.1.0 - EPIC-CC-ARC Sprint Planning complete, Week 1 execution starting |
-| 2026-01-16 | Fixed useWorkspaceAccess hook, browser-mode.ts persistence |
-| 2026-01-11 | NON-NEGOTIABLE BMAD RULES added (10 rules from master-orchestrator.md) |
-| 2026-01-09 | Governance Overhaul: 6-cycle context poison reduction |
-
----
-
-## 🚫 Critical Anti-Patterns
-
-### Never Do These
-
-```typescript
-// ❌ WRONG: Multiple separate selectors
-const items = useStore((s) => s.items);
-const addItem = useStore((s) => s.addItem);
-
-// ❌ WRONG: Deprecated path
-import { something } from '@/lib/state/store';
-
-// ❌ WRONG: Non-8-bit styling
-<div className="rounded-lg backdrop-blur opacity-80">
-
-// ❌ WRONG: Direct Dexie in components
-const db = new Dexie('MyDB');
-
-// ❌ WRONG: Untyped async handlers
-const handleClick = async () => { ... }
-```
-
-### Always Do These
-
-```typescript
-// ✅ RIGHT: useShallow for multiple selectors
-const { items, addItem } = useStore(
-  useShallow((state) => ({
-    items: state.items,
-    addItem: state.addItem,
-  }))
-);
-
-// ✅ RIGHT: Clean Architecture import
-import { useProjectStore } from '@/infrastructure/persistence/stores/project-store';
-
-// ✅ RIGHT: 8-bit styling
-<div className="rounded-none shadow-[4px_4px_0_0]">
-
-// ✅ RIGHT: Use store facades
-import { db } from '@/infrastructure/persistence/dexie-db';
-
-// ✅ RIGHT: Typed handlers with try-catch
-const handleClick = async (): Promise<void> => {
-  try { ... } catch (e) { ... }
-}
-```
-
----
-
-## ⏱️ REALISTIC TIMING (Actual Data - NOT Estimates)
-
-| Work Unit | Real Average | Example |
-|-----------|--------------|---------|
-| **Story (simple)** | 1-2 hours | FS-05: 1.5h, MOBILE stories: 1-2h |
-| **Story (complex)** | 2-4 hours | 40-01 Tool Registry: ~3h |
-| **Epic (6-8 stories)** | 4-8 hours | EPIC-40: 12 stories in one day |
-| **Epic (mini 3-4)** | 2-4 hours | EPIC-39: 4 stories in one day |
-
-### Velocity Reality
-- **Stories/day**: 4-8 (varies by complexity)
-- **Epics/day**: 1-3 (depends on size)
-- **Exceptional**: 2-3 epics possible in flow state
-
-### Time-Boxing (Realistic)
-| Level | Duration | On Timeout |
-|-------|----------|------------|
-| Step | 15 min | Escalate to story |
-| Story | 4 hours max | Split or continue |
-| Deep Investigation | 30 min | Split story |
-| Epic | 8 hours | Adjust scope |
-
----
-
-## ✅ Import Pattern Reference
-
-```typescript
-// Framework imports
-import React, { useState, useCallback } from 'react';
-import { useParams, useNavigate } from '@tanstack/react-router';
-
-// Third-party
-import { useShallow } from 'zustand/react/shallow';
-import { toast } from 'sonner';
-
-// Infrastructure (always @/)
-import { useNoteStore } from '@/infrastructure/persistence/stores/note-store';
-import { db } from '@/infrastructure/persistence/dexie-db';
-import type { Note } from '@/domain/types/note';
-
-// Presentation
-import { Button } from '@/presentation/components/ui/button';
-import { useAI } from '@/presentation/hooks/use-ai';
-
-// Relative (same module only)
-import { formatDate } from './utils';
-```
-
----
-
-## 🗂️ File System Architecture (Current Focus)
-
-**Epic:** EPIC-FS (File System Foundation)
-**Progress:** 28.6%
-**Current Story:** FS-05 (FileLockService)
-
-### Key Files
-
-| File | description |
-|------|---------|
-| `src/infrastructure/persistence/file-adapters/` | FSA/IDB adapters |
-| `src/infrastructure/persistence/stores/note-store.ts` | Notes state |
-| `src/infrastructure/sync/file-sync-service.ts` | Sync orchestration |
-| `src/domain/services/file-lock-service.ts` | Lock management |
-| `src/routes/notes.lazy.tsx` | Notes route |
-
-### Storage Types
-
-```typescript
-type StorageType = 'fsa' | 'indexeddb';
-
-// FSA = File System Access API (native folders)
-// IndexedDB = Browser storage (always available)
-```
-
----
-
-## 🏗️ Architecture Layers
-
-```
-src/
-├── routes/              # TanStack Router routes
-├── presentation/        # React components, hooks
-│   ├── components/     
-│   └── hooks/          
-├── domain/              # Business logic
-│   ├── services/       
-│   └── types/          
-└── infrastructure/      # External interfaces
-    ├── persistence/     # Stores, Dexie, adapters
-    ├── sync/           
-    └── events/         
-```
-
----
-
-## 🔒 ARCHITECTURAL BOUNDARIES (Non-Negotiable)
-
-> **Source**: ADR-033 - Correct-Course Architectural Remediation
-> **Updated**: 2026-01-17
+> **Source**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
 > **Status**: APPROVED - All decisions final
+> **Updated**: 2026-01-17
 
-### 🏛️ ADR-033 Key Decisions (NEVER DEVIATE)
+### Platform & Storage Decisions
 
-| Decision | Rule | Enforcement |
-|----------|------|-------------|
-| **D1: Platform Detection** | Auto-detect ONCE at app start. Desktop=FSA, Mobile=IndexedDB | Never check device type at call sites |
-| **D2: Storage Immutable** | Storage type set at project creation, never changes | Never decide FSA vs IndexedDB per operation |
-| **D3: IDE Desktop Only** | IDE workspace blocked on mobile/tablet | Always redirect mobile to Notes |
-| **D4: Notes on FSA** | Desktop notes save as `.md` files in `/project/notes/` | Same tech as IDE, bidirectional sync |
-| **D5: Persist First** | Write to DexieDB FIRST, then update Zustand | Never update Zustand without DB success |
-| **D6: Single Database** | Only `ViaGentDatabase` for all tables | Never create new Dexie databases |
-| **D7: Path-Based IDs** | File IDs are relative paths from project root | Never use UUIDs for file identity |
-| **D8: Metadata Folder** | `.viagent/` at project root for metadata | Never scatter metadata files |
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Storage Type Selection** | Auto-detect, NO user choice | Desktop=FSA, Mobile=IndexedDB. Simplifies UX |
+| **Desktop Storage** | FSA (File System Access API) | Required for agentic coding |
+| **Mobile/Tablet Storage** | IndexedDB (Dexie) | FSA not supported on mobile |
+| **IDE Access** | Desktop only | FSA required for file CRUD |
+| **Mobile IDE Behavior** | Block and redirect to Notes | Clear UX boundary |
 
-### PlatformContract Interface (Canonical)
+### FSA & Handle Persistence
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Handle Storage** | Store `FileSystemDirectoryHandle` in IndexedDB | Chrome DevRel recommended |
+| **Permission Persistence** | Use Chrome 122+ "Allow on every visit" | Research confirmed |
+| **File Watching** | FileSystemObserver (129+), polling fallback | Native when available |
+| **Fast Load Strategy** | Snapshot in Dexie, diff in background | No waiting on rescan |
+
+### Notes Storage for FSA Desktop
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Notes Location** | FSA folder (`/project/notes/*.md`) | Same tech as IDE, reactive |
+| **Sync Direction** | Bidirectional (BlockNote ↔ Markdown) | External editor support |
+| **Conflict Resolution** | Merge dialog if local dirty + external change | User decides |
+| **Autosave Debounce** | 500ms | Balance responsiveness and I/O |
+
+### Project Structure
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Metadata Folder** | `.viagent/` at project root | Hidden, consistent |
+| **Notes Folder** | `/notes/` (configurable) | Separate from code |
+| **Assets Folder** | `/notes/assets/` | Embedded media |
+| **File IDs** | Path-based (relative from root) | FSA uses paths, debuggable |
+
+### Mobile Project Model
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Project Count** | Single default (`notes:browser-mode`) | Simpler for MVP |
+| **Desktop Without Project** | Must create/select project first | Consistent with FSA model |
+
+### Database Keys
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| **Composite Keys** | Keep `[projectId+workspaceId]` | Intentional isolation per workspace |
+
+### Nested Folder Rules
+
+| Scenario | Behavior |
+|----------|----------|
+| **Same path** | Block - cannot create duplicate |
+| **Child of existing** | Warn - allow if user confirms |
+| **Parent of existing** | Warn - allow if user confirms |
+| **Sibling** | Allow - no overlap |
+
+### File Discovery Limits
+
+| Setting | Default |
+|---------|---------|
+| **Max Depth** | 20 |
+| **Warn At Depth** | 15 |
+| **Max Files** | 50,000 |
+| **Max Total Size** | 500MB |
+
+### Default Exclusions
+
+```
+node_modules, .git, .next, .nuxt, dist, build, out,
+.cache, coverage, __pycache__, .venv, venv, .idea
+```
+
+### FSA Project Folder Structure (Canonical)
+
+```
+/MyProject/                          ← FSA Project Root
+├── .viagent/                        ← ViaGent metadata folder
+│   ├── project.json                 ← Project config (ID, name, bindings)
+│   ├── notes-index.json             ← Note metadata (titles, order, favorites)
+│   ├── file-tree-snapshot.json      ← Cached file tree for fast load
+│   └── rag-index/                   ← Local RAG vectors (optional)
+│       ├── chunks.json
+│       └── embeddings.bin
+│
+├── notes/                           ← Notes workspace content
+│   ├── welcome.md                   ← Markdown file
+│   └── assets/                      ← Embedded assets
+│       └── image-abc123.png
+│
+├── src/                             ← Code (IDE workspace)
+│   └── index.ts
+│
+└── docs/                            ← Viewable in Notes OR IDE
+    └── api.md
+```
+
+### PlatformContract Interface (Use This Everywhere)
 
 ```typescript
-// ALWAYS use this interface - defined in ARC-A01
 interface PlatformContract {
   deviceType: 'desktop' | 'mobile' | 'tablet';
   storageType: 'fsa' | 'indexeddb';
-  canAccessFSA: boolean;        // Desktop only
-  canWatchFiles: boolean;       // Desktop with FSA
-  canRunTerminal: boolean;      // Desktop with WebContainer
-  canDoAgenticCoding: boolean;  // Desktop with FSA + Terminal
-  canAccessIDE: boolean;        // Desktop only
+  canAccessFSA: boolean;
+  canWatchFiles: boolean;
+  canRunTerminal: boolean;
+  canDoAgenticCoding: boolean;
+  canAccessIDE: boolean;
 }
 
-// ✅ CORRECT: Call once, use everywhere
+// Usage: Call ONCE, use everywhere
 const platform = getPlatformContract();
-if (!platform.canAccessIDE) {
-  redirect({ to: '/notes/$projectId', params });
-}
-
-// ❌ WRONG: Check device type at call site
-if (navigator.userAgent.match(/mobile/i)) { ... }  // NEVER
-if (window.innerWidth < 768) { ... }  // NEVER for routing
 ```
 
-### StorageGateway Pattern (Mandatory for Phase B)
+### StorageGateway Interface (Use This for All I/O)
 
 ```typescript
-// ALWAYS use StorageGateway - defined in ARC-B01
 interface StorageGateway {
   read(path: string): Promise<Uint8Array>;
   write(path: string, data: Uint8Array): Promise<void>;
@@ -375,212 +365,418 @@ interface StorageGateway {
   watch(callback: FileChangeCallback): () => void;
 }
 
-// ✅ CORRECT: Get gateway from factory
+// Usage: Get from factory based on project.storageType
 const gateway = StorageGatewayFactory.create(project.storageType);
-await gateway.write('notes/welcome.md', content);
-
-// ❌ WRONG: Decide storage type at call site
-if (project.storageType === 'fsa') {
-  await fsaAdapter.write(...);
-} else {
-  await idbAdapter.write(...);
-}
-```
-
-### FSA Project Folder Structure (Standard)
-
-```
-/MyProject/                          ← FSA Project Root
-├── .viagent/                        ← ViaGent metadata (hidden)
-│   ├── project.json                 ← Project config (ID, name, bindings)
-│   ├── notes-index.json             ← Note metadata (titles, order, favorites)
-│   ├── file-tree-snapshot.json      ← Cached file tree for fast load
-│   └── rag-index/                   ← Local RAG vectors (optional)
-│
-├── notes/                           ← Notes workspace content
-│   ├── welcome.md                   ← Markdown files
-│   └── assets/                      ← Embedded assets
-│       └── image-abc123.png
-│
-├── src/                             ← Code (IDE workspace)
-└── docs/                            ← Viewable in Notes OR IDE
-```
-
-### 6-Domain Architecture Contract
-
-| Domain | Rule | Violation = Block |
-|--------|------|-------------------|
-| **D1: Identity & Routing** | Platform contract determined ONCE at app start | Never check device type at call sites |
-| **D2: Storage Contract** | Storage type set at project creation, immutable | Never decide FSA vs IndexedDB per operation |
-| **D3: State & Persistence** | Persist FIRST, then update Zustand | Never update Zustand without DexieDB |
-| **D4: Entity Naming** | `projectId` = storage, `workspaceType` = UI enum | Never use `workspaceId` as entity ID |
-| **D5: Database** | Single ViaGentDatabase for all tables | Never create new Dexie databases |
-| **D6: File Tree** | ONE canonical location per concern | Never duplicate stores/adapters |
-
-### Canonical File Locations (ONLY USE THESE)
-
-```
-✅ CANONICAL (Use these):
-src/infrastructure/persistence/stores/project/    → Project Store
-src/infrastructure/persistence/stores/note/       → Note Store
-src/infrastructure/persistence/dexie-db.ts        → Single Dexie DB
-src/infrastructure/filesystem/                    → All FS adapters
-src/domain/services/                              → Business logic
-src/domain/types/                                 → Domain types
-
-❌ DEPRECATED (Never import from):
-src/lib/workspace/project-store/                  → ARCHIVED
-src/lib/filesystem/local-fs-adapter.ts            → ARCHIVED
-src/lib/workspace/file-sync-status-store/         → ARCHIVED
-src/lib/state/                                    → ARCHIVED
-src/stores/                                       → NEVER EXISTED
-```
-
-### Storage Contract Pattern
-
-```typescript
-// ✅ CORRECT: Storage determined once at project creation
-const project = await createProject({
-  name: "My Project",
-  storageType: getPlatformContract().storageType  // Set once, never changes
-});
-
-// ❌ WRONG: Storage decided at call site
-if (isMobile) {
-  await idbAdapter.write(...);
-} else {
-  await fsaAdapter.write(...);
-}
-```
-
-### Persist-First Pattern (Mandatory)
-
-```typescript
-// ✅ CORRECT: Persist first, then Zustand
-async createNote(input: CreateNoteInput): Promise<Note> {
-  const note = generateNote(input);
-  
-  // Step 1: Persist to DexieDB FIRST (fail-fast)
-  await db.notes.put(note);
-  
-  // Step 2: Update Zustand ONLY after persistence succeeds
-  set((state) => ({ notes: [...state.notes, note] }));
-  
-  return note;
-}
-
-// ❌ WRONG: Zustand first (data loss risk)
-async createNote(input: CreateNoteInput): Promise<Note> {
-  const note = generateNote(input);
-  set((state) => ({ notes: [...state.notes, note] }));  // Lost if DB fails!
-  await db.notes.put(note);
-  return note;
-}
-```
-
-### Route Guard Pattern (All Workspace Routes)
-
-```typescript
-// ✅ CORRECT: Every workspace route has beforeLoad guard
-export const Route = createFileRoute('/ide/$projectId')({
-  beforeLoad: async ({ params }) => {
-    const platform = getPlatformContract();
-    
-    // Platform check
-    if (!platform.canAccessIDE) {
-      throw redirect({ to: '/notes/$projectId', params });
-    }
-    
-    // Project validation
-    const project = await db.projects.get(params.projectId);
-    if (!project) {
-      throw redirect({ to: '/hub', search: { error: 'not-found' } });
-    }
-    
-    return { project, platform };
-  }
-});
-```
-
-### Entity Naming Rules
-
-| Term | Meaning | Type | Example |
-|------|---------|------|---------|
-| `projectId` | Storage container identity | `string` (UUID) | `"proj_abc123"` |
-| `workspaceType` | UI context | `'ide' \| 'notes' \| 'knowledge' \| 'study'` | `"notes"` |
-| `workspaceBindings` | Which workspaces can access project | `WorkspaceBindings` | `{ ide: true, notes: true }` |
-
-```typescript
-// ❌ NEVER: These patterns cause bugs
-const id = workspaceId || projectId;  // Confusing fallback
-const workspace = projects.find(p => p.workspaceId === id);  // Wrong field
-
-// ✅ ALWAYS: Clear intent
-const project = projects.find(p => p.id === projectId);
-const canAccessIDE = project.workspaceBindings.ide;
 ```
 
 ---
 
-## 🎨 8-bit Design Tokens
+## 🗂️ FILE TREE GOVERNANCE (Strict Enforcement)
 
-```css
-/* Sharp corners only */
---radius-none: 0;
---radius-sm: 2px;
+> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
+> **Updated**: 2026-01-16
+> **Enforcement**: MANDATORY - All file changes must follow these rules
 
-/* Pixel shadows */
---shadow-pixel: 4px 4px 0 0 var(--shadow-color);
+### Canonical Directory Structure
 
-/* Solid colors - no transparency */
---bg-solid: hsl(var(--background));
+```
+src/
+├── routes/                          # TanStack Router ONLY
+│   ├── __root.tsx                   # Root layout
+│   ├── index.tsx                    # Hub entry
+│   ├── notes.lazy.tsx               # Notes workspace route
+│   ├── notes.$projectId.lazy.tsx    # Notes with project
+│   ├── ide.$projectId.tsx           # IDE workspace route
+│   ├── knowledge.$projectId.tsx     # Knowledge workspace route
+│   └── study.$projectId.tsx         # Study workspace route
+│
+├── presentation/                    # React UI ONLY
+│   ├── components/                  # UI components
+│   │   ├── ui/                      # Design system primitives
+│   │   ├── common/                  # Shared components
+│   │   ├── notes/                   # Notes-specific
+│   │   ├── ide/                     # IDE-specific
+│   │   ├── knowledge/               # Knowledge-specific
+│   │   └── study/                   # Study-specific
+│   └── hooks/                       # React hooks (UI concerns only)
+│
+├── domain/                          # Business Logic ONLY
+│   ├── entities/                    # Domain entities (Project, Agent, etc.)
+│   ├── services/                    # Domain services
+│   ├── types/                       # Domain types
+│   └── interfaces/                  # Repository interfaces
+│
+├── infrastructure/                  # External Interfaces ONLY
+│   ├── persistence/                 # Data persistence
+│   │   ├── dexie-db.ts              # Single DexieDB (ViaGentDatabase)
+│   │   └── stores/                  # Zustand stores (canonical location)
+│   │       ├── project/             # Project store
+│   │       ├── note/                # Note store
+│   │       ├── agents/              # Agent stores
+│   │       └── workspace/           # Workspace stores
+│   ├── filesystem/                  # File system adapters
+│   │   ├── fsa-storage-adapter.ts   # FSA adapter (desktop)
+│   │   ├── platform-detection.ts    # Platform contract
+│   │   └── StorageAdapterFactory.ts # Storage factory
+│   ├── sync/                        # Sync services
+│   └── events/                      # Event bus
+│
+└── lib/                             # LEGACY - Migrate to above
+    ├── utils.ts                     # Keep (utility functions)
+    └── [everything else]            # DEPRECATED - Do not add new files
+```
+
+### File Change Rules
+
+| Action | Rule | Gatekeeping |
+|--------|------|-------------|
+| **CREATE** | Only in canonical directories | Block if in `src/lib/` (except utils) |
+| **MODIFY** | Check canonical location first | If duplicate exists, modify canonical only |
+| **DELETE** | Archive to `_bmad-ext/.archive/` first | Never delete without archive |
+| **MOVE** | Create facade re-export at old path | Maintain backward compatibility |
+
+### Deprecated Directories (Do NOT Add Files)
+
+```
+❌ DEPRECATED - NEVER ADD NEW FILES:
+src/lib/workspace/                   # Migrate to infrastructure/persistence/stores/
+src/lib/filesystem/                  # Migrate to infrastructure/filesystem/
+src/lib/state/                       # Migrate to infrastructure/persistence/stores/
+src/lib/sync/                        # Migrate to infrastructure/sync/
+src/lib/storage/                     # Migrate to infrastructure/persistence/
+src/stores/                          # NEVER EXISTED - Do not create
+```
+
+### Files Pending Archive (Do Not Modify)
+
+```
+⚠️ PENDING ARCHIVE - DO NOT MODIFY:
+src/lib/workspace/project-store/project-crud-slice.ts    # STUB - use infrastructure version
+src/lib/workspace/fsa-persistence.ts.bak*                # Dead code
+src/lib/workspace/file-sync-status-store/                # Duplicate
+src/lib/filesystem/local-fs-adapter.ts                   # Duplicate
+```
+
+### File Change Tracking Template
+
+When modifying files, document in story artifact:
+
+```yaml
+file_changes:
+  created:
+    - path: "src/infrastructure/filesystem/platform-detection.ts"
+      reason: "ARC-A01: Platform contract implementation"
+      lines: 120
+  modified:
+    - path: "src/routes/ide.$projectId.tsx"
+      reason: "ARC-A02: Add route guard"
+      lines_changed: 25
+  archived:
+    - path: "src/lib/workspace/project-store/"
+      archive_path: "_bmad-ext/.archive/project-store-2026-01-16/"
+      reason: "ARC-E02: Consolidated to infrastructure"
+  deleted:
+    - path: "src/lib/workspace/fsa-persistence.ts.bak"
+      reason: "ARC-E01: Dead code cleanup"
 ```
 
 ---
 
-## 📋 Before Completing Any Story
+## ⏱️ REALISTIC TIMING GOVERNANCE (Based on Actual Data)
+
+> **Source**: `bmm-workflow-status.yaml` timing analysis | **Applies**: Epic/Story planning
+
+### Actual Timing Data (NOT Estimates)
+
+| Work Unit | Real Average | Historical Data |
+|-----------|--------------|-----------------|
+| **Story (simple)** | 1-2 hours | FS-05: 1.5h, MOBILE stories: 1-2h each |
+| **Story (complex)** | 2-4 hours | 40-01 Tool Registry: ~3h with full cycle |
+| **Epic (6-8 stories)** | 4-8 hours | EPIC-40: 12 stories in one day |
+| **Epic (mini 3-4 stories)** | 2-4 hours | EPIC-39: 4 stories in one day |
+| **Sprint Planning Wrapper** | 5-15 min | Cohesion + Dependency + Reality checks |
+| **Agent Handoff** | < 5 min | UUID + callback processing |
+
+### Planning Guidelines (Reality-Based)
+
+```
+✅ REALISTIC STORY ESTIMATES:
+   - Simple fix/refactor: 1 hour
+   - Feature implementation: 2-3 hours
+   - Complex feature: 3-4 hours
+   
+✅ REALISTIC EPIC ESTIMATES:
+   - Mini epic (3-4 stories): 4-6 hours
+   - Standard epic (6-8 stories): 8-12 hours
+   - Large epic (10+ stories): 16-24 hours (split recommended)
+
+❌ AVOID EXCESSIVE ESTIMATES:
+   - Don't estimate "1 day per story" - too slow
+   - Don't estimate "1 week per epic" - demotivating
+   - Trust autonomous agent velocity (2-3 stories/day is normal)
+```
+
+### Time-Boxing (Corrected from Excessive Values)
+
+| Level | Duration | Monitoring | On Timeout |
+|-------|----------|------------|------------|
+| **Step** | 15 min | Every 5 min | Escalate to story |
+| **Story** | 4 hours max | Every 15 min | Split story or continue |
+| **Deep Investigation** | 30 min | Every 10 min | Split story, defer remainder |
+| **Epic** | 8 hours | Every 30 min | Assess progress, adjust scope |
+
+### Why Old Estimates Were Wrong
+
+| Old Value | Problem | Real Behavior |
+|-----------|---------|---------------|
+| Story: 30 min | Too short - causes anxiety, ignored | 1-4 hours normal |
+| Epic: 4 hours | Realistic for some, but not minimum | 2-3 epics/day is normal |
+| Step: 5 min | Too short for meaningful work | 15 min minimum |
+
+### Velocity Tracking
+
+```
+NORMAL VELOCITY (Autonomous Mode):
+- Stories per day: 4-8 (varies by complexity)
+- Epics per day: 1-3 (depends on size)
+- Sprint velocity: 12-20 stories/week
+
+EXCEPTIONAL DAYS:
+- When flow state: 2-3 epics possible
+- When blocked: 0-1 stories
+- Average over time: ~5 stories/day
+```
+
+---
+
+## ⚡ Quick Reference (Always Read First)
+
+| Key | Value |
+|-----|-------|
+| **Current Phase** | EPIC-CC-ARC Week 1 |
+| **Active Epic** | EPIC-CC-ARC (Architectural Remediation) |
+| **Team A Story** | ARC-A01: Create getPlatformContract() |
+| **Team B Story** | ARC-B01: Create StorageGateway (blocked by A01) |
+| **Sprint File** | `epic-cc-arc-sprint-2026-01-17.yaml` |
+| **ADR** | ADR-033 (APPROVED) |
+| **TypeScript Errors** | 0 ✅ |
+| **Completed Stories** | ARC-A03, ARC-B04 |
+
+---
+
+## 📍 Navigation Index
+
+| What You Need | Where To Find It |
+|---------------|------------------|
+| Workflow Status | `bmm-workflow-status.yaml` |
+| Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
+| Story Index | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
+| Architecture | `_bmad-output/planning-artifacts/architecture.md` |
+| UX Specification | `_bmad-output/planning-artifacts/ux-specification.md` |
+| PRD | `_bmad-output/planning-artifacts/prd.md` |
+| Epics & Stories | `_bmad-output/planning-artifacts/epics.md` |
+| Standards | `agent-os/standards/` |
+| Governance Gates | `_bmad/modules/governance/checklists/` |
+
+---
+
+## 🚫 Non-Negotiable Rules
+
+### 1. Never Skip Build Validation
 
 ```bash
-# 1. TypeScript check
-pnpm tsc --noEmit
-
-# 2. Unit tests
-pnpm vitest run
-
-# 3. Lint check
-pnpm lint
-
-# 4. (If Epic complete) E2E
-pnpm test:e2e
+pnpm tsc --noEmit && pnpm vitest run
 ```
+
+Run BEFORE claiming any story complete.
+
+### 2. Clean Architecture Paths
+
+```
+✅ CORRECT:
+  src/infrastructure/persistence/stores/    → Zustand stores
+  src/infrastructure/persistence/dexie/     → Dexie DB
+  src/infrastructure/sync/                  → File sync logic
+  src/domain/services/                      → Domain services
+  src/domain/types/                         → Domain types
+  src/presentation/components/              → React components
+  src/presentation/hooks/                   → Custom hooks
+  src/routes/                               → TanStack Router routes
+
+❌ DEPRECATED (Never use):
+  src/lib/state/
+  src/stores/
+  src/lib/filesystem/sync-manager
+```
+
+### 3. Import Order
+
+```typescript
+// 1. React/Framework
+import React from 'react';
+import { useParams } from '@tanstack/react-router';
+
+// 2. Third-party
+import { useShallow } from 'zustand/react/shallow';
+
+// 3. Infrastructure (with @/)
+import { useProjectStore } from '@/infrastructure/persistence/stores/project-store';
+
+// 4. Domain
+import type { Project } from '@/domain/types/project';
+
+// 5. Presentation
+import { Button } from '@/presentation/components/ui/button';
+
+// 6. Relative
+import { localHelper } from './utils';
+```
+
+### 4. Zustand Store Pattern
+
+```typescript
+// ✅ ALWAYS use useShallow for multiple selectors
+const { items, addItem } = useStore(
+  useShallow((state) => ({
+    items: state.items,
+    addItem: state.addItem,
+  }))
+);
+
+// ❌ NEVER
+const items = useStore((s) => s.items);
+const addItem = useStore((s) => s.addItem);
+```
+
+### 5. 8-bit Design System
+
+```css
+/* ✅ REQUIRED */
+border-radius: 0;           /* Sharp corners */
+border-radius: 2px;         /* Minimal rounding only */
+box-shadow: 4px 4px 0 0;    /* Pixel shadows */
+
+/* ❌ FORBIDDEN */
+border-radius: 0.5rem;      /* Too rounded */
+border-radius: 9999px;      /* Pill shape */
+backdrop-filter: blur();    /* Glassmorphism */
+opacity: 0.8;               /* Avoid - use solid */
+```
+
+### 6. Epic Ordering
+
+Epic numbers are **MONOTONIC**:
+- Epic N cannot start until Epic N-1 is 80%+
+- Story IDs are sequential within epic
+- Never skip story numbers
+
+### 7. Development Standards (Mandatory)
+
+**Before writing any code, consult these standards:**
+
+| Standard | Location | When to Use |
+|----------|----------|-------------|
+| **API Patterns** | `agent-os/standards/backend/api.md` | Server functions, validation |
+| **Migrations** | `agent-os/standards/backend/migrations.md` | Dexie schema changes |
+| **Domain Models** | `agent-os/standards/backend/models.md` | Entity definitions |
+| **Query Patterns** | `agent-os/standards/backend/queries.md` | Dexie CRUD operations |
+| **Components** | `agent-os/standards/frontend/components.md` | React component structure |
+| **CSS/8-bit** | `agent-os/standards/frontend/css.md` | Styling rules |
+| **Coding Style** | `agent-os/standards/global/coding-style.md` | Import order, naming |
+| **Validation** | `agent-os/standards/global/validation.md` | Zod schemas |
+| **Testing** | `agent-os/standards/testing/test-writing.md` | Vitest/Playwright |
+
+**Non-compliance = Story Rejection.**
 
 ---
 
-## 🔗 Full Reference
+## 🏗️ Architecture Overview
 
-| Resource | Location |
-|----------|----------|
-| Complete project state | `AGENTS.md` |
-| Architecture decisions | `_bmad-output/planning-artifacts/architecture.md` |
-| UX system | `_bmad-output/planning-artifacts/ux-specification.md` |
-| All standards | `agent-os/standards/` |
-| Governance gates | `_bmad/modules/governance/checklists/` |
-| Historical archives | `_bmad-output/.archive/` |
+### Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 19 + TypeScript 5.9 |
+| Routing | TanStack Router (@tanstack/react-router) |
+| State | Zustand v5 + Dexie.js |
+| Styling | Tailwind CSS + Radix UI |
+| Build | Vite + TanStack Start |
+| Testing | Vitest + Playwright |
+| AI | Google Gemini (via @tanstack/ai-gemini) |
+
+### Workspaces
+
+| Route | Description |
+|-------|-------------|
+| `/notes` | Markdown/BlockNote editor |
+| `/ide` | WebContainer-based IDE |
+| `/study` | Flashcards/Quizzes |
+| `/knowledge` | Knowledge base |
+| `/marketing` | Landing page builder |
+| `/settings` | API keys, Vault, Config |
+
+### Active Epics
+
+| ID | Name | Progress | Priority |
+|----|------|----------|----------|
+| EPIC-FS | File System Foundation | 28.6% | P0 |
+| EPIC-39 | 8-bit Design Compliance | 0% | P1 |
+| EPIC-38 | Architecture Extension | BLOCKED | P2 |
 
 ---
 
-## 🚀 Session Quick Start
+## 📦 Module References
 
-```
-1. Read NON-NEGOTIABLE BMAD RULES above (CLAUDE.md) - DO NOT SKIP
-2. Read AGENTS.md (project state)
-3. Check bmm-workflow-status.yaml (current epic/story)
-4. Load story context if assigned
-5. Begin work
-```
+| Module | Location | description |
+|--------|----------|---------|
+| Governance | `_bmad/modules/governance/` | Gates, cycles, regulation |
+| Integration Testing | `_bmad/modules/integration-testing/` | Playwright, API keys |
+| Architecture Remediation | `_bmad/modules/architecture-remediation/` | ARC loop |
 
 ---
 
+## 🔗 External References
+
+For detailed documentation:
+
+- **Full BMAD Framework**: `_bmad/FRAMEWORK.md`
+- **ADR Decisions**: `_bmad-output/planning-artifacts/architecture/adr/`
+- **Historical Content**: `_bmad-output/.archive/`
+- **Standards (Full)**: `agent-os/standards/`
+
+---
+
+## 📋 Governance Gates
+
+Before any workflow:
+
+1. **Story Start**: Run `story-start-gate.yaml` checks
+2. **Story Done**: Run `story-done-gate.yaml` checks
+3. **Epic Done**: Run `epic-done-gate.yaml` (requires human `APPROVED: EPIC-XX`)
+4. **Daily**: Run `sprint-rotation-gate.yaml`
+5. **All**: Check `artifact-freshness-gate.yaml` TTL tiers
+
+---
+
+## 📊 Context Limits
+
+| Limit | Value |
+|-------|-------|
+| Max active epics | 4 |
+| Max stories per epic | 8 |
+| Max active sprint files | 4 |
+| YAML file limit in _bmad-output | 25 |
+| workflow-status.yaml max lines | 200 |
+
+---
+
+## 🚀 Quick Start for New Agent Session
+
+1. Read this file (AGENTS.md)
+2. Check `bmm-workflow-status.yaml` for current story
+3. Load `sprint-status.yaml` for active work
+4. Load story context: `stories/{story-id}-context.xml`
+5. Begin work using dev-story workflow
 
 ## DEVELOPMENT GUIDELINES -  THE RESEARCH USING INTERNET-BASED TOOLS OF MCP SERVERS ARE **NON-NEGOTIABLE**  (when these agents, tools uses, ai, llms, multimodality, endpoints, or any dependencies packages are arraised in the keywords - even you are dev agent, to start the session of context collecting you must at least make 3 successful and relevant call to online-based or pull official and relevant documents and guides to ensure following the 2026 patterns)
 
@@ -717,3 +913,67 @@ Based on my research, here's a comprehensive list of official documentation and 
 - Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
 - Prioritize iteration, insertion, updates on single-source of truth
 - When generating new files, isolate with new
+
+---
+
+## TanStack MCP Server (Official)
+
+**Critical Tool for TanStack Ecosystem Research** - Agents MUST use this for all TanStack documentation queries.
+
+### Configuration
+
+| Property | Value |
+|----------|-------|
+| **Server URL** | `https://tanstack.com/api/mcp` |
+| **API Key** | `ts_bdd5ade6ba81622c4855582aaf830e44d337d22680decf9301b3cb95f950d92b` |
+| **Transport** | Streamable HTTP |
+| **Auth** | OAuth (browser-based) |
+
+### Available Tools
+
+#### Documentation Tools
+
+| Tool | Description | Auth Required |
+|------|-------------|---------------|
+| `list_libraries` | List all TanStack libraries with versions and metadata | No |
+| `get_doc` | Fetch specific documentation page by library and path | No |
+| `search_docs` | Full-text search across all TanStack documentation | No |
+
+#### NPM Stats Tools
+
+| Tool | Description | Auth Required |
+|------|-------------|---------------|
+| `get_npm_stats` | Get aggregated download stats for TanStack or a library | No |
+| `list_npm_comparisons` | List preset package comparisons | No |
+| `compare_npm_packages` | Compare download stats for multiple packages | No |
+| `get_npm_package_downloads` | Get detailed historical downloads for a package | No |
+
+### Supported Libraries
+
+- **@tanstack/react-router**, `@tanstack/react-router-devtools`, `@tanstack/react-router-ssr-query`
+- **@tanstack/react-start**, `@tanstack/router-plugin`
+- **@tanstack/ai**, `@tanstack/ai-gemini**, `@tanstack/ai-react`
+- **@tanstack/store**, `@tanstack/react-devtools`
+- And all other TanStack packages
+
+### Usage Examples
+
+```typescript
+// Search for router documentation
+await search_docs({ query: "route params navigation" });
+
+// Get specific library info
+await list_libraries();
+
+// Get npm stats comparison
+await compare_npm_packages({
+  packages: ["@tanstack/react-router", "@tanstack/query"]
+});
+```
+
+### Integration Notes
+
+- AI assistants can access **current documentation** for all TanStack libraries
+- **Version-specific docs** available for exact versions in use
+- **Full-text search** across all TanStack documentation
+- Fetches directly from TanStack GitHub repositories for most current content

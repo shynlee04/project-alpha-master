@@ -1,7 +1,7 @@
 # Handoff Artifact: Hooks Error Investigation & Fix
 
 **Artifact ID**: hnd_20260121_183000_abcdef
-**Date**: 2026-01-21
+**Date**: 2026-01-15
 **Type**: EMERGENCY_FIX
 **Priority**: P0
 
@@ -10,7 +10,7 @@
 ## Parent Information
 
 **Parent Agent**: BMAD Master Orchestrator
-**Parent Session**: EMERGENCY-FIX-2026-01-21
+**Parent Session**: EMERGENCY-FIX-2026-01-15
 **Handoff Date**: 2026-01-21T18:30:00+07:00
 
 ---
@@ -304,7 +304,7 @@ If error persists after hard refresh → implement Loading State Pattern (Option
 - Move to next step: "EF-A03: Test hooks fix"
 
 **Create completion report**:
-- File: `_bmad-output/handoffs/completion/hooks-error-fix-completion-2026-01-21.md`
+- File: `_bmad-output/handoffs/completion/hooks-error-fix-completion-2026-01-15.md`
 - Include:
   - Root cause identified
   - Fix implemented

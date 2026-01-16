@@ -40,7 +40,7 @@ Successfully migrated `threads-store.ts` from cross-layer violation (`src/lib/wo
 
 | Path | Archive Location | Reason |
 |-------|----------------|--------|
-| `src/lib/workspace/threads-store.ts` | `_bmad-ext/.archive/threads-store-2026-01-22-legacy.ts` | Migrated to infrastructure |
+| `src/lib/workspace/threads-store.ts` | `_bmad-ext/.archive/threads-store-2026-01-16-legacy.ts` | Migrated to infrastructure |
 
 ---
 
@@ -112,7 +112,7 @@ Added to new `persistence.ts`:
 - @module tag: `infrastructure/persistence/stores/conversation/persistence`
 - @governance tag: `EPIC-INF-02`
 - @migration-from tag: `@/lib/workspace/threads-store.ts`
-- @migration-status: `COMPLETED (2026-01-22)`
+- @migration-status: `COMPLETED (2026-01-16)`
 - @adr-compliance: `ADR-033, ADR-035`
 
 ---
@@ -162,7 +162,7 @@ Test files in `conversation/__tests__/` use:
 | ✅ `saveThread` logic moved to infrastructure | **PASS** | Function in `src/infrastructure/persistence/stores/conversation/persistence.ts` line 127-130 |
 | ✅ `conversation-helpers.ts` imports from infrastructure only | **PASS** | Line 8 now imports from `./persistence` |
 | ✅ No imports remain from `threads-store.ts` in active code | **PASS** | Cross-reference audit found 0 active imports |
-| ✅ Legacy file archived (not deleted) | **PASS** | Archived to `_bmad-ext/.archive/threads-store-2026-01-22-legacy.ts` |
+| ✅ Legacy file archived (not deleted) | **PASS** | Archived to `_bmad-ext/.archive/threads-store-2026-01-16-legacy.ts` |
 | ✅ LOOP_STATE updated | **PENDING** | Not required for standalone task |
 | ✅ Handoff artifact created | **PASS** | This document ✅ |
 
@@ -346,7 +346,7 @@ describe('Persist Conversation Flow', () => {
  * @consumers
  * - src/infrastructure/persistence/stores/conversation/conversation-helpers.ts
  *
- * @migration-status COMPLETED (2026-01-22)
+ * @migration-status COMPLETED (2026-01-16)
  * @adr-compliance ADR-033, ADR-035
  */
 

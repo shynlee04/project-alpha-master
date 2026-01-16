@@ -82,7 +82,7 @@ Team B completed **8 comprehensive investigation tasks** across state management
 
 | File | Type | Priority | Recommendation |
 |------|------|----------|----------------|
-| `src/lib/filesystem/index.ts` | Deprecated facade | Critical | Remove after migration (deadline: 2026-01-22) |
+| `src/lib/filesystem/index.ts` | Deprecated facade | Critical | Remove after migration (deadline: 2026-01-16) |
 | `src/routes/debug.tsx` | Debug console.log | Medium | Clean up before production |
 | `src/presentation/components/knowledge/KnowledgePage.tsx` | Debug console.log | Medium | Clean up before production |
 | `src/presentation/components/ide/AgentChatPanel.tsx` | Debug console.log | Medium | Clean up before production |

@@ -342,7 +342,7 @@ Return JSON:
 ```json
 {
   "scanner": "Architecture Drift Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "files_scanned": 8,
   "violations": [
     {
@@ -434,7 +434,7 @@ Return JSON:
 ```json
 {
   "scanner": "TypeScript Deep Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "tsc_command": "pnpm tsc --noEmit",
   "tsc_errors": 0,
   "tsc_warnings": 0,
@@ -544,7 +544,7 @@ Return JSON:
 ```json
 {
   "scanner": "ADR-033 Compliance Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "adr_version": "2.2.0",
   "adr_status": "APPROVED",
   "decisions_audited": 7,
@@ -675,7 +675,7 @@ Return JSON:
 ```json
 {
   "scanner": "God Store & Component Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "files_scanned": 4,
   "findings": [
     {
@@ -798,7 +798,7 @@ Return JSON:
 ```json
 {
   "scanner": "Integration & Flow Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "flows_traced": 3,
   "flow_1_chrome_check": {
     "trace_complete": true/false,
@@ -921,7 +921,7 @@ Return JSON:
 ```json
 {
   "scanner": "8-bit Design & UI Compliance Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "files_scanned": 10,
   "violations": [
     {
@@ -1013,7 +1013,7 @@ Return JSON:
 ```json
 {
   "scanner": "Test Coverage & Validation Scanner",
-  "scan_date": "2026-01-21",
+  "scan_date": "2026-01-15",
   "files_scanned": 3,
   "test_coverage": {
     "handle-persistence.ts": {

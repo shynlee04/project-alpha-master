@@ -75,17 +75,23 @@
       }
     },
     "explore": {
-      "description": "DISABLED - Use bmad-master",
-      "mode": "all",
+      "description": "To run parallel for code-base investigation",
+      "mode": "subagent",
       "hidden": true,
+      "model": "minimax/MiniMax-M2.1",
       "tools": {
-        "write": false,
+        "write": true,
         "edit": false,
         "bash": false,
-        "glob": false,
-        "grep": false,
-        "read": false,
-        "task": false
+        "list": true,
+        "mkdir": true,
+        "rm": false,
+        "mv": true,
+        "cp": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "task": true,
       }
     },
     // === EXTENSION AGENTS (can be primary or subagent) ===
@@ -108,7 +114,10 @@
         "bash": "allow",
         "task": {
           "*": "allow",
-          "tea-ext": "allow"
+          "tea-ext": "allow",
+          "analyst-ext": "allow",
+          "architect-ext": "allow",
+          "explore": "allow"
         }
       }
     },
@@ -205,7 +214,7 @@
       "mode": "all",
       "temperature": 0.1,
       "prompt": "{file:agent/tea-ext.md}",
-      "maxSteps": 30,
+      "maxSteps": 300,
       "tools": {
         "write": true,
         "edit": true,
@@ -227,7 +236,7 @@
       "mode": "all",
       "temperature": 0.2,
       "prompt": "{file:agent/product-management-ext.md}",
-      "maxSteps": 30,
+      "maxSteps": 300,
       "tools": {
         "write": true,
         "edit": true,
@@ -249,7 +258,7 @@
       "mode": "all",
       "temperature": 0.1,
       "prompt": "{file:agent/bmad-governance.md}",
-      "maxSteps": 30,
+      "maxSteps": 300,
       "tools": {
         "write": true,
         "edit": true,
@@ -294,7 +303,7 @@
       "mode": "subagent",
       "temperature": 0.1,
       "prompt": "{file:agent/deep-scan-orchestrator.md}",
-      "maxSteps": 20,
+      "maxSteps": 200,
       "tools": {
         "write": true,
         "edit": true,
@@ -316,7 +325,7 @@
       "mode": "subagent",
       "temperature": 0.3,
       "prompt": "{file:agent/real-world-validator.md}",
-      "maxSteps": 30,
+      "maxSteps": 300,
       "tools": {
         "write": true,
         "edit": true,
@@ -338,7 +347,7 @@
       "mode": "subagent",
       "temperature": 0.2,
       "prompt": "{file:agent/file-sync-specialist.md}",
-      "maxSteps": 30,
+      "maxSteps": 300,
       "tools": {
         "write": true,
         "edit": true,

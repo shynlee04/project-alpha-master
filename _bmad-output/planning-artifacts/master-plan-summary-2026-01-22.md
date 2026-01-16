@@ -1,7 +1,7 @@
 # Master Plan Summary for Specialist Coordinator
 
 **Version:** 1.0.0
-**Created:** 2026-01-22
+**Created:** 2026-01-16
 **Status:** READY_FOR_COORDINATION
 
 ---
@@ -10,7 +10,7 @@
 
 This summary provides the specialist coordinator with a high-level view of the master plan for implementing Via-Gent's fundamental truths.
 
-**Master Plan Document:** `_bmad-output/planning-artifacts/master-plan-fundamental-truth-2026-01-22.md`
+**Master Plan Document:** `_bmad-output/planning-artifacts/master-plan-fundamental-truth-2026-01-16.md`
 
 ---
 
@@ -226,11 +226,11 @@ The specialist coordinator is responsible for:
 
 ### ADR Documents
 - `ADR-033-correct-course-architectural-remediation-2026-01-16.md`
-- `ADR-034-correct-course-v2-architecture-standardization-2026-01-20.md`
-- `ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md`
+- `ADR-034-correct-course-v2-architecture-standardization-2026-01-14.md`
+- `ADR-035-correct-course-v2-architecture-standardization-2026-01-14.md`
 
 ### Analysis Documents
-- `_bmad-output/planning-artifacts/deep-architectural-analysis-2026-01-21.md`
+- `_bmad-output/planning-artifacts/deep-architectural-analysis-2026-01-15.md`
 
 ---
 
@@ -248,7 +248,7 @@ The master plan is ready for execution. The specialist coordinator should:
 ---
 
 **Document Version:** 1.0.0
-**Created:** 2026-01-22
+**Created:** 2026-01-16
 **Status:** READY_FOR_COORDINATION
 
 ---

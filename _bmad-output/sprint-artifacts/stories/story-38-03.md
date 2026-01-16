@@ -212,7 +212,7 @@ This story establishes the facade pattern that will be used for future migration
 ### Decisions Made
 - **Decision 1**: Use JSDoc @deprecated tags instead of runtime warnings to avoid performance overhead
 - **Decision 2**: Keep sync-manager and related utilities in lib for now (will move in future epic)
-- **Decision 3**: Set 2-week timeline (2026-01-22) before facade removal
+- **Decision 3**: Set 2-week timeline (2026-01-16) before facade removal
 
 ## Code Review
 

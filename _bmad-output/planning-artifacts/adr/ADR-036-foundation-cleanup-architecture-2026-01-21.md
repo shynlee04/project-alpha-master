@@ -1,7 +1,7 @@
 # ADR-036: Foundation Cleanup & Infrastructure Consolidation
 
 **Status:** PROPOSED
-**Date:** 2026-01-21
+**Date:** 2026-01-15
 **Author:** Architecture Documentation Agent
 
 ## Context

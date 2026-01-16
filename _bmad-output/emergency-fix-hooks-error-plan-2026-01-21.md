@@ -1,6 +1,6 @@
 # Emergency Fix Coordination Plan - Hooks Error + ADR Validation
 
-**Date**: 2026-01-21
+**Date**: 2026-01-15
 **Status**: ACTIVE
 **Priority**: P0 - BLOCKING USER JOURNEY
 **Orchestrator**: BMAD Master
@@ -706,7 +706,7 @@ pnpm tsc --noEmit
 
 **Task**: Implement emergency hooks fix
 
-**Handoff Artifact**: `_bmad-output/handoffs/2026-01-21/hooks-error-fix-handoff.md`
+**Handoff Artifact**: `_bmad-output/handoffs/2026-01-15/hooks-error-fix-handoff.md`
 
 **Context**:
 - Root cause: Inconsistent hook order or HMR state corruption
@@ -777,5 +777,5 @@ pnpm tsc --noEmit
 ---
 
 **Document Owner**: BMAD Master Orchestrator
-**Created**: 2026-01-21
+**Created**: 2026-01-15
 **Status**: READY FOR EXECUTION

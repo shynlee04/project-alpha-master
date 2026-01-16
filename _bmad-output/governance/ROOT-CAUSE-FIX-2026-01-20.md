@@ -1,7 +1,7 @@
 # Root Cause Fix - Governance Artifact
 
-**Date**: 2026-01-20
-**Session**: GOVERNANCE-AUDIT-2026-01-20
+**Date**: 2026-01-14
+**Session**: GOVERNANCE-AUDIT-2026-01-14
 **Project**: ViaGent (Project Alpha)
 **Version**: 2.0.0
 
@@ -200,7 +200,7 @@ workspaceState!: PersistedStateTable; // NEW: Dedicated workspace state table
 
 **Added** (Lines 254-299): Migration Function
 ```typescript
-// ROOT CAUSE FIX (2026-01-20): Migration to move workspace state from providerConfigs to workspaceState table
+// ROOT CAUSE FIX (2026-01-14): Migration to move workspace state from providerConfigs to workspaceState table
 export const MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE = async (db: ViaGentDatabase) => {
   console.log('[Migration] Moving workspace state from providerConfigs to workspaceState table...');
 
@@ -331,7 +331,7 @@ if (projectId) {
 ```typescript
 if (!projectId) {
   // No projectId in sessionStorage - this is first visit or session lost
-  // ROOT CAUSE FIX (2026-01-20): Removed "most recent" fallback
+  // ROOT CAUSE FIX (2026-01-14): Removed "most recent" fallback
   // Workspace state must ONLY load by projectId (no cross-project contamination per ADR-033)
   console.debug('[IDEStateStorage] No projectId in session, skipping hydration');
   return null;
@@ -561,7 +561,7 @@ All 31 infections identified in continuation document are now addressed:
 
 ### Immediate (Governance-2)
 
-1. ✅ Create this governance artifact (`ROOT-CAUSE-FIX-2026-01-20.md`) ← **COMPLETED**
+1. ✅ Create this governance artifact (`ROOT-CAUSE-FIX-2026-01-14.md`) ← **COMPLETED**
 2. ⏳ Update `_bmad-ext/state/LOOP_STATE.yaml` to 100% complete
 3. ⏳ User manual testing (VALIDATE-3)
 
@@ -592,4 +592,4 @@ All 31 infections identified in continuation document are now addressed:
 **Governance Status**: Code complete, awaiting validation evidence
 
 **Document Version**: 1.0
-**Last Updated**: 2026-01-20
+**Last Updated**: 2026-01-14

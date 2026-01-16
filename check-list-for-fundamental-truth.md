@@ -1,47 +1,118 @@
-1. 
-    1. are of the core and centralized groups: aka the managing and directing most flows and journeys of the users
-        1. The BYOK - the vault of key will get to persist and conditionally used to different endpoints of providers and of the use cases
-        2. the `project space` → this must be make very clear boundaries - routing - naming ID - flow and redirecting vs other components states and stores too as the concern of tjhe infrastructure differences → this is going to be the first unbinding knot to resolve everything else → so making any scan (for this I am going to pass to architect first then analyst for research confirming the best-in-class not just because you or I think it works) → these are entrance the use get into the workspaces (ide, note offering them features that they expected)
-            1. From entry of homepage we have these matrix → user of desktops vs. other devices vs new or returned (with created project) → they can entry from any from the homepage but all must satisfy the following
-                1. there is no entering workspace - note or ide if not having at least a project → show toast conditionally and correctly per the above matrix → for example I returned I am using my desktop choices for me are  → create a new or select from a list of project -aka as for other devices user → there is no list selected but they got to create a project first → show them the creation wizard 
-                2. ide is not the route for any devices but desktop → show the toast saying they must use desktop
-                3. From the entry → list of project created → choice of entering the space type → dexiedb will  not enter ide (must make this clear) 
-                4. at once both id (project) and workspace are both met → users expected to get to the intended workspace must make a direct land, no other second step needed
-                5. project selection when within workspace must hoatload and reactive
-                6. The no compromise between devices (except for NOT-desktop device NO entry to IDE with clear note)
-            
-            as above said this involves the CRUD permissions to both human and AI agent → and as they are synced to filesystem →  unstable state as now will collapse all bellow level features as just now your back and forth struggling and we handle this as this - but the thing is we lack addressing this the whole project level
-            
-        3. The agents Vs. LLMs → as these are centralized for managements but when under the following factors and under certain workspaces , as these concepts activated → agents will behave, gain certain permissions, interact with users through out putting to those different environment
-            1. system instruction prompts → two layers the orchestrator layer that conversational and detecting the user intention + workspace-specific → auto switch to `mode` → mode though naturally converse with user it will decide executing tools on focus groups (tools are described below) → not that it is unable to use other tools (if explicitly requested but it will more focus on the 5-6 targets)
-            2. tools - these are a lot and connected to various parts → as `AI agents` (YOU as i will refer to not to be mistaken with the concepts of the project) encounter these → you must make logic of their intricate relationship for the above mentioned → tools also get to me as the concerns for its actual CRUD if given permissions →  and if they are able to execute agentic multi-step using tool and thinking on the tools’ errors (to facilitate one-shot app building ai agent for example)
-            3. The RAG → this is also my concerns as for the infrastructure and use cases → as for both browser vector db and as for local embedding and chunking models (of different types of resources) vs the gemini gema3 etc
-            4. the multimodality for in and out put → these also major concerns as they output to different features across workspaces and they also consume (input) by either features (like commands of notebook) and also by ai agents
-        4. is it of the cascade and thread managed chat flow → this is like the gate to agents and we use it across workspace it is verstile as it has threads to be managed and later RAG
-    2. of which workspace - is it cross-workspace  → their current mapping, entry points - routing → perpetuate the users use cases
-    3. as for the rest of the other work-space specific features I think they are more like the environment to the above to either manage or output  renderer → to manage, show, sort data of all sorts that presentable to end-users 
+<think>
+We are going to enhance the prompt by:
+ 1. Structuring it more clearly with a hierarchical numbering system for better readability.
+ 2. Removing redundant phrases and fixing grammatical errors.
+ 3. Clarifying ambiguous points and ensuring each requirement is distinct.
+ 4. Grouping related concepts and removing repetitions.
+ 5. Ensuring that the checklist items are clearly separated and actionable.
 
-===
+ However, note that the original prompt is very detailed and complex. We will try to preserve all the key points while making it more organized.
 
-## Keywords as checklist for the project’s fundamental truths
+ Steps:
+ - We'll break down the core groups and sub-points.
+ - We'll use a consistent numbering and indentation for hierarchy.
+ - We'll rephrase for clarity without changing the intended meaning.
 
-1. Client-side 100% - server call is only from llms and other API providers as services  - access through browser 
-2. BYOK → Tanstack AI SDK , Framework Tanstack Start → key are passed to agent → reactive at space key saved at vault
-3. project id , multiple projects → across workspaces (ide, notes - knowledge and study are disabled for MVP)
-4. desktops = fsa ; indexdb (dexie) = the other devices >> NO IDE FOR OTHER DEVICES
-5. The thread managements - chat cascade → threads and conversation are managed for RAG purposes and they are tied to project as for which space the conversation is used → this needs both id project and space for references
-6.  similar user experiences (states, hotload, persistence) - 
-    1. For FSA —+ not too much compromise (waiting to resync all over everytime, no reload or lose state for fsa - as permissions must persist) - also as now for FSA when using block notes render dot md files → what about other file types
-    2. For other devices → any RAG, agentic, tools uses conflict
-    3. CRUD permissions from agents → Both any conflict 
-    4. RAG → both any conflict? 
-    5. muti-modality → both input and output → access conflict too
-7. Permissions to agents through tools (CRUD toggle, on files)
-8. Rendering on workspaces and the chat cascade of different types (file types and generation from AI agent)
-9. clear boundaries between when Zustand - when Dexie - pretty much stores are created without any clear boundaries nor connection
-10. all the hooks, hydration rerouting with id and reactive -persistence
-11. NEED research = if there are needs to use dexiedb to assist fsa for persistence or reactive → if yes refactor and reorganize with stores
-12. Addressing edge cases - one example agent CRUD when human edit on file
-13. Any gaps detected
+ Important: The enhanced prompt must be self-contained and only the enhanced prompt.
 
-====
+ Let's start by organizing the main sections:
+
+ I. Core and Centralized Groups (Managing and directing user flows and journeys)
+    A. BYOK (Vault of Keys)
+    B. Project Space (with clear boundaries, routing, naming, ID, flow, redirecting, and infrastructure considerations)
+        - Entry points and conditions (homepage matrix: device type, user status)
+        - Workspace entry rules (project required, device restrictions for IDE)
+        - Project selection and workspace entry must be direct when conditions met
+        - Project selection within workspace must be hotloaded and reactive
+        - Device compromises: non-desktop devices cannot enter IDE (with clear notification)
+    C. Agents vs LLMs (centralized management, activated under specific factors and workspaces)
+        - System instruction prompts (orchestrator layer and workspace-specific modes)
+        - Tools (intricate relationships, permissions, agentic multi-step execution with error handling)
+        - RAG (infrastructure and use cases: browser vector DB, local embedding/chunking models, Gemini/Gemma)
+        - Multimodality (input and output across workspaces and features)
+    D. Cascade and thread-managed chat flow (gate to agents, used across workspaces, versatile with threads for RAG)
+
+ II. Cross-Workspace Considerations
+    - Current mapping, entry points, routing, and perpetuation of user use cases.
+
+ III. Workspace-Specific Features
+    - Environments for managing or rendering data (presentable to end-users).
+
+ IV. Keywords Checklist (Project's Fundamental Truths)
+    1. Client-side 100% (server calls only for LLMs and external APIs via browser).
+    2. BYOK using Tanstack AI SDK and Tanstack Start; keys saved in vault and passed to agents reactively.
+    3. Project ID and multiple projects across workspaces (IDE, notes; knowledge and study disabled for MVP).
+    4. Desktop = FSA (File System Access); other devices = IndexedDB (Dexie). No IDE for non-desktop devices.
+    5. Thread management (chat cascade): threads and conversations tied to project and space for RAG references.
+    6. Consistent user experiences (states, hotload, persistence) across environments:
+        a. FSA: Minimal compromise (no state loss, permissions persist, handling of file types beyond .md?).
+        b. Other devices: Avoid conflicts in RAG, agentic, and tool usage.
+        c. CRUD permissions for agents: Avoid conflicts (especially when human edits occur).
+        d. RAG: Avoid conflicts across environments.
+        e. Multimodality: Avoid input/output access conflicts.
+    7. Agent permissions via tools (CRUD toggle on files).
+    8. Rendering in workspaces and chat cascade for various file types and AI-generated content.
+    9. Clear boundaries between state management (Zustand vs. Dexie); currently stores lack clear boundaries and connections.
+    10. Hooks, hydration, rerouting with ID, and reactive persistence.
+    11. Research: Determine if DexieDB should assist FSA for persistence or reactivity; refactor and reorganize stores if needed.
+    12. Address edge cases (e.g., agent CRUD during human file edits).
+    13. Identify any gaps.
+
+ Now, we write the enhanced prompt accordingly.
+</think>
+**Enhanced Prompt:**
+
+Define the architecture and implementation plan for a client-side application with the following core components and constraints:
+
+1.  **Core Centralized Groups (User Flow Management):**
+    1.  **BYOK (Bring Your Own Key) Vault:**
+        *   Securely persist and conditionally distribute keys to various provider endpoints and use cases.
+       2.  **Project Space (Critical Path):**
+            *   Establish strict boundaries: routing, unique naming/ID, flow logic, redirects, state management (vs. other stores), infrastructure handling (FSA vs. IndexedDB/Dexie).
+            *   Resolve foundational issues here to unblock dependent features.
+            *   Entry Point Matrix (Homepage):
+                *   Device: Desktop vs. Non-Desktop vs. New User vs. Returning User (with projects).
+                *   Mandatory: No workspace (Note/IDE) entry without a project. Enforce via conditional toasts:
+                    *   Returning Desktop User: Choose existing project or create new.
+                    *   New/Non-Desktop User: Force project creation wizard.
+                *   IDE Restriction: Accessible *only* on Desktop (show clear desktop-required toast).
+                *   Project List: Display created projects for selection.
+                *   Direct Landing: When project ID and workspace type are valid, land user directly in the target workspace (no intermediate steps).
+                *   Reactive Project Selection: Hot-load and react to project changes within any workspace.
+                *   Device Compromise: Strictly prohibit IDE access on non-desktop devices.
+            *   CRUD Permissions: Apply consistently to humans and AI agents.
+            *   Filesystem Sync: Handle unstable sync states to prevent cascading failures in downstream features.
+        3.  **Agents & LLMs (Central Orchestration):**
+            *   System Prompts: Two-layer (Orchestrator for intent/conversation + Workspace-specific "mode" for focused tool execution).
+            *   Tools: Manage complex relationships, permissions (CRUD), and enable multi-step agentic execution with error handling logic.
+            *   RAG: Design infrastructure for browser-based vector DB, local embedding/chunking models (various resources), and integration with models (e.g., Gemini, Gemma).
+            *   Multimodality: Support input/output across workspaces and features (e.g., notebook commands, agent consumption/generation).
+        4.  **Chat Cascade & Thread Management:**
+            *   Central gateway to agents, used cross-workspace.
+            *   Manage threads for conversation history and RAG context.
+            *   Reference threads by Project ID and Workspace.
+    2.  **Cross-Workspace Integration:**
+        *   Map current features, define entry points, routing, and ensure seamless user journey transitions.
+    3.  **Workspace-Specific Features:**
+        *   Function as environments for core group management, data rendering, and user presentation.
+
+**Keywords Checklist (Fundamental Truths & Constraints):**
+
+1.  **Client-Side Only:** Server interaction limited to LLM/API calls via browser.
+2.  **BYOK Implementation:** Use Tanstack AI SDK & Tanstack Start. Keys persisted in vault, reactively passed to agents.
+3.  **Project-Centric:** Multiple projects across workspaces (IDE, Notes - Knowledge/Study disabled for MVP). Unique Project IDs.
+4.  **Device Parity:** Desktop = FSA. Non-Desktop = IndexedDB (Dexie). **NO IDE on Non-Desktop.**
+5.  **Thread Management:** Chat cascade threads tied to Project ID and Workspace for RAG context.
+6.  **Consistent UX (State/Persistence):**
+    1.  FSA: Minimize compromise (persistent permissions, no reload/state loss). Handle non-MD file rendering in block notes.
+    2.  Non-Desktop: Prevent conflicts in RAG, agentic actions, and tool usage.
+    3.  CRUD Permissions: Prevent conflicts between agents and humans (esp. concurrent edits).
+    4.  RAG: Ensure conflict-free operation across environments.
+    5.  Multimodality: Prevent input/output access conflicts.
+7.  **Agent Permissions:** Control CRUD on files via tools.
+8.  **Rendering:** Support diverse file types and AI-generated content across workspaces and chat.
+9.  **State Management Boundaries:** Clearly define and connect Zustand (client state) and Dexie (persisted data) usage.
+10. **Technical Hygiene:** Implement robust hooks, hydration, ID-based routing, and reactive persistence.
+11. **Research:** Evaluate if DexieDB should augment FSA for persistence/reactivity. Refactor stores if needed.
+12. **Edge Cases:** Address scenarios like agent CRUD operations during human file edits.
+13. **Gap Analysis:** Identify and resolve any architectural or functional gaps.

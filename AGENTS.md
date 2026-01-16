@@ -1,6 +1,23 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.2.0 | **Updated:** 2026-01-17T08:00+07:00 | **Health:** 75%
+> **Version:** 2.2.0 | **Updated:** 2026-01-17T08:00+07:00 | **Health:** 50%
+
+**MOST IMPORTANT** 
+
+-NO CONTEXT, FALSE CONTEXT WILL HALT ANY ON-GOING FLOW -
+
+
+- Always start first with pulling context, by reading, consuming relevant documents, using mcp servers, reading code files with grep, glob, search, list
+
+
+- Never pass any create new files (even document) without going through validation and gatekeeping - both code and documents
+
+- Do not use any documents for consumption if it does not have references, meta data links, nor yaml references - NEVER - these documents never pass
+
+- Never execute any tasks without plan
+
+- Never run anything withotu set up TODO list
+
 
 ---
 #*FOLLOWING ALL BMAD RULES AND GOVERNANVE** 
@@ -26,6 +43,81 @@ There are alot and detail of each but these certain things are the most annoying
 - No more than 2 background tasks at a time, kill them before use new
 
 - MCP tools and servers are absolutely important to check and use often
+
+## 🚨 CRITICAL: ALWAYS Set Tool Constraints When Delegating to Sub-Agents
+
+**NEVER delegate without explicitly setting tool permissions!** This prevents sub-agents from overstepping their role boundaries.
+
+### Required Pattern for EVERY Delegation
+
+**Add this to EVERY task delegation prompt:**
+
+```markdown
+## Tool Constraints
+
+**CRITICAL**: This agent has LIMITED permissions:
+- write: [true/false] - What it can create
+- edit: [true/false] - Whether it can modify code files
+- bash: [true/false] - Whether it can run commands
+- task: true - Can delegate further if approved
+
+**Role Boundaries**:
+- [AGENT ROLE] - What it should do
+- [WHAT NOT TO DO] - Clear list of forbidden actions
+
+**Required Output**:
+- Report location: [path]
+- Success criteria: [list]
+- Timebox: [duration]
+```
+
+### Tool Permission Matrix (MEMORIZE THIS)
+
+| Agent Type | write | edit | bash | task | Notes |
+|-----------|--------|-------|-------|-------|--------|
+| **real-world-validator** | true | false | true (limited) | true | Tests ONLY (bash: browser automation + restart if stuck), writes reports (write), NEVER modifies code (edit: NO) |
+| **dev-ext** | true | true | true (limited) | true | Implementation, but NEVER without context and review |
+| **architect-ext** | false | true (design only) | false | true | Architecture docs, NOT code implementation |
+| **analyst-ext** | false | false | false | true | Research and analysis ONLY |
+| **tea-ext** | false | false | false | true | Test specifications, NOT implementation |
+| **ux-designer-ext** | false | false | false | true | UI/UX design, NOT coding |
+
+### MCP Server Usage (REQUIRED FOR RESEARCH)
+
+Agents MUST use MCP servers for official documentation:
+
+| Tool | When To Use | Examples |
+|-------|-------------|-----------|
+| **TanStack MCP** | All TanStack documentation queries | "Search: TanStack Router route registration manual" |
+| **websearch-prime** | Best practices, 2026 patterns | "React state management best practices 2026" |
+| **fetch_fetch** | Official docs, API references | "Fetch TanStack Router GitHub README" |
+
+### Validation Checklist (Check Before EVERY Delegation)
+
+- [ ] Tool permissions explicitly set in prompt
+- [ ] Role boundaries clearly defined in prompt
+- [ ] Output location specified in prompt
+- [ ] Evidence requirements stated in prompt
+- [ ] MCP server usage mentioned if research needed
+- [ ] Timebox specified in prompt
+- [ ] Success criteria documented in prompt
+
+### Consequence of NOT Setting Constraints
+
+**If sub-agent has unrestricted permissions, it may:**
+- Modify code files outside its scope (e.g., real-world-validator editing router.tsx)
+- Fix issues it should only report and document
+- Restart services and cause conflicts with other teams
+- Install/uninstall dependencies without approval
+- Overstep role boundaries (e.g., testing agent doing implementation)
+
+**Result**: Cascading failures, corrupted codebase, lost time, team coordination breakdown.
+
+### Memory Reference
+
+See `ext-master-constraints` memory file for complete templates and examples.
+
+---
 
 ## 🔴 NON-NEGOTIABLE BMAD RULES (Must Obey At All Times)
 

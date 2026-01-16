@@ -1,7 +1,7 @@
 # EPIC-INF-02: Fix Hooks Error
 ## Phase 1 - Fix Notes Workspace Crash to Unblock User Journey
 
-**Date**: 2026-01-21
+**Date**: 2026-01-15
 **Status**: READY FOR IMPLEMENTATION
 **Team**: Team A (Identity & Routing Squad)
 **Priority**: P0-CRITICAL
@@ -300,7 +300,7 @@ After this epic is complete:
 
 ## Reference Documents
 
-- **Deep Analysis**: `_bmad-output/planning-artifacts/deep-architectural-analysis-2026-01-21.md`
+- **Deep Analysis**: `_bmad-output/planning-artifacts/deep-architectural-analysis-2026-01-15.md`
   - Part 1.2.1: Hooks error in /notes route
   - Part 2.2: Use Case #1 and #6 (Desktop + Mobile Notes)
   - Part 5.1: Phase 1 implementation plan (1 hour)

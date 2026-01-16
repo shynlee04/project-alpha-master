@@ -124,8 +124,8 @@ src/routes/ide.$projectId.tsx: 0 errors ✅
 ```
 
 ### Files Created This Session
-- `_bmad-output/sprint-artifacts/epics/epic-inf-04-fix-fsa-handle-persistence-2026-01-22.md`
-- `_bmad-output/sprint-artifacts/stories/INF-04-01-context-2026-01-22.xml`
+- `_bmad-output/sprint-artifacts/epics/epic-inf-04-fix-fsa-handle-persistence-2026-01-16.md`
+- `_bmad-output/sprint-artifacts/stories/INF-04-01-context-2026-01-16.xml`
 
 ---
 

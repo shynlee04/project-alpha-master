@@ -306,7 +306,7 @@ Mobile (IndexedDB):
 ## 9. Next Actions
 
 ### Immediate
-1. ✅ Update `sprint-status-architecture-remediation-2026-01-21.yaml` to mark CC-01-01 as completed
+1. ✅ Update `sprint-status-architecture-remediation-2026-01-15.yaml` to mark CC-01-01 as completed
 2. ✅ Update LOOP_STATE to mark delegation as completed
 3. ⏳ Signal to @bmad-master that CC-01-01 is ready for review
 
