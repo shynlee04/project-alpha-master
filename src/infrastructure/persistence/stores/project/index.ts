@@ -277,10 +277,14 @@ export async function getProjectCount(): Promise<number> {
  * Facade: Generate project ID
  *
  * @deprecated Use useProjectStore.getState().createProject() which generates ID internally
+ *
+ * FUNDAMENTAL TRUTH: Project ID should NOT have workspace prefix.
+ * Project ID is: proj_${timestamp}_${random}
+ * Workspace is determined by routing, not by project ID.
  */
 export function generateProjectId(): string {
   const randomPart = Math.random().toString(36).substring(2, 11);
-  return `ide:proj_${Date.now()}_${randomPart}`;
+  return `proj_${Date.now()}_${randomPart}`;
 }
 
 /**

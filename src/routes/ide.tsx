@@ -1,28 +1,23 @@
 /**
- * @fileoverview IDE Workspace Route - PHASE 1 SIMPLIFIED VERSION
+ * @fileoverview IDE Workspace Route - Clean Architecture (Phase 1)
  * @module routes/ide
- * @updated 2026-01-08T22:00:00+07:00
+ * @updated 2026-01-22T12:00:00+07:00
  *
- * PHASE 1 UPDATE (P1-03):
- * - Integrated temp project auto-creation flow
- * - Mobile users auto-create temp project
- * - Desktop users can create temp or pick folder
+ * PHASE 1 CLEANUP:
+ * - Removed temp project auto-creation flow
+ * - All users without projects are redirected to hub
+ * - Platform guard ensures desktop-only access
+ * - Clean routing: /ide (no projects) → hub, /ide/$projectId → IDE workspace
  *
- * PHASE 1 DETACHMENT:
- * - Bypassed useWorkspaceAccess to prevent infinite loops
- * - Uses 'default-ide' as stable projectId (similar to notes pattern)
- * - Simplified to 2 patterns: /ide and /ide/$projectId
- * - Re-attach in: Phase 2 (after temp/folder picker flows complete)
- * - Gate: GATE-R3 must pass (/ide renders without errors)
- *
- * Original functionality preserved with PHASE_1_DETACHMENT marker.
+ * Architecture:
+ * - Desktop with FSA: Can access IDE, must create project first
+ * - Mobile/Desktop without FSA: Redirected to hub or Notes
  */
 
 import { createFileRoute, redirect, useNavigate, useMatchRoute } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { Code2, FolderOpen, Plus } from 'lucide-react';
-import { getOrCreateTempProject } from '@/lib/workspace/temp-project';
 import { FolderPickerDialog } from '@/presentation/components/workspace';
 import { useState } from 'react';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
@@ -82,41 +77,25 @@ function IDESkeleton() {
 }
 
 /**
- * IDE workspace with simplified access (Phase 1 + P1-03 + P1-04)
+ * IDE workspace - Clean Architecture
  *
- * Three scenarios handled:
- * 1. On child route (/ide/$projectId): Render Outlet with IDELayout
- * 2. On /ide route: Show project selector (temp or existing)
- * 3. Loading state: Show skeleton
+ * Two scenarios handled:
+ * 1. On child route (/ide/$projectId): Render IDELayout with project
+ * 2. On /ide route (no project): Show empty state with redirect to hub
  *
- * ═══════════════════════════════════════════════════════════════
- * ⚠️ PHASE 1 DETACHMENT
- * Feature: Workspace Access via useWorkspaceAccess
- * Reason: Causes infinite loops / returns 'no_projects'
- * Re-attach in: Phase 2 (after P1-03, P1-04 complete)
- * Gate: GATE-R3 must pass
- * Documentation: _bmad-output/project-planning-artifacts/phase-1-epics-2026-01-08.md
- * ═══════════════════════════════════════════════════════════════
- *
- * P1-03: Temp Project Auto-Flow
- * Feature: Automatic temp project creation for mobile users
- * Status: INTEGRATED - Mobile users auto-create temp project on click
- *
- * P1-04: Folder Picker Flow
- * Feature: Desktop users can select a project folder via FSA API
- * Status: INTEGRATED - Desktop users see folder picker dialog
+ * No temp projects - users must create projects explicitly via hub.
  */
 function IDEWorkspace() {
   const navigate = useNavigate();
   const matchRoute = useMatchRoute();
   const [showFolderPicker, setShowFolderPicker] = useState(false);
-  
-  // Platform detection (PLAT-001: Only show temp project on mobile/fallback)
+
+  // Platform detection
   const platform = getPlatformContract();
-  
-  // Check if we're on a child route like /ide/$projectId (ROUTE-002 fix)
+
+  // Check if we're on a child route like /ide/$projectId
   const isOnChildRoute = !!matchRoute({ to: '/ide/$projectId', fuzzy: true });
-  
+
   // Render child route content if on child route
   if (isOnChildRoute) {
     return (
@@ -127,89 +106,57 @@ function IDEWorkspace() {
       </MainLayout>
     );
   }
-  
-  // Show project selector for /ide route
+
+  // Show empty state for /ide route (no project selected)
   return (
     <MainLayout>
       <div className="h-screen w-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6 max-w-md text-center p-8">
           <div className="flex flex-col items-center gap-3">
             <Code2 className="h-16 w-16 text-primary" />
-            <h2 className="text-2xl font-bold">Via-gent IDE</h2>
+            <h2 className="text-2xl font-bold">ViaGent IDE</h2>
             <p className="text-muted-foreground">
-              Create a quick temp project or select a project folder to start coding.
+              Create a project or select an existing one to start coding.
             </p>
           </div>
           <div className="flex flex-col gap-3 w-full">
-            {/* PLAT-001: Only show temp project on mobile/fallback (when FSA not available) */}
-            {!platform.canAccessFSA && (
+            {/* Desktop with FSA: Show folder picker option */}
+            {platform.canAccessFSA && (
               <button
-                onClick={() => handleCreateTemp(navigate)}
-                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 font-medium flex items-center justify-center gap-2"
+                onClick={() => setShowFolderPicker(true)}
+                className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-none border-2 border-primary hover:bg-primary/90 font-medium flex items-center justify-center gap-2"
               >
-                <Plus className="h-4 w-4" />
-                ⚡ Quick IDE (Temp Project)
+                <FolderOpen className="h-4 w-4" />
+                Select Project Folder
               </button>
             )}
             <button
-              onClick={() => setShowFolderPicker(true)}
-              className="w-full px-6 py-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 font-medium flex items-center justify-center gap-2"
-            >
-              <FolderOpen className="h-4 w-4" />
-              Select Project Folder
-            </button>
-            <button
               onClick={() => handleBrowseProjects(navigate)}
-              className="w-full px-6 py-3 border border-border text-foreground rounded-lg hover:bg-muted font-medium flex items-center justify-center gap-2"
+              className="w-full px-6 py-3 bg-muted text-foreground rounded-none border-2 border-border hover:bg-muted/80 font-medium flex items-center justify-center gap-2"
             >
-              Browse Projects
+              <Plus className="h-4 w-4" />
+              Create / Browse Projects
             </button>
           </div>
-          <p className="text-xs text-muted-foreground mt-4">
-            Phase 1: Temp project auto-creates on mobile, folder picker on desktop
-          </p>
         </div>
       </div>
 
-      {/* Folder Picker Dialog (P1-04) */}
-      <FolderPickerDialog
-        open={showFolderPicker}
-        onOpenChange={setShowFolderPicker}
-        onSuccess={(projectId) => {
-          console.log('[IDERoute] Folder selected, navigating to:', projectId);
-          navigate({ to: '/ide/$projectId', params: { projectId } });
-        }}
-        onFallbackToTemp={async () => {
-          console.log('[IDERoute] Fallback to temp project');
-          const tempProject = await getOrCreateTempProject();
-          navigate({ to: '/ide/$projectId', params: { projectId: tempProject.id } });
-        }}
-        onCancel={() => {
-          console.log('[IDERoute] Folder picker cancelled');
-        }}
-      />
+      {/* Folder Picker Dialog */}
+      {platform.canAccessFSA && (
+        <FolderPickerDialog
+          open={showFolderPicker}
+          onOpenChange={setShowFolderPicker}
+          onSuccess={(projectId) => {
+            console.log('[IDERoute] Folder selected, navigating to:', projectId);
+            navigate({ to: '/ide/$projectId', params: { projectId } });
+          }}
+          onCancel={() => {
+            console.log('[IDERoute] Folder picker cancelled');
+          }}
+        />
+      )}
     </MainLayout>
   );
-}
-
-/**
- * Handle temp project creation (P1-03)
- *
- * Phase 1: Auto-creates temp project and navigates to it
- * - Gets or creates temp project via getOrCreateTempProject()
- * - Navigates to /ide/$projectId route
- * - Temp project persists in IndexedDB via project store
- */
-async function handleCreateTemp(navigate: ReturnType<typeof useNavigate>) {
-  console.log('[IDERoute] Create temp project clicked');
-  try {
-    const tempProject = await getOrCreateTempProject();
-    console.log('[IDERoute] Temp project created/retrieved:', tempProject.id);
-    // Navigate to the temp project route
-    navigate({ to: '/ide/$projectId', params: { projectId: tempProject.id } });
-  } catch (error) {
-    console.error('[IDERoute] Failed to create temp project:', error);
-  }
 }
 
 /**
@@ -218,28 +165,6 @@ async function handleCreateTemp(navigate: ReturnType<typeof useNavigate>) {
  */
 function handleBrowseProjects(navigate: ReturnType<typeof useNavigate>) {
   console.log('[IDERoute] Browse projects clicked');
-  // Navigate to hub
-  navigate({ to: '/hub' });
+  // Navigate to hub with create-project action
+  navigate({ to: '/hub', search: { action: 'create-project' } });
 }
-
-/**
- * ═══════════════════════════════════════════════════════════════
- * ⚠️ PHASE 1 DETACHMENT: Original useWorkspaceAccess implementation
- * Reason: Causes infinite loops, returns 'no_projects' unexpectedly
- * Re-attach in: Phase 2
- * ═══════════════════════════════════════════════════════════════
-
-function IDEWorkspace_Original() {
-  const { state, actions, status } = useWorkspaceAccess('ide');
-
-  // Check if we're on a child route like /ide/$projectId
-  const isOnChildRoute = window.location.pathname !== '/ide';
-
-  // Render child route content if on child route
-  if (isOnChildRoute) {
-    return <Outlet />;
-  }
-
-  // ... rest of original implementation
-}
-*/

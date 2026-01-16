@@ -37,12 +37,19 @@ interface PermissionCapableHandle extends FileSystemDirectoryHandle {
  * @returns true if browser supports structuredClone for FileSystemDirectoryHandle
  */
 function isStructuredCloneSupported(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    typeof navigator !== 'undefined' &&
-    'structuredClone' in window &&
-    navigator.userAgent.includes('Chrome/129')
-  );
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return false;
+  }
+
+  if (!('structuredClone' in window)) {
+    return false;
+  }
+
+  // Extract Chrome version and check if >= 129
+  const chromeMatch = navigator.userAgent.match(/Chrome\/(\d+)/);
+  const chromeVersion = chromeMatch ? parseInt(chromeMatch[1], 10) : 0;
+
+  return chromeVersion >= 129;
 }
 
 /**

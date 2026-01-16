@@ -9,7 +9,7 @@
 /**
  * Workspace Type Enumeration
  *
- * Represents the four workspace types in the application:
+ * Represents the workspace types in the application:
  * - ide: Code development workspace
  * - knowledge: Knowledge synthesis workspace
  * - study: Study and flashcard workspace

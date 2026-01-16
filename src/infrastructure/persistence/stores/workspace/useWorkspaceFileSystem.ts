@@ -27,6 +27,8 @@ import {
  */
 export interface UseWorkspaceFileSystemOptions {
   initialProjectId?: string | null;
+  /** Initial directory handle restored from persistence (INF-04-02) */
+  initialHandle?: FileSystemDirectoryHandle | null;
   setCurrentProject: (id: string) => void;
 }
 
@@ -43,11 +45,13 @@ export interface UseWorkspaceFileSystemOptions {
  */
 export function useWorkspaceFileSystem({
   initialProjectId,
+  initialHandle,
   setCurrentProject,
 }: UseWorkspaceFileSystemOptions) {
   // Slice 1: File Loader - Project loading and hydration
   const fileLoader = useFileLoaderSlice({
     initialProjectId,
+    initialHandle,
   });
 
   // Slice 3: Storage Adapter - Sync and event bus management

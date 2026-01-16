@@ -6,19 +6,690 @@
     ".opencode/instructions/governance-rules.md",
     ".opencode/instructions/agent-behavior.md"
   ],
-
   // === PRIMARY AGENTS ===
-
-
-   // BMAD Agent Configuration (Official OpenCode Format),
-  "agent": {// === DISABLED DEFAULT AGENTS (hidden with no tools) ===
-  
-  "bmad-master": {
-    "description": "BMAD Master Orchestrator - Entry point for all _bmad-ext modules with full handoff protocol",
-    "mode": "primary",
-    "temperature": 0.3,
-    "prompt": "{file:agent/bmad-master.md}",
-    "maxSteps": 2000,
+  // BMAD Agent Configuration (Official OpenCode Format),
+  "agent": { // === DISABLED DEFAULT AGENTS (hidden with no tools) ===
+    "bmad-master": {
+      "description": "BMAD Master Orchestrator - Entry point for all _bmad-ext modules with full handoff protocol",
+      "mode": "primary",
+      "temperature": 0.3,
+      "prompt": "{file:agent/bmad-master.md}",
+      "maxSteps": 2000,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true,
+        "task": true
+      },
+      "permission": {
+        "edit": "ask",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "build": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    "plan": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    "general": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    "explore": {
+      "description": "DISABLED - Use bmad-master",
+      "mode": "all",
+      "hidden": true,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false
+      }
+    },
+    // === EXTENSION AGENTS (can be primary or subagent) ===
+    "dev-ext": {
+      "description": "Senior Software Engineer - executes delegated development tasks with full handoff protocol",
+      "mode": "subagent",
+      "temperature": 0.2,
+      "prompt": "{file:agent/dev-ext.md}",
+      "maxSteps": 50,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow",
+          "tea-ext": "allow"
+        }
+      }
+    },
+    "architect-ext": {
+      "description": "Software Architect & System Designer - Clean Architecture, DDD, ADRs with handoff protocol",
+      "mode": "all",
+      "temperature": 0.1,
+      "prompt": "{file:agent/architect-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "ux-designer-ext": {
+      "description": "UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing with handoff protocol",
+      "mode": "all",
+      "temperature": 0.3,
+      "prompt": "{file:agent/ux-designer-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "tech-writer-ext": {
+      "description": "Technical Writer - API docs, user guides, architecture documentation with handoff protocol",
+      "mode": "all",
+      "temperature": 0.2,
+      "prompt": "{file:agent/tech-writer-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "analyst-ext": {
+      "description": "Business Analyst - Requirements gathering, user story breakdown, competitive analysis with handoff protocol",
+      "mode": "all",
+      "temperature": 0.2,
+      "prompt": "{file:agent/analyst-ext.md}",
+      "maxSteps": 300,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "tea-ext": {
+      "description": "Test Engineer & QA Specialist - Test strategy, automation (Vitest, Playwright), TDD with handoff protocol",
+      "mode": "all",
+      "temperature": 0.1,
+      "prompt": "{file:agent/tea-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "product-management-ext": {
+      "description": "Product Management & Scrum Master - Backlog, stories, sprints, stakeholders with handoff protocol",
+      "mode": "all",
+      "temperature": 0.2,
+      "prompt": "{file:agent/product-management-ext.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "ask",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "bmad-governance": {
+      "description": "Governance enforcement agent for BMAD framework - validates compliance, manages artifacts. Ruthlessly enforces and only allow passing with 100% passing score with tracable evidences",
+      "mode": "all",
+      "temperature": 0.1,
+      "prompt": "{file:agent/bmad-governance.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "bmad-sprint-manager": {
+      "description": "Sprint manager for sprint planning, story development, and execution tracking",
+      "mode": "all",
+      "temperature": 0.3,
+      "prompt": "{file:agent/bmad-sprint-manager.md}",
+      "maxSteps": 50,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    // === SUBAGENTS (Specialized Scanners & Tools) ===
+    "deep-scan-orchestrator": {
+      "description": "Deep Scan Orchestrator - Coordinates diagnostic scanners across domains",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-orchestrator.md}",
+      "maxSteps": 20,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "ask",
+        "bash": "ask",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "real-world-validator": {
+      "description": "Real-world testing specialist - production API tests, browser automation, visual regression",
+      "mode": "subagent",
+      "temperature": 0.3,
+      "prompt": "{file:agent/real-world-validator.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "file-sync-specialist": {
+      "description": "File synchronization specialist - sync strategies, conflict resolution, offline-first",
+      "mode": "subagent",
+      "temperature": 0.2,
+      "prompt": "{file:agent/file-sync-specialist.md}",
+      "maxSteps": 30,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "domain-scanner": {
+      "description": "Domain analysis - identifies domain boundaries, responsibilities, relationships",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/domain-scanner.md}",
+      "maxSteps": 20,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "deny",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-workspace-scanner": {
+      "description": "Workspace integration diagnostics - cross-workspace leaks, event isolation",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-workspace-scanner.md}",
+      "maxSteps": 20,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-ux-scanner": {
+      "description": "UX & accessibility diagnostics - i18n violations, accessibility issues, responsive failures",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-ux-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-types-scanner": {
+      "description": "TypeScript diagnostics - `any` types, suppressions, interface duplication",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-types-scanner.md}",
+      "maxSteps": 20,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-state-scanner": {
+      "description": "State management diagnostics - god stores, circular dependencies, Zustand v5 compliance",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-state-scanner.md}",
+      "maxSteps": 20,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-security-scanner": {
+      "description": "Security diagnostics - secret leaks, XSS vulnerabilities, unsafe file operations",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-security-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-performance-scanner": {
+      "description": "Performance diagnostics - bundle bloat, render waste, memory leaks",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-performance-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-persistence-scanner": {
+      "description": "Persistence layer diagnostics - IndexedDB quota, unencrypted secrets, schema issues",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-persistence-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-architecture-scanner": {
+      "description": "Architecture diagnostics - layer violations, god components, feature coupling",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-architecture-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-agent-rag-scanner": {
+      "description": "AI Agent & RAG diagnostics - tool permissions, prompt injection, RAG pipeline safety",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-agent-rag-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "deep-scan-evidence-synthesizer": {
+      "description": "Evidence synthesizer - aggregates findings, prioritizes risks, generates remediation backlog",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/deep-scan-evidence-synthesizer.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": false,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "deny",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "component-splitter": {
+      "description": "Component refactoring specialist - breaks god components into focused modules",
+      "mode": "subagent",
+      "temperature": 0.2,
+      "prompt": "{file:agent/component-splitter.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "allow",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    "artifact-scanner": {
+      "description": "Artifact scanner - staleness detection, orphaned files, code validation",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "prompt": "{file:agent/artifact-scanner.md}",
+      "maxSteps": 200,
+      "tools": {
+        "write": true,
+        "edit": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
+        "read": true
+      },
+      "permission": {
+        "edit": "deny",
+        "bash": "allow",
+        "task": {
+          "*": "allow"
+        }
+      }
+    },
+    // Custom commands for BMAD workflows
+    "command": {
+      "bmad-sprint": {
+        "description": "Execute BMAD sprint workflow with governance enforcement",
+        "template": "Execute following sprint task using BMAD methodology:\n\n$ARGUMENTS\n\nFollow workflow:\n1. Load context from _bmad/modules/*\n2. Validate task against AGENTS.md\n3. Execute with autonomous decision-making\n4. Update AGENT-STATE.yaml on completion\n5. Enforce governance rules throughout",
+        "agent": "bmad-master"
+      },
+      "bmad-governance": {
+        "description": "Run governance validation and enforcement",
+        "template": "Run governance validation:\n\n1. Check AGENTS.md for current policies\n2. Validate against context-filter.yaml\n3. Enforce time-boxing rules\n4. Update governance documents if needed\n5. Report violations",
+        "agent": "bmad-master"
+      },
+      "bmad-refactor": {
+        "description": "Execute architecture remediation workflows",
+        "template": "Execute architecture refactoring:\n\n$ARGUMENTS\n\nAvailable workflows:\n- eliminate-god-stores: Split oversized stores into slices\n- normalize-components: Split oversized components\n- workspace-file-system-e2e: Implement workspace E2E\n- knowledge-sync-strategy: Implement knowledge sync\n- notes-sync-strategy: Implement notes sync\n\nLoad context from _bmad-ext/modules/architecture-remediation/",
+        "agent": "bmad-master"
+      },
+      "bmad-scan": {
+        "description": "Run deep scan diagnostics",
+        "template": "Execute comprehensive code scan:\n\n$ARGUMENTS\n\nAvailable scanners:\n- full-scan: Complete codebase analysis\n- targeted-scan: Focused on specific areas\n- architecture-scan: Layer violations and god components\n- state-scan: Store analysis and circular dependencies\n- types-scan: TypeScript errors and type safety\n- security-scan: Vulnerability detection\n- performance-scan: Performance bottlenecks\n- ux-scan: Accessibility and UX issues\n\nLoad context from _bmad/modules/quality/",
+        "agent": "deep-scan-orchestrator"
+      },
+      "story-cycle": {
+        "description": "Execute complete story development cycle v2.0",
+        "template": "Execute story development cycle:\n\n$ARGUMENTS\n\n9-Step Workflow:\n1. Create Story - Create story file from epic\n2. Validate Story - Validate story file 100%\n3. Create Context - Build context XML\n4. Validate Context - Validate with freshness check\n5. Pre-Planning - **NEW v2.0** Research gate\n6. Dev Story - TDD implementation\n7. Code Review - Multi-agent review\n8. Story Done - Complete story\n9. Retrospective - Epic-level review\n\nLoad context from _bmad-ext/modules/sprint-planning/",
+        "agent": "bmad-master"
+      },
+      "create-story": {
+        "description": "Create a new story from epic backlog",
+        "template": "Create story file:\n\n$ARGUMENTS\n\nRequired: epic={N}\nOptional: story={N} (auto-increment)\n\nLoads: _bmad-ext/modules/sprint-planning/\nOutput: _bmad-output/sprint-artifacts/{epic}-{story}-{slug}.md",
+        "agent": "product-management-ext"
+      },
+      "dev-story": {
+        "description": "Implement story with TDD methodology",
+        "template": "Implement story with TDD:\n\n$ARGUMENTS\n\nRequired: story={story_key}\n\nWorkflow:\n1. Load context XML\n2. For each task: Red-Green-Refactor\n3. Run full test suite\n4. Update Dev Agent Record\n\nLoads: _bmad-ext/modules/sprint-planning/",
+        "agent": "dev-ext"
+      },
+      "code-review": {
+        "description": "Run code review on completed implementation",
+        "template": "Execute code review:\n\n$ARGUMENTS\n\nRequired: story={story_key}\nOptional: focus={area}\n\nChecklist:\n- Design compliance (4-layer architecture)\n- Code quality (TypeScript, no any)\n- UI/UX (8-bit design, no glassmorphism)\n- Testing (≥80% coverage)\n- Documentation\n\nLoads: _bmad-ext/modules/governance/",
+        "agent": "bmad-master"
+      },
+      "correct-course": {
+        "description": "Recovery workflow for stuck stories",
+        "template": "Execute course correction:\n\n$ARGUMENTS\n\nRequired: story={story_key}\n\nTriggered when:\n- Story exceeds 2x timebox\n- Validation loop >3 attempts\n- Unresolvable blockers\n\nOptions:\n- Split story into smaller pieces\n- Defer to next sprint\n- Escalate to architect\n- Reduce scope\n- Continue with acknowledged risk\n\nLoads: _bmad-ext/modules/sprint-planning/",
+        "agent": "product-management-ext"
+      }
+    },
+    // Global tool permissions
     "tools": {
       "write": true,
       "edit": true,
@@ -28,725 +699,40 @@
       "read": true,
       "task": true
     },
+    // Global permission controls
     "permission": {
       "edit": "allow",
       "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
+      "webfetch": "allow"
+    },
+    // Context compaction settings
+    "compaction": {
+      "auto": true,
+      "prune": true
+    },
+    // File watcher ignore patterns
+    "watcher": {
+      "ignore": [
+        "node_modules/**",
+        ".git/**",
+        "dist/**",
+        "build/**",
+        "_bmad-output/**",
+        ".DS_Store"
+      ]
+    },
+    // TUI settings
+    "tui": {
+      "scroll_speed": 2,
+      "diff_style": "stacked"
+    },
+    // Server settings
+    "server": {
+      "port": 4096,
+      "hostname": "0.0.0.0",
+      "cors": [
+        "http://localhost:5173"
+      ]
     }
-  },
-
-  "build": {
-    "description": "DISABLED - Use bmad-master",
-    "mode": "all",
-    "hidden": true,
-    "tools": {
-      "write": false,
-      "edit": false,
-      "bash": false,
-      "glob": false,
-      "grep": false,
-      "read": false,
-      "task": false
-    }
-  },
-  "plan": {
-    "description": "DISABLED - Use bmad-master",
-    "mode": "all",
-    "hidden": true,
-    "tools": {
-      "write": false,
-      "edit": false,
-      "bash": false,
-      "glob": false,
-      "grep": false,
-      "read": false,
-      "task": false
-    }
-  },
-  "general": {
-    "description": "DISABLED - Use bmad-master",
-    "mode": "all",
-    "hidden": true,
-    "tools": {
-      "write": false,
-      "edit": false,
-      "bash": false,
-      "glob": false,
-      "grep": false,
-      "read": false,
-      "task": false
-    }
-  },
-  "explore": {
-    "description": "DISABLED - Use bmad-master",
-    "mode": "all",
-    "hidden": true,
-    "tools": {
-      "write": false,
-      "edit": false,
-      "bash": false,
-      "glob": false,
-      "grep": false,
-      "read": false,
-      "task": false
-    }
-  },
-
-  // === EXTENSION AGENTS (can be primary or subagent) ===
-  "dev-ext": {
-    "description": "Senior Software Engineer - executes delegated development tasks with full handoff protocol",
-    "mode": "subagent",
-    "temperature": 0.2,
-    "prompt": "{file:agent/dev-ext.md}",
-    "maxSteps": 50,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow",
-        "tea-ext": "allow"
-      }
-    }
-  },
-  "architect-ext": {
-    "description": "Software Architect & System Designer - Clean Architecture, DDD, ADRs with handoff protocol",
-    "mode": "all",
-    "temperature": 0.1,
-    "prompt": "{file:agent/architect-ext.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": false,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "ux-designer-ext": {
-    "description": "UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing with handoff protocol",
-    "mode": "all",
-    "temperature": 0.3,
-    "prompt": "{file:agent/ux-designer-ext.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": false,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "ask",
-      "task": {
-        "*": "deny"
-      }
-    }
-  },
-  "tech-writer-ext": {
-    "description": "Technical Writer - API docs, user guides, architecture documentation with handoff protocol",
-    "mode": "all",
-    "temperature": 0.2,
-    "prompt": "{file:agent/tech-writer-ext.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": false,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "deny",
-      "task": {
-        "*": "deny"
-      }
-    }
-  },
-  "analyst-ext": {
-    "description": "Business Analyst - Requirements gathering, user story breakdown, competitive analysis with handoff protocol",
-    "mode": "all",
-    "temperature": 0.2,
-    "prompt": "{file:agent/analyst-ext.md}",
-    "maxSteps": 300,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": false,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "deny",
-      "task": {
-        "*": "deny"
-      }
-    }
-  },
-  "tea-ext": {
-    "description": "Test Engineer & QA Specialist - Test strategy, automation (Vitest, Playwright), TDD with handoff protocol",
-    "mode": "all",
-    "temperature": 0.1,
-    "prompt": "{file:agent/tea-ext.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "product-management-ext": {
-    "description": "Product Management & Scrum Master - Backlog, stories, sprints, stakeholders with handoff protocol",
-    "mode": "all",
-    "temperature": 0.2,
-    "prompt": "{file:agent/product-management-ext.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": false,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "ask",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "bmad-governance": {
-    "description": "Governance enforcement agent for BMAD framework - validates compliance, manages artifacts. Ruthlessly enforces and only allow passing with 100% passing score with tracable evidences",
-    "mode": "all",
-    "temperature": 0.1,
-    "prompt": "{file:agent/bmad-governance.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "bmad-sprint-manager": {
-    "description": "Sprint manager for sprint planning, story development, and execution tracking",
-    "mode": "all",
-    "temperature": 0.3,
-    "prompt": "{file:agent/bmad-sprint-manager.md}",
-    "maxSteps": 50,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-
-  // === SUBAGENTS (Specialized Scanners & Tools) ===
-  "deep-scan-orchestrator": {
-    "description": "Deep Scan Orchestrator - Coordinates diagnostic scanners across domains",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-orchestrator.md}",
-    "maxSteps": 20,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "ask",
-      "bash": "ask",
-      "task": {
-        "*": "deny"
-      }
-    }
-  },
-  "real-world-validator": {
-    "description": "Real-world testing specialist - production API tests, browser automation, visual regression",
-    "mode": "subagent",
-    "temperature": 0.3,
-    "prompt": "{file:agent/real-world-validator.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "file-sync-specialist": {
-    "description": "File synchronization specialist - sync strategies, conflict resolution, offline-first",
-    "mode": "subagent",
-    "temperature": 0.2,
-    "prompt": "{file:agent/file-sync-specialist.md}",
-    "maxSteps": 30,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "domain-scanner": {
-    "description": "Domain analysis - identifies domain boundaries, responsibilities, relationships",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/domain-scanner.md}",
-    "maxSteps": 20,
-    "tools": {
-      "write": false,
-      "edit": false,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "deny",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-workspace-scanner": {
-    "description": "Workspace integration diagnostics - cross-workspace leaks, event isolation",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-workspace-scanner.md}",
-    "maxSteps": 20,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-ux-scanner": {
-    "description": "UX & accessibility diagnostics - i18n violations, accessibility issues, responsive failures",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-ux-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-types-scanner": {
-    "description": "TypeScript diagnostics - `any` types, suppressions, interface duplication",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-types-scanner.md}",
-    "maxSteps": 20,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-state-scanner": {
-    "description": "State management diagnostics - god stores, circular dependencies, Zustand v5 compliance",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-state-scanner.md}",
-    "maxSteps": 20,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-security-scanner": {
-    "description": "Security diagnostics - secret leaks, XSS vulnerabilities, unsafe file operations",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-security-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-performance-scanner": {
-    "description": "Performance diagnostics - bundle bloat, render waste, memory leaks",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-performance-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-persistence-scanner": {
-    "description": "Persistence layer diagnostics - IndexedDB quota, unencrypted secrets, schema issues",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-persistence-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-architecture-scanner": {
-    "description": "Architecture diagnostics - layer violations, god components, feature coupling",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-architecture-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-agent-rag-scanner": {
-    "description": "AI Agent & RAG diagnostics - tool permissions, prompt injection, RAG pipeline safety",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-agent-rag-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "deep-scan-evidence-synthesizer": {
-    "description": "Evidence synthesizer - aggregates findings, prioritizes risks, generates remediation backlog",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/deep-scan-evidence-synthesizer.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": false,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "deny",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "component-splitter": {
-    "description": "Component refactoring specialist - breaks god components into focused modules",
-    "mode": "subagent",
-    "temperature": 0.2,
-    "prompt": "{file:agent/component-splitter.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": true,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "allow",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-  "artifact-scanner": {
-    "description": "Artifact scanner - staleness detection, orphaned files, code validation",
-    "mode": "subagent",
-    "temperature": 0.1,
-    "prompt": "{file:agent/artifact-scanner.md}",
-    "maxSteps": 200,
-    "tools": {
-      "write": true,
-      "edit": false,
-      "bash": true,
-      "glob": true,
-      "grep": true,
-      "read": true
-    },
-    "permission": {
-      "edit": "deny",
-      "bash": "allow",
-      "task": {
-        "*": "allow"
-      }
-    }
-  },
-
-  // Custom commands for BMAD workflows
-  "command": {
-    "bmad-sprint": {
-      "description": "Execute BMAD sprint workflow with governance enforcement",
-      "template": "Execute following sprint task using BMAD methodology:\n\n$ARGUMENTS\n\nFollow workflow:\n1. Load context from _bmad/modules/*\n2. Validate task against AGENTS.md\n3. Execute with autonomous decision-making\n4. Update AGENT-STATE.yaml on completion\n5. Enforce governance rules throughout",
-      "agent": "bmad-master"
-    },
-    "bmad-governance": {
-      "description": "Run governance validation and enforcement",
-      "template": "Run governance validation:\n\n1. Check AGENTS.md for current policies\n2. Validate against context-filter.yaml\n3. Enforce time-boxing rules\n4. Update governance documents if needed\n5. Report violations",
-      "agent": "bmad-master"
-    },
-    "bmad-refactor": {
-      "description": "Execute architecture remediation workflows",
-      "template": "Execute architecture refactoring:\n\n$ARGUMENTS\n\nAvailable workflows:\n- eliminate-god-stores: Split oversized stores into slices\n- normalize-components: Split oversized components\n- workspace-file-system-e2e: Implement workspace E2E\n- knowledge-sync-strategy: Implement knowledge sync\n- notes-sync-strategy: Implement notes sync\n\nLoad context from _bmad-ext/modules/architecture-remediation/",
-      "agent": "bmad-master"
-    },
-    "bmad-scan": {
-      "description": "Run deep scan diagnostics",
-      "template": "Execute comprehensive code scan:\n\n$ARGUMENTS\n\nAvailable scanners:\n- full-scan: Complete codebase analysis\n- targeted-scan: Focused on specific areas\n- architecture-scan: Layer violations and god components\n- state-scan: Store analysis and circular dependencies\n- types-scan: TypeScript errors and type safety\n- security-scan: Vulnerability detection\n- performance-scan: Performance bottlenecks\n- ux-scan: Accessibility and UX issues\n\nLoad context from _bmad/modules/quality/",
-      "agent": "deep-scan-orchestrator"
-    },
-    "story-cycle": {
-      "description": "Execute complete story development cycle v2.0",
-      "template": "Execute story development cycle:\n\n$ARGUMENTS\n\n9-Step Workflow:\n1. Create Story - Create story file from epic\n2. Validate Story - Validate story file 100%\n3. Create Context - Build context XML\n4. Validate Context - Validate with freshness check\n5. Pre-Planning - **NEW v2.0** Research gate\n6. Dev Story - TDD implementation\n7. Code Review - Multi-agent review\n8. Story Done - Complete story\n9. Retrospective - Epic-level review\n\nLoad context from _bmad-ext/modules/sprint-planning/",
-      "agent": "bmad-master"
-    },
-    "create-story": {
-      "description": "Create a new story from epic backlog",
-      "template": "Create story file:\n\n$ARGUMENTS\n\nRequired: epic={N}\nOptional: story={N} (auto-increment)\n\nLoads: _bmad-ext/modules/sprint-planning/\nOutput: _bmad-output/sprint-artifacts/{epic}-{story}-{slug}.md",
-      "agent": "product-management-ext"
-    },
-    "dev-story": {
-      "description": "Implement story with TDD methodology",
-      "template": "Implement story with TDD:\n\n$ARGUMENTS\n\nRequired: story={story_key}\n\nWorkflow:\n1. Load context XML\n2. For each task: Red-Green-Refactor\n3. Run full test suite\n4. Update Dev Agent Record\n\nLoads: _bmad-ext/modules/sprint-planning/",
-      "agent": "dev-ext"
-    },
-    "code-review": {
-      "description": "Run code review on completed implementation",
-      "template": "Execute code review:\n\n$ARGUMENTS\n\nRequired: story={story_key}\nOptional: focus={area}\n\nChecklist:\n- Design compliance (4-layer architecture)\n- Code quality (TypeScript, no any)\n- UI/UX (8-bit design, no glassmorphism)\n- Testing (≥80% coverage)\n- Documentation\n\nLoads: _bmad-ext/modules/governance/",
-      "agent": "bmad-master"
-    },
-    "correct-course": {
-      "description": "Recovery workflow for stuck stories",
-      "template": "Execute course correction:\n\n$ARGUMENTS\n\nRequired: story={story_key}\n\nTriggered when:\n- Story exceeds 2x timebox\n- Validation loop >3 attempts\n- Unresolvable blockers\n\nOptions:\n- Split story into smaller pieces\n- Defer to next sprint\n- Escalate to architect\n- Reduce scope\n- Continue with acknowledged risk\n\nLoads: _bmad-ext/modules/sprint-planning/",
-      "agent": "product-management-ext"
-    }
-  },
-
-  // Global tool permissions
-  "tools": {
-    "write": true,
-    "edit": true,
-    "bash": true,
-    "glob": true,
-    "grep": true,
-    "read": true,
-    "task": true
-  },
-
-  // Global permission controls
-  "permission": {
-    "edit": "allow",
-    "bash": "allow",
-    "webfetch": "allow"
-  },
-
-  // Context compaction settings
-  "compaction": {
-    "auto": true,
-    "prune": true
-  },
-
-  // File watcher ignore patterns
-  "watcher": {
-    "ignore": [
-      "node_modules/**",
-      ".git/**",
-      "dist/**",
-      "build/**",
-      "_bmad-output/**",
-      ".DS_Store"
-    ]
-  },
-
-  // TUI settings
-  "tui": {
-    "scroll_speed": 2,
-    "diff_style": "stacked"
-  },
-
-  // Server settings
-  "server": {
-    "port": 4096,
-    "hostname": "0.0.0.0",
-    "cors": [
-      "http://localhost:5173"
-    ]
   }
-}
 }

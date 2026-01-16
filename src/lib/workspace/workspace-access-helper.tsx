@@ -143,6 +143,11 @@ export function isTempProject(project: Project): boolean {
 
 /**
  * Create temp project for workspace
+ *
+ * ⚠️ DEPRECATED: This function will be removed in Phase 4.
+ * Projects should be explicitly created by users via the hub.
+ *
+ * @deprecated Use explicit project creation via hub instead.
  */
 export async function createTempProject(
   workspace: WorkspaceType

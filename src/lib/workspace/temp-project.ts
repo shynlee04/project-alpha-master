@@ -67,13 +67,25 @@ export function getStoredTempProjectId(): string | null {
 /**
  * Get or create the temp project for this session
  *
+ * ⚠️ DEPRECATED: This function will be removed in Phase 4.
+ * Projects should be explicitly created by users via the hub.
+ *
  * Phase 1 Behavior:
  * - On mobile: Always creates temp project
  * - On desktop: Creates temp project if no FSA handle available
  * - ONE temp project per session (reuses existing if found)
  * - Project persists in IndexedDB via project store
+ *
+ * @deprecated Use explicit project creation via hub instead. Will be removed in Phase 4.
  */
 export async function getOrCreateTempProject(): Promise<Project> {
+  // Runtime deprecation warning
+  console.warn(
+    '[DEPRECATED] getOrCreateTempProject() is deprecated and will be removed in Phase 4. ' +
+    'Projects should be explicitly created by users via the hub. ' +
+    'This creates a temporary project that may not persist correctly.'
+  );
+
   // Check for existing temp project
   const existingId = getStoredTempProjectId();
   if (existingId) {

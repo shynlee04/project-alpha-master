@@ -6,7 +6,7 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-18T11:30:00+07:00"
-last_updated: "2026-01-21T13:00:00+07:00"
+last_updated: "2026-01-16T20:30:00+07:00"
 
 registry:
   # Planning Artifacts
@@ -127,3 +127,13 @@ sessions:
     parent_id: "adr-033"
     created_at: "2026-01-21T00:00:00+07:00"
     status: "proposed"
+
+  # Investigation Artifacts
+  - id: "team-b-investigation-report"
+    type: "investigation"
+    name: "Team B State, Route & Cleanup Investigation Report"
+    path: "_bmad-output/team-b-state-route-cleanup-investigation-report-2026-01-16-v2.md"
+    parent_id: "adr-034"
+    created_at: "2026-01-16T20:00:00+07:00"
+    status: "complete"
+    tasks_completed: 8

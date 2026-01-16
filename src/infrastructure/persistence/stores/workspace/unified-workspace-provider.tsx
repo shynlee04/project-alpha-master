@@ -44,7 +44,8 @@ type ExtendedWorkspaceType = WorkspaceType | 'hub';
 export interface UnifiedWorkspaceProviderProps {
   children: ReactNode;
   initialWorkspace?: ExtendedWorkspaceType;
-  initialProjectId?: string | null;
+  /** Initial directory handle restored from persistence (INF-04-02) */
+  initialHandle?: FileSystemDirectoryHandle | null;
 }
 
 /**
@@ -58,7 +59,7 @@ export interface UnifiedWorkspaceProviderProps {
 export function UnifiedWorkspaceProvider({
   children,
   initialWorkspace,
-  initialProjectId,
+  initialHandle,
 }: UnifiedWorkspaceProviderProps) {
   // Get workspace store setters
   const setCurrentWorkspace = useWorkspaceStore((s) => s.setCurrentWorkspace);
@@ -71,9 +72,10 @@ export function UnifiedWorkspaceProvider({
     }
   }, [initialWorkspace, currentWorkspace, setCurrentWorkspace]);
 
-  // Use extracted hooks
+  // Use extracted hooks (INF-04-02: pass initialHandle for early restoration)
   const fileSystem = useWorkspaceFileSystem({
-    initialProjectId,
+    initialProjectId: null, // Project ID comes from route/store, not props
+    initialHandle,
     setCurrentProject: useWorkspaceStore((s) => s.setCurrentProject),
   });
 

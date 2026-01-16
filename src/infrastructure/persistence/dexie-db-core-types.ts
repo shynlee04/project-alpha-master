@@ -35,24 +35,55 @@ export type WorkspaceId = 'ide' | 'knowledge' | 'study' | 'notes';
  * Runtime code handles both fields for backwards compatibility.
  *
  * PERSIST-S002: Added workspaceId for cross-workspace isolation
+ *
+ * TEMP-PROJECT-ELIMINATION: Temp fields (isTemp, autoCreated, isBrowserMode)
+ * are deprecated and will be removed in Phase 4. New projects should not use these.
  */
 export interface ProjectRecord {
+    // Core identity
     id: string;
     name: string;
     path: string;
+    folderPath?: string;
+
+    // Workspace configuration
     workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     storageType?: 'indexeddb' | 'fsa'; // Storage backend type for project
-    lastOpened: Date;
-    createdAt: Date;
+
     // ARC-D03: New canonical field (preferred)
     workspaceBindings?: WorkspaceBindings;
     // Legacy field (kept for backward compatibility - migrated to workspaceBindings)
     bindings?: WorkspaceBindings | Record<string, string>;
-    folderPath?: string;
+
+    // Timestamps
+    lastOpened: Date;
+    createdAt: Date;
+
+    // Configuration
+    autoSync?: boolean;  // Auto-sync flag (default: true)
+    exclusionPatterns?: string[];  // Custom exclusion patterns for sync
+    layoutState?: {  // Optional layout state for IDE restoration
+      panelSizes?: number[];
+      openFiles?: string[];
+      activeFile?: string | null;
+    };
+
+    // Feature flags
     fileSnapshotEnabled?: boolean;
-    // NS-2026-01-07: Temp project support for standalone Notes access
+
+    // Metadata
+    description?: string;
+    tags?: string[];
+
+    // Soft delete support
+    deleted?: boolean;
+    deletedAt?: Date;
+
+    // DEPRECATED: Temp project support (NS-2026-01-07)
+    // Will be removed in Phase 4 of temp project elimination
     isTemp?: boolean;
     autoCreated?: boolean;
+    isBrowserMode?: boolean;
 }
 
 /**

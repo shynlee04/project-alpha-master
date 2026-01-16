@@ -32,23 +32,27 @@ import {
 } from '@/domain/types/project-ids';
 
 /**
- * Generate unique project ID with workspace namespace
- * **ARC-D01**: Returns typed ProjectId for compile-time safety
- * Format: {workspace}:proj_{timestamp}_{random}
- * Example: ide:proj_1704787200000_abc123xyz
+ * Generate unique project ID
  *
- * @param workspaceType - Workspace type for namespace
+ * FUNDAMENTAL TRUTH: Project ID should NOT have workspace prefix.
+ * Project ID is: proj_{timestamp}_{random}
+ * Workspace is determined by routing, not by project ID.
+ *
+ * **ARC-D01**: Returns typed ProjectId for compile-time safety
+ * Format: proj_{timestamp}_{random}
+ * Example: proj_1704787200000_abc123xyz
+ *
  * @returns Validated ProjectId string
  */
-function generateProjectId(workspaceType: WorkspaceType = 'ide'): ProjectId {
+function generateProjectId(): ProjectId {
   const randomPart = Math.random().toString(36).substring(2, 11);
-  const id = `${workspaceType}:proj_${Date.now()}_${randomPart}` as ProjectId;
-  
+  const id = `proj_${Date.now()}_${randomPart}` as ProjectId;
+
   // Runtime validation (should never fail if code is correct)
   if (!isValidProjectId(id)) {
     throw new Error(`Generated invalid ProjectId: ${id}`);
   }
-  
+
   return id;
 }
 
@@ -107,10 +111,11 @@ export const createProjectCrudSlice: StateCreator<
   activeProjectId: null,
 
   // Create new project
-  // FS-03: Workspace-aware project creation with namespaced IDs
+  // FUNDAMENTAL TRUTH: Project ID does NOT include workspace prefix
+  // Workspace is determined by routing, not by project ID
   createProject: (input: CreateProjectInput) => {
-    const workspaceType = input.workspaceType ?? 'ide';  // Default to 'ide' for backward compatibility
-    const projectId = generateProjectId(workspaceType);
+    const workspaceType: WorkspaceType = input.workspaceType ?? 'ide';  // Default to 'ide' for backward compatibility
+    const projectId = generateProjectId();  // No workspace prefix in project ID
     const now = new Date();
     const storageType = input.storageType ?? 'fsa';  // Default to 'fsa' for backward compatibility
 
@@ -189,7 +194,7 @@ export const createProjectCrudSlice: StateCreator<
 
     // Persist to Dexie (async, non-blocking)
     // FS-03: Extract workspace type from project ID for proper isolation
-    const workspaceType = domainExtractWorkspaceType(projectId);
+    const workspaceType: WorkspaceType = domainExtractWorkspaceType(projectId);
     db.projects.put(toRecord(updated, workspaceType)).catch((error: unknown) => {
       const err = error as Error;
       console.error('[ProjectStore] Failed to update project in Dexie:', err.message);

@@ -25,7 +25,6 @@ import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 
@@ -92,51 +91,13 @@ function IDEWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
 
+  // Store project ID in stores on mount
   useEffect(() => {
     if (_projectId) {
       useIDEStore.getState().setProjectId(_projectId);
       useWorkspaceStore.getState().setCurrentProject(_projectId);
       console.log('[IDERoute] Project ID set in IDE store & workspace store:', _projectId);
     }
-  }, [_projectId]);
-
-  // INF-04 FIX: Restore FSA handle on mount for handle persistence
-  useEffect(() => {
-    const restoreHandleAsync = async () => {
-      if (!_projectId) return;
-
-      console.log('[IDERoute] Attempting to restore FSA handle for project:', _projectId);
-
-      try {
-        const result = await handlePersistenceService.restoreHandle(_projectId);
-
-        if (result.success && result.handle) {
-          console.log('[IDERoute] Handle restored successfully');
-
-          // Store handle in useWorkspaceFileSystem's localAdapterRef
-          // The workspace store should pick this up via useWorkspaceFileSystem
-
-          // Log restoration details
-          if (result.restoredFromMetadata) {
-            console.log('[IDERoute] Restored from metadata:', {
-              directoryName: result.restoredFromMetadata.directoryName,
-              workspaceId: result.restoredFromMetadata.workspaceId,
-              requiresUserInteraction: result.requiresUserInteraction,
-            });
-          }
-        } else if (result.requiresUserInteraction) {
-          console.log('[IDERoute] Handle restoration requires user interaction:', result.error);
-          // PermissionOverlay will handle the prompt automatically
-          // because permissionState will be 'prompt'
-        } else {
-          console.log('[IDERoute] Handle restoration failed:', result.error);
-        }
-      } catch (error) {
-        console.error('[IDERoute] Failed to restore handle:', error);
-      }
-    };
-
-    restoreHandleAsync();
   }, [_projectId]);
 
   return (

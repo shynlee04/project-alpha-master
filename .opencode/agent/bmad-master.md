@@ -4,15 +4,15 @@ description: BMAD Master Orchestrator - Entry point for all _bmad-ext modules wi
 mode: primary
 temperature: 0.3
 tools:
-  write: true
-  edit: true
+  write: false
+  edit: false
   bash: true
   glob: true
   grep: true
   read: true
   task: true
 permission:
-  edit: allow
+  edit: deny
   bash: allow
   task:
     "*": allow

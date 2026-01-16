@@ -44,7 +44,7 @@ export const HubHomePage: React.FC = () => {
   // Use useRouterState() which works in nested components (useSearch requires route context)
   const routerState = useRouterState();
   const searchParams = routerState.location.search as {
-    workspace?: 'ide' | 'notes' | 'knowledge' | 'study' | 'agents';
+    workspace?: 'ide' | 'notes' | 'knowledge' | 'study';
     action?: string;
     message?: string;
   };
@@ -57,7 +57,7 @@ export const HubHomePage: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [projectPickerOpen, setProjectPickerOpen] = useState(false);
   const [projectCreationWizardOpen, setProjectCreationWizardOpen] = useState(false);
-  const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes' | 'knowledge' | 'study' | 'agents'>('ide');
+  const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes' | 'knowledge' | 'study'>('ide');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
 
@@ -96,31 +96,55 @@ export const HubHomePage: React.FC = () => {
   }, [workspace, action, message]);
 
   // -- Project Picker Handler --
-  const openProjectPicker = (targetWorkspace: 'ide' | 'notes' | 'knowledge' | 'study' | 'agents') => {
+  const openProjectPicker = (targetWorkspace: 'ide' | 'notes' | 'knowledge' | 'study') => {
     setProjectPickerWorkspace(targetWorkspace);
     setProjectPickerOpen(true);
   };
 
   // -- Workspace Navigation with Project Picker --
-  const navigateToWorkspace = async (workspace: 'notes' | 'knowledge' | 'study' | 'agents') => {
+  const navigateToWorkspace = async (workspace: 'ide' | 'notes' | 'knowledge' | 'study') => {
     if (!projects || projects.length === 0) {
       toast.info(`No projects yet`, {
-        description: `Create or mount a project first to access the ${workspace} workspace.`,
+        description: `Create or mount a project first to access to ${workspace} workspace.`,
         duration: 5000,
       });
       return;
     }
 
-    if (projects.length === 1) {
+    // Filter projects by workspace - show ALL projects for the requested workspace
+    const workspaceProjects = (projects || []).filter(p => {
+      // Check workspace bindings to determine which projects belong to each workspace
+      const isIdeWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'ide');
+      const isNotesWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'notes');
+      const isKnowledgeWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'knowledge');
+      const isStudyWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'study');
+
+      // Return true if project belongs to requested workspace
+      switch (workspace) {
+        case 'ide': return isIdeWorkspace;
+        case 'notes': return isNotesWorkspace;
+        case 'knowledge': return isKnowledgeWorkspace;
+        case 'study': return isStudyWorkspace;
+        default: return true;
+      }
+    });
+
+    if (workspaceProjects.length === 1) {
       // Only one project - navigate directly
       await navigate({
         to: `/${workspace}/$projectId`,
-        params: { projectId: projects[0].id }
+        params: { projectId: workspaceProjects[0].id }
       });
     } else {
       // Multiple projects - show picker
       openProjectPicker(workspace);
     }
+  };
+
+  // Helper function to check if workspace is enabled in bindings
+  function isWorkspaceEnabled(bindings: WorkspaceBindings | undefined, workspaceType: 'ide' | 'notes' | 'knowledge' | 'study'): boolean {
+    if (!bindings) return false;
+    return bindings[workspaceType] === true;
   };
 
   // -- Handlers --
@@ -310,7 +334,11 @@ export const HubHomePage: React.FC = () => {
       title: t('hub.menu.agents', 'NEURAL_AGENTS'),
       icon: <Cpu className="h-6 w-6" />,
       topic: 'Agents',
-      onClick: () => navigateToWorkspace('agents'),
+      onClick: () => {
+        toast.info("Agents Workspace Coming Soon", {
+          description: "The AI Agents workspace will be available in a future update.",
+        });
+      },
     },
     {
       id: 'knowledge',
