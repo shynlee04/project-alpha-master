@@ -106,7 +106,7 @@ pnpm tsc --noEmit  # ✅ No errors
 
 **ADR-034**: Infection Remediation
 - Status: **APPROVED BUT NOT EXECUTED**
-- Created: 2026-01-17
+- Created: 2026-01-11
 - Infections: 31 (10 FSA + 12 State + 9 Routing - actually 6 Platform)
 - Phases: 0/5 executed (0%)
 

@@ -27,9 +27,9 @@
 
 | Artifact | Path | Last Updated | TTL | Status |
 |----------|------|--------------|-----|--------|
-| **ADR-034** | `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md` | 2026-01-17 | Permanent | ✅ FRESH |
-| **Sprint Status** | `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml` | 2026-01-18 | 24h | ✅ FRESH |
-| **LOOP_STATE** | `_bmad-ext/state/LOOP_STATE.yaml` | 2026-01-17 | 24h | ✅ FRESH |
+| **ADR-034** | `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-11.md` | 2026-01-11 | Permanent | ✅ FRESH |
+| **Sprint Status** | `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml` | 2026-01-12 | 24h | ✅ FRESH |
+| **LOOP_STATE** | `_bmad-ext/state/LOOP_STATE.yaml` | 2026-01-11 | 24h | ✅ FRESH |
 | **Workflow Status** | `bmm-workflow-status.yaml` | 2026-01-14 | 24h | ⚠️ STALE (>48h) |
 | **ADR-033** | `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md` | 2026-01-16 | Permanent | ✅ FRESH |
 
@@ -310,7 +310,7 @@ pnpm build
 |-------|--------|
 | **Validator** | EXCALIBUR (BMAD Master Orchestrator) |
 | **Validation Timestamp** | 2026-01-19T16:00:00+07:00 |
-| **Session ID** | ADR-034-REMEDIATION-2026-01-17 |
+| **Session ID** | ADR-034-REMEDIATION-2026-01-11 |
 | **Platform** | Claude Code |
 | **Governance Framework** | BMAD v2.0 |
 | **Gatekeeping Standard** | Strict (ZERO TOLERANCE) |

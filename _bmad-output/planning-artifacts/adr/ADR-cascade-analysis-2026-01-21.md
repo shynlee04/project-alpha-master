@@ -12,7 +12,7 @@
 | ADR | Date | Purpose | Status | Coverage |
 |-----|------|---------|--------|----------|
 | **ADR-033** | 2026-01-16 | Architectural decisions (high-level) | APPROVED | ~70% |
-| **ADR-034** | 2026-01-17 | Fix 31 infection points blocking user workflows | APPROVED | ~85% |
+| **ADR-034** | 2026-01-11 | Fix 31 infection points blocking user workflows | APPROVED | ~85% |
 | **ADR-035** | 2026-01-14 | Standardize architecture, fix 3 P0 bugs despite 90%+ completion | APPROVED | ~95% |
 
 **The Pattern**: Each ADR discovers critical issues the previous one missed, creating a cascade of remediation efforts.

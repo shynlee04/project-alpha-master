@@ -113,9 +113,9 @@ Validate execution status of ADR-034 (Infection Remediation) and ADR-035 (Archit
 
 ### ADR-034: Infection Remediation
 
-**File**: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md`
+**File**: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-11.md`
 **Status**: APPROVED BUT NOT EXECUTED
-**Date Created**: 2026-01-17
+**Date Created**: 2026-01-11
 **Infection Count**: 31 (10 FSA + 12 State + 9 Route - actually listed as 6 Platform)
 
 #### Phase Execution Status

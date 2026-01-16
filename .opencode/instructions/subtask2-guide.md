@@ -303,5 +303,5 @@ When using subtask2 with BMAD agents:
 
 ---
 
-**Created:** 2026-01-17
+**Created:** 2026-01-11
 **For:** OpenCode subtask2 plugin integration with BMAD framework

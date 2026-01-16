@@ -245,7 +245,7 @@ export const useConversationStore = create<CombinedConversationState>((set, _get
 
 **Investigation Findings**: Already verified in initial scan - migrated to Dexie storage
 
-**Status**: ✅ RESOLVED (Fixed 2026-01-19)
+**Status**: ✅ RESOLVED (Fixed 2026-01-13)
 
 ---
 
@@ -310,7 +310,7 @@ export const useConversationStore = create<CombinedConversationState>((set, _get
 | STATE-006 | `useConversationStore.ts` | Subscription leak | ✅ Resolved | CR-005 FIX applied |
 | STATE-007 | `unified-chat-store.ts` | Global storage key | ✅ Resolved | Uses Dexie table |
 | STATE-008 | `rag-store.ts` | Global indexMetadata | ✅ Resolved | Uses Dexie with scoping |
-| STATE-009 | `terminal-store.ts` | Uses localStorage | ✅ Resolved | Fixed 2026-01-19 |
+| STATE-009 | `terminal-store.ts` | Uses localStorage | ✅ Resolved | Fixed 2026-01-13 |
 | STATE-010 | `hydration-manager.ts` | Empty hydrate | ✅ Resolved | Fixed 2026-01-14 |
 | STATE-011 | `project-crud-slice.ts` | persistHandle(null) | ✅ Resolved | Handle persisted separately |
 | STATE-012 | Multiple stores | No cleanup | ❓ Pending | Needs verification |

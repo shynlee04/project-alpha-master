@@ -1,5 +1,5 @@
 ---
-artifact_id: "handoff-arc-b08-2026-01-18"
+artifact_id: "handoff-arc-b08-2026-01-12"
 artifact_type: "handoff"
 parent_id: "master-orchestrator-epic-cc-arc"
 story_id: "ARC-B08"
@@ -7,7 +7,7 @@ source_agent: "master-orchestrator"
 target_agent: "dev-ext"
 created_at: "2026-01-18T11:30:00+07:00"
 status: "PENDING"
-sprint_id: "epic-cc-arc-week3-2026-01-18"
+sprint_id: "epic-cc-arc-week3-2026-01-12"
 workflow: "story-cycle"
 version: "2.0.0"
 ---
@@ -148,7 +148,7 @@ On failure → Report to master-orchestrator with:
 ## TRACEABILITY
 
 - **ADR**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
-- **Sprint Status**: `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml`
+- **Sprint Status**: `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml`
 - **Workflow Status**: `bmm-workflow-status.yaml`
 - **LOOP_STATE**: `_bmad-ext/state/LOOP_STATE.yaml`
 

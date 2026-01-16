@@ -7,7 +7,7 @@
 - Original: `_bmad-output/planning-artifacts/epics.md`
 - Audit: `_bmad-output/planning-artifacts/team-b-phase-1/phase-1-audit-report.md`
 - ADR-033: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
-- ADR-034: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md`
+- ADR-034: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-11.md`
 
 ---
 

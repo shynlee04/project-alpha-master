@@ -129,9 +129,9 @@ private async trySilentRestore(
 
 **ADR-034 Claim**: `ProjectContext.tsx` No handle in context interface
 
-**Investigation Findings**: Already verified in initial scan - handle added to context on 2026-01-19
+**Investigation Findings**: Already verified in initial scan - handle added to context on 2026-01-13
 
-**Status**: ✅ RESOLVED (Fixed 2026-01-19)
+**Status**: ✅ RESOLVED (Fixed 2026-01-13)
 
 ---
 
@@ -208,7 +208,7 @@ console.log('[IDERoute] Project ID set in IDE store & workspace store:', _projec
 | FSA-004 | `handle-persistence.ts` | Prompts user | ✅ Resolved | Correct fallback |
 | FSA-005 | `permission-lifecycle.ts` | Returns null | ✅ Resolved | Was never broken |
 | FSA-006 | `storage-gateway-factory.ts` | Handle not available | ✅ Resolved | Was never broken |
-| FSA-007 | `ProjectContext.tsx` | No handle in context | ✅ Resolved | Fixed 2026-01-19 |
+| FSA-007 | `ProjectContext.tsx` | No handle in context | ✅ Resolved | Fixed 2026-01-13 |
 | FSA-008 | `ide.$projectId.tsx` | Claims restore | ✅ Resolved | Was never broken |
 | FSA-009 | Multiple files | 3 handle managers | ✅ Resolved | Only 2 exist |
 | FSA-010 | `project-types.ts` | Duplicate state | ✅ Resolved | Fixed in PS-04 |

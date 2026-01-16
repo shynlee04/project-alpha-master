@@ -227,7 +227,7 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
 | `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md` | **Master ADR for architecture** | Before any refactoring |
-| `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml` | Current sprint status | Check story assignments |
+| `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml` | Current sprint status | Check story assignments |
 
 ---
 
@@ -235,7 +235,7 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 
 > **Source**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
 > **Status**: APPROVED - All decisions final
-> **Updated**: 2026-01-17
+> **Updated**: 2026-01-11
 
 ### Platform & Storage Decisions
 
@@ -557,7 +557,7 @@ EXCEPTIONAL DAYS:
 | **Active Epic** | EPIC-CC-ARC (Architectural Remediation) |
 | **Team A Story** | ARC-A01: Create getPlatformContract() |
 | **Team B Story** | ARC-B01: Create StorageGateway (blocked by A01) |
-| **Sprint File** | `epic-cc-arc-sprint-2026-01-17.yaml` |
+| **Sprint File** | `epic-cc-arc-sprint-2026-01-11.yaml` |
 | **ADR** | ADR-033 (APPROVED) |
 | **TypeScript Errors** | 0 ✅ |
 | **Completed Stories** | ARC-A03, ARC-B04 |

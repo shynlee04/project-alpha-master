@@ -586,7 +586,7 @@ If error is HMR-related:
 
 ### Step 2.1: Check ADR-034 Status (1 hour)
 
-**File**: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md`
+**File**: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-11.md`
 
 **Check Items**:
 1. Read ADR-034 infection registry

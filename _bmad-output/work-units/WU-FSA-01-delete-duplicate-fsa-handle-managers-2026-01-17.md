@@ -40,7 +40,7 @@ Updated `src/lib/workspace/fsa-persistence.ts`:
 
 ### 2. Archived Duplicate Files
 
-- `src/lib/filesystem/fsa-handle-manager.ts` → `_bmad-ext/.archive/fsa-handle-manager-2026-01-17.ts`
+- `src/lib/filesystem/fsa-handle-manager.ts` → `_bmad-ext/.archive/fsa-handle-manager-2026-01-11.ts`
 - `src/lib/filesystem/__tests__/fsa-handle-manager.test.ts` → `_bmad-ext/.archive/fsa-handle-manager.test.ts`
 
 ### 3. Updated State

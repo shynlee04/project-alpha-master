@@ -324,5 +324,5 @@ await service.toggleNoteFavorite(noteId);
 ---
 # Governance References
 - ADR-033: _bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md
-- Sprint Status: _bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml
+- Sprint Status: _bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml
 - LOOP_STATE: _bmad-output/state/LOOP_STATE.yaml

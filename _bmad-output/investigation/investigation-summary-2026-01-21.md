@@ -71,7 +71,7 @@ Investigation of critical user journey failure reveals **mixed findings**:
 | FSA-004 | Prompts user | ❓ Pending | |
 | FSA-005 | Returns null | ✅ Resolved | Was never broken |
 | FSA-006 | Handle not available | ✅ Resolved | Was never broken |
-| FSA-007 | No handle in context | ✅ Resolved | Fixed 2026-01-19 |
+| FSA-007 | No handle in context | ✅ Resolved | Fixed 2026-01-13 |
 | FSA-008 | Claims restore | ❓ Pending | |
 | FSA-009 | 3 handle managers | ❓ Pending | |
 | FSA-010 | Duplicate state | ❓ Pending | |
@@ -168,7 +168,7 @@ return chromeVersion >= 129;
 **FSA-005, FSA-006, FSA-007** were never actually broken:
 - FSA-005: `deserializeHandle()` works correctly (returns handle in Chrome 129+)
 - FSA-006: Factory correctly requires handle (clear error if missing)
-- FSA-007: Handle added to context on 2026-01-19
+- FSA-007: Handle added to context on 2026-01-13
 
 **Impact**: ADR-034 infection count should be reduced from 10 to 7.
 

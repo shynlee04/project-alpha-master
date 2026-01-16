@@ -17,7 +17,7 @@ This document is a **working copy** for Team B Phase 1 updates. The following AD
 | **ADR-035** | Architecture Standardization v2 | APPROVED | Entity model, storage boundaries, P0 bugs (3), Chrome 129+ detection |
 
 **Reference:** `ADR-033-correct-course-architectural-remediation-2026-01-16.md`  
-**Reference:** `ADR-034-workspace-access-infection-remediation-2026-01-17.md`  
+**Reference:** `ADR-034-workspace-access-infection-remediation-2026-01-11.md`  
 **Reference:** `ADR-035-correct-course-v2-architecture-standardization-2026-01-14.md`
 
 **Related Documents:**

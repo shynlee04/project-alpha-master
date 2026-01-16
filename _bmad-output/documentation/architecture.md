@@ -855,7 +855,7 @@ See [Master Risk Register](../quality/reports/MASTER-RISK-REGISTER.md) for detai
 ## References
 
 ### Architecture Decision Records
-- [ADR-033: PlatformContract & StorageGateway](../planning-artifacts/architecture/ADR-033-platform-contract-2026-01-17.md)
+- [ADR-033: PlatformContract & StorageGateway](../planning-artifacts/architecture/ADR-033-platform-contract-2026-01-11.md)
 - [ADR-024: State Management Consolidation](../project-planning-artifacts/adr-state-consolidation-2026-01-04.md)
 
 ### Project Governance

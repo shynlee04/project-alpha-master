@@ -1,6 +1,6 @@
 # FSA-006 + FSA-007 Usage Example
 
-**Date:** 2026-01-19
+**Date:** 2026-01-13
 **Stories:** FSA-006, FSA-007
 **Status:** REMEDIATED
 

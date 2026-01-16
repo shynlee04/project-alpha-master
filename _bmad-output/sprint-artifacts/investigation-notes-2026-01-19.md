@@ -1,6 +1,6 @@
 # GOVERNANCE AUDIT INVESTIGATION NOTES
 
-**Audit ID**: AUDIT-2026-01-19-001
+**Audit ID**: AUDIT-2026-01-13-001
 **Conducted by**: BMAD Master Orchestrator
 **Date**: 2026-01-19T14:30:00+07:00
 **Trigger**: User complaint that teams are "messing up each other's work"
@@ -178,10 +178,10 @@ Three parallel deep-scan agents were deployed:
 
 | Artifact | Path |
 |----------|------|
-| Team A Handoff | `_bmad-output/sprint-artifacts/team-a-handoff-2026-01-19.md` |
-| Team B Handoff | `_bmad-output/sprint-artifacts/team-b-handoff-2026-01-19.md` |
-| Governance Violation Plan | `_bmad-output/sprint-artifacts/governance-violation-remediation-2026-01-19.yaml` |
-| Investigation Notes | `_bmad-output/sprint-artifacts/investigation-notes-2026-01-19.md` (this file) |
+| Team A Handoff | `_bmad-output/sprint-artifacts/team-a-handoff-2026-01-13.md` |
+| Team B Handoff | `_bmad-output/sprint-artifacts/team-b-handoff-2026-01-13.md` |
+| Governance Violation Plan | `_bmad-output/sprint-artifacts/governance-violation-remediation-2026-01-13.yaml` |
+| Investigation Notes | `_bmad-output/sprint-artifacts/investigation-notes-2026-01-13.md` (this file) |
 
 ---
 

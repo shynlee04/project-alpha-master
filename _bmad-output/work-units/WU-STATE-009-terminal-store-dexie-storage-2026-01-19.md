@@ -1,7 +1,7 @@
 # Work Unit: STATE-009 - Terminal Store Dexie Migration
 
 **ID**: WU-STATE-009
-**Date**: 2026-01-19
+**Date**: 2026-01-13
 **Team**: Team B (Storage & State Squad)
 **Status**: COMPLETED
 
@@ -78,7 +78,7 @@ idbFiles!: IDBFilesTable;
 // ARC-B03: IDBGateway File Storage (Mobile/Tablet)
 idbFiles!: IDBFilesTable;
 
-// STATE-009 FIX: Terminal State Persistence (2026-01-19)
+// STATE-009 FIX: Terminal State Persistence (2026-01-13)
 terminalState!: PersistedStateTable;
 ```
 

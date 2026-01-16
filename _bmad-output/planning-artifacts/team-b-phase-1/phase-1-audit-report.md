@@ -332,7 +332,7 @@ This audit analyzes three core governance documents against the source of truth 
 | check-list-for-fundamental-truth.md | Source of truth for requirements | 47 lines - Core checklist |
 | deep-architectural-analysis-2026-01-15.md | Deep analysis with 31 infection points | 1429 lines - Critical reference |
 | ADR-033-correct-course-architectural-remediation-2026-01-16.md | Canonical architecture decisions | 441 lines - AUTHORITATIVE |
-| ADR-034-workspace-access-infection-remediation-2026-01-17.md | 31 infection points, remediation phases | 395 lines - AUTHORITATIVE |
+| ADR-034-workspace-access-infection-remediation-2026-01-11.md | 31 infection points, remediation phases | 395 lines - AUTHORITATIVE |
 | ADR-035-correct-course-v2-architecture-standardization-2026-01-14.md | Standardized architecture, 3 P0 bugs | 397 lines - AUTHORITATIVE |
 | phase-1-master-plan.md | Team B Phase 1 execution plan | 435 lines - Reference |
 

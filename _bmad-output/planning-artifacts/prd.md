@@ -1068,7 +1068,7 @@ function checkChromeVersion(): {
 | **Phase 4** | 7 | State scoping by workspace |
 | **Phase 5** | 5 | Platform guards |
 
-> **Full Details:** See `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-17.md`
+> **Full Details:** See `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-11.md`
 
 ---
 
