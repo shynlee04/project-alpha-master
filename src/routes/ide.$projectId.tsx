@@ -21,12 +21,11 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
-import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store';
+ import { createWorkspaceStore } from '@/infrastructure/persistence/stores/workspace-store-factory';
 import { ErrorBoundary } from '@/presentation/components/error';
-import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
+import { requireIDEAccess } from '@/infrastructure/filesystem/route-guards';
 
 // Lazy load IDELayout
 const IDELayout = lazy(() =>
@@ -44,15 +43,7 @@ export const Route = createFileRoute('/ide/$projectId')({
     console.log('[IDERoute] beforeLoad called for project:', projectId);
 
     // Check: Mobile users cannot access IDE (audit violation - ABSOLUTE)
-    const platform = getPlatformContract();
-    if (!platform.canAccessIDE) {
-      console.warn('[IDERoute] Mobile/tablet access denied to IDE, redirecting to Notes');
-      throw redirect({
-        to: '/notes/$projectId',
-        params: { projectId },
-        search: { reason: 'mobile-not-supported' }
-      });
-    }
+    await requireIDEAccess(projectId);
 
     console.log('[IDERoute] Route guard passed (platform validated):', { projectId });
   },
@@ -94,9 +85,10 @@ function IDEWorkspace() {
   // Store project ID in stores on mount
   useEffect(() => {
     if (_projectId) {
-      useIDEStore.getState().setProjectId(_projectId);
-      useWorkspaceStore.getState().setCurrentProject(_projectId);
-      console.log('[IDERoute] Project ID set in IDE store & workspace store:', _projectId);
+      // Use workspace-scoped store instead of global singleton
+      const workspaceStore = createWorkspaceStore('ide', _projectId);
+      workspaceStore.getState().setCurrentProject(_projectId);
+      console.log('[IDERoute] Project ID set in workspace-scoped store:', _projectId);
     }
   }, [_projectId]);
 

@@ -298,7 +298,7 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
       };
 
       // Create project
-      const projectId = createProject(projectInput);
+      const projectId = await createProject(projectInput);
 
       // Close wizard
       onOpenChange(false);

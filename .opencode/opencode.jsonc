@@ -16,19 +16,21 @@
       "prompt": "{file:agent/bmad-master.md}",
       "maxSteps": 2000,
       "tools": {
-        "write": false,
+        "write": true,
+        "mcp": false,
         "edit": false,
-        "bash": true,
-        "glob": true,
-        "grep": true,
-        "read": true,
+        "bash": false,
         "task": true
       },
       "permission": {
-        "edit": "ask",
-        "bash": "allow",
+        "edit": "deny",
+        "bash": "deny",
         "task": {
-          "*": "allow"
+          "*": "allow",
+          "agent": "allow",
+          "subagent": "allow",
+          "skill": "allow",
+          "command": "ask"
         }
       }
     },
@@ -115,6 +117,10 @@
         "task": {
           "*": "allow",
           "tea-ext": "allow",
+          "agent": "allow",
+          "subagent": "allow",
+          "skill": "allow",
+          "command": "allow",
           "analyst-ext": "allow",
           "architect-ext": "allow",
           "explore": "allow"
@@ -271,7 +277,12 @@
         "edit": "allow",
         "bash": "allow",
         "task": {
-          "*": "allow"
+          "*": "allow",
+          "agent": "allow",
+          "subagent": "allow",
+          "skill": "allow",
+          "command": "allow",
+          "mcp": "allow"
         }
       }
     },
@@ -316,7 +327,7 @@
         "edit": "ask",
         "bash": "ask",
         "task": {
-          "*": "deny"
+          "*": "allow"
         }
       }
     },

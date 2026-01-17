@@ -1,6 +1,7 @@
 /**
   * @fileoverview Project Workspace Route (Legacy)
   * @module routes/workspace/$projectId
+  * @deprecated Use /ide/$projectId instead
   * @governance Story WB-6: Cross-Workspace Navigation
   * @updated 2026-01-06 - Fixed to use loader pattern and setProjectId
   *
@@ -23,8 +24,8 @@ import { ProjectProvider } from '@/lib/workspace/ProjectContext'
 import { getProject } from '@/infrastructure/persistence/stores/project'
 import { useProjectStore } from '@/infrastructure/persistence/stores/project'
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types'
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide'
-import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract'
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store'
+import { requireIDEAccess } from '@/infrastructure/filesystem/route-guards'
 
 // Lazy load IDELayout to reduce initial bundle size
 const IDELayout = lazy(() => import('@/presentation/components/layout/IDELayoutMain').then(m => ({ default: m.IDELayout })))
@@ -81,15 +82,8 @@ export const Route = createFileRoute('/workspace/$projectId')({
     // ROUTE-005 FIX: Add platform guard before project fetch
     beforeLoad: async ({ params }) => {
         // Platform validation - Mobile users cannot access IDE (redirect to Notes)
-        const platform = getPlatformContract();
-        if (!platform.canAccessIDE) {
-            console.warn('[WorkspaceRoute] Mobile/tablet access denied to IDE, redirecting to Notes');
-            throw redirect({
-                to: '/notes/$projectId',
-                params: { projectId: params.projectId },
-                search: { reason: 'mobile-not-supported' }
-            });
-        }
+        // FIX-ARC-01: Use unified route guard
+        await requireIDEAccess(params.projectId);
 
         // Project fetch with retry
         const project = await getProjectWithRetry(params.projectId);
@@ -104,9 +98,9 @@ export const Route = createFileRoute('/workspace/$projectId')({
         return { project };
     },
 
-    // Loader returns empty - project already fetched in beforeLoad
-    loader: () => {
-        return {};
+    // Loader passes project from context to component
+    loader: ({ context }) => {
+        return { project: context.project };
     },
 
     component: ProjectWorkspace,
@@ -120,9 +114,10 @@ function ProjectWorkspace() {
     // This ensures the store has the correct projectId for persistence
     // Using getState() to avoid infinite loop (selector returns new fn reference each render)
     useEffect(() => {
+        console.warn('[DEPRECATED] /workspace route is deprecated. Use /ide, /notes, etc.');
         if (_projectId) {
-            useIDEStore.getState().setProjectId(_projectId);
-            console.log('[WorkspaceRoute] Project ID set in store:', _projectId);
+            useWorkspaceStore.getState().setCurrentProject(_projectId);
+            console.log('[WorkspaceRoute] Project ID set in workspace store:', _projectId);
         }
     }, [_projectId]);
 
@@ -141,4 +136,3 @@ function ProjectWorkspace() {
         </ProjectProvider>
     )
 }
-

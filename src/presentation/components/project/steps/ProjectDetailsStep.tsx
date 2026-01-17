@@ -16,8 +16,7 @@ import { FolderOpen, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import type { WizardFormData } from '../wizard-types';
-import { useDeviceType } from '@/hooks/useMediaQuery';
-import { isFSASupported } from '@/infrastructure/filesystem/platform-detection';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 
 // ============================================================================
 // Types
@@ -86,30 +85,27 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
   error,
 }) => {
   const { t } = useTranslation();
-  const { isMobile, isTablet } = useDeviceType();
+  const platform = getPlatformContract();
   const [isPickingFolder, setIsPickingFolder] = useState(false);
 
   // P1 FIX: Auto-set default storage type based on platform
   useEffect(() => {
     // Only auto-set if not already set (first render)
     if (!formData.storageType) {
-      const optimalStorage = isMobile || isTablet ? 'indexeddb' : 'fsa';
+      const optimalStorage = platform.canAccessFSA ? 'fsa' : 'indexeddb';
       updateFormData('storageType', optimalStorage as WizardFormData['storageType']);
     }
   }, []); // Run once on mount
 
   // P1 FIX: Filter storage types based on platform
   const availableStorageTypes = React.useMemo(() => {
-    // Mobile/tablet users cannot use FSA
-    if (isMobile || isTablet) {
+    // If platform cannot access FSA, only show IndexedDB
+    if (!platform.canAccessFSA) {
       return STORAGE_TYPES.filter(t => t.value === 'indexeddb');
     }
-    // Desktop users can see both, but FSA requires browser support
-    if (!isFSASupported()) {
-      return STORAGE_TYPES.filter(t => t.value === 'indexeddb');
-    }
+    // Otherwise show all
     return STORAGE_TYPES;
-  }, [isMobile, isTablet]);
+  }, [platform.canAccessFSA]);
 
   /**
    * Handle folder picker for FSA storage type
@@ -117,17 +113,9 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
    */
   const handlePickFolder = useCallback(async () => {
     // P1 FIX: Check FSA support first
-    if (!isFSASupported()) {
+    if (!platform.canAccessFSA) {
       toast.error('Folder selection not supported', {
-        description: 'Please use a desktop browser (Chrome, Edge, Opera) with File System Access API support.',
-      });
-      return;
-    }
-
-    // P1 FIX: Mobile users cannot use FSA
-    if (isMobile || isTablet) {
-      toast.error('Folder selection not available on mobile', {
-        description: 'Please use Browser Storage on mobile devices.',
+        description: 'Your platform does not support direct file system access.',
       });
       return;
     }
@@ -295,7 +283,7 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
                 onClick={() =>
                   updateFormData('storageType', type.value)
                 }
-                disabled={isMobile || isTablet}
+                disabled={type.value === 'fsa' && !platform.canAccessFSA}
                 className={cn(
                   "p-4 min-h-[60px] border-2 rounded-[4px]",
                   "text-left transition-all duration-150",
@@ -305,10 +293,10 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
                   isSelected
                     ? "border-primary bg-primary/10"
                     : "border-border bg-background",
-                  (isMobile || isTablet) && type.value === 'fsa' && "opacity-50 cursor-not-allowed"
+                  (type.value === 'fsa' && !platform.canAccessFSA) && "opacity-50 cursor-not-allowed"
                 )}
                 aria-pressed={formData.storageType === type.value}
-                aria-disabled={isMobile || isTablet}
+                aria-disabled={type.value === 'fsa' && !platform.canAccessFSA}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

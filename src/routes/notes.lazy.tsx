@@ -21,7 +21,7 @@ import { getPlatformContract } from '@/infrastructure/filesystem/platform-contra
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { useBrowserModeProject } from '@/infrastructure/persistence/stores/project/use-fsa-projects';
 import { useNoteStore } from '@/lib/notes/note-store';
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide/useIDEStore';
+ import { createWorkspaceStore } from '@/infrastructure/persistence/stores/workspace-store-factory';
 import { ErrorBoundary } from '@/presentation/components/error';
 
 /**
@@ -153,10 +153,12 @@ function NotesWorkspaceDefault() {
     };
   }, [project]);
 
-  // Set projectId in IDE store when component mounts
+  // Set projectId in workspace store when component mounts
   useEffect(() => {
     if (project?.id) {
-      useIDEStore.getState().setProjectId(project.id);
+      // Use workspace-scoped store instead of global singleton
+      const workspaceStore = createWorkspaceStore('notes', project.id);
+      workspaceStore.getState().setCurrentProject(project.id);
     }
   }, [project?.id]);
 

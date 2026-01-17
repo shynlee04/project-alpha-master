@@ -121,7 +121,7 @@ export interface ProjectState {
  * PS-04: Changed restoreProjectHandle to return HandleRestoreResult
  */
 export interface ProjectMethods {
-  createProject: (input: CreateProjectInput) => string;
+  createProject: (input: CreateProjectInput) => Promise<string>;
   updateProject: (projectId: string, updates: UpdateProjectInput) => void;
   deleteProject: (projectId: string) => void;
   setActiveProject: (projectId: string | null) => void;

@@ -1,0 +1,243 @@
+---
+step: 2
+story: EP01-ST-02
+status: completed
+validation_date: 2026-01-17T08:35+07:00
+
+evidence:
+
+  dependencies:
+    chrome_122_support:
+      status: "⚠️ PARTIAL"
+      version: "122+"
+      evidence: |
+        - Feature detection exists: src/lib/filesystem/permission-lifecycle.ts:262-268
+        - BUT NOT actively used (Step 1 context, line 158-162 confirms)
+        - isPersistentPermissionSupported() checks navigator.permissions.query but doesn't implement navigator.permissions.request()
+      severity: "HIGH - Implementation gap, not technical blocker"
+
+    code_readiness:
+      status: "✅ PASSED"
+      routes_identified: 4
+      evidence:
+        - "ide.$projectId.tsx (modified Jan 17 07:52)"
+        - "knowledge.$projectId.lazy.tsx (modified Jan 17 06:48)"
+        - "study.$projectId.lazy.tsx (modified Jan 17 06:47)"
+        - "notes.$projectId.lazy.tsx (modified Jan 17 06:13)"
+      permission_handlers:
+        - "src/lib/filesystem/permission-lifecycle.ts (297 lines) - LEGACY location"
+        - "src/infrastructure/filesystem/handle-persistence.ts (574 lines)"
+        - "src/infrastructure/sync/adapters/fsa-permission-manager.ts (113 lines)"
+      dexie_schema_ready: "YES"
+      dexie_evidence:
+        - "FSAHandleRecord includes permissionStatus field (src/infrastructure/persistence/dexie-db-session-types.ts:119-125)"
+        - "handle-persistence.ts has permission update methods"
+        - "project-permissions-slice.ts uses FSAHandleRecord as single source of truth"
+
+    sprint_capacity:
+      status: "✅ PASSED"
+      estimated_hours: 4
+      fits_sprint: true
+      evidence: |
+        - Sprint status shows 4/14 stories completed (EPIC-FS), 10 remaining
+        - No blocking stories with higher priority than EP01-ST-02
+        - Story dependencies are satisfied
+      notes: "Story is not in sprint-status.yaml - appears to be new work item"
+
+  context_freshness:
+    status: "✅ PASSED"
+    step1_timestamp: 2026-01-17T08:26+07:00 (file modification)
+    step1a_timestamp: 2026-01-17T08:31+07:00 (file modification)
+    ttl_valid: true
+    age_minutes: 9-10 minutes (< 1 hour threshold)
+    evidence: "File modification times verified via ls -la command"
+    note: "Internal timestamps in files (completed_at: 00:00:00) don't match file system timestamps - likely data entry error"
+
+  acceptance_criteria:
+    AC1_chrome_api_imported:
+      status: "⚠️ PARTIAL"
+      description: "Chrome 122+ Permissions API imported and configured"
+      evidence: |
+        - Feature detection exists: src/lib/filesystem/permission-lifecycle.ts:262-268
+        - isPersistentPermissionSupported() returns true for Chrome 122+
+        - BUT navigator.permissions.request() is NOT actively used
+        - Implementation gap identified in Step 1 context, line 158-162
+      severity: "HIGH - Feature detected but not implemented"
+
+    AC2_persistent_file_access:
+      status: "❌ FAILED"
+      description: "Persistent file access requested using navigator.permissions.request()"
+      evidence: |
+        - navigator.permissions.request() NOT actively used in codebase
+        - src/lib/workspace/fsa-persistence.ts:89 calls showDirectoryPicker with id: undefined
+        - No persistent ID triggers 3-way prompt (Step 1a journey, line 89-93 confirms)
+      severity: "CRITICAL - This is the core issue story aims to fix"
+
+    AC3_allow_on_every_visit:
+      status: "❌ FAILED"
+      description: "Allow on every visit prompt displayed to user"
+      evidence: |
+        - Desktop routes do NOT trigger Chrome 122+ persistent permission prompts
+        - Step 1a journey shows first visit has no 3-way prompt (line 15-34)
+        - Current behavior: Regular folder picker (not 3-way prompt)
+      severity: "CRITICAL - User experience failure"
+
+    AC4_permission_state_persisted:
+      status: "✅ PASSED"
+      description: "Permission state persisted in IndexedDB (via Dexie)"
+      evidence: |
+        - Dexie DB schema supports FSAHandleRecord.permissionStatus field
+        - src/infrastructure/filesystem/handle-persistence.ts has updatePermissionStatus() method
+        - src/infrastructure/persistence/stores/project/project-permissions-slice.ts uses FSAHandleRecord as single source of truth
+      notes: "Permission persistence infrastructure exists, but not actively used for Chrome 122+ flow"
+
+    AC5_permission_checked_on_load:
+      status: "❌ FAILED"
+      description: "Permission checked on page load, re-request if needed"
+      evidence: |
+        - Route guard (src/infrastructure/filesystem/route-guards.ts) only checks platform, not permission
+        - Loader (src/routes/ide.$projectId.tsx:52-72) queries Dexie but doesn't restore FSA handle
+        - No silent restoration logic in current implementation
+      severity: "CRITICAL - Core functionality missing"
+
+    AC6_routes_updated:
+      status: "❌ FAILED"
+      description: "All desktop workspace routes updated to use permission persistence"
+      evidence: |
+        - ide.$projectId.tsx:46 - Calls requireIDEAccess() but no permission check
+        - knowledge.$projectId.lazy.tsx:56 - Delegates to provider (no permission trigger)
+        - study.$projectId.lazy.tsx:56 - Delegates to provider (no permission trigger)
+        - notes.$projectId.lazy.tsx:159 - Delegates to provider (no permission trigger)
+      severity: "CRITICAL - None of the 4 routes implement permission persistence"
+
+  architecture_compliance:
+    ADR_033:
+      status: "✅ PASSED"
+      description: "Chrome 122+ persistent permission aligns with ADR-033"
+      evidence: |
+        - ADR-033 D2 decision: "Permission Persistence: Use Chrome 122+ Allow on every visit"
+        - Research confirmed (Step 1 context, line 180-198)
+        - Handle storage in IndexedDB matches ADR-033 decision
+      notes: "ADR alignment is correct, but implementation is missing"
+
+    ADR_034:
+      status: "❌ FAILED"
+      description: "Clean architecture paths - code in legacy directory"
+      evidence: |
+        - Target location: src/infrastructure/filesystem/permission-persistence-service.ts (not src/lib/)
+        - CURRENT location: src/lib/filesystem/permission-lifecycle.ts (297 lines in LEGACY dir)
+        - Step 1 context, line 169-172 identifies this as "Potential ADR-034 Violation"
+      severity: "HIGH - Permission code in legacy directory violates clean architecture"
+      impact: "Implementation MUST be in src/infrastructure/filesystem/ to comply with ADR-034"
+
+  test_coverage_feasibility:
+    status: "⚠️ PARTIAL"
+    description: "Test coverage achievable with caveats"
+    evidence: |
+      - Existing tests for permission-lifecycle.ts (7 test files)
+      - FSA handle helpers have tests: src/infrastructure/persistence/dexie-db-helpers/__tests__/fsa-handle-helpers.test.ts
+      - Project permissions slice has tests (lines from grep results)
+      - Permission request logic IS testable (unit tests)
+      - Dexie save/load logic IS testable (integration tests)
+      - Route integration IS testable (e2e tests)
+      - Chrome 122+ browser behavior NOT testable in automated tests (requires actual Chrome 122+)
+      - 3-way prompt NOT testable without real browser environment
+    caveats:
+      - "Chrome 122+ API behavior requires manual verification in Chrome 122+ browser"
+      - "3-way prompt cannot be automated in tests - requires manual QA"
+    conclusion: "Test coverage >=80% achievable for implementation logic, but Chrome 122+ behavior requires manual verification"
+
+  blockers:
+    critical:
+      - "AC2 FAILED: navigator.permissions.request() not actively used"
+      - "AC3 FAILED: 3-way prompt not triggered (no persistent ID)"
+      - "AC5 FAILED: No permission restoration on page load"
+      - "AC6 FAILED: None of 4 desktop routes implement permission persistence"
+    high:
+      - "ADR-034 violation: permission-lifecycle.ts in src/lib/ (legacy location)"
+      - "AC1 PARTIAL: Chrome 122+ feature detected but not implemented"
+    medium:
+      - "Code duplication: 3 permission management implementations (permission-lifecycle.ts, handle-persistence.ts, fsa-permission-manager.ts)"
+      - "Test coverage gap: Chrome 122+ behavior requires manual verification"
+    low: []
+
+  implementation_gaps:
+    primary:
+      - "No navigator.permissions.request() calls in codebase"
+      - "No persistent ID passed to showDirectoryPicker() (id: undefined)"
+      - "Route guard doesn't check or restore permissions"
+      - "Loaders don't restore FSA handles"
+
+    secondary:
+      - "Permission management code scattered across 3 files (maintenance burden)"
+      - "Legacy code in src/lib/filesystem/ needs migration to infrastructure layer"
+      - "No centralized permission service (fragmented implementation)"
+
+    tertiary:
+      - "No test coverage for Chrome 122+ specific behavior (manual verification required)"
+      - "Story not tracked in sprint-status.yaml (gap in workflow visibility)"
+
+  recommendations:
+    immediate:
+      - "BLOCK STORY - 4 critical acceptance criteria failures (AC2, AC3, AC5, AC6)"
+      - "Story requires significant additional work before implementation can begin"
+      - "Need to update story acceptance criteria to match current state of code"
+
+    architecture_fixes:
+      - "Migrate src/lib/filesystem/permission-lifecycle.ts to src/infrastructure/filesystem/"
+      - "Consolidate 3 permission implementations into single service"
+      - "Create src/infrastructure/filesystem/permission-persistence-service.ts (new file per Step 1 recommendations)"
+
+    implementation_approach:
+      - "Add navigator.permissions.request() call to permission service"
+      - "Pass projectId as persistent ID to showDirectoryPicker({id: projectId})"
+      - "Add attemptSilentRestore() function to route-guards.ts"
+      - "Call attemptSilentRestore() from all 4 desktop workspace routes"
+      - "Update loaders to restore FSA handles from Dexie"
+
+    testing_strategy:
+      - "Unit tests for permission request logic (mock navigator.permissions)"
+      - "Integration tests for Dexie permission save/load"
+      - "E2E tests for permission restoration flow"
+      - "Manual QA in Chrome 122+ browser for 3-way prompt verification"
+
+    governance:
+      - "Fix ADR-034 violation (migrate code to infrastructure layer)"
+      - "Track story in sprint-status.yaml for better visibility"
+      - "Update story acceptance criteria to be more specific about implementation gaps"
+
+  overall_status: "❌ BLOCKED - Critical Implementation Gaps"
+
+  summary:
+    title: "EP01-ST-02 Validation Report"
+    verdict: "STORY BLOCKED - Cannot Proceed to Step 3 (Pre-Planning)"
+    reason: |
+      Story analysis reveals significant implementation gaps not captured in acceptance criteria:
+      - Chrome 122+ API is detected but NOT actively used
+      - No navigator.permissions.request() implementation (core missing piece)
+      - No persistent ID passed to showDirectoryPicker (prevents 3-way prompt)
+      - Route guards don't check/restore permissions
+      - All 4 desktop routes lack permission persistence integration
+      - Code violates ADR-034 (legacy directory location)
+
+    impact:
+      - "This is NOT a simple implementation story - it requires architectural refactoring"
+      - "Current acceptance criteria don't reflect the true scope of work"
+      - "Story needs significant rework before it can be successfully implemented"
+
+    next_steps:
+      - "User must decide: (a) Expand story scope to include all gaps, or (b) Create new smaller stories, or (c) Cancel this story as 'invalid requirement'"
+      - "If proceeding: Update acceptance criteria to reflect all identified gaps"
+      - "If proceeding: Update story estimation (4 hours is too low for this scope)"
+      - "If proceeding: Fix ADR-034 violation before implementation"
+
+    evidence_sources:
+      - "Step 1 context: EP01-ST-02-step1-context.yaml (240 lines)"
+      - "Step 1a journey: EP01-ST-02-step1a-journey.md (580 lines)"
+      - "Code analysis: grep results for permission files, routes, Dexie schema"
+      - "ADR-033: Chrome 122+ persistent permission decision confirmed"
+      - "File system checks: route files, infrastructure layer structure"
+
+    validation_confidence: "HIGH - Multiple evidence sources, code-level verification, clear blockers identified"
+
+---

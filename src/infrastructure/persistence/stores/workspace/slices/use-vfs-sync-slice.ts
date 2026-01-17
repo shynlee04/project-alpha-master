@@ -27,6 +27,8 @@ import type { FileChangeEvent } from '@/domain/interfaces/storage-adapter.interf
 import { storageAdapterFactory } from '@/infrastructure/filesystem/StorageAdapterFactory';
 import { crossWorkspaceEventBus } from '@/lib/events/cross-workspace-event-bus';
 import { useStatusBarStore } from '@/infrastructure/persistence/stores/statusbar-store';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { useShallow } from 'zustand/react/shallow';
 
 // ============================================================================
 // Types
@@ -376,14 +378,25 @@ export function useVFSSync(): VFSSyncStore {
  */
 export function useVFSAutoWatch(projectId: string | null) {
   const store = useVFSSync();
+  
+  // P1 FIX: Get project to check storage handle readiness
+  const project = useProjectStore(
+    useShallow((state) => (projectId ? state.projects[projectId] : null))
+  );
+
+  // FSA requires handle to be restored (metadata present implies partial readiness)
+  // IndexedDB is always ready
+  const isHandleReady = project 
+    ? project.storageType === 'indexeddb' || !!project.storageMetadata
+    : false;
 
   useEffect(() => {
-    if (projectId) {
+    if (projectId && isHandleReady) {
       store.startWatch(projectId);
     } else {
       store.stopWatch();
     }
-  }, [projectId, store.startWatch, store.stopWatch]);
+  }, [projectId, isHandleReady, store.startWatch, store.stopWatch]);
 }
 
 // ============================================================================

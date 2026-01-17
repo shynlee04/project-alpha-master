@@ -224,7 +224,7 @@ export const HubHomePage: React.FC = () => {
 
       // Use the store's createProject method to ensure Zustand state is updated
       // Note: Store already persists to Dexie at project-crud-slice.ts:108
-      const newProjectId = useProjectStore.getState().createProject(projectInput);
+      const newProjectId = await useProjectStore.getState().createProject(projectInput);
       console.log('[HubHomePage] Created project:', newProjectId);
 
       // 3. Navigate to IDE Workspace

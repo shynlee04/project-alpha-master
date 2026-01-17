@@ -138,6 +138,7 @@
     "@types/react-i18next": "^8.1.0",
     "@types/react-window": "^2.0.0",
     "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "^4.0.17",
     "axe-core": "^4.11.0",
     "fake-indexeddb": "^6.2.5",
     "i18next-scanner": "^4.6.0",

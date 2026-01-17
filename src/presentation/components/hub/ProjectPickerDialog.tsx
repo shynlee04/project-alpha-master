@@ -14,9 +14,10 @@
  * @see WorkspaceBindingDialog for reference pattern
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import { FolderOpen, Plus } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { cn } from '@/lib/utils';
@@ -155,13 +156,17 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
     return new Date(date).toLocaleDateString();
   };
 
+  // Get navigate function from TanStack Router
+  const navigate = useNavigate();
+
   // Handle project selection
   const handleProjectSelect = (project: ProjectRecord) => {
     // Update last opened timestamp
     useProjectStore.getState().updateLastOpened(project.id);
 
-    // Navigate to workspace-specific route with project
-    // Use window.location for direct navigation (bypasses TanStack Router type issues)
+    console.log('[ProjectPicker] Navigating to workspace:', targetWorkspace, 'with project:', project.id);
+
+    // Build route path using workspace-specific base
     const routeMap: Record<PickerWorkspace, string> = {
       ide: '/ide',
       notes: '/notes',
@@ -170,17 +175,26 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
       agents: '/agents',
     };
 
-    window.location.href = `${routeMap[targetWorkspace]}/${project.id}`;
+    const baseUrl = routeMap[targetWorkspace];
+    const fullPath = `${baseUrl}/${project.id}`;
+
+    console.log('[ProjectPicker] Full path:', fullPath);
+
+    // Use window.location.href for navigation (WORKING SOLUTION)
+    // TanStack Router navigate() attempts all failed - caused redirects to home
+    // This is the only working solution despite full page reload
+    window.location.href = fullPath;
+    
     onOpenChange(false);
   };
 
   // Handle create project (triggers wizard via callback)
-  const handleCreateProject = () => {
-    // Close the picker dialog
+  const handleCreateProject = useCallback(() => {
+    // Close picker dialog
     onOpenChange(false);
-    // Trigger the creation wizard callback
+    // Trigger creation wizard callback
     onCreateNew?.();
-  };
+  }, [onOpenChange, onCreateNew]);
 
   const hasProjects = projects.length > 0;
 

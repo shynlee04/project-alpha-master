@@ -14,8 +14,11 @@ permission:
   edit: allow
   bash: allow
   task:
-    "*": deny
+    "*": allow
     "tea-ext": allow
+    "architect-ext": allow
+    "ux-designer-ext": allow
+    "deep-scan-*-*": allow
 phase: "4"
 status: "active"
 category: "execution"

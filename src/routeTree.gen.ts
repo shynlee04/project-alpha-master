@@ -22,20 +22,16 @@ import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
-import { Route as SpikeIndexRouteImport } from './routes/spike/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
-import { Route as SpikeNotesRouteImport } from './routes/spike/notes'
-import { Route as SpikeIdeRouteImport } from './routes/spike/ide'
-import { Route as SpikeCreateRouteImport } from './routes/spike/create'
+import { Route as StudyProjectIdRouteImport } from './routes/study.$projectId'
 import { Route as NotesProjectIdRouteImport } from './routes/notes.$projectId'
+import { Route as KnowledgeProjectIdRouteImport } from './routes/knowledge.$projectId'
 import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as __debug_ProviderPlaygroundRouteImport } from './routes/$__debug__.provider-playground'
-import { Route as SpikeNotesProjectIdRouteImport } from './routes/spike/notes.$projectId'
-import { Route as SpikeIdeProjectIdRouteImport } from './routes/spike/ide.$projectId'
 import { Route as ApiQuizzesGenerateRouteImport } from './routes/api/quizzes/generate'
 import { Route as ApiProvidersIdRouteImport } from './routes/api/providers.$id'
 import { Route as ApiFlashcardsGenerateRouteImport } from './routes/api/flashcards/generate'
@@ -45,10 +41,6 @@ import { Route as ApiProvidersIdExecuteRouteImport } from './routes/api/provider
 const StudyLazyRouteImport = createFileRoute('/study')()
 const NotesLazyRouteImport = createFileRoute('/notes')()
 const KnowledgeLazyRouteImport = createFileRoute('/knowledge')()
-const StudyProjectIdLazyRouteImport = createFileRoute('/study/$projectId')()
-const KnowledgeProjectIdLazyRouteImport = createFileRoute(
-  '/knowledge/$projectId',
-)()
 
 const StudyLazyRoute = StudyLazyRouteImport.update({
   id: '/study',
@@ -120,25 +112,6 @@ const WorkspaceIndexRoute = WorkspaceIndexRouteImport.update({
   path: '/workspace/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SpikeIndexRoute = SpikeIndexRouteImport.update({
-  id: '/spike/',
-  path: '/spike/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudyProjectIdLazyRoute = StudyProjectIdLazyRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => StudyLazyRoute,
-} as any).lazy(() =>
-  import('./routes/study.$projectId.lazy').then((d) => d.Route),
-)
-const KnowledgeProjectIdLazyRoute = KnowledgeProjectIdLazyRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => KnowledgeLazyRoute,
-} as any).lazy(() =>
-  import('./routes/knowledge.$projectId.lazy').then((d) => d.Route),
-)
 const WorkspaceProjectIdRoute = WorkspaceProjectIdRouteImport.update({
   id: '/workspace/$projectId',
   path: '/workspace/$projectId',
@@ -149,27 +122,26 @@ const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   path: '/webcontainer/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SpikeNotesRoute = SpikeNotesRouteImport.update({
-  id: '/spike/notes',
-  path: '/spike/notes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SpikeIdeRoute = SpikeIdeRouteImport.update({
-  id: '/spike/ide',
-  path: '/spike/ide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SpikeCreateRoute = SpikeCreateRouteImport.update({
-  id: '/spike/create',
-  path: '/spike/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const StudyProjectIdRoute = StudyProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => StudyLazyRoute,
+} as any).lazy(() =>
+  import('./routes/study.$projectId.lazy').then((d) => d.Route),
+)
 const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
   getParentRoute: () => NotesLazyRoute,
 } as any).lazy(() =>
   import('./routes/notes.$projectId.lazy').then((d) => d.Route),
+)
+const KnowledgeProjectIdRoute = KnowledgeProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => KnowledgeLazyRoute,
+} as any).lazy(() =>
+  import('./routes/knowledge.$projectId.lazy').then((d) => d.Route),
 )
 const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
   id: '/$projectId',
@@ -197,16 +169,6 @@ const __debug_ProviderPlaygroundRoute =
     path: '/$__debug_/provider-playground',
     getParentRoute: () => rootRouteImport,
   } as any)
-const SpikeNotesProjectIdRoute = SpikeNotesProjectIdRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => SpikeNotesRoute,
-} as any)
-const SpikeIdeProjectIdRoute = SpikeIdeProjectIdRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => SpikeIdeRoute,
-} as any)
 const ApiQuizzesGenerateRoute = ApiQuizzesGenerateRouteImport.update({
   id: '/api/quizzes/generate',
   path: '/api/quizzes/generate',
@@ -252,21 +214,15 @@ export interface FileRoutesByFullPath {
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
+  '/knowledge/$projectId': typeof KnowledgeProjectIdRoute
   '/notes/$projectId': typeof NotesProjectIdRoute
-  '/spike/create': typeof SpikeCreateRoute
-  '/spike/ide': typeof SpikeIdeRouteWithChildren
-  '/spike/notes': typeof SpikeNotesRouteWithChildren
+  '/study/$projectId': typeof StudyProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
-  '/study/$projectId': typeof StudyProjectIdLazyRoute
-  '/spike': typeof SpikeIndexRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
-  '/spike/ide/$projectId': typeof SpikeIdeProjectIdRoute
-  '/spike/notes/$projectId': typeof SpikeNotesProjectIdRoute
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
@@ -289,21 +245,15 @@ export interface FileRoutesByTo {
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
+  '/knowledge/$projectId': typeof KnowledgeProjectIdRoute
   '/notes/$projectId': typeof NotesProjectIdRoute
-  '/spike/create': typeof SpikeCreateRoute
-  '/spike/ide': typeof SpikeIdeRouteWithChildren
-  '/spike/notes': typeof SpikeNotesRouteWithChildren
+  '/study/$projectId': typeof StudyProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
-  '/study/$projectId': typeof StudyProjectIdLazyRoute
-  '/spike': typeof SpikeIndexRoute
   '/workspace': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
-  '/spike/ide/$projectId': typeof SpikeIdeProjectIdRoute
-  '/spike/notes/$projectId': typeof SpikeNotesProjectIdRoute
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
@@ -327,21 +277,15 @@ export interface FileRoutesById {
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
   '/ide/$projectId': typeof IdeProjectIdRoute
+  '/knowledge/$projectId': typeof KnowledgeProjectIdRoute
   '/notes/$projectId': typeof NotesProjectIdRoute
-  '/spike/create': typeof SpikeCreateRoute
-  '/spike/ide': typeof SpikeIdeRouteWithChildren
-  '/spike/notes': typeof SpikeNotesRouteWithChildren
+  '/study/$projectId': typeof StudyProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/knowledge/$projectId': typeof KnowledgeProjectIdLazyRoute
-  '/study/$projectId': typeof StudyProjectIdLazyRoute
-  '/spike/': typeof SpikeIndexRoute
   '/workspace/': typeof WorkspaceIndexRoute
   '/api/flashcards/generate': typeof ApiFlashcardsGenerateRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/quizzes/generate': typeof ApiQuizzesGenerateRoute
-  '/spike/ide/$projectId': typeof SpikeIdeProjectIdRoute
-  '/spike/notes/$projectId': typeof SpikeNotesProjectIdRoute
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
@@ -366,21 +310,15 @@ export interface FileRouteTypes {
     | '/api/provider-test'
     | '/api/providers'
     | '/ide/$projectId'
+    | '/knowledge/$projectId'
     | '/notes/$projectId'
-    | '/spike/create'
-    | '/spike/ide'
-    | '/spike/notes'
+    | '/study/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
-    | '/knowledge/$projectId'
-    | '/study/$projectId'
-    | '/spike'
     | '/workspace'
     | '/api/flashcards/generate'
     | '/api/providers/$id'
     | '/api/quizzes/generate'
-    | '/spike/ide/$projectId'
-    | '/spike/notes/$projectId'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
   fileRoutesByTo: FileRoutesByTo
@@ -403,21 +341,15 @@ export interface FileRouteTypes {
     | '/api/provider-test'
     | '/api/providers'
     | '/ide/$projectId'
+    | '/knowledge/$projectId'
     | '/notes/$projectId'
-    | '/spike/create'
-    | '/spike/ide'
-    | '/spike/notes'
+    | '/study/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
-    | '/knowledge/$projectId'
-    | '/study/$projectId'
-    | '/spike'
     | '/workspace'
     | '/api/flashcards/generate'
     | '/api/providers/$id'
     | '/api/quizzes/generate'
-    | '/spike/ide/$projectId'
-    | '/spike/notes/$projectId'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
   id:
@@ -440,21 +372,15 @@ export interface FileRouteTypes {
     | '/api/provider-test'
     | '/api/providers'
     | '/ide/$projectId'
+    | '/knowledge/$projectId'
     | '/notes/$projectId'
-    | '/spike/create'
-    | '/spike/ide'
-    | '/spike/notes'
+    | '/study/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
-    | '/knowledge/$projectId'
-    | '/study/$projectId'
-    | '/spike/'
     | '/workspace/'
     | '/api/flashcards/generate'
     | '/api/providers/$id'
     | '/api/quizzes/generate'
-    | '/spike/ide/$projectId'
-    | '/spike/notes/$projectId'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
   fileRoutesById: FileRoutesById
@@ -477,12 +403,8 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiProviderTestRoute: typeof ApiProviderTestRoute
   ApiProvidersRoute: typeof ApiProvidersRouteWithChildren
-  SpikeCreateRoute: typeof SpikeCreateRoute
-  SpikeIdeRoute: typeof SpikeIdeRouteWithChildren
-  SpikeNotesRoute: typeof SpikeNotesRouteWithChildren
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
   WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
-  SpikeIndexRoute: typeof SpikeIndexRoute
   WorkspaceIndexRoute: typeof WorkspaceIndexRoute
   ApiFlashcardsGenerateRoute: typeof ApiFlashcardsGenerateRoute
   ApiQuizzesGenerateRoute: typeof ApiQuizzesGenerateRoute
@@ -588,27 +510,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkspaceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/spike/': {
-      id: '/spike/'
-      path: '/spike'
-      fullPath: '/spike'
-      preLoaderRoute: typeof SpikeIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/study/$projectId': {
-      id: '/study/$projectId'
-      path: '/$projectId'
-      fullPath: '/study/$projectId'
-      preLoaderRoute: typeof StudyProjectIdLazyRouteImport
-      parentRoute: typeof StudyLazyRoute
-    }
-    '/knowledge/$projectId': {
-      id: '/knowledge/$projectId'
-      path: '/$projectId'
-      fullPath: '/knowledge/$projectId'
-      preLoaderRoute: typeof KnowledgeProjectIdLazyRouteImport
-      parentRoute: typeof KnowledgeLazyRoute
-    }
     '/workspace/$projectId': {
       id: '/workspace/$projectId'
       path: '/workspace/$projectId'
@@ -623,26 +524,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebcontainerSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/spike/notes': {
-      id: '/spike/notes'
-      path: '/spike/notes'
-      fullPath: '/spike/notes'
-      preLoaderRoute: typeof SpikeNotesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/spike/ide': {
-      id: '/spike/ide'
-      path: '/spike/ide'
-      fullPath: '/spike/ide'
-      preLoaderRoute: typeof SpikeIdeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/spike/create': {
-      id: '/spike/create'
-      path: '/spike/create'
-      fullPath: '/spike/create'
-      preLoaderRoute: typeof SpikeCreateRouteImport
-      parentRoute: typeof rootRouteImport
+    '/study/$projectId': {
+      id: '/study/$projectId'
+      path: '/$projectId'
+      fullPath: '/study/$projectId'
+      preLoaderRoute: typeof StudyProjectIdRouteImport
+      parentRoute: typeof StudyLazyRoute
     }
     '/notes/$projectId': {
       id: '/notes/$projectId'
@@ -650,6 +537,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/notes/$projectId'
       preLoaderRoute: typeof NotesProjectIdRouteImport
       parentRoute: typeof NotesLazyRoute
+    }
+    '/knowledge/$projectId': {
+      id: '/knowledge/$projectId'
+      path: '/$projectId'
+      fullPath: '/knowledge/$projectId'
+      preLoaderRoute: typeof KnowledgeProjectIdRouteImport
+      parentRoute: typeof KnowledgeLazyRoute
     }
     '/ide/$projectId': {
       id: '/ide/$projectId'
@@ -685,20 +579,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/$__debug_/provider-playground'
       preLoaderRoute: typeof __debug_ProviderPlaygroundRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/spike/notes/$projectId': {
-      id: '/spike/notes/$projectId'
-      path: '/$projectId'
-      fullPath: '/spike/notes/$projectId'
-      preLoaderRoute: typeof SpikeNotesProjectIdRouteImport
-      parentRoute: typeof SpikeNotesRoute
-    }
-    '/spike/ide/$projectId': {
-      id: '/spike/ide/$projectId'
-      path: '/$projectId'
-      fullPath: '/spike/ide/$projectId'
-      preLoaderRoute: typeof SpikeIdeProjectIdRouteImport
-      parentRoute: typeof SpikeIdeRoute
     }
     '/api/quizzes/generate': {
       id: '/api/quizzes/generate'
@@ -749,11 +629,11 @@ const IdeRouteChildren: IdeRouteChildren = {
 const IdeRouteWithChildren = IdeRoute._addFileChildren(IdeRouteChildren)
 
 interface KnowledgeLazyRouteChildren {
-  KnowledgeProjectIdLazyRoute: typeof KnowledgeProjectIdLazyRoute
+  KnowledgeProjectIdRoute: typeof KnowledgeProjectIdRoute
 }
 
 const KnowledgeLazyRouteChildren: KnowledgeLazyRouteChildren = {
-  KnowledgeProjectIdLazyRoute: KnowledgeProjectIdLazyRoute,
+  KnowledgeProjectIdRoute: KnowledgeProjectIdRoute,
 }
 
 const KnowledgeLazyRouteWithChildren = KnowledgeLazyRoute._addFileChildren(
@@ -773,11 +653,11 @@ const NotesLazyRouteWithChildren = NotesLazyRoute._addFileChildren(
 )
 
 interface StudyLazyRouteChildren {
-  StudyProjectIdLazyRoute: typeof StudyProjectIdLazyRoute
+  StudyProjectIdRoute: typeof StudyProjectIdRoute
 }
 
 const StudyLazyRouteChildren: StudyLazyRouteChildren = {
-  StudyProjectIdLazyRoute: StudyProjectIdLazyRoute,
+  StudyProjectIdRoute: StudyProjectIdRoute,
 }
 
 const StudyLazyRouteWithChildren = StudyLazyRoute._addFileChildren(
@@ -810,30 +690,6 @@ const ApiProvidersRouteWithChildren = ApiProvidersRoute._addFileChildren(
   ApiProvidersRouteChildren,
 )
 
-interface SpikeIdeRouteChildren {
-  SpikeIdeProjectIdRoute: typeof SpikeIdeProjectIdRoute
-}
-
-const SpikeIdeRouteChildren: SpikeIdeRouteChildren = {
-  SpikeIdeProjectIdRoute: SpikeIdeProjectIdRoute,
-}
-
-const SpikeIdeRouteWithChildren = SpikeIdeRoute._addFileChildren(
-  SpikeIdeRouteChildren,
-)
-
-interface SpikeNotesRouteChildren {
-  SpikeNotesProjectIdRoute: typeof SpikeNotesProjectIdRoute
-}
-
-const SpikeNotesRouteChildren: SpikeNotesRouteChildren = {
-  SpikeNotesProjectIdRoute: SpikeNotesProjectIdRoute,
-}
-
-const SpikeNotesRouteWithChildren = SpikeNotesRoute._addFileChildren(
-  SpikeNotesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -852,12 +708,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiProviderTestRoute: ApiProviderTestRoute,
   ApiProvidersRoute: ApiProvidersRouteWithChildren,
-  SpikeCreateRoute: SpikeCreateRoute,
-  SpikeIdeRoute: SpikeIdeRouteWithChildren,
-  SpikeNotesRoute: SpikeNotesRouteWithChildren,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
   WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
-  SpikeIndexRoute: SpikeIndexRoute,
   WorkspaceIndexRoute: WorkspaceIndexRoute,
   ApiFlashcardsGenerateRoute: ApiFlashcardsGenerateRoute,
   ApiQuizzesGenerateRoute: ApiQuizzesGenerateRoute,

@@ -14,21 +14,13 @@
  * - Mobile/Desktop without FSA: Redirected to hub or Notes
  */
 
-import { createFileRoute, redirect, useNavigate, useMatchRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate, useMatchRoute, Outlet } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { Code2, FolderOpen, Plus } from 'lucide-react';
 import { FolderPickerDialog } from '@/presentation/components/workspace';
 import { useState } from 'react';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-
-// Lazy load IDELayout
-import { lazy, Suspense } from 'react';
-const IDELayout = lazy(() =>
-  import('@/presentation/components/layout/IDELayoutMain').then(m => ({
-    default: m.IDELayout,
-  }))
-);
 
 export const Route = createFileRoute('/ide')({
   ssr: false,
@@ -44,8 +36,11 @@ export const Route = createFileRoute('/ide')({
       canRunTerminal: platform.canRunTerminal,
     });
     
-    if (!platform.canAccessIDE) {
-      console.warn('[ide.tsx] Mobile/tablet/desktop-without-FSA detected, redirecting to /hub');
+    // BUG-007 FIX: Only block strictly if on /ide root.
+    // Child routes like /ide/$projectId handle their own redirection (e.g. to /notes/$projectId).
+    // This allows deep linking to work on mobile.
+    if (!platform.canAccessIDE && location.pathname === '/ide') {
+      console.warn('[ide.tsx] Mobile/tablet/desktop-without-FSA detected on root /ide, redirecting to /hub');
       throw redirect({
         to: '/hub',
         search: { reason: 'mobile-not-supported' }
@@ -61,20 +56,6 @@ export const Route = createFileRoute('/ide')({
     </ErrorBoundary>
   ),
 });
-
-/**
- * Loading spinner for lazy components
- */
-function IDESkeleton() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-muted-foreground">Loading IDE...</p>
-      </div>
-    </div>
-  );
-}
 
 /**
  * IDE workspace - Clean Architecture
@@ -96,15 +77,9 @@ function IDEWorkspace() {
   // Check if we're on a child route like /ide/$projectId
   const isOnChildRoute = !!matchRoute({ to: '/ide/$projectId', fuzzy: true });
 
-  // Render child route content if on child route
+  // BUG-008 FIX: Render Outlet for child routes
   if (isOnChildRoute) {
-    return (
-      <MainLayout>
-        <Suspense fallback={<IDESkeleton />}>
-          <IDELayout />
-        </Suspense>
-      </MainLayout>
-    );
+    return <Outlet />;
   }
 
   // Show empty state for /ide route (no project selected)

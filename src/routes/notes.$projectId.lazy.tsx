@@ -22,49 +22,20 @@
   */
 
 import { useEffect, useRef } from 'react';
-import { redirect, createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { ErrorBoundary } from '@/presentation/components/error';
-import { db } from '@/infrastructure/persistence/dexie-db';
-import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 
 type NotesSearchParams = { reason?: "mobile-not-supported" | undefined };
 
 // ============================================================================
-// Route Definition (ROUTE-004 FIX: Using createFileRoute for loader pattern)
-// INF-03 FIX: Added waitForHydration() to fix race condition
+// Route Definition
 // ============================================================================
 
 export const Route = createLazyFileRoute('/notes/$projectId')({
-  ssr: false,
-
-  // INF-03 FIX: Use loader with waitForHydration per ADR-034 D12
-  loader: async ({ params }) => {
-    const { projectId } = params;
-    console.log('[notes.$projectId] Loader called for project:', projectId);
-
-    // ✅ INF-03 FIX: Wait for Zustand store hydration before querying
-    await waitForHydration();
-    console.log('[notes.$projectId] Hydration complete, querying Dexie...');
-
-    // ✅ INF-03 FIX: Query Dexie directly (not Zustand/getProject facade)
-    const record = await db.projects.get(projectId);
-    
-    if (!record) {
-      console.error('[notes.$projectId] Project not found in Dexie:', projectId);
-      throw redirect({ to: '/hub' });
-    }
-
-    // Convert record to Project type
-    const project = record as unknown as Project;
-    console.log('[notes.$projectId] Project loaded successfully:', project.id);
-    return { project };
-  },
-
   component: () => (
     <ErrorBoundary>
       <NotesWorkspace />
@@ -88,14 +59,6 @@ function NotesWorkspace() {
       });
     }
   }, [search?.reason]);
-
-  // Set projectId in IDE store when component mounts
-  useEffect(() => {
-    if (_projectId) {
-      useIDEStore.getState().setProjectId(_projectId);
-      console.log('[NotesRoute] Project ID set in store:', _projectId);
-    }
-  }, [_projectId]);
 
   return (
     <ProjectProvider project={project as Project | null} workspace="notes">

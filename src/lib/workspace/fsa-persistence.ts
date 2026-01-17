@@ -150,7 +150,7 @@ export async function createProjectFromFolder(
   // - Zustand store update
   // - Dexie persistence
   // - FSA handle persistence
-  const projectId = useProjectStore.getState().createProject(projectInput);
+  const projectId = await useProjectStore.getState().createProject(projectInput);
 
   // Explicitly persist FSA handle for instant re-grant on next visit
   await handlePersistenceService.persistHandle(projectId, handle, 'ide');

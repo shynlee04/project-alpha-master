@@ -12,82 +12,16 @@
   * - WorkspaceSwitcher in header allows switching to IDE/Notes/Knowledge
   *
   * @epic Future: Knowledge Synthesis Station
-  *
-  * ROUTE-012 FIX: Changed from createLazyFileRoute to createFileRoute
-  * to support loader pattern instead of useEffect fetch.
   */
 
 import { useEffect } from 'react';
-import { redirect, createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute } from '@tanstack/react-router';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import { getProject } from '@/infrastructure/persistence/stores/project';
-import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
-import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+import { useWorkspaceStore } from '@/infrastructure/persistence/stores/workspace/workspace-store';
 import { ErrorBoundary } from '@/presentation/components/error';
 
-// ============================================================================
-// Retry Utility for Project Lookup (FIX-2026-01-13: Handle timing issues)
-// ============================================================================
-
-async function getProjectWithRetry(
-  projectId: string,
-  maxRetries: number = 3,
-  baseDelayMs: number = 50
-): Promise<Project | null> {
-  let lastError: Error | null = null;
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const fromStore = useProjectStore.getState().getProject(projectId);
-    if (fromStore) {
-      if (attempt > 1) {
-        console.log(`[StudyRoute] Project found on attempt ${attempt}/${maxRetries}`);
-      }
-      return fromStore as Project;
-    }
-
-    try {
-      const fromFacade = await getProject(projectId);
-      if (fromFacade) {
-        return fromFacade as Project;
-      }
-    } catch (error) {
-      lastError = error as Error;
-    }
-
-    if (attempt < maxRetries) {
-      const delayMs = baseDelayMs * Math.pow(2, attempt - 1);
-      console.log(`[StudyRoute] Project not found, attempt ${attempt}/${maxRetries}, retrying in ${delayMs}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delayMs));
-    }
-  }
-
-  console.error(`[StudyRoute] Project not found after ${maxRetries} attempts:`, projectId, lastError);
-  return null;
-}
-
-// ============================================================================
-// Route Definition (ROUTE-012 FIX: Using createFileRoute for loader pattern)
-// ============================================================================
-
 export const Route = createLazyFileRoute('/study/$projectId')({
-  ssr: false,
-
-  // ROUTE-012 FIX: Use beforeLoad to fetch project BEFORE component renders
-  beforeLoad: async ({ params }) => {
-    const project = await getProjectWithRetry(params.projectId);
-    if (!project) {
-      console.error('[StudyRoute] Project not found:', params.projectId);
-      throw redirect({ to: '/hub' });
-    }
-    return { project };
-  },
-
-  // Loader returns empty - project already fetched in beforeLoad
-  loader: () => {
-    return {};
-  },
-
   component: () => (
     <ErrorBoundary>
       <StudyWorkspace />
@@ -114,12 +48,12 @@ function StudyPlaceholder() {
 
 function StudyWorkspace() {
   const { projectId: _projectId } = Route.useParams();
-  const { project } = Route.useLoaderData();
+  const { project } = Route.useLoaderData() as { project: Project };
 
-  // Set projectId in IDE store when component mounts
+  // Set projectId in workspace store when component mounts
   useEffect(() => {
     if (_projectId) {
-      useIDEStore.getState().setProjectId(_projectId);
+      useWorkspaceStore.getState().setCurrentProject(_projectId);
       console.log('[StudyRoute] Project ID set in store:', _projectId);
     }
   }, [_projectId]);
