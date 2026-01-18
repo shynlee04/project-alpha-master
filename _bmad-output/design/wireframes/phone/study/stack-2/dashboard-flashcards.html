@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Via-Gent | Study - Flashcards (Phone)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        :root {
+            --header-height: 44px;
+            --bottom-nav-height: 56px;
+        }
+
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--study-bg);
+        }
+
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active {
+            display: flex;
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        .flashcard-panel {
+            background: var(--study-bg);
+            padding: 16px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .progress-label {
+            font-size: var(--text-sm);
+            color: var(--secondary);
+        }
+
+        .progress-count {
+            font-size: var(--text-sm);
+            color: var(--action);
+            font-weight: var(--font-semibold);
+        }
+
+        .flashcard-container {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flashcard {
+            flex: 1;
+            min-height: 0;
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 16px;
+        }
+
+        .flashcard:hover {
+            border-color: var(--action);
+        }
+
+        .flashcard.flipped {
+            background: var(--canvas);
+        }
+
+        .card-label {
+            font-size: var(--text-xs);
+            color: var(--muted);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-content {
+            font-size: var(--text-lg);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+            line-height: 1.5;
+        }
+
+        .card-content.question {
+            font-size: var(--text-xl);
+        }
+
+        .card-hint {
+            font-size: var(--text-sm);
+            color: var(--muted);
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 2px solid var(--structural);
+            width: 100%;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .action-btn.incorrect {
+            background: var(--surface);
+            color: var(--error);
+            border-color: var(--error);
+        }
+
+        .action-btn.incorrect:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .action-btn.correct {
+            background: var(--surface);
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        .action-btn.correct:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.hint-btn {
+            background: var(--surface);
+            color: var(--secondary);
+        }
+
+        .bottom-nav {
+            height: var(--bottom-nav-height);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            padding-bottom: env(safe-area-inset-bottom);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: var(--font-medium);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--surface);
+            border: none;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--action);
+            width: 35%;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <button class="back-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <span class="header-title">React Hooks</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="panel flashcard-panel active">
+                <div class="progress-info">
+                    <span class="progress-label">Progress</span>
+                    <span class="progress-count">7 / 20</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+
+                <div class="flashcard-container">
+                    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                        <div class="card-label">Question</div>
+                        <div class="card-content question">What is the purpose of the useEffect hook in React?</div>
+                        <div class="card-hint">Tap to reveal answer</div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="action-btn incorrect">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Again
+                        </button>
+                        <button class="action-btn hint-btn">
+                            Hint
+                        </button>
+                        <button class="action-btn correct">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Got it
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="9"></rect>
+                    </svg>
+                </span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <line x1="6" y1="12" x2="18" y2="12"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Cards</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Quiz</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Stats</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function switchPanel(panelName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Switch to panel:', panelName);
+        }
+    </script>
+</body>
+</html>

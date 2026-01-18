@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge - Tree + Preview + Chat + Config View</title>
+  <style>
+    :root {
+      --background: #0f0f11;
+      --foreground: #f2f2f5;
+      --card: #18181b;
+      --card-foreground: #f2f2f5;
+      --border: #27272a;
+      --primary: #f97316;
+      --primary-foreground: #fff;
+      --muted: #27272a;
+      --muted-foreground: #a1a1aa;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --radius: 0px;
+      --shadow-pixel: 4px 4px 0 0 #000;
+      --sidebar-width: 180px;
+      --preview-width: 35%;
+      --chat-width: 25%;
+      --config-width: 22%;
+      --header-height: 48px;
+      --footer-height: 24px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+      background: var(--background);
+      color: var(--foreground);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      height: var(--header-height);
+      background: var(--card);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .project-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .project-name svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      height: 32px;
+      padding: 0 12px;
+      border: 2px solid var(--border);
+      background: var(--card);
+      color: var(--foreground);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--muted);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      background: #ea580c;
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--background);
+      border: 2px solid var(--border);
+      padding: 0 12px;
+      height: 32px;
+      width: 240px;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--foreground);
+      font-size: 12px;
+      width: 100%;
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: var(--muted-foreground);
+    }
+
+    .search-box svg {
+      width: 14px;
+      height: 14px;
+      color: var(--muted-foreground);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 0px;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      cursor: pointer;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .collections-tree {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: var(--card);
+      border-right: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tree-header {
+      padding: 12px 12px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tree-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .tree-item:hover {
+      background: var(--muted);
+    }
+
+    .tree-item.selected {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .tree-item-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .tree-item-text {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+    }
+
+    .tree-folder {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tree-folder-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .tree-folder-header:hover {
+      background: var(--muted);
+    }
+
+    .folder-chevron {
+      width: 12px;
+      height: 12px;
+      transition: transform 0.15s;
+    }
+
+    .tree-folder.collapsed .folder-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .tree-folder.collapsed .tree-folder-items {
+      display: none;
+    }
+
+    .tree-folder-items {
+      padding-left: 16px;
+    }
+
+    .source-count {
+      font-size: 10px;
+      color: var(--muted-foreground);
+      background: var(--background);
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* Preview Panel */
+    .preview-panel {
+      width: var(--preview-width);
+      min-width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      background: var(--background);
+    }
+
+    .preview-header {
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+    }
+
+    .preview-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .preview-title-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ef4444;
+    }
+
+    .preview-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      min-height: 0;
+    }
+
+    .browser-mock {
+      background: var(--card);
+      border: 2px solid var(--border);
+      min-height: 100%;
+    }
+
+    .browser-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-bottom: 2px solid var(--border);
+      background: var(--background);
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+
+    .browser-dot.red { background: #ef4444; }
+    .browser-dot.yellow { background: #f59e0b; }
+    .browser-dot.green { background: #22c55e; }
+
+    .browser-url-bar {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      font-size: 10px;
+      color: var(--muted-foreground);
+    }
+
+    .browser-content {
+      padding: 16px;
+    }
+
+    .doc-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--foreground);
+    }
+
+    .doc-section {
+      margin-bottom: 16px;
+    }
+
+    .doc-heading {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    .doc-text {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--foreground);
+      margin-bottom: 8px;
+    }
+
+    .doc-code {
+      background: var(--background);
+      border: 2px solid var(--border);
+      padding: 8px;
+      font-family: 'SF Mono', monospace;
+      font-size: 11px;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+
+    .doc-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .doc-list li {
+      padding: 6px 0;
+      padding-left: 16px;
+      position: relative;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .doc-list li::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .doc-highlight {
+      background: rgba(249, 115, 22, 0.2);
+      padding: 2px 4px;
+      border: 1px solid var(--primary);
+    }
+
+    /* Chat Panel */
+    .chat-panel {
+      width: var(--chat-width);
+      min-width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-left: 2px solid var(--border);
+      background: var(--card);
+    }
+
+    .chat-header {
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--background);
+    }
+
+    .chat-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .chat-message {
+      margin-bottom: 12px;
+    }
+
+    .chat-message.user {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .chat-message.assistant {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .message-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .message-avatar.assistant {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .message-avatar.user {
+      background: var(--muted);
+      color: var(--foreground);
+    }
+
+    .message-content {
+      max-width: 95%;
+      padding: 8px 10px;
+      font-size: 11px;
+      line-height: 1.5;
+      border: 2px solid var(--border);
+    }
+
+    .chat-message.user .message-content {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .chat-message.assistant .message-content {
+      background: var(--card);
+      border-color: var(--border);
+    }
+
+    .message-citations {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .citation {
+      font-size: 9px;
+      padding: 2px 4px;
+      background: var(--background);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    .chat-input-container {
+      padding: 10px;
+      border-top: 2px solid var(--border);
+      background: var(--background);
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chat-input {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      color: var(--foreground);
+      font-size: 11px;
+      resize: none;
+      height: 60px;
+      font-family: inherit;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .chat-input-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-input-info {
+      font-size: 9px;
+      color: var(--muted-foreground);
+    }
+
+    .send-btn {
+      height: 28px;
+      padding: 0 12px;
+      background: var(--primary);
+      border: 2px solid var(--primary);
+      color: var(--primary-foreground);
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.1s;
+    }
+
+    .send-btn:hover {
+      background: #ea580c;
+    }
+
+    .send-btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Config Panel */
+    .config-panel {
+      width: var(--config-width);
+      min-width: 200px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-left: 2px solid var(--border);
+      background: var(--card);
+    }
+
+    .config-header {
+      padding: 12px 16px;
+      border-bottom: 2px solid var(--border);
+      background: var(--background);
+    }
+
+    .config-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .config-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    .config-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 12px;
+    }
+
+    .config-section {
+      margin-bottom: 20px;
+    }
+
+    .config-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .config-field {
+      margin-bottom: 12px;
+    }
+
+    .config-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .config-toggle {
+      width: 36px;
+      height: 20px;
+      background: var(--muted);
+      border: 2px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.1s;
+    }
+
+    .config-toggle.active {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .config-toggle::after {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--foreground);
+      border: 2px solid var(--border);
+      top: 2px;
+      left: 2px;
+      transition: transform 0.1s;
+    }
+
+    .config-toggle.active::after {
+      transform: translateX(14px);
+    }
+
+    .config-select {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--background);
+      border: 2px solid var(--border);
+      color: var(--foreground);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .config-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .config-range {
+      width: 100%;
+      height: 6px;
+      background: var(--background);
+      border: 2px solid var(--border);
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .config-range::-webkit-slider-thumb {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--primary);
+      border: 2px solid var(--border);
+      cursor: pointer;
+    }
+
+    .config-value {
+      font-size: 11px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .config-description {
+      font-size: 10px;
+      color: var(--muted-foreground);
+      margin-top: 4px;
+    }
+
+    .model-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: var(--background);
+      border: 2px solid var(--border);
+      font-size: 10px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .model-badge.active {
+      background: rgba(249, 115, 22, 0.2);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .footer {
+      height: var(--footer-height);
+      background: var(--card);
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--success);
+    }
+
+    .sync-status svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .storage-info {
+      color: var(--muted-foreground);
+    }
+
+    .storage-info span {
+      color: var(--foreground);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="project-name">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          AI Research Project
+        </div>
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Search sources...">
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17,8 12,3 7,8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Import
+        </button>
+        <button class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/>
+          </svg>
+          Config
+        </button>
+        <div class="user-avatar">JD</div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Collections Tree -->
+      <aside class="collections-tree">
+        <div class="tree-header">Collections</div>
+        <div class="tree-content">
+          <div class="tree-item">
+            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18"/>
+              <path d="M9 21V9"/>
+            </svg>
+            <span class="tree-item-text">All Sources</span>
+            <span class="source-count">12</span>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #ef4444;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+              </svg>
+              <span class="tree-item-text">PDF Documents</span>
+              <span class="source-count">3</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item selected">
+                <span class="tree-item-text">research-paper.pdf</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">documentation.pdf</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">whitepaper-2024.pdf</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #3b82f6;">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+              </svg>
+              <span class="tree-item-text">URLs</span>
+              <span class="source-count">4</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">ai-agents-guide.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">llm-comparison.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">rag-best-practices.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">architecture-patterns.md</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #f2f2f5;">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77"/>
+              </svg>
+              <span class="tree-item-text">GitHub Repos</span>
+              <span class="source-count">3</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">via-gent.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">react-router.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">tanstack-query.md</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tree-folder">
+            <div class="tree-folder-header">
+              <svg class="folder-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9,18 15,12 9,6"/>
+              </svg>
+              <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor" style="color: #22c55e;">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+              </svg>
+              <span class="tree-item-text">Markdown Files</span>
+              <span class="source-count">2</span>
+            </div>
+            <div class="tree-folder-items">
+              <div class="tree-item">
+                <span class="tree-item-text">meeting-notes.md</span>
+              </div>
+              <div class="tree-item">
+                <span class="tree-item-text">project-specs.md</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Preview Panel -->
+      <main class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-title">
+            <div class="preview-title-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+              </svg>
+            </div>
+            Research Paper
+          </div>
+        </div>
+        <div class="preview-content">
+          <div class="browser-mock">
+            <div class="browser-toolbar">
+              <div class="browser-dots">
+                <span class="browser-dot red"></span>
+                <span class="browser-dot yellow"></span>
+                <span class="browser-dot green"></span>
+              </div>
+              <div class="browser-url-bar">
+                research-paper.pdf
+              </div>
+            </div>
+            <div class="browser-content">
+              <h1 class="doc-title">Autonomous AI Agents: A Comprehensive Survey</h1>
+
+              <div class="doc-section">
+                <h2 class="doc-heading">1. Introduction</h2>
+                <p class="doc-text">
+                  The emergence of <span class="doc-highlight">autonomous AI agents</span> represents a paradigm shift in artificial intelligence research.
+                </p>
+              </div>
+
+              <div class="doc-section">
+                <h2 class="doc-heading">2. Architecture Patterns</h2>
+                <ul class="doc-list">
+                  <li><strong>ReAct Pattern:</strong> Reasoning + action</li>
+                  <li><strong>Plan-and-Execute:</strong> Separated phases</li>
+                  <li><strong>Hierarchical Agents:</strong> Parent-child structure</li>
+                </ul>
+              </div>
+
+              <div class="doc-section">
+                <h2 class="doc-heading">3. Evaluation Metrics</h2>
+                <ul class="doc-list">
+                  <li>Task Completion Rate</li>
+                  <li>Reasoning Quality</li>
+                  <li>Tool Usage Efficiency</li>
+                  <li>Robustness</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Chat Panel -->
+      <aside class="chat-panel">
+        <div class="chat-header">
+          <div class="chat-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            RAG Chat
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="chat-message assistant">
+            <div class="message-avatar assistant">AI</div>
+            <div class="message-content">
+              Hello! I'm your RAG assistant. What would you like to know?
+            </div>
+          </div>
+
+          <div class="chat-message user">
+            <div class="message-avatar user">JD</div>
+            <div class="message-content">
+              What are the main architectural patterns for AI agents?
+            </div>
+          </div>
+
+          <div class="chat-message assistant">
+            <div class="message-avatar assistant">AI</div>
+            <div class="message-content">
+              Three main patterns: ReAct (reasoning + action), Plan-and-Execute (separated phases), and Hierarchical Agents (parent-child relationships).
+            </div>
+            <div class="message-citations">
+              <span class="citation">[research-paper.pdf]</span>
+            </div>
+          </div>
+
+          <div class="chat-message user">
+            <div class="message-avatar user">JD</div>
+            <div class="message-content">
+              How do agents evaluate tool use efficiency?
+            </div>
+          </div>
+
+          <div class="chat-message assistant">
+            <div class="message-avatar assistant">AI</div>
+            <div class="message-content">
+              Measures optimal tool selection, parameter tuning, tool chaining, and error recovery capabilities.
+            </div>
+            <div class="message-citations">
+              <span class="citation">[research-paper.pdf]</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-container">
+          <div class="chat-input-wrapper">
+            <textarea class="chat-input" placeholder="Ask a question..."></textarea>
+            <div class="chat-input-actions">
+              <span class="chat-input-info">12 sources</span>
+              <button class="send-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                </svg>
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Config Panel -->
+      <aside class="config-panel">
+        <div class="config-header">
+          <div class="config-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0"/>
+            </svg>
+            RAG Configuration
+          </div>
+        </div>
+        <div class="config-content">
+          <div class="config-section">
+            <div class="config-section-title">Embedding Model</div>
+            <select class="config-select">
+              <option>text-embedding-3-small</option>
+              <option>text-embedding-3-large</option>
+              <option>text-embedding-ada-002</option>
+            </select>
+            <div class="config-description">Model for vectorizing documents</div>
+          </div>
+
+          <div class="config-section">
+            <div class="config-section-title">Chat Model</div>
+            <div style="display: flex; flex-wrap: wrap; margin-bottom: 8px;">
+              <span class="model-badge active">GPT-4o</span>
+              <span class="model-badge">Claude 3.5</span>
+              <span class="model-badge">Gemini 1.5</span>
+            </div>
+            <select class="config-select">
+              <option>GPT-4o (OpenAI)</option>
+              <option>Claude 3.5 Sonnet (Anthropic)</option>
+              <option>Gemini 1.5 Pro (Google)</option>
+            </select>
+          </div>
+
+          <div class="config-section">
+            <div class="config-section-title">Retrieval Settings</div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Top-K Results</span>
+                <span class="config-value">10</span>
+              </div>
+              <input type="range" class="config-range" min="1" max="20" value="10">
+            </div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Chunk Size</span>
+                <span class="config-value">512</span>
+              </div>
+              <input type="range" class="config-range" min="256" max="2048" value="512" step="128">
+            </div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Chunk Overlap</span>
+                <span class="config-value">50</span>
+              </div>
+              <input type="range" class="config-range" min="0" max="200" value="50">
+            </div>
+          </div>
+
+          <div class="config-section">
+            <div class="config-section-title">Features</div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Enable Citations</span>
+                <div class="config-toggle active"></div>
+              </div>
+            </div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Hybrid Search</span>
+                <div class="config-toggle active"></div>
+              </div>
+            </div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Re-ranking</span>
+                <div class="config-toggle"></div>
+              </div>
+            </div>
+            <div class="config-field">
+              <div class="config-label">
+                <span>Streaming Response</span>
+                <div class="config-toggle active"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-section">
+            <div class="config-section-title">System</div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7,10 12,15 17,10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Re-index All Sources
+            </button>
+            <button class="btn" style="width: 100%; justify-content: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              </svg>
+              Export Index
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="sync-status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"/>
+          </svg>
+          All sources synced
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="sources-indexed">12 sources indexed</div>
+        <div class="storage-info">Storage: <span>847 MB</span> / 5 GB</div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

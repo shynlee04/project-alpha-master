@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | IDE - Tree + Editor + Preview + Terminal (4 interfaces)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        :root {
+            --canvas: #09090b;
+            --surface: #18181b;
+            --surface-hover: #27272a;
+            --depth: #0a0a0a;
+            --primary: #fafafa;
+            --muted: #a1a1aa;
+            --action: #f97316;
+            --structural: #3f3f46;
+            --success: #22c55e;
+            --error: #ef4444;
+            --font-code: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-code);
+            background-color: var(--canvas);
+            color: var(--primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container { height: 100vh; width: 100vw; display: flex; flex-direction: column; }
+
+        .header {
+            height: 48px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 16px; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--action);
+        }
+
+        .logo svg { width: 24px; height: 24px; }
+
+        .workspace-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .workspace-tab:hover { color: var(--primary); background-color: var(--structural); }
+        .workspace-tab.active { color: var(--primary); background-color: var(--structural); border-bottom: 2px solid var(--action); }
+
+        .header-right { display: flex; align-items: center; gap: 8px; }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--success);
+            padding: 4px 8px;
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background-color: var(--action);
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .main-content { flex: 1; display: flex; min-height: 0; overflow: hidden; }
+
+        .activity-bar {
+            width: 64px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+            background-color: var(--surface);
+            border-right: 2px solid var(--structural);
+        }
+
+        .activity-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .activity-btn:hover { color: var(--primary); }
+        .activity-btn.active { color: var(--primary); }
+        .activity-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background-color: var(--action);
+        }
+
+        .activity-btn svg { width: 24px; height: 24px; }
+
+        .tree-panel {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border-right: 2px solid var(--structural);
+        }
+
+        .tree-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--structural);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .tree-actions { display: flex; gap: 4px; }
+
+        .tree-action-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .tree-action-btn:hover { color: var(--primary); }
+        .tree-action-btn svg { width: 14px; height: 14px; }
+
+        .tree-content { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 0; }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.1s;
+        }
+
+        .tree-item:hover { background-color: var(--structural); }
+        .tree-item.selected { background-color: var(--action); color: var(--canvas); }
+
+        .tree-arrow {
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+            transition: transform 0.1s;
+            flex-shrink: 0;
+        }
+
+        .tree-arrow.collapsed { transform: rotate(-90deg); }
+
+        .tree-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .tree-icon.folder { color: var(--action); }
+        .tree-icon.file-ts { color: #3178c6; }
+        .tree-icon.file-json { color: #eebb00; }
+
+        .tree-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .editor-area {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background-color: var(--canvas);
+        }
+
+        .tab-bar {
+            height: 36px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: flex-end;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            overflow-x: auto;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            background-color: transparent;
+            border: none;
+            border-right: 2px solid var(--structural);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+            min-width: 100px;
+            max-width: 160px;
+        }
+
+        .tab:hover { background-color: var(--structural); }
+        .tab.active {
+            background-color: var(--canvas);
+            color: var(--primary);
+            border-bottom: 2px solid var(--canvas);
+            margin-bottom: -2px;
+        }
+
+        .tab-icon { width: 16px; height: 16px; flex-shrink: 0; }
+        .tab-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .tab:hover .tab-close { opacity: 1; }
+        .tab-close:hover { color: var(--error); }
+        .tab-close svg { width: 12px; height: 12px; }
+
+        .editor-content { flex: 1; display: flex; min-height: 0; overflow: hidden; }
+
+        .line-numbers {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 8px;
+            background-color: var(--surface);
+            border-right: 2px solid var(--structural);
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+            text-align: right;
+            user-select: none;
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+
+        .line-number { height: 20.8px; }
+        .line-number.active { color: var(--action); }
+
+        .code-area {
+            flex: 1;
+            padding: 12px;
+            overflow: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: var(--font-code);
+            white-space: pre;
+        }
+
+        .code-area .keyword { color: #ff79c6; }
+        .code-area .string { color: #f1fa8c; }
+        .code-area .function { color: #8be9fd; }
+        .code-area .type { color: #bd93f9; }
+        .code-area .comment { color: #6272a4; }
+        .code-area .variable { color: #f8f8f2; }
+        .code-area .property { color: #50fa7b; }
+
+        .resize-handle {
+            width: 4px;
+            flex-shrink: 0;
+            background-color: var(--structural);
+            cursor: col-resize;
+            transition: background-color 0.15s;
+        }
+
+        .resize-handle:hover { background-color: var(--action); }
+
+        .preview-panel {
+            width: 30%;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border-left: 2px solid var(--structural);
+            background-color: var(--canvas);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .preview-tabs { display: flex; gap: 4px; }
+
+        .preview-tab {
+            padding: 4px 12px;
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .preview-tab:hover { color: var(--primary); }
+        .preview-tab.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+            border: 1px solid var(--action);
+        }
+
+        .browser-mock {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        .browser-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background-color: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        .browser-nav-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .browser-nav-btn:hover { color: #333; }
+        .browser-nav-btn:disabled { color: #ccc; }
+
+        .browser-url-bar {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 0;
+        }
+
+        .browser-url-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 13px;
+            font-family: var(--font-code);
+            color: #333;
+        }
+
+        .browser-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 24px;
+            background-color: #fff;
+        }
+
+        .browser-content h1 { font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+        .browser-content p { font-size: 14px; color: #444; line-height: 1.6; margin-bottom: 12px; }
+        .browser-content pre {
+            background: #f5f5f5;
+            border: 2px solid #333;
+            padding: 16px;
+            font-family: var(--font-code);
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .response-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background-color: #10a37f;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .terminal-panel {
+            width: 25%;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            border-left: 2px solid var(--structural);
+            background-color: var(--depth);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .terminal-tabs { display: flex; gap: 4px; }
+
+        .terminal-tab {
+            padding: 4px 12px;
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .terminal-tab:hover { color: var(--primary); }
+        .terminal-tab.active { color: var(--success); background-color: rgba(34, 197, 94, 0.1); border: 1px solid var(--success); }
+
+        .terminal-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 12px;
+            font-family: var(--font-code);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .terminal-line { margin-bottom: 4px; display: flex; gap: 0; }
+        .terminal-prompt { color: var(--success); white-space: nowrap; }
+        .terminal-command { color: var(--primary); }
+        .terminal-output { color: var(--muted); white-space: pre-wrap; }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: var(--action);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .status-bar {
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background-color: var(--surface);
+            border-top: 2px solid var(--structural);
+            font-size: 11px;
+        }
+
+        .status-left, .status-right { display: flex; align-items: center; gap: 16px; }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .status-item:hover { color: var(--primary); }
+        .status-item svg { width: 14px; height: 14px; }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: var(--depth); }
+        ::-webkit-scrollbar-thumb { background: var(--structural); border: 2px solid var(--depth); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+        @media (max-width: 1280px) {
+            .activity-bar { width: 48px; }
+            .activity-btn { width: 40px; height: 40px; }
+            .tree-panel { width: 180px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="0"/>
+                        <path d="M12 8v8M8 12h8"/>
+                    </svg>
+                    Via-Gent
+                </div>
+                <button class="workspace-tab">my-awesome-app</button>
+                <button class="workspace-tab active">knowledge</button>
+            </div>
+            <div class="header-right">
+                <div class="sync-status">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                        <polyline points="21 3 21 9 15 9"/>
+                    </svg>
+                    Synced
+                </div>
+                <div class="user-avatar">A</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <aside class="activity-bar">
+                <button class="activity-btn active" title="Explorer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                    </svg>
+                </button>
+                <button class="activity-btn" title="Search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="activity-btn" title="AI Agent">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                        <circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/>
+                        <path d="M9 17h6"/>
+                    </svg>
+                </button>
+            </aside>
+
+            <aside class="tree-panel">
+                <div class="tree-header">
+                    <span>Explorer</span>
+                    <div class="tree-actions">
+                        <button class="tree-action-btn" title="New File">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="tree-content">
+                    <div class="tree-item">
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">api-server</span>
+                    </div>
+                    <div class="tree-item selected" style="padding-left: 28px;">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">server.ts</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 28px;">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">routes.ts</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 28px;">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">db.ts</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 44px;">
+                        <svg class="tree-arrow collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">routes</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 44px;">
+                        <svg class="tree-arrow collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">middleware</span>
+                    </div>
+                    <div class="tree-item">
+                        <svg class="tree-icon file-json" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">package.json</span>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="editor-area">
+                <div class="tab-bar">
+                    <button class="tab active">
+                        <svg class="tab-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tab-name">server.ts</span>
+                        <button class="tab-close">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </button>
+                </div>
+                <div class="editor-content">
+                    <div class="line-numbers">
+                        <div class="line-number">1</div><div class="line-number">2</div><div class="line-number">3</div>
+                        <div class="line-number">4</div><div class="line-number">5</div><div class="line-number">6</div>
+                        <div class="line-number">7</div><div class="line-number">8</div><div class="line-number">9</div>
+                        <div class="line-number">10</div><div class="line-number">11</div><div class="line-number">12</div>
+                        <div class="line-number">13</div><div class="line-number">14</div><div class="line-number">15</div>
+                        <div class="line-number">16</div><div class="line-number">17</div><div class="line-number">18</div>
+                        <div class="line-number">19</div><div class="line-number">20</div>
+                    </div>
+                    <div class="code-area"><span class="keyword">import</span> <span class="variable">express</span>, { <span class="function">Request</span>, <span class="function">Response</span> } <span class="keyword">from</span> <span class="string">'express'</span>;
+<span class="keyword">import</span> { <span class="function">routes</span> } <span class="keyword">from</span> <span class="string">'./routes'</span>;
+<span class="keyword">import</span> { <span class="function">db</span> } <span class="keyword">from</span> <span class="string">'./db'</span>;
+
+<span class="keyword">const</span> <span class="variable">app</span> = <span class="function">express</span>();
+<span class="keyword">const</span> <span class="variable">PORT</span> = <span class="number">3000</span>;
+
+<span class="variable">app</span>.<span class="function">use</span>(<span class="variable">express</span>.<span class="function">json</span>());
+
+<span class="variable">app</span>.<span class="function">get</span>(<span class="string">'/'</span>, (<span class="attr-name">req</span>: <span class="type">Request</span>, <span class="attr-name">res</span>: <span class="type">Response</span>) => {
+  <span class="variable">res</span>.<span class="function">json</span>({
+    <span class="property">message</span>: <span class="string">'Welcome to API Server'</span>,
+    <span class="property">version</span>: <span class="string">'1.0.0'</span>,
+    <span class="property">endpoints</span>: <span class="variable">routes</span>,
+  });
+});
+
+<span class="variable">app</span>.<span class="function">listen</span>(<span class="variable">PORT</span>, () => {
+  <span class="variable">console</span>.<span class="function">log</span>(<span class="string">`Server running on port ${PORT}`</span>);
+});</div>
+                </div>
+            </section>
+
+            <div class="resize-handle"></div>
+
+            <section class="preview-panel">
+                <div class="preview-header">
+                    <div class="preview-tabs">
+                        <button class="preview-tab active">browser</button>
+                        <button class="preview-tab">console</button>
+                    </div>
+                </div>
+                <div class="browser-mock">
+                    <div class="browser-toolbar">
+                        <button class="browser-nav-btn" disabled>←</button>
+                        <button class="browser-nav-btn" disabled>→</button>
+                        <button class="browser-nav-btn">⟳</button>
+                        <div class="browser-url-bar">
+                            <span style="color: #666; font-size: 12px;">🔒</span>
+                            <input type="text" class="browser-url-input" value="http://localhost:3000/" readonly>
+                        </div>
+                    </div>
+                    <div class="browser-content">
+                        <span class="response-badge">200 OK</span>
+                        <h1>Welcome to API Server</h1>
+                        <p>This is your Node.js Express API server response.</p>
+                        <pre>{
+  "message": "Welcome to API Server",
+  "version": "1.0.0",
+  "endpoints": ["/api/users", "/api/posts"]
+}</pre>
+                        <p style="margin-top: 16px; color: #888; font-size: 12px;">
+                            Response time: 45ms | Size: 256 bytes
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="resize-handle"></div>
+
+            <section class="terminal-panel">
+                <div class="terminal-header">
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active">Shell</button>
+                        <button class="terminal-tab">Build</button>
+                    </div>
+                </div>
+                <div class="terminal-content">
+                    <div class="terminal-line"><span class="terminal-prompt">~/api-server $ </span><span class="terminal-command">npm run dev</span></div>
+                    <div class="terminal-line terminal-output"></div>
+                    <div class="terminal-line terminal-output" style="color: var(--success);">> api-server@1.0.0 dev</div>
+                    <div class="terminal-line terminal-output" style="color: var(--success);">> ts-node server.ts</div>
+                    <div class="terminal-line terminal-output"></div>
+                    <div class="terminal-line terminal-output" style="color: var(--success);">Server running on port 3000</div>
+                    <div class="terminal-line terminal-output"></div>
+                    <div class="terminal-line"><span class="terminal-prompt">~/api-server $ </span><span class="terminal-cursor"></span></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item">
+                    <span>WebContainer</span>
+                </div>
+                <div class="status-item">
+                    <span>3000</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <div class="status-item">
+                    <span>Ln 18, Col 3</span>
+                </div>
+                <div class="status-item">
+                    <span>TypeScript</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

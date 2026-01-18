@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Hub - Projects Stats Activities</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Hub-specific layout styles */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--hub-bg);
+        }
+
+        .hub-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-6);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .hub-content {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .hub-tabs {
+            position: absolute;
+            top: var(--header-height);
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-6);
+            border-bottom: var(--border-width) solid var(--border-color);
+            background-color: var(--hub-bg);
+            flex-shrink: 0;
+        }
+
+        .hub-tab {
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .hub-tab:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+
+        .hub-tab.active {
+            color: var(--action);
+            border-bottom-color: var(--action);
+        }
+
+        /* Left Panel - Projects Grid (50%) */
+        .projects-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            border-right: var(--border-width) solid var(--border-color);
+        }
+
+        .panel-header {
+            padding: var(--space-4);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-3);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .filter-tab {
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-tab:hover {
+            background-color: var(--surface-hover);
+        }
+
+        .filter-tab.active {
+            color: var(--action);
+            border-color: var(--action);
+        }
+
+        .projects-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            min-height: 0;
+        }
+
+        .project-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-pixel-lg);
+            border-color: var(--action);
+        }
+
+        .project-card.selected {
+            border-color: var(--action);
+            background-color: var(--surface-hover);
+        }
+
+        .project-name {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-1);
+        }
+
+        .project-meta {
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .project-tags {
+            display: flex;
+            gap: var(--space-1);
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            padding: var(--space-0-5) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        /* Middle Panel - Stats (25%) */
+        .stats-panel {
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+            border-right: var(--border-width) solid var(--border-color);
+        }
+
+        .stats-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            min-height: 0;
+        }
+
+        .stat-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--action);
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .chart-section {
+            margin-top: var(--space-4);
+        }
+
+        .chart-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-3);
+        }
+
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100px;
+            padding: var(--space-2);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        .mini-bar {
+            width: 20px;
+            background-color: var(--action);
+            border: var(--border-width) solid var(--action);
+            border-radius: var(--radius-none);
+        }
+
+        .mini-label {
+            font-size: var(--text-xs);
+            color: var(--muted);
+            margin-top: var(--space-1);
+        }
+
+        /* Right Panel - Activities (25%) */
+        .activities-panel {
+            width: 25%;
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+        .activities-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+            min-height: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: var(--space-3);
+            padding: var(--space-3) 0;
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-text {
+            font-size: var(--text-sm);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .activity-text strong {
+            color: var(--action);
+        }
+
+        .activity-time {
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .activity-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .hub-footer {
+            height: var(--status-bar-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-4);
+            border-top: var(--border-width) solid var(--border-color);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .storage-bar {
+            width: 60px;
+            height: 6px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow: hidden;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background-color: var(--action);
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+    Via-Gent Progressive Disclosure Wireframe
+    Workspace: Hub
+    Stack: 3 interfaces (Projects + Stats + Activities)
+    Device: Desktop
+    Language: en
+    -->
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="hub-header">
+            <div class="flex items-center gap-4">
+                <div class="icon icon-xl text-action">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">Via-Gent</span>
+                <span class="badge">Hub</span>
+            </div>
+            
+            <div class="flex items-center gap-4" style="flex: 1; max-width: 400px; margin: 0 var(--space-6);">
+                <div class="input flex items-center gap-2" style="background-color: var(--canvas);">
+                    <svg class="icon-sm text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <span class="text-muted">Search...</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="btn btn-primary">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    New Project
+                </button>
+                <div class="avatar">U</div>
+            </div>
+        </header>
+
+        <!-- NAVIGATION TABS -->
+        <div class="hub-tabs">
+            <button class="hub-tab active">Projects</button>
+            <button class="hub-tab">Stats</button>
+            <button class="hub-tab">Activities</button>
+            <button class="hub-tab">Binding</button>
+            <button class="hub-tab">Settings</button>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <main class="hub-content">
+            <!-- LEFT PANEL: Projects Grid (50%) -->
+            <section class="projects-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Projects</h2>
+                    <div class="filter-bar">
+                        <button class="filter-tab active">All</button>
+                        <button class="filter-tab">Recent</button>
+                        <button class="filter-tab">Favorites</button>
+                    </div>
+                </div>
+                <div class="projects-scroll">
+                    <!-- Project 1 -->
+                    <div class="project-card selected">
+                        <div class="project-name">📁 my-awesome-app</div>
+                        <div class="project-meta">TypeScript + React</div>
+                        <div class="project-tags">
+                            <span class="project-tag">TypeScript</span>
+                            <span class="project-tag">React</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card">
+                        <div class="project-name">🚀 via-gent</div>
+                        <div class="project-meta">Full-stack AI workspace</div>
+                        <div class="project-tags">
+                            <span class="project-tag">AI</span>
+                            <span class="project-tag">Full-stack</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card">
+                        <div class="project-name">📝 personal-blog</div>
+                        <div class="project-meta">Gatsby + Markdown</div>
+                        <div class="project-tags">
+                            <span class="project-tag">Gatsby</span>
+                            <span class="project-tag">Blog</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card">
+                        <div class="project-name">💼 work-project</div>
+                        <div class="project-meta">Node.js + PostgreSQL</div>
+                        <div class="project-tags">
+                            <span class="project-tag">Node.js</span>
+                            <span class="project-tag">PostgreSQL</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="project-card">
+                        <div class="project-name">📚 learning-ts</div>
+                        <div class="project-meta">TypeScript exercises</div>
+                        <div class="project-tags">
+                            <span class="project-tag">TypeScript</span>
+                            <span class="project-tag">Learning</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 6 -->
+                    <div class="project-card">
+                        <div class="project-name">🎮 game-engine</div>
+                        <div class="project-meta">Unity C# Game</div>
+                        <div class="project-tags">
+                            <span class="project-tag">Unity</span>
+                            <span class="project-tag">C#</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MIDDLE PANEL: Stats (25%) -->
+            <section class="stats-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Stats</h2>
+                </div>
+                <div class="stats-content">
+                    <!-- Stat Cards -->
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Projects</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">2.4 GB</div>
+                        <div class="stat-label">Storage</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">1.2M</div>
+                        <div class="stat-label">AI Tokens</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-value">7 days</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+
+                    <!-- Mini Chart -->
+                    <div class="chart-section">
+                        <h3 class="chart-title">Weekly Hours</h3>
+                        <div class="mini-chart">
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="mini-bar" style="height: 60px;"></div>
+                                <span class="mini-label">M</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="mini-bar" style="height: 90px;"></div>
+                                <span class="mini-label">T</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="mini-bar" style="height: 45px;"></div>
+                                <span class="mini-label">W</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="mini-bar" style="height: 100px;"></div>
+                                <span class="mini-label">T</span>
+                            </div>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div class="mini-bar" style="height: 75px;"></div>
+                                <span class="mini-label">F</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: Activities (25%) -->
+            <section class="activities-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Recent Activity</h2>
+                </div>
+                <div class="activities-content">
+                    <!-- Activity 1 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar">U</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Edited <strong>my-awesome-app</strong> • src/components/App.tsx
+                            </div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                        <div class="activity-icon">✏️</div>
+                    </div>
+
+                    <!-- Activity 2 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar" style="background-color: var(--agent-avatar);">AI</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Generated code for <strong>via-gent</strong> • Storage adapter
+                            </div>
+                            <div class="activity-time">3 hours ago</div>
+                        </div>
+                        <div class="activity-icon">🤖</div>
+                    </div>
+
+                    <!-- Activity 3 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar">U</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Created new note in <strong>personal-blog</strong>
+                            </div>
+                            <div class="activity-time">Yesterday</div>
+                        </div>
+                        <div class="activity-icon">📝</div>
+                    </div>
+
+                    <!-- Activity 4 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar">U</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Committed to <strong>work-project</strong> • API endpoints
+                            </div>
+                            <div class="activity-time">2 days ago</div>
+                        </div>
+                        <div class="activity-icon">📦</div>
+                    </div>
+
+                    <!-- Activity 5 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar" style="background-color: var(--success);">✓</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Deployed <strong>my-awesome-app</strong> to production
+                            </div>
+                            <div class="activity-time">3 days ago</div>
+                        </div>
+                        <div class="activity-icon">🚀</div>
+                    </div>
+
+                    <!-- Activity 6 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar">U</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Starred <strong>learning-ts</strong>
+                            </div>
+                            <div class="activity-time">1 week ago</div>
+                        </div>
+                        <div class="activity-icon">⭐</div>
+                    </div>
+
+                    <!-- Activity 7 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar" style="background-color: var(--warning);">!</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Build failed in <strong>game-engine</strong>
+                            </div>
+                            <div class="activity-time">1 week ago</div>
+                        </div>
+                        <div class="activity-icon">⚠️</div>
+                    </div>
+
+                    <!-- Activity 8 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar">U</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Renamed <strong>old-project</strong> to <strong>new-name</strong>
+                            </div>
+                            <div class="activity-time">2 weeks ago</div>
+                        </div>
+                        <div class="activity-icon">📁</div>
+                    </div>
+
+                    <!-- Activity 9 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar">U</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Deleted <strong>temp-files</strong>
+                            </div>
+                            <div class="activity-time">2 weeks ago</div>
+                        </div>
+                        <div class="activity-icon">🗑️</div>
+                    </div>
+
+                    <!-- Activity 10 -->
+                    <div class="activity-item">
+                        <div class="activity-avatar" style="background-color: var(--info);">i</div>
+                        <div class="activity-content">
+                            <div class="activity-text">
+                                Shared <strong>personal-blog</strong> with public link
+                            </div>
+                            <div class="activity-time">3 weeks ago</div>
+                        </div>
+                        <div class="activity-icon">🔗</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="hub-footer">
+            <div class="footer-left">
+                <div class="footer-item">
+                    <span>v2.1.0</span>
+                </div>
+                <div class="footer-item">
+                    <span class="text-success">●</span>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-item">
+                    <span>Storage:</span>
+                    <div class="storage-bar">
+                        <div class="storage-fill" style="width: 24%;"></div>
+                    </div>
+                    <span>2.4 GB / 10 GB</span>
+                </div>
+                <button class="btn btn-ghost text-sm" style="padding: var(--space-1) var(--space-2);">
+                    Settings
+                </button>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

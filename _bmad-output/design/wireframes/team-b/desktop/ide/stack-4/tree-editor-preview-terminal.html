@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | IDE - Tree + Editor + Preview + Terminal (4 interfaces)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* 8-Bit Design System */
+        :root {
+            --canvas: #09090b;
+            --surface: #18181b;
+            --depth: #000000;
+            --primary: #fafafa;
+            --muted: #a1a1aa;
+            --action: #f97316;
+            --structural: #3f3f46;
+            --success: #22c55e;
+            --error: #ef4444;
+            --warning: #eab308;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background-color: var(--canvas);
+            color: var(--primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-rows: 48px 1fr 24px;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            height: 48px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--action);
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .workspace-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .workspace-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .workspace-tab:hover {
+            color: var(--primary);
+            background-color: var(--structural);
+        }
+
+        .workspace-tab.active {
+            color: var(--primary);
+            background-color: var(--structural);
+            border-bottom: 2px solid var(--action);
+        }
+
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .breadcrumb-item {
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item:hover {
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--success);
+            padding: 4px 8px;
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success);
+        }
+
+        .sync-status svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .header-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 2px solid transparent;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .header-btn:hover {
+            background-color: var(--structural);
+            color: var(--primary);
+        }
+
+        .header-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            background-color: var(--action);
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 64px 220px 1fr 30% 25%;
+            overflow: hidden;
+        }
+
+        .activity-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+            background-color: var(--surface);
+            border-right: 2px solid var(--structural);
+        }
+
+        .activity-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .activity-btn:hover {
+            color: var(--primary);
+        }
+
+        .activity-btn.active {
+            color: var(--primary);
+        }
+
+        .activity-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background-color: var(--action);
+        }
+
+        .activity-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .tree-panel {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border-right: 2px solid var(--structural);
+            overflow: hidden;
+        }
+
+        .tree-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 2px solid var(--structural);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+        }
+
+        .tree-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .tree-action-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .tree-action-btn:hover {
+            color: var(--primary);
+        }
+
+        .tree-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .tree-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 0;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.1s;
+        }
+
+        .tree-item:hover {
+            background-color: var(--structural);
+        }
+
+        .tree-item.selected {
+            background-color: var(--action);
+            color: var(--canvas);
+        }
+
+        .tree-item.selected .tree-icon {
+            color: var(--canvas);
+        }
+
+        .tree-arrow {
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+            transition: transform 0.1s;
+        }
+
+        .tree-arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .tree-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            color: var(--muted);
+        }
+
+        .tree-icon.folder {
+            color: var(--action);
+        }
+
+        .tree-icon.file-ts {
+            color: #3178c6;
+        }
+
+        .tree-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .editor-area {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--canvas);
+            overflow: hidden;
+        }
+
+        .tab-bar {
+            display: flex;
+            align-items: flex-end;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            overflow-x: auto;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            background-color: transparent;
+            border: none;
+            border-right: 2px solid var(--structural);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+            min-width: 120px;
+            max-width: 200px;
+        }
+
+        .tab:hover {
+            background-color: var(--structural);
+        }
+
+        .tab.active {
+            background-color: var(--canvas);
+            color: var(--primary);
+            border-bottom: 2px solid var(--canvas);
+            margin-bottom: -2px;
+        }
+
+        .tab-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .tab-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab-close {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .tab:hover .tab-close {
+            opacity: 1;
+        }
+
+        .tab-close:hover {
+            color: var(--error);
+        }
+
+        .tab-close svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .editor-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .line-numbers {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 8px;
+            background-color: var(--surface);
+            border-right: 2px solid var(--structural);
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--muted);
+            text-align: right;
+            user-select: none;
+            min-width: 50px;
+        }
+
+        .line-number {
+            height: 20.8px;
+        }
+
+        .line-number.active {
+            color: var(--action);
+        }
+
+        .code-area {
+            flex: 1;
+            padding: 12px;
+            overflow: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            white-space: pre;
+        }
+
+        .code-area .keyword { color: #ff79c6; }
+        .code-area .string { color: #f1fa8c; }
+        .code-area .function { color: #8be9fd; }
+        .code-area .type { color: #bd93f9; }
+        .code-area .comment { color: #6272a4; }
+        .code-area .variable { color: #f8f8f2; }
+        .code-area .operator { color: #ff79c6; }
+        .code-area .punctuation { color: #f8f8f2; }
+        .code-area .keyword { color: #ff79c6; }
+        .code-area .const { color: #bd93f9; }
+        .code-area .keyword { color: #ff79c6; }
+        .code-area .return { color: #ff79c6; }
+        .code-area .param { color: #50fa7b; }
+
+        .resize-handle {
+            width: 4px;
+            background-color: var(--structural);
+            cursor: col-resize;
+            transition: background-color 0.1s;
+        }
+
+        .resize-handle:hover {
+            background-color: var(--action);
+        }
+
+        .preview-panel {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--canvas);
+            overflow: hidden;
+            border-left: 2px solid var(--structural);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+        }
+
+        .preview-url-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            padding: 6px 12px;
+            background-color: var(--depth);
+            border: 2px solid var(--structural);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .preview-url-bar svg {
+            width: 14px;
+            height: 14px;
+            color: var(--success);
+        }
+
+        .preview-url-bar span {
+            flex: 1;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .preview-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 2px solid var(--structural);
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .preview-btn:hover {
+            background-color: var(--structural);
+            color: var(--primary);
+        }
+
+        .preview-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .preview-tabs {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+        }
+
+        .preview-tab {
+            padding: 8px 16px;
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .preview-tab:hover {
+            color: var(--primary);
+        }
+
+        .preview-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--action);
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow: auto;
+            background-color: #1a1a2e;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .api-response {
+            color: #a8dadc;
+            line-height: 1.8;
+        }
+
+        .api-key { color: #e63946; }
+        .api-string { color: #98c379; }
+        .api-number { color: #d19a66; }
+        .api-boolean { color: #c678dd; }
+        .api-null { color: #be5046; }
+
+        .terminal-panel {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--depth);
+            overflow: hidden;
+            border-left: 2px solid var(--structural);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: var(--surface);
+            border-bottom: 2px solid var(--structural);
+        }
+
+        .terminal-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .terminal-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .terminal-tab:hover {
+            color: var(--primary);
+        }
+
+        .terminal-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--action);
+        }
+
+        .terminal-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .terminal-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .terminal-btn:hover {
+            color: var(--primary);
+        }
+
+        .terminal-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .terminal-content {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .terminal-line .prompt { color: var(--success); }
+        .terminal-line .command { color: var(--primary); }
+        .terminal-line .output { color: var(--muted); }
+        .terminal-line .error { color: var(--error); }
+        .terminal-line .success { color: var(--success); }
+        .terminal-line .path { color: #8be9fd; }
+        .terminal-line .info { color: #3b82f6; }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: var(--action);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background-color: var(--surface);
+            border-top: 2px solid var(--structural);
+            height: 24px;
+            font-size: 11px;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .status-item:hover {
+            color: var(--primary);
+        }
+
+        .status-item svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .status-item.active {
+            color: var(--action);
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--canvas);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--structural);
+            border: 2px solid var(--canvas);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+
+        @media (max-width: 1280px) {
+            .main-content {
+                grid-template-columns: 48px 180px 1fr 30% 25%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="0"/>
+                        <path d="M12 8v8M8 12h8"/>
+                    </svg>
+                    Via-Gent
+                </div>
+                <div class="workspace-tabs">
+                    <button class="workspace-tab">my-awesome-app</button>
+                    <button class="workspace-tab">notes</button>
+                    <button class="workspace-tab">knowledge</button>
+                </div>
+            </div>
+            <div class="header-center">
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">src</span>
+                    <span>/</span>
+                    <span class="breadcrumb-item">api</span>
+                    <span>/</span>
+                    <span style="color: var(--primary);">server.ts</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="sync-status">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                        <polyline points="21 3 21 9 15 9"/>
+                    </svg>
+                    Synced
+                </div>
+                <button class="header-btn" title="Search (Cmd+K)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="header-btn" title="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                    </svg>
+                </button>
+                <div class="user-avatar">A</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <aside class="activity-bar">
+                <button class="activity-btn active" title="Explorer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                    </svg>
+                </button>
+                <button class="activity-btn" title="Search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="activity-btn" title="Source Control">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="18" r="3"/>
+                        <circle cx="6" cy="6" r="3"/>
+                        <path d="M6 21V9a9 9 0 009 9"/>
+                    </svg>
+                </button>
+                <button class="activity-btn" title="Extensions">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="8" height="8"/>
+                        <rect x="13" y="3" width="8" height="8"/>
+                        <rect x="13" y="13" width="8" height="8"/>
+                        <rect x="3" y="13" width="8" height="8"/>
+                    </svg>
+                </button>
+                <button class="activity-btn" title="AI Agent">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1v1a2 2 0 01-2 2H5a2 2 0 01-2-2v-1H2a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2z"/>
+                        <circle cx="9" cy="13" r="1"/>
+                        <circle cx="15" cy="13" r="1"/>
+                        <path d="M9 17h6"/>
+                    </svg>
+                </button>
+            </aside>
+
+            <aside class="tree-panel">
+                <div class="tree-header">
+                    <span>Explorer</span>
+                    <div class="tree-actions">
+                        <button class="tree-action-btn" title="New File">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                        </button>
+                        <button class="tree-action-btn" title="New Folder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                                <line x1="12" y1="11" x2="12" y2="17"/>
+                                <line x1="9" y1="14" x2="15" y2="14"/>
+                            </svg>
+                        </button>
+                        <button class="tree-action-btn" title="Collapse All">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="18 15 12 9 6 15"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="tree-content">
+                    <div class="tree-item">
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">my-awesome-app</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 28px;">
+                        <svg class="tree-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">src</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 44px;">
+                        <svg class="tree-arrow collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">api</span>
+                    </div>
+                    <div class="tree-item selected" style="padding-left: 60px;">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">server.ts</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 60px;">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">routes.ts</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 44px;">
+                        <svg class="tree-arrow collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">components</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 44px;">
+                        <svg class="tree-arrow collapsed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"/>
+                        </svg>
+                        <svg class="tree-icon folder" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2v11z"/>
+                        </svg>
+                        <span class="tree-name">lib</span>
+                    </div>
+                    <div class="tree-item" style="padding-left: 44px;">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">App.ts</span>
+                    </div>
+                    <div class="tree-item">
+                        <svg class="tree-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tree-name">package.json</span>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="editor-area">
+                <div class="tab-bar">
+                    <button class="tab active">
+                        <svg class="tab-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tab-name">server.ts</span>
+                        <button class="tab-close">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </button>
+                    <button class="tab">
+                        <svg class="tab-icon file-ts" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="tab-name">routes.ts</span>
+                        <button class="tab-close">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </button>
+                </div>
+
+                <div class="editor-content">
+                    <div class="line-numbers">
+                        <div class="line-number">1</div>
+                        <div class="line-number">2</div>
+                        <div class="line-number">3</div>
+                        <div class="line-number">4</div>
+                        <div class="line-number">5</div>
+                        <div class="line-number">6</div>
+                        <div class="line-number">7</div>
+                        <div class="line-number">8</div>
+                        <div class="line-number">9</div>
+                        <div class="line-number">10</div>
+                        <div class="line-number">11</div>
+                        <div class="line-number">12</div>
+                        <div class="line-number">13</div>
+                        <div class="line-number">14</div>
+                        <div class="line-number">15</div>
+                        <div class="line-number">16</div>
+                        <div class="line-number">17</div>
+                        <div class="line-number">18</div>
+                        <div class="line-number">19</div>
+                        <div class="line-number">20</div>
+                        <div class="line-number">21</div>
+                        <div class="line-number">22</div>
+                        <div class="line-number">23</div>
+                        <div class="line-number">24</div>
+                        <div class="line-number">25</div>
+                        <div class="line-number">26</div>
+                        <div class="line-number">27</div>
+                        <div class="line-number">28</div>
+                        <div class="line-number">29</div>
+                        <div class="line-number">30</div>
+                    </div>
+                    <div class="code-area"><span class="keyword">import</span> <span class="variable">express</span>, <span class="punctuation">{</span> <span class="variable">Request</span>, <span class="variable">Response</span> <span class="punctuation">}</span> <span class="keyword">from</span> <span class="string">'express'</span>;
+
+<span class="keyword">const</span> <span class="variable">app</span> <span class="operator">=</span> <span class="function">express</span>();
+<span class="keyword">const</span> <span class="variable">PORT</span> <span class="operator">=</span> <span class="string">3000</span>;
+
+<span class="comment">// Middleware</span>
+<span class="variable">app</span>.<span class="function">use</span>(<span class="variable">express</span>.<span class="function">json</span>());
+
+<span class="comment">// Health check endpoint</span>
+<span class="variable">app</span>.<span class="function">get</span>(<span class="string">'/api/health'</span>, (<span class="param">req</span>: <span class="type">Request</span>, <span class="param">res</span>: <span class="type">Response</span>) => {
+  <span class="keyword">return</span> <span class="variable">res</span>.<span class="function">json</span>(<span class="punctuation">{</span>
+    <span class="attr-name">status</span>: <span class="string">'healthy'</span>,
+    <span class="attr-name">timestamp</span>: <span class="keyword">new</span> <span class="function">Date</span>().<span class="function">toISOString</span>(),
+  <span class="punctuation">}</span>);
+});
+
+<span class="comment">// API routes</span>
+<span class="variable">app</span>.<span class="function">get</span>(<span class="string">'/api/users'</span>, <span class="keyword">async</span> (<span class="param">req</span>: <span class="type">Request</span>, <span class="param">res</span>: <span class="type">Response</span>) => {
+  <span class="keyword">try</span> <span class="punctuation">{</span>
+    <span class="keyword">const</span> <span class="variable">users</span> <span class="operator">=</span> <span class="keyword">await</span> <span class="function">getUsersFromDB</span>();
+    <span class="keyword">return</span> <span class="variable">res</span>.<span class="function">json</span>(<span class="punctuation">{</span> <span class="attr-name">users</span> <span class="punctuation">}</span>);
+  <span class="punctuation">}</span> <span class="keyword">catch</span> (<span class="param">error</span>) <span class="punctuation">{</span>
+    <span class="keyword">return</span> <span class="variable">res</span>.<span class="function">status</span>(<span class="string">500</span>).<span class="function">json</span>(<span class="punctuation">{</span> <span class="attr-name">error</span>: <span class="string">'Failed to fetch users'</span> <span class="punctuation">}</span>);
+  <span class="punctuation">}</span>
+});
+
+<span class="variable">app</span>.<span class="function">listen</span>(<span class="variable">PORT</span>, () => {
+  <span class="variable">console</span>.<span class="function">log</span>(<span class="string">`Server running on port ${PORT}`</span>);
+});</div>
+                </div>
+            </section>
+
+            <div class="resize-handle"></div>
+
+            <aside class="preview-panel">
+                <div class="preview-header">
+                    <div class="preview-url-bar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                        </svg>
+                        <span>http://localhost:3000/api/users</span>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="preview-btn" title="Refresh">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="preview-tabs">
+                    <button class="preview-tab active">Response</button>
+                    <button class="preview-tab">Headers</button>
+                    <button class="preview-tab">Timing</button>
+                </div>
+                <div class="preview-content">
+                    <div class="api-response">
+<span class="api-key">{</span>
+  <span class="api-string">"users"</span>: <span class="api-key">[</span>
+    <span class="api-key">{</span>
+      <span class="api-string">"id"</span>: <span class="api-number">1</span>,
+      <span class="api-string">"name"</span>: <span class="api-string">"John Doe"</span>,
+      <span class="api-string">"email"</span>: <span class="api-string">"john@example.com"</span>,
+      <span class="api-string">"role"</span>: <span class="api-string">"admin"</span>,
+      <span class="api-string">"createdAt"</span>: <span class="api-string">"2024-01-15T10:30:00Z"</span>
+    <span class="api-key">}</span>,
+    <span class="api-key">{</span>
+      <span class="api-string">"id"</span>: <span class="api-number">2</span>,
+      <span class="api-string">"name"</span>: <span class="api-string">"Jane Smith"</span>,
+      <span class="api-string">"email"</span>: <span class="api-string">"jane@example.com"</span>,
+      <span class="api-string">"role"</span>: <span class="api-string">"user"</span>,
+      <span class="api-string">"createdAt"</span>: <span class="api-string">"2024-01-16T14:20:00Z"</span>
+    <span class="api-key">}</span>,
+    <span class="api-key">{</span>
+      <span class="api-string">"id"</span>: <span class="api-number">3</span>,
+      <span class="api-string">"name"</span>: <span class="api-string">"Bob Wilson"</span>,
+      <span class="api-string">"email"</span>: <span class="api-string">"bob@example.com"</span>,
+      <span class="api-string">"role"</span>: <span class="api-string">"user"</span>,
+      <span class="api-string">"createdAt"</span>: <span class="api-string">"2024-01-17T09:15:00Z"</span>
+    <span class="api-key">}</span>
+  <span class="api-key">]</span>,
+  <span class="api-string">"total"</span>: <span class="api-number">3</span>,
+  <span class="api-string">"page"</span>: <span class="api-number">1</span>
+<span class="api-key">}</span></div>
+                </div>
+            </aside>
+
+            <div class="resize-handle"></div>
+
+            <aside class="terminal-panel">
+                <div class="terminal-header">
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active">Shell</button>
+                        <button class="terminal-tab">Build</button>
+                        <button class="terminal-tab">Debug</button>
+                    </div>
+                    <div class="terminal-actions">
+                        <button class="terminal-btn" title="Clear">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                            </svg>
+                        </button>
+                        <button class="terminal-btn" title="Kill Terminal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="terminal-content">
+                    <div class="terminal-line"><span class="path">~/project $</span> <span class="command">node dist/api/server.js</span></div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line success">Server running on port 3000</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line info">[10:32:15] GET /api/health - 200 - 5ms</div>
+                    <div class="terminal-line info">[10:32:18] GET /api/users - 200 - 23ms</div>
+                    <div class="terminal-line"></div>
+                    <div class="terminal-line"><span class="path">~/project $</span> <span class="cursor"></span></div>
+                </div>
+            </aside>
+        </main>
+
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item" title="WebContainer Status">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                    <span>WebContainer</span>
+                </div>
+                <div class="status-item" title="Branch">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="18" r="3"/>
+                        <circle cx="6" cy="6" r="3"/>
+                        <path d="M6 21V9a9 9 0 009 9"/>
+                    </svg>
+                    <span>main*</span>
+                </div>
+                <div class="status-item" title="Sync Status">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                        <polyline points="21 3 21 9 15 9"/>
+                    </svg>
+                    <span>0↓ 0↑</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <div class="status-item" title="Problems">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>0</span>
+                </div>
+                <div class="status-item" title="Cursor Position">
+                    <span>Ln 22, Col 18</span>
+                </div>
+                <div class="status-item" title="Encoding">
+                    <span>UTF-8</span>
+                </div>
+                <div class="status-item" title="Language">
+                    <span>TypeScript</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

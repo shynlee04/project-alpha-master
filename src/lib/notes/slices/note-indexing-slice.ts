@@ -11,10 +11,13 @@
  * Coordinates with note-indexer for async RAG pipeline integration.
  */
 
-import { db } from '@/infrastructure/persistence/dexie-db';
 import type { StateCreator } from 'zustand';
 import type { NoteStoreState } from '../types-slice';
 import { indexNote, removeNoteFromIndex } from '../note-indexer';
+import { createStorageGateway } from '@/infrastructure/filesystem/storage-gateway-factory';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { NoteGateway } from '@/domain/services/note-gateway';
 
 /**
  * Indexing Operations Slice
@@ -58,7 +61,44 @@ export const createNoteIndexingSlice: StateCreator<
         indexNote(note as any, currentProjectId)
             .then(async () => {
                 const updates = { isIndexed: true, indexedAt: Date.now() };
-                await db.notes.update(noteId, updates);
+
+                // Get platform contract and project for gateway creation
+                const platform = getPlatformContract();
+                const currentProjectId = get().currentProjectId;
+                const project = currentProjectId ? useProjectStore.getState().projects[currentProjectId] : null;
+
+                if (!project) {
+                    console.warn(`[NoteStore-Indexing] Project not found, skipping note update`);
+                    // Still update local state without persistence
+                    set((state) => {
+                        const currentNote = state.notes.get(noteId);
+                        if (!currentNote) return state;
+
+                        const newMap = new Map(state.notes);
+                        newMap.set(noteId, { ...currentNote, ...updates });
+
+                        const newIndexing = new Set(state.indexingNoteIds);
+                        newIndexing.delete(noteId);
+
+                        return {
+                            notes: newMap,
+                            notesArray: Array.from(newMap.values()).sort((a, b) => a.order - b.order),
+                            indexingNoteIds: newIndexing
+                        };
+                    });
+                    return;
+                }
+
+                // Create gateway for current platform
+                const gateway = createStorageGateway(platform, {
+                    directoryHandle: undefined,
+                    projectId: currentProjectId ?? '',
+                });
+
+                const noteGateway = new NoteGateway(gateway);
+
+                // Persist update through gateway
+                await noteGateway.updateNote(noteId, updates);
 
                 set((state) => {
                     const currentNote = state.notes.get(noteId);

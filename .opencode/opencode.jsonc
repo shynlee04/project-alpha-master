@@ -16,21 +16,61 @@
       "prompt": "{file:agent/bmad-master.md}",
       "maxSteps": 2000,
       "tools": {
-        "write": true,
+        "write": false,
         "mcp": false,
         "edit": false,
         "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
         "task": true
       },
       "permission": {
         "edit": "deny",
         "bash": "deny",
+        "glob": "deny",
+        "grep": "deny",
+        "read": "deny",
+        "write": "deny",
         "task": {
           "*": "allow",
           "agent": "allow",
           "subagent": "allow",
           "skill": "allow",
           "command": "ask"
+        }
+      }
+    },
+    "ext-master-enhanced": {
+      "description": "EXCALIBUR - Event-Driven Workflow Orchestrator with Sub-Agent Delegation",
+      "mode": "primary",
+      "temperature": 0.2,
+      "prompt": "{file:agent/ext-master-enhanced.md}",
+      "maxSteps": 2000,
+      "tools": {
+        "write": false,
+        "edit": false,
+        "bash": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": true,
+        "mcp": false
+      },
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "glob": "deny",
+        "grep": "deny",
+        "read": "deny",
+        "write": "deny",
+        "mcp": "deny",
+        "task": {
+          "*": "allow",
+          "subtask": "allow",
+          "agent": "allow",
+          "subagent": "allow",
+          "skill": "allow"
         }
       }
     },
@@ -132,7 +172,7 @@
       "mode": "all",
       "temperature": 0.1,
       "prompt": "{file:agent/architect-ext.md}",
-      "maxSteps": 30,
+      "maxSteps": 300,
       "tools": {
         "write": true,
         "edit": true,
@@ -145,7 +185,14 @@
         "edit": "allow",
         "bash": "allow",
         "task": {
-          "*": "allow"
+          "*": "allow",
+          "subtask": "allow",
+          "agent": "allow",
+          "subagent": "allow",
+          "skill": "allow",
+          "command": "allow",
+          "edit": "allow",
+          "bash": "allow"
         }
       }
     },
@@ -202,16 +249,24 @@
       "tools": {
         "write": true,
         "edit": true,
-        "bash": false,
+        "bash": true,
         "glob": true,
         "grep": true,
         "read": true
       },
       "permission": {
         "edit": "allow",
-        "bash": "deny",
+        "subtask": "allow",
+        "bash": "allow",
         "task": {
-          "*": "deny"
+          "*": "allow",
+          "agent": "allow",
+          "subagent": "allow",
+          "skill": "allow",
+          "command": "allow",
+          "analyst-ext": "allow",
+          "architect-ext": "allow",
+          "explore": "allow"
         }
       }
     },

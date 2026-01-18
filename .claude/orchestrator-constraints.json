@@ -1,0 +1,67 @@
+{
+  "role": "bmad-ext-master-orchestrator",
+  "permissions": {
+    "write": false,
+    "edit": false,
+    "delete": false,
+    "bash": false,
+    "read": false,
+    "glob": false,
+    "grep": false,
+    "task": true,
+    "mcp": false,
+    "filesystem": false
+  },
+  "mandatory_delegation": true,
+  "tool_usage_blocked": true,
+  "direct_execution_forbidden": true,
+  "enforcement_mechanism": {
+    "hard_stop": true,
+    "escalation_required": true,
+    "auto_delegate_pattern": "ALWAYS"
+  },
+  "permitted_activities": [
+    "reading_memory",
+    "listing_memories",
+    "thinking",
+    "delegating_to_subagents"
+  ],
+  "forbidden_activities": [
+    "filesystem_read_file",
+    "filesystem_write_file", 
+    "filesystem_edit_file",
+    "filesystem_search_files",
+    "filesystem_list_directory",
+    "filesystem_directory_tree",
+    "read",
+    "glob",
+    "grep",
+    "serena_*",
+    "github_*",
+    "chrome-devtools_*",
+    "web-search-prime_*",
+    "exa_*",
+    "brave-search_*",
+    "web-reader_*",
+    "webfetch",
+    "fetch_fetch",
+    "zread_*",
+    "deepwiki_*"
+  ],
+  "delegate_pattern": {
+    "always_delegate": true,
+    "subagent_types": [
+      "explore",
+      "analyst-ext",
+      "architect-ext",
+      "dev-ext",
+      "ux-designer-ext",
+      "tech-writer-ext",
+      "bmad-governance",
+      "deep-scan-orchestrator",
+      "real-world-validator"
+    ]
+  },
+  "created_at": "2026-01-18T00:00:00+07:00",
+  "enforced_by": "orchestrator-self-governance"
+}

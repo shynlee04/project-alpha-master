@@ -1,0 +1,306 @@
+{
+  "metadata": {
+    "scan_date": "2026-01-18",
+    "scanner": "deep-scan-performance-scanner",
+    "scope": "src/",
+    "exclusions": ["node_modules", ".git", "dist", "build", ".next", ".nuxt", ".cache", "coverage"]
+  },
+  "render_waste": [
+    {
+      "file": "src/presentation/components/ide/AgentChatPanel.tsx",
+      "component": "AgentChatPanel",
+      "issue": "Missing React.memo wrapper for large component (600+ lines)",
+      "impact": "medium",
+      "fix": "Wrap component with React.memo to prevent unnecessary re-renders"
+    },
+    {
+      "file": "src/presentation/components/ide/EnhancedChatInterface.tsx",
+      "component": "EnhancedChatInterface",
+      "issue": "Large component without React.memo, receives many props",
+      "impact": "medium",
+      "fix": "Wrap with React.memo and use useMemo for derived data"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "component": "NoteEditor",
+      "issue": "Large component (800+ lines) without React.memo",
+      "impact": "medium",
+      "fix": "Consider memoizing sub-components or wrapping with React.memo"
+    },
+    {
+      "file": "src/presentation/components/chat/UnifiedChatPanel.tsx",
+      "component": "UnifiedChatPanel",
+      "issue": "Already memoized but may benefit from useCallback optimization for callbacks",
+      "impact": "low",
+      "fix": "Ensure all callback props are wrapped with useCallback"
+    },
+    {
+      "file": "src/presentation/components/ide/FileTree/FileTree.tsx",
+      "component": "FileTree",
+      "issue": "Missing React.memo for tree component that re-renders on file changes",
+      "impact": "medium",
+      "fix": "Wrap with React.memo and memoize renderItem callback"
+    },
+    {
+      "file": "src/presentation/components/ide/SyncStatusPanel.tsx",
+      "component": "SyncStatusPanel",
+      "issue": "Large panel component without memoization",
+      "impact": "medium",
+      "fix": "Wrap with React.memo and use useMemo for status calculations"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteSidebar.tsx",
+      "component": "NoteSidebar",
+      "issue": "Sidebar with many event listeners, should be memoized",
+      "impact": "medium",
+      "fix": "Wrap with React.memo"
+    },
+    {
+      "file": "src/presentation/components/knowledge/SourceCardGrid.tsx",
+      "component": "SourceCardGrid",
+      "issue": "Grid component without memoization, re-renders on each source change",
+      "impact": "medium",
+      "fix": "Wrap with React.memo"
+    },
+    {
+      "file": "src/presentation/components/chat/ChatHistory.tsx",
+      "component": "ChatHistory",
+      "issue": "List component without memoization, re-renders on filter changes",
+      "impact": "medium",
+      "fix": "Wrap with React.memo and memoize conversation items"
+    },
+    {
+      "file": "src/presentation/components/agent/AgentManager.tsx",
+      "component": "AgentManager",
+      "issue": "Large manager component without memoization",
+      "impact": "medium",
+      "fix": "Wrap with React.memo"
+    }
+  ],
+  "memory_leaks": [
+    {
+      "file": "src/presentation/components/chat/ApprovalOverlay.tsx",
+      "hook": "useEffect for keyboard listener",
+      "issue": "Event listener added conditionally but cleanup always runs - potential double cleanup",
+      "impact": "medium",
+      "fix": "Ensure cleanup function handles both mounted and unmounted states gracefully"
+    },
+    {
+      "file": "src/presentation/components/chat/ChatBubbleOverlay.tsx",
+      "hook": "useEffect for body scroll and keyboard",
+      "issue": "Cleanup runs twice (once in else branch, once in return) - redundant cleanup calls",
+      "impact": "low",
+      "fix": "Remove duplicate cleanup in else branch, keep only return cleanup"
+    },
+    {
+      "file": "src/presentation/components/layout/hooks/useIDEKeyboardShortcuts.ts",
+      "hook": "useEffect for keyboard shortcuts",
+      "issue": "Missing cleanup for CustomEvent dispatch - 'ide.chat.focus' event may accumulate",
+      "impact": "low",
+      "fix": "Add cleanup to remove event listener if any custom events are attached"
+    },
+    {
+      "file": "src/hooks/useResponsiveBreakpoint.ts",
+      "hook": "useEffect",
+      "issue": "Event listeners properly cleaned up, but checkBreakpoint function recreated on each render",
+      "impact": "low",
+      "fix": "Wrap checkBreakpoint with useCallback"
+    },
+    {
+      "file": "src/hooks/useCommandPalette.ts",
+      "hook": "useEffect for keyboard listener",
+      "issue": "handleKeyDown recreated on every isOpen change, causing re-attachment",
+      "impact": "medium",
+      "fix": "Wrap handleKeyDown with useCallback to prevent re-attachment"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "hook": "Multiple useEffect hooks",
+      "issue": "Complex editor with many subscriptions - ensure all disposals are called",
+      "impact": "medium",
+      "fix": "Verify all Monaco editor disposals are called in cleanup"
+    },
+    {
+      "file": "src/presentation/components/notes/InBlockAIPopup.tsx",
+      "hook": "Multiple useEffect hooks",
+      "issue": "Many event listeners (selectionchange, mousedown, keydown) - verify cleanup",
+      "impact": "medium",
+      "fix": "Ensure all listeners have proper cleanup in useEffect return"
+    },
+    {
+      "file": "src/presentation/components/ide/CommandPalette.tsx",
+      "hook": "useEffect for keyboard shortcuts",
+      "issue": "Command palette keyboard listener may not clean up properly",
+      "impact": "medium",
+      "fix": "Verify cleanup function removes all event listeners"
+    },
+    {
+      "file": "src/presentation/components/ui/resizable.tsx",
+      "hook": "useEffect for mouse/touch listeners",
+      "issue": "Complex drag handlers with multiple document listeners",
+      "impact": "medium",
+      "fix": "Ensure all move/end handlers are removed in cleanup"
+    },
+    {
+      "file": "src/presentation/components/study/study-session.tsx",
+      "hook": "useEffect for keyboard listeners",
+      "issue": "Multiple keyboard event listeners without proper dependency management",
+      "impact": "medium",
+      "fix": "Wrap handlers with useCallback and ensure proper cleanup"
+    }
+  ],
+  "state_update_loops": [
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "store": "useIDEStore + useNoteStore",
+      "issue": "Potential circular dependency: IDE projectId change triggers navigation, which may trigger re-render",
+      "impact": "high",
+      "fix": "Add proper guards to prevent navigation loops"
+    },
+    {
+      "file": "src/presentation/components/knowledge/KnowledgePage.tsx",
+      "store": "useIDEStore + useRAGStore",
+      "issue": "Cross-workspace event listeners may cause state update loops",
+      "impact": "high",
+      "fix": "Already disabled problematic event listeners - verify re-enablement is safe"
+    },
+    {
+      "file": "src/presentation/components/ide/AgentChatPanel.tsx",
+      "store": "useAgentSelection + useConversationStore",
+      "issue": "Agent selection effect may cause re-render loops if hydration state changes frequently",
+      "impact": "medium",
+      "fix": "Add _hasHydrated check to prevent early execution"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx",
+      "store": "UnifiedWorkspaceContext",
+      "issue": "Multiple state slices may cause cascading updates",
+      "impact": "medium",
+      "fix": "Use useMemo to batch context value updates"
+    },
+    {
+      "file": "src/presentation/components/layout/IDELayout/IDEResizableLayout.tsx",
+      "store": "IDE store",
+      "issue": "Multiple useEffect hooks updating refs and scheduling persistence - potential cascade",
+      "impact": "medium",
+      "fix": "Debounce state persistence to prevent rapid updates"
+    },
+    {
+      "file": "src/lib/events/use-chat-state-sync.ts",
+      "store": "Chat state sync",
+      "issue": "State update events may trigger infinite loops if not properly guarded",
+      "impact": "high",
+      "fix": "Add event emission guards and debouncing"
+    },
+    {
+      "file": "src/presentation/components/ide/SyncStatusPanel.tsx",
+      "store": "Sync status map",
+      "issue": "Multiple status updates may cause re-render cascades",
+      "impact": "medium",
+      "fix": "Batch status updates and use useMemo for derived state"
+    }
+  ],
+  "bundle_bloat": [
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "import": "monaco-editor (full bundle)",
+      "size": "~3.5MB (minified)",
+      "alternative": "Use dynamic import with @monaco-editor/react lazy loading"
+    },
+    {
+      "file": "src/presentation/components/canvas/Canvas.tsx",
+      "import": "@xyflow/react (full bundle)",
+      "size": "~500KB (minified)",
+      "alternative": "Consider code splitting if only used in knowledge workspace"
+    },
+    {
+      "file": "src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "import": "@tanstack/ai + @tanstack/ai-gemini",
+      "size": "~200KB combined",
+      "alternative": "Already using TanStack AI - verify tree-shaking is enabled"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "import": "BlockNote + TipTap editor dependencies",
+      "size": "~800KB combined",
+      "alternative": "Consider lazy loading editor only when editing"
+    },
+    {
+      "file": "src/lib/pdf/pdf-vision-hook.ts",
+      "import": "pdfjs-dist",
+      "size": "~400KB",
+      "alternative": "Use dynamic import to load PDF.js only when needed"
+    },
+    {
+      "file": "src/presentation/components/notes/blocks/ChartDiagramBlock.tsx",
+      "import": "chart.js or recharts",
+      "size": "~200KB",
+      "alternative": "Lazy load chart components only when chart block is rendered"
+    },
+    {
+      "file": "src/presentation/components/notes/blocks/VideoGenerationBlock.tsx",
+      "import": "video processing libraries",
+      "size": "~300KB",
+      "alternative": "Lazy load video components"
+    },
+    {
+      "file": "src/presentation/components/notes/blocks/AIImageBlock.tsx",
+      "import": "image generation libraries",
+      "size": "~250KB",
+      "alternative": "Lazy load image generation UI"
+    },
+    {
+      "file": "src/presentation/components/notes/blocks/SlidesExportBlock.tsx",
+      "import": "pptxgenie or similar",
+      "size": "~200KB",
+      "alternative": "Lazy load export functionality"
+    },
+    {
+      "file": "src/lib/voice/use-voice-recording.ts",
+      "import": "Web Speech API (native) + transcription services",
+      "size": "~100KB (transcription)",
+      "alternative": "Lazy load transcription service only when voice recording is used"
+    }
+  ],
+  "summary": {
+    "render_waste_count": 10,
+    "memory_leaks_count": 10,
+    "state_update_loops_count": 7,
+    "bundle_bloat_count": 10,
+    "total_issues": 37,
+    "critical_count": 0,
+    "high_count": 4,
+    "medium_count": 23,
+    "low_count": 10
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "recommendation": "Add React.memo to unmemoized large components (AgentChatPanel, EnhancedChatInterface, NoteEditor)"
+    },
+    {
+      "priority": "high",
+      "recommendation": "Fix state update loops in NotesPage and KnowledgePage cross-workspace sync"
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Implement dynamic imports for Monaco Editor and other heavy dependencies"
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Fix useCallback usage in hooks with event listeners (useCommandPalette, useResponsiveBreakpoint)"
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Remove duplicate cleanup in ChatBubbleOverlay"
+    },
+    {
+      "priority": "low",
+      "recommendation": "Add proper TypeScript strict mode compliance for event handlers"
+    },
+    {
+      "priority": "low",
+      "recommendation": "Consider using React Compiler (experimental) for automatic memoization"
+    }
+  ]
+}

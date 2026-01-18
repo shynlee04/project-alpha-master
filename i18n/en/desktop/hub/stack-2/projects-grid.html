@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent - Hub - Projects Grid</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f0f1a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #a0a0a0;
+      --accent: #00d9ff;
+      --accent-secondary: #ff6b6b;
+      --border: #2a2a4e;
+      --success: #4ecdc4;
+      --warning: #ffe66d;
+      --shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.5);
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    body {
+      font-family: var(--font-mono);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-primary);
+    }
+
+    .header {
+      height: 56px;
+      background: var(--bg-tertiary);
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+
+    .nav-link.active {
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .search-input {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      outline: none;
+      width: 200px;
+    }
+
+    .header-btn {
+      padding: 8px 16px;
+      background: var(--accent);
+      color: var(--bg-primary);
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      padding: 24px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .section-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .section-tab {
+      padding: 6px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .section-tab.active {
+      background: var(--border);
+      color: var(--accent);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .project-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      padding: 20px;
+      cursor: pointer;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 0 var(--border);
+    }
+
+    .project-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .project-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .project-tag {
+      padding: 4px 8px;
+      background: var(--bg-tertiary);
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    .project-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .status-bar {
+      height: 32px;
+      background: var(--bg-tertiary);
+      border-top: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-tertiary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border: 2px solid var(--bg-tertiary);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">Via-Gent</span>
+        <nav class="nav-links">
+          <a class="nav-link active">🏠 Hub</a>
+          <a class="nav-link">📁 Projects</a>
+          <a class="nav-link">📊 Stats</a>
+          <a class="nav-link">⚙️ Settings</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" class="search-input" placeholder="Search projects...">
+        </div>
+        <button class="header-btn">
+          <span>➕</span>
+          <span>New Project</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <h1 class="page-title">Good morning! 👋</h1>
+      <p class="page-subtitle">Here's an overview of your projects</p>
+
+      <div class="section-header" style="margin-top: 32px;">
+        <h2 class="section-title">📊 Quick Overview</h2>
+      </div>
+      <div class="projects-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 32px;">
+        <div class="project-card" style="text-align: center; padding: 24px;">
+          <div style="font-size: 36px; margin-bottom: 8px;">📁</div>
+          <div style="font-size: 28px; font-weight: bold; color: var(--accent);">12</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Total Projects</div>
+        </div>
+        <div class="project-card" style="text-align: center; padding: 24px;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🟢</div>
+          <div style="font-size: 28px; font-weight: bold; color: var(--success);">8</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Active</div>
+        </div>
+        <div class="project-card" style="text-align: center; padding: 24px;">
+          <div style="font-size: 36px; margin-bottom: 8px;">💾</div>
+          <div style="font-size: 28px; font-weight: bold; color: var(--warning);">2.4 GB</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Storage</div>
+        </div>
+        <div class="project-card" style="text-align: center; padding: 24px;">
+          <div style="font-size: 36px; margin-bottom: 8px;">🔥</div>
+          <div style="font-size: 28px; font-weight: bold;">7</div>
+          <div style="font-size: 12px; color: var(--text-secondary);">Day Streak</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2 class="section-title">📂 Recent</h2>
+        <div class="section-tabs">
+          <div class="section-tab active">All</div>
+          <div class="section-tab">Favorites</div>
+        </div>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-icon">📁</div>
+          <div class="project-name">my-awesome-app</div>
+          <div class="project-desc">TypeScript + React starter project with 8-bit pixel art design</div>
+          <div class="project-tags">
+            <span class="project-tag">TypeScript</span>
+            <span class="project-tag">React</span>
+            <span class="project-tag">Vite</span>
+          </div>
+          <div class="project-meta">
+            <span>🕐 Last opened: 2 hours ago</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-icon">🤖</div>
+          <div class="project-name">via-gent</div>
+          <div class="project-desc">Full AI workspace with WebContainer and agentic coding</div>
+          <div class="project-tags">
+            <span class="project-tag">AI</span>
+            <span class="project-tag">WebContainer</span>
+          </div>
+          <div class="project-meta">
+            <span>🕐 Last opened: Yesterday</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-icon">📝</div>
+          <div class="project-name">personal-blog</div>
+          <div class="project-desc">Personal blog built with Gatsby and Markdown</div>
+          <div class="project-tags">
+            <span class="project-tag">Gatsby</span>
+            <span class="project-tag">Markdown</span>
+          </div>
+          <div class="project-meta">
+            <span>🕐 Last opened: 3 days ago</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-icon">📚</div>
+          <div class="project-name">english-learning</div>
+          <div class="project-desc">Vocabulary learning app with flashcards and spaced repetition</div>
+          <div class="project-tags">
+            <span class="project-tag">Education</span>
+            <span class="project-tag">Spaced Repetition</span>
+          </div>
+          <div class="project-meta">
+            <span>🕐 Last opened: 1 week ago</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="status-bar">
+      <div class="status-item">
+        <span>🔑 Google connected</span>
+      </div>
+      <div class="status-item">
+        <span>📦 2.4 GB / 10 GB used</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

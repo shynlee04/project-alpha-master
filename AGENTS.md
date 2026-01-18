@@ -387,7 +387,7 @@ src/
 │   ├── notes.lazy.tsx               # Notes workspace route
 │   ├── notes.$projectId.lazy.tsx    # Notes with project
 │   ├── ide.$projectId.tsx           # IDE workspace route
-│   ├── knowledge.$projectId.tsx     # Knowledge workspace route
+│   ├── knowledge.$projectId.tsx     # Knowledge workspace route **DEFER**
 │   └── study.$projectId.tsx         # Study workspace route
 │
 ├── presentation/                    # React UI ONLY
@@ -396,8 +396,8 @@ src/
 │   │   ├── common/                  # Shared components
 │   │   ├── notes/                   # Notes-specific
 │   │   ├── ide/                     # IDE-specific
-│   │   ├── knowledge/               # Knowledge-specific
-│   │   └── study/                   # Study-specific
+│   │   ├── knowledge/               # Knowledge-specific **DEFER**
+│   │   └── study/                   # Study-specific **DEFER**
 │   └── hooks/                       # React hooks (UI concerns only)
 │
 ├── domain/                          # Business Logic ONLY
@@ -710,8 +710,8 @@ Epic numbers are **MONOTONIC**:
 |-------|-------------|
 | `/notes` | Markdown/BlockNote editor |
 | `/ide` | WebContainer-based IDE |
-| `/study` | Flashcards/Quizzes |
-| `/knowledge` | Knowledge base |
+| `/study` | Flashcards/Quizzes **DEFER** |
+| `/knowledge` | Knowledge base **DEFER** |
 | `/marketing` | Landing page builder |
 | `/settings` | API keys, Vault, Config |
 

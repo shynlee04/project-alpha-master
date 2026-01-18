@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Hub - Projects Stats</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Hub-specific layout styles */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--hub-bg);
+        }
+
+        .hub-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-6);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .hub-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+            padding: var(--space-6);
+        }
+
+        .hub-tabs {
+            display: flex;
+            gap: var(--space-1);
+            margin-bottom: var(--space-4);
+            flex-shrink: 0;
+        }
+
+        .hub-tab {
+            padding: var(--space-2) var(--space-4);
+            font-size: var(--text-sm);
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .hub-tab:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+
+        .hub-tab.active {
+            color: var(--action);
+            border-bottom-color: var(--action);
+        }
+
+        .stats-section {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .stats-title {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-6);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+        }
+
+        .stat-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+        }
+
+        .stat-card:hover {
+            border-color: var(--action);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-3);
+            font-size: 24px;
+        }
+
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-change {
+            font-size: var(--text-xs);
+            margin-top: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--error);
+        }
+
+        .activity-chart-section {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+        }
+
+        .chart-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-4);
+        }
+
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 200px;
+            padding: var(--space-4);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        .chart-bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-2);
+            flex: 1;
+        }
+
+        .chart-bar {
+            width: 40px;
+            background-color: var(--action);
+            border: var(--border-width) solid var(--action);
+            border-radius: var(--radius-none);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            background-color: var(--action-hover);
+            transform: scaleY(1.05);
+        }
+
+        .chart-label {
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .storage-section {
+            margin-top: var(--space-6);
+        }
+
+        .storage-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        .storage-card {
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            padding: var(--space-4);
+        }
+
+        .storage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .storage-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+        }
+
+        .storage-value {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--action);
+        }
+
+        .progress {
+            width: 100%;
+            height: 12px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow: hidden;
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--action);
+            transition: width 0.3s ease;
+        }
+
+        .progress-bar.success {
+            background-color: var(--success);
+        }
+
+        .progress-bar.warning {
+            background-color: var(--warning);
+        }
+
+        .storage-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .storage-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: var(--text-sm);
+        }
+
+        .storage-item-name {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .storage-color {
+            width: 12px;
+            height: 12px;
+            border: var(--border-width) solid var(--border-color);
+        }
+
+        .hub-footer {
+            height: var(--status-bar-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-4);
+            border-top: var(--border-width) solid var(--border-color);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .storage-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .storage-bar {
+            width: 60px;
+            height: 6px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow: hidden;
+        }
+
+        .storage-fill {
+            height: 100%;
+            background-color: var(--action);
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+    Via-Gent Progressive Disclosure Wireframe
+    Workspace: Hub
+    Stack: 2 interfaces (Projects Stats)
+    Device: Desktop
+    Language: en
+    -->
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="hub-header">
+            <div class="flex items-center gap-4">
+                <div class="icon icon-xl text-action">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">Via-Gent</span>
+                <span class="badge">Hub</span>
+            </div>
+            
+            <div class="flex items-center gap-4" style="flex: 1; max-width: 400px; margin: 0 var(--space-6);">
+                <div class="input flex items-center gap-2" style="background-color: var(--canvas);">
+                    <svg class="icon-sm text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <span class="text-muted">Search projects...</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button class="btn btn-primary">
+                    <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    New Project
+                </button>
+                <div class="avatar">U</div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="hub-content">
+            <!-- Navigation Tabs -->
+            <div class="hub-tabs">
+                <button class="hub-tab">Projects</button>
+                <button class="hub-tab active">Stats</button>
+                <button class="hub-tab">Activities</button>
+                <button class="hub-tab">Binding</button>
+                <button class="hub-tab">Settings</button>
+            </div>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <h2 class="stats-title">Dashboard Overview</h2>
+
+                <!-- Stats Cards Grid -->
+                <div class="stats-grid">
+                    <!-- Projects Count -->
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Total Projects</div>
+                        <div class="stat-change positive">
+                            <span>↑</span>
+                            <span>3 this month</span>
+                        </div>
+                    </div>
+
+                    <!-- Storage Used -->
+                    <div class="stat-card">
+                        <div class="stat-icon">💾</div>
+                        <div class="stat-value">2.4 GB</div>
+                        <div class="stat-label">Storage Used</div>
+                        <div class="stat-change">
+                            <span>of 10 GB total</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Tokens -->
+                    <div class="stat-card">
+                        <div class="stat-icon">🤖</div>
+                        <div class="stat-value">1.2M</div>
+                        <div class="stat-label">AI Tokens</div>
+                        <div class="stat-change positive">
+                            <span>↑</span>
+                            <span>15% vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Streak -->
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-value">7 days</div>
+                        <div class="stat-label">Current Streak</div>
+                        <div class="stat-change positive">
+                            <span>Personal best: 14 days</span>
+                        </div>
+                    </div>
+
+                    <!-- Last Activity -->
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-value">2h ago</div>
+                        <div class="stat-label">Last Activity</div>
+                        <div class="stat-change">
+                            <span>Edited via-gent</span>
+                        </div>
+                    </div>
+
+                    <!-- Code Commits -->
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Commits This Week</div>
+                        <div class="stat-change positive">
+                            <span>↑</span>
+                            <span>12% vs last week</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Chart -->
+                <div class="activity-chart-section">
+                    <h3 class="chart-title">Weekly Activity</h3>
+                    <div class="chart-container">
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 120px;"></div>
+                            <span class="chart-label">Mon</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 180px;"></div>
+                            <span class="chart-label">Tue</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 90px;"></div>
+                            <span class="chart-label">Wed</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 240px;"></div>
+                            <span class="chart-label">Thu</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 150px;"></div>
+                            <span class="chart-label">Fri</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 60px;"></div>
+                            <span class="chart-label">Sat</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 30px;"></div>
+                            <span class="chart-label">Sun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storage Details -->
+                <div class="storage-section">
+                    <div class="storage-grid">
+                        <div class="storage-card">
+                            <div class="storage-header">
+                                <span class="storage-title">Storage Usage</span>
+                                <span class="storage-value">24%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 24%;"></div>
+                            </div>
+                            <div class="storage-breakdown">
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--action);"></div>
+                                        <span>Projects</span>
+                                    </div>
+                                    <span>1.2 GB</span>
+                                </div>
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--success);"></div>
+                                        <span>Notes</span>
+                                    </div>
+                                    <span>512 MB</span>
+                                </div>
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--info);"></div>
+                                        <span>Assets</span>
+                                    </div>
+                                    <span>448 MB</span>
+                                </div>
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--warning);"></div>
+                                        <span>Other</span>
+                                    </div>
+                                    <span>256 MB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="storage-card">
+                            <div class="storage-header">
+                                <span class="storage-title">AI Usage</span>
+                                <span class="storage-value">1.2M</span>
+                            </div>
+                            <div class="progress warning">
+                                <div class="progress-bar warning" style="width: 60%;"></div>
+                            </div>
+                            <div class="text-sm text-muted" style="margin-bottom: var(--space-3);">
+                                60% of monthly limit
+                            </div>
+                            <div class="storage-breakdown">
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--action);"></div>
+                                        <span>Code Generation</span>
+                                    </div>
+                                    <span>720K tokens</span>
+                                </div>
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--success);"></div>
+                                        <span>Refactoring</span>
+                                    </div>
+                                    <span>240K tokens</span>
+                                </div>
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--info);"></div>
+                                        <span>Documentation</span>
+                                    </div>
+                                    <span>144K tokens</span>
+                                </div>
+                                <div class="storage-item">
+                                    <div class="storage-item-name">
+                                        <div class="storage-color" style="background-color: var(--warning);"></div>
+                                        <span>Chat</span>
+                                    </div>
+                                    <span>96K tokens</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="hub-footer">
+            <div class="footer-left">
+                <div class="footer-item">
+                    <span>v2.1.0</span>
+                </div>
+                <div class="footer-item">
+                    <span class="text-success">●</span>
+                    <span>Online</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="storage-indicator">
+                    <span>Storage:</span>
+                    <div class="storage-bar">
+                        <div class="storage-fill" style="width: 24%;"></div>
+                    </div>
+                    <span>2.4 GB / 10 GB</span>
+                </div>
+                <button class="btn btn-ghost text-sm" style="padding: var(--space-1) var(--space-2);">
+                    Settings
+                </button>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

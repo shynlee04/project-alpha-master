@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IDE - Stack 3: Tree + Editor + Preview | Via-Gent Wireframe</title>
+  <style>
+    :root {
+      --color-canvas: #09090b;
+      --color-surface: #18181b;
+      --color-depth: #000000;
+      --color-primary: #fafafa;
+      --color-muted: #a1a1aa;
+      --color-action: #f97316;
+      --color-structural: #3f3f46;
+      --color-success: #22c55e;
+      --color-error: #ef4444;
+      --color-warning: #eab308;
+      --font-ui: 'JetBrains Mono', monospace;
+      --font-prose: 'Geist Sans', system-ui, sans-serif;
+      --shadow-pixel: 4px 4px 0px 0px #000000;
+      --border-width: 2px;
+      --border-radius: 0px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--color-canvas);
+      color: var(--color-primary);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      overflow: hidden;
+    }
+
+    .layout-container {
+      display: grid;
+      grid-template-rows: 40px 1fr 24px;
+      height: 100vh;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      background: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-structural);
+    }
+
+    .header-left { display: flex; align-items: center; gap: var(--space-4); }
+    .logo { font-weight: 700; font-size: 14px; color: var(--color-action); }
+    .project-name { color: var(--color-muted); font-size: 12px; }
+    .header-center { display: flex; gap: var(--space-1); }
+    .header-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--color-muted);
+      padding: var(--space-1) var(--space-2);
+      font-size: 11px;
+      cursor: pointer;
+      font-family: var(--font-ui);
+    }
+    .header-btn:hover { border-color: var(--color-structural); color: var(--color-primary); }
+    .header-btn.active { background: var(--color-structural); color: var(--color-primary); }
+    .header-right { display: flex; align-items: center; gap: var(--space-3); }
+    .sync-status { display: flex; align-items: center; gap: var(--space-1); font-size: 11px; color: var(--color-success); }
+    .sync-dot { width: 6px; height: 6px; background: var(--color-success); border-radius: 50%; }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      overflow: hidden;
+    }
+
+    .tree-panel {
+      background: var(--color-surface);
+      border-right: var(--border-width) solid var(--color-structural);
+      display: flex;
+      flex-direction: column;
+    }
+    .tree-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: 1px solid var(--color-structural);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--color-muted);
+    }
+    .tree-content { flex: 1; overflow-y: auto; padding: var(--space-2); }
+    .tree-item {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: var(--space-1) var(--space-2);
+      cursor: pointer; font-size: 12px; color: var(--color-primary);
+    }
+    .tree-item:hover { background: var(--color-structural); }
+    .tree-item.selected { background: var(--color-action); color: var(--color-canvas); }
+    .tree-item.folder { color: var(--color-primary); font-weight: 500; }
+    .tree-icon { width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; }
+
+    .editor-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--color-canvas);
+      border-right: var(--border-width) solid var(--color-structural);
+    }
+    .tab-bar {
+      display: flex;
+      background: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-structural);
+      height: 32px;
+    }
+    .tab {
+      display: flex; align-items: center; gap: var(--space-2);
+      padding: 0 var(--space-3);
+      font-size: 12px;
+      border-right: 1px solid var(--color-structural);
+      cursor: pointer;
+    }
+    .tab.active { background: var(--color-canvas); border-bottom: 2px solid var(--color-action); }
+    .tab-icon { width: 14px; height: 14px; flex-shrink: 0; }
+    .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tab-close { width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; opacity: 0; }
+    .tab:hover .tab-close { opacity: 1; }
+    .editor-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .editor-area {
+      flex: 1;
+      padding: var(--space-4);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      line-height: 1.6;
+      overflow: auto;
+    }
+    .line-numbers { color: var(--color-muted); user-select: none; text-align: right; padding-right: var(--space-3); opacity: 0.5; }
+    .code-line { display: flex; }
+    .code-content { flex: 1; }
+    .keyword { color: #c084fc; }
+    .string { color: #4ade80; }
+    .function { color: #60a5fa; }
+    .variable { color: #f472b6; }
+
+    .preview-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--color-canvas);
+    }
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-3);
+      background: var(--color-surface);
+      border-bottom: var(--border-width) solid var(--color-structural);
+      font-size: 11px;
+    }
+    .preview-tabs { display: flex; gap: var(--space-1); }
+    .preview-tab {
+      padding: var(--space-1) var(--space-2);
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--color-muted);
+    }
+    .preview-tab.active { color: var(--color-primary); background: var(--color-structural); }
+    .preview-url { display: flex; align-items: center; gap: var(--space-2); color: var(--color-muted); }
+    .preview-content {
+      flex: 1;
+      padding: var(--space-4);
+      overflow: auto;
+      background: #fff;
+      color: #000;
+      font-family: var(--font-prose);
+    }
+    .preview-frame {
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+    .preview-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #666;
+    }
+    .preview-placeholder h2 { margin-bottom: var(--space-2); color: #333; }
+    .preview-button {
+      margin-top: var(--space-3);
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-action);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-ui);
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--color-action);
+      color: var(--color-canvas);
+      padding: 0 var(--space-3);
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .status-left, .status-right { display: flex; align-items: center; gap: var(--space-4); }
+    .status-item { display: flex; align-items: center; gap: var(--space-1); cursor: pointer; }
+    .status-item:hover { opacity: 0.8; }
+
+    .info-panel {
+      position: fixed;
+      bottom: 30px;
+      right: var(--space-4);
+      background: var(--color-surface);
+      border: var(--border-width) solid var(--color-structural);
+      box-shadow: var(--shadow-pixel);
+      padding: var(--space-3);
+      max-width: 280px;
+      font-size: 11px;
+    }
+    .info-title { font-weight: 700; margin-bottom: var(--space-2); color: var(--color-action); }
+    .info-row { display: flex; justify-content: space-between; padding: var(--space-1) 0; border-bottom: 1px solid var(--color-structural); }
+    .info-label { color: var(--color-muted); }
+
+    .nav-info {
+      position: fixed;
+      bottom: var(--space-4);
+      left: var(--space-4);
+      background: var(--color-surface);
+      border: var(--border-width) solid var(--color-structural);
+      padding: var(--space-2) var(--space-3);
+      font-size: 11px;
+      display: flex;
+      gap: var(--space-4);
+    }
+    .nav-link { color: var(--color-action); text-decoration: none; }
+    .nav-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="layout-container">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">VIA-GENT</div>
+        <div class="project-name">› my-awesome-project</div>
+      </div>
+      <div class="header-center">
+        <button class="header-btn">Files</button>
+        <button class="header-btn active">Search</button>
+        <button class="header-btn">Source</button>
+        <button class="header-btn">Run</button>
+      </div>
+      <div class="header-right">
+        <div class="sync-status"><div class="sync-dot"></div> Synced</div>
+        <button class="header-btn">[ Settings ]</button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <!-- TREE PANEL (Type A) -->
+      <aside class="tree-panel">
+        <div class="tree-header"><span>Explorer</span><span>▼</span></div>
+        <div class="tree-content">
+          <div class="tree-item folder"><span class="tree-icon">📁</span><span>src</span></div>
+          <div class="tree-item" style="padding-left: 20px;"><span class="tree-icon">📁</span><span>components</span></div>
+          <div class="tree-item selected" style="padding-left: 20px;"><span class="tree-icon">📄</span><span>Button.tsx</span></div>
+          <div class="tree-item" style="padding-left: 20px;"><span class="tree-icon">📄</span><span>Card.tsx</span></div>
+          <div class="tree-item" style="padding-left: 20px;"><span class="tree-icon">📄</span><span>Modal.tsx</span></div>
+          <div class="tree-item" style="padding-left: 4px;"><span class="tree-icon">📁</span><span>lib</span></div>
+          <div class="tree-item" style="padding-left: 4px;"><span class="tree-icon">📁</span><span>styles</span></div>
+          <div class="tree-item"><span class="tree-icon">📄</span><span>App.tsx</span></div>
+          <div class="tree-item"><span class="tree-icon">📄</span><span>index.html</span></div>
+          <div class="tree-item"><span class="tree-icon">📄</span><span>package.json</span></div>
+        </div>
+      </aside>
+
+      <!-- EDITOR PANEL (Type B) -->
+      <section class="editor-panel">
+        <div class="tab-bar">
+          <div class="tab active">
+            <span class="tab-icon">📄</span>
+            <span class="tab-name">Button.tsx</span>
+            <span class="tab-close">×</span>
+          </div>
+          <div class="tab">
+            <span class="tab-icon">📄</span>
+            <span class="tab-name">App.tsx</span>
+            <span class="tab-close">×</span>
+          </div>
+        </div>
+        <div class="editor-content">
+          <div class="editor-area">
+            <div class="code-line">
+              <span class="line-numbers">1</span>
+              <span class="code-content"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">2</span>
+              <span class="code-content"></span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">3</span>
+              <span class="code-content"><span class="keyword">interface</span> <span class="variable">ButtonProps</span> {</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">4</span>
+              <span class="code-content">  <span class="variable">variant</span>?: <span class="string">'primary'</span> | <span class="string">'secondary'</span>;</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">5</span>
+              <span class="code-content">  <span class="variable">children</span>: React.ReactNode;</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">6</span>
+              <span class="code-content">  <span class="variable">onClick</span>?: () => <span class="keyword">void</span>;</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">7</span>
+              <span class="code-content">}</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">8</span>
+              <span class="code-content"></span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">9</span>
+              <span class="code-content"><span class="keyword">export const</span> <span class="function">Button</span> = ({</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">10</span>
+              <span class="code-content">  <span class="variable">variant</span> = <span class="string">'primary'</span>,</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">11</span>
+              <span class="code-content">  <span class="variable">children</span>,</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">12</span>
+              <span class="code-content">  <span class="variable">onClick</span>,</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">13</span>
+              <span class="code-content">}: <span class="variable">ButtonProps</span>) => {</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">14</span>
+              <span class="code-content">  <span class="keyword">return</span> (</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">15</span>
+              <span class="code-content">    &lt;<span class="variable">button</span> <span class="variable">className</span>={`btn <span class="variable">btn</span>-${<span class="variable">variant</span>}`} <span class="variable">onClick</span>={onClick}&gt;</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">16</span>
+              <span class="code-content">      {<span class="variable">children</span>}</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">17</span>
+              <span class="code-content">    &lt;/<span class="variable">button</span>&gt;</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">18</span>
+              <span class="code-content">  );</span>
+            </div>
+            <div class="code-line">
+              <span class="line-numbers">19</span>
+              <span class="code-content">}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREVIEW PANEL (Type C) -->
+      <section class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-tabs">
+            <div class="preview-tab active">localhost:3000</div>
+            <div class="preview-tab">Console</div>
+            <div class="preview-tab">Problems</div>
+          </div>
+          <div class="preview-url">
+            <span>↻</span>
+            <span>http://localhost:3000</span>
+          </div>
+        </div>
+        <div class="preview-content">
+          <div class="preview-placeholder">
+            <h2>🚀 Dev Server Running</h2>
+            <p>Your app is ready at:</p>
+            <p style="font-family: var(--font-ui); margin-top: var(--space-2);">http://localhost:3000</p>
+            <button class="preview-button">Open in Browser</button>
+            
+            <div style="margin-top: 40px; padding: 20px; background: #f5f5f5; border-radius: 4px; max-width: 400px;">
+              <h3 style="margin-bottom: 12px; font-size: 16px;">Button Component</h3>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button style="background: #f97316; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 14px;">Primary</button>
+                <button style="background: #6b7280; color: white; padding: 10px 20px; border: none; cursor: pointer; font-size: 14px;">Secondary</button>
+                <button style="background: transparent; color: #f97316; padding: 10px 20px; border: 2px solid #f97316; cursor: pointer; font-size: 14px;">Ghost</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- STATUS BAR -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <div class="status-item">WC Ready</div>
+        <div class="status-item">Agent: Idle</div>
+        <div class="status-item">main*</div>
+      </div>
+      <div class="status-right">
+        <div class="status-item">Ln 15, Col 47</div>
+        <div class="status-item">UTF-8</div>
+        <div class="status-item">TypeScript</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Info Panel -->
+  <div class="info-panel">
+    <div class="info-title">📐 Stack 3 Layout</div>
+    <div class="info-row"><span class="info-label">Interfaces</span><span>Tree + Editor + Preview</span></div>
+    <div class="info-row"><span class="info-label">Types</span><span>A + B + C</span></div>
+    <div class="info-row"><span class="info-label">Use Case</span><span>Web Development</span></div>
+    <div class="info-row"><span class="info-label">Min Width</span><span>900px</span></div>
+    <div class="info-row"><span class="info-label">Preview Width</span><span>35% (280-400px)</span></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="nav-info">
+    <a href="../stack-2/index.html" class="nav-link">← Stack 2</a>
+    <a href="../stack-4/index.html" class="nav-link">Stack 4 →</a>
+  </nav>
+</body>
+</html>

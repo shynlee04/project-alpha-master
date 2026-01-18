@@ -6,15 +6,17 @@ temperature: 0.3
 tools:
   write: true
   edit: true
-  bash: false
+  bash: true
   glob: true
   grep: true
   read: true
 permission:
   edit: allow
-  bash: ask
+  bash: allow
   task:
     "*": allow
+    "subtask": allow
+    "subagent": allow
 ---
 
 # ux-designer-ext (Subagent)

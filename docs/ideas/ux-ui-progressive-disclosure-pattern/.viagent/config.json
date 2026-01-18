@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "projectId": "ide:proj_1768658110871_hhofuiki9",
+  "exclusionPatterns": [
+    "node_modules",
+    ".git",
+    ".next",
+    "dist",
+    "build",
+    "coverage",
+    ".cache",
+    ".turbo",
+    "out",
+    ".viagent"
+  ],
+  "scan": {
+    "maxDepth": 20,
+    "warningDepth": 15,
+    "maxFiles": 50000,
+    "showProgress": true
+  },
+  "updatedAt": "2026-01-17T13:55:10.876Z"
+}

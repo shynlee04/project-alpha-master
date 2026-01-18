@@ -1,0 +1,524 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-18T10:30:00+07:00",
+    "scan_scope": "src/",
+    "excluded_patterns": ["node_modules", ".git", "dist", "build", ".next", ".nuxt", ".cache", "coverage"]
+  },
+  "contexts": [
+    {
+      "name": "notes",
+      "entities": ["Note", "Block", "Prompt", "SlashCommand", "SavedBlock"],
+      "stores": [
+        "note-store.ts",
+        "note-store-refactored.ts",
+        "note-navigation-store.ts",
+        "ai-prompt-store.ts",
+        "ai-loading-store.ts",
+        "ai-insertion-store.ts",
+        "prompt-history-store.ts",
+        "prompt-suggestion-store.ts",
+        "slash-command-store.ts",
+        "saved-blocks-store.ts"
+      ],
+      "persistence": [
+        "dexie-db-block-types.ts",
+        "dexie-db-helpers.ts"
+      ],
+      "ui_components": [
+        "NoteEditor.tsx",
+        "NoteSidebar.tsx",
+        "NoteTree.tsx",
+        "NotesPage.tsx",
+        "AIInsertionDialog.tsx",
+        "AIPromptDialog.tsx",
+        "SlashCommandsDialog.tsx",
+        "PromptHistoryPanel.tsx",
+        "PromptSuggestionsPanel.tsx"
+      ],
+      "cross_context_deps": ["workspace", "sync", "knowledge", "chat"],
+      "layer_violations": [
+        {
+          "file": "lib/notes/note-store.ts",
+          "issue": "Legacy store in lib/ should be in infrastructure/persistence/stores/notes/"
+        },
+        {
+          "file": "lib/notes/note-file-sync.ts",
+          "issue": "Duplicate sync logic - infrastructure/sync/workspace-services/notes/ exists"
+        }
+      ]
+    },
+    {
+      "name": "knowledge",
+      "entities": ["Source", "Collection", "RAGIndex", "Synthesis"],
+      "stores": [
+        "knowledge-store.ts",
+        "knowledge-source-store.ts"
+      ],
+      "persistence": [
+        "dexie-db-knowledge-types.ts",
+        "rag-store-types.ts",
+        "rag-store-helpers.ts"
+      ],
+      "ui_components": [
+        "KnowledgePage.tsx",
+        "CollectionManager.tsx",
+        "SourceCard.tsx",
+        "SourceImportDialog.tsx",
+        "SourcePreviewPanel.tsx",
+        "RAGConfigurationPanel.tsx",
+        "FlashcardPreviewPanel.tsx",
+        "QuizPreviewPanel.tsx"
+      ],
+      "cross_context_deps": ["notes", "study", "sync", "rag"],
+      "layer_violations": [
+        {
+          "file": "lib/knowledge/",
+          "issue": "Entire lib/knowledge/ directory duplicates infrastructure/sync/workspace-services/knowledge-sync/"
+        }
+      ]
+    },
+    {
+      "name": "study",
+      "entities": ["Quiz", "Flashcard", "StudySession", "QuizHistory"],
+      "stores": [
+        "study-store.ts",
+        "study-store-refactored.ts",
+        "flashcard-store.ts",
+        "quiz-store.ts",
+        "quiz-history-store.ts"
+      ],
+      "persistence": [
+        "dexie-db-study-types.ts"
+      ],
+      "ui_components": [
+        "StudyPage.tsx",
+        "QuizContainer.tsx",
+        "QuizQuestionView.tsx",
+        "QuizResults.tsx",
+        "QuizStartScreen.tsx",
+        "flashcard.tsx",
+        "study-session.tsx",
+        "study-stats.tsx"
+      ],
+      "cross_context_deps": ["knowledge", "sync", "chat"],
+      "layer_violations": [
+        {
+          "file": "lib/study/",
+          "issue": "lib/study/ duplicates infrastructure/persistence/stores/study/"
+        },
+        {
+          "file": "lib/filesync/study-file-sync-service.ts",
+          "issue": "Duplicate sync - infrastructure/sync/workspace-services/study-sync/ exists"
+        }
+      ]
+    },
+    {
+      "name": "IDE",
+      "entities": ["File", "EditorTab", "TerminalSession", "FileTree"],
+      "stores": [
+        "editor-tabs-store.ts",
+        "terminal-store.ts",
+        "file-watcher-store.ts",
+        "ide-store.ts"
+      ],
+      "persistence": [
+        "dexie-db-idb-file-types.ts"
+      ],
+      "ui_components": [
+        "IDEMobileLayout.tsx",
+        "AgentChatPanel.tsx",
+        "AgentsPanel.tsx",
+        "ExplorerPanel.tsx",
+        "MonacoEditor/",
+        "FileTree/",
+        "XTerminal.tsx",
+        "StatusBar.tsx",
+        "CommandPalette.tsx"
+      ],
+      "cross_context_deps": ["workspace", "sync", "chat", "git"],
+      "layer_violations": [
+        {
+          "file": "lib/ide/code-analyzer.ts",
+          "issue": "Limited IDE logic in lib/ - should be in presentation/components/ide/"
+        },
+        {
+          "file": "lib/filesync/ide-file-sync-service.ts",
+          "issue": "Duplicate sync - infrastructure/sync/workspace-services/ide-file-sync-service.ts exists"
+        }
+      ]
+    },
+    {
+      "name": "chat",
+      "entities": ["Conversation", "Message", "Thread", "Artifact"],
+      "stores": [
+        "conversation-store.ts",
+        "unified-chat-store.ts",
+        "chat-settings-store.ts",
+        "conversation-auto-restore.ts"
+      ],
+      "persistence": [
+        "dexie-db-session-types.ts"
+      ],
+      "ui_components": [
+        "UnifiedChatPanel.tsx",
+        "ChatBubble.tsx",
+        "ChatHistory.tsx",
+        "ChatInputControls.tsx",
+        "MultiAgentChatPanel.tsx",
+        "ExpandableChatPanel.tsx",
+        "WorkflowBuilder.tsx",
+        "WorkflowVisualizer.tsx"
+      ],
+      "cross_context_deps": ["workspace", "agents", "providers", "notes"],
+      "layer_violations": [
+        {
+          "file": "lib/chat/context-window-manager.ts",
+          "issue": "Chat manager in lib/ - should be in infrastructure/persistence/stores/chat/"
+        }
+      ]
+    },
+    {
+      "name": "workspace",
+      "entities": ["Project", "Workspace", "WorkspaceBinding"],
+      "stores": [
+        "workspace-store.ts",
+        "workspace-store-facade.ts",
+        "workspace-store-factory.ts",
+        "hub-store.ts",
+        "navigation-store.ts",
+        "layout-store.ts",
+        "statusbar-store.ts",
+        "use-app-store.ts"
+      ],
+      "persistence": [
+        "dexie-db-core-types.ts",
+        "dexie-db-types.ts"
+      ],
+      "ui_components": [
+        "WorkspaceSettings.tsx",
+        "WorkspaceEnhancedSwitcher.tsx",
+        "FolderPickerDialog.tsx",
+        "HubHomePage.tsx",
+        "ProjectCard.tsx",
+        "RecentProjectsSection.tsx",
+        "WorkspaceBindingDialog.tsx"
+      ],
+      "cross_context_deps": ["notes", "knowledge", "study", "IDE", "sync"],
+      "layer_violations": [
+        {
+          "file": "lib/workspace/",
+          "issue": "Entire lib/workspace/ duplicates infrastructure/persistence/stores/workspace/"
+        },
+        {
+          "file": "lib/workspace/workspace-transition-manager.ts",
+          "issue": "Duplicate - domain/services/workspace-transition-service.ts exists"
+        }
+      ]
+    },
+    {
+      "name": "providers",
+      "entities": ["Provider", "Model", "Credentials"],
+      "stores": [
+        "provider-crud-slice.ts",
+        "provider-models-slice.ts",
+        "provider-credentials-slice.ts",
+        "provider-utils-slice.ts"
+      ],
+      "persistence": [
+        "dexie-db-plugin-types.ts"
+      ],
+      "ui_components": [
+        "SettingsPanel.tsx",
+        "AutoApproveSettings.tsx"
+      ],
+      "cross_context_deps": ["chat", "agents"],
+      "layer_violations": [
+        {
+          "file": "lib/agent/providers/",
+          "issue": "Provider logic split between lib/agent/providers/, domain/services/, and application/services/"
+        }
+      ]
+    },
+    {
+      "name": "hub",
+      "entities": ["DashboardMetrics", "Activity", "StorageUsage"],
+      "stores": [
+        "hub-store.ts",
+        "analytics-store.ts"
+      ],
+      "persistence": [],
+      "ui_components": [
+        "HubHomePage.tsx",
+        "SummaryCardsGrid.tsx",
+        "ActivityLineChart.tsx",
+        "WorkspacePieChart.tsx",
+        "StorageUsageCard.tsx",
+        "RecentProjectsSection.tsx"
+      ],
+      "cross_context_deps": ["workspace", "analytics"],
+      "layer_violations": []
+    }
+  ],
+  "god_modules": [
+    {
+      "path": "infrastructure/persistence/state-orchestrator.ts",
+      "signals": ["orchestrator"],
+      "responsibilities": ["store hydration", "initialization", "state management"],
+      "lines_estimate": 400,
+      "violation": "Single file handling multiple store initializations"
+    },
+    {
+      "path": "infrastructure/persistence/stores/workspace-store-facade.ts",
+      "signals": ["facade"],
+      "responsibilities": ["workspace store access", "store delegation"],
+      "lines_estimate": 300,
+      "violation": "God facade aggregating multiple workspace concerns"
+    },
+    {
+      "path": "infrastructure/persistence/stores/workspace-store-factory.ts",
+      "signals": ["factory"],
+      "responsibilities": ["workspace store creation", "factory patterns"],
+      "lines_estimate": 250,
+      "violation": "Factory with too many responsibilities"
+    },
+    {
+      "path": "infrastructure/tools/centralized-tool-registry.ts",
+      "signals": ["registry", "centralized"],
+      "responsibilities": ["tool registration", "tool catalog", "permissions"],
+      "lines_estimate": 350,
+      "violation": "Registry handling multiple tool types"
+    },
+    {
+      "path": "lib/filesystem/sync-manager/sync-manager.ts",
+      "signals": ["manager"],
+      "responsibilities": ["sync planning", "sync execution", "sync rollback"],
+      "lines_estimate": 500,
+      "violation": "God manager - should be split into sync-planner, sync-executor, sync-rollback"
+    },
+    {
+      "path": "domain/services/universal-adapter-factory.ts",
+      "signals": ["universal", "factory"],
+      "responsibilities": ["adapter creation", "factory patterns"],
+      "lines_estimate": 200,
+      "violation": "Universal factory with too many concerns"
+    },
+    {
+      "path": "domain/services/universal-provider-registry.ts",
+      "signals": ["universal", "registry"],
+      "responsibilities": ["provider registration", "model registry"],
+      "lines_estimate": 200,
+      "violation": "Registry combining provider and model concerns"
+    },
+    {
+      "path": "lib/agent/tool-permission-manager.ts",
+      "signals": ["manager"],
+      "responsibilities": ["tool permissions", "workspace permissions"],
+      "lines_estimate": 300,
+      "violation": "Permission manager handling multiple permission types"
+    }
+  ],
+  "duplication_zones": [
+    {
+      "pattern": "sync.*",
+      "locations": [
+        "lib/sync/",
+        "lib/filesync/",
+        "lib/filesystem/sync-manager/",
+        "infrastructure/sync/"
+      ],
+      "description": "CRITICAL: Four separate sync implementations exist",
+      "recommendation": "Consolidate to infrastructure/sync/ only"
+    },
+    {
+      "pattern": "note.*store",
+      "locations": [
+        "lib/notes/note-store.ts",
+        "lib/notes/note-store-refactored.ts",
+        "infrastructure/persistence/stores/notes/"
+      ],
+      "description": "Multiple note store implementations",
+      "recommendation": "Consolidate to infrastructure/persistence/stores/notes/"
+    },
+    {
+      "pattern": "workspace.*store",
+      "locations": [
+        "lib/workspace/",
+        "infrastructure/persistence/stores/workspace/"
+      ],
+      "description": "Duplicate workspace store implementations",
+      "recommendation": "Consolidate to infrastructure/persistence/stores/workspace/"
+    },
+    {
+      "pattern": "provider.*registry",
+      "locations": [
+        "lib/agent/providers/model-registry.ts",
+        "domain/services/universal-provider-registry.ts"
+      ],
+      "description": "Duplicate provider/model registry implementations",
+      "recommendation": "Consolidate to domain/services/"
+    },
+    {
+      "pattern": "file.*sync.*service",
+      "locations": [
+        "lib/filesync/notes-file-sync-service.ts",
+        "lib/filesync/ide-file-sync-service.ts",
+        "lib/filesync/study-file-sync-service.ts",
+        "lib/filesync/knowledge-file-sync-service.ts",
+        "infrastructure/sync/workspace-services/notes-file-sync-service.ts",
+        "infrastructure/sync/workspace-services/ide-file-sync-service.ts",
+        "infrastructure/sync/workspace-services/study-file-sync-service.ts",
+        "infrastructure/sync/workspace-services/knowledge-file-sync-service.ts"
+      ],
+      "description": "CRITICAL: File sync services duplicated in lib/filesync/ and infrastructure/sync/workspace-services/",
+      "recommendation": "Remove lib/filesync/ entirely, use infrastructure/sync/workspace-services/ only"
+    },
+    {
+      "pattern": "entity.*project",
+      "locations": [
+        "core/entities/Project.ts",
+        "domain/entities/project.ts"
+      ],
+      "description": "Duplicate Project entity definitions",
+      "recommendation": "Consolidate to domain/entities/ only"
+    },
+    {
+      "pattern": "entity.*workspace",
+      "locations": [
+        "core/entities/Workspace.ts",
+        "domain/entities/workspace.ts"
+      ],
+      "description": "Duplicate Workspace entity definitions",
+      "recommendation": "Consolidate to domain/entities/ only"
+    },
+    {
+      "pattern": "entity.*agent",
+      "locations": [
+        "core/entities/Agent.ts",
+        "domain/entities/agent.ts"
+      ],
+      "description": "Duplicate Agent entity definitions",
+      "recommendation": "Consolidate to domain/entities/ only"
+    }
+  ],
+  "cross_context_coupling": [
+    {
+      "from": "notes",
+      "to": "workspace",
+      "strength": "strong",
+      "coupling_points": ["note-store.ts imports workspace-store", "note-file-sync.ts depends on workspace"]
+    },
+    {
+      "from": "notes",
+      "to": "sync",
+      "strength": "strong",
+      "coupling_points": ["note-file-sync.ts", "notes-file-sync-service.ts"]
+    },
+    {
+      "from": "knowledge",
+      "to": "notes",
+      "strength": "medium",
+      "coupling_points": ["source-import.ts references note entities", "knowledge-graph.ts uses note-chunker.ts"]
+    },
+    {
+      "from": "study",
+      "to": "knowledge",
+      "strength": "strong",
+      "coupling_points": ["quiz-generator.ts uses flashcard-generator.ts", "study-store.ts imports knowledge-store"]
+    },
+    {
+      "from": "IDE",
+      "to": "workspace",
+      "strength": "strong",
+      "coupling_points": ["ide.$projectId.tsx route depends on workspace", "file-tree-scanner.ts uses workspace-store"]
+    },
+    {
+      "from": "IDE",
+      "to": "chat",
+      "strength": "strong",
+      "coupling_points": ["AgentChatPanel.tsx", "ide/hooks/useAgentChat*"]
+    },
+    {
+      "from": "chat",
+      "to": "providers",
+      "strength": "strong",
+      "coupling_points": ["unified-chat-store.ts imports provider-crud-slice", "chat uses provider-adapter.ts"]
+    },
+    {
+      "from": "chat",
+      "to": "agents",
+      "strength": "strong",
+      "coupling_points": ["conversation-store.ts imports agent-selection-store", "multi-agent chat panels"]
+    },
+    {
+      "from": "workspace",
+      "to": "sync",
+      "strength": "strong",
+      "coupling_points": ["workspace-store.ts imports sync services", "file-sync-status-store.ts"]
+    },
+    {
+      "from": "hub",
+      "to": "workspace",
+      "strength": "strong",
+      "coupling_points": ["hub-store.ts imports workspace-store", "HubHomePage.tsx displays project data"]
+    }
+  ],
+  "source_of_truth_analysis": {
+    "Project": {
+      "primary_store": "infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "secondary_stores": ["lib/workspace/project-store.ts"],
+      "persistence": "dexie-db.ts (projects table)",
+      "status": "fragmented - duplicate implementations"
+    },
+    "Workspace": {
+      "primary_store": "infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "secondary_stores": ["lib/workspace/"],
+      "persistence": "dexie-db.ts (workspaces table)",
+      "status": "fragmented - lib/workspace/ duplicates infrastructure/"
+    },
+    "Note": {
+      "primary_store": "infrastructure/persistence/stores/notes/note-store.ts",
+      "secondary_stores": ["lib/notes/note-store.ts", "lib/notes/note-store-refactored.ts"],
+      "persistence": "dexie-db.ts (notes, blocks tables)",
+      "status": "fragmented - multiple store implementations"
+    },
+    "Source": {
+      "primary_store": "infrastructure/persistence/stores/knowledge/knowledge-store.ts",
+      "secondary_stores": ["lib/knowledge/"],
+      "persistence": "dexie-db.ts (sources, collections tables)",
+      "status": "fragmented - lib/knowledge/ duplicates infrastructure/"
+    },
+    "Conversation": {
+      "primary_store": "infrastructure/persistence/stores/conversation/conversation-store.ts",
+      "secondary_stores": ["lib/chat/"],
+      "persistence": "dexie-db.ts (conversations, messages tables)",
+      "status": "mostly unified - some chat logic in lib/"
+    },
+    "Provider": {
+      "primary_store": "infrastructure/persistence/stores/providers/",
+      "secondary_stores": ["lib/agent/providers/", "application/services/"],
+      "persistence": "dexie-db.ts (providers table)",
+      "status": "fragmented - provider logic split across 3 locations"
+    }
+  },
+  "summary": {
+    "total_contexts": 8,
+    "total_god_modules": 8,
+    "total_duplication_zones": 8,
+    "critical_issues": [
+      "Four separate sync implementations (lib/sync/, lib/filesync/, lib/filesystem/sync-manager/, infrastructure/sync/)",
+      "Duplicate entity definitions in core/entities/ and domain/entities/",
+      "lib/ directory contains massive duplication of infrastructure/ layer",
+      "Provider logic split across lib/agent/providers/, domain/services/, and application/services/"
+    ],
+    "recommendations": [
+      "Phase 1: Consolidate sync implementations to infrastructure/sync/ only",
+      "Phase 2: Migrate lib/notes/ to infrastructure/persistence/stores/notes/",
+      "Phase 3: Migrate lib/knowledge/ to infrastructure/persistence/stores/knowledge/",
+      "Phase 4: Migrate lib/study/ to infrastructure/persistence/stores/study/",
+      "Phase 5: Migrate lib/workspace/ to infrastructure/persistence/stores/workspace/",
+      "Phase 6: Consolidate entity definitions to domain/entities/ only",
+      "Phase 7: Consolidate provider logic to domain/services/ only",
+      "Phase 8: Split god-modules into focused slices"
+    ]
+  }
+}

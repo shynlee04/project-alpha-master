@@ -6,7 +6,7 @@ temperature: 0.1
 tools:
   write: true
   edit: true
-  bash: false
+  bash: true
   glob: true
   grep: true
   read: true
@@ -15,6 +15,13 @@ permission:
   bash: allow
   task:
     "*": allow
+    "subtask": allow
+    "agent": allow
+    "subagent": allow
+    "skill": allow
+    "command": allow
+    "edit": allow
+    "bash": allow
 
 integration_points:
   receives_from:

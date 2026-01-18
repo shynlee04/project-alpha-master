@@ -1,0 +1,210 @@
+{
+  "workflow": "sync_notes",
+  "description": "Complete flow for syncing note edits from user input to persistence",
+  "entry_point": {
+    "file": "src/presentation/components/notes/NoteEditor.tsx",
+    "function": "handleChange",
+    "line": 777,
+    "handler_assignment_line": 991,
+    "editor_component": "BlockNoteView"
+  },
+  "sync_implementation_used": "infrastructure/sync",
+  "sequence": [
+    {
+      "step": 1,
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "function": "handleChange",
+      "action": "Captures BlockNote editor changes, calls debouncedSave with blocks"
+    },
+    {
+      "step": 2,
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "function": "debouncedSave",
+      "action": "Debounced callback with 500ms delay, calls updateNote with noteId and blocks"
+    },
+    {
+      "step": 3,
+      "file": "src/lib/notes/slices/note-crud-slice.ts",
+      "function": "updateNote",
+      "line": 198,
+      "action": "Validates note exists, extracts title from blocks, prepares updates"
+    },
+    {
+      "step": 4,
+      "file": "src/infrastructure/persistence/dexie-db-class.ts",
+      "function": "ViaGentDatabase.notes.update",
+      "action": "Persists note changes to IndexedDB (Dexie) - PRIMARY STORAGE"
+    },
+    {
+      "step": 5,
+      "file": "src/lib/notes/slices/note-crud-slice.ts",
+      "function": "updateNote",
+      "action": "Updates local Zustand state with new note data"
+    },
+    {
+      "step": 6,
+      "file": "src/lib/notes/slices/note-sync-slice.ts",
+      "function": "triggerAutoSave",
+      "line": 103,
+      "action": "If content changed and projectId exists, triggers FSA auto-save with 2s debounce"
+    },
+    {
+      "step": 7,
+      "file": "src/lib/notes/slices/note-sync-slice.ts",
+      "function": "setDebounceTimer",
+      "line": 126,
+      "action": "Sets 2000ms debounce timer for FSA file sync"
+    },
+    {
+      "step": 8,
+      "file": "src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts",
+      "function": "saveNoteToFile",
+      "line": 238,
+      "action": "Converts note to markdown, generates file path, writes to filesystem"
+    },
+    {
+      "step": 9,
+      "file": "src/infrastructure/filesystem/markdown-sync-service.ts",
+      "function": "exportNote",
+      "line": 222,
+      "action": "Converts BlockNote blocks to Markdown with YAML frontmatter"
+    },
+    {
+      "step": 10,
+      "file": "src/infrastructure/filesystem/fsa-gateway.ts",
+      "function": "FSAGateway.write",
+      "action": "Writes markdown file to filesystem via FileSystem Access API - DESKTOP ONLY"
+    },
+    {
+      "step": 11,
+      "file": "src/lib/notes/slices/note-indexing-slice.ts",
+      "function": "triggerIndexing",
+      "action": "Triggers RAG indexing for the updated note (background process)"
+    }
+  ],
+  "storage_architecture": {
+    "primary": {
+      "type": "IndexedDB",
+      "implementation": "Dexie.js",
+      "table": "ViaGentDatabase.notes",
+      "location": "src/infrastructure/persistence/dexie-db-class.ts"
+    },
+    "secondary": {
+      "type": "FSA",
+      "implementation": "File System Access API",
+      "path_pattern": "notes/{sanitized-title}-{short-id}.md",
+      "location": "src/infrastructure/filesystem/fsa-gateway.ts",
+      "platform": "desktop"
+    }
+  },
+  "conflict_resolution": {
+    "strategy": "last-write-wins",
+    "configurable_strategies": ["last-write-wins", "source-wins", "target-wins", "manual-merge"],
+    "detection_file": "src/infrastructure/sync/strategies/conflict-detection.ts",
+    "resolution_file": "src/infrastructure/sync/strategies/conflict-resolver.ts",
+    "simultaneous_edit_threshold_ms": 1000,
+    "files_involved": [
+      "src/infrastructure/sync/strategies/conflict-detection.ts",
+      "src/infrastructure/sync/strategies/conflict-resolver.ts",
+      "src/infrastructure/sync/core/sync-engine-core.ts"
+    ]
+  },
+  "transaction_boundary": {
+    "file": "src/infrastructure/persistence/dexie-db-class.ts",
+    "function": "ViaGentDatabase.notes.update",
+    "scope": "single-record",
+    "note": "Dexie wraps each operation in implicit transaction; no explicit transaction() calls found"
+  },
+  "debounce_configuration": {
+    "save_to_dexie_ms": 500,
+    "sync_to_fsa_ms": 2000,
+    "sync_batch_size": 50,
+    "sync_max_concurrent": 5
+  },
+  "invariant_assumptions": [
+    {
+      "assumption": "Note ID remains constant throughout update lifecycle",
+      "enforced_by": "note-crud-slice.ts:198 - uses params.id for all operations"
+    },
+    {
+      "assumption": "Dexie operations are atomic per record",
+      "enforced_by": "Dexie.js library - implicit transaction per operation"
+    },
+    {
+      "assumption": "FSA sync is optional and non-blocking for core persistence",
+      "enforced_by": "note-crud-slice.ts:253 - triggerAutoSave is fire-and-forget"
+    },
+    {
+      "assumption": "IndexedDB is source of truth for note data",
+      "enforced_by": "ADR-033 - Mobile uses IndexedDB only, FSA is sync target"
+    },
+    {
+      "assumption": "BlockNote blocks can be serialized to JSON and back",
+      "enforced_by": "NoteRecord.blocks: unknown[] type in dexie-db-knowledge-types.ts"
+    }
+  ],
+  "failure_points": [
+    {
+      "point": "DexieDB update",
+      "condition": "db.notes.update() throws error (quota exceeded, transaction aborted)",
+      "result": "saveStatus set to 'error', error message stored in state"
+    },
+    {
+      "point": "FSA file write",
+      "condition": "FileSystem Access API permission denied or handle revoked",
+      "result": "Error logged, note remains in IndexedDB (data not lost)"
+    },
+    {
+      "point": "Debounced save",
+      "condition": "User edits note then closes app before 500ms debounce completes",
+      "result": "Unsaved changes lost - no persistence before debounce fires"
+    },
+    {
+      "point": "Auto-save trigger",
+      "condition": "currentProjectId is null or triggerAutoSave handler not registered",
+      "result": "FSA sync skipped, note persists only in IndexedDB"
+    },
+    {
+      "point": "Conflict detection",
+      "condition": "simultaneous edits on same note from multiple tabs/devices",
+      "result": "last-write-wins applies; no merge dialog without manual strategy"
+    },
+    {
+      "point": "Markdown export",
+      "condition": "BlockNote blocks contain unsupported content types",
+      "result": "Partial export or data loss in markdown file (IndexedDB retains full data)"
+    }
+  ],
+  "platform_routing": {
+    "desktop": {
+      "storage": "FSA + IndexedDB",
+      "sync": "Bidirectional (FSA ↔ IndexedDB)",
+      "notes_path": "notes/*.md"
+    },
+    "mobile": {
+      "storage": "IndexedDB only",
+      "sync": "None (IndexedDB is source of truth)",
+      "notes_path": "N/A"
+    }
+  },
+  "key_files": {
+    "entry_point": "src/presentation/components/notes/NoteEditor.tsx",
+    "crud_operations": "src/lib/notes/slices/note-crud-slice.ts",
+    "auto_save": "src/lib/notes/slices/note-sync-slice.ts",
+    "dexie_db": "src/infrastructure/persistence/dexie-db-class.ts",
+    "dexie_schema": "src/infrastructure/persistence/dexie-db-knowledge-types.ts",
+    "fsa_gateway": "src/infrastructure/filesystem/fsa-gateway.ts",
+    "idb_gateway": "src/infrastructure/filesystem/idb-gateway.ts",
+    "markdown_sync": "src/infrastructure/filesystem/markdown-sync-service.ts",
+    "note_folder_bridge": "src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts",
+    "sync_engine": "src/infrastructure/sync/core/sync-engine.ts",
+    "bidirectional_sync": "src/infrastructure/sync/strategies/bidirectional-sync.ts",
+    "conflict_resolver": "src/infrastructure/sync/strategies/conflict-resolver.ts"
+  },
+  "metadata": {
+    "trace_date": "2026-01-18",
+    "trace_cycle": 2,
+    "investigated_by": "deep-scan-persistence-scanner",
+    "adr_reference": "ADR-033-correct-course-architectural-remediation-2026-01-16"
+  }
+}

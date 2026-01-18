@@ -1305,10 +1305,66 @@ epic_40_status:
   phase: "READY_FOR_DEV"
   total_stories: 12
   estimated_effort: "~52 hours"
-  created_at: "2026-01-09T23:50:00+07:00"
-  source: "Team A + Team B Sprint Planning Proposals Merge"
+      created_at: "2026-01-09T23:50:00+07:00"
+      source: "Team A + Team B Sprint Planning Proposals Merge"
 
-  research_artifacts:
+  # ============================================================================
+  # CORRECT COURSE VALIDATION ADRs (2026-01-18)
+  # ============================================================================
+
+  correct_course_adrs:
+    created_at: "2026-01-18T12:35:00+07:00"
+    status: "completed"
+    trigger_reports:
+      - "_bmad-ext/.correct-course/validation/paper-02-claims-validated.md"
+      - "_bmad-ext/.correct-course/validation/prd-architecture-validation.md"
+      - "_bmad-ext/.correct-course/validation/past-fix-attempts.md"
+
+    adrs_created:
+      - id: "ADR-036"
+        title: "PlatformContract Interface Consolidation"
+        path: "_bmad-output/planning-artifacts/adr/ADR-036-platform-contract-consolidation-2026-01-18.md"
+        status: "proposed"
+        issue: "Duplicate interface in platform-contract.ts and storage-types.ts"
+        impact: "19 import locations affected"
+        key_decisions:
+          - "Keep canonical in platform-contract.ts"
+          - "Standardize on DeviceType naming"
+          - "Add readonly modifiers consistently"
+
+      - id: "ADR-037"
+        title: "XSS Sanitization Strategy"
+        path: "_bmad-output/planning-artifacts/adr/ADR-037-xss-sanitization-2026-01-18.md"
+        status: "proposed"
+        issue: "5+ dangerouslySetInnerHTML without sanitization, 2 iframe vectors"
+        impact: "7 vulnerable locations identified"
+        key_decisions:
+          - "Install DOMPurify"
+          - "Create sanitization utilities (sanitizeHtml, sanitizeSvg, sanitizeIframeContent)"
+          - "Fix all 7 vulnerable locations"
+
+      - id: "ADR-038"
+        title: "Event Listener Error Isolation"
+        path: "_bmad-output/planning-artifacts/adr/ADR-038-event-listener-isolation-2026-01-18.md"
+        status: "proposed"
+        issue: "9 listeners without try-catch can crash event bus"
+        impact: "cross-workspace-event-bus.ts vulnerable"
+        key_decisions:
+          - "Create IsolatedEventBus wrapper class"
+          - "Wrap all listener registrations with try-catch"
+          - "Add error monitoring hook"
+
+    validation_evidence:
+      - claim_4: "XSS Vulnerabilities - TRUE (5 instances + 2 additional)"
+      - claim_7: "Event Listener Isolation - TRUE (9 listeners, no try-catch)"
+      - discrepancy: "PlatformContract duplicate interface found"
+
+    next_actions:
+      - "Present ADRs for approval"
+      - "Create implementation stories for each ADR"
+      - "Prioritize ADR-037 (XSS) as security critical"
+
+    research_artifacts:
     team_a:
       - "_bmad-output/research/2026-01-09/multimodality-chat-architecture/01-research-findings.md"
       - "_bmad-output/research/2026-01-09/multimodality-chat-architecture/02-correct-course.md"

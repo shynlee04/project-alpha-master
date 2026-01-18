@@ -611,7 +611,7 @@ export class FSAGateway implements StorageGateway {
    * Check if directory should be excluded
    */
   private isExcludedDirectory(name: string): boolean {
-    return ['node_modules', '.git', '.next', 'dist', 'build', 'coverage'].includes(name);
+    return ['.viagent', 'node_modules', '.git', '.next', 'dist', 'build', 'coverage'].includes(name);
   }
 
   /**
@@ -627,7 +627,7 @@ export class FSAGateway implements StorageGateway {
     if (binaryExtensions.includes(ext)) return false;
 
     // Skip excluded directories
-    for (const dir of ['node_modules', '.git', '.next', 'dist']) {
+    for (const dir of ['.viagent', 'node_modules', '.git', '.next', 'dist']) {
       if (path.includes(`${dir}/`)) return false;
     }
 

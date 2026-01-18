@@ -1,0 +1,443 @@
+{
+  "metadata": {
+    "scanId": "security-scan-2026-01-18",
+    "timestamp": "2026-01-18T12:00:00+07:00",
+    "scanner": "deep-scan-security-scanner",
+    "version": "1.0.0",
+    "scope": "src/",
+    "exclusions": ["node_modules", ".git", "dist", "build", ".next", ".nuxt", ".cache", "coverage"]
+  },
+  "summary": {
+    "totalFindings": 47,
+    "critical": 6,
+    "high": 12,
+    "medium": 18,
+    "low": 11,
+    "info": 0
+  },
+  "permission_gap_analysis": {
+    "severity": "high",
+    "findings": [
+      {
+        "id": "PERM-001",
+        "category": "Tool Execution Without Permission Check",
+        "file": "src/lib/plugins/plugin-manager.ts",
+        "line": 208,
+        "description": "Plugin code execution uses new Function() without explicit permission validation",
+        "code": "const sandboxedEval = new Function('code', `${codeRecord.value} return plugin;`);",
+        "impact": "Arbitrary code execution if malicious plugin is loaded",
+        "remediation": "Add permission check before plugin execution, use Web Worker for sandboxing"
+      },
+      {
+        "id": "PERM-002",
+        "category": "Tool Execution Without Permission Check",
+        "file": "src/lib/scheduler/task-scheduler.ts",
+        "line": 207,
+        "description": "Task handler code execution uses new Function() without permission validation",
+        "code": "const handler = new Function(handlerCode)",
+        "impact": "Arbitrary code execution if task handler is compromised",
+        "remediation": "Add permission check, use Web Worker with proper message passing"
+      },
+      {
+        "id": "PERM-003",
+        "category": "Tool Execution Without Permission Check",
+        "file": "src/lib/knowledge/pdf-parser.ts",
+        "line": 109,
+        "description": "PDF.js module loaded from CDN and executed via eval() without permission check",
+        "code": "const module = await eval(code) as PdfJsModule;",
+        "impact": "Remote code execution if CDN is compromised or response is manipulated",
+        "remediation": "Use script tag injection with integrity check, implement subresource integrity"
+      },
+      {
+        "id": "PERM-004",
+        "category": "Workspace Validation Missing",
+        "file": "src/lib/agent/providers/agent-validation-service.ts",
+        "line": 108,
+        "description": "API key used directly without workspace context validation",
+        "code": "this.genAI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });",
+        "impact": "Credentials may be used across workspace boundaries",
+        "remediation": "Add workspaceId parameter to credential retrieval calls"
+      },
+      {
+        "id": "PERM-005",
+        "category": "Unchecked Trust Level Assumptions",
+        "file": "src/lib/agent/tool-permission/tool-permission-manager.ts",
+        "line": 129,
+        "description": "checkPermission() assumes default workspace 'ide' when not specified",
+        "code": "public checkPermission(toolId: string, workspaceType?: WorkspaceType): PermissionCheckResult",
+        "impact": "Tools may execute in wrong workspace context if workspaceType is undefined",
+        "remediation": "Add explicit workspace validation and reject calls without workspaceType"
+      },
+      {
+        "id": "PERM-006",
+        "category": "Unchecked Trust Level Assumptions",
+        "file": "src/presentation/components/command-palette/CommandPalette.tsx",
+        "line": 269,
+        "description": "dangerouslySetInnerHTML used for command descriptions without XSS sanitization",
+        "code": "dangerouslySetInnerHTML={{ __html: command.description }}",
+        "impact": "Stored XSS if command descriptions contain malicious content",
+        "remediation": "Sanitize HTML content before rendering, use DOMPurify"
+      }
+    ]
+  },
+  "injection_vulnerabilities": {
+    "severity": "critical",
+    "findings": [
+      {
+        "id": "INJ-001",
+        "category": "Dynamic Code Execution",
+        "file": "src/lib/plugins/plugin-manager.ts",
+        "line": 208,
+        "description": "Dynamic code execution via new Function() allows arbitrary code execution",
+        "code": "const sandboxedEval = new Function('code', `${codeRecord.value} return plugin;`);",
+        "severity": "critical",
+        "impact": "Complete compromise of application if plugin code is malicious",
+        "remediation": "Use Web Worker sandbox, implement Content Security Policy, add plugin code signing"
+      },
+      {
+        "id": "INJ-002",
+        "category": "Dynamic Code Execution",
+        "file": "src/lib/scheduler/task-scheduler.ts",
+        "line": 207,
+        "description": "Dynamic code execution via new Function() in task handler",
+        "code": "const handler = new Function(handlerCode)",
+        "severity": "critical",
+        "impact": "Arbitrary code execution in worker context",
+        "remediation": "Use message passing pattern instead of code evaluation"
+      },
+      {
+        "id": "INJ-003",
+        "category": "Dynamic Code Execution",
+        "file": "src/lib/knowledge/pdf-parser.ts",
+        "line": 109,
+        "description": "eval() used to execute dynamically loaded code from CDN",
+        "code": "const module = await eval(code) as PdfJsModule;",
+        "severity": "critical",
+        "impact": "Remote code execution if CDN is compromised",
+        "remediation": "Use script tag injection with integrity verification"
+      },
+      {
+        "id": "INJ-004",
+        "category": "DOM XSS",
+        "file": "src/presentation/components/agent/DeepThinkUI.tsx",
+        "line": 221,
+        "description": "dangerouslySetInnerHTML used without sanitization for AI-generated content",
+        "code": "dangerouslySetInnerHTML={{ __html: renderMarkdown(result.synthesis) }}",
+        "severity": "high",
+        "impact": "Stored XSS from AI-generated synthesis content",
+        "remediation": "Sanitize markdown output before rendering, use DOMPurify"
+      },
+      {
+        "id": "INJ-005",
+        "category": "DOM XSS",
+        "file": "src/presentation/components/notes/blocks/ChartDiagramBlock.tsx",
+        "line": 502,
+        "description": "dangerouslySetInnerHTML used for Mermaid SVG without sanitization",
+        "code": "<div dangerouslySetInnerHTML={{ __html: mermaidSvg }} />",
+        "severity": "medium",
+        "impact": "Potential XSS if Mermaid SVG contains malicious content",
+        "remediation": "Validate SVG content, use sanitization library"
+      },
+      {
+        "id": "INJ-006",
+        "category": "DOM XSS",
+        "file": "src/presentation/components/rag/RAGSearchPanel.tsx",
+        "line": 63,
+        "description": "dangerouslySetInnerHTML used for search result text without sanitization",
+        "code": "return <span dangerouslySetInnerHTML={{ __html: text }} />;",
+        "severity": "high",
+        "impact": "Stored XSS in search results from indexed content",
+        "remediation": "Sanitize text content before rendering"
+      },
+      {
+        "id": "INJ-007",
+        "category": "DOM XSS",
+        "file": "src/presentation/components/chat/StreamdownRenderer.tsx",
+        "line": 124,
+        "description": "dangerouslySetInnerHTML used for SVG content without sanitization",
+        "code": "dangerouslySetInnerHTML={{ __html: svg }}",
+        "severity": "medium",
+        "impact": "Potential XSS from SVG content",
+        "remediation": "Sanitize SVG content before rendering"
+      },
+      {
+        "id": "INJ-008",
+        "category": "Command Injection",
+        "file": "src/lib/agent/facades/command-sanitizer.ts",
+        "line": 51,
+        "description": "Shell metacharacter detection pattern may miss edge cases",
+        "code": "const SHELL_METACHARACTERS = /[;&|`$(){}[\]\\\\!#<>\"\\'\\n\\r]/;",
+        "severity": "medium",
+        "impact": "Potential command injection if edge cases are missed",
+        "remediation": "Use allowlist mode for production, implement command whitelisting"
+      }
+    ]
+  },
+  "secret_leakage": {
+    "severity": "critical",
+    "findings": [
+      {
+        "id": "SEC-001",
+        "category": "Hardcoded API Key",
+        "file": "src/lib/init/seed-workspace-permissions.ts",
+        "line": 33,
+        "description": "Hardcoded Gemini API key in source code",
+        "code": "const GEMINI_API_KEY = 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ';",
+        "severity": "critical",
+        "impact": "API key exposed in repository, potential unauthorized usage",
+        "remediation": "Remove hardcoded key, use environment variables or secure vault"
+      },
+      {
+        "id": "SEC-002",
+        "category": "Hardcoded API Key",
+        "file": "src/lib/agent/providers/agent-validation-service.ts",
+        "line": 27,
+        "description": "Hardcoded Gemini API key in source code",
+        "code": "const GEMINI_API_KEY = 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ';",
+        "severity": "critical",
+        "impact": "API key exposed in repository, potential unauthorized usage",
+        "remediation": "Remove hardcoded key, use environment variables or secure vault"
+      },
+      {
+        "id": "SEC-003",
+        "category": "Process.env Exposure",
+        "file": "src/lib/knowledge/flashcard-generator.ts",
+        "line": 37,
+        "description": "Direct access to process.env.GEMINI_API_KEY without validation",
+        "code": "const key = apiKey || process.env.GEMINI_API_KEY || '';",
+        "severity": "high",
+        "impact": "Environment variables exposed to client-side code",
+        "remediation": "Use import.meta.env for Vite, implement server-side proxy for API calls"
+      },
+      {
+        "id": "SEC-004",
+        "category": "Process.env Exposure",
+        "file": "src/lib/study/quiz-generator.ts",
+        "line": 39,
+        "description": "Direct access to process.env.GEMINI_API_KEY without validation",
+        "code": "const key = apiKey || process.env.GEMINI_API_KEY || '';",
+        "severity": "high",
+        "impact": "Environment variables exposed to client-side code",
+        "remediation": "Use import.meta.env for Vite, implement server-side proxy"
+      },
+      {
+        "id": "SEC-005",
+        "category": "API Key in URL",
+        "file": "src/lib/notes/ai-image-service.ts",
+        "line": 187,
+        "description": "API key passed in URL query parameter",
+        "code": "const response = await fetch(`${endpoint}?key=${apiKey}`, {",
+        "severity": "high",
+        "impact": "API key may be logged in server access logs",
+        "remediation": "Use Authorization header instead of query parameters"
+      },
+      {
+        "id": "SEC-006",
+        "category": "API Key in URL",
+        "file": "src/lib/workflow/agents/content-routing-agent.ts",
+        "line": 303,
+        "description": "API key passed in URL query parameter",
+        "code": "const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${this.config.model}:generateContent?key=${apiKey}`, {",
+        "severity": "high",
+        "impact": "API key may be logged in server access logs",
+        "remediation": "Use Authorization header instead of query parameters"
+      },
+      {
+        "id": "SEC-007",
+        "category": "Insecure Logging",
+        "file": "src/lib/utils/security.ts",
+        "line": 65,
+        "description": "API key masking function exists but may not be consistently applied",
+        "code": "export function maskApiKey(key: string | null | undefined): string",
+        "severity": "medium",
+        "impact": "API keys may be logged in plaintext if masking is not enforced",
+        "remediation": "Implement automatic sanitization in logging layer"
+      },
+      {
+        "id": "SEC-008",
+        "category": "Window Property Exposure",
+        "file": "src/presentation/components/notes/blocks/VideoGenerationBlock.tsx",
+        "line": 236,
+        "description": "API key accessed from window object",
+        "code": "if (typeof window !== 'undefined' && (window as any).__GEMINI_API_KEY__) {",
+        "severity": "high",
+        "impact": "API key accessible via browser console",
+        "remediation": "Use secure storage, avoid window properties for secrets"
+      }
+    ]
+  },
+  "unsafe_file_operations": {
+    "severity": "high",
+    "findings": [
+      {
+        "id": "FILE-001",
+        "category": "Path Traversal Prevention",
+        "file": "src/lib/filesystem/path-utils.ts",
+        "line": 51,
+        "description": "Path validation implemented but needs verification of all call sites",
+        "code": "export function validatePath(path: string, operation: string): void",
+        "severity": "medium",
+        "impact": "Path traversal may be possible if validation is bypassed",
+        "remediation": "Ensure validatePath is called at all file operation entry points"
+      },
+      {
+        "id": "FILE-002",
+        "category": "Path Traversal Prevention",
+        "file": "src/lib/filesystem/sync-manager/sync-file-ops.ts",
+        "line": 98,
+        "description": "fs.mkdir called without explicit path validation",
+        "code": "await fs.mkdir(parentPath, { recursive: true });",
+        "severity": "medium",
+        "impact": "Path traversal may be possible if parentPath is user-controlled",
+        "remediation": "Add path validation before mkdir operations"
+      },
+      {
+        "id": "FILE-003",
+        "category": "Path Traversal Prevention",
+        "file": "src/lib/filesystem/sync-manager/sync-file-ops.ts",
+        "line": 104,
+        "description": "fs.writeFile called without explicit path validation",
+        "code": "await fs.writeFile(path, content);",
+        "severity": "medium",
+        "impact": "Path traversal may be possible if path is user-controlled",
+        "remediation": "Add path validation before write operations"
+      },
+      {
+        "id": "FILE-004",
+        "category": "Unsafe File Permissions",
+        "file": "src/lib/filesystem/sync-transaction/sync-batch-writer.ts",
+        "line": 87,
+        "description": "fs.writeFile called without permission validation",
+        "code": "await fs.writeFile(file.path, file.content);",
+        "severity": "medium",
+        "impact": "File write to arbitrary locations if path is manipulated",
+        "remediation": "Add permission check before file writes"
+      },
+      {
+        "id": "FILE-005",
+        "category": "Unsafe File Permissions",
+        "file": "src/lib/filesystem/sync-transaction/sync-rollback-executor.ts",
+        "line": 121,
+        "description": "fs.writeFile called without permission validation",
+        "code": "await fs.writeFile(op.path, '');",
+        "severity": "medium",
+        "impact": "File write to arbitrary locations during rollback",
+        "remediation": "Add permission check before rollback operations"
+      },
+      {
+        "id": "FILE-006",
+        "category": "Command Injection via Path",
+        "file": "src/lib/agent/facades/command-sanitizer.ts",
+        "line": 152,
+        "description": "Path traversal detection in commands but may miss edge cases",
+        "code": "if (command.startsWith('..') || (command.startsWith('/') && command.includes('..')))",
+        "severity": "medium",
+        "impact": "Command injection via path traversal may be possible",
+        "remediation": "Add additional validation for path normalization"
+      }
+    ]
+  },
+  "positive_security_controls": {
+    "findings": [
+      {
+        "id": "POS-001",
+        "category": "Command Sanitization",
+        "file": "src/lib/agent/facades/command-sanitizer.ts",
+        "description": "Comprehensive command sanitizer with blocklist and allowlist modes",
+        "features": [
+          "Dangerous command blocklist (rm, chmod, sudo, etc.)",
+          "Shell metacharacter detection",
+          "Injection pattern matching",
+          "Path traversal detection",
+          "Event bus logging for blocked attempts"
+        ]
+      },
+      {
+        "id": "POS-002",
+        "category": "Tool Permission Management",
+        "file": "src/lib/agent/tool-permission/tool-permission-manager.ts",
+        "description": "Comprehensive tool permission system with trust levels",
+        "features": [
+          "Three trust levels: auto, prompt, block",
+          "Workspace-specific permissions",
+          "Session trust for temporary approval",
+          "YOLO mode for bulk operations",
+          "Category-based approvals (search, knowledge, files, terminal, vision, web)"
+        ]
+      },
+      {
+        "id": "POS-003",
+        "category": "Path Validation",
+        "file": "src/lib/filesystem/path-guard.ts",
+        "description": "Path validation utilities prevent path traversal attacks",
+        "features": [
+          "Empty path validation",
+          "Path traversal detection (../)",
+          "Absolute path rejection",
+          "Cross-platform path normalization"
+        ]
+      },
+      {
+        "id": "POS-004",
+        "category": "Credential Security",
+        "file": "src/lib/utils/security.ts",
+        "description": "Security utilities for credential handling",
+        "features": [
+          "API key pattern detection",
+          "Sensitive field masking",
+          "Safe logging sanitization",
+          "URL safety validation",
+          "Error message redaction"
+        ]
+      },
+      {
+        "id": "POS-005",
+        "category": "Workspace Isolation",
+        "file": "src/infrastructure/persistence/dexie-db-migrations.ts",
+        "description": "Workspace ID enforcement for data isolation",
+        "features": [
+          "Composite key pattern [workspaceId + projectId]",
+          "workspaceId added to all tables",
+          "Cross-workspace data isolation enforced"
+        ]
+      },
+      {
+        "id": "POS-006",
+        "category": "Permission Lifecycle",
+        "file": "src/lib/filesystem/permission-lifecycle.ts",
+        "description": "File System Access API permission management",
+        "features": [
+          "Permission state tracking (unknown, granted, prompt, denied, dismissed)",
+          "Permission restoration for persistent handles",
+          "Chrome 122+ persistent permission support detection"
+        ]
+      }
+    ]
+  },
+  "recommendations": {
+    "critical": [
+      "Remove hardcoded API keys from source code immediately",
+      "Replace eval() and new Function() with safer alternatives",
+      "Implement Content Security Policy to prevent code injection",
+      "Add subresource integrity for CDN-loaded scripts"
+    ],
+    "high": [
+      "Sanitize all dangerouslySetInnerHTML usage with DOMPurify",
+      "Use Authorization headers instead of URL query parameters for API keys",
+      "Add explicit workspace validation to all permission checks",
+      "Implement automatic credential masking in logging layer"
+    ],
+    "medium": [
+      "Add path validation to all file system operations",
+      "Use allowlist mode for command sanitizer in production",
+      "Implement plugin code signing and verification",
+      "Add rate limiting for API key usage"
+    ],
+    "low": [
+      "Document security review process for new code",
+      "Implement security-focused code review checklist",
+      "Add automated security scanning to CI/CD pipeline",
+      "Create security incident response procedure"
+    ]
+  }
+}

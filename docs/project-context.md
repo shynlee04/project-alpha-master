@@ -2,14 +2,28 @@
 project_name: 'project-alpha'
 user_name: 'via-gent-dev'
 date: '2025-12-28'
-last_updated: '2025-12-28'
-sections_completed: ['technology_stack', 'implementation_rules', 'patterns']
-existing_patterns_found: 3
+last_updated: '2026-01-17'
+sections_completed: ['technology_stack', 'implementation_rules', 'patterns', 'architecture_decisions']
+existing_patterns_found: 4
 ---
 
 # Project Context & Implementation Rules
 
 This document defines the critical technical context, rules, and patterns that ALL AI agents must follow when implementing code for the `project-alpha` (Via-gent) codebase.
+
+## 0. Critical Architecture Decisions (2026-01-17)
+
+### Storage & Persistence (ADR-033)
+- **Hybrid Storage Model:**
+  - **Desktop:** File System Access API (FSA) for direct file manipulation (PRIMARY).
+  - **Mobile/Tablet:** IndexedDB (via Dexie) for fallback storage (SECONDARY).
+- **Metadata Layer:** DexieDB used for project metadata, settings, and caches across ALL platforms.
+- **Sync Strategy:** Single-direction flow from "System of Record" (FSA/IDB) to UI State.
+
+### Research Status
+- **Client-Side IDE Research:** COMPLETED & PUT ASIDE (2026-01-17).
+  - Findings: FSA+Dexie is viable. Unified IDB-only is rejected (performance/quota issues).
+  - Next: Domain Discovery & State Architecture.
 
 ## 1. Technology Stack
 

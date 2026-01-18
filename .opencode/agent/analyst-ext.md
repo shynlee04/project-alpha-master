@@ -6,7 +6,7 @@ temperature: 0.2
 tools:
   write: true
   edit: true
-  bash: false
+  bash: true
   glob: true
   grep: true
   read: true
@@ -15,6 +15,9 @@ permission:
   bash: allow
   task:
     "*": allow
+    "agent": allow
+    "subagent": allow
+    "skill": allow
 ---
 
 # analyst-ext (Subagent)

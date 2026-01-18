@@ -1,127 +1,130 @@
-# Master Orchestrator Constraints for Sub-Agent Delegation
+# EXCALIBUR - Tool Constraints Reference
+# Created: 2026-01-18
+# Purpose: Template for tool permission delegation patterns
 
-## CRITICAL RULE: Always Set Tool Constraints When Delegating
-
-**NEVER delegate without explicitly setting tool permissions!**
-
-### Why This Matters
-
-When sub-agents have unrestricted access (write, edit, bash), they can:
-- Modify code files they shouldn't touch
-- Fix issues outside their scope
-- Overstep their role boundaries
-- Cause cascading failures
-
-### Required Delegation Pattern
-
-**WRONG** (oversteps boundaries):
-```
-task({
-  subagent_type: "real-world-validator",
-  prompt: "Test the spike and fix any issues"
-})
-```
-
-**CORRECT** (strictly scoped):
-```
-task({
-  subagent_type: "real-world-validator",
-  prompt: "Test the spike and REPORT findings ONLY. DO NOT modify code.",
-  tools: {
-    write: false,
-    edit: false,
-    bash: false,
-    task: true
-  }
-})
-```
-
-### Tool Permission Matrix by Agent Type
+## Tool Permission Matrix (MEMORIZE THIS)
 
 | Agent Type | write | edit | bash | task | Notes |
 |-----------|--------|-------|-------|-------|--------|
-| **real-world-validator** | false | false | false | true | Tests ONLY, writes reports |
-| **dev-ext** | true | true | true (limited) | true | Implementation, but NEVER without context |
-| **architect-ext** | false | true (design only) | false | true | Architecture docs, not code |
-| **analyst-ext** | false | false | false | true | Research and analysis only |
-| **tea-ext** | false | false | false | true | Test specifications, not implementation |
+| **real-world-validator** | true | false | true (limited) | true | Tests ONLY (bash: browser automation + restart if stuck), writes reports (write), NEVER modifies code (edit: NO) |
+| **dev-ext** | true | true | true (limited) | true | Implementation, but NEVER without context and review |
+| **architect-ext** | false | true (design only) | false | true | Architecture docs, NOT code implementation |
+| **analyst-ext** | false | false | false | true | Research and analysis ONLY |
+| **tea-ext** | false | false | false | true | Test specifications, NOT implementation |
+| **ux-designer-ext** | false | false | false | true | UI/UX design, NOT coding |
+| **bmad-sprint-manager** | true | true | true (limited) | true | Sprint coordination, story execution, tracking |
+| **component-splitter** | true | true | false | true | Refactoring ONLY, no new features |
+| **store-refactorer** | true | true | false | true | Store refactoring ONLY, no new features |
 
-### Mandatory Delegation Template
+**CRITICAL**: Always set tool constraints when delegating! See templates below.
 
-**Copy and adapt this for EVERY delegation:**
+---
 
+## Delegation Templates
+
+### For dev-ext (Implementation)
 ```markdown
 ## Tool Constraints
 
 **CRITICAL**: This agent has LIMITED permissions:
-- ❌ write: FALSE - Can only create report documents
-- ❌ edit: FALSE - CANNOT modify code files
-- ❌ bash: FALSE - CANNOT run commands
-- ✅ task: TRUE - Can delegate further if approved
+- write: true - Can create files (components, tests, utilities)
+- edit: true - Can modify code files (implementation only)
+- bash: true (limited) - Can run pnpm commands for build/test ONLY
+- task: true - Can delegate further if approved
 
 **Role Boundaries**:
-- TEST ONLY - Validate behavior, don't fix
-- REPORT ONLY - Document findings, don't implement solutions
-- SUGGEST ONLY - Provide recommendations, don't write code
+- [IMPLEMENTATION] - Write code based on story context
+- [WHAT NOT TO DO] - Don't modify governance docs, don't skip tests
 
-## What To Do
-
-1. Test [what to test]
-2. Report findings
-3. Document evidence
-4. Suggest fixes (in report, NOT in code)
-
-## What NOT To Do
-
-1. ❌ Do NOT modify any code files
-2. ❌ Do NOT restart services
-3. ❌ Do NOT install/uninstall dependencies
-4. ❌ Do NOT fix routing or configuration
-5. ❌ Do NOT edit production code
-
-## Required Output
-
-Create report at [path] with:
-1. Test results (pass/fail)
-2. Evidence (screenshots, logs, metrics)
-3. Issues found (description only)
-4. Recommendations (what to fix, NOT how)
+**Required Output**:
+- Report location: _bmad-output/sprint-artifacts/stories/{story-id}-report.md
+- Success criteria: All AC verified, 0 TypeScript errors, tests passing
+- Timebox: Story-specific (see story template)
 ```
 
-### MCP Server Usage
+### For real-world-validator (Testing)
+```markdown
+## Tool Constraints
 
-Agents MUST use MCP servers for official documentation:
+**CRITICAL**: This agent has LIMITED permissions:
+- write: true - Can write test reports
+- edit: false - NEVER modifies code files
+- bash: true (limited) - Can run browser automation, restart if stuck
+- task: true - Can delegate further if approved
 
-| Tool | When To Use | Examples |
-|-------|-------------|-----------|
-| **TanStack MCP** | All TanStack documentation queries | "Search TanStack Router docs" |
-| **websearch-prime** | Best practices, patterns | "React state management best practices 2026" |
-| **fetch** | Official docs, API references | "Fetch React Router docs" |
+**Role Boundaries**:
+- [TESTING] - Run browser automation tests, validate real-world behavior
+- [WHAT NOT TO DO] - Don't fix bugs, only report them with evidence
 
-**Required**: Before any research, use MCP servers - NOT search engines.
+**Required Output**:
+- Report location: _bmad-output/sprint-artifacts/stories/{story-id}-test-report.md
+- Success criteria: All acceptance criteria validated in browser
+- Timebox: 60 minutes per test session
+```
 
-### Validation Checklist
+### For bmad-sprint-manager (Sprint Coordination)
+```markdown
+## Tool Constraints
 
-Before submitting delegation, check:
+**CRITICAL**: This agent has LIMITED permissions:
+- write: true - Can create story reports, sprint reports
+- edit: true - Can update sprint status files, LOOP_STATE.yaml
+- bash: true (limited) - Can run pnpm tsc, pnpm vitest for validation ONLY
+- task: true - Can delegate to dev-ext, real-world-validator, etc.
 
-- [ ] Tool permissions explicitly set
-- [ ] Role boundaries clearly defined
-- [ ] Output location specified
-- [ ] Evidence requirements stated
-- [ ] MCP server usage mentioned if needed
-- [ ] Timebox specified
-- [ ] Success criteria documented
+**Role Boundaries**:
+- [COORDINATION] - Execute stories, track progress, maintain sprint state
+- [WHAT NOT TO DO] - Don't modify production code directly, delegate to dev-ext
 
-### Failure Consequences
+**Required Output**:
+- Report location: _bmad-output/sprint-artifacts/sprint-completion-report-{sprint-id}.md
+- Success criteria: All stories complete, all AC met, all tests passing
+- Timebox: Epic-specific (see epic template)
+```
 
-If sub-agent oversteps:
-1. Stop the delegation immediately
-2. Document the violation
-3. Update agent definition to prevent recurrence
-4. Report to user for oversight
+---
 
-### Last Updated
+## CC-DESKTOP-FSA EPIC - TEAM_B EXECUTION
+**Status**: ACTIVE - STARTING NOW
+**Context**: CC-STORAGE-GATEWAY complete, FSA migration ready
 
-- Created: 2026-01-16
-- Triggered by: real-world-validator calling 97 tools, modifying routing, fixing code
-- Status: ACTIVE - Apply to ALL future delegations
+### Stories to Execute (Total: 6, Effort: 22 hours)
+
+1. **CC-DF-01**: Note File Format Migration (4h)
+   - Create note-formatter.ts (Markdown + YAML frontmatter)
+   - Create note-exporter.ts (DexieDB → FSA export)
+
+2. **CC-DF-02**: DexieDB → FSA Sync Layer (6h)
+   - Create note-sync-layer.ts
+   - Create file-watcher.ts (FileSystemObserver + polling)
+   - Create cache-sync.ts (bidirectional sync)
+
+3. **CC-DF-03**: Agent Tool Integration (4h)
+   - Create note-commands.ts (agent tools for FSA notes)
+   - Update file-commands.ts
+
+4. **CC-DF-04**: User Experience Updates (3h)
+   - Create StorageIndicator.tsx (8-bit design)
+   - Create useStorageMode.ts hook
+   - Update NoteHeader.tsx
+
+5. **CC-DF-05**: Migration Verification Tests (3h)
+   - Create fsa-migration.test.ts
+   - E2E tests for create/edit/delete workflows
+
+6. **CC-DF-06**: Rollback Procedure (2h)
+   - Create rollback-procedure.md
+   - Document rollback steps
+
+### Critical Dependencies (Now Unblocked ✅)
+- ✅ StorageGateway abstraction working (CC-SG-01)
+- ✅ Platform routing verified (CC-SG-02)
+- ✅ Migration path documented (CC-SG-03)
+
+### Success Criteria
+- Desktop notes in /project/notes/*.md (FSA)
+- DexieDB only contains cache data
+- Agent tools can read/write notes via file system
+- Storage mode indicator visible in UI
+- 0 TypeScript errors
+- All tests passing

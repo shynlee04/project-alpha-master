@@ -10,9 +10,12 @@
  * These operations update note metadata without changing content.
  */
 
-import { db } from '@/infrastructure/persistence/dexie-db';
 import type { StateCreator } from 'zustand';
 import type { NoteStoreState } from '../types-slice';
+import { createStorageGateway } from '@/infrastructure/filesystem/storage-gateway-factory';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { NoteGateway } from '@/domain/services/note-gateway';
 
 /**
  * Metadata Operations Slice
@@ -43,7 +46,25 @@ export const createNoteMetadataSlice: StateCreator<
         const newIsFavorite = !note.isFavorite;
 
         try {
-            await db.notes.update(noteId, {
+            // Get platform contract and project for gateway creation
+            const platform = getPlatformContract();
+            const currentProjectId = get().currentProjectId;
+            const project = currentProjectId ? useProjectStore.getState().projects[currentProjectId] : null;
+
+            if (!project) {
+                throw new Error(`Project ${currentProjectId} not found`);
+            }
+
+            // Create gateway for current platform
+            const gateway = createStorageGateway(platform, {
+                directoryHandle: undefined,
+                projectId: currentProjectId ?? '',
+            });
+
+            const noteGateway = new NoteGateway(gateway);
+
+            // Persist update through gateway
+            await noteGateway.updateNote(noteId, {
                 isFavorite: newIsFavorite,
                 updatedAt: Date.now(),
             });
@@ -85,7 +106,25 @@ export const createNoteMetadataSlice: StateCreator<
         }
 
         try {
-            await db.notes.update(noteId, {
+            // Get platform contract and project for gateway creation
+            const platform = getPlatformContract();
+            const currentProjectId = get().currentProjectId;
+            const project = currentProjectId ? useProjectStore.getState().projects[currentProjectId] : null;
+
+            if (!project) {
+                throw new Error(`Project ${currentProjectId} not found`);
+            }
+
+            // Create gateway for current platform
+            const gateway = createStorageGateway(platform, {
+                directoryHandle: undefined,
+                projectId: currentProjectId ?? '',
+            });
+
+            const noteGateway = new NoteGateway(gateway);
+
+            // Persist update through gateway
+            await noteGateway.updateNote(noteId, {
                 parentId: newParentId ?? undefined,
                 order: newOrder,
                 updatedAt: Date.now(),

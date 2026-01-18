@@ -10,7 +10,15 @@ tools:
 permission:
   edit: allow
   bash: allow
-  task: allow
+  task:
+    "*": allow
+    "subtask": allow
+    "agent": allow
+    "subagent": allow
+    "skill": allow
+    "command": allow
+    "edit": allow
+    "bash": allow
 ---
 
 # bmad-sprint-manager (Primary Agent)

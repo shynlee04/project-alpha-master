@@ -2,9 +2,9 @@
 # BMM WORKFLOW STATUS v2.5 - EPIC-CC-ARC (Architectural Remediation Execution)
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.5.0"
-last_updated: "2026-01-14T00:00:00+07:00"
-updated_by: "BMAD Master - Team B Orchestrator"
+schema_version: "2.5.1"
+last_updated: "2026-01-17T12:00:00+07:00"
+updated_by: "BMAD Master - Orchestrator"
 previous_version: "bmm-workflow-status-v2.5.yaml"
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -75,6 +75,114 @@ limits:
   max_stories_per_epic: 8
   max_blocked_items: 5
   max_file_lines: 200
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RESEARCH ARTIFACTS (Temporary - For Deep-Scanning Preparation)
+# ═══════════════════════════════════════════════════════════════════════════
+
+research_artifacts:
+  - id: "RES-ARCH-2026-01-17"
+    name: "Client-Side IDE Architecture Research"
+    completed_at: "2026-01-17T10:00:00+07:00"
+    put_aside_at: "2026-01-17T12:30:00+07:00"
+    status: "PUT_ASIDE_FOR_LATER_RESOLUTION"
+    description: |
+      Technical research on IDE WebContainer sandboxing alternatives and FSA vs IndexedDB
+      for unified storage across 2 device types (desktop/mobile).
+      
+      **PUT ASIDE STATUS:** Research findings are valid but not immediately actionable.
+      Decision outcomes are memorialized for future resolution when deep-scanning system
+      architecture remediation is ready to execute.
+    scope:
+      - "IDE Workspace WebContainer sandboxing alternatives"
+      - "FSA vs IndexedDB (Dexie) for unified storage"
+      - "Performance optimization for dual device types"
+    findings_summary:
+      - "FSA + DexieDB Dual Storage = PROCEED (High Confidence)"
+      - "DexieDB-Only Unified Storage = REJECT (High Confidence)"
+      - "7 sandbox alternatives analyzed with SWOT"
+      - "File tree snapshot index identified as P0 for performance"
+    document_path: "_bmad-output/project-planning-artifacts/research/technical-client-side-ide-architecture-2026-01-17.md"
+    discovery_framework_status: "_bmad-output/project-planning-artifacts/discovery-framework-2026-01-17/discovery-framework-status.md"
+    discovery_framework:
+      id: "DISC-FRAMEWORK-2026-01-17"
+      name: "Discovery Framework - Phase 1: Domain-Specific Discovery"
+      created_at: "2026-01-17T13:00:00+07:00"
+      status: "ITERATIVE_VALIDATION_IN_PROGRESS"
+      accuracy: 68.4
+      target_accuracy: 90.0
+      governance_decision: "BLOCK_PHASE_2_UNTIL_CORRECTIONS"
+      iteration: 10
+      last_updated: "2026-01-18T13:30:00+07:00"
+      iteration_1_results:
+        claim_fixed: "C-001 EnhancedChatInterface"
+        previous_status: "HALLUCINATED (incorrect)"
+        new_status: "VERIFIED (correct)"
+        finding: "File EXISTS with 602 lines, 29 grep matches across 12 files"
+        critical_error: "Original governance report was WRONG - failed to perform filesystem verification"
+        accuracy_change: "36.8% → 42.1% (+5.3%)"
+      iteration_2_results:
+        claim_fixed: "H-001 slash-commands"
+        previous_status: "HALLUCINATED (line count wrong)"
+        new_status: "VERIFIED_WITH_CORRECTION"
+        finding: "File EXISTS at src/infrastructure/persistence/stores/notes/slash-commands/index.ts with 564 lines (claimed 563, 1-line discrepancy)"
+        governance_verdict: "Scanner Agent CORRECT, Analyst Agent FAILED verification"
+        accuracy_change: "42.1% → 47.4% (+5.3%)"
+      iteration_3_results:
+        claim_fixed: "H-002 migration-backup"
+        previous_status: "HALLUCINATED (line count wrong)"
+        new_status: "VERIFIED_WITH_CORRECTION"
+        finding: "File EXISTS at src/infrastructure/persistence/stores/providers/migration-backup.ts with 562 lines (claimed 561, 1-line discrepancy)"
+        governance_verdict: "Scanner Agent CORRECT, Analyst Agent CORRECT (no disagreement)"
+        accuracy_change: "47.4% → 52.6% (+5.2%)"
+      iteration_5_results:
+        claim_fixed: "H-004 use-vfs-sync-slice"
+        previous_status: "HALLUCINATED (line count wrong)"
+        new_status: "VERIFIED_WITH_CORRECTION"
+        finding: "File EXISTS at src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts with 446 lines (claimed 445, 1-line discrepancy)"
+        governance_verdict: "Scanner Agent CORRECT, Analyst Agent CORRECT (no disagreement)"
+        accuracy_change: "52.6% → 57.9% (+5.3%)"
+      iteration_8_results:
+        claim_fixed: "U-001 Total 38 stores"
+        previous_status: "UNVERIFIED (1-store discrepancy)"
+        new_status: "VERIFIED"
+        finding: "38 stores exist in codebase - 37 files with create< pattern, 2 files export 2 stores each"
+        governance_verdict: "Scanner Agent CORRECT (38 stores), Analyst Agent INCORRECT (37 stores - 1-store discrepancy)"
+        accuracy_change: "52.6% → 57.9% (+5.3%)"
+      iteration_9_results:
+        claim_fixed: "U-002 Total 35 services"
+        previous_status: "UNVERIFIED"
+        new_status: "VERIFIED_WITH_CORRECTION"
+        finding: "38 production services exist in codebase (files with '*service*.ts', excluding tests). Original claim of 35 was 3 services too few (8.6% error). Scanner (49) and Analyst (55) both overcounted significantly."
+        governance_verdict: "Governance Agent CORRECT (38 services), Scanner Agent INCORRECT (49 services - 11 overcount), Analyst Agent INCORRECT (55 services - 17 overcount)"
+        accuracy_change: "57.9% → 63.2% (+5.3%)"
+      iteration_10_results:
+        claim_fixed: "U-003 Total 482 components"
+        previous_status: "UNVERIFIED"
+        new_status: "VERIFIED_WITH_CORRECTION"
+        finding: "478 React components exist in codebase (482 total .tsx files - 4 pure utility files excluded). Original claim of 482 was 4 components overcounted (0.8% error). Scanner counted 477 components (incorrectly excluded 1 mixed file), Analyst counted 478 components (correctly identified mixed file that exports StatusIcon component)."
+        governance_verdict: "Analyst Agent CORRECT (478 components), Scanner Agent INCORRECT (477 components - 1 undercount due to excluding mixed file event-indicator-utils.tsx)"
+        accuracy_change: "63.2% → 68.4% (+5.2%)"
+      remaining_work:
+        hallucinated_claims: 4
+        unverified_claims: 2
+        gap_to_target: "21.6%"
+    next_phase_requirements:
+      - "Domain-Specific Discovery (Stack-Feature Scan)"
+      - "Dependency/Conflict Analysis Research Framework"
+      - "Deep-Scanning System Architecture Remediation"
+    decision_outcomes:
+      - "FSA + DexieDB = PROCEED (Chrome DevRel recommended)"
+      - "DexieDB-only = REJECT (3x-4x slower, 2GB limit)"
+      - "Performance priority: File tree snapshot index"
+    put_aside_reason: |
+      User directive: Research is valid but needs to be put aside. Findings memorialized
+      in governance for later resolution. Next phase requires domain-specific discovery
+      and research framework before deep-scanning can execute effectively.
+    memorialized_for:
+      - "Future deep-scanning architecture remediation"
+      - "Storage layer refactoring (when EPIC-CC-ARC unblocks)"
+      - "WebContainer integration (when sandbox alternatives needed)"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CURRENT ACTIVE STATE (Only Live Data)
@@ -248,14 +356,17 @@ active_epics:
 
   - id: "EPIC-CC-01"
     name: "Project Space Foundation"
-    status: "IN_PROGRESS"
-    progress: 40  # PS-04 completed (4/10 stories)
-    stories_total: 10
-    stories_done: 4
+    status: "COMPLETE"
+    progress: 100  # All 6 stories complete
+    stories_total: 6
+    stories_done: 6
     priority: "P0"
     team: "Team B"
     blocked_by: null
     adr: "ADR-032"
+    completed_at: "2026-01-18T07:00:00+07:00"
+    actual_duration_hours: 2.75
+    estimated_duration_hours: 22
     user_reported_issues:
       - id: "URI-01"
         description: "Project IDs not persistent - need to open folder every time"
@@ -547,7 +658,40 @@ architecture:
 # NEXT ACTIONS (Immediate)
 # ═══════════════════════════════════════════════════════════════════════════
 
-next_actions:
+# ═══════════════════════════════════════════════════════════════════════════
+  # PUT ASIDE RESEARCH ARTIFACTS (Memorized for Later Resolution)
+  # ═══════════════════════════════════════════════════════════════════════════
+  
+  put_aside_research:
+    - id: "RES-ARCH-2026-01-17"
+      decision_outcomes:
+        storage_architecture:
+          decision: "PROCEED with FSA + DexieDB Dual Storage"
+          confidence: "High"
+          evidence: "Chrome DevRel official recommendation"
+          rejection_reasons:
+            - "DexieDB-only unified storage REJECTED"
+            - "3x-4x slower than FSA/OPFS"
+            - "2GB quota insufficient for IDE workloads"
+            - "Breaks local file system integration"
+        performance_optimization:
+          decision: "Implement file tree snapshot index (P0)"
+          confidence: "High"
+          evidence: "OPFS 3x-4x faster than IndexedDB"
+          benefit: "Enables instant project switching"
+        sandboxing_alternatives:
+          decision: "Documented SWOT for 7 open-source options"
+          confidence: "Medium"
+          evidence: "Feature comparison matrix created"
+          when_to_use: "When WebContainer limitations encountered"
+      deferred_until: "Deep-scanning system architecture remediation phase"
+      governance_reference: "ADR-033 - Section on Storage Strategy"
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # NEXT ACTIONS (Immediate)
+  # ═══════════════════════════════════════════════════════════════════════════
+  
+  next_actions:
   team_a:
     current_story: "BYOK-02"
     task: "Add Zod validation schemas for credentials"
@@ -638,3 +782,49 @@ user_reported_issues:
     target_story: "PS-06"
     status: "BLOCKED_BY_PS-05"
     workaround: "Use keyword search only"
+
+# ═════════════════════════════════════════════════════════════════
+# CORRECT-COURSE WORKFLOW STATUS - TRACK 3 RESOLUTION
+# ═════════════════════════════════════════════════════════════════
+
+correct_course_workflow:
+  track_3_epic_cc_11:
+    name: "God Store Decomposition"
+    status: "COMPLETE"
+    completed_at: "2026-01-22T08:45:00+07:00"
+    assignee: "Team B (store-refactorer agent)"
+    effort: "2 hours"
+    resolution_artifact: "_bmad-output/correct-course-resolution-track3-epic-cc-11-2026-01-22.md"
+
+    stories_completed:
+      - id: "CC-11-01"
+        title: "Extract Chat Persistence Slice"
+        status: "COMPLETED"
+        artifact: "_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-01.md"
+
+      - id: "CC-11-02"
+        title: "Verify Context Window Slice"
+        status: "COMPLETED"
+        artifact: "_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-02.md"
+
+      - id: "CC-11-03"
+        title: "Update Main Store (Compose)"
+        status: "COMPLETED"
+        artifact: "_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-03.md"
+
+    metrics:
+      lines_extracted: 300
+      lines_removed_inline: 257
+      main_store_final: 200
+      reduction_percentage: 55
+      ts_errors: 0
+      regressions: 0
+
+    governance_compliance:
+      - "ADR-033: God Store pattern eliminated ✅"
+      - "ADR-014: Slice pattern implemented (S-014b) ✅"
+      - "ADR-035: Store in canonical infrastructure path ✅"
+      - "Clean Architecture: Main file composes, slices implement ✅"
+
+  workflow_status: "COMPLETE"
+  completed_at: "2026-01-22T14:45:00+07:00"

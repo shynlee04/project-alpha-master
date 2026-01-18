@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent IDE - Toàn diện (5 giao diện)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --action: #f97316;
+      --border: #3f3f46;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --chat-user-bg: #27272a;
+      --chat-ai-bg: #1e293b;
+    }
+    body {
+      font-family: 'Geist Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .ide-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+    .tree-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-left: 3px solid transparent;
+    }
+    .tree-item:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+    .tree-item.active {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+      border-left-color: var(--action);
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+    .breadcrumb {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+      font-family: inherit;
+    }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .tab:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+    .tab.active {
+      background: var(--canvas);
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--action);
+    }
+    .workspace-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 380px;
+      grid-template-rows: 1fr 220px;
+      gap: 0;
+      overflow: hidden;
+    }
+    .editor-panel, .preview-panel, .chat-panel, .terminal-panel {
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .editor-panel { grid-column: 1/2; grid-row: 1/2; }
+    .preview-panel { grid-column: 2/3; grid-row: 1/2; background: var(--surface); }
+    .chat-panel { grid-column: 3/4; grid-row: 1/3; background: var(--surface); }
+    .terminal-panel { grid-column: 1/3; grid-row: 2/3; background: #1e1e1e; }
+
+    .panel-header {
+      padding: 8px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      justify-content: space-between;
+    }
+    .editor-container {
+      flex: 1;
+      display: flex;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      overflow: auto;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-message {
+      padding: 12px;
+      font-size: 13px;
+    }
+    .chat-message.user {
+      align-self: flex-end;
+      background: var(--chat-user-bg);
+    }
+    .chat-message.ai {
+      align-self: flex-start;
+      background: var(--chat-ai-bg);
+    }
+    .chat-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-input {
+      width: 100%;
+      padding: 10px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      color: var(--canvas);
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+  </style>
+</head>
+<body>
+  <div class="ide-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">📁 Tập tin dự án</div>
+      </div>
+      <div class="file-tree">
+        <div class="tree-item active">📄 App.tsx</div>
+        <div class="tree-item">📄 main.tsx</div>
+        <div class="tree-item">📁 components</div>
+        <div class="tree-item">📄 api.ts</div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="breadcrumb">src / App.tsx</div>
+        <div class="header-actions">
+          <button class="btn btn-secondary">👁 Xem trước</button>
+          <button class="btn btn-secondary">⌨ Terminal</button>
+          <button class="btn btn-secondary">🤖 AI Chat</button>
+          <button class="btn">▶ Chạy</button>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <div class="tab active">📄 App.tsx</div>
+        <div class="tab">📄 api.ts</div>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="editor-panel">
+          <div class="panel-header">📝 Trình soạn thảo</div>
+          <div class="editor-container">
+            <pre><code>import React from 'react';
+
+export function App() {
+  return (
+    &lt;div className="app"&gt;
+      &lt;h1&gt;Via-Gent v2.0&lt;/h1&gt;
+      &lt;p&gt;Trải nghiệm IDE hoàn chỉnh&lt;/p&gt;
+      &lt;button&gt;Nhấn vào đây&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="preview-panel">
+          <div class="panel-header">👁 Xem trước</div>
+          <div style="padding: 20px; background: white; color: #333; font-family: sans-serif;">
+            <h1 style="color: #f97316; margin-bottom: 16px;">Via-Gent v2.0</h1>
+            <p style="margin-bottom: 16px;">Trải nghiệm IDE hoàn chỉnh</p>
+            <button style="background: #f97316; color: white; padding: 12px 24px; font-weight: bold; border: none;">Nhấn vào đây</button>
+          </div>
+        </div>
+
+        <div class="chat-panel">
+          <div class="panel-header">🤖 Trợ lý AI</div>
+          <div class="chat-messages">
+            <div class="chat-message ai">Xin chào! Tôi có thể giúp bạn với mã, gỡ lỗi và các phương pháp tốt nhất. Bạn muốn làm việc gì?</div>
+            <div class="chat-message user">Giúp tôi làm component này dễ tiếp cận</div>
+            <div class="chat-message ai">Tốt! Tôi sẽ thêm các thuộc tính aria, điều hướng bàn phím và quản lý focus. Bạn có muốn tôi thực hiện không?</div>
+          </div>
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" placeholder="Hỏi AI...">
+          </div>
+        </div>
+
+        <div class="terminal-panel">
+          <div class="panel-header" style="background: var(--surface);">⌨ Terminal</div>
+          <div style="padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4ade80;">
+            <div>$ npm run dev</div>
+            <div style="color: #60a5fa;">VITE v5.0.0 sẵn sàng</div>
+            <div style="color: #60a5fa;">➜ Local: http://localhost:5173/</div>
+            <div style="color: #4ade80;">✓ Xây dựng thành công</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <span>⟳ Tự động làm mới</span>
+        <span>📍 Dòng 8, Cột 12</span>
+        <span>TypeScript React</span>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tree-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

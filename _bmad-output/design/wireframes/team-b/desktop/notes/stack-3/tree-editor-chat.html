@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Notes - Tree + Editor + Chat (Stack 3)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Wireframe-specific overrides */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--notes-bg);
+        }
+        
+        .header {
+            height: var(--header-height);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .activity-bar {
+            width: 64px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border-right: var(--border-width) solid var(--border-color);
+        }
+        
+        .activity-bar-top {
+            display: flex;
+            flex-direction: column;
+            padding: var(--space-2);
+            gap: var(--space-1);
+        }
+        
+        .activity-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+            color: var(--muted);
+            transition: all 0.15s ease;
+            position: relative;
+        }
+        
+        .activity-item:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .activity-item.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+        }
+        
+        .activity-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 24px;
+            background-color: var(--action);
+            border-radius: 0 2px 2px 0;
+        }
+        
+        .activity-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .note-tree {
+            width: 220px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border-right: var(--border-width) solid var(--border-color);
+        }
+        
+        .tree-header {
+            padding: var(--space-3);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+        }
+        
+        .project-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--action);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+        }
+        
+        .project-name {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+        
+        .tree-search {
+            margin-top: var(--space-2);
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+        }
+        
+        .search-input-wrapper svg {
+            position: absolute;
+            left: var(--space-2);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--muted);
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: var(--space-2) var(--space-2) var(--space-2) var(--space-8);
+            font-size: var(--text-sm);
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            outline: none;
+        }
+        
+        .search-input:focus {
+            border-color: var(--action);
+        }
+        
+        .tree-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-2);
+        }
+        
+        .tree-section {
+            margin-bottom: var(--space-4);
+        }
+        
+        .tree-section-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: var(--space-1) var(--space-2);
+            margin-bottom: var(--space-1);
+        }
+        
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .tree-item:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .tree-item.selected {
+            color: var(--primary);
+            background-color: rgba(249, 115, 22, 0.15);
+            border: 1px solid var(--action);
+        }
+        
+        .tree-item.selected .tree-item-name {
+            color: var(--action);
+        }
+        
+        .tree-item-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .tree-item-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .folder-chevron {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.15s ease;
+        }
+        
+        .folder-children {
+            padding-left: var(--space-4);
+        }
+        
+        .editor-area {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background-color: var(--notes-bg);
+        }
+        
+        .editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-2) var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .editor-tabs {
+            display: flex;
+            gap: var(--space-1);
+            align-items: center;
+        }
+        
+        .editor-tab {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background-color: transparent;
+            border: 1px solid transparent;
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .editor-tab.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+            border-color: var(--action);
+        }
+        
+        .editor-tab:hover:not(.active) {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        
+        .editor-tab-icon {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: white;
+            background-color: var(--action);
+            border: var(--border-width) solid var(--action);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--action-hover);
+            border-color: var(--action-hover);
+        }
+        
+        .btn-primary svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .blocknote-editor {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-2) var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-none);
+            color: var(--secondary);
+            background-color: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .toolbar-btn:hover {
+            color: var(--primary);
+            background-color: var(--surface-hover);
+            border-color: var(--border-color);
+        }
+        
+        .toolbar-btn.active {
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+            border-color: var(--action);
+        }
+        
+        .toolbar-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background-color: var(--border-color);
+            margin: 0 var(--space-1);
+        }
+        
+        .editor-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-6);
+            background-color: var(--notes-bg);
+        }
+        
+        .note-document {
+            max-width: 700px;
+            margin: 0 auto;
+            font-family: var(--font-prose);
+            color: var(--primary);
+            line-height: var(--leading-relaxed);
+        }
+        
+        .note-document h1 {
+            font-size: 28px;
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--action);
+        }
+        
+        .note-document h2 {
+            font-size: 20px;
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+            margin-top: var(--space-6);
+            margin-bottom: var(--space-3);
+        }
+        
+        .note-document h3 {
+            font-size: 16px;
+            font-weight: var(--font-semibold);
+            color: var(--action);
+            margin-top: var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+        
+        .note-document p {
+            margin-bottom: var(--space-3);
+            color: var(--secondary);
+        }
+        
+        .note-document ul, .note-document ol {
+            margin-bottom: var(--space-3);
+            padding-left: var(--space-5);
+        }
+        
+        .note-document li {
+            margin-bottom: var(--space-1);
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        
+        .note-document blockquote {
+            padding: var(--space-2) var(--space-3);
+            margin: var(--space-3) 0;
+            background-color: var(--surface);
+            border-left: 4px solid var(--action);
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        
+        .note-document code {
+            font-family: var(--font-code);
+            font-size: 0.85em;
+            padding: 2px 5px;
+            background-color: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-none);
+            color: var(--action);
+        }
+        
+        .note-document pre {
+            padding: var(--space-3);
+            margin: var(--space-3) 0;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            overflow-x: auto;
+        }
+        
+        .note-document pre code {
+            padding: 0;
+            background-color: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 13px;
+        }
+        
+        /* Resize Handle */
+        .resize-handle {
+            width: 4px;
+            background-color: var(--structural);
+            flex-shrink: 0;
+            cursor: col-resize;
+            transition: background-color 0.15s ease;
+        }
+        
+        .resize-handle:hover {
+            background-color: var(--action);
+        }
+        
+        /* Chat Panel */
+        .chat-panel {
+            width: 28%;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            background-color: var(--surface);
+            border-left: var(--border-width) solid var(--border-color);
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3) var(--space-4);
+            background-color: var(--surface);
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+        
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .chat-title-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--agent-avatar);
+            border-radius: var(--radius-none);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-title-text {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+        
+        .chat-subtitle {
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-4);
+        }
+        
+        .chat-message {
+            margin-bottom: var(--space-4);
+        }
+        
+        .chat-message-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-1);
+        }
+        
+        .chat-message-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-none);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: white;
+        }
+        
+        .chat-message-avatar.user {
+            background-color: var(--action);
+        }
+        
+        .chat-message-avatar.ai {
+            background-color: var(--agent-avatar);
+        }
+        
+        .chat-message-author {
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+        
+        .chat-message-content {
+            padding: var(--space-3);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            line-height: var(--leading-normal);
+        }
+        
+        .chat-message.ai .chat-message-content {
+            border-color: var(--agent-avatar);
+        }
+        
+        .chat-message.user .chat-message-content {
+            margin-left: var(--space-6);
+            background-color: rgba(249, 115, 22, 0.1);
+            border-color: var(--action);
+        }
+        
+        .chat-actions {
+            margin-top: var(--space-3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+        }
+        
+        .chat-action-chip {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--action);
+            background-color: rgba(249, 115, 22, 0.1);
+            border: 1px solid var(--action);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .chat-action-chip:hover {
+            background-color: rgba(249, 115, 22, 0.2);
+        }
+        
+        .chat-input-area {
+            padding: var(--space-3) var(--space-4);
+            border-top: var(--border-width) solid var(--border-color);
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: var(--space-2);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: var(--space-2) var(--space-3);
+            font-size: var(--text-sm);
+            font-family: var(--font-mono);
+            color: var(--primary);
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            outline: none;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--action);
+        }
+        
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--action);
+            border: var(--border-width) solid var(--action);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .chat-send-btn:hover {
+            background-color: var(--action-hover);
+            border-color: var(--action-hover);
+        }
+        
+        .chat-send-btn svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+        
+        /* Ghost Plan Overlay */
+        .ghost-plan {
+            margin-top: var(--space-3);
+            padding: var(--space-3);
+            background-color: var(--ghost-plan);
+            border: 2px solid #f59e0b;
+            border-radius: var(--radius-none);
+        }
+        
+        .ghost-plan-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-2);
+        }
+        
+        .ghost-plan-icon {
+            width: 20px;
+            height: 20px;
+            background-color: #f59e0b;
+            border-radius: var(--radius-none);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ghost-plan-title {
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            color: #92400e;
+        }
+        
+        .ghost-plan-content {
+            font-size: var(--text-xs);
+            color: #78350f;
+            line-height: var(--leading-normal);
+        }
+        
+        .status-bar {
+            height: 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-4);
+            font-size: var(--text-xs);
+            color: var(--muted);
+            background-color: var(--surface);
+            border-top: var(--border-width) solid var(--border-color);
+        }
+        
+        .status-left, .status-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-none);
+        }
+        
+        .status-dot.synced {
+            background-color: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="project-selector">
+                <div class="project-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                        <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
+                    </svg>
+                </div>
+                <span class="project-name">My Knowledge Base</span>
+            </div>
+            
+            <div class="flex-1" style="margin-left: 32px; max-width: 400px;">
+                <div class="search-input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" class="search-input" placeholder="Search notes...">
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+                <button class="btn-primary">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/>
+                    </svg>
+                    AI Transform
+                </button>
+                <div class="avatar">JD</div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Activity Bar -->
+            <nav class="activity-bar">
+                <div class="activity-bar-top">
+                    <button class="activity-item active" title="Notes">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm-1 2l5 5h-5V4zM6 20V4h6v6h6v10H6z"/>
+                            <path d="M8 12h8v2H8zm0 4h8v2H8z"/>
+                        </svg>
+                    </button>
+                    <button class="activity-item" title="Search">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                    <button class="activity-item" title="AI">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Note Tree Panel -->
+            <aside class="note-tree">
+                <div class="tree-header">
+                    <div class="project-selector">
+                        <div class="project-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                <path d="M4 4h16v16H4V4zm2 2v12h12V6H6z"/>
+                            </svg>
+                        </div>
+                        <span class="project-name">My Knowledge Base</span>
+                    </div>
+                    <div class="tree-search">
+                        <div class="search-input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                            </svg>
+                            <input type="text" class="search-input" placeholder="Filter notes...">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tree-content">
+                    <div class="tree-section">
+                        <div class="tree-section-title">Personal</div>
+                        <div class="tree-item folder-item">
+                            <svg class="folder-chevron" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5l8 8-8 8H5V5h3z"/>
+                            </svg>
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+                            </svg>
+                            <span class="tree-item-name">Journal</span>
+                        </div>
+                        <div class="folder-children">
+                            <div class="tree-item selected">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">2024-01-18.md</span>
+                            </div>
+                            <div class="tree-item">
+                                <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                </svg>
+                                <span class="tree-item-name">2024-01-17.md</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-section">
+                        <div class="tree-section-title">Work</div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">via-gent.md</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">sprint-planning.md</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-section">
+                        <div class="tree-section-title">Research</div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">ai-agents.md</span>
+                        </div>
+                        <div class="tree-item">
+                            <svg class="tree-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span class="tree-item-name">react-19-features.md</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Editor Area -->
+            <main class="editor-area">
+                <div class="editor-header">
+                    <div class="editor-tabs">
+                        <div class="editor-tab active">
+                            <svg class="editor-tab-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                            <span>2024-01-18.md</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="blocknote-editor">
+                    <div class="editor-toolbar">
+                        <button class="toolbar-btn" title="Bold">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Italic">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"/>
+                            </svg>
+                        </button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" title="Heading 1">H1</button>
+                        <button class="toolbar-btn" title="Heading 2">H2</button>
+                        <div class="toolbar-divider"></div>
+                        <button class="toolbar-btn" title="Bullet List">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="Code Block">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="editor-content">
+                        <div class="note-document">
+                            <h1>2024-01-18 Daily Journal</h1>
+                            
+                            <h2>Morning Reflections</h2>
+                            <p>Today I started working on Via-Gent, my personal knowledge management system. The goal is to create a seamless workspace that combines note-taking with AI-assisted writing.</p>
+                            
+                            <h2>Key Insights</h2>
+                            <ul>
+                                <li>Progressive disclosure helps manage complexity</li>
+                                <li>8-bit design creates focus through constraints</li>
+                                <li>Agent collaboration is the future</li>
+                            </ul>
+                            
+                            <h3>Storage Strategy</h3>
+                            <p>Based on research, implementing auto-detection for storage type. Desktop uses FSA, mobile uses IndexedDB.</p>
+                            
+                            <pre><code>interface PlatformContract {
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  storageType: 'fsa' | 'indexeddb';
+}</code></pre>
+                            
+                            <h2>Tomorrow's Goals</h2>
+                            <ul>
+                                <li>Complete FSA storage adapter</li>
+                                <li>Design AI chat integration</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Resize Handle -->
+            <div class="resize-handle"></div>
+            
+            <!-- Chat Panel -->
+            <aside class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <div class="chat-title-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="chat-title-text">AI Assistant</div>
+                            <div class="chat-subtitle">Writing help</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-messages">
+                    <!-- AI Message -->
+                    <div class="chat-message ai">
+                        <div class="chat-message-header">
+                            <div class="chat-message-avatar ai">AI</div>
+                            <span class="chat-message-author">AI Assistant</span>
+                        </div>
+                        <div class="chat-message-content">
+                            I noticed you're working on the journal entry for today. Your platform architecture notes look solid! Would you like me to help you expand on the storage strategy section?
+                            
+                            <div class="chat-actions">
+                                <span class="chat-action-chip">Expand storage section</span>
+                                <span class="chat-action-chip">Add code example</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- User Message -->
+                    <div class="chat-message user">
+                        <div class="chat-message-header">
+                            <div class="chat-message-avatar user">ME</div>
+                            <span class="chat-message-author">You</span>
+                        </div>
+                        <div class="chat-message-content">
+                            Yes, please expand the storage section with more details about IndexedDB implementation on mobile.
+                        </div>
+                    </div>
+                    
+                    <!-- AI Message -->
+                    <div class="chat-message ai">
+                        <div class="chat-message-header">
+                            <div class="chat-message-avatar ai">AI</div>
+                            <span class="chat-message-author">AI Assistant</span>
+                        </div>
+                        <div class="chat-message-content">
+                            Here's an expanded version of the storage strategy section:
+                            
+                            <h4 style="margin: 8px 0; font-size: 14px; color: var(--primary);">Mobile Storage Implementation</h4>
+                            <p style="font-size: 13px;">Using Dexie.js for IndexedDB abstraction:</p>
+                            
+                            <pre style="margin: 8px 0; font-size: 12px; padding: 8px; background: var(--canvas);"><code>const db = new Dexie('ViaGentDB');
+db.version(1).stores({
+  notes: '++id, title, projectId, updatedAt',
+  projects: '++id, name, createdAt'
+});</code></pre>
+                            
+                            <div class="chat-actions">
+                                <span class="chat-action-chip">Insert into editor</span>
+                                <span class="chat-action-chip">Copy code</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ghost Plan -->
+                    <div class="ghost-plan">
+                        <div class="ghost-plan-header">
+                            <div class="ghost-plan-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                </svg>
+                            </div>
+                            <span class="ghost-plan-title">Ghost Plan Suggestion</span>
+                        </div>
+                        <div class="ghost-plan-content">
+                            Based on your note structure, consider adding a "Goals" section to track your daily objectives and a "Reflection" section for end-of-day insights.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" placeholder="Ask AI for help...">
+                        <button class="chat-send-btn">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-left">
+                <div class="status-item">
+                    <span class="status-dot synced"></span>
+                    <span>Synced</span>
+                </div>
+                <div class="status-item">
+                    <span>512 words</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <div class="status-item">
+                    <span>Last saved: 1 min ago</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

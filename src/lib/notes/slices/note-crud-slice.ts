@@ -22,6 +22,10 @@ import type { NoteStoreState } from '../types-slice';
 import type { CreateNoteParams, UpdateNoteParams } from '../types';
 import { generateNoteId, DEFAULT_NOTE_BLOCKS } from '../types';
 import { useNoteNavigationStore } from '../note-navigation-store';
+import { createStorageGateway } from '@/infrastructure/filesystem/storage-gateway-factory';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+import { NoteGateway } from '@/domain/services/note-gateway';
 
 /**
  * CRUD Operations Slice
@@ -164,7 +168,24 @@ export const createNoteCRUDSlice: StateCreator<
         };
 
         try {
-            await db.notes.add(newNote);
+            // Get platform contract and project for gateway creation
+            const platform = getPlatformContract();
+            const project = currentProjectId ? useProjectStore.getState().projects[currentProjectId] : null;
+
+            if (!project) {
+                throw new Error(`Project ${currentProjectId} not found`);
+            }
+
+            // Create gateway for current platform
+            const gateway = createStorageGateway(platform, {
+                directoryHandle: undefined, // Handle will be resolved by gateway internally
+                projectId: currentProjectId ?? '',
+            });
+
+            const noteGateway = new NoteGateway(gateway);
+
+            // Persist note through gateway
+            await noteGateway.createNote(newNote);
 
             // Update local state
             set((state) => {
@@ -226,7 +247,24 @@ export const createNoteCRUDSlice: StateCreator<
 
             const updatedNote = { ...note, ...updates } as NoteRecord;
 
-            await db.notes.update(params.id, updates);
+            // Get platform contract and project for gateway creation
+            const platform = getPlatformContract();
+            const project = currentProjectId ? useProjectStore.getState().projects[currentProjectId] : null;
+
+            if (!project) {
+                throw new Error(`Project ${currentProjectId} not found`);
+            }
+
+            // Create gateway for current platform
+            const gateway = createStorageGateway(platform, {
+                directoryHandle: undefined, // Handle will be resolved by gateway internally
+                projectId: currentProjectId ?? '',
+            });
+
+            const noteGateway = new NoteGateway(gateway);
+
+            // Persist update through gateway (gateway handles merge)
+            await noteGateway.updateNote(params.id, updates);
 
             // Update local state
             set((state) => {
@@ -291,7 +329,28 @@ export const createNoteCRUDSlice: StateCreator<
                 for (const child of children) {
                     await deleteRecursive(child.id);
                 }
-                await db.notes.delete(id);
+
+                // Get platform contract and project for gateway creation
+                const platform = getPlatformContract();
+                const currentProjectId = get().currentProjectId;
+                const project = currentProjectId ? useProjectStore.getState().projects[currentProjectId] : null;
+
+                if (!project) {
+                    console.warn(`[NoteStore-CRUD] Project not found, skipping note deletion`);
+                    return;
+                }
+
+                // Create gateway for current platform
+                const gateway = createStorageGateway(platform, {
+                    directoryHandle: undefined,
+                    projectId: currentProjectId ?? '',
+                });
+
+                const noteGateway = new NoteGateway(gateway);
+
+                // Persist deletion through gateway
+                await noteGateway.deleteNote(id);
+
                 // 45-05: Clear scroll position for deleted note
                 useNoteNavigationStore.getState().clearNoteScrollPosition(id);
             };

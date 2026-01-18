@@ -19,6 +19,7 @@ import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
 import { NoteTree } from './NoteTree';
 import { NotesIndexingButton } from './NotesIndexingButton';
+import { StorageBadge } from './StorageIndicator';
 import { ProjectFilesPanel } from './ProjectFilesPanel';
 import { NotesRAGSearch } from './NotesRAGSearch';
 import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
@@ -375,7 +376,35 @@ export function NoteSidebar({
                         <span className="text-xs font-bold">{t('notes.create.short', 'New')}</span>
                     </Button>
                 </div>
+
+                {/* Section 3: Storage Mode Indicator (Desktop only) */}
+                {projectId && (
+                    <div className="space-y-1">
+                        <label className="text-xs font-mono text-muted-foreground uppercase tracking-wider">
+                            {t('notes.storage_mode', 'Storage')}
+                        </label>
+                        <div className="flex items-center gap-2">
+                            <StorageBadge
+                                storageMode={{
+                                    storageMode: isBrowserMode ? 'indexeddb' : 'fsa',
+                                    platform: 'desktop', // Desktop detection
+                                    isFSA: !isBrowserMode,
+                                    isBrowserDB: isBrowserMode,
+                                    storageLabel: isBrowserMode ? 'BrowserDB' : 'FSA',
+                                    storageDescription: isBrowserMode
+                                        ? 'Browser Storage (IndexedDB)'
+                                        : 'File System Access API'
+                                }}
+                                size="sm"
+                            />
+                            <span className="text-xs text-muted-foreground">
+                                {isBrowserMode ? '(Browser Mode)' : '(Project Mode)'}
+                            </span>
+                        </div>
+                    </div>
+                )}
             </div>
+
         </div>
     );
 }

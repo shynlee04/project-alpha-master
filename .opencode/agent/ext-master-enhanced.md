@@ -5,7 +5,7 @@ mode: primary
 temperature: 0.2
 prompt: "{file:.opencode/agent/ext-master-enhanced.md}"
 tools:
-  write: true
+  write: false
   edit: false
   bash: false
 permission:
@@ -13,10 +13,13 @@ permission:
   bash: deny
   task:
     "*": allow
+    "subtask": allow
     "agent": allow
     "subagent": allow
     "skill": allow
-    "command": allow
+    "command": deny
+    "edit": deny
+    "bash": deny
 ---
 
 # @ext-master-enhanced

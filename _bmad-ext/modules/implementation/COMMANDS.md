@@ -1,304 +1,230 @@
 ---
 name: "implementation-commands"
-description: "Unified command reference for BMAD-ext Implementation Module v2.0"
+description: "Unified command reference for BMAD-ext Implementation Module v2.0 - MVP (Notes + IDE only)"
 version: "2.0.0"
 created: "2026-01-12"
 updated: "2026-01-12"
+tier: "execution"
 ---
 
-# BMAD-ext Implementation Module Commands v2.0
+# Implementation Module Commands
 
-**All commands start with the unified prefix: `@implementation`**
+**Purpose**: Provide unified command reference for all BMAD-ext Implementation Module commands.
 
-## Command Structure
+## Command Index
 
-```
-@implementation:<workflow> --<option>=<value>
-```
+### Sprint Commands
+| Command | Module | Description |
+|---------|--------|-------------|
+| `/sprint-start` | MOD-C-SPRINT | Initialize sprint artifacts |
+| `/sprint-status` | MOD-C-SPRINT | Show current progress |
+| `/sprint-complete` | MOD-C-SPRINT | Complete sprint, trigger retrospective |
 
-## Quick Reference
+### Story Commands
+| Command | Module | Description |
+|---------|--------|-------------|
+| `/story-create` | MOD-C-SPRINT | Create new story file |
+| `/story-validate` | MOD-C-SPRINT | Validate story structure |
+| `/story-dev` | MOD-C-SPRINT | Execute story development |
+| `/story-done` | MOD-C-SPRINT | Mark story complete |
 
-| Command | Alias | description |
-|---------|-------|---------|
-| `@implementation:story-cycle` | `@impl:sc` | Start full story development cycle |
-| `@implementation:create-story` | `@impl:cs` | Create new story from epic |
-| `@implementation:dev-story` | `@impl:ds` | Implement story with TDD |
-| `@implementation:code-review` | `@impl:cr` | Review implementation |
-| `@implementation:story-done` | `@impl:sd` | Mark story complete |
-| `@implementation:correct-course` | `@impl:cc` | Run recovery workflow |
-| `@implementation:validate-story` | `@impl:vs` | Validate story file |
-| `@implementation:create-context` | `@impl:ccx` | Create context XML |
-| `@implementation:validate-context` | `@impl:vcx` | Validate context |
-| `@implementation:pre-planning` | `@impl:pp` | Research and planning gate |
-| `@implementation:retrospective` | `@impl:retro` | Epic retrospective |
+### Development Commands
+| Command | Module | Description |
+|---------|--------|-------------|
+| `/dev-start` | MOD-A-CGOV | Initialize development environment |
+| `/dev-fix` | MOD-A-CGOV | Fix issues in current branch |
+| `/dev-complete` | MOD-A-CGOV | Complete development, create PR |
 
----
+### Architecture Commands
+| Command | Module | Description |
+|---------|--------|-------------|
+| `/arch-scan` | MOD-B-ARCH | Run architecture scan |
+| `/arch-fix` | MOD-B-ARCH | Fix architecture issues |
 
-## Story-Cycle Commands
+### Testing Commands
+| Command | Module | Description |
+|---------|--------|-------------|
+| `/test-run` | MOD-D-TEST | Run test suite |
+| `/test-e2e` | MOD-D-TEST | Run E2E tests |
 
-### @implementation:story-cycle
-**description**: Start or continue the full story development cycle
-
-**Usage**:
-```bash
-@implementation:story-cycle --story={story_key}
-@implementation:story-cycle --story={story_key} --step={1-10}
-@implementation:story-cycle --story={story_key} --continue
-@implementation:story-cycle --story={story_key} --jump={step_name}
-```
-
-**Steps**:
-| Step | Command | Description |
-|------|---------|-------------|
-| 1 | `@impl:sc --step=1` | Init with deep analysis |
-| 1a | `@impl:sc --step=journey` | User journey simulation |
-| 2 | `@impl:sc --step=2` | Validate prerequisites |
-| 3a | `@impl:sc --step=toolspec` | Agent tool specification |
-| 3 | `@impl:sc --step=3` | Implement with TDD |
-| 4 | `@impl:sc --step=4` | Run tests |
-| 5 | `@impl:sc --step=5` | Code review |
-| 6 | `@impl:sc --step=6` | Mark done |
-| 6a | `@impl:sc --step=reality` | Visual reality check |
-| 7 | `@impl:sc --step=retro` | Retrospective |
-
-**Examples**:
-```bash
-@implementation:story-cycle --story=FS-05
-@implementation:story-cycle --story=FS-05 --continue
-@implementation:story-cycle --story=FS-05 --jump=dev-story
-@implementation:story-cycle --story=FS-05 --step=5
-```
+### UX Commands
+| Command | Module | Description |
+|---------|--------|-------------|
+| `/ux-review` | MOD-C-SPRINT | Review UI/UX design |
+| `/ux-fix` | MOD-C-SPRINT | Fix UI/UX issues |
 
 ---
 
-### @implementation:create-story
-**description**: Create a new story file from epic backlog with deep analysis
+## Detailed Command Reference
 
-**Usage**:
-```bash
-@implementation:create-story --epic={N}
-@implementation:create-story --epic={N} --story={M}
-@implementation:create-story --epic={N} --title={title}
-```
+### `/sprint-start`
+Initialize sprint artifacts and prepare for development.
 
-**Examples**:
-```bash
-@implementation:create-story --epic=40
-@implementation:create-story --epic=40 --story=2
-@implementation:create-story --epic=40 --title="Add file sync"
-```
-
----
-
-### @implementation:dev-story
-**description**: Implement story with TDD and enforced grep/glob analysis
-
-**Usage**:
-```bash
-@implementation:dev-story --story={story_key}
-@implementation:dev-story --story={story_key} --tdd
-@implementation:dev-story --story={story_key} --continue
-```
-
-**Examples**:
-```bash
-@implementation:dev-story --story=FS-05
-@implementation:dev-story --story=FS-05 --tdd
-@implementation:dev-story --story=FS-05 --continue
-```
-
----
-
-### @implementation:code-review
-**description**: Review implementation with real code analysis
-
-**Usage**:
-```bash
-@implementation:code-review --story={story_key}
-@implementation:code-review --story={story_key} --verbose
-@implementation:code-review --story={story_key} --auto-approve
-```
-
-**Examples**:
-```bash
-@implementation:code-review --story=FS-05
-@implementation:code-review --story=FS-05 --verbose
-```
-
----
-
-### @implementation:story-done
-**description**: Mark story complete and update sprint status
-
-**Usage**:
-```bash
-@implementation:story-done --story={story_key}
-@implementation:story-done --story={story_key} --handoff
-```
-
-**Examples**:
-```bash
-@implementation:story-done --story=FS-05
-@implementation:story-done --story=FS-05 --handoff
-```
-
----
-
-## Validation Commands
-
-### @implementation:validate-story
-**description**: Validate story file is 100% complete
-
-**Usage**:
-```bash
-@implementation:validate-story --story={story_key}
-@implementation:validate-story --story={story_key} --strict
-```
-
----
-
-### @implementation:create-context
-**description**: Create context XML for story development
-
-**Usage**:
-```bash
-@implementation:create-context --story={story_key}
-@implementation:create-context --story={story_key} --deep
-```
-
----
-
-### @implementation:validate-context
-**description**: Validate context XML and run stale check
-
-**Usage**:
-```bash
-@implementation:validate-context --story={story_key}
-@implementation:validate-context --story={story_key} --freshness
-```
-
----
-
-### @implementation:pre-planning
-**description**: Research and planning gate before implementation
-
-**Usage**:
-```bash
-@implementation:pre-planning --story={story_key}
-@implementation:pre-planning --story={story_key} --research
-```
-
----
-
-## Recovery Commands
-
-### @implementation:correct-course
-**description**: Recovery workflow when story is stuck
-
-**Usage**:
-```bash
-@implementation:correct-course --story={story_key}
-@implementation:correct-course --issue={issue_key}
-@implementation:correct-course --story={story_key} --split
-@implementation:correct-course --story={story_key} --defer
-@implementation:correct-course --story={story_key} --escalate
-@implementation:correct-course --story={story_key} --reduce-scope
-```
+**Usage**: `/sprint-start [sprint-id]`
 
 **Options**:
-| Option | Description |
-|--------|-------------|
-| `--split` | Split story into smaller stories |
-| `--defer` | Move to next sprint |
-| `--escalate` | Send to architect |
-| `--reduce-scope` | Ship partial value |
+- `sprint-id`: Optional sprint identifier
 
-**Examples**:
-```bash
-@implementation:correct-course --story=FS-05
-@implementation:correct-course --story=FS-05 --split
-@implementation:correct-course --story=FS-05 --defer
+**Example**: `/sprint-start sprint-2026-01-13`
+
+---
+
+### `/sprint-status`
+Show current sprint progress across all stories.
+
+**Usage**: `/sprint-status`
+
+**Output**:
+```
+Sprint Status: sprint-2026-01-13
+========================================
+Stories: 4/8 Complete (50%)
+  ✓ FS-01: File System Foundation
+  ✓ FS-02: Project CRUD Operations
+  ○ FS-03: File Watching (In Progress)
+  ○ FS-04: Project Selector UI
+  ...
+
+Errors: 2 Active
+  ✗ ARC-01: TypeScript Errors (12 remaining)
+  ✗ ARC-02: Component Cleanup (blocked by ARC-01)
 ```
 
 ---
 
-## Epic Commands
+### `/sprint-complete`
+Complete sprint and trigger retrospective.
 
-### @implementation:retrospective
-**description**: Epic retrospective after all stories complete
+**Usage**: `/sprint-complete`
 
-**Usage**:
-```bash
-@implementation:retrospective --epic={N}
-@implementation:retrospective --epic={N} --full
-```
-
----
-
-## Platform Aliases
-
-### .claude Platform (Skills)
-Use without `@implementation:` prefix:
-
-```bash
-/story-cycle {story_key}
-/create-story --epic={N}
-/dev-story --story={story_key}
-/code-review --story={story_key}
-/story-done --story={story_key}
-/correct-course --story={story_key}
-```
-
-### .opencode Platform (Commands)
-Use full `@implementation:` prefix:
-
-```bash
-@implementation:story-cycle --story={story_key}
-@implementation:create-story --epic={N}
-@implementation:dev-story --story={story_key}
-@implementation:code-review --story={story_key}
-@implementation:story-done --story={story_key}
-@implementation:correct-course --story={story_key}
-```
+**Prerequisites**:
+- All stories must be complete
+- No TypeScript errors
+- All tests passing
 
 ---
 
-## Global Options
+### `/story-create`
+Create a new story file from epic backlog.
 
-| Option | Description | Available For |
-|--------|-------------|---------------|
-| `--help` | Show help | All commands |
-| `--verbose` | Detailed output | All commands |
-| `--dry-run` | Preview without execution | Most commands |
-| `--continue` | Continue from current step | story-cycle |
-| `--jump={step}` | Jump to specific step | story-cycle |
-| `--step={N}` | Specify step number | story-cycle |
+**Usage**: `/story-create [epic-id].[story-id]`
+
+**Example**: `/story-create FS-03`
+
+**Output**: Creates `stories/FS-03-context.xml`
 
 ---
 
-## Error Recovery
+### `/story-validate`
+Validate story structure and acceptance criteria.
 
-### Common Errors and Solutions
+**Usage**: `/story-validate [epic-id].[story-id]`
 
-| Error | Command | Solution |
-|-------|---------|----------|
-| Story not found | Any | Check story key, list available with `@implementation:list --stories` |
-| Step invalid | story-cycle | Use valid step: 1, 1a, 2, 3a, 3, 4, 5, 6, 6a, 7 |
-| Context stale | create-context | Run `@implementation:validate-context --freshness` |
-| Tests failing | dev-story | Fix failing tests before proceeding |
-| Review blocked | code-review | Address blocking issues, re-run review |
-| Sprint full | create-story | Check capacity with `@implementation:sprint-status` |
+**Example**: `/story-validate FS-03`
 
 ---
 
-## Command History
+### `/story-dev`
+Execute story development workflow.
 
-All commands are tracked in:
-- `_bmad-ext/state/LOOP_STATE.yaml`
-- `{story_file}` status history
+**Usage**: `/story-dev [epic-id].[story-id]`
+
+**Example**: `/story-dev FS-03`
 
 ---
 
-**Version**: 2.0.0
-**Last Updated**: 2026-01-12
-**Prefix**: `@implementation:`
+### `/story-done`
+Mark story as complete and update governance.
+
+**Usage**: `/story-done [epic-id].[story-id]`
+
+**Example**: `/story-done FS-03`
+
+---
+
+### `/dev-start`
+Initialize development environment for story.
+
+**Usage**: `/dev-start [story-id]`
+
+---
+
+### `/dev-fix`
+Fix issues in current branch.
+
+**Usage**: `/dev-fix [issue-type]`
+
+**Issue Types**:
+- `typescript`: Fix TypeScript errors
+- `lint`: Fix linting issues
+- `test`: Fix failing tests
+- `all`: Fix all issues
+
+---
+
+### `/dev-complete`
+Complete development and prepare for PR.
+
+**Usage**: `/dev-complete`
+
+---
+
+### `/arch-scan`
+Run architecture scan on codebase.
+
+**Usage**: `/arch-scan [scope]`
+
+**Options**:
+- `scope`: Optional scope (all, stores, components)
+
+---
+
+### `/arch-fix`
+Fix architecture issues.
+
+**Usage**: `/arch-fix [issue-id]`
+
+**Example**: `/arch-fix ARC-01`
+
+---
+
+### `/test-run`
+Run test suite.
+
+**Usage**: `/test-run [type]`
+
+**Options**:
+- `type`: Optional test type (unit, integration, all)
+
+---
+
+### `/test-e2e`
+Run E2E browser tests.
+
+**Usage**: `/test-e2e`
+
+---
+
+### `/ux-review`
+Review UI/UX design.
+
+**Usage**: `/ux-review [component]`
+
+**Example**: `/ux-review ProjectSelector`
+
+---
+
+### `/ux-fix`
+Fix UI/UX issues.
+
+**Usage**: `/ux-fix [issue-id]`
+
+**Example**: `/ux-fix UX-01`
+
+---
+
+## Version History
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 2.0.0 | 2026-01-12 | BMAD | MVP version - Notes + IDE only |

@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Desktop IDE - Tree + Editor Stack (2 panels) - Production-ready prototype">
+  <meta name="author" content="Project Alpha">
+  <title>IDE - Tree + Editor | Project Alpha</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       8-BIT DESIGN SYSTEM - Production Ready
+       ============================================ */
+
+    /* CSS Variables */
+    :root {
+      /* Colors */
+      --canvas: #0f0f11;
+      --surface: #18181b;
+      --depth: #000000;
+      --primary: #fafafa;
+      --muted: #a1a1aa;
+      --action: #f97316;
+      --structural: #27272a;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --action-hover: #ea580c;
+      --surface-hover: #27272a;
+
+      /* Typography */
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font-prose: 'Inter', 'Geist Sans', system-ui, sans-serif;
+
+      /* Spacing */
+      --header-height: 48px;
+      --status-height: 24px;
+      --tree-width: 240px;
+      --tree-collapsed: 48px;
+      --panel-min-width: 200px;
+
+      /* Animation */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Border Radius - 8-bit style */
+      --radius: 0;
+      --radius-sm: 2px;
+
+      /* Pixel Shadows */
+      --shadow-sm: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+      --shadow-md: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+      --shadow-action: 4px 4px 0px 0px #ea580c;
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--canvas);
+      color: var(--primary);
+      font-family: var(--font-prose);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Focus Styles - Accessibility */
+    *:focus-visible {
+      outline: 2px solid var(--action);
+      outline-offset: 2px;
+    }
+
+    *:focus:not(:focus-visible) {
+      outline: none;
+    }
+
+    /* ============================================
+       LAYOUT STRUCTURE
+       ============================================ */
+
+    .ide-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--canvas);
+    }
+
+    /* ============================================
+       HEADER BAR
+       ============================================ */
+
+    .header-bar {
+      height: var(--header-height);
+      background: var(--surface);
+      border-bottom: 1px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      user-select: none;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .project-name {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .project-badge {
+      background: var(--action);
+      color: var(--depth);
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.5px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
+      font-family: var(--font-prose);
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--action);
+      color: var(--depth);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--action-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+
+    .btn-ghost:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    /* ============================================
+       MAIN CONTENT AREA
+       ============================================ */
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ============================================
+       ACTIVITY BAR (Left Icon Strip)
+       ============================================ */
+
+    .activity-bar {
+      width: 48px;
+      background: var(--surface);
+      border-right: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+      gap: 4px;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .activity-icon:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .activity-icon.active {
+      color: var(--depth);
+      background: var(--action);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .activity-icon.active::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 20px;
+      background: var(--action);
+    }
+
+    /* ============================================
+       TREE EXPLORER PANEL
+       ============================================ */
+
+    .tree-panel {
+      width: var(--tree-width);
+      background: var(--surface);
+      border-right: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      transition: width var(--transition-normal);
+    }
+
+    .tree-panel.collapsed {
+      width: var(--tree-collapsed);
+    }
+
+    .tree-header {
+      height: 36px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--structural);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+
+    .tree-collapse-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: var(--radius);
+      transition: color var(--transition-fast);
+    }
+
+    .tree-collapse-btn:hover {
+      color: var(--primary);
+    }
+
+    /* Tree Items */
+    .tree-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      transition: all var(--transition-fast);
+      gap: 8px;
+      position: relative;
+    }
+
+    .tree-item:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .tree-item.active {
+      color: var(--primary);
+      background: var(--action);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tree-item.folder {
+      padding-left: 8px;
+    }
+
+    .tree-item.file {
+      padding-left: 32px;
+    }
+
+    .tree-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .tree-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ============================================
+       RESIZABLE HANDLE
+       ============================================ */
+
+    .resize-handle {
+      width: 4px;
+      background: transparent;
+      cursor: col-resize;
+      position: absolute;
+      right: -2px;
+      top: 0;
+      bottom: 0;
+      transition: background var(--transition-fast);
+      z-index: 10;
+    }
+
+    .resize-handle:hover,
+    .resize-handle.active {
+      background: var(--action);
+    }
+
+    /* ============================================
+       EDITOR PANEL
+       ============================================ */
+
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+      overflow: hidden;
+    }
+
+    /* Editor Tabs */
+    .editor-tabs {
+      height: 36px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--structural);
+      display: flex;
+      overflow-x: auto;
+    }
+
+    .editor-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      border-right: 1px solid var(--structural);
+      border-top: 2px solid transparent;
+      transition: all var(--transition-fast);
+      background: var(--surface);
+    }
+
+    .editor-tab:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .editor-tab.active {
+      color: var(--primary);
+      background: var(--canvas);
+      border-top: 2px solid var(--action);
+    }
+
+    .editor-tab-close {
+      opacity: 0;
+      padding: 2px;
+      border-radius: var(--radius);
+      transition: all var(--transition-fast);
+    }
+
+    .editor-tab:hover .editor-tab-close {
+      opacity: 1;
+    }
+
+    .editor-tab-close:hover {
+      background: var(--action);
+      color: var(--depth);
+    }
+
+    .tab-icon {
+      font-size: 12px;
+    }
+
+    /* Monaco Editor */
+    .editor-container {
+      flex: 1;
+      position: relative;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    .editor-gutter {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 56px;
+      background: #0d0d0f;
+      border-right: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 4px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      text-align: right;
+      overflow: hidden;
+    }
+
+    .editor-line-number {
+      height: 21px;
+      line-height: 21px;
+    }
+
+    .editor-content {
+      position: absolute;
+      left: 56px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: 8px 16px;
+      overflow: auto;
+      color: var(--primary);
+      white-space: pre;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 21px;
+    }
+
+    /* Syntax Highlighting */
+    .token-keyword { color: #c586c0; }
+    .token-string { color: #ce9178; }
+    .token-number { color: #b5cea8; }
+    .token-comment { color: #6a9955; }
+    .token-function { color: #dcdcaa; }
+    .token-class { color: #4ec9b0; }
+    .token-operator { color: #d4d4d4; }
+    .token-tag { color: #569cd6; }
+    .token-attr { color: #9cdcfe; }
+
+    .editor-line {
+      min-height: 21px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .editor-line.highlighted {
+      background: rgba(249, 115, 22, 0.1);
+    }
+
+    /* Minimap */
+    .editor-minimap {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+      background: var(--surface);
+      border-left: 1px solid var(--structural);
+      overflow: hidden;
+      padding: 4px;
+    }
+
+    .minimap-line {
+      height: 2px;
+      background: var(--muted);
+      margin-bottom: 1px;
+      opacity: 0.3;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ============================================
+       STATUS BAR
+       ============================================ */
+
+    .status-bar {
+      height: var(--status-height);
+      background: var(--action);
+      color: var(--depth);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-top: 1px solid var(--action-hover);
+    }
+
+    .status-left,
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-dot.success { background: var(--success); }
+    .status-dot.warning { background: var(--warning); }
+    .status-dot.error { background: var(--error); }
+
+    /* ============================================
+       SCROLLBAR STYLES
+       ============================================ */
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--structural);
+      border-radius: var(--radius);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    /* ============================================
+       TOOLTIPS
+       ============================================ */
+
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--depth);
+      color: var(--primary);
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 8px;
+      font-family: var(--font-prose);
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+    }
+
+    /* ============================================
+       REDUCED MOTION
+       ============================================ */
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0ms !important;
+        animation-duration: 0ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ide-container">
+    <!-- Header Bar -->
+    <header class="header-bar" role="banner">
+      <div class="header-left">
+        <div class="project-name">
+          <span>Project Alpha</span>
+          <span class="project-badge">v2.0</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="btn btn-primary" data-tooltip="Sync changes (Ctrl+S)">
+          <span>Sync Now</span>
+        </button>
+        <button class="btn btn-ghost" data-tooltip="Open settings (Ctrl+,)">
+          <span>Settings</span>
+        </button>
+        <button class="btn btn-ghost" data-tooltip="User profile">
+          <span>Dev</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+      <!-- Activity Bar -->
+      <nav class="activity-bar" aria-label="Workspace navigation">
+        <button
+          class="activity-icon active"
+          data-tooltip="IDE Workspace (Ctrl+1)"
+          aria-label="IDE Workspace"
+          aria-current="page"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </button>
+        <button
+          class="activity-icon"
+          data-tooltip="Knowledge Workspace (Ctrl+2)"
+          aria-label="Knowledge Workspace"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"></path>
+          </svg>
+        </button>
+        <button
+          class="activity-icon"
+          data-tooltip="Notes Workspace (Ctrl+3)"
+          aria-label="Notes Workspace"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
+        </button>
+        <button
+          class="activity-icon"
+          data-tooltip="Study Workspace (Ctrl+4)"
+          aria-label="Study Workspace"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"></path>
+            <circle cx="12" cy="13" r="3"></circle>
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Tree Panel -->
+      <aside class="tree-panel" role="complementary" aria-label="File explorer">
+        <div class="resize-handle" role="separator" aria-label="Resize panel"></div>
+        <div class="tree-header">
+          <span>Explorer</span>
+          <button class="tree-collapse-btn" data-tooltip="Collapse panel" aria-label="Collapse panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div class="tree-container" role="tree">
+          <div class="tree-item folder" role="treeitem" aria-expanded="true">
+            <span class="tree-icon">📁</span>
+            <span class="tree-name">src</span>
+          </div>
+          <div class="tree-item file" role="treeitem">
+            <span class="tree-icon">📄</span>
+            <span class="tree-name">index.tsx</span>
+          </div>
+          <div class="tree-item file active" role="treeitem" aria-current="true">
+            <span class="tree-icon">📜</span>
+            <span class="tree-name">Button.tsx</span>
+          </div>
+          <div class="tree-item file" role="treeitem">
+            <span class="tree-icon">📐</span>
+            <span class="tree-name">types.ts</span>
+          </div>
+          <div class="tree-item folder" role="treeitem" aria-expanded="false">
+            <span class="tree-icon">📁</span>
+            <span class="tree-name">components</span>
+          </div>
+          <div class="tree-item file" role="treeitem">
+            <span class="tree-icon">📄</span>
+            <span class="tree-name">App.tsx</span>
+          </div>
+          <div class="tree-item file" role="treeitem">
+            <span class="tree-icon">📄</span>
+            <span class="tree-name">main.tsx</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Editor Panel -->
+      <section class="editor-panel" role="main" aria-label="Code editor">
+        <div class="editor-tabs" role="tablist">
+          <div class="editor-tab active" role="tab" aria-selected="true" tabindex="0">
+            <span class="tab-icon">📜</span>
+            <span>Button.tsx</span>
+            <button class="editor-tab-close" aria-label="Close tab">×</button>
+          </div>
+          <div class="editor-tab" role="tab" aria-selected="false" tabindex="-1">
+            <span class="tab-icon">📐</span>
+            <span>types.ts</span>
+            <button class="editor-tab-close" aria-label="Close tab">×</button>
+          </div>
+          <div class="editor-tab" role="tab" aria-selected="false" tabindex="-1">
+            <span class="tab-icon">📄</span>
+            <span>App.tsx</span>
+            <button class="editor-tab-close" aria-label="Close tab">×</button>
+          </div>
+        </div>
+        <div class="editor-container">
+          <div class="editor-gutter" aria-label="Line numbers">
+            <div class="editor-line-number">1</div>
+            <div class="editor-line-number">2</div>
+            <div class="editor-line-number">3</div>
+            <div class="editor-line-number">4</div>
+            <div class="editor-line-number">5</div>
+            <div class="editor-line-number">6</div>
+            <div class="editor-line-number">7</div>
+            <div class="editor-line-number">8</div>
+            <div class="editor-line-number">9</div>
+            <div class="editor-line-number">10</div>
+            <div class="editor-line-number">11</div>
+            <div class="editor-line-number">12</div>
+          </div>
+          <div class="editor-content">
+            <div class="editor-line highlighted">
+              <span class="token-keyword">import</span> <span class="token-function">React</span> <span class="token-keyword">from</span> <span class="token-string">'react'</span>;
+            </div>
+            <div class="editor-line">
+              <span class="token-keyword">import</span> { <span class="token-class">ButtonProps</span> } <span class="token-keyword">from</span> <span class="token-string">'./types'</span>;
+            </div>
+            <div class="editor-line"></div>
+            <div class="editor-line">
+              <span class="token-keyword">export const</span> <span class="token-function">Button</span>: <span class="token-function">React.FC</span><<span class="token-class">ButtonProps</span>> = ({
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;<span class="token-attr">children</span>,
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;<span class="token-attr">onClick</span>,
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;<span class="token-attr">variant</span> = <span class="token-string">'primary'</span>,
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;<span class="token-attr">disabled</span> = <span class="token-keyword">false</span>,
+            </div>
+            <div class="editor-line">}) => {
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;<span class="token-keyword">return</span> (
+            </div>
+            <div class="editor-line highlighted">
+              &nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="token-tag">button</span>
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-attr">className</span>={<span class="token-string">`btn btn-${variant}`</span>}
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-attr">onClick</span>={<span class="token-attr">onClick</span>}
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="token-attr">disabled</span>={<span class="token-attr">disabled</span>}
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;&nbsp;&nbsp;&gt;
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<span class="token-attr">children</span>}
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="token-tag">button</span>&gt;
+            </div>
+            <div class="editor-line">
+              &nbsp;&nbsp;);
+            </div>
+            <div class="editor-line">};
+            </div>
+          </div>
+          <div class="editor-minimap" aria-label="Code minimap">
+            <div class="minimap-line"></div>
+            <div class="minimap-line" style="width: 60%"></div>
+            <div class="minimap-line" style="width: 40%"></div>
+            <div class="minimap-line" style="width: 50%"></div>
+            <div class="minimap-line"></div>
+            <div class="minimap-line" style="width: 70%"></div>
+            <div class="minimap-line" style="width: 45%"></div>
+            <div class="minimap-line" style="width: 55%"></div>
+            <div class="minimap-line"></div>
+            <div class="minimap-line" style="width: 35%"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Status Bar -->
+    <footer class="status-bar" role="contentinfo">
+      <div class="status-left">
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>WebContainer</span>
+        </div>
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>Sync: Synced</span>
+        </div>
+      </div>
+      <div class="status-right">
+        <span>Ln 8, Col 12</span>
+        <span>UTF-8</span>
+        <span>TypeScript</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Panel resize functionality
+    const treePanel = document.querySelector('.tree-panel');
+    const resizeHandle = document.querySelector('.resize-handle');
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startX = e.clientX;
+      startWidth = treePanel.offsetWidth;
+      resizeHandle.classList.add('active');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      const diff = e.clientX - startX;
+      const newWidth = Math.max(48, Math.min(400, startWidth + diff));
+      treePanel.style.width = `${newWidth}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        resizeHandle.classList.remove('active');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    });
+
+    // Panel collapse functionality
+    const collapseBtn = document.querySelector('.tree-collapse-btn');
+    collapseBtn.addEventListener('click', () => {
+      treePanel.classList.toggle('collapsed');
+    });
+
+    // Tab switching
+    const tabs = document.querySelectorAll('.editor-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+          t.setAttribute('tabindex', '-1');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('tabindex', '0');
+      });
+    });
+
+    // Tree item selection
+    const treeItems = document.querySelectorAll('.tree-item.file');
+    treeItems.forEach(item => {
+      item.addEventListener('click', () => {
+        treeItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+
+    // Activity bar navigation
+    const activityIcons = document.querySelectorAll('.activity-icon');
+    activityIcons.forEach(icon => {
+      icon.addEventListener('click', () => {
+        activityIcons.forEach(i => i.classList.remove('active'));
+        icon.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
