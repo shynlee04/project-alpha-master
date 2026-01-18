@@ -40,7 +40,7 @@ import { updateWorkspaceFiles } from '@/lib/navigation/definition-provider';
 import type { OutlineNode } from '@/lib/navigation/symbol-outline';
 
 /** Auto-save debounce delay in milliseconds */
-const AUTO_SAVE_DELAY_MS = 2000;
+const AUTO_SAVE_DELAY_MS = 500;
 
 export interface MonacoEditorProps {
     /** Currently open files with their content and dirty state */

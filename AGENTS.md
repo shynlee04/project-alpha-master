@@ -770,6 +770,76 @@ Before any workflow:
 
 ---
 
+## 🔧 CORRECTION COURSE (ARCH-001 through ARCH-007)
+
+> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
+> **Status**: COMPLETE - Phase 3 Cleanup Done
+> **Archive**: `_bmad-ext/.archive/correction-course-2026-01-18/`
+
+### Correction Course Summary
+
+| Phase | Stories | Status | Result |
+|-------|---------|--------|--------|
+| Phase 1: Store Architecture | ARC-A01 through ARC-A04 | ✅ Complete | Store consolidation |
+| Phase 2: Storage Gateway | ARC-B01 through ARC-B04 | ✅ Complete | Storage abstraction layer |
+| Phase 3: Cleanup & Governance | 4 files archived | ✅ Complete | Archive + governance update |
+
+### Archived Files (Phase 3)
+
+```
+_bmad-ext/.archive/correction-course-2026-01-18/
+├── srs-types.ts                  # Study types (deprecated)
+├── quiz-types.ts                 # Quiz types (deprecated)
+├── tool-permission-manager.ts    # Duplicate permission manager
+└── constants.ts                  # Duplicate permissions constants
+```
+
+### Story Completion Status
+
+| Story | Status | Notes |
+|-------|--------|-------|
+| ARC-A01 | ✅ Complete | `getPlatformContract()` implemented |
+| ARC-A02 | ✅ Complete | Platform detection standardized |
+| ARC-A03 | ✅ Complete | Store architecture cleaned |
+| ARC-A04 | ✅ Complete | Store duplication removed |
+| ARC-B01 | ✅ Complete | `StorageGateway` interface created |
+| ARC-B02 | ✅ Complete | FSA adapter implemented |
+| ARC-B03 | ✅ Complete | Dexie adapter implemented |
+| ARC-B04 | ✅ Complete | Factory pattern consolidated |
+
+### Validation Results
+
+```bash
+pnpm tsc --noEmit  # 0 errors ✅
+```
+
+### Key Architectural Decisions
+
+| Decision | Choice | Location |
+|----------|--------|----------|
+| Platform Contract | `getPlatformContract()` | `src/infrastructure/filesystem/platform-detection.ts` |
+| Storage Gateway | `StorageGateway` interface | `src/domain/interfaces/storage-gateway.interface.ts` |
+| FSA Adapter | Desktop storage | `src/infrastructure/filesystem/fsa-storage-adapter.ts` |
+| Dexie Adapter | Mobile storage | `src/infrastructure/filesystem/dexie-storage-adapter.ts` |
+| Factory | Storage adapter factory | `src/infrastructure/filesystem/StorageAdapterFactory.ts` |
+
+### Verification
+
+- [x] All deprecated files archived
+- [x] No broken imports from archived files
+- [x] TypeScript compiles with 0 errors
+- [x] AGENTS.md updated
+- [x] All tests pass
+- [x] Build successful
+
+### Next Steps
+
+1. Continue EPIC-CC-ARC (remaining stories)
+2. Begin EPIC-40 (Tool registry integration)
+3. Monitor performance of new architecture
+
+---
+
 ## 🚀 Quick Start for New Agent Session
 
 1. Read this file (AGENTS.md)

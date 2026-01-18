@@ -2,18 +2,17 @@
  * @fileoverview IDE File Handlers Hook
  * @module components/layout/hooks/useIDEFileHandlers
  *
+ * **CC-IDE-03**: Manages file operations using StorageGateway
+ *
  * Manages file operations in the IDE: select, save, close, content change.
  * Extracted from IDELayout.tsx for code organization.
  */
 
 import { useCallback } from 'react';
-import type { SyncManager } from '@/infrastructure/sync';
 import type { WorkspaceEventEmitter } from '@/lib/events/workspace-events';
 import type { OpenFile } from '../../ide/MonacoEditor';
-import type { LocalFSAdapter } from '@/infrastructure/filesystem';
-import type { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
+import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 import { useDeviceType } from '@/hooks/useMediaQuery';
-import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 
 interface UseIDEFileHandlersOptions {
   openFiles: OpenFile[];
@@ -25,8 +24,7 @@ interface UseIDEFileHandlersOptions {
   setSelectedFilePath: React.Dispatch<React.SetStateAction<string | undefined>>;
   setFileTreeRefreshKey: React.Dispatch<React.SetStateAction<number>>;
   setFileContentCache: React.Dispatch<React.SetStateAction<Map<string, string>>>;
-  syncManagerRef: React.RefObject<SyncManager | null>;
-  localAdapterRef: React.RefObject<LocalFSAdapter | UnifiedStorageAdapter | null>;
+  gatewayRef: React.RefObject<StorageGateway | null>;
   eventBus: WorkspaceEventEmitter;
   toast: (message: string, type?: 'success' | 'warning' | 'error') => void;
 }
@@ -45,9 +43,11 @@ interface UseIDEFileHandlersResult {
 /**
  * Hook to manage IDE file operations.
  *
+ * **CC-IDE-03**: Manages file operations using StorageGateway
+ *
  * Provides handlers for:
- * - File selection from FileTree
- * - File saving (via SyncManager)
+ * - File selection from FileTree (via StorageGateway)
+ * - File saving (via StorageGateway)
  * - Content changes (marks dirty, emits event)
  * - Tab closing
  */
@@ -61,8 +61,7 @@ export function useIDEFileHandlers({
     setSelectedFilePath,
     setFileTreeRefreshKey,
     setFileContentCache,
-    syncManagerRef,
-    localAdapterRef,
+    gatewayRef,
     eventBus,
     toast,
 }: UseIDEFileHandlersOptions): UseIDEFileHandlersResult {
@@ -70,7 +69,7 @@ export function useIDEFileHandlers({
     const { isMobile, isTablet } = useDeviceType();
 
     const handleFileSelect = useCallback(
-        async (path: string, handle: FileSystemFileHandle) => {
+        async (path: string, _handle: FileSystemFileHandle) => {
             setSelectedFilePath(path);
             console.log('[IDE] File selected:', path);
 
@@ -80,9 +79,19 @@ export function useIDEFileHandlers({
                 return;
             }
 
+            // CC-IDE-03: Read file via StorageGateway
+            const gateway = gatewayRef.current;
+            if (!gateway) {
+                console.warn('[IDE] File gateway not available');
+                return;
+            }
+
             try {
-                const file = await handle.getFile();
-                const content = await file.text();
+                // Read file as Uint8Array, decode to string
+                const data = await gateway.read(path);
+                const content = new TextDecoder().decode(data);
+                console.log('[IDE] File read via gateway:', path, { size: data.length });
+
                 // Update Zustand store and local cache
                 addOpenFile(path);
                 setFileContentCache((prev) => new Map(prev).set(path, content));
@@ -91,59 +100,42 @@ export function useIDEFileHandlers({
                 console.error('[IDE] Failed to read file:', path, error);
             }
         },
-        [openFiles, addOpenFile, setActiveFilePath, setSelectedFilePath, setFileContentCache],
+        [openFiles, addOpenFile, setActiveFilePath, setSelectedFilePath, setFileContentCache, gatewayRef],
     );
 
     const handleSave = useCallback(
         async (path: string, content: string) => {
             console.log('[IDE] Saving file:', path);
 
-            try {
-                // Try syncManager first (preferred path)
-                if (syncManagerRef.current) {
-                    await syncManagerRef.current.writeFile(path, content);
-                    setFileContentCache((prev) => new Map(prev).set(path, content));
-                    console.log('[IDE] File saved via SyncManager:', path);
-                    setFileTreeRefreshKey((prev) => prev + 1);
-                    return;
-                }
-
-                // Fallback: Try to use localAdapterRef directly
-                if (localAdapterRef.current) {
-                    // UnifiedStorageAdapter takes string, LocalFSAdapter takes Uint8Array
-                    if ('readFile' in localAdapterRef.current && typeof localAdapterRef.current.readFile === 'function') {
-                        // Check which type of adapter we have
-                        const adapter = localAdapterRef.current;
-                        if ('writeFile' in adapter) {
-                            const writeFile = adapter.writeFile as (path: string, content: string | Uint8Array) => Promise<void>;
-                            await writeFile(path, content);
-                            setFileContentCache((prev) => new Map(prev).set(path, content));
-                            console.log('[IDE] File saved via localAdapter:', path);
-                            setFileTreeRefreshKey((prev) => prev + 1);
-                            return;
-                        }
-                    }
-                }
-
-                // Mobile users get specific error message
-                if (isMobile || isTablet) {
-                    showMobileWorkspaceError('openFailed');
-                    return;
-                }
-                console.warn('[IDE] No storage available for save');
+            // CC-IDE-03: Save file via StorageGateway
+            const gateway = gatewayRef.current;
+            if (!gateway) {
+                console.warn('[IDE] File gateway not available');
                 toast('No project folder open - save skipped', 'warning');
+                return;
+            }
+
+            try {
+                // Encode string to Uint8Array for gateway.write()
+                const encoder = new TextEncoder();
+                const uint8Data = encoder.encode(content);
+
+                // Write via gateway
+                await gateway.write(path, uint8Data);
+                setFileContentCache((prev) => new Map(prev).set(path, content));
+                setFileTreeRefreshKey((prev) => prev + 1);
+
+                console.log('[IDE] File saved via gateway:', path, { size: uint8Data.length });
+
+                // CC-IDE-03: Show success toast
+                toast('File saved successfully', 'success');
             } catch (error) {
                 console.error('[IDE] Failed to save file:', path, error);
-                // Mobile users get specific error message
-                if (isMobile || isTablet) {
-                    showMobileWorkspaceError('openFailed');
-                    return;
-                }
                 const errorMessage = error instanceof Error ? error.message : 'Unknown error';
                 toast(`Failed to save ${path.split('/').pop()}: ${errorMessage}`, 'error');
             }
         },
-        [syncManagerRef, localAdapterRef, isMobile, isTablet, setFileTreeRefreshKey, setFileContentCache, toast],
+        [gatewayRef, setFileTreeRefreshKey, setFileContentCache, toast],
     );
 
     const handleContentChange = useCallback(

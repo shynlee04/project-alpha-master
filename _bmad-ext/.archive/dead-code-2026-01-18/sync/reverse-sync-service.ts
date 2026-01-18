@@ -9,7 +9,7 @@
  * @see {@link ../sync-event-bus.ts} for SyncEventBus implementation
  */
 
-import { SyncEventBus } from './sync-event-bus';
+import { SyncEventBus } from '@/infrastructure/sync/core/sync-event-bus';
 import type {
   FileEventType,
   BaseEventPayload,
@@ -137,7 +137,7 @@ export class ReverseSyncService {
   private isRunning: boolean;
   private debounceTimers: Map<string, NodeJS.Timeout | number>;
   private syncedCount: number;
-  private readonly eventListeners: Map<FileEventType, (payload: BaseEventPayload<FileEventPayload>) => void>;
+  private readonly eventUnsubscribers: Map<FileEventType, () => void>;
 
   /**
    * Create a new ReverseSyncService instance
@@ -163,7 +163,7 @@ export class ReverseSyncService {
     this.isRunning = false;
     this.debounceTimers = new Map();
     this.syncedCount = 0;
-    this.eventListeners = new Map();
+    this.eventUnsubscribers = new Map();
   }
 
   /**
@@ -236,8 +236,10 @@ export class ReverseSyncService {
         this.handleFileEvent(eventType, payload);
       };
       
-      this.syncEventBus.on(eventType, handler);
-      this.eventListeners.set(eventType, handler);
+      // Use type assertion for API compatibility - new SyncEventBus returns unsubscribe function
+      const bus = this.syncEventBus as unknown as { on: (event: string, handler: Function) => () => void };
+      const unsubscribe = bus.on(eventType, handler);
+      this.eventUnsubscribers.set(eventType, unsubscribe);
     }
 
     console.log(`[ReverseSyncService] Subscribed to ${eventTypes.length} event types`);
@@ -247,10 +249,11 @@ export class ReverseSyncService {
    * Unsubscribe from all file events
    */
   private unsubscribeFromEvents(): void {
-    for (const [eventType, listener] of this.eventListeners) {
-      this.syncEventBus.off(eventType, listener as () => void);
+    for (const [_, unsubscribe] of this.eventUnsubscribers) {
+      // Call the unsubscribe function returned by on()
+      unsubscribe();
     }
-    this.eventListeners.clear();
+    this.eventUnsubscribers.clear();
   }
 
   /**

@@ -17,8 +17,6 @@ import type { ToolCategory } from '@/infrastructure/persistence/stores/permissio
  * Import all tool definitions
  * We import only the definitions (schemas), not implementations
  */
-import { readFileDef } from '@/lib/agent/tools/read-file-tool';
-import { writeFileDef } from '@/lib/agent/tools/write-file-tool';
 import { listFilesDef } from '@/lib/agent/tools/list-files-tool';
 import { executeCommandDef } from '@/lib/agent/tools/execute-command-tool';
 import { searchNotesDef } from '@/lib/agent/tools/search-notes-tool';
@@ -77,23 +75,7 @@ const DEFAULT_WORKSPACES: WorkspaceType[] = ['ide', 'knowledge', 'study', 'notes
  * Maps each tool to its metadata
  */
 export const TOOL_CATALOG = [
-  // File Tools (3)
-  {
-    definition: readFileDef,
-    metadata: createToolMetadata('read_file', 'files', DEFAULT_MODES.files, DEFAULT_WORKSPACES, {
-      defaultTrustLevel: 'auto',
-      riskLevel: 'low',
-      executionSide: 'both',
-    }),
-  },
-  {
-    definition: writeFileDef,
-    metadata: createToolMetadata('write_file', 'files', DEFAULT_MODES.files, DEFAULT_WORKSPACES, {
-      defaultTrustLevel: 'prompt',
-      riskLevel: 'high',
-      executionSide: 'both',
-    }),
-  },
+  // File Tools (1) - list_files only, read_file/write_file replaced by unified tools
   {
     definition: listFilesDef,
     metadata: createToolMetadata('list_files', 'files', DEFAULT_MODES.files, DEFAULT_WORKSPACES, {

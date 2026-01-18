@@ -178,6 +178,36 @@ export interface StorageGateway {
    * For IndexedDB: Not applicable (no external changes possible)
    */
   watch(callback: FileChangeCallback): WatchHandle;
+
+  // ============================================================================
+  // CC-IDE-02: Extended interface for FileTree compatibility
+  // ============================================================================
+
+  /**
+   * Rename a file or directory
+   *
+   * @param oldPath - Current relative path
+   * @param newPath - New relative path
+   * @throws {PermissionDeniedError} if rename access denied
+   *
+   * @remarks
+   * Added for CC-IDE-02 to support FileTree context menu.
+   * Default implementations may use read+write if native rename unavailable.
+   */
+  rename?(oldPath: string, newPath: string): Promise<void>;
+
+  /**
+   * Create a new directory
+   *
+   * @param path - Relative path for new directory
+   * @throws {PermissionDeniedError} if create access denied
+   *
+   * @remarks
+   * Added for CC-IDE-02 to support FileTree folder creation.
+   * FSA: Uses getDirectoryHandle({ create: true })
+   * IndexedDB: Creates entry in database
+   */
+  createDirectory?(path: string): Promise<void>;
 }
 
 // ============================================================================

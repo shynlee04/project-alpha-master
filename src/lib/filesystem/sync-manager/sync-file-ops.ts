@@ -12,8 +12,8 @@ import type { SyncConfig } from '@/infrastructure/sync/types';
 import { SyncError } from '@/infrastructure/sync/types';
 import { validateFileSize, shouldWarnFileSize, formatFileSize } from '../validation';
 import { showErrorToast } from '../../utils/error-handling';
-import { emitStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
-import type { FileSavedPayload } from '@/lib/events/store-events';
+import { emitStoreEvent, STORE_EVENTS } from '@/infrastructure/events/event-bus';
+import type { FileSavedPayload } from '@/infrastructure/events/event-bus';
 
 /**
  * Write a file to both Local FS and WebContainers

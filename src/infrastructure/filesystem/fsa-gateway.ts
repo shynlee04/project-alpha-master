@@ -24,6 +24,7 @@ import type {
 } from '@/domain/interfaces/storage-gateway.interface';
 import { FileSystemError } from './fs-errors';
 import * as fileOps from './file-ops';
+import * as dirOps from './dir-ops';
 
 // ============================================================================
 // Types
@@ -297,6 +298,74 @@ export class FSAGateway implements StorageGateway {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  // ============================================================================
+  // CC-IDE-02: Extended Methods for FileTree Compatibility
+  // ============================================================================
+
+  /**
+   * Rename a file or directory
+   *
+   * @param oldPath - Current relative path
+   * @param newPath - New relative path
+   * @throws {FileSystemError} if rename access denied or path doesn't exist
+   *
+   * @remarks
+   * Uses FSA native move() operation for efficiency.
+   */
+  async rename(oldPath: string, newPath: string): Promise<void> {
+    try {
+      await dirOps.rename(this.directoryHandle, oldPath, newPath);
+
+      // Update hash entries after rename
+      const oldEntry = this.fileHashes.get(oldPath);
+      if (oldEntry) {
+        this.fileHashes.delete(oldPath);
+        this.fileHashes.set(newPath, {
+          path: newPath,
+          size: oldEntry.size,
+          lastModified: Date.now(),
+          hash: oldEntry.hash,
+        });
+      }
+
+      // Emit change event
+      this.emitChange({ path: newPath, kind: 'modified' });
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      throw new FileSystemError(
+        `Failed to rename: ${oldPath} → ${newPath} - ${err.message || 'Unknown error'}`,
+        'RENAME_FAILED',
+        error
+      );
+    }
+  }
+
+  /**
+   * Create a new directory
+   *
+   * @param path - Relative path for new directory
+   * @throws {FileSystemError} if create access denied or parent doesn't exist
+   *
+   * @remarks
+   * Basic directory creation for FileTree (overlap validation at UI layer).
+   */
+  async createDirectory(path: string): Promise<void> {
+    try {
+      // Create directory using dir-ops
+      await dirOps.createDirectory(this.directoryHandle, path);
+
+      // Emit change event
+      this.emitChange({ path, kind: 'created' });
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      throw new FileSystemError(
+        `Failed to create directory: ${path} - ${err.message || 'Unknown error'}`,
+        'CREATE_DIRECTORY_FAILED',
+        error
+      );
     }
   }
 

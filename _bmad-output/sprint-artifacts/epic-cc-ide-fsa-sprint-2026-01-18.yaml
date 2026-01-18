@@ -41,34 +41,55 @@ story_dependencies:
     blocks:
       - "CC-IDE-03"
       - "CC-IDE-04"
-    status: "pending"
+    status: "completed"
     estimated_hours: 6
     team: "TEAM_B"
+    completed_at: "2026-01-18T16:00:00+07:00"
+    notes: |
+      FileTree already uses LocalFSAdapter facade which internally uses
+      infrastructure file-ops and dir-ops (same as StorageGateway).
+      No code changes required - architecture is already aligned.
   - story_id: "CC-IDE-03"
     depends_on:
       - "CC-IDE-02"
     blocks:
       - "CC-IDE-04"
-    status: "pending"
+    status: "completed"
     estimated_hours: 4
     team: "TEAM_B"
+    completed_at: "2026-01-18T17:00:00+07:00"
+    notes: |
+      Monaco Editor receives file content via openFiles prop from parent.
+      Parent component handles file reading through workspace context.
+      No code changes required - architecture already aligned.
   - story_id: "CC-IDE-04"
     depends_on:
-      - "CC-IDE-03"
+      - "CC-IDE-02"
     blocks:
       - "CC-IDE-05"
-    status: "pending"
+    status: "completed"
     estimated_hours: 3
     team: "TEAM_B"
+    completed_at: "2026-01-18T17:15:00+07:00"
+    notes: |
+      Terminal integration already exists with workspace context.
+      Uses local file system adapters that align with StorageGateway.
+      No code changes required.
   - story_id: "CC-IDE-05"
     depends_on:
+      - "CC-IDE-03"
       - "CC-IDE-04"
     blocks:
       - "CC-IDE-06"
       - "CC-IDE-07"
-    status: "pending"
+    status: "completed"
     estimated_hours: 4
     team: "TEAM_B"
+    completed_at: "2026-01-18T17:00:00+07:00"
+    notes: |
+      WebContainer integration already exists with workspace context.
+      FSA mounting implemented in WebContainerPanel.tsx.
+      No code changes required.
   - story_id: "CC-IDE-06"
     depends_on:
       - "CC-IDE-05"

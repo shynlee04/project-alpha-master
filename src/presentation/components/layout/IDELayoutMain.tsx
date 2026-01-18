@@ -14,7 +14,7 @@
  * @integration Responsive branching for mobile/desktop layouts
  */
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { SidebarProvider, ActivityBar, SidebarContent } from '../ide/IconSidebar';
 import { StatusAnnouncerProvider } from '@/presentation/components/ui/StatusAnnouncer';
 import { SkipLinks } from '@/presentation/components/ui/SkipLinks';
@@ -34,6 +34,10 @@ import {
 import { useFileTreeEventSubscriptions } from '../ide/FileTree/hooks/useFileTreeEventSubscriptions';
 import { useMonacoEditorEventSubscriptions } from '../ide/MonacoEditor/hooks';
 import { useVFSAutoWatch } from '@/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice';
+import { createWebContainerFSAAdapter } from '@/infrastructure/webcontainer/fsa-adapter';
+import { createIdeFileGateway } from '@/infrastructure/filesystem/ide-file-gateway';
+import { getInstance } from '@/lib/webcontainer';
+import type { WebContainerFSAAdapter as WebContainerFSAAdapterType } from '@/infrastructure/webcontainer/fsa-adapter';
 
 // Import sub-components
 import {
@@ -121,7 +125,19 @@ export function IDELayout(): React.JSX.Element {
         onCommandPaletteOpen: () => layoutState.setIsCommandPaletteOpen(true),
     });
 
-    const { previewUrl, previewPort } = useWebContainerBoot({ onBooted: () => setIsWebContainerBooted(true) });
+    const { previewUrl, previewPort } = useWebContainerBoot({ 
+        onBooted: () => {
+            setIsWebContainerBooted(true);
+            isWebContainerBootedRef.current = true;
+        } 
+    });
+
+    // CC-IDE-05b: Storage gateway for IDE file operations
+    const gatewayRef = useRef<import('@/domain/interfaces/storage-gateway.interface').StorageGateway | null>(null);
+
+    // CC-IDE-05b: FSA adapter reference for WebContainer integration
+    const fsaAdapterRef = useRef<WebContainerFSAAdapterType | null>(null);
+    const isWebContainerBootedRef = useRef(false);
 
     const { handleFileSelect, handleContentChange, handleTabClose } = useIDEFileHandlers({
         openFiles: openFilesDerived,
@@ -133,8 +149,7 @@ export function IDELayout(): React.JSX.Element {
         setSelectedFilePath: (path) => { if (typeof path === 'string') setSelectedFilePath(path); },
         setFileTreeRefreshKey,
         setFileContentCache,
-        syncManagerRef,
-        localAdapterRef,
+        gatewayRef,
         eventBus,
         toast,
     });
@@ -148,6 +163,7 @@ export function IDELayout(): React.JSX.Element {
         openFiles: openFilesDerived,
         activeFilePath: activeFilePath ?? null,
         setOpenFiles,
+        fsaAdapterRef,
     });
 
     // PS-02-B: Start VFS auto-watch for hot reload
@@ -188,6 +204,87 @@ export function IDELayout(): React.JSX.Element {
     useEffect(() => { terminalTabRef.current = terminalTab; }, [terminalTab, terminalTabRef]);
     useEffect(() => { chatVisibleRef.current = chatVisible; }, [chatVisible, chatVisibleRef]);
     useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
+
+    // CC-IDE-05b: Initialize StorageGateway when project is loaded
+    useEffect(() => {
+        if (!projectId || !layoutState.projectMetadata?.fsaHandle) {
+            return;
+        }
+
+        // Create gateway for IDE file operations
+        const gateway = createIdeFileGateway({
+            projectId,
+            fsaHandle: layoutState.projectMetadata.fsaHandle,
+        });
+        gatewayRef.current = gateway;
+        console.log('[IDELayout] Storage gateway created for project:', projectId);
+
+        return () => {
+            gatewayRef.current = null;
+            console.log('[IDELayout] Storage gateway cleaned up');
+        };
+    }, [projectId, layoutState.projectMetadata?.fsaHandle]);
+
+    // CC-IDE-05b: Initialize FSA adapter when WebContainer boots
+    useEffect(() => {
+        // Only initialize if we have gateway, project, and WebContainer is booted
+        if (!gatewayRef.current || !projectId || !isWebContainerBootedRef.current) {
+            return;
+        }
+
+        // Prevent re-initialization
+        if (fsaAdapterRef.current) {
+            return;
+        }
+
+        const initializeAdapter = async () => {
+            try {
+                const gateway = gatewayRef.current;
+                const container = getInstance();
+                const eventBusRef = eventBus;
+
+                if (!gateway || !container || !eventBusRef) {
+                    console.warn('[IDELayout] Missing required resources for FSA adapter');
+                    return;
+                }
+
+                console.log('[IDELayout] Initializing FSA adapter...');
+
+                // Create FSA adapter
+                const adapter = createWebContainerFSAAdapter({
+                    fsaGateway: gateway,
+                    container,
+                    eventBus: eventBusRef,
+                    mountPoint: '/project',
+                    conflictResolution: 'fsa-wins',
+                });
+
+                fsaAdapterRef.current = adapter;
+
+                // Mount FSA files to WebContainer
+                await adapter.mountToContainer();
+
+                // Start bidirectional sync
+                await adapter.startBidirectionalSync();
+
+                console.log('[IDELayout] FSA adapter initialized and synced');
+            } catch (error) {
+                console.error('[IDELayout] Failed to initialize FSA adapter:', error);
+            }
+        };
+
+        initializeAdapter();
+
+        // Cleanup on unmount
+        return () => {
+            if (fsaAdapterRef.current) {
+                fsaAdapterRef.current.stopSync();
+                fsaAdapterRef.current.dispose();
+                fsaAdapterRef.current = null;
+                console.log('[IDELayout] FSA adapter cleaned up');
+            }
+        };
+    }, [projectId, eventBus, gatewayRef, isWebContainerBootedRef.current]);
 
     return (
         <StatusAnnouncerProvider>

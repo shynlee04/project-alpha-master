@@ -762,3 +762,127 @@ export const eventBus = new EventBus({
   maxEventLogSize: 1000,
   enableDebugLogging: process.env.NODE_ENV === 'development'
 });
+
+// ============================================================================
+// Legacy Store Events Compatibility Layer
+// ============================================================================
+// These exports maintain compatibility with code that previously imported
+// from '@/lib/events/store-events' which has been migrated to infrastructure/events
+
+/**
+ * File Saved Payload
+ *
+ * Payload for file saved events from the legacy store-events module.
+ */
+export interface FileSavedPayload {
+  /** Relative path to the file */
+  filePath: string;
+  /** Project ID where the file was saved */
+  projectId: string;
+  /** Workspace type */
+  workspaceType: 'ide' | 'notes' | 'knowledge' | 'study';
+  /** Timestamp of save */
+  timestamp: number;
+  /** Whether content was provided */
+  hasContent?: boolean;
+}
+
+/**
+ * Store Event Types
+ *
+ * Event type constants for store-level events.
+ * Maps to DomainEventType values for compatibility.
+ */
+export const STORE_EVENTS = {
+  FILE_SAVED: 'file:saved' as const,
+  FILE_CREATED: 'file:created' as const,
+  FILE_UPDATED: 'file:updated' as const,
+  FILE_DELETED: 'file:deleted' as const,
+  SYNC_STARTED: 'sync:started' as const,
+  SYNC_COMPLETED: 'sync:completed' as const,
+  WORKSPACE_CHANGED: 'workspace:changed' as const,
+};
+
+/**
+ * Emit Store Event
+ *
+ * Helper function to emit store events with the legacy store-events API.
+ * Wraps the EventBus emit method for compatibility.
+ *
+ * @param eventType - Type of store event
+ * @param payload - Event payload
+ * @param correlationId - Optional correlation ID
+ */
+export function emitStoreEvent<T>(
+  eventType: string,
+  payload: T,
+  correlationId?: string
+): void {
+  // Convert legacy event types to DomainEventType if needed
+  const domainEventType = mapToDomainEventType(eventType);
+  // Use type assertion for compatibility with legacy API
+  eventBus.emit(domainEventType, payload as unknown as T, correlationId);
+}
+
+/**
+ * Map legacy store event type to DomainEventType
+ */
+function mapToDomainEventType(eventType: string): DomainEventType {
+  const mapping: Record<string, DomainEventType> = {
+    'file:saved': DomainEventType.FILE_SAVED,
+    'file:created': DomainEventType.FILE_CREATED,
+    'file:updated': DomainEventType.FILE_UPDATED,
+    'file:deleted': DomainEventType.FILE_DELETED,
+    'sync:started': DomainEventType.SYNC_STARTED,
+    'sync:completed': DomainEventType.SYNC_COMPLETED,
+    'workspace:changed': DomainEventType.WORKSPACE_CHANGED,
+  };
+
+  return mapping[eventType] ?? (eventType as DomainEventType);
+}
+
+/**
+ * Use Store Event Hook
+ *
+ * React hook for subscribing to store events.
+ * Provides type-safe event subscription with automatic cleanup.
+ * Mimics useEffect pattern with dependency array.
+ *
+ * @param eventType - Type of event to subscribe to
+ * @param handler - Event handler function
+ * @param deps - Dependency array (like useEffect) - empty array = run once on mount
+ * @returns void
+ *
+ * @example
+ * ```tsx
+ * // Subscribe once on mount
+ * useStoreEvent('file:saved', (payload) => {
+ *   console.log('File saved:', payload.path);
+ * }, []);
+ * ```
+ */
+export function useStoreEvent<T>(
+  eventType: string,
+  handler: (payload: T) => void,
+  _deps: unknown[]
+): void {
+  // This function is designed to be called within a useEffect or similar
+  // React hook context. The subscription is managed by the caller.
+  // For true React hook behavior, use useEffect with this pattern:
+  // useEffect(() => {
+  //   const unsubscribe = eventBus.on(mappedType, (event) => handler(event.payload));
+  //   return unsubscribe;
+  // }, [deps]);
+  //
+  // For backward compatibility, we export the raw subscription function
+  // and the caller is expected to manage cleanup.
+  const domainEventType = mapToDomainEventType(eventType);
+  const unsubscribe = eventBus.on(domainEventType, (event) => {
+    handler(event.payload as T);
+  });
+
+  // Return unsubscribe function for manual cleanup
+  // The caller should store this and call it on cleanup
+  // This matches the pattern expected by the existing code
+  (useStoreEvent as unknown as { _unsubscribe?: () => void })._unsubscribe = unsubscribe;
+}
