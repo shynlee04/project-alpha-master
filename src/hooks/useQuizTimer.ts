@@ -108,12 +108,19 @@ export function useQuizCountdown(initialLimit?: number): CountdownTimer {
   const remainingSeconds = Math.max(0, limitSeconds - timer.elapsedSeconds);
   const isExpired = limitSeconds > 0 && remainingSeconds <= 0;
 
+  // FIX: Use ref to stabilize timer callback access
+  // This prevents infinite useEffect loops when timer object reference changes
+  const timerRef = useRef(timer);
+  useEffect(() => {
+    timerRef.current = timer;
+  }, [timer]);
+
   // Auto-pause when expired
   useEffect(() => {
-    if (isExpired && timer.isRunning) {
-      timer.pause();
+    if (isExpired && timerRef.current.isRunning) {
+      timerRef.current.pause();
     }
-  }, [isExpired, timer.isRunning, timer]);
+  }, [isExpired]);
 
   const setTimeLimit = useCallback((seconds: number) => {
     setLimitSeconds(seconds);

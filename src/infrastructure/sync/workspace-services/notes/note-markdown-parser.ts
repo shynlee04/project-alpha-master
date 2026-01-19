@@ -3,14 +3,32 @@
  * @module infrastructure/sync/workspace-services/notes/note-markdown-parser
  *
  * Markdown to BlockNote conversion utilities for notes sync.
- * Handles parsing Markdown files into BlockNote blocks.
- * Supports embed blocks for common services (YouTube, Twitter, etc.)
+ * Uses BlockNote's built-in markdown parser for proper formatting support.
  *
  * @epic CW-01 - Abstract File Sync Service
  * @story CW-1.4 - File System Access Expansion
+ *
+ * BUG-FIX-010: Use BlockNote's built-in tryParseMarkdownToBlocks() instead of
+ * custom parser to properly handle bold, italic, code blocks, links, etc.
  */
 
 import type { Block } from '@blocknote/core';
+import { BlockNoteEditor } from '@blocknote/core';
+
+// Create a minimal editor instance for markdown parsing
+// BlockNote's tryParseMarkdownToBlocks requires an editor instance
+let markdownParserEditor: BlockNoteEditor | null = null;
+
+/**
+ * Get or create the markdown parser editor instance
+ * A minimal editor is needed to use BlockNote's markdown parsing
+ */
+function getMarkdownParserEditor(): BlockNoteEditor {
+    if (!markdownParserEditor) {
+        markdownParserEditor = BlockNoteEditor.create();
+    }
+    return markdownParserEditor;
+}
 
 // URL patterns that should be converted to embed blocks
 const EMBED_URL_REGEX = /(?:^|\s)(https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|vimeo\.com\/|twitter\.com\/|x\.com\/|github\.com\/|gist\.github\.com\/|spotify\.com\/|codepen\.io\/|codesandbox\.io\/|instagram\.com\/p\/|reddit\.com\/r\/))/gm;
@@ -152,15 +170,16 @@ function extractEmbedUrls(line: string): string[] {
  *
  * Extracts title, blocks, and frontmatter from markdown content.
  * Handles YAML frontmatter and standard Markdown syntax.
+ * Uses BlockNote's built-in markdown parser for proper formatting support.
  *
  * @param markdown - Raw markdown content
  * @returns Object containing title, blocks, and frontmatter
  */
-export function parseMarkdownFile(markdown: string): {
+export async function parseMarkdownFile(markdown: string): Promise<{
     title: string;
     blocks: Block[];
     frontmatter: Record<string, unknown>;
-} {
+}> {
     let title = 'Untitled';
     let body = markdown;
     const frontmatter: Record<string, unknown> = {};
@@ -190,8 +209,10 @@ export function parseMarkdownFile(markdown: string): {
         body = body.replace(/^# .+\n\n/, '');
     }
 
-    // Convert markdown to BlockNote blocks
-    const blocks = markdownToBlocks(body);
+    // BUG-FIX-010: Use BlockNote's built-in markdown parser
+    // This properly handles **bold**, *italic*, `code`, links, code blocks, etc.
+    const editor = getMarkdownParserEditor();
+    const blocks = await editor.tryParseMarkdownToBlocks(body);
 
     return { title, blocks, frontmatter };
 }
@@ -199,112 +220,17 @@ export function parseMarkdownFile(markdown: string): {
 /**
  * Convert markdown to BlockNote blocks
  *
- * Parses markdown syntax and converts to BlockNote block structure.
- * Supports headings, lists, quotes, and paragraphs.
+ * BUG-FIX-010: Uses BlockNote's built-in markdown parser for proper formatting.
+ * Supports headings, lists, quotes, bold, italic, code, links, and more.
  *
  * @param markdown - Markdown content to convert
  * @returns Array of BlockNote blocks
  */
-export function markdownToBlocks(markdown: string): Block[] {
-    const blocks: Block[] = [];
-    const lines = markdown.split('\n');
-    let i = 0;
-
-    while (i < lines.length) {
-        const line = lines[i];
-
-        if (line.startsWith('# ')) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'heading',
-                props: { level: 1, textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line.slice(2), styles: {} }],
-                children: []
-            } as unknown as Block);
-        } else if (line.startsWith('## ')) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'heading',
-                props: { level: 2, textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line.slice(3), styles: {} }],
-                children: []
-            } as unknown as Block);
-        } else if (line.startsWith('### ')) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'heading',
-                props: { level: 3, textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line.slice(4), styles: {} }],
-                children: []
-            } as unknown as Block);
-        } else if (line.startsWith('- ')) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'bulletListItem',
-                props: { textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line.slice(2), styles: {} }],
-                children: []
-            } as unknown as Block);
-        } else if (line.match(/^\d+\.\s/)) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'numberedListItem',
-                props: { textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line.replace(/^\d+\.\s/, ''), styles: {} }],
-                children: []
-            } as unknown as Block);
-        } else if (line.startsWith('> ')) {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'quote',
-                props: { textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line.slice(2), styles: {} }],
-                children: []
-            } as unknown as Block);
-        } else if (isEmbedUrl(line)) {
-            // Line contains embeddable URL - create embed block
-            const urls = extractEmbedUrls(line);
-            for (const url of urls) {
-                blocks.push({
-                    id: crypto.randomUUID(),
-                    type: 'embed',
-                    props: {
-                        url: url,
-                        provider: detectProvider(url),
-                        embedUrl: getEmbedUrl(url, detectProvider(url)),
-                        title: url,
-                        textAlignment: 'left',
-                    },
-                    content: [],
-                    children: []
-                } as unknown as Block);
-            }
-            // Also add any remaining text as paragraph
-            let remainingText = line;
-            for (const url of urls) {
-                remainingText = remainingText.replace(url, '').trim();
-            }
-            if (remainingText) {
-                blocks.push({
-                    id: crypto.randomUUID(),
-                    type: 'paragraph',
-                    props: { textColor: 'default', backgroundColor: 'default' },
-                    content: [{ type: 'text', text: remainingText, styles: {} }],
-                    children: []
-                } as unknown as Block);
-            }
-        } else if (line.trim() !== '') {
-            blocks.push({
-                id: crypto.randomUUID(),
-                type: 'paragraph',
-                props: { textColor: 'default', backgroundColor: 'default' },
-                content: [{ type: 'text', text: line, styles: {} }],
-                children: []
-            } as unknown as Block);
-        }
-
-        i++;
-    }
+export async function markdownToBlocks(markdown: string): Promise<Block[]> {
+    // BUG-FIX-010: Use BlockNote's built-in markdown parser
+    // This properly handles **bold**, *italic*, `code`, links, code blocks, etc.
+    const editor = getMarkdownParserEditor();
+    const blocks = await editor.tryParseMarkdownToBlocks(markdown);
 
     return blocks.length > 0 ? blocks : [{
         id: crypto.randomUUID(),

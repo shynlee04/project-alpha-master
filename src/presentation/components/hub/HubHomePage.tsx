@@ -159,26 +159,39 @@ export const HubHomePage: React.FC = () => {
       duration: 3000,
     });
 
-    // ARC-A06: Platform-aware redirect after project creation
-    // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
+    // BUG-017 FIX: Navigate to the INTENDED workspace, not always IDE
+    // When user clicks Notes → creates project, they want Notes, not IDE!
+    
     const project = useProjectStore.getState().getProject(projectId);
     if (!project) return;
     
     const platform = getPlatformContract();
+    
+    console.log('[HubHomePage] handleProjectCreated:', {
+      projectId,
+      projectPickerWorkspace, // The workspace user originally intended to access
+      platform: getPlatformInfoForLogging(),
+      projectStorageType: project.storageType,
+    });
 
-    // Per ADR-033 D1: canAccessIDE already implies desktop with FSA
-    // No need for redundant project.storageType check
-    console.log('[HubHomePage] Platform detection:', getPlatformInfoForLogging());
-    console.log('[HubHomePage] Project storage type:', project.storageType);
-    console.log('[HubHomePage] canAccessIDE:', platform.canAccessIDE);
+    // BUG-017 FIX: If user was navigating to a specific workspace (via ProjectPicker),
+    // respect that choice instead of defaulting to IDE
+    if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
+      // User explicitly wanted this workspace (e.g., clicked Notes card → created project)
+      console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
+      navigate({ to: `/${projectPickerWorkspace}/$projectId`, params: { projectId } });
+      // Reset the picker workspace after navigation
+      setProjectPickerWorkspace('ide');
+      return;
+    }
 
-    if (platform.canAccessIDE) {
-      // Desktop with FSA: Navigate to IDE (full file system access)
-      console.log('[HubHomePage] Navigating to IDE workspace');
+    // Default behavior: Platform-aware redirect (only when no specific workspace intended)
+    // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
+    if (platform.canAccessIDE && project.storageType === 'fsa') {
+      console.log('[HubHomePage] Navigating to IDE workspace (default for FSA)');
       navigate({ to: '/ide/$projectId', params: { projectId } });
     } else {
-      // Mobile OR Desktop with IndexedDB: Navigate to Notes
-      console.log('[HubHomePage] Navigating to Notes workspace (IDE not available)');
+      console.log('[HubHomePage] Navigating to Notes workspace (default for non-FSA)');
       navigate({ to: '/notes/$projectId', params: { projectId } });
     }
   };
@@ -234,11 +247,24 @@ export const HubHomePage: React.FC = () => {
         await handlePersistenceService.persistHandle(newProjectId, handle, 'ide');
       }
 
-      // 3. Navigate to IDE Workspace
-      await navigate({
-        to: '/ide/$projectId',
-        params: { projectId: newProjectId }
-      });
+      // 3. Navigate to Workspace
+      // BUG-017 FIX: Respect intended workspace if specified
+      if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
+         console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
+         await navigate({
+            to: `/${projectPickerWorkspace}/$projectId`,
+            params: { projectId: newProjectId }
+         });
+         // Don't reset picker workspace immediately if we want to preserve context, 
+         // but usually resetting is safer.
+         setProjectPickerWorkspace('ide');
+      } else {
+         // Default to IDE for FSA projects
+         await navigate({
+            to: '/ide/$projectId',
+            params: { projectId: newProjectId }
+         });
+      }
 
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {

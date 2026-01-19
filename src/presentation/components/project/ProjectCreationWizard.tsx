@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import type { CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
 import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
-import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
+import { serializeHandle, handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 
 // Wizard Steps
 import { ProjectDetailsStep } from './steps/ProjectDetailsStep';
@@ -304,6 +304,11 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
 
       // Create project
       const projectId = await createProject(projectInput);
+
+      // FIX: Persist the actual FSA handle to fsaHandles table for silent restore
+      if (formData.storageType === 'fsa' && formData.fsaHandle) {
+        await handlePersistenceService.persistHandle(projectId, formData.fsaHandle, 'ide');
+      }
 
       // Close wizard
       onOpenChange(false);

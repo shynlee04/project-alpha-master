@@ -8,7 +8,7 @@
  * Browse templates, view details, and customize options.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -76,12 +76,22 @@ export const TemplateSelectionStep: React.FC<TemplateSelectionStepProps> = ({
   // UI state
   const [showCustomization, setShowCustomization] = useState(false);
 
+  // FIX: Use refs to stabilize callback access and prevent infinite useEffect loops
+  // Initialize with null, will be updated after callbacks are defined
+  const updateFormDataRef = useRef(updateFormData);
+  const handleValidateRef = useRef<(() => string | undefined) | null>(null);
+
+  // Update refs when callbacks change
+  useEffect(() => {
+    updateFormDataRef.current = updateFormData;
+  }, [updateFormData]);
+
   // Initialize with selected template if available
   React.useEffect(() => {
     if (formData.template && !template) {
       selectTemplate(formData.template);
     }
-  }, [formData.template, template, selectTemplate]);
+  }, [formData.template, template]); // selectTemplate is stable from useProjectTemplates
 
   // Handle template selection
   const handleTemplateSelect = useCallback(
@@ -102,16 +112,26 @@ export const TemplateSelectionStep: React.FC<TemplateSelectionStepProps> = ({
     return undefined;
   }, [validate]);
 
+  // Sync handleValidate ref after definition
+  useEffect(() => {
+    handleValidateRef.current = handleValidate;
+  }, [handleValidate]);
+
   // Validate step on render (parent will call this)
   React.useEffect(() => {
     if (template && showCustomization) {
-      const validationError = handleValidate();
+      const validationError = handleValidateRef.current?.();
       if (validationError && error !== validationError) {
-        // Pass error to parent via formData or callback
-        updateFormData('templateValidationError', validationError as any);
+        // Pass error to parent via formData callback
+        updateFormDataRef.current('templateValidationError', validationError as any);
       }
     }
-  }, [template, showCustomization, handleValidate, error, updateFormData]);
+  }, [template, showCustomization, error]);
+
+  // Sync handleValidate ref after definition
+  useEffect(() => {
+    handleValidateRef.current = handleValidate;
+  }, [handleValidate]);
 
   return (
     <div className="space-y-6">

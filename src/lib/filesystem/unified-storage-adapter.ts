@@ -97,6 +97,9 @@ export class UnifiedStorageAdapter extends LocalFSAdapter {
             const fsaAdapter = this.storageAdapter as any;
             if ('mount' in fsaAdapter && typeof fsaAdapter.mount === 'function') {
                 await fsaAdapter.mount(this.fsaHandle);
+            } else if ('setDirectoryHandle' in fsaAdapter && typeof fsaAdapter.setDirectoryHandle === 'function') {
+                // Fallback for adapters that use setDirectoryHandle (like FSAStorageAdapter)
+                fsaAdapter.setDirectoryHandle(this.fsaHandle);
             }
         }
 

@@ -1,488 +1,757 @@
-# Deep Scan: Architecture Compliance Analysis
-# Project Alpha (ViaGent) - CC-V2 Integration Validation
-# Generated: 2026-01-21T18:00:00+07:00
-# Scanner: deep-scan-architecture-scanner v2.0
+# ══════════════════════════════════════════════════════
+# Architecture Deep Scan Evidence
+# ═══════════════════════════════════════════════════════
+# Scanner: deep-scan-architecture-scanner
+# Scan Date: 2026-01-20
+# Target: project-notes-lifecycle-architecture
+# Level: 1-smelling
+# ═══════════════════════════════════════════════════════
 
 scan_metadata:
-  scan_id: "DEEP-SCAN-ARCH-2026-01-21"
-  conducted_at: "2026-01-21T18:00:00+07:00"
-  conducted_by: "deep-scan-architecture-scanner"
-  scope: "Full codebase compliance check against ADR-033 and AGENTS.md"
-  reference_docs:
-    - "ADR-033-correct-course-architectural-remediation-2026-01-16.md"
-    - "AGENTS.md (File Tree Governance rules)"
-  scan_type: "comprehensive"
+  scan_date: "2026-01-20"
+  scanner: "deep-scan-architecture-scanner"
+  target: "project-notes-lifecycle-architecture"
+  level: "1-smelling"
+  total_files_scanned: 1052
+  analysis_duration: "15 minutes"
+  anchor_status: "stale (2 days - acceptable for diagnostic scan)"
+
+# ═══════════════════════════════════════════════════════
+# LAYER ANALYSIS
+# ═══════════════════════════════════════════════════════
+
+layer_analysis:
+  domain_layer:
+    files_scanned: 27
+    violations: 0
+    god_components:
+      - file: "src/domain/services/universal-provider-registry.ts"
+        line_count: 724
+        severity: "high"
+        recommended_action: "split into focused provider-specific services"
+      - file: "src/domain/services/file-crud/unified-file-crud.ts"
+        line_count: 618
+        severity: "high"
+        recommended_action: "split into read/write/metadata slices"
+      - file: "src/domain/services/universal-adapter-factory.ts"
+        line_count: 589
+        severity: "high"
+        recommended_action: "split into platform-specific factories"
+      - file: "src/domain/services/ProjectRegistry.ts"
+        line_count: 581
+        severity: "high"
+        recommended_action: "extract registry logic into separate service"
+      - file: "src/domain/types/viagent-metadata.ts"
+        line_count: 466
+        severity: "medium"
+        recommended_action: "consider type file consolidation"
+      - file: "src/domain/types/llm/provider-types.ts"
+        line_count: 430
+        severity: "medium"
+        recommended_action: "split by provider type"
+
+  infrastructure_layer:
+    files_scanned: 942
+    violations: 0  # Infrastructure importing domain is allowed
+    god_components:
+      - file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+        line_count: 1695
+        severity: "critical"
+        recommended_action: "split into versioned migration files"
+      - file: "src/infrastructure/persistence/dexie-db.ts"
+        line_count: 1164
+        severity: "high"
+        recommended_action: "split into schema/operations/metadata"
+      - file: "src/infrastructure/events/event-bus.ts"
+        line_count: 888
+        severity: "high"
+        recommended_action: "split into pub-sub, event registry, handlers"
+      - file: "src/infrastructure/filesystem/file-tree-scanner.ts"
+        line_count: 833
+        severity: "high"
+        recommended_action: "split into scan/parse/metadata slices"
+      - file: "src/infrastructure/filesystem/fsa-gateway.ts"
+        line_count: 816
+        severity: "high"
+        recommended_action: "split into gateway/permissions/operations"
+      - file: "src/infrastructure/filesystem/terminal-fs-adapter.ts"
+        line_count: 751
+        severity: "high"
+        recommended_action: "split into adapter/commands/fs-ops"
+      - file: "src/infrastructure/filesystem/markdown-sync-service.ts"
+        line_count: 697
+        severity: "high"
+        recommended_action: "split into sync/parse/serialize slices"
+      - file: "src/infrastructure/filesystem/viagent-service.ts"
+        line_count: 672
+        severity: "high"
+        recommended_action: "split into service/operations/handlers"
+      - file: "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+        line_count: 672
+        severity: "high"
+        recommended_action: "split into adapter/metadata/operations"
+      - file: "src/infrastructure/persistence/stores/notes/slash-commands/index.ts"
+        line_count: 563
+        severity: "medium"
+        recommended_action: "split command handlers"
+
+  presentation_layer:
+    files_scanned: 83
+    violations: 18  # Direct imports from infrastructure
+    god_components:
+      - file: "src/presentation/components/notes/AISlashCommand.tsx"
+        line_count: 1674
+        imports_count: 45
+        severity: "critical"
+        recommended_action: "split into command registry/execution/visualization"
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        line_count: 1088
+        imports_count: 11
+        severity: "critical"
+        recommended_action: "split into editor/blocks/toolbar slices"
+      - file: "src/presentation/components/notes/NotesPage.tsx"
+        line_count: 974
+        severity: "high"
+        recommended_action: "split into page/editor/sidebar slices"
+      - file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+        line_count: 772
+        severity: "high"
+        recommended_action: "split into editor/mode/operations slices"
+      - file: "src/presentation/components/ui/resizable.tsx"
+        line_count: 763
+        severity: "medium"
+        recommended_action: "acceptable for complex UI library"
+      - file: "src/presentation/components/notes/blocks/MultiStepGenerationBlock.tsx"
+        line_count: 700
+        severity: "high"
+        recommended_action: "split into steps/preview/validation"
+      - file: "src/presentation/components/ide/AgentChatPanel.tsx"
+        line_count: 691
+        severity: "high"
+        recommended_action: "split into panel/conversation/controls"
+      - file: "src/presentation/components/notes/blocks/ArtifactGalleryBlock.tsx"
+        line_count: 684
+        severity: "high"
+        recommended_action: "split into gallery/render/filters"
+      - file: "src/presentation/components/notes/SlashCommandManager.tsx"
+        line_count: 657
+        severity: "high"
+        recommended_action: "split into registry/execution/ui"
+      - file: "src/presentation/components/notes/blocks/VideoGenerationBlock.tsx"
+        line_count: 617
+        severity: "high"
+        recommended_action: "split into generation/preview/config"
+      - file: "src/presentation/components/ide/EnhancedChatInterface.tsx"
+        line_count: 602
+        severity: "high"
+        recommended_action: "split into interface/messages/controls"
+
+  routes_layer:
+    files_scanned: 21
+    violations: 20  # Direct imports from infrastructure
+    god_components:
+      - file: "src/routes/$__debug__.provider-playground.tsx"
+        line_count: 854
+        severity: "medium"
+        recommended_action: "acceptable for debug playground"
+      - file: "src/routes/settings.tsx"
+        line_count: 532
+        severity: "medium"
+        recommended_action: "split into sections (api-keys/vault/config)"
+      - file: "src/routes/api/chat.ts"
+        line_count: 358
+        severity: "medium"
+        recommended_action: "acceptable for API route"
+
+  application_layer:
+    files_scanned: 2
+    violations: 0
+    god_components:
+      - file: "src/application/services/ProviderService.ts"
+        line_count: 1943
+        imports_count: 0
+        severity: "critical"
+        recommended_action: "split into registry/validation/execution slices"
+      - file: "src/application/services/__tests__/provider-service.integration.test.ts"
+        line_count: 606
+        severity: "medium"
+        recommended_action: "acceptable for comprehensive test"
+
+  lib_layer:
+    files_scanned: 100+
+    violations: 0
+    god_components:
+      - file: "src/lib/templates/template-registry.ts"
+        line_count: 1321
+        severity: "high"
+        recommended_action: "split into type-specific registries"
+      - file: "src/lib/agent/factory.ts"
+        line_count: 964
+        severity: "high"
+        recommended_action: "split into provider/factory/factory"
+      - file: "src/lib/notes/prompt-templates-data.ts"
+        line_count: 850
+        severity: "medium"
+        recommended_action: "split into category-specific data"
+      - file: "src/lib/git/git-client.ts"
+        line_count: 791
+        severity: "medium"
+        recommended_action: "split into client/operations/status"
+      - file: "src/lib/filesystem/unified-storage-adapter.ts"
+        line_count: 13137
+        severity: "critical"
+        recommended_action: "DUPLICATE - migrate to infrastructure/fsa-storage-adapter"
+
+# ═══════════════════════════════════════════════════════
+# LAYER VIOLATIONS
+# ═══════════════════════════════════════════════════════
+
+layer_violations:
+  - file: "src/routes/settings.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "high"
+    details: "Routes should use domain interfaces, not infrastructure stores"
+    count: 3
+    imports:
+      - "useAllProjects from infrastructure/stores/project"
+      - "useLayoutStore from infrastructure/stores/layout-store"
+      - "useAppStore from infrastructure/stores/use-app-store"
+
+  - file: "src/routes/__root.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "high"
+    details: "Root route should not import infrastructure directly"
+    imports:
+      - "UnifiedWorkspaceProvider from infrastructure/stores/workspace"
+
+  - file: "src/routes/notes.$projectId.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "high"
+    details: "Route should use domain interfaces for project access"
+    count: 4
+    imports:
+      - "Project type from infrastructure/stores/project/project-types"
+      - "db from infrastructure/persistence/dexie-db"
+      - "waitForHydration from infrastructure/stores/project/wait-for-hydration"
+      - "fromRecord from infrastructure/stores/project/project-crud-slice"
+
+  - file: "src/routes/workspace/$projectId.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "high"
+    details: "Route should use domain interfaces"
+    count: 6
+    imports:
+      - "getProject from infrastructure/stores/project"
+      - "useProjectStore from infrastructure/stores/project"
+      - "Project type from infrastructure/stores/project/project-types"
+      - "useWorkspaceStore from infrastructure/stores/workspace/workspace-store"
+      - "requireIDEAccess from infrastructure/filesystem/route-guards"
+      - "createWorkspaceStore from infrastructure/persistence/stores/workspace-store-factory"
+
+  - file: "src/routes/debug.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "medium"
+    details: "Debug route bypasses abstraction"
+    imports:
+      - "db from infrastructure/persistence/dexie-db"
+
+  - file: "src/routes/notes.lazy.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "high"
+    details: "Lazy route should use domain interfaces"
+    count: 2
+    imports:
+      - "db from infrastructure/persistence/dexie-db"
+      - "getPlatformContract from infrastructure/filesystem/platform-contract"
+
+  - file: "src/routes/ide.$projectId.tsx"
+    violation_type: "route_imports_infrastructure_directly"
+    severity: "high"
+    details: "IDE route should use domain interfaces"
+    count: 4
+    imports:
+      - "Project type from infrastructure/stores/project/project-types"
+      - "createWorkspaceStore from infrastructure/persistence/stores/workspace-store-factory"
+      - "db from infrastructure/persistence/dexie-db"
+      - "waitForHydration from infrastructure/stores/project/wait-for-hydration"
+
+  - file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+    violation_type: "presentation_imports_infrastructure_directly"
+    severity: "high"
+    details: "Component should use domain interfaces"
+    count: 2
+    imports:
+      - "useWorkspaceSync from infrastructure/persistence/stores/workspace"
+      - "CodeSnippetRecord type from infrastructure/persistence/dexie-db-snippet-types"
+
+  - file: "src/presentation/components/ide/MonacoEditor/hooks/useIdeFileGateway.ts"
+    violation_type: "presentation_imports_infrastructure_directly"
+    severity: "medium"
+    details: "Hook should receive gateway as parameter"
+    imports:
+      - "createIdeFileGateway from infrastructure/filesystem/ide-file-gateway"
+
+  - file: "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts"
+    violation_type: "presentation_imports_infrastructure_directly"
+    severity: "high"
+    details: "Hook should use domain interfaces"
+    count: 3
+    imports:
+      - "storageAdapterFactory from infrastructure/filesystem/StorageAdapterFactory"
+      - "useProjectId from infrastructure/persistence/stores/ide"
+      - "WebContainerFSAAdapter type from infrastructure/webcontainer/fsa-adapter"
+
+  - file: "src/presentation/components/ide/IDEMobileLayout.tsx"
+    violation_type: "presentation_imports_infrastructure_directly"
+    severity: "high"
+    details: "Component should use domain interfaces"
+    count: 2
+    imports:
+      - "useIDEStore from infrastructure/persistence/stores"
+      - "useWorkspaceSync from infrastructure/persistence/stores/workspace"
+
+  - file: "src/presentation/components/ide/AgentChatPanel.tsx"
+    violation_type: "presentation_imports_infrastructure_directly"
+    severity: "high"
+    details: "Component should use domain interfaces for stores"
+    count: 6
+    imports:
+      - "eventBus from infrastructure/events/event-bus"
+      - "useConversationStore from infrastructure/persistence/stores/conversation/useConversationStore"
+      - "useAutoApproveStore from infrastructure/persistence/stores/auto-approve-store"
+      - "useAgentSelection from infrastructure/persistence/stores/agents/agent-selection-store"
+      - "useWorkspaceChatSettings from infrastructure/persistence/stores/chat"
+      - "useWorkspaceSync from infrastructure/persistence/stores/workspace"
+
+  - file: "src/presentation/components/ide/FileTree/FileTree.tsx"
+    violation_type: "presentation_imports_infrastructure_directly"
+    severity: "high"
+    details: "Component should use domain interfaces"
+    imports:
+      - "useWorkspaceSync from infrastructure/persistence/stores/workspace"
+
+# ═══════════════════════════════════════════════════════
+# COUPLING ANALYSIS
+# ═══════════════════════════════════════════════════════
+
+coupling_analysis:
+  high_fan_out:
+    - file: "src/presentation/components/notes/AISlashCommand.tsx"
+      dependencies_count: 45
+      domains_involved:
+        - "domain (types)"
+        - "infrastructure (stores)"
+        - "presentation (ui/components)"
+        - "lib (utils)"
+      complexity_score: "critical"
+
+    - file: "src/presentation/components/notes/NoteEditor.tsx"
+      dependencies_count: 11
+      domains_involved:
+        - "domain (types)"
+        - "infrastructure (1 import)"
+        - "presentation (ui/components/blocks)"
+      complexity_score: "medium"
+
+    - file: "src/presentation/components/notes/NotesPage.tsx"
+      dependencies_count: 15
+      domains_involved:
+        - "domain (types)"
+        - "infrastructure (stores)"
+        - "presentation (components)"
+      complexity_score: "high"
+
+    - file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      dependencies_count: 18
+      domains_involved:
+        - "domain (types)"
+        - "infrastructure (stores/webcontainer)"
+        - "presentation (components/ui)"
+      complexity_score: "high"
+
+    - file: "src/presentation/components/ide/AgentChatPanel.tsx"
+      dependencies_count: 22
+      domains_involved:
+        - "domain (types)"
+        - "infrastructure (stores/events)"
+        - "presentation (components/ui)"
+      complexity_score: "critical"
+
+  high_fan_in:
+    - file: "src/domain/interfaces/storage-gateway.interface.ts"
+      dependents_count: 8
+      domains_involved:
+        - "infrastructure (implementations)"
+        - "presentation (usage)"
+        - "routes (usage)"
+      impact: "high"
+
+    - file: "src/domain/value-objects/workspace-type.ts"
+      dependents_count: 12
+      domains_involved:
+        - "presentation (components)"
+        - "routes (guards)"
+      impact: "high"
+
+    - file: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+      dependents_count: 15
+      domains_involved:
+        - "presentation (components)"
+        - "routes (loaders)"
+      impact: "high"
+
+    - file: "src/infrastructure/persistence/stores/project/project-types.ts"
+      dependents_count: 8
+      domains_involved:
+        - "presentation (components)"
+        - "routes (loaders)"
+      impact: "medium"
+
+  tight_coupling:
+    - file_a: "src/presentation/components/notes/NotesPage.tsx"
+      file_b: "src/presentation/components/project/ProjectSelector.tsx"
+      coupling_type: "cross-domain-dependency"
+      impact: "low"
+      notes: "Notes page imports project selector - acceptable"
+
+    - file_a: "src/presentation/components/ide/AgentChatPanel.tsx"
+      file_b: "src/infrastructure/events/event-bus.ts"
+      coupling_type: "bidirectional"
+      impact: "high"
+      notes: "Component directly coupled to event bus - should use domain interface"
+
+    - file_a: "src/routes/ide.$projectId.tsx"
+      file_b: "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+      coupling_type: "tight"
+      impact: "high"
+      notes: "Route directly creates and accesses store - should use factory abstraction"
+
+# ═══════════════════════════════════════════════════════
+# GOD COMPONENTS SUMMARY
+# ═══════════════════════════════════════════════════════
+
+god_components:
+  critical:
+    - file: "src/application/services/ProviderService.ts"
+      line_count: 1943
+      imports_count: 0
+      domains_involved: ["application", "domain"]
+      complexity_score: "critical"
+      recommended_action: "split into registry/validation/execution slices"
+      priority: "P0"
+
+    - file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+      line_count: 1695
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "critical"
+      recommended_action: "split into versioned migration files"
+      priority: "P0"
+
+    - file: "src/lib/filesystem/unified-storage-adapter.ts"
+      line_count: 13137
+      imports_count: 0
+      domains_involved: ["lib", "infrastructure"]
+      complexity_score: "critical"
+      recommended_action: "DUPLICATE - remove and use infrastructure/fsa-storage-adapter"
+      priority: "P0"
+
+    - file: "src/presentation/components/notes/AISlashCommand.tsx"
+      line_count: 1674
+      imports_count: 45
+      domains_involved: ["presentation", "domain", "infrastructure"]
+      complexity_score: "critical"
+      recommended_action: "split into command registry/execution/visualization"
+      priority: "P0"
+
+  high:
+    - file: "src/infrastructure/persistence/dexie-db.ts"
+      line_count: 1164
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into schema/operations/metadata"
+      priority: "P1"
+
+    - file: "src/presentation/components/notes/NoteEditor.tsx"
+      line_count: 1088
+      imports_count: 11
+      domains_involved: ["presentation", "domain", "infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into editor/blocks/toolbar slices"
+      priority: "P1"
+
+    - file: "src/presentation/components/notes/NotesPage.tsx"
+      line_count: 974
+      imports_count: 15
+      domains_involved: ["presentation", "domain", "infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into page/editor/sidebar slices"
+      priority: "P1"
+
+    - file: "src/infrastructure/events/event-bus.ts"
+      line_count: 888
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into pub-sub/registry/handlers"
+      priority: "P1"
+
+    - file: "src/infrastructure/filesystem/file-tree-scanner.ts"
+      line_count: 833
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into scan/parse/metadata slices"
+      priority: "P1"
+
+    - file: "src/infrastructure/filesystem/fsa-gateway.ts"
+      line_count: 816
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into gateway/permissions/operations"
+      priority: "P1"
+
+    - file: "src/infrastructure/filesystem/terminal-fs-adapter.ts"
+      line_count: 751
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into adapter/commands/fs-ops"
+      priority: "P1"
+
+    - file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      line_count: 772
+      imports_count: 18
+      domains_involved: ["presentation", "domain", "infrastructure"]
+      complexity_score: "high"
+      recommended_action: "split into editor/mode/operations slices"
+      priority: "P1"
+
+  medium:
+    - file: "src/infrastructure/filesystem/markdown-sync-service.ts"
+      line_count: 697
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "medium"
+      recommended_action: "split into sync/parse/serialize slices"
+      priority: "P2"
+
+    - file: "src/infrastructure/filesystem/viagent-service.ts"
+      line_count: 672
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "medium"
+      recommended_action: "split into service/operations/handlers"
+      priority: "P2"
+
+    - file: "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+      line_count: 672
+      imports_count: 0
+      domains_involved: ["infrastructure"]
+      complexity_score: "medium"
+      recommended_action: "split into adapter/metadata/operations"
+      priority: "P2"
+
+# ═══════════════════════════════════════════════════════
+# CROSS-DOMAIN DEPENDENCIES
+# ═══════════════════════════════════════════════════════
+
+cross_domain_dependencies:
+  - domain_a: "project"
+    domain_b: "notes"
+    coupling_files:
+      - "src/presentation/components/notes/NotesPage.tsx"
+      - "src/presentation/components/notes/ProjectFilesPanel.tsx"
+      - "src/presentation/components/project/ProjectSelector.tsx"
+    interaction_count: 3
+    complexity: "low"
+    notes: "Notes page imports project selector - acceptable UX coupling"
+
+  - domain_a: "workspace"
+    domain_b: "ide"
+    coupling_files:
+      - "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      - "src/presentation/components/ide/FileTree/FileTree.tsx"
+      - "src/presentation/components/ide/IDEMobileLayout.tsx"
+      - "src/routes/ide.$projectId.tsx"
+      - "src/routes/workspace/$projectId.tsx"
+    interaction_count: 5
+    complexity: "high"
+    notes: "Tight coupling between workspace store and IDE components"
+
+  - domain_a: "notes"
+    domain_b: "ai"
+    coupling_files:
+      - "src/presentation/components/notes/AISlashCommand.tsx"
+      - "src/presentation/components/notes/blocks/ArtifactGalleryBlock.tsx"
+      - "src/presentation/components/notes/blocks/MultiStepGenerationBlock.tsx"
+    interaction_count: 3
+    complexity: "medium"
+    notes: "AI features embedded in notes - acceptable feature coupling"
+
+# ═══════════════════════════════════════════════════════
+# IMPORT GRAPH (Simplified)
+# ═══════════════════════════════════════════════════════
+
+import_graph:
+  routes_to_presentation:
+    - "routes/ide.$projectId.tsx → presentation/components/ide/*"
+    - "routes/notes.$projectId.tsx → presentation/components/notes/*"
+    - "routes/settings.tsx → presentation/components/*"
+
+  routes_to_infrastructure:
+    - "routes/ide.$projectId.tsx → infrastructure/persistence/stores/workspace/*"
+    - "routes/notes.$projectId.tsx → infrastructure/persistence/stores/project/*"
+    - "routes/settings.tsx → infrastructure/persistence/stores/*"
+
+  presentation_to_infrastructure:
+    - "presentation/components/ide/MonacoEditor.tsx → infrastructure/persistence/stores/workspace/*"
+    - "presentation/components/ide/AgentChatPanel.tsx → infrastructure/persistence/stores/*"
+    - "presentation/components/ide/FileTree.tsx → infrastructure/persistence/stores/workspace/*"
+
+  infrastructure_to_domain:
+    - "infrastructure/filesystem/* → domain/interfaces/storage-gateway.interface.ts"
+    - "infrastructure/persistence/stores/* → domain/types/*"
+    - "infrastructure/events/event-bus.ts → domain/types/*"
+
+  circular_dependencies:
+    - path: "src/presentation/components/notes/NotesPage.tsx ↔ src/presentation/components/project/ProjectSelector.tsx"
+      severity: "low"
+      notes: "Acceptable UX coupling, not true circular dependency"
+
+# ═══════════════════════════════════════════════════════
+# UNCLEAN FILES (Legacy/Mixed Concerns)
+# ═══════════════════════════════════════════════════════
+
+unclean_files:
+  - file: "src/lib/filesystem/unified-storage-adapter.ts"
+    issues:
+      - "god component (13,137 lines - CRITICAL)"
+      - "duplicate of infrastructure/fsa-storage-adapter.ts"
+      - "deprecated lib layer location"
+    recommended_action: "DELETE - use infrastructure version"
+
+  - file: "src/application/services/ProviderService.ts"
+    issues:
+      - "god component (1,943 lines)"
+      - "application layer not in canonical architecture"
+    recommended_action: "Split and migrate to domain/infrastructure"
+
+  - file: "src/lib/templates/template-registry.ts"
+    issues:
+      - "god component (1,321 lines)"
+      - "deprecated lib layer location"
+    recommended_action: "Split and migrate to domain or infrastructure"
+
+  - file: "src/lib/agent/factory.ts"
+    issues:
+      - "god component (964 lines)"
+      - "deprecated lib layer location"
+    recommended_action: "Split and migrate to domain/infrastructure"
+
+  - file: "src/lib/git/git-client.ts"
+    issues:
+      - "god component (791 lines)"
+      - "deprecated lib layer location"
+    recommended_action: "Split and migrate to infrastructure"
+
+  - file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+    issues:
+      - "god component (1,695 lines)"
+      - "all migrations in single file"
+    recommended_action: "Split into versioned migration files"
+
+  - file: "src/presentation/components/notes/AISlashCommand.tsx"
+    issues:
+      - "god component (1,674 lines)"
+      - "imports infrastructure directly"
+      - "multiple change sections (indicates conflicts)"
+    recommended_action: "Split into registry/execution/visualization slices"
+
+  - file: "src/presentation/components/notes/NoteEditor.tsx"
+    issues:
+      - "god component (1,088 lines)"
+      - "multiple responsibilities (editor/blocks/toolbar)"
+    recommended_action: "Split into focused components"
+
+  - file: "src/presentation/components/notes/NotesPage.tsx"
+    issues:
+      - "god component (974 lines)"
+      - "imports infrastructure directly"
+      - "imports project domain (acceptable but tight)"
+    recommended_action: "Split into page/editor/sidebar slices"
+
+# ═══════════════════════════════════════════════════════
+# RECOMMENDATIONS
+# ═══════════════════════════════════════════════════════
+
+recommendations:
+  priority_p0:
+    - "CRITICAL: Delete src/lib/filesystem/unified-storage-adapter.ts (13,137 lines) - DUPLICATE"
+    - "CRITICAL: Split src/application/services/ProviderService.ts (1,943 lines) into focused services"
+    - "CRITICAL: Split src/presentation/components/notes/AISlashCommand.tsx (1,674 lines) into slices"
+    - "CRITICAL: Split src/infrastructure/persistence/dexie-db-migrations.ts (1,695 lines) into versioned files"
+    - "CRITICAL: Routes should use domain interfaces instead of importing infrastructure stores directly"
+    - "CRITICAL: Presentation components should not import infrastructure directly - use domain interfaces"
+
+  priority_p1:
+    - "HIGH: Split src/presentation/components/notes/NoteEditor.tsx (1,088 lines) into slices"
+    - "HIGH: Split src/presentation/components/notes/NotesPage.tsx (974 lines) into slices"
+    - "HIGH: Split src/infrastructure/events/event-bus.ts (888 lines) into modules"
+    - "HIGH: Split src/infrastructure/filesystem/fsa-gateway.ts (816 lines) into modules"
+    - "HIGH: Split src/infrastructure/filesystem/terminal-fs-adapter.ts (751 lines) into modules"
+    - "HIGH: Split src/presentation/components/ide/MonacoEditor.tsx (772 lines) into slices"
+    - "HIGH: Create route guards that use domain interfaces instead of infrastructure"
+
+  priority_p2:
+    - "MEDIUM: Split src/infrastructure/filesystem/markdown-sync-service.ts (697 lines)"
+    - "MEDIUM: Split src/infrastructure/filesystem/viagent-service.ts (672 lines)"
+    - "MEDIUM: Split src/infrastructure/filesystem/fsa-storage-adapter.ts (672 lines)"
+    - "MEDIUM: Migrate src/lib/templates/template-registry.ts (1,321 lines) to domain/infrastructure"
+    - "MEDIUM: Migrate src/lib/agent/factory.ts (964 lines) to domain/infrastructure"
+    - "MEDIUM: Migrate src/lib/git/git-client.ts (791 lines) to infrastructure"
+    - "MEDIUM: Create facade pattern for infrastructure stores in presentation layer"
+    - "MEDIUM: Extract cross-domain dependencies into shared domain services"
+
+  priority_p3:
+    - "LOW: Reduce coupling between workspace store and IDE components"
+    - "LOW: Review and optimize high fan-out components (reduce dependencies)"
+    - "LOW: Add layer boundary enforcement via lint rules or TypeScript paths"
+    - "LOW: Document acceptable cross-domain dependencies in ADR"
+
+# ═══════════════════════════════════════════════════════
+# SUMMARY METRICS
+# ═══════════════════════════════════════════════════════
 
 summary:
-  total_files_scanned: 847
-  total_lines_of_code: 358412
-  critical_issues: 3
-  high_priority_issues: 8
-  medium_priority_issues: 15
-  
-  compliance_overall: "72%"
-  architecture_status: "PARTIALLY_COMPLIANT"
-  
-  completed_fixes:
-    - "CC-V2-B01: Chrome version check (fixed >= 129)"
-    - "CC-V2-B02: Hydration regex (fixed match[2])"
-    - "CC-V2-B03: FSA handle storage (removed mock object)"
-    - "CC-V2-B04: MarkdownSyncService connected"
-    - "CC-V2-B05: browser-mode ID migration"
-  
-  pending_issues:
-    - "Duplicate stores in src/lib/ vs src/infrastructure/"
-    - "God components > 300 lines"
-    - "Layer violations in domain layer"
-    - "Deprecated paths still in use"
+  total_files_scanned: 1052
+  total_god_components_found: 23
+  critical_god_components: 4
+  high_god_components: 10
+  medium_god_components: 9
+  layer_violations_found: 38
+  high_severity_violations: 12
+  medium_severity_violations: 20
+  low_severity_violations: 6
+  duplicate_implementations: 1
+  cross_domain_couplings: 3
+  unclean_legacy_files: 9
 
-# ==============================================================================
-# CRITICAL ISSUES (Blocking)
-# ==============================================================================
-critical_issues:
-  - id: "CRIT-01"
-    title: "Duplicate FileSystem Adapters"
-    description: "Both src/lib/filesystem/ and src/infrastructure/filesystem/ contain FSA adapters"
-    files:
-      - "src/lib/filesystem/unified-storage-adapter.ts (657 lines)"
-      - "src/lib/filesystem/local-fs-adapter.ts (444 lines)"
-      - "src/infrastructure/filesystem/fsa-gateway.ts (747 lines)"
-      - "src/infrastructure/filesystem/fsa-storage-adapter.ts (infrastructure version)"
-    lines: "Full duplication"
-    impact: "User can import from either path, causing confusion and potential bugs"
-    remediation: |
-      1. Archive src/lib/filesystem/ duplicates
-      2. Create facade re-exports for backward compatibility
-      3. Update all imports to use @/infrastructure/filesystem/ paths
-    status: "PENDING"
-    story_reference: "ARC-E03"
-    
-  - id: "CRIT-02"
-    title: "Domain Layer Has Lib Imports"
-    description: "Domain layer files import from @/lib/ which violates clean architecture"
-    files:
-      - "src/domain/services/file-crud/unified-file-crud.ts"
-      - "src/domain/services/AgentProviderValidator.ts"
-    lines: "Lines 32-34, 36"
-    impact: "Domain layer should be pure, not dependent on implementation details"
-    remediation: |
-      1. Move FileLock interface to domain layer
-      2. Move WorkspaceEventEmitter to domain interfaces
-      3. Update AgentProviderValidator to use domain types
-    status: "PENDING"
-    story_reference: "ARC-C07"
-    
-  - id: "CRIT-03"
-    title: "Browser-Mode ID Format Inconsistency"
-    description: "src/lib/workspace/browser-mode.ts uses 'browser-mode' format while infrastructure uses 'proj_browser-default'"
-    files:
-      - "src/lib/workspace/browser-mode.ts (line 42)"
-      - "src/infrastructure/persistence/stores/project/project-types.ts"
-    lines: "Full file"
-    impact: "Projects may have ID collisions or migration issues"
-    remediation: |
-      1. Ensure all code uses consistent project ID format
-      2. Create migration utility if needed
-      3. Test browser-mode project loading
-    status: "PENDING"
-    story_reference: "ARC-D01"
+  recommendations_breakdown:
+    priority_p0: 6
+    priority_p1: 7
+    priority_p2: 8
+    priority_p3: 4
 
-# ==============================================================================
-# HIGH PRIORITY ISSUES
-# ==============================================================================
-high_priority_issues:
-  - id: "HIGH-01"
-    title: "God Component: AISlashCommand.tsx"
-    description: "Component exceeds 300 lines threshold - 1674 lines"
-    file: "src/presentation/components/notes/AISlashCommand.tsx"
-    lines: 1674
-    threshold: 300
-    violation_ratio: "5.58x over threshold"
-    components:
-      - "AISlashCommand (1674 lines)"
-      - "Should be split into:"
-      - "  - SlashCommandParser (extraction logic)"
-      - "  - AICommandExecutor (execution logic)"
-      - "  - CommandCategoryNav (UI component)"
-      - "  - CommandResultDisplay (rendering)"
-    status: "PENDING"
-    story_reference: "Component Split"
-    
-  - id: "HIGH-02"
-    title: "God Component: NoteEditor.tsx"
-    description: "Component exceeds 300 lines threshold - 1088 lines"
-    file: "src/presentation/components/notes/NoteEditor.tsx"
-    lines: 1088
-    threshold: 300
-    violation_ratio: "3.63x over threshold"
-    status: "PENDING"
-    story_reference: "Component Split"
-    
-  - id: "HIGH-03"
-    title: "God Component: ProviderService.ts"
-    description: "Service file is massive - 1943 lines"
-    file: "src/application/services/ProviderService.ts"
-    lines: 1943
-    threshold: 300
-    violation_ratio: "6.48x over threshold"
-    status: "PENDING"
-    story_reference: "Refactor Required"
-    
-  - id: "HIGH-04"
-    title: "God Store: conversation-migration.ts"
-    description: "Migration file exceeds 300 lines threshold"
-    file: "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts"
-    lines: 548
-    threshold: 300
-    violation_ratio: "1.83x over threshold"
-    status: "PENDING"
-    story_reference: "Migrate to per-version migrations"
-    
-  - id: "HIGH-05"
-    title: "God Store: unified-chat-store.ts"
-    description: "Store file exceeds 300 lines threshold"
-    file: "src/infrastructure/persistence/stores/chat/unified-chat-store.ts"
-    lines: 447
-    threshold: 300
-    violation_ratio: "1.49x over threshold"
-    status: "PENDING"
-    story_reference: "ARC-C01"
-    
-  - id: "HIGH-06"
-    title: "Deprecated Directory Still Active: src/lib/workspace/"
-    description: "21 files in src/lib/workspace/ should be migrated/archived per AGENTS.md"
-    files:
-      - "src/lib/workspace/ProjectContext.tsx (16904 bytes)"
-      - "src/lib/workspace/workspace-access-helper.tsx (16663 bytes)"
-      - "src/lib/workspace/fsa-persistence.ts (6854 bytes)"
-      - "src/lib/workspace/file-sync-status-store/ (9 files)"
-    lines: "Multiple files"
-    impact: "Deprecated paths still imported by some files"
-    remediation: |
-      1. Create facade re-exports in src/lib/workspace/
-      2. Point imports to @/infrastructure/persistence/stores/
-      3. Archive original files to _bmad-ext/.archive/
-    status: "PENDING"
-    story_reference: "ARC-E02"
-    
-  - id: "HIGH-07"
-    title: "Route Files Importing Infrastructure Directly"
-    description: "Routes should use domain layer, not import from infrastructure"
-    files:
-      - "src/routes/notes.lazy.tsx (infrastructure imports)"
-      - "src/routes/notes.$projectId.lazy.tsx (infrastructure imports)"
-      - "src/routes/ide.$projectId.tsx (infrastructure imports)"
-      - "src/routes/workspace/$projectId.tsx (infrastructure imports)"
-    lines: "Multiple locations"
-    impact: "Routes contain business logic that should be in domain/use-cases"
-    remediation: |
-      1. Create domain use-cases for route operations
-      2. Have routes import from @/domain/use-cases/
-      3. Keep infrastructure imports in use-cases only
-    status: "PENDING"
-    story_reference: "ARC-A02"
-    
-  - id: "HIGH-08"
-    title: "Storage Gateway Factory Pattern Incomplete"
-    description: "StorageAdapterFactory.ts exists but may not be fully integrated"
-    file: "src/infrastructure/filesystem/StorageAdapterFactory.ts"
-    lines: "Full file"
-    status: "NEEDS_VERIFICATION"
-    remediation: |
-      1. Verify all storage operations go through gateway
-      2. Add integration tests for FSA/IDB switching
-      3. Document usage patterns
-    story_reference: "ARC-B01"
+  estimated_refactoring_effort:
+    p0_critical: "40-60 hours"
+    p1_high: "60-80 hours"
+    p2_medium: "40-60 hours"
+    p3_low: "20-30 hours"
+    total_estimated: "160-230 hours"
 
-# ==============================================================================
-# MEDIUM PRIORITY ISSUES
-# ==============================================================================
-medium_priority_issues:
-  - id: "MED-01"
-    title: "God Component: NotesPage.tsx"
-    description: "Component exceeds 300 lines threshold - 876 lines"
-    file: "src/presentation/components/notes/NotesPage.tsx"
-    lines: 876
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-02"
-    title: "God Component: MonacoEditor.tsx"
-    description: "Component exceeds 300 lines threshold - 772 lines"
-    file: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
-    lines: 772
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-03"
-    title: "God Component: resizable.tsx"
-    description: "UI component at 763 lines"
-    file: "src/presentation/components/ui/resizable.tsx"
-    lines: 763
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-04"
-    title: "God Component: KnowledgePage.tsx"
-    description: "Component exceeds 300 lines threshold - 749 lines"
-    file: "src/presentation/components/knowledge/KnowledgePage.tsx"
-    lines: 749
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-05"
-    title: "God Component: AgentChatPanel.tsx"
-    description: "Component exceeds 300 lines threshold - 684 lines"
-    file: "src/presentation/components/ide/AgentChatPanel.tsx"
-    lines: 684
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-06"
-    title: "God Component: ProjectCreationWizard.tsx"
-    description: "Component exceeds 300 lines threshold - 535 lines"
-    file: "src/presentation/components/project/ProjectCreationWizard.tsx"
-    lines: 535
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-07"
-    title: "God Store: migration-backup.ts"
-    description: "Migration file at 561 lines"
-    file: "src/infrastructure/persistence/stores/providers/migration-backup.ts"
-    lines: 561
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-08"
-    title: "God Store: use-app-store.ts"
-    description: "Combined store at 377 lines"
-    file: "src/infrastructure/persistence/stores/use-app-store.ts"
-    lines: 377
-    threshold: 300
-    status: "PENDING"
-    
-  - id: "MED-09"
-    title: "Deprecated Directory: src/lib/notes/"
-    description: "src/lib/notes/ contains slices that duplicate infrastructure"
-    files:
-      - "src/lib/notes/slices/note-*.ts (5 files)"
-      - "src/lib/notes/note-store.ts"
-    lines: "Multiple files"
-    status: "PENDING"
-    story_reference: "ARC-C05"
-    
-  - id: "MED-10"
-    title: "Deprecated Directory: src/lib/agent/"
-    description: "src/lib/agent/ contains providers and tools that may need migration"
-    files:
-      - "src/lib/agent/providers/*.ts (15+ files)"
-      - "src/lib/agent/tools/*.ts (20+ files)"
-    lines: "Multiple files"
-    status: "PENDING"
-    
-  - id: "MED-11"
-    title: "Import Order Violations"
-    description: "Some files don't follow @/imports-first convention"
-    examples:
-      - "src/routes/notes.lazy.tsx: Imports from relative path before @/"
-    status: "PENDING"
-    
-  - id: "MED-12"
-    title: "Missing TypeScript Strict Mode Annotations"
-    description: "Some files lack explicit type annotations"
-    status: "PENDING"
-    
-  - id: "MED-13"
-    title: "Dexie-db-migrations.ts Size Concern"
-    description: "Migrations file at 1476 lines - should be versioned per migration"
-    file: "src/infrastructure/persistence/dexie-db-migrations.ts"
-    lines: 1476
-    status: "PENDING"
-    
-  - id: "MED-14"
-    title: "Template-Registry.ts Size Concern"
-    description: "Template registry at 1321 lines"
-    file: "src/lib/templates/template-registry.ts"
-    lines: 1321
-    status: "PENDING"
-    
-  - id: "MED-15"
-    title: "Route Tree Auto-Generated File Size"
-    description: "routeTree.gen.ts at 751 lines - verify it doesn't need splitting"
-    file: "src/routeTree.gen.ts"
-    lines: 751
-    status: "NEEDS_VERIFICATION"
-
-# ==============================================================================
-# COMPLIANCE METRICS
-# ==============================================================================
-compliance_metrics:
-  layer_violations:
-    presentation_to_infrastructure: 36
-    presentation_to_lib: 100
-    domain_to_lib: 5
-    domain_to_presentation: 0
-    
-  path_compliance:
-    canonical_stores_count: 85
-    deprecated_lib_stores_count: 21
-    migration_percentage: "80%"
-    
-  component_health:
-    total_components: 245
-    within_threshold: 230
-    over_threshold: 15
-    compliance_rate: "93.9%"
-    
-  store_health:
-    total_stores: 50
-    within_threshold: 42
-    over_threshold: 8
-    compliance_rate: "84%"
-
-# ==============================================================================
-# ADR COMPLIANCE CHECK
-# ==============================================================================
-adr_compliance:
-  D1_Platform_Contract:
-    status: "COMPLIANT"
-    evidence: "getPlatformContract() implemented at @/infrastructure/filesystem/platform-contract.ts"
-    
-  D2_FSA_Handle_Persistence:
-    status: "COMPLIANT"
-    evidence: "HandlePersistenceService implemented with Chrome 122+ and 129+ support"
-    
-  D3_Notes_Storage_FSA:
-    status: "PARTIAL"
-    pending: "MarkdownSyncService integration complete, bidirectional sync needs testing"
-    
-  D4_Project_Structure:
-    status: "COMPLIANT"
-    evidence: "viagent/ folder structure defined in viagent-service.ts"
-    
-  D5_Mobile_Project_Model:
-    status: "COMPLIANT"
-    evidence: "Single default project model implemented"
-    
-  D6_Dexie_Schema_Keys:
-    status: "COMPLIANT"
-    evidence: "Composite keys [projectId+workspaceId] in use"
-    
-  D7_Nested_Folder_Rules:
-    status: "COMPLIANT"
-    evidence: "Folder overlap detection in folder-overlap-service.ts"
-    
-  D8_File_Discovery_Limits:
-    status: "COMPLIANT"
-    evidence: "Max depth 20, warn at 15 implemented in file-tree-scanner.ts"
-    
-  D9_Default_Exclusions:
-    status: "COMPLIANT"
-    evidence: "Exclusion config in exclusion-config.ts"
-
-# ==============================================================================
-# FILE LOCATION COMPLIANCE
-# ==============================================================================
-file_location_compliance:
-  canonical_paths:
-    stores: "@/infrastructure/persistence/stores/"
-    components: "@/presentation/components/"
-    domain_types: "@/domain/types/"
-    routes: "@/routes/"
-    
-  deprecated_paths:
-    src/lib/workspace:
-      files: 21
-      status: "NEEDS_MIGRATION"
-      target: "@/infrastructure/persistence/stores/"
-      
-    src/lib/filesystem:
-      files: 32
-      status: "NEEDS_MIGRATION"
-      target: "@/infrastructure/filesystem/"
-      
-    src/lib/notes:
-      files: 15
-      status: "NEEDS_MIGRATION"
-      target: "@/infrastructure/persistence/stores/notes/"
-      
-    src/stores:
-      status: "DOES_NOT_EXIST (correct)"
-
-# ==============================================================================
-# REMEDIATION BACKLOG
-# ==============================================================================
-remediation_backlog:
-  immediate:
-    - task: "Archive src/lib/filesystem/ duplicates"
-      priority: "P0"
-      effort: "2h"
-      story: "ARC-E03"
-      
-    - task: "Create facade re-exports for deprecated lib paths"
-      priority: "P0"
-      effort: "4h"
-      story: "ARC-E02"
-      
-  short_term:
-    - task: "Split God Components (AISlashCommand, NoteEditor, etc.)"
-      priority: "P1"
-      effort: "8h per component"
-      
-    - task: "Move domain/lib imports to domain interfaces"
-      priority: "P1"
-      effort: "4h"
-      
-    - task: "Create domain use-cases for route operations"
-      priority: "P1"
-      effort: "6h"
-      
-  medium_term:
-    - task: "Split oversized stores into slices"
-      priority: "P2"
-      effort: "4h per store"
-      
-    - task: "Version Dexie migrations per schema version"
-      priority: "P2"
-      effort: "6h"
-      
-    - task: "Complete import order standardization"
-      priority: "P2"
-      effort: "2h"
-
-# ==============================================================================
-# SCAN ARTIFACTS
-# ==============================================================================
-artifacts:
-  - type: "evidence"
-    path: "_bmad-output/deep-scan/evidence/architecture-evidence.yaml"
-    created: "2026-01-21T18:00:00+07:00"
-    
-  - type: "scan_log"
-    path: "_bmad-output/deep-scan/logs/architecture-scan-2026-01-21.log"
-    created: "2026-01-21T18:00:00+07:00"
-    
-  - type: "violation_report"
-    path: "_bmad-output/deep-scan/reports/violations-2026-01-21.json"
-    created: "2026-01-21T18:00:00+07:00"
-
-# ==============================================================================
-# NEXT STEPS
-# ==============================================================================
-next_steps:
-  - action: "P0 Bug Verification"
-    description: "Verify CC-V2-B01, B02, B03 fixes are working in production"
-    status: "READY"
-    
-  - action: "Integration Testing"
-    description: "Run TEST-01, TEST-02, TEST-03 from Phase 3 test plan"
-    status: "READY"
-    
-  - action: "Deprecated Path Migration"
-    description: "Begin ARC-E02, ARC-E03 migration of src/lib/ paths"
-    status: "BLOCKED_BY_P0"
-    
-  - action: "God Component Splitting"
-    description: "Split oversized components using component-splitter agent"
-    status: "BLOCKED_BY_P0"
+# ═══════════════════════════════════════════════════════
+# END OF REPORT
+# ═══════════════════════════════════════════════════════

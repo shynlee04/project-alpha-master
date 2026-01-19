@@ -29,6 +29,7 @@ import {
   WorkspaceType,
   isValidProjectId,
   extractWorkspaceType as domainExtractWorkspaceType,
+  stripLegacyPrefix,
 } from '@/domain/types/project-ids';
 
 /**
@@ -38,17 +39,20 @@ import {
  * Project ID is: proj_{timestamp}_{random}
  * Workspace is determined by routing, not by project ID.
  *
+ * **BUG-011 FIX (2026-01-19)**: Removed workspace prefix.
+ * Previous implementation incorrectly added {workspaceType}: prefix.
+ *
  * **ARC-D01**: Returns typed ProjectId for compile-time safety
  * Format: proj_{timestamp}_{random}
  * Example: proj_1704787200000_abc123xyz
  *
- * @returns Validated ProjectId string
+ * @param _workspaceType - DEPRECATED: Ignored, kept for backward compatibility
+ * @returns Validated ProjectId string WITHOUT workspace prefix
  */
-function generateProjectId(workspaceType: WorkspaceType = 'ide'): ProjectId {
+export function generateProjectId(_workspaceType?: WorkspaceType): ProjectId {
   const randomPart = Math.random().toString(36).substring(2, 11);
-  // BUG-003 FIX: Include workspace prefix to match domain validation rules
-  // Validator requires: {workspace}:proj_{timestamp}_{random}
-  const id = `${workspaceType}:proj_${Date.now()}_${randomPart}` as ProjectId;
+  // BUG-011 FIX: NO workspace prefix - ID is just proj_{timestamp}_{random}
+  const id = `proj_${Date.now()}_${randomPart}` as ProjectId;
 
   // Runtime validation (should never fail if code is correct)
   if (!isValidProjectId(id)) {
@@ -67,6 +71,7 @@ export { extractWorkspaceType } from '@/domain/types/project-ids';
 /**
  * Convert Zustand Project to Dexie ProjectRecord for persistence
  * PERSIST-S002: Added workspaceId for cross-workspace isolation
+ * BUG-012 FIX: Added storageType to persist storage backend type
  */
 export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide') {
   return {
@@ -75,6 +80,7 @@ export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 's
     path: project.folderPath,
     workspaceId, // PERSIST-S002: Track which workspace this project record belongs to
     folderPath: project.folderPath,
+    storageType: project.storageType, // BUG-012 FIX: Persist storage type for routing/filtering
     lastOpened: project.lastOpened,
     createdAt: project.createdAt,
     workspaceBindings: project.workspaceBindings, // ARC-D03: Renamed from bindings

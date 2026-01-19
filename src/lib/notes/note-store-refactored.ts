@@ -136,10 +136,12 @@ export const useNoteStore = create<NoteStoreState>()(
                 if (state) {
                     state.setHasHydrated(true);
 
-                    // Reload notes for current project if exists
-                    if (state.currentProjectId) {
-                        state.loadNotes(state.currentProjectId);
-                    }
+                    // BUG-014 FIX: DO NOT auto-load notes on rehydration
+                    // This causes wrong notes to load when switching projects
+                    // NotesPage's useEffect will load notes for current project
+                    // if (state.currentProjectId) {
+                    //     state.loadNotes(state.currentProjectId);
+                    // }
                 }
             },
         }

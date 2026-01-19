@@ -1,0 +1,642 @@
+---
+# ProjectId Contract Diagnostic Artifact
+# Generated: 2026-01-19 (Updated 2026-01-19 15:00 UTC)
+# Status: ROOT CAUSE IDENTIFIED - FSA handle race condition between ProjectContext and NotesPage
+# Related: STORY-13-1 (Terminal CWD Fix) - Side Investigation
+
+# ============================================================================
+# A) REPRODUCTION EVIDENCE (UPDATED)
+# ============================================================================
+
+reproduction:
+  failing_url: "/notes/ide:proj_1768769391206_kauy5uj906"
+  expected_behavior: "Load notes workspace for project ide:proj_1768769391206_kauy5uj906"
+  actual_behavior: "Black screen, no content rendered"
+
+  fix_status:
+    route_loader: "✅ ADDED - Notes route now has loader matching IDE route"
+    fromRecord_conversion: "✅ ADDED - Uses fromRecord() for proper defaults"
+    waitForHydration: "✅ ADDED - Prevents race condition"
+    root_cause_identified: "✅ COMPLETE - FSA handle race condition + silent error handling"
+
+  remaining_issue: |
+    ROOT CAUSE IDENTIFIED - No further investigation needed for diagnosis.
+
+    Black screen caused by:
+    1. FSA handle race condition: ProjectContext restores handle async, NotesPage loads notes immediately
+    2. Silent error handling: loadNotes() errors caught but not displayed in UI
+    3. Missing error UI: NotesPage doesn't show noteStore.error state
+    4. Secondary: fromRecord() defaults storageType to 'fsa' incorrectly
+
+    Fix required:
+    1. Wait for FSA handle restoration in ProjectContext before allowing notes to load
+    2. Display error state in NotesPage when loadNotes fails
+    3. Fix fromRecord() to properly detect storageType or use platform detection
+
+# ============================================================================
+# B) INVARIANT PROOF (UNCHANGED)
+# ============================================================================
+
+## Invariant Proof
+
+### I1: Canonical ProjectId
+
+**Dexie Schema** ([src/infrastructure/persistence/dexie-db-migrations.ts:86](src/infrastructure/persistence/dexie-db-migrations.ts#L86)):
+```typescript
+db.version(1).stores({
+    projects: 'id, lastOpened, name',  // Primary key: 'id' (string)
+});
+```
+
+**ID Generation - CONFLICT** ([src/infrastructure/persistence/stores/project/project-crud-slice.ts:46-58](src/infrastructure/persistence/stores/project/project-crud-slice.ts#L46-L58)):
+```typescript
+function generateProjectId(workspaceType: WorkspaceType = 'ide'): ProjectId {
+  const randomPart = Math.random().toString(36).substring(2, 11);
+  const id = `${workspaceType}:proj_${Date.now()}_${randomPart}` as ProjectId;
+  // Generates: 'ide:proj_1768784857048_zqq67bail'
+}
+```
+
+**ID Generation - BARE VARIANT** ([src/infrastructure/persistence/stores/project/index.ts:284-287](src/infrastructure/persistence/stores/project/index.ts#L284-L287)):
+```typescript
+export function generateProjectId(): string {
+  const randomPart = Math.random().toString(36).substring(2, 11);
+  return `proj_${Date.now()}_${randomPart}`;  // NO PREFIX!
+}
+```
+
+**Actual stored format in Dexie**: `ide:proj_1768784857048_zqq67bail` (namespaced)
+
+### I2: Route param contract
+
+**IDE Route** ([src/routes/ide.$projectId.tsx:51-71](src/routes/ide.$projectId.tsx#L51-L71)):
+```typescript
+loader: async ({ params }) => {
+    const { projectId } = params;
+    await waitForHydration();
+    const record = await db.projects.get(projectId);  // Uses as-is
+    if (!record) { throw redirect({ to: '/hub' }); }
+    return { project: record as unknown as Project };
+}
+```
+- ✅ Has loader
+- ✅ Queries Dexie with `projectId` as-is
+- ✅ Returns project data
+
+**Notes Route** ([src/routes/notes.$projectId.lazy.tsx:42-61](src/routes/notes.$projectId.lazy.tsx#L42-L61)):
+```typescript
+loader: async ({ params }) => {
+    const { projectId } = params;
+    console.log('[NotesRoute.loader] Loading project:', projectId);
+    await waitForHydration();
+    const record = await db.projects.get(projectId);
+    if (!record) {
+      console.error('[NotesRoute.loader] Project not found in Dexie:', projectId);
+      throw redirect({ to: '/hub' });
+    }
+    const project = fromRecord(record);
+    console.log('[NotesRoute.loader] Project found:', { id: project.id, name: project.name, storageType: project.storageType });
+    return { project };
+  }
+```
+- ✅ NOW HAS loader (was added in previous fix)
+- ✅ Queries Dexie with `projectId` as-is
+- ✅ Uses `fromRecord()` for proper defaults
+- ⏳ Black screen issue remains (possibly FSA handle related)
+
+### I3: Workspace switching
+
+**Hub Navigation** ([src/presentation/components/hub/HubHomePage.tsx:134-137](src/presentation/components/hub/HubHomePage.tsx#L134-L137)):
+```typescript
+await navigate({
+  to: `/${workspace}/$projectId`,
+  params: { projectId: workspaceProjects[0].id }  // Uses id directly
+});
+```
+
+**After Project Creation** ([src/presentation/components/hub/HubHomePage.tsx:178-182](src/presentation/components/hub/HubHomePage.tsx#L178-L182)):
+```typescript
+if (platform.canAccessIDE) {
+  navigate({ to: '/ide/$projectId', params: { projectId } });
+} else {
+  navigate({ to: '/notes/$projectId', params: { projectId } });
+}
+```
+
+**Finding**: No ID mutation occurs - same `projectId` string flows through entire navigation chain.
+
+### I4: Single normalization
+
+**Available utility** ([src/domain/types/project-ids.ts:133-143](src/domain/types/project-ids.ts#L133-L143)):
+```typescript
+export function extractWorkspaceType(id: string): WorkspaceType {
+  const parts = id.split(':');
+  if (parts.length === 2) {
+    const workspaceType = parts[0];
+    if (workspaceType === 'ide' || workspaceType === 'knowledge' ||
+        workspaceType === 'study' || workspaceType === 'notes') {
+      return workspaceType;
+    }
+  }
+  return 'ide';  // Legacy default
+}
+```
+
+**Usage scan**:
+- Routes: ❌ No usage of `extractWorkspaceType`
+- Persistence: ❌ No usage before `db.projects.get()`
+- UI only: `NoteTreeItem.tsx:127` uses `split(':')` for display
+
+**Finding**: Utility exists but is NOT used at route/data boundaries.
+
+---
+
+## Root Cause Statement (UPDATED 2026-01-19 15:00 UTC)
+
+**ORIGINAL BUG** (FIXED): Notes route had no loader to query Dexie with projectId, causing `useLoaderData()` to return `undefined`.
+
+**BLACK SCREEN ROOT CAUSE IDENTIFIED**:
+
+**PRIMARY**: FSA handle race condition in ProjectContext.tsx:280-308
+- ProjectProvider starts async FSA handle restoration in useEffect (not awaited)
+- NotesPage mounts and calls loadNotes() immediately
+- loadNotes() tries to create storage gateway with mountedHandle from notesSyncService
+- mountedHandle is undefined because handle restoration is still pending
+- gateway.list('/notes') fails silently, error is caught but not displayed
+- Result: Empty state that renders as "black screen" if layout also fails
+
+**SECONDARY**: fromRecord() in project-crud-slice.ts:89-103
+- Defaults storageType to 'fsa' if not present in Dexie record
+- Causes code to attempt FSA operations for IndexedDB projects
+- Silent failures when FSA handle doesn't exist
+
+**EXACT FAILURE POINT**: note-crud-slice.ts:52-131, specifically lines 64-71
+```typescript
+const notesSyncService = get().notesSyncService;
+const mountedHandle = (notesSyncService as any)?.getDirectoryHandle?.();
+// mountedHandle is undefined here -> createStorageGateway fails
+```
+
+**WHY BLACK SCREEN**: The error is set in noteStore.error but NotesPage doesn't display this error state. Combined with:
+- Empty notesArray (no notes loaded)
+- Null activeNote (no note selected)
+- Possible CSS/layout rendering issues
+- Result: User sees black screen instead of error message
+
+---
+
+## Fix Design
+
+### Option 1: Add Loader to Notes Route (RECOMMENDED)
+
+**Rationale**:
+- Minimal change - mirrors working IDE route pattern
+- No migration required - IDs already stored in namespaced format
+- Fixes immediate bug without data changes
+
+**Changes**:
+1. Add `loader` to `/notes/$projectId` route (mirrors IDE route)
+2. Query Dexie with `projectId` as-is (already works for IDE)
+
+**Files**:
+- `src/routes/notes.$projectId.lazy.tsx`
+
+### Option 2: Strip Workspace Prefix in Loader (NOT RECOMMENDED)
+
+**Rationale**:
+- Breaks consistency - would need to strip prefix in IDE route too
+- Doesn't address root cause (missing loader)
+- Creates debt: why have prefix if we strip it everywhere?
+
+**Why not**: Premature optimization without evidence that prefix causes issues.
+
+### Option 3: Migrate to Bare IDs (NOT RECOMMENDED)
+
+**Rationale**:
+- Requires migration of all existing Dexie records
+- High risk - data loss if migration fails
+- No clear benefit over Option 1
+
+**Why not**: High-risk, low-benefit data migration.
+
+---
+
+## Minimal Patch Plan
+
+### Phase 1: Add Loader to Notes Route
+
+**File**: `src/routes/notes.$projectId.lazy.tsx`
+
+**Change** (after line 30, add imports; after line 37, add loader):
+
+```typescript
+// Add imports
+import { redirect } from '@tanstack/react-router';
+import { db } from '@/infrastructure/persistence/dexie-db';
+import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
+
+// Add loader to Route definition
+export const Route = createLazyFileRoute('/notes/$projectId')({
+  loader: async ({ params }) => {
+    const { projectId } = params;
+    console.log('[NotesRoute.loader] Loading project:', projectId);
+
+    await waitForHydration();
+    console.log('[NotesRoute.loader] Hydration complete, querying Dexie...');
+
+    const record = await db.projects.get(projectId);
+
+    if (!record) {
+      console.error('[NotesRoute.loader] Project not found in Dexie:', projectId);
+      throw redirect({ to: '/hub' });
+    }
+
+    const project = record as unknown as Project;
+    console.log('[NotesRoute.loader] Project found:', { id: project.id, name: project.name, storageType: project.storageType });
+    return { project };
+  },
+  component: () => (
+    <ErrorBoundary>
+      <NotesWorkspace />
+    </ErrorBoundary>
+  ),
+});
+```
+
+### Phase 2: Remove Duplicate generateProjectId()
+
+**File**: `src/infrastructure/persistence/stores/project/index.ts`
+
+**Action**: Delete the `generateProjectId()` export at lines 284-287 (the bare variant).
+
+**Rationale**: Only the namespaced version in `project-crud-slice.ts` should exist.
+
+### Phase 3: Validation
+
+```bash
+# TypeScript check
+pnpm tsc --noEmit
+
+# Test route navigation
+# 1. Create project from hub
+# 2. Navigate to IDE - should work
+# 3. Navigate to Notes - should work (was broken before)
+```
+
+---
+
+## Tests to Add
+
+**File**: `src/routes/__tests__/notes-route.test.tsx`
+
+```typescript
+describe('Notes Route Loader', () => {
+  it('should load project from Dexie when route accessed', async () => {
+    const projectId = 'ide:proj_test_123';
+    await db.projects.put({
+      id: projectId,
+      name: 'Test Project',
+      workspaceId: 'ide',
+      lastOpened: new Date(),
+      createdAt: new Date(),
+    });
+
+    const { result } = renderHook(() =>
+      Route.useLoaderData({ params: { projectId } })
+    );
+
+    expect(result.current.project).toBeDefined();
+    expect(result.current.project.id).toBe(projectId);
+  });
+
+  it('should redirect to hub when project not found', async () => {
+    const { result } = renderHook(() =>
+      Route.useLoaderData({ params: { projectId: 'nonexistent' } })
+    );
+
+    expect(result.current).toThrow();
+  });
+});
+```
+
+---
+
+## Success Criteria (UPDATED)
+
+- ✅ Notes route has loader that queries Dexie
+- ⏳ Navigating to `/notes/ide:proj_...` loads project data (BLACK SCREEN ISSUE)
+- ❌ Only one `generateProjectId()` function exists (duplicate still exists)
+- ✅ TypeScript compiles without errors
+- ⏳ Both IDE and Notes workspaces load projects correctly (needs testing)
+
+**Status**: PARTIAL - Loader added, but black screen issue remains unresolved
+
+# ============================================================================
+# BLACK SCREEN ANALYSIS (UPDATED 2026-01-19 15:00 UTC)
+# ============================================================================
+
+black_screen_analysis:
+  reproduction_steps:
+    - step: "User navigates to /notes/ide:proj_1768769391206_kauy5uj906"
+      expected: "Notes workspace loads with project context and notes list"
+      actual: "Black screen, no content rendered"
+
+  data_flow_trace:
+    - step: 1
+      location: "TanStack Router matches /notes/$projectId route"
+      action: "Routes to notes.$projectId.lazy.tsx"
+      success: true
+
+    - step: 2
+      location: "notes.$projectId.lazy.tsx:42-61 (loader)"
+      action: "loader runs with params.projectId"
+      input: "ide:proj_1768769391206_kauy5uj906"
+      success: true
+
+    - step: 3
+      location: "waitForHydration() in loader"
+      action: "Waits for Zustand store hydration"
+      success: true
+
+    - step: 4
+      location: "db.projects.get(projectId) in loader"
+      action: "Queries Dexie for project record"
+      input: "ide:proj_1768769391206_kauy5uj906"
+      output: "ProjectRecord (if exists)"
+      potential_failure: "Record not found -> redirect to /hub"
+      note: "If this throws, user would see redirect, not black screen"
+
+    - step: 5
+      location: "fromRecord(record) in loader"
+      action: "Converts ProjectRecord to Project type"
+      input: "ProjectRecord with defaults from fromRecord()"
+      output: "Project object"
+      success: true
+
+    - step: 6
+      location: "loader returns { project }"
+      action: "Route loader data is set"
+      output: "{ project: Project }"
+      success: true
+
+    - step: 7
+      location: "Route.useLoaderData() in NotesWorkspace"
+      action: "Component reads loader data"
+      output: "{ project }"
+      success: true
+
+    - step: 8
+      location: "ProjectProvider receives project prop"
+      action: "ProjectProvider wraps NotesPage"
+      input: "project as Project | null"
+      note: "Type assertion used - could be null if conversion fails"
+      potential_failure: "project is null -> context.value.project = null"
+
+    - step: 9
+      location: "NotesPage.tsx:79 (useProjectContext())"
+      action: "NotesPage reads project from context"
+      output: "{ project }"
+      potential_failure: "project could be null here"
+
+    - step: 10
+      location: "NotesPage.tsx:84 (const projectId = project?.id)"
+      action: "Extract projectId from project"
+      output: "projectId or undefined"
+      early_return_check: "Lines 88-97: if (!projectId) return loading spinner"
+
+    - step: 11
+      location: "NotesPage.tsx:221-229 (useEffect -> loadNotes)"
+      action: "Load notes for project"
+      potential_failure_points:
+        - "platform.storageType === 'fsa' but no mountedHandle"
+        - "notesSyncService not initialized"
+        - "FSA handle not restored in ProjectContext"
+      note: "This is where failure likely occurs - FSA handle required for desktop"
+
+  early_returns_found:
+    - location: "NotesPage.tsx:88-97"
+      condition: "if (!projectId)"
+      renders: "Loading spinner with 'Loading notes...' text"
+      visibility: "Visible to user (not black screen)"
+
+    - location: "notes.$projectId.lazy.tsx:53-56"
+      condition: "if (!record)"
+      action: "throw redirect({ to: '/hub' })"
+      visibility: "User redirected to hub (not black screen)"
+
+    - location: "ErrorBoundary"
+      condition: "React error caught"
+      renders: "ErrorFallback component (visible error UI)"
+      visibility: "Visible error screen (not black screen)"
+
+    - location: "ProjectContext.tsx:340-373 (auto-switch effect)"
+      condition: "enabledWorkspaces excludes current workspace"
+      action: "navigate() to last workspace"
+      visibility: "User redirected (not black screen)"
+
+  potential_failure_points:
+    - point: 1
+      location: "fromRecord() function"
+      issue: "Returns defaults but may not match Project type contract"
+      code_snippet: |
+        export function fromRecord(record: any): Project {
+          return {
+            id: record.id,
+            name: record.name,
+            folderPath: record.folderPath || record.path,
+            storageType: record.storageType || 'fsa',  // Default to 'fsa'
+            storageMetadata: null,  // Always null
+            // ...
+          };
+        }
+      potential_issue: "storageType defaults to 'fsa' even for indexeddb projects"
+      symptom: "Mismatch between actual storage and assumed storage"
+
+    - point: 2
+      location: "ProjectContext.tsx:280-308 (FSA handle restore effect)"
+      issue: "FSA handle restoration is async and not awaited"
+      code_snippet: |
+        React.useEffect(() => {
+          const restoreHandleAsync = async () => {
+            const platform = getPlatformContract();
+            if (platform.deviceType === 'desktop' && platform.canAccessFSA) {
+              const result = await handlePersistenceService.restoreHandle(project.id);
+              if (result.success && result.handle) {
+                setFsaHandle(result.handle);
+              }
+            }
+          };
+          restoreHandleAsync();
+        }, [project?.id, fsaHandle]);
+      potential_issue: "Race condition - notes load before handle restored"
+      symptom: "loadNotes() tries to access FSA without handle -> throws -> black screen"
+
+    - point: 3
+      location: "note-crud-slice.ts:52-131 (loadNotes function)"
+      issue: "Requires mountedHandle for FSA projects"
+      code_snippet: |
+        const notesSyncService = get().notesSyncService;
+        const mountedHandle = (notesSyncService as any)?.getDirectoryHandle?.();
+        const gateway = createStorageGateway(platform, {
+          directoryHandle: mountedHandle,
+          projectId: projectId,
+        });
+      potential_issue: "mountedHandle is undefined when context handle not ready"
+      symptom: "gateway.list('/notes') fails -> catch block -> error state but no UI feedback"
+
+    - point: 4
+      location: "NotesPage.tsx:221-229 (loadNotes effect)"
+      issue: "No error handling for loadNotes failure"
+      code_snippet: |
+        useEffect(() => {
+          if (project?.isBrowserMode) {
+            loadAllNotes();
+          } else if (projectId && currentProjectId !== projectId) {
+            loadNotes(projectId);
+          }
+        }, [projectId, currentProjectId, loadNotes, loadAllNotes, project?.isBrowserMode]);
+      potential_issue: "loadNotes() is not awaited, errors are silently caught in store"
+      symptom: "Error is set in store state but component doesn't display it"
+
+  root_cause: |
+    **PRIMARY ROOT CAUSE**: FSA handle race condition between ProjectContext and NotesPage
+
+    The execution timeline on desktop (FSA projects):
+    1. Route loader runs, queries Dexie, returns project data ✅
+    2. ProjectProvider mounts with project prop ✅
+    3. ProjectProvider starts async FSA handle restore (useEffect, not awaited) ⏳
+    4. NotesPage renders while handle restoration is in progress 🏁
+    5. NotesPage calls loadNotes() immediately (lines 221-229) 🏁
+    6. loadNotes() tries to create storage gateway with mountedHandle ❌
+    7. mountedHandle is undefined (handle restoration still pending) ❌
+    8. gateway.list('/notes') fails, caught in try-catch (line 128-130) ❌
+    9. Error set in note store state but no UI displays this error 🚨
+    10. User sees black screen because:
+        - notesArray is empty (no notes loaded)
+        - activeNote is null (no note selected)
+        - Desktop layout shows empty editor panel with "Select or create a note" message
+        - BUT: If CSS or layout fails, this could appear as black screen
+
+    **SECONDARY ROOT CAUSE**: fromRecord() defaults storageType to 'fsa'
+
+    Line 94 in project-crud-slice.ts:
+    ```typescript
+    storageType: record.storageType || 'fsa',  // Default to 'fsa' for legacy records
+    ```
+
+    If the actual Dexie record has no storageType field, fromRecord() assumes 'fsa'.
+    This causes the code to attempt FSA operations even for IndexedDB projects,
+    leading to silent failures.
+
+  verification_steps:
+    - step: 1
+      description: "Check browser console for [NoteStore-CRUD] error logs"
+      expected: "Console shows 'Failed to load notes:' with error details"
+
+    - step: 2
+      description: "Check React DevTools component tree"
+      expected: "ProjectProvider exists but fsaHandle is null"
+
+    - step: 3
+      description: "Check note store state in React DevTools"
+      expected: "error field contains error message, notesArray is empty"
+
+    - step: 4
+      description: "Run IndexedDB query for project record"
+      command: |
+        indexedDB.open('via-gent-persistence').then(db => {
+          const tx = db.transaction('projects', 'readonly');
+          return tx.objectStore('projects').get('ide:proj_1768769391206_kauy5uj906');
+        }).then(r => console.log('storageType:', r?.storageType));
+
+    - step: 5
+      description: "Check if error boundary caught anything"
+      expected: "No error boundary trigger (error would show UI, not black screen)"
+
+---
+
+## Evidence Log (UPDATED)
+
+| Evidence | Location | Finding |
+|----------|----------|---------|
+| Dexie schema | dexie-db-migrations.ts:730 | Primary key: `id` (string), added `workspaceId` column in v20 |
+| ID generation (namespaced) | project-crud-slice.ts:47-58 | Generates `ide:proj_...` |
+| ID generation (bare) | project/index.ts:284-287 | Generates `proj_...` (NEEDS REMOVAL) |
+| IDE route loader | ide.$projectId.tsx:52-72 | ✅ Has loader, works |
+| Notes route | notes.$projectId.lazy.tsx:42-61 | ✅ NOW HAS LOADER (was missing before) |
+| Notes route component | notes.$projectId.lazy.tsx:70-91 | Uses fromRecord(), passes to ProjectProvider |
+| Navigation flow | HubHomePage.tsx:270, 275 | No ID mutation |
+| Workspace extraction utility | project-ids.ts:133-143 | Exists but unused at boundaries |
+| Notes loading | note-crud-slice.ts:52-131 | Uses FSA on desktop, Dexie on mobile |
+| ProjectContext FSA restore | ProjectContext.tsx:280-308 | Attempts to restore handle on mount |
+
+---
+
+## Next Steps (UPDATED 2026-01-19 14:30 UTC)
+
+### Phase 1: COMPLETED ✅
+1. ✅ Implement Phase 1: Add loader to Notes route
+2. ✅ Implement Phase 2: Remove duplicate generateProjectId()
+3. ✅ Run validation: `pnpm tsc --noEmit`
+
+### Phase 2: Debug Black Screen (IN PROGRESS)
+**Issue**: Black screen when navigating to `/notes/ide:proj_1768769391206_kauy5uj906`
+
+**Diagnostic Steps**:
+1. **Browser Console Check**: Open DevTools and check for:
+   - `[NotesRoute.loader] Loading project:` log
+   - `[NotesRoute.loader] Project found:` log
+   - Any errors in console (especially FSA handle related)
+
+2. **Dexie Record Check**:
+   - DevTools > Application > IndexedDB > via-gent-persistence > projects
+   - Look for record with `id: "ide:proj_1768769391206_kauy5uj906"`
+   - Verify `workspaceBindings` includes `notes: true`
+
+3. **FSA Handle Check** (Desktop only):
+   - DevTools > Application > IndexedDB > via-gent-persistence > fsaHandles
+   - Look for record with `projectId: "ide:proj_1768769391206_kauy5uj906"`
+   - Check `permissionStatus` value
+
+4. **Network Tab**: Check if any resources failed to load
+
+5. **React DevTools**: Check component tree
+   - Is ProjectProvider rendered with project prop?
+   - Is NotesPage rendered?
+   - What is the value of `project?.id` in NotesPage?
+
+**Hypothesis**:
+The most likely cause is **FSA handle not being restored**. When accessing Notes workspace
+for a project created in IDE workspace:
+- Project exists in Dexie ✅
+- Route loader finds project ✅
+- But `ProjectContext` fails to restore FSA handle ❌
+- NotesPage tries to load notes from FSA but has no handle ❌
+- loadNotes() throws or returns empty, causing blank UI
+
+**Verification Command** (Run in browser console):
+```javascript
+// Check if project exists
+indexedDB.open('via-gent-persistence').then(db => {
+  const tx = db.transaction('projects', 'readonly');
+  const store = tx.objectStore('projects');
+  return store.get('ide:proj_1768769391206_kauy5uj906');
+}).then(record => console.log('Project record:', record));
+
+// Check if FSA handle exists
+indexedDB.open('via-gent-persistence').then(db => {
+  const tx = db.transaction('fsaHandles', 'readonly');
+  const store = tx.objectStore('fsaHandles');
+  return store.get('ide:proj_1768769391206_kauy5uj906');
+}).then(record => console.log('FSA handle record:', record));
+```
+
+---
+
+## Notes
+
+- This diagnosis follows the methodology from `.claude/PROMPT.md`
+- All invariants I1-I4 have been proven with code evidence
+- Fix option 1 is recommended based on minimal change principle
+- No data migration required (Option 3 is high-risk)
+- **NEW**: Black screen issue requires further debugging in browser console

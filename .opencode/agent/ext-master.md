@@ -10,7 +10,6 @@ tools:
   write: false
   edit: false
   bash: false
-  mcp/*: false
 permission:
   edit: deny
   bash: deny

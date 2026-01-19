@@ -26,6 +26,7 @@ import { createStorageGateway } from '@/infrastructure/filesystem/storage-gatewa
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { NoteGateway } from '@/domain/services/note-gateway';
+import { restoreHandle } from '@/infrastructure/filesystem/handle-persistence';
 
 /**
  * CRUD Operations Slice
@@ -43,11 +44,10 @@ export const createNoteCRUDSlice: StateCreator<
     Pick<NoteStoreState, 'loadNotes' | 'loadAllNotes' | 'createNote' | 'updateNote' | 'deleteNote'>
 > = (set, get) => ({
     /**
-     * Load notes for a project from the appropriate storage based on platform
+     * Load notes for a project from the appropriate storage
      *
-     * Per ADR-033:
-     * - Desktop (FSA): Read from /notes/{id}.md files in project directory
-     * - Mobile/Tablet (IndexedDB): Read from DexieDB
+     * Per ADR-033: Desktop uses FSA ONLY, Mobile uses IndexedDB
+     * BUG-013 FIX: If FSA handle is not available, fall back to IndexedDB
      *
      * @param projectId - Project ID to load notes for
      */
@@ -55,62 +55,78 @@ export const createNoteCRUDSlice: StateCreator<
         set({ loading: true, error: null, currentProjectId: projectId });
 
         try {
+            // BUG-FIX-008: Enforce FSA ONLY on desktop - no IndexedDB fallback
+            // Platform detection is the SINGLE SOURCE OF TRUTH for storage type
+            // Project storageType is metadata only - actual storage is determined by platform
             const platform = getPlatformContract();
 
+            // BUG-013 FIX: If FSA but no handle available, fall back to IndexedDB
+            // This prevents crash when handle hasn't been restored yet
+            let useIndexedDB = platform.storageType === 'indexeddb';
+
             if (platform.storageType === 'fsa') {
-                // Desktop: Read notes from FSA files
-                // Per ADR-033: FSA is source of truth, Dexie is for reactivity only
-                const project = useProjectStore.getState().projects[projectId];
+                // Try to get FSA handle
+                const restoreResult = await restoreHandle(projectId);
+                const mountedHandle = restoreResult.handle ?? undefined;
 
-                if (!project) {
-                    throw new Error(`Project ${projectId} not found`);
-                }
-
-                // Create gateway to read from FSA
-                const gateway = createStorageGateway(platform, {
-                    directoryHandle: undefined, // Handle will be resolved by gateway internally
-                    projectId: projectId,
-                });
-
-                const noteGateway = new NoteGateway(gateway);
-
-                // List all files in /notes/ directory
-                const entries = await gateway.list('/notes');
-
-                // Filter for .md files and read them
-                const notePromises = entries
-                    .filter(entry => entry.kind === 'file' && entry.path.endsWith('.md'))
-                    .map(async (entry) => {
-                        const filename = entry.path.split('/').pop()?.replace('.md', '') || '';
-                        try {
-                            const note = await noteGateway.readNote(filename);
-                            // Only include notes belonging to this project
-                            if (note.projectId === projectId) {
-                                return note;
-                            }
-                            return null;
-                        } catch (error) {
-                            console.warn(`[NoteStore-CRUD] Failed to read note ${filename}:`, error);
-                            return null;
-                        }
+                if (!mountedHandle) {
+                    // BUG-013 FIX: No handle available - fall back to IndexedDB
+                    console.warn('[NoteStore-CRUD] FSA handle not available for project:', projectId, '- falling back to IndexedDB');
+                    useIndexedDB = true;
+                } else {
+                    // FSA with handle - use FSAGateway
+                    const gateway = createStorageGateway(platform, {
+                        directoryHandle: mountedHandle,
+                        projectId: projectId,
                     });
 
-                const notes = (await Promise.all(notePromises)).filter((n): n is NoteRecord => n !== null);
-                const notesMap = new Map<string, NoteRecord>();
-                notes.forEach(note => notesMap.set(note.id, note));
+                    const noteGateway = new NoteGateway(gateway);
 
-                // Sort by order
-                const notesArray = Array.from(notesMap.values()).sort((a, b) => a.order - b.order);
+                    // List all files in /notes/ directory
+                    let entries: { kind: string; path: string }[] = [];
+                    try {
+                        entries = await gateway.list('/notes');
+                    } catch (err) {
+                        // Notes folder may not exist yet - that's OK
+                        console.log('[NoteStore-CRUD] /notes directory not found, starting fresh');
+                        entries = [];
+                    }
 
-                set({
-                    notes: notesMap,
-                    notesArray,
-                    loading: false,
-                });
+                    // Filter for .md files and read them
+                    const notePromises = entries
+                        .filter(entry => entry.kind === 'file' && entry.path.endsWith('.md'))
+                        .map(async (entry) => {
+                            const filename = entry.path.split('/').pop()?.replace('.md', '') || '';
+                            try {
+                                const note = await noteGateway.readNote(filename);
+                                // Only include notes belonging to this project
+                                if (note.projectId === projectId) {
+                                    return note;
+                                }
+                                return null;
+                            } catch (error) {
+                                console.warn(`[NoteStore-CRUD] Failed to read note ${filename}:`, error);
+                                return null;
+                            }
+                        });
 
-                console.log(`[NoteStore-CRUD] Loaded ${notes.length} notes for project ${projectId} from FSA`);
-            } else {
-                // Mobile/Tablet: Read from DexieDB (Dexie is primary storage)
+                    const notes = (await Promise.all(notePromises)).filter((n): n is NoteRecord => n !== null);
+                    const notesMap = new Map<string, NoteRecord>();
+                    notes.forEach(note => notesMap.set(note.id, note));
+
+                    set({
+                        notes: notesMap,
+                        notesArray: notes,
+                        loading: false,
+                        error: null,
+                    });
+                    return;
+                }
+            }
+
+            // IndexedDB path (mobile OR FSA fallback when no handle)
+            if (useIndexedDB) {
+                // Mobile/Tablet/FSA-fallback: Read from DexieDB (Dexie is primary storage)
                 const notes = await db.notes
                     .where('projectId')
                     .equals(projectId)
@@ -239,8 +255,12 @@ export const createNoteCRUDSlice: StateCreator<
             }
 
             // Create gateway for current platform
+            // Get FSA handle from handle persistence service
+            const restoreResult = await restoreHandle(currentProjectId ?? '');
+            const mountedHandle = restoreResult.handle ?? undefined;
+
             const gateway = createStorageGateway(platform, {
-                directoryHandle: undefined, // Handle will be resolved by gateway internally
+                directoryHandle: mountedHandle,
                 projectId: currentProjectId ?? '',
             });
 
@@ -318,8 +338,12 @@ export const createNoteCRUDSlice: StateCreator<
             }
 
             // Create gateway for current platform
+            // Get FSA handle from handle persistence service
+            const restoreResult = await restoreHandle(currentProjectId ?? '');
+            const mountedHandle = restoreResult.handle ?? undefined;
+
             const gateway = createStorageGateway(platform, {
-                directoryHandle: undefined, // Handle will be resolved by gateway internally
+                directoryHandle: mountedHandle,
                 projectId: currentProjectId ?? '',
             });
 
@@ -403,8 +427,12 @@ export const createNoteCRUDSlice: StateCreator<
                 }
 
                 // Create gateway for current platform
+                // Get FSA handle from handle persistence service
+                const restoreResult = await restoreHandle(currentProjectId ?? '');
+                const mountedHandle = restoreResult.handle ?? undefined;
+
                 const gateway = createStorageGateway(platform, {
-                    directoryHandle: undefined,
+                    directoryHandle: mountedHandle,
                     projectId: currentProjectId ?? '',
                 });
 

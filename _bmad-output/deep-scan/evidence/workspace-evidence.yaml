@@ -1,0 +1,423 @@
+scan_metadata:
+  scan_date: "2026-01-20"
+  scanner: "deep-scan-workspace-scanner"
+  target_lifecycle: "project-creation-to-notes-usage"
+  level: "1-smelling"
+
+path_a_investigation:
+  description: "Project Creation → Notes Entry → Note Usage"
+
+  stages:
+    - stage: "project_creation"
+      components:
+        - file: "src/presentation/components/project/ProjectCreationWizard.tsx"
+          role: "Multi-step project creation UI (5 steps)"
+          state_impact: "Creates project in Zustand store + Dexie db"
+          persistence: "Project metadata → Dexie.projects, FSA handle → Dexie.fsaHandles"
+          notes: "546 lines - Long file with detailed comments (100+ lines of governance metadata)"
+
+        - file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+          role: "Project CRUD operations"
+          state_impact: "updateProject() updates Zustand state"
+          persistence: "toRecord() converts Zustand → Dexie, db.projects.put() persists"
+          notes: "316 lines - Contains multiple historical fix comments (BUG-011, PS-04, ARC-D03)"
+
+        - file: "src/infrastructure/filesystem/handle-persistence.ts"
+          role: "FSA handle storage and restoration"
+          state_impact: "storeFSAHandle() persists handle metadata to Dexie"
+          persistence: "Chrome 122+: structuredClone(handle) → Dexie.fsaHandles.handleData"
+          notes: "599 lines - Extensive inline comments explaining Chrome version support and persistence strategy"
+
+        - file: "src/presentation/components/project/ProjectsPage.tsx"
+          role: "Project listing and selection"
+          state_impact: "useLiveQuery(() → db.projects.toArray())"
+          persistence: "Reads from Dexie.projects table"
+          notes: "381 lines - Clean file with minimal comments"
+
+      hooks_used:
+        - "useProjectStore() - Access project CRUD methods"
+        - "useLiveQuery() - React hook for Dexie queries"
+        - "createProject() - Async project creation"
+
+      services_involved:
+        - "handlePersistenceService.persistHandle() - Store FSA handle"
+        - "handlePersistenceService.restoreHandle() - Restore FSA handle"
+        - "getPlatformContract() - Detect platform capabilities"
+
+      id_management:
+        generation: "generateProjectId() → 'proj_{timestamp}_{random}'"
+        storage: "Dexie.projects.id (primary key)"
+        format: "proj_1704787200000_abc123xyz (no workspace prefix per BUG-011 FIX)"
+
+    - stage: "notes_entry"
+      components:
+        - file: "src/routes/notes.$projectId.tsx"
+          role: "Notes workspace route definition"
+          state_impact: "Loader returns project data to component"
+          persistence: "Wait for Zustand hydration, then db.projects.get(projectId)"
+          notes: "101 lines - Clean with minimal comments"
+
+        - file: "src/lib/workspace/ProjectContext.tsx"
+          role: "Cross-workspace project state provider"
+          state_impact: "Provides project, currentWorkspace, fsaHandle to child components"
+          persistence: "Loads last workspace from localStorage, persists on changes"
+          notes: "507 lines - Contains FSA-006, FSA-007 fix comments"
+
+        - file: "src/infrastructure/persistence/stores/project/wait-for-hydration.ts"
+          role: "Hydration waiter"
+          state_impact: "Blocks until Zustand store hydrates from Dexie"
+          persistence: "No persistence - just waiting"
+          notes: "Unknown size - Need to read"
+
+      hooks_used:
+        - "useParams() - Get projectId from URL"
+        - "useLoaderData() - Get project from route loader"
+        - "useProjectContext() - Access project context"
+        - "waitForHydration() - Wait for Zustand store to load"
+
+      services_involved:
+        - "Route loader - Runs before component renders"
+        - "ProjectProvider - Context provider for project state"
+        - "restoreProjectHandle() - Restore FSA handle on project load"
+
+      loaders_involved:
+        - "Route loader (notes.$projectId.tsx): await waitForHydration(), db.projects.get()"
+        - "Hydration: Zustand store loads from Dexie on app mount"
+
+      guards_involved:
+        - "Platform detection - Check if IDE is accessible on mobile"
+        - "Workspace binding validation - Check if workspace is enabled"
+
+      id_management:
+        retrieval: "URL params: /notes/$projectId"
+        context: "ProjectContext provides project object with id"
+        validation: "Route loader throws redirect if project not found"
+
+    - stage: "note_usage"
+      components:
+        - file: "src/presentation/components/notes/NotesPage.tsx"
+          role: "Main notes workspace component"
+          state_impact: "useNoteStore() loads notes, setActiveNote() sets active"
+          persistence: "loadNotes() from Dexie, createNote/updateNote persist to Dexie"
+          notes: "975 lines - CRITICAL: Contains extensive change history comments (TB-15, R3, BUG-016, etc)"
+
+        - file: "src/presentation/components/notes/NoteSidebar.tsx"
+          role: "Notes list with search/filter"
+          state_impact: "Display notesArray from note store, calls onNoteSelect()"
+          persistence: "No direct persistence - just display"
+          notes: "411 lines - Clean with minimal comments"
+
+        - file: "src/presentation/components/notes/NoteEditor.tsx"
+          role: "BlockNote editor component"
+          state_impact: "Auto-saves note on edits (500ms debounce)"
+          persistence: "updateNote() persists changes to Dexie"
+          notes: "Unknown size - Need to read"
+
+        - file: "src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"
+          role: "Notes file sync service (FSA ↔ Markdown)"
+          state_impact: "NoteFolderBridge imports .md files to note store"
+          persistence: "Read/write .md files via FSA adapter, persist notes to Dexie"
+          notes: "304 lines - Contains sync logic and bridge integration"
+
+      hooks_used:
+        - "useNoteStore() - Access note CRUD operations"
+        - "useActiveNote() - Get currently active note"
+        - "useProjectContext() - Get project info"
+        - "useFileSyncService() - Initialize file sync for FSA projects"
+
+      services_involved:
+        - "NotesFileSyncService - Bidirectional notes ↔ Markdown sync"
+        - "NoteFolderBridge - Import/export notes to files"
+        - "StorageAdapterFactory - Create FSA/IDB gateway"
+        - "StorageGateway - Abstract file operations"
+
+      handlers_involved:
+        - "handleNoteSelect() - Set active note in store"
+        - "handleCreateNote() - Create new note"
+        - "handleImport() - Import markdown files"
+        - "handleExport() - Export notes to markdown"
+
+      logic:
+        - "Auto-import: On mount, if FSA project, import .md files from /notes/"
+        - "Auto-save: NoteEditor debounces edits 500ms, then updateNote()"
+        - "File watching: FSA adapter watches /notes/ for external changes"
+        - "Cross-workspace: Event subscriptions react to IDE file saves"
+
+      cross_domain_interactions:
+        - domain_a: "notes"
+          domain_b: "storage"
+          interaction_type: "read/write/update"
+          files_involved:
+            - "StorageAdapterFactory.ts"
+            - "FSA storage adapter"
+            - "IDB gateway"
+
+        - domain_a: "notes"
+          domain_b: "project"
+          interaction_type: "read"
+          files_involved:
+            - "ProjectContext.tsx"
+            - "useProjectStore()"
+
+        - domain_a: "notes"
+          domain_b: "routing"
+          interaction_type: "navigate"
+          files_involved:
+            - "notes.$projectId.tsx"
+
+      route_directing:
+        entry_point: "Route /notes/$projectId"
+        params: "projectId from URL"
+        loader: "Load project from Dexie"
+        provider: "ProjectProvider wraps NotesPage"
+        component: "NotesPage (975 lines - main workspace component)"
+
+      handle_hydration:
+       时机: "On ProjectProvider mount"
+        service: "handlePersistenceService.restoreHandle(projectId)"
+        storage_location: "Dexie.fsaHandles table"
+        strategies:
+          - "Chrome 129+: structuredClone(handle) stored in handleData field"
+          - "Chrome 122-128: showDirectoryPicker({ id: projectId }) silent restore"
+          - "Chrome <122: User prompt required every time"
+        fallback: "Prompt user with showDirectoryPicker() if silent restore fails"
+
+      queries:
+        dexie: "db.notes.where('projectId').equals(projectId).toArray()"
+        dexie_projects: "db.projects.get(projectId)"
+        dexie_handles: "db.fsaHandles.get(projectId)"
+
+      lazy_loading:
+        routes:
+          - "notes.lazy.tsx - Code-split route for workspace"
+          - "ide.$projectId.tsx - IDE route (uses lazy loaders)"
+          - "knowledge.$projectId.tsx - Knowledge route (deferred)"
+
+  cross_domain_interactions:
+    - domain_a: "project"
+      domain_b: "notes"
+      interaction_type: "read"
+      files_involved:
+        - "ProjectContext.tsx provides project to NotesPage"
+        - "ProjectsPage.tsx handles project creation and listing"
+        - "ProjectCreationWizard.tsx creates project, navigates to notes/ide"
+
+    - domain_a: "project"
+      domain_b: "storage"
+      interaction_type: "write/update"
+      files_involved:
+        - "project-crud-slice.ts persists to Dexie.projects"
+        - "handle-persistence.ts stores FSA handles in Dexie.fsaHandles"
+        - "StorageAdapterFactory creates storage gateway based on project.storageType"
+
+    - domain_a: "notes"
+      domain_b: "storage"
+      interaction_type: "read/write"
+      files_involved:
+        - "NotesFileSyncService uses FSA/IDB gateway for file I/O"
+        - "note-store persists notes to Dexie.notes"
+        - "NoteFolderBridge imports/exports to .md files"
+
+    - domain_a: "notes"
+      domain_b: "routing"
+      interaction_type: "navigate"
+      files_involved:
+        - "notes.$projectId.tsx route"
+        - "ProjectContext.switchWorkspace() navigates between workspaces"
+        - "Cross-workspace navigation preserves project state"
+
+  unclean_files:
+    - file: "src/presentation/components/notes/NotesPage.tsx"
+      issues:
+        - "Long change history comments (TB-15, R3, BUG-016, BUG-FIX-003, etc.)"
+        - "100+ lines of inline governance and bug fix metadata"
+        - "Dangling logic comments for auto-import retries"
+        - "Complex useEffect chains with multiple ref-based guards"
+        - "975 lines total - exceeds 400 line threshold"
+
+    - file: "src/presentation/components/project/ProjectCreationWizard.tsx"
+      issues:
+        - "100+ lines of governance metadata comments (PHASE 1 DETACHMENT tracking)"
+        - "Complex wizard state management across 5 steps"
+        - "546 lines total - exceeds 400 line threshold"
+
+    - file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+      issues:
+        - "Multiple historical fix comments (BUG-011, PS-04, ARC-D03)"
+        - "CC-V2-B03, INF-03 fix references"
+        - "Complex handle persistence logic with fallback paths"
+        - "316 lines total - within limit but dense with comments"
+
+    - file: "src/infrastructure/filesystem/handle-persistence.ts"
+      issues:
+        - "Extensive inline comments explaining Chrome version support"
+        - "Complex silent restore logic with multiple browser version checks"
+        - "599 lines total - exceeds 400 line threshold"
+
+    - file: "src/lib/workspace/ProjectContext.tsx"
+      issues:
+        - "FSA-006, FSA-007 fix comments throughout"
+        - "Complex useEffect chain for handle restoration and workspace switching"
+        - "ROUTE-008 remediation comments for platform validation"
+        - "507 lines total - exceeds 400 line threshold"
+
+path_b_investigation:
+  description: "Project Revisit from ID → Notes Loading"
+
+  stages:
+    - stage: "project_load"
+      components:
+        - file: "src/routes/notes.$projectId.tsx (same as Path A)"
+          role: "Route with project ID from URL"
+          state_impact: "Loader loads project from Dexie by ID"
+          persistence: "db.projects.get(projectId) - read-only query"
+
+        - file: "src/lib/workspace/ProjectContext.tsx (same as Path A)"
+          role: "Restore project context from persisted state"
+          state_impact: "useEffect restores FSA handle on project load"
+          persistence: "handlePersistenceService.restoreHandle(projectId)"
+
+        - file: "src/infrastructure/persistence/stores/project/wait-for-hydration.ts"
+          role: "Ensure Zustand store hydrated from Dexie"
+          state_impact: "Blocks until _hasHydrated = true"
+          persistence: "Waits for Zustand to load from Dexie"
+
+      hooks_used:
+        - "useLoaderData() - Get project from route loader (already fetched)"
+        - "useProjectContext() - Access restored project state"
+        - "waitForHydration() - Ensure store ready"
+
+      services_involved:
+        - "handlePersistenceService.restoreHandle() - Restore FSA handle"
+        - "Zustand hydration - Load projects from Dexie on app mount"
+
+      loaders_involved:
+        - "Route loader: db.projects.get(projectId) - Single project fetch"
+        - "Hydration: db.projects.toArray() - Load all projects on app mount"
+
+      handle_hydration:
+       时机: "ProjectProvider mount"
+        service: "handlePersistenceService.restoreHandle(projectId)"
+        strategies:
+          - "Chrome 129+: structuredClone(record.handleData)"
+          - "Chrome 122-128: showDirectoryPicker({ id }) with persistent permission"
+          - "Chrome <122: User prompt required"
+        result: "FSA handle restored to context via setFsaHandle()"
+
+      id_management:
+        retrieval: "URL params → route loader → Dexie.projects.get()"
+        format: "proj_{timestamp}_{random} (no workspace prefix)"
+        validation: "Route loader throws redirect if not found"
+
+    - stage: "notes_load"
+      components:
+        - file: "src/presentation/components/notes/NotesPage.tsx (same as Path A)"
+          role: "Load notes for project ID"
+          state_impact: "loadNotes(projectId) loads from Dexie.notes"
+          persistence: "db.notes.where('projectId').equals(projectId).toArray()"
+          notes: "975 lines - Same unclean issues as Path A"
+
+        - file: "src/lib/notes/note-store.ts"
+          role: "Note store facade (redirects to refactored slices)"
+          state_impact: "loadNotes() filters by projectId, sets in Zustand"
+          persistence: "Dexie.notes table (filtered by projectId)"
+          notes: "40 lines - Clean facade, logic in note-store-refactored.ts"
+
+        - file: "src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"
+          role: "Initialize file sync for FSA projects"
+          state_impact: "Auto-import .md files from /notes/ on mount"
+          persistence: "FSA adapter reads /notes/*.md, imports to Dexie.notes"
+          notes: "304 lines - Sync service with bridge integration"
+
+      hooks_used:
+        - "useNoteStore() - Access loadNotes() method"
+        - "useProjectContext() - Get project ID for filtering"
+
+      services_involved:
+        - "NotesFileSyncService - Auto-import on mount for FSA"
+        - "NoteFolderBridge - Convert .md files to Note records"
+        - "StorageAdapterFactory - Create gateway based on storageType"
+
+      handlers_involved:
+        - "loadNotes(projectId) - Load notes from Dexie"
+        - "initializeNotesSync() - Initialize file sync service"
+        - "autoImportFiles() - Import directory on service ready"
+
+      logic:
+        - "Project mode: loadNotes(projectId) - Filter by project ID"
+        - "Browser mode: loadAllNotes() - Show notes from all projects"
+        - "FSA projects: Auto-import from /notes/ directory on mount"
+        - "IndexedDB projects: No auto-import (no file system access)"
+
+      lazy_loading:
+        components:
+          - "NoteEditor - Lazy loads BlockNote libraries"
+          - "NotesPage components - Lazy loaded via notes.lazy.tsx route"
+
+  cross_domain_interactions:
+    - domain_a: "project"
+      domain_b: "notes"
+      interaction_type: "read"
+      files_involved:
+        - "ProjectContext provides project metadata to NotesPage"
+        - "Project store filters notes by projectId"
+
+    - domain_a: "notes"
+      domain_b: "storage"
+      interaction_type: "read/write"
+      files_involved:
+        - "Note store persists to Dexie.notes table"
+        - "File sync service reads/writes .md files via FSA adapter"
+
+  unclean_files:
+    - file: "src/presentation/components/notes/NotesPage.tsx"
+      issues:
+        - "Same issues as Path A - shared component"
+        - "975 lines - Exceeds 400 line threshold"
+
+findings_summary:
+  total_components_involved: 18
+  cross_domain_count: 6
+  unclean_files_count: 4
+  critical_issues:
+    - "NotesPage.tsx (975 lines) - Massive component with extensive change history"
+    - "ProjectCreationWizard.tsx (546 lines) - Exceeds threshold, complex state"
+    - "handle-persistence.ts (599 lines) - Exceeds threshold, dense comments"
+    - "ProjectContext.tsx (507 lines) - Exceeds threshold, fix comments"
+
+  data_flow_bottlenecks:
+    - "Hydration: waitForHydration() blocks until Zustand loads from Dexie"
+    - "FSA handle restoration: Complex Chrome version detection and fallback logic"
+    - "Auto-import: NotesPage auto-import on mount can take 30+ seconds for large projects"
+    - "Cross-workspace events: Multiple event subscriptions in NotesPage (FILE_SAVED, KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED)"
+
+  complexity_hotspots:
+    - "NotesPage.tsx: 975 lines with 8 useEffect hooks, complex state management"
+    - "ProjectCreationWizard.tsx: 5-step wizard with validation, optional steps"
+    - "handle-persistence.ts: 3-tier restoration strategy (Chrome 129+, 122-128, <122)"
+    - "ProjectContext.tsx: Handle restoration + workspace switching + platform validation"
+
+  recommendations:
+    - "SPLIT NotesPage.tsx (975 lines) into focused components"
+    - "Extract file sync initialization logic from NotesPage to custom hook"
+    - "Reduce inline governance comments in favor of external documentation"
+    - "Split ProjectCreationWizard into smaller step components"
+    - "Refactor handle-persistence.ts to strategy pattern for Chrome versions"
+    - "Extract ProjectContext effects to custom hooks (useFSAHandle, useWorkspaceSwitching)"
+    - "Consider memoization for Dexie queries to reduce re-renders"
+    - "Implement proper code split for NotesPage (editor, sidebar, chat as separate modules)"
+
+  architecture_gaps:
+    - "No clear separation between UI components and business logic in NotesPage"
+    - "File sync initialization tightly coupled to NotesPage component"
+    - "FSA handle restoration logic scattered across multiple files"
+    - "Workspace switching logic mixed with handle restoration in ProjectContext"
+
+  positive_findings:
+    - "Clean separation: project, notes, storage domains are well-architected"
+    - "Dexie as single source of truth - no dual storage issues"
+    - "Platform-aware routing - IDE blocked on mobile, Notes fallback"
+    - "Workspace binding validation prevents invalid workspace access"
+    - "Handle persistence service well-abstracted with Chrome version support"
+    - "Project ID format consistent (no workspace prefix per BUG-011 fix)"
+    - "Storage gateway abstraction allows FSA/IDB switching"

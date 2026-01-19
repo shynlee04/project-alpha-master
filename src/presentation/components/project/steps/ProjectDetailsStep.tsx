@@ -10,7 +10,7 @@
  * Size target: ≤200 lines
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Loader2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -88,15 +88,22 @@ export const ProjectDetailsStep: React.FC<ProjectDetailsStepProps> = ({
   const platform = getPlatformContract();
   const [isPickingFolder, setIsPickingFolder] = useState(false);
 
+  // FIX: Use ref to stabilize updateFormData callback access
+  // This prevents infinite useEffect loops when updateFormData reference changes
+  const updateFormDataRef = useRef(updateFormData);
+  useEffect(() => {
+    updateFormDataRef.current = updateFormData;
+  }, [updateFormData]);
+
   // TASK-1 FIX: Force FSA for desktop, no user choice per ADR-033
   // Desktop users ALWAYS use FSA, mobile/tablet ALWAYS use IndexedDB
   useEffect(() => {
     const optimalStorage = platform.canAccessFSA ? 'fsa' : 'indexeddb';
     // Always force the correct storage type for the platform
     if (formData.storageType !== optimalStorage) {
-      updateFormData('storageType', optimalStorage as WizardFormData['storageType']);
+      updateFormDataRef.current('storageType', optimalStorage as WizardFormData['storageType']);
     }
-  }, [platform.canAccessFSA, formData.storageType, updateFormData]);
+  }, [platform.canAccessFSA, formData.storageType]);
 
   // TASK-1 FIX: Desktop users should NOT see storage type choice
   // Only show selector for non-FSA platforms (mobile/tablet)

@@ -17,6 +17,9 @@ export {
   getProjectStoreState,
 } from './useProjectStore';
 
+// CRUD utilities
+export { generateProjectId, fromRecord, toRecord } from './project-crud-slice';
+
 // Types
 export type {
   Project,
@@ -271,20 +274,6 @@ export async function clearAllProjects(): Promise<boolean> {
  */
 export async function getProjectCount(): Promise<number> {
   return useProjectStore.getState().getAllProjects().length;
-}
-
-/**
- * Facade: Generate project ID
- *
- * @deprecated Use useProjectStore.getState().createProject() which generates ID internally
- *
- * FUNDAMENTAL TRUTH: Project ID should NOT have workspace prefix.
- * Project ID is: proj_${timestamp}_${random}
- * Workspace is determined by routing, not by project ID.
- */
-export function generateProjectId(): string {
-  const randomPart = Math.random().toString(36).substring(2, 11);
-  return `proj_${Date.now()}_${randomPart}`;
 }
 
 /**

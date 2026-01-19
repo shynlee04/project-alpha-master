@@ -30,6 +30,7 @@ import type { WorkspaceBindings } from '@/infrastructure/persistence/stores/proj
 import { serializeHandle } from '@/infrastructure/filesystem/handle-persistence';
 import { FSAGateway } from '@/infrastructure/filesystem/fsa-gateway';
 import { initializeViagentFolder } from '@/infrastructure/filesystem/viagent-service';
+import { db } from '@/infrastructure/persistence/dexie-db';
 
 // ============================================================================
 // Types
@@ -115,33 +116,94 @@ export async function pickFolder(): Promise<FolderPickResult> {
 }
 
 /**
+ * Check if a project with the given folder path already exists
+ *
+ * Returns the existing project ID if found, null otherwise.
+ * This prevents duplicate projects pointing to the same folder.
+ */
+async function checkForDuplicateProject(folderPath: string): Promise<string | null> {
+  try {
+    const allProjects = await db.projects.toArray();
+    const duplicate = allProjects.find(p => p.folderPath === folderPath);
+    return duplicate?.id ?? null;
+  } catch (error) {
+    console.error('[FSA-Persistence] Error checking for duplicate projects:', error);
+    return null; // On error, allow creation (better than blocking)
+  }
+}
+
+/**
+ * Verify that a FileSystemDirectoryHandle is valid and can read the directory
+ *
+ * This prevents creating projects with invalid handles or insufficient permissions.
+ */
+async function verifyHandleAccess(handle: FileSystemDirectoryHandle): Promise<boolean> {
+  try {
+    // Try to read the first entry from the directory to verify permission
+    // Note: TypeScript may not have full FSA types - using type assertion
+    const iterator = (handle as any).entries();
+    await iterator.next();
+    // If we get here without throwing, we have access
+    return true;
+  } catch (error) {
+    const err = error as { name?: string; message?: string };
+    console.error('[FSA-Persistence] Handle verification failed:', err.name, err.message);
+    return false;
+  }
+}
+
+/**
  * Create a project from a selected folder handle
  *
  * **ARC-B10**: Initialize .viagent/ metadata folder on project creation
  *
  * This function:
- * 1. Creates a new project with 'fsa' storage type
- * 2. Persists the FSA handle via fsaHandleManager
- * 3. Initializes .viagent/ folder with metadata files (project.json, notes-index.json, file-tree-snapshot.json)
- * 4. Returns the project ID for navigation
+ * 1. Checks for duplicate projects with same folder
+ * 2. Verifies handle is valid and accessible
+ * 3. Creates a new project with 'fsa' storage type
+ * 4. Persists the FSA handle via handlePersistenceService
+ * 5. Initializes .viagent/ folder with metadata files
+ * 6. Returns the project ID for navigation
  */
 export async function createProjectFromFolder(
   handle: FileSystemDirectoryHandle,
   folderName: string,
   options?: CreateFromFolderOptions
 ): Promise<string> {
+  // BUG-FIX-001: Check for duplicate project with same folder
+  const folderPath = handle.name;
+  const existingProjectId = await checkForDuplicateProject(folderPath);
+  if (existingProjectId) {
+    console.warn(`[FSA-Persistence] Project already exists for folder: ${folderPath}, returning existing project: ${existingProjectId}`);
+    // Update the existing project's lastOpened timestamp
+    useProjectStore.getState().updateLastOpened?.(existingProjectId);
+    return existingProjectId;
+  }
+
+  // BUG-FIX-002: Verify handle is accessible before creating project
+  const hasAccess = await verifyHandleAccess(handle);
+  if (!hasAccess) {
+    throw new Error(`Cannot access folder "${folderName}". Please ensure you have granted read/write permissions.`);
+  }
+
+  console.log('[FSA-Persistence] Creating new project for folder:', folderPath);
+
+  // BUG-FIX-005: Desktop FSA projects should enable Notes by default
+  // Users expect to take notes in the same folder they're coding in
+  const defaultBindings = {
+    ide: true,
+    knowledge: false,
+    notes: true,  // Changed: Enable Notes for FSA projects by default
+    study: false,
+  };
+
   const projectInput: CreateProjectInput = {
     name: folderName,
     folderPath: handle.name,
     storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata instead of handle
     storageType: 'fsa', // Desktop uses File System Access API
     autoSync: options?.autoSync ?? true,
-    bindings: options?.workspaceBindings ?? {
-      ide: true,
-      knowledge: false,
-      notes: false,
-      study: false,
-    },
+    bindings: options?.workspaceBindings ?? defaultBindings,
     tags: options?.tags ?? [],
   };
 
@@ -155,15 +217,21 @@ export async function createProjectFromFolder(
   // Explicitly persist FSA handle for instant re-grant on next visit
   await handlePersistenceService.persistHandle(projectId, handle, 'ide');
 
+  // BUG-FIX-006: Initialize /notes folder for note storage
+  // Desktop users expect notes to be stored alongside their code
+  try {
+    const gateway = new FSAGateway(handle);
+    await gateway.createDirectory('/notes');
+    console.log('[FSA-Persistence] Created /notes folder for project:', projectId);
+  } catch (error) {
+    const err = error as Error;
+    console.warn('[FSA-Persistence] Failed to create /notes folder:', err.message);
+    // Non-fatal - notes can still work in Dexie mode or will be created on first write
+  }
+
   // ARC-B10: Initialize .viagent/ metadata folder
   try {
     const gateway = new FSAGateway(handle);
-    const defaultBindings = {
-      ide: true,
-      knowledge: false,
-      notes: false,
-      study: false,
-    };
     const bindings = options?.workspaceBindings ?? defaultBindings;
     // Convert optional WorkspaceBindings to required { ide: boolean; knowledge: boolean; notes: boolean; study: boolean; }
     const requiredBindings = {

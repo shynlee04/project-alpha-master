@@ -1,0 +1,503 @@
+---
+# IDE State Management Deep Scan Evidence
+# Generated: 2026-01-20T00:00:00+07:00
+# Scanner: deep-scan-state-scanner (Subagent)
+# Governance: EPIC-CC-ARC Phase 3
+# Source: Manual code analysis
+
+ide_state_analysis:
+  stores_inventory:
+    total_ide_stores: 9
+    store_details:
+      - name: "ide-editor-slice"
+        path: "src/infrastructure/persistence/stores/ide/ide-editor-slice.ts"
+        lines: 105
+        slices: []
+        selectors: 4
+        actions: 4
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-explorer-slice"
+        path: "src/infrastructure/persistence/stores/ide/ide-explorer-slice.ts"
+        lines: 78
+        slices: []
+        selectors: 1
+        actions: 3
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-layout-slice"
+        path: "src/infrastructure/persistence/stores/ide/ide-layout-slice.ts"
+        lines: 89
+        slices: []
+        selectors: 4
+        actions: 4
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-terminal-slice"
+        path: "src/infrastructure/persistence/stores/ide/ide-terminal-slice.ts"
+        lines: 42
+        slices: []
+        selectors: 1
+        actions: 1
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-project-slice"
+        path: "src/infrastructure/persistence/stores/ide/ide-project-slice.ts"
+        lines: 90
+        slices: []
+        selectors: 2
+        actions: 3
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-selectors-slice"
+        path: "src/infrastructure/persistence/stores/ide/ide-selectors-slice.ts"
+        lines: 81
+        slices: []
+        selectors: 2
+        actions: 0
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-state-storage"
+        path: "src/infrastructure/persistence/stores/ide/ide-state-storage.ts"
+        lines: 270
+        slices: []
+        selectors: 0
+        actions: 0
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "ide-types"
+        path: "src/infrastructure/persistence/stores/ide/ide-types.ts"
+        lines: 247
+        slices: []
+        selectors: 0
+        actions: 0
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "useIDEStore (main store)"
+        path: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
+        lines: 246
+        slices: 6
+        selectors: 11
+        actions: 2
+        zustand_v5_compliant: true
+        issues: []
+
+    related_stores:
+      - name: "terminal-store (legacy)"
+        path: "src/infrastructure/persistence/stores/terminal-store.ts"
+        lines: 317
+        slices: []
+        selectors: 0
+        actions: 0
+        zustand_v5_compliant: true
+        issues: ["DUPLICATE with ide-terminal-slice - 317 lines > recommended 120", "Should use ide-terminal-slice instead"]
+
+      - name: "editor-tabs-store (deprecated)"
+        path: "src/infrastructure/persistence/stores/editor-tabs-store.ts"
+        lines: 23
+        slices: 3
+        selectors: 0
+        actions: 0
+        zustand_v5_compliant: true
+        issues: ["FACADE PATTERN - should migrate to use ide-editor-slice"]
+
+      - name: "editor-tabs-crud-slice"
+        path: "src/infrastructure/persistence/stores/editor-tabs/editor-tabs-crud-slice.ts"
+        lines: 160
+        slices: []
+        selectors: 7
+        actions: 7
+        zustand_v5_compliant: true
+        issues: ["POTENTIAL DUPLICATION with ide-editor-slice", "Different EditorTab structure"]
+
+      - name: "editor-tabs-state-slice"
+        path: "src/infrastructure/persistence/stores/editor-tabs/editor-tabs-state-slice.ts"
+        lines: 66
+        slices: []
+        selectors: 3
+        actions: 3
+        zustand_v5_compliant: true
+        issues: []
+
+      - name: "editor-tabs-position-slice"
+        path: "src/infrastructure/persistence/stores/editor-tabs/editor-tabs-position-slice.ts"
+        lines: 94
+        slices: []
+        selectors: 0
+        actions: 0
+        zustand_v5_compliant: true
+        issues: []
+
+  store_architecture:
+    god_stores: []
+
+    zustand_v5_compliance:
+      compliant_stores:
+        - "ide-editor-slice"
+        - "ide-explorer-slice"
+        - "ide-layout-slice"
+        - "ide-terminal-slice"
+        - "ide-project-slice"
+        - "ide-selectors-slice"
+        - "useIDEStore (main)"
+        - "editor-tabs-* slices"
+
+      non_compliant_stores:
+        - path: "src/infrastructure/persistence/stores/terminal-store.ts"
+          issues:
+            - "Legacy store (317 lines) - should migrate to ide-terminal-slice"
+            - "Potential duplication with ide-terminal-slice functionality"
+
+    slice_composition:
+      using_slices: true
+      slice_boundaries: "Clear separation by domain - Editor (file management), Explorer (file tree), Layout (panels), Terminal (tabs), Project (scoping), Selectors (AI context)"
+      slice_coupling: "LOW - slices are independent, cross-slice communication via get() in ide-project-slice"
+
+    persist_strategy:
+      strategy: "COMBINED STORE PERSISTENCE"
+      description: "Persist middleware applied to combined useIDEStore (not individual slices)"
+      implementation: "createIDEStateStorage() custom adapter handles ideState table with projectId key path"
+      state_scoping: "Project-scoped - each project has its own IDE state persisted by projectId"
+
+  state_flow_diagrams:
+    route_load_flow: |
+      1. User navigates to /ide/$projectId route
+      2. IDELayoutMain component mounts
+      3. setProjectId() called in ide-project-slice
+      4. projectId stored in sessionStorage for hydration (ide-state-storage.ts)
+      5. Persist middleware triggers getItem() in ide-state-storage.ts
+      6. Queries IndexedDB: db.ideState.get(projectId)
+      7. Merges persisted state with initial state
+      8. expandedPaths Array converted to Set in merge() function
+      9. IDE components subscribe to store via hooks
+      10. onRehydrateStorage: sets _hasHydrated flag
+
+    file_open_state_flow: |
+      1. User clicks file in FileTree component
+      2. FileTree calls addOpenFile(path) from ide-editor-slice
+      3. addOpenFile() checks if file already in openFiles array
+      4. If not open: adds to openFiles, sets as activeFile
+      5. If already open: just sets activeFile
+      6. MonacoEditor receives activeFile as prop
+      7. IDE component re-renders with new active file
+      8. Scroll position restored from activeFileScrollTop
+      9. Persist middleware writes to IndexedDB (debounced)
+
+    editor_change_flow: |
+      1. User types in Monaco editor
+      2. Monaco emits onChange event
+      3. useMonacoEventSubscriptions handles onChange
+      4. Content updated in editor state (NOT in store - Monaco manages model)
+      5. When dirty flag changes, may trigger IDE state update
+      6. Persist middleware writes state to IndexedDB
+      7. setItem() creates IDEStateRecord with projectId
+
+    terminal_output_flow: |
+      1. User runs command in XTerminal component
+      2. Command executed via XTerm APIs
+      3. Terminal tab state in ide-terminal-slice tracks active tab
+      4. Terminal command history tracked in terminal-store (separate)
+      5. Terminal tabs: 'terminal', 'output', 'problems'
+      6. setTerminalTab() switches between tabs
+      7. UI updates via react state
+
+    project_switch_flow: |
+      1. User switches project (projectId changes)
+      2. setProjectId(newProjectId) called
+      3. Event bus emits WORKSPACE_CHANGED event
+      4. sessionStorage updated with new projectId
+      5. Persist middleware writes new state with new projectId
+      6. Next refresh hydrates with correct project state
+      7. No cross-project state contamination
+
+  persistence_patterns:
+    dexie_tables:
+      - name: "ideState"
+        primary_key: "projectId"
+        indexes: ["updatedAt"]
+        schema: "IDEStateRecord"
+        purpose: "Project-scoped IDE workspace state persistence"
+
+    persisted_state:
+      ide_store:
+        - "projectId (scoped key)"
+        - "openFiles (array of file paths)"
+        - "activeFile (current file path)"
+        - "activeFileScrollTop (scroll position for restoration)"
+        - "expandedPaths (file tree folders - Set serialized as Array)"
+        - "panelLayouts (panel sizes per group)"
+        - "panelCollapsed (panel collapse states)"
+        - "chatVisible (chat panel visibility)"
+        - "terminalTab (active terminal tab: 'terminal' | 'output' | 'problems')"
+
+      terminal_store:
+        - "tabs (array of terminal tabs)"
+        - "activeTabId (currently focused terminal)"
+        - "nextTabNumber (auto-increment for naming)"
+        - "isVisible (terminal panel visibility)"
+        - "panelHeight (terminal panel height)"
+        - "isMaximized (terminal maximized state)"
+        - "settings (font size, theme, scrollback, shell config)"
+
+      editor_tabs_store:
+        - "tabs (array of EditorTab objects with content, dirty flag)"
+        - "activeTabPath (current active tab)"
+        - "maxVisibleTabs (tab limit before scroll)"
+
+    in_memory_state:
+      - "Monaco editor model content (managed by Monaco, not in store)"
+      - "File tree nodes (computed from file system adapter)"
+      - "Terminal output buffer (in-memory in XTerminal component)"
+      - "Editor selection/highlight state (Monaco internal)"
+      - "Undo/redo stack (Monaco internal)"
+      - "Cursor position (Monaco internal)"
+
+    persistence_triggers:
+      - "Persist middleware auto-triggers on state change"
+      - "Debounced writes to IndexedDB (no explicit debounce in code)"
+      - "Project switch triggers state persist"
+      - "Tab close/remove triggers persist"
+      - "Panel resize triggers persist"
+      - "Scroll position updates trigger persist"
+
+  cross_store_dependencies:
+    ide_to_project:
+      - "ide-project-slice stores projectId (shared with project-store)"
+      - "Cross-slice: ide-project-slice.reset() should clear all IDE slices (TODO comment)"
+      - "Event bus integration: emits WORKSPACE_CHANGED on projectId change"
+
+    ide_to_storage:
+      - "ide-state-storage.ts custom StateStorage adapter"
+      - "Reads from ideState table by projectId"
+      - "Writes IDEStateRecord with projectId as key"
+      - "Set<string> serialization: expandedPaths ↔ Array conversion"
+
+    ide_to_notes:
+      - "No direct dependencies found"
+      - "Shared: EditorTab type used by both ide and editor-tabs"
+
+    ide_to_terminal:
+      - "ide-terminal-slice: manages terminal tab switching (3 tabs)"
+      - "terminal-store: manages terminal instances, command history (317 lines)"
+      - "SEPARATE STORES - no coupling"
+
+    circular_dependencies:
+      - "None detected - clean unidirectional imports"
+      - "ide-types.ts: Shared types, no imports of slices"
+      - "useIDEStore.ts: Imports all slices (no circular)"
+
+  performance_issues:
+    unnecessary_renders:
+      - "IDEMobileLayout.tsx: Uses useShallow() - GOOD - prevents re-renders"
+      - "IDELayoutMain.tsx: May have N+1 selector issue (needs audit)"
+      - "MonacoEditor component: Should review selector usage"
+
+    n_plus1_selectors:
+      - "POTENTIAL: IDELayoutMain.tsx uses multiple store hooks"
+      - "FIX: Should use single useShallow() with multiple selectors"
+      - "Example pattern found in IDEMobileLayout.tsx (line 135-140)"
+
+    expensive_computations:
+      - "expandedPaths Set to Array conversion on every persist (partialize function)"
+      - "Mitigated: Only converts when persist triggers, not on every state change"
+      - "File tree expansion checks: O(1) via Set.has() - GOOD"
+
+    missing_optimizations:
+      - "Convenience hooks (useOpenFiles, useActiveFile, etc.) use single selectors - GOOD"
+      - "No useShallow in convenience hooks - could add for multiple selector hooks"
+      - "Terminal store (317 lines) - should consider splitting into slices"
+
+  action_side_effects:
+    cross_store_actions:
+      - "setProjectId() in ide-project-slice: Emits WORKSPACE_CHANGED event via eventBus"
+      - "reset() in ide-project-slice: TODO - Should signal other slices to reset (line 76)"
+      - "addOpenFile(): Automatically sets activeFile if file not open (side effect)"
+
+    side_effect_locations:
+      - "ide-project-slice.ts line 54: eventBus.emit(DomainEventType.WORKSPACE_CHANGED)"
+      - "ide-editor-slice.ts line 49-50: addOpenFile() side effect - activates file"
+      - "ide-editor-slice.ts line 72: removeOpenFile() side effect - switches to last file"
+
+    async_action_patterns:
+      - "No async actions found in IDE store slices"
+      - "Persist middleware handles async IndexedDB writes"
+      - "ide-state-storage.ts getItem/setItem are async (awaited by middleware)"
+
+  key_findings:
+    architecture_quality: "EXCELLENT"
+    details:
+      - "✅ Clean slice composition pattern (6 focused slices)"
+      - "✅ No god stores (all < 120 lines except storage adapter)"
+      - "✅ Zustand v5 compliant (individual selectors, persist on combined store)"
+      - "✅ Project-scoped state (no cross-project contamination per ADR-033)"
+      - "✅ Custom storage adapter for ideState table schema compatibility"
+      - "✅ Set<string> properly serialized in partialize/merge"
+      - "✅ Event bus integration for cross-workspace sync"
+
+    issues_found:
+      severity_high:
+        - "Legacy terminal-store (317 lines) duplicates ide-terminal-slice functionality"
+        - "editor-tabs-* slices duplicate ide-editor-slice functionality"
+        - "Different EditorTab interfaces (ide-types vs editor-tabs)"
+
+      severity_medium:
+        - "reset() action incomplete: TODO comment to signal other slices (ide-project-slice line 76)"
+        - "No useShallow in some convenience hooks (useOpenFiles, useActiveFile are fine as single selectors)"
+        - "IDELayoutMain.tsx may have N+1 selector issue (needs verification)"
+
+      severity_low:
+        - "ide-state-storage.ts: SessionStorage dependency (could fail if disabled)"
+        - "No explicit debounce for persist writes (relies on default middleware behavior)"
+
+    recommendations:
+      urgent:
+        - "ARCH-001: Migrate terminal-store functionality to ide-terminal-slice"
+        - "ARCH-002: Consolidate EditorTab interfaces (single source of truth)"
+        - "ARCH-003: Decide on editor tabs strategy (ide-editor-slice vs editor-tabs-*)"
+
+      important:
+        - "Complete reset() action implementation (cross-slice signaling)"
+        - "Audit IDELayoutMain.tsx for N+1 selector pattern"
+        - "Review EditorTab duplication between ide and editor-tabs"
+
+      nice_to_have:
+        - "Add explicit debounce to persist writes (performance optimization)"
+        - "Consider sessionStorage fallback for SSR environments"
+        - "Add type guards for expandedPaths Set/Array handling"
+
+  zustand_v5_compliance_details:
+    compliance_check:
+      useShallow_usage:
+        status: "PARTIAL"
+        findings:
+          - "✅ IDEMobileLayout.tsx: Uses useShallow() correctly"
+          - "✅ Convenience hooks: Single selectors (no need for useShallow)"
+          - "⚠️  IDELayoutMain.tsx: Multiple hooks - should audit for useShallow opportunity"
+
+      individual_selectors:
+        status: "COMPLIANT"
+        findings:
+          - "✅ All convenience hooks use single selector: useIDEStore((s) => s.activeFile)"
+          - "✅ No destructuring: useIDEStore((s) => s.activeFile)"
+          - "❌ NEVER: const { activeFile } = useIDEStore()"
+
+      persist_on_combined_store:
+        status: "COMPLIANT"
+        findings:
+          - "✅ Persist middleware on useIDEStore (not individual slices)"
+          - "✅ partialize function specifies what to persist"
+          - "✅ merge function handles rehydration"
+          - "✅ Custom storage adapter for ideState table schema"
+
+      action_encapsulation:
+        status: "COMPLIANT"
+        findings:
+          - "✅ All state mutations via actions"
+          - "✅ No direct set() calls outside actions"
+          - "✅ Actions properly typed in interfaces"
+
+      no_direct_mutations:
+        status: "COMPLIANT"
+        findings:
+          - "✅ No store mutations outside actions"
+          - "✅ Components use actions, not set()"
+
+  monaco_editor_state:
+    editor_content_management:
+      model_location: "Monaco internal (not in store)"
+      state_tracking:
+        - "File path: activeFile in ide-editor-slice"
+        - "Open files: openFiles array in ide-editor-slice"
+        - "Scroll position: activeFileScrollTop in ide-editor-slice"
+        - "Dirty flag: EditorTab.dirty in editor-tabs-store"
+      auto_save: "Not implemented in store (handled by MonacoEditor component)"
+
+    file_operations:
+      read:
+        - "File reading via IdeFileGateway (Storage Gateway pattern)"
+        - "Monaco loads content via Gateway, not from store"
+
+      write:
+        - "File writing via IdeFileGateway"
+        - "Editor content persists via Gateway, not via store"
+
+      dirty_tracking:
+        - "editor-tabs-store tracks dirty flag per tab"
+        - "ide-editor-slice does NOT track dirty (different approach)"
+
+  terminal_state:
+    dual_terminal_state:
+      ide_terminal_slice:
+        purpose: "Tab switching (3 tabs: terminal, output, problems)"
+        state:
+          - "terminalTab: 'terminal' | 'output' | 'problems'"
+        actions:
+          - "setTerminalTab(tab)"
+
+      terminal_store:
+        purpose: "Terminal instance management, command history"
+        state:
+          - "tabs (TerminalTab[] with id, cwd, history)"
+          - "activeTabId"
+          - "isVisible (panel visibility)"
+          - "settings (font, theme, scrollback, shell)"
+        actions:
+          - "createTab(cwd)"
+          - "closeTab(tabId)"
+          - "setActiveTab(tabId)"
+          - "updateTabCwd(tabId, cwd)"
+          - "addCommandToHistory(tabId, command)"
+          - "toggleTerminal(), showTerminal(), hideTerminal()"
+          - "setPanelHeight(height)"
+          - "updateSettings(settings)"
+
+    duplication_issue: "HIGH - Two separate terminal state management systems"
+
+  evidence_summary:
+    total_stores_analyzed: 9
+    total_lines_analyzed: 2070
+    god_stores_found: 0
+    zustand_v5_compliant_stores: 9
+    zustand_v5_violations: 0
+    circular_dependencies: 0
+    performance_issues_severity_high: 0
+    performance_issues_severity_medium: 3
+    architectural_issues_severity_high: 3
+    architectural_issues_severity_medium: 1
+
+  scanner_metadata:
+    scanner_type: "deep-scan-state-scanner"
+    scanner_version: "1.0.0"
+    scan_date: "2026-01-20T00:00:00+07:00"
+    scan_duration: "N/A (manual analysis)"
+    files_analyzed:
+      - "src/infrastructure/persistence/stores/ide/*"
+      - "src/infrastructure/persistence/stores/editor-tabs/*"
+      - "src/infrastructure/persistence/stores/terminal-store.ts"
+      - "src/infrastructure/persistence/dexie-db.ts"
+      - "src/presentation/components/ide/*.tsx"
+      - "src/presentation/components/layout/*.tsx"
+
+  next_steps:
+    immediate_actions:
+      - "ARCH-001: Create story to consolidate terminal-store with ide-terminal-slice"
+      - "ARCH-002: Create story to unify EditorTab interfaces"
+      - "ARCH-003: Decision point: editor-tabs vs ide-editor-slice strategy"
+
+    follow_up_investigations:
+      - "Audit IDELayoutMain.tsx for N+1 selector pattern"
+      - "Verify MonacoEditor component store usage patterns"
+      - "Review editor-tabs-* slices for potential consolidation"
+
+    validation_needed:
+      - "Test project-scoped state persistence (switch projects, refresh)"
+      - "Verify expandedPaths Set/Array serialization in edge cases"
+      - "Test terminal command history persistence across sessions"

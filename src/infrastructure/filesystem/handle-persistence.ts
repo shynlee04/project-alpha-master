@@ -319,8 +319,32 @@ export class HandlePersistenceService {
       try {
         // structuredClone can restore the actual FileSystemDirectoryHandle
         const handle = structuredClone(record.handleData) as FileSystemDirectoryHandle;
-        console.log(`[HandlePersistence] Handle restored from structuredClone for project: ${projectId}`);
-        return handle;
+        
+        // CC-IDE-02-FIX: Verify permission is still granted after restoration
+        // Even with structuredClone, permission may not persist if user only clicked "Allow this time"
+        // instead of "Allow on every visit". We must verify permission before returning the handle.
+        // Use type assertion for queryPermission which is not in standard TS lib types
+        const handleWithPermission = handle as FileSystemDirectoryHandle & {
+          queryPermission?: (options: { mode: 'readwrite' | 'read' }) => Promise<PermissionState>;
+        };
+        
+        if (typeof handleWithPermission.queryPermission === 'function') {
+          const permission = await handleWithPermission.queryPermission({ mode: 'readwrite' });
+          if (permission === 'granted') {
+            console.log(`[HandlePersistence] Handle restored with valid permission for project: ${projectId}`);
+            return handle;
+          }
+          
+          console.log(
+            `[HandlePersistence] Handle restored but permission not granted (status: ${permission}), ` +
+            `will fall through to user interaction flow for project: ${projectId}`
+          );
+          // Fall through to other restoration methods which handle user interaction
+        } else {
+          // Browser doesn't support queryPermission - return handle and let it fail at usage
+          console.log(`[HandlePersistence] Handle restored (queryPermission not available) for project: ${projectId}`);
+          return handle;
+        }
       } catch (error) {
         console.warn(`[HandlePersistence] Failed to restore handle from structuredClone: ${error}`);
         // Continue to other restoration methods

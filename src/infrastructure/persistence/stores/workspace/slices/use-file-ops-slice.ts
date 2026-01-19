@@ -31,7 +31,7 @@ import {
   saveDirectoryHandleReference,
   restorePermission,
 } from '@/lib/filesystem/permission-lifecycle';
-import { saveProject, generateProjectId } from '@/infrastructure/persistence/stores/project';
+import { saveProject, useProjectStore } from '@/infrastructure/persistence/stores/project';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 import {
@@ -139,25 +139,28 @@ export function useFileOpsSlice({
       setDirectoryHandle(handle);
       setPermissionState('granted');
 
-      const projectId = generateProjectId();
+      // Use store's createProject() which generates namespaced ID and persists to Dexie
+      const projectInput = {
+        name: handle.name,
+        folderPath: handle.name,
+        storageType: 'fsa' as const,
+        storageMetadata: serializeHandle(handle, 'ide'),
+        autoSync,
+        workspaceType: 'ide' as const,  // IDE workspace creates projects with 'ide:' prefix
+        workspaceBindings: { ide: true, knowledge: true, notes: true, study: true },
+        tags: [],
+      };
+      const projectId = await useProjectStore.getState().createProject(projectInput);
+
+      // Get the full project object from store
+      const project = useProjectStore.getState().getProject(projectId);
+      if (!project) {
+        throw new Error(`Failed to retrieve created project: ${projectId}`);
+      }
 
       // Save to legacy permission-lifecycle store
       await saveDirectoryHandleReference(handle, projectId, handle.name);
 
-      // Save to ProjectStore
-      const project: ProjectMetadata = {
-        id: projectId,
-        name: handle.name,
-        folderPath: handle.name,
-        storageType: 'fsa',  // FSA-based project for IDE workspace
-        storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata
-        lastOpened: new Date(),
-        autoSync,
-        createdAt: new Date(),
-        workspaceBindings: { ide: true, knowledge: true, notes: true, study: true }, // ARC-D03
-        tags: [],
-      };
-      await saveProject(project);
       setProjectMetadata(project);
       setCurrentProject(projectId);
 
@@ -208,25 +211,28 @@ export function useFileOpsSlice({
       setDirectoryHandle(handle);
       setPermissionState('granted');
 
-      const newProjectId = generateProjectId();
+      // Use store's createProject() which generates namespaced ID and persists to Dexie
+      const projectInput = {
+        name: handle.name,
+        folderPath: handle.name,
+        storageType: 'fsa' as const,
+        storageMetadata: serializeHandle(handle, 'ide'),
+        autoSync: true,
+        workspaceType: 'ide' as const,  // IDE workspace creates projects with 'ide:' prefix
+        workspaceBindings: { ide: true, knowledge: true, notes: true, study: true },
+        tags: [],
+      };
+      const newProjectId = await useProjectStore.getState().createProject(projectInput);
+
+      // Get the full project object from store
+      const project = useProjectStore.getState().getProject(newProjectId);
+      if (!project) {
+        throw new Error(`Failed to retrieve created project: ${newProjectId}`);
+      }
 
       // Save to legacy permission-lifecycle store
       await saveDirectoryHandleReference(handle, newProjectId, handle.name);
 
-      // Save to ProjectStore
-      const project: ProjectMetadata = {
-        id: newProjectId,
-        name: handle.name,
-        folderPath: handle.name,
-        storageType: 'fsa',
-        storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata
-        lastOpened: new Date(),
-        autoSync: true,
-        createdAt: new Date(),
-        workspaceBindings: { ide: true, knowledge: true, notes: true, study: true }, // ARC-D03
-        tags: [],
-      };
-      await saveProject(project);
       setProjectMetadata(project);
       setCurrentProject(newProjectId);
 

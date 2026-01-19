@@ -16,6 +16,7 @@ import { createStorageGateway } from '@/infrastructure/filesystem/storage-gatewa
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { NoteGateway } from '@/domain/services/note-gateway';
+import { restoreHandle } from '@/infrastructure/filesystem/handle-persistence';
 
 /**
  * Metadata Operations Slice
@@ -56,8 +57,12 @@ export const createNoteMetadataSlice: StateCreator<
             }
 
             // Create gateway for current platform
+            // Get FSA handle from handle persistence service
+            const restoreResult = await restoreHandle(currentProjectId ?? '');
+            const mountedHandle = restoreResult.handle ?? undefined;
+
             const gateway = createStorageGateway(platform, {
-                directoryHandle: undefined,
+                directoryHandle: mountedHandle,
                 projectId: currentProjectId ?? '',
             });
 
@@ -116,8 +121,12 @@ export const createNoteMetadataSlice: StateCreator<
             }
 
             // Create gateway for current platform
+            // Get FSA handle from handle persistence service
+            const restoreResult = await restoreHandle(currentProjectId ?? '');
+            const mountedHandle = restoreResult.handle ?? undefined;
+
             const gateway = createStorageGateway(platform, {
-                directoryHandle: undefined,
+                directoryHandle: mountedHandle,
                 projectId: currentProjectId ?? '',
             });
 

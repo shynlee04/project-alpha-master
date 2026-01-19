@@ -45,7 +45,8 @@ import { AgentManager } from '@/presentation/components/agent';
 import { ProjectSelector } from '@/presentation/components/project/ProjectSelector';
 import { useWorkspaceProjects } from '@/infrastructure/persistence/stores/project/useWorkspaceProjects';
 // P0-3: File Sync Service Initialization
-import { useFileSyncService } from '@/lib/filesync/hooks';
+import { useFileSyncService } from '@/lib/filesync/hooks/use-file-sync-service';
+import type { UseFileSyncServiceResult } from '@/lib/filesync/hooks/use-file-sync-service';
 import type { NotesFileSyncService } from '@/infrastructure/sync/workspace-services/notes/notes-file-sync-service';
 // CHAT-006: Thread management
 import { ThreadManager } from '@/presentation/components/chat/ThreadManager';
@@ -77,6 +78,8 @@ export const NotesPage = React.memo(function NotesPage() {
 
     // Get projectId from ProjectContext (set by route)
     const { project } = useProjectContext();
+
+    console.log('[NotesPage] Component mounted!', { projectId: project?.id, project });
     
     // FIX TB-15: Don't fallback to 'default' - use actual project ID or browser-mode ID
     // The route component should ensure project is loaded before rendering NotesPage
@@ -96,15 +99,9 @@ export const NotesPage = React.memo(function NotesPage() {
         );
     }
 
-    // 45-03: Sync projectId from IDE store (single source of truth)
-    // When project changes in other workspaces (IDE, Knowledge), Notes workspace follows
-    const ideProjectId = useIDEStore((s) => s.projectId);
-    useEffect(() => {
-        if (ideProjectId && ideProjectId !== projectId) {
-            console.log('[NotesPage] Project changed in IDE store, navigating:', ideProjectId);
-            navigate({ to: `/notes/${ideProjectId}` });
-        }
-    }, [ideProjectId, projectId, navigate]);
+    // REMOVED: Navigation loop caused by IDE store sync
+    // URL is the source of truth - when user navigates to /notes/$projectId,
+    // that's the project they want to view. No auto-sync from IDE store.
 
     // STORAGE-3-2: Project Selector Logic
     const { projects, activeProject } = useWorkspaceProjects({
@@ -215,44 +212,106 @@ export const NotesPage = React.memo(function NotesPage() {
         workspaceType: 'notes',
         storageType: project?.storageType ?? 'indexeddb',
         noteStore: noteStoreConfig,
-    });
+    }) as UseFileSyncServiceResult;
 
     // S-007: File loading state for auto-import
     const [isImportingFiles, setIsImportingFiles] = useState(false);
     const [importProgress, setImportProgress] = useState({ current: 0, total: 0, currentFile: '' });
+    
+    // BUG-016 FIX: Track if auto-init has been attempted to prevent infinite retries
+    const autoInitAttemptedRef = useRef(false);
+    
+    // BUG-FIX: Track if auto-import has been triggered to prevent infinite loop
+    const hasAutoImportedRef = useRef(false);
+
+    // BUG-FIX: Reset refs when project changes to allow init/import for new project
+    useEffect(() => {
+        autoInitAttemptedRef.current = false;
+        hasAutoImportedRef.current = false;
+    }, [projectId]);
 
     // 45-04: Load notes based on project mode
     // - Browser mode: load all notes from all projects
-    // - Project mode: load notes for specific project
     useEffect(() => {
+        console.log('[NotesPage useEffect]', {
+            projectId,
+            currentProjectId,
+            isBrowserMode: project?.isBrowserMode,
+            shouldLoadNotes: projectId && currentProjectId !== projectId,
+            shouldLoadAll: project?.isBrowserMode
+        });
+
         if (project?.isBrowserMode) {
             // Browser mode: show notes from all projects
+            console.log('[NotesPage] Loading all notes (browser mode)');
             loadAllNotes();
         } else if (projectId && currentProjectId !== projectId) {
             // Project mode: show notes for specific project
+            console.log('[NotesPage] Loading notes for project:', projectId);
             loadNotes(projectId);
         }
     }, [projectId, currentProjectId, loadNotes, loadAllNotes, project?.isBrowserMode]);
 
-    // S-007: Auto-import project files when file sync service becomes ready
+    // BUG-016 FIX: Auto-initialize file sync for FSA projects
+    // This ensures handle restoration is attempted when entering Notes workspace
     useEffect(() => {
-        if (isNotesSyncReady && notesSyncService && !isImportingFiles) {
+        if (!projectId || !project) return;
+        
+        // Only for FSA/Desktop
+        if (project.storageType !== 'fsa') return;
+        
+        // If we haven't attempted auto-init yet, and service is not ready
+        if (!autoInitAttemptedRef.current && isNotesSyncSupported && !notesSyncService && !isNotesSyncInitializing) {
+             console.log('[NotesPage] Auto-initializing file sync service for FSA project...');
+             autoInitAttemptedRef.current = true;
+             initializeNotesSync().catch(err => {
+                 console.error('[NotesPage] Auto-init failed:', err);
+             });
+        }
+    }, [projectId, project, isNotesSyncSupported, notesSyncService, isNotesSyncInitializing, initializeNotesSync]);
+
+    // S-007: Auto-import project files when file sync service becomes ready
+    // BUG-FIX-003: Added timeout and cleanup to prevent infinite spinning
+    useEffect(() => {
+        let mounted = true;
+        let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+        // BUG-FIX: Check hasAutoImportedRef to prevent infinite loop
+        if (isNotesSyncReady && notesSyncService && !isImportingFiles && !hasAutoImportedRef.current) {
+            hasAutoImportedRef.current = true;
             const autoImportFiles = async () => {
+                if (!mounted) return;
+
                 setIsImportingFiles(true);
                 setImportProgress({ current: 0, total: 0, currentFile: '' });
+
+                // BUG-FIX-003: Create a timeout promise (30 seconds max)
+                const importTimeout = new Promise((_, reject) => {
+                    timeoutId = setTimeout(() => {
+                        reject(new Error('Import timeout after 30 seconds - operation cancelled'));
+                    }, 30000);
+                });
 
                 try {
                     console.log('[NotesPage] Auto-importing project files...');
 
-                    // Trigger import via the folder bridge
-                    // NotesFileSyncService exposes importDirectory as public method
-                    // Cast to NotesFileSyncService since importDirectory is workspace-specific
-                    const result = await (notesSyncService as NotesFileSyncService).importDirectory(
-                        '', // Root directory
-                        (current: number, total: number, currentFile: string) => {
-                            setImportProgress({ current, total, currentFile });
-                        }
-                    );
+                    // BUG-FIX-003: Race between import and timeout
+                    const result = await Promise.race([
+                        (notesSyncService as NotesFileSyncService).importDirectory(
+                            '', // Root directory
+                            (current: number, total: number, currentFile: string) => {
+                                if (mounted) {
+                                    setImportProgress({ current, total, currentFile });
+                                }
+                            }
+                        ),
+                        importTimeout,
+                    ]) as Awaited<ReturnType<typeof NotesFileSyncService.prototype.importDirectory>>;
+
+                    // Clear timeout on success
+                    if (timeoutId) clearTimeout(timeoutId);
+
+                    if (!mounted) return;
 
                     console.log('[NotesPage] Auto-import complete:', result);
 
@@ -261,18 +320,34 @@ export const NotesPage = React.memo(function NotesPage() {
                         await loadNotes(projectId);
                     }
                 } catch (error) {
-                    console.error('[NotesPage] Auto-import failed:', error);
+                    if (!mounted) return;
+
+                    const err = error as Error;
+                    console.error('[NotesPage] Auto-import failed:', err);
+
+                    // BUG-FIX-003: Show specific error for timeout
+                    const isTimeout = err.message.includes('timeout');
                     toast.error(t('notes.import_failed', 'Failed to auto-import files'), {
-                        description: error instanceof Error ? error.message : String(error),
+                        description: isTimeout
+                            ? t('notes.import_timeout', 'Import took too long. The folder may be too large or access was denied.')
+                            : err.message,
                     });
                 } finally {
-                    setIsImportingFiles(false);
+                    if (mounted) {
+                        setIsImportingFiles(false);
+                    }
                 }
             };
 
             autoImportFiles();
         }
-    }, [isNotesSyncReady, notesSyncService, projectId, loadNotes]);
+
+        // BUG-FIX-003: Cleanup function to prevent state updates after unmount
+        return () => {
+            mounted = false;
+            if (timeoutId) clearTimeout(timeoutId);
+        };
+    }, [isNotesSyncReady, notesSyncService, projectId, loadNotes]); // Removed isImportingFiles to prevent loop
 
     // Sync mobile view with active note
     useEffect(() => {
@@ -282,6 +357,17 @@ export const NotesPage = React.memo(function NotesPage() {
     }, [activeNote, isMobile]);
 
     // P2-7: Listen to Knowledge synthesis export events
+    // FIX: Use refs to stabilize createNote and setActiveNote callback access
+    // This prevents infinite useEffect loops when callback references change
+    const createNoteRef = useRef(createNote);
+    const setActiveNoteRef = useRef(setActiveNote);
+    useEffect(() => {
+        createNoteRef.current = createNote;
+    }, [createNote]);
+    useEffect(() => {
+        setActiveNoteRef.current = setActiveNote;
+    }, [setActiveNote]);
+
     useEffect(() => {
         console.log('[NotesPage] Setting up Knowledge export event listener');
 
@@ -302,13 +388,13 @@ export const NotesPage = React.memo(function NotesPage() {
             const blocks = undefined; // Block[] type requires BlockNote library structure
 
             // Create note with synthesis data
-            createNote({
+            createNoteRef.current({
                 title: noteTitle,
                 emoji: '📝', // Knowledge-sourced note
                 blocks,
             }).then((noteId) => {
                 // Set as active note
-                setActiveNote(noteId);
+                setActiveNoteRef.current(noteId);
 
                 // Show toast notification
                 toast.success('Note created from Knowledge workspace', {
@@ -344,7 +430,7 @@ export const NotesPage = React.memo(function NotesPage() {
             console.log('[NotesPage] Cleaning up Knowledge export event listener');
             unsubscribe();
         };
-    }, [eventBus, createNote, setActiveNote]);
+    }, [eventBus]);
 
     // UJ-004: Listen to FILE_SAVED events for cross-workspace reactivity
     // When IDE files are saved, refresh notes if they're markdown files

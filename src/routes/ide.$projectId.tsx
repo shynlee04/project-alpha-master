@@ -26,6 +26,7 @@ import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 import { requireIDEAccess } from '@/infrastructure/filesystem/route-guards';
+import { fromRecord } from '@/infrastructure/persistence/stores/project/project-crud-slice';
 
 // Lazy load IDELayout
 const IDELayout = lazy(() =>
@@ -65,8 +66,8 @@ export const Route = createFileRoute('/ide/$projectId')({
       throw redirect({ to: '/hub' });
     }
 
-    // Convert record to Project type
-    const project = record as unknown as Project;
+    // Convert record to Project type using fromRecord for proper defaults
+    const project = fromRecord(record);
     console.log('[IDERoute.loader] Project found:', { id: project.id, name: project.name });
     return { project };
   },

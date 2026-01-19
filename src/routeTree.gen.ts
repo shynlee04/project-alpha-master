@@ -110,9 +110,7 @@ const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
   getParentRoute: () => NotesLazyRoute,
-} as any).lazy(() =>
-  import('./routes/notes.$projectId.lazy').then((d) => d.Route),
-)
+} as any)
 const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',

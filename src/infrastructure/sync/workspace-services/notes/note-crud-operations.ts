@@ -62,7 +62,8 @@ export async function importFileAsNote(
     try {
         const result = await fileAdapter.readFile(filePath);
         const content = result.content;
-        const { title, blocks, frontmatter } = parseMarkdownFile(content);
+        // BUG-FIX-010: await the async parseMarkdownFile function
+        const { title, blocks, frontmatter } = await parseMarkdownFile(content);
 
         // Check if note already exists (from frontmatter ID)
         const noteId = frontmatter.id as string | undefined;

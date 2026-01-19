@@ -65,6 +65,8 @@ export class NotesFileSyncService implements FileSyncService {
     private syncTimer?: ReturnType<typeof setInterval>;
     private cleanupFileWatcher?: () => void;
     private bridgeInstance?: NoteFolderBridge;
+    /** Mounted FSA directory handle - exposed for note slices to create storage gateways */
+    private mountedHandle?: FileSystemDirectoryHandle;
 
     // FileSyncService interface methods (bound to state)
     declare readFile: (path: string) => Promise<string>;
@@ -104,6 +106,9 @@ export class NotesFileSyncService implements FileSyncService {
         // FIX-2026-01-06: Now properly handles import result instead of swallowing errors
         // CC-V2-B04: Register bridge for auto-save functionality
         this.mount = async (source: FileSystemDirectoryHandle) => {
+            // BUG-FIX-010: Store handle for access by note slices
+            this.mountedHandle = source;
+
             // Mount the directory in the adapter
             await impl.mount(source);
 
@@ -274,6 +279,19 @@ export class NotesFileSyncService implements FileSyncService {
         // Reuse existing bridge if available, otherwise create new instance
         const bridge = this.bridgeInstance || new NoteFolderBridge(this.localAdapter, this.noteStore);
         return bridge.importDirectory(rootPath || '', onProgress);
+    }
+
+    /**
+     * Get the currently mounted FSA directory handle
+     *
+     * BUG-FIX-010: Expose handle for note slices to create storage gateways.
+     * Without this, note slices cannot access FSA files because they
+     * try to create gateways with directoryHandle=undefined.
+     *
+     * @returns The mounted FileSystemDirectoryHandle, or undefined if not mounted
+     */
+    getDirectoryHandle(): FileSystemDirectoryHandle | undefined {
+        return this.mountedHandle;
     }
 }
 

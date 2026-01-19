@@ -20,6 +20,7 @@ import { NotesFileSyncService } from '../notes-file-sync-service';
 import type { StudyFileSyncConfig } from '../study-file-sync-service';
 import type { NotesFileSyncConfig } from '../notes-file-sync-service';
 import type { FileSyncService } from '../file-sync-service';
+import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 
 export interface UseFileSyncServiceOptions {
     /** Current project ID */
@@ -114,11 +115,59 @@ export function useFileSyncService({
             let adapter: UnifiedStorageAdapter;
 
             if (storageType === 'fsa') {
-                // FSA mode: Prompt user to select directory (must be user-triggered)
-                if (!('showDirectoryPicker' in window)) {
-                    throw new Error('File System Access API not supported in this browser');
+                // BUG-FIX-007: Try to restore existing FSA handle first
+                // Only prompt user if restoration fails or handle not found
+                let directoryHandle: FileSystemDirectoryHandle | undefined = undefined;
+                let requiresPrompt = false;
+
+                try {
+                    const restoreResult = await handlePersistenceService.restoreHandle(projectId);
+                    
+                    if (restoreResult.handle && !restoreResult.requiresUserInteraction) {
+                        // Successfully restored handle silently
+                        directoryHandle = restoreResult.handle;
+                        console.log('[useFileSyncService] FSA handle restored silently for project:', projectId);
+                    } else {
+                        requiresPrompt = true;
+                    }
+
+                // Prompt user if restoration failed or no handle stored
+                if (requiresPrompt) {
+                        // Handle restoration failed or requires user interaction
+                        if (restoreResult.requiresUserInteraction) {
+                            console.log('[useFileSyncService] FSA handle requires user prompt for project:', projectId);
+                        } else {
+                            console.log('[useFileSyncService] No stored FSA handle for project:', projectId);
+                        }
+                        requiresPrompt = true;
+                    }
+                } catch (restoreError) {
+                    console.warn('[useFileSyncService] FSA handle restoration failed:', restoreError);
+                    requiresPrompt = true;
                 }
-                const directoryHandle = await window.showDirectoryPicker();
+
+                // Prompt user if restoration failed or no handle stored
+                if (requiresPrompt) {
+                    if (!('showDirectoryPicker' in window)) {
+                        throw new Error('File System Access API not supported in this browser');
+                    }
+                    
+                    try {
+                        directoryHandle = await window.showDirectoryPicker({
+                            mode: 'readwrite',
+                            startIn: 'documents',
+                        });
+
+                        // Persist the newly granted handle for future use
+                        await handlePersistenceService.persistHandle(projectId, directoryHandle, workspaceType as 'ide' | 'knowledge' | 'study' | 'notes');
+                        console.log('[useFileSyncService] New FSA handle persisted for project:', projectId);
+                    } catch (pickerError: any) {
+                        if (pickerError.name === 'AbortError') {
+                            throw new Error('Directory selection was cancelled. Please select a folder to continue.');
+                        }
+                        throw pickerError;
+                    }
+                }
 
                 // Create UnifiedStorageAdapter with FSA handle
                 adapter = new UnifiedStorageAdapter({
@@ -141,9 +190,7 @@ export function useFileSyncService({
             // Create appropriate service based on workspace type
             if (workspaceType === 'study') {
                 const studyConfig: StudyFileSyncConfig = {
-                    workspaceType: 'study',
                     projectId,
-                    localAdapter: adapter,
                 };
                 const studyService = new StudyFileSyncService(studyConfig);
                 setService(studyService);

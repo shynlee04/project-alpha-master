@@ -88,7 +88,6 @@ export function IDELayout(): React.JSX.Element {
         permissionState,
         syncStatus,
         localAdapterRef,
-        syncManagerRef,
         toast,
         setActiveFilePath,
         setChatVisible,
@@ -197,13 +196,16 @@ export function IDELayout(): React.JSX.Element {
         },
     });
 
-    // State sync with refs
-    const openFilePathsKey = openFilePaths.join('\0');
-    useEffect(() => { openFilePathsRef.current = openFilePaths; }, [openFilePathsKey, openFilePathsRef]);
-    useEffect(() => { activeFilePathRef.current = activeFilePath ?? null; }, [activeFilePath, activeFilePathRef]);
-    useEffect(() => { terminalTabRef.current = terminalTab; }, [terminalTab, terminalTabRef]);
-    useEffect(() => { chatVisibleRef.current = chatVisible; }, [chatVisible, chatVisibleRef]);
-    useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);
+     // FIX: Single useEffect for all ref syncs - eliminates cascading triggers
+     // Refs are stable references, so we only depend on the actual state values
+     // scheduleIdeStatePersistence is a no-op (Zustand persist middleware auto-saves)
+     useEffect(() => {
+         openFilePathsRef.current = openFilePaths;
+         activeFilePathRef.current = activeFilePath ?? null;
+         terminalTabRef.current = terminalTab;
+         chatVisibleRef.current = chatVisible;
+         // No scheduleIdeStatePersistence call - Zustand persist middleware auto-saves
+     }, [openFilePaths, activeFilePath, terminalTab, chatVisible]);
 
     // CC-IDE-05b: Initialize StorageGateway when project is loaded
     useEffect(() => {

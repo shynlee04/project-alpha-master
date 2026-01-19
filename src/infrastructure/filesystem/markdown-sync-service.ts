@@ -309,7 +309,8 @@ export class MarkdownSyncService {
         return null;
       }
 
-      const { title, blocks, frontmatter } = parseMarkdownFile(markdown);
+      // BUG-FIX-010: await the async parseMarkdownFile function
+      const { title, blocks, frontmatter } = await parseMarkdownFile(markdown);
 
       const metadata: MarkdownMetadata = {
         id: frontmatter.id as string || this.generateNoteId(),
@@ -688,8 +689,9 @@ export function noteToMarkdownString(note: NoteRecord): string {
  * @param content - Markdown file content
  * @returns Parsed note data
  */
-export function parseMarkdownFileContent(
+// BUG-FIX-010: Make async to match parseMarkdownFile signature
+export async function parseMarkdownFileContent(
   content: string
-): { title: string; blocks: Block[]; frontmatter: Record<string, unknown> } {
-  return parseMarkdownFile(content);
+): Promise<{ title: string; blocks: Block[]; frontmatter: Record<string, unknown> }> {
+  return await parseMarkdownFile(content);
 }

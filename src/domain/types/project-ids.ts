@@ -6,21 +6,28 @@
  *
  * Per ADR-033 Decision D4 (Entity Naming):
  * - ProjectId MUST follow naming convention at compile time
- * - Format: {workspaceType}:proj_{timestamp}_{random}
- * - Example: ide:proj_1704787200000_abc123xyz
+ * - Format: proj_{timestamp}_{random}
+ * - Example: proj_1704787200000_abc123xyz
+ * - WORKSPACE IS DETERMINED BY ROUTING, NOT BY PROJECT ID
+ *
+ * **BUG-011 FIX (2026-01-19)**: Removed workspace prefix from ProjectId.
+ * Previous implementation incorrectly added {workspaceType}: prefix to project IDs,
+ * causing routing failures and URL encoding issues (ide%3Aproj_...).
  *
  * @epic EPIC-CC-ARC
  * @story ARC-D01
  * @author Team B
  * @created 2026-01-18
+ * @modified 2026-01-19 - BUG-011 FIX: Remove workspace prefix
  */
 
 /**
  * Workspace type enumeration
  *
  * @remarks
- * Represents the 4 valid workspace types that can be prefixed
- * to project IDs for namespace isolation.
+ * Represents the 4 valid workspace types.
+ * BUG-011 FIX: Workspace type is NO LONGER part of project ID.
+ * Workspace is determined by routing context, not by project ID prefix.
  */
 export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
 
@@ -28,21 +35,20 @@ export type WorkspaceType = 'ide' | 'knowledge' | 'study' | 'notes';
  * Project ID template literal type
  *
  * @remarks
- * Enforces the naming convention at compile time:
- * - Must start with workspaceType (ide/knowledge/study/notes)
- * - Followed by literal ':proj_'
- * - Followed by numeric timestamp
- * - Followed by underscore
- * - Followed by random alphanumeric string
+ * BUG-011 FIX: Project ID format is now:
+ * - proj_{timestamp}_{random}
+ * - NO workspace prefix
+ *
+ * Previous (WRONG): ide:proj_1704787200000_abc123xyz
+ * Correct: proj_1704787200000_abc123xyz
  *
  * @example
  * ```ts
- * const valid: ProjectId = 'ide:proj_1704787200000_abc123xyz'; // ✅
- * const invalid: ProjectId = 'random-string'; // ❌ Type error
- * const invalid: ProjectId = 'ide:xyz_123_abc'; // ❌ Type error (wrong format)
+ * const valid: ProjectId = 'proj_1704787200000_abc123xyz'; // ✅
+ * const invalid: ProjectId = 'ide:proj_1704787200000_abc123xyz'; // ❌ No prefix!
  * ```
  */
-export type ProjectId = `${WorkspaceType}:proj_${number}_${string}`;
+export type ProjectId = `proj_${number}_${string}`;
 
 /**
  * Legacy project ID type (for backward compatibility)
@@ -106,40 +112,74 @@ export type ExtractWorkspaceType<T extends string> =
  * @param id - String to validate
  * @returns true if valid ProjectId format
  *
+ * BUG-011 FIX: Updated regex to NOT require workspace prefix
+ *
  * @example
  * ```ts
- * isValidProjectId('ide:proj_123_abc'); // true
+ * isValidProjectId('proj_123_abc'); // true
+ * isValidProjectId('ide:proj_123_abc'); // false (prefix not allowed)
  * isValidProjectId('invalid'); // false
  * ```
  */
 export function isValidProjectId(id: string): id is ProjectId {
-  const pattern = /^(ide|knowledge|study|notes):proj_\d+_[a-z0-9]+$/;
+  // BUG-011 FIX: Pattern is now proj_{timestamp}_{random} WITHOUT workspace prefix
+  const pattern = /^proj_\d+_[a-z0-9]+$/;
   return pattern.test(id);
+}
+
+/**
+ * Check if a project ID has legacy workspace prefix (for migration)
+ *
+ * @param id - Project ID to check
+ * @returns true if has legacy prefix like 'ide:', 'notes:', etc.
+ */
+export function hasLegacyPrefix(id: string): boolean {
+  const legacyPattern = /^(ide|knowledge|study|notes):proj_\d+_[a-z0-9]+$/;
+  return legacyPattern.test(id);
+}
+
+/**
+ * Strip legacy workspace prefix from project ID
+ *
+ * @param id - Project ID that may have legacy prefix
+ * @returns Project ID without prefix
+ *
+ * @example
+ * ```ts
+ * stripLegacyPrefix('ide:proj_123_abc'); // 'proj_123_abc'
+ * stripLegacyPrefix('proj_123_abc'); // 'proj_123_abc' (unchanged)
+ * ```
+ */
+export function stripLegacyPrefix(id: string): string {
+  if (hasLegacyPrefix(id)) {
+    return id.split(':')[1];
+  }
+  return id;
 }
 
 /**
  * Extract workspace type from project ID (runtime)
  *
- * @param id - Project ID to parse
- * @returns Workspace type or 'ide' as default
+ * BUG-011 FIX: Since project IDs no longer contain workspace prefix,
+ * this function now returns 'ide' as default for all projects.
+ * Workspace should be determined from routing context, not project ID.
  *
- * @example
- * ```ts
- * extractWorkspaceType('ide:proj_123_abc'); // 'ide'
- * extractWorkspaceType('knowledge:proj_456_def'); // 'knowledge'
- * extractWorkspaceType('legacy'); // 'ide'
- * ```
+ * @deprecated Use route context to determine workspace instead
+ * @param id - Project ID to parse (ignored since IDs don't have prefix)
+ * @returns 'ide' as default (workspace comes from routing, not ID)
  */
 export function extractWorkspaceType(id: string): WorkspaceType {
-  const parts = id.split(':');
-  if (parts.length === 2) {
+  // BUG-011 FIX: Legacy IDs may still have prefix - extract it for migration
+  if (hasLegacyPrefix(id)) {
+    const parts = id.split(':');
     const workspaceType = parts[0];
     if (workspaceType === 'ide' || workspaceType === 'knowledge' ||
         workspaceType === 'study' || workspaceType === 'notes') {
       return workspaceType;
     }
   }
-  // Legacy or malformed IDs default to 'ide'
+  // For new IDs without prefix, default to 'ide'
+  // Actual workspace is determined by routing context
   return 'ide';
 }
 

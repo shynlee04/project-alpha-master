@@ -37,6 +37,32 @@ export const defaultProps = { textAlignment: 'left' };
 export const BlockNoteSchema = { create: () => ({}) };
 export const defaultBlockSpecs = {};
 
+// BlockNoteEditor mock for markdown parsing (BUG-FIX-010: tryParseMarkdownToBlocks support)
+// Class with static create() method returning editor instance with tryParseMarkdownToBlocks
+export class BlockNoteEditor {
+    static create() {
+        return new BlockNoteEditor();
+    }
+
+    async tryParseMarkdownToBlocks(markdown: string) {
+        // Return a minimal default paragraph block for SSR compatibility
+        // Real parsing happens client-side after hydration
+        return [{
+            id: 'mock-block',
+            type: 'paragraph',
+            props: {},
+            content: markdown ? [{ type: 'text', text: markdown, styles: {} }] : [],
+            children: [],
+        }];
+    }
+
+    dispose() {}
+    // Add other methods as needed for SSR compatibility
+    replaceBlocks() {}
+    getDocument() { return []; }
+    getTextCursorPosition() { return undefined; }
+}
+
 // XTerm Mocks
 export class Terminal {
     loadAddon() { }

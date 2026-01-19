@@ -340,20 +340,132 @@ bugs:
       reporter: "agent-domain-scanner"
       session: "turn-3-debug-2026-01-17"
 
+  - id: "BUG-016"
+    discovered_at: "2026-01-19T16:00:00Z"
+    title: "FSA Folder Mounting Fails / Notes Import Spins Forever"
+    description: |
+      User sees "Importing Notes" spinner hanging indefinitely when entering Notes workspace.
+      
+      Root cause investigation:
+      1. Service never initializes for FSA (missing auto-init).
+      2. Infinite Loop in `autoImportFiles` effect:
+         - Effect depends on `isImportingFiles`.
+         - Effect sets `isImportingFiles(true)`.
+         - Operation completes -> `finally` sets `isImportingFiles(false)`.
+         - State change triggers Effect again.
+         - Loop continues forever.
+      
+      This logic error affects all storage types but is most visible when service actually initializes.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Logic"
+    status: "OPEN"
+    location:
+      file: "src/presentation/components/notes/NotesPage.tsx"
+      lines: "246-319"
+    symptoms:
+      - "Spinning 'Importing Notes' dialog never disappears"
+      - "Notes workspace unusable"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-19T17:00:00Z"
+        action: "Added auto-initialization for FSA projects in NotesPage useEffect"
+        result: "PARTIAL - Service initializes, but import operation loops indefinitely"
+      - attempt: "2"
+        timestamp: "2026-01-19T17:30:00Z"
+        action: "Attempted to fix infinite loop by removing dependency and adding ref."
+        result: "REVERTED - User request."
+      - attempt: "3"
+        timestamp: "2026-01-19T18:00:00Z"
+        action: "Re-applying loop fix: Remove `isImportingFiles` from dependency array and use ref to ensure single execution per project."
+        result: "PENDING VERIFICATION - Waiting for user confirmation."
+    hypothesis: "Infinite loop caused by `isImportingFiles` state being in dependency array of the effect that sets it."
+    resolution: "Pending user verification of loop fix."
+    related_bugs: ["BUG-013"]
+
+  - id: "BUG-021"
+    discovered_at: "2026-01-19T18:30:00Z"
+    title: "Notes Parent Route Redirect Loop"
+    description: |
+      Infinite remount loop in Notes workspace.
+      Sequence: NotesPage mounts -> NotesRedirect (parent) detects no match? -> Redirects -> NotesPage unmounts -> Redirect completes -> NotesPage mounts.
+      
+      Root cause: `useMatch` in `NotesRedirect` (parent route) likely returns false/null intermittently or incorrectly, causing the redirect logic to fire even when a child route is active. This forces a navigation which unmounts the child route (`<Outlet />` replaced by spinner), causing the loop.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "OPEN"
+    location:
+      file: "src/routes/notes.lazy.tsx"
+      lines: "56-154"
+    symptoms:
+      - "NotesPage constantly unmounting/remounting"
+      - "FSA handle repeatedly restored and cleared"
+      - "Auto-import loops because component state resets on remount"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-19T18:35:00Z"
+        action: "Replace `useMatch` with `useLocation` for stable child route detection."
+        result: "PENDING VERIFICATION - Code updated to use location.pathname check."
+    hypothesis: "useMatch is unreliable for conditional rendering in parent route. useLocation.pathname check is deterministic."
+    resolution: "Pending implementation verification."
+    related_bugs: ["BUG-019", "BUG-016"]
+
 statistics:
-  total_bugs: 10
+  total_bugs: 13
   by_severity:
-    P0-Critical: 5
+    P0-Critical: 8
+    P1-High: 4
+    P2-Medium: 1
+    P3-Low: 0
+    metadata:
+      reporter: "user"
+      session: "debug-2026-01-19"
+
+  - id: "BUG-019"
+    discovered_at: "2026-01-19T17:00:00Z"
+    title: "React Hook Error in NotesRedirect"
+    description: |
+      "Rendered fewer hooks than expected" error when navigating to Notes workspace.
+      Root cause: Early return in `NotesRedirect` component (based on `useMatch`)
+      causes subsequent hooks (`useMemo`, `useLiveQuery`, `useEffect`) to be skipped
+      when child route matches.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "FIXED"
+    location:
+      file: "src/routes/notes.lazy.tsx"
+      lines: "56-154"
+    symptoms:
+      - "App crashes with React error when accessing /notes/$projectId"
+      - "White screen with error boundary stack trace"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-19T17:10:00Z"
+        action: "Moved all hooks to top level before conditional returns."
+        result: "SUCCESS - Hooks execution order is now consistent."
+    hypothesis: "Conditional early return violates Rules of Hooks."
+    resolution: "Move all hooks to top level before any return statement. Use conditional logic inside hooks or their callbacks."
+    related_bugs: ["BUG-015"]
+    metadata:
+      reporter: "user"
+      session: "debug-2026-01-19"
+
+statistics:
+  total_bugs: 12
+  by_severity:
+    P0-Critical: 7
     P1-High: 4
     P2-Medium: 1
     P3-Low: 0
   by_scope:
     spike-only: 1
-    main-infected: 8
+    main-infected: 9
     cross-domain: 0
   by_category:
     Logic: 5
-    Architecture: 4
+    Architecture: 5
     UX: 0
     Performance: 0
     DataConsistency: 1

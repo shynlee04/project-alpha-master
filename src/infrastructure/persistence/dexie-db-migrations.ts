@@ -1473,4 +1473,223 @@ export function registerMigrations(db: Dexie): void {
                 throw error;
             }
         });
+
+    // ========================================================================
+    // Version 27: BUG-011 FIX - Strip workspace prefix from project IDs
+    // ========================================================================
+    // 
+    // Previous implementation incorrectly added 'ide:', 'notes:', etc. prefix
+    // to project IDs. Per ADR-033, project IDs should be:
+    //   proj_{timestamp}_{random}
+    // NOT:
+    //   ide:proj_{timestamp}_{random}
+    //
+    // This migration strips the workspace prefix from all affected records.
+    // ========================================================================
+
+    db.version(27)
+        .stores({
+            // No schema changes - just data migration
+            projects: 'id, workspaceId, name, lastOpened, createdAt, deleted, [workspaceId+lastOpened]',
+            ideState: 'projectId, workspaceId, [projectId+workspaceId]',
+            conversations: 'id, workspaceId, projectId, createdAt, updatedAt, [projectId+workspaceId], [workspaceId+updatedAt]',
+            taskContexts: 'id, workspaceId, status, priority, createdAt, dueAt, [status], [priority], [workspaceId]',
+            toolExecutions: 'id, workspaceId, taskId, status, createdAt, [taskId], [status], [workspaceId]',
+            credentials: 'id, service, createdAt',
+            threads: 'id, workspaceId, projectId, updatedAt, createdAt, pinned, archived, [projectId+workspaceId], [projectId+updatedAt], [pinned], [archived]',
+            providerConfigs: 'id',
+            agentConfigs: 'id',
+            conversationState: 'id',
+            ragState: 'id',
+            workspaceState: 'id',
+            syncStatus: 'id, path, syncStatus, updatedAt, [syncStatus], [updatedAt]',
+            fileSyncStatus: 'id',
+            fileMetadata: 'id, projectId, path, lastModified, syncedAt, [projectId+path], [projectId], [lastModified]',
+            toolExecutionLogs: 'id, conversationId, timestamp, toolName, approved, status, [conversationId], [timestamp], [toolName]',
+            fsaHandles: 'projectId, permissionStatus, lastAccessedAt, [permissionStatus]',
+            sessionSnapshots: 'id, projectId, createdAt, expiresAt, [projectId+createdAt], [expiresAt]',
+            fileSnapshots: '++id, workspaceId, projectId, filePath, timestamp, [projectId+filePath], [projectId+timestamp]',
+            fileContentCache: 'id, projectId, filePath, lastModified, [projectId+filePath]',
+            sources: 'id, workspaceId, projectId, type, createdAt, updatedAt, [projectId+workspaceId], [projectId+type], [type], [createdAt]',
+            collections: 'id, workspaceId, projectId, name, createdAt, [projectId+workspaceId], [name]',
+            synthesisResults: 'id, workspaceId, projectId, sourceId, type, createdAt, [projectId+workspaceId], [sourceId], [type]',
+            oramaIndexes: 'id, workspaceId, projectId, version, updatedAt, [projectId+workspaceId]',
+            embedding_models: 'id, workspaceId, name, provider, [name], [provider]',
+            notes: 'id, workspaceId, projectId, title, createdAt, updatedAt, parentId, order, isFavorite, [projectId+workspaceId], [projectId+parentId], [projectId+isFavorite], [projectId+updatedAt]',
+            workflows: 'id, workspaceId, name, createdAt, updatedAt, *tags, [name], [createdAt], [updatedAt]',
+            codeSnippets: 'id, workspaceId, language, folder, tags, shortcut, createdAt, updatedAt, isBuiltIn, [language], [folder], [shortcut]',
+            savedBlocks: 'id, workspaceId, blockType, category, isFavorite, tags, createdAt, updatedAt, lastUsedAt, useCount, [workspaceId+blockType], [workspaceId+isFavorite], [workspaceId+category], [workspaceId+tags]',
+            plugins: 'id, workspaceId, source, state, installedAt, [source], [state], [installedAt]',
+            pluginSettings: 'pluginId, workspaceId, updatedAt',
+            pluginMarketplace: 'id, workspaceId, category, cachedAt, expiresAt, [category], [cachedAt]',
+            pluginStorage: 'id, pluginId, workspaceId, [pluginId]',
+            flashcards: 'id, workspaceId, projectId, topic, difficulty, createdAt, *sourceIds',
+            flashcardSets: 'id, workspaceId, projectId, name, createdAt, updatedAt, *cardIds',
+            studySessions: 'id, workspaceId, projectId, startTime, completed',
+            studyCards: 'id, workspaceId, cardId, sessionId',
+            quizzes: 'id, workspaceId, projectId, title, createdAt, *sourceIds',
+            quizQuestions: 'id, workspaceId, quizId, difficulty, topic, *sourceIds',
+            idbFiles: '[projectId+path], projectId, kind, lastModified, [projectId+kind]',
+            terminalState: 'id, updatedAt',
+        }).upgrade(async (tx) => {
+            logDexieMigration(27, 'bug-011-strip-workspace-prefix', 'started');
+
+            // Check if already applied
+            if (isMigrationApplied(27)) {
+                logDexieMigration(27, 'bug-011-strip-workspace-prefix', 'completed', 'Already applied, skipping');
+                return;
+            }
+
+            const db = tx.db as any;
+            let totalMigrated = 0;
+
+            // Regex to detect legacy prefixed IDs
+            const LEGACY_PREFIX_PATTERN = /^(ide|knowledge|study|notes):proj_(\d+)_([a-z0-9]+)$/;
+
+            /**
+             * Strip workspace prefix from project ID
+             * 'ide:proj_123_abc' -> 'proj_123_abc'
+             */
+            function stripPrefix(id: string): string {
+                const match = id.match(LEGACY_PREFIX_PATTERN);
+                if (match) {
+                    return `proj_${match[2]}_${match[3]}`;
+                }
+                return id;
+            }
+
+            try {
+                // Step 1: Get all projects with legacy prefixed IDs
+                const allProjects = await db.projects.toArray();
+                const projectsToMigrate = allProjects.filter((p: any) => LEGACY_PREFIX_PATTERN.test(p.id));
+
+                console.log(`[Migration v27] Found ${projectsToMigrate.length} projects with legacy prefix`);
+
+                for (const oldProject of projectsToMigrate) {
+                    const newId = stripPrefix(oldProject.id);
+                    const oldId = oldProject.id;
+
+                    console.log(`[Migration v27] Migrating project: ${oldId} -> ${newId}`);
+
+                    // Delete old record
+                    await db.projects.delete(oldId);
+
+                    // Insert with new ID
+                    await db.projects.put({
+                        ...oldProject,
+                        id: newId,
+                    });
+
+                    // Update all related records that reference this projectId
+                    // Notes
+                    const notesToUpdate = await db.notes.where('projectId').equals(oldId).toArray();
+                    if (notesToUpdate.length > 0) {
+                        const updatedNotes = notesToUpdate.map((note: any) => ({
+                            ...note,
+                            projectId: newId
+                        }));
+                        await db.notes.bulkPut(updatedNotes);
+                        totalMigrated += notesToUpdate.length;
+                    }
+
+                    // IDE State
+                    const ideStateRecords = await db.ideState.where('projectId').equals(oldId).toArray();
+                    for (const record of ideStateRecords) {
+                        await db.ideState.delete(oldId);
+                        await db.ideState.put({ ...record, projectId: newId });
+                    }
+                    totalMigrated += ideStateRecords.length;
+
+                    // FSA Handles
+                    const fsaHandleRecords = await db.fsaHandles.where('projectId').equals(oldId).toArray();
+                    for (const record of fsaHandleRecords) {
+                        await db.fsaHandles.delete(oldId);
+                        await db.fsaHandles.put({ ...record, projectId: newId });
+                    }
+                    totalMigrated += fsaHandleRecords.length;
+
+                    // Conversations
+                    const conversationRecords = await db.conversations.where('projectId').equals(oldId).toArray();
+                    if (conversationRecords.length > 0) {
+                        const updatedConversations = conversationRecords.map((c: any) => ({
+                            ...c,
+                            projectId: newId
+                        }));
+                        await db.conversations.bulkPut(updatedConversations);
+                        totalMigrated += conversationRecords.length;
+                    }
+
+                    // Threads
+                    const threadRecords = await db.threads.where('projectId').equals(oldId).toArray();
+                    if (threadRecords.length > 0) {
+                        const updatedThreads = threadRecords.map((t: any) => ({
+                            ...t,
+                            projectId: newId
+                        }));
+                        await db.threads.bulkPut(updatedThreads);
+                        totalMigrated += threadRecords.length;
+                    }
+
+                    // Sources
+                    const sourceRecords = await db.sources.where('projectId').equals(oldId).toArray();
+                    if (sourceRecords.length > 0) {
+                        const updatedSources = sourceRecords.map((s: any) => ({
+                            ...s,
+                            projectId: newId
+                        }));
+                        await db.sources.bulkPut(updatedSources);
+                        totalMigrated += sourceRecords.length;
+                    }
+
+                    // Collections
+                    const collectionRecords = await db.collections.where('projectId').equals(oldId).toArray();
+                    if (collectionRecords.length > 0) {
+                        const updatedCollections = collectionRecords.map((c: any) => ({
+                            ...c,
+                            projectId: newId
+                        }));
+                        await db.collections.bulkPut(updatedCollections);
+                        totalMigrated += collectionRecords.length;
+                    }
+
+                    // File Metadata
+                    const fileMetadataRecords = await db.fileMetadata.where('projectId').equals(oldId).toArray();
+                    if (fileMetadataRecords.length > 0) {
+                        const updatedFileMetadata = fileMetadataRecords.map((f: any) => ({
+                            ...f,
+                            projectId: newId
+                        }));
+                        await db.fileMetadata.bulkPut(updatedFileMetadata);
+                        totalMigrated += fileMetadataRecords.length;
+                    }
+
+                    // Session Snapshots
+                    const snapshotRecords = await db.sessionSnapshots.where('projectId').equals(oldId).toArray();
+                    if (snapshotRecords.length > 0) {
+                        const updatedSnapshots = snapshotRecords.map((s: any) => ({
+                            ...s,
+                            projectId: newId
+                        }));
+                        await db.sessionSnapshots.bulkPut(updatedSnapshots);
+                        totalMigrated += snapshotRecords.length;
+                    }
+
+                    totalMigrated++; // Count the project itself
+                }
+
+                markMigrationApplied(27);
+
+                logDexieMigration(27, 'bug-011-strip-workspace-prefix', 'completed', {
+                    tableName: 'projects,notes,ideState,fsaHandles,conversations,threads,sources,collections,fileMetadata,sessionSnapshots',
+                    itemsCount: totalMigrated
+                });
+
+                console.log(`[Migration v27] Completed. Migrated ${totalMigrated} records.`);
+            } catch (error) {
+                logDexieMigration(27, 'bug-011-strip-workspace-prefix', 'failed', {
+                    error: error instanceof Error ? error.message : String(error)
+                });
+                throw error;
+            }
+        });
 }

@@ -79,6 +79,12 @@ export class FSAStorageAdapter implements StorageAdapter {
   };
   private debounceTimers: Map<string, ReturnType<typeof setTimeout>> = new Map();
 
+  constructor(options?: { handle?: FileSystemDirectoryHandle | null }) {
+    if (options?.handle) {
+      this.directoryHandle = options.handle;
+    }
+  }
+
   // ============================================================================
   // Lifecycle
   // ============================================================================

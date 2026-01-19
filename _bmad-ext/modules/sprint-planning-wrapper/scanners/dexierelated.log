@@ -1,0 +1,4755 @@
+1292 results - 390 files
+
+spike/src/domain/interfaces/storage-gateway.interface.ts:
+  97   * - Desktop with FSA → FSAGateway (uses File System Access API)
+  98:  * - Mobile/Tablet → IDBGateway (uses IndexedDB via Dexie)
+  99   *
+
+spike/src/domain/services/note-gateway.ts:
+  22  import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
+  23: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  24  
+
+spike/src/domain/types/viagent-metadata.ts:
+  41  
+  42:   /** Unique project identifier (matches Dexie Project.id) */
+  43    projectId: string;
+
+  81  export interface ViagentNoteEntry {
+  82:   /** Unique note identifier (matches Dexie Note.id) */
+  83    id: string;
+
+spike/src/hooks/index.ts:
+  49  
+  50: // Thread manager hook (CHAT-005) - Uses UnifiedChatStore (Dexie) - CORRECT ARCHITECTURE
+  51  export {
+
+spike/src/hooks/useCodeSnippets.ts:
+  13  import { useCallback, useEffect } from 'react';
+  14: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  15  import { useSnippetStore, initializeSnippetStore, processSnippetForInsertion } from '@/lib/snippets/snippet-store';
+
+spike/src/hooks/useIdeStatePersistence.ts:
+   4   * 
+   5:  * Story 27-1b: Component Migration to Zustand + Dexie.js
+   6   * 
+
+  10   * The Zustand store (`useIDEStore`) handles all persistence automatically
+  11:  * via its persist middleware connected to Dexie.js.
+  12   * 
+
+  91   * Now delegates to Zustand store for all state management.
+  92:  * The store's persist middleware handles IndexedDB via Dexie.js.
+  93   * 
+
+spike/src/infrastructure/filesystem/folder-overlap-service.ts:
+  17  
+  18: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  19  
+
+spike/src/infrastructure/filesystem/handle-persistence.ts:
+   35    getAllValidFSAHandles,
+   36: } from '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers';
+   37: import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db-types';
+   38  
+
+   99   *
+  100:  * @param record - FSA handle record from Dexie
+  101   * @returns true if silent restore should be attempted
+
+  171     * Chrome 129+ Enhancement: If structuredClone is supported, we store the
+  172:    * actual FileSystemDirectoryHandle in Dexie. This enables true "instant restore"
+  173     * without any user prompt on page reload.
+
+  194  
+  195:     // Store in Dexie using existing helper (converts to FSAHandleRecord)
+  196      await storeFSAHandle({
+
+  219    async restoreHandle(projectId: string): Promise<HandleRestoreResult> {
+  220:     // Get stored metadata from Dexie
+  221      const record = await getFSAHandle(projectId);
+
+  300     * @param projectId - The project ID (used as handle ID)
+  301:    * @param record - FSA handle record from Dexie
+  302     * @returns Restored handle or null if silent restore not possible
+
+  405     * @param projectId - The project ID
+  406:    * @param record - FSA handle record from Dexie (optional, for context)
+  407     * @param silentRestoreFailed - Whether silent restore was attempted and failed
+
+spike/src/infrastructure/filesystem/handle-types.ts:
+  10  
+  11: import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db-types';
+  12  
+
+  52   * Permission state for FSA handles
+  53:  * NOTE: Aligned with Dexie FSAHandleRecord.permissionStatus values
+  54   * PS-04: Added 'dismissed' for user-cancelled permission dialogs
+
+spike/src/infrastructure/filesystem/idb-gateway.ts:
+  25  import { FileSystemError } from './fs-errors';
+  26: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  27: import type { IDBFileRecord } from '@/infrastructure/persistence/dexie-db-idb-file-types';
+  28  
+
+spike/src/infrastructure/filesystem/index.ts:
+  65  // NOTE: Re-exported from lib/filesystem/permission-lifecycle
+  66: // These handle FSA permission state and handle persistence via Dexie
+  67  // TODO: Move permission-lifecycle.ts to infrastructure/filesystem
+
+spike/src/infrastructure/filesystem/markdown-sync-service.ts:
+  21  import type { Block } from '@blocknote/core';
+  22: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  23  import type { StorageGateway, FileChangeEvent } from '@/domain/interfaces/storage-gateway.interface';
+
+spike/src/infrastructure/persistence/database-recovery.ts:
+    5   *
+    6:  * Handles database corruption recovery when Dexie migrations fail.
+    7   *
+    8   * PROBLEM:
+    9:  * - Dexie cannot migrate primary key changes
+   10   * - Previous schema changes caused database corruption
+
+   21   * - IndexedDB CANNOT migrate primary key changes
+   22:  * - This is a hard IndexedDB limitation, not a Dexie bug
+   23   */
+
+   25  import { toast } from 'sonner';
+   26: import type Dexie from 'dexie';
+   27  
+
+   71  
+   72:     // Dexie primary key migration error
+   73      if (errorMessage.includes('UpgradeError') &&
+
+  165          const key = localStorage.key(i);
+  166:         if (key && (key.startsWith('vg_') || key.startsWith('dexie-') ||
+  167                        key.startsWith('via-gent') || key === 'sync-status-store')) {
+
+  299  export async function initializeDatabaseWithRecovery(
+  300:     dbOpen: () => Promise<Dexie>
+  301  ): Promise<boolean> {
+
+spike/src/infrastructure/persistence/dexie-db-ai-types.ts:
+    2   * @fileoverview AI Foundation Database Record Types
+    3:  * @module lib/state/dexie-db-ai-types
+    4   * @governance EPIC-27-1c
+
+    7   * AI agent orchestration and conversation thread types.
+    8:  * Extracted from dexie-db.ts for better code organization.
+    9   *
+   10   * Story 27-1: State Architecture Stabilization
+   11:  * Story 27-1c: Persistence Migration (idb → Dexie)
+   12   *
+
+   17  
+   18: import type { Table } from 'dexie';
+   19  
+
+  118  /**
+  119:  * Conversation thread record for Dexie persistence
+  120   * Enables full-text indexing for search.
+
+spike/src/infrastructure/persistence/dexie-db-block-types.ts:
+   2   * @fileoverview Saved Blocks Database Types
+   3:  * @module infrastructure/persistence/dexie-db-block-types
+   4   * @governance UX-13
+
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+spike/src/infrastructure/persistence/dexie-db-class.ts:
+    2   * @fileoverview ViaGent Database Class Definition
+    3:  * @module lib/state/dexie-db-class
+    4   * @governance EPIC-27-1c
+
+    7   * Main database class definition with table declarations.
+    8:  * Migrations are extracted to dexie-db-migrations.ts for better code organization.
+    9   *
+   10   * Story 27-1: State Architecture Stabilization
+   11:  * Story 27-1c: Persistence Migration (idb → Dexie)
+   12   */
+   13  
+   14: import Dexie, { /* type Table */ } from 'dexie';
+   15  
+
+   22      FileContentCacheTable,
+   23: } from './dexie-db-core-types';
+   24  
+
+   29      ConversationThreadsTable,
+   30: } from './dexie-db-ai-types';
+   31  
+
+   38      SessionSnapshotTable,
+   39: } from './dexie-db-session-types';
+   40  
+
+   47      NotesTable,
+   48: } from './dexie-db-knowledge-types';
+   49  
+
+   51      WorkflowsTable,
+   52: } from './dexie-db-workflow-types';
+   53  
+
+   55      CodeSnippetsTable,
+   56: } from './dexie-db-snippet-types';
+   57  
+
+   59      SavedBlocksTable,
+   60: } from './dexie-db-block-types';
+   61  
+
+   66      PluginStorageTable,
+   67: } from './dexie-db-plugin-types';
+   68  
+
+   74      QuizQuestionsTable,
+   75: } from './dexie-db-study-types';
+   76  
+
+   82      IDBFilesTable,
+   83: } from './dexie-db-idb-file-types';
+   84  
+   85  // Import migrations
+   86: import { registerMigrations } from './dexie-db-migrations';
+   87  
+
+   92  /**
+   93:  * Via-Gent Dexie Database
+   94   *
+
+  100   */
+  101: export class ViaGentDatabase extends Dexie {
+  102      // ========================================================================
+
+  225      // STATE-009 FIX: Terminal State Persistence (2026-01-19)
+  226:     // Migrated from localStorage to Dexie
+  227      // ========================================================================
+
+spike/src/infrastructure/persistence/dexie-db-core-types.ts:
+   2   * @fileoverview Core Database Record Types
+   3:  * @module lib/state/dexie-db-core-types
+   4   * @governance EPIC-27-1c
+
+   6   * Core record types for IndexedDB persistence.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { Table } from 'dexie';
+  14  import type { WorkspaceBindings } from '@/domain/entities/project';
+
+spike/src/infrastructure/persistence/dexie-db-helpers.ts:
+   2   * @fileoverview Database Helper Functions
+   3:  * @module lib/state/dexie-db-helpers
+   4   * @governance EPIC-27-1c
+
+   6   * Helper functions for database operations.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { SyncStatusRecord } from './dexie-db-session-types';
+  14  
+
+spike/src/infrastructure/persistence/dexie-db-idb-file-types.ts:
+   2   * @fileoverview IndexedDB File Storage Types
+   3:  * @module infrastructure/persistence/dexie-db-idb-file-types
+   4   *
+
+  17  
+  18: import type { Table } from 'dexie';
+  19  
+
+  78   *
+  79:  * Dexie Table type for IDBFileRecord with compound primary key.
+  80   */
+
+spike/src/infrastructure/persistence/dexie-db-knowledge-types.ts:
+   2   * @fileoverview Knowledge Base Database Record Types
+   3:  * @module lib/state/dexie-db-knowledge-types
+   4   * @governance EPIC-27-1c
+
+   6   * Knowledge base and note-taking record types for IndexedDB.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+  88   * @epic Epic 53 - State Management Consolidation
+  89:  * @story 53-2 - Move Dexie Helpers to Infrastructure
+  90   */
+
+spike/src/infrastructure/persistence/dexie-db-migrations.ts:
+     1  /**
+     2:  * @fileoverview Dexie Database Migrations
+     3:  * @module lib/state/dexie-db-migrations
+     4   * @governance EPIC-27-1c
+
+     6   * All schema version migrations for ViaGentDatabase.
+     7:  * Extracted from dexie-db.ts for better code organization.
+     8   *
+     9   * Story 27-1: State Architecture Stabilization
+    10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+    11   */
+    12  
+    13: import type { Dexie } from 'dexie';
+    14: // import type { SyncStatusRecord } from './dexie-db-session-types';
+    15: // import { queueItemToSyncStatus } from './dexie-db-helpers';
+    16  
+
+    21  /**
+    22:  * Log a Dexie migration event for audit trail
+    23   */
+
+    31          timestamp: Date.now(),
+    32:         type: 'dexie-migration',
+    33          version,
+
+    39      if (status === 'failed') {
+    40:         console.error('[Dexie Migration]', JSON.stringify(entry, null, 2));
+    41      } else {
+    42:         console.log('[Dexie Migration]', JSON.stringify(entry, null, 2));
+    43      }
+
+    52      try {
+    53:         const appliedKey = `dexie-migration-v${version}-applied`;
+    54          return localStorage.getItem(appliedKey) === 'true';
+
+    66      try {
+    67:         const appliedKey = `dexie-migration-v${version}-applied`;
+    68          localStorage.setItem(appliedKey, 'true');
+
+    81   *
+    82:  * @param db - Dexie database instance (ViaGentDatabase extends Dexie)
+    83   */
+    84: export function registerMigrations(db: Dexie): void {
+    85          db.version(1).stores({
+
+    96          }).upgrade(async () => {
+    97:             console.log('[Dexie] Running migration to v2 (standardization)');
+    98          });
+
+   110          }).upgrade(async () => {
+   111:             console.log('[Dexie] Running migration to v3 (AI Foundation tables)');
+   112          });
+
+   124          }).upgrade(async () => {
+   125:             console.log('[Dexie] Running migration to v4 (credentials table)');
+   126          });
+
+   139          }).upgrade(async () => {
+   140:             console.log('[Dexie] Running migration to v5 (conversation threads)');
+   141          });
+
+   155          }).upgrade(async () => {
+   156:             console.log('[Dexie] Running migration to v6 (provider configs)');
+   157          });
+
+   159          // Schema version 7: Add agentConfigs + conversationState tables (Story 2.1)
+   160:         // For unified state management with Zustand + Dexie
+   161          db.version(7).stores({
+
+   174          }).upgrade(async () => {
+   175:             console.log('[Dexie] Running migration to v7 (agent configs + conversation state)');
+   176          });
+
+   178          // Schema version 8: Add syncStatus table (RC-005 - Sprint 27B)
+   179:         // Migrates SyncStatusStore from localStorage to Dexie
+   180          db.version(8).stores({
+
+   923              // This approach is safer because:
+   924:             // - Dexie migrations can't access other databases
+   925              // - We can run consolidation at app startup with better error handling
+
+  1100          // Schema version 24: STATE-009 - Terminal State Persistence
+  1101:         // Migrates terminal settings from localStorage to Dexie
+  1102          db.version(24).stores({
+
+  1168              // terminalState: Terminal settings and tab state persistence
+  1169:             // Migrated from localStorage to Dexie for consistent storage strategy
+  1170              terminalState: 'id, updatedAt',
+
+  1183                  if (localStorageData) {
+  1184:                     console.log('[Dexie Migration v24] Found existing terminal settings in localStorage, will be migrated on first store access');
+  1185                      // Note: Actual data migration happens automatically when Zustand hydrates
+
+  1279              try {
+  1280:                 const { MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE } = await import('./dexie-db-class');
+  1281                  await MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE(tx as any);
+
+spike/src/infrastructure/persistence/dexie-db-plugin-types.ts:
+   1  /**
+   2:  * Dexie Database Plugin Types
+   3   *
+
+   6   *
+   7:  * @module infrastructure/persistence/dexie-db-plugin-types
+   8   * @story S-037 - Plugin System for extensibility with marketplace
+
+  68  /**
+  69:  * Dexie table definitions
+  70   */
+
+spike/src/infrastructure/persistence/dexie-db-session-types.ts:
+   2   * @fileoverview Session State Database Record Types
+   3:  * @module lib/state/dexie-db-session-types
+   4   * @governance EPIC-27-1c
+
+   6   * Session state and persistence types for IndexedDB.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+  19  /**
+  20:  * Generic record for Zustand persistence in Dexie
+  21   * Used by createDexieStorage adapter
+
+  37   * Sync status record for tracking file sync operations
+  38:  * Migrated from localStorage to Dexie for better query support
+  39   */
+
+spike/src/infrastructure/persistence/dexie-db-snippet-types.ts:
+   2   * @fileoverview Code Snippets Database Types
+   3:  * @module infrastructure/persistence/dexie-db-snippet-types
+   4   * @governance S-031
+
+   6   *
+   7:  * Code snippet types for Dexie database.
+   8   * Supports code snippet management with folders, tags, and placeholders.
+
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+spike/src/infrastructure/persistence/dexie-db-study-types.ts:
+   2   * @fileoverview Study Database Types - Consolidated Tables
+   3:  * @module infrastructure/persistence/dexie-db-study-types
+   4   *
+
+   8   * @epic EPIC-CC-01 - Project Space Foundation
+   9:  * @story PS-03 - Consolidate Dexie Databases
+  10   */
+  11  
+  12: import type { Table } from 'dexie';
+  13  
+
+spike/src/infrastructure/persistence/dexie-db-types.ts:
+   1  /**
+   2:  * @fileoverview Dexie Database Types Barrel Export
+   3:  * @module infrastructure/persistence/dexie-db-types
+   4   * @governance Epic 53 Story 53-2
+
+   7   * This barrel file consolidates types from:
+   8:  * - dexie-db-core-types.ts
+   9:  * - dexie-db-ai-types.ts
+  10:  * - dexie-db-session-types.ts
+  11:  * - dexie-db-knowledge-types.ts
+  12   */
+
+  19      FileContentCacheRecord,
+  20: } from './dexie-db-core-types';
+  21  
+  22  // Workspace Type (shared across the application)
+  23: export type { WorkspaceId } from './dexie-db-core-types';
+  24  
+
+  28      ThreadMessageRecord,
+  29: } from './dexie-db-ai-types';
+  30  
+
+  37      SessionSnapshotRecord,
+  38: } from './dexie-db-session-types';
+  39  
+
+  44      SynthesisResultRecord,
+  45: } from './dexie-db-knowledge-types';
+
+spike/src/infrastructure/persistence/dexie-db-workflow-types.ts:
+   2   * @fileoverview Workflow Table Types
+   3:  * @module infrastructure/persistence/dexie-db-workflow-types
+   4   * @governance EPIC-E4-7
+
+   6   *
+   7:  * Dexie table types for workflow persistence.
+   8   */
+   9  
+  10: import type { Table } from 'dexie';
+  11  import type { Workflow } from '@/lib/workflow/builder/types';
+
+spike/src/infrastructure/persistence/dexie-db.ts:
+    1  /**
+    2:  * @fileoverview Dexie Database Main Export
+    3:  * @module lib/state/dexie-db
+    4   * @governance EPIC-27-1c
+
+    6   *
+    7:  * Main export file for Dexie database.
+    8   * Re-exports all types and the database instance.
+
+   10   * Story 27-1: State Architecture Stabilization
+   11:  * Story 27-1c: Persistence Migration (idb → Dexie)
+   12   */
+
+   17  
+   18: import { ViaGentDatabase } from './dexie-db-class';
+   19: export { ViaGentDatabase } from './dexie-db-class';
+   20  
+
+   27   *
+   28:  * Handles Dexie migration failures caused by primary key changes.
+   29   * Schema v20 changed primary keys (e.g., 'id' → 'id, workspaceId'),
+
+   49      IDEStateRecord,
+   50: } from './dexie-db-core-types';
+   51  
+
+   56      WorkspaceBindings,
+   57: } from './dexie-db-core-types';
+   58  
+
+   62      ConversationsTable,
+   63: } from './dexie-db-core-types';
+   64  
+
+   70      ConversationThreadRecord,
+   71: } from './dexie-db-ai-types';
+   72  
+
+   80      ConversationThreadRecord,
+   81: } from './dexie-db-ai-types';
+   82  
+
+   87      ConversationThreadsTable,
+   88: } from './dexie-db-ai-types';
+   89  
+
+   99      SessionSnapshotRecord,
+  100: } from './dexie-db-session-types';
+  101  
+
+  108      SessionSnapshotRecord,
+  109: } from './dexie-db-session-types';
+  110  
+
+  117      SessionSnapshotTable,
+  118: } from './dexie-db-session-types';
+  119  
+
+  122      generateFileMetadataId,
+  123: } from './dexie-db-session-types';
+  124  
+
+  131      CollectionRecord,
+  132: } from './dexie-db-knowledge-types';
+  133  
+
+  142      SynthesisResultRecord,
+  143: } from './dexie-db-knowledge-types';
+  144  
+
+  150      NotesTable,
+  151: } from './dexie-db-knowledge-types';
+  152  
+
+  159      WorkflowsTable,
+  160: } from './dexie-db-workflow-types';
+  161  
+
+  171      SnippetTemplate,
+  172: } from './dexie-db-snippet-types';
+  173  
+
+  182      PluginStorageRecord,
+  183: } from './dexie-db-plugin-types';
+  184  
+
+  189      PluginStorageTable,
+  190: } from './dexie-db-plugin-types';
+  191  
+  192: export { generatePluginId, generateStorageId } from './dexie-db-plugin-types';
+  193  
+
+  203      SavedBlockType,
+  204: } from './dexie-db-block-types';
+  205  
+
+  209  
+  210: export { queueItemToSyncStatus } from './dexie-db-helpers';
+  211  
+
+  219      markMigrationApplied,
+  220: } from './dexie-db-migrations';
+  221  
+
+  258   * CRITICAL-FIX-2026-01-07: Now uses initializeDatabaseWithRecovery()
+  259:  * to handle Dexie migration failures caused by schema v20 primary key changes.
+  260   */
+
+  293      if (!instance) {
+  294:       throw new Error('[Dexie] Database not available during SSR. Use getDb() and check for null.');
+  295      }
+
+spike/src/infrastructure/persistence/dexie-storage.ts:
+    1  /**
+    2:  * @fileoverview Dexie Storage Adapter for Zustand
+    3:  * @module infrastructure/persistence/dexie-storage
+    4   * @governance ADR-024 State Management Consolidation, Epic 53
+    5   *
+    6:  * CANONICAL LOCATION for Zustand-Dexie persistence adapter.
+    7:  * Implements Zustand's StateStorage interface using Dexie.js for persistence.
+    8   * This allows Zustand stores to be persisted to IndexedDB instead of localStorage.
+
+   19  // import { type StateStorage } from 'zustand/middleware';
+   20: import { getDb, db, type PersistedStateRecord } from './dexie-db';
+   21: import type { ViaGentDatabase } from './dexie-db-class';
+   22: import type { Table } from 'dexie';
+   23  
+
+   60   * Evict oldest entries from a table to free up space
+   61:  * @param table The Dexie table to clean up
+   62   * @param bytesToFree Number of bytes to free (approximate)
+
+   97  /**
+   98:  * Create a persistence storage adapter for a specific Dexie table
+   99   *
+  100:  * @param tableName Name of the Dexie table to store state in
+  101   * @returns Zustand StateStorage implementation
+
+  159  
+  160:             // Dexie/IndexedDB needs the raw object, not stringified JSON for the 'state' field
+  161              // But Zustand passes a stringified JSON.
+
+spike/src/infrastructure/persistence/index.ts:
+  16  // Database
+  17: export { ViaGentDatabase as DexieDB } from './dexie-db';
+  18: export * from './dexie-db-class';
+  19: export { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  20: export * from './dexie-db-migrations';
+  21: export * from './dexie-db-core-types';
+  22: export * from './dexie-db-ai-types';
+  23: export * from './dexie-db-session-types';
+  24: export * from './dexie-db-knowledge-types';
+  25: export * from './dexie-db-workflow-types';
+  26: export * from './dexie-db-helpers';
+  27  
+
+spike/src/infrastructure/persistence/workflow-persistence.ts:
+    6   *
+    7:  * Dexie-based persistence for workflows with versioning, import/export, and search.
+    8   */
+    9  
+   10: import { getDb } from './dexie-db';
+   11: import type { WorkflowRecord } from './dexie-db-workflow-types';
+   12  import type { Workflow } from '@/lib/workflow/builder/types';
+
+  494  /**
+  495:  * Migrate workflows from localStorage to Dexie
+  496   *
+
+spike/src/infrastructure/persistence/dexie-db-helpers/additional-file-metadata-helpers.ts:
+   2   * @fileoverview Additional File Metadata Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/additional-file-metadata-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for advanced file metadata operations.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { FileMetadataRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/collection-helpers-basic.ts:
+   2   * @fileoverview Collection Helper Functions (Basic Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/collection-helpers-basic
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for collection CRUD operations (Part 1 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { CollectionRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/collection-helpers-sources.ts:
+   2   * @fileoverview Collection Helper Functions (Source Management)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/collection-helpers-sources
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for managing sources within collections (Part 2 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { CollectionRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/conversation-thread-helpers.ts:
+   2   * @fileoverview Conversation Thread Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/conversation-thread-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for conversation thread management.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { ConversationThreadRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/file-metadata-helpers.ts:
+   2   * @fileoverview File Metadata Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/file-metadata-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for file metadata CRUD operations.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { FileMetadataRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers.ts:
+   2   * @fileoverview FSA Handle Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for File System Access API handle management.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { FSAHandleRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/ide-state-helpers.ts:
+   2   * @fileoverview IDE State Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/ide-state-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for IDE state CRUD operations.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { IDEStateRecord, ProjectRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/index.ts:
+  1  /**
+  2:  * @fileoverview Dexie DB Helpers Barrel Export
+  3:  * @module infrastructure/persistence/dexie-db-helpers
+  4   * @governance Epic 53-2 (State Management Consolidation)
+
+  6   *
+  7:  * Barrel export for all Dexie database helper functions.
+  8   */
+
+spike/src/infrastructure/persistence/dexie-db-helpers/session-snapshot-helpers.ts:
+   2   * @fileoverview Session Snapshot Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/session-snapshot-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for session snapshot management.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SessionSnapshotRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/source-helpers-basic.ts:
+   2   * @fileoverview Source Helper Functions (Basic Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/source-helpers-basic
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for source CRUD operations (Part 1 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SourceRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/source-helpers-search.ts:
+   2   * @fileoverview Source Helper Functions (Search & Stats)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/source-helpers-search
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for source search and statistics (Part 2 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SourceRecord } from '../dexie-db-types';
+  11  import { getSourcesForProject } from './source-helpers-basic';
+
+spike/src/infrastructure/persistence/dexie-db-helpers/sync-status-helpers-basic.ts:
+   2   * @fileoverview Sync Status Helper Functions (Basic Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/sync-status-helpers-basic
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for sync status CRUD operations (Part 1 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SyncStatusRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/sync-status-helpers-query.ts:
+   2   * @fileoverview Sync Status Helper Functions (Query & Utilities)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/sync-status-helpers-query
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for sync status queries and utility operations (Part 2 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SyncStatusRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-create.ts:
+   2   * @fileoverview Synthesis Result Helper Functions (Create & Update)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-create
+   4   * @governance Epic 53 Story 53-2
+
+   6   * Helper functions for synthesis result creation and status updates (Part 2 of 2).
+   7:  * Part of Story 53-2: Move Dexie Helpers to Infrastructure
+   8   */
+   9  
+  10: import type { SynthesisResultRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-crud.ts:
+   2   * @fileoverview Synthesis Result Helper Functions (CRUD Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-crud
+   4   * @governance Epic 53 Story 53-2
+
+   6   * Helper functions for synthesis result CRUD operations (Part 1 of 2).
+   7:  * Part of Story 53-2: Move Dexie Helpers to Infrastructure
+   8   */
+   9  
+  10: import type { SynthesisResultRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/dexie-db-helpers/tool-execution-log-helpers.ts:
+   2   * @fileoverview Tool Execution Log Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/tool-execution-log-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for tool execution logging.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { ToolExecutionLogRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+spike/src/infrastructure/persistence/services/db-consolidation-service.ts:
+   8   * @epic EPIC-CC-01 - Project Space Foundation
+   9:  * @story PS-03 - Consolidate Dexie Databases
+  10   */
+  11  
+  12: import Dexie from 'dexie';
+  13: import { db } from '../dexie-db';
+  14  import type {
+
+  20    QuizQuestionRecord,
+  21: } from '../dexie-db-study-types';
+  22  
+
+  66   */
+  67: async function openLegacyDb(name: string, version: number, stores: Record<string, string>): Promise<Dexie | null> {
+  68    try {
+  69:     const db = new Dexie(name);
+  70      db.version(version).stores(stores);
+
+spike/src/infrastructure/persistence/stores/conversation-auto-restore.ts:
+  1: import type { ConversationThreadRecord } from '../dexie-db';
+  2: import { db, getConversationThread, saveConversationThread } from '../dexie-db';
+  3  import { useConversationStore } from './conversation/conversation-store';
+
+spike/src/infrastructure/persistence/stores/hydration-manager.ts:
+    4   *
+    5:  * Manages Zustand store hydration from Dexie with error recovery.
+    6   *
+    7   * ROOT CAUSE FIX (2026-01-20):
+    8:  * - EMPTY STUBS REPLACED WITH ACTUAL DEXIE READS
+    9   * - Each store now properly hydrates from IndexedDB
+
+   12  
+   13: import { db } from '@/infrastructure/persistence/dexie-db';
+   14  
+
+   63    constructor() {
+   64:     // Register default stores with ACTUAL DEXIE HYDRATION LOGIC
+   65      this.registerStore({
+
+   67        hydrate: async () => {
+   68:         console.log('[HydrationManager] Hydrating ideStore from Dexie...');
+   69          const projectId = this.getProjectIdFromURL();
+
+  109      // Note: agentSelectionStore, unifiedChatStore, and navigationStore
+  110:     // have their own persist middleware with Dexie storage.
+  111      // They hydrate automatically via Zustand's persist middleware.
+
+  156      // Check if any stores have existing data
+  157:     // This is a simplified check - in production, you'd check Dexie directly
+  158      return this.stores.size > 0;
+
+spike/src/infrastructure/persistence/stores/index.ts:
+  155    type ConversationRecord,
+  156: } from '../dexie-db';
+  157  
+  158: export { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  159: export { ViaGentDatabase } from '../dexie-db-class';
+  160  
+
+  190  
+  191: export { useLiveQuery } from 'dexie-react-hooks';
+  192  
+
+  223  
+  224: export * from '../dexie-db-core-types';
+  225: export * from '../dexie-db-ai-types';
+  226: export * from '../dexie-db-session-types';
+  227: export * from '../dexie-db-knowledge-types';
+
+spike/src/infrastructure/persistence/stores/quiz-history-store.ts:
+   1  /**
+   2:  * @fileoverview Quiz history store with Dexie persistence
+   3   * @module lib/state/quiz-history-store
+
+   5  
+   6: import Dexie, { type Table } from 'dexie';
+   7  import { create } from 'zustand';
+
+  11  /**
+  12:  * Dexie database for quiz history
+  13   */
+  14: class QuizHistoryDatabase extends Dexie {
+  15    quizHistory!: Table<QuizHistoryRecord>;
+
+  53  /**
+  54:  * Quiz history store with Dexie persistence
+  55   */
+
+spike/src/infrastructure/persistence/stores/session-snapshot-manager.ts:
+  166      const snapshotRecord = snapshot as Omit<
+  167:       import('../dexie-db-session-types').SessionSnapshotRecord,
+  168        'createdAt' | 'expiresAt'
+
+  170  
+  171:     // Store in IndexedDB via dexie
+  172:     const { saveSessionSnapshot } = await import('../dexie-db');
+  173      await saveSessionSnapshot(snapshotRecord);
+
+  185      // Get from IndexedDB
+  186:     const { getLatestSessionSnapshot } = await import('../dexie-db');
+  187      const snapshotRecord = await getLatestSessionSnapshot(projectPath);
+
+  250    async clearSnapshots(): Promise<void> {
+  251:     const { clearProjectSessionSnapshots } = await import('../dexie-db');
+  252      await clearProjectSessionSnapshots(this.options.projectPath);
+
+spike/src/infrastructure/persistence/stores/study-store.ts:
+  1  /**
+  2:  * @fileoverview Study session store with Dexie persistence for SRS data
+  3   * @module lib/state/study-store
+
+spike/src/infrastructure/persistence/stores/terminal-store.ts:
+   18  import { persist, createJSONStorage } from 'zustand/middleware';
+   19: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   20  
+
+  302   * 
+  303:  * STATE-009 FIX (2026-01-19): Migrated from localStorage to Dexie storage
+  304   * - localStorage was causing workspace access infection
+  305:  * - Dexie provides consistent persistence across all stores
+  306   * - Uses 'terminalState' table in ViaGentDatabase
+
+spike/src/infrastructure/persistence/stores/use-app-store.ts:
+    9   * - Cross-slice communication via get()
+   10:  * - Dexie persistence with selective partialize
+   11   *
+
+   20  import { useMemo } from 'react';
+   21: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   22  import { runMigrations, validateMigratedState, CURRENT_SCHEMA_VERSION } from './schema-migrations';
+
+  106  
+  107:       // Use Dexie storage adapter for IndexedDB persistence
+  108        // Note: Using 'providerConfigs' table as generic storage for app state
+  109:       storage: createJSONStorage(() => createDexieStorage('providerConfigs' as keyof typeof import('../dexie-db').db)),
+  110  
+
+spike/src/infrastructure/persistence/stores/agents/agent-selection-store.ts:
+  14  import { persist, createJSONStorage } from 'zustand/middleware';
+  15: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  16  import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+
+  30  /**
+  31:  * Create Dexie storage for agent selection
+  32   */
+
+spike/src/infrastructure/persistence/stores/canvas/canvas-db.ts:
+  10   * - Extracted from canvas-store.ts (original lines 36-71)
+  11:  * - Canonical location for Dexie database initialization
+  12   * - Supports canvas metadata and state persistence
+
+  16  
+  17: import Dexie from 'dexie';
+  18  import type { Node, Edge, Viewport } from '@xyflow/react';
+
+  42   * KnowledgeCanvasDB class for IndexedDB operations
+  43:  * Extends Dexie for type-safe database operations
+  44   */
+  45: export class KnowledgeCanvasDB extends Dexie {
+  46:   canvases!: Dexie.Table<CanvasMetadataRecord, string, CanvasMetadataRecord>;
+  47:   canvasStates!: Dexie.Table<CanvasStateRecord, string, CanvasStateRecord>;
+  48  
+
+spike/src/infrastructure/persistence/stores/chat/unified-chat-store.ts:
+  23  import type { CombinedUnifiedChatState } from './unified-chat-types';
+  24: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  25  
+
+  55   *
+  56:  * Combines all slices into a single Zustand store with Dexie persistence.
+  57   *
+
+spike/src/infrastructure/persistence/stores/chat/__tests__/test-helper.ts:
+  6   * Creates a complete test store with all slices for unit testing.
+  7:  * Mocks Dexie storage to avoid IndexedDB operations in tests.
+  8   *
+
+spike/src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts:
+   6   * Extracted from unified-chat-store.ts (448 lines → 120 lines slice)
+   7:  * Handles conversation state persistence via Dexie/IndexedDB.
+   8   *
+
+  21  import type { ConversationState } from '@/domain/entities/chat';
+  22: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  23  
+
+spike/src/infrastructure/persistence/stores/conversation/conversation-helpers.ts:
+    9  import type { ConversationThread } from './types';
+   10: import type { ConversationThreadRecord } from '../../dexie-db';
+   11  
+
+   68  /**
+   69:  * Persist conversation state to Dexie threads table
+   70   * This ensures consistency with the Threads view
+
+  115  /**
+  116:  * Create a debounced persist to Dexie function
+  117   * Performance optimization for frequent updates during chat
+
+spike/src/infrastructure/persistence/stores/conversation/conversation-types.ts:
+   15  import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+   16: import type { ThreadMessageRecord } from '../../dexie-db';
+   17  
+
+  142  
+  143:   /** Load conversation from Dexie into store */
+  144    loadConversation: (id: string) => Promise<void>;
+
+spike/src/infrastructure/persistence/stores/conversation/conversation-utils-slice.ts:
+  17    getRecentConversations: (limit?: number) => ConversationMetadataWithId[];
+  18:   loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
+  19    loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
+
+  70    loadConversation: async (conversationId: string) => {
+  71:     // Load conversation from Dexie and populate store (Story 51-3)
+  72      const conversation = get().getConversation(conversationId);
+
+spike/src/infrastructure/persistence/stores/conversation/persistence.ts:
+   1  /**
+   2:  * @fileoverview Thread Persistence - Dexie-backed thread storage (Migrated from legacy)
+   3   * @module infrastructure/persistence/stores/conversation/persistence
+
+   7   * @description
+   8:  * This module provides async Dexie persistence for conversation threads.
+   9   * Migrated from src/lib/workspace/threads-store.ts as part of architectural cleanup.
+
+  17  
+  18: import { db, type ConversationThreadRecord } from '@/infrastructure/persistence/dexie-db';
+  19  import type { ConversationThread, ThreadMessage } from './types';
+
+  21  /**
+  22:  * Convert Zustand thread to Dexie record
+  23   */
+
+  56  /**
+  57:  * Convert Dexie record to Zustand thread
+  58   */
+
+spike/src/infrastructure/persistence/stores/conversation/types.ts:
+  209      getRecentConversations: (limit?: number) => ConversationMetadataWithId[];
+  210:     loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
+  211      loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
+
+spike/src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts:
+   19  
+   20: import { dexieDB } from '@/infrastructure/persistence/dexie-db-class';
+   21  import { useConversationStore } from '../useConversationStore';
+
+  159          try {
+  160:             // Read all conversation data from Dexie
+  161              const legacyState = await readLegacyStore();
+
+spike/src/infrastructure/persistence/stores/editor-tabs/index.ts:
+  12  import { persist, createJSONStorage } from 'zustand/middleware';
+  13: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  14  import { createEditorTabsCrudSlice, EditorTabsCrudState, EditorTabsCrudActions } from './editor-tabs-crud-slice';
+
+  41   *
+  42:  * Combines all 3 slices into a single store with Dexie persistence.
+  43   */
+
+spike/src/infrastructure/persistence/stores/filesystem/snapshot-bulk-ops-slice.ts:
+   10  import { StateCreator } from 'zustand';
+   11: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+   12  import type { SnapshotBulkOpsState, SnapshotBulkOpsMethods } from './snapshot-types';
+
+   98  
+   99:     // Persist to Dexie
+  100:     // TODO: Add Dexie persistence
+  101    },
+
+spike/src/infrastructure/persistence/stores/filesystem/snapshot-cache-slice.ts:
+  53  
+  54:     // Persist to Dexie
+  55:     // TODO: Add Dexie persistence with quota management
+  56    },
+
+  85  
+  86:     // Persist to Dexie
+  87:     // TODO: Add Dexie persistence
+  88    },
+
+spike/src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts:
+   10  import { StateCreator } from 'zustand';
+   11: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+   12  import type { SnapshotMetadataState, SnapshotMetadataMethods, FileTreeNode } from './snapshot-types';
+
+   33  
+   34:     // Persist to Dexie
+   35:     // TODO: Add Dexie persistence
+   36    },
+
+  104  
+  105:     // Persist to Dexie
+  106:     // TODO: Add Dexie persistence
+  107    },
+
+spike/src/infrastructure/persistence/stores/filesystem/snapshot-quota-slice.ts:
+  85  
+  86:     // Persist to Dexie
+  87:     // TODO: Add Dexie persistence for quota evictions
+  88  
+
+spike/src/infrastructure/persistence/stores/filesystem/snapshot-types.ts:
+    9  
+   10: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+   11  
+
+  170   * Re-export FileSnapshotRecord for convenience
+  171:  * FileSnapshotRecord is defined in dexie-db-core-types.ts
+  172   */
+  173: export type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+
+spike/src/infrastructure/persistence/stores/filesystem/useFileSnapshotStore.ts:
+   8   * - Each slice is <120 lines (single responsibility principle)
+   9:  * - Dexie IndexedDB persistence for metadata
+  10   * - Content cache is ephemeral (in-memory only)
+
+  47   * Composed from 4 focused slices following January 2026 Zustand pattern.
+  48:  * Persists metadata to Dexie IndexedDB with selective partialize.
+  49   * Content cache is ephemeral (in-memory only, not persisted).
+
+  67  
+  68:       // TODO: Add Dexie storage adapter
+  69        // For now using localStorage as temporary storage
+
+spike/src/infrastructure/persistence/stores/flashcard/flashcard-db.ts:
+   1  /**
+   2:  * @fileoverview Flashcard database initialization (Dexie IndexedDB)
+   3   * @module infrastructure/persistence/stores/flashcard/flashcard-db
+
+   6  
+   7: import Dexie from 'dexie';
+   8  
+
+  37   * FlashcardDatabase class for IndexedDB operations
+  38:  * Extends Dexie for type-safe database operations
+  39   *
+
+  42   */
+  43: export class FlashcardDatabase extends Dexie {
+  44:   flashcards!: Dexie.Table<FlashcardRecord, string>;
+  45:   flashcardSets!: Dexie.Table<FlashcardSetRecord, string>;
+  46  
+
+  56  /**
+  57:  * Dexie database instance getter
+  58   * Ensures singleton pattern for IndexedDB access
+
+spike/src/infrastructure/persistence/stores/ide/ide-project-slice.ts:
+  13   * - Reset clears all slices via cross-slice communication
+  14:  * - Future: Load project-specific state from Dexie
+  15   */
+
+spike/src/infrastructure/persistence/stores/ide/ide-state-storage.ts:
+  22   *
+  23:  * @see dexie-db-migrations.ts line 147: ideState: 'projectId, updatedAt'
+  24   */
+
+  26  import type { StateStorage } from 'zustand/middleware';
+  27: import type { IDEStateRecord } from '@/infrastructure/persistence/dexie-db';
+  28  import type { CombinedIDEState } from './ide-types';
+  29: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  30  
+
+spike/src/infrastructure/persistence/stores/ide/useIDEStore.ts:
+   4   * @governance EPIC-CP-1
+   5:  * @updated 2026-01-06 - Fixed Dexie persistence with custom storage adapter
+   6   *
+
+  58   *
+  59:  * Uses Dexie.js (IndexedDB) for persistence.
+  60   * Set<string> properly serialized to/from Array.
+
+spike/src/infrastructure/persistence/stores/notes/note-context-tracker.ts:
+  22  import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
+  23: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  24  import type { Block } from '@blocknote/core';
+
+spike/src/infrastructure/persistence/stores/notes/slash-commands/index.ts:
+    7   *
+    8:  * CANONICAL LOCATION for slash commands Zustand store with Dexie persistence.
+    9   * This is the authoritative location for slash command state management.
+
+   18  import { persist } from 'zustand/middleware';
+   19: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   20  
+
+  315  // ============================================================================
+  316: // Store with Dexie Persistence
+  317  // ============================================================================
+
+  321   *
+  322:  * Migrated from localStorage to Dexie storage for:
+  323   * - Better performance with IndexedDB
+
+  480              name: 'via-gent-slash-commands',
+  481:             // DEXIE STORAGE MIGRATION (Track 1)
+  482:             // Changed from default localStorage to Dexie persist storage
+  483              storage: createDexieStorage('workspaceState') as any, // Type assertion for Zustand compatibility
+
+spike/src/infrastructure/persistence/stores/notifications/index.ts:
+  41   *
+  42:  * Combines all 3 slices into a single store with Dexie persistence.
+  43   */
+
+spike/src/infrastructure/persistence/stores/permissions/tool-permission-store.ts:
+  22  import { persist, createJSONStorage } from 'zustand/middleware';
+  23: import { createDexieStorage } from '../../dexie-storage';
+  24  import type { ToolPermissionState } from './types';
+
+spike/src/infrastructure/persistence/stores/project/migrate-bindings.ts:
+  17  
+  18: import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+  19  import { getProjectStoreState } from './useProjectStore';
+
+spike/src/infrastructure/persistence/stores/project/project-bindings-slice.ts:
+  10  import { StateCreator } from 'zustand';
+  11: import { db } from '@/infrastructure/persistence/dexie-db';
+  12  import type {
+
+  54  
+  55:     // Persist to Dexie (async, non-blocking)
+  56:     // ARC-C06: Added Dexie persistence for workspaceBindings updates
+  57      db.projects.update(projectId, { workspaceBindings: updated.workspaceBindings }).catch((error: unknown) => {
+  58        const err = error as Error;
+  59:       console.error('[ProjectStore] Failed to persist workspaceBindings to Dexie:', err.message);
+  60      });
+
+spike/src/infrastructure/persistence/stores/project/project-crud-slice.ts:
+    5   *
+    6:  * Project lifecycle management operations with Dexie persistence.
+    7   *
+
+   15  import { StateCreator } from 'zustand';
+   16: import { db } from '@/infrastructure/persistence/dexie-db';
+   17  // CC-V2-B03: Removed storeFSAHandle import - handle storage is now done in fsa-persistence.ts
+
+   67  /**
+   68:  * Convert Zustand Project to Dexie ProjectRecord for persistence
+   69   * PERSIST-S002: Added workspaceId for cross-workspace isolation
+
+   85  /**
+   86:  * Convert Dexie ProjectRecord to Zustand Project
+   87   * PS-04: Now uses storageMetadata instead of fsaHandle
+
+   94      storageType: record.storageType || 'fsa',  // Default to 'fsa' for legacy records
+   95:     storageMetadata: null,  // Not stored in Dexie (requires user permission, store in fsaHandles table)
+   96      lastOpened: new Date(record.lastOpened),
+
+  150  
+  151:     // Persist to Dexie (async, blocking)
+  152      // FS-03: Pass workspaceType for proper isolation
+
+  157        const err = error as Error;
+  158:       console.error('[ProjectStore] Failed to persist project to Dexie:', err.message);
+  159        // We should probably re-throw here so the caller knows creation failed, 
+
+  170      // 1. createProjectFromFolder() in fsa-persistence.ts calls this createProject() method
+  171:     // 2. This method creates project metadata in Zustand + Dexie
+  172      // 3. fsa-persistence.ts then calls handlePersistenceService.persistHandle(projectId, handle, 'ide')
+
+  202  
+  203:     // Persist to Dexie (async, non-blocking)
+  204      // FS-03: Extract workspace type from project ID for proper isolation
+
+  207        const err = error as Error;
+  208:       console.error('[ProjectStore] Failed to update project in Dexie:', err.message);
+  209      });
+
+  224  
+  225:     // Delete from Dexie (async, non-blocking)
+  226      db.projects.delete(projectId).catch((error: unknown) => {
+  227        const err = error as Error;
+  228:       console.error('[ProjectStore] Failed to delete project from Dexie:', err.message);
+  229      });
+
+spike/src/infrastructure/persistence/stores/project/project-layout-slice.ts:
+  10   * layoutState is stored in-memory on the Project object for quick access.
+  11:  * Persistence is handled by the IDE store's IDEStateRecord in Dexie, NOT ProjectRecord.
+  12   * This slice is for in-memory coordination only - the IDE store persists panelLayouts.
+
+  49  
+  50:     // NOTE: Dexie persistence is handled by IDE store (IDEStateRecord.panelLayouts)
+  51:     // ProjectRecord does not have layoutState field - see dexie-db-core-types.ts
+  52    },
+
+  80  
+  81:     // NOTE: Dexie persistence is handled by IDE store (IDEStateRecord.panelLayouts)
+  82:     // ProjectRecord does not have layoutState field - see dexie-db-core-types.ts
+  83    },
+
+spike/src/infrastructure/persistence/stores/project/project-permissions-slice.ts:
+   29    updateProjectPermission: async (projectId: string, permissionState: FsaPermissionState) => {
+   30:     // Update the FSAHandleRecord in Dexie (single source of truth)
+   31      await handlePersistenceService.updatePermissionStatus(projectId, permissionState);
+
+  103      // Permission state is now in FSAHandleRecord, not in Project
+  104:     // Just update the Dexie record to 'prompt' to force re-verification
+  105      await handlePersistenceService.updatePermissionStatus(projectId, 'prompt');
+
+spike/src/infrastructure/persistence/stores/project/project-types.ts:
+  160   * FSA-010: Permission state is now sourced from FSAHandleRecord via handlePersistenceService
+  161:  * All methods are async since they query Dexie for permission state
+  162   */
+
+spike/src/infrastructure/persistence/stores/project/project-utils-slice.ts:
+   9  import { StateCreator } from 'zustand';
+  10: import { db } from '@/infrastructure/persistence/dexie-db';
+  11  import { fromRecord, toRecord } from './project-crud-slice'; // PERSIST-S002: Import both converters
+
+  41  
+  42:     // Persist to Dexie
+  43      // PERSIST-S002: Use toRecord() to ensure workspaceId is included
+
+  46      db.projects.put(record).catch((error) => {
+  47:       console.error('[ProjectStore] Failed to update lastOpened in Dexie:', error);
+  48      });
+
+  50  
+  51:   // Hydrate projects from Dexie into Zustand store
+  52    // Call this on app startup to load persisted projects
+  53    hydrateProjects: async () => {
+  54:     console.log('[ProjectStore] Hydrating projects from Dexie...');
+  55  
+
+  70  
+  71:       console.log(`[ProjectStore] Hydrated ${Object.keys(projects).length} projects from Dexie`);
+  72      } catch (error) {
+  73:       console.error('[ProjectStore] Failed to hydrate projects from Dexie:', error);
+  74        // Mark as hydrated even on error to prevent infinite retries
+
+spike/src/infrastructure/persistence/stores/project/use-fsa-projects.ts:
+  4  
+  5: import { useLiveQuery } from 'dexie-react-hooks';
+  6  import { useMemo } from 'react';
+  7  import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+  8: import { db } from '@/infrastructure/persistence/dexie-db';
+  9  import type { Project } from './project-types';
+
+spike/src/infrastructure/persistence/stores/project/useProjectStore.ts:
+   8   * - Each slice is <120 lines (single responsibility principle)
+   9:  * - Dexie IndexedDB persistence
+  10   * - Cross-slice communication via get()
+
+  47   * Composed from 5 focused slices following January 2026 Zustand pattern.
+  48:  * Persists to Dexie IndexedDB with selective partialize.
+  49   */
+  50  // FIX-2026-01-06: REMOVED localStorage persist - causes dual storage chaos
+  51: // Dexie is the SINGLE SOURCE OF TRUTH for projects
+  52: // Hub reads from Dexie, all components should read from Dexie
+  53  // This store is now a transient in-memory cache, NOT persisted
+
+spike/src/infrastructure/persistence/stores/rag/rag-store.ts:
+  20   * - IndexedDB quota handling
+  21:  * - Dexie persistence with debounced writes
+  22   */
+
+  25  import { persist, createJSONStorage } from 'zustand/middleware';
+  26: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  27  import type { RAGStoreState } from './rag-types';
+
+  50  
+  51:       // Use Dexie storage adapter for IndexedDB persistence
+  52        // P0 FIX: ragState table now exists in ViaGentDatabase schema (v17 migration)
+
+spike/src/infrastructure/persistence/stores/study/slices/study-database-slice.ts:
+   6  
+   7: import Dexie from 'dexie';
+   8  
+
+  36   */
+  37: export class StudyDatabase extends Dexie {
+  38    constructor() {
+
+spike/src/infrastructure/persistence/stores/workspace/workspace-store.ts:
+   20  import { persist, createJSONStorage } from 'zustand/middleware';
+   21: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   22  import { useShallow } from 'zustand/react/shallow';
+
+  175        name: 'workspace-state',
+  176:       // FIXED STATE-003: Use Dexie storage instead of localStorage per ADR-033
+  177        // Uses providerConfigs table which stores { key, state } records
+
+spike/src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts:
+    7   * Manages:
+    8:  * - Project loading/hydration from Dexie
+    9   * - Permission state detection
+
+   60   *
+   61:  * Handles project loading from Dexie, permission state detection,
+   62   * and IndexedDB adapter initialization for browser-only projects.
+
+  108            if (project.storageType === 'indexeddb') {
+  109:             // Dexie-stored projects have no FSA handle - auto-grant permission
+  110              setPermissionState('granted');
+
+spike/src/infrastructure/sync/bridges/note-folder-bridge.ts:
+   4   *
+   5:  * Bridges the gap between local filesystem Markdown files and Dexie-stored Notes.
+   6   * Handles parsing, conversion, and synchronization.
+
+  11  
+  12: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  13: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db-knowledge-types';
+  14  import type { LocalFSAdapter } from '@/infrastructure/filesystem';
+
+spike/src/infrastructure/sync/workspace-services/notes/note-crud-operations.ts:
+  12  import type { Block } from '@blocknote/core';
+  13: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  14  import { parseMarkdownFile } from './note-markdown-parser';
+
+spike/src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts:
+  18  import type { NoteSyncStore } from './notes-file-sync-core';
+  19: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  20  import { importFileAsNote } from './note-crud-operations';
+
+spike/src/infrastructure/sync/workspace-services/notes/note-markdown-writer.ts:
+  11  
+  12: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  13  import type { Block } from '@blocknote/core';
+
+spike/src/infrastructure/sync/workspace-services/notes/notes-file-sync-core.ts:
+  19  import type { Block } from '@blocknote/core';
+  20: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  21  import { SyncError } from '@/infrastructure/sync/types';
+
+spike/src/lib/agent/system-prompt.ts:
+  156  - State: Zustand
+  157: - Storage: Dexie (IndexedDB)
+  158  
+
+spike/src/lib/agent/facades/note-tools-impl.ts:
+  19  import type { NoteStoreState } from '@/lib/notes/types-slice';
+  20: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  21  
+
+spike/src/lib/agent/memory/conversation-memory.ts:
+  11  
+  12: import Dexie, { Table } from 'dexie';
+  13  
+
+  44   */
+  45: class ConversationDatabase extends Dexie {
+  46    conversationMemory!: Table<ConversationMemory, number>;
+
+spike/src/lib/agent/preferences/user-profile.ts:
+  10  
+  11: import Dexie, { Table } from 'dexie';
+  12  
+
+  81   */
+  82: class UserPreferencesDatabase extends Dexie {
+  83    preferences!: Table<UserPreference, string>;
+
+spike/src/lib/agent/providers/credential-storage.ts:
+  13  
+  14: import { getDb, type CredentialRecord } from '@/infrastructure/persistence/dexie-db';
+  15  
+
+spike/src/lib/agent/providers/credential-vault.ts:
+  4   *
+  5:  * Secure storage for API keys using Web Crypto API (AES-GCM) and Dexie.js.
+  6   * This is the public API facade that orchestrates storage and encryption modules.
+
+spike/src/lib/agent/suggestions/suggestion-tracker.ts:
+  10  
+  11: import Dexie, { Table } from 'dexie';
+  12  
+
+  79   */
+  80: class SuggestionTrackerDatabase extends Dexie {
+  81    dismissals!: Table<SuggestionDismissal, number>;
+
+spike/src/lib/agent/tools/retry-queue.ts:
+   9   * - Max retry limits per error type
+  10:  * - Dexie persistence for session recovery
+  11   * - Event bus lifecycle events
+
+spike/src/lib/agent/tools/tool-execution-logger.ts:
+  1  import type { ToolExecutionContext } from './types';
+  2: import type { ToolExecutionLogRecord } from '@/infrastructure/persistence/dexie-db';
+  3  import {
+
+  8    clearToolExecutionLogs
+  9: } from '@/infrastructure/persistence/dexie-db';
+  10  
+
+spike/src/lib/analytics/metrics-collector.ts:
+  11   *
+  12:  * Privacy-first: All data stored locally in IndexedDB via Dexie.
+  13   * No telemetry or external data transmission.
+
+  18  
+  19: import { db } from '@/infrastructure/persistence/dexie-db';
+  20  
+
+spike/src/lib/analytics/performance-monitor.ts:
+  16  
+  17: import { db } from '@/infrastructure/persistence/dexie-db';
+  18  import { getMetricsCollector } from './metrics-collector';
+
+spike/src/lib/audio/audio-storage.ts:
+   10  
+   11: import Dexie, { Table } from 'dexie';
+   12  
+
+   43   */
+   44: class AudioDatabase extends Dexie {
+   45    audio!: Table<StoredAudio, number>;
+
+  222  
+  223:   // Workaround for Dexie v9: fetch current value, increment, update
+  224    const audio = await db.audio.get(id);
+
+spike/src/lib/events/cross-workspace-event-bus.ts:
+  30  // CC-V2-A02: Import from canonical location per ADR-035
+  31: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  32  
+
+spike/src/lib/filesync/hooks/use-markdown-sync-service.ts:
+  21  import { useEffect, useState, useCallback, useRef } from 'react';
+  22: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  23  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+
+spike/src/lib/filesystem/file-snapshot-store.ts:
+   9   *
+  10:  * BEFORE (517 lines): Class-based service using Dexie directly
+  11   * - Class: FileSnapshotStore with constructor options
+  12:  * - Direct Dexie IndexedDB operations
+  13   * - No state management, just cache utilities
+  14   *
+  15:  * AFTER (Zustand): Zustand store with 4 slices + Dexie persistence
+  16   * - Store: useFileSnapshotStore with slice composition
+  17   * - State management via Zustand
+  18:  * - Dexie persistence via Zustand middleware
+  19   * - Reactive hooks for components
+
+  52  // Re-export FileSnapshotRecord for backward compatibility
+  53: export type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-types';
+  54  
+
+  83  import { useFileSnapshotStore } from './file-snapshot-store/file-snapshot-store-refactored';
+  84: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-types';
+  85  
+
+spike/src/lib/filesystem/permission-lifecycle.ts:
+    6   *
+    7:  * Uses the main Dexie database (via-gent-persistence) for FSA handle persistence,
+    8   * following the unified state management approach.
+
+   10  
+   11: import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db';
+   12  import {
+
+   16    deleteFSAHandle,
+   17: } from '@/infrastructure/persistence/dexie-db';
+   18  
+
+  121  /**
+  122:  * Save directory handle reference for the project using Dexie persistence.
+  123   * Note: The actual handle cannot be serialized - only metadata is stored.
+
+  150  /**
+  151:  * Load directory handle reference metadata from Dexie persistence.
+  152   * Returns null if no stored handle exists.
+
+spike/src/lib/filesystem/project-context-provider.ts:
+  14   *
+  15:  * @see Research: Dexie transaction patterns, Web Crypto API, WebContainer fs operations
+  16   */
+
+spike/src/lib/filesystem/file-snapshot-store/file-snapshot-store-refactored.ts:
+  36  import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+  37: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  38  import {
+
+  75   * - Slice composition for single responsibility
+  76:  * - Persist middleware for IndexedDB via Dexie
+  77   * - Backward compatible facade for gradual migration
+
+spike/src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts:
+   69      saveBulkSnapshots: async (projectId, snapshots) => {
+   70:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+   71        const startTime = Date.now();
+
+  132      getExpiredSnapshots: async () => {
+  133:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  134        const now = Date.now();
+
+  143      bulkInvalidateByPattern: async (projectId, pattern) => {
+  144:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  145  
+
+  167      bulkRefreshTTL: async (projectId, paths) => {
+  168:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  169        const now = Date.now();
+
+spike/src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts:
+   77      saveSnapshot: async (projectId, path, content, hash, size = content.length, workspaceId: WorkspaceType = 'ide') => {
+   78:       // This will delegate to Dexie operations
+   79:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+   80        const now = Date.now();
+
+  114      getFileTree: async (projectId) => {
+  115:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  116        return await db.fileSnapshots.where('projectId').equals(projectId).toArray();
+
+  119      getFileCount: async (projectId) => {
+  120:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  121        return await db.fileSnapshots.where('projectId').equals(projectId).count();
+
+  124      getCacheSize: async (projectId) => {
+  125:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  126        const snapshots = await db.fileSnapshots.where('projectId').equals(projectId).toArray();
+
+  130      getCacheStats: async (projectId) => {
+  131:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  132        const now = Date.now();
+
+  147      refreshSnapshot: async (projectId, path) => {
+  148:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  149        const now = Date.now();
+
+  158      refreshAllSnapshots: async (projectId) => {
+  159:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  160        const now = Date.now();
+
+spike/src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts:
+   57    invalidateSnapshot: async (projectId, path) => {
+   58:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   59  
+
+   74    invalidateProject: async (projectId) => {
+   75:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   76  
+
+   96    invalidateExpired: async (projectId) => {
+   97:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   98      const now = Date.now();
+
+  149    invalidateByHashMismatch: async (projectId, path, expectedHash) => {
+  150:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  151  
+
+  181    deleteAllSnapshots: async () => {
+  182:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  183  
+
+spike/src/lib/filesystem/file-snapshot-store/snapshot-lookup-slice.ts:
+   48    getSnapshot: async (projectId, path, loadContent = false) => {
+   49:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   50      const now = Date.now();
+
+   89    isFresh: async (projectId, path) => {
+   90:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   91      const now = Date.now();
+
+  105    getSnapshotMetadata: async (projectId, path) => {
+  106:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  107  
+
+  116    loadSnapshotContent: async (projectId, path, workspaceId: WorkspaceType = 'ide') => {
+  117:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  118  
+
+spike/src/lib/filesystem/sync-manager/sync-batch-sync.ts:
+  12  import { countFilesToSync, buildFileSystemTree } from '../sync-operations';
+  13: import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
+  14  import { fileMetadataCache } from '../../sync/file-metadata-cache';
+
+spike/src/lib/notes/markdown-converter.ts:
+  10  import type { Block } from '@blocknote/core';
+  11: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  12  
+
+spike/src/lib/notes/note-event-emitter.ts:
+  10  import EventEmitter from 'eventemitter3';
+  11: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  12  
+
+spike/src/lib/notes/note-file-sync.ts:
+  12  
+  13: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  14  import type { FileSyncService, SyncResult } from '@/lib/filesync/file-sync-service';
+
+spike/src/lib/notes/note-store-refactored.ts:
+   18   * - Cross-slice communication via get()
+   19:  * - Dexie persistence with partialize
+   20   */
+
+   23  import { persist, createJSONStorage } from 'zustand/middleware';
+   24: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   25: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+   26  import { createNoteCRUDSlice } from './slices/note-crud-slice';
+
+   46   * - Active note ID and project ID persist to IndexedDB
+   47:  * - Full note records persist to Dexie notes table (not via Zustand persist)
+   48   * - UI state (loading, error, saveStatus) is ephemeral
+
+  131              // Custom serializer for Map/Set (not used due to partialize, but documented)
+  132:             // Actual notes are persisted directly to Dexie notes table
+  133  
+
+spike/src/lib/notes/note-tree-utils.ts:
+  10  
+  11: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  12  
+
+spike/src/lib/notes/saved-blocks-store.ts:
+    7   * Allows users to save blocks for reuse across notes.
+    8:  * Persists to Dexie with favorites and usage tracking.
+    9   */
+
+   16      SavedBlockType,
+   17: } from '@/infrastructure/persistence/dexie-db';
+   18: import { db } from '@/infrastructure/persistence/dexie-db';
+   19  
+
+  408                  partialize: (state) => ({
+  409:                     // Only persist UI state, not the actual blocks (those come from Dexie)
+  410                      selectedCategory: state.selectedCategory,
+
+spike/src/lib/notes/store-facades.ts:
+  27   *
+  28:  * Re-exports from canonical infrastructure location with Dexie storage.
+  29   * Maintains backward compatibility for imports from '@/lib/notes'
+
+spike/src/lib/notes/types-slice.ts:
+   9  
+  10: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  11  import type { NoteSaveStatus, CreateNoteParams, UpdateNoteParams } from './types';
+
+spike/src/lib/notes/types.ts:
+   8  
+   9: import type { NoteRecord as DexieNoteRecord } from '@/infrastructure/persistence/dexie-db-knowledge-types';
+  10  
+
+  12   * Note record for BlockNote editor persistence
+  13:  * Re-export from Dexie types for barrel exports
+  14   */
+
+spike/src/lib/notes/export/note-exporter.ts:
+   5   *
+   6:  * Exports Dexie notes to FSA markdown file format.
+   7   * Handles batch export with progress tracking.
+
+  85  /**
+  86:  * Export notes from Dexie format to FSA markdown format
+  87   *
+  88:  * Converts Dexie NoteRecord array to FSA-compatible markdown files
+  89   * with proper YAML frontmatter and ISO 8601 timestamps.
+  90   *
+  91:  * @param notes - Array of NoteRecord from Dexie
+  92   * @param options - Export options for filtering/formatting
+
+spike/src/lib/notes/format/note-formatter.ts:
+    5   *
+    6:  * Converts between Dexie NoteRecord and FSA markdown file format.
+    7   * Handles YAML frontmatter with proper ISO 8601 timestamps.
+
+  107   *
+  108:  * Converts Dexie NoteRecord to FSA markdown format with YAML frontmatter.
+  109   * Uses ISO 8601 timestamps and proper type handling.
+  110   *
+  111:  * @param note - Note record from Dexie
+  112   * @returns Markdown string with frontmatter
+
+  529   * @param parsed - Parsed note with frontmatter and blocks
+  530:  * @returns NoteRecord compatible with Dexie
+  531   */
+
+spike/src/lib/notes/slices/note-crud-slice.ts:
+   17  
+   18: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+   19: import { db } from '@/infrastructure/persistence/dexie-db';
+   20  import type { StateCreator } from 'zustand';
+
+   61                  // Desktop: Read notes from FSA files
+   62:                 // Per ADR-033: FSA is source of truth, Dexie is for reactivity only
+   63                  const project = useProjectStore.getState().projects[projectId];
+
+  112              } else {
+  113:                 // Mobile/Tablet: Read from DexieDB (Dexie is primary storage)
+  114                  const notes = await db.notes
+
+spike/src/lib/notes/slices/note-sync-slice.ts:
+  14  
+  15: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  16  import type { StateCreator } from 'zustand';
+
+spike/src/lib/persistence/db.ts:
+    1  /**
+    2:  * Persistence DB - Dexie Compatibility Layer
+    3   * 
+
+    7   * Story 5-1: Set Up IndexedDB Schema (Original)
+    8:  * Story 27-1c: Migrated to Dexie.js with idb-compatible wrapper
+    9   * 
+   10:  * This module wraps the Dexie database to provide backward compatibility
+   11   * with code that used the idb-style API patterns.
+
+   19   * 
+   20:  * // NEW code should use Dexie directly:
+   21   * import { db } from '@/infrastructure/persistence/stores';
+
+   25  
+   26: import { db as dexieDb, resetDatabaseForTesting } from '@/infrastructure/persistence/dexie-db';
+   27  import type { ProjectMetadata } from '../workspace/project-types'; // Import from domain types to break circular dependency
+
+   54   * Legacy schema type for backward compatibility
+   55:  * @deprecated Use Dexie db.table directly
+   56   */
+
+   81  /**
+   82:  * Wrapper that provides idb-like API on top of Dexie
+   83   * This allows existing code to work without modification.
+
+  143      transaction(_storeName: TableName, _mode: 'readonly' | 'readwrite') {
+  144:         // Legacy transaction not needed with Dexie - operations are auto-transactional
+  145          console.warn('[IdbCompatWrapper] transaction() is deprecated, use direct db operations');
+
+  162  
+  163:     /** Close database (no-op for Dexie, it manages connections) */
+  164      close(): void {
+  165:         // No-op - Dexie manages its own connections
+  166      }
+
+  179  /**
+  180:  * Get the persistence database (idb-compatible wrapper on Dexie)
+  181   * 
+
+  189  
+  190:     // Ensure Dexie database is open
+  191      await dexieDb.open();
+
+  207  
+  208: // Re-export Dexie instance for direct access
+  209  export { dexieDb as db };
+
+spike/src/lib/plugins/plugin-manager.ts:
+  13  
+  14: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  15: import { generatePluginId } from '@/infrastructure/persistence/dexie-db-plugin-types';
+  16  
+  17: // Helper functions to bypass Dexie table type assertions
+  18  const pluginsTable = () => (getDb()?.plugins as any);
+
+spike/src/lib/rag/document-chunker.ts:
+  13  
+  14: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  15  import type {
+
+spike/src/lib/rag/embedding-cache.ts:
+   9  
+  10: import { db } from '@/infrastructure/persistence/dexie-db';
+  11: // import type { EmbeddingModelRecord } from '@/infrastructure/persistence/dexie-db';
+  12  import type { EmbeddingModelMetadata } from './types';
+
+spike/src/lib/rag/indexeddb-storage.ts:
+   5   *
+   6:  * Provides Dexie-based persistence for Orama index data.
+   7   * Stores serialized Orama indexes in IndexedDB.
+
+   9  
+  10: import { db, type OramaIndexRecord } from '@/infrastructure/persistence/dexie-db';
+  11  
+
+spike/src/lib/rag/orama-index.ts:
+    7   * Provides CRUD operations for indexes, document indexing, search,
+    8:  * and persistence to IndexedDB via Dexie.
+    9   *
+
+  131  
+  132:   // Try to load from IndexedDB via Dexie
+  133    const { getOramaIndexData } = await import('./indexeddb-storage');
+
+  194  
+  195:     // Save to IndexedDB via Dexie
+  196      const { saveOramaIndexData } = await import('./indexeddb-storage');
+
+  220  
+  221:   // Remove from IndexedDB via Dexie
+  222    const { deleteOramaIndexData } = await import('./indexeddb-storage');
+
+spike/src/lib/rag/chunk-strategies/chunk-strategy.interface.ts:
+   9  import type { ChunkMetadata, ChunkingOptions } from '../types';
+  10: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  11  
+
+spike/src/lib/rag/chunk-strategies/fixed-size-chunker.ts:
+  13  import type { ChunkStrategy } from './chunk-strategy.interface';
+  14: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  15  
+
+spike/src/lib/rag/chunk-strategies/recursive-chunker.ts:
+  15  import type { ChunkStrategy } from './chunk-strategy.interface';
+  16: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  17  
+
+spike/src/lib/rag/chunk-strategies/semantic-chunker.ts:
+  13  import type { ChunkStrategy } from './chunk-strategy.interface';
+  14: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  15  
+
+spike/src/lib/snippets/snippet-store.ts:
+  47  
+  48: export type { CodeSnippetRecord, InsertedSnippet, SnippetPlaceholder } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  49  
+
+spike/src/lib/snippets/snippet-templates.ts:
+  12  
+  13: import type { CodeSnippetRecord, SnippetTemplate } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  14  
+
+spike/src/lib/snippets/snippet-store/snippet-crud-slice.ts:
+   6  import { StateCreator } from 'zustand';
+   7: import { db } from '@/infrastructure/persistence/dexie-db';
+   8: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+   9  
+
+  32  export interface SnippetCrudActions {
+  33:   /** Load snippets from Dexie */
+  34    loadSnippets: (builtInSnippets: CodeSnippetRecord[]) => Promise<void>;
+
+  64      try {
+  65:       // Load user snippets from Dexie
+  66        const userSnippets = await db.codeSnippets.toArray();
+
+spike/src/lib/snippets/snippet-store/snippet-export-slice.ts:
+  6  import { StateCreator } from 'zustand';
+  7: import { db } from '@/infrastructure/persistence/dexie-db';
+  8: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  9  
+
+spike/src/lib/snippets/snippet-store/snippet-filtering-slice.ts:
+  6  import { StateCreator } from 'zustand';
+  7: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  8  
+
+spike/src/lib/snippets/snippet-store/snippet-store-refactored.ts:
+  18  import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+  19: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  20  import { createSnippetCrudSlice, SnippetCrudSlice } from './snippet-crud-slice';
+
+  24  import { BUILT_IN_SNIPPETS } from '../snippet-templates';
+  25: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  26  
+
+  76  
+  77:         // Do NOT persist: snippets (loaded from Dexie), isLoading (transient), error (transient), selectedSnippetId (transient)
+  78        }),
+
+spike/src/lib/snippets/snippet-store/snippet-utils-slice.ts:
+  6  import { StateCreator } from 'zustand';
+  7: import type { CodeSnippetRecord, SnippetPlaceholder, InsertedSnippet } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  8  
+
+spike/src/lib/sync/file-metadata-cache.ts:
+  1: import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
+  2: import { db, getChangedFilesSince, clearFileMetadataCache as clearCache } from '../../infrastructure/persistence/dexie-db';
+  3  
+
+spike/src/lib/workspace/browser-mode.ts:
+  15  import { getProject } from '@/infrastructure/persistence/stores/project';
+  16: // FIX-2026-01-14: Use infrastructure store which has REAL Dexie persistence
+  17  // The lib/workspace version is a STUB that doesn't persist
+  18  import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+  19: import { db } from '@/infrastructure/persistence/dexie-db';
+  20  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+
+  40   * 
+  41:  * FIX-2026-01-14: Uses DIRECT Dexie persistence instead of broken Zustand store facade
+  42   * The lib/workspace/project-store saveProject was a STUB that didn't persist.
+
+  47    try {
+  48:     // Check Dexie directly for existing project
+  49      const existingRecord = await db.projects.get(BROWSER_MODE_PROJECT_ID);
+
+  95  
+  96:     // FIX-2026-01-14: Persist DIRECTLY to Dexie (bypass broken store facade)
+  97      const dexieRecord = {
+
+spike/src/lib/workspace/fsa-persistence.ts:
+  150    // - Zustand store update
+  151:   // - Dexie persistence
+  152    // - FSA handle persistence
+
+spike/src/lib/workspace/index.ts:
+  27  // WorkspaceId type from core types
+  28: export type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
+  29  
+
+spike/src/lib/workspace/note-context-tracker.ts:
+  22  import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
+  23: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  24  import type { Block } from '@blocknote/core';
+
+spike/src/lib/workspace/project-types.ts:
+   9  import type { FsaPermissionState } from '../filesystem/permission-lifecycle';
+  10: import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+  11  
+
+spike/src/lib/workspace/ProjectContext.tsx:
+  18  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+  19: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
+  20  import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+
+spike/src/lib/workspace/session-snapshot.ts:
+  26  
+  27: import { db, type SessionSnapshotRecord } from '@/infrastructure/persistence/dexie-db';
+  28  import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+
+spike/src/lib/workspace/threads-store.ts:
+   1  /**
+   2:  * @fileoverview Thread Persistence - Dexie-backed thread storage
+   3   * @module lib/workspace/thread-store
+
+   6   * @deprecated PERSISTENCE UTILITY - Not a Zustand store.
+   7:  * This module provides async Dexie persistence for conversation threads.
+   8   * Future migrations should move to:
+
+  20  
+  21: import { db, type ConversationThreadRecord /*, type ThreadMessageRecord */ } from '@/infrastructure/persistence/dexie-db';
+  22  import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+
+  24  /**
+  25:  * Convert Zustand thread to Dexie record
+  26   */
+
+  59  /**
+  60:  * Convert Dexie record to Zustand thread
+  61   */
+
+spike/src/lib/workspace/workspace-access-helper.tsx:
+   32  import { useNavigate } from '@tanstack/react-router';
+   33: import { db } from '@/infrastructure/persistence/dexie-db';
+   34  import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
+   35  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+   36: import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-types';
+   37  
+
+  232    // FIX-2026-01-14: Replaced broken useLiveQuery with controlled useEffect pattern
+  233:   // useLiveQuery caused infinite re-renders due to Dexie subscription conflicts
+  234    // This pattern loads data once on mount and when workspace changes
+
+  241    
+  242:   // Load projects from Dexie on mount and when workspace changes
+  243    useEffect(() => {
+
+spike/src/lib/workspace/file-sync-status-store/file-sync-status-store-refactored.ts:
+  17  import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+  18: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  19  import {
+
+spike/src/presentation/components/about/projects/ViaGentCard.tsx:
+  171          <div className="flex flex-wrap gap-2">
+  172:           {['React 18', 'TypeScript', 'TanStack Router', 'Zustand', 'Dexie', 'WebContainer', 'TailwindCSS', 'Radix UI'].map(
+  173              (tech) => (
+
+spike/src/presentation/components/about/skills/SkillsMatrix.tsx:
+  68          { name: 'WebContainer API', level: 'expert' as SkillLevel, years: 1, projectEvidence: 'Integrated StackBlitz WebContainer for browser-based code execution' },
+  69:         { name: 'IndexedDB + Dexie', level: 'advanced' as SkillLevel, years: 1, projectEvidence: 'Built complete IndexedDB persistence layer with Dexie ORM' },
+  70          { name: 'File System Access API', level: 'advanced' as SkillLevel, years: 1, projectEvidence: 'Local-first file system with browser File System Access API' },
+
+spike/src/presentation/components/about/timeline/AchievementTimeline.tsx:
+  64        title: 'State Architecture',
+  65:       description: 'Zustand + Dexie unified state management system',
+  66        metrics: [
+
+spike/src/presentation/components/chat/index.ts:
+   5   * ARCHITECTURE CHANGE 2026-01-11:
+   6:  * - ThreadManager now integrated with UnifiedChatStore (Dexie)
+   7   * - Legacy ThreadCard/ThreadsList archived to _bmad-output/.archive/legacy-thread-components-2026-01-11/
+
+  19  
+  20: // Thread Management (CHAT-006) - INTEGRATED with UnifiedChatStore (Dexie)
+  21  // ✅ CORRECT ARCHITECTURE for RAG, vector indexing, cross-workspace
+
+spike/src/presentation/components/common/AppInitializer.tsx:
+   7   * - Workspace bindings migration (P0 fix - enable all workspaces)
+   8:  * - Dexie stores hydration
+   9   * - Service Worker (offline support)
+
+  48  
+  49:                 // 2. Hydrate projects from Dexie (CRITICAL: Must happen before workspace migration)
+  50                  // This loads all persisted projects into the Zustand store cache
+  51                  await hydrateProjects();
+  52:                 console.log('[AppInitializer] Projects hydrated from Dexie');
+  53  
+
+spike/src/presentation/components/common/DatabaseRecoveryDialog.tsx:
+   8   *
+   9:  * Story: Fix Dexie database corruption (primary key migration error)
+  10   *
+  11   * When to use:
+  12:  * - Dexie throws "UpgradeError: Not yet support for changing primary key"
+  13   * - Database is closed and cannot be opened
+
+spike/src/presentation/components/hub/ActivityLineChart.tsx:
+  47    // When implemented, add:
+  48:   // 1. Table definition in dexie-db-class.ts
+  49:   // 2. Migration in dexie-db-migrations.ts
+  50    // 3. Metrics collection logic in useMetricsCollection.ts
+
+spike/src/presentation/components/hub/HubHomePage.tsx:
+    3  import { useNavigate, useRouterState } from '@tanstack/react-router';
+    4: import { useLiveQuery } from 'dexie-react-hooks';
+    5  import {
+
+   16  
+   17: import { db } from '@/infrastructure/persistence/dexie-db';
+   18  import { cn } from '@/lib/utils';
+
+  209  
+  210:       // 2. Create Project via Zustand Store (syncs to Dexie)
+  211        const projectInput: CreateProjectInput = {
+
+  225        // Use the store's createProject method to ensure Zustand state is updated
+  226:       // Note: Store already persists to Dexie at project-crud-slice.ts:108
+  227        const newProjectId = await useProjectStore.getState().createProject(projectInput);
+
+spike/src/presentation/components/hub/ProjectPickerDialog.tsx:
+   21  import { FolderOpen, Plus } from 'lucide-react';
+   22: import { useLiveQuery } from 'dexie-react-hooks';
+   23  import { cn } from '@/lib/utils';
+   24: import { db } from '@/infrastructure/persistence/dexie-db';
+   25  import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+   26: import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db';
+   27  
+
+  125  
+  126:   // FIX-2026-01-06: Read from Dexie directly (same source as Hub)
+  127    // This ensures consistency - Hub and ProjectPicker see the same data
+
+spike/src/presentation/components/hub/useMetricsCollection.ts:
+  33   * To implement metrics history, add:
+  34:  * 1. Table definition in dexie-db-class.ts
+  35:  * 2. Migration in dexie-db-migrations.ts
+  36   * 3. Collection logic in this hook
+
+spike/src/presentation/components/hub/useWorkspaceBindingState.ts:
+  17  // CC-V2-A02: Import from canonical location
+  18: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  19  
+
+spike/src/presentation/components/hub/WorkspaceBindingDialog.types.ts:
+  11  // CC-V2-A02: Import from canonical location
+  12: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  13  
+
+spike/src/presentation/components/hub/WorkspaceBindingToggle.tsx:
+  20  // CC-V2-A02: Import from canonical location
+  21: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  22  
+
+spike/src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx:
+  28  import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
+  29: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  30  import { DiffViewer } from '@/presentation/components/diff/DiffViewer';
+
+spike/src/presentation/components/layout/ChatPanelWrapper.tsx:
+    5   * Right sidebar containing AI chat platform with conversation threads.
+    6:  * Shows ThreadManager when no thread is active (uses UnifiedChatStore - Dexie).
+    7   * Shows AgentChatPanel when a thread is selected.
+
+   12   * ARCHITECTURE:
+   13:  * - Uses UnifiedChatStore with Dexie persistence (correct for RAG, indexing)
+   14   * - Replaces legacy ThreadCard + ConversationStore pattern
+
+   44   * 
+   45:  * INTEGRATED WITH UNIFIED CHAT STORE (Dexie) via ThreadManager
+   46   * 
+
+  119  
+  120:     // No active thread - show ThreadManager (INTEGRATED with UnifiedChatStore - Dexie)
+  121      return (
+
+  142  
+  143:             {/* ThreadManager - Uses UnifiedChatStore with Dexie (CORRECT ARCHITECTURE) */}
+  144              <div className="flex-1 overflow-auto">
+
+spike/src/presentation/components/notes/AISlashCommand.tsx:
+  48  } from '@/lib/notes/saved-blocks-store';
+  49: import type { SavedBlockRecord } from '@/infrastructure/persistence/dexie-db';
+  50  import { openSaveBlockDialog } from './SaveBlockDialog';
+
+spike/src/presentation/components/notes/NoteContextMenu.tsx:
+  30  import { useNoteStore } from '@/lib/notes/note-store';
+  31: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  32  
+
+spike/src/presentation/components/notes/NoteSidebar.tsx:
+  24  import { NotesRAGSearch } from './NotesRAGSearch';
+  25: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  26  
+
+spike/src/presentation/components/notes/NotesIndexingButton.tsx:
+   99        // Use noteIndexer.rebuildIndex() for bulk indexing
+  100:       // Type assertion: notesArray uses dexie-db NoteRecord, cast to notes/types NoteRecord for noteIndexer
+  101        await noteIndexer.rebuildIndex(notesToIndex as NoteRecord[], projectId);
+
+spike/src/presentation/components/notes/NoteTree.tsx:
+  13  import { buildTree, filterTreeBySearch, filterTreeByFavorites } from '@/lib/notes/note-tree-utils';
+  14: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  15  import { NoteTreeItem } from './NoteTreeItem';
+
+spike/src/presentation/components/project/ProjectsPage.tsx:
+  14  import { useNavigate } from '@tanstack/react-router';
+  15: import { useLiveQuery } from 'dexie-react-hooks';
+  16  import {
+
+  23  
+  24: import { db } from '@/infrastructure/persistence/dexie-db';
+  25  import { cn } from '@/lib/utils';
+  26: import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+  27  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+
+  50  /**
+  51:  * Convert ProjectRecord (Dexie) to Project (store type)
+  52   * Adds default values for properties not in the database schema
+
+spike/src/presentation/components/project/wizard-types.ts:
+   9  
+  10: import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+  11  
+
+spike/src/presentation/components/snippets/SnippetEditor.tsx:
+  29  import { useSnippetStore } from '@/lib/snippets/snippet-store';
+  30: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  31  
+
+spike/src/presentation/components/snippets/SnippetManager.tsx:
+  27  import { useSnippetStore, initializeSnippetStore, useFilteredSnippets, useSnippetFolders, useSnippetTags } from '@/lib/snippets/snippet-store';
+  28: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  29  import { SnippetEditor } from './SnippetEditor';
+
+spike/src/routes/debug.tsx:
+   7  import { useState, useEffect } from 'react';
+   8: import { db } from '@/infrastructure/persistence/dexie-db';
+   9  
+
+  29          try {
+  30:             // Check Dexie
+  31:             log('Opening Dexie database...');
+  32              await db.open();
+
+  34              const projects = await db.projects.toArray();
+  35:             log(`Found ${projects.length} projects in Dexie:`);
+  36  
+
+  65          try {
+  66:             // 1. Clear Dexie tables
+  67:             log('Clearing Dexie tables...');
+  68              await db.projects.clear();
+
+spike/src/routes/ide.$projectId.tsx:
+  25  import { ErrorBoundary } from '@/presentation/components/error';
+  26: import { db } from '@/infrastructure/persistence/dexie-db';
+  27  import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
+
+  57      await waitForHydration();
+  58:     console.log('[IDERoute.loader] Hydration complete, querying Dexie...');
+  59  
+  60:     // ✅ INF-03 FIX: Query Dexie directly (not Zustand/getProject facade)
+  61      const record = await db.projects.get(projectId);
+
+  63      if (!record) {
+  64:       console.error('[IDERoute.loader] Project not found in Dexie:', projectId);
+  65        throw redirect({ to: '/hub' });
+
+spike/src/routes/notes.$projectId.tsx:
+   1  import { createFileRoute, redirect } from '@tanstack/react-router';
+   2: import { db } from '@/infrastructure/persistence/dexie-db';
+   3  import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
+
+  13  
+  14:     // Query Dexie directly for the project
+  15      const record = await db.projects.get(projectId);
+
+spike/src/routes/notes.lazy.tsx:
+  14  import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+  15: import { useLiveQuery } from 'dexie-react-hooks';
+  16: import { db } from '@/infrastructure/persistence/dexie-db';
+  17  import { ErrorBoundary } from '@/presentation/components/error';
+
+spike/src/routes/workspace/$projectId.tsx:
+  57  
+  58:     // Fallback to facade (handles Dexie lookup)
+  59      try {
+
+spike/src/test/setup.ts:
+    1: // Import fake-indexeddb BEFORE any code that uses IndexedDB/Dexie
+    2  // This provides a mock IndexedDB implementation for tests
+
+  215  // ============================================
+  216: // Dexie Mock for All Tests
+  217  // ============================================
+  218: // NOTE: With fake-indexeddb/auto imported above, Dexie can use the real IndexedDB
+  219: // We only mock specific Dexie methods if needed for certain tests
+  220: // DO NOT mock the entire dexie module as it breaks database functionality
+  221  
+  222: // vi.mock('dexie', () => mockDexieModule);
+
+spike/src/utils/export-utils.ts:
+  8  
+  9: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  10  
+
+src/domain/interfaces/storage-gateway.interface.ts:
+  97   * - Desktop with FSA → FSAGateway (uses File System Access API)
+  98:  * - Mobile/Tablet → IDBGateway (uses IndexedDB via Dexie)
+  99   *
+
+src/domain/services/note-gateway.ts:
+  22  import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
+  23: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  24  
+
+src/domain/types/viagent-metadata.ts:
+  41  
+  42:   /** Unique project identifier (matches Dexie Project.id) */
+  43    projectId: string;
+
+  81  export interface ViagentNoteEntry {
+  82:   /** Unique note identifier (matches Dexie Note.id) */
+  83    id: string;
+
+src/hooks/index.ts:
+  49  
+  50: // Thread manager hook (CHAT-005) - Uses UnifiedChatStore (Dexie) - CORRECT ARCHITECTURE
+  51  export {
+
+src/hooks/useCodeSnippets.ts:
+  13  import { useCallback, useEffect } from 'react';
+  14: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  15  import { useSnippetStore, initializeSnippetStore, processSnippetForInsertion } from '@/lib/snippets/snippet-store';
+
+src/hooks/useIdeStatePersistence.ts:
+   4   * 
+   5:  * Story 27-1b: Component Migration to Zustand + Dexie.js
+   6   * 
+
+  10   * The Zustand store (`useIDEStore`) handles all persistence automatically
+  11:  * via its persist middleware connected to Dexie.js.
+  12   * 
+
+  91   * Now delegates to Zustand store for all state management.
+  92:  * The store's persist middleware handles IndexedDB via Dexie.js.
+  93   * 
+
+src/infrastructure/filesystem/folder-overlap-service.ts:
+  17  
+  18: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  19  
+
+src/infrastructure/filesystem/handle-persistence.ts:
+   35    getAllValidFSAHandles,
+   36: } from '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers';
+   37: import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db-types';
+   38  
+
+   99   *
+  100:  * @param record - FSA handle record from Dexie
+  101   * @returns true if silent restore should be attempted
+
+  171     * Chrome 129+ Enhancement: If structuredClone is supported, we store the
+  172:    * actual FileSystemDirectoryHandle in Dexie. This enables true "instant restore"
+  173     * without any user prompt on page reload.
+
+  194  
+  195:     // Store in Dexie using existing helper (converts to FSAHandleRecord)
+  196      await storeFSAHandle({
+
+  219    async restoreHandle(projectId: string): Promise<HandleRestoreResult> {
+  220:     // Get stored metadata from Dexie
+  221      const record = await getFSAHandle(projectId);
+
+  300     * @param projectId - The project ID (used as handle ID)
+  301:    * @param record - FSA handle record from Dexie
+  302     * @returns Restored handle or null if silent restore not possible
+
+  405     * @param projectId - The project ID
+  406:    * @param record - FSA handle record from Dexie (optional, for context)
+  407     * @param silentRestoreFailed - Whether silent restore was attempted and failed
+
+src/infrastructure/filesystem/handle-types.ts:
+  10  
+  11: import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db-types';
+  12  
+
+  52   * Permission state for FSA handles
+  53:  * NOTE: Aligned with Dexie FSAHandleRecord.permissionStatus values
+  54   * PS-04: Added 'dismissed' for user-cancelled permission dialogs
+
+src/infrastructure/filesystem/idb-gateway.ts:
+  25  import { FileSystemError } from './fs-errors';
+  26: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  27: import type { IDBFileRecord } from '@/infrastructure/persistence/dexie-db-idb-file-types';
+  28  
+
+src/infrastructure/filesystem/index.ts:
+  65  // NOTE: Re-exported from lib/filesystem/permission-lifecycle
+  66: // These handle FSA permission state and handle persistence via Dexie
+  67  // TODO: Move permission-lifecycle.ts to infrastructure/filesystem
+
+src/infrastructure/filesystem/markdown-sync-service.ts:
+  21  import type { Block } from '@blocknote/core';
+  22: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  23  import type { StorageGateway, FileChangeEvent } from '@/domain/interfaces/storage-gateway.interface';
+
+src/infrastructure/persistence/database-recovery.ts:
+    5   *
+    6:  * Handles database corruption recovery when Dexie migrations fail.
+    7   *
+    8   * PROBLEM:
+    9:  * - Dexie cannot migrate primary key changes
+   10   * - Previous schema changes caused database corruption
+
+   21   * - IndexedDB CANNOT migrate primary key changes
+   22:  * - This is a hard IndexedDB limitation, not a Dexie bug
+   23   */
+
+   25  import { toast } from 'sonner';
+   26: import type Dexie from 'dexie';
+   27  
+
+   71  
+   72:     // Dexie primary key migration error
+   73      if (errorMessage.includes('UpgradeError') &&
+
+  165          const key = localStorage.key(i);
+  166:         if (key && (key.startsWith('vg_') || key.startsWith('dexie-') ||
+  167                        key.startsWith('via-gent') || key === 'sync-status-store')) {
+
+  299  export async function initializeDatabaseWithRecovery(
+  300:     dbOpen: () => Promise<Dexie>
+  301  ): Promise<boolean> {
+
+src/infrastructure/persistence/dexie-db-ai-types.ts:
+    2   * @fileoverview AI Foundation Database Record Types
+    3:  * @module lib/state/dexie-db-ai-types
+    4   * @governance EPIC-27-1c
+
+    7   * AI agent orchestration and conversation thread types.
+    8:  * Extracted from dexie-db.ts for better code organization.
+    9   *
+   10   * Story 27-1: State Architecture Stabilization
+   11:  * Story 27-1c: Persistence Migration (idb → Dexie)
+   12   *
+
+   17  
+   18: import type { Table } from 'dexie';
+   19  
+
+  118  /**
+  119:  * Conversation thread record for Dexie persistence
+  120   * Enables full-text indexing for search.
+
+src/infrastructure/persistence/dexie-db-block-types.ts:
+   2   * @fileoverview Saved Blocks Database Types
+   3:  * @module infrastructure/persistence/dexie-db-block-types
+   4   * @governance UX-13
+
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+src/infrastructure/persistence/dexie-db-class.ts:
+    2   * @fileoverview ViaGent Database Class Definition
+    3:  * @module lib/state/dexie-db-class
+    4   * @governance EPIC-27-1c
+
+    7   * Main database class definition with table declarations.
+    8:  * Migrations are extracted to dexie-db-migrations.ts for better code organization.
+    9   *
+   10   * Story 27-1: State Architecture Stabilization
+   11:  * Story 27-1c: Persistence Migration (idb → Dexie)
+   12   */
+   13  
+   14: import Dexie, { /* type Table */ } from 'dexie';
+   15  
+
+   22      FileContentCacheTable,
+   23: } from './dexie-db-core-types';
+   24  
+
+   29      ConversationThreadsTable,
+   30: } from './dexie-db-ai-types';
+   31  
+
+   38      SessionSnapshotTable,
+   39: } from './dexie-db-session-types';
+   40  
+
+   47      NotesTable,
+   48: } from './dexie-db-knowledge-types';
+   49  
+
+   51      WorkflowsTable,
+   52: } from './dexie-db-workflow-types';
+   53  
+
+   55      CodeSnippetsTable,
+   56: } from './dexie-db-snippet-types';
+   57  
+
+   59      SavedBlocksTable,
+   60: } from './dexie-db-block-types';
+   61  
+
+   66      PluginStorageTable,
+   67: } from './dexie-db-plugin-types';
+   68  
+
+   74      QuizQuestionsTable,
+   75: } from './dexie-db-study-types';
+   76  
+
+   82      IDBFilesTable,
+   83: } from './dexie-db-idb-file-types';
+   84  
+   85  // Import migrations
+   86: import { registerMigrations } from './dexie-db-migrations';
+   87  
+
+   92  /**
+   93:  * Via-Gent Dexie Database
+   94   *
+
+  100   */
+  101: export class ViaGentDatabase extends Dexie {
+  102      // ========================================================================
+
+  225      // STATE-009 FIX: Terminal State Persistence (2026-01-19)
+  226:     // Migrated from localStorage to Dexie
+  227      // ========================================================================
+
+src/infrastructure/persistence/dexie-db-core-types.ts:
+   2   * @fileoverview Core Database Record Types
+   3:  * @module lib/state/dexie-db-core-types
+   4   * @governance EPIC-27-1c
+
+   6   * Core record types for IndexedDB persistence.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { Table } from 'dexie';
+  14  import type { WorkspaceBindings } from '@/domain/entities/project';
+
+src/infrastructure/persistence/dexie-db-helpers.ts:
+   2   * @fileoverview Database Helper Functions
+   3:  * @module lib/state/dexie-db-helpers
+   4   * @governance EPIC-27-1c
+
+   6   * Helper functions for database operations.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { SyncStatusRecord } from './dexie-db-session-types';
+  14  
+
+src/infrastructure/persistence/dexie-db-idb-file-types.ts:
+   2   * @fileoverview IndexedDB File Storage Types
+   3:  * @module infrastructure/persistence/dexie-db-idb-file-types
+   4   *
+
+  17  
+  18: import type { Table } from 'dexie';
+  19  
+
+  78   *
+  79:  * Dexie Table type for IDBFileRecord with compound primary key.
+  80   */
+
+src/infrastructure/persistence/dexie-db-knowledge-types.ts:
+   2   * @fileoverview Knowledge Base Database Record Types
+   3:  * @module lib/state/dexie-db-knowledge-types
+   4   * @governance EPIC-27-1c
+
+   6   * Knowledge base and note-taking record types for IndexedDB.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+  88   * @epic Epic 53 - State Management Consolidation
+  89:  * @story 53-2 - Move Dexie Helpers to Infrastructure
+  90   */
+
+src/infrastructure/persistence/dexie-db-migrations.ts:
+     1  /**
+     2:  * @fileoverview Dexie Database Migrations
+     3:  * @module lib/state/dexie-db-migrations
+     4   * @governance EPIC-27-1c
+
+     6   * All schema version migrations for ViaGentDatabase.
+     7:  * Extracted from dexie-db.ts for better code organization.
+     8   *
+     9   * Story 27-1: State Architecture Stabilization
+    10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+    11   */
+    12  
+    13: import type { Dexie } from 'dexie';
+    14: // import type { SyncStatusRecord } from './dexie-db-session-types';
+    15: // import { queueItemToSyncStatus } from './dexie-db-helpers';
+    16  
+
+    21  /**
+    22:  * Log a Dexie migration event for audit trail
+    23   */
+
+    31          timestamp: Date.now(),
+    32:         type: 'dexie-migration',
+    33          version,
+
+    39      if (status === 'failed') {
+    40:         console.error('[Dexie Migration]', JSON.stringify(entry, null, 2));
+    41      } else {
+    42:         console.log('[Dexie Migration]', JSON.stringify(entry, null, 2));
+    43      }
+
+    52      try {
+    53:         const appliedKey = `dexie-migration-v${version}-applied`;
+    54          return localStorage.getItem(appliedKey) === 'true';
+
+    66      try {
+    67:         const appliedKey = `dexie-migration-v${version}-applied`;
+    68          localStorage.setItem(appliedKey, 'true');
+
+    81   *
+    82:  * @param db - Dexie database instance (ViaGentDatabase extends Dexie)
+    83   */
+    84: export function registerMigrations(db: Dexie): void {
+    85          db.version(1).stores({
+
+    96          }).upgrade(async () => {
+    97:             console.log('[Dexie] Running migration to v2 (standardization)');
+    98          });
+
+   110          }).upgrade(async () => {
+   111:             console.log('[Dexie] Running migration to v3 (AI Foundation tables)');
+   112          });
+
+   124          }).upgrade(async () => {
+   125:             console.log('[Dexie] Running migration to v4 (credentials table)');
+   126          });
+
+   139          }).upgrade(async () => {
+   140:             console.log('[Dexie] Running migration to v5 (conversation threads)');
+   141          });
+
+   155          }).upgrade(async () => {
+   156:             console.log('[Dexie] Running migration to v6 (provider configs)');
+   157          });
+
+   159          // Schema version 7: Add agentConfigs + conversationState tables (Story 2.1)
+   160:         // For unified state management with Zustand + Dexie
+   161          db.version(7).stores({
+
+   174          }).upgrade(async () => {
+   175:             console.log('[Dexie] Running migration to v7 (agent configs + conversation state)');
+   176          });
+
+   178          // Schema version 8: Add syncStatus table (RC-005 - Sprint 27B)
+   179:         // Migrates SyncStatusStore from localStorage to Dexie
+   180          db.version(8).stores({
+
+   923              // This approach is safer because:
+   924:             // - Dexie migrations can't access other databases
+   925              // - We can run consolidation at app startup with better error handling
+
+  1100          // Schema version 24: STATE-009 - Terminal State Persistence
+  1101:         // Migrates terminal settings from localStorage to Dexie
+  1102          db.version(24).stores({
+
+  1168              // terminalState: Terminal settings and tab state persistence
+  1169:             // Migrated from localStorage to Dexie for consistent storage strategy
+  1170              terminalState: 'id, updatedAt',
+
+  1183                  if (localStorageData) {
+  1184:                     console.log('[Dexie Migration v24] Found existing terminal settings in localStorage, will be migrated on first store access');
+  1185                      // Note: Actual data migration happens automatically when Zustand hydrates
+
+  1279              try {
+  1280:                 const { MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE } = await import('./dexie-db-class');
+  1281                  await MIGRATION_WORKSPACE_STATE_TO_DEDICATED_TABLE(tx as any);
+
+src/infrastructure/persistence/dexie-db-plugin-types.ts:
+   1  /**
+   2:  * Dexie Database Plugin Types
+   3   *
+
+   6   *
+   7:  * @module infrastructure/persistence/dexie-db-plugin-types
+   8   * @story S-037 - Plugin System for extensibility with marketplace
+
+  68  /**
+  69:  * Dexie table definitions
+  70   */
+
+src/infrastructure/persistence/dexie-db-session-types.ts:
+   2   * @fileoverview Session State Database Record Types
+   3:  * @module lib/state/dexie-db-session-types
+   4   * @governance EPIC-27-1c
+
+   6   * Session state and persistence types for IndexedDB.
+   7:  * Extracted from dexie-db.ts for better code organization.
+   8   *
+   9   * Story 27-1: State Architecture Stabilization
+  10:  * Story 27-1c: Persistence Migration (idb → Dexie)
+  11   */
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+  19  /**
+  20:  * Generic record for Zustand persistence in Dexie
+  21   * Used by createDexieStorage adapter
+
+  37   * Sync status record for tracking file sync operations
+  38:  * Migrated from localStorage to Dexie for better query support
+  39   */
+
+src/infrastructure/persistence/dexie-db-snippet-types.ts:
+   2   * @fileoverview Code Snippets Database Types
+   3:  * @module infrastructure/persistence/dexie-db-snippet-types
+   4   * @governance S-031
+
+   6   *
+   7:  * Code snippet types for Dexie database.
+   8   * Supports code snippet management with folders, tags, and placeholders.
+
+  12  
+  13: import type { Table } from 'dexie';
+  14  
+
+src/infrastructure/persistence/dexie-db-study-types.ts:
+   2   * @fileoverview Study Database Types - Consolidated Tables
+   3:  * @module infrastructure/persistence/dexie-db-study-types
+   4   *
+
+   8   * @epic EPIC-CC-01 - Project Space Foundation
+   9:  * @story PS-03 - Consolidate Dexie Databases
+  10   */
+  11  
+  12: import type { Table } from 'dexie';
+  13  
+
+src/infrastructure/persistence/dexie-db-types.ts:
+   1  /**
+   2:  * @fileoverview Dexie Database Types Barrel Export
+   3:  * @module infrastructure/persistence/dexie-db-types
+   4   * @governance Epic 53 Story 53-2
+
+   7   * This barrel file consolidates types from:
+   8:  * - dexie-db-core-types.ts
+   9:  * - dexie-db-ai-types.ts
+  10:  * - dexie-db-session-types.ts
+  11:  * - dexie-db-knowledge-types.ts
+  12   */
+
+  19      FileContentCacheRecord,
+  20: } from './dexie-db-core-types';
+  21  
+  22  // Workspace Type (shared across the application)
+  23: export type { WorkspaceId } from './dexie-db-core-types';
+  24  
+
+  28      ThreadMessageRecord,
+  29: } from './dexie-db-ai-types';
+  30  
+
+  37      SessionSnapshotRecord,
+  38: } from './dexie-db-session-types';
+  39  
+
+  44      SynthesisResultRecord,
+  45: } from './dexie-db-knowledge-types';
+
+src/infrastructure/persistence/dexie-db-workflow-types.ts:
+   2   * @fileoverview Workflow Table Types
+   3:  * @module infrastructure/persistence/dexie-db-workflow-types
+   4   * @governance EPIC-E4-7
+
+   6   *
+   7:  * Dexie table types for workflow persistence.
+   8   */
+   9  
+  10: import type { Table } from 'dexie';
+  11  import type { Workflow } from '@/lib/workflow/builder/types';
+
+src/infrastructure/persistence/dexie-db.ts:
+    1  /**
+    2:  * @fileoverview Dexie Database Main Export
+    3:  * @module lib/state/dexie-db
+    4   * @governance EPIC-27-1c
+
+    6   *
+    7:  * Main export file for Dexie database.
+    8   * Re-exports all types and the database instance.
+
+   10   * Story 27-1: State Architecture Stabilization
+   11:  * Story 27-1c: Persistence Migration (idb → Dexie)
+   12   */
+
+   17  
+   18: import { ViaGentDatabase } from './dexie-db-class';
+   19: export { ViaGentDatabase } from './dexie-db-class';
+   20  
+
+   27   *
+   28:  * Handles Dexie migration failures caused by primary key changes.
+   29   * Schema v20 changed primary keys (e.g., 'id' → 'id, workspaceId'),
+
+   49      IDEStateRecord,
+   50: } from './dexie-db-core-types';
+   51  
+
+   56      WorkspaceBindings,
+   57: } from './dexie-db-core-types';
+   58  
+
+   62      ConversationsTable,
+   63: } from './dexie-db-core-types';
+   64  
+
+   70      ConversationThreadRecord,
+   71: } from './dexie-db-ai-types';
+   72  
+
+   80      ConversationThreadRecord,
+   81: } from './dexie-db-ai-types';
+   82  
+
+   87      ConversationThreadsTable,
+   88: } from './dexie-db-ai-types';
+   89  
+
+   99      SessionSnapshotRecord,
+  100: } from './dexie-db-session-types';
+  101  
+
+  108      SessionSnapshotRecord,
+  109: } from './dexie-db-session-types';
+  110  
+
+  117      SessionSnapshotTable,
+  118: } from './dexie-db-session-types';
+  119  
+
+  122      generateFileMetadataId,
+  123: } from './dexie-db-session-types';
+  124  
+
+  131      CollectionRecord,
+  132: } from './dexie-db-knowledge-types';
+  133  
+
+  142      SynthesisResultRecord,
+  143: } from './dexie-db-knowledge-types';
+  144  
+
+  150      NotesTable,
+  151: } from './dexie-db-knowledge-types';
+  152  
+
+  159      WorkflowsTable,
+  160: } from './dexie-db-workflow-types';
+  161  
+
+  171      SnippetTemplate,
+  172: } from './dexie-db-snippet-types';
+  173  
+
+  182      PluginStorageRecord,
+  183: } from './dexie-db-plugin-types';
+  184  
+
+  189      PluginStorageTable,
+  190: } from './dexie-db-plugin-types';
+  191  
+  192: export { generatePluginId, generateStorageId } from './dexie-db-plugin-types';
+  193  
+
+  203      SavedBlockType,
+  204: } from './dexie-db-block-types';
+  205  
+
+  209  
+  210: export { queueItemToSyncStatus } from './dexie-db-helpers';
+  211  
+
+  219      markMigrationApplied,
+  220: } from './dexie-db-migrations';
+  221  
+
+  258   * CRITICAL-FIX-2026-01-07: Now uses initializeDatabaseWithRecovery()
+  259:  * to handle Dexie migration failures caused by schema v20 primary key changes.
+  260   */
+
+  293      if (!instance) {
+  294:       throw new Error('[Dexie] Database not available during SSR. Use getDb() and check for null.');
+  295      }
+
+src/infrastructure/persistence/dexie-storage.ts:
+    1  /**
+    2:  * @fileoverview Dexie Storage Adapter for Zustand
+    3:  * @module infrastructure/persistence/dexie-storage
+    4   * @governance ADR-024 State Management Consolidation, Epic 53
+    5   *
+    6:  * CANONICAL LOCATION for Zustand-Dexie persistence adapter.
+    7:  * Implements Zustand's StateStorage interface using Dexie.js for persistence.
+    8   * This allows Zustand stores to be persisted to IndexedDB instead of localStorage.
+
+   19  // import { type StateStorage } from 'zustand/middleware';
+   20: import { getDb, db, type PersistedStateRecord } from './dexie-db';
+   21: import type { ViaGentDatabase } from './dexie-db-class';
+   22: import type { Table } from 'dexie';
+   23  
+
+   60   * Evict oldest entries from a table to free up space
+   61:  * @param table The Dexie table to clean up
+   62   * @param bytesToFree Number of bytes to free (approximate)
+
+   97  /**
+   98:  * Create a persistence storage adapter for a specific Dexie table
+   99   *
+  100:  * @param tableName Name of the Dexie table to store state in
+  101   * @returns Zustand StateStorage implementation
+
+  159  
+  160:             // Dexie/IndexedDB needs the raw object, not stringified JSON for the 'state' field
+  161              // But Zustand passes a stringified JSON.
+
+src/infrastructure/persistence/index.ts:
+  16  // Database
+  17: export { ViaGentDatabase as DexieDB } from './dexie-db';
+  18: export * from './dexie-db-class';
+  19: export { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  20: export * from './dexie-db-migrations';
+  21: export * from './dexie-db-core-types';
+  22: export * from './dexie-db-ai-types';
+  23: export * from './dexie-db-session-types';
+  24: export * from './dexie-db-knowledge-types';
+  25: export * from './dexie-db-workflow-types';
+  26: export * from './dexie-db-helpers';
+  27  
+
+src/infrastructure/persistence/workflow-persistence.ts:
+    6   *
+    7:  * Dexie-based persistence for workflows with versioning, import/export, and search.
+    8   */
+    9  
+   10: import { getDb } from './dexie-db';
+   11: import type { WorkflowRecord } from './dexie-db-workflow-types';
+   12  import type { Workflow } from '@/lib/workflow/builder/types';
+
+  494  /**
+  495:  * Migrate workflows from localStorage to Dexie
+  496   *
+
+src/infrastructure/persistence/dexie-db-helpers/additional-file-metadata-helpers.ts:
+   2   * @fileoverview Additional File Metadata Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/additional-file-metadata-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for advanced file metadata operations.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { FileMetadataRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/collection-helpers-basic.ts:
+   2   * @fileoverview Collection Helper Functions (Basic Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/collection-helpers-basic
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for collection CRUD operations (Part 1 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { CollectionRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/collection-helpers-sources.ts:
+   2   * @fileoverview Collection Helper Functions (Source Management)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/collection-helpers-sources
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for managing sources within collections (Part 2 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { CollectionRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/conversation-thread-helpers.ts:
+   2   * @fileoverview Conversation Thread Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/conversation-thread-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for conversation thread management.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { ConversationThreadRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/file-metadata-helpers.ts:
+   2   * @fileoverview File Metadata Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/file-metadata-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for file metadata CRUD operations.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { FileMetadataRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers.ts:
+   2   * @fileoverview FSA Handle Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for File System Access API handle management.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { FSAHandleRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/ide-state-helpers.ts:
+   2   * @fileoverview IDE State Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/ide-state-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for IDE state CRUD operations.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { IDEStateRecord, ProjectRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/index.ts:
+  1  /**
+  2:  * @fileoverview Dexie DB Helpers Barrel Export
+  3:  * @module infrastructure/persistence/dexie-db-helpers
+  4   * @governance Epic 53-2 (State Management Consolidation)
+
+  6   *
+  7:  * Barrel export for all Dexie database helper functions.
+  8   */
+
+src/infrastructure/persistence/dexie-db-helpers/session-snapshot-helpers.ts:
+   2   * @fileoverview Session Snapshot Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/session-snapshot-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for session snapshot management.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SessionSnapshotRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/source-helpers-basic.ts:
+   2   * @fileoverview Source Helper Functions (Basic Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/source-helpers-basic
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for source CRUD operations (Part 1 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SourceRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/source-helpers-search.ts:
+   2   * @fileoverview Source Helper Functions (Search & Stats)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/source-helpers-search
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for source search and statistics (Part 2 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SourceRecord } from '../dexie-db-types';
+  11  import { getSourcesForProject } from './source-helpers-basic';
+
+src/infrastructure/persistence/dexie-db-helpers/sync-status-helpers-basic.ts:
+   2   * @fileoverview Sync Status Helper Functions (Basic Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/sync-status-helpers-basic
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for sync status CRUD operations (Part 1 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SyncStatusRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/sync-status-helpers-query.ts:
+   2   * @fileoverview Sync Status Helper Functions (Query & Utilities)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/sync-status-helpers-query
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for sync status queries and utility operations (Part 2 of 2).
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { SyncStatusRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-create.ts:
+   2   * @fileoverview Synthesis Result Helper Functions (Create & Update)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-create
+   4   * @governance Epic 53 Story 53-2
+
+   6   * Helper functions for synthesis result creation and status updates (Part 2 of 2).
+   7:  * Part of Story 53-2: Move Dexie Helpers to Infrastructure
+   8   */
+   9  
+  10: import type { SynthesisResultRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-crud.ts:
+   2   * @fileoverview Synthesis Result Helper Functions (CRUD Operations)
+   3:  * @module infrastructure/persistence/dexie-db-helpers/synthesis-result-helpers-crud
+   4   * @governance Epic 53 Story 53-2
+
+   6   * Helper functions for synthesis result CRUD operations (Part 1 of 2).
+   7:  * Part of Story 53-2: Move Dexie Helpers to Infrastructure
+   8   */
+   9  
+  10: import type { SynthesisResultRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/dexie-db-helpers/tool-execution-log-helpers.ts:
+   2   * @fileoverview Tool Execution Log Helper Functions
+   3:  * @module infrastructure/persistence/dexie-db-helpers/tool-execution-log-helpers
+   4   * @governance ARC-1.1
+
+   6   * Helper functions for tool execution logging.
+   7:  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+   8   */
+   9  
+  10: import type { ToolExecutionLogRecord } from '../dexie-db-types';
+  11: import { db } from '../dexie-db';
+  12  
+
+src/infrastructure/persistence/services/db-consolidation-service.ts:
+   8   * @epic EPIC-CC-01 - Project Space Foundation
+   9:  * @story PS-03 - Consolidate Dexie Databases
+  10   */
+  11  
+  12: import Dexie from 'dexie';
+  13: import { db } from '../dexie-db';
+  14  import type {
+
+  20    QuizQuestionRecord,
+  21: } from '../dexie-db-study-types';
+  22  
+
+  66   */
+  67: async function openLegacyDb(name: string, version: number, stores: Record<string, string>): Promise<Dexie | null> {
+  68    try {
+  69:     const db = new Dexie(name);
+  70      db.version(version).stores(stores);
+
+src/infrastructure/persistence/stores/conversation-auto-restore.ts:
+  1: import type { ConversationThreadRecord } from '../dexie-db';
+  2: import { db, getConversationThread, saveConversationThread } from '../dexie-db';
+  3  import { useConversationStore } from './conversation/conversation-store';
+
+src/infrastructure/persistence/stores/hydration-manager.ts:
+    4   *
+    5:  * Manages Zustand store hydration from Dexie with error recovery.
+    6   *
+    7   * ROOT CAUSE FIX (2026-01-20):
+    8:  * - EMPTY STUBS REPLACED WITH ACTUAL DEXIE READS
+    9   * - Each store now properly hydrates from IndexedDB
+
+   12  
+   13: import { db } from '@/infrastructure/persistence/dexie-db';
+   14  
+
+   63    constructor() {
+   64:     // Register default stores with ACTUAL DEXIE HYDRATION LOGIC
+   65      this.registerStore({
+
+   67        hydrate: async () => {
+   68:         console.log('[HydrationManager] Hydrating ideStore from Dexie...');
+   69          const projectId = this.getProjectIdFromURL();
+
+  109      // Note: agentSelectionStore, unifiedChatStore, and navigationStore
+  110:     // have their own persist middleware with Dexie storage.
+  111      // They hydrate automatically via Zustand's persist middleware.
+
+  156      // Check if any stores have existing data
+  157:     // This is a simplified check - in production, you'd check Dexie directly
+  158      return this.stores.size > 0;
+
+src/infrastructure/persistence/stores/index.ts:
+  155    type ConversationRecord,
+  156: } from '../dexie-db';
+  157  
+  158: export { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  159: export { ViaGentDatabase } from '../dexie-db-class';
+  160  
+
+  190  
+  191: export { useLiveQuery } from 'dexie-react-hooks';
+  192  
+
+  223  
+  224: export * from '../dexie-db-core-types';
+  225: export * from '../dexie-db-ai-types';
+  226: export * from '../dexie-db-session-types';
+  227: export * from '../dexie-db-knowledge-types';
+
+src/infrastructure/persistence/stores/quiz-history-store.ts:
+   1  /**
+   2:  * @fileoverview Quiz history store with Dexie persistence
+   3   * @module lib/state/quiz-history-store
+
+   5  
+   6: import Dexie, { type Table } from 'dexie';
+   7  import { create } from 'zustand';
+
+  11  /**
+  12:  * Dexie database for quiz history
+  13   */
+  14: class QuizHistoryDatabase extends Dexie {
+  15    quizHistory!: Table<QuizHistoryRecord>;
+
+  53  /**
+  54:  * Quiz history store with Dexie persistence
+  55   */
+
+src/infrastructure/persistence/stores/session-snapshot-manager.ts:
+  166      const snapshotRecord = snapshot as Omit<
+  167:       import('../dexie-db-session-types').SessionSnapshotRecord,
+  168        'createdAt' | 'expiresAt'
+
+  170  
+  171:     // Store in IndexedDB via dexie
+  172:     const { saveSessionSnapshot } = await import('../dexie-db');
+  173      await saveSessionSnapshot(snapshotRecord);
+
+  185      // Get from IndexedDB
+  186:     const { getLatestSessionSnapshot } = await import('../dexie-db');
+  187      const snapshotRecord = await getLatestSessionSnapshot(projectPath);
+
+  250    async clearSnapshots(): Promise<void> {
+  251:     const { clearProjectSessionSnapshots } = await import('../dexie-db');
+  252      await clearProjectSessionSnapshots(this.options.projectPath);
+
+src/infrastructure/persistence/stores/study-store.ts:
+  1  /**
+  2:  * @fileoverview Study session store with Dexie persistence for SRS data
+  3   * @module lib/state/study-store
+
+src/infrastructure/persistence/stores/terminal-store.ts:
+   18  import { persist, createJSONStorage } from 'zustand/middleware';
+   19: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   20  
+
+  302   * 
+  303:  * STATE-009 FIX (2026-01-19): Migrated from localStorage to Dexie storage
+  304   * - localStorage was causing workspace access infection
+  305:  * - Dexie provides consistent persistence across all stores
+  306   * - Uses 'terminalState' table in ViaGentDatabase
+
+src/infrastructure/persistence/stores/use-app-store.ts:
+    9   * - Cross-slice communication via get()
+   10:  * - Dexie persistence with selective partialize
+   11   *
+
+   20  import { useMemo } from 'react';
+   21: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   22  import { runMigrations, validateMigratedState, CURRENT_SCHEMA_VERSION } from './schema-migrations';
+
+  106  
+  107:       // Use Dexie storage adapter for IndexedDB persistence
+  108        // Note: Using 'providerConfigs' table as generic storage for app state
+  109:       storage: createJSONStorage(() => createDexieStorage('providerConfigs' as keyof typeof import('../dexie-db').db)),
+  110  
+
+src/infrastructure/persistence/stores/agents/agent-selection-store.ts:
+  14  import { persist, createJSONStorage } from 'zustand/middleware';
+  15: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  16  import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+
+  30  /**
+  31:  * Create Dexie storage for agent selection
+  32   */
+
+src/infrastructure/persistence/stores/canvas/canvas-db.ts:
+  10   * - Extracted from canvas-store.ts (original lines 36-71)
+  11:  * - Canonical location for Dexie database initialization
+  12   * - Supports canvas metadata and state persistence
+
+  16  
+  17: import Dexie from 'dexie';
+  18  import type { Node, Edge, Viewport } from '@xyflow/react';
+
+  42   * KnowledgeCanvasDB class for IndexedDB operations
+  43:  * Extends Dexie for type-safe database operations
+  44   */
+  45: export class KnowledgeCanvasDB extends Dexie {
+  46:   canvases!: Dexie.Table<CanvasMetadataRecord, string, CanvasMetadataRecord>;
+  47:   canvasStates!: Dexie.Table<CanvasStateRecord, string, CanvasStateRecord>;
+  48  
+
+src/infrastructure/persistence/stores/chat/unified-chat-store.ts:
+  23  import type { CombinedUnifiedChatState } from './unified-chat-types';
+  24: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  25  
+
+  55   *
+  56:  * Combines all slices into a single Zustand store with Dexie persistence.
+  57   *
+
+src/infrastructure/persistence/stores/chat/__tests__/test-helper.ts:
+  6   * Creates a complete test store with all slices for unit testing.
+  7:  * Mocks Dexie storage to avoid IndexedDB operations in tests.
+  8   *
+
+src/infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts:
+   6   * Extracted from unified-chat-store.ts (448 lines → 120 lines slice)
+   7:  * Handles conversation state persistence via Dexie/IndexedDB.
+   8   *
+
+  21  import type { ConversationState } from '@/domain/entities/chat';
+  22: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  23  
+
+src/infrastructure/persistence/stores/conversation/conversation-helpers.ts:
+    9  import type { ConversationThread } from './types';
+   10: import type { ConversationThreadRecord } from '../../dexie-db';
+   11  
+
+   68  /**
+   69:  * Persist conversation state to Dexie threads table
+   70   * This ensures consistency with the Threads view
+
+  115  /**
+  116:  * Create a debounced persist to Dexie function
+  117   * Performance optimization for frequent updates during chat
+
+src/infrastructure/persistence/stores/conversation/conversation-types.ts:
+   15  import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+   16: import type { ThreadMessageRecord } from '../../dexie-db';
+   17  
+
+  142  
+  143:   /** Load conversation from Dexie into store */
+  144    loadConversation: (id: string) => Promise<void>;
+
+src/infrastructure/persistence/stores/conversation/conversation-utils-slice.ts:
+  17    getRecentConversations: (limit?: number) => ConversationMetadataWithId[];
+  18:   loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
+  19    loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
+
+  70    loadConversation: async (conversationId: string) => {
+  71:     // Load conversation from Dexie and populate store (Story 51-3)
+  72      const conversation = get().getConversation(conversationId);
+
+src/infrastructure/persistence/stores/conversation/persistence.ts:
+   1  /**
+   2:  * @fileoverview Thread Persistence - Dexie-backed thread storage (Migrated from legacy)
+   3   * @module infrastructure/persistence/stores/conversation/persistence
+
+   7   * @description
+   8:  * This module provides async Dexie persistence for conversation threads.
+   9   * Migrated from src/lib/workspace/threads-store.ts as part of architectural cleanup.
+
+  17  
+  18: import { db, type ConversationThreadRecord } from '@/infrastructure/persistence/dexie-db';
+  19  import type { ConversationThread, ThreadMessage } from './types';
+
+  21  /**
+  22:  * Convert Zustand thread to Dexie record
+  23   */
+
+  56  /**
+  57:  * Convert Dexie record to Zustand thread
+  58   */
+
+src/infrastructure/persistence/stores/conversation/types.ts:
+  209      getRecentConversations: (limit?: number) => ConversationMetadataWithId[];
+  210:     loadConversation: (conversationId: string) => Promise<void>; // Story 51-3: Load conversation from Dexie
+  211      loadConversationByProject: (projectId: string) => Promise<void>; // Story 51-3: Load most recent conversation for project
+
+src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts:
+   19  
+   20: import { dexieDB } from '@/infrastructure/persistence/dexie-db-class';
+   21  import { useConversationStore } from '../useConversationStore';
+
+  159          try {
+  160:             // Read all conversation data from Dexie
+  161              const legacyState = await readLegacyStore();
+
+src/infrastructure/persistence/stores/editor-tabs/index.ts:
+  12  import { persist, createJSONStorage } from 'zustand/middleware';
+  13: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  14  import { createEditorTabsCrudSlice, EditorTabsCrudState, EditorTabsCrudActions } from './editor-tabs-crud-slice';
+
+  41   *
+  42:  * Combines all 3 slices into a single store with Dexie persistence.
+  43   */
+
+src/infrastructure/persistence/stores/filesystem/snapshot-bulk-ops-slice.ts:
+   10  import { StateCreator } from 'zustand';
+   11: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+   12  import type { SnapshotBulkOpsState, SnapshotBulkOpsMethods } from './snapshot-types';
+
+   98  
+   99:     // Persist to Dexie
+  100:     // TODO: Add Dexie persistence
+  101    },
+
+src/infrastructure/persistence/stores/filesystem/snapshot-cache-slice.ts:
+  53  
+  54:     // Persist to Dexie
+  55:     // TODO: Add Dexie persistence with quota management
+  56    },
+
+  85  
+  86:     // Persist to Dexie
+  87:     // TODO: Add Dexie persistence
+  88    },
+
+src/infrastructure/persistence/stores/filesystem/snapshot-metadata-slice.ts:
+   10  import { StateCreator } from 'zustand';
+   11: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+   12  import type { SnapshotMetadataState, SnapshotMetadataMethods, FileTreeNode } from './snapshot-types';
+
+   33  
+   34:     // Persist to Dexie
+   35:     // TODO: Add Dexie persistence
+   36    },
+
+  104  
+  105:     // Persist to Dexie
+  106:     // TODO: Add Dexie persistence
+  107    },
+
+src/infrastructure/persistence/stores/filesystem/snapshot-quota-slice.ts:
+  85  
+  86:     // Persist to Dexie
+  87:     // TODO: Add Dexie persistence for quota evictions
+  88  
+
+src/infrastructure/persistence/stores/filesystem/snapshot-types.ts:
+    9  
+   10: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+   11  
+
+  170   * Re-export FileSnapshotRecord for convenience
+  171:  * FileSnapshotRecord is defined in dexie-db-core-types.ts
+  172   */
+  173: export type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+
+src/infrastructure/persistence/stores/filesystem/useFileSnapshotStore.ts:
+   8   * - Each slice is <120 lines (single responsibility principle)
+   9:  * - Dexie IndexedDB persistence for metadata
+  10   * - Content cache is ephemeral (in-memory only)
+
+  47   * Composed from 4 focused slices following January 2026 Zustand pattern.
+  48:  * Persists metadata to Dexie IndexedDB with selective partialize.
+  49   * Content cache is ephemeral (in-memory only, not persisted).
+
+  67  
+  68:       // TODO: Add Dexie storage adapter
+  69        // For now using localStorage as temporary storage
+
+src/infrastructure/persistence/stores/flashcard/flashcard-db.ts:
+   1  /**
+   2:  * @fileoverview Flashcard database initialization (Dexie IndexedDB)
+   3   * @module infrastructure/persistence/stores/flashcard/flashcard-db
+
+   6  
+   7: import Dexie from 'dexie';
+   8  
+
+  37   * FlashcardDatabase class for IndexedDB operations
+  38:  * Extends Dexie for type-safe database operations
+  39   *
+
+  42   */
+  43: export class FlashcardDatabase extends Dexie {
+  44:   flashcards!: Dexie.Table<FlashcardRecord, string>;
+  45:   flashcardSets!: Dexie.Table<FlashcardSetRecord, string>;
+  46  
+
+  56  /**
+  57:  * Dexie database instance getter
+  58   * Ensures singleton pattern for IndexedDB access
+
+src/infrastructure/persistence/stores/ide/ide-project-slice.ts:
+  13   * - Reset clears all slices via cross-slice communication
+  14:  * - Future: Load project-specific state from Dexie
+  15   */
+
+src/infrastructure/persistence/stores/ide/ide-state-storage.ts:
+  22   *
+  23:  * @see dexie-db-migrations.ts line 147: ideState: 'projectId, updatedAt'
+  24   */
+
+  26  import type { StateStorage } from 'zustand/middleware';
+  27: import type { IDEStateRecord } from '@/infrastructure/persistence/dexie-db';
+  28  import type { CombinedIDEState } from './ide-types';
+  29: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  30  
+
+src/infrastructure/persistence/stores/ide/useIDEStore.ts:
+   4   * @governance EPIC-CP-1
+   5:  * @updated 2026-01-06 - Fixed Dexie persistence with custom storage adapter
+   6   *
+
+  58   *
+  59:  * Uses Dexie.js (IndexedDB) for persistence.
+  60   * Set<string> properly serialized to/from Array.
+
+src/infrastructure/persistence/stores/notes/note-context-tracker.ts:
+  22  import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
+  23: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  24  import type { Block } from '@blocknote/core';
+
+src/infrastructure/persistence/stores/notes/slash-commands/index.ts:
+    7   *
+    8:  * CANONICAL LOCATION for slash commands Zustand store with Dexie persistence.
+    9   * This is the authoritative location for slash command state management.
+
+   18  import { persist } from 'zustand/middleware';
+   19: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   20  
+
+  315  // ============================================================================
+  316: // Store with Dexie Persistence
+  317  // ============================================================================
+
+  321   *
+  322:  * Migrated from localStorage to Dexie storage for:
+  323   * - Better performance with IndexedDB
+
+  480              name: 'via-gent-slash-commands',
+  481:             // DEXIE STORAGE MIGRATION (Track 1)
+  482:             // Changed from default localStorage to Dexie persist storage
+  483              storage: createDexieStorage('workspaceState') as any, // Type assertion for Zustand compatibility
+
+src/infrastructure/persistence/stores/notifications/index.ts:
+  41   *
+  42:  * Combines all 3 slices into a single store with Dexie persistence.
+  43   */
+
+src/infrastructure/persistence/stores/permissions/tool-permission-store.ts:
+  22  import { persist, createJSONStorage } from 'zustand/middleware';
+  23: import { createDexieStorage } from '../../dexie-storage';
+  24  import type { ToolPermissionState } from './types';
+
+src/infrastructure/persistence/stores/project/migrate-bindings.ts:
+  17  
+  18: import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+  19  import { getProjectStoreState } from './useProjectStore';
+
+src/infrastructure/persistence/stores/project/project-bindings-slice.ts:
+  10  import { StateCreator } from 'zustand';
+  11: import { db } from '@/infrastructure/persistence/dexie-db';
+  12  import type {
+
+  54  
+  55:     // Persist to Dexie (async, non-blocking)
+  56:     // ARC-C06: Added Dexie persistence for workspaceBindings updates
+  57      db.projects.update(projectId, { workspaceBindings: updated.workspaceBindings }).catch((error: unknown) => {
+  58        const err = error as Error;
+  59:       console.error('[ProjectStore] Failed to persist workspaceBindings to Dexie:', err.message);
+  60      });
+
+src/infrastructure/persistence/stores/project/project-crud-slice.ts:
+    5   *
+    6:  * Project lifecycle management operations with Dexie persistence.
+    7   *
+
+   15  import { StateCreator } from 'zustand';
+   16: import { db } from '@/infrastructure/persistence/dexie-db';
+   17  // CC-V2-B03: Removed storeFSAHandle import - handle storage is now done in fsa-persistence.ts
+
+   67  /**
+   68:  * Convert Zustand Project to Dexie ProjectRecord for persistence
+   69   * PERSIST-S002: Added workspaceId for cross-workspace isolation
+
+   85  /**
+   86:  * Convert Dexie ProjectRecord to Zustand Project
+   87   * PS-04: Now uses storageMetadata instead of fsaHandle
+
+   94      storageType: record.storageType || 'fsa',  // Default to 'fsa' for legacy records
+   95:     storageMetadata: null,  // Not stored in Dexie (requires user permission, store in fsaHandles table)
+   96      lastOpened: new Date(record.lastOpened),
+
+  150  
+  151:     // Persist to Dexie (async, blocking)
+  152      // FS-03: Pass workspaceType for proper isolation
+
+  157        const err = error as Error;
+  158:       console.error('[ProjectStore] Failed to persist project to Dexie:', err.message);
+  159        // We should probably re-throw here so the caller knows creation failed, 
+
+  170      // 1. createProjectFromFolder() in fsa-persistence.ts calls this createProject() method
+  171:     // 2. This method creates project metadata in Zustand + Dexie
+  172      // 3. fsa-persistence.ts then calls handlePersistenceService.persistHandle(projectId, handle, 'ide')
+
+  202  
+  203:     // Persist to Dexie (async, non-blocking)
+  204      // FS-03: Extract workspace type from project ID for proper isolation
+
+  207        const err = error as Error;
+  208:       console.error('[ProjectStore] Failed to update project in Dexie:', err.message);
+  209      });
+
+  224  
+  225:     // Delete from Dexie (async, non-blocking)
+  226      db.projects.delete(projectId).catch((error: unknown) => {
+  227        const err = error as Error;
+  228:       console.error('[ProjectStore] Failed to delete project from Dexie:', err.message);
+  229      });
+
+src/infrastructure/persistence/stores/project/project-layout-slice.ts:
+  10   * layoutState is stored in-memory on the Project object for quick access.
+  11:  * Persistence is handled by the IDE store's IDEStateRecord in Dexie, NOT ProjectRecord.
+  12   * This slice is for in-memory coordination only - the IDE store persists panelLayouts.
+
+  49  
+  50:     // NOTE: Dexie persistence is handled by IDE store (IDEStateRecord.panelLayouts)
+  51:     // ProjectRecord does not have layoutState field - see dexie-db-core-types.ts
+  52    },
+
+  80  
+  81:     // NOTE: Dexie persistence is handled by IDE store (IDEStateRecord.panelLayouts)
+  82:     // ProjectRecord does not have layoutState field - see dexie-db-core-types.ts
+  83    },
+
+src/infrastructure/persistence/stores/project/project-permissions-slice.ts:
+   29    updateProjectPermission: async (projectId: string, permissionState: FsaPermissionState) => {
+   30:     // Update the FSAHandleRecord in Dexie (single source of truth)
+   31      await handlePersistenceService.updatePermissionStatus(projectId, permissionState);
+
+  103      // Permission state is now in FSAHandleRecord, not in Project
+  104:     // Just update the Dexie record to 'prompt' to force re-verification
+  105      await handlePersistenceService.updatePermissionStatus(projectId, 'prompt');
+
+src/infrastructure/persistence/stores/project/project-types.ts:
+  160   * FSA-010: Permission state is now sourced from FSAHandleRecord via handlePersistenceService
+  161:  * All methods are async since they query Dexie for permission state
+  162   */
+
+src/infrastructure/persistence/stores/project/project-utils-slice.ts:
+   9  import { StateCreator } from 'zustand';
+  10: import { db } from '@/infrastructure/persistence/dexie-db';
+  11  import { fromRecord, toRecord } from './project-crud-slice'; // PERSIST-S002: Import both converters
+
+  41  
+  42:     // Persist to Dexie
+  43      // PERSIST-S002: Use toRecord() to ensure workspaceId is included
+
+  46      db.projects.put(record).catch((error) => {
+  47:       console.error('[ProjectStore] Failed to update lastOpened in Dexie:', error);
+  48      });
+
+  50  
+  51:   // Hydrate projects from Dexie into Zustand store
+  52    // Call this on app startup to load persisted projects
+  53    hydrateProjects: async () => {
+  54:     console.log('[ProjectStore] Hydrating projects from Dexie...');
+  55  
+
+  70  
+  71:       console.log(`[ProjectStore] Hydrated ${Object.keys(projects).length} projects from Dexie`);
+  72      } catch (error) {
+  73:       console.error('[ProjectStore] Failed to hydrate projects from Dexie:', error);
+  74        // Mark as hydrated even on error to prevent infinite retries
+
+src/infrastructure/persistence/stores/project/use-fsa-projects.ts:
+  4  
+  5: import { useLiveQuery } from 'dexie-react-hooks';
+  6  import { useMemo } from 'react';
+  7  import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+  8: import { db } from '@/infrastructure/persistence/dexie-db';
+  9  import type { Project } from './project-types';
+
+src/infrastructure/persistence/stores/project/useProjectStore.ts:
+   8   * - Each slice is <120 lines (single responsibility principle)
+   9:  * - Dexie IndexedDB persistence
+  10   * - Cross-slice communication via get()
+
+  47   * Composed from 5 focused slices following January 2026 Zustand pattern.
+  48:  * Persists to Dexie IndexedDB with selective partialize.
+  49   */
+  50  // FIX-2026-01-06: REMOVED localStorage persist - causes dual storage chaos
+  51: // Dexie is the SINGLE SOURCE OF TRUTH for projects
+  52: // Hub reads from Dexie, all components should read from Dexie
+  53  // This store is now a transient in-memory cache, NOT persisted
+
+src/infrastructure/persistence/stores/rag/rag-store.ts:
+  20   * - IndexedDB quota handling
+  21:  * - Dexie persistence with debounced writes
+  22   */
+
+  25  import { persist, createJSONStorage } from 'zustand/middleware';
+  26: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  27  import type { RAGStoreState } from './rag-types';
+
+  50  
+  51:       // Use Dexie storage adapter for IndexedDB persistence
+  52        // P0 FIX: ragState table now exists in ViaGentDatabase schema (v17 migration)
+
+src/infrastructure/persistence/stores/study/slices/study-database-slice.ts:
+   6  
+   7: import Dexie from 'dexie';
+   8  
+
+  36   */
+  37: export class StudyDatabase extends Dexie {
+  38    constructor() {
+
+src/infrastructure/persistence/stores/workspace/workspace-store.ts:
+   20  import { persist, createJSONStorage } from 'zustand/middleware';
+   21: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   22  import { useShallow } from 'zustand/react/shallow';
+
+  175        name: 'workspace-state',
+  176:       // FIXED STATE-003: Use Dexie storage instead of localStorage per ADR-033
+  177        // Uses providerConfigs table which stores { key, state } records
+
+src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts:
+    7   * Manages:
+    8:  * - Project loading/hydration from Dexie
+    9   * - Permission state detection
+
+   60   *
+   61:  * Handles project loading from Dexie, permission state detection,
+   62   * and IndexedDB adapter initialization for browser-only projects.
+
+  108            if (project.storageType === 'indexeddb') {
+  109:             // Dexie-stored projects have no FSA handle - auto-grant permission
+  110              setPermissionState('granted');
+
+src/infrastructure/sync/bridges/note-folder-bridge.ts:
+   4   *
+   5:  * Bridges the gap between local filesystem Markdown files and Dexie-stored Notes.
+   6   * Handles parsing, conversion, and synchronization.
+
+  11  
+  12: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  13: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db-knowledge-types';
+  14  import type { LocalFSAdapter } from '@/infrastructure/filesystem';
+
+src/infrastructure/sync/workspace-services/notes/note-crud-operations.ts:
+  12  import type { Block } from '@blocknote/core';
+  13: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  14  import { parseMarkdownFile } from './note-markdown-parser';
+
+src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts:
+  18  import type { NoteSyncStore } from './notes-file-sync-core';
+  19: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  20  import { importFileAsNote } from './note-crud-operations';
+
+src/infrastructure/sync/workspace-services/notes/note-markdown-writer.ts:
+  11  
+  12: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  13  import type { Block } from '@blocknote/core';
+
+src/infrastructure/sync/workspace-services/notes/notes-file-sync-core.ts:
+  19  import type { Block } from '@blocknote/core';
+  20: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  21  import { SyncError } from '@/infrastructure/sync/types';
+
+src/lib/agent/system-prompt.ts:
+  156  - State: Zustand
+  157: - Storage: Dexie (IndexedDB)
+  158  
+
+src/lib/agent/facades/note-tools-impl.ts:
+  19  import type { NoteStoreState } from '@/lib/notes/types-slice';
+  20: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  21  
+
+src/lib/agent/memory/conversation-memory.ts:
+  11  
+  12: import Dexie, { Table } from 'dexie';
+  13  
+
+  44   */
+  45: class ConversationDatabase extends Dexie {
+  46    conversationMemory!: Table<ConversationMemory, number>;
+
+src/lib/agent/preferences/user-profile.ts:
+  10  
+  11: import Dexie, { Table } from 'dexie';
+  12  
+
+  81   */
+  82: class UserPreferencesDatabase extends Dexie {
+  83    preferences!: Table<UserPreference, string>;
+
+src/lib/agent/providers/credential-storage.ts:
+  13  
+  14: import { getDb, type CredentialRecord } from '@/infrastructure/persistence/dexie-db';
+  15  
+
+src/lib/agent/providers/credential-vault.ts:
+  4   *
+  5:  * Secure storage for API keys using Web Crypto API (AES-GCM) and Dexie.js.
+  6   * This is the public API facade that orchestrates storage and encryption modules.
+
+src/lib/agent/suggestions/suggestion-tracker.ts:
+  10  
+  11: import Dexie, { Table } from 'dexie';
+  12  
+
+  79   */
+  80: class SuggestionTrackerDatabase extends Dexie {
+  81    dismissals!: Table<SuggestionDismissal, number>;
+
+src/lib/agent/tools/retry-queue.ts:
+   9   * - Max retry limits per error type
+  10:  * - Dexie persistence for session recovery
+  11   * - Event bus lifecycle events
+
+src/lib/agent/tools/tool-execution-logger.ts:
+  1  import type { ToolExecutionContext } from './types';
+  2: import type { ToolExecutionLogRecord } from '@/infrastructure/persistence/dexie-db';
+  3  import {
+
+  8    clearToolExecutionLogs
+  9: } from '@/infrastructure/persistence/dexie-db';
+  10  
+
+src/lib/analytics/metrics-collector.ts:
+  11   *
+  12:  * Privacy-first: All data stored locally in IndexedDB via Dexie.
+  13   * No telemetry or external data transmission.
+
+  18  
+  19: import { db } from '@/infrastructure/persistence/dexie-db';
+  20  
+
+src/lib/analytics/performance-monitor.ts:
+  16  
+  17: import { db } from '@/infrastructure/persistence/dexie-db';
+  18  import { getMetricsCollector } from './metrics-collector';
+
+src/lib/audio/audio-storage.ts:
+   10  
+   11: import Dexie, { Table } from 'dexie';
+   12  
+
+   43   */
+   44: class AudioDatabase extends Dexie {
+   45    audio!: Table<StoredAudio, number>;
+
+  222  
+  223:   // Workaround for Dexie v9: fetch current value, increment, update
+  224    const audio = await db.audio.get(id);
+
+src/lib/events/cross-workspace-event-bus.ts:
+  30  // CC-V2-A02: Import from canonical location per ADR-035
+  31: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  32  
+
+src/lib/filesync/hooks/use-markdown-sync-service.ts:
+  21  import { useEffect, useState, useCallback, useRef } from 'react';
+  22: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  23  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+
+src/lib/filesystem/file-snapshot-store.ts:
+   9   *
+  10:  * BEFORE (517 lines): Class-based service using Dexie directly
+  11   * - Class: FileSnapshotStore with constructor options
+  12:  * - Direct Dexie IndexedDB operations
+  13   * - No state management, just cache utilities
+  14   *
+  15:  * AFTER (Zustand): Zustand store with 4 slices + Dexie persistence
+  16   * - Store: useFileSnapshotStore with slice composition
+  17   * - State management via Zustand
+  18:  * - Dexie persistence via Zustand middleware
+  19   * - Reactive hooks for components
+
+  52  // Re-export FileSnapshotRecord for backward compatibility
+  53: export type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-types';
+  54  
+
+  83  import { useFileSnapshotStore } from './file-snapshot-store/file-snapshot-store-refactored';
+  84: import type { FileSnapshotRecord } from '@/infrastructure/persistence/dexie-db-types';
+  85  
+
+src/lib/filesystem/permission-lifecycle.ts:
+    6   *
+    7:  * Uses the main Dexie database (via-gent-persistence) for FSA handle persistence,
+    8   * following the unified state management approach.
+
+   10  
+   11: import type { FSAHandleRecord } from '@/infrastructure/persistence/dexie-db';
+   12  import {
+
+   16    deleteFSAHandle,
+   17: } from '@/infrastructure/persistence/dexie-db';
+   18  
+
+  121  /**
+  122:  * Save directory handle reference for the project using Dexie persistence.
+  123   * Note: The actual handle cannot be serialized - only metadata is stored.
+
+  150  /**
+  151:  * Load directory handle reference metadata from Dexie persistence.
+  152   * Returns null if no stored handle exists.
+
+src/lib/filesystem/project-context-provider.ts:
+  14   *
+  15:  * @see Research: Dexie transaction patterns, Web Crypto API, WebContainer fs operations
+  16   */
+
+src/lib/filesystem/file-snapshot-store/file-snapshot-store-refactored.ts:
+  36  import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+  37: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  38  import {
+
+  75   * - Slice composition for single responsibility
+  76:  * - Persist middleware for IndexedDB via Dexie
+  77   * - Backward compatible facade for gradual migration
+
+src/lib/filesystem/file-snapshot-store/snapshot-bulk-slice.ts:
+   69      saveBulkSnapshots: async (projectId, snapshots) => {
+   70:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+   71        const startTime = Date.now();
+
+  132      getExpiredSnapshots: async () => {
+  133:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  134        const now = Date.now();
+
+  143      bulkInvalidateByPattern: async (projectId, pattern) => {
+  144:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  145  
+
+  167      bulkRefreshTTL: async (projectId, paths) => {
+  168:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  169        const now = Date.now();
+
+src/lib/filesystem/file-snapshot-store/snapshot-cache-slice.ts:
+   77      saveSnapshot: async (projectId, path, content, hash, size = content.length, workspaceId: WorkspaceType = 'ide') => {
+   78:       // This will delegate to Dexie operations
+   79:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+   80        const now = Date.now();
+
+  114      getFileTree: async (projectId) => {
+  115:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  116        return await db.fileSnapshots.where('projectId').equals(projectId).toArray();
+
+  119      getFileCount: async (projectId) => {
+  120:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  121        return await db.fileSnapshots.where('projectId').equals(projectId).count();
+
+  124      getCacheSize: async (projectId) => {
+  125:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  126        const snapshots = await db.fileSnapshots.where('projectId').equals(projectId).toArray();
+
+  130      getCacheStats: async (projectId) => {
+  131:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  132        const now = Date.now();
+
+  147      refreshSnapshot: async (projectId, path) => {
+  148:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  149        const now = Date.now();
+
+  158      refreshAllSnapshots: async (projectId) => {
+  159:       const { db } = await import('@/infrastructure/persistence/dexie-db');
+  160        const now = Date.now();
+
+src/lib/filesystem/file-snapshot-store/snapshot-invalidation-slice.ts:
+   57    invalidateSnapshot: async (projectId, path) => {
+   58:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   59  
+
+   74    invalidateProject: async (projectId) => {
+   75:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   76  
+
+   96    invalidateExpired: async (projectId) => {
+   97:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   98      const now = Date.now();
+
+  149    invalidateByHashMismatch: async (projectId, path, expectedHash) => {
+  150:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  151  
+
+  181    deleteAllSnapshots: async () => {
+  182:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  183  
+
+src/lib/filesystem/file-snapshot-store/snapshot-lookup-slice.ts:
+   48    getSnapshot: async (projectId, path, loadContent = false) => {
+   49:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   50      const now = Date.now();
+
+   89    isFresh: async (projectId, path) => {
+   90:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+   91      const now = Date.now();
+
+  105    getSnapshotMetadata: async (projectId, path) => {
+  106:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  107  
+
+  116    loadSnapshotContent: async (projectId, path, workspaceId: WorkspaceType = 'ide') => {
+  117:     const { db } = await import('@/infrastructure/persistence/dexie-db');
+  118  
+
+src/lib/filesystem/sync-manager/sync-batch-sync.ts:
+  12  import { countFilesToSync, buildFileSystemTree } from '../sync-operations';
+  13: import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
+  14  import { fileMetadataCache } from '../../sync/file-metadata-cache';
+
+src/lib/notes/markdown-converter.ts:
+  10  import type { Block } from '@blocknote/core';
+  11: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  12  
+
+src/lib/notes/note-event-emitter.ts:
+  10  import EventEmitter from 'eventemitter3';
+  11: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  12  
+
+src/lib/notes/note-file-sync.ts:
+  12  
+  13: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  14  import type { FileSyncService, SyncResult } from '@/lib/filesync/file-sync-service';
+
+src/lib/notes/note-store-refactored.ts:
+   18   * - Cross-slice communication via get()
+   19:  * - Dexie persistence with partialize
+   20   */
+
+   23  import { persist, createJSONStorage } from 'zustand/middleware';
+   24: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+   25: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+   26  import { createNoteCRUDSlice } from './slices/note-crud-slice';
+
+   46   * - Active note ID and project ID persist to IndexedDB
+   47:  * - Full note records persist to Dexie notes table (not via Zustand persist)
+   48   * - UI state (loading, error, saveStatus) is ephemeral
+
+  131              // Custom serializer for Map/Set (not used due to partialize, but documented)
+  132:             // Actual notes are persisted directly to Dexie notes table
+  133  
+
+src/lib/notes/note-tree-utils.ts:
+  10  
+  11: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  12  
+
+src/lib/notes/saved-blocks-store.ts:
+    7   * Allows users to save blocks for reuse across notes.
+    8:  * Persists to Dexie with favorites and usage tracking.
+    9   */
+
+   16      SavedBlockType,
+   17: } from '@/infrastructure/persistence/dexie-db';
+   18: import { db } from '@/infrastructure/persistence/dexie-db';
+   19  
+
+  408                  partialize: (state) => ({
+  409:                     // Only persist UI state, not the actual blocks (those come from Dexie)
+  410                      selectedCategory: state.selectedCategory,
+
+src/lib/notes/store-facades.ts:
+  27   *
+  28:  * Re-exports from canonical infrastructure location with Dexie storage.
+  29   * Maintains backward compatibility for imports from '@/lib/notes'
+
+src/lib/notes/types-slice.ts:
+   9  
+  10: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  11  import type { NoteSaveStatus, CreateNoteParams, UpdateNoteParams } from './types';
+
+src/lib/notes/types.ts:
+   8  
+   9: import type { NoteRecord as DexieNoteRecord } from '@/infrastructure/persistence/dexie-db-knowledge-types';
+  10  
+
+  12   * Note record for BlockNote editor persistence
+  13:  * Re-export from Dexie types for barrel exports
+  14   */
+
+src/lib/notes/export/note-exporter.ts:
+   5   *
+   6:  * Exports Dexie notes to FSA markdown file format.
+   7   * Handles batch export with progress tracking.
+
+  85  /**
+  86:  * Export notes from Dexie format to FSA markdown format
+  87   *
+  88:  * Converts Dexie NoteRecord array to FSA-compatible markdown files
+  89   * with proper YAML frontmatter and ISO 8601 timestamps.
+  90   *
+  91:  * @param notes - Array of NoteRecord from Dexie
+  92   * @param options - Export options for filtering/formatting
+
+src/lib/notes/format/note-formatter.ts:
+    5   *
+    6:  * Converts between Dexie NoteRecord and FSA markdown file format.
+    7   * Handles YAML frontmatter with proper ISO 8601 timestamps.
+
+  107   *
+  108:  * Converts Dexie NoteRecord to FSA markdown format with YAML frontmatter.
+  109   * Uses ISO 8601 timestamps and proper type handling.
+  110   *
+  111:  * @param note - Note record from Dexie
+  112   * @returns Markdown string with frontmatter
+
+  529   * @param parsed - Parsed note with frontmatter and blocks
+  530:  * @returns NoteRecord compatible with Dexie
+  531   */
+
+src/lib/notes/slices/note-crud-slice.ts:
+   17  
+   18: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+   19: import { db } from '@/infrastructure/persistence/dexie-db';
+   20  import type { StateCreator } from 'zustand';
+
+   61                  // Desktop: Read notes from FSA files
+   62:                 // Per ADR-033: FSA is source of truth, Dexie is for reactivity only
+   63                  const project = useProjectStore.getState().projects[projectId];
+
+  112              } else {
+  113:                 // Mobile/Tablet: Read from DexieDB (Dexie is primary storage)
+  114                  const notes = await db.notes
+
+src/lib/notes/slices/note-sync-slice.ts:
+  14  
+  15: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  16  import type { StateCreator } from 'zustand';
+
+src/lib/persistence/db.ts:
+    1  /**
+    2:  * Persistence DB - Dexie Compatibility Layer
+    3   * 
+
+    7   * Story 5-1: Set Up IndexedDB Schema (Original)
+    8:  * Story 27-1c: Migrated to Dexie.js with idb-compatible wrapper
+    9   * 
+   10:  * This module wraps the Dexie database to provide backward compatibility
+   11   * with code that used the idb-style API patterns.
+
+   19   * 
+   20:  * // NEW code should use Dexie directly:
+   21   * import { db } from '@/infrastructure/persistence/stores';
+
+   25  
+   26: import { db as dexieDb, resetDatabaseForTesting } from '@/infrastructure/persistence/dexie-db';
+   27  import type { ProjectMetadata } from '../workspace/project-types'; // Import from domain types to break circular dependency
+
+   54   * Legacy schema type for backward compatibility
+   55:  * @deprecated Use Dexie db.table directly
+   56   */
+
+   81  /**
+   82:  * Wrapper that provides idb-like API on top of Dexie
+   83   * This allows existing code to work without modification.
+
+  143      transaction(_storeName: TableName, _mode: 'readonly' | 'readwrite') {
+  144:         // Legacy transaction not needed with Dexie - operations are auto-transactional
+  145          console.warn('[IdbCompatWrapper] transaction() is deprecated, use direct db operations');
+
+  162  
+  163:     /** Close database (no-op for Dexie, it manages connections) */
+  164      close(): void {
+  165:         // No-op - Dexie manages its own connections
+  166      }
+
+  179  /**
+  180:  * Get the persistence database (idb-compatible wrapper on Dexie)
+  181   * 
+
+  189  
+  190:     // Ensure Dexie database is open
+  191      await dexieDb.open();
+
+  207  
+  208: // Re-export Dexie instance for direct access
+  209  export { dexieDb as db };
+
+src/lib/plugins/plugin-manager.ts:
+  13  
+  14: import { getDb } from '@/infrastructure/persistence/dexie-db';
+  15: import { generatePluginId } from '@/infrastructure/persistence/dexie-db-plugin-types';
+  16  
+  17: // Helper functions to bypass Dexie table type assertions
+  18  const pluginsTable = () => (getDb()?.plugins as any);
+
+src/lib/rag/document-chunker.ts:
+  13  
+  14: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  15  import type {
+
+src/lib/rag/embedding-cache.ts:
+   9  
+  10: import { db } from '@/infrastructure/persistence/dexie-db';
+  11: // import type { EmbeddingModelRecord } from '@/infrastructure/persistence/dexie-db';
+  12  import type { EmbeddingModelMetadata } from './types';
+
+src/lib/rag/indexeddb-storage.ts:
+   5   *
+   6:  * Provides Dexie-based persistence for Orama index data.
+   7   * Stores serialized Orama indexes in IndexedDB.
+
+   9  
+  10: import { db, type OramaIndexRecord } from '@/infrastructure/persistence/dexie-db';
+  11  
+
+src/lib/rag/orama-index.ts:
+    7   * Provides CRUD operations for indexes, document indexing, search,
+    8:  * and persistence to IndexedDB via Dexie.
+    9   *
+
+  131  
+  132:   // Try to load from IndexedDB via Dexie
+  133    const { getOramaIndexData } = await import('./indexeddb-storage');
+
+  194  
+  195:     // Save to IndexedDB via Dexie
+  196      const { saveOramaIndexData } = await import('./indexeddb-storage');
+
+  220  
+  221:   // Remove from IndexedDB via Dexie
+  222    const { deleteOramaIndexData } = await import('./indexeddb-storage');
+
+src/lib/rag/chunk-strategies/chunk-strategy.interface.ts:
+   9  import type { ChunkMetadata, ChunkingOptions } from '../types';
+  10: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  11  
+
+src/lib/rag/chunk-strategies/fixed-size-chunker.ts:
+  13  import type { ChunkStrategy } from './chunk-strategy.interface';
+  14: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  15  
+
+src/lib/rag/chunk-strategies/recursive-chunker.ts:
+  15  import type { ChunkStrategy } from './chunk-strategy.interface';
+  16: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  17  
+
+src/lib/rag/chunk-strategies/semantic-chunker.ts:
+  13  import type { ChunkStrategy } from './chunk-strategy.interface';
+  14: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  15  
+
+src/lib/snippets/snippet-store.ts:
+  47  
+  48: export type { CodeSnippetRecord, InsertedSnippet, SnippetPlaceholder } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  49  
+
+src/lib/snippets/snippet-templates.ts:
+  12  
+  13: import type { CodeSnippetRecord, SnippetTemplate } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  14  
+
+src/lib/snippets/snippet-store/snippet-crud-slice.ts:
+   6  import { StateCreator } from 'zustand';
+   7: import { db } from '@/infrastructure/persistence/dexie-db';
+   8: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+   9  
+
+  32  export interface SnippetCrudActions {
+  33:   /** Load snippets from Dexie */
+  34    loadSnippets: (builtInSnippets: CodeSnippetRecord[]) => Promise<void>;
+
+  64      try {
+  65:       // Load user snippets from Dexie
+  66        const userSnippets = await db.codeSnippets.toArray();
+
+src/lib/snippets/snippet-store/snippet-export-slice.ts:
+  6  import { StateCreator } from 'zustand';
+  7: import { db } from '@/infrastructure/persistence/dexie-db';
+  8: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  9  
+
+src/lib/snippets/snippet-store/snippet-filtering-slice.ts:
+  6  import { StateCreator } from 'zustand';
+  7: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  8  
+
+src/lib/snippets/snippet-store/snippet-store-refactored.ts:
+  18  import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+  19: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  20  import { createSnippetCrudSlice, SnippetCrudSlice } from './snippet-crud-slice';
+
+  24  import { BUILT_IN_SNIPPETS } from '../snippet-templates';
+  25: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  26  
+
+  76  
+  77:         // Do NOT persist: snippets (loaded from Dexie), isLoading (transient), error (transient), selectedSnippetId (transient)
+  78        }),
+
+src/lib/snippets/snippet-store/snippet-utils-slice.ts:
+  6  import { StateCreator } from 'zustand';
+  7: import type { CodeSnippetRecord, SnippetPlaceholder, InsertedSnippet } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  8  
+
+src/lib/sync/file-metadata-cache.ts:
+  1: import type { FileMetadataRecord } from '@/infrastructure/persistence/dexie-db';
+  2: import { db, getChangedFilesSince, clearFileMetadataCache as clearCache } from '../../infrastructure/persistence/dexie-db';
+  3  
+
+src/lib/workspace/browser-mode.ts:
+  15  import { getProject } from '@/infrastructure/persistence/stores/project';
+  16: // FIX-2026-01-14: Use infrastructure store which has REAL Dexie persistence
+  17  // The lib/workspace version is a STUB that doesn't persist
+  18  import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+  19: import { db } from '@/infrastructure/persistence/dexie-db';
+  20  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+
+  40   * 
+  41:  * FIX-2026-01-14: Uses DIRECT Dexie persistence instead of broken Zustand store facade
+  42   * The lib/workspace/project-store saveProject was a STUB that didn't persist.
+
+  47    try {
+  48:     // Check Dexie directly for existing project
+  49      const existingRecord = await db.projects.get(BROWSER_MODE_PROJECT_ID);
+
+  95  
+  96:     // FIX-2026-01-14: Persist DIRECTLY to Dexie (bypass broken store facade)
+  97      const dexieRecord = {
+
+src/lib/workspace/fsa-persistence.ts:
+  150    // - Zustand store update
+  151:   // - Dexie persistence
+  152    // - FSA handle persistence
+
+src/lib/workspace/index.ts:
+  27  // WorkspaceId type from core types
+  28: export type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
+  29  
+
+src/lib/workspace/note-context-tracker.ts:
+  22  import { extractTextFromBlocks } from '@/lib/notes/types-embedding';
+  23: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  24  import type { Block } from '@blocknote/core';
+
+src/lib/workspace/project-types.ts:
+   9  import type { FsaPermissionState } from '../filesystem/permission-lifecycle';
+  10: import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+  11  
+
+src/lib/workspace/ProjectContext.tsx:
+  18  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+  19: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-types';
+  20  import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+
+src/lib/workspace/session-snapshot.ts:
+  26  
+  27: import { db, type SessionSnapshotRecord } from '@/infrastructure/persistence/dexie-db';
+  28  import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
+
+src/lib/workspace/threads-store.ts:
+   1  /**
+   2:  * @fileoverview Thread Persistence - Dexie-backed thread storage
+   3   * @module lib/workspace/thread-store
+
+   6   * @deprecated PERSISTENCE UTILITY - Not a Zustand store.
+   7:  * This module provides async Dexie persistence for conversation threads.
+   8   * Future migrations should move to:
+
+  20  
+  21: import { db, type ConversationThreadRecord /*, type ThreadMessageRecord */ } from '@/infrastructure/persistence/dexie-db';
+  22  import type { ConversationThread, ThreadMessage } from '@/infrastructure/persistence/stores/conversation/useConversationStore';
+
+  24  /**
+  25:  * Convert Zustand thread to Dexie record
+  26   */
+
+  59  /**
+  60:  * Convert Dexie record to Zustand thread
+  61   */
+
+src/lib/workspace/workspace-access-helper.tsx:
+   32  import { useNavigate } from '@tanstack/react-router';
+   33: import { db } from '@/infrastructure/persistence/dexie-db';
+   34  import type { WorkspaceType } from '@/infrastructure/persistence/stores/workspace/workspace-types';
+   35  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+   36: import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-types';
+   37  
+
+  232    // FIX-2026-01-14: Replaced broken useLiveQuery with controlled useEffect pattern
+  233:   // useLiveQuery caused infinite re-renders due to Dexie subscription conflicts
+  234    // This pattern loads data once on mount and when workspace changes
+
+  241    
+  242:   // Load projects from Dexie on mount and when workspace changes
+  243    useEffect(() => {
+
+src/lib/workspace/file-sync-status-store/file-sync-status-store-refactored.ts:
+  17  import { subscribeWithSelector, persist, createJSONStorage } from 'zustand/middleware';
+  18: import { createDexieStorage } from '@/infrastructure/persistence/dexie-storage';
+  19  import {
+
+src/presentation/components/about/projects/ViaGentCard.tsx:
+  171          <div className="flex flex-wrap gap-2">
+  172:           {['React 18', 'TypeScript', 'TanStack Router', 'Zustand', 'Dexie', 'WebContainer', 'TailwindCSS', 'Radix UI'].map(
+  173              (tech) => (
+
+src/presentation/components/about/skills/SkillsMatrix.tsx:
+  68          { name: 'WebContainer API', level: 'expert' as SkillLevel, years: 1, projectEvidence: 'Integrated StackBlitz WebContainer for browser-based code execution' },
+  69:         { name: 'IndexedDB + Dexie', level: 'advanced' as SkillLevel, years: 1, projectEvidence: 'Built complete IndexedDB persistence layer with Dexie ORM' },
+  70          { name: 'File System Access API', level: 'advanced' as SkillLevel, years: 1, projectEvidence: 'Local-first file system with browser File System Access API' },
+
+src/presentation/components/about/timeline/AchievementTimeline.tsx:
+  64        title: 'State Architecture',
+  65:       description: 'Zustand + Dexie unified state management system',
+  66        metrics: [
+
+src/presentation/components/chat/index.ts:
+   5   * ARCHITECTURE CHANGE 2026-01-11:
+   6:  * - ThreadManager now integrated with UnifiedChatStore (Dexie)
+   7   * - Legacy ThreadCard/ThreadsList archived to _bmad-output/.archive/legacy-thread-components-2026-01-11/
+
+  19  
+  20: // Thread Management (CHAT-006) - INTEGRATED with UnifiedChatStore (Dexie)
+  21  // ✅ CORRECT ARCHITECTURE for RAG, vector indexing, cross-workspace
+
+src/presentation/components/common/AppInitializer.tsx:
+   7   * - Workspace bindings migration (P0 fix - enable all workspaces)
+   8:  * - Dexie stores hydration
+   9   * - Service Worker (offline support)
+
+  48  
+  49:                 // 2. Hydrate projects from Dexie (CRITICAL: Must happen before workspace migration)
+  50                  // This loads all persisted projects into the Zustand store cache
+  51                  await hydrateProjects();
+  52:                 console.log('[AppInitializer] Projects hydrated from Dexie');
+  53  
+
+src/presentation/components/common/DatabaseRecoveryDialog.tsx:
+   8   *
+   9:  * Story: Fix Dexie database corruption (primary key migration error)
+  10   *
+  11   * When to use:
+  12:  * - Dexie throws "UpgradeError: Not yet support for changing primary key"
+  13   * - Database is closed and cannot be opened
+
+src/presentation/components/hub/ActivityLineChart.tsx:
+  47    // When implemented, add:
+  48:   // 1. Table definition in dexie-db-class.ts
+  49:   // 2. Migration in dexie-db-migrations.ts
+  50    // 3. Metrics collection logic in useMetricsCollection.ts
+
+src/presentation/components/hub/HubHomePage.tsx:
+    3  import { useNavigate, useRouterState } from '@tanstack/react-router';
+    4: import { useLiveQuery } from 'dexie-react-hooks';
+    5  import {
+
+   16  
+   17: import { db } from '@/infrastructure/persistence/dexie-db';
+   18  import { cn } from '@/lib/utils';
+
+  209  
+  210:       // 2. Create Project via Zustand Store (syncs to Dexie)
+  211        const projectInput: CreateProjectInput = {
+
+  225        // Use the store's createProject method to ensure Zustand state is updated
+  226:       // Note: Store already persists to Dexie at project-crud-slice.ts:108
+  227        const newProjectId = await useProjectStore.getState().createProject(projectInput);
+
+src/presentation/components/hub/ProjectPickerDialog.tsx:
+   21  import { FolderOpen, Plus } from 'lucide-react';
+   22: import { useLiveQuery } from 'dexie-react-hooks';
+   23  import { cn } from '@/lib/utils';
+   24: import { db } from '@/infrastructure/persistence/dexie-db';
+   25  import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+   26: import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db';
+   27  
+
+  125  
+  126:   // FIX-2026-01-06: Read from Dexie directly (same source as Hub)
+  127    // This ensures consistency - Hub and ProjectPicker see the same data
+
+src/presentation/components/hub/useMetricsCollection.ts:
+  33   * To implement metrics history, add:
+  34:  * 1. Table definition in dexie-db-class.ts
+  35:  * 2. Migration in dexie-db-migrations.ts
+  36   * 3. Collection logic in this hook
+
+src/presentation/components/hub/useWorkspaceBindingState.ts:
+  17  // CC-V2-A02: Import from canonical location
+  18: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  19  
+
+src/presentation/components/hub/WorkspaceBindingDialog.types.ts:
+  11  // CC-V2-A02: Import from canonical location
+  12: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  13  
+
+src/presentation/components/hub/WorkspaceBindingToggle.tsx:
+  20  // CC-V2-A02: Import from canonical location
+  21: import type { WorkspaceId } from '@/infrastructure/persistence/dexie-db-core-types';
+  22  
+
+src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx:
+  28  import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
+  29: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  30  import { DiffViewer } from '@/presentation/components/diff/DiffViewer';
+
+src/presentation/components/layout/ChatPanelWrapper.tsx:
+    5   * Right sidebar containing AI chat platform with conversation threads.
+    6:  * Shows ThreadManager when no thread is active (uses UnifiedChatStore - Dexie).
+    7   * Shows AgentChatPanel when a thread is selected.
+
+   12   * ARCHITECTURE:
+   13:  * - Uses UnifiedChatStore with Dexie persistence (correct for RAG, indexing)
+   14   * - Replaces legacy ThreadCard + ConversationStore pattern
+
+   44   * 
+   45:  * INTEGRATED WITH UNIFIED CHAT STORE (Dexie) via ThreadManager
+   46   * 
+
+  119  
+  120:     // No active thread - show ThreadManager (INTEGRATED with UnifiedChatStore - Dexie)
+  121      return (
+
+  142  
+  143:             {/* ThreadManager - Uses UnifiedChatStore with Dexie (CORRECT ARCHITECTURE) */}
+  144              <div className="flex-1 overflow-auto">
+
+src/presentation/components/notes/AISlashCommand.tsx:
+  48  } from '@/lib/notes/saved-blocks-store';
+  49: import type { SavedBlockRecord } from '@/infrastructure/persistence/dexie-db';
+  50  import { openSaveBlockDialog } from './SaveBlockDialog';
+
+src/presentation/components/notes/NoteContextMenu.tsx:
+  30  import { useNoteStore } from '@/lib/notes/note-store';
+  31: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  32  
+
+src/presentation/components/notes/NoteSidebar.tsx:
+  24  import { NotesRAGSearch } from './NotesRAGSearch';
+  25: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  26  
+
+src/presentation/components/notes/NotesIndexingButton.tsx:
+   99        // Use noteIndexer.rebuildIndex() for bulk indexing
+  100:       // Type assertion: notesArray uses dexie-db NoteRecord, cast to notes/types NoteRecord for noteIndexer
+  101        await noteIndexer.rebuildIndex(notesToIndex as NoteRecord[], projectId);
+
+src/presentation/components/notes/NoteTree.tsx:
+  13  import { buildTree, filterTreeBySearch, filterTreeByFavorites } from '@/lib/notes/note-tree-utils';
+  14: import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+  15  import { NoteTreeItem } from './NoteTreeItem';
+
+src/presentation/components/project/ProjectsPage.tsx:
+  14  import { useNavigate } from '@tanstack/react-router';
+  15: import { useLiveQuery } from 'dexie-react-hooks';
+  16  import {
+
+  23  
+  24: import { db } from '@/infrastructure/persistence/dexie-db';
+  25  import { cn } from '@/lib/utils';
+  26: import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-core-types';
+  27  import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+
+  50  /**
+  51:  * Convert ProjectRecord (Dexie) to Project (store type)
+  52   * Adds default values for properties not in the database schema
+
+src/presentation/components/project/wizard-types.ts:
+   9  
+  10: import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+  11  
+
+src/presentation/components/snippets/SnippetEditor.tsx:
+  29  import { useSnippetStore } from '@/lib/snippets/snippet-store';
+  30: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  31  
+
+src/presentation/components/snippets/SnippetManager.tsx:
+  27  import { useSnippetStore, initializeSnippetStore, useFilteredSnippets, useSnippetFolders, useSnippetTags } from '@/lib/snippets/snippet-store';
+  28: import type { CodeSnippetRecord } from '@/infrastructure/persistence/dexie-db-snippet-types';
+  29  import { SnippetEditor } from './SnippetEditor';
+
+src/routes/debug.tsx:
+   7  import { useState, useEffect } from 'react';
+   8: import { db } from '@/infrastructure/persistence/dexie-db';
+   9  
+
+  29          try {
+  30:             // Check Dexie
+  31:             log('Opening Dexie database...');
+  32              await db.open();
+
+  34              const projects = await db.projects.toArray();
+  35:             log(`Found ${projects.length} projects in Dexie:`);
+  36  
+
+  65          try {
+  66:             // 1. Clear Dexie tables
+  67:             log('Clearing Dexie tables...');
+  68              await db.projects.clear();
+
+src/routes/ide.$projectId.tsx:
+  25  import { ErrorBoundary } from '@/presentation/components/error';
+  26: import { db } from '@/infrastructure/persistence/dexie-db';
+  27  import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
+
+  57      await waitForHydration();
+  58:     console.log('[IDERoute.loader] Hydration complete, querying Dexie...');
+  59  
+  60:     // ✅ INF-03 FIX: Query Dexie directly (not Zustand/getProject facade)
+  61      const record = await db.projects.get(projectId);
+
+  63      if (!record) {
+  64:       console.error('[IDERoute.loader] Project not found in Dexie:', projectId);
+  65        throw redirect({ to: '/hub' });
+
+src/routes/notes.$projectId.tsx:
+   1  import { createFileRoute, redirect } from '@tanstack/react-router';
+   2: import { db } from '@/infrastructure/persistence/dexie-db';
+   3  import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
+
+  13  
+  14:     // Query Dexie directly for the project
+  15      const record = await db.projects.get(projectId);
+
+src/routes/notes.lazy.tsx:
+  14  import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+  15: import { useLiveQuery } from 'dexie-react-hooks';
+  16: import { db } from '@/infrastructure/persistence/dexie-db';
+  17  import { ErrorBoundary } from '@/presentation/components/error';
+
+src/routes/workspace/$projectId.tsx:
+  57  
+  58:     // Fallback to facade (handles Dexie lookup)
+  59      try {
+
+src/test/setup.ts:
+    1: // Import fake-indexeddb BEFORE any code that uses IndexedDB/Dexie
+    2  // This provides a mock IndexedDB implementation for tests
+
+  215  // ============================================
+  216: // Dexie Mock for All Tests
+  217  // ============================================
+  218: // NOTE: With fake-indexeddb/auto imported above, Dexie can use the real IndexedDB
+  219: // We only mock specific Dexie methods if needed for certain tests
+  220: // DO NOT mock the entire dexie module as it breaks database functionality
+  221  
+  222: // vi.mock('dexie', () => mockDexieModule);
+
+src/utils/export-utils.ts:
+  8  
+  9: import type { SourceRecord } from '@/infrastructure/persistence/dexie-db';
+  10  

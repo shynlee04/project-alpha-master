@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo, useState } from 'react';
+import { useEffect, useCallback, useMemo, useState, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -443,6 +443,13 @@ export function AgentChatPanel({
         rejectToolCall(approval.approvalId, 'User rejected', approval.toolCallId);
     }, [rejectToolCall]);
 
+    // FIX: Use ref to stabilize approveToolCall callback access
+    // This prevents infinite useEffect loops when approveToolCall reference changes
+    const approveToolCallRef = useRef(approveToolCall);
+    useEffect(() => {
+        approveToolCallRef.current = approveToolCall;
+    }, [approveToolCall]);
+
     // Auto-approve effect
     useEffect(() => {
         if (pendingApprovals.length === 0) return;
@@ -450,10 +457,10 @@ export function AgentChatPanel({
         for (const approval of pendingApprovals) {
             if (shouldAutoApprove(approval.toolName)) {
                 console.log('[AgentChatPanel] Auto-approving tool call:', approval.toolName);
-                approveToolCall(approval.approvalId, approval.toolCallId);
+                approveToolCallRef.current(approval.approvalId, approval.toolCallId);
             }
         }
-    }, [pendingApprovals, shouldAutoApprove, approveToolCall]);
+    }, [pendingApprovals, shouldAutoApprove]);
 
     // Handle artifact preview
     const handlePreviewArtifact = useCallback((code: string) => {
