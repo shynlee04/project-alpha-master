@@ -84,6 +84,10 @@ export interface ProjectRecord {
     isTemp?: boolean;
     autoCreated?: boolean;
     isBrowserMode?: boolean;
+
+    // PHASE0-2: Notes import hash tracking for idempotent imports
+    notesImportHash?: string;
+    notesImportHashTimestamp?: Date;
 }
 
 /**

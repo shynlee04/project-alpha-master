@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 import type { TreeNode, ContextMenuState, ContextMenuAction } from '../types';
 import { getAncestorPaths } from '../utils';
 import {
@@ -39,8 +39,8 @@ export interface UseContextMenuActionsOptions {
     setContextMenu: React.Dispatch<React.SetStateAction<ContextMenuState>>;
     /** Directory handle */
     directoryHandle: FileSystemDirectoryHandle | null | undefined;
-    /** Get adapter function */
-    getAdapter: () => LocalFSAdapter;
+    /** Get gateway function */
+    getGateway: () => StorageGateway | null;
     /** Handle toggle for refresh */
     handleToggle: (node: TreeNode) => Promise<void>;
     /** Load root directory for refresh */
@@ -92,7 +92,7 @@ export function useContextMenuActions(
         contextMenu,
         setContextMenu,
         directoryHandle,
-        getAdapter,
+        getGateway,
         loadRootDirectory,
         setExpandedPaths,
         setFocusedPath,
@@ -157,8 +157,8 @@ export function useContextMenuActions(
             const targetNode = contextMenu.targetNode;
             if (!targetNode || !directoryHandle || !operationDialog.operation) return;
 
-            const adapter = getAdapter();
-            adapter.setDirectoryHandle(directoryHandle);
+            const gateway = getGateway();
+            if (!gateway || !gateway.rename) return;
 
             try {
                 const parentPath = targetNode.path.includes('/')
@@ -167,7 +167,7 @@ export function useContextMenuActions(
                 const newPath = parentPath ? `${parentPath}/${newName}` : newName;
 
                 if (operationDialog.operation === 'rename') {
-                    await adapter.rename(targetNode.path, newPath);
+                    await gateway.rename(targetNode.path, newPath);
                     toast.success(`Renamed to "${newName}"`);
                 } else if (operationDialog.operation === 'duplicate') {
                     await duplicateFile(directoryHandle, targetNode.path, newPath);
@@ -190,7 +190,7 @@ export function useContextMenuActions(
                 toast.error(`Operation failed: ${errorMessage}`);
             }
         },
-        [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, setExpandedPaths, operationDialog.operation, closeOperationDialog],
+        [contextMenu.targetNode, directoryHandle, getGateway, loadRootDirectory, setExpandedPaths, operationDialog.operation, closeOperationDialog],
     );
 
     /**
@@ -201,17 +201,12 @@ export function useContextMenuActions(
             const targetNode = contextMenu.targetNode;
             if (!targetNode || !directoryHandle) return;
 
-            const adapter = getAdapter();
-            adapter.setDirectoryHandle(directoryHandle);
+            const gateway = getGateway();
+            if (!gateway) return;
 
             try {
-                if (targetNode.type === 'directory') {
-                    await adapter.deleteDirectory(targetNode.path);
-                    toast.success(`Deleted folder "${targetNode.name}"`);
-                } else {
-                    await adapter.deleteFile(targetNode.path);
-                    toast.success(`Deleted file "${targetNode.name}"`);
-                }
+                await gateway.delete(targetNode.path);
+                toast.success(`Deleted ${targetNode.type === 'directory' ? 'folder' : 'file'} "${targetNode.name}"`);
 
                 closeConfirmDialog();
                 await loadRootDirectory();
@@ -220,7 +215,7 @@ export function useContextMenuActions(
                 toast.error(`Delete failed: ${errorMessage}`);
             }
         },
-        [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, closeConfirmDialog],
+        [contextMenu.targetNode, directoryHandle, getGateway, loadRootDirectory, closeConfirmDialog],
     );
 
     /**
@@ -232,8 +227,8 @@ export function useContextMenuActions(
             const targetNode = contextMenu.targetNode;
             if (!targetNode || !directoryHandle) return;
 
-            const adapter = getAdapter();
-            adapter.setDirectoryHandle(directoryHandle);
+            const gateway = getGateway();
+            if (!gateway) return;
 
             try {
                 switch (action) {
@@ -244,7 +239,7 @@ export function useContextMenuActions(
                                 targetNode.type === 'directory'
                                     ? `${targetNode.path}/${name}`
                                     : name;
-                            await adapter.createFile(newPath, '');
+                            await gateway.write(newPath, new TextEncoder().encode(''));
 
                             const parentPath = targetNode.type === 'directory'
                                 ? targetNode.path
@@ -271,7 +266,9 @@ export function useContextMenuActions(
                                 targetNode.type === 'directory'
                                     ? `${targetNode.path}/${name}`
                                     : name;
-                            await adapter.createDirectory(newPath);
+                            if (gateway.createDirectory) {
+                                await gateway.createDirectory(newPath);
+                            }
 
                             const parentPath = targetNode.type === 'directory'
                                 ? targetNode.path
@@ -350,7 +347,7 @@ export function useContextMenuActions(
                 toast.error(`Failed to ${action}: ${errorMessage}`);
             }
         },
-        [contextMenu.targetNode, directoryHandle, getAdapter, loadRootDirectory, setExpandedPaths, setFocusedPath],
+        [contextMenu.targetNode, directoryHandle, getGateway, loadRootDirectory, setExpandedPaths, setFocusedPath],
     );
 
     return {

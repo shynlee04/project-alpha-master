@@ -13,7 +13,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Folder, Sparkles, Bolt } from 'lucide-react';
+import { Search, Star, Plus, Notebook, FileUp, FileDown, FolderOpen, Folder, Sparkles, Bolt, RefreshCw } from 'lucide-react';
 import { useNoteNavigationStore } from '@/lib/notes/note-navigation-store';
 import { Input } from '@/presentation/components/ui/input';
 import { Button } from '@/presentation/components/ui/button';
@@ -33,6 +33,8 @@ interface NoteSidebarProps {
     onImport?: () => void;
     /** NR-06: Export callback for markdown files */
     onExport?: () => void;
+    /** PHASE0-2: Re-import callback for forced re-import */
+    onReImport?: () => void;
     /** P2-8: Index for RAG callback - DEPRECATED: Now handled internally by NotesIndexingButton */
     onIndexForRAG?: () => void;
     /** CW-1.4: File sync settings callback */
@@ -77,7 +79,8 @@ export function NoteSidebar({
     onCreateNote,
     onImport,
     onExport,
-    onIndexForRAG: _onIndexForRAG, // P2-8: DEPRECATED - Now handled internally by NotesIndexingButton
+    onReImport, // PHASE0-2: Re-import callback
+    onIndexForRAG: _onIndexForRAG, // P2-8: DEPRECATED: Now handled internally by NotesIndexingButton
     onFileSync,
     onSlashCommands,
     agentSelectorSlot,
@@ -313,6 +316,20 @@ export function NoteSidebar({
                         >
                             <FileUp size={14} />
                             <span className="text-xs hidden sm:inline">{t('notes.import.short', 'Import')}</span>
+                        </Button>
+                    )}
+
+                    {/* PHASE0-2: Re-import (for forced refresh) */}
+                    {onReImport && (
+                        <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={onReImport}
+                            className="h-9 px-2 rounded-none border border-border flex items-center gap-1"
+                            aria-label={t('notes.import.reImport', 'Re-import from files')}
+                        >
+                            <RefreshCw size={14} />
+                            <span className="text-xs hidden sm:inline">{t('notes.import.reImportShort', 'Refresh')}</span>
                         </Button>
                     )}
 

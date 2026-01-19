@@ -220,14 +220,11 @@ export const NotesPage = React.memo(function NotesPage() {
     
     // BUG-016 FIX: Track if auto-init has been attempted to prevent infinite retries
     const autoInitAttemptedRef = useRef(false);
-    
-    // BUG-FIX: Track if auto-import has been triggered to prevent infinite loop
-    const hasAutoImportedRef = useRef(false);
 
-    // BUG-FIX: Reset refs when project changes to allow init/import for new project
+    // BUG-FIX: Reset auto-init ref when project changes
     useEffect(() => {
+        setIsImportingFiles(false);  // ✅ FIX #1: Reset import state on project change
         autoInitAttemptedRef.current = false;
-        hasAutoImportedRef.current = false;
     }, [projectId]);
 
     // 45-04: Load notes based on project mode
@@ -272,13 +269,14 @@ export const NotesPage = React.memo(function NotesPage() {
 
     // S-007: Auto-import project files when file sync service becomes ready
     // BUG-FIX-003: Added timeout and cleanup to prevent infinite spinning
+    // PHASE0-2: Use Dexie hash tracking for idempotent imports
     useEffect(() => {
         let mounted = true;
         let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-        // BUG-FIX: Check hasAutoImportedRef to prevent infinite loop
-        if (isNotesSyncReady && notesSyncService && !isImportingFiles && !hasAutoImportedRef.current) {
-            hasAutoImportedRef.current = true;
+        if (!projectId) return;
+
+        if (isNotesSyncReady && notesSyncService && !isImportingFiles) {
             const autoImportFiles = async () => {
                 if (!mounted) return;
 
@@ -293,7 +291,7 @@ export const NotesPage = React.memo(function NotesPage() {
                 });
 
                 try {
-                    console.log('[NotesPage] Auto-importing project files...');
+                    console.log('[NotesPage] Auto-importing project files for:', projectId);
 
                     // BUG-FIX-003: Race between import and timeout
                     const result = await Promise.race([
@@ -315,9 +313,18 @@ export const NotesPage = React.memo(function NotesPage() {
 
                     console.log('[NotesPage] Auto-import complete:', result);
 
-                    // Reload notes after import
-                    if (projectId) {
-                        await loadNotes(projectId);
+                    // PHASE0-2: Handle skipped import (hash unchanged)
+                    if (result.skipped && result.skipReason === 'unchanged') {
+                        console.log('[NotesPage] Import skipped - files unchanged');
+                        // Still load notes to ensure they're available
+                        if (projectId) {
+                            await loadNotes(projectId);
+                        }
+                    } else {
+                        // Reload notes after successful import
+                        if (projectId) {
+                            await loadNotes(projectId);
+                        }
                     }
                 } catch (error) {
                     if (!mounted) return;
@@ -347,7 +354,7 @@ export const NotesPage = React.memo(function NotesPage() {
             mounted = false;
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [isNotesSyncReady, notesSyncService, projectId, loadNotes]); // Removed isImportingFiles to prevent loop
+    }, [isNotesSyncReady, notesSyncService, projectId, loadNotes, t, isImportingFiles]);
 
     // Sync mobile view with active note
     useEffect(() => {
@@ -539,6 +546,43 @@ export const NotesPage = React.memo(function NotesPage() {
 
     const handleImport = () => {
         setIsImportDialogOpen(true);
+    };
+
+    // PHASE0-2: Handle manual re-import with force option
+    const handleReImport = async () => {
+        if (!notesSyncService || !projectId) return;
+
+        try {
+            setIsImportingFiles(true);
+            setImportProgress({ current: 0, total: 0, currentFile: '' });
+
+            console.log('[NotesPage] Manual re-import triggered for:', projectId);
+
+            const result = await (notesSyncService as NotesFileSyncService).importDirectory(
+                '', // Root directory
+                (current: number, total: number, currentFile: string) => {
+                    setImportProgress({ current, total, currentFile });
+                },
+                { force: true } // PHASE0-2: Force re-import
+            );
+
+            console.log('[NotesPage] Manual re-import complete:', result);
+
+            // Reload notes after import
+            if (projectId) {
+                await loadNotes(projectId);
+            }
+
+            toast.success('Re-import completed');
+        } catch (error) {
+            const err = error as Error;
+            console.error('[NotesPage] Manual re-import failed:', err);
+            toast.error('Failed to re-import files', {
+                description: err.message,
+            });
+        } finally {
+            setIsImportingFiles(false);
+        }
     };
 
     // Mobile Layout: Use NotesMobileLayout component
@@ -833,6 +877,7 @@ export const NotesPage = React.memo(function NotesPage() {
                             onCreateNote={handleCreateNote}
                             onImport={handleImport}
                             onExport={handleExport}
+                            onReImport={handleReImport} // PHASE0-2: Pass re-import handler
                             onIndexForRAG={handleIndexForRAG}
                             onFileSync={() => setIsFilePickerOpen(true)}
                             onSlashCommands={() => setIsSlashCommandsDialogOpen(true)}

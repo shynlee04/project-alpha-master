@@ -1,28 +1,60 @@
 /**
  * FileTree Utilities
+ * 
+ * BUG-FIX-2026-01-20: Fixed DirectoryEntry vs FileEntry type mismatch
+ * LocalFSAdapter.listDirectory() returns DirectoryEntry (name, type)
+ * StorageGateway.list() returns FileEntry (path, kind, size, lastModified)
+ * This file now supports BOTH formats for backward compatibility.
  */
-import type { FileEntry } from '@/domain/interfaces/storage-gateway.interface';
+import type { DirectoryEntry } from '@/domain/interfaces/file-operations-adapter.interface';
 import type { TreeNode } from './types';
 
 /**
- * Build a TreeNode from a FileEntry (StorageGateway format).
+ * Entry type that supports both DirectoryEntry and FileEntry formats.
+ * DirectoryEntry has: name, type
+ * FileEntry has: path, kind, size, lastModified
+ */
+type AnyFileEntry = DirectoryEntry | { path: string; kind: 'file' | 'directory' };
+
+/**
+ * Build a TreeNode from a directory entry.
  * 
- * @param entry - File entry from storage gateway
+ * BUG-FIX-2026-01-20: Now supports both DirectoryEntry (from LocalFSAdapter)
+ * and FileEntry (from StorageGateway) formats.
+ * 
+ * @param entry - Directory entry from LocalFSAdapter or StorageGateway
  * @param parentPath - Parent path for constructing full path
  * @returns TreeNode for the file tree
  */
-export function buildTreeNode(entry: FileEntry, parentPath: string): TreeNode {
-    // Extract name from path
-    const name = entry.path.split('/').pop() || entry.path;
+export function buildTreeNode(entry: AnyFileEntry, parentPath: string): TreeNode {
+    // Support both DirectoryEntry (name/type) and FileEntry (path/kind)
+    let name: string;
+    let type: 'file' | 'directory';
+    
+    if ('name' in entry && 'type' in entry) {
+        // DirectoryEntry format from LocalFSAdapter.listDirectory()
+        name = entry.name;
+        type = entry.type;
+    } else if ('path' in entry && 'kind' in entry) {
+        // FileEntry format from StorageGateway.list()
+        name = entry.path.split('/').pop() || entry.path;
+        type = entry.kind;
+    } else {
+        // Fallback - try to extract from any available property
+        name = (entry as { name?: string }).name || 'unknown';
+        type = 'file';
+    }
+    
     const path = parentPath ? `${parentPath}/${name}` : name;
+    
     return {
         name,
         path,
-        type: entry.kind,
-        handle: undefined, // StorageGateway doesn't provide handles in list()
+        type,
+        handle: (entry as DirectoryEntry & { handle?: FileSystemHandle }).handle,
         expanded: false,
         loading: false,
-        children: entry.kind === 'directory' ? undefined : undefined,
+        children: type === 'directory' ? undefined : undefined,
     };
 }
 

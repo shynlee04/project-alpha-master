@@ -8,6 +8,9 @@
 
 /**
  * Represents a node in the file tree
+ * 
+ * BUG-FIX-2026-01-20: Made handle optional because DirectoryEntry from
+ * LocalFSAdapter.listDirectory() may not always include handle.
  */
 export interface TreeNode {
     /** File or folder name */
@@ -16,8 +19,8 @@ export interface TreeNode {
     path: string;
     /** Type of node */
     type: 'file' | 'directory';
-    /** Handle to the file/directory */
-    handle: FileSystemHandle;
+    /** Handle to the file/directory (optional - may not be available from all adapters) */
+    handle?: FileSystemHandle;
     /** Child nodes (only for directories) */
     children?: TreeNode[];
     /** Whether folder is expanded */

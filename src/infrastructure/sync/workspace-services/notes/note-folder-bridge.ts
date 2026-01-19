@@ -2,12 +2,18 @@
  * @fileoverview Note Folder Bridge
  * @module infrastructure/sync/workspace-services/notes/note-folder-bridge
  *
- * Handles the mapping between the filesystem folder structure and the Notes store.
+ * Handles mapping between filesystem folder structure and Notes store.
  * Responsible for initial scanning and importing of notes from a mounted directory.
  *
  * @epic CW-01 - Abstract File Sync Service
  * @story S-007 - Fix Notes Workspace Project File Loading
- * 
+ *
+ * PHASE0-2: Made import idempotent using hash tracking
+ * - Computes hash of file list before import
+ * - Skips import if hash matches stored value
+ * - Updates hash after successful import
+ * - Allows forced re-import via options
+ *
  * FIX-2026-01-06: Added proper error handling with user feedback
  * - Errors are now surfaced via toast notifications
  * - Progress tracking for large imports
@@ -26,6 +32,9 @@ import {
     showLoadingToast,
     dismissToast
 } from '@/lib/utils/error-handling';
+import { computeFileListHash } from '@/lib/utils/hash';
+import { getNotesImportHash, setNotesImportHash } from '@/infrastructure/persistence/dexie-db';
+import { startImport, endImport } from '@/lib/notes/slices/note-crud-slice';
 
 /**
  * Import result with detailed error tracking
@@ -36,6 +45,8 @@ export interface ImportResult {
     importedCount: number;
     failedFiles: Array<{ path: string; error: string }>;
     duration: number;
+    skipped?: boolean;
+    skipReason?: 'unchanged' | string;
 }
 
 /**
@@ -57,26 +68,63 @@ export interface SaveResult {
 export class NoteFolderBridge {
     constructor(
         private localAdapter: LocalFSAdapter,
-        private noteStore: NoteSyncStore
+        private noteStore: NoteSyncStore,
+        private projectId?: string
     ) { }
 
     /**
      * Recursively scan directory and import all markdown files as notes.
-     * 
+     *
+     * PHASE0-2: Now idempotent using hash tracking
+     * - Computes hash of file list before import
+     * - Skips import if hash matches stored value
+     * - Updates hash after successful import
+     * - Allows forced re-import via force: true option
+     *
      * FIX-2026-01-06: Now surfaces errors properly with user feedback
-     * 
+     *
      * @param rootPath - Root path to start scanning from (relative to mount point)
      * @param onProgress - Optional progress callback for UI updates
+     * @param options - Import options (force: true to bypass hash check)
      * @returns Import result with success/failure details
      */
     async importDirectory(
         rootPath: string = '',
-        onProgress?: ImportProgressCallback
+        onProgress?: ImportProgressCallback,
+        options?: { force?: boolean }
     ): Promise<ImportResult> {
         console.log(`[NoteFolderBridge] Starting import from: ${rootPath || 'root'}`);
         const startTime = Date.now();
         let importedCount = 0;
         const failedFiles: Array<{ path: string; error: string }> = [];
+
+        // ✅ FIX #2: Start import tracking to handle missing projectId
+        startImport(this.projectId || 'browser-mode');
+
+        // PHASE0-2: Skip import if hash matches (unless forced)
+        if (this.projectId && !options?.force) {
+            try {
+                const files = await this.listMarkdownFiles(rootPath);
+                const currentHash = computeFileListHash(files);
+                const existingHash = await getNotesImportHash(this.projectId);
+
+                if (existingHash === currentHash && files.length > 0) {
+                    console.log('[NoteFolderBridge] Files unchanged, skipping import');
+                    return {
+                        success: true,
+                        totalFiles: files.length,
+                        importedCount: 0,
+                        failedFiles: [],
+                        duration: Date.now() - startTime,
+                        skipped: true,
+                        skipReason: 'unchanged',
+                    };
+                }
+            } catch (error) {
+                console.warn('[NoteFolderBridge] Hash check failed, proceeding with import:', error);
+                // Continue with import if hash check fails
+            }
+        }
 
         // Show loading toast
         const loadingToastId = 'notes-import-progress';
@@ -140,6 +188,13 @@ export class NoteFolderBridge {
 
             console.log(`[NoteFolderBridge] Import complete. Imported ${importedCount}/${files.length} notes in ${duration}ms`);
 
+            // PHASE0-2: Store hash after successful import
+            if (this.projectId && importedCount > 0) {
+                const hash = computeFileListHash(files);
+                await setNotesImportHash(this.projectId, hash);
+                console.log(`[NoteFolderBridge] Stored import hash: ${hash}`);
+            }
+
             return {
                 success: failedFiles.length === 0,
                 totalFiles: files.length,
@@ -175,6 +230,9 @@ export class NoteFolderBridge {
                 }],
                 duration,
             };
+        } finally {
+            // ✅ FIX #2: End import tracking (always run, even on error)
+            endImport();
         }
     }
 
@@ -182,12 +240,26 @@ export class NoteFolderBridge {
      * Recursively list all markdown files in a directory.
      */
     private async listMarkdownFiles(dirPath: string): Promise<string[]> {
+        const MAX_DEPTH = 20;
+        const MAX_FILES = 5000;
+
         const results: string[] = [];
-        const queue: string[] = [dirPath];
+        const queue: Array<{ path: string; depth: number }> = [{ path: dirPath, depth: 0 }];
         const failedDirs: string[] = [];
 
         while (queue.length > 0) {
-            const currentPath = queue.shift()!;
+            const { path: currentPath, depth } = queue.shift()!;
+
+            // Check depth and file count limits
+            if (depth > MAX_DEPTH || results.length > MAX_FILES) {
+                console.warn('[NoteFolderBridge] Scan limits reached', {
+                    depth,
+                    fileCount: results.length,
+                    maxDepth: MAX_DEPTH,
+                    maxFiles: MAX_FILES
+                });
+                break;
+            }
 
             try {
                 const entries = await this.localAdapter.listDirectory(currentPath);
@@ -203,7 +275,7 @@ export class NoteFolderBridge {
                             results.push(entryPath);
                         }
                     } else if (entry.type === 'directory') {
-                        queue.push(entryPath);
+                        queue.push({ path: entryPath, depth: depth + 1 });
                     }
                 }
             } catch (error) {

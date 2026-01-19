@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 import type { TreeNode, ContextMenuState } from '../types';
 
 /**
@@ -40,15 +40,15 @@ export interface UseFileTreeStateResult {
     contextMenu: ContextMenuState;
     /** Set context menu state */
     setContextMenu: React.Dispatch<React.SetStateAction<ContextMenuState>>;
-    /** Ref to LocalFSAdapter */
-    adapterRef: React.MutableRefObject<LocalFSAdapter | null>;
-    /** Get or create adapter */
-    getAdapter: () => LocalFSAdapter;
+    /** Ref to StorageGateway */
+    gatewayRef: React.MutableRefObject<StorageGateway | null>;
+    /** Get or create gateway */
+    getGateway: () => StorageGateway | null;
 }
 
 /**
  * Hook for managing FileTree state.
- * 
+ *
  * @param options - Hook options
  * @returns FileTree state and setters
  */
@@ -69,16 +69,16 @@ export function useFileTreeState(
         targetNode: null,
     });
 
-    const adapterRef = useRef<LocalFSAdapter | null>(null);
+    const gatewayRef = useRef<StorageGateway | null>(null);
 
-    const getAdapter = useCallback(() => {
-        if (!adapterRef.current) {
-            adapterRef.current = new LocalFSAdapter();
+    const getGateway = useCallback(() => {
+        if (!gatewayRef.current && directoryHandle) {
+            // Dynamic import to avoid circular dependencies
+            import('@/infrastructure/filesystem/fsa-gateway').then(({ FSAGateway }) => {
+                gatewayRef.current = new FSAGateway(directoryHandle);
+            });
         }
-        if (directoryHandle) {
-            adapterRef.current.setDirectoryHandle(directoryHandle);
-        }
-        return adapterRef.current;
+        return gatewayRef.current;
     }, [directoryHandle]);
 
     return {
@@ -94,7 +94,7 @@ export function useFileTreeState(
         setIsLoading,
         contextMenu,
         setContextMenu,
-        adapterRef,
-        getAdapter,
+        gatewayRef,
+        getGateway,
     };
 }

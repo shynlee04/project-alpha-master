@@ -1,10 +1,8 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    LocalFSAdapter,
-    FileSystemError,
-    PermissionDeniedError,
-} from '@/lib/filesystem/local-fs-adapter';
+import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
+import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
+import { FileSystemError, PermissionDeniedError } from '@/infrastructure/filesystem/fs-errors';
 import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
 import type { TreeNode } from '../types';
 import { buildTreeNode, updateNodeByPath, restoreExpandedState } from '../utils';
@@ -17,8 +15,8 @@ import { showMobileWorkspaceError } from '@/lib/utils/mobile-error-handling';
 export interface UseFileTreeActionsOptions {
     /** Directory handle */
     directoryHandle: FileSystemDirectoryHandle | null | undefined;
-    /** Get adapter function */
-    getAdapter: () => LocalFSAdapter;
+    /** Get gateway function */
+    getGateway: () => StorageGateway | null;
     /** Set root nodes */
     setRootNodes: React.Dispatch<React.SetStateAction<TreeNode[]>>;
     /** Set error */
@@ -62,7 +60,7 @@ export function useFileTreeActions(
     const { isMobile } = useDeviceType();
     const {
         directoryHandle,
-        getAdapter,
+        getGateway,
         setRootNodes,
         setError,
         setIsLoading,
@@ -85,7 +83,7 @@ export function useFileTreeActions(
                 setError(null);
                 try {
                     const entries = await localAdapterRef.current.listDirectory();
-                    const nodes = entries.map((entry) => buildTreeNode(entry, ''));
+                    const nodes = entries.map((entry: any) => buildTreeNode(entry, ''));
                     const restoredNodes = restoreExpandedState(nodes, expandedPaths);
                     setRootNodes(restoredNodes);
                 } catch (err) {
@@ -106,10 +104,12 @@ export function useFileTreeActions(
         setError(null);
 
         try {
-            const adapter = getAdapter();
-            adapter.setDirectoryHandle(directoryHandle);
+            const gateway = getGateway();
+            if (!gateway) {
+                throw new FileSystemError('Gateway not initialized', 'GATEWAY_NOT_INITIALIZED');
+            }
 
-            const entries = await adapter.listDirectory('');
+            const entries = await gateway.list('.');
             const nodes = entries.map((entry) => buildTreeNode(entry, ''));
 
             // Restore expanded state from saved paths
@@ -152,7 +152,7 @@ export function useFileTreeActions(
         } finally {
             setIsLoading(false);
         }
-    }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths, isMobile, localAdapterRef]);
+    }, [directoryHandle, getGateway, setRootNodes, setError, setIsLoading, expandedPaths, isMobile, localAdapterRef, t]);
 
     /**
      * Load children of a directory node.
@@ -165,7 +165,7 @@ export function useFileTreeActions(
                 if (localAdapterRef.current) {
                     try {
                         const entries = await localAdapterRef.current.listDirectory(node.path);
-                        return entries.map((entry) => buildTreeNode(entry, node.path));
+                        return entries.map((entry: any) => buildTreeNode(entry, node.path));
                     } catch (err) {
                         console.error('Error loading children (IndexedDB):', err);
                         return [];
@@ -175,17 +175,19 @@ export function useFileTreeActions(
             }
 
             try {
-                const adapter = getAdapter();
-                adapter.setDirectoryHandle(directoryHandle);
+                const gateway = getGateway();
+                if (!gateway) {
+                    return [];
+                }
 
-                const entries = await adapter.listDirectory(node.path);
+                const entries = await gateway.list(node.path);
                 return entries.map((entry) => buildTreeNode(entry, node.path));
             } catch (err) {
                 console.error('Error loading children:', err);
                 return [];
             }
         },
-        [directoryHandle, getAdapter, localAdapterRef],
+        [directoryHandle, getGateway, localAdapterRef],
     );
 
     /**
@@ -260,7 +262,9 @@ export function useFileTreeActions(
                 // Dynamic import to avoid circular dependencies
                 const { setFileSyncPending } = await import('@/lib/workspace');
 
-                adapter.setDirectoryHandle(directoryHandle);
+                if ('setDirectoryHandle' in adapter) {
+                    adapter.setDirectoryHandle(directoryHandle);
+                }
                 setFileSyncPending(path);
                 const fileResult = await adapter.readFile(path);
                 await syncManager.writeFile(path, fileResult.content);

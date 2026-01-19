@@ -138,7 +138,7 @@ export function FileTree({
     setIsLoading,
     contextMenu,
     setContextMenu,
-    getAdapter,
+    getGateway,
   } = useFileTreeState({ directoryHandle, refreshKey });
 
   // ============================================================================
@@ -151,7 +151,7 @@ export function FileTree({
     handleRetryFile,
   } = useFileTreeActions({
     directoryHandle,
-    getAdapter,
+    getGateway,
     setRootNodes,
     setError,
     setIsLoading,
@@ -191,7 +191,7 @@ export function FileTree({
     contextMenu,
     setContextMenu,
     directoryHandle,
-    getAdapter,
+    getGateway,
     handleToggle,
     loadRootDirectory,
     setExpandedPaths,

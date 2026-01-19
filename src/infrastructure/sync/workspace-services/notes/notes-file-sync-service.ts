@@ -114,7 +114,11 @@ export class NotesFileSyncService implements FileSyncService {
 
             // Trigger initial import via bridge
             console.log('[NotesFileSyncService] Directory mounted, starting initial import...');
-            this.bridgeInstance = new NoteFolderBridge(this.localAdapter, this.noteStore);
+            this.bridgeInstance = new NoteFolderBridge(
+                this.localAdapter,
+                this.noteStore,
+                this.projectId // PHASE0-2: Pass projectId for hash tracking
+            );
 
             // Register bridge for auto-save (CC-V2-B04)
             registerFileSaveHandler(this.projectId, this.bridgeInstance);
@@ -268,17 +272,25 @@ export class NotesFileSyncService implements FileSyncService {
      * Public method to trigger (re-)import of files from mounted directory.
      * Can be called after service initialization to refresh notes from filesystem.
      *
+     * PHASE0-2: Added force option to bypass hash check
+     *
      * @param rootPath - Root path to scan (empty string for full scan)
      * @param onProgress - Optional progress callback
+     * @param options - Import options (force: true to bypass hash check)
      * @returns Import result with success/failure details
      */
     async importDirectory(
         rootPath?: string,
-        onProgress?: (current: number, total: number, currentFile: string) => void
+        onProgress?: (current: number, total: number, currentFile: string) => void,
+        options?: { force?: boolean }
     ) {
         // Reuse existing bridge if available, otherwise create new instance
-        const bridge = this.bridgeInstance || new NoteFolderBridge(this.localAdapter, this.noteStore);
-        return bridge.importDirectory(rootPath || '', onProgress);
+        const bridge = this.bridgeInstance || new NoteFolderBridge(
+            this.localAdapter,
+            this.noteStore,
+            this.projectId // PHASE0-2: Pass projectId for hash tracking
+        );
+        return bridge.importDirectory(rootPath || '', onProgress, options);
     }
 
     /**

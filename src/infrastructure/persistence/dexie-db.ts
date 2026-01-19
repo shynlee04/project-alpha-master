@@ -938,6 +938,54 @@ export async function getSourcesForProject(
     return sources.reverse();
 }
 
+// ============================================================================
+// PHASE0-2: Notes Import Hash Helpers
+// ============================================================================
+
+/**
+ * Get notes import hash for a project
+ *
+ * @param projectId - Project ID to query
+ * @returns Import hash or undefined if not set
+ */
+export async function getNotesImportHash(
+    projectId: string
+): Promise<string | undefined> {
+    const project = await db.projects.get(projectId);
+    return project?.notesImportHash;
+}
+
+/**
+ * Set notes import hash for a project
+ *
+ * @param projectId - Project ID to update
+ * @param hash - New import hash
+ */
+export async function setNotesImportHash(
+    projectId: string,
+    hash: string
+): Promise<void> {
+    await db.projects.update(projectId, {
+        notesImportHash: hash,
+        notesImportHashTimestamp: new Date(),
+    });
+}
+
+/**
+ * Clear notes import hash for a project
+ * Used to force re-import on next mount.
+ *
+ * @param projectId - Project ID to clear hash for
+ */
+export async function clearNotesImportHash(
+    projectId: string
+): Promise<void> {
+    await db.projects.update(projectId, {
+        notesImportHash: undefined,
+        notesImportHashTimestamp: undefined,
+    });
+}
+
 /**
  * Get sources by type for a project.
  *

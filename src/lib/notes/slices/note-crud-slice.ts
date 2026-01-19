@@ -29,6 +29,20 @@ import { NoteGateway } from '@/domain/services/note-gateway';
 import { restoreHandle } from '@/infrastructure/filesystem/handle-persistence';
 
 /**
+ * Import tracking to handle missing projectId during import
+ * This prevents cross-contamination between projects
+ */
+let importingFromProjectId: string | null = null;
+
+export function startImport(projectId: string): void {
+    importingFromProjectId = projectId;
+}
+
+export function endImport(): void {
+    importingFromProjectId = null;
+}
+
+/**
  * CRUD Operations Slice
  *
  * Manages core note lifecycle operations with IndexedDB persistence.
@@ -99,10 +113,22 @@ export const createNoteCRUDSlice: StateCreator<
                             const filename = entry.path.split('/').pop()?.replace('.md', '') || '';
                             try {
                                 const note = await noteGateway.readNote(filename);
-                                // Only include notes belonging to this project
-                                if (note.projectId === projectId) {
+
+                                // Handle missing projectId during import
+                                if (!note.projectId || note.projectId === projectId) {
+                                    // ✅ ONLY assign projectId if this note is from current import
+                                    if (importingFromProjectId === projectId && !note.projectId) {
+                                        note.projectId = projectId;
+
+                                        // Persist to Dexie
+                                        await db.notes.update(note.id, { projectId: note.projectId });
+
+                                        console.log(`[NoteStore-CRUD] Assigned projectId ${projectId} to note ${note.id}`);
+                                    }
+
                                     return note;
                                 }
+
                                 return null;
                             } catch (error) {
                                 console.warn(`[NoteStore-CRUD] Failed to read note ${filename}:`, error);
