@@ -1,0 +1,570 @@
+src/application/services/AgentService.ts(11,44): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/types' or its corresponding type declarations.
+src/application/services/AgentService.ts(163,13): error TS7006: Parameter 'wb' implicitly has an 'any' type.
+src/application/services/AgentService.ts(181,39): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/application/services/AgentService.ts(200,45): error TS7006: Parameter 'wb' implicitly has an 'any' type.
+src/core/entities/Conversation.ts(5,86): error TS2307: Cannot find module '../../infrastructure/persistence/stores/conversation/conversation-types' or its corresponding type declarations.
+src/core/entities/Conversation.ts(6,86): error TS2307: Cannot find module '../../infrastructure/persistence/stores/conversation/types' or its corresponding type declarations.
+src/core/entities/index.ts(12,86): error TS2307: Cannot find module '../../infrastructure/persistence/stores/conversation/conversation-types' or its corresponding type declarations.
+src/core/entities/index.ts(15,35): error TS2307: Cannot find module '../../shared/types/index' or its corresponding type declarations.
+src/core/entities/Provider.ts(5,35): error TS2307: Cannot find module '../../shared/types/index' or its corresponding type declarations.
+src/core/entities/Provider.ts(6,49): error TS2307: Cannot find module '../../infrastructure/persistence/stores/providers/types' or its corresponding type declarations.
+src/core/entities/Provider.ts(7,37): error TS2307: Cannot find module '../../infrastructure/persistence/stores/providers/types' or its corresponding type declarations.
+src/domain/agent.ts(10,57): error TS2307: Cannot find module '../value-objects/workspace-binding' or its corresponding type declarations.
+src/domain/agent.ts(11,57): error TS2307: Cannot find module '../value-objects/tool-permission' or its corresponding type declarations.
+src/domain/agent.ts(12,31): error TS2307: Cannot find module '../value-objects/workspace-type' or its corresponding type declarations.
+src/infrastructure/dexie-db-plugin-types.ts(11,61): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/infrastructure/dexie-db-workflow-types.ts(11,31): error TS2307: Cannot find module '@/lib/workflow/builder/types' or its corresponding type declarations.
+src/infrastructure/events/index.ts(11,54): error TS2307: Cannot find module '../persistence/state-orchestrator' or its corresponding type declarations.
+src/infrastructure/filesystem/file-ops.ts(301,27): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/fsa-storage-adapter.ts(105,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/handle-persistence.ts(36,8): error TS2307: Cannot find module '@/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers' or its corresponding type declarations.
+src/infrastructure/filesystem/handle-persistence.ts(343,39): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/handle-persistence.ts(439,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/filesystem/local-fs-adapter.ts(53,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/persistence/dexie-db-plugin-types.ts(11,61): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/infrastructure/persistence/dexie-db-workflow-types.ts(11,31): error TS2307: Cannot find module '@/lib/workflow/builder/types' or its corresponding type declarations.
+src/infrastructure/persistence/dexie-db.ts(36,8): error TS2307: Cannot find module './database-recovery' or its corresponding type declarations.
+src/infrastructure/persistence/dexie-db.ts(41,8): error TS2307: Cannot find module './database-recovery' or its corresponding type declarations.
+src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts(17,31): error TS2307: Cannot find module '@/hooks/useResponsive' or its corresponding type declarations.
+src/infrastructure/services/db-consolidation-service.ts(140,34): error TS2345: Argument of type 'FlashcardSetRecord' is not assignable to parameter of type 'FlashcardRecord'.
+  Type 'FlashcardSetRecord' is missing the following properties from type 'FlashcardRecord': question, answer, difficulty, topic
+src/infrastructure/state-orchestrator.ts(10,43): error TS2307: Cannot find module '../events/event-bus' or its corresponding type declarations.
+src/infrastructure/state-orchestrator.ts(11,34): error TS2307: Cannot find module '../events/event-bus' or its corresponding type declarations.
+src/infrastructure/state-orchestrator.ts(12,31): error TS2307: Cannot find module '../../domain/value-objects/workspace-type' or its corresponding type declarations.
+src/infrastructure/stores/agents/agent-selection-store.ts(16,29): error TS2307: Cannot find module '@/infrastructure/persistence/stores/use-app-store' or its corresponding type declarations.
+src/infrastructure/stores/agents/agent-selection-store.ts(79,50): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/infrastructure/stores/agents/index.ts(22,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/use-app-store' or its corresponding type declarations.
+src/infrastructure/stores/agents/slices/agent-events-slice.ts(14,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace' or its corresponding type declarations.
+src/infrastructure/stores/agents/slices/agent-selection-actions.ts(10,29): error TS2307: Cannot find module '@/infrastructure/persistence/stores/use-app-store' or its corresponding type declarations.
+src/infrastructure/stores/agents/slices/agent-selection-queries.ts(11,29): error TS2307: Cannot find module '@/infrastructure/persistence/stores/use-app-store' or its corresponding type declarations.
+src/infrastructure/stores/agents/slices/agent-selection-queries.ts(40,46): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/infrastructure/stores/agents/slices/agent-selection-queries.ts(47,52): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/infrastructure/stores/agents/slices/agent-selection-queries.ts(54,52): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/infrastructure/stores/agents/slices/agent-selection-queries.ts(59,51): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/infrastructure/stores/agents/slices/agent-workspace-bindings-slice.ts(15,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/providers/types' or its corresponding type declarations.
+src/infrastructure/stores/agents/types.ts(15,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/providers/types' or its corresponding type declarations.
+src/infrastructure/stores/analytics-store.ts(13,51): error TS2307: Cannot find module '@/lib/analytics/metrics-collector' or its corresponding type declarations.
+src/infrastructure/stores/analytics-store.ts(14,39): error TS2307: Cannot find module '@/lib/analytics/performance-monitor' or its corresponding type declarations.
+src/infrastructure/stores/canvas/canvas-db.ts(19,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-io-slice.ts(20,51): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-linkage-slice.ts(20,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-linkage-slice.ts(22,39): error TS2307: Cannot find module '@/lib/canvas/linkage-analyzer' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-state-slice.ts(24,45): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/slices/canvas-state-slice.ts(25,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/types.ts(16,8): error TS2307: Cannot find module '@/lib/canvas/types' or its corresponding type declarations.
+src/infrastructure/stores/canvas/types.ts(17,38): error TS2307: Cannot find module '@/lib/canvas/linkage-types' or its corresponding type declarations.
+src/infrastructure/stores/conversation/slices/create-context-window-slice.ts(41,73): error TS2307: Cannot find module '@/lib/chat/context-window-manager' or its corresponding type declarations.
+src/infrastructure/stores/conversation/useConversationStore.ts(21,37): error TS2307: Cannot find module '@/infrastructure/persistence/stores/chat' or its corresponding type declarations.
+src/infrastructure/stores/conversation/useConversationStore.ts(26,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/chat/unified-chat-types' or its corresponding type declarations.
+src/infrastructure/stores/conversation/useConversationStore.ts(85,36): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(131,36): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(153,69): error TS18046: 'm' is of type 'unknown'.
+src/infrastructure/stores/conversation/useConversationStore.ts(179,46): error TS18046: 'msg' is of type 'unknown'.
+src/infrastructure/stores/conversation/useConversationStore.ts(185,62): error TS7006: Parameter 'pa' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(237,66): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(245,57): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(248,54): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(273,24): error TS7006: Parameter 'msg' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(277,18): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(347,20): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(348,17): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(356,42): error TS7006: Parameter 'tc' implicitly has an 'any' type.
+src/infrastructure/stores/conversation/useConversationStore.ts(395,6): error TS7006: Parameter 'unifiedState' implicitly has an 'any' type.
+src/infrastructure/stores/file-watcher-store.ts(14,57): error TS2307: Cannot find module '@/lib/watcher/file-watcher' or its corresponding type declarations.
+src/infrastructure/stores/hydration-manager.ts(84,50): error TS2307: Cannot find module '@/infrastructure/persistence/stores/ide/useIDEStore' or its corresponding type declarations.
+src/infrastructure/stores/index.ts(77,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/ide' or its corresponding type declarations.
+src/infrastructure/stores/index.ts(95,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/study/quiz-store' or its corresponding type declarations.
+src/infrastructure/stores/index.ts(206,8): error TS2307: Cannot find module '@/lib/workspace/file-sync-status-store' or its corresponding type declarations.
+src/infrastructure/stores/notes/note-context-tracker.ts(21,30): error TS2307: Cannot find module '@/lib/notes' or its corresponding type declarations.
+src/infrastructure/stores/notes/note-context-tracker.ts(22,39): error TS2307: Cannot find module '@/lib/notes/types-embedding' or its corresponding type declarations.
+src/infrastructure/stores/notifications/index.ts(13,59): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/stores/notifications/notification-crud-slice.ts(12,35): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/stores/notifications/notification-filter-slice.ts(12,55): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/infrastructure/stores/permissions/types.ts(10,51): error TS2307: Cannot find module '@/domain/tools/tool-permissions' or its corresponding type declarations.
+src/infrastructure/stores/plugins-store.ts(20,8): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/infrastructure/stores/plugins-store.ts(237,28): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/stores/plugins-store.ts(247,38): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/infrastructure/stores/project/useWorkspaceProjects.ts(17,31): error TS2307: Cannot find module '@/hooks/useResponsive' or its corresponding type declarations.
+src/infrastructure/stores/providers/provider-models-slice.ts(28,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace' or its corresponding type declarations.
+src/infrastructure/stores/quiz-history-store.ts(8,33): error TS2307: Cannot find module '@/lib/study/quiz-session' or its corresponding type declarations.
+src/infrastructure/stores/quiz-history-store.ts(9,40): error TS2307: Cannot find module '@/lib/study/quiz-session' or its corresponding type declarations.
+src/infrastructure/stores/session-snapshot-manager.ts(12,51): error TS2307: Cannot find module '@/infrastructure/persistence/stores/ide' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(10,37): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(11,35): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(12,34): error TS2307: Cannot find module '@/lib/knowledge/synthesis-service' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(13,56): error TS2307: Cannot find module '@/lib/knowledge/synthesis-types' or its corresponding type declarations.
+src/infrastructure/stores/synthesis-store.ts(103,22): error TS7006: Parameter 'progress' implicitly has an 'any' type.
+src/infrastructure/stores/use-app-store.ts(228,13): error TS2307: Cannot find module '@/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault' or its corresponding type declarations.
+src/infrastructure/stores/use-app-store.ts(236,16): error TS7006: Parameter 'id' implicitly has an 'any' type.
+src/infrastructure/stores/use-app-store.ts(236,20): error TS7006: Parameter 'config' implicitly has an 'any' type.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(35,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(36,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(135,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/stores/workspace/slices/use-file-ops-slice.ts(200,35): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(41,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-storage-adapter-slice.ts(42,42): error TS2307: Cannot find module '@/lib/utils/mobile-error-handling' or its corresponding type declarations.
+src/infrastructure/stores/workspace/slices/use-vfs-sync-slice.ts(29,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/statusbar-store' or its corresponding type declarations.
+src/infrastructure/stores/workspace/unified-workspace-provider.tsx(34,36): error TS2307: Cannot find module '@/infrastructure/ui/AgentWorkspaceSync' or its corresponding type declarations.
+src/infrastructure/sync/adapters/fsa-permission-manager.ts(38,26): error TS18046: 'window.showDirectoryPicker' is of type 'unknown'.
+src/infrastructure/sync/workspace-services/__tests__/mock-sync-events.ts(23,34): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/hooks/index.ts(11,36): error TS2307: Cannot find module '@/lib/filesync/hooks/use-file-sync-service' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/hooks/index.ts(12,74): error TS2307: Cannot find module '@/lib/filesync/hooks/use-file-sync-service' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/knowledge-file-sync-service.ts(44,11): error TS6133: '_config' is declared but its value is never read.
+src/infrastructure/sync/workspace-services/notes/note-folder-bridge.ts(28,8): error TS2307: Cannot find module '@/lib/utils/error-handling' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts(32,68): error TS2307: Cannot find module '@/lib/notes/slices/note-sync-slice' or its corresponding type declarations.
+src/infrastructure/sync/workspace-services/study-file-sync-service.ts(44,11): error TS6133: '_config' is declared but its value is never read.
+src/infrastructure/workflow-persistence.ts(12,31): error TS2307: Cannot find module '@/lib/workflow/builder/types' or its corresponding type declarations.
+src/infrastructure/workflow-persistence.ts(113,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(122,47): error TS2339: Property 'createdAt' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(123,45): error TS2339: Property 'createdAt' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(133,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(134,29): error TS2339: Property 'name' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(135,26): error TS2339: Property 'description' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(136,27): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/infrastructure/workflow-persistence.ts(350,58): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'UpdateSpec<WorkflowRecord> | ((obj: WorkflowRecord, ctx: { value: any; primKey: IndexableType; }) => boolean | void)'.
+src/infrastructure/workflow-persistence.ts(372,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(375,21): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'UpdateSpec<WorkflowRecord> | ((obj: WorkflowRecord, ctx: { value: any; primKey: IndexableType; }) => boolean | void)'.
+src/infrastructure/workflow-persistence.ts(401,35): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(404,21): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'UpdateSpec<WorkflowRecord> | ((obj: WorkflowRecord, ctx: { value: any; primKey: IndexableType; }) => boolean | void)'.
+src/infrastructure/workflow-persistence.ts(404,39): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/infrastructure/workflow-persistence.ts(444,31): error TS2339: Property 'tags' does not exist on type 'WorkflowRecord'.
+src/infrastructure/workflow-persistence.ts(448,22): error TS2339: Property 'createdAt' does not exist on type 'WorkflowRecord'.
+src/lib/agent/agent-io.ts(13,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/types' or its corresponding type declarations.
+src/lib/agent/agent-io.ts(14,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents' or its corresponding type declarations.
+src/lib/agent/agent-io.ts(96,44): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/lib/agent/agent-io.ts(161,38): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/lib/agent/agent-io.ts(168,61): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/lib/agent/deep-think/deep-think-hook.ts(13,35): error TS2307: Cannot find module '@/lib/utils/platform-detection' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(18,8): error TS2307: Cannot find module '@/domain/tools/note/types' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(19,37): error TS2307: Cannot find module '@/lib/notes/types-slice' or its corresponding type declarations.
+src/lib/agent/facades/note-tools-impl.ts(216,29): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/agent/facades/note-tools-impl.ts(222,10): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/agent/facades/note-tools-impl.ts(234,34): error TS7006: Parameter 'n' implicitly has an 'any' type.
+src/lib/agent/facades/note-tools.ts(13,70): error TS2307: Cannot find module '@/domain/tools/note/types' or its corresponding type declarations.
+src/lib/agent/facades/terminal-tools-impl.ts(15,33): error TS2307: Cannot find module '../../webcontainer/manager' or its corresponding type declarations.
+src/lib/agent/facades/terminal-tools-impl.ts(261,28): error TS7006: Parameter 'exitCode' implicitly has an 'any' type.
+src/lib/agent/factory.ts(28,8): error TS2307: Cannot find module '@/domain/tools/note' or its corresponding type declarations.
+src/lib/agent/factory.ts(373,51): error TS2345: Argument of type '{ sourceId: string; sourceType: "pdf" | "url" | "text" | "image" | "markdown"; title: string; content: string; mimeType?: string | undefined; options?: { generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined; }' is not assignable to parameter of type 'SynthesisInput'.
+  Type '{ sourceId: string; sourceType: "pdf" | "url" | "text" | "image" | "markdown"; title: string; content: string; mimeType?: string | undefined; options?: { generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined; }' is missing the following properties from type 'SynthesisInput': sourceIds, artifactType
+src/lib/agent/factory.ts(378,38): error TS2339: Property 'sourceId' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/factory.ts(379,41): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/factory.ts(380,39): error TS2339: Property 'synthesizedAt' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/factory.ts(444,81): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/factory.ts(509,85): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/factory.ts(556,81): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(26,37): error TS2307: Cannot find module '@/infrastructure/persistence/stores/chat' or its corresponding type declarations.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(197,53): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(198,57): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(199,54): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(200,56): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(679,25): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/lib/agent/hooks/use-agent-chat-with-tools.ts(680,22): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/lib/agent/hooks/use-multi-agent-chat.ts(21,8): error TS2307: Cannot find module '@/lib/workflow/agents/debate-agent' or its corresponding type declarations.
+src/lib/agent/hooks/use-multi-agent-chat.ts(26,8): error TS2307: Cannot find module '@/lib/workflow/agents/content-routing-agent' or its corresponding type declarations.
+src/lib/agent/hooks/use-multi-agent-chat.ts(31,8): error TS2307: Cannot find module '@/lib/workflow/agents/sequential-expansion-agent' or its corresponding type declarations.
+src/lib/agent/mode-classifier-types.ts(14,32): error TS2307: Cannot find module '@/domain/tools/tool-definition' or its corresponding type declarations.
+src/lib/agent/mode-classifier.ts(21,32): error TS2307: Cannot find module '@/domain/tools/tool-definition' or its corresponding type declarations.
+src/lib/agent/prompt-orchestrator.ts(13,30): error TS2307: Cannot find module '@/infrastructure/tools/centralized-tool-registry' or its corresponding type declarations.
+src/lib/agent/prompt-orchestrator.ts(15,47): error TS2307: Cannot find module '@/domain/tools' or its corresponding type declarations.
+src/lib/agent/prompt-orchestrator.ts(216,30): error TS7006: Parameter 'tool' implicitly has an 'any' type.
+src/lib/agent/provider-fallback.ts(14,36): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace/workspace-types' or its corresponding type declarations.
+src/lib/agent/system-prompt.ts(27,47): error TS2307: Cannot find module '@/domain/tools/tool-definition' or its corresponding type declarations.
+src/lib/agent/tool-permission/tool-permission-manager.ts(54,40): error TS2307: Cannot find module '@/infrastructure/persistence/stores/permissions/tool-permission-store' or its corresponding type declarations.
+src/lib/agent/tool-permission/tool-permission-queries.ts(10,40): error TS2307: Cannot find module '@/infrastructure/persistence/stores/permissions/tool-permission-store' or its corresponding type declarations.
+src/lib/agent/tool-permission/tool-permission-queries.ts(29,31): error TS18046: 'workspaceMap' is of type 'unknown'.
+src/lib/agent/tool-permission/tool-permission-queries.ts(61,9): error TS18046: 'workspaceMap' is of type 'unknown'.
+src/lib/agent/tool-permission/tool-permission-singleton.ts(12,40): error TS2307: Cannot find module '@/infrastructure/persistence/stores/permissions/tool-permission-store' or its corresponding type declarations.
+src/lib/agent/tool-permission/tool-permission-trust.ts(10,40): error TS2307: Cannot find module '@/infrastructure/persistence/stores/permissions/tool-permission-store' or its corresponding type declarations.
+src/lib/agent/tools/note-commands.ts(15,92): error TS2307: Cannot find module '@/lib/notes/format/note-formatter' or its corresponding type declarations.
+src/lib/agent/tools/note-commands.ts(196,42): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(260,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(295,44): error TS6133: 'content' is declared but its value is never read.
+src/lib/agent/tools/note-commands.ts(336,21): error TS2339: Property 'write' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(380,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(384,21): error TS2339: Property 'delete' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(432,42): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(496,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(531,44): error TS6133: 'content' is declared but its value is never read.
+src/lib/agent/tools/note-commands.ts(572,21): error TS2339: Property 'write' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(616,38): error TS2339: Property 'read' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/note-commands.ts(620,21): error TS2339: Property 'delete' does not exist on type 'StorageAdapter'.
+src/lib/agent/tools/process-image-tool.ts(111,78): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-image-tool.ts(115,31): error TS2339: Property 'text' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-image-tool.ts(116,9): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/lib/agent/tools/process-image-tool.ts(117,33): error TS2339: Property 'detectedObjects' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-image-tool.ts(117,54): error TS7006: Parameter 'obj' implicitly has an 'any' type.
+src/lib/agent/tools/process-image-tool.ts(121,31): error TS2339: Property 'imageType' does not exist on type '{ id: string; description?: string | undefined; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(124,74): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-pdf-tool.ts(128,26): error TS2339: Property 'headings' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(128,39): error TS7006: Parameter 'h' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(133,24): error TS2339: Property 'tables' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(133,35): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(139,25): error TS2339: Property 'figures' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(139,37): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/lib/agent/tools/process-pdf-tool.ts(144,27): error TS2339: Property 'citations' does not exist on type '{ id: string; pages: number; success: boolean; }'.
+src/lib/agent/tools/process-pdf-tool.ts(144,41): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/lib/agent/tools/process-url-tool.ts(91,73): error TS2554: Expected 1-2 arguments, but got 3.
+src/lib/agent/tools/process-url-tool.ts(95,9): error TS2741: Property 'cleanContent' is missing in type '{ id: string; title?: string | undefined; success: boolean; }' but required in type '{ cleanContent: string; title: string; author?: string | undefined; publishedDate?: string | undefined; contentType?: string | undefined; readingTimeMinutes?: number | undefined; summary?: string | undefined; tags?: string[] | undefined; relatedLinks?: { ...; }[] | undefined; mainImageUrl?: string | undefined; }'.
+src/lib/agent/tools/retry-queue.ts(24,8): error TS2307: Cannot find module '../../utils/error-classification' or its corresponding type declarations.
+src/lib/agent/tools/search-notes-tool.ts(15,29): error TS2307: Cannot find module '@/lib/notes/note-retriever' or its corresponding type declarations.
+src/lib/agent/tools/search-notes-tool.ts(16,41): error TS2307: Cannot find module '@/lib/workspace/note-context-tracker' or its corresponding type declarations.
+src/lib/agent/tools/search-notes-tool.ts(65,25): error TS7006: Parameter 'note' implicitly has an 'any' type.
+src/lib/agent/tools/search-notes-tool.ts(66,22): error TS7006: Parameter 'note' implicitly has an 'any' type.
+src/lib/agent/tools/synthesize-tool.ts(98,9): error TS2322: Type '{ generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; } | undefined' is not assignable to type 'SynthesisOptions | undefined'.
+  Type '{ generateSummary: boolean; extractKeyConcepts: boolean; classifySubject: boolean; generateTags: boolean; }' has no properties in common with type 'SynthesisOptions'.
+src/lib/agent/tools/synthesize-tool.ts(104,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(105,49): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(107,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(108,52): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(110,18): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(111,69): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(119,29): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(120,33): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(120,62): error TS7006: Parameter 'kc' implicitly has an 'any' type.
+src/lib/agent/tools/synthesize-tool.ts(121,29): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(122,26): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(123,33): error TS2339: Property 'frontmatter' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/tools/synthesize-tool.ts(126,29): error TS2339: Property 'synthesizedAt' does not exist on type '{ id: string; type: string; success: boolean; }'.
+src/lib/agent/workspace-execution-context.ts(18,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace' or its corresponding type declarations.
+src/lib/agent/workspace-execution-context.ts(19,40): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/agent-selection-store' or its corresponding type declarations.
+src/lib/agent/workspace-execution-context.ts(20,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/types' or its corresponding type declarations.
+src/lib/agent/workspace-execution-context.ts(21,36): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace/workspace-types' or its corresponding type declarations.
+src/lib/agent/workspace-execution-context.ts(93,7): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/agent/workspace-tool-filter.ts(18,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/types' or its corresponding type declarations.
+src/lib/agent/workspace-tool-filter.ts(196,35): error TS7006: Parameter 'binding' implicitly has an 'any' type.
+src/lib/events/use-conversation-persistence.ts(27,43): error TS2307: Cannot find module '@/infrastructure/persistence/stores/conversation/useConversationStore' or its corresponding type declarations.
+src/lib/events/use-conversation-persistence.ts(139,42): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/lib/events/use-conversation-persistence.ts(140,42): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/lib/events/use-conversation-persistence.ts(148,53): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/lib/events/use-conversation-persistence.ts(148,56): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/lib/events/use-cross-workspace-events.ts(22,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents' or its corresponding type declarations.
+src/lib/filesystem/file-ops.ts(301,27): error TS2339: Property 'showDirectoryPicker' does not exist on type 'Window & typeof globalThis'.
+src/lib/filesystem/sync-executor.ts(1,41): error TS2307: Cannot find module '../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(9,54): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(14,35): error TS2307: Cannot find module '../../sync/file-metadata-cache' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-batch-sync.ts(222,72): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/lib/filesystem/sync-manager/sync-file-ops.ts(9,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-manager/sync-file-ops.ts(14,32): error TS2307: Cannot find module '../../utils/error-handling' or its corresponding type declarations.
+src/lib/filesystem/sync-transaction/sync-batch-deleter.ts(13,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-transaction/sync-batch-writer.ts(13,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/sync-transaction/sync-rollback-executor.ts(13,41): error TS2307: Cannot find module '../../webcontainer' or its corresponding type declarations.
+src/lib/filesystem/unified-storage-adapter.ts(282,26): error TS18046: 'window.showDirectoryPicker' is of type 'unknown'.
+src/lib/rag/embedding-service.ts(113,47): error TS2304: Cannot find name 'GPU'.
+src/lib/rag/embedding-service.ts(114,68): error TS2304: Cannot find name 'GPU'.
+src/lib/rag/orama-index-adapter.ts(19,29): error TS2307: Cannot find module '@/infrastructure/persistence/stores/rag/rag-store' or its corresponding type declarations.
+src/lib/rag/orama-index-adapter.ts(20,45): error TS2307: Cannot find module '@/infrastructure/persistence/stores/rag/rag-types' or its corresponding type declarations.
+src/lib/rag/transformers-loader.ts(81,28): error TS2339: Property 'gpu' does not exist on type 'Navigator'.
+src/lib/rag/transformers-loader.ts(82,45): error TS2339: Property 'gpu' does not exist on type 'Navigator'.
+src/presentation/components/error/ErrorBoundary.tsx(11,34): error TS2307: Cannot find module '@/lib/monitoring/sentry' or its corresponding type declarations.
+src/presentation/components/error/ErrorFallback.tsx(12,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/presentation/components/error/ErrorMessage.tsx(12,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/presentation/components/error/ErrorMessage.tsx(13,24): error TS2307: Cannot find module '@/presentation/components/ui/button' or its corresponding type declarations.
+src/presentation/hooks/index.ts(53,8): error TS2307: Cannot find module '../presentation/hooks/useThreadManager' or its corresponding type declarations.
+src/presentation/hooks/index.ts(61,8): error TS2307: Cannot find module '../lib/agent/hooks/use-multi-agent-chat' or its corresponding type declarations.
+src/presentation/hooks/index.ts(69,8): error TS2307: Cannot find module '../lib/agent/hooks/use-multi-agent-chat' or its corresponding type declarations.
+src/presentation/hooks/useAdvancedSearch.ts(18,8): error TS2307: Cannot find module '@/lib/search/search-indexer' or its corresponding type declarations.
+src/presentation/hooks/useAdvancedSearch.ts(257,21): error TS7006: Parameter 'prev' implicitly has an 'any' type.
+src/presentation/hooks/useAgents.ts(10,57): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents' or its corresponding type declarations.
+src/presentation/hooks/useAgents.ts(11,45): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/types' or its corresponding type declarations.
+src/presentation/hooks/useAgents.ts(12,33): error TS2307: Cannot find module '@/infrastructure/persistence/stores/agents/types' or its corresponding type declarations.
+src/presentation/hooks/useAgents.ts(61,36): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useAgents.ts(62,43): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useAgents.ts(63,46): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useAgents.ts(64,52): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useAgents.ts(65,46): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(12,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/analytics-store' or its corresponding type declarations.
+src/presentation/hooks/useAnalytics.ts(13,48): error TS2307: Cannot find module '@/infrastructure/persistence/stores/analytics-store' or its corresponding type declarations.
+src/presentation/hooks/useAnalytics.ts(14,35): error TS2307: Cannot find module '@/lib/analytics/metrics-collector' or its corresponding type declarations.
+src/presentation/hooks/useAnalytics.ts(15,37): error TS2307: Cannot find module '@/lib/analytics/metrics-collector' or its corresponding type declarations.
+src/presentation/hooks/useAnalytics.ts(38,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(39,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(40,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(41,46): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(42,41): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(44,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(45,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(46,48): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(47,41): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(48,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useAnalytics.ts(89,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(13,38): error TS2307: Cannot find module '@/infrastructure/persistence/stores/conversation/useConversationStore' or its corresponding type declarations.
+src/presentation/hooks/useChatHistory.ts(14,43): error TS2307: Cannot find module '@/lib/chat/title-generator' or its corresponding type declarations.
+src/presentation/hooks/useChatHistory.ts(15,69): error TS2307: Cannot find module '@/lib/chat/message-search' or its corresponding type declarations.
+src/presentation/hooks/useChatHistory.ts(16,64): error TS2307: Cannot find module '@/infrastructure/persistence/stores/conversation/types' or its corresponding type declarations.
+src/presentation/hooks/useChatHistory.ts(17,36): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace/workspace-types' or its corresponding type declarations.
+src/presentation/hooks/useChatHistory.ts(96,47): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(97,54): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(99,52): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(100,52): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(101,60): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(102,55): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(103,58): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(104,60): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(105,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(156,33): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(198,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/presentation/hooks/useChatHistory.ts(205,34): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/presentation/hooks/useCodeFormatter.ts(20,8): error TS2307: Cannot find module '@/lib/formatter' or its corresponding type declarations.
+src/presentation/hooks/useCodeNavigation.ts(21,8): error TS2307: Cannot find module '@/lib/navigation/definition-provider' or its corresponding type declarations.
+src/presentation/hooks/useCodeNavigation.ts(26,8): error TS2307: Cannot find module '@/lib/navigation/references-provider' or its corresponding type declarations.
+src/presentation/hooks/useCodeNavigation.ts(33,8): error TS2307: Cannot find module '@/lib/navigation/symbol-outline' or its corresponding type declarations.
+src/presentation/hooks/useCodeSnippets.ts(15,85): error TS2307: Cannot find module '@/lib/snippets/snippet-store' or its corresponding type declarations.
+src/presentation/hooks/useCodeSnippets.ts(59,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(60,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(61,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(65,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(66,45): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(67,43): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(85,18): error TS7006: Parameter 'snippet' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(104,18): error TS7006: Parameter 'snippet' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(107,40): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(184,47): error TS7006: Parameter 'snippet' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(191,36): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/presentation/hooks/useCodeSnippets.ts(205,52): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(13,38): error TS2307: Cannot find module '@/lib/collaboration/websocket-client' or its corresponding type declarations.
+src/presentation/hooks/useCollaborationPresence.ts(14,39): error TS2307: Cannot find module '@/lib/collaboration/websocket-client' or its corresponding type declarations.
+src/presentation/hooks/useCollaborationPresence.ts(18,8): error TS2307: Cannot find module '@/lib/collaboration/presence-manager' or its corresponding type declarations.
+src/presentation/hooks/useCollaborationPresence.ts(22,8): error TS2307: Cannot find module '@/lib/collaboration/cursor-tracker' or its corresponding type declarations.
+src/presentation/hooks/useCollaborationPresence.ts(105,28): error TS7006: Parameter 'users' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(110,28): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(114,26): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(114,36): error TS7006: Parameter 'users' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(126,26): error TS7006: Parameter 'cursors' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(172,19): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(176,28): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(179,26): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(182,26): error TS7006: Parameter 'userId' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(185,25): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(188,24): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(191,22): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/presentation/hooks/useCollaborationPresence.ts(194,23): error TS7006: Parameter 'userId' implicitly has an 'any' type.
+src/presentation/hooks/useCommandPalette.ts(9,33): error TS2307: Cannot find module '@/lib/command-palette/command-registry' or its corresponding type declarations.
+src/presentation/hooks/useEditorTabs.ts(12,83): error TS2307: Cannot find module '@/infrastructure/persistence/stores/editor-tabs-store' or its corresponding type declarations.
+src/presentation/hooks/useEditorTabs.ts(13,71): error TS2307: Cannot find module '@/lib/editor/tab-persistence' or its corresponding type declarations.
+src/presentation/hooks/useEditorTabs.ts(14,54): error TS2307: Cannot find module '@/lib/editor/tab-manager' or its corresponding type declarations.
+src/presentation/hooks/useEditorTabs.ts(73,42): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(76,46): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(77,47): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(78,51): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(79,53): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(80,53): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(81,48): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(82,55): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(83,46): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(84,51): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(85,50): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(86,59): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(125,27): error TS7006: Parameter 'tab' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(153,31): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(210,31): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(215,31): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(251,43): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(252,42): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(286,53): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(311,43): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useEditorTabs.ts(311,71): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useFileDiff.ts(12,59): error TS2307: Cannot find module '@/lib/diff/diff-generator' or its corresponding type declarations.
+src/presentation/hooks/useFileDiff.ts(239,31): error TS7006: Parameter 'line' implicitly has an 'any' type.
+src/presentation/hooks/useFileDiff.ts(239,37): error TS7006: Parameter 'index' implicitly has an 'any' type.
+src/presentation/hooks/useFileWatcher.ts(12,54): error TS2307: Cannot find module '@/lib/watcher/file-watcher' or its corresponding type declarations.
+src/presentation/hooks/useFileWatcher.ts(13,35): error TS2307: Cannot find module '@/lib/watcher/change-detector' or its corresponding type declarations.
+src/presentation/hooks/useFileWatcher.ts(23,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/file-watcher-store' or its corresponding type declarations.
+src/presentation/hooks/useGit.ts(11,29): error TS2307: Cannot find module '@/infrastructure/persistence/stores/git-store' or its corresponding type declarations.
+src/presentation/hooks/useGit.ts(116,31): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(117,33): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(118,32): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(119,36): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(120,34): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(121,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(122,42): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(123,30): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(124,43): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(125,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(126,35): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(129,35): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(130,38): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(131,35): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(132,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(133,31): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(134,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(135,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(136,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(137,37): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(138,36): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(139,36): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(140,32): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(141,34): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(142,40): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(143,44): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(144,40): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(145,35): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(146,30): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(169,33): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(174,33): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(179,33): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(184,33): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(188,27): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/presentation/hooks/useGit.ts(198,31): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(28,47): error TS2307: Cannot find module '@/infrastructure/persistence/stores/ide' or its corresponding type declarations.
+src/presentation/hooks/useIdeStatePersistence.ts(101,35): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(102,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(103,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(104,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(105,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(106,45): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(107,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useIdeStatePersistence.ts(108,40): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useKeyboardShortcuts.ts(12,39): error TS2307: Cannot find module '@/lib/keyboard/KeyboardShortcutManager' or its corresponding type declarations.
+src/presentation/hooks/useKeyboardShortcuts.ts(13,41): error TS2307: Cannot find module '@/lib/keyboard/KeyboardShortcutManager' or its corresponding type declarations.
+src/presentation/hooks/useNotifications.ts(11,40): error TS2307: Cannot find module '@/lib/notifications/notification-manager' or its corresponding type declarations.
+src/presentation/hooks/useNotifications.ts(22,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/notification-store' or its corresponding type declarations.
+src/presentation/hooks/useNotifications.ts(23,59): error TS2307: Cannot find module '@/lib/notifications/types' or its corresponding type declarations.
+src/presentation/hooks/useOfflineStatus.ts(7,55): error TS2307: Cannot find module '@/lib/offline/offline-detector' or its corresponding type declarations.
+src/presentation/hooks/useOfflineStatus.ts(59,38): error TS7006: Parameter 'status' implicitly has an 'any' type.
+src/presentation/hooks/useOfflineStatus.ts(83,49): error TS2307: Cannot find module '@/lib/offline/offline-detector' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(12,31): error TS2307: Cannot find module '@/lib/plugins/plugin-manager' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(13,33): error TS2307: Cannot find module '@/infrastructure/persistence/stores/plugins-store' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(14,44): error TS2307: Cannot find module '@/lib/plugins/builtins/github-integration' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(15,48): error TS2307: Cannot find module '@/lib/plugins/builtins/retro-theme-pack' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(27,8): error TS2307: Cannot find module '@/infrastructure/persistence/stores/plugins-store' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(33,8): error TS2307: Cannot find module '@/lib/plugins/types' or its corresponding type declarations.
+src/presentation/hooks/usePlugins.ts(63,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/usePlugins.ts(387,31): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/usePlugins.ts(388,33): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/usePlugins.ts(389,29): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/usePlugins.ts(391,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/usePlugins.ts(393,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useProcessManager.ts(9,8): error TS2307: Cannot find module '../lib/webcontainer/process-manager' or its corresponding type declarations.
+src/presentation/hooks/useProcessManager.ts(51,22): error TS7006: Parameter 'code' implicitly has an 'any' type.
+src/presentation/hooks/useProjectTemplates.ts(16,8): error TS2307: Cannot find module '@/lib/templates/template-types' or its corresponding type declarations.
+src/presentation/hooks/useProjectTemplates.ts(22,8): error TS2307: Cannot find module '@/lib/templates/template-engine' or its corresponding type declarations.
+src/presentation/hooks/useProjectTemplates.ts(26,8): error TS2307: Cannot find module '@/lib/templates/template-registry' or its corresponding type declarations.
+src/presentation/hooks/useProjectTemplates.ts(299,36): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/presentation/hooks/useTaskScheduler.ts(12,8): error TS2307: Cannot find module '@/lib/scheduler/task-scheduler' or its corresponding type declarations.
+src/presentation/hooks/useTaskScheduler.ts(13,34): error TS2307: Cannot find module '@/lib/scheduler/task-scheduler' or its corresponding type declarations.
+src/presentation/hooks/useTerminal.ts(13,80): error TS2307: Cannot find module '@/lib/terminal/terminal-emulator' or its corresponding type declarations.
+src/presentation/hooks/useTerminal.ts(14,34): error TS2307: Cannot find module '@/infrastructure/persistence/stores/terminal-store' or its corresponding type declarations.
+src/presentation/hooks/useTerminal.ts(15,32): error TS2307: Cannot find module '@/lib/webcontainer' or its corresponding type declarations.
+src/presentation/hooks/useTerminal.ts(100,41): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(101,34): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(102,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(103,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(104,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(105,39): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(106,45): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(107,49): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(108,44): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(109,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(140,23): error TS7006: Parameter 'sessionId' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(143,29): error TS7006: Parameter 'sessionId' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(143,40): error TS7006: Parameter 'command' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(307,40): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useTerminal.ts(339,33): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/presentation/hooks/useUnsavedWorkPreservation.ts(12,31): error TS2307: Cannot find module '@/presentation/components/ide/MonacoEditor' or its corresponding type declarations.
+src/presentation/hooks/useWorkspaceContext.ts(26,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace' or its corresponding type declarations.
+src/presentation/hooks/useWorkspaceContext.ts(27,66): error TS2307: Cannot find module '@/lib/workspace/workspace-detector' or its corresponding type declarations.
+src/presentation/hooks/useWorkspaceContext.ts(54,49): error TS7006: Parameter 'state' implicitly has an 'any' type.
+src/routes/$__debug__.provider-playground.tsx(487,38): error TS2345: Argument of type '"/$__debug__/provider-playground"' is not assignable to parameter of type 'undefined'.
+src/routes/__root.tsx(5,32): error TS2307: Cannot find module '../i18n/LocaleProvider' or its corresponding type declarations.
+src/routes/__root.tsx(6,34): error TS2307: Cannot find module '@/presentation/components/common/AppErrorBoundary' or its corresponding type declarations.
+src/routes/__root.tsx(7,32): error TS2307: Cannot find module '@/presentation/components/common/AppInitializer' or its corresponding type declarations.
+src/routes/__root.tsx(8,40): error TS2307: Cannot find module '@/presentation/components/common/DatabaseRecoveryDialog' or its corresponding type declarations.
+src/routes/__root.tsx(9,28): error TS2307: Cannot find module '../lib/monitoring/sentry' or its corresponding type declarations.
+src/routes/__root.tsx(10,41): error TS2307: Cannot find module '@/lib/errorHandling/globalErrorHandlers' or its corresponding type declarations.
+src/routes/__root.tsx(11,31): error TS2307: Cannot find module '@/presentation/components/ui/ThemeProvider' or its corresponding type declarations.
+src/routes/__root.tsx(12,33): error TS2307: Cannot find module '@/presentation/components/ui/tooltip-react19-compatible' or its corresponding type declarations.
+src/routes/__root.tsx(13,47): error TS2307: Cannot find module '@/presentation/components/ui/Toast' or its corresponding type declarations.
+src/routes/__root.tsx(14,29): error TS2307: Cannot find module '@/presentation/components/ui/OverlayRoot' or its corresponding type declarations.
+src/routes/__root.tsx(15,33): error TS2307: Cannot find module '@/presentation/components/agent/MigrationStatus' or its corresponding type declarations.
+src/routes/__root.tsx(16,42): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace' or its corresponding type declarations.
+src/routes/__root.tsx(17,49): error TS2307: Cannot find module '@/presentation/components/notifications/NotificationPermissionRequester' or its corresponding type declarations.
+src/routes/__root.tsx(18,32): error TS2307: Cannot find module '@/presentation/components/command-palette/CommandPalette' or its corresponding type declarations.
+src/routes/__root.tsx(19,35): error TS2307: Cannot find module '@/hooks/useCommandPalette' or its corresponding type declarations.
+src/routes/about.lazy.tsx(2,27): error TS2307: Cannot find module '@/presentation/components/about' or its corresponding type declarations.
+src/routes/about.lazy.tsx(4,42): error TS2345: Argument of type '"/about"' is not assignable to parameter of type 'never'.
+src/routes/about.tsx(3,38): error TS2345: Argument of type '"/about"' is not assignable to parameter of type 'undefined'.
+src/routes/agents.tsx(15,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/agents.tsx(16,29): error TS2307: Cannot find module '@/presentation/components/ide/AgentsPanel' or its corresponding type declarations.
+src/routes/agents.tsx(17,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/routes/agents.tsx(18,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/routes/agents.tsx(20,38): error TS2345: Argument of type '"/agents"' is not assignable to parameter of type 'undefined'.
+src/routes/api/chat.ts(26,30): error TS2307: Cannot find module '@/infrastructure/tools/centralized-tool-registry' or its corresponding type declarations.
+src/routes/api/chat.ts(27,40): error TS2307: Cannot find module '@/infrastructure/tools/tool-catalog' or its corresponding type declarations.
+src/routes/api/chat.ts(32,8): error TS2307: Cannot find module '../../lib/validation/chat-request' or its corresponding type declarations.
+src/routes/api/chat.ts(139,39): error TS7006: Parameter 'tool' implicitly has an 'any' type.
+src/routes/api/chat.ts(144,30): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/routes/api/chat.ts(156,38): error TS2345: Argument of type '"/api/chat"' is not assignable to parameter of type 'undefined'.
+src/routes/api/chat.ts(157,5): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/chat.ts(272,46): error TS7006: Parameter 't' implicitly has an 'any' type.
+src/routes/api/provider-test.ts(248,38): error TS2345: Argument of type '"/api/provider-test"' is not assignable to parameter of type 'undefined'.
+src/routes/api/provider-test.ts(249,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.execute.ts(107,38): error TS2345: Argument of type '"/api/providers/$id/execute"' is not assignable to parameter of type 'undefined'.
+src/routes/api/providers.$id.execute.ts(108,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.$id.ts(150,38): error TS2345: Argument of type '"/api/providers/$id"' is not assignable to parameter of type 'undefined'.
+src/routes/api/providers.$id.ts(151,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/api/providers.ts(135,38): error TS2345: Argument of type '"/api/providers"' is not assignable to parameter of type 'undefined'.
+src/routes/api/providers.ts(136,3): error TS2578: Unused '@ts-expect-error' directive.
+src/routes/debug.tsx(10,38): error TS2345: Argument of type '"/debug"' is not assignable to parameter of type 'undefined'.
+src/routes/hub.tsx(2,29): error TS2307: Cannot find module '@/presentation/components/hub/HubHomePage' or its corresponding type declarations.
+src/routes/hub.tsx(3,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/hub.tsx(6,38): error TS2345: Argument of type '"/hub"' is not assignable to parameter of type 'undefined'.
+src/routes/ide.$projectId.tsx(21,38): error TS2307: Cannot find module '@/presentation/components/ui/Toast' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(22,33): error TS2307: Cannot find module '@/lib/workspace/ProjectContext' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(24,39): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace-store-factory' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(32,10): error TS2307: Cannot find module '@/presentation/components/layout/IDELayoutMain' or its corresponding type declarations.
+src/routes/ide.$projectId.tsx(37,38): error TS2345: Argument of type '"/ide/$projectId"' is not assignable to parameter of type 'undefined'.
+src/routes/ide.tsx(19,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/ide.tsx(21,36): error TS2307: Cannot find module '@/presentation/components/workspace' or its corresponding type declarations.
+src/routes/ide.tsx(25,38): error TS2345: Argument of type '"/ide"' is not assignable to parameter of type 'undefined'.
+src/routes/ide.tsx(124,23): error TS7006: Parameter 'projectId' implicitly has an 'any' type.
+src/routes/index.tsx(2,29): error TS2307: Cannot find module '@/presentation/components/hub/HubHomePage' or its corresponding type declarations.
+src/routes/index.tsx(3,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/index.tsx(5,38): error TS2345: Argument of type '"/"' is not assignable to parameter of type 'undefined'.
+src/routes/notes.$projectId.lazy.tsx(27,27): error TS2307: Cannot find module '@/presentation/components/notes/NotesPage' or its corresponding type declarations.
+src/routes/notes.$projectId.lazy.tsx(28,33): error TS2307: Cannot find module '@/lib/workspace/ProjectContext' or its corresponding type declarations.
+src/routes/notes.$projectId.lazy.tsx(38,42): error TS2345: Argument of type '"/notes/$projectId"' is not assignable to parameter of type 'never'.
+src/routes/notes.$projectId.tsx(6,38): error TS2345: Argument of type '"/notes/$projectId"' is not assignable to parameter of type 'undefined'.
+src/routes/notes.lazy.tsx(22,42): error TS2345: Argument of type '"/notes"' is not assignable to parameter of type 'never'.
+src/routes/projects.tsx(2,30): error TS2307: Cannot find module '@/presentation/components/project/ProjectsPage' or its corresponding type declarations.
+src/routes/projects.tsx(3,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/projects.tsx(6,38): error TS2345: Argument of type '"/projects"' is not assignable to parameter of type 'undefined'.
+src/routes/settings.tsx(16,28): error TS2307: Cannot find module '@/presentation/components/layout/MainLayout' or its corresponding type declarations.
+src/routes/settings.tsx(17,35): error TS2307: Cannot find module '@/presentation/components/agent/AgentConfigDialog' or its corresponding type declarations.
+src/routes/settings.tsx(18,31): error TS2307: Cannot find module '@/presentation/components/common/ErrorBoundary' or its corresponding type declarations.
+src/routes/settings.tsx(19,40): error TS2307: Cannot find module '@/presentation/components/ui/icons' or its corresponding type declarations.
+src/routes/settings.tsx(21,24): error TS2307: Cannot find module '@/presentation/components/ui/button' or its corresponding type declarations.
+src/routes/settings.tsx(22,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/routes/settings.tsx(23,31): error TS2307: Cannot find module '@/hooks/useMediaQuery' or its corresponding type declarations.
+src/routes/settings.tsx(24,34): error TS2307: Cannot find module '@/presentation/components/agent/ProviderSettings' or its corresponding type declarations.
+src/routes/settings.tsx(25,33): error TS2307: Cannot find module '@/presentation/components/agent/VaultStatusCard' or its corresponding type declarations.
+src/routes/settings.tsx(26,29): error TS2307: Cannot find module '@/presentation/components/ui/ThemeToggle' or its corresponding type declarations.
+src/routes/settings.tsx(27,38): error TS2307: Cannot find module '@/presentation/components/settings/SettingsExportDialog' or its corresponding type declarations.
+src/routes/settings.tsx(28,38): error TS2307: Cannot find module '@/presentation/components/settings/SettingsImportDialog' or its corresponding type declarations.
+src/routes/settings.tsx(29,32): error TS2307: Cannot find module '@/presentation/components/snippets/SnippetManager' or its corresponding type declarations.
+src/routes/settings.tsx(30,37): error TS2307: Cannot find module '@/presentation/components/notes/SlashCommandManager' or its corresponding type declarations.
+src/routes/settings.tsx(32,36): error TS2307: Cannot find module '@/presentation/components/analytics' or its corresponding type declarations.
+src/routes/settings.tsx(40,32): error TS2307: Cannot find module '@/infrastructure/persistence/stores/layout-store' or its corresponding type declarations.
+src/routes/settings.tsx(41,29): error TS2307: Cannot find module '@/infrastructure/persistence/stores/use-app-store' or its corresponding type declarations.
+src/routes/settings.tsx(45,38): error TS2345: Argument of type '"/settings"' is not assignable to parameter of type 'undefined'.
+src/routes/settings.tsx(67,44): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/routes/settings.tsx(68,45): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/routes/settings.tsx(71,35): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/routes/settings.tsx(414,31): error TS7006: Parameter 'error' implicitly has an 'any' type.
+src/routes/settings.tsx(443,32): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/routes/settings.tsx(448,61): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/routes/settings.tsx(455,39): error TS7006: Parameter 'snippet' implicitly has an 'any' type.
+src/routes/test-error-boundary.tsx(13,38): error TS2345: Argument of type '"/test-error-boundary"' is not assignable to parameter of type 'undefined'.
+src/routes/test-fs-adapter.tsx(4,31): error TS2307: Cannot find module '../hooks/useMediaQuery' or its corresponding type declarations.
+src/routes/test-fs-adapter.tsx(6,38): error TS2345: Argument of type '"/test-fs-adapter"' is not assignable to parameter of type 'undefined'.
+src/routes/webcontainer.$.tsx(3,38): error TS2345: Argument of type '"/webcontainer/$"' is not assignable to parameter of type 'undefined'.
+src/routes/workspace/$projectId.tsx(22,38): error TS2307: Cannot find module '@/presentation/components/ui/Toast' or its corresponding type declarations.
+src/routes/workspace/$projectId.tsx(23,33): error TS2307: Cannot find module '@/lib/workspace/ProjectContext' or its corresponding type declarations.
+src/routes/workspace/$projectId.tsx(27,35): error TS2307: Cannot find module '@/infrastructure/persistence/stores/workspace/workspace-store' or its corresponding type declarations.
+src/routes/workspace/$projectId.tsx(31,37): error TS2307: Cannot find module '@/presentation/components/layout/IDELayoutMain' or its corresponding type declarations.
+src/routes/workspace/$projectId.tsx(79,38): error TS2345: Argument of type '"/workspace/$projectId"' is not assignable to parameter of type 'undefined'.
+src/routes/workspace/$projectId.tsx(86,39): error TS2339: Property 'projectId' does not exist on type 'never'.
+src/routes/workspace/$projectId.tsx(89,58): error TS2339: Property 'projectId' does not exist on type 'never'.
+src/routes/workspace/$projectId.tsx(92,95): error TS2339: Property 'projectId' does not exist on type 'never'.
+src/routes/workspace/$projectId.tsx(103,35): error TS2339: Property 'project' does not exist on type 'never'.
+src/routes/workspace/index.tsx(11,38): error TS2345: Argument of type '"/workspace/"' is not assignable to parameter of type 'undefined'.

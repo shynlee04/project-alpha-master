@@ -1,0 +1,376 @@
+{
+  "search_timestamp": "2026-01-19T12:00:00+00:00",
+  "search_scope": {
+    "directories": [
+      "src/infrastructure/persistence/stores/",
+      "src/presentation/components/**/*.tsx",
+      "src/routes/**/*.tsx",
+      "src/lib/notes/"
+    ],
+    "zucostand_version": "v5"
+  },
+  "good_patterns": [
+    {
+      "file": "src/lib/notes/note-navigation-store.ts",
+      "line": 177,
+      "selector": "s => state.expandedNodes.has(id)",
+      "hook_name": "useNodeExpanded",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/lib/notes/note-navigation-store.ts",
+      "line": 183,
+      "selector": "s => state.searchQuery",
+      "hook_name": "useSearchQuery",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/lib/notes/note-navigation-store.ts",
+      "line": 190,
+      "selector": "s => state.showFavoritesOnly",
+      "hook_name": "useFavoritesFilter",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/lib/notes/note-navigation-store.ts",
+      "line": 198,
+      "selector": "useShallow((s) => ({...}))",
+      "hook_name": "useNoteScrollPosition",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/lib/notes/note-store-refactored.ts",
+      "line": 156,
+      "selector": "s => s.notesArray",
+      "hook_name": "useActiveNote",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/lib/notes/note-store-refactored.ts",
+      "line": 167,
+      "selector": "s => s.saveStatus",
+      "hook_name": "useNoteSaveStatus",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/lib/notes/note-store-refactored.ts",
+      "line": 174,
+      "selector": "s => s.getNotesByParent(parentId)",
+      "hook_name": "useNotesByParent",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/lib/notes/note-store-refactored.ts",
+      "line": 184,
+      "selector": "s => s.getFavoriteNotes()",
+      "hook_name": "useFavoriteNotes",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "line": 77,
+      "selector": "s => { if (!s.activeProjectId) return null; return s.projects[s.activeProjectId] || null; }",
+      "hook_name": "useActiveProject",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "line": 92,
+      "selector": "useShallow((s) => state.projects ? Object.values(state.projects) : [])",
+      "hook_name": "useAllProjects",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "line": 100,
+      "selector": "useShallow((s) => s.getRecentProjects(limit))",
+      "hook_name": "useRecentProjects",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "line": 115,
+      "selector": "useShallow((s) => s.getProjectStats())",
+      "hook_name": "useProjectStats",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "line": 432,
+      "selector": "useShallow pattern",
+      "hook_name": "useActiveConversation",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "line": 464,
+      "selector": "s => s.threads[threadId]",
+      "hook_name": "useActiveThread",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "line": 474,
+      "selector": "useShallow((s) => ({...}))",
+      "hook_name": "useActiveThreadWithControls",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 101,
+      "selector": "s => s.projectId",
+      "store_name": "useIDEStore",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 136,
+      "selector": "useShallow((state) => ({...}))",
+      "store_name": "useConversationStore",
+      "pattern_type": "useShallow"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 144,
+      "selector": "s => { const threads = Object.values(s.threads).filter(...) }",
+      "store_name": "useConversationStore",
+      "pattern_type": "derived_selector"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 152,
+      "selector": "s => s.panelCollapsed['notes-sidebar'] ?? false",
+      "store_name": "useIDEStore",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 153,
+      "selector": "s => s.setPanelCollapsed",
+      "store_name": "useIDEStore",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 156,
+      "selector": "s => s.panelCollapsed['notes-chat'] ?? false",
+      "store_name": "useIDEStore",
+      "pattern_type": "individual_selector"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 157,
+      "selector": "s => s.chatVisible ?? true",
+      "store_name": "useIDEStore",
+      "pattern_type": "individual_selector"
+    }
+  ],
+  "bad_patterns": [
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 118,
+      "pattern": "destructuring",
+      "code": "const { notesArray, currentProjectId, loadNotes, loadAllNotes, createNote, setActiveNote, activeNoteId, toggleFavorite } = useNoteStore();",
+      "severity": "High",
+      "reason": "Entire store state returned, triggers re-render on ANY state change"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteTreeItem.tsx",
+      "line": 46,
+      "pattern": "destructuring",
+      "code": "const { toggleFavorite } = useNoteStore();",
+      "severity": "High",
+      "reason": "Entire store state returned just to access one action"
+    },
+    {
+      "file": "src/presentation/components/notes/ProjectFilesPanel.tsx",
+      "line": 74,
+      "pattern": "destructuring",
+      "code": "const { createNote, setActiveNote } = useNoteStore();",
+      "severity": "High",
+      "reason": "Entire store state returned just to access actions"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteContextMenu.tsx",
+      "line": 51,
+      "pattern": "destructuring",
+      "code": "const { toggleFavorite, deleteNote, updateNote } = useNoteStore();",
+      "severity": "High",
+      "reason": "Entire store state returned just to access actions"
+    },
+    {
+      "file": "src/presentation/components/ide/AgentChatPanel/AgentChatToolFacades.tsx",
+      "line": 58,
+      "pattern": "destructuring",
+      "code": "const noteStoreState = useNoteStore();",
+      "severity": "High",
+      "reason": "Entire store state returned, causes unnecessary re-renders"
+    },
+    {
+      "file": "src/presentation/components/agent/AgentWorkspaceSwitchingFeedback.tsx",
+      "line": 99,
+      "pattern": "destructuring",
+      "code": "const { currentWorkspace } = useWorkspaceStore();",
+      "severity": "High",
+      "reason": "Entire store state returned just to access one property"
+    },
+    {
+      "file": "src/presentation/components/agent/AgentWorkspaceSwitchingFeedback.tsx",
+      "line": 422,
+      "pattern": "destructuring",
+      "code": "const { currentWorkspace } = useWorkspaceStore();",
+      "severity": "High",
+      "reason": "Entire store state returned just to access one property"
+    },
+    {
+      "file": "src/presentation/components/layout/ChatPanelWrapper.tsx",
+      "line": 71,
+      "pattern": "destructuring",
+      "code": "const { setActiveThread } = useConversationStore();",
+      "severity": "High",
+      "reason": "Entire store state returned just to access one action"
+    },
+    {
+      "file": "src/presentation/components/ide/AgentChatPanel/AgentChatConversationManager.tsx",
+      "line": 41,
+      "pattern": "destructuring",
+      "code": "const { activeThreadId, threads } = useConversationStore();",
+      "severity": "High",
+      "reason": "Entire store state returned, triggers re-render on ANY conversation state change"
+    }
+  ],
+  "store_definitions": [
+    {
+      "file": "src/infrastructure/persistence/stores/use-app-store.ts",
+      "store_name": "useAppStore",
+      "size": 377,
+      "has_god_store": true,
+      "slice_count": 8,
+      "persistence": "Dexie IndexedDB"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "store_name": "useConversationStore",
+      "size": 495,
+      "has_god_store": true,
+      "slice_count": 1,
+      "note": "Backward compatibility facade - actual store is unified-chat-store"
+    },
+    {
+      "file": "src/lib/notes/note-store-refactored.ts",
+      "store_name": "useNoteStore",
+      "size": 205,
+      "has_god_store": false,
+      "slice_count": 7,
+      "persistence": "Dexie IndexedDB"
+    },
+    {
+      "file": "src/lib/notes/note-navigation-store.ts",
+      "store_name": "useNoteNavigationStore",
+      "size": 205,
+      "has_god_store": false,
+      "slice_count": 1,
+      "persistence": "localStorage"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "store_name": "useProjectStore",
+      "size": 148,
+      "has_god_store": false,
+      "slice_count": 5,
+      "persistence": "Dexie IndexedDB"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "store_name": "useWorkspaceStore",
+      "size": 226,
+      "has_god_store": false,
+      "slice_count": 1,
+      "persistence": "localStorage"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/agents/agent-selection-store.ts",
+      "store_name": "useAgentSelectionStore",
+      "size": 143,
+      "has_god_store": false,
+      "slice_count": 1,
+      "persistence": "None (transient)"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/ide/ide-editor-slice.ts",
+      "store_name": "useIDEStore",
+      "size": 0,
+      "has_god_store": false,
+      "slice_count": 1,
+      "note": "Likely slice exported from workspace store"
+    }
+  ],
+  "god_stores_identified": [
+    {
+      "file": "src/infrastructure/persistence/stores/use-app-store.ts",
+      "store_name": "useAppStore",
+      "size": 377,
+      "threshold_exceeded": 77,
+      "recommendation": "Split into separate slice files (agents-slice.ts, providers-slice.ts, etc.)"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "store_name": "useConversationStore",
+      "size": 495,
+      "threshold_exceeded": 195,
+      "recommendation": "This is a facade - actual store is unified-chat-store. Refactor facade to use individual hooks."
+    }
+  ],
+  "summary": {
+    "total_bad_patterns": 9,
+    "files_affected": 6,
+    "god_stores": 2,
+    "good_patterns_count": 23,
+    "useShallow_usage": 7,
+    "individual_selectors": 16,
+    "by_store": {
+      "useNoteStore": {
+        "bad_patterns": 5,
+        "files": ["NotesPage.tsx", "NoteTreeItem.tsx", "ProjectFilesPanel.tsx", "NoteContextMenu.tsx", "AgentChatToolFacades.tsx"]
+      },
+      "useWorkspaceStore": {
+        "bad_patterns": 2,
+        "files": ["AgentWorkspaceSwitchingFeedback.tsx"]
+      },
+      "useConversationStore": {
+        "bad_patterns": 2,
+        "files": ["ChatPanelWrapper.tsx", "AgentChatConversationManager.tsx"]
+      }
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "P0",
+      "type": "bad_pattern_fix",
+      "description": "Fix destructuring patterns in 6 files",
+      "estimated_effort": "1-2 hours",
+      "pattern_change": "Replace `const { x } = useStore()` with `const x = useStore(s => s.x)` or create hook"
+    },
+    {
+      "priority": "P1",
+      "type": "god_store_refactor",
+      "description": "Refactor useAppStore (377 lines) into slice pattern",
+      "estimated_effort": "4-6 hours",
+      "pattern_change": "Split into: agent-crud-slice.ts, agent-workspace-slice.ts, provider-crud-slice.ts, provider-utils-slice.ts"
+    },
+    {
+      "priority": "P1",
+      "type": "facade_cleanup",
+      "description": "Clean up useConversationStore facade",
+      "estimated_effort": "2-3 hours",
+      "pattern_change": "Move individual selector hooks to avoid direct store access"
+    },
+    {
+      "priority": "P2",
+      "type": "migration",
+      "description": "Migrate legacy lib/notes stores to infrastructure/persistence/stores",
+      "estimated_effort": "8-12 hours",
+      "pattern_change": "Move note-store-refactored.ts to infrastructure/persistence/stores/notes/"
+    }
+  ]
+}

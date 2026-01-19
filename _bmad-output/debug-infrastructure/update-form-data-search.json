@@ -1,0 +1,290 @@
+{
+  "search_timestamp": "2026-01-19T12:30:00+07:00",
+  "search_scope": "src/",
+  "search_patterns": ["updateFormData", "setFormData", "formData", "WizardFormData", "INITIAL_FORM_DATA", "updateProject", "setProject"],
+  "total_matches": 142,
+  "summary": {
+    "primary_pattern": "updateFormData",
+    "definition_location": "src/presentation/components/project/ProjectCreationWizard.tsx",
+    "usage_count": 47,
+    "related_patterns": {
+      "WizardFormData_interface": 1,
+      "INITIAL_FORM_DATA": 1,
+      "formData_state": 2,
+      "setFormData": 1,
+      "updateProject": 17
+    }
+  },
+  "definitions": [
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 265,
+      "code": "const updateFormData = useCallback(<K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => {\n    setFormData((prev) => ({ ...prev, [key]: value }));\n    // Clear error for current step when data changes\n    if (stepErrors[currentStep]) {\n      setStepErrors((prev) => {\n        const { [currentStep]: _, ...rest } = prev;\n        return rest;\n      });\n    }\n  }, [currentStep, stepErrors]);",
+      "context": "Main updateFormData callback - creates typed form updater with error clearing"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 27,
+      "code": "updateFormData: <K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => void;",
+      "context": "Interface definition for ProjectDetailsStep props"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 24,
+      "code": "updateFormData: <K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => void;",
+      "context": "Interface definition for WorkspaceSetupStep props"
+    },
+    {
+      "file": "src/presentation/components/project/steps/AgentSelectionStep.tsx",
+      "line": 37,
+      "code": "updateFormData: <K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => void;",
+      "context": "Interface definition for AgentSelectionStep props"
+    },
+    {
+      "file": "src/presentation/components/project/steps/FileSetupStep.tsx",
+      "line": 23,
+      "code": "updateFormData: <K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => void;",
+      "context": "Interface definition for FileSetupStep props"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ReviewStep.tsx",
+      "line": 25,
+      "code": "updateFormData: <K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => void;",
+      "context": "Interface definition for ReviewStep props"
+    },
+    {
+      "file": "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+      "line": 26,
+      "code": "updateFormData: <K extends keyof WizardFormData>(\n    key: K,\n    value: WizardFormData[K]\n  ) => void;",
+      "context": "Interface definition for TemplateSelectionStep props"
+    }
+  ],
+  "usages": [
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 161,
+      "code": "const [formData, setFormData] = useState<WizardFormData>(INITIAL_FORM_DATA);",
+      "context": "useState declaration for form data"
+    },
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 338,
+      "code": "const props = {\n  formData,\n  updateFormData,\n  error: stepErrors[currentStep],\n};",
+      "context": "Props passed to step components"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 97,
+      "code": "updateFormData('storageType', optimalStorage as WizardFormData['storageType']);",
+      "context": "Auto-detect storage type based on platform"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 137,
+      "code": "updateFormData('fsaHandle', handle);",
+      "context": "Update FSA folder handle after picker selection"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 184,
+      "code": "onChange={(e) => updateFormData('projectName', e.target.value)}",
+      "context": "Project name input change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 220,
+      "code": "onChange={(e) => updateFormData('projectDescription', e.target.value)}",
+      "context": "Project description textarea change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 251,
+      "code": "updateFormData('projectType', e.target.value as WizardFormData['projectType'])",
+      "context": "Project type select change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 290,
+      "code": "updateFormData('storageType', type.value)",
+      "context": "Storage type button click handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 397,
+      "code": "onClick={() => updateFormData('projectIcon', icon)}",
+      "context": "Project icon selection click handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 105,
+      "code": "onChange={(e) => updateFormData('workspaceEnabled', e.target.checked)}",
+      "context": "Workspace enabled toggle change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 139,
+      "code": "onChange={(e) => updateFormData('workspaceName', e.target.value)}",
+      "context": "Workspace name input change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 170,
+      "code": "updateFormData('workspaceType', type.value as WizardFormData['workspaceType'])",
+      "context": "Workspace type button click handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 203,
+      "code": "updateFormData('workspaceTemplate', template.value as WizardFormData['workspaceTemplate'])",
+      "context": "Workspace template button click handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 253,
+      "code": "updateFormData('workspaceBindings', {\n  ...formData.workspaceBindings,\n  [binding.key]: !isChecked,\n});",
+      "context": "Workspace bindings toggle handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "line": 267,
+      "code": "updateFormData('workspaceBindings', {\n  ...formData.workspaceBindings,\n  [binding.key]: !isChecked,\n});",
+      "context": "Workspace bindings checkbox change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/AgentSelectionStep.tsx",
+      "line": 89,
+      "code": "updateFormData('agentPermissions', {\n  ...formData.agentPermissions,\n  [permission]: value,\n});",
+      "context": "Agent permission change handler helper function"
+    },
+    {
+      "file": "src/presentation/components/project/steps/AgentSelectionStep.tsx",
+      "line": 116,
+      "code": "onChange={(e) => updateFormData('agentEnabled', e.target.checked)}",
+      "context": "Agent enabled toggle change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/AgentSelectionStep.tsx",
+      "line": 148,
+      "code": "onClick={() => updateFormData('selectedAgent', agent.value)}",
+      "context": "Agent selection click handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/FileSetupStep.tsx",
+      "line": 76,
+      "code": "updateFormData(option, value);",
+      "context": "File option change handler helper function"
+    },
+    {
+      "file": "src/presentation/components/project/steps/FileSetupStep.tsx",
+      "line": 107,
+      "code": "onChange={(e) => updateFormData('fileSetupEnabled', e.target.checked)}",
+      "context": "File setup enabled toggle change handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+      "line": 90,
+      "code": "updateFormData('template', selectedTemplate.id);",
+      "context": "Template selection click handler"
+    },
+    {
+      "file": "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+      "line": 111,
+      "code": "updateFormData('templateValidationError', validationError as any);",
+      "context": "Template validation error update"
+    },
+    {
+      "file": "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+      "line": 191,
+      "code": "updateFormData('packageManager', pm as any);",
+      "context": "Package manager change handler"
+    }
+  ],
+  "related_patterns": [
+    {
+      "file": "src/presentation/components/project/wizard-types.ts",
+      "line": 16,
+      "pattern": "WizardFormData",
+      "code": "export interface WizardFormData {",
+      "context": "Central WizardFormData type definition (59 lines)"
+    },
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 81,
+      "pattern": "INITIAL_FORM_DATA",
+      "code": "const INITIAL_FORM_DATA: WizardFormData = {\n  projectName: '',\n  projectDescription: '',\n  projectType: 'app',\n  projectIcon: '📁',\n  // ... more fields\n};",
+      "context": "Initial form data constant with all default values"
+    },
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 161,
+      "pattern": "formData",
+      "code": "const [formData, setFormData] = useState<WizardFormData>(INITIAL_FORM_DATA);",
+      "context": "useState hook for form data management"
+    },
+    {
+      "file": "src/presentation/components/notes/SlashCommandManager.tsx",
+      "line": 80,
+      "pattern": "formData",
+      "code": "const [formData, setFormData] = useState<Partial<CustomSlashCommand>>({});",
+      "context": "Separate form state for slash command management (different component)"
+    },
+    {
+      "file": "src/presentation/components/notes/SlashCommandManager.tsx",
+      "line": 136,
+      "pattern": "setFormData",
+      "code": "setFormData({ ...formData, tags: newTags });",
+      "context": "Slash command form data update"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/project-crud-slice.ts",
+      "line": 181,
+      "pattern": "updateProject",
+      "code": "updateProject: (projectId: string, updates: UpdateProjectInput) => {",
+      "context": "Zustand store method for updating projects (different from form update)"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/project/index.ts",
+      "line": 68,
+      "pattern": "updateProject",
+      "code": "state.updateProject(project.id, {",
+      "context": "Usage of updateProject in store"
+    }
+  ],
+  "wizard_form_data_interface": {
+    "file": "src/presentation/components/project/wizard-types.ts",
+    "fields": [
+      "projectName: string",
+      "projectDescription: string",
+      "projectType: 'app' | 'library' | 'experiment' | 'learning'",
+      "projectIcon: string",
+      "template?: string",
+      "storageType: ProjectStorageType",
+      "fsaHandle?: FileSystemDirectoryHandle | null",
+      "workspaceBindings: WorkspaceBindings",
+      "workspaceEnabled: boolean",
+      "workspaceName: string",
+      "workspaceType: 'local' | 'webcontainer'",
+      "workspaceTemplate: 'blank' | 'react-app' | 'next-app' | 'node-lib'",
+      "agentEnabled: boolean",
+      "selectedAgent: string",
+      "agentPermissions: { read: boolean; write: boolean; execute: boolean; }",
+      "fileSetupEnabled: boolean",
+      "createReadme: boolean",
+      "createGitignore: boolean",
+      "initialFiles: Array<{ name: string; content: string }>",
+      "templateValidationError?: string",
+      "packageManager?: string"
+    ],
+    "total_fields": 21
+  },
+  "architecture_notes": {
+    "pattern_type": "useCallback with generics",
+    "state_management": "React useState (local component state)",
+    "prop_drilling": "updateFormData passed through multiple step components",
+    "scope": "ProjectCreationWizard component and its child steps",
+    "related_patterns": [
+      "SlashCommandManager.tsx uses separate formData state",
+      "Project store uses updateProject (Zustand) for persistence"
+    ]
+  }
+}

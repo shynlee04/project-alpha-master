@@ -1,0 +1,172 @@
+{
+  "welcome": "Welcome to Via-Gent",
+  "actions.toggleLanguage": "Toggle Language",
+  "navigation.title": "Menu",
+  "navigation.home": "Home",
+  "navigation.startServerFunctions": "Server Functions",
+  "navigation.startApiRequest": "API Request",
+  "navigation.startSsrDemos": "SSR Demos",
+  "navigation.startSpaMode": "SPA Mode",
+  "navigation.startFullSsr": "Full SSR",
+  "navigation.startDataOnly": "Data Only",
+  "ide.noFileOpen": "No file open",
+  "ide.selectFile": "Select a file to edit",
+  "preview.newTabInfo": "Opened preview in new tab",
+  "preview.focusMode": "Focus Mode",
+  "preview.exitFocusMode": "Exit Focus Mode",
+  "preview.focusModeHint": "Press ESC to exit focus mode",
+  "ide.preview": "Preview",
+  "ide.deviceDesktop": "Desktop",
+  "ide.deviceTablet": "Tablet",
+  "ide.deviceMobile": "Mobile",
+  "ide.refreshPreview": "Refresh Preview",
+  "ide.openInNewTab": "Open in New Tab",
+  "ide.waitingDevServer": "Waiting for dev server...",
+  "ide.runDevCommand": "Run npm run dev to start the server",
+  "ide.reAuthorize": "Re-authorize",
+  "ide.fsDenied": "File System Access Denied",
+  "ide.syncError": "Sync Error",
+  "ide.toggleChatShortcut": "Toggle Chat (Cmd+J)",
+  "ide.hideChat": "Hide Chat",
+  "ide.showChat": "Show Chat",
+  "ide.autoSync": "Auto-sync On",
+  "ide.autoSyncOff": "Auto-sync Off",
+  "ide.syncNow": "Sync Now",
+  "ide.switchFolder": "Switch Folder",
+  "ide.openFolder": "Open Folder",
+  "ide.terminal": "Terminal",
+  "ide.output": "Output",
+  "ide.problems": "Problems",
+  "ide.outputSoon": "Output coming soon...",
+  "ide.problemsSoon": "Problems coming soon...",
+  "errors.loadProjects": "Failed to load projects",
+  "errors.permissionDenied": "Permission denied",
+  "errors.generic": "An error occurred",
+  "errors.accessDenied": "Access denied",
+  "errors.fsNotSupported": "File System Access API not supported",
+  "errors.openFolder": "Failed to open folder",
+  "badges.clickToReauthorize": "Click to re-authorize",
+  "badges.accessDenied": "Access denied",
+  "dashboard.title": "Dashboard",
+  "actions.openLocalFolder": "Open Local Folder",
+  "actions.dismiss": "Dismiss",
+  "dashboard.loading": "Loading dashboard...",
+  "status.lastOpened": "Last opened",
+  "dashboard.removeTooltip": "Remove from history",
+  "status.authorizing": "Authorizing...",
+  "status.opening": "Opening...",
+  "actions.openWorkspace": "Open Workspace",
+  "dashboard.emptyTitle": "No Recent Projects",
+  "dashboard.emptySubtitle": "Open a local folder to get started with Via-Gent.",
+  "time.justNow": "Just now",
+  "time.yesterday": "Yesterday",
+  "ide.noFolderSelected": "No folder selected",
+  "ide.openFolderToView": "Open a folder to view files",
+  "ide.loading": "Loading...",
+  "status.pendingFiles": "Pending files",
+  "status.pending": "pending",
+  "status.errorFiles": "Files with errors",
+  "status.error": "error",
+  "status.syncedFiles": "Synced files",
+  "status.synced": "synced",
+  "ide.fileExplorer": "File Explorer",
+  "time.agoSeconds": "{{count}}s ago",
+  "time.agoSeconds_plural": "{{count}}s ago",
+  "time.agoMinutes": "{{count}}m ago",
+  "time.agoMinutes_plural": "{{count}}m ago",
+  "time.agoHours": "{{count}}h ago",
+  "time.agoHours_plural": "{{count}}h ago",
+  "status.syncingFile": "Syncing: {{file}}",
+  "status.syncing": "Syncing",
+  "errors.syncRetry": "Sync error - click to retry",
+  "status.notSynced": "Not synced",
+  "status.lastSynced": "Last synced",
+  "contextMenu.newFile": "New File",
+  "contextMenu.newFolder": "New Folder",
+  "contextMenu.rename": "Rename",
+  "contextMenu.delete": "Delete",
+  "common": {
+    "dismiss": "Dismiss"
+  },
+  "agent": {
+    "title": "Agent Chat",
+    "clear": "Clear",
+    "welcome": {
+      "title": "Welcome to the Agent Chat!",
+      "subtitle": "Ask me anything about your project..."
+    },
+    "welcome_message": "Hi! I'm your AI coding assistant for {{projectName}}. What would you like to work on?",
+    "demo_response": "I'm a demo assistant. Wire me to TanStack AI in Epic 6 for real streaming responses.",
+    "placeholder": "Ask the agent… (⌘K)",
+    "status": {
+      "thinking": "Agent is thinking..."
+    }
+  },
+  "editor": {
+    "loading": "Loading editor...",
+    "noFile": {
+      "title": "No file open",
+      "subtitle": "Select a file to edit"
+    },
+    "input": {
+      "syncWarning": "Editing during sync may cause conflicts"
+    }
+  },
+  "terminal": {
+    "ariaLabel": "Terminal",
+    "shellExited": "Shell exited with code {{code}}",
+    "error": "Terminal Error: {{error}}",
+    "bootFailed": "Failed to boot WebContainer: {{error}}"
+  },
+  "onboarding": {
+    "launch": "Launch Interactive Tour",
+    "slides": {
+      "intro": {
+        "title": "Via-gent",
+        "subtitle": "Your Intelligent Local Dev Environment",
+        "desc": "Experience the future of browser-based development. Zero setup. 100% Privacy."
+      },
+      "privacy": {
+        "title": "Complete Privacy",
+        "subtitle": "100% Client-Side",
+        "desc": "No servers. No data tracking. Your code never leaves your browser."
+      },
+      "agents": {
+        "title": "AI-Powered Teams",
+        "subtitle": "Multi-Agent Orchestration",
+        "desc": "Orchestrator, Planner, Coder, and Validator agents working in unison to build your vision."
+      },
+      "workflows": {
+        "title": "Workflow for Every Department",
+        "subtitle": "Unified Process",
+        "desc": "Seamlessly bridge Research, Design, Coding, and Deployment in one workspace."
+      },
+      "roadmap": {
+        "title": "The Future",
+        "subtitle": "Roadmap",
+        "desc": "Collaborative Editing, Mobile Support, and Plugin Architecture coming soon."
+      },
+      "contact": {
+        "title": "Join the Revolution",
+        "subtitle": "Connect with Creator",
+        "roles": "Creator & Maintainer",
+        "name": "Linh Nguyen"
+      }
+    },
+    "controls": {
+      "next": "Next",
+      "prev": "Previous",
+      "close": "Close Pitch",
+      "restart": "Replay"
+    }
+  },
+  "webcontainer": {
+    "notSupported": {
+      "title": "Preview Not Available",
+      "subtitle": "WebContainer Preview Limitation",
+      "description": "This preview is bound to the IDE tab where WebContainer was initialized. Preview cannot be viewed in a separate browser tab.",
+      "explanation": "WebContainer runs a full Node.js environment in your browser. For security and resource management, previews must remain within the IDE session.",
+      "backToDashboard": "Back to Dashboard"
+    }
+  }
+}

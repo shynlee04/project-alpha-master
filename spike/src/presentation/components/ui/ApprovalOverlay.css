@@ -1,0 +1,210 @@
+/**
+ * Approval Overlay Styles
+ * @module components/ui/ApprovalOverlay.css
+ *
+ * 8-bit gaming aesthetic animations for the approval overlay.
+ * RC-008: Sprint 27B - Approval Overlay UI
+ */
+
+/* Fade animations */
+.fade-in {
+    animation: fadeIn 0.15s ease-out forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.15s ease-in forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Scale animations for modal */
+.scale-in {
+    animation: scaleIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.scale-out {
+    animation: scaleOut 0.12s ease-in forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes scaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+}
+
+/* Pixel corners effect */
+.pixel-corners {
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% calc(100% - 8px),
+        calc(100% - 8px) 100%,
+        0 100%
+    );
+}
+
+/* Risk badge animations */
+.risk-low {
+    animation: pulse-green 2s ease-in-out infinite;
+}
+
+.risk-medium {
+    animation: pulse-yellow 2s ease-in-out infinite;
+}
+
+.risk-high {
+    animation: pulse-orange 1.5s ease-in-out infinite;
+}
+
+.risk-critical {
+    animation: pulse-red 1s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(74, 222, 128, 0);
+    }
+}
+
+@keyframes pulse-yellow {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(250, 204, 21, 0);
+    }
+}
+
+@keyframes pulse-orange {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(251, 146, 60, 0);
+    }
+}
+
+@keyframes pulse-red {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(248, 113, 113, 0);
+    }
+}
+
+/* Button hover effects */
+.approval-overlay button {
+    transition: all 0.1s ease;
+}
+
+.approval-overlay button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.approval-overlay button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.deny-button:hover:not(:disabled) {
+    box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+}
+
+.allow-once-button:hover:not(:disabled) {
+    box-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+}
+
+.allow-always-button:hover:not(:disabled) {
+    box-shadow: 0 0 15px var(--glow-color, rgba(74, 222, 128, 0.4));
+}
+
+/* Backdrop click to close */
+.approval-overlay-backdrop {
+    cursor: pointer;
+}
+
+.approval-overlay-backdrop:hover {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+/* Focus visible for keyboard navigation */
+.approval-overlay button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .fade-in,
+    .fade-out,
+    .scale-in,
+    .scale-out,
+    .risk-low,
+    .risk-medium,
+    .risk-high,
+    .risk-critical {
+        animation: none;
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+    .approval-overlay {
+        max-width: calc(100% - 2rem);
+        margin: 1rem;
+    }
+
+    .approval-overlay .flex.flex-col {
+        flex-direction: column;
+    }
+
+    .approval-overlay button {
+        width: 100%;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .approval-overlay {
+        border-width: 3px;
+    }
+
+    .approval-overlay button {
+        border-width: 2px;
+    }
+}

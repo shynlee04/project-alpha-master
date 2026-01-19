@@ -1,26 +1,28 @@
 /**
  * FileTree Utilities
  */
-import type { DirectoryEntry } from '@/lib/filesystem/local-fs-adapter';
+import type { FileEntry } from '@/domain/interfaces/storage-gateway.interface';
 import type { TreeNode } from './types';
 
 /**
- * Build a TreeNode from a DirectoryEntry.
+ * Build a TreeNode from a FileEntry (StorageGateway format).
  * 
- * @param entry - Directory entry from file system
+ * @param entry - File entry from storage gateway
  * @param parentPath - Parent path for constructing full path
  * @returns TreeNode for the file tree
  */
-export function buildTreeNode(entry: DirectoryEntry, parentPath: string): TreeNode {
-    const path = parentPath ? `${parentPath}/${entry.name}` : entry.name;
+export function buildTreeNode(entry: FileEntry, parentPath: string): TreeNode {
+    // Extract name from path
+    const name = entry.path.split('/').pop() || entry.path;
+    const path = parentPath ? `${parentPath}/${name}` : name;
     return {
-        name: entry.name,
+        name,
         path,
-        type: entry.type,
-        handle: entry.handle,
+        type: entry.kind,
+        handle: undefined, // StorageGateway doesn't provide handles in list()
         expanded: false,
         loading: false,
-        children: entry.type === 'directory' ? undefined : undefined,
+        children: entry.kind === 'directory' ? undefined : undefined,
     };
 }
 

@@ -1,0 +1,161 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# DOCUMENTATION TASK TODO LIST
+# Architectural Requirements & BMAD Governance Tracking
+# ═══════════════════════════════════════════════════════════════════════════
+
+task_id: "DOC-ARCH-2026-01-19"
+created_at: "2026-01-19T00:00:00+07:00"
+status: "completed"
+completed_at: "2026-01-19T00:30:00+07:00"
+assigned_to: "tech-writer-ext"
+priority: "high"
+
+documents_to_create:
+  - id: "DOC-001"
+    name: "Core Centralized Groups Document"
+    file_path: "_bmad-output/planning-artifacts/architecture/core-centralized-groups-2026-01-19.md"
+    artifact_id: "doc-001-core-groups"
+    sections:
+      - "BYOK Vault System"
+      - "Project Space Architecture"
+      - "Agents & LLMs Orchestration"
+      - "Chat Cascade & Thread Management"
+    status: "completed"
+
+  - id: "DOC-002"
+    name: "Cross-Workspace Integration Document"
+    file_path: "_bmad-output/planning-artifacts/architecture/cross-workspace-integration-2026-01-19.md"
+    artifact_id: "doc-002-cross-workspace"
+    sections:
+      - "Feature Mapping"
+      - "Entry Points Definition"
+      - "Routing Logic"
+      - "User Journey Transition Flows"
+    status: "completed"
+
+  - id: "DOC-003"
+    name: "Workspace-Specific Features Document"
+    file_path: "_bmad-output/planning-artifacts/architecture/workspace-features-2026-01-19.md"
+    artifact_id: "doc-003-workspace-features"
+    sections:
+      - "IDE Workspace Requirements"
+      - "Notes Workspace Requirements"
+      - "Knowledge Workspace (Disabled for MVP)"
+      - "Study Workspace (Disabled for MVP)"
+      - "Environment Rendering Patterns"
+    status: "completed"
+
+  - id: "DOC-004"
+    name: "Keywords Checklist Document"
+    file_path: "_bmad-output/planning-artifacts/architecture/keywords-checklist-2026-01-19.md"
+    artifact_id: "doc-004-keywords-checklist"
+    sections:
+      - "11 Fundamental Truths with Implementation Details"
+      - "Client-side Only Constraints"
+      - "BYOK Implementation Specs"
+      - "Project-Centric Architecture"
+      - "Device Parity Rules"
+      - "Thread Management Specifications"
+      - "Agent Permission Model"
+      - "Rendering Support Matrix"
+      - "State Management Boundaries"
+      - "Technical Hygiene Requirements"
+      - "Edge Case Handling"
+      - "Gap Analysis Framework"
+    status: "completed"
+
+governance_tasks:
+  - id: "GOV-001"
+    name: "Update ARTIFACT_REGISTRY.yaml"
+    description: "Register all 4 new documents in the artifact registry"
+    status: "completed"
+    completed_at: "2026-01-19T00:25:00+07:00"
+    depends_on: ["DOC-001", "DOC-002", "DOC-003", "DOC-004"]
+
+  - id: "GOV-002"
+    name: "Add Governance Compliance Notes"
+    description: "Add governance compliance notes to each document"
+    status: "completed"
+    completed_at: "2026-01-19T00:20:00+07:00"
+    depends_on: ["DOC-001", "DOC-002", "DOC-003", "DOC-004"]
+
+  - id: "GOV-003"
+    name: "Create Dependencies Map"
+    description: "Create a dependencies map showing relationships between components"
+    status: "completed"
+    completed_at: "2026-01-19T00:15:00+07:00"
+    depends_on: ["DOC-001", "DOC-002", "DOC-003", "DOC-004"]
+
+implementation_todo:
+  - id: "IMP-001"
+    name: "BYOK Vault Implementation"
+    description: "Implement key persistence and TanStack AI SDK integration"
+    status: "pending"
+    priority: "P0"
+    depends_on: ["DOC-001"]
+
+  - id: "IMP-002"
+    name: "Project Space Routing"
+    description: "Implement entry point matrix and routing logic"
+    status: "pending"
+    priority: "P0"
+    depends_on: ["DOC-001", "DOC-002"]
+
+  - id: "IMP-003"
+    name: "Agent Orchestration Layer"
+    description: "Implement two-tier system prompts and tool management"
+    status: "pending"
+    priority: "P1"
+    depends_on: ["DOC-001"]
+
+  - id: "IMP-004"
+    name: "Thread Management System"
+    description: "Implement chat cascade and thread binding to Project ID"
+    status: "pending"
+    priority: "P1"
+    depends_on: ["DOC-001", "DOC-004"]
+
+  - id: "IMP-005"
+    name: "Cross-Workspace Integration"
+    description: "Implement workspace transitions and user journey flows"
+    status: "pending"
+    priority: "P2"
+    depends_on: ["DOC-002", "DOC-003"]
+
+  - id: "IMP-006"
+    name: "Device Parity Enforcement"
+    description: "Implement FSA vs Dexie device detection and enforcement"
+    status: "pending"
+    priority: "P0"
+    depends_on: ["DOC-004"]
+
+progress_log:
+  - timestamp: "2026-01-19T00:00:00+07:00"
+    action: "Task initiated"
+    status: "in_progress"
+
+  - timestamp: "2026-01-19T00:05:00+07:00"
+    action: "Context loaded from governance files"
+    status: "completed"
+
+  - timestamp: "2026-01-19T00:10:00+07:00"
+    action: "TODO list created"
+    status: "completed"
+
+  - timestamp: "2026-01-19T00:15:00+07:00"
+    action: "Dependencies map created in DOC-001"
+    status: "completed"
+
+  - timestamp: "2026-01-19T00:20:00+07:00"
+    action: "Governance compliance notes added to all documents"
+    status: "completed"
+
+  - timestamp: "2026-01-19T00:25:00+07:00"
+    action: "ARTIFACT_REGISTRY.yaml updated"
+    status: "completed"
+
+  - timestamp: "2026-01-19T00:30:00+07:00"
+    action: "All 4 documents created successfully"
+    status: "completed"
+    documents_created: 4

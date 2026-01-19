@@ -137,3 +137,50 @@ sessions:
     created_at: "2026-01-16T20:00:00+07:00"
     status: "complete"
     tasks_completed: 8
+
+  # Architectural Documentation (2026-01-19)
+  - id: "doc-001-core-groups"
+    type: "documentation"
+    name: "Core Centralized Groups Document"
+    path: "_bmad-output/planning-artifacts/architecture/core-centralized-groups-2026-01-19.md"
+    parent_id: "adr-033"
+    created_at: "2026-01-19T00:00:00+07:00"
+    status: "active"
+    sections: ["BYOK Vault System", "Project Space Architecture", "Agents & LLMs Orchestration", "Chat Cascade & Thread Management"]
+
+  - id: "doc-002-cross-workspace"
+    type: "documentation"
+    name: "Cross-Workspace Integration Document"
+    path: "_bmad-output/planning-artifacts/architecture/cross-workspace-integration-2026-01-19.md"
+    parent_id: "doc-001-core-groups"
+    created_at: "2026-01-19T00:00:00+07:00"
+    status: "active"
+    sections: ["Feature Mapping", "Entry Points Definition", "Routing Logic", "User Journey Transition Flows"]
+
+  - id: "doc-003-workspace-features"
+    type: "documentation"
+    name: "Workspace-Specific Features Document"
+    path: "_bmad-output/planning-artifacts/architecture/workspace-features-2026-01-19.md"
+    parent_id: "doc-001-core-groups"
+    created_at: "2026-01-19T00:00:00+07:00"
+    status: "active"
+    sections: ["IDE Workspace", "Notes Workspace", "Knowledge Workspace", "Study Workspace", "Environment Rendering"]
+
+  - id: "doc-004-keywords-checklist"
+    type: "documentation"
+    name: "Keywords Checklist Document (11 Fundamental Truths)"
+    path: "_bmad-output/planning-artifacts/architecture/keywords-checklist-2026-01-19.md"
+    parent_id: "doc-001-core-groups"
+    created_at: "2026-01-19T00:00:00+07:00"
+    status: "active"
+    sections: ["Client-Side Only", "BYOK Implementation", "Project-Centric Architecture", "Device Parity", "Thread Management", "Agent Permissions", "State Boundaries"]
+
+  - id: "doc-architecture-todo"
+    type: "task"
+    name: "Documentation Task TODO List"
+    path: "_bmad-output/planning-artifacts/architecture/documentation-todo-2026-01-19.yaml"
+    parent_id: "doc-001-core-groups"
+    created_at: "2026-01-19T00:00:00+07:00"
+    status: "completed"
+    documents_created: 4
+    implementation_todos: 6

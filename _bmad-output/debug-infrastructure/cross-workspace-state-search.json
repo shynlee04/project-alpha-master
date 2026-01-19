@@ -1,0 +1,793 @@
+{
+  "search_timestamp": "2026-01-19T12:00:00.000Z",
+  "search_summary": {
+    "total_store_hook_usages": 436,
+    "total_event_bus_usages": 584,
+    "cross_workspace_event_types": 14,
+    "primary_shared_stores": 12,
+    "potential_issues_identified": 8
+  },
+  "ide_workspace": {
+    "state_files": [
+      "src/infrastructure/persistence/stores/ide/useIDEStore.ts",
+      "src/infrastructure/persistence/stores/ide/ide-editor-slice.ts",
+      "src/infrastructure/persistence/stores/ide/ide-explorer-slice.ts",
+      "src/infrastructure/persistence/stores/ide/ide-layout-slice.ts",
+      "src/infrastructure/persistence/stores/ide/ide-project-slice.ts",
+      "src/infrastructure/persistence/stores/ide/ide-terminal-slice.ts",
+      "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "src/presentation/components/ide/AgentChatPanel.tsx",
+      "src/presentation/components/ide/FileTree/FileTree.tsx",
+      "src/presentation/components/ide/ExplorerPanel.tsx",
+      "src/presentation/components/ide/IDEMobileLayout.tsx",
+      "src/presentation/components/ide/statusbar/StatusBarSegment.tsx",
+      "src/presentation/components/layout/IDELayout/IDEResizableLayout.tsx"
+    ],
+    "problematic_patterns": [
+      {
+        "pattern": "useIDEStore dependency on useProjectStore",
+        "location": "src/presentation/components/ide/IDEMobileLayout.tsx:135",
+        "description": "IDEMobileLayout imports useIDEStore and depends on projectId from IDE store which may not be synchronized with Notes/Knowledge stores",
+        "severity": "medium",
+        "impact": "State desynchronization between IDE and other workspaces when switching projects"
+      },
+      {
+        "pattern": "useIDEStore direct access without useShallow",
+        "location": "src/presentation/components/ide/IDEMobileLayout.tsx:31",
+        "description": "Uses useIDEStore directly without useShallow which can cause unnecessary re-renders",
+        "severity": "low",
+        "impact": "Performance degradation on store updates"
+      },
+      {
+        "pattern": "IDE components listening to cross-workspace events",
+        "location": "src/presentation/components/ide/AgentChatPanel.tsx:300-396",
+        "description": "Multiple useEffect hooks for event subscriptions that may not properly clean up on workspace unmount",
+        "severity": "medium",
+        "impact": "Potential memory leaks and stale event handlers"
+      },
+      {
+        "pattern": "ProjectContext wrapping without proper cleanup",
+        "location": "src/routes/ide.$projectId.tsx:86-93",
+        "description": "useEffect sets project in workspace-scoped store but may not clear on unmount",
+        "severity": "low",
+        "impact": "Potential state leakage when switching projects"
+      }
+    ],
+    "shared_dependencies": [
+      {
+        "store": "useProjectStore",
+        "usage_pattern": "projectId synchronization",
+        "cross_workspace_impact": ["notes", "knowledge", "study"],
+        "sync_mechanism": "ProjectContext + localStorage persistence"
+      },
+      {
+        "store": "useConversationStore",
+        "usage_pattern": "chat/agent conversation state",
+        "cross_workspace_impact": ["notes", "knowledge"],
+        "sync_mechanism": "crossWorkspaceEventBus + unified-chat-store"
+      },
+      {
+        "store": "useRAGStore",
+        "usage_pattern": "file indexing and search",
+        "cross_workspace_impact": ["notes", "knowledge"],
+        "sync_mechanism": "eventBus.emitFileCreated/Updated/Deleted"
+      },
+      {
+        "store": "useAgentSelectionStore",
+        "usage_pattern": "active agent per workspace",
+        "cross_workspace_impact": ["notes", "knowledge", "study"],
+        "sync_mechanism": "crossWorkspaceEventBus.emitAgentConfigChange"
+      }
+    ],
+    "form_state_patterns": [
+      {
+        "form": "AgentConfigDialog",
+        "location": "src/presentation/components/agent/AgentConfigDialog.tsx",
+        "state_management": "useAgentFormState hook",
+        "workspace_isolated": true
+      },
+      {
+        "form": "AgentChatPanel settings",
+        "location": "src/presentation/components/ide/AgentChatPanel.tsx",
+        "state_management": "useAgentChatMessages/useAgentChatApproval hooks",
+        "workspace_isolated": true
+      }
+    ],
+    "useEffect_hooks_span_boundaries": [
+      {
+        "file": "src/presentation/components/ide/AgentChatPanel.tsx",
+        "lines": [96, 300, 304, 378, 396, 447],
+        "effects": [
+          "API key validation check",
+          "Conversation message subscriptions",
+          "Tool execution tracking",
+          "Approval state sync"
+        ],
+        "cross_workspace_listeners": true
+      },
+      {
+        "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+        "lines": [126, 183, 188, 200, 204, 209, 220, 278, 297, 549],
+        "effects": [
+          "Editor content sync",
+          "File change subscriptions",
+          "WebContainer boot status",
+          "Cursor position tracking"
+        ],
+        "cross_workspace_listeners": false
+      }
+    ]
+  },
+  "notes_workspace": {
+    "state_files": [
+      "src/infrastructure/persistence/stores/navigation-store.ts",
+      "src/presentation/components/notes/NoteEditor.tsx",
+      "src/presentation/components/notes/NoteSidebar.tsx",
+      "src/presentation/components/notes/NotesPage.tsx",
+      "src/presentation/components/notes/NoteTree.tsx",
+      "src/presentation/components/notes/NoteContextMenu.tsx",
+      "src/presentation/components/notes/ProjectFilesPanel.tsx",
+      "src/presentation/components/notes/blocks/ReferenceBlock.tsx",
+      "src/presentation/components/notes/blocks/TTSBlock.tsx",
+      "src/presentation/components/notes/blocks/EmbedBlock.tsx",
+      "src/presentation/components/notes/NoteSidebarChat.tsx",
+      "src/presentation/components/notes/PromptSuggestionsPanel.tsx"
+    ],
+    "problematic_patterns": [
+      {
+        "pattern": "useConversationStore in NotesPage",
+        "location": "src/presentation/components/notes/NotesPage.tsx:52",
+        "description": "Notes workspace importing conversation store for sidebar chat - creates tight coupling between Notes and chat functionality",
+        "severity": "medium",
+        "impact": "Notes workspace depends on chat infrastructure that may not be properly isolated"
+      },
+      {
+        "pattern": "Cross-workspace file references in ReferenceBlock",
+        "location": "src/presentation/components/notes/blocks/ReferenceBlock.tsx:164-175",
+        "description": "useEffect hooks that may trigger re-indexing when files change in other workspaces",
+        "severity": "low",
+        "impact": "Potential race conditions in RAG indexing"
+      },
+      {
+        "pattern": "ProjectFilesPanel useEffect with project dependency",
+        "location": "src/presentation/components/notes/ProjectFilesPanel.tsx:101",
+        "description": "useEffect that loads project files when project changes - may conflict with IDE file tree state",
+        "severity": "medium",
+        "impact": "File state desynchronization between IDE and Notes workspaces"
+      }
+    ],
+    "shared_dependencies": [
+      {
+        "store": "useProjectStore",
+        "usage_pattern": "projectId and project metadata",
+        "cross_workspace_impact": ["ide", "knowledge", "study"],
+        "sync_mechanism": "useUnifiedProjectState hook + eventBus"
+      },
+      {
+        "store": "useRAGStore",
+        "usage_pattern": "note indexing for search",
+        "cross_workspace_impact": ["knowledge"],
+        "sync_mechanism": "eventBus.emitNotesRAGIndexRequested"
+      },
+      {
+        "store": "useConversationStore",
+        "usage_pattern": "sidebar chat functionality",
+        "cross_workspace_impact": ["ide", "knowledge"],
+        "sync_mechanism": "crossWorkspaceEventBus.emitChatMessageSent"
+      },
+      {
+        "store": "useIDEStore",
+        "usage_pattern": "via useUnifiedProjectState hook",
+        "cross_workspace_impact": ["ide"],
+        "sync_mechanism": "IDE store as single source of truth for projectId"
+      }
+    ],
+    "form_state_patterns": [
+      {
+        "form": "NoteEditor content",
+        "location": "src/presentation/components/notes/NoteEditor.tsx",
+        "state_management": "BlockNote editor state + localStorage persistence",
+        "workspace_isolated": true,
+        "sync_with_ide": "via FileChange events when synced to FSA"
+      },
+      {
+        "form": "AIPromptDialog",
+        "location": "src/presentation/components/notes/AIPromptDialog.tsx",
+        "state_management": "React local state + AI service",
+        "workspace_isolated": true
+      },
+      {
+        "form": "MarkdownImportDialog",
+        "location": "src/presentation/components/notes/MarkdownImportDialog.tsx",
+        "state_management": "React local state",
+        "workspace_isolated": true
+      }
+    ],
+    "useEffect_hooks_span_boundaries": [
+      {
+        "file": "src/presentation/components/notes/blocks/ReferenceBlock.tsx",
+        "lines": [164, 175],
+        "effects": ["File reference monitoring"],
+        "cross_workspace_listeners": true
+      },
+      {
+        "file": "src/presentation/components/notes/NoteSidebarChat.tsx",
+        "lines": [92, 109],
+        "effects": ["Chat message subscriptions"],
+        "cross_workspace_listeners": true
+      },
+      {
+        "file": "src/presentation/components/notes/ProjectFilesPanel.tsx",
+        "lines": [101],
+        "effects": ["Project file loading"],
+        "cross_workspace_listeners": false
+      }
+    ]
+  },
+  "knowledge_workspace": {
+    "state_files": [
+      "src/infrastructure/persistence/stores/rag/rag-store.ts",
+      "src/infrastructure/persistence/stores/rag/rag-chat-slice.ts",
+      "src/infrastructure/persistence/stores/rag/rag-index-slice.ts",
+      "src/infrastructure/persistence/stores/rag/rag-search-slice.ts",
+      "src/infrastructure/persistence/stores/canvas/canvas-store.ts",
+      "src/presentation/components/canvas/Canvas.tsx",
+      "src/presentation/components/rag/RAGSearchPanel.tsx",
+      "src/presentation/components/rag/RAGChatPanel.tsx",
+      "src/presentation/components/rag/CitationSidebar.tsx",
+      "src/lib/ide/code-analysis-bridge.ts",
+      "src/lib/ide/code-analyzer.ts"
+    ],
+    "problematic_patterns": [
+      {
+        "pattern": "IDE → Knowledge code analysis bridge",
+        "location": "src/lib/ide/code-analysis-bridge.ts",
+        "description": "Bidirectional bridge between IDE and Knowledge that emits events - tight coupling between workspaces",
+        "severity": "high",
+        "impact": "Strong dependency between IDE and Knowledge - changes in one may break the other"
+      },
+      {
+        "pattern": "RAG store with cross-workspace file events",
+        "location": "src/infrastructure/persistence/stores/rag/rag-store.ts",
+        "description": "RAG store listens to FILE_CREATED/UPDATED/DELETED events from all workspaces for auto-indexing",
+        "severity": "medium",
+        "impact": "File changes in any workspace trigger RAG operations - potential performance impact"
+      },
+      {
+        "pattern": "Canvas store sharing between workspaces",
+        "location": "src/infrastructure/persistence/stores/canvas/canvas-store.ts",
+        "description": "Canvas (concept mapping) store may be accessed by multiple workspaces",
+        "severity": "medium",
+        "impact": "Concept nodes may be created from IDE code analysis OR Notes exports - potential conflicts"
+      }
+    ],
+    "shared_dependencies": [
+      {
+        "store": "useRAGStore",
+        "usage_pattern": "indexing and search operations",
+        "cross_workspace_impact": ["ide", "notes"],
+        "sync_mechanism": "eventBus emits for all file changes + dedicated RAG events"
+      },
+      {
+        "store": "useConversationStore",
+        "usage_pattern": "RAG chat functionality",
+        "cross_workspace_impact": ["ide", "notes"],
+        "sync_mechanism": "crossWorkspaceEventBus"
+      },
+      {
+        "store": "useIDEStore",
+        "usage_pattern": "code analysis requests",
+        "cross_workspace_impact": ["ide"],
+        "sync_mechanism": "eventBus.emitIDE_CODE_ANALYSIS_REQUESTED"
+      },
+      {
+        "store": "useAppStore (providers)",
+        "usage_pattern": "LLM provider for RAG synthesis",
+        "cross_workspace_impact": ["ide", "notes", "study"],
+        "sync_mechanism": "crossWorkspaceEventBus.emitProviderConfigChange"
+      }
+    ],
+    "form_state_patterns": [
+      {
+        "form": "RAGSearchPanel query",
+        "location": "src/presentation/components/rag/RAGSearchPanel.tsx",
+        "state_management": "useRAGStore + local state",
+        "workspace_isolated": true
+      },
+      {
+        "form": "RAGChatPanel conversation",
+        "location": "src/presentation/components/rag/RAGChatPanel.tsx",
+        "state_management": "useRAGStore + useConversationStore",
+        "workspace_isolated": false,
+        "shared_with": ["ide", "notes"]
+      },
+      {
+        "form": "Canvas node editing",
+        "location": "src/presentation/components/canvas/Canvas.tsx",
+        "state_management": "useCanvasStore",
+        "workspace_isolated": false,
+        "shared_with": ["ide"] // via code analysis bridge
+      }
+    ],
+    "useEffect_hooks_span_boundaries": [
+      {
+        "file": "src/lib/ide/code-analysis-bridge.ts",
+        "lines": [42, 84, 160],
+        "effects": ["Code analysis event subscriptions", "Concept node creation"],
+        "cross_workspace_listeners": true,
+        "listens_to_ide": true
+      },
+      {
+        "file": "src/presentation/components/rag/RAGChatPanel.tsx",
+        "effects": ["RAG subscription setup"],
+        "cross_workspace_listeners": true
+      }
+    ]
+  },
+  "study_workspace": {
+    "state_files": [
+      "src/infrastructure/persistence/stores/study/quiz-store.ts",
+      "src/infrastructure/persistence/stores/study/study-store-refactored.ts",
+      "src/infrastructure/persistence/stores/flashcard-store.ts",
+      "src/infrastructure/persistence/stores/quiz-history-store.ts",
+      "src/presentation/components/ui/event-indicators/QuizGenerationIndicator.tsx"
+    ],
+    "problematic_patterns": [
+      {
+        "pattern": "Quiz store dependency on RAG for generation",
+        "location": "src/infrastructure/persistence/stores/study/quiz-store.ts",
+        "description": "Quiz generation requires RAG pipeline - creates dependency on RAG store which listens to cross-workspace events",
+        "severity": "medium",
+        "impact": "Study workspace may fail or be slow if RAG is processing events from other workspaces"
+      },
+      {
+        "pattern": "Flashcard store isolation",
+        "location": "src/infrastructure/persistence/stores/flashcard-store.ts",
+        "description": "Flashcard store appears isolated but may need synchronization with Notes workspace for note-based flashcard creation",
+        "severity": "low",
+        "impact": "Potential missing cross-workspace functionality"
+      },
+      {
+        "pattern": "Quiz history shared across workspaces",
+        "location": "src/infrastructure/persistence/stores/quiz-history-store.ts",
+        "description": "Quiz history is stored per project but accessed only by Study workspace - potential isolation gap",
+        "severity": "low",
+        "impact": "History may not be visible in Hub or other workspaces where it could be useful"
+      }
+    ],
+    "shared_dependencies": [
+      {
+        "store": "useRAGStore",
+        "usage_pattern": "quiz generation from notes/knowledge",
+        "cross_workspace_impact": ["notes", "knowledge"],
+        "sync_mechanism": "RAG indexing completion triggers"
+      },
+      {
+        "store": "useProjectStore",
+        "usage_pattern": "project context for quiz history",
+        "cross_workspace_impact": ["ide", "notes", "knowledge"],
+        "sync_mechanism": "standard project store"
+      },
+      {
+        "store": "useAppStore (providers)",
+        "usage_pattern": "LLM for quiz generation",
+        "cross_workspace_impact": ["ide", "notes", "knowledge"],
+        "sync_mechanism": "crossWorkspaceEventBus.emitProviderConfigChange"
+      }
+    ],
+    "form_state_patterns": [
+      {
+        "form": "Quiz generation settings",
+        "location": "src/presentation/components/study/QuizGenerator.tsx",
+        "state_management": "useQuizStore + local state",
+        "workspace_isolated": true
+      },
+      {
+        "form": "Flashcard study session",
+        "location": "src/presentation/components/study/FlashcardSession.tsx",
+        "state_management": "useFlashcardStore",
+        "workspace_isolated": true
+      },
+      {
+        "form": "Quiz results review",
+        "location": "src/presentation/components/study/QuizResults.tsx",
+        "state_management": "useQuizHistoryStore",
+        "workspace_isolated": false,
+        "shared_with": ["hub"] // via project metrics
+      }
+    ],
+    "useEffect_hooks_span_boundaries": [
+      {
+        "file": "src/presentation/components/ui/event-indicators/QuizGenerationIndicator.tsx",
+        "effects": ["RAG progress subscription"],
+        "cross_workspace_listeners": true
+      }
+    ]
+  },
+  "shared_state": {
+    "stores": [
+      {
+        "name": "useProjectStore",
+        "path": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+        "description": "Primary store for project management - projectId, project metadata, bindings",
+        "workspace_scope": "global (shared across all workspaces)",
+        "isolation_level": "project-scoped",
+        "persistence": "DexieDB",
+        "cross_workspace_sync": "via ProjectContext + localStorage for last workspace preference",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "useWorkspaceStore",
+        "path": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+        "description": "Single source of truth for workspace state - currentWorkspace, transitions",
+        "workspace_scope": "global (singleton)",
+        "isolation_level": "application-scoped",
+        "persistence": "localStorage (currentWorkspace only)",
+        "cross_workspace_sync": "crossWorkspaceEventBus.emitWorkspaceChanged",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "useAppStore",
+        "path": "src/infrastructure/persistence/stores/use-app-store.ts",
+        "description": "LLM providers, models, agents, auto-approve settings",
+        "workspace_scope": "global (singleton)",
+        "isolation_level": "application-scoped",
+        "persistence": "localStorage + DexieDB",
+        "cross_workspace_sync": "crossWorkspaceEventBus.emitProviderConfigChange",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "useAgentSelectionStore",
+        "path": "src/infrastructure/persistence/stores/agents/agent-selection-store.ts",
+        "description": "Active agent per workspace, default agents, workspace bindings",
+        "workspace_scope": "per-workspace (via Record<WorkspaceType, ...>)",
+        "isolation_level": "workspace-scoped",
+        "persistence": "localStorage",
+        "cross_workspace_sync": "crossWorkspaceEventBus.emitAgentConfigChange",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "useConversationStore",
+        "path": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+        "description": "Chat conversations, messages, threads per project",
+        "workspace_scope": "per-project (composite key projectId + workspaceType)",
+        "isolation_level": "project-scoped",
+        "persistence": "DexieDB",
+        "cross_workspace_sync": "crossWorkspaceEventBus.emitChatMessageSent",
+        "critical_for": ["ide", "notes", "knowledge"]
+      },
+      {
+        "name": "useRAGStore",
+        "path": "src/infrastructure/persistence/stores/rag/rag-store.ts",
+        "description": "RAG indexing status, search results, chunking state",
+        "workspace_scope": "global (singleton)",
+        "isolation_level": "application-scoped",
+        "persistence": "DexieDB (indexes)",
+        "cross_workspace_sync": "eventBus emits for file changes + dedicated RAG events",
+        "critical_for": ["knowledge", "notes"]
+      },
+      {
+        "name": "useIDEStore",
+        "path": "src/infrastructure/persistence/stores/ide/useIDEStore.ts",
+        "description": "IDE-specific state - open files, editor tabs, terminal sessions",
+        "workspace_scope": "ide-only",
+        "isolation_level": "ide-workspace-scoped",
+        "persistence": "localStorage + DexieDB",
+        "cross_workspace_sync": "useUnifiedProjectState hook uses IDE store as source of truth for projectId",
+        "critical_for": ["ide"]
+      },
+      {
+        "name": "createWorkspaceStore (factory)",
+        "path": "src/infrastructure/persistence/stores/workspace-store-factory.ts",
+        "description": "Factory for creating workspace-scoped stores with composite key [workspaceId:projectId]",
+        "workspace_scope": "per-workspace+project",
+        "isolation_level": "composite-scoped",
+        "persistence": "in-memory (transient)",
+        "cross_workspace_sync": "via event bus for state synchronization",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "UnifiedWorkspaceContext",
+        "path": "src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts",
+        "description": "Combined context for all 5 cornerstone stores + file system + workspace switching",
+        "workspace_scope": "global (singleton provider)",
+        "isolation_level": "application-scoped",
+        "persistence": "via individual stores",
+        "cross_workspace_sync": "all event bus mechanisms",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "ProjectContext",
+        "path": "src/lib/workspace/ProjectContext.tsx",
+        "description": "React Context for project sharing across workspace routes",
+        "workspace_scope": "per-workspace+project (nested providers)",
+        "isolation_level": "component-tree-scoped",
+        "persistence": "in-memory (React state)",
+        "cross_workspace_sync": "via localStorage for last workspace + navigation",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      },
+      {
+        "name": "useUnifiedProjectState",
+        "path": "src/lib/workspace/useUnifiedProjectState.ts",
+        "description": "Hook that uses IDE store as single source of truth for project state",
+        "workspace_scope": "uses IDE store (ide-specific)",
+        "isolation_level": "ide-workspace-scoped for source of truth",
+        "persistence": "via useIDEStore",
+        "cross_workspace_sync": "eventBus.on(WORKSPACE_CHANGED) for re-renders",
+        "critical_for": ["notes", "knowledge", "study"]
+      },
+      {
+        "name": "auto-approve-store",
+        "path": "src/infrastructure/persistence/stores/auto-approve-store.ts",
+        "description": "Auto-approve rules configuration",
+        "workspace_scope": "global (singleton)",
+        "isolation_level": "application-scoped",
+        "persistence": "localStorage",
+        "cross_workspace_sync": "none (workspace-agnostic)",
+        "critical_for": ["ide", "notes", "knowledge", "study"]
+      }
+    ],
+    "cross_workspace_effects": [
+      {
+        "name": "crossWorkspaceEventBus",
+        "path": "src/lib/events/cross-workspace-event-bus.ts",
+        "description": "Singleton EventEmitter3 instance for broadcasting state changes across workspaces",
+        "event_types": [
+          "file:change",
+          "agent:config:change",
+          "sync:status",
+          "project:state:change",
+          "workspace:changed",
+          "provider:config:change",
+          "models:updated",
+          "chat:message:sent",
+          "chat:state:update"
+        ],
+        "subscribers_count": "~50 components across workspaces",
+        "potential_issues": [
+          "Memory leaks if listeners not cleaned up on unmount",
+          "Race conditions when multiple events fire in quick succession",
+          "Stale closures in useEffect handlers"
+        ]
+      },
+      {
+        "name": "eventBus (Domain Events)",
+        "path": "src/infrastructure/events/event-bus.ts",
+        "description": "Infrastructure event bus for domain events (workspace, agent, conversation, provider, sync, RAG)",
+        "event_types": [
+          "workspace:transition:started/completed/failed",
+          "workspace:changed",
+          "agent:selected/deselected/default:changed/config:updated/created/deleted",
+          "conversation:created/deleted/message:added/title:updated",
+          "provider:key:set/removed/models:fetched/error",
+          "sync:started/completed/failed/progress",
+          "file:opened/closed/saved/synced/created/updated/deleted",
+          "rag:embedding:progress/chunking:status/database:indexing/source:processing",
+          "ide:debug:session:captured/refactor:journal:created/dependency:audit:complete/code:analysis:request",
+          "knowledge:synthesis:export:request",
+          "notes:rag:index:request"
+        ],
+        "subscribers_count": "~80 components across workspaces",
+        "potential_issues": [
+          "Complex event flow (two event buses may conflict)",
+          "Event ordering not guaranteed",
+          "No dead letter queue for failed events"
+        ]
+      },
+      {
+        "name": "useCrossWorkspaceAgentConfigEvents",
+        "path": "src/lib/events/use-cross-workspace-events.ts",
+        "description": "Hook that subscribes to agent config changes from other workspaces",
+        "trigger": "crossWorkspaceEventBus.onAgentConfigChange",
+        "action": "useAgentsStore.getState() to force re-hydration",
+        "potential_issues": [
+          "Brute-force re-hydration may cause performance issues",
+          "No debouncing for rapid changes"
+        ]
+      },
+      {
+        "name": "useAllCrossWorkspaceEvents",
+        "path": "src/lib/events/use-cross-workspace-events.ts:85-112",
+        "description": "Comprehensive event subscription hook for workspace-level components",
+        "subscribes_to": ["agentConfig", "fileChange", "syncStatus", "projectStateChange"],
+        "potential_issues": [
+          "May cause unnecessary re-renders when multiple events fire",
+          "No selective filtering by event source"
+        ]
+      },
+      {
+        "name": "useWorkspaceChangedEvents",
+        "path": "src/lib/events/use-cross-workspace-events.ts:132-151",
+        "description": "Hook for reacting to workspace transitions",
+        "trigger": "crossWorkspaceEventBus.onWorkspaceChanged",
+        "action": "useAgentsStore.getState() for filtered agents update",
+        "potential_issues": [
+          "May not properly handle rapid workspace switches",
+          "Agent filtering may lag behind UI"
+        ]
+      },
+      {
+        "name": "useUnifiedProjectState (cross-workspace project)",
+        "path": "src/lib/workspace/useUnifiedProjectState.ts:62-78",
+        "description": "Effect that subscribes to WORKSPACE_CHANGED events to trigger re-renders",
+        "trigger": "eventBus.on(DomainEventType.WORKSPACE_CHANGED)",
+        "action": "setVersion(v => v + 1) for React re-render",
+        "potential_issues": [
+          "Version increment triggers full component re-render",
+          "May cause jank during rapid workspace switches"
+        ]
+      },
+      {
+        "name": "IDE → Knowledge Bridge (code-analysis)",
+        "path": "src/lib/ide/code-analysis-bridge.ts",
+        "description": "Bidirectional bridge that handles IDE code analysis requests and creates Knowledge concept nodes",
+        "trigger": "eventBus.emitIDE_CODE_ANALYSIS_REQUESTED",
+        "action": "Analyze code and create concept nodes in Knowledge canvas",
+        "potential_issues": [
+          "Tight coupling between IDE and Knowledge workspaces",
+          "Error in one workspace may affect the other",
+          "No fallback if bridge fails"
+        ]
+      },
+      {
+        "name": "useEventBusEffects (file/sync events)",
+        "path": "src/lib/workspace/hooks/useEventBusEffects.ts",
+        "description": "Effect that subscribes to file and sync events from eventBus",
+        "triggers": [
+          "file:modified",
+          "file:deleted",
+          "sync:started",
+          "sync:progress",
+          "sync:error"
+        ],
+        "action": "Update UI state, show notifications, retry failed operations",
+        "potential_issues": [
+          "Complex cleanup logic in useEffect return",
+          "May not handle all edge cases in file conflict scenarios"
+        ]
+      }
+    ],
+    "event_isolation_status": {
+      "primary_event_buses": 2,
+      "buses": [
+        {
+          "name": "eventBus",
+          "location": "src/infrastructure/events/event-bus.ts",
+          "purpose": "Domain events (workspace, agent, conversation, RAG, IDE, Knowledge, Notes)",
+          "isolation": "infrastructure-level",
+          "recommended_for": "New code"
+        },
+        {
+          "name": "crossWorkspaceEventBus",
+          "location": "src/lib/events/cross-workspace-event-bus.ts",
+          "purpose": "Workspace state changes for UI synchronization",
+          "isolation": "lib-level (legacy)",
+          "recommended_for": "Migration to eventBus"
+        }
+      ],
+      "isolation_violations": [
+        {
+          "violation": "Both event buses active simultaneously",
+          "impact": "Confusing event flow, potential duplicate processing",
+          "recommendation": "Consolidate to single event bus (eventBus)"
+        },
+        {
+          "violation": "useCrossWorkspaceEvents uses crossWorkspaceEventBus while useUnifiedProjectState uses eventBus",
+          "impact": "Components may receive events out of order or miss updates",
+          "recommendation": "Standardize on eventBus with namespace prefixes"
+        }
+      ]
+    },
+    "potential_cross_workspace_leaks": [
+      {
+        "source": "IDE workspace",
+        "target": "Notes workspace",
+        "leak_type": "useIDEStore accessed via useUnifiedProjectState",
+        "file": "src/lib/workspace/useUnifiedProjectState.ts:47",
+        "description": "Notes, Knowledge, and Study workspaces use IDE store as source of truth for projectId - creates implicit dependency on IDE store state"
+      },
+      {
+        "source": "IDE workspace",
+        "target": "Knowledge workspace",
+        "leak_type": "IDE → Knowledge code analysis bridge",
+        "file": "src/lib/ide/code-analysis-bridge.ts",
+        "description": "Strong bidirectional coupling via event emissions - changes in IDE directly affect Knowledge canvas state"
+      },
+      {
+        "source": "Notes workspace",
+        "target": "Knowledge workspace",
+        "leak_type": "RAG indexing trigger",
+        "file": "src/infrastructure/events/event-bus.ts:87",
+        "description": "Notes emits NOTES_RAG_INDEX_REQUESTED which triggers RAG operations in Knowledge workspace"
+      },
+      {
+        "source": "Any workspace",
+        "target": "All workspaces",
+        "leak_type": "Agent configuration changes broadcast",
+        "file": "src/lib/events/cross-workspace-event-bus.ts:255-278",
+        "description": "Agent creation/deletion in any workspace triggers store re-hydration in all other workspaces"
+      },
+      {
+        "source": "Any workspace",
+        "target": "All workspaces",
+        "leak_type": "Provider configuration changes broadcast",
+        "file": "src/lib/events/cross-workspace-event-bus.ts:394-424",
+        "description": "Provider API key changes require refresh in all workspaces"
+      },
+      {
+        "source": "Any workspace",
+        "target": "All workspaces",
+        "leak_type": "File change propagation",
+        "file": "src/infrastructure/events/event-bus.ts:698-745",
+        "description": "File created/updated/deleted events trigger RAG indexing in Knowledge workspace regardless of source"
+      },
+      {
+        "source": "IDE workspace",
+        "target": "Knowledge workspace",
+        "leak_type": "Debug session capture",
+        "file": "src/infrastructure/events/event-bus.ts:148-170",
+        "description": "Debug sessions captured in IDE can be viewed/archived in Knowledge workspace"
+      },
+      {
+        "source": "Knowledge workspace",
+        "target": "Notes workspace",
+        "leak_type": "Synthesis export",
+        "file": "src/infrastructure/events/event-bus.ts:283-308",
+        "description": "Knowledge synthesis nodes can be exported to Notes as markdown"
+      }
+    ]
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "recommendation": "Consolidate event buses",
+      "rationale": "Two event buses (eventBus and crossWorkspaceEventBus) create confusing event flow. Consolidate to single eventBus with namespace prefixes for workspace-specific events.",
+      "files_affected": [
+        "src/lib/events/cross-workspace-event-bus.ts",
+        "src/lib/events/use-cross-workspace-events.ts"
+      ]
+    },
+    {
+      "priority": "high",
+      "recommendation": "Add debouncing to cross-workspace event handlers",
+      "rationale": "useCrossWorkspaceAgentConfigEvents calls useAgentsStore.getState() on every change - should be debounced to prevent excessive re-hydration during batch updates.",
+      "files_affected": [
+        "src/lib/events/use-cross-workspace-events.ts:45-67"
+      ]
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Add cleanup verification for event subscriptions",
+      "rationale": "Many useEffect hooks with event subscriptions may not properly clean up on component unmount. Add automated test to verify cleanup.",
+      "files_affected": [
+        "src/presentation/components/ide/AgentChatPanel.tsx",
+        "src/presentation/components/notes/NoteSidebarChat.tsx",
+        "src/presentation/components/notes/ProjectFilesPanel.tsx"
+      ]
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Isolate useUnifiedProjectState from IDE store",
+      "rationale": "Current implementation uses IDE store as source of truth for projectId, creating implicit dependency. Consider using ProjectContext directly or creating neutral project state store.",
+      "files_affected": [
+        "src/lib/workspace/useUnifiedProjectState.ts"
+      ]
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Add workspace isolation tests",
+      "rationale": "Create test suite to verify that workspace state doesn't leak between IDE↔Notes↔Knowledge↔Study when switching projects.",
+      "files_affected": [
+        "src/infrastructure/persistence/stores/workspace/__tests__/"
+      ]
+    },
+    {
+      "priority": "low",
+      "recommendation": "Standardize on useShallow for all store selectors",
+      "rationale": "Some components use direct store selectors without useShallow, causing unnecessary re-renders.",
+      "files_affected": [
+        "src/presentation/components/ide/IDEMobileLayout.tsx"
+      ]
+    }
+  ]
+}
