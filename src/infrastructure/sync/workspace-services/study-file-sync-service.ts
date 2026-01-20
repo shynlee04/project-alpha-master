@@ -52,6 +52,7 @@ export class StudyFileSyncService implements FileSyncService {
 
   constructor(config: StudyFileSyncConfig) {
     this._config = config;
+    void this._config; // Silencing unused var - stub pattern for deferred feature
     console.warn('[StudyFileSyncService] Study sync is deferred to post-MVP');
   }
 

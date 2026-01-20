@@ -10,10 +10,11 @@
  * - A pre-translated message string
  * - A translation key (messageKey) that components can translate
  *
- * For React components, use the useErrorToast() hook which handles translation.
+ * For React components, use useErrorToast() hook which handles translation.
  */
 
 import { toast } from 'sonner'
+import { router } from '@/router'
 
 
 /**
@@ -114,7 +115,8 @@ export function showErrorToast(error: Error | string, options?: ErrorToastOption
                             break
                         case 'home':
                             if (typeof window !== 'undefined') {
-                                window.location.href = '/'
+                                // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+                                router.navigate({ to: '/' })
                             }
                             break
                         case 'dismiss':

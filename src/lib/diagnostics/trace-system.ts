@@ -49,7 +49,7 @@ export interface TraceEvent {
   traceId: string;
   flow: FlowName;
   step: StepName;
-  timestamp: number;
+  timestamp?: number;
   ok: boolean;
   errorCode?: ErrorCode;
   errorMessage?: string;
@@ -405,7 +405,6 @@ export async function clearTraces(): Promise<void> {
 
 export {
   createDiagnosticTrace as default,
-  traceEvent,
   traceVerifyHandleAccess,
   traceVerifyDexieRecord,
   traceVerifyHandlePersistence,

@@ -6,9 +6,11 @@ import {
   Plus,
   Terminal,
   Cpu,
-  BookOpen,
+  // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+  // Imports retained for backward compatibility, remove when implementing these workspaces
+  // BookOpen,
   Settings,
-  HardDrive,
+  // HardDrive,
   Notebook,
   Info,
   Search
@@ -45,6 +47,8 @@ export const HubHomePage: React.FC = () => {
   // Access route search params for project picker triggering
   // Use useRouterState() which works in nested components (useSearch requires route context)
   const routerState = useRouterState();
+  // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+  // Workspace types retained for backward compatibility with existing projects
   const searchParams = routerState.location.search as {
     workspace?: 'ide' | 'notes' | 'knowledge' | 'study';
     action?: string;
@@ -59,7 +63,7 @@ export const HubHomePage: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [projectPickerOpen, setProjectPickerOpen] = useState(false);
   const [projectCreationWizardOpen, setProjectCreationWizardOpen] = useState(false);
-  const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes' | 'knowledge' | 'study'>('ide');
+  const [projectPickerWorkspace, setProjectPickerWorkspace] = useState<'ide' | 'notes'>('ide');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [advancedSearchOpen, setAdvancedSearchOpen] = useState(false);
 
@@ -83,6 +87,16 @@ export const HubHomePage: React.FC = () => {
   // Handle route query params - show project picker or toast
   useEffect(() => {
     if (workspace) {
+      // DEFERRED (ADR-034): Redirect knowledge/study workspace requests to 'notes'
+      if (workspace === 'knowledge' || workspace === 'study') {
+        navigate({
+          to: '/hub',
+          search: { workspace: 'notes', action: 'create-project' },
+          replace: true,
+        });
+        return;
+      }
+
       // User clicked workspace from sidebar without project - show picker
       setProjectPickerWorkspace(workspace);
       setProjectPickerOpen(true);
@@ -98,13 +112,15 @@ export const HubHomePage: React.FC = () => {
   }, [workspace, action, message]);
 
   // -- Project Picker Handler --
-  const openProjectPicker = (targetWorkspace: 'ide' | 'notes' | 'knowledge' | 'study') => {
+  // DEFERRED (ADR-034): Knowledge and Study workspaces removed from UI
+  const openProjectPicker = (targetWorkspace: 'ide' | 'notes') => {
     setProjectPickerWorkspace(targetWorkspace);
     setProjectPickerOpen(true);
   };
 
   // -- Workspace Navigation with Project Picker --
-  const navigateToWorkspace = async (workspace: 'ide' | 'notes' | 'knowledge' | 'study') => {
+  // DEFERRED (ADR-034): Knowledge and Study workspaces removed from UI
+  const navigateToWorkspace = async (workspace: 'ide' | 'notes') => {
     if (!projects || projects.length === 0) {
       toast.info(`No projects yet`, {
         description: `Create or mount a project first to access to ${workspace} workspace.`,
@@ -118,15 +134,18 @@ export const HubHomePage: React.FC = () => {
       // Check workspace bindings to determine which projects belong to each workspace
       const isIdeWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'ide');
       const isNotesWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'notes');
-      const isKnowledgeWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'knowledge');
-      const isStudyWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'study');
+      // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+      // Workspace checks retained for backward compatibility, restore when implementing
+      // const isKnowledgeWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'knowledge');
+      // const isStudyWorkspace = isWorkspaceEnabled(p.workspaceBindings, 'study');
 
       // Return true if project belongs to requested workspace
       switch (workspace) {
         case 'ide': return isIdeWorkspace;
         case 'notes': return isNotesWorkspace;
-        case 'knowledge': return isKnowledgeWorkspace;
-        case 'study': return isStudyWorkspace;
+        // TODO: Restore when Knowledge/Study workspaces implemented
+        // case 'knowledge': return isKnowledgeWorkspace;
+        // case 'study': return isStudyWorkspace;
         default: return true;
       }
     });
@@ -144,7 +163,8 @@ export const HubHomePage: React.FC = () => {
   };
 
   // Helper function to check if workspace is enabled in bindings
-  function isWorkspaceEnabled(bindings: WorkspaceBindings | undefined, workspaceType: 'ide' | 'notes' | 'knowledge' | 'study'): boolean {
+  // DEFERRED (ADR-034): Knowledge and Study workspaces removed from UI
+  function isWorkspaceEnabled(bindings: WorkspaceBindings | undefined, workspaceType: 'ide' | 'notes'): boolean {
     if (!bindings) return false;
     return bindings[workspaceType] === true;
   };
@@ -357,22 +377,24 @@ export const HubHomePage: React.FC = () => {
         });
       },
     },
-    {
-      id: 'knowledge',
-      size: 'small',
-      title: t('hub.menu.knowledge', 'DATA_BANK'),
-      icon: <HardDrive className="h-6 w-6" />,
-      topic: 'Knowledge',
-      onClick: () => navigateToWorkspace('knowledge'),
-    },
-    {
-      id: 'docs',
-      size: 'small',
-      title: t('hub.menu.study', 'STUDY_CORE'),
-      icon: <BookOpen className="h-6 w-6" />,
-      topic: 'Study',
-      onClick: () => navigateToWorkspace('study'),
-    },
+    // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+    // Menu items removed from UI but backend types retained for backward compatibility
+    // {
+    //   id: 'knowledge',
+    //   size: 'small',
+    //   title: t('hub.menu.knowledge', 'DATA_BANK'),
+    //   icon: <HardDrive className="h-6 w-6" />,
+    //   topic: 'Knowledge',
+    //   onClick: () => navigateToWorkspace('knowledge'),
+    // },
+    // {
+    //   id: 'docs',
+    //   size: 'small',
+    //   title: t('hub.menu.study', 'STUDY_CORE'),
+    //   icon: <BookOpen className="h-6 w-6" />,
+    //   topic: 'Study',
+    //   onClick: () => navigateToWorkspace('study'),
+    // },
     {
       id: 'terminal',
       size: 'small',

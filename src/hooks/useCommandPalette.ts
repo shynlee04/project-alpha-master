@@ -7,6 +7,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { commandRegistry } from '@/lib/command-palette/command-registry';
+import { router } from '@/router';
 
 export function useCommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +54,8 @@ export function useCommandPalette() {
  */
 function registerBuiltinCommands() {
   const navigate = (path: string) => {
-    window.location.href = path;
+    // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+    router.navigate({ to: path });
   };
 
   // Navigation Commands

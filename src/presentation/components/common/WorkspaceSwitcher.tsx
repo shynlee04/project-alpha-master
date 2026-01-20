@@ -27,7 +27,7 @@ import { getPlatformContract } from '@/infrastructure/filesystem/platform-contra
 
 const WORKSPACE_CONFIG: Record<
   WorkspaceId,
-  { icon: string; labelKey: string; color: string }
+  { icon: string; labelKey: string; color: string; isDeferred?: boolean }
 > = {
   ide: {
     icon: '💻',
@@ -43,11 +43,13 @@ const WORKSPACE_CONFIG: Record<
     icon: '📚',
     labelKey: 'hub.workspaceBinding.workspaces.knowledge',
     color: 'text-purple-400',
+    isDeferred: true, // DEFERRED (ADR-034)
   },
   study: {
     icon: '🎓',
     labelKey: 'hub.workspaceBinding.workspaces.study',
     color: 'text-warning',
+    isDeferred: true, // DEFERRED (ADR-034)
   },
 };
 
@@ -219,6 +221,12 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
           {/* Workspace Items */}
           {enabledWorkspaces.map((workspace) => {
             const config = WORKSPACE_CONFIG[workspace];
+
+            // DEFERRED (ADR-034): Skip knowledge/study workspaces
+            if (config.isDeferred) {
+              return null;
+            }
+
             const isActive = workspace === currentWorkspace;
 
             return (
@@ -251,7 +259,7 @@ export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
                 )}
               </DropdownMenu.Item>
             );
-          })}
+          }).filter(Boolean)}
 
           {/* Footer Hint */}
           <div className="px-3 py-2 border-t-2 border-border/40">

@@ -34,21 +34,34 @@ export interface PersistedStateRecord {
 // ============================================================================
 
 /**
- * Sync status record for tracking file sync operations
- * Migrated from localStorage to Dexie for better query support
+ * Session state snapshot for complete restoration (Story 24-5)
+ * Captures full IDE session state for seamless resumption.
  */
-export interface SyncStatusRecord {
-    id: string;                 // Primary key (generated from path)
-    path: string;               // File path (indexed)
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
-    syncStatus: 'pending' | 'syncing' | 'synced' | 'error' | 'conflict'; // (indexed)
-    localVersion?: number;
-    remoteVersion?: number;
-    lastSyncedAt?: number;      // (indexed for sorting)
-    errorMessage?: string;
-    retryCount: number;
-    createdAt: number;
-    updatedAt: number;
+export interface SessionSnapshotRecord {
+  id: string;
+  projectId: string;
+  workspaceId: "ide" | "knowledge" | "study" | "notes";
+  snapshot: { openFiles: string[]; activeFile: string | null; cursorPositions: Record<string, { line: number; column: number; }>; scrollPositions: Record<string, number>; panelWidths: number[]; terminalHistory: string[]; chatState: { activeConversationId: string | null; scrollPosition: number; }; };
+  createdAt: number;
+  expiresAt: number;
+}
+
+// ============================================================================
+// Diagnostic Trace Types (ARCH-01-06)
+// ============================================================================
+
+/**
+ * Diagnostic trace event record for structured observability
+ */
+export interface DiagnosticTraceEventRecord {
+  traceId: string;           // Unique trace identifier
+  flow: string;              // Flow name (createProjectFromFolder, loadProject, etc.)
+  step: string;              // Step name within the flow
+  timestamp?: number;           // Event timestamp (optional for TraceEvent compatibility)
+  ok: boolean;               // Operation success status
+  errorCode?: string;          // Error code if failed
+  errorMessage?: string;       // Error message if failed
+  metadata?: Record<string, unknown>;  // Additional metadata
 }
 
 /**
@@ -165,9 +178,28 @@ export interface SessionSnapshotRecord {
 // Table Type Exports
 // ============================================================================
 
+/**
+ * Sync status record for tracking file sync operations
+ * Migrated from localStorage to Dexie for better query support
+ */
+export interface SyncStatusRecord {
+    id: string;                 // Primary key (generated from path)
+    path: string;               // File path (indexed)
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
+    syncStatus: 'pending' | 'syncing' | 'synced' | 'error' | 'conflict'; // (indexed)
+    localVersion?: number;
+    remoteVersion?: number;
+    lastSyncedAt?: number;      // (indexed for sorting)
+    errorMessage?: string;
+    retryCount: number;
+    createdAt: number;
+    updatedAt: number;
+}
+
 export type PersistedStateTable = Table<PersistedStateRecord, string>;
 export type SyncStatusTable = Table<SyncStatusRecord, string>;
 export type FileMetadataTable = Table<FileMetadataRecord, string>;
 export type ToolExecutionLogTable = Table<ToolExecutionLogRecord, string>;
 export type FSAHandleTable = Table<FSAHandleRecord, string>;
 export type SessionSnapshotTable = Table<SessionSnapshotRecord, string>;
+export type DiagnosticTracesTable = Table<DiagnosticTraceEventRecord, string>;

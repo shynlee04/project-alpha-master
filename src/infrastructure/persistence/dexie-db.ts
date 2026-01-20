@@ -115,6 +115,7 @@ export type {
     ToolExecutionLogTable,
     FSAHandleTable,
     SessionSnapshotTable,
+    DiagnosticTracesTable,
 } from './dexie-db-session-types';
 
 export {

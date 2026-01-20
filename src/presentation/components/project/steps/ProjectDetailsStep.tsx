@@ -35,13 +35,11 @@ export interface ProjectDetailsStepProps {
 // Constants
 // ============================================================================
 
-const PROJECT_ICONS = ['📁', '💻', '🎮', '🚀', '⚡', '🔥', '💎', '🎨', '📊', '🔧'];
+const PROJECT_ICONS = ['📁', '💻', '🚀', '⚡', '🎨', '🔧'];
 
 const PROJECT_TYPES = [
   { value: 'app', labelKey: 'wizard.projectTypes.app' },
   { value: 'library', labelKey: 'wizard.projectTypes.library' },
-  { value: 'experiment', labelKey: 'wizard.projectTypes.experiment' },
-  { value: 'learning', labelKey: 'wizard.projectTypes.learning' },
 ] as const;
 
 const STORAGE_TYPES = [

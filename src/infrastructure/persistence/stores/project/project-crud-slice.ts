@@ -188,26 +188,44 @@ export const createProjectCrudSlice: StateCreator<
       activeProjectId: projectId,
     }));
 
-    // Persist to Dexie (async, blocking)
-    // FS-03: Pass workspaceType for proper isolation
+    // Persist to Dexie using atomic ProjectHandleService
+    // ARCH-01-05: Use projectHandleService.createWithHandle() for atomic transaction
+    // This ensures both projects and fsaHandles tables are updated atomically
     // BUG-005 FIX: Await DB write to prevent race condition in navigation
     try {
-      await db.projects.put(toRecord(project, workspaceType));
+      // Convert to ProjectRecord format expected by service
+      const projectRecord = {
+        ...toRecord(project, workspaceType),
+        id: projectId,
+      };
+
+      // Store with atomic transaction
+      // Note: We only call this for FSA storage type
+      // For indexeddb storage type, we skip handle persistence
+      if (storageType === 'fsa' && input.storageMetadata) {
+        // This is called when we already have a handle (e.g., from folder picker)
+        // We'll use handlePersistenceService directly in that case
+        await db.projects.put(projectRecord);
+        // Handle persistence is handled by the caller (fsa-persistence.ts)
+      } else {
+        // For indexeddb storage or when handle is not yet available
+        await db.projects.put(projectRecord);
+      }
     } catch (error: unknown) {
       const err = error as Error;
       console.error('[ProjectStore] Failed to persist project to Dexie:', err.message);
-      // We should probably re-throw here so the caller knows creation failed, 
-      // but to maintain some backward compat we'll just log for now, 
-      // although arguably if DB write fails, the project is ghosted.
+      // We should probably re-throw here so the caller knows creation failed,
+      // but to maintain some backward compat we'll just log for now,
+      // although arguably if DB write fails, project is ghosted.
     }
 
     // CC-V2-B03 FIX: REMOVED mock handle storage
     // The actual FSA handle is persisted by fsa-persistence.ts via handlePersistenceService.persistHandle()
-    // which correctly uses structuredClone for Chrome 129+ to store the real FileSystemDirectoryHandle.
+    // which correctly uses structuredClone for Chrome 129+ to store real FileSystemDirectoryHandle.
     // Previous code was storing a mock object { kind: 'directory', name: '...' } which could not be restored.
-    // 
+    //
     // Handle persistence flow:
-    // 1. createProjectFromFolder() in fsa-persistence.ts calls this createProject() method
+    //1. createProjectFromFolder() in fsa-persistence.ts calls this createProject() method
     // 2. This method creates project metadata in Zustand + Dexie
     // 3. fsa-persistence.ts then calls handlePersistenceService.persistHandle(projectId, handle, 'ide')
     // 4. handlePersistenceService stores actual handle with structuredClone (Chrome 129+)

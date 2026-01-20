@@ -15,6 +15,7 @@ import type {
   NotificationType,
 } from './types';
 import { useNotificationStore } from '@/infrastructure/persistence/stores/notification-store';
+import { router } from '@/router';
 
 /**
  * Notification Manager Singleton
@@ -257,7 +258,8 @@ class NotificationManagerClass {
 
         // Navigate if link provided
         if (notification.link) {
-          window.location.href = notification.link;
+          // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+          router.navigate({ to: notification.link });
         }
 
         // Mark as read

@@ -9,6 +9,7 @@
 
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { router } from '@/router'
 // import { useDeviceType } from '@/hooks/useMediaQuery'
 
 /**
@@ -134,8 +135,8 @@ export function showMobileWorkspaceError(
         if (onAction) {
           onAction()
         } else {
-          // Default action: navigate to Home
-          window.location.href = '/'
+          // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+          router.navigate({ to: '/' })
         }
       },
     },
@@ -236,8 +237,8 @@ export function showMobileWebContainerError(
                 if (onAction) {
                     onAction()
                 } else {
-                    // Default action: navigate to Home
-                    window.location.href = '/'
+                    // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+                    router.navigate({ to: '/' })
                 }
             },
         },

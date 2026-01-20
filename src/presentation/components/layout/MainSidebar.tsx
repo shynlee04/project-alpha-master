@@ -12,8 +12,10 @@ import { useNavigate, useLocation } from '@tanstack/react-router';
 import {
   Home,
   Folder,
-  Brain,
-  BookOpen,
+  // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+  // Imports retained for backward compatibility, remove when implementing these workspaces
+  // Brain,
+  // BookOpen,
   Bot,
   Settings,
   Notebook,
@@ -161,9 +163,11 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   const navItems = [
     { id: 'home', label: t('sidebar.home'), icon: Home, path: '/' },
     { id: 'projects', label: t('sidebar.projects'), icon: Folder, path: '/workspace' },
-    { id: 'knowledge', label: t('sidebar.knowledge', 'Knowledge'), icon: Brain, path: '/knowledge' },
+    // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+    // Navigation removed from UI, but backend types retained for backward compatibility
+    // { id: 'knowledge', label: t('sidebar.knowledge', 'Knowledge'), icon: Brain, path: '/knowledge' },
     { id: 'notes', label: t('sidebar.notes', 'Notes'), icon: Notebook, path: '/notes' },
-    { id: 'study', label: t('sidebar.study', 'Study'), icon: BookOpen, path: '/study' },
+    // { id: 'study', label: t('sidebar.study', 'Study'), icon: BookOpen, path: '/study' },
     { id: 'agents', label: t('sidebar.agents'), icon: Bot, path: '/agents' },
     { id: 'settings', label: t('sidebar.settings'), icon: Settings, path: '/settings' },
   ];

@@ -37,7 +37,7 @@ export interface WorkspaceBadgeProps {
 
 const WORKSPACE_CONFIG: Record<
   WorkspaceId,
-  { icon: string; labelKey: string; color: string }
+  { icon: string; labelKey: string; color: string; isDeferred?: boolean }
 > = {
   ide: {
     icon: '💻',
@@ -53,11 +53,13 @@ const WORKSPACE_CONFIG: Record<
     icon: '📚',
     labelKey: 'hub.workspaceBinding.workspaces.knowledge',
     color: 'text-purple-400',
+    isDeferred: true, // DEFERRED (ADR-034)
   },
   study: {
     icon: '🎓',
     labelKey: 'hub.workspaceBinding.workspaces.study',
     color: 'text-warning',
+    isDeferred: true, // DEFERRED (ADR-034)
   },
 } as const;
 
@@ -114,6 +116,11 @@ export const WorkspaceBadge: React.FC<WorkspaceBadgeProps> = ({
 }) => {
   const { t } = useTranslation();
   const config = WORKSPACE_CONFIG[workspace];
+
+  // DEFERRED (ADR-034): Hide knowledge/study workspaces from UI
+  if (config.isDeferred) {
+    return null;
+  }
 
   return (
     <button

@@ -30,7 +30,9 @@ import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db';
 // ============================================================================
 
 /** Workspace type for project picker */
-export type PickerWorkspace = 'ide' | 'notes' | 'knowledge' | 'study' | 'agents';
+// NOTE: Knowledge and Study workspaces are DEFERRED (ADR-034)
+// TODO: Re-add when these workspaces are implemented
+export type PickerWorkspace = 'ide' | 'notes' | 'agents';
 
 /** Props for ProjectPickerDialog */
 export interface ProjectPickerDialogProps {
@@ -69,18 +71,8 @@ const WORKSPACE_CONFIG: Record<PickerWorkspace, WorkspaceConfig> = {
     labelKey: 'hub.workspaceBinding.workspaces.notes',
     emptyStateKey: 'hub.projectPicker.empty.notes',
   },
-  knowledge: {
-    id: 'knowledge',
-    icon: '📚',
-    labelKey: 'hub.workspaceBinding.workspaces.knowledge',
-    emptyStateKey: 'hub.projectPicker.empty.knowledge',
-  },
-  study: {
-    id: 'study',
-    icon: '🎓',
-    labelKey: 'hub.workspaceBinding.workspaces.study',
-    emptyStateKey: 'hub.projectPicker.empty.study',
-  },
+  // Deferred: knowledge: { id: 'knowledge', icon: '📚', labelKey: 'hub.workspaceBinding.workspaces.knowledge', emptyStateKey: 'hub.projectPicker.empty.knowledge' },
+  // Deferred: study: { id: 'study', icon: '🎓', labelKey: 'hub.workspaceBinding.workspaces.study', emptyStateKey: 'hub.projectPicker.empty.study' },
   agents: {
     id: 'agents',
     icon: '🤖',
@@ -325,22 +317,22 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
  * hub.projectPicker.empty.title: "No projects found"
  * hub.projectPicker.empty.ide: "No projects with IDE workspace enabled. Create a new project or enable IDE in existing project settings."
  * hub.projectPicker.empty.notes: "No projects with Notes workspace enabled. Create a new project or enable Notes in existing project settings."
- * hub.projectPicker.empty.knowledge: "No projects with Knowledge workspace enabled. Create a new project or enable Knowledge in existing project settings."
- * hub.projectPicker.empty.study: "No projects with Study workspace enabled. Create a new project or enable Study in existing project settings."
- * hub.projectPicker.empty.createProject: "Create Project"
- *
- * Vietnamese keys to add:
- * hub.projectPicker.title: "Chọn dự án {workspace}"
- * hub.projectPicker.description: "Chọn một dự án để mở trong không gian làm việc này"
- * hub.projectPicker.lastOpen.label: "Mở lần cuối"
- * hub.projectPicker.lastOpen.justNow: "Vừa xong"
- * hub.projectPicker.lastOpen.minutesAgo: "{count} phút trước"
- * hub.projectPicker.lastOpen.hoursAgo: "{count} giờ trước"
- * hub.projectPicker.lastOpen.daysAgo: "{count} ngày trước"
- * hub.projectPicker.empty.title: "Không tìm thấy dự án"
- * hub.projectPicker.empty.ide: "Không có dự án nào bật không gian IDE. Tạo dự án mới hoặc bật IDE trong cài đặt dự án."
- * hub.projectPicker.empty.notes: "Không có dự án nào bật không gian Notes. Tạo dự án mới hoặc bật Notes trong cài đặt dự án."
- * hub.projectPicker.empty.knowledge: "Không có dự án nào bật không gian Knowledge. Tạo dự án mới hoặc bật Knowledge trong cài đặt dự án."
- * hub.projectPicker.empty.study: "Không có dự án nào bật không gian Study. Tạo dự án mới hoặc bật Study trong cài đặt dự án."
- * hub.projectPicker.empty.createProject: "Tạo Dự Án"
- */
+  // Deferred (ADR-034): hub.projectPicker.empty.knowledge: "No projects with Knowledge workspace enabled. Create a new project or enable Knowledge in existing project settings."
+  // Deferred (ADR-034): hub.projectPicker.empty.study: "No projects with Study workspace enabled. Create a new project or enable Study in existing project settings."
+  * hub.projectPicker.empty.createProject: "Create Project"
+  *
+  * Vietnamese keys to add:
+  * hub.projectPicker.title: "Chọn dự án {workspace}"
+  * hub.projectPicker.description: "Chọn một dự án để mở trong không gian làm việc này"
+  * hub.projectPicker.lastOpen.label: "Mở lần cuối"
+  * hub.projectPicker.lastOpen.justNow: "Vừa xong"
+  * hub.projectPicker.lastOpen.minutesAgo: "{count} phút trước"
+  * hub.projectPicker.lastOpen.hoursAgo: "{count} giờ trước"
+  * hub.projectPicker.lastOpen.daysAgo: "{count} ngày trước"
+  * hub.projectPicker.empty.title: "Không tìm thấy dự án"
+  * hub.projectPicker.empty.ide: "Không có dự án nào bật không gian IDE. Tạo dự án mới hoặc bật IDE trong cài đặt dự án."
+  * hub.projectPicker.empty.notes: "Không có dự án nào bật không gian Notes. Tạo dự án mới hoặc bật Notes trong cài đặt dự án."
+  // Deferred (ADR-034): hub.projectPicker.empty.knowledge: "Không có dự án nào bật không gian Knowledge. Tạo dự án mới hoặc bật Knowledge trong cài đặt dự án."
+  // Deferred (ADR-034): hub.projectPicker.empty.study: "Không có dự án nào bật không gian Study. Tạo dự án mới hoặc bật Study trong cài đặt dự án."
+  * hub.projectPicker.empty.createProject: "Tạo Dự Án"
+  */

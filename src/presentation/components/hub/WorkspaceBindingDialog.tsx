@@ -44,12 +44,16 @@ import type { WorkspaceBindingDialogProps, WorkspaceConfig } from './WorkspaceBi
 // ============================================================================
 // Workspace Configuration
 // ============================================================================
+// TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+// Workspace list updated to remove knowledge/study from UI
+// Backend types retained for backward compatibility with existing projects
 
 const WORKSPACES: WorkspaceConfig[] = [
   { id: 'ide', icon: '💻', labelKey: 'hub.workspaceBinding.workspaces.ide' },
   { id: 'notes', icon: '📝', labelKey: 'hub.workspaceBinding.workspaces.notes' },
-  { id: 'knowledge', icon: '📚', labelKey: 'hub.workspaceBinding.workspaces.knowledge' },
-  { id: 'study', icon: '🎓', labelKey: 'hub.workspaceBinding.workspaces.study' },
+  // TODO: Restore when Knowledge/Study workspaces implemented
+  // { id: 'knowledge', icon: '📚', labelKey: 'hub.workspaceBinding.workspaces.knowledge' },
+  // { id: 'study', icon: '🎓', labelKey: 'hub.workspaceBinding.workspaces.study' },
 ];
 
 // ============================================================================

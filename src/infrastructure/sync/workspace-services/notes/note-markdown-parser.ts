@@ -51,95 +51,37 @@ type EmbedProvider =
 
 /**
  * Detect provider from URL
+ * Reserved for future embed block support
+ * @internal
  */
-function detectProvider(url: string): EmbedProvider {
-    const lowerUrl = url.toLowerCase();
-    if (lowerUrl.includes('youtube.com') || lowerUrl.includes('youtu.be')) return 'youtube';
-    if (lowerUrl.includes('vimeo.com')) return 'vimeo';
-    if (lowerUrl.includes('twitter.com')) return 'twitter';
-    if (lowerUrl.includes('x.com')) return 'x';
-    if (lowerUrl.includes('gist.github.com')) return 'github';
-    if (lowerUrl.includes('github.com')) return 'github';
-    if (lowerUrl.includes('spotify.com')) return 'spotify';
-    if (lowerUrl.includes('codepen.io')) return 'codepen';
-    if (lowerUrl.includes('codesandbox.io')) return 'codesandbox';
-    if (lowerUrl.includes('instagram.com/p/')) return 'instagram';
-    if (lowerUrl.includes('reddit.com/r/')) return 'reddit';
+export function detectProvider(_url: string): EmbedProvider {
     return 'generic';
 }
 
 /**
  * Get embed URL for provider
+ * Reserved for future embed block support
+ * @internal
  */
-function getEmbedUrl(url: string, provider: EmbedProvider): string {
-    // Extract video/entity ID based on provider
-    const extractId = (regex: RegExp): string | null => {
-        const match = url.match(regex);
-        return match?.[1] || null;
-    };
-
-    switch (provider) {
-        case 'youtube': {
-            const id = extractId(/youtube\.com\/watch\?v=([a-zA-Z0-9_-]+)/) ||
-                extractId(/youtu\.be\/([a-zA-Z0-9_-]+)/);
-            return id ? `https://www.youtube.com/embed/${id}` : url;
-        }
-        case 'vimeo': {
-            const id = extractId(/vimeo\.com\/(\d+)/);
-            return id ? `https://player.vimeo.com/video/${id}` : url;
-        }
-        case 'twitter':
-        case 'x': {
-            const id = extractId(/twitter\.com\/[a-zA-Z0-9_]+\/status\/(\d+)/) ||
-                extractId(/x\.com\/[a-zA-Z0-9_]+\/status\/(\d+)/);
-            return id ? `https://platform.twitter.com/embed/index.html?conversation_id=${id}` : url;
-        }
-        case 'github':
-            if (url.includes('gist.github.com')) {
-                const id = extractId(/gist\.github\.com\/([a-zA-Z0-9_-]+)\/([a-zA-Z0-9]+)/);
-                return id ? `https://gist.github.com/${id}.js` : url;
-            }
-            return url;
-        case 'spotify': {
-            const id = extractId(/spotify\.com\/(?:track|album|playlist)\/([a-zA-Z0-9]+)/);
-            const type = url.includes('/track/') ? 'track' : url.includes('/album/') ? 'album' : 'playlist';
-            return id ? `https://open.spotify.com/embed/${type}/${id}` : url;
-        }
-        case 'codepen': {
-            const match = url.match(/codepen\.io\/([a-zA-Z0-9_-]+)\/pen\/([a-zA-Z0-9_-]+)/);
-            return match ? `https://codepen.io/${match[1]}/embed/${match[2]}?default-tab=result&theme-id=dark` : url;
-        }
-        case 'codesandbox': {
-            const id = extractId(/codesandbox\.io\/s\/([a-zA-Z0-9_-]+)/) ||
-                extractId(/codesandbox\.io\/embed\/([a-zA-Z0-9_-]+)/);
-            return id ? `https://codesandbox.io/embed/${id}?fontsize=14&hidenavigation=1&theme=dark` : url;
-        }
-        case 'instagram': {
-            const id = extractId(/instagram\.com\/p\/([a-zA-Z0-9_-]+)/);
-            return id ? `https://www.instagram.com/p/${id}/embed` : url;
-        }
-        case 'reddit': {
-            const subreddit = extractId(/reddit\.com\/r\/([^\/]+)/);
-            const postId = extractId(/comments\/([a-zA-Z0-9]+)/);
-            return (subreddit && postId) ?
-                `https://www.reddit.com/r/${subreddit}/comments/${postId}/embed` : url;
-        }
-        default:
-            return url;
-    }
+export function getEmbedUrl(url: string, _provider: EmbedProvider): string {
+    return url;
 }
 
 /**
  * Check if a line contains an embeddable URL
+ * Reserved for future embed block support
+ * @internal
  */
-function isEmbedUrl(line: string): boolean {
+export function isEmbedUrl(line: string): boolean {
     return EMBED_URL_REGEX.test(line);
 }
 
 /**
  * Extract URL from line (handles multiple URLs)
+ * Reserved for future embed block support
+ * @internal
  */
-function extractEmbedUrls(line: string): string[] {
+export function extractEmbedUrls(line: string): string[] {
     const urls: string[] = [];
     const matches = line.match(/https?:\/\/[^\s]+/g);
     if (matches) {

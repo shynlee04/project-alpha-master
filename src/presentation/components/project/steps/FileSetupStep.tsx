@@ -1,13 +1,17 @@
 /**
- * @fileoverview File Setup Step
+ * @fileoverview File Setup Step (Simplified)
  * @module presentation/components/project/steps/FileSetupStep
  * @governance S-023
- * @created 2026-01-06T10:00:00+07:00
+ * @updated 2026-01-21 ARCH-01-04
  *
- * Step 4 of project creation wizard: Initial file setup (optional).
- * Collects options for creating initial files like README.md and .gitignore.
+ * Simplified step 4: Initial file setup (optional).
  *
- * Size target: ≤200 lines
+ * Changes from original:
+ * - Removed: fileSetupEnabled toggle (always show this section when enabled)
+ * - Removed: createGitignore (rarely needed, can be added later)
+ * - Simplified: single createReadme toggle (default: true)
+ *
+ * Size target: ≤100 lines
  */
 
 import React from 'react';
@@ -20,42 +24,21 @@ import type { WizardFormData } from '../wizard-types';
 
 export interface FileSetupStepProps {
   formData: WizardFormData;
-  updateFormData: <K extends keyof WizardFormData>(
-    key: K,
-    value: WizardFormData[K]
-  ) => void;
+  updateFormData: <K extends keyof WizardFormData>(key: K, value: WizardFormData[K]) => void;
   error?: string;
 }
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-const FILE_OPTIONS = [
-  {
-    key: 'createReadme',
-    labelKey: 'wizard.fileOptions.readme.label',
-    descriptionKey: 'wizard.fileOptions.readme.description',
-  },
-  {
-    key: 'createGitignore',
-    labelKey: 'wizard.fileOptions.gitignore.label',
-    descriptionKey: 'wizard.fileOptions.gitignore.description',
-  },
-] as const;
 
 // ============================================================================
 // Component
 // ============================================================================
 
 /**
- * FileSetupStep - Step 4: Initial file setup (optional)
+ * FileSetupStep - Simplified file configuration
  *
- * Features:
- * - Toggle to enable/disable file setup
- * - Create README.md option
- * - Create .gitignore option
- * - Preview of files to be created
+ * Simplified Features:
+ * - Single "Create README.md" toggle (default: true)
+ * - Removed fileSetupEnabled toggle (section always visible in step 4)
+ * - Removed createGitignore (can be added via Settings later)
  *
  * @example
  * ```tsx
@@ -72,17 +55,6 @@ export const FileSetupStep: React.FC<FileSetupStepProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  const handleFileOptionChange = (option: 'createReadme' | 'createGitignore', value: boolean) => {
-    updateFormData(option, value);
-  };
-
-  // Build list of files to be created
-  const filesToCreate: string[] = [];
-  if (formData.fileSetupEnabled) {
-    if (formData.createReadme) filesToCreate.push('README.md');
-    if (formData.createGitignore) filesToCreate.push('.gitignore');
-  }
-
   return (
     <div className="space-y-6">
       {/* Step Title */}
@@ -98,13 +70,13 @@ export const FileSetupStep: React.FC<FileSetupStepProps> = ({
         </p>
       </div>
 
-      {/* Enable File Setup Toggle */}
-      <div className="flex items-center gap-3 p-4 border-2 border-border rounded-[4px] bg-muted/30">
+      {/* Create README Toggle */}
+      <div className="flex items-center gap-3 p-4 border-2 border-border rounded-[4px] bg-background hover:border-primary/50 transition-colors">
         <input
-          id="fileSetupEnabled"
+          id="createReadme"
           type="checkbox"
-          checked={formData.fileSetupEnabled}
-          onChange={(e) => updateFormData('fileSetupEnabled', e.target.checked)}
+          checked={formData.createReadme}
+          onChange={(e) => updateFormData('createReadme', e.target.checked)}
           className="w-5 h-5 min-w-[20px] min-h-[20px] border-2 border-border rounded-[4px]
                      focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]
                      focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]
@@ -112,95 +84,40 @@ export const FileSetupStep: React.FC<FileSetupStepProps> = ({
                      cursor-pointer"
         />
         <label
-          htmlFor="fileSetupEnabled"
+          htmlFor="createReadme"
           className="flex-1 cursor-pointer"
         >
           <div className="font-medium text-foreground">
-            {t('wizard.fields.enableFileSetup.label')}
+            {t('wizard.fileOptions.readme.label', 'Create README.md')}
           </div>
           <div className="text-sm text-muted-foreground">
-            {t('wizard.fields.enableFileSetup.description')}
+            {t('wizard.fileOptions.readme.description',
+              'Adds a basic README file with project name and description')}
           </div>
         </label>
       </div>
 
-      {formData.fileSetupEnabled && (
-        <div className="space-y-4 pl-4 border-l-2 border-primary/30">
-          {/* File Options */}
-          <div className="space-y-3">
-            {FILE_OPTIONS.map((option) => (
-              <div
-                key={option.key}
-                className="flex items-start gap-3 p-3 border-2 border-border rounded-[4px] bg-background"
-              >
-                <input
-                  id={`fileOption-${option.key}`}
-                  type="checkbox"
-                  checked={formData[option.key]}
-                  onChange={(e) =>
-                    handleFileOptionChange(
-                      option.key,
-                      e.target.checked
-                    )
-                  }
-                  className="mt-1 w-4 h-4 min-w-[16px] min-h-[16px] border-2 border-border rounded-[4px]
-                             focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]
-                             focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]
-                             checked:bg-primary checked:border-primary
-                             cursor-pointer"
-                />
-                <label
-                  htmlFor={`fileOption-${option.key}`}
-                  className="flex-1 cursor-pointer"
-                >
-                  <div className="font-medium text-foreground text-sm">
-                    {t(option.labelKey)}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {t(option.descriptionKey)}
-                  </div>
-                </label>
-              </div>
-            ))}
-          </div>
-
-          {/* Preview of files to be created */}
-          {filesToCreate.length > 0 && (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-foreground">
-                {t('wizard.fields.filesPreview.label')}
-              </label>
-              <div className="p-3 border-2 border-dashed border-border rounded-[4px] bg-muted/20">
-                <div className="text-xs text-muted-foreground mb-2">
-                  {t('wizard.fields.filesPreview.description')}
-                </div>
-                <div className="space-y-1">
-                  {filesToCreate.map((fileName) => (
-                    <div
-                      key={fileName}
-                      className="flex items-center gap-2 text-sm text-foreground"
-                    >
-                      <span className="text-muted-foreground">📄</span>
-                      <code className="px-2 py-1 bg-muted rounded-[2px] text-xs">
-                        {fileName}
-                      </code>
-                    </div>
-                  ))}
-                </div>
-              </div>
+      {/* File Preview */}
+      <div className="p-3 border-2 border-dashed border-border rounded-[4px] bg-muted/20">
+        <div className="text-xs text-muted-foreground mb-2">
+          {t('wizard.fields.filesPreview.description', 'Files to be created:')}
+        </div>
+        <div className="space-y-1">
+          {formData.createReadme && (
+            <div className="flex items-center gap-2 text-sm text-foreground">
+              <span className="text-muted-foreground">📄</span>
+              <code className="px-2 py-1 bg-muted rounded-[2px] text-xs">
+                README.md
+              </code>
             </div>
           )}
-
-          {/* Empty state message */}
-          {filesToCreate.length === 0 && (
-            <div className="p-4 border-2 border-dashed border-border rounded-[4px] bg-muted/20 text-center">
-              <div className="text-sm text-muted-foreground">
-                {t('wizard.fields.filesPreview.noFiles')}
-              </div>
+          {!formData.createReadme && (
+            <div className="text-sm text-muted-foreground italic">
+              {t('wizard.fields.filesPreview.noFiles', 'No files will be created')}
             </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

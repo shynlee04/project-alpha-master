@@ -110,18 +110,20 @@ export default function Header() {
             <Sparkles size={20} />
             <span className="font-medium">{t('navigation.agents')}</span>
           </Link>
-          <Link
-            to="/knowledge"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors mb-2',
-            }}
-          >
-            <Sparkles size={20} />
-            <span className="font-medium">{t('navigation.knowledge')}</span>
-          </Link>
+          {/* TODO: ARCH-01-03 - Knowledge workspace DEFERRED per ADR-033 */}
+          {/* Navigation link removed from UI, backend types retained for backward compatibility */}
+          {/* <Link */}
+          {/*   to="/knowledge" */}
+          {/*   onClick={() => setIsOpen(false)} */}
+          {/*   className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors mb-2" */}
+          {/*   activeProps={{ */}
+          {/*      className: */}
+          {/*          'flex items-center gap-3 p-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors mb-2', */}
+          {/*    }} */}
+          {/* > */}
+          {/*    <Sparkles size={20} /> */}
+          {/*    <span className="font-medium">{t('navigation.knowledge')}</span> */}
+          {/* </Link> */}
           <Link
             to="/settings"
             onClick={() => setIsOpen(false)}

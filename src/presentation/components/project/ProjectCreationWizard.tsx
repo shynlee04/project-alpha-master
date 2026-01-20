@@ -83,39 +83,23 @@ const INITIAL_FORM_DATA: WizardFormData = {
   projectDescription: '',
   projectType: 'app',
   projectIcon: '📁',
-  template: '',
 
-  // TASK-1 FIX: Leave undefined so ProjectDetailsStep can auto-detect based on platform
-  storageType: undefined as unknown as WizardFormData['storageType'],
+  // Storage type: auto-detected based on platform
+  storageType: 'fsa' as const,
   fsaHandle: undefined, // Will be set when user picks folder for FSA storage
+
+  // Workspace bindings: simplified (only notes/ide)
   workspaceBindings: {
-    knowledge: true,
-    notes: true,
-    study: true,
-    // ide binding is set to false initially, will be enabled only for fsa
     ide: false,
+    notes: true,
   },
 
-  workspaceEnabled: false,
-  workspaceName: '',
-  workspaceType: 'webcontainer',
+  workspaceEnabled: true, // Default to enabled
   workspaceTemplate: 'blank',
 
-  agentEnabled: false,
-  selectedAgent: 'claude',
-  agentPermissions: {
-    read: true,
-    write: false,
-    execute: false,
-  },
-
-  fileSetupEnabled: false,
-  createReadme: true,
-  createGitignore: true,
-  initialFiles: [],
-
-  templateValidationError: undefined,
-  packageManager: undefined,
+  agentEnabled: true, // Default to enabled
+  agentFullAccess: false, // Simplified: false = read-only, true = full access
+  createReadme: true, // Simplified: single toggle instead of fileSetupEnabled + createReadme + createGitignore
 };
 
 // ============================================================================
@@ -223,13 +207,7 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
         }
         break;
 
-      case 2: // Workspace Setup
-        if (formData.workspaceEnabled && !formData.workspaceName.trim()) {
-          errors[2] = t('wizard.validation.workspaceNameRequired');
-        }
-        break;
-
-      // Steps 3, 4, 5 have no required validation
+      // Steps 2, 3, 4, 5 have no required validation (simplified wizard)
     }
 
     setStepErrors(errors);

@@ -36,6 +36,7 @@ import type {
     ToolExecutionLogTable,
     FSAHandleTable,
     SessionSnapshotTable,
+    DiagnosticTracesTable,
 } from './dexie-db-session-types';
 
 import type {
@@ -147,6 +148,12 @@ export class ViaGentDatabase extends Dexie {
     toolExecutionLogs!: ToolExecutionLogTable;
     fsaHandles!: FSAHandleTable;
     sessionSnapshots!: SessionSnapshotTable;
+
+    // ========================================================================
+    // ARCH-01-06: Diagnostic Traces Table
+    // ========================================================================
+
+    diagnosticTraces!: DiagnosticTracesTable;
 
     // ========================================================================
     // Story WB-2: File Snapshot Store Tables

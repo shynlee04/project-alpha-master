@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from '@tanstack/react-router';
 import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';
 import { FileSystemError, PermissionDeniedError } from '@/infrastructure/filesystem/fs-errors';
@@ -58,6 +59,7 @@ export function useFileTreeActions(
 ): UseFileTreeActionsResult {
     const { t } = useTranslation();
     const { isMobile } = useDeviceType();
+    const navigate = useNavigate();
     const {
         directoryHandle,
         getGateway,
@@ -135,9 +137,10 @@ export function useFileTreeActions(
             if (err instanceof PermissionDeniedError) {
                 // Show mobile-specific error on mobile devices
                 if (isMobile) {
-                    setError(null); // Clear the error state for toast handling
+                    setError(null); // Clear error state for toast handling
                     showMobileWorkspaceError('permissionDenied', () => {
-                        window.location.href = '/hub';
+                        // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+                        navigate({ to: '/hub' });
                     });
                 } else {
                     setError(t('errors.workspace.permissionDenied.description', 'Permission was denied to access this folder. Please grant access in your browser settings.'));
@@ -145,9 +148,10 @@ export function useFileTreeActions(
             } else if (err instanceof FileSystemError) {
                 // Show mobile-specific error on mobile devices
                 if (isMobile) {
-                    setError(null); // Clear the error state for toast handling
+                    setError(null); // Clear error state for toast handling
                     showMobileWorkspaceError('openFailed', () => {
-                        window.location.href = '/hub';
+                        // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+                        navigate({ to: '/hub' });
                     });
                 } else {
                     setError(t('errors.workspace.openFailed.description', `Error loading directory: ${err.message}`));
@@ -155,9 +159,10 @@ export function useFileTreeActions(
             } else {
                 // Show mobile-specific error on mobile devices
                 if (isMobile) {
-                    setError(null); // Clear the error state for toast handling
+                    setError(null); // Clear error state for toast handling
                     showMobileWorkspaceError('openFailed', () => {
-                        window.location.href = '/hub';
+                        // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
+                        navigate({ to: '/hub' });
                     });
                 } else {
                     setError(t('errors.workspace.openFailed.description', `Error loading directory: ${err instanceof Error ? err.message : String(err)}`));

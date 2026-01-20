@@ -1,58 +1,73 @@
 /**
- * Project Creation Wizard Types
+ * @fileoverview Project Creation Wizard Types (Simplified)
  *
- * Shared types for the project creation wizard to avoid circular dependencies.
- * Separated from ProjectCreationWizard.tsx and step components.
+ * Simplified wizard types for ARCH-01-04: Reduce from 23 to 10 options
+ *
+ * Changes from original:
+ * - projectType: 4 values → 2 values (app/library)
+ * - workspaceType: Removed (always 'local' for simplified UX)
+ * - workspaceBindings: Simplified (only notes/ide)
+ * - agentPermissions: 3 toggles → 1 simplified toggle
+ * - fileSetupEnabled: Merged into single createReadme option
+ * - Removed: template, templateValidationError, packageManager
  *
  * @module presentation/components/project/wizard-types
+ * @updated 2026-01-21 ARCH-01-04
  */
 
 import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
 
-/** Storage type for project data */
+/** Storage type for project data - auto-detected based on platform */
 export type ProjectStorageType = 'indexeddb' | 'fsa';
 
-/** Wizard form data */
+/**
+ * Simplified Wizard form data (10 essential options)
+ *
+ * Total fields: 14 (down from 23)
+ * Active options: 10 (down from 23)
+ */
 export interface WizardFormData {
-  // Step 1: Project Details (required)
+  // ========================================
+  // Step 1: Project Details (4 options)
+  // ========================================
+  /** Project name (required, 2-50 chars) */
   projectName: string;
+  /** Project description (optional, max 500 chars) */
   projectDescription: string;
-  projectType: 'app' | 'library' | 'experiment' | 'learning';
+  /** Project type: simplified to app/library (was 4 options) */
+  projectType: 'app' | 'library';
+  /** Project icon: reduced to 6 essential emojis (was 10) */
   projectIcon: string;
-  template?: string;
 
-  // Storage type: browser DB (mobile) vs file system access (desktop)
+  // ========================================
+  // Step 2: Storage (1 option - auto-detected)
+  // ========================================
+  /** Storage type: auto-detected based on platform (FSA for desktop, IndexedDB for mobile) */
   storageType: ProjectStorageType;
-
-  // FSA folder handle (required for 'fsa' storage type)
-  // When user selects 'fsa' storage, they must pick a folder via showDirectoryPicker
+  /** FSA folder handle (auto-set when user picks folder for FSA storage) */
   fsaHandle?: FileSystemDirectoryHandle | null;
 
-  // Workspace bindings: which workspaces this project is available in
-  workspaceBindings: WorkspaceBindings;
-
-  // Step 2: Workspace Setup (optional)
+  // ========================================
+  // Step 3: Workspace Setup (2 options)
+  // ========================================
+  /** Enable workspace setup (default: true) */
   workspaceEnabled: boolean;
-  workspaceName: string;
-  workspaceType: 'local' | 'webcontainer';
-  workspaceTemplate: 'blank' | 'react-app' | 'next-app' | 'node-lib';
+  /** Workspace template: simplified to blank/react/next (was 4 options, removed node-lib) */
+  workspaceTemplate: 'blank' | 'react-app' | 'next-app';
 
-  // Step 3: Agent Selection (optional)
+  // ========================================
+  // Step 4: Agent & Files (3 options)
+  // ========================================
+  /** Enable agent features (default: true, simplified from complex selection) */
   agentEnabled: boolean;
-  selectedAgent: string;
-  agentPermissions: {
-    read: boolean;
-    write: boolean;
-    execute: boolean;
-  };
-
-  // Step 4: File Setup (optional)
-  fileSetupEnabled: boolean;
+  /** Simplified permissions: just a single "Full Access" toggle vs 3 separate toggles */
+  agentFullAccess: boolean;
+  /** Create README.md (default: true, simplified from fileSetupEnabled + 2 options) */
   createReadme: boolean;
-  createGitignore: boolean;
-  initialFiles: Array<{ name: string; content: string }>;
 
-  // Additional validation and metadata fields
-  templateValidationError?: string;
-  packageManager?: string;
+  // ========================================
+  // Internal: Workspace Bindings
+  // ========================================
+  /** Workspace bindings: simplified to only active workspaces (knowledge/study removed) */
+  workspaceBindings: Omit<WorkspaceBindings, 'knowledge' | 'study'>;
 }

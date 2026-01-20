@@ -41,7 +41,7 @@ export interface KnowledgeFileSyncConfig {
  * @deprecated Knowledge workspace is deferred to post-MVP
  */
 export class KnowledgeFileSyncService implements FileSyncService {
-  private _config: KnowledgeFileSyncConfig;
+  private _config: KnowledgeFileSyncConfig; // Intentionally unused - stub pattern
   private listeners: Set<(event: FileChangeEvent) => void> = new Set();
   private _status: SyncStatus = {
     syncing: false,
@@ -52,6 +52,7 @@ export class KnowledgeFileSyncService implements FileSyncService {
 
   constructor(config: KnowledgeFileSyncConfig) {
     this._config = config;
+    void this._config; // Silencing unused var - stub pattern for deferred feature
     console.warn('[KnowledgeFileSyncService] Knowledge sync is deferred to post-MVP');
   }
 

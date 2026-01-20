@@ -22,30 +22,27 @@ import { cn } from '@/lib/utils';
 export interface WorkspacePieChartProps {
   /** Number of projects with IDE workspace binding */
   ideCount: number;
-  /** Number of projects with Knowledge workspace binding */
-  knowledgeCount: number;
   /** Number of projects with Notes workspace binding */
   notesCount: number;
-  /** Number of projects with Study workspace binding */
-  studyCount: number;
   /** Optional additional CSS classes */
   className?: string;
 }
 
 // Color palette for workspaces (8-bit dark theme compatible)
+// NOTE: Knowledge and Study workspaces are DEFERRED (ADR-034)
 const WORKSPACE_COLORS: Record<string, string> = {
-  ide: '#3b82f6',      // blue-500
-  knowledge: '#22c55e', // green-500
-  notes: '#eab308',     // yellow-500
-  study: '#a855f7',     // purple-500
+  ide: '#3b82f6',   // blue-500
+  notes: '#eab308',   // yellow-500
+  // Deferred: knowledge: '#22c55e', // green-500
+  // Deferred: study: '#a855f7',     // purple-500
 };
 
 // Workspace icons (emojis)
 const WORKSPACE_ICONS: Record<string, string> = {
   ide: '💻',
-  knowledge: '📚',
   notes: '📝',
-  study: '🎓',
+  // Deferred: knowledge: '📚',
+  // Deferred: study: '🎓',
 };
 
 /**
@@ -70,9 +67,7 @@ const WORKSPACE_ICONS: Record<string, string> = {
  */
 export const WorkspacePieChart: React.FC<WorkspacePieChartProps> = ({
   ideCount,
-  knowledgeCount,
   notesCount,
-  studyCount,
   className,
 }) => {
   const { t } = useTranslation();
@@ -88,31 +83,19 @@ export const WorkspacePieChart: React.FC<WorkspacePieChartProps> = ({
         labelKey: 'hub.workspaceBinding.workspaces.ide',
       },
       {
-        name: 'Knowledge',
-        value: knowledgeCount,
-        color: WORKSPACE_COLORS.knowledge,
-        icon: WORKSPACE_ICONS.knowledge,
-        labelKey: 'hub.workspaceBinding.workspaces.knowledge',
-      },
-      {
         name: 'Notes',
         value: notesCount,
         color: WORKSPACE_COLORS.notes,
         icon: WORKSPACE_ICONS.notes,
         labelKey: 'hub.workspaceBinding.workspaces.notes',
       },
-      {
-        name: 'Study',
-        value: studyCount,
-        color: WORKSPACE_COLORS.study,
-        icon: WORKSPACE_ICONS.study,
-        labelKey: 'hub.workspaceBinding.workspaces.study',
-      },
+      // Deferred: Knowledge workspace (ADR-034)
+      // Deferred: Study workspace (ADR-034)
     ];
 
     // Filter out workspaces with 0 projects
     return data.filter((item) => item.value > 0);
-  }, [ideCount, knowledgeCount, notesCount, studyCount]);
+  }, [ideCount, notesCount]);
 
   // Empty state
   if (chartData.length === 0) {

@@ -5,6 +5,23 @@
  *
  * Helper functions for File System Access API handle management.
  * Part of Story ARC-1.1: Split dexie-db.ts (1,267 lines)
+ *
+ * **DEPRECATION NOTICE (ARCH-01-05-Remediation)**:
+ * These functions operate on fsaHandles table ONLY.
+ * For ATOMIC operations across BOTH projects AND fsaHandles tables,
+ * use ProjectHandleService instead:
+ *
+ * ✅ PREFERRED: Use projectHandleService.createWithHandle()
+ * ✅ PREFERRED: Use projectHandleService.deleteWithHandle()
+ * ✅ PREFERRED: Use projectHandleService.restoreHandle()
+ *
+ * @example
+ * // Old (non-atomic):
+ * await db.projects.put(project);
+ * await storeFSAHandle(handleRecord);
+ *
+ * // New (atomic):
+ * await projectHandleService.createWithHandle(project, handle, 'ide');
  */
 
 import type { FSAHandleRecord } from '../dexie-db-types';

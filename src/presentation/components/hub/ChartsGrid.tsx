@@ -80,9 +80,7 @@ export const ChartsGrid: React.FC<ChartsGridProps> = ({
       {/* Workspace Pie Chart */}
       <WorkspacePieChart
         ideCount={metrics.ideWorkspaceCount}
-        knowledgeCount={metrics.knowledgeWorkspaceCount}
         notesCount={metrics.notesWorkspaceCount}
-        studyCount={metrics.studyWorkspaceCount}
       />
     </section>
   );

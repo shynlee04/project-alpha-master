@@ -39,6 +39,9 @@ export interface WorkspaceBindingToggleProps {
 // ============================================================================
 // Workspace Metadata
 // ============================================================================
+// TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+// Workspace metadata retained for backward compatibility with existing projects
+// Restore these labels/icons when implementing Knowledge/Study workspaces
 
 const WORKSPACE_LABELS: Record<WorkspaceId, string> = {
   ide: 'IDE',
@@ -164,7 +167,10 @@ export interface WorkspaceBindingListProps {
  */
 export function WorkspaceBindingList({
   projectId,
-  workspaces = ['ide', 'notes', 'knowledge', 'study'],
+  // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
+  // Default workspaces updated to remove knowledge/study from UI
+  // Backend types retained for backward compatibility with existing projects
+  workspaces = ['ide', 'notes'],
   disabled = false,
   onToggleChange,
 }: WorkspaceBindingListProps) {

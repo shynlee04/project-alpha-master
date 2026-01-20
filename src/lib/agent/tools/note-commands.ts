@@ -193,7 +193,7 @@ export function createListNotesTool() {
       for (const filePath of filePaths) {
         try {
           // Read file content
-          const fileData = await storage.read(filePath);
+          const fileData = await storage.readFile(filePath);
 
           // Parse note metadata from markdown
           const noteId = extractNoteId(filePath.split('/').pop() || filePath);
@@ -257,7 +257,7 @@ export function createReadNoteTool() {
       const filePath = `notes/${getNoteFilename(noteId)}`;
 
       // Read note file
-      const fileData = await storage.read(filePath);
+      const fileData = await storage.readFile(filePath);
 
       // Parse note from markdown
       const parsed = parseNoteFromStorage(fileData.text || '', noteId);
@@ -333,7 +333,7 @@ export function createWriteNoteTool() {
       const data = encoder.encode(markdown);
 
       // Write note file
-      await storage.write(filePath, data);
+      await storage.writeFile(filePath, data);
 
       return {
         success: true,
@@ -377,11 +377,11 @@ export function createDeleteNoteTool() {
       const filePath = `notes/${getNoteFilename(noteId)}`;
 
       // Read note to get title for response
-      const fileData = await storage.read(filePath);
+      const fileData = await storage.readFile(filePath);
       const parsed = parseNoteFromStorage(fileData.text || '', noteId);
 
       // Delete note file
-      await storage.delete(filePath);
+      await storage.deleteFile(filePath);
 
       return {
         success: true,
@@ -429,7 +429,7 @@ export function createListNotesClientTool() {
       for (const filePath of filePaths) {
         try {
           // Read file content
-          const fileData = await storage.read(filePath);
+          const fileData = await storage.readFile(filePath);
 
           // Parse note metadata from markdown
           const noteId = extractNoteId(filePath.split('/').pop() || filePath);
@@ -493,7 +493,7 @@ export function createReadNoteClientTool() {
       const filePath = `notes/${getNoteFilename(noteId)}`;
 
       // Read note file
-      const fileData = await storage.read(filePath);
+      const fileData = await storage.readFile(filePath);
 
       // Parse note from markdown
       const parsed = parseNoteFromStorage(fileData.text || '', noteId);
@@ -569,7 +569,7 @@ export function createWriteNoteClientTool() {
       const data = encoder.encode(markdown);
 
       // Write note file
-      await storage.write(filePath, data);
+      await storage.writeFile(filePath, data);
 
       return {
         success: true,
@@ -613,11 +613,11 @@ export function createDeleteNoteClientTool() {
       const filePath = `notes/${getNoteFilename(noteId)}`;
 
       // Read note to get title for response
-      const fileData = await storage.read(filePath);
+      const fileData = await storage.readFile(filePath);
       const parsed = parseNoteFromStorage(fileData.text || '', noteId);
 
       // Delete note file
-      await storage.delete(filePath);
+      await storage.deleteFile(filePath);
 
       return {
         success: true,

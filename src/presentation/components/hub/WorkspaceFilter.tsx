@@ -28,11 +28,13 @@ export interface WorkspaceFilterProps {
 }
 
 // Workspace configuration with icons and labels
+// NOTE: Knowledge and Study workspaces are DEFERRED (ADR-034)
+// TODO: Re-add when these workspaces are implemented
 const WORKSPACES: { id: WorkspaceFilterType; icon: string; labelKey: string }[] = [
   { id: 'ide', icon: '💻', labelKey: 'hub.workspaceBinding.workspaces.ide' },
-  { id: 'knowledge', icon: '📚', labelKey: 'hub.workspaceBinding.workspaces.knowledge' },
   { id: 'notes', icon: '📝', labelKey: 'hub.workspaceBinding.workspaces.notes' },
-  { id: 'study', icon: '🎓', labelKey: 'hub.workspaceBinding.workspaces.study' },
+  // Deferred: { id: 'knowledge', icon: '📚', labelKey: 'hub.workspaceBinding.workspaces.knowledge' },
+  // Deferred: { id: 'study', icon: '🎓', labelKey: 'hub.workspaceBinding.workspaces.study' },
 ];
 
 /**
@@ -86,7 +88,7 @@ export const WorkspaceFilter: React.FC<WorkspaceFilterProps> = ({
         <Filter className="h-4 w-4 text-muted-foreground" />
 
         {/* Active Filter Badges */}
-        {activeWorkspaces.length > 0 && activeWorkspaces.length < 4 && (
+        {activeWorkspaces.length > 0 && activeWorkspaces.length < 2 && (
           <div className="flex items-center gap-1">
             {activeWorkspaces.map((workspace) => {
               const workspaceConfig = WORKSPACES.find((ws) => ws.id === workspace);
@@ -122,7 +124,7 @@ export const WorkspaceFilter: React.FC<WorkspaceFilterProps> = ({
         )}
 
         {/* Active Count Badge */}
-        {(activeWorkspaces.length === 0 || activeWorkspaces.length === 4) && (
+        {(activeWorkspaces.length === 0 || activeWorkspaces.length === 2) && (
           <span className="text-sm text-muted-foreground">
             {activeWorkspaces.length === 0
               ? t('hub.workspaceFilter.none', 'None')
@@ -132,7 +134,7 @@ export const WorkspaceFilter: React.FC<WorkspaceFilterProps> = ({
         )}
 
         {/* Count Badge */}
-        {activeWorkspaces.length > 0 && activeWorkspaces.length < 4 && (
+        {activeWorkspaces.length > 0 && activeWorkspaces.length < 2 && (
           <span className="text-sm text-muted-foreground">
             {activeCount} {t('hub.workspaceFilter.selected', 'selected')}
           </span>
