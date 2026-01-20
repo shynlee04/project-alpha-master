@@ -51,3 +51,17 @@ export type {
   FileChangeCallback as GatewayFileChangeCallback,
   WatchHandle,
 } from './storage-gateway.interface';
+
+// ============================================================================
+// Feature Plugin Interface (ARCH-02-01)
+// ============================================================================
+
+export type {
+  FeaturePlugin,
+  PluginMainProps,
+  PluginSidebarProps,
+  PluginToolbarProps,
+  PluginRequirements,
+  PluginRegistryEntry,
+  ProjectContext,
+} from './feature-plugin.interface';

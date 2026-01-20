@@ -15,6 +15,7 @@ import { z } from 'zod';
 import { formatNoteForStorage, parseNoteFromStorage, getNoteFilename, extractNoteId } from '@/lib/notes/format/note-formatter';
 import { createStorageAdapter } from '@/infrastructure/filesystem/StorageAdapterFactory';
 import type { ToolResult } from './types';
+import type { NoteRecord } from '@/lib/notes/types';
 
 // ============================================================================
 // Types
@@ -309,7 +310,7 @@ export function createWriteNoteTool() {
 
       // Parse content to NoteRecord format for formatter
       // Use simplified NoteRecord structure with required fields
-      const noteRecord = {
+      const noteRecord: NoteRecord = {
         id: finalNoteId,
         projectId,
         workspaceId: 'notes',
@@ -545,7 +546,7 @@ export function createWriteNoteClientTool() {
 
       // Parse content to NoteRecord format for formatter
       // Use simplified NoteRecord structure with required fields
-      const noteRecord = {
+      const noteRecord: NoteRecord = {
         id: finalNoteId,
         projectId,
         workspaceId: 'notes',

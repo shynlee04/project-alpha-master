@@ -1,0 +1,28 @@
+/**
+ * @fileoverview useProjectContext Hook - Consumes project context
+ * @module infrastructure/context/use-project-context
+ *
+ * **ARCH-02-03**: Create ProjectContext Provider
+ *
+ * Per ADR-034 Decision D1:
+ * Hook for accessing ProjectContext in child components.
+ *
+ * Throws error if called outside of ProjectContextProvider.
+ *
+ * @epic EPIC-ARCH-02
+ * @story ARCH-02-03
+ * @team Team B
+ * @created 2026-01-21
+ */
+
+import { useContext } from 'react';
+import { ProjectContext, ProjectContextProvider } from './project-context';
+
+export { ProjectContext, ProjectContextProvider };
+
+  return context;
+}
+
+// ============================================================================
+// No additional exports
+// ============================================================================

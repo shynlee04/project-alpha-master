@@ -110,7 +110,6 @@ export function createDiagnosticTrace(
     traceId,
     flow,
     step: 'START',
-    timestamp,
     ok: true,
     metadata
   });
@@ -370,8 +369,8 @@ export async function getRecentTraces(limit: number = 10): Promise<Trace[]> {
       if (!grouped.has(event.traceId)) {
         grouped.set(event.traceId, {
           traceId: event.traceId,
-          flow: event.flow,
-          startTime: event.timestamp,
+          flow: event.flow as FlowName,
+          startTime: event.timestamp ?? 0,
           events: [],
           status: event.step === 'COMPLETE' ? 'success' : 
                   event.step === 'FAILED' ? 'failed' : 'running'
@@ -405,9 +404,6 @@ export async function clearTraces(): Promise<void> {
 
 export {
   createDiagnosticTrace as default,
-  traceVerifyHandleAccess,
-  traceVerifyDexieRecord,
-  traceVerifyHandlePersistence,
   completeTrace,
   getRecentTraces,
   clearTraces
