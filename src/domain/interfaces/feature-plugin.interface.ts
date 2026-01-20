@@ -60,14 +60,17 @@ export interface ProjectContext {
  * Props for main plugin component
  *
  * @remarks
- * Passed to the plugin's main rendering component when loaded in a panel.
+ * Passed to plugin's main rendering component when loaded in a panel.
+ *
+ * Note: Plugins can use useProjectContext() hook to access context,
+ * so projectContext and panelId are optional.
  */
 export interface PluginMainProps {
-  /** Project context with storage, platform, and services */
-  projectContext: ProjectContext;
+  /** Project context with storage, platform, and services (optional) */
+  projectContext?: ProjectContext;
 
-  /** Unique identifier for this panel instance */
-  panelId: string;
+  /** Unique identifier for this panel instance (optional) */
+  panelId?: string;
 
   /** Panel width in pixels (responsive) */
   width: number;

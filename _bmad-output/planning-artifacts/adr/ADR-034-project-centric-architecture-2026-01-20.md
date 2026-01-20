@@ -158,12 +158,22 @@ AFTER:
 - [ ] Remove Knowledge/Study UI elements (defer to Phase 4)
 - [ ] Replace all `window.location.href` with navigate()
 
-### Phase 2: Feature Plugins (Week 3-4) - EPIC-ARCH-02
-- [ ] Define FeaturePlugin interface
-- [ ] Convert FileTree to plugin
-- [ ] Convert Monaco to plugin
-- [ ] Convert Notes/BlockNote to plugin
-- [ ] Convert Terminal to plugin
+### Phase 2: Feature Plugins (Week 3-4) - EPIC-ARCH-02 [AMENDED 2026-01-20]
+
+**Amendment:** Based on independent architecture review, Phase 2 now includes mandatory route migration to prove architecture before building all plugins.
+
+- [x] Define FeaturePlugin interface ✅ DONE (ARCH-02-01)
+- [x] Create Plugin Registry ✅ DONE (ARCH-02-02)
+- [x] Create ProjectContext Provider ✅ DONE (ARCH-02-03, needs file fix)
+- [ ] **ARCH-02-FIX-01:** Fix window.location.href violation in new code
+- [ ] **ARCH-02-FIX-02:** Fix file extension/import issues
+- [ ] Convert FileTree to plugin + **MIGRATE notes.$projectId route** (ARCH-02-04)
+- [ ] Convert Monaco to plugin + **MIGRATE ide.$projectId route** (ARCH-02-05)
+- [ ] Convert Notes/BlockNote to plugin (ARCH-02-06)
+- [ ] Convert Terminal to plugin (ARCH-02-07)
+- [ ] Convert Chat to plugin (ARCH-02-08)
+
+**Gate:** At least 2 routes must use new ProjectContextProvider before Phase 3.
 
 ### Phase 3: Layout System (Week 5-6) - EPIC-ARCH-03
 - [ ] Implement flexible layout engine

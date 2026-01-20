@@ -22,8 +22,9 @@
  * @created 2026-01-21
  */
 
-import React, { createContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useEffect, useState, useCallback, useContext } from 'react';
 import type { ReactNode } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { storageAdapterFactory } from '@/infrastructure/filesystem/StorageAdapterFactory';
@@ -147,6 +148,12 @@ export const ProjectContextProvider: React.FC<{
   projectId: string;
   children: ReactNode;
 }> = ({ projectId, children }) => {
+  // ========================================================================
+  // Router
+  // ========================================================================
+
+  const navigate = useNavigate();
+
   // ========================================================================
   // State
   // ========================================================================
@@ -310,7 +317,7 @@ export const ProjectContextProvider: React.FC<{
             <h2 className="text-xl font-bold text-red-600 mb-2">Error Loading Project</h2>
             <p className="text-gray-700">{error}</p>
             <button
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate({ to: '/' })}
               className="mt-4 rounded-none bg-blue-600 text-white px-4 py-2 hover:bg-blue-700"
             >
               Go to Hub
@@ -337,5 +344,25 @@ export const ProjectContextProvider: React.FC<{
 };
 
 // ============================================================================
-// No additional exports - useProjectContext is in separate file
+// Hook for accessing ProjectContext
+// ============================================================================
+
+/**
+ * Hook to access ProjectContext
+ *
+ * @throws Error if called outside ProjectContextProvider
+ * @returns ProjectContext value
+ */
+export function useProjectContext(): ProjectContext {
+  const context = useContext(ProjectContext);
+
+  if (!context) {
+    throw new Error('useProjectContext must be used within ProjectContextProvider');
+  }
+
+  return context;
+}
+
+// ============================================================================
+// No additional exports
 // ============================================================================

@@ -1,32 +1,32 @@
 /**
- * @fileoverview Notes Workspace Route with Project ID
+ * @fileoverview Notes Workspace Route with Project ID - MIGRATED TO NEW ARCHITECTURE
  * @module routes/notes.$projectId
- * @governance Story WB-6: Cross-Workspace Navigation
+ * @governance Story ARCH-02-04: Migrate to Project-Centric Architecture
  *
- * Notes workspace route for a specific project ID.
- * Integrates ProjectProvider for cross-workspace state sharing.
- * Loads BlockNote editor with AI slash commands and RAG retrieval.
+ * MIGRATED: This route now uses new ProjectContextProvider from @/infrastructure/context
+ * instead of old ProjectProvider from @/lib/workspace.
  *
- * Route Pattern: /notes/$projectId
- * - ProjectProvider wraps NotesPage with project context
- * - WorkspaceSwitcher in header allow switching to IDE/Knowledge/Study
+ * Changes:
+ * - Import ProjectContextProvider from @/infrastructure/context
+ * - Remove ProjectProvider import from @/lib/workspace/ProjectContext
+ * - Wrap NotesPage in ProjectContextProvider
+ * - Integrate FileTree plugin.MainComponent
  *
- * @epic Epic-26 Intelligent Knowledge Base
- * @story 26-1 BlockNote Editor
- * @story 26-2 Client-Side Embedding Pipeline
- * @story 26-3 "Ask My Notes" RAG Tool
- * @story 26-4 Inline AI Magic
+ * This proves ADR-034 architecture works for notes workspace.
  *
- * INF-03 FIX: Added waitForHydration() to fix race condition where
- * loader runs before Zustand store hydration completes.
+ * @epic EPIC-ARCH-02
+ * @story ARCH-02-04
+ * @team Team A
+ * @created 2026-01-21
  */
 
 import { useEffect, useRef } from 'react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
-import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
+import { ProjectContextProvider } from '@/infrastructure/context/project-context';
+import { fileTreePlugin } from '@/plugins/filetree';
+import type { Project } from '@/domain/entities/project';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
@@ -45,11 +45,11 @@ export const Route = createFileRoute('/notes/$projectId')({
     const { projectId } = params;
     console.log('[NotesRoute.loader] Loading project:', projectId);
 
-    // ✅ INF-03 FIX: Wait for Zustand store hydration before querying
+    // Wait for Zustand store hydration before querying
     await waitForHydration();
     console.log('[NotesRoute.loader] Hydration complete, querying Dexie...');
 
-    // ✅ INF-03 FIX: Query Dexie directly (not Zustand/getProject facade)
+    // Query Dexie directly (not Zustand/getProject facade)
     const record = await db.projects.get(projectId);
 
     if (!record) {
@@ -71,7 +71,7 @@ export const Route = createFileRoute('/notes/$projectId')({
 
 function NotesWorkspace() {
   console.log('[NotesWorkspace] Component rendering...');
-  
+
   const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
   const search = Route.useSearch() as NotesSearchParams;
@@ -79,7 +79,7 @@ function NotesWorkspace() {
 
   console.log('[NotesWorkspace] Data loaded:', { projectId: _projectId, project, search });
 
-  // ARC-A04: Show toast when redirected from IDE (mobile users)
+  // Show toast when redirected from IDE (mobile users)
   useEffect(() => {
     if (search?.reason === 'mobile-not-supported' && !toastShownRef.current) {
       toastShownRef.current = true;
@@ -90,11 +90,34 @@ function NotesWorkspace() {
     }
   }, [search?.reason]);
 
-  console.log('[NotesWorkspace] About to render ProjectProvider with NotesPage');
+  console.log('[NotesWorkspace] About to render ProjectContextProvider with NotesPage and FileTree');
+
+  // ============================================================================
+  // Render with NEW ProjectContextProvider (ARCH-02-04 migration)
+  // ============================================================================
 
   return (
-    <ProjectProvider project={project as Project | null} workspace="notes">
-      <NotesPage />
-    </ProjectProvider>
+    // MIGRATION: Use ProjectContextProvider from new architecture
+    <ProjectContextProvider projectId={project.id}>
+      <div className="flex h-full">
+        {/* MIGRATION: Integrate FileTree plugin.MainComponent */}
+        <div className="w-64 border-r border-border/30 shrink-0 overflow-hidden flex flex-col">
+          <div className="text-xs font-semibold px-3 py-2 border-b border-border/30 bg-card/30">
+            File Tree
+          </div>
+          <div className="flex-1 overflow-auto">
+            <fileTreePlugin.MainComponent
+              width={256}
+              height={window.innerHeight - 32} // Subtract header height
+            />
+          </div>
+        </div>
+
+        {/* Notes Editor (existing NotesPage) */}
+        <div className="flex-1 overflow-auto">
+          <NotesPage />
+        </div>
+      </div>
+    </ProjectContextProvider>
   );
 }

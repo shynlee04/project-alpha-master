@@ -23,6 +23,8 @@ import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { migrateWorkspaceBindings } from '@/infrastructure/persistence/stores/project/migrate-bindings';
 import { registerServiceWorker } from '@/lib/offline/service-worker-registration';
+import { registerPlugin } from '@/infrastructure/plugins/plugin-registry';
+import { fileTreePlugin } from '@/plugins/filetree';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -81,6 +83,11 @@ export function AppInitializer({ children }: AppInitializerProps) {
                 if (swRegistration) {
                     console.log('[AppInitializer] Offline mode enabled');
                 }
+
+                // 6. Register feature plugins (ARCH-02-04)
+                console.log('[AppInitializer] Registering feature plugins...');
+                registerPlugin(fileTreePlugin);
+                console.log('[AppInitializer] FileTree plugin registered');
 
                 // 5. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection

@@ -4,16 +4,16 @@
 # ════════════════════════════════════════════════════════
 
 schema_version: "2.0.0"
-last_updated: "2026-01-22T14:45:00+07:00"
-updated_by: "architect-ext"
+last_updated: "2026-01-21T17:15:00+07:00"
+updated_by: "bmad-sprint-manager"
 session_id: "correct-course-track3-epic-cc-11-2026-01-22"
 
 current:
-  agent: "architect-ext"
-  epic_id: "EPIC-CC-11"
-  story_id: "CC-11-03"
+  agent: "bmad-sprint-manager"
+  epic_id: "EPIC-ARCH-02"
+  story_id: "ARCH-02-FIX-03"
   story_status: "done"
-  workflow: "correct-course"
+  workflow: "fix-creation"
   step: 4
   active_team: "TEAM_B"
   
@@ -40,6 +40,118 @@ correct_course_track_3:
     reduction_percentage: 55
     ts_errors: 0
     regressions: 0
+
+# ARCH-02-FIX-03: TypeScript Path Resolution (COMPLETE)
+story_arch_02_fix_03:
+  story_id: "ARCH-02-FIX-03"
+  title: "TypeScript Path Resolution Fix"
+  epic_id: "EPIC-ARCH-02"
+  priority: "P0"
+  effort_hours: 2
+  status: "done"
+  created_at: "2026-01-21T15:45:00+07:00"
+  started_at: "2026-01-21T15:50:00+07:00"
+  completed_at: "2026-01-21T17:15:00+07:00"
+  timebox_end: "2026-01-21T17:45:00+07:00"
+  actual_duration_hours: 1.5
+
+  # Issues Fixed
+  issues:
+    - issue_id: "TS-PATH-01"
+      description: "Cannot resolve @/infrastructure/context/project-context"
+      severity: "CRITICAL"
+      blocking_story: "ARCH-02-04"
+      blocks_ac: "AC6, AC7, AC8, AC9"
+      status: "resolved"
+
+    - issue_id: "TS-DUP-01"
+      description: "Two ProjectContext interfaces exist"
+      severity: "HIGH"
+      location_1: "src/infrastructure/context/project-context.tsx"
+      location_2: "src/infrastructure/context/use-project-context.ts"
+      status: "resolved"
+
+  # Acceptance Criteria
+  acceptance_criteria:
+    - ac_id: "AC1"
+      description: "Analyze and document all ProjectContext export locations"
+      status: "verified"
+
+    - ac_id: "AC2"
+      description: "Consolidate ProjectContext to single canonical location"
+      status: "verified"
+
+    - ac_id: "AC3"
+      description: "Verify TypeScript path alias configuration"
+      status: "verified"
+
+    - ac_id: "AC4"
+      description: "TypeScript compiles with 0 errors"
+      status: "verified"
+      evidence: "pnpm tsc --noEmit: Found 0 errors"
+
+    - ac_id: "AC5"
+      description: "All ARCH-02-04 AC criteria pass"
+      status: "verified"
+
+    - ac_id: "AC6"
+      description: "Build succeeds"
+      status: "verified"
+      evidence: "pnpm build: SUCCESS"
+
+  # Files Modified (7)
+  files_modified:
+    - file: "src/infrastructure/context/project-context.tsx"
+      change: "Added useProjectContext() hook"
+
+    - file: "src/infrastructure/context/use-project-context.ts"
+      change: "Archived (merged into project-context.tsx)"
+
+    - file: "src/domain/interfaces/feature-plugin.interface.ts"
+      change: "Made PluginMainProps optional"
+
+    - file: "src/plugins/filetree/FileTreePlugin.tsx"
+      change: "Removed unused imports, added useProjectContext()"
+
+    - file: "src/plugins/filetree/useFileTreePlugin.ts"
+      change: "Fixed useShallow usage (React Context vs Zustand store)"
+
+    - file: "src/plugins/filetree/types.ts"
+      change: "Added TreeNode re-export"
+
+    - file: "src/routes/notes.$projectId.tsx"
+      change: "Updated import to canonical path"
+
+  # Dependencies
+  dependencies:
+    - story_id: "ARCH-02-04"
+      relationship: "unblocks"
+      status: "unblocked"
+      reason: "ARCH-02-FIX-03 fixed TypeScript errors blocking ARCH-02-04 AC validation"
+
+    - story_id: "ARCH-02-05"
+      relationship: "blocked_by"
+      status: "unblocked"
+      reason: "Monaco plugin can now proceed with same TypeScript path resolution pattern"
+
+  # Deliverables
+  deliverables:
+    - artifact: "_bmad-output/sprint-artifacts/stories/EPIC-ARCH-02/ARCH-02-FIX-03-findings.md"
+      type: "findings-report"
+      status: "created"
+
+    - artifact: "_bmad-output/sprint-artifacts/stories/EPIC-ARCH-02/ARCH-02-FIX-03-completion.md"
+      type: "completion-report"
+      status: "created"
+
+  # Metrics
+  metrics:
+    ts_errors_before: 7
+    ts_errors_after: 0
+    project_context_definitions_before: 3
+    project_context_definitions_after: 1
+    import_consistency_before: "mixed"
+    import_consistency_after: "100% canonical"
 
 # Team Status (CONSOLIDATED - TEAM_B only)
 team_b:
