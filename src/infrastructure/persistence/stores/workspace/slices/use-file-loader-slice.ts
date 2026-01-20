@@ -125,7 +125,10 @@ export function useFileLoaderSlice({
             // FSA projects - restore handle via handlePersistenceService
             // INF-04-02: Use handlePersistenceService instead of projectStore.restoreProjectHandle
             console.log('[FileLoaderSlice] FSA project - attempting handle restoration for:', project.id);
-            
+
+            // PHASE-5-V4 FIX: Set 'restoring' state to prevent overlay flash
+            setPermissionState('restoring');
+
             try {
               // INF-04-02: Use pre-restored handle if available, otherwise restore it
               let restoredHandle: FileSystemDirectoryHandle | null = null;

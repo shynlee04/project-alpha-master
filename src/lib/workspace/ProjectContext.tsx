@@ -85,6 +85,8 @@ export interface ProjectProviderProps {
   workspace: WorkspaceId;
   /** Child components */
   children: React.ReactNode;
+  /** Optional initial FSA handle (bypasses restoration from storage) */
+  initialHandle?: FileSystemDirectoryHandle | null;
 }
 
 // ============================================================================
@@ -234,7 +236,7 @@ export function useProjectContextSafe(): ProjectContextValue | null {
  * }
  * ```
  */
-export function ProjectProvider({ project, workspace, children }: ProjectProviderProps) {
+export function ProjectProvider({ project, workspace, children, initialHandle }: ProjectProviderProps) {
   const navigate = useNavigate();
 
   // ---------------------------------------------------------------------
@@ -242,7 +244,9 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
   // ---------------------------------------------------------------------
 
   /** FSA handle for File System Access storage operations */
-  const [fsaHandle, setFsaHandle] = React.useState<FileSystemDirectoryHandle | null>(null);
+  const [fsaHandle, setFsaHandle] = React.useState<FileSystemDirectoryHandle | null>(
+    initialHandle ?? null
+  );
 
   /**
    * Clear FSA handle on project switch or unmount
@@ -267,6 +271,15 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
     };
   }, []);
 
+  /**
+   * Log when initialHandle is provided (Phase 4: Handle passing via navigation state)
+   */
+  React.useEffect(() => {
+    if (initialHandle) {
+      console.log('[ProjectProvider] Using initialHandle from props, skipping restoration');
+    }
+  }, [initialHandle]);
+
   // ---------------------------------------------------------------------
   // Effects: Restore FSA Handle (FSA-007: Restore handle on load)
   // ---------------------------------------------------------------------
@@ -274,12 +287,13 @@ export function ProjectProvider({ project, workspace, children }: ProjectProvide
   /**
    * Restore FSA handle when project loads (Desktop only)
    * This bridges the gap between project selection and workspace entry.
-   * 
+   *
    * FIX-2026-01-19: Wire up "Disconnect" between creation and workspace entry.
+   * Phase 4: Skip restoration if initialHandle was provided via navigation state.
    */
   React.useEffect(() => {
-    // Only restore if we have a project ID and no handle yet
-    if (!project?.id || fsaHandle) return;
+    // Skip restoration if initialHandle was provided
+    if (!project?.id || fsaHandle || initialHandle) return;
 
     const restoreHandleAsync = async () => {
       const platform = getPlatformContract();

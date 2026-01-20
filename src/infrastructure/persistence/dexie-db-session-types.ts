@@ -129,7 +129,7 @@ export interface FSAHandleRecord {
     directoryPath: string;      // Original directory path for display
     grantedAt: number;          // When permission was granted
     lastAccessedAt: number;     // Last successful access check
-    permissionStatus: 'granted' | 'prompt' | 'denied' | 'unknown' | 'dismissed';
+    permissionStatus: "unknown" | "restoring" | "granted" | "prompt" | "denied" | "dismissed";
     createdAt: number;
     updatedAt: number;
 }

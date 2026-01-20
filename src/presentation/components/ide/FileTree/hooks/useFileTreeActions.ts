@@ -104,9 +104,25 @@ export function useFileTreeActions(
         setError(null);
 
         try {
-            const gateway = getGateway();
+            // V3-FIX-003: Wait for gateway initialization with retry
+            // This fixes race condition on page reload where FileTree loads before gateway is ready
+            let gateway = getGateway();
+            let retries = 0;
+            const maxRetries = 10;
+            const retryDelay = 100; // ms
+
+            while (!gateway && retries < maxRetries) {
+                console.log(`[FileTree] Waiting for gateway initialization (attempt ${retries + 1}/${maxRetries})...`);
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+                gateway = getGateway();
+                retries++;
+            }
+
             if (!gateway) {
-                throw new FileSystemError('Gateway not initialized', 'GATEWAY_NOT_INITIALIZED');
+                throw new FileSystemError(
+                    'Gateway initialization timeout. Please try refreshing the page.',
+                    'GATEWAY_INIT_TIMEOUT'
+                );
             }
 
             const entries = await gateway.list('.');

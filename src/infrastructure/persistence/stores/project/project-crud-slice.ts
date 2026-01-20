@@ -29,7 +29,6 @@ import {
   WorkspaceType,
   isValidProjectId,
   extractWorkspaceType as domainExtractWorkspaceType,
-  stripLegacyPrefix,
 } from '@/domain/types/project-ids';
 
 /**
@@ -126,6 +125,41 @@ export const createProjectCrudSlice: StateCreator<
     const projectId = generateProjectId(workspaceType);  // BUG-003: Pass workspaceType for correct prefix
     const now = new Date();
     const storageType = input.storageType ?? 'fsa';  // Default to 'fsa' for backward compatibility
+
+    // FIX-2026-01-21: Validate folderPath before duplicate check
+    // Prevents empty string matching legacy projects with empty folderPath
+    if (!input.folderPath || input.folderPath.trim() === '') {
+      throw new Error('Project folder path is required');
+    }
+
+    // FIX-2026-01-21: Check if folder path is already used by another project
+    // Uses try-catch for backward compatibility with older schemas without folderPath index
+    try {
+        let existingProject;
+        try {
+            // Try indexed query first (fast, requires schema v28+)
+            existingProject = await db.projects
+                .where('folderPath')
+                .equals(input.folderPath)
+                .first();
+        } catch (indexError) {
+            // Fallback to filter scan for older schemas
+            console.warn('[ProjectStore] folderPath not indexed, using filter scan');
+            const allProjects = await db.projects.toArray();
+            existingProject = allProjects.find(p => p.folderPath === input.folderPath);
+        }
+
+        if (existingProject) {
+            throw new Error(`This folder is already used by project "${existingProject.name}"`);
+        }
+    } catch (error) {
+        // Only re-throw if it's our duplicate folder error
+        if ((error as Error).message.includes('already used by project')) {
+            throw error;
+        }
+        // Log but don't block project creation for other errors
+        console.error('[ProjectStore] Error checking duplicate folder:', error);
+    }
 
     const project: Project = {
       id: projectId,

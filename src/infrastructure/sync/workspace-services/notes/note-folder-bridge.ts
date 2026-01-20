@@ -135,14 +135,27 @@ export class NoteFolderBridge {
             console.log(`[NoteFolderBridge] Found ${files.length} markdown files to import`);
 
             if (files.length === 0) {
-                dismissToast(loadingToastId);
-                showWarningToast('No markdown files found in the selected folder');
+                console.log('[NoteFolderBridge] 0 markdown files found, returning early');
+
+                // PHASE-3-V4 FIX: Wrap toast calls in try-catch to prevent hang
+                try {
+                    dismissToast(loadingToastId);
+                    showWarningToast('No markdown files found in the selected folder');
+                } catch (toastError) {
+                    console.warn('[NoteFolderBridge] Toast error (non-fatal):', toastError);
+                }
+
+                // PHASE-3-V4 FIX: CRITICAL - Call endImport() before returning
+                endImport();
+
                 return {
                     success: true,
                     totalFiles: 0,
                     importedCount: 0,
                     failedFiles: [],
                     duration: Date.now() - startTime,
+                    skipped: true,
+                    skipReason: 'no-files',
                 };
             }
 

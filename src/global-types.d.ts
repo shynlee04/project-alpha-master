@@ -6,6 +6,25 @@
 
 declare global {
   // ============================================================================
+  // TanStack Router State Extension
+  // ============================================================================
+
+  /**
+   * Augment TanStack Router's HistoryState to include custom FSA handle
+   *
+   * PHASE-4-V4 FIX: Allows passing FileSystemDirectoryHandle via navigation state
+   * to avoid async restoration delay and second picker dialog.
+   *
+   * @see HubHomePage.tsx - handleNewProject()
+   * @see ide.$projectId.tsx - IDEWorkspace()
+   */
+  module '@tanstack/history' {
+    interface HistoryState {
+      fsaHandle?: FileSystemDirectoryHandle;
+    }
+  }
+
+  // ============================================================================
   // File System Access API
   // ============================================================================
 

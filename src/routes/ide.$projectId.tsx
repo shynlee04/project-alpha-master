@@ -17,7 +17,7 @@
   */
 
 import { lazy, Suspense, useEffect } from 'react';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, useRouterState } from '@tanstack/react-router';
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
 import { ProjectProvider } from '@/lib/workspace/ProjectContext';
 import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
@@ -83,6 +83,14 @@ function IDEWorkspace() {
   const { projectId: _projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
 
+  // PHASE-4-V4 FIX: Get FSA handle from route state if passed from navigation
+  const routerState = useRouterState();
+  const passedHandle = routerState.location.state?.fsaHandle as FileSystemDirectoryHandle | undefined;
+
+  if (passedHandle) {
+    console.log('[IDERoute] Received FSA handle from navigation state:', passedHandle.name);
+  }
+
   // Store project ID in stores on mount
   useEffect(() => {
     if (_projectId) {
@@ -94,7 +102,7 @@ function IDEWorkspace() {
   }, [_projectId]);
 
   return (
-    <ProjectProvider project={project as Project | null} workspace="ide">
+    <ProjectProvider project={project as Project | null} workspace="ide" initialHandle={passedHandle}>
       <ToastProvider>
         <Suspense fallback={
           <div className="h-screen w-screen flex items-center justify-center bg-background">

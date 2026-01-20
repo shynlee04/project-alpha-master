@@ -102,8 +102,23 @@ export async function getOrCreateTempProject(): Promise<Project> {
 
 /**
  * Create a new temp project
+ *
+ * ⚠️ DEPRECATED: This function is deprecated and will be removed in 2 weeks.
+ * Use createProjectFromFolder() for FSA projects or
+ * getOrCreateBrowserModeProject() for IndexedDB projects instead.
+ *
+ * @deprecated Use createProjectFromFolder() or getOrCreateBrowserModeProject()
+ * @throws DeprecationWarning in console
  */
 async function createTempProject(): Promise<Project> {
+  // DEPRECATION WARNING
+  console.warn(
+    '[DEPRECATED] createTempProject() is deprecated and will be removed. ' +
+    'Use createProjectFromFolder() for FSA projects or ' +
+    'getOrCreateBrowserModeProject() for IndexedDB projects instead. ' +
+    'Called from: ' + (new Error().stack?.split('\n')[2] || 'unknown')
+  );
+
   const projectId = generateTempProjectId();
   const now = new Date();
   const platform = isDesktopPlatform() ? 'desktop' : 'mobile';

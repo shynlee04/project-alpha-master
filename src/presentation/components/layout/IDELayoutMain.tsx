@@ -19,6 +19,7 @@ import { SidebarProvider, ActivityBar, SidebarContent } from '../ide/IconSidebar
 import { StatusAnnouncerProvider } from '@/presentation/components/ui/StatusAnnouncer';
 import { SkipLinks } from '@/presentation/components/ui/SkipLinks';
 import { MobileCapabilityBanner } from '@/presentation/components/ui/MobileCapabilityBanner';
+import { LoadingSpinner } from '@/presentation/components/ui/LoadingSpinner';
 import { PermissionOverlay } from './PermissionOverlay';
 import { IDEHeaderBar } from './IDEHeaderBar';
 import { StatusBar } from '../ide/StatusBar';
@@ -294,6 +295,15 @@ export function IDELayout(): React.JSX.Element {
                 <div className="h-dvh w-dvw bg-background text-foreground overflow-hidden flex flex-col">
                     <SkipLinks />
                     <MobileCapabilityBanner />
+                    {/* Show loading spinner during 'restoring' and 'unknown' states to prevent overlay flash */}
+                    {(permissionState === 'restoring' || permissionState === 'unknown') && (
+                        <LoadingSpinner
+                            fullScreen
+                            size="lg"
+                            message={permissionState === 'restoring' ? 'Restoring project access...' : 'Loading...'}
+                            ariaLabel={permissionState === 'restoring' ? 'Restoring project access' : 'Loading'}
+                        />
+                    )}
                     {permissionState === 'prompt' && <PermissionOverlay projectMetadata={layoutState.projectMetadata} onRestoreAccess={restoreAccess} />}
                     <IDEHeaderBar projectId={projectId} isChatVisible={chatVisible} onToggleChat={() => setChatVisible(!chatVisible)} />
 

@@ -19,8 +19,33 @@ import {
 /**
  * Get permission state label for display
  * PS-04: Added 'dismissed' for user-cancelled permission dialogs
+ * PHASE-5: Added 'restoring' for handle restoration from IndexedDB
  */
-export type FsaPermissionState = 'unknown' | 'granted' | 'prompt' | 'denied' | 'dismissed';
+export type FsaPermissionState = 'unknown' | 'restoring' | 'granted' | 'prompt' | 'denied' | 'dismissed';
+
+/**
+ * Get permission state label for display
+ * PS-04: Added 'dismissed' for user-cancelled permission dialogs
+ * PHASE-5: Added 'restoring' for handle restoration from IndexedDB
+ */
+export function getPermissionStateLabel(state: FsaPermissionState): string {
+  switch (state) {
+    case 'unknown':
+      return 'Unknown';
+    case 'restoring':
+      return 'Restoring...';
+    case 'granted':
+      return 'Granted';
+    case 'prompt':
+      return 'Prompt';
+    case 'denied':
+      return 'Denied';
+    case 'dismissed':
+      return 'Dismissed';
+    default:
+      return 'Unknown';
+  }
+}
 
 interface PermissionCapableHandle extends FileSystemDirectoryHandle {
   queryPermission?: (options: { mode: 'read' | 'readwrite' }) => Promise<PermissionState>;

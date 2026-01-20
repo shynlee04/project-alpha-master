@@ -101,8 +101,16 @@ export function useFileOpsSlice({
 
   /**
    * Open folder via picker
+   * @deprecated Use createProjectFromFolder() from fsa-persistence.ts instead
    */
   const openFolder = useCallback(async (): Promise<void> => {
+    // DEPRECATION WARNING
+    console.warn(
+      '[DEPRECATED] useFileOpsSlice.openFolder() is deprecated. ' +
+      'Please use createProjectFromFolder() from fsa-persistence.ts instead. ' +
+      'This function will be removed in a future update.'
+    );
+
     if (!LocalFSAdapter.isSupported()) {
       const { isMobile, isTablet } = deviceType;
       if (isMobile || isTablet) {
@@ -186,8 +194,16 @@ export function useFileOpsSlice({
 
   /**
    * Switch to different folder
+   * @deprecated Use switchToDifferentFolder() from fsa-persistence.ts instead
    */
   const switchFolder = useCallback(async (): Promise<void> => {
+    // DEPRECATION WARNING
+    console.warn(
+      '[DEPRECATED] useFileOpsSlice.switchFolder() is deprecated. ' +
+      'Please use switchToDifferentFolder() from fsa-persistence.ts instead. ' +
+      'This function will be removed in a future update.'
+    );
+
     if (!LocalFSAdapter.isSupported()) {
       const { isMobile, isTablet } = deviceType;
       if (isMobile || isTablet) {

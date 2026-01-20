@@ -1,0 +1,322 @@
+# EPIC-ARCH-01: Foundation Cleanup Status
+# =========================================
+# Created: 2026-01-21
+# Architecture: ADR-034 (Project-Centric Architecture with Feature Plugins)
+# Status: IN_PROGRESS (Ready for execution)
+# Priority: P0
+# Team: Both (Team A + Team B parallel)
+# Duration: 1-2 days (AI agent time)
+
+metadata:
+  created_at: 2026-01-21T00:00:00+07:00
+  updated_at: 2026-01-21T00:00:00+07:00
+  epic_id: EPIC-ARCH-01
+  epic_name: Foundation Cleanup
+  architecture_ref: ADR-034
+  superseded_architecture: ADR-033 (SUPERSEDED - DO NOT USE)
+  context_poisoning_notes: |
+    Old status files (bmm-workflow-status.yaml, sprint-status.yaml) contain
+    poisoned data referencing obsolete ADR-033 and old epics (EPIC-CC-01, EPIC-40, etc.).
+    This document represents a CLEAN SLATE with only ADR-034/EPIC-ARCH-01 data.
+
+architecture:
+  reference: ADR-034
+  title: Project-Centric Architecture with Feature Plugins
+  status: PROPOSED
+  date: 2026-01-20
+  rationale: |
+    Foundation cleanup required for cleaner architecture with:
+    - Removal of window.location.href (11 instances causing hydration issues)
+    - Consolidation of project creation paths (7 → 2)
+    - Archive Knowledge/Study UI (DEFER features)
+    - Simplify Project Wizard (23 → 10 options)
+    - Sync Project Pointers (atomic operations)
+    - Fix TypeScript errors blocking build
+
+epic:
+  id: EPIC-ARCH-01
+  name: Foundation Cleanup
+  description: |
+    Comprehensive foundation cleanup required for ADR-034 architecture adoption.
+    Addresses technical debt and architectural inconsistencies.
+  status: PROPOSED
+  priority: P0
+  start_date: 2026-01-21
+  target_end_date: 2026-01-23
+  estimated_duration_hours: 12-16
+  stories_total: 6
+  stories_completed: 0
+  stories_in_progress: 0
+  team_assignment: "Both (Team A + Team B parallel)"
+
+stories:
+  - id: ARCH-01-01
+    name: Remove window.location.href (11 instances)
+    effort_hours: 2
+    team: A
+    priority: P0
+    status: pending
+    dependencies: []
+    description: |
+      Remove all 11 instances of window.location.href that cause hydration issues
+      and replace with proper TanStack Router navigation.
+    acceptance_criteria:
+      - All 11 instances identified and removed
+      - TanStack Router useNavigate() or Link component used instead
+      - No hydration mismatches
+      - TypeScript compiles without errors
+    tasks:
+      - Identify all 11 instances via grep
+      - Replace with router-based navigation
+      - Validate no regressions
+    handoff_artifact: null
+
+  - id: ARCH-01-02
+    name: Consolidate Project Creation Paths (7→2)
+    effort_hours: 4
+    team: B
+    priority: P0
+    status: pending
+    dependencies: []
+    description: |
+      Consolidate 7 different project creation entry points into 2 unified paths:
+      - FSA-based creation (desktop)
+      - IndexedDB-based creation (mobile)
+    acceptance_criteria:
+      - 7 entry points reduced to 2
+      - Platform detection integrated
+      - No duplicate creation logic
+      - Consistent user experience
+    tasks:
+      - Audit existing 7 creation paths
+      - Identify common patterns
+      - Create unified creation service
+      - Implement platform routing
+    handoff_artifact: null
+
+  - id: ARCH-01-03
+    name: Archive Knowledge/Study UI
+    effort_hours: 2
+    team: A
+    priority: P1
+    status: pending
+    dependencies: []
+    description: |
+      Archive Knowledge and Study workspace UI components that are marked as DEFER.
+      These features are not currently implemented and should be removed from navigation.
+    acceptance_criteria:
+      - Knowledge workspace removed from navigation
+      - Study workspace removed from navigation
+      - Route definitions archived (not deleted)
+      - No broken imports
+    tasks:
+      - Identify Knowledge/Study routes
+      - Archive route definitions
+      - Remove from main navigation
+      - Update route index
+    handoff_artifact: null
+
+  - id: ARCH-01-04
+    name: Simplify Project Wizard (23→10 options)
+    effort_hours: 3
+    team: B
+    priority: P1
+    status: pending
+    dependencies:
+      - ARCH-01-02
+    description: |
+      Simplify the Project Wizard from 23 configuration options to 10 essential options.
+      Remove advanced options that are rarely used or can be set later.
+    acceptance_criteria:
+      - 23 options reduced to 10
+      - Essential options retained
+      - Advanced options accessible via settings
+      - UI remains functional
+    tasks:
+      - Audit all 23 wizard options
+      - Identify essential vs advanced options
+      - Redesign wizard flow
+      - Update state management
+    handoff_artifact: null
+
+  - id: ARCH-01-05
+    name: Sync Project Pointers (atomic)
+    effort_hours: 3
+    team: A
+    priority: P0
+    status: pending
+    dependencies:
+      - ARCH-01-02
+    description: |
+      Implement atomic synchronization for project pointers.
+      Ensure consistent state between UI and storage layer.
+    acceptance_criteria:
+      - Atomic operations for pointer updates
+      - No race conditions
+      - Consistent state across workspaces
+      - Rollback on failure
+    tasks:
+      - Analyze current pointer sync logic
+      - Implement atomic operations
+      - Add error handling
+      - Test concurrent access
+    handoff_artifact: null
+
+  - id: ARCH-01-06
+    name: Fix TypeScript Errors
+    effort_hours: 1
+    team: B
+    priority: P0
+    status: pending
+    dependencies: []
+    description: |
+      Fix remaining TypeScript errors blocking successful build.
+      Address type mismatches, missing imports, and any casting issues.
+    acceptance_criteria:
+      - pnpm tsc --noEmit passes with 0 errors
+      - All types properly defined
+      - No any types without justification
+      - Strict mode compliance
+    tasks:
+      - Run TypeScript compiler to identify errors
+      - Categorize errors by type
+      - Fix in batches of 10-20
+      - Validate fix doesn't break other code
+    handoff_artifact: null
+
+execution_plan:
+  recommended_order:
+    - ARCH-01-01  # No dependencies - Team A
+    - ARCH-01-02  # No dependencies - Team B (blocks ARCH-01-04, ARCH-01-05)
+    - ARCH-01-06  # No dependencies - Team B
+    - ARCH-01-05  # Depends on ARCH-01-02 - Team A
+    - ARCH-01-03  # No dependencies - Team A
+    - ARCH-01-04  # Depends on ARCH-01-02 - Team B
+
+  parallel_execution:
+    team_a:
+      stories:
+        - ARCH-01-01  # Remove window.location.href
+        - ARCH-01-03  # Archive Knowledge/Study UI
+        - ARCH-01-05  # Sync Project Pointers (after ARCH-01-02)
+      lead: Team A
+      notes: |
+        ARCH-01-05 can only start after ARCH-01-02 is complete.
+        Consider starting ARCH-01-01 and ARCH-01-03 in parallel.
+
+    team_b:
+      stories:
+        - ARCH-01-02  # Consolidate Project Creation Paths
+        - ARCH-01-04  # Simplify Project Wizard (after ARCH-01-02)
+        - ARCH-01-06  # Fix TypeScript Errors
+      lead: Team B
+      notes: |
+        ARCH-01-04 can only start after ARCH-01-02 is complete.
+        ARCH-01-06 can run independently at any time.
+
+  dependency_graph:
+    description: |
+      Simple dependency graph:
+      ARCH-01-02 → ARCH-01-04 (Team B)
+      ARCH-01-02 → ARCH-01-05 (Team A)
+      All other stories have no dependencies.
+    visualization: |
+      ┌─────────────┐     ┌─────────────┐
+      │ ARCH-01-01  │     │ ARCH-01-02  │
+      │ (Team A)    │     │ (Team B)    │
+      └─────────────┘     └─────────────┘
+             │                   │
+             │                   ▼
+             │           ┌─────────────┐
+             │           │ ARCH-01-04  │
+             │           │ (Team B)    │
+             │           └─────────────┘
+             │
+             ▼
+      ┌─────────────┐
+      │ ARCH-01-03  │
+      │ (Team A)    │
+      └─────────────┘
+
+      ┌─────────────┐     ┌─────────────┐
+      │ ARCH-01-05  │     │ ARCH-01-06  │
+      │ (Team A)    │     │ (Team B)    │
+      └─────────────┘     └─────────────┘
+
+team_assignments:
+  team_a:
+    lead: Team A
+    stories:
+      - ARCH-01-01
+      - ARCH-01-03
+      - ARCH-01-05
+    total_effort_hours: 8
+    notes: |
+      Focus on navigation cleanup (ARCH-01-01) and workspace
+      simplification (ARCH-01-03, ARCH-01-05).
+
+  team_b:
+    lead: Team B
+    stories:
+      - ARCH-01-02
+      - ARCH-01-04
+      - ARCH-01-06
+    total_effort_hours: 8
+    notes: |
+      Focus on project creation (ARCH-01-02, ARCH-01-04)
+      and build quality (ARCH-01-06).
+
+validation:
+  checklist:
+    - context_poisoning_acknowledged: true
+    - new_status_file_created: true
+    - stories_assigned_to_teams: true
+    - dependencies_mapped: true
+    - parallel_execution_strategy_confirmed: true
+    - no_references_to_old_adr_033: true
+    - adr_034_reference_present: true
+
+  blocking_issues: []
+  risks:
+    - description: ARCH-01-02 is a critical path item
+      impact: Delays will cascade to ARCH-01-04 and ARCH-01-05
+      mitigation: Prioritize ARCH-01-02 early in Team B's work
+    - description: TypeScript errors may block other work
+      impact: Build failures could prevent testing
+      mitigation: Fix ARCH-01-06 early or run in parallel
+
+success_criteria:
+  - Clean slate status document with only ADR-034/EPIC-ARCH-01 data
+  - Stories assigned to Team A and Team B
+  - Dependency order documented
+  - Parallel execution strategy confirmed
+  - Ready for handoff to dev-ext agents
+
+handoff:
+  status: ready_for_handoff
+  target_agents:
+    - dev-ext (for implementation)
+  required_actions:
+    - Create individual story files for each story
+    - Generate context XML files
+    - Delegate to dev-ext agents based on team assignment
+  notes: |
+    This status document serves as the coordination point.
+    Each story should be executed via story-cycle workflow
+    with appropriate team delegation.
+
+logging:
+  context_poisoning:
+    acknowledged: true
+    poisoned_files:
+      - bmm-workflow-status.yaml (contains obsolete epics)
+      - sprint-status.yaml (contains obsolete data)
+      - References to ADR-033 (superseded)
+    resolution: Created new clean document at epic-arch-01-status.yaml
+    recommendation: Do not use old status files for EPIC-ARCH-01 work
+
+audit_trail:
+  - action: status_document_created
+    timestamp: 2026-01-21T00:00:00+07:00
+    actor: bmad-sprint-manager
+    details: Created clean status document for EPIC-ARCH-01

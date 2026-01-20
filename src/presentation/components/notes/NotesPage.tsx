@@ -221,11 +221,68 @@ export const NotesPage = React.memo(function NotesPage() {
     // BUG-016 FIX: Track if auto-init has been attempted to prevent infinite retries
     const autoInitAttemptedRef = useRef(false);
 
-    // BUG-FIX: Reset auto-init ref when project changes
+    // FIX-2026-01-20: Use ref for import guard to prevent infinite loop
+    // Ref doesn't trigger re-render, so it won't cause effect to re-run
+    const isImportingRef = useRef(false);
+
+    // FIX-2026-01-20: Track imported projects per session
+    const getImportKey = (pid: string) => `notes_imported_${pid}`;
+    const hasImportedThisSession = (pid: string) => sessionStorage.getItem(getImportKey(pid)) === 'done';
+    const markImportedThisSession = (pid: string) => sessionStorage.setItem(getImportKey(pid), 'done');
+
+    // PHASE-2-V4 FIX: Use ONLY stable primitives for canAutoImport
+    // Service existence is checked INSIDE the effect, not in dependencies
+    const canAutoImport = isNotesSyncReady && !!projectId;
+
+    // FIX-2026-01-21: Migrate old sessionStorage keys after project ID migration (v27)
+    // Old format: notes_imported_notes:proj_xxx → New format: notes_imported_proj_xxx
     useEffect(() => {
-        setIsImportingFiles(false);  // ✅ FIX #1: Reset import state on project change
-        autoInitAttemptedRef.current = false;
+        if (!projectId) return;
+
+        // Check if old key format exists (from before migration v27)
+        const oldFormats = [
+            `notes_imported_notes:${projectId}`,
+            `notes_imported_ide:${projectId}`,
+            `notes_imported_knowledge:${projectId}`,
+            `notes_imported_study:${projectId}`,
+        ];
+
+        for (const oldKey of oldFormats) {
+            if (sessionStorage.getItem(oldKey) === 'done') {
+                // Migrate to new format
+                const newKey = `notes_imported_${projectId}`;
+                sessionStorage.setItem(newKey, 'done');
+                sessionStorage.removeItem(oldKey);
+                console.log(`[NotesPage] Migrated sessionStorage key: ${oldKey} → ${newKey}`);
+            }
+        }
     }, [projectId]);
+
+    // BUG-FIX: Reset UI state when project changes, but NOT the import guard
+    useEffect(() => {
+        setIsImportingFiles(false);
+        // PHASE-2-V4 FIX: Do NOT reset isImportingRef here!
+        // It should only be reset after import completes (in finally block)
+        // Resetting here causes the effect to run again on remount
+        autoInitAttemptedRef.current = false;
+
+        // Check if already imported this session
+        if (projectId && hasImportedThisSession(projectId)) {
+            console.log('[NotesPage] Project already imported this session, skipping reset');
+        }
+    }, [projectId]);
+
+    // DEBUG: Log import state changes (remove after fix verified)
+    useEffect(() => {
+        console.log('[NotesPage DEBUG] Import state:', {
+            projectId,
+            canAutoImport,
+            isImportingRef: isImportingRef.current,
+            hasImported: projectId ? hasImportedThisSession(projectId) : 'no-project',
+            isNotesSyncReady,
+            hasService: Boolean(notesSyncService),
+        });
+    }, [projectId, canAutoImport, isNotesSyncReady, notesSyncService]);
 
     // 45-04: Load notes based on project mode
     // - Browser mode: load all notes from all projects
@@ -270,91 +327,117 @@ export const NotesPage = React.memo(function NotesPage() {
     // S-007: Auto-import project files when file sync service becomes ready
     // BUG-FIX-003: Added timeout and cleanup to prevent infinite spinning
     // PHASE0-2: Use Dexie hash tracking for idempotent imports
+    // PHASE-2-V4 FIX: Add early checks INSIDE effect, not in dependencies
     useEffect(() => {
         let mounted = true;
         let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
+        // Early exit conditions (before any async work)
         if (!projectId) return;
+        if (!canAutoImport) return;
+        if (!notesSyncService) return;  // FIX: Check service HERE
+        if (isImportingRef.current) return;  // FIX: Check ref HERE
+        if (hasImportedThisSession(projectId)) {
+            console.log('[NotesPage] Import skipped - already imported this session:', projectId);
+            return;
+        }
 
-        if (isNotesSyncReady && notesSyncService && !isImportingFiles) {
-            const autoImportFiles = async () => {
+        // ✅ CRITICAL FIX: Mark as imported IMMEDIATELY, BEFORE any async work
+        // This survives component unmount/remount - prevents infinite loop
+        markImportedThisSession(projectId);
+        console.log('[NotesPage] Marked project as imported (before async work):', projectId);
+
+        const autoImportFiles = async () => {
+            // Double-check ref guard (in case of race)
+            if (isImportingRef.current) {
+                console.log('[NotesPage] Import skipped - already in progress');
+                return;
+            }
+
+            if (!mounted) return;
+
+            setIsImportingFiles(true);
+            isImportingRef.current = true;
+            setImportProgress({ current: 0, total: 0, currentFile: '' });
+
+            // BUG-FIX-003: Create a timeout promise (30 seconds max)
+            const importTimeout = new Promise((_, reject) => {
+                timeoutId = setTimeout(() => {
+                    reject(new Error('Import timeout after 30 seconds - operation cancelled'));
+                }, 30000);
+            });
+
+            try {
+                console.log('[NotesPage] Auto-importing project files for:', projectId);
+
+                // BUG-FIX-003: Race between import and timeout
+                const result = await Promise.race([
+                    (notesSyncService as NotesFileSyncService).importDirectory(
+                        '', // Root directory
+                        (current: number, total: number, currentFile: string) => {
+                            if (mounted) {
+                                setImportProgress({ current, total, currentFile });
+                            }
+                        }
+                    ),
+                    importTimeout,
+                ]) as Awaited<ReturnType<typeof NotesFileSyncService.prototype.importDirectory>>;
+
+                // Clear timeout on success
+                if (timeoutId) clearTimeout(timeoutId);
+
                 if (!mounted) return;
 
-                setIsImportingFiles(true);
-                setImportProgress({ current: 0, total: 0, currentFile: '' });
+                console.log('[NotesPage] Auto-import complete:', result);
 
-                // BUG-FIX-003: Create a timeout promise (30 seconds max)
-                const importTimeout = new Promise((_, reject) => {
-                    timeoutId = setTimeout(() => {
-                        reject(new Error('Import timeout after 30 seconds - operation cancelled'));
-                    }, 30000);
-                });
-
-                try {
-                    console.log('[NotesPage] Auto-importing project files for:', projectId);
-
-                    // BUG-FIX-003: Race between import and timeout
-                    const result = await Promise.race([
-                        (notesSyncService as NotesFileSyncService).importDirectory(
-                            '', // Root directory
-                            (current: number, total: number, currentFile: string) => {
-                                if (mounted) {
-                                    setImportProgress({ current, total, currentFile });
-                                }
-                            }
-                        ),
-                        importTimeout,
-                    ]) as Awaited<ReturnType<typeof NotesFileSyncService.prototype.importDirectory>>;
-
-                    // Clear timeout on success
-                    if (timeoutId) clearTimeout(timeoutId);
-
-                    if (!mounted) return;
-
-                    console.log('[NotesPage] Auto-import complete:', result);
-
-                    // PHASE0-2: Handle skipped import (hash unchanged)
-                    if (result.skipped && result.skipReason === 'unchanged') {
+                // Handle skipped imports (both 'unchanged' and 'no-files')
+                if (result.skipped) {
+                    if (result.skipReason === 'unchanged') {
                         console.log('[NotesPage] Import skipped - files unchanged');
-                        // Still load notes to ensure they're available
-                        if (projectId) {
-                            await loadNotes(projectId);
-                        }
-                    } else {
-                        // Reload notes after successful import
-                        if (projectId) {
-                            await loadNotes(projectId);
-                        }
+                    } else if (result.skipReason === 'no-files') {
+                        console.log('[NotesPage] Import skipped - no markdown files in folder');
                     }
-                } catch (error) {
-                    if (!mounted) return;
-
-                    const err = error as Error;
-                    console.error('[NotesPage] Auto-import failed:', err);
-
-                    // BUG-FIX-003: Show specific error for timeout
-                    const isTimeout = err.message.includes('timeout');
-                    toast.error(t('notes.import_failed', 'Failed to auto-import files'), {
-                        description: isTimeout
-                            ? t('notes.import_timeout', 'Import took too long. The folder may be too large or access was denied.')
-                            : err.message,
-                    });
-                } finally {
-                    if (mounted) {
-                        setIsImportingFiles(false);
+                    // Still load notes to show any existing notes
+                    if (projectId) await loadNotes(projectId);
+                    return;  // Exit early for skipped imports
+                } else {
+                    // Reload notes after successful import
+                    if (projectId) {
+                        await loadNotes(projectId);
                     }
                 }
-            };
+            } catch (error) {
+                if (!mounted) return;
 
-            autoImportFiles();
-        }
+                const err = error as Error;
+                console.error('[NotesPage] Auto-import failed:', err);
+
+                // BUG-FIX-003: Show specific error for timeout
+                const isTimeout = err.message.includes('timeout');
+                toast.error(t('notes.import_failed', 'Failed to auto-import files'), {
+                    description: isTimeout
+                        ? t('notes.import_timeout', 'Import took too long. The folder may be too large or access was denied.')
+                        : err.message,
+                });
+            } finally {
+                if (mounted) {
+                    isImportingRef.current = false;
+                    setIsImportingFiles(false);
+                    // sessionStorage already set at effect start - NO NEED to set here
+                }
+            }
+        };
+
+        autoImportFiles();
 
         // BUG-FIX-003: Cleanup function to prevent state updates after unmount
         return () => {
             mounted = false;
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [isNotesSyncReady, notesSyncService, projectId, loadNotes, t, isImportingFiles]);
+    // FIX-2026-01-21: Use stable boolean instead of service reference
+    // V3-FIX-001: Remove notesSyncService from deps to prevent re-trigger
+    }, [canAutoImport, projectId, loadNotes, t]);
 
     // Sync mobile view with active note
     useEffect(() => {

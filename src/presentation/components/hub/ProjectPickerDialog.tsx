@@ -166,25 +166,21 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
 
     console.log('[ProjectPicker] Navigating to workspace:', targetWorkspace, 'with project:', project.id);
 
-    // Build route path using workspace-specific base
-    const routeMap: Record<PickerWorkspace, string> = {
-      ide: '/ide',
-      notes: '/notes',
-      knowledge: '/knowledge',
-      study: '/study',
-      agents: '/agents',
-    };
+    console.log('[ProjectPicker] Navigating to project:', project.id);
 
-    const baseUrl = routeMap[targetWorkspace];
-    const fullPath = `${baseUrl}/${project.id}`;
+    // ARCHITECT-FIX-2: Use SPA navigation instead of full page reload
+    // Determine target workspace based on project storage type
+    const navigateTarget = project.storageType === 'fsa' ? 'ide' : 'notes';
 
-    console.log('[ProjectPicker] Full path:', fullPath);
+    console.log('[ProjectPickerDialog] Target workspace:', navigateTarget, '| Project ID:', project.id);
 
-    // Use window.location.href for navigation (WORKING SOLUTION)
-    // TanStack Router navigate() attempts all failed - caused redirects to home
-    // This is the only working solution despite full page reload
-    window.location.href = fullPath;
-    
+    // Use TanStack Router navigate() for proper SPA navigation
+    navigate({
+      to: `/${navigateTarget}/$projectId`,
+      params: { projectId: project.id },
+    });
+
+    // Close dialog (navigate handles route change)
     onOpenChange(false);
   };
 

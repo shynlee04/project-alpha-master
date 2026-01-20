@@ -93,18 +93,20 @@ export interface ProjectRecord {
 /**
  * IDE state per project (panel layouts, open files, etc.)
  * PERSIST-S002: Added workspaceId for cross-workspace isolation
+ * FIX-2026-01-20: Added focusedPath for FileTree persistence
  */
 export interface IDEStateRecord {
-    projectId: string;
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
-    openFiles: string[];
-    activeFile: string | null;
-    expandedPaths: string[];  // Stored as array, used as Set in app
-    panelLayouts: Record<string, number[]>;
-    terminalTab: 'terminal' | 'output' | 'problems';
-    chatVisible: boolean;
-    activeFileScrollTop?: number;
-    updatedAt: Date;
+  projectId: string;
+  workspaceId: "ide" | "knowledge" | "study" | "notes";
+  openFiles: string[];
+  activeFile: string | null;
+  expandedPaths: string[];
+  focusedPath?: string;  // FIX-2026-01-20: FileTree focused path persistence
+  panelLayouts: Record<string, number[]>;
+  terminalTab: "output" | "terminal" | "problems";
+  chatVisible: boolean;
+  activeFileScrollTop?: number | undefined;
+  updatedAt: Date;
 }
 
 /**

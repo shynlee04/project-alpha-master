@@ -16,13 +16,15 @@ import {
 
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
-import type { Project, WorkspaceBindings, CreateProjectInput } from '@/infrastructure/persistence/stores/project/project-types';
+import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { getPlatformContract, getPlatformInfoForLogging } from '@/infrastructure/filesystem/platform-contract';
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';
-import { serializeHandle, handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
+import { createProjectFromFolder } from '@/lib/workspace/fsa-persistence';
+// V3-FIX-002: Removed unused imports - createProjectFromFolder handles persistence
+// import { serializeHandle, handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 
 // Hub subcomponents
 import { BootSequence } from './BootSequence';
@@ -220,49 +222,29 @@ export const HubHomePage: React.FC = () => {
         mode: 'readwrite',
       });
 
-      // 2. Create Project via Zustand Store (syncs to Dexie)
-      const projectInput: CreateProjectInput = {
-        name: handle.name,
-        folderPath: handle.name,
-        storageMetadata: serializeHandle(handle, 'ide'), // PS-04: Use serializable metadata instead of handle
-        autoSync: true,
-        bindings: {
-          ide: true,
-          knowledge: true,
-          notes: true,
-          study: true,
-        },
-        tags: [],
-      };
-
-      // Use the store's createProject method to ensure Zustand state is updated
-      // Note: Store already persists to Dexie at project-crud-slice.ts:108
-      const newProjectId = await useProjectStore.getState().createProject(projectInput);
-      console.log('[HubHomePage] Created project:', newProjectId);
-
-      // FIX-2026-01-19: Persist FSA handle immediately after project creation
-      // This ensures the handle is available for restoration in ProjectContext (FSA-007)
-      if (handle) {
-        console.log('[HubHomePage] Persisting FSA handle for project:', newProjectId);
-        await handlePersistenceService.persistHandle(newProjectId, handle, 'ide');
-      }
+      // 2. Create Project via consolidated function (prevents duplicate creation)
+      // V3-FIX-002: Use createProjectFromFolder instead of inline creation
+      // This prevents race conditions and duplicate project creation
+      const newProjectId = await createProjectFromFolder(handle, handle.name);
+      console.log('[HubHomePage] Created project via createProjectFromFolder:', newProjectId);
 
       // 3. Navigate to Workspace
       // BUG-017 FIX: Respect intended workspace if specified
+      // ARCH-01-06: Handle is persisted by createProjectFromFolder(), no need to pass via state
       if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
          console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
          await navigate({
             to: `/${projectPickerWorkspace}/$projectId`,
-            params: { projectId: newProjectId }
+            params: { projectId: newProjectId },
          });
-         // Don't reset picker workspace immediately if we want to preserve context, 
+         // Don't reset picker workspace immediately if we want to preserve context,
          // but usually resetting is safer.
          setProjectPickerWorkspace('ide');
       } else {
          // Default to IDE for FSA projects
          await navigate({
             to: '/ide/$projectId',
-            params: { projectId: newProjectId }
+            params: { projectId: newProjectId },
          });
       }
 

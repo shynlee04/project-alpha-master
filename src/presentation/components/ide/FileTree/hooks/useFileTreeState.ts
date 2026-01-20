@@ -1,6 +1,7 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 import type { TreeNode, ContextMenuState } from '../types';
+import { getDb } from '@/infrastructure/persistence/dexie-db';
 
 /**
  * Options for the useFileTreeState hook.
@@ -10,6 +11,8 @@ export interface UseFileTreeStateOptions {
     directoryHandle: FileSystemDirectoryHandle | null | undefined;
     /** Key to trigger refresh */
     refreshKey?: number;
+    /** Project ID for persistence */
+    projectId?: string;
 }
 
 /**
@@ -55,7 +58,7 @@ export interface UseFileTreeStateResult {
 export function useFileTreeState(
     options: UseFileTreeStateOptions
 ): UseFileTreeStateResult {
-    const { directoryHandle } = options;
+    const { directoryHandle, projectId } = options;
 
     const [rootNodes, setRootNodes] = useState<TreeNode[]>([]);
     const [focusedPath, setFocusedPath] = useState<string | undefined>();
@@ -71,15 +74,68 @@ export function useFileTreeState(
 
     const gatewayRef = useRef<StorageGateway | null>(null);
 
-    const getGateway = useCallback(() => {
-        if (!gatewayRef.current && directoryHandle) {
-            // Dynamic import to avoid circular dependencies
+    // PHASE-1 FIX: Initialize gateway in useEffect (not during getGateway call)
+    // This ensures gateway is ready before any code tries to use it
+    useEffect(() => {
+        let mounted = true;
+        
+        if (directoryHandle && !gatewayRef.current) {
             import('@/infrastructure/filesystem/fsa-gateway').then(({ FSAGateway }) => {
-                gatewayRef.current = new FSAGateway(directoryHandle);
+                if (mounted && directoryHandle) {
+                    gatewayRef.current = new FSAGateway(directoryHandle);
+                    console.log('[useFileTreeState] Gateway initialized');
+                }
+            }).catch((error) => {
+                console.error('[useFileTreeState] Failed to initialize gateway:', error);
             });
         }
-        return gatewayRef.current;
+        
+        return () => {
+            mounted = false;
+            // Don't clear gateway here - let it persist for the session
+        };
     }, [directoryHandle]);
+
+    // FIX-2026-01-20: Load tree state from Dexie on mount
+    useEffect(() => {
+        if (projectId) {
+            const db = getDb();
+            if (db) {
+                db.ideState.get(projectId).then(state => {
+                    if (state?.expandedPaths) {
+                        setExpandedPaths(new Set(state.expandedPaths));
+                    }
+                    if (state?.focusedPath) {
+                        setFocusedPath(state.focusedPath);
+                    }
+                });
+            }
+        }
+    }, [projectId]);
+
+    // FIX-2026-01-20: Save tree state to Dexie on change (debounced 500ms)
+    useEffect(() => {
+        if (projectId) {
+            const timeout = setTimeout(() => {
+                const db = getDb();
+                if (db) {
+                    const currentExpanded = Array.from(expandedPaths);
+                    // Use update for partial record update
+                    db.ideState.update(projectId, {
+                        expandedPaths: currentExpanded,
+                        focusedPath,
+                    });
+                }
+            }, 500);
+            return () => clearTimeout(timeout);
+        }
+    }, [expandedPaths, focusedPath, projectId]);
+
+    // PHASE-1 FIX: getGateway is now just a simple getter
+    // Gateway initialization happens in useEffect above
+    const getGateway = useCallback(() => {
+        return gatewayRef.current;
+    }, []);
 
     return {
         rootNodes,

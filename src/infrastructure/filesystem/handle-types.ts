@@ -52,8 +52,9 @@ export interface HandleRestoreResult {
  * Permission state for FSA handles
  * NOTE: Aligned with Dexie FSAHandleRecord.permissionStatus values
  * PS-04: Added 'dismissed' for user-cancelled permission dialogs
+ * PHASE-5-V4: Added 'restoring' for handle restoration from IndexedDB to prevent overlay flash
  */
-export type HandlePermissionState = 'granted' | 'denied' | 'prompt' | 'unknown' | 'dismissed';
+export type HandlePermissionState = 'unknown' | 'restoring' | 'granted' | 'prompt' | 'denied' | 'dismissed';
 
 /**
  * Configuration for handle persistence operations

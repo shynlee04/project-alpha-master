@@ -1692,4 +1692,55 @@ export function registerMigrations(db: Dexie): void {
                 throw error;
             }
         });
+
+        // Schema version 28: Add folderPath index to projects table (BUG-A-2026-01-21)
+        // Required for duplicate folder detection in project creation
+        db.version(28).stores({
+            projects: 'id, lastOpened, name, folderPath',  // ADD folderPath index
+            ideState: 'projectId, workspaceId, updatedAt',
+            conversations: 'id, projectId, workspaceId, updatedAt',
+            taskContexts: 'id, projectId, workspaceId, agentId, status, [projectId+status]',
+            toolExecutions: 'id, taskId, workspaceId, toolName, status, [taskId+status]',
+            credentials: 'providerId, workspaceId, createdAt',
+            threads: 'id, projectId, workspaceId, updatedAt, [projectId+updatedAt]',
+            providerConfigs: 'id, workspaceId, updatedAt',
+            agentConfigs: 'id, workspaceId, updatedAt',
+            conversationState: 'id, workspaceId, updatedAt',
+            syncStatus: 'id, workspaceId, path, syncStatus, lastSyncedAt, [path+syncStatus]',
+            ragState: 'id, workspaceId, updatedAt',
+            fileSyncStatus: 'id, workspaceId, updatedAt',
+            fileMetadata: '[projectId+workspaceId+path], projectId, workspaceId, lastModified',
+            toolExecutionLogs: 'id, workspaceId, conversationId, toolName, status, createdAt, [conversationId+createdAt]',
+            fsaHandles: 'projectId, workspaceId, createdAt, [projectId+workspaceId]',
+            sessionSnapshots: 'id, projectId, workspaceId, createdAt, expiresAt, [projectId+createdAt]',
+            fileSnapshots: '++id, projectId, workspaceId, filePath, createdAt, [projectId+filePath]',
+            fileContentCache: 'id, projectId, workspaceId, lastAccessed',
+            sources: 'id, projectId, workspaceId, type, createdAt, [projectId+type]',
+            collections: 'id, projectId, workspaceId, createdAt',
+            synthesisResults: 'id, workspaceId, createdAt',
+            oramaIndexes: 'id, workspaceId, projectId, createdAt',
+            embedding_models: 'id, workspaceId, provider',
+            notes: 'id, projectId, workspaceId, createdAt, updatedAt, [projectId+updatedAt]',
+            workflows: 'id, name, workspaceId, createdAt, updatedAt, *tags',
+            codeSnippets: 'id, projectId, workspaceId, language, createdAt, *tags',
+            savedBlocks: 'id, projectId, workspaceId, type, createdAt, *tags',
+            plugins: 'id, workspaceId, source, state, installedAt',
+            pluginSettings: 'id, workspaceId',
+            pluginMarketplace: 'id, workspaceId, category, cachedAt',
+            pluginStorage: 'id, pluginId, workspaceId',
+            flashcards: 'id, projectId, workspaceId, sourceId, createdAt, [projectId+sourceId]',
+            flashcardSets: 'id, projectId, workspaceId, createdAt',
+            studySessions: 'id, projectId, workspaceId, startedAt, [projectId+startedAt]',
+            studyCards: 'id, sessionId, workspaceId, flashcardId',
+            quizzes: 'id, projectId, workspaceId, createdAt, [projectId+createdAt]',
+            quizQuestions: 'id, quizId, workspaceId, order',
+            idbFiles: '[projectId+workspaceId+path], projectId, workspaceId',
+            workspaceState: 'id, workspaceId, updatedAt',
+            terminalState: 'id, workspaceId, updatedAt',
+        }).upgrade(async () => {
+            logDexieMigration(28, 'add-folderPath-index', 'started');
+            // No data migration needed - just index addition
+            logDexieMigration(28, 'add-folderPath-index', 'completed', 'Index added to projects table');
+            markMigrationApplied(28);
+        });
 }

@@ -207,6 +207,12 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
           errors[1] = t('wizard.validation.projectNameTooLong');
         }
 
+        // FIX-2026-01-21: Validate project slug
+        const generatedSlug = formData.projectName?.toLowerCase().replace(/\s+/g, '-') || '';
+        if (!generatedSlug) {
+          errors[1] = t('project.wizard.error.invalidName', 'Please enter a valid project name (not just spaces)');
+        }
+
         // TASK-1 FIX: Ensure storage type is set (auto-detection should have run)
         if (!formData.storageType) {
           errors[1] = 'Storage type is required';
