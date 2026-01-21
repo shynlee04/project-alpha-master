@@ -36,13 +36,21 @@ const IDELayout = lazy(() =>
 export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,
 
-  // P0 FIX: Route guards for platform validation ONLY (ADR-033 D12, ADR-034 D12)
-  beforeLoad: async ({ params }) => {
+  // ARCH-02-10: Redirect old IDE route to new unified route
+  // This is final story of EPIC-ARCH-02 - redirects preserve backward compatibility
+  beforeLoad: async ({ params, search }) => {
     const { projectId } = params;
     console.log('[IDERoute] beforeLoad called for project:', projectId);
 
     // Check: Mobile users cannot access IDE (audit violation - ABSOLUTE)
     await requireIDEAccess(projectId);
+
+    // ARCH-02-10: Redirect to new unified route with layout preset
+    // Check if already on new route (avoid redirect loop)
+    if (search?.layout !== 'ide') {
+      console.log('[IDERoute] Redirecting to new route: /$projectId?layout=ide');
+      throw redirect({ to: `/$projectId`, search: { layout: 'ide' } });
+    }
 
     console.log('[IDERoute] Route guard passed (platform validated):', { projectId });
   },

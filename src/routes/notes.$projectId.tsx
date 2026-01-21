@@ -41,6 +41,20 @@ type NotesSearchParams = { reason?: "mobile-not-supported" | undefined };
 export const Route = createFileRoute('/notes/$projectId')({
   ssr: false,
 
+  // ARCH-02-10: Redirect old Notes route to new unified route
+  // This is final story of EPIC-ARCH-02 - redirects preserve backward compatibility
+  beforeLoad: async ({ params, search }) => {
+    const { projectId } = params;
+    console.log('[NotesRoute] beforeLoad called for project:', projectId);
+
+    // ARCH-02-10: Redirect to new unified route with layout preset
+    // Check if already on new route (avoid redirect loop)
+    if (search?.layout !== 'notes') {
+      console.log('[NotesRoute] Redirecting to new route: /$projectId?layout=notes');
+      throw redirect({ to: `/$projectId`, search: { layout: 'notes' } });
+    }
+  },
+
   loader: async ({ params }) => {
     const { projectId } = params;
     console.log('[NotesRoute.loader] Loading project:', projectId);

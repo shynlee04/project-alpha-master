@@ -27,6 +27,8 @@ import { registerPlugin } from '@/infrastructure/plugins/plugin-registry';
 import { fileTreePlugin } from '@/plugins/filetree';
 import { monacoPlugin } from '@/plugins/monaco';
 import { notesPlugin } from '@/plugins/notes';
+import { terminalPlugin } from '@/plugins/terminal';
+import { chatPlugin } from '@/plugins/chat';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -86,7 +88,7 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     console.log('[AppInitializer] Offline mode enabled');
                 }
 
-                 // 6. Register feature plugins (ARCH-02-04, ARCH-02-05, ARCH-02-06)
+                 // 6. Register feature plugins (ARCH-02-04, ARCH-02-05, ARCH-02-06, ARCH-02-07, ARCH-02-08)
                  console.log('[AppInitializer] Registering feature plugins...');
                  registerPlugin(fileTreePlugin);
                  console.log('[AppInitializer] FileTree plugin registered');
@@ -94,6 +96,10 @@ export function AppInitializer({ children }: AppInitializerProps) {
                  console.log('[AppInitializer] Monaco plugin registered');
                  registerPlugin(notesPlugin);
                  console.log('[AppInitializer] Notes plugin registered');
+                 registerPlugin(terminalPlugin);
+                 console.log('[AppInitializer] Terminal plugin registered');
+                 registerPlugin(chatPlugin);
+                 console.log('[AppInitializer] Chat plugin registered');
 
                 // 5. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection

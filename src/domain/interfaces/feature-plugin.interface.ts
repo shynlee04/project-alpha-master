@@ -26,31 +26,21 @@
 // ============================================================================
 
 import type React from 'react';
+import type { PluginId } from '@/domain/types/plugin-types';
+import type { ProjectContext } from '@/infrastructure/context/project-context';
 
 // ============================================================================
-// Plugin Context Types (Forward Reference)
+// Plugin Context Types
 // ============================================================================
 
 /**
  * Project Context
  *
  * @remarks
- * Forward reference - will be fully defined in ARCH-02-03 (Create ProjectContext Provider).
- * For now, declare as interface without full definition.
- *
- * Will contain:
- * - project: Project
- * - projectId: string
- * - gateway: StorageGateway
- * - platform: PlatformContract
- * - shared services (fileTree, chatService)
- * - actions (openFile, saveFile, refreshFileTree)
+ * Re-exported from @/infrastructure/context/project-context
+ * Defined in ARCH-02-03 (Create ProjectContext Provider).
  */
-export interface ProjectContext {
-  // To be fully defined in ARCH-02-03
-  // Placeholder to satisfy TypeScript compilation
-  [key: string]: unknown;
-}
+export type { ProjectContext };
 
 // ============================================================================
 // Plugin Props Interfaces
@@ -189,7 +179,7 @@ export interface FeaturePlugin {
   // ========================================================================
 
   /** Unique plugin identifier (must be a valid PluginId) */
-  id: import('../types/plugin-types').PluginId;
+  id: PluginId;
 
   /** Display name for UI */
   name: string;
