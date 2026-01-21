@@ -1,26 +1,18 @@
 /**
- * @fileoverview Project Route - Unified Route for All Workspaces
+ * @fileoverview Unified Project Route - Project-Centric Architecture
  * @module routes/$projectId
  *
- * **ARCH-02-10**: Create Project Route (/$projectId) - FINAL STORY
+ * **ARCH-02-10**: Create Project Route (/\$projectId) - FINAL STORY
  *
- * Per ADR-034 Decision D5, this is the NEW unified route that:
- * - Replaces 4 old workspace routes (/ide, /notes, /knowledge, /study)
- * - Loads ProjectContextProvider for all plugins
- * - Renders PluginLayout with user's selected plugins
- * - Supports layout presets via query params
+ * This is the NEW unified route that replaces workspace-specific routes.
+ * Per ADR-034 Section 5: Single Project Route.
  *
- * Route: /$projectId
- * Loader: Load project from Dexie, redirect to /hub if not found
- * Component: Render ProjectContextProvider → PluginLayout
- *
- * Plugin Presets (via ?layout= query param):
- * - ?layout=ide: activePlugins=['filetree','monaco','terminal','chat'], layoutMode='2+1'
- * - ?layout=notes: activePlugins=['filetree','notes','chat'], layoutMode='2-column'
- * - Default (no param): Load from project settings or empty state
- *
- * This is the FINAL route in EPIC-ARCH-02.
- * All 10/10 stories will be complete after this.
+ * Route Behavior:
+ * 1. Load ProjectContextProvider (from ARCH-02-03)
+ * 2. Render PluginLayout (from ARCH-02-09) with user's selected plugins
+ * 3. Support layout presets via query params (?layout=ide, ?layout=notes)
+ * 4. Persist user's plugin selection per project
+ * 5. Old routes redirect with query param to preserve layout preference
  *
  * @epic EPIC-ARCH-02
  * @story ARCH-02-10
@@ -28,32 +20,46 @@
  * @created 2026-01-21
  */
 
-import { useEffect } from 'react';
+import React from 'react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { ProjectContextProvider } from '@/infrastructure/context/project-context';
-import { PluginLayout } from '@/presentation/layouts/PluginLayout';
-import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 import { fromRecord } from '@/infrastructure/persistence/stores/project/project-crud-slice';
-
-// ============================================================================
-// Search Params Interface
-// ============================================================================
+import { ProjectContextProvider } from '@/infrastructure/context/project-context';
+import { PluginLayout } from '@/presentation/layouts/PluginLayout';
+import type { Project } from '@/domain/entities/project';
+import type { PluginId } from '@/domain/types/plugin-types';
 
 /**
- * Project route search params
- *
- * @remarks
- * Supports layout preset via ?layout= query param:
- * - 'ide': IDE layout preset (filetree + monaco + terminal + chat)
- * - 'notes': Notes layout preset (filetree + notes + chat)
- * - undefined: Use project's saved layout
+ * Layout preset type from query params
  */
-export interface ProjectRouteSearchParams {
-  layout?: 'ide' | 'notes';
+type LayoutPreset = 'ide' | 'notes' | 'custom';
+
+/**
+ * Search params for route
+ */
+interface ProjectRouteSearch {
+  layout?: LayoutPreset;
 }
+
+/**
+ * Plugin presets for common layouts
+ */
+const PLUGIN_PRESETS: Record<LayoutPreset, PluginId[]> = {
+  ide: ['filetree', 'monaco', 'terminal', 'chat'],
+  notes: ['filetree', 'notes', 'chat'],
+  custom: [], // User's custom selection from store
+};
+
+/**
+ * Layout mode presets for common layouts
+ */
+const LAYOUT_MODE_PRESETS: Record<LayoutPreset, '1-column' | '2-column' | '2+1'> = {
+  ide: '2+1', // FileTree | Monaco | Terminal (sidebar) + Chat (bottom)
+  notes: '2-column', // FileTree | Notes (side-by-side)
+  custom: '2-column', // Default to 2-column for custom
+};
 
 // ============================================================================
 // Route Definition
@@ -62,15 +68,7 @@ export interface ProjectRouteSearchParams {
 export const Route = createFileRoute('/$projectId')({
   ssr: false,
 
-  /**
-   * Loader - Load Project from Dexie
-   *
-   * @remarks
-   * - Wait for Zustand store hydration (per ADR-034 D12)
-   * - Query Dexie directly (not Zustand facade)
-   * - Redirect to /hub if project not found
-   * - Returns project data for component
-   */
+  // Load project data (same pattern as existing routes)
   loader: async ({ params }) => {
     const { projectId } = params;
     console.log('[ProjectRoute.loader] Loading project:', projectId);
@@ -89,89 +87,44 @@ export const Route = createFileRoute('/$projectId')({
 
     // Convert record to Project type using fromRecord for proper defaults
     const project = fromRecord(record);
-    console.log('[ProjectRoute.loader] Project found:', {
-      id: project.id,
-      name: project.name,
-      storageType: project.storageType
-    });
+    console.log('[ProjectRoute.loader] Project found:', { id: project.id, name: project.name });
+
     return { project };
   },
 
   component: () => (
     <ErrorBoundary>
-      <ProjectWorkspace />
+      <UnifiedProjectRoute />
     </ErrorBoundary>
   ),
 });
 
 // ============================================================================
-// Component: ProjectWorkspace
+// Main Route Component
 // ============================================================================
 
 /**
- * Project Workspace Component
+ * UnifiedProjectRoute Component
  *
- * @remarks
- * - Loads projectId from route params
- * - Loads search params for layout preset
- * - Wraps PluginLayout in ProjectContextProvider
- * - Applies layout preset if ?layout= query param exists
- * - Renders PluginLayout for flexible plugin arrangement
+ * Renders unified project route with ProjectContextProvider and PluginLayout.
+ * Supports layout presets via query params.
  */
-function ProjectWorkspace() {
+function UnifiedProjectRoute() {
   const { projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
-  const search = Route.useSearch() as ProjectRouteSearchParams;
+  const search = Route.useSearch() as ProjectRouteSearch;
 
-  // Get layout store actions
-  const { setLayoutMode, clearActivePlugins } = usePluginLayoutStore((state) => ({
-    setLayoutMode: state.setLayoutMode,
-    clearActivePlugins: state.clearActivePlugins,
-  }));
+  console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, layout: search.layout });
 
-  /**
-   * Apply Layout Preset on Mount
-   *
-   * @remarks
-   * - Check ?layout= query param
-   * - If 'ide': Set activePlugins and layoutMode for IDE
-   * - If 'notes': Set activePlugins and layoutMode for Notes
-   * - If undefined: Use project's saved layout (already in store)
-   */
-  useEffect(() => {
-    if (search.layout === 'ide') {
-      console.log('[ProjectRoute] Applying IDE layout preset');
-      // Clear existing plugins first
-      clearActivePlugins();
-      // IDE preset: filetree + monaco + terminal + chat in 2+1 layout
-      setLayoutMode('2+1');
-      // Note: Plugins are added via PluginLayout UI, not programmatically here
-      // Users will add plugins via the "Add Plugin" button
-    } else if (search.layout === 'notes') {
-      console.log('[ProjectRoute] Applying Notes layout preset');
-      // Clear existing plugins first
-      clearActivePlugins();
-      // Notes preset: filetree + notes + chat in 2-column layout
-      setLayoutMode('2-column');
-      // Note: Plugins are added via PluginLayout UI, not programmatically here
-    } else {
-      console.log('[ProjectRoute] No layout preset, using saved layout');
-    }
-  }, [search.layout, setLayoutMode, clearActivePlugins]);
-
-  console.log('[ProjectRoute] Rendering ProjectContextProvider with PluginLayout');
-
-  // ========================================================================
-  // Render: ProjectContextProvider → PluginLayout
-  // ========================================================================
+  // Determine layout preset from query param OR project settings
+  const layoutPreset: LayoutPreset = (search.layout as LayoutPreset) || 'custom';
 
   return (
     <ProjectContextProvider projectId={projectId}>
-      <PluginLayout />
+      <PluginLayout
+        initialPlugins={PLUGIN_PRESETS[layoutPreset]}
+        initialLayoutMode={LAYOUT_MODE_PRESETS[layoutPreset]}
+      />
     </ProjectContextProvider>
   );
 }
-
-// ============================================================================
-// No additional exports - Route and ProjectWorkspace exported above
-// ============================================================================

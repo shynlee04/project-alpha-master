@@ -20,6 +20,7 @@ import { Route as HubRouteImport } from './routes/hub'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ProjectIdRouteImport } from './routes/$projectId'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
 import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
@@ -86,6 +87,11 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+const ProjectIdRoute = ProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -155,6 +161,7 @@ const ApiProvidersIdExecuteRoute = ApiProvidersIdExecuteRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$projectId': typeof ProjectIdRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$projectId': typeof ProjectIdRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
@@ -206,6 +214,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$projectId': typeof ProjectIdRoute
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$projectId'
     | '/about'
     | '/agents'
     | '/debug'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$projectId'
     | '/about'
     | '/agents'
     | '/debug'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$projectId'
     | '/about'
     | '/agents'
     | '/debug'
@@ -309,6 +321,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProjectIdRoute: typeof ProjectIdRoute
   AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
   DebugRoute: typeof DebugRoute
@@ -398,6 +411,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$projectId': {
+      id: '/$projectId'
+      path: '/$projectId'
+      fullPath: '/$projectId'
+      preLoaderRoute: typeof ProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -544,6 +564,7 @@ const ApiProvidersRouteWithChildren = ApiProvidersRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProjectIdRoute: ProjectIdRoute,
   AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
   DebugRoute: DebugRoute,

@@ -10,9 +10,12 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { Terminal } from '@xterm/xterm';
+import * as XTerm from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import '@xterm/xterm/css/xterm.css';
+
+// Extract Terminal class from namespace for convenience
+const Terminal = XTerm.Terminal;
 import { createTerminalAdapter, boot, isBooted } from '@/lib/webcontainer';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'next-themes';
@@ -72,7 +75,7 @@ interface XTerminalProps {
 
 export function XTerminal({ className, initialSyncCompleted = false, permissionState, syncError = false, syncTimeout = 30000 }: XTerminalProps) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const terminalRef = useRef<Terminal | null>(null);
+    const terminalRef = useRef<XTerm.Terminal | null>(null);
     const fitAddonRef = useRef<FitAddon | null>(null);
     const adapterRef = useRef<ReturnType<typeof createTerminalAdapter> | null>(null);
     const initializedRef = useRef(false);

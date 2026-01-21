@@ -18,7 +18,7 @@
  * ```
  */
 
-import type { Terminal } from '@xterm/xterm';
+import * as XTerm from '@xterm/xterm';
 import type { FitAddon } from '@xterm/addon-fit';
 import type { WebContainerProcess } from '@webcontainer/api';
 import { spawn, isBooted } from './manager';
@@ -28,8 +28,7 @@ import type { WorkspaceEventEmitter } from '../events';
  * Options for creating a terminal adapter
  */
 export interface TerminalAdapterOptions {
-    /** xterm.js Terminal instance */
-    terminal: Terminal;
+  terminal: XTerm.Terminal;
     /** FitAddon instance for resize handling (optional) */
     fitAddon?: FitAddon;
     /** Callback when shell process exits */

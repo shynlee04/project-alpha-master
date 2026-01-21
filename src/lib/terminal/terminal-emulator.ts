@@ -8,11 +8,14 @@
  * @story S-036 Terminal/Console Integration
  */
 
-import { Terminal } from '@xterm/xterm';
+import * as XTerm from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { SearchAddon } from '@xterm/addon-search';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import type { ITerminalOptions } from '@xterm/xterm';
+
+// Extract Terminal class from namespace for convenience
+const Terminal = XTerm.Terminal;
 import { createTerminalAdapter } from '@/lib/webcontainer';
 import type { TerminalAdapter } from '@/lib/webcontainer';
 
@@ -49,7 +52,7 @@ export interface TerminalSession {
   /** Unique session ID */
   id: string;
   /** Terminal instance */
-  terminal: Terminal;
+  terminal: XTerm.Terminal;
   /** Fit addon for resize */
   fitAddon: FitAddon;
   /** Search addon */
