@@ -25,6 +25,8 @@ import { migrateWorkspaceBindings } from '@/infrastructure/persistence/stores/pr
 import { registerServiceWorker } from '@/lib/offline/service-worker-registration';
 import { registerPlugin } from '@/infrastructure/plugins/plugin-registry';
 import { fileTreePlugin } from '@/plugins/filetree';
+import { monacoPlugin } from '@/plugins/monaco';
+import { notesPlugin } from '@/plugins/notes';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -84,10 +86,14 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     console.log('[AppInitializer] Offline mode enabled');
                 }
 
-                // 6. Register feature plugins (ARCH-02-04)
-                console.log('[AppInitializer] Registering feature plugins...');
-                registerPlugin(fileTreePlugin);
-                console.log('[AppInitializer] FileTree plugin registered');
+                 // 6. Register feature plugins (ARCH-02-04, ARCH-02-05, ARCH-02-06)
+                 console.log('[AppInitializer] Registering feature plugins...');
+                 registerPlugin(fileTreePlugin);
+                 console.log('[AppInitializer] FileTree plugin registered');
+                 registerPlugin(monacoPlugin);
+                 console.log('[AppInitializer] Monaco plugin registered');
+                 registerPlugin(notesPlugin);
+                 console.log('[AppInitializer] Notes plugin registered');
 
                 // 5. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection

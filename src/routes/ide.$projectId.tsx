@@ -16,12 +16,10 @@
   * loader runs before Zustand store hydration completes.
   */
 
-import { lazy, Suspense, useEffect } from 'react';
-import { createFileRoute, redirect, useRouterState } from '@tanstack/react-router';
+import { lazy, Suspense } from 'react';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ToastProvider, Toast } from '@/presentation/components/ui/Toast';
-import { ProjectProvider } from '@/lib/workspace/ProjectContext';
-import type { Project } from '@/infrastructure/persistence/stores/project/project-types';
- import { createWorkspaceStore } from '@/infrastructure/persistence/stores/workspace-store-factory';
+import { ProjectContextProvider } from '@/infrastructure/context/project-context';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
@@ -37,7 +35,7 @@ const IDELayout = lazy(() =>
 
 export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,
-  
+
   // P0 FIX: Route guards for platform validation ONLY (ADR-033 D12, ADR-034 D12)
   beforeLoad: async ({ params }) => {
     const { projectId } = params;
@@ -48,7 +46,7 @@ export const Route = createFileRoute('/ide/$projectId')({
 
     console.log('[IDERoute] Route guard passed (platform validated):', { projectId });
   },
-  
+
   // INF-03 FIX: Use loader with waitForHydration per ADR-034 D12
   loader: async ({ params }) => {
     const { projectId } = params;
@@ -60,7 +58,7 @@ export const Route = createFileRoute('/ide/$projectId')({
 
     // ✅ INF-03 FIX: Query Dexie directly (not Zustand/getProject facade)
     const record = await db.projects.get(projectId);
-    
+
     if (!record) {
       console.error('[IDERoute.loader] Project not found in Dexie:', projectId);
       throw redirect({ to: '/hub' });
@@ -71,7 +69,7 @@ export const Route = createFileRoute('/ide/$projectId')({
     console.log('[IDERoute.loader] Project found:', { id: project.id, name: project.name });
     return { project };
   },
-  
+
   component: () => (
     <ErrorBoundary>
       <IDEWorkspace />
@@ -80,29 +78,11 @@ export const Route = createFileRoute('/ide/$projectId')({
 });
 
 function IDEWorkspace() {
-  const { projectId: _projectId } = Route.useParams();
+  const { projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
 
-  // PHASE-4-V4 FIX: Get FSA handle from route state if passed from navigation
-  const routerState = useRouterState();
-  const passedHandle = routerState.location.state?.fsaHandle as FileSystemDirectoryHandle | undefined;
-
-  if (passedHandle) {
-    console.log('[IDERoute] Received FSA handle from navigation state:', passedHandle.name);
-  }
-
-  // Store project ID in stores on mount
-  useEffect(() => {
-    if (_projectId) {
-      // Use workspace-scoped store instead of global singleton
-      const workspaceStore = createWorkspaceStore('ide', _projectId);
-      workspaceStore.getState().setCurrentProject(_projectId);
-      console.log('[IDERoute] Project ID set in workspace-scoped store:', _projectId);
-    }
-  }, [_projectId]);
-
   return (
-    <ProjectProvider project={project as Project | null} workspace="ide" initialHandle={passedHandle}>
+    <ProjectContextProvider projectId={projectId}>
       <ToastProvider>
         <Suspense fallback={
           <div className="h-screen w-screen flex items-center justify-center bg-background">
@@ -113,6 +93,6 @@ function IDEWorkspace() {
         </Suspense>
         <Toast />
       </ToastProvider>
-    </ProjectProvider>
+    </ProjectContextProvider>
   );
 }
