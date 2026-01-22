@@ -207,3 +207,30 @@ sessions:
       - "Define rollback procedures per phase"
       - "Simplify FeaturePlugin interface"
     alternative: "Complete ADR-033 phases A-E first, then re-evaluate ADR-034"
+
+  # ADR-034 Amendment (2026-01-21)
+  - id: "adr-034-amendment-001"
+    type: "adr-amendment"
+    name: "ADR-034 Amendment 001: Platform-First Plugin Selection"
+    path: "_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md"
+    parent_id: "adr-034"
+    created_at: "2026-01-21T00:00:00+07:00"
+    status: "approved"
+    breaking_changes:
+      - "Eliminates 'IDE mode' vs 'Notes mode' concept"
+      - "Deprecates /ide/$projectId and /notes/$projectId routes"
+      - "Removes ?layout=ide and ?layout=notes query params"
+      - "Platform determines plugins, not user workspace selection"
+
+  # Handoff Artifacts (2026-01-22)
+  - id: "arch-03-00-handoff"
+    type: "handoff"
+    name: "ARCH-03-00 Architect Handoff: Platform-First Impact"
+    path: "_bmad-output/handoffs/2026-01-22/ARCH-03-00-architect-handoff.md"
+    parent_id: "adr-034-amendment-001"
+    created_at: "2026-01-22T00:00:00+07:00"
+    status: "pending-review"
+    source_agent: "architect-ext"
+    target_agent: "bmad-sprint-manager"
+    urgency: "P0-BLOCKING"
+    impact: "ARCH-03-01 completed with deprecated patterns, requires update"

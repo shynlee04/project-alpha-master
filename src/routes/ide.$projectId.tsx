@@ -37,22 +37,29 @@ export const Route = createFileRoute('/ide/$projectId')({
   ssr: false,
 
   // ARCH-02-10: Redirect old IDE route to new unified route
+  // ARCH-03-00: Platform-first defaults, no layout params
   // This is final story of EPIC-ARCH-02 - redirects preserve backward compatibility
-  beforeLoad: async ({ params, search }) => {
+  beforeLoad: async ({ params }) => {
     const { projectId } = params;
+
     console.log('[IDERoute] beforeLoad called for project:', projectId);
 
     // Check: Mobile users cannot access IDE (audit violation - ABSOLUTE)
     await requireIDEAccess(projectId);
 
-    // ARCH-02-10: Redirect to new unified route with layout preset
-    // Check if already on new route (avoid redirect loop)
-    if (search?.layout !== 'ide') {
-      console.log('[IDERoute] Redirecting to new route: /$projectId?layout=ide');
-      throw redirect({ to: `/$projectId`, search: { layout: 'ide' } });
-    }
+    // ARCH-03-00: Log deprecation warning
+    console.warn(
+      '[DEPRECATED] /ide/$projectId route is deprecated. ' +
+      'Use /$projectId instead. Platform detection handles plugin availability.'
+    );
 
-    console.log('[IDERoute] Route guard passed (platform validated):', { projectId });
+    // ARCH-03-00: Redirect to unified route WITHOUT layout param
+    // Platform detection will determine appropriate plugins
+    throw redirect({
+      to: '/$projectId',
+      params: { projectId },
+      // NO search params - let platform decide
+    });
   },
 
   // INF-03 FIX: Use loader with waitForHydration per ADR-034 D12
@@ -73,9 +80,9 @@ export const Route = createFileRoute('/ide/$projectId')({
     }
 
     // Convert record to Project type using fromRecord for proper defaults
-    const project = fromRecord(record);
-    console.log('[IDERoute.loader] Project found:', { id: project.id, name: project.name });
-    return { project };
+    const _project = fromRecord(record);
+    console.log('[IDERoute.loader] Project found:', { id: _project.id, name: _project.name });
+    return { project: _project };
   },
 
   component: () => (
@@ -87,7 +94,7 @@ export const Route = createFileRoute('/ide/$projectId')({
 
 function IDEWorkspace() {
   const { projectId } = Route.useParams();
-  const { project } = Route.useLoaderData();
+  const { project: _project } = Route.useLoaderData();
 
   return (
     <ProjectContextProvider projectId={projectId}>

@@ -26,7 +26,6 @@ import { toast } from 'sonner';
 import { NotesPage } from '@/presentation/components/notes/NotesPage';
 import { ProjectContextProvider } from '@/infrastructure/context/project-context';
 import { fileTreePlugin } from '@/plugins/filetree';
-import type { Project } from '@/domain/entities/project';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
@@ -42,17 +41,26 @@ export const Route = createFileRoute('/notes/$projectId')({
   ssr: false,
 
   // ARCH-02-10: Redirect old Notes route to new unified route
+  // ARCH-03-00: Platform-first defaults, no layout params
   // This is final story of EPIC-ARCH-02 - redirects preserve backward compatibility
-  beforeLoad: async ({ params, search }) => {
+  beforeLoad: async ({ params }) => {
     const { projectId } = params;
+
     console.log('[NotesRoute] beforeLoad called for project:', projectId);
 
-    // ARCH-02-10: Redirect to new unified route with layout preset
-    // Check if already on new route (avoid redirect loop)
-    if (search?.layout !== 'notes') {
-      console.log('[NotesRoute] Redirecting to new route: /$projectId?layout=notes');
-      throw redirect({ to: `/$projectId`, search: { layout: 'notes' } });
-    }
+    // ARCH-03-00: Log deprecation warning
+    console.warn(
+      '[DEPRECATED] /notes/$projectId route is deprecated. ' +
+      'Use /$projectId instead. Platform detection handles plugin availability.'
+    );
+
+    // ARCH-03-00: Redirect to unified route WITHOUT layout param
+    // Platform detection will determine appropriate plugins
+    throw redirect({
+      to: '/$projectId',
+      params: { projectId },
+      // NO search params - let platform decide
+    });
   },
 
   loader: async ({ params }) => {
@@ -72,9 +80,9 @@ export const Route = createFileRoute('/notes/$projectId')({
     }
 
     // Convert record to Project type using fromRecord for proper defaults
-    const project = fromRecord(record);
-    console.log('[NotesRoute.loader] Project found:', { id: project.id, name: project.name, storageType: project.storageType });
-    return { project };
+    const _project = fromRecord(record);
+    console.log('[NotesRoute.loader] Project found:', { id: _project.id, name: _project.name, storageType: _project.storageType });
+    return { project: _project };
   },
   component: () => (
     <ErrorBoundary>
@@ -87,11 +95,11 @@ function NotesWorkspace() {
   console.log('[NotesWorkspace] Component rendering...');
 
   const { projectId: _projectId } = Route.useParams();
-  const { project } = Route.useLoaderData();
+  const { project: _project } = Route.useLoaderData();
   const search = Route.useSearch() as NotesSearchParams;
   const toastShownRef = useRef(false);
 
-  console.log('[NotesWorkspace] Data loaded:', { projectId: _projectId, project, search });
+  console.log('[NotesWorkspace] Data loaded:', { projectId: _projectId, project: _project, search });
 
   // Show toast when redirected from IDE (mobile users)
   useEffect(() => {
@@ -112,7 +120,7 @@ function NotesWorkspace() {
 
   return (
     // MIGRATION: Use ProjectContextProvider from new architecture
-    <ProjectContextProvider projectId={project.id}>
+    <ProjectContextProvider projectId={_project.id}>
       <div className="flex h-full">
         {/* MIGRATION: Integrate FileTree plugin.MainComponent */}
         <div className="w-64 border-r border-border/30 shrink-0 overflow-hidden flex flex-col">

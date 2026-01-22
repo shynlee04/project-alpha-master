@@ -3,24 +3,26 @@
  * @module routes/$projectId
  *
  * **ARCH-02-10**: Create Project Route (/\$projectId) - FINAL STORY
+ * **ARCH-03-00**: Platform-First Plugin Defaults - P0 BLOCKING
  *
- * This is the NEW unified route that replaces workspace-specific routes.
+ * This is NEW unified route that replaces workspace-specific routes.
  * Per ADR-034 Section 5: Single Project Route.
+ * Per ADR-034-001: Platform-First Plugin Selection.
  *
  * Route Behavior:
  * 1. Load ProjectContextProvider (from ARCH-02-03)
- * 2. Render PluginLayout (from ARCH-02-09) with user's selected plugins
- * 3. Support layout presets via query params (?layout=ide, ?layout=notes)
- * 4. Persist user's plugin selection per project
- * 5. Old routes redirect with query param to preserve layout preference
+ * 2. Render PluginLayout (from ARCH-02-09) with platform-default plugins
+ * 3. Initialize plugins based on platform detection (NO layout query params)
+ * 4. Persist user's plugin customization per project
+ * 5. Old routes redirect WITHOUT query param (platform decides defaults)
  *
- * @epic EPIC-ARCH-02
- * @story ARCH-02-10
+ * @epic EPIC-ARCH-03
+ * @story ARCH-03-00
  * @team Team A
- * @created 2026-01-21
+ * @created 2026-01-22
  */
 
-import React from 'react';
+import { useEffect } from 'react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
@@ -28,38 +30,9 @@ import { waitForHydration } from '@/infrastructure/persistence/stores/project/wa
 import { fromRecord } from '@/infrastructure/persistence/stores/project/project-crud-slice';
 import { ProjectContextProvider } from '@/infrastructure/context/project-context';
 import { PluginLayout } from '@/presentation/layouts/PluginLayout';
-import type { Project } from '@/domain/entities/project';
-import type { PluginId } from '@/domain/types/plugin-types';
-
-/**
- * Layout preset type from query params
- */
-type LayoutPreset = 'ide' | 'notes' | 'custom';
-
-/**
- * Search params for route
- */
-interface ProjectRouteSearch {
-  layout?: LayoutPreset;
-}
-
-/**
- * Plugin presets for common layouts
- */
-const PLUGIN_PRESETS: Record<LayoutPreset, PluginId[]> = {
-  ide: ['filetree', 'monaco', 'terminal', 'chat'],
-  notes: ['filetree', 'notes', 'chat'],
-  custom: [], // User's custom selection from store
-};
-
-/**
- * Layout mode presets for common layouts
- */
-const LAYOUT_MODE_PRESETS: Record<LayoutPreset, '1-column' | '2-column' | '2+1'> = {
-  ide: '2+1', // FileTree | Monaco | Terminal (sidebar) + Chat (bottom)
-  notes: '2-column', // FileTree | Notes (side-by-side)
-  custom: '2-column', // Default to 2-column for custom
-};
+import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
+import { getDefaultPlugins, getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
+import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
 
 // ============================================================================
 // Route Definition
@@ -107,24 +80,31 @@ export const Route = createFileRoute('/$projectId')({
  * UnifiedProjectRoute Component
  *
  * Renders unified project route with ProjectContextProvider and PluginLayout.
- * Supports layout presets via query params.
+ * Uses platform-first defaults for plugin initialization.
+ * Sử dụng mặc định ưu tiên nền tảng để khởi tạo plugin.
  */
 function UnifiedProjectRoute() {
   const { projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
-  const search = Route.useSearch() as ProjectRouteSearch;
+  const layoutStore = usePluginLayoutStore();
+  const platform = getPlatformContract();
 
-  console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, layout: search.layout });
+  console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, platform });
 
-  // Determine layout preset from query param OR project settings
-  const layoutPreset: LayoutPreset = (search.layout as LayoutPreset) || 'custom';
+  // Initialize layout store with platform-appropriate defaults
+  // Chỉ khởi tạo mặc định nếu người dùng chưa tùy chỉnh
+  useEffect(() => {
+    if (layoutStore.activePlugins.length === 0) {
+      const defaultPlugins = getDefaultPlugins(platform, project);
+      const defaultMode = getDefaultLayoutMode(platform);
+      console.log('[UnifiedProjectRoute] Initializing defaults:', { defaultPlugins, defaultMode });
+      layoutStore.initializeDefaults(defaultPlugins, defaultMode);
+    }
+  }, [project.id]);
 
   return (
     <ProjectContextProvider projectId={projectId}>
-      <PluginLayout
-        initialPlugins={PLUGIN_PRESETS[layoutPreset]}
-        initialLayoutMode={LAYOUT_MODE_PRESETS[layoutPreset]}
-      />
+      <PluginLayout />  {/* No props - reads from store */}
     </ProjectContextProvider>
   );
 }

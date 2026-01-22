@@ -104,6 +104,7 @@ export type LayoutMode = '1-column' | '2-column' | '3-column' | '2+1';
  * - Active plugin IDs in display order
  * - Layout mode (1-column, 2-column, 3-column, 2+1)
  * - Panel sizes (plugin ID -> size percentage)
+ * - User customization flag (prevents overwriting defaults)
  *
  * Persisted via localStorage with project-specific key.
  */
@@ -116,6 +117,9 @@ interface PluginLayoutState {
 
   /** Panel sizes: plugin ID -> size percentage (0-100) */
   panelSizes: Record<string, number>;
+
+  /** Track if user has customized layout (prevents overwriting defaults) */
+  hasUserCustomized: boolean;
 
   // ========================================================================
   // Actions
@@ -138,6 +142,9 @@ interface PluginLayoutState {
 
   /** Clear all active plugins */
   clearActivePlugins: () => void;
+
+  /** Initialize default plugins and layout mode (only if not customized) */
+  initializeDefaults: (plugins: PluginId[], mode: LayoutMode) => void;
 }
 
 // ============================================================================
@@ -167,6 +174,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
       activePlugins: [],
       layoutMode: '2-column',
       panelSizes: {},
+      hasUserCustomized: false,
 
       // ========================================================================
       // Actions
@@ -180,6 +188,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
        * - Checks if plugin is already active (prevents duplicates)
        * - Enforces 5 plugins max (per ADR-034 Section 4)
        * - Appends to end of list (newest plugins last)
+       * - Sets hasUserCustomized flag when user adds plugin
        */
       addPlugin: (pluginId) =>
         set((state) => {
@@ -197,9 +206,10 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
             return state;
           }
 
-          // Add plugin to end of list
+          // Add plugin to end of list and mark as customized
           return {
             activePlugins: [...state.activePlugins, pluginId],
+            hasUserCustomized: true,
           };
         }),
 
@@ -210,6 +220,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
        * @remarks
        * - Filters out plugin from activePlugins array
        * - Also removes panel size for this plugin
+       * - Sets hasUserCustomized flag when user removes plugin
        */
       removePlugin: (pluginId) =>
         set((state) => {
@@ -219,6 +230,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
           return {
             activePlugins: state.activePlugins.filter((id) => id !== pluginId),
             panelSizes: newPanelSizes,
+            hasUserCustomized: true,
           };
         }),
 
@@ -230,6 +242,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
        * @remarks
        * - Uses array splice to remove and reinsert
        * - Useful for drag-drop reordering
+       * - Sets hasUserCustomized flag when user reorders
        */
       reorderPlugin: (fromIndex, toIndex) =>
         set((state) => {
@@ -247,6 +260,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
 
           return {
             activePlugins: newPlugins,
+            hasUserCustomized: true,
           };
         }),
 
@@ -257,11 +271,13 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
        * @remarks
        * - Directly updates layoutMode
        * - No validation needed (all modes supported)
+       * - Sets hasUserCustomized flag when user changes mode
        */
       setLayoutMode: (mode) =>
-        set({
+        set(() => ({
           layoutMode: mode,
-        }),
+          hasUserCustomized: true,
+        })),
 
       /**
        * Update panel size
@@ -291,6 +307,26 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
         set({
           activePlugins: [],
           panelSizes: {},
+        }),
+
+      /**
+       * Initialize default plugins and layout mode
+       *
+       * @param plugins - Default plugin IDs to load
+       * @param mode - Default layout mode
+       * @remarks
+       * - Only initializes if user hasn't customized layout
+       * - Sets hasUserCustomized=false initially
+       * - Called by route when first opening a project
+       */
+      initializeDefaults: (plugins, mode) =>
+        set(() => {
+          // Only initialize if not already customized
+          return {
+            activePlugins: plugins,
+            layoutMode: mode,
+            hasUserCustomized: false,
+          };
         }),
     }),
 

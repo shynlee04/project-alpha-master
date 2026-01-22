@@ -2,12 +2,34 @@
 
 **Epic ID:** EPIC-ARCH-03
 **Created:** 2026-01-21
+**Updated:** 2026-01-21 (Amendment 001 integrated)
 **Status:** APPROVED
 **Priority:** P1
 **Estimated Duration:** 2 days (AI agent time)
 **Team:** Both (Team A + Team B parallel)
-**ADR Reference:** ADR-034 Phase 3
+**ADR Reference:** ADR-034 Phase 3 + ADR-034-AMENDMENT-001
 **Depends On:** EPIC-ARCH-02 ✅ COMPLETE (Verified 2026-01-21)
+
+---
+
+## 🚨 CRITICAL AMENDMENT: ADR-034-AMENDMENT-001
+
+**READ FIRST:** `_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md`
+
+### Summary of Amendment
+
+The "IDE mode" vs "Notes mode" concept is **ELIMINATED**. Replace with:
+
+| OLD (Wrong) | NEW (Correct) |
+|-------------|---------------|
+| `?layout=ide` / `?layout=notes` | No layout param - platform decides |
+| Navigate to `/ide/$projectId` | Navigate to `/$projectId` |
+| Navigate to `/notes/$projectId` | Navigate to `/$projectId` |
+| User picks "workspace mode" | Platform determines available plugins |
+
+### New Story Added: ARCH-03-00 (BLOCKING)
+
+**ARCH-03-00 must complete before ARCH-03-01 navigation logic is finalized.**
 
 ---
 
@@ -15,11 +37,12 @@
 
 Complete the project-centric architecture transformation by implementing the remaining layout and UX components from ADR-034 Phase 3. This epic focuses on:
 
-1. **ProjectSidebar** - The primary navigation component for project/chat switching
-2. **Mobile-responsive layouts** - Ensure plugin layouts work on all devices
-3. **Layout presets** - Save/load user-customized layouts
-4. **Drag-drop polish** - Complete the plugin reordering UX
-5. **Progressive disclosure** - Simplify first-time user experience
+1. **Platform-first defaults** - Eliminate IDE/Notes mode distinction (NEW - ARCH-03-00)
+2. **ProjectSidebar** - The primary navigation component for project/chat switching
+3. **Mobile-responsive layouts** - Ensure plugin layouts work on all devices
+4. **Layout presets** - Save/load user-customized layouts (NOT workspace modes)
+5. **Drag-drop polish** - Complete the plugin reordering UX
+6. **Progressive disclosure** - Simplify first-time user experience
 
 ---
 
@@ -28,7 +51,7 @@ Complete the project-centric architecture transformation by implementing the rem
 Before starting this epic, verify:
 
 ```bash
-# 1. TypeScript compiles with 0 errors
+# 1. TypeScript compiles with 0 errors (goal, may have legacy errors)
 pnpm tsc --noEmit
 
 # 2. Application starts without errors
@@ -37,7 +60,7 @@ pnpm dev
 # 3. All 5 plugins load on /$projectId route
 # Manual: Navigate to a project, verify FileTree, Monaco, Notes, Terminal, Chat render
 
-# 4. Redirects work
+# 4. OLD redirects work (will be deprecated in ARCH-03-00)
 # Manual: /ide/$projectId redirects to /$projectId?layout=ide
 # Manual: /notes/$projectId redirects to /$projectId?layout=notes
 ```
@@ -56,10 +79,16 @@ pnpm dev
 - ProjectContextProvider
 - Plugin registry
 
+⚠️ ARCHITECTURAL ISSUE (Per Amendment 001):
+- Still has "layout=ide" vs "layout=notes" concept
+- Still navigates to /ide/$projectId and /notes/$projectId
+- This perpetuates workspace-centric thinking
+
 ❌ MISSING (ADR-034 Phase 3):
+- Platform-first plugin defaults (Amendment 001)
 - ProjectSidebar with project list and chat threads
 - Mobile-responsive layouts (not tested)
-- Layout presets (only query params, no persistence)
+- Layout presets (save/load, NOT workspace modes)
 - Drag-drop visual polish
 - Progressive disclosure for new users
 ```
@@ -164,28 +193,39 @@ interface LayoutPreset {
 
 ### Built-in Presets
 
+**UPDATED per Amendment 001:** Presets are now "saved layouts", NOT "workspace modes".
+
 ```typescript
+// BEFORE (workspace-centric - WRONG)
+const BUILT_IN_PRESETS = [
+  { id: 'preset-ide', name: 'IDE Mode', ... },
+  { id: 'preset-notes', name: 'Notes Mode', ... },
+];
+
+// AFTER (platform-first - CORRECT)
 const BUILT_IN_PRESETS: LayoutPreset[] = [
   {
-    id: 'preset-ide',
-    name: 'IDE Mode',
+    id: 'preset-coding',
+    name: 'Coding',  // NOT "IDE Mode"
     plugins: ['filetree', 'monaco', 'terminal', 'chat'],
     layoutMode: '2+1',
     panelSizes: { filetree: 20, monaco: 50, terminal: 30 },
     isBuiltIn: true,
+    // NOTE: Only available on desktop-fsa (platform checks this)
   },
   {
-    id: 'preset-notes',
-    name: 'Notes Mode',
+    id: 'preset-writing',
+    name: 'Writing',  // NOT "Notes Mode"
     plugins: ['filetree', 'notes', 'chat'],
     layoutMode: '2-column',
     panelSizes: { filetree: 25, notes: 75 },
     isBuiltIn: true,
+    // Available on all platforms
   },
   {
     id: 'preset-focus',
-    name: 'Focus Mode',
-    plugins: ['monaco'],
+    name: 'Focus',
+    plugins: ['monaco'],  // or ['notes'] depending on available plugins
     layoutMode: '1-column',
     panelSizes: { monaco: 100 },
     isBuiltIn: true,
@@ -197,10 +237,124 @@ const BUILT_IN_PRESETS: LayoutPreset[] = [
 
 ## Stories
 
+### 🚨 ARCH-03-00: Platform-First Plugin Defaults (BLOCKING)
+
+**Priority:** P0 (BLOCKING) | **Effort:** 2 hours | **Team:** Team A
+**Depends On:** None
+**BLOCKS:** ARCH-03-01 navigation logic, ARCH-03-03 presets
+
+**Reference:** `ADR-034-AMENDMENT-001-platform-first-2026-01-21.md`
+
+Eliminate "IDE mode" vs "Notes mode" distinction. Platform determines available plugins.
+
+**Files to Create:**
+```
+src/infrastructure/plugins/platform-defaults.ts    (getDefaultPlugins, getDefaultLayoutMode)
+```
+
+**Files to Modify:**
+```
+src/routes/$projectId.tsx                         (remove LayoutPreset, use platform defaults)
+src/routes/ide.$projectId.tsx                     (add deprecation, redirect without layout param)
+src/routes/notes.$projectId.tsx                   (add deprecation, redirect without layout param)
+src/presentation/layouts/PluginLayout.tsx         (remove initialPlugins/initialLayoutMode props)
+src/presentation/layouts/PluginLayoutStore.ts     (add initializeDefaults action)
+```
+
+**Implementation:**
+
+1. Create `platform-defaults.ts`:
+```typescript
+export function getDefaultPlugins(
+  platform: PlatformContract,
+  project: Project
+): PluginId[] {
+  // Desktop FSA: Full development
+  if (platform.deviceType === 'desktop' && project.storageType === 'fsa') {
+    return ['filetree', 'monaco', 'chat'];
+  }
+  // Desktop IndexedDB: Notes-focused
+  if (platform.deviceType === 'desktop' && project.storageType === 'indexeddb') {
+    return ['filetree', 'notes', 'chat'];
+  }
+  // Tablet: Notes-focused
+  if (platform.deviceType === 'tablet') {
+    return ['filetree', 'notes', 'chat'];
+  }
+  // Mobile: Single plugin
+  if (platform.deviceType === 'mobile') {
+    return ['notes'];
+  }
+  return ['notes', 'chat'];
+}
+
+export function getDefaultLayoutMode(
+  platform: PlatformContract
+): LayoutMode {
+  if (platform.deviceType === 'mobile') return '1-column';
+  if (platform.deviceType === 'tablet') return '2-column';
+  return '2-column';
+}
+```
+
+2. Update `$projectId.tsx`:
+```typescript
+// REMOVE this:
+type LayoutPreset = 'ide' | 'notes' | 'custom';
+const PLUGIN_PRESETS = { ... };
+
+// ADD this:
+import { getDefaultPlugins, getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
+
+function UnifiedProjectRoute() {
+  // Initialize with platform defaults if store is empty
+  useEffect(() => {
+    if (layoutStore.activePlugins.length === 0) {
+      const defaults = getDefaultPlugins(platform, project);
+      layoutStore.initializeDefaults(defaults, getDefaultLayoutMode(platform));
+    }
+  }, [project.id]);
+  
+  return (
+    <ProjectContextProvider projectId={projectId}>
+      <PluginLayout />  {/* NO PROPS */}
+    </ProjectContextProvider>
+  );
+}
+```
+
+3. Update old routes:
+```typescript
+// ide.$projectId.tsx and notes.$projectId.tsx
+beforeLoad: async ({ params }) => {
+  console.warn('[DEPRECATED] Use /$projectId instead');
+  throw redirect({ 
+    to: '/$projectId', 
+    params: { projectId: params.projectId },
+    // NO search params
+  });
+},
+```
+
+**Acceptance Criteria:**
+- [ ] `platform-defaults.ts` exists with both functions
+- [ ] `$projectId.tsx` uses platform defaults, no LayoutPreset type
+- [ ] Old routes log deprecation warning
+- [ ] Old routes redirect to `/$projectId` without `?layout=` param
+- [ ] `PluginLayout` has no props (reads from store)
+- [ ] `PluginLayoutStore` has `initializeDefaults(plugins, mode)` action
+- [ ] TypeScript: 0 new errors
+- [ ] Manual test: Open project on desktop → sees default plugins
+- [ ] Manual test: Old `/ide/$projectId` URL → redirects to `/$projectId`
+
+---
+
 ### ARCH-03-01: Create ProjectSidebar Component
 
 **Priority:** P0 | **Effort:** 4 hours | **Team:** Team A
-**Depends On:** None (can start immediately)
+**Depends On:** ARCH-03-00 (for navigation pattern)
+
+**⚠️ AMENDMENT NOTE:** Navigation in ProjectSidebar MUST use `/$projectId` pattern (not `/ide/$projectId` or `/notes/$projectId`). See ARCH-03-00.
 
 Create the collapsible sidebar that provides project switching and chat thread access.
 
@@ -535,27 +689,32 @@ src/presentation/components/layout/Header.tsx      (add sidebar toggle)
 ## Dependencies Graph
 
 ```
-ARCH-03-01 (ProjectSidebar)
+ARCH-03-00 (Platform Defaults) ← BLOCKING - Do first!
+    ↓
+ARCH-03-01 (ProjectSidebar) ← Navigation must use /$projectId
     ↓
     ├── ARCH-03-02 (Mobile Responsive) ← needs sidebar for mobile context
     │       ↓
     │       └── ARCH-03-04 (Drag-Drop) ← responsive must be stable first
     │
-    ├── ARCH-03-03 (Presets) ← sidebar shows project context
+    ├── ARCH-03-03 (Presets) ← No "IDE mode"/"Notes mode", just saved layouts
     │       ↓
     │       └── ARCH-03-05 (Progressive Disclosure) ← presets for defaults
     │
     └── ARCH-03-06 (Root Integration) ← sidebar component needed
 ```
 
+**CRITICAL:** ARCH-03-00 must complete before navigation logic in any other story is finalized.
+
 ---
 
 ## Parallel Execution Plan
 
-### Team A (Stories: 01, 03, 05)
+### Team A (Stories: 00, 01, 03, 05)
 
 | Time | Story | Description |
 |------|-------|-------------|
+| Day 1 AM (2h) | **ARCH-03-00** | Platform-First Defaults (BLOCKING) |
 | Day 1 AM (4h) | ARCH-03-01 | Create ProjectSidebar Component |
 | Day 1 PM (3h) | ARCH-03-03 | Layout Presets System |
 | Day 2 AM (2h) | ARCH-03-05 | Progressive Disclosure UI |
@@ -565,7 +724,7 @@ ARCH-03-01 (ProjectSidebar)
 
 | Time | Story | Description |
 |------|-------|-------------|
-| Day 1 AM | *Wait* | Wait for ARCH-03-01 ProjectSidebar |
+| Day 1 AM | *Wait* | Wait for ARCH-03-00 + ARCH-03-01 |
 | Day 1 PM (4h) | ARCH-03-02 | Mobile-Responsive Layouts |
 | Day 2 AM (2h) | ARCH-03-06 | Root Layout Integration |
 | Day 2 AM (3h) | ARCH-03-04 | Drag-Drop Polish |
@@ -574,11 +733,11 @@ ARCH-03-01 (ProjectSidebar)
 ### Critical Path
 
 ```
-ARCH-03-01 (4h) → ARCH-03-02 (4h) → ARCH-03-04 (3h)
-                → ARCH-03-06 (2h)
+ARCH-03-00 (2h) → ARCH-03-01 (4h) → ARCH-03-02 (4h) → ARCH-03-04 (3h)
+                                  → ARCH-03-06 (2h)
                 
-Total: 8-9 hours sequential
-With parallelization: ~6 hours effective
+Total: 10-11 hours sequential
+With parallelization: ~7 hours effective
 ```
 
 ---
@@ -687,14 +846,19 @@ Each story maintains backward compatibility.
    - `src/presentation/layouts/` (existing PluginLayout)
 
 3. **Assign teams:**
-   - Team A: ARCH-03-01, ARCH-03-03, ARCH-03-05
+   - Team A: **ARCH-03-00**, ARCH-03-01, ARCH-03-03, ARCH-03-05
    - Team B: ARCH-03-02, ARCH-03-04, ARCH-03-06
+
+4. **🚨 READ THE AMENDMENT:**
+   - `ADR-034-AMENDMENT-001-platform-first-2026-01-21.md`
+   - All navigation must use `/$projectId` (not `/ide/$projectId`)
 
 ### During Execution
 
-1. **Check dependencies before starting each story**
-2. **Run TypeScript after each story**
-3. **Update story status in this file**
+1. **ARCH-03-00 MUST complete before navigation logic in ARCH-03-01 is finalized**
+2. **Check dependencies before starting each story**
+3. **Run TypeScript after each story**
+4. **Update story status in this file**
 
 ### After Completion
 
@@ -709,9 +873,10 @@ Each story maintains backward compatibility.
 
 | Story | Status | Team | Started | Completed | Notes |
 |-------|--------|------|---------|-----------|-------|
-| ARCH-03-01 | ⏳ PENDING | A | | | |
-| ARCH-03-02 | ⏳ PENDING | B | | | Blocked by 01 |
-| ARCH-03-03 | ⏳ PENDING | A | | | |
+| **ARCH-03-00** | ⏳ PENDING | A | | | **BLOCKING** - Do first! |
+| ARCH-03-01 | 🔄 IN PROGRESS | A | | | Blocked by 00 for navigation |
+| ARCH-03-02 | ⏳ PENDING | B | | | Blocked by 00, 01 |
+| ARCH-03-03 | ⏳ PENDING | A | | | Blocked by 00 |
 | ARCH-03-04 | ⏳ PENDING | B | | | Blocked by 02 |
 | ARCH-03-05 | ⏳ PENDING | A | | | Blocked by 03 |
 | ARCH-03-06 | ⏳ PENDING | B | | | Blocked by 01 |

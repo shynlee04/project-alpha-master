@@ -203,12 +203,20 @@ AFTER:
 
 **Epic File:** `_bmad-output/planning-artifacts/epics/EPIC-ARCH-03-layout-ux-2026-01-21.md`
 
-**Note:** EPIC-ARCH-02 delivered ~60% of Phase 3 requirements (PluginLayout with 4 modes).
-Remaining work focuses on:
+**🚨 AMENDMENT 001:** `_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md`
 
+The "IDE mode" vs "Notes mode" concept is **ELIMINATED**. Key changes:
+- No more `?layout=ide` or `?layout=notes` query params
+- All navigation uses `/$projectId` (not `/ide/$projectId` or `/notes/$projectId`)
+- Platform determines available plugins, not user-selected "workspace mode"
+- Old routes are deprecated and redirect to `/$projectId`
+
+**Stories:**
+
+- [ ] **ARCH-03-00:** Platform-First Plugin Defaults (BLOCKING - do first!)
 - [ ] **ARCH-03-01:** Create ProjectSidebar with project list + chat threads
 - [ ] **ARCH-03-02:** Mobile-responsive plugin layouts
-- [ ] **ARCH-03-03:** Layout presets system (save/load custom layouts)
+- [ ] **ARCH-03-03:** Layout presets system (save/load custom layouts, NOT workspace modes)
 - [ ] **ARCH-03-04:** Drag-drop plugin reordering polish
 - [ ] **ARCH-03-05:** Progressive disclosure UI
 - [ ] **ARCH-03-06:** Integrate ProjectSidebar into root layout
