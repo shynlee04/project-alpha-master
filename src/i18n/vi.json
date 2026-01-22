@@ -1544,5 +1544,7 @@
   "folder.approveCategories": "Phê duyệt các danh mục để tiếp tục",
   "folder.resetAll": "Đặt lại Tất cả",
   "mobile.pleaseResize": "Vui lòng thay đổi kích thước cửa sổ trình duyệt để tiếp tục.",
-  "mobile.minWidth": "Chiều rộng tối thiểu: 640px"
+  "mobile.minWidth": "Chiều rộng tối thiểu: 640px",
+  "mobilePluginNav.ariaLabel": "Điều hướng plugin",
+  "mobilePluginNav.switchToPlugin": "Chuyển sang {{pluginName}}"
 }

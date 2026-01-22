@@ -978,6 +978,8 @@
   "ide.output": "Output",
   "ide.problems": "Problems",
   "ide.outputSoon": "Output panel coming soon",
+  "mobilePluginNav.ariaLabel": "Plugin navigation",
+  "mobilePluginNav.switchToPlugin": "Switch to {{pluginName}}",
   "ide.problemsSoon": "Problems panel coming soon",
   "notes.ai.success": "Content generated successfully",
   "notes.ai.error.noAgent": "Please select an AI agent first",

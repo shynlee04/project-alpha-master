@@ -16,6 +16,14 @@
 
 export { PluginLayout } from './PluginLayout';
 export { PluginPanel } from './PluginPanel';
+export { MobilePluginNav } from './MobilePluginNav';
+
+// ============================================================================
+// Layout Hooks
+// ============================================================================
+
+export { useBreakpoint, BREAKPOINTS, LAYOUT_RULES } from './useBreakpoint';
+export type { Breakpoint } from './useBreakpoint';
 
 // ============================================================================
 // Layout Stores

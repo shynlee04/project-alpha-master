@@ -16,7 +16,7 @@
 import { create } from 'zustand';
 import { persist, type StorageValue } from 'zustand/middleware';
 import type { PluginId } from '@/domain/types/plugin-types';
-import type { Breakpoint } from './useBreakpoint';
+// Import type { Breakpoint } from './useBreakpoint';
 
 // ============================================================================
 // Project-Specific Storage Wrapper (INT-02 fix)

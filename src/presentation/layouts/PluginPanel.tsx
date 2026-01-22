@@ -16,6 +16,7 @@
 
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useRef, useEffect } from 'react';
 
 // Plugin system
 import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
@@ -93,6 +94,94 @@ export function PluginPanel({
   const { t } = useTranslation();
 
   // ========================================================================
+  // Swipe Gesture Detection
+  // ========================================================================
+
+  /**
+   * Touch gesture refs for swipe detection
+   *
+   * @remarks
+   * - touchStartX: Starting X position of touch
+   * - touchStartY: Starting Y position (to distinguish scroll from swipe)
+   * - Detects horizontal swipes > 50px, ignores vertical movements
+   */
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+
+  /**
+   * Handle touch start
+   *
+   * @param e - Touch event
+   * @remarks
+   * - Records initial touch position
+   * - Used to calculate swipe delta
+   */
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  /**
+   * Handle touch end (detect swipe gestures)
+   *
+   * @param e - Touch event
+   * @remarks
+   * - Calculates delta from start to end position
+   * - Detects horizontal swipe (|deltaX| > 50 && |deltaY| < 50)
+   * - Imports layout store dynamically to avoid circular dependency
+   * - Calls switchToNextPlugin or switchToPreviousPlugin based on direction
+   */
+  const handleTouchEnd = async (e: React.TouchEvent) => {
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+
+    // Detect horizontal swipe (not vertical scroll)
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaY) < 50) {
+      // Import layout store dynamically to avoid circular dependency at build time
+      const { usePluginLayoutStore } = await import('./PluginLayoutStore');
+
+      if (deltaX > 0) {
+        // Swipe right - switch to previous plugin
+        usePluginLayoutStore().switchToPreviousPlugin();
+      } else {
+        // Swipe left - switch to next plugin
+        usePluginLayoutStore().switchToNextPlugin();
+      }
+    }
+  };
+
+  /**
+   * Register touch gesture listeners
+   *
+   * @remarks
+   * - Only active if PluginLayoutStore is available
+   * - Prevents memory leaks by cleaning up on unmount
+   */
+  useEffect(() => {
+    // Check if PluginLayoutStore is available (prevents errors during SSR)
+    if (typeof window !== 'undefined') {
+      const element = document.querySelector('.plugin-panel');
+      if (element) {
+        const touchStartHandler = (e: Event) => {
+          handleTouchStart(e as TouchEvent);
+        };
+        const touchEndHandler = (e: Event) => {
+          handleTouchEnd(e as TouchEvent);
+        };
+
+        element.addEventListener('touchstart', touchStartHandler);
+        element.addEventListener('touchend', touchEndHandler);
+
+        return () => {
+          element.removeEventListener('touchstart', touchStartHandler);
+          element.removeEventListener('touchend', touchEndHandler);
+        };
+      }
+    }
+    return undefined;
+  }, []);
+
+  // ========================================================================
   // Get Plugin from Registry
   // ========================================================================
 
@@ -156,8 +245,10 @@ export function PluginPanel({
 
   return (
     <div
-      className="h-full flex flex-col bg-background border border-border/30"
+      className="h-full flex flex-col bg-background border border-border/30 plugin-panel"
       style={{ width, height }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* ========================================================================
            Panel Header

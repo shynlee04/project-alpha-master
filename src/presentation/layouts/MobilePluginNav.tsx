@@ -1,23 +1,7 @@
 /**
  * @fileoverview MobilePluginNav - Bottom navigation for mobile plugins
  * @module presentation/layouts/MobilePluginNav
- *
- * **ARCH-03-02**: Mobile-Responsive Plugin Layouts
- *
- * Mobile bottom navigation component that:
- * - Shows icons for active plugins
- * - Allows switching between plugins on mobile
- * - Follows 8-bit design principles (sharp corners, pixel shadows)
- * - Ensures touch targets ≥ 44x44px (WCAG 2.5.5)
- * - Uses i18n for user-facing strings
- *
- * @epic EPIC-ARCH-03
- * @story ARCH-03-02
- * @team Team B
- * @created 2026-01-22
  */
-
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { PluginId } from '@/domain/types/plugin-types';
@@ -152,3 +136,74 @@ export function MobilePluginNav({
 // ============================================================================
 // No additional exports - component exported above
 // ============================================================================
+
+// ============================================================================
+// 8-Bit Design Styles (Inline CSS)
+// ============================================================================
+
+/**
+ * MobilePluginNav Component Styles
+ *
+ * @remarks
+ * 8-bit design system applied:
+ * - Sharp corners (border-radius: 0)
+ * - Pixel shadows (box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3))
+ * - Solid colors (no glassmorphism, no transparency)
+ * - High contrast for active state (blue-600 on gray-700)
+ * - Touch targets ≥ 44x44px (WCAG 2.5.5 compliant)
+ */
+const styles = `
+  .mobile-plugin-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: #333333;
+    border-top: 2px solid #000000;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  .plugin-tab {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* WCAG 2.5.5 touch target: minimum 44x44px */
+    min-height: 44px;
+    min-width: 44px;
+    color: #9CA3AF; /* blue-500 */
+    transition: color 0.2s ease;
+  }
+
+  .plugin-tab:hover:not(.active) {
+    background: #444444; /* gray-700 */
+  }
+
+  .plugin-tab.active {
+    background: #2563EB; /* blue-600 */
+    color: #FFFFFF; /* white */
+  }
+
+  .plugin-icon {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+// Inject styles into document head
+if (typeof document !== 'undefined') {
+  const styleTag = document.createElement('style');
+  styleTag.textContent = styles;
+  document.head.appendChild(styleTag);
+}

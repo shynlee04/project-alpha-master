@@ -34,8 +34,8 @@ import { usePluginLayoutStore, type LayoutMode } from './PluginLayoutStore';
 // Local components
 import { PluginPanel } from './PluginPanel.tsx';
 
-// Responsive hooks
-import { useBreakpoint, LAYOUT_RULES, type Breakpoint } from './useBreakpoint';
+// Responsive layout rules
+import { LAYOUT_RULES, type Breakpoint } from './useBreakpoint';
 import { MobilePluginNav } from './MobilePluginNav.tsx';
 
 // ============================================================================
@@ -106,8 +106,6 @@ export function PluginLayout({}: PluginLayoutProps) {
     breakpoint,
     setBreakpoint,
     switchPlugin,
-    switchToNextPlugin,
-    switchToPreviousPlugin,
   } = usePluginLayoutStore(
     useShallow((state) => ({
       activePlugins: state.activePlugins,
@@ -120,8 +118,6 @@ export function PluginLayout({}: PluginLayoutProps) {
       breakpoint: state.breakpoint,
       setBreakpoint: state.setBreakpoint,
       switchPlugin: state.switchPlugin,
-      switchToNextPlugin: state.switchToNextPlugin,
-      switchToPreviousPlugin: state.switchToPreviousPlugin,
     }))
   );
 
@@ -680,10 +676,46 @@ export function PluginLayout({}: PluginLayoutProps) {
                 <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
                 <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
                 <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-              </div>
+                </div>
             </div>
           </div>
         )}
+      </div>
+    );
+  };
+
+  /**
+   * Mobile Single-View Layout (One Plugin Fullscreen)
+   */
+  const renderMobileSingleView = () => {
+    if (visiblePlugins.length === 0) {
+      return renderEmptyState();
+    }
+
+    const currentPlugin = currentPluginForLayout || visiblePlugins[0];
+    const plugin = getPlugin(currentPlugin);
+
+    if (!plugin) {
+      return renderEmptyState();
+    }
+
+    return (
+      <div
+        className="flex-1 h-full"
+        style={{ width: '100%' }}
+      >
+        <PluginPanel
+          pluginId={currentPlugin}
+          width={0}
+          height={0}
+          index={0}
+          onClose={() => {
+            // On mobile, don't allow closing the last plugin
+            if (visiblePlugins.length > 1) {
+              handleRemovePlugin(currentPlugin, 0);
+            }
+          }}
+        />
       </div>
     );
   };
