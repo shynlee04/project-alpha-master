@@ -34,6 +34,10 @@ import { usePluginLayoutStore, type LayoutMode } from './PluginLayoutStore';
 // Local components
 import { PluginPanel } from './PluginPanel.tsx';
 
+// Responsive hooks
+import { useBreakpoint, LAYOUT_RULES, type Breakpoint } from './useBreakpoint';
+import { MobilePluginNav } from './MobilePluginNav.tsx';
+
 // ============================================================================
 // PluginLayout Props Interface
 // ============================================================================
@@ -99,6 +103,11 @@ export function PluginLayout({}: PluginLayoutProps) {
     removePlugin,
     reorderPlugin,
     setLayoutMode,
+    breakpoint,
+    setBreakpoint,
+    switchPlugin,
+    switchToNextPlugin,
+    switchToPreviousPlugin,
   } = usePluginLayoutStore(
     useShallow((state) => ({
       activePlugins: state.activePlugins,
@@ -108,6 +117,11 @@ export function PluginLayout({}: PluginLayoutProps) {
       removePlugin: state.removePlugin,
       reorderPlugin: state.reorderPlugin,
       setLayoutMode: state.setLayoutMode,
+      breakpoint: state.breakpoint,
+      setBreakpoint: state.setBreakpoint,
+      switchPlugin: state.switchPlugin,
+      switchToNextPlugin: state.switchToNextPlugin,
+      switchToPreviousPlugin: state.switchToPreviousPlugin,
     }))
   );
 
@@ -120,6 +134,43 @@ export function PluginLayout({}: PluginLayoutProps) {
   // ========================================================================
   // Get Available Plugins
   // ========================================================================
+
+  /**
+   * Apply responsive layout rules
+   *
+   * @remarks
+   * - Enforces LAYOUT_RULES based on current breakpoint
+   * - Limits visible plugins to maxPlugins for viewport
+   * - Returns layout rules for use in render
+   * - Triggers setBreakpoint when breakpoint changes
+   */
+  const layoutRules = LAYOUT_RULES[breakpoint];
+
+  /**
+   * Enforce max plugins per platform
+   *
+   * @remarks
+   * - Slices activePlugins to maxPlugins for current breakpoint
+   * - Used for mobile/tablet constraints
+   * - Desktop shows all plugins
+   */
+  const visiblePlugins = activePlugins.slice(0, layoutRules.maxPlugins);
+
+  /**
+   * Current plugin for mobile single-view
+   *
+   * @remarks
+   * - Used on mobile/tablet to show one plugin at a time
+   * - Falls back to first visible plugin if currentPlugin not set
+   */
+  const currentPluginForLayout = (breakpoint === 'mobile' || breakpoint === 'mobileLg')
+    ? (activePlugins.find(p => p === (usePluginLayoutStore.getState() as any).currentPlugin) || null)
+    : null;
+
+  // Sync breakpoint state with useBreakpoint hook
+  useEffect(() => {
+    setBreakpoint(breakpoint);
+  }, [breakpoint, setBreakpoint]);
 
   /**
    * Filter plugins by project context (deviceType, storageType)
@@ -233,19 +284,27 @@ export function PluginLayout({}: PluginLayoutProps) {
   );
 
   // ========================================================================
-  // Render Layout Based on Mode
+  // Render Layout Based on Mode and Breakpoint
   // ========================================================================
 
   /**
-   * Render layout panels based on layoutMode
+   * Render layout panels based on layoutMode and breakpoint
    *
    * @remarks
+   * Mobile: Single plugin fullscreen with bottom navigation
+   * Desktop/Tablet: Multiple plugins based on layoutMode
    * - 1-column: Single panel
    * - 2-column: Two panels side-by-side
    * - 3-column: Three panels side-by-side
    * - 2+1: Two panels top, one full-width bottom
    */
   const renderLayout = () => {
+    // Mobile single-view: show only current plugin fullscreen
+    if (breakpoint === 'mobile' || breakpoint === 'mobileLg') {
+      return renderMobileSingleView();
+    }
+
+    // Desktop/Tablet: show layout based on mode
     switch (layoutMode) {
       case '1-column':
         return render1Column();
@@ -775,10 +834,10 @@ export function PluginLayout({}: PluginLayoutProps) {
 
   return (
     <div
-      className="h-full flex flex-col"
+      className={`h-full flex flex-col breakpoint-${breakpoint}`}
       onDragOver={(e) => {
         e.preventDefault();
-        if (dragIndex !== null && activePlugins.length > 0) {
+        if (dragIndex !== null && activePlugins.length > 0 && breakpoint !== 'mobile' && breakpoint !== 'mobileLg') {
           // Allow drop - assume dropping at mouse position
           const rect = e.currentTarget.getBoundingClientRect();
           const x = e.clientX || 0;
@@ -814,56 +873,70 @@ export function PluginLayout({}: PluginLayoutProps) {
       onDragEnd={() => handleDragEnd()}
     >
       {/* ========================================================================
-           Layout Toolbar
-       ======================================================================== */}
+           Layout Toolbar (Desktop/Tablet only)
+        ======================================================================== */}
 
-      <div className="h-10 px-4 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
-        {/* Left: Active Plugins Count */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Layers size={16} />
-          <span>
-            {activePlugins.length} {t('plugin.activePlugins')}
-          </span>
+      {breakpoint !== 'mobile' && breakpoint !== 'mobileLg' && (
+        <div className="h-10 px-4 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
+          {/* Left: Active Plugins Count */}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Layers size={16} />
+            <span>
+              {activePlugins.length} {t('plugin.activePlugins')}
+            </span>
+          </div>
+
+          {/* Right: Layout Mode Switcher */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {t('plugin.layoutMode')}:
+            </span>
+            <select
+              value={layoutMode}
+              onChange={(e) => handleSetLayoutMode(e.target.value as LayoutMode)}
+              className="rounded-none bg-background border border-border/30 px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+            >
+              <option value="1-column">{t('plugin.layout1Column')}</option>
+              <option value="2-column">{t('plugin.layout2Column')}</option>
+              <option value="3-column">{t('plugin.layout3Column')}</option>
+              <option value="2+1">{t('plugin.layout2Plus1')}</option>
+            </select>
+
+            {/* Add Plugin Button */}
+            <button
+              onClick={() => setShowAddDialog(true)}
+              className="rounded-none bg-blue-600 text-white px-3 py-1 text-xs hover:bg-blue-700 transition-colors flex items-center gap-1"
+            >
+              <Plus size={14} />
+              <span>{t('plugin.add')}</span>
+            </button>
+          </div>
         </div>
-
-        {/* Right: Layout Mode Switcher */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground">
-            {t('plugin.layoutMode')}:
-          </span>
-          <select
-            value={layoutMode}
-            onChange={(e) => handleSetLayoutMode(e.target.value as LayoutMode)}
-            className="rounded-none bg-background border border-border/30 px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
-          >
-            <option value="1-column">{t('plugin.layout1Column')}</option>
-            <option value="2-column">{t('plugin.layout2Column')}</option>
-            <option value="3-column">{t('plugin.layout3Column')}</option>
-            <option value="2+1">{t('plugin.layout2Plus1')}</option>
-          </select>
-
-          {/* Add Plugin Button */}
-          <button
-            onClick={() => setShowAddDialog(true)}
-            className="rounded-none bg-blue-600 text-white px-3 py-1 text-xs hover:bg-blue-700 transition-colors flex items-center gap-1"
-          >
-            <Plus size={14} />
-            <span>{t('plugin.add')}</span>
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* ========================================================================
            Layout Content
-       ======================================================================== */}
+        ======================================================================== */}
 
       <div className="flex-1 min-h-0">
         {renderLayout()}
       </div>
 
       {/* ========================================================================
+           Mobile Bottom Navigation
+        ======================================================================== */}
+
+      {layoutRules.showBottomNav && (
+        <MobilePluginNav
+          activePlugins={visiblePlugins}
+          currentPlugin={currentPluginForLayout || visiblePlugins[0] || 'notes'}
+          onSwitchPlugin={switchPlugin}
+        />
+      )}
+
+      {/* ========================================================================
            Add Plugin Dialog
-       ======================================================================== */}
+        ======================================================================== */}
 
       {renderAddDialog()}
     </div>

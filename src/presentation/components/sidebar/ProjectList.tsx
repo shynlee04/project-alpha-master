@@ -13,7 +13,7 @@
  * @created 2026-01-22
  */
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Folder, Search } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAllProjects } from '@/infrastructure/persistence/stores/project/useProjectStore';
@@ -59,6 +59,10 @@ export function ProjectList({ currentProjectId }: ProjectListProps) {
   }, [allProjects, searchQuery]);
 
   const handleProjectClick = (project: Project) => {
+    // Platform-first navigation pattern (ADR-034-AMENDMENT-001)
+    // All navigation uses unified /$projectId route
+    // Platform detection in route handles what plugins to show
+    // User customizations are preserved per project via PluginLayoutStore
     navigate({
       to: '/$projectId',
       params: { projectId: project.id },

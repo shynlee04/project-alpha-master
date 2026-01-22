@@ -40,7 +40,6 @@ export interface ProjectSidebarProps {
 // Constants
 // ============================================================================
 
-const DEFAULT_WIDTH = 280;
 const MIN_WIDTH = 200;
 const MAX_WIDTH = 400;
 const DRAG_HANDLE_WIDTH = 4;
@@ -55,13 +54,20 @@ const DRAG_HANDLE_WIDTH = 4;
  * Collapsible sidebar with project list, chat threads, and agent tools.
  * Resizable by dragging the right edge.
  * State persisted to localStorage.
+ *
+ * Platform-First Pattern (ADR-034-AMENDMENT-001):
+ * - ProjectList navigates to unified /$projectId route
+ * - NO workspace-specific routing (/ide/$projectId or /notes/$projectId)
+ * - NO conditional navigation based on platform
+ * - Platform determines available plugins automatically
+ * - User customizations preserved per project
  */
 export function ProjectSidebar({
   isOpen,
   onToggle,
   currentProjectId,
 }: ProjectSidebarProps) {
-  const { width, setWidth, activeSection, setActiveSection } = useSidebarStore();
+  const { width, setWidth } = useSidebarStore();
   const [isDragging, setIsDragging] = useState(false);
 
   const sidebarRef = useRef<HTMLDivElement>(null);

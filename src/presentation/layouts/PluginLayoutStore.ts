@@ -16,6 +16,7 @@
 import { create } from 'zustand';
 import { persist, type StorageValue } from 'zustand/middleware';
 import type { PluginId } from '@/domain/types/plugin-types';
+import type { Breakpoint } from './useBreakpoint';
 
 // ============================================================================
 // Project-Specific Storage Wrapper (INT-02 fix)
@@ -105,6 +106,8 @@ export type LayoutMode = '1-column' | '2-column' | '3-column' | '2+1';
  * - Layout mode (1-column, 2-column, 3-column, 2+1)
  * - Panel sizes (plugin ID -> size percentage)
  * - User customization flag (prevents overwriting defaults)
+ * - Responsive breakpoint state
+ * - Current plugin for mobile single-view
  *
  * Persisted via localStorage with project-specific key.
  */
@@ -120,6 +123,12 @@ interface PluginLayoutState {
 
   /** Track if user has customized layout (prevents overwriting defaults) */
   hasUserCustomized: boolean;
+
+  /** Current breakpoint (responsive state) */
+  breakpoint: 'mobile' | 'mobileLg' | 'tablet' | 'desktop' | 'wide';
+
+  /** Current plugin for mobile single-view */
+  currentPlugin: PluginId | null;
 
   // ========================================================================
   // Actions
@@ -145,6 +154,18 @@ interface PluginLayoutState {
 
   /** Initialize default plugins and layout mode (only if not customized) */
   initializeDefaults: (plugins: PluginId[], mode: LayoutMode) => void;
+
+  /** Set current breakpoint */
+  setBreakpoint: (bp: 'mobile' | 'mobileLg' | 'tablet' | 'desktop' | 'wide') => void;
+
+  /** Switch to specific plugin (for mobile navigation) */
+  switchPlugin: (pluginId: PluginId) => void;
+
+  /** Switch to next plugin (for mobile swipe gestures) */
+  switchToNextPlugin: () => void;
+
+  /** Switch to previous plugin (for mobile swipe gestures) */
+  switchToPreviousPlugin: () => void;
 }
 
 // ============================================================================
@@ -175,6 +196,8 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
       layoutMode: '2-column',
       panelSizes: {},
       hasUserCustomized: false,
+      breakpoint: 'desktop',
+      currentPlugin: null,
 
       // ========================================================================
       // Actions
@@ -326,6 +349,113 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
             activePlugins: plugins,
             layoutMode: mode,
             hasUserCustomized: false,
+          };
+        }),
+
+      /**
+       * Set current breakpoint
+       *
+       * @param bp - New breakpoint value
+       * @remarks
+       * - Updates responsive breakpoint state
+       * - Enforces max plugins based on LAYOUT_RULES
+       * - Sets current plugin if not set
+       */
+      setBreakpoint: (bp) =>
+        set((state) => {
+          // Import LAYOUT_RULES from useBreakpoint
+          const LAYOUT_RULES = {
+            mobile: {
+              maxPlugins: 1,
+              layoutMode: '1-column',
+              sidebarMode: 'overlay',
+              showBottomNav: true,
+            },
+            mobileLg: {
+              maxPlugins: 1,
+              layoutMode: '1-column',
+              sidebarMode: 'overlay',
+              showBottomNav: true,
+            },
+            tablet: {
+              maxPlugins: 2,
+              layoutMode: '2-column',
+              sidebarMode: 'collapsible',
+              showBottomNav: false,
+            },
+            desktop: {
+              maxPlugins: 5,
+              layoutMode: 'user-selected',
+              sidebarMode: 'persistent',
+              showBottomNav: false,
+            },
+            wide: {
+              maxPlugins: 5,
+              layoutMode: 'user-selected',
+              sidebarMode: 'persistent',
+              showBottomNav: false,
+            },
+          } as const;
+
+          const rules = LAYOUT_RULES[bp];
+
+          return {
+            ...state,
+            breakpoint: bp,
+            // Enforce max plugins on breakpoint change
+            activePlugins: state.activePlugins.slice(0, rules.maxPlugins),
+            // Set current plugin if not set
+            currentPlugin: state.currentPlugin || state.activePlugins[0] || null,
+          };
+        }),
+
+      /**
+       * Switch to specific plugin (for mobile navigation)
+       *
+       * @param pluginId - Plugin ID to switch to
+       * @remarks
+       * - Updates currentPlugin for mobile single-view
+       * - Used by bottom navigation clicks
+       */
+      switchPlugin: (pluginId) =>
+        set((state) => ({
+          ...state,
+          currentPlugin: pluginId,
+        })),
+
+      /**
+       * Switch to next plugin (for mobile swipe gestures)
+       *
+       * @remarks
+       * - Cycles forward through activePlugins array
+       * - Wraps around to first plugin if at end
+       * - Used by swipe left gesture
+       */
+      switchToNextPlugin: () =>
+        set((state) => {
+          const currentIndex = state.activePlugins.indexOf(state.currentPlugin || state.activePlugins[0] || '');
+          const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % state.activePlugins.length;
+          return {
+            ...state,
+            currentPlugin: state.activePlugins[nextIndex] || null,
+          };
+        }),
+
+      /**
+       * Switch to previous plugin (for mobile swipe gestures)
+       *
+       * @remarks
+       * - Cycles backward through activePlugins array
+       * - Wraps around to last plugin if at beginning
+       * - Used by swipe right gesture
+       */
+      switchToPreviousPlugin: () =>
+        set((state) => {
+          const currentIndex = state.activePlugins.indexOf(state.currentPlugin || state.activePlugins[0] || '');
+          const prevIndex = currentIndex === -1 ? state.activePlugins.length - 1 : currentIndex === 0 ? state.activePlugins.length - 1 : currentIndex - 1;
+          return {
+            ...state,
+            currentPlugin: state.activePlugins[prevIndex] || null,
           };
         }),
     }),
