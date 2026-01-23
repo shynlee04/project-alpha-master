@@ -978,6 +978,7 @@
   "ide.output": "Output",
   "ide.problems": "Problems",
   "ide.outputSoon": "Output panel coming soon",
+  "header.toggleSidebar": "Toggle sidebar",
   "mobilePluginNav.ariaLabel": "Plugin navigation",
   "mobilePluginNav.switchToPlugin": "Switch to {{pluginName}}",
   "ide.problemsSoon": "Problems panel coming soon",
@@ -1951,5 +1952,56 @@
   "folder.approveCategories": "Approve categories to continue",
   "folder.resetAll": "Reset All",
   "mobile.pleaseResize": "Please resize your browser window to continue.",
-  "mobile.minWidth": "Minimum width required: 640px"
+  "mobile.minWidth": "Minimum width required: 640px",
+  "layoutPresets.picker.custom": "Custom Layout",
+  "layoutPresets.picker.coding": "Coding",
+  "layoutPresets.picker.writing": "Writing",
+  "layoutPresets.picker.focus": "Focus",
+  "layoutPresets.picker.saveCustomLayout": "Save Custom Layout",
+  "layoutPresets.picker.delete": "Delete {{name}}",
+  "layoutPresets.picker.confirmDelete": "Are you sure you want to delete the preset \"{{name}}\"?",
+  "layoutPresets.saveDialog.title": "Save Layout Preset",
+  "layoutPresets.saveDialog.nameLabel": "Preset Name",
+  "layoutPresets.saveDialog.namePlaceholder": "Enter preset name...",
+  "layoutPresets.saveDialog.currentLayout": "Current Layout:",
+  "layoutPresets.saveDialog.plugins": "Plugins",
+  "layoutPresets.saveDialog.layoutMode": "Layout Mode",
+  "layoutPresets.saveDialog.panelCount": "Panel Count",
+  "layoutPresets.saveDialog.error.emptyName": "Preset name cannot be empty",
+  "layoutPresets.saveDialog.error.nameTooLong": "Preset name is too long (max 50 characters)",
+  "layoutPresets.showAdvanced": "More layouts...",
+  "layoutPresets.hideAdvanced": "Hide advanced layouts",
+  "layoutOnboarding": {
+    "hints": {
+      "drag": {
+        "title": "Drag to Reorder",
+        "message": "Drag plugins by the handle (≡) to rearrange your layout"
+      },
+      "add": {
+        "title": "Add Plugins",
+        "message": "Click the + button to add more plugins to your layout"
+      },
+      "save": {
+        "title": "Save Layouts",
+        "message": "Use 'Save Current Layout' to remember your setup"
+      },
+      "advanced": {
+        "title": "Advanced Layouts",
+        "message": "Toggle 'Show advanced features' in Settings to see more layout options"
+      }
+    },
+    "close": "Close",
+    "next": "Next",
+    "gotIt": "Got it!",
+    "skip": "Skip",
+    "progress": "Hint {{current}} of {{total}}"
+  },
+  "settings.advancedFeatures": {
+    "title": "Advanced Features",
+    "showAdvancedLayouts": "Show advanced layouts (3-column, 2+1)",
+    "description": "Enable advanced layout options for more customization"
+  },
+  "pluginPanel.dragAriaLabel": "Drag to reorder",
+  "pluginPanel.dragHandleTooltip": "Press and drag to reorder this panel",
+  "pluginPanel.announcement.moved": "{{plugin}} moved to position {{position}}"
 }

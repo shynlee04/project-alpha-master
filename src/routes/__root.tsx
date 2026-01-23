@@ -1,7 +1,4 @@
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
-
-// Header is deprecated - navigation now handled by MainLayout/MainSidebar
-// import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '@/presentation/components/common/AppErrorBoundary'
 import { AppInitializer } from '@/presentation/components/common/AppInitializer'
@@ -17,6 +14,12 @@ import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/wo
 import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
 import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
 import { useCommandPalette } from '@/hooks/useCommandPalette'
+
+// ARCH-03-06: Root Layout Integration - Add ProjectSidebar and SimpleHeader
+import { ProjectSidebar } from '@/presentation/components/sidebar/ProjectSidebar'
+import { useSidebarStore } from '@/infrastructure/persistence/stores/sidebar-store'
+import { useShallow } from 'zustand/react/shallow'
+import { SimpleHeader } from '@/presentation/components/header/SimpleHeader'
 
 import appCss from '../styles.css?url'
 
@@ -72,13 +75,27 @@ export const Route = createRootRoute({
   component: () => {
     const commandPalette = useCommandPalette();
 
+    // ARCH-03-06: Get route params to determine if project is loaded
+    const { projectId } = Route.useParams() as { projectId?: string };
+
+    // ARCH-03-06: Sidebar state
+    const { isOpen, toggle } = useSidebarStore(
+      useShallow((state) => ({
+        isOpen: state.isOpen,
+        toggle: state.toggle,
+      }))
+    );
+
+    // ARCH-03-06: Project is loaded if projectId exists in route params
+    const projectLoaded = !!projectId;
+
     return (
       <html lang="en" suppressHydrationWarning>
         <head>
           <HeadContent />
         </head>
         {/* BUG-FIX-2026-01-11: Add suppressHydrationWarning to body to prevent locale mismatch warnings
-           Server renders in English (fallbackLng), client may render in saved locale (vi/en) */}
+            Server renders in English (fallbackLng), client may render in saved locale (vi/en) */}
         <body suppressHydrationWarning>
           <ThemeProvider>
             <LocaleProvider>
@@ -89,11 +106,29 @@ export const Route = createRootRoute({
                     <AppInitializer>
                       <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
                         <AppErrorBoundary>
+                          {/* ARCH-03-06: Sidebar - only when project loaded */}
+                          {projectLoaded && (
+                            <ProjectSidebar
+                              isOpen={isOpen}
+                              onToggle={toggle}
+                              currentProjectId={projectId}
+                            />
+                          )}
+
                           {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
                           {/* <OfflineIndicator /> */}
                           {/* Notification Permission Requester */}
                           <NotificationPermissionRequester />
-                          <Outlet />
+
+                          {/* ARCH-03-06: Main content - Outlet renders child routes */}
+                          <div className="flex-1 flex flex-col">
+                            {/* Header with toggle button - only when project loaded */}
+                            {projectLoaded && (
+                              <SimpleHeader onToggleSidebar={toggle} projectId={projectId} />
+                            )}
+
+                            <Outlet />
+                          </div>
                         </AppErrorBoundary>
                       </UnifiedWorkspaceProvider>
                     </AppInitializer>

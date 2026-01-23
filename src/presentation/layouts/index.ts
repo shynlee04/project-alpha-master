@@ -38,5 +38,15 @@ export {
 } from './PluginLayoutStore';
 
 // ============================================================================
+// Layout Presets (ARCH-03-03)
+// ============================================================================
+
+export {
+  useLayoutPresetsStore,
+  type LayoutPreset,
+  BUILT_IN_PRESETS,
+} from '@/infrastructure/persistence/stores/layout-presets-store';
+
+// ============================================================================
 // No additional exports
 // ============================================================================

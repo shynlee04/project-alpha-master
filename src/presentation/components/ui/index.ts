@@ -53,3 +53,10 @@ export { KeyboardShortcutsOverlay } from './keyboard-shortcuts-overlay';
 // Agent UI Components (RC-008)
 export { ApprovalOverlay } from './ApprovalOverlay';
 export type { ApprovalDecision, PermissionRequest, RiskLevel } from './ApprovalOverlay';
+
+// Layout Presets (ARCH-03-03)
+export {
+  LayoutPresetPicker,
+  useLayoutShortcuts,
+} from './LayoutPresetPicker';
+export { SavePresetDialog, type SavePresetDialogProps } from './SavePresetDialog';

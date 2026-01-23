@@ -936,6 +936,7 @@
   "ide.problems": "Vấn đề",
   "terminal.loading": "Đang tải terminal...",
   "ide.outputSoon": "Bảng Output sắp ra mắt",
+  "header.toggleSidebar": "Chuyển đổi thanh bên",
   "ide.problemsSoon": "Bảng Problems sắp ra mắt",
   "notes.ai.success": "Đã tạo nội dung thành công",
   "notes.ai.error.noAgent": "Vui lòng chọn một agent AI trước",
@@ -1546,5 +1547,56 @@
   "mobile.pleaseResize": "Vui lòng thay đổi kích thước cửa sổ trình duyệt để tiếp tục.",
   "mobile.minWidth": "Chiều rộng tối thiểu: 640px",
   "mobilePluginNav.ariaLabel": "Điều hướng plugin",
-  "mobilePluginNav.switchToPlugin": "Chuyển sang {{pluginName}}"
+  "mobilePluginNav.switchToPlugin": "Chuyển sang {{pluginName}}",
+  "layoutPresets.picker.custom": "Layout Tùy Chỉnh",
+  "layoutPresets.picker.coding": "Lập Trình",
+  "layoutPresets.picker.writing": "Viết",
+  "layoutPresets.picker.focus": "Tập Trung",
+  "layoutPresets.picker.saveCustomLayout": "Lưu Layout Tùy Chỉnh",
+  "layoutPresets.picker.delete": "Xóa {{name}}",
+  "layoutPresets.picker.confirmDelete": "Bạn có chắc chắn muốn xóa preset \"{{name}}\" không?",
+  "layoutPresets.saveDialog.title": "Lưu Preset Layout",
+  "layoutPresets.saveDialog.nameLabel": "Tên Preset",
+  "layoutPresets.saveDialog.namePlaceholder": "Nhập tên preset...",
+  "layoutPresets.saveDialog.currentLayout": "Layout Hiện Tại:",
+  "layoutPresets.saveDialog.plugins": "Plugins",
+  "layoutPresets.saveDialog.layoutMode": "Chế độ Layout",
+  "layoutPresets.saveDialog.panelCount": "Số Panel",
+  "layoutPresets.saveDialog.error.emptyName": "Tên preset không thể trống",
+  "layoutPresets.saveDialog.error.nameTooLong": "Tên preset quá dài (tối đa 50 ký tự)",
+  "layoutPresets.showAdvanced": "Layout khác...",
+  "layoutPresets.hideAdvanced": "Ẩn layout nâng cao",
+  "layoutOnboarding": {
+    "hints": {
+      "drag": {
+        "title": "Kéo để Sắp xếp lại",
+        "message": "Kéo plugins bằng biểu tượng (≡) để sắp xếp lại layout"
+      },
+      "add": {
+        "title": "Thêm Plugins",
+        "message": "Nhấn nút + để thêm plugins vào layout"
+      },
+      "save": {
+        "title": "Lưu Layouts",
+        "message": "Sử dụng 'Save Current Layout' để nhớ thiết lập của bạn"
+      },
+      "advanced": {
+        "title": "Layout Nâng cao",
+        "message": "Bật 'Show advanced features' trong Cài đặt để xem thêm tùy chọn layout"
+      }
+    },
+    "close": "Đóng",
+    "next": "Tiếp",
+    "gotIt": "Hiểu rồi!",
+    "skip": "Bỏ qua",
+    "progress": "Gợi ý {{current}} của {{total}}"
+  },
+  "settings.advancedFeatures": {
+    "title": "Tính năng Nâng cao",
+    "showAdvancedLayouts": "Hiển thị layout nâng cao (3 cột, 2+1)",
+    "description": "Kích hoạt tùy chọn layout nâng cao để tùy biến nhiều hơn"
+  },
+  "pluginPanel.dragAriaLabel": "Kéo để sắp xếp lại",
+  "pluginPanel.dragHandleTooltip": "Nhấn và kéo để sắp xếp lại bảng này",
+  "pluginPanel.announcement.moved": "{{plugin}} đã chuyển sang vị trí {{position}}"
 }

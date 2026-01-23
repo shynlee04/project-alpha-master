@@ -35,8 +35,17 @@ import { usePluginLayoutStore, type LayoutMode } from './PluginLayoutStore';
 import { PluginPanel } from './PluginPanel.tsx';
 
 // Responsive layout rules
-import { LAYOUT_RULES, type Breakpoint } from './useBreakpoint';
+import { LAYOUT_RULES } from './useBreakpoint';
 import { MobilePluginNav } from './MobilePluginNav.tsx';
+
+// CSS (ARCH-03-04)
+import './plugin-dnd.css';
+
+// ============================================================================
+// ARCH-03-05: Layout Onboarding
+// ============================================================================
+
+import { LayoutOnboarding } from '@/presentation/components/onboarding/LayoutOnboarding';
 
 // ============================================================================
 // PluginLayout Props Interface
@@ -126,6 +135,31 @@ export function PluginLayout({}: PluginLayoutProps) {
   // ========================================================================
 
   const [showAddDialog, setShowAddDialog] = useState(false);
+
+  // ========================================================================
+  // Screen Reader Announcements (ARCH-03-04)
+  // ========================================================================
+
+  const [announcement, setAnnouncement] = useState('');
+
+  /**
+   * Announce reorder to screen readers
+   *
+   * @param pluginId - Plugin ID that moved
+   * @param newIndex - New position index
+   * @remarks
+   * - Sets announcement text
+   * - Clears after 2 seconds (allowing screen reader to read)
+   */
+  const announceReorder = useCallback((pluginId: PluginId, newIndex: number) => {
+    const plugin = getPlugin(pluginId);
+    const pluginName = plugin?.name || pluginId;
+    const announcementText = t('pluginPanel.announcement.moved', { plugin: pluginName, position: newIndex + 1 });
+    setAnnouncement(announcementText);
+
+    // Clear after announcement is read
+    setTimeout(() => setAnnouncement(''), 2000);
+  }, [t]);
 
   // ========================================================================
   // Get Available Plugins
@@ -269,14 +303,17 @@ export function PluginLayout({}: PluginLayoutProps) {
    * @param toIndex - Target index
    * @remarks
    * - Calls store.reorderPlugin
+   * - Announces reorder to screen readers (ARCH-03-04)
    * - Simplified drag-drop for POC (just moves array indices)
    */
   const handleReorderPlugin = useCallback(
     (fromIndex: number, toIndex: number) => {
       reorderPlugin(fromIndex, toIndex);
+      const pluginId = activePlugins[fromIndex];
+      announceReorder(pluginId, toIndex);
       console.log(`[PluginLayout] Reordered plugin from ${fromIndex} to ${toIndex}`);
     },
-    [reorderPlugin]
+    [reorderPlugin, activePlugins, announceReorder]
   );
 
   // ========================================================================
@@ -970,10 +1007,27 @@ export function PluginLayout({}: PluginLayoutProps) {
            Add Plugin Dialog
         ======================================================================== */}
 
-      {renderAddDialog()}
-    </div>
-  );
-}
+       {renderAddDialog()}
+
+       {/* ========================================================================
+            Screen Reader Live Region (ARCH-03-04)
+          ======================================================================== */}
+       <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+       >
+         {announcement}
+       </div>
+
+       {/* ========================================================================
+            Layout Onboarding (ARCH-03-05)
+          ======================================================================== */}
+       <LayoutOnboarding />
+      </div>
+   );
+ }
 
 // ============================================================================
 // No additional exports - PluginLayout exported above

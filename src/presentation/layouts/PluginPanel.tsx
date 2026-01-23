@@ -13,10 +13,10 @@
  * @created 2026-01-21
  */
 
-
-import { X } from 'lucide-react';
+ 
+import { X, GripHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 
 // Plugin system
 import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
@@ -24,6 +24,9 @@ import type { PluginId } from '@/domain/types/plugin-types';
 
 // Plugin registry
 import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
+
+// CSS
+import './plugin-dnd.css';
 
 // ============================================================================
 // PluginPanel Props Interface
@@ -108,78 +111,48 @@ export function PluginPanel({
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
 
-  /**
-   * Handle touch start
-   *
-   * @param e - Touch event
-   * @remarks
-   * - Records initial touch position
-   * - Used to calculate swipe delta
-   */
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
+  // ========================================================================
+  // Keyboard Accessibility Handler (ARCH-03-04)
+  // ========================================================================
 
   /**
-   * Handle touch end (detect swipe gestures)
+   * Keyboard Accessibility Handler (ARCH-03-04)
    *
-   * @param e - Touch event
+   * Handle keyboard events for reordering
+   *
+   * @param e - Keyboard event
    * @remarks
-   * - Calculates delta from start to end position
-   * - Detects horizontal swipe (|deltaX| > 50 && |deltaY| < 50)
+   * - ArrowUp/ArrowDown/ArrowLeft/ArrowRight to reorder
+   * - Only responds when panel is focused
    * - Imports layout store dynamically to avoid circular dependency
-   * - Calls switchToNextPlugin or switchToPreviousPlugin based on direction
    */
-  const handleTouchEnd = async (e: React.TouchEvent) => {
-    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
-    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+  const panelRef = useRef<HTMLDivElement>(null);
 
-    // Detect horizontal swipe (not vertical scroll)
-    if (Math.abs(deltaX) > 50 && Math.abs(deltaY) < 50) {
-      // Import layout store dynamically to avoid circular dependency at build time
-      const { usePluginLayoutStore } = await import('./PluginLayoutStore');
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
+    if (document.activeElement !== panelRef.current) return;
 
-      if (deltaX > 0) {
-        // Swipe right - switch to previous plugin
-        usePluginLayoutStore().switchToPreviousPlugin();
-      } else {
-        // Swipe left - switch to next plugin
-        usePluginLayoutStore().switchToNextPlugin();
-      }
+    // Import layout store dynamically to avoid circular dependency
+    const { usePluginLayoutStore } = await import('./PluginLayoutStore');
+    const store = usePluginLayoutStore.getState();
+    const currentIndex = store.activePlugins.indexOf(pluginId);
+
+    if (currentIndex === -1) return;
+
+    // Arrow keys to reorder
+    if (e.key === 'ArrowUp' && currentIndex > 0) {
+      e.preventDefault();
+      store.reorderPlugin(currentIndex, currentIndex - 1);
+    } else if (e.key === 'ArrowDown' && currentIndex < store.activePlugins.length - 1) {
+      e.preventDefault();
+      store.reorderPlugin(currentIndex, currentIndex + 1);
+    } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+      e.preventDefault();
+      store.reorderPlugin(currentIndex, currentIndex - 1);
+    } else if (e.key === 'ArrowRight' && currentIndex < store.activePlugins.length - 1) {
+      e.preventDefault();
+      store.reorderPlugin(currentIndex, currentIndex + 1);
     }
   };
-
-  /**
-   * Register touch gesture listeners
-   *
-   * @remarks
-   * - Only active if PluginLayoutStore is available
-   * - Prevents memory leaks by cleaning up on unmount
-   */
-  useEffect(() => {
-    // Check if PluginLayoutStore is available (prevents errors during SSR)
-    if (typeof window !== 'undefined') {
-      const element = document.querySelector('.plugin-panel');
-      if (element) {
-        const touchStartHandler = (e: Event) => {
-          handleTouchStart(e as TouchEvent);
-        };
-        const touchEndHandler = (e: Event) => {
-          handleTouchEnd(e as TouchEvent);
-        };
-
-        element.addEventListener('touchstart', touchStartHandler);
-        element.addEventListener('touchend', touchEndHandler);
-
-        return () => {
-          element.removeEventListener('touchstart', touchStartHandler);
-          element.removeEventListener('touchend', touchEndHandler);
-        };
-      }
-    }
-    return undefined;
-  }, []);
 
   // ========================================================================
   // Get Plugin from Registry
@@ -232,6 +205,53 @@ export function PluginPanel({
   }
 
   // ========================================================================
+  // Touch Event Handlers for Swipe Gestures (Mobile Only)
+  // ========================================================================
+  /**
+   * Handle touch start (detect swipe gestures)
+   *
+   * @param e - Touch event
+   * @remarks
+   * - Records initial touch position
+   * - Used to calculate swipe delta
+   */
+  // @ts-expect-error - TouchEvent not assignable to TouchEventHandler due to addEventListener conflict
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartX.current = e.touches[0]?.clientX || 0;
+    touchStartY.current = e.touches[0]?.clientY || 0;
+  };
+
+  /**
+   * Handle touch end (detect swipe gestures)
+   *
+   * @param e - Touch event
+   * @remarks
+   * - Calculates delta from start to end position
+   * - Detects horizontal swipe (|deltaX| > 50 && |deltaY| < 50)
+   * - Imports layout store dynamically to avoid circular dependency
+   * - Calls switchToNextPlugin or switchToPreviousPlugin based on direction
+   */
+  // @ts-expect-error - TouchEvent not assignable to TouchEventHandler due to addEventListener conflict
+  const handleTouchEnd = async (e: TouchEvent) => {
+    const deltaX = (e.changedTouches[0]?.clientX || 0) - touchStartX.current;
+    const deltaY = (e.changedTouches[0]?.clientY || 0) - touchStartY.current;
+
+    // Detect horizontal swipe (not vertical scroll)
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaY) < 50) {
+      // Import layout store dynamically to avoid circular dependency
+      const { usePluginLayoutStore } = await import('./PluginLayoutStore');
+
+      if (deltaX > 0) {
+        // Swipe right - switch to previous plugin
+        usePluginLayoutStore().switchToPreviousPlugin();
+      } else {
+        // Swipe left - switch to next plugin
+        usePluginLayoutStore().switchToNextPlugin();
+      }
+    }
+  };
+
+  // ========================================================================
   // Main Render
   // ========================================================================
 
@@ -245,31 +265,33 @@ export function PluginPanel({
 
   return (
     <div
+      ref={panelRef}
       className="h-full flex flex-col bg-background border border-border/30 plugin-panel"
       style={{ width, height }}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      tabIndex={0}
+      role="region"
+      aria-label={`${plugin.name} panel`}
+      onKeyDown={handleKeyDown}
     >
       {/* ========================================================================
            Panel Header
-       ======================================================================== */}
+        ======================================================================== */}
 
       <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
-        {/* Drag Handle Indicator */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {/* Drag grip icon */}
-          <div className="flex gap-0.5 cursor-grab active:cursor-grabbing">
-            <div className="w-0.5 h-3 bg-muted-foreground/50" />
-            <div className="w-0.5 h-3 bg-muted-foreground/50" />
-            <div className="w-0.5 h-3 bg-muted-foreground/50" />
-          </div>
-
-          {/* Plugin Icon and Name */}
-          <span className="flex items-center gap-2">
-            {plugin.icon}
-            <span className="font-semibold">{plugin.name}</span>
-          </span>
+        {/* Drag Handle Indicator - GripHorizontal Icon (ARCH-03-04) */}
+        <div
+          className="plugin-drag-handle flex items-center"
+          aria-hidden="true"
+          title={t('pluginPanel.dragHandleTooltip')}
+        >
+          <GripHorizontal size={14} />
         </div>
+
+        {/* Plugin Icon and Name */}
+        <span className="flex items-center gap-2 text-xs text-muted-foreground">
+          {plugin.icon}
+          <span className="font-semibold">{plugin.name}</span>
+        </span>
 
         {/* Close Button */}
         <button

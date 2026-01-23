@@ -3,9 +3,15 @@ import { useTranslation } from 'react-i18next'
 import { Settings as SettingsIcon, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// ============================================================================
+// ARCH-03-05: Advanced Features Setting
+// ============================================================================
+
+import { useAdvancedLayouts } from '@/infrastructure/persistence/stores/user-preferences-store'
+
 /**
  * SettingsPanel - Settings sidebar panel
- * 
+ *
  * Shows when 'settings' is active in the activity bar.
  * Provides quick access to common settings categories.
  */
@@ -25,6 +31,9 @@ export function SettingsPanel({
     onSelectCategory?: (category: SettingsCategory) => void
 }) {
     const { t } = useTranslation()
+
+    // ARCH-03-05: Advanced layouts toggle
+    const { showAdvanced, setShow } = useAdvancedLayouts();
 
     const defaultCategories: SettingsCategory[] = [
         {
@@ -50,6 +59,12 @@ export function SettingsPanel({
             label: t('settings.keyboard', 'Keyboard'),
             icon: SettingsIcon,
             description: t('settings.keyboardDesc', 'Shortcuts, bindings')
+        },
+        {
+            id: 'advancedFeatures',
+            label: t('settings.advancedFeatures.title', 'Advanced Features'),
+            icon: SettingsIcon,
+            description: t('settings.advancedFeatures.description', 'Enable advanced layout options for more customization')
         },
     ]
 
@@ -81,6 +96,9 @@ function SettingsCategoryItem({
 }) {
     const Icon = category.icon
 
+    // ARCH-03-05: Special handling for advanced features category
+    const isAdvancedFeatures = category.id === 'advancedFeatures'
+
     return (
         <button
             onClick={onClick}
@@ -102,7 +120,23 @@ function SettingsCategoryItem({
                     </p>
                 )}
             </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
+
+            {/* ARCH-03-05: Show advanced features checkbox for advanced features category */}
+            {isAdvancedFeatures && (
+                <label className="flex items-center gap-2 ml-auto">
+                    <input
+                        type="checkbox"
+                        checked={showAdvanced}
+                        onChange={(e) => setShow(e.target.checked)}
+                        className="w-4 h-4 border-2 border-black"
+                        aria-label={t('settings.advancedFeatures.showAdvancedLayouts')}
+                    />
+                </label>
+            )}
+
+            {!isAdvancedFeatures && (
+                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
+            )}
         </button>
     )
 }

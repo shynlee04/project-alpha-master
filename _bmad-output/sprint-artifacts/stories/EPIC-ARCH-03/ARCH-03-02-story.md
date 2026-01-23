@@ -6,7 +6,8 @@
 **Priority:** P0 - Critical Path
 **Estimated Effort:** 4 hours
 **Created:** 2026-01-22
-**Status:** IN PROGRESS
+**Status:** COMPLETE ✅
+**Completion Date:** 2026-01-22T20:00+07:00
 **Dependencies:** ARCH-03-00 (Platform-First Plugin Defaults) ✅ COMPLETE, ARCH-03-01 (ProjectSidebar) ✅ COMPLETE
 
 ---
@@ -17,18 +18,10 @@
 
 1. **ADR-034: Project-Centric Architecture** (Phase 3 - Layout System & UX)
    - Path: `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md`
-   - Status: APPROVED - IN PROGRESS
-   - Key Sections: Feature Plugin Architecture (lines 80-103), Unified Layout System (lines 105-120), Phase 3 (lines 202-220)
-
+    - Status: APPROVED - COMPLETE
 2. **ADR-034-AMENDMENT-001: Platform-First Plugin Selection**
-   - Path: `_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md`
-   - Status: APPROVED - IMPLEMENTED ✅ (ARCH-03-00 complete)
-   - Key Decision: Platform determines available plugins (not workspace modes)
-   - Critical: Single `/$projectId` route (no `/ide/$projectId` or `/notes/$projectId`)
-
-3. **EPIC-ARCH-03: Layout System & UX**
-   - Path: `_bmad-output/planning-artifacts/epics/EPIC-ARCH-03-layout-ux-2026-01-21.md`
-   - Status: APPROVED - IN PROGRESS
+    - Path: `_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md`
+    - Status: APPROVED - IMPLEMENTED ✅
    - Story Location: Lines 433-503 (ARCH-03-02 specification)
 
 4. **Architect Handoff: ARCH-03-00 Impact**
