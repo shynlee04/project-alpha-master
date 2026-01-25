@@ -321,5 +321,61 @@ next_actions:
     - "Then execute CC-AR-08: Split PluginLayout.tsx"
 
 # ═══════════════════════════════════════════════════════════════════════════
+# EPIC-UX-GLOBAL-UI SPRINT (Team B - 2026-01-26)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_ux_global_ui:
+  epic_id: "EPIC-UX-GLOBAL-UI"
+  title: "Global UI Improvements & 8-Bit Compliance"
+  status: "IN_PROGRESS"
+  priority: "P0"
+  progress: "75%"  # 3 of 4 stories complete
+  
+  stories:
+    - id: "UX-05"
+      title: "Implement System Rail"
+      status: "COMPLETE"
+      team: "B"
+      effort: "45min"
+      completed_at: "2026-01-26T18:30:00+07:00"
+      files_created:
+        - "src/presentation/components/layout/SystemRail.tsx"
+      
+    - id: "UX-06"
+      title: "Fix PluginToolbar/Layout (Blue to Orange)"
+      status: "COMPLETE"
+      team: "B"
+      effort: "60min"
+      completed_at: "2026-01-26T18:40:00+07:00"
+      files_modified:
+        - "src/presentation/components/layout/PluginToolbar.tsx"
+        - "src/presentation/layouts/PluginLayout.tsx"
+        - "src/plugins/monaco/MonacoPlugin.tsx"
+        - "src/infrastructure/context/project-context.tsx"
+        - "src/presentation/components/onboarding/LayoutOnboarding.tsx"
+        - "src/plugins/filetree/FileTreePlugin.tsx"
+        - "src/presentation/components/sidebar/ProjectSidebar.tsx"
+      
+    - id: "UX-08"
+      title: "Color Palette Enforcement"
+      status: "COMPLETE"
+      team: "B"
+      effort: "30min"
+      completed_at: "2026-01-26T18:45:00+07:00"
+      files_modified:
+        - "src/styles.css"
+        - "src/i18n/en.json"
+        - "src/i18n/vi.json"
+      
+    - id: "UX-10"
+      title: "Mobile Responsive Fixes"
+      status: "DEFERRED"
+      team: "B"
+      reason: "Lower priority (P2), focus on P0 blockers first"
+
+  artifacts:
+    handoff: "_bmad-output/handoffs/2026-01-26/TEAM-B-UX-SPRINT-STATUS-2026-01-26.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
 # END OF FILE
 # ═══════════════════════════════════════════════════════════════════════════

@@ -262,7 +262,7 @@
 
 .reference-block__embed-id {
     font-size: 0.7rem;
-    font-family: monospace;
+    font-family: var(--font-family-mono);
     color: hsl(var(--muted-foreground));
 }
 

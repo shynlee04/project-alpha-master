@@ -278,7 +278,7 @@ export function LayoutOnboarding({}: LayoutOnboardingProps) {
             </button>
             <button
               onClick={handleNext}
-              className="text-xs bg-blue-600 text-white hover:bg-blue-700 transition-colors px-3 py-1 border-2 border-black"
+              className="text-xs bg-primary text-primary-foreground hover:brightness-110 transition-all px-3 py-1 border-2 border-black"
             >
               {currentHintIndex < hints.length - 1
                 ? t('layoutOnboarding.next')

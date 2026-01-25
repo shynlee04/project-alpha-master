@@ -386,7 +386,7 @@
 }
 
 .multistep-block__step-output--code {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--font-family-mono);
   font-size: 12px;
 }
 

@@ -7,7 +7,7 @@
   padding: var(--spacing-xl);
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-family-body);
+  font-family: var(--font-family-sans);
 }
 
 /* Hero Section */

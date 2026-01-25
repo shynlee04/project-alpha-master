@@ -83,21 +83,20 @@ function PluginToggleButton({
     <button
       onClick={onToggle}
       className={`
-        px-2 py-1 text-xs flex items-center gap-1 transition-colors
-        border border-border
+        w-9 h-9 flex items-center justify-center transition-all duration-200
+        border-2 border-structural rounded-none
         ${isActive
-          ? 'bg-blue-600 text-white border-blue-600'
-          : 'bg-background text-muted-foreground hover:bg-muted'
+          ? 'bg-primary text-primary-foreground border-primary'
+          : 'bg-transparent text-muted-foreground hover:bg-canvas hover:text-foreground'
         }
       `}
-      style={{ borderRadius: 0 }}
       title={isActive ? t('plugin.clickToRemove') : t('plugin.clickToAdd')}
       aria-pressed={isActive}
+      aria-label={plugin.name}
     >
-      <span className="w-4 h-4 flex items-center justify-center">
+      <span className="w-5 h-5 flex items-center justify-center">
         {plugin.icon}
       </span>
-      <span className="hidden sm:inline">{plugin.name}</span>
     </button>
   );
 }
@@ -134,13 +133,13 @@ function LayoutModeButton({
     <button
       onClick={() => onClick(mode)}
       className={`
-        p-1.5 transition-colors border border-border
+        w-8 h-8 flex items-center justify-center transition-all duration-200
+        border-2 rounded-none
         ${isActive
-          ? 'bg-blue-600 text-white border-blue-600'
-          : 'bg-background text-muted-foreground hover:bg-muted'
+          ? 'bg-primary text-primary-foreground border-primary'
+          : 'bg-transparent text-muted-foreground border-structural hover:bg-canvas hover:text-foreground'
         }
       `}
-      style={{ borderRadius: 0 }}
       title={label}
       aria-pressed={isActive}
     >

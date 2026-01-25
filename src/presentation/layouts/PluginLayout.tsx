@@ -410,7 +410,7 @@ export function PluginLayout({}: PluginLayoutProps) {
 
         {/* Resize Handle */}
         <div
-          className="w-2 bg-border/50 hover:bg-blue-500 transition-colors cursor-col-resize flex-shrink-0"
+          className="w-2 bg-border/50 hover:bg-primary transition-colors cursor-col-resize flex-shrink-0"
         />
 
         {/* Panel 2 */}
@@ -475,7 +475,7 @@ export function PluginLayout({}: PluginLayoutProps) {
 
         {/* Resize Handle */}
         <div
-          className="w-2 bg-border/50 hover:bg-blue-500 transition-colors cursor-col-resize flex-shrink-0"
+          className="w-2 bg-border/50 hover:bg-primary transition-colors cursor-col-resize flex-shrink-0"
         />
 
         {/* Panel 2 */}
@@ -496,7 +496,7 @@ export function PluginLayout({}: PluginLayoutProps) {
 
         {/* Resize Handle */}
         <div
-          className="w-2 bg-border/50 hover:bg-blue-500 transition-colors cursor-col-resize flex-shrink-0"
+          className="w-2 bg-border/50 hover:bg-primary transition-colors cursor-col-resize flex-shrink-0"
         />
 
         {/* Panel 3 */}
@@ -563,7 +563,7 @@ export function PluginLayout({}: PluginLayoutProps) {
 
           {/* Resize Handle (Top Row) */}
           <div
-            className="w-2 h-full bg-border/50 hover:bg-blue-500 transition-colors cursor-col-resize flex-shrink-0"
+            className="w-2 h-full bg-border/50 hover:bg-primary transition-colors cursor-col-resize flex-shrink-0"
           />
 
           {/* Panel 2 (Top Right) */}
@@ -585,7 +585,7 @@ export function PluginLayout({}: PluginLayoutProps) {
 
         {/* Vertical Resize Handle */}
         <div
-          className="h-2 w-full bg-border/50 hover:bg-blue-500 transition-colors cursor-row-resize flex-shrink-0"
+          className="h-2 w-full bg-border/50 hover:bg-primary transition-colors cursor-row-resize flex-shrink-0"
         />
 
         {/* Bottom Row: Full-Width Panel */}
@@ -660,7 +660,7 @@ export function PluginLayout({}: PluginLayoutProps) {
         {/* Add Plugin Button */}
         <button
           onClick={() => setShowAddDialog(true)}
-          className="rounded-none bg-blue-600 text-white px-6 py-3 hover:bg-blue-700 transition-colors flex items-center gap-2"
+          className="rounded-none bg-primary text-primary-foreground px-6 py-3 hover:brightness-110 transition-all duration-200 flex items-center gap-2 border-2 border-primary"
         >
           <Plus size={18} />
           <span>{t('plugin.addPlugin')}</span>

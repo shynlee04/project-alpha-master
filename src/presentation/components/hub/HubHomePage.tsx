@@ -14,7 +14,10 @@ import {
   // HardDrive,
   Notebook,
   Info,
-  Search
+  Search,
+  FolderOpen,
+  NotebookPen,
+  Bot
 } from 'lucide-react';
 
 import { db } from '@/infrastructure/persistence/dexie-db';
@@ -32,6 +35,7 @@ import { createProjectFromFolder } from '@/lib/workspace/fsa-persistence';
 // Hub subcomponents
 import { BootSequence } from './BootSequence';
 import { HubHero } from './HubHero';
+import { QuickActionCard } from './QuickActionCard';
 import { RecentProjectsSection } from './RecentProjectsSection';
 import { WorkspaceBindingDialog } from './WorkspaceBindingDialog';
 import { ProjectPickerDialog } from './ProjectPickerDialog';
@@ -447,6 +451,37 @@ export const HubHomePage: React.FC = () => {
 
       {/* Hero Section */}
       <HubHero />
+
+      {/* Quick Actions Section - UX-07 */}
+      <section className="space-y-3">
+        <h2 className="text-sm font-pixel text-muted-foreground uppercase tracking-wider">
+          {t('hub.quickActions.title', 'Quick Actions')}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <QuickActionCard
+            icon={<Plus size={24} />}
+            label={t('hub.quickActions.newProject', 'New Project')}
+            description={t('hub.newProjectDesc', 'Initialize a new workspace entry')}
+            onClick={handleOpenProjectCreationWizard}
+          />
+          <QuickActionCard
+            icon={<FolderOpen size={24} />}
+            label={t('hub.quickActions.openProject', 'Open Project')}
+            description={t('hub.openProjectDesc', 'Mount an existing folder')}
+            onClick={handleNewProject}
+          />
+          <QuickActionCard
+            icon={<NotebookPen size={24} />}
+            label={t('hub.quickActions.quickNote', 'Quick Note')}
+            onClick={() => navigateToWorkspace('notes')}
+          />
+          <QuickActionCard
+            icon={<Bot size={24} />}
+            label={t('hub.quickActions.newAgent', 'New Agent')}
+            onClick={() => navigate({ to: '/agents' })}
+          />
+        </div>
+      </section>
 
       {/* Quick Search Button */}
       <div className="flex justify-end">

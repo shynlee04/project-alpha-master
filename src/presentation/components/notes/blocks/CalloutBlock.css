@@ -14,13 +14,13 @@
 
 /* Callout Content Styling */
 .callout-block-content {
-    font-family: var(--font-sans);
+    font-family: var(--font-family-sans);
     line-height: 1.6;
 }
 
 /* Callout Type Selector */
 .callout-type-selector {
-    font-family: var(--font-sans);
+    font-family: var(--font-family-sans);
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
     border: 2px solid var(--border);

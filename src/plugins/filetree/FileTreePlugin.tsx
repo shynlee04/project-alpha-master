@@ -243,7 +243,7 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
         <p className="text-sm text-center">{error}</p>
         <button
           onClick={loadFileTree}
-          className="mt-4 rounded-none bg-blue-600 text-white px-4 py-2 hover:bg-blue-700"
+          className="mt-4 rounded-none bg-primary text-primary-foreground px-4 py-2 hover:brightness-110 transition-all"
         >
           Retry
         </button>

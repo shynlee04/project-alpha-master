@@ -170,7 +170,7 @@ export function ProjectSidebar({
       {/* Resize Handle */}
       <div
         ref={dragHandleRef}
-        className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-blue-400 transition-colors"
+        className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary transition-colors"
         style={{ width: `${DRAG_HANDLE_WIDTH}px` }}
         onMouseDown={handleDragStart}
         role="separator"
@@ -179,7 +179,7 @@ export function ProjectSidebar({
         title="Drag to resize sidebar"
       >
         {isDragging && (
-          <div className="absolute inset-0 bg-blue-600" />
+          <div className="absolute inset-0 bg-primary" />
         )}
         {!isDragging && (
           <GripHorizontal

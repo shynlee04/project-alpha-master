@@ -263,7 +263,7 @@
   border-bottom: 2px solid var(--border);
   background: #1e1e1e;
   color: #d4d4d4;
-  font-family: "Fira Code", "Consolas", "Monaco", monospace;
+  font-family: var(--font-family-mono);
   font-size: 0.875rem;
   line-height: 1.5;
   resize: vertical;

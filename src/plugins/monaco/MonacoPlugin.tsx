@@ -244,7 +244,7 @@ function MonacoComponent({ width, height }: PluginMainProps) {
         <button
           onClick={handleSave}
           disabled={!isModified}
-          className="rounded-none bg-blue-600 text-white px-2 py-0.5 text-xs hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-none bg-primary text-primary-foreground px-2 py-0.5 text-xs hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {t('ide.save')}
         </button>

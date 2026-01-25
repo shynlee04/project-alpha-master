@@ -15,11 +15,11 @@ import { NotificationPermissionRequester } from '@/presentation/components/notif
 import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
 import { useCommandPalette } from '@/hooks/useCommandPalette'
 
-// ARCH-03-06: Root Layout Integration - Add ProjectSidebar and SimpleHeader
-import { ProjectSidebar } from '@/presentation/components/sidebar/ProjectSidebar'
-import { useSidebarStore } from '@/infrastructure/persistence/stores/sidebar-store'
-import { useShallow } from 'zustand/react/shallow'
-import { SimpleHeader } from '@/presentation/components/header/SimpleHeader'
+// UX-GLOBAL-UI: New Global Layout Components
+import { GlobalHeader } from '@/presentation/components/layout/GlobalHeader'
+import { MainSidebar } from '@/presentation/components/layout/MainSidebar'
+import { Breadcrumbs } from '@/presentation/components/layout/Breadcrumbs'
+import { SystemRail } from '@/presentation/components/layout/SystemRail'
 
 import appCss from '../styles.css?url'
 
@@ -75,20 +75,6 @@ export const Route = createRootRoute({
   component: () => {
     const commandPalette = useCommandPalette();
 
-    // ARCH-03-06: Get route params to determine if project is loaded
-    const { projectId } = Route.useParams() as { projectId?: string };
-
-    // ARCH-03-06: Sidebar state
-    const { isOpen, toggle } = useSidebarStore(
-      useShallow((state) => ({
-        isOpen: state.isOpen,
-        toggle: state.toggle,
-      }))
-    );
-
-    // ARCH-03-06: Project is loaded if projectId exists in route params
-    const projectLoaded = !!projectId;
-
     return (
       <html lang="en" suppressHydrationWarning>
         <head>
@@ -106,29 +92,36 @@ export const Route = createRootRoute({
                     <AppInitializer>
                       <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
                         <AppErrorBoundary>
-                          {/* ARCH-03-06: Sidebar - only when project loaded */}
-                          {projectLoaded && (
-                            <ProjectSidebar
-                              isOpen={isOpen}
-                              onToggle={toggle}
-                              currentProjectId={projectId}
-                            />
-                          )}
+                          {/* UX-GLOBAL-UI: New Global Layout Structure */}
+                          <div className="h-screen flex flex-col bg-canvas">
+                            {/* Fixed Header - Always visible at top */}
+                            <GlobalHeader />
+
+                            <div className="flex flex-1 overflow-hidden">
+                              {/* Collapsible Sidebar - Desktop: fixed, Mobile: overlay */}
+                              <MainSidebar />
+
+                              {/* Main Content Area */}
+                              <main className="flex-1 flex flex-col overflow-hidden">
+                                {/* Breadcrumbs - Navigation context */}
+                                <Breadcrumbs />
+
+                                {/* Page Content - Outlet renders child routes */}
+                                {/* pb-8 accounts for fixed SystemRail height (32px = h-8) */}
+                                <div className="flex-1 overflow-auto pb-8">
+                                  <Outlet />
+                                </div>
+                              </main>
+                            </div>
+
+                            {/* Fixed System Rail - Bottom status bar with terminal drawer */}
+                            <SystemRail />
+                          </div>
 
                           {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
                           {/* <OfflineIndicator /> */}
                           {/* Notification Permission Requester */}
                           <NotificationPermissionRequester />
-
-                          {/* ARCH-03-06: Main content - Outlet renders child routes */}
-                          <div className="flex-1 flex flex-col">
-                            {/* Header with toggle button - only when project loaded */}
-                            {projectLoaded && (
-                              <SimpleHeader onToggleSidebar={toggle} projectId={projectId} />
-                            )}
-
-                            <Outlet />
-                          </div>
                         </AppErrorBoundary>
                       </UnifiedWorkspaceProvider>
                     </AppInitializer>

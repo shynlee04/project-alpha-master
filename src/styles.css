@@ -11,76 +11,91 @@
 @custom-variant light (&:is(.light *, [data-theme="light"] *));
 
 /* =============================================================================
-   VIA-GENT Typography System
-   - Body: Inter (clean sans-serif)
-   - Pixel: VT323 (lightweight 8-bit)
-   - Pixel Heavy: Press Start 2P (chunky 8-bit)
-   - Code: JetBrains Mono (developer-focused)
+   VIA-GENT Typography System (UX-09 Standardized)
+   
+   Font Stack:
+   - UI/Code: JetBrains Mono (font-mono) - All UI text and code
+   - Prose: Geist Sans / Inter (font-sans) - Notes editor ONLY
+   - Decorative: VT323 (font-pixel) - Logo and major headers ONLY
+   
+   CSS Variables:
+   - --font-family-mono: JetBrains Mono (default for all UI)
+   - --font-family-sans: Inter (prose/body in notes)
+   - --font-family-pixel: VT323 (decorative headers)
    ============================================================================= */
+
+:root {
+  /* Typography CSS Variables - Use these in component CSS files */
+  --font-family-mono: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  --font-family-pixel: 'VT323', monospace;
+}
 
 body {
   @apply m-0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-family: var(--font-family-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas,
-    'Courier New', monospace;
+  font-family: var(--font-family-mono);
 }
 
-/* Pixel Font Utility Classes */
+/* Font Utility Classes - Use Tailwind classes in components */
 .font-pixel {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   letter-spacing: 0.05em;
 }
 
 .font-pixel-heavy {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-family-mono);
+}
+
+.font-sans {
+  font-family: var(--font-family-sans);
 }
 
 /* Pixel text sizes - optimized for VT323 readability */
 .text-pixel-xs {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
 
 .text-pixel-sm {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-size: 1rem;
   line-height: 1.5rem;
 }
 
 .text-pixel-base {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
 
 .text-pixel-lg {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-size: 1.5rem;
   line-height: 2rem;
 }
 
 .text-pixel-xl {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-size: 1.875rem;
   line-height: 2.25rem;
 }
 
 .text-pixel-2xl {
-  font-family: 'VT323', monospace;
+  font-family: var(--font-family-pixel);
   font-size: 2.25rem;
   line-height: 2.5rem;
 }
@@ -681,4 +696,59 @@ code {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* =============================================================================
+   VIA-GENT UX-08: Semantic Color Variables (Tungsten & Fire Palette)
+   
+   Canvas: #09090b (Zinc 950) - App background
+   Surface: #18181b (Zinc 900) - Panels, cards
+   Depth: #000000 (Black) - Inputs
+   Primary: #fafafa (Zinc 50) - Body text
+   Muted: #a1a1aa (Zinc 400) - Secondary text
+   Action: #f97316 (Orange 500) - Interactive ONLY
+   Structural: #3f3f46 (Zinc 700) - Borders
+   ============================================================================= */
+
+:root {
+  /* Semantic Color Aliases */
+  --color-canvas: #09090b;
+  --color-surface: #18181b;
+  --color-depth: #000000;
+  --color-text-primary: #fafafa;
+  --color-text-muted: #a1a1aa;
+  --color-action: #f97316;
+  --color-structural: #3f3f46;
+  
+  /* Pixel Shadow Token */
+  --shadow-pixel-8bit: 4px 4px 0px 0px #000;
+}
+
+/* Utility Classes for 8-Bit Design */
+.shadow-pixel {
+  box-shadow: var(--shadow-pixel-8bit);
+}
+
+.border-structural {
+  border-color: var(--color-structural);
+}
+
+.bg-canvas {
+  background-color: var(--color-canvas);
+}
+
+.bg-surface {
+  background-color: var(--color-surface);
+}
+
+.bg-depth {
+  background-color: var(--color-depth);
+}
+
+.text-action {
+  color: var(--color-action);
+}
+
+.bg-action {
+  background-color: var(--color-action);
 }

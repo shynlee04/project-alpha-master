@@ -395,7 +395,7 @@ export const ProjectContextProvider: React.FC<{
             <p className="text-gray-700">{error}</p>
             <button
               onClick={() => navigate({ to: '/' })}
-              className="mt-4 rounded-none bg-blue-600 text-white px-4 py-2 hover:bg-blue-700"
+              className="mt-4 rounded-none bg-primary text-primary-foreground px-4 py-2 hover:brightness-110 transition-all"
             >
               Go to Hub
             </button>
