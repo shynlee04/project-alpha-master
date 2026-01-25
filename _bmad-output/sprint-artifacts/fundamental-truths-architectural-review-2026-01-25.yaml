@@ -1,0 +1,346 @@
+---
+document_id: ARCH-REVIEW-001
+date: "2026-01-25"
+reviewer: architect-ext
+status: COMPLETE
+priority: HIGH
+
+executive_summary:
+  description: "Architectural review of new-fundamental-truths.md against ADR-034 and AMENDMENT-001"
+  key_findings:
+    aligned_claims: 5
+    partial_alignments: 4
+    contradictions: 2
+    missing_coverage_areas: 4
+  recommendation: "Update new-fundamental-truths.md to address 3 P0 items, 4 P1 items, and 3 P2 items. Create 4 new ADRs."
+
+technical_consistency:
+  aligned_claims:
+    - claim: "Project IDs = PROJECT + children"
+      evidence: "ADR-034 Section 1: ID without workspace prefix/suffix"
+      resolution: KEEP
+    - claim: "Up to 5 plugins total"
+      evidence: "ADR-034 Section 4: Users select up to 5 features"
+      resolution: KEEP
+    - claim: "Thread limit 150k tokens"
+      evidence: "Not in ADR-034 but doesn't contradict"
+      resolution: KEEP
+    - claim: "Client-side only (server = LLM/API)"
+      evidence: "ADR-034 confirms: Server interaction limited to LLM/API calls via browser"
+      resolution: KEEP
+    - claim: "Device parity (FSA vs IndexedDB)"
+      evidence: "ADR-034 Section 2: Desktop (FSA) vs Mobile (IndexedDB)"
+      resolution: KEEP
+
+  partial_claims:
+    - claim: "Two always-loaded plugins"
+      issue: "ADR-034 uses getDefaultPlugins() platform-first, not fixed 2 plugins"
+      evidence: "AMENDMENT-001: Desktop shows 3 plugins, Mobile shows 1 plugin"
+      resolution: UPDATE - Add platform-aware plugin defaults
+    - claim: "BYOK with TanStack AI SDK"
+      issue: "Not covered in ADR-034"
+      evidence: "TanStack AI SDK concepts accurate but ADR-034 has no BYOK"
+      resolution: CREATE ADR-034-AMENDMENT-002
+    - claim: "Agent orchestrator mode"
+      issue: "Not covered in ADR-034"
+      evidence: "Document references TanStack AI but ADR-034 has no agent concept"
+      resolution: CREATE ADR-034-AMENDMENT-003
+    - claim: "Threads tied to Project ID"
+      issue: "Document says AND Workspace which contradicts AMENDMENT-001"
+      evidence: "AMENDMENT-001 eliminates workspace concept"
+      resolution: "UPDATE - Remove Workspace reference"
+
+  contradicting_claims:
+    - claim: "Threads tied to Project ID AND Workspace"
+      issue: "AMENDMENT-001 explicitly eliminates workspace concept"
+      evidence: "AMENDMENT-001 Section 35: The IDE mode vs Notes mode concept is ELIMINATED"
+      resolution: REMOVE Workspace reference immediately
+
+data_flow_analysis:
+  flows_validated:
+    - name: "Project-centric routing"
+      document_status: VALID
+      adr_034_status: VALID
+    - name: "Device separation (FSA vs IndexedDB)"
+      document_status: VALID
+      adr_034_status: VALID
+    - name: "Plugin limit (max 5)"
+      document_status: VALID
+      adr_034_status: VALID
+
+  flows_with_gaps:
+    - name: "Thread creation flow"
+      document_description: "User -> Orchestrator -> Domain agent -> Tools -> Response with 150k token limit"
+      adr_034_status: "No thread concept defined"
+      gap_impact: HIGH
+      required_adr: ADR-034-AMENDMENT-004
+    - name: "Context management"
+      document_description: "Per conversation thread with compaction at 90% limit"
+      adr_034_status: "Per project only, no thread concept"
+      gap_impact: MEDIUM
+      required_adr: ADR-034-AMENDMENT-004
+    - name: "Plugin initialization"
+      document_description: "Two always-loaded plugins"
+      adr_034_status: "Platform-first via getDefaultPlugins()"
+      gap_impact: MEDIUM
+      required_action: "Update document to reference getDefaultPlugins()"
+
+  missing_flows:
+    - name: "BYOK Flow"
+      description: "Settings -> Vault -> Secure storage -> Conditional distribution -> Provider endpoints"
+      not_in_adr: true
+      required_adr: ADR-034-AMENDMENT-002
+    - name: "Agent Tool Execution Flow"
+      description: "Thread -> Orchestrator (read-only) -> Mode switch OR delegate -> Domain agent -> Execution"
+      not_in_adr: true
+      required_adr: ADR-034-AMENDMENT-003
+    - name: "Thread Context Compaction Flow"
+      description: "Token limit check (90%) -> Compact sub-agent -> Recap context -> New thread creation"
+      not_in_adr: true
+      required_adr: ADR-034-AMENDMENT-004
+
+integration_points:
+  required:
+    - point: "Project <-> Thread relationship"
+      document_section: "Section 4"
+      adr_034_coverage: "MISSING - Thread concept not in ADR-034"
+      impact: HIGH
+      action: "CREATE ADR-034-AMENDMENT-004"
+    - point: "Route navigation update"
+      document_section: "Section 1, 4"
+      adr_034_coverage: "Has deprecated routes (/ide/$projectId, /notes/$projectId)"
+      impact: HIGH
+      action: "UPDATE all routes to /$projectId"
+    - point: "Plugin <-> Agent integration"
+      document_section: "Section 3"
+      adr_034_coverage: "MISSING - Agent concept not in ADR-034"
+      impact: HIGH
+      action: "CREATE ADR-034-AMENDMENT-003"
+
+  partial:
+    - point: "BYOK <-> Provider integration"
+      document_section: "Section 2"
+      adr_034_coverage: "Partial - TanStack AI SDK mentioned but no implementation"
+      impact: MEDIUM
+      action: "CREATE ADR-034-AMENDMENT-002"
+    - point: "FSA <-> Dexie persistence"
+      document_section: "Section 1"
+      adr_034_coverage: "Partial - Both mentioned but no unified interface"
+      impact: MEDIUM
+      action: "Reference existing platform-detection.ts and StorageGateway"
+
+  missing:
+    - point: "AI Commands <-> Notes plugin"
+      document_section: "Section 5"
+      adr_034_coverage: "MISSING - Generative AI features not covered"
+      impact: MEDIUM
+      action: "CREATE ADR-034-AMENDMENT-005"
+
+state_management:
+  current_patterns:
+    - layer: "Client State"
+      technology: "Zustand"
+      purpose: "UI state, plugin layout, user preferences"
+    - layer: "React State"
+      technology: "useState, useReducer"
+      purpose: "Component-local state"
+    - layer: "Persistence"
+      technology: "Dexie.js"
+      purpose: "IndexedDB wrapper for mobile"
+    - layer: "Storage"
+      technology: "FSA"
+      purpose: "File System Access for desktop"
+    - layer: "Events"
+      technology: "EventEmitter"
+      purpose: "Cross-component communication"
+    - layer: "RAG"
+      technology: "Dexie indexes"
+      purpose: "Search and context retrieval"
+
+  unified_patterns_needed:
+    - pattern: "ProjectContext with single storage accessor"
+      reference: "ADR-034 Section 1"
+      priority: P0
+    - pattern: "FeaturePlugin state contract"
+      reference: "ADR-034 Section 3"
+      priority: P1
+    - pattern: "Thread state management"
+      reference: "Required by new-fundamental-truths.md"
+      priority: P0
+    - pattern: "Agent state management"
+      reference: "Required by new-fundamental-truths.md"
+      priority: P1
+
+  migration_steps:
+    - step: 1
+      description: "Create unified state interface per ADR-034 Phase 1"
+      priority: P0
+    - step: 2
+      description: "Define FeaturePlugin state contract per ADR-034 Section 3"
+      priority: P1
+    - step: 3
+      description: "Create thread state management (requires new ADR)"
+      priority: P0
+    - step: 4
+      description: "Consolidate event bus to single implementation"
+      priority: P2
+    - step: 5
+      description: "Update Zustand stores to use useShallow pattern per AGENTS.md"
+      priority: P2
+
+security_review:
+  validated:
+    - aspect: "No direct provider packages"
+      status: "CORRECT"
+      evidence: "Document references TanStack AI SDK correctly"
+    - aspect: "Client-side only architecture"
+      status: "CORRECT"
+      evidence: "ADR-034 confirms server = LLM/API calls only"
+
+  gaps:
+    - aspect: "Encryption at rest"
+      document_status: "Claimed"
+      adr_034_status: "Not specified"
+      recommendation: "Use Web Crypto API for encryption with device-specific key"
+    - aspect: "Memory security for API keys"
+      document_status: "Not addressed"
+      adr_034_status: "Not specified"
+      recommendation: "Keys in memory only when actively used, clear after provider call"
+    - aspect: "Key exposure prevention"
+      document_status: "Vague (Securely persist)"
+      adr_034_status: "Not specified"
+      recommendation: "Define encryption mechanism and access patterns"
+    - aspect: "Provider endpoint security"
+      document_status: "Vague (Conditional distribution)"
+      adr_034_status: "Not specified"
+      recommendation: "Define security model for key distribution"
+
+  recommendations:
+    - priority: P0
+      area: "BYOK Vault security"
+      action: "Create detailed security specification in ADR-034-AMENDMENT-002"
+      items:
+        - "Use Web Crypto API for encryption at rest"
+        - "Keys encrypted with device-specific key"
+        - "No plain-text key storage"
+        - "Keys in memory only when actively used"
+        - "Clear from memory after provider call"
+        - "Use WeakMap for temporary key storage"
+        - "Direct provider calls only (HTTPS enforcement)"
+        - "No proxy through application server"
+
+recommendations:
+  p0_critical:
+    - section: "Section 4"
+      change: "REMOVE Workspace from thread management"
+      rationale: "Contradicts AMENDMENT-001 which eliminates workspace concept"
+    - section: "Section 1, 4"
+      change: "REPLACE route references from /ide/$projectId and /notes/$projectId to /$projectId"
+      rationale: "AMENDMENT-001 mandates single unified route"
+    - section: "Section 4"
+      change: "REPLACE two always-loaded plugins with platform-first plugin defaults via getDefaultPlugins()"
+      rationale: "ADR-034-AMENDMENT-001 defines platform-aware defaults"
+
+  p1_high:
+    - section: "Section 2"
+      change: "CREATE ADR-034-AMENDMENT-002 for BYOK Vault"
+      rationale: "Document has detailed requirements not in ADR-034"
+    - section: "Section 3"
+      change: "CREATE ADR-034-AMENDMENT-003 for Agent/Tool architecture"
+      rationale: "Document has detailed agent patterns not in ADR-034"
+    - section: "Section 4"
+      change: "CREATE ADR-034-AMENDMENT-004 for Thread management"
+      rationale: "Thread limits and compaction not in ADR-034"
+    - section: "Section 5"
+      change: "CREATE ADR-034-AMENDMENT-005 for Generative AI features"
+      rationale: "AI commands and text transformation not in ADR-034"
+
+  p2_medium:
+    - section: "Section 1"
+      change: "ADD platform-aware plugin defaults table"
+      rationale: "Document mentions 2 always-loaded but doesnt specify platform differences"
+    - section: "Section 6"
+      change: "ADD state management diagram showing Zustand + Dexie + FSA boundaries"
+      rationale: "Current text is ambiguous"
+    - section: "Section 2"
+      change: "ADD security implementation details for BYOK"
+      rationale: "Securely persist needs definition"
+
+blockers_for_implementation:
+  architectural_blockers:
+    - blocker_id: B1
+      description: "Document uses Workspace concept"
+      blocks: "All thread-related implementation"
+      resolution: "REMOVE workspace references"
+    - blocker_id: B2
+      description: "Route references use deprecated format"
+      blocks: "Navigation implementation"
+      resolution: "UPDATE to /$projectId"
+    - blocker_id: B3
+      description: "No BYOK Vault architecture defined"
+      blocks: "AI features implementation"
+      resolution: "CREATE ADR-034-AMENDMENT-002"
+    - blocker_id: B4
+      description: "No Agent/Tool architecture defined"
+      blocks: "Agent features implementation"
+      resolution: "CREATE ADR-034-AMENDMENT-003"
+    - blocker_id: B5
+      description: "No Thread management architecture"
+      blocks: "Chat cascade implementation"
+      resolution: "CREATE ADR-034-AMENDMENT-004"
+
+  technical_dependencies:
+    - dependency: "Platform-first plugin defaults"
+      from: "AMENDMENT-001"
+      to: "new-fundamental-truths.md"
+      status: "PENDING UPDATE"
+    - dependency: "getDefaultPlugins()"
+      from: "ADR-034-AMEND-001"
+      to: "new-fundamental-truths.md"
+      status: "PENDING REFERENCE"
+    - dependency: "Single unified route"
+      from: "ADR-034-AMEND-001"
+      to: "new-fundamental-truths.md"
+      status: "PENDING UPDATE"
+
+verification_checklist:
+  - check: "No remaining Workspace references in thread management"
+    status: "PENDING"
+  - check: "All route references use /$projectId format only"
+    status: "PENDING"
+  - check: "Platform-first plugin defaults are documented"
+    status: "PENDING"
+  - check: "4 new ADRs are created (AMENDMENT-002 through 005)"
+    status: "PENDING"
+  - check: "Thread-Project relationship has NO workspace mention"
+    status: "PENDING"
+  - check: "Agent patterns reference new ADR-034-AMENDMENT-003"
+    status: "PENDING"
+  - check: "BYOK patterns reference new ADR-034-AMENDMENT-002"
+    status: "PENDING"
+  - check: "AI commands reference new ADR-034-AMENDMENT-005"
+    status: "PENDING"
+
+references:
+  - path: "/Users/apple/Documents/coding-projects/project-alpha-master/new-fundamental-truths.md"
+    type: SOURCE
+    description: "Strategic vision document under review"
+  - path: "_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md"
+    type: REFERENCE
+    description: "Primary architectural decision document"
+  - path: "_bmad-output/planning-artifacts/adr/ADR-034-AMENDMENT-001-platform-first-2026-01-21.md"
+    type: REFERENCE
+    description: "Amendment eliminating workspace concept"
+  - path: "_bmad-output/sprint-artifacts/fundamental-truths-analysis-2026-01-25.json"
+    type: PREVIOUS_ANALYSIS
+    description: "Prior analysis with recommendations"
+  - path: "_bmad-ext/state/LOOP_STATE.yaml"
+    type: GOVERNANCE
+    description: "Session state and delegation tracking"
+
+metadata:
+  created: "2026-01-25"
+  reviewer: architect-ext
+  version: "1.0.0"
+  next_action: "Update new-fundamental-truths.md with P0 changes"
+  signature: "architect-ext"

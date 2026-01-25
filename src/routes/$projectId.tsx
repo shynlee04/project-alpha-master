@@ -23,7 +23,7 @@
  */
 
 import { useEffect } from 'react';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, useLocation } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
@@ -88,6 +88,8 @@ function UnifiedProjectRoute() {
   const { project } = Route.useLoaderData();
   const layoutStore = usePluginLayoutStore();
   const platform = getPlatformContract();
+  const location = useLocation();
+  const fsaHandle = (location.state as { fsaHandle?: FileSystemDirectoryHandle | null } | undefined)?.fsaHandle ?? null;
 
   console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, platform });
 
@@ -103,7 +105,7 @@ function UnifiedProjectRoute() {
   }, [project.id]);
 
   return (
-    <ProjectContextProvider projectId={projectId}>
+    <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
       <PluginLayout />  {/* No props - reads from store */}
     </ProjectContextProvider>
   );

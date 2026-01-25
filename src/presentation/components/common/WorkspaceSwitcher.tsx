@@ -1,57 +1,21 @@
 /**
- * @fileoverview Workspace Switcher Component
+ * @fileoverview Workspace Switcher Component (DEPRECATED)
  * @module presentation/components/common/WorkspaceSwitcher
- * @governance Story WB-6: Cross-Workspace Navigation
+ * @governance Story HOOKS-FIX-01: Migrate to Unified ProjectContext
  *
- * Dropdown menu for switching between workspaces (IDE, Notes, Knowledge, Study).
- * Shows workspace icons and highlights current workspace.
- * Integrates with ProjectContext for cross-workspace navigation.
+ * DEPRECATED (2026-01-25): Workspace navigation now handled via router directly.
+ * Old ProjectContext with workspace-specific properties has been archived.
+ * New ProjectContext focuses on data and storage, not workspace navigation.
  *
- * @see Research: Radix UI Dropdown Menu, WorkspaceBadge patterns
+ * To implement workspace switching in new architecture:
+ * - Use TanStack Router navigation
+ * - Navigate to /ide/$projectId, /notes/$projectId, etc.
+ * - Handle platform validation in route guards
+ *
+ * @see _bmad-ext/.archive/ProjectContext-2026-01-25.tsx for archived implementation
  */
 
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { ChevronsUpDown } from 'lucide-react';
-
-import { useProjectContextSafe, type WorkspaceId } from '@/lib/workspace';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
-import { cn } from '@/lib/utils';
-import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
-import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-
-// ============================================================================
-// Workspace Configuration
-// ============================================================================
-
-const WORKSPACE_CONFIG: Record<
-  WorkspaceId,
-  { icon: string; labelKey: string; color: string; isDeferred?: boolean }
-> = {
-  ide: {
-    icon: '💻',
-    labelKey: 'hub.workspaceBinding.workspaces.ide',
-    color: 'text-info',
-  },
-  notes: {
-    icon: '📝',
-    labelKey: 'hub.workspaceBinding.workspaces.notes',
-    color: 'text-success',
-  },
-  knowledge: {
-    icon: '📚',
-    labelKey: 'hub.workspaceBinding.workspaces.knowledge',
-    color: 'text-purple-400',
-    isDeferred: true, // DEFERRED (ADR-034)
-  },
-  study: {
-    icon: '🎓',
-    labelKey: 'hub.workspaceBinding.workspaces.study',
-    color: 'text-warning',
-    isDeferred: true, // DEFERRED (ADR-034)
-  },
-};
 
 // ============================================================================
 // Component Props
@@ -67,208 +31,23 @@ export interface WorkspaceSwitcherProps {
 // ============================================================================
 
 /**
- * WorkspaceSwitcher - Dropdown menu for workspace switching
+ * WorkspaceSwitcher (DEPRECATED)
  *
- * Features:
- * - Shows current workspace icon + label
- * - Dropdown menu with all enabled workspaces
- * - Checkmark indicator for current workspace
- * - 8-bit styling (bordered, pixel corners)
- * - Desktop only (hidden on mobile)
- * - Integrates with ProjectContext for navigation
- * - FIX-2026-01-05: Safe to render outside ProjectProvider (returns null)
+ * This component has been deprecated as part of ProjectContext migration.
+ * Workspace navigation is now handled via TanStack Router directly.
  *
- * @example
- * ```tsx
- * import { WorkspaceSwitcher } from '@/presentation/components/common/WorkspaceSwitcher';
- *
- * function Header() {
- *   return (
- *     <header>
- *       <WorkspaceSwitcher />
- *     </header>
- *   );
- * }
- * ```
+ * @deprecated Use router navigation instead
+ * @returns Always returns null (component hidden)
  */
-export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = ({
-  className,
-}) => {
-  const { t } = useTranslation();
-
-  // FIX-2026-01-05: Use safe version that returns null outside ProjectProvider
-  const projectContext = useProjectContextSafe();
-
-  // Guard: Not inside ProjectProvider (Hub, About, etc.) - hide component
-  if (!projectContext) {
-    return null;
-  }
-
-  const { currentWorkspace, enabledWorkspaces, switchWorkspace } = projectContext;
-
-  // ============================================================================
-  // WB-8.3: Workspace Transition with State Orchestration
-  // ============================================================================
-
-  /**
-   * Handle workspace switch using WorkspaceTransitionManager
-   *
-   * Coordinates state updates across all stores:
-   * - Workspace store (current workspace)
-   * - Agents store (filter by availability)
-   * - Agent selection store (re-select if needed)
-   * - Cross-workspace event bus (emit events)
-   *
-   * ROUTE-007: Platform validation added - blocks mobile/tablet from IDE
-   */
-  const handleWorkspaceSwitch = async (workspace: WorkspaceType) => {
-    console.log('[WorkspaceSwitcher] Switching to workspace:', workspace);
-
-    // ROUTE-007: Platform validation - block mobile/tablet from IDE
-    if (workspace === 'ide') {
-      const platform = getPlatformContract();
-      if (!platform.canAccessIDE) {
-        console.warn('[WorkspaceSwitcher] IDE access denied on mobile/tablet. Platform:', {
-          deviceType: platform.deviceType,
-          canAccessIDE: platform.canAccessIDE,
-          canDoAgenticCoding: platform.canDoAgenticCoding,
-        });
-        return; // Don't switch - stay in current workspace
-      }
-    }
-
-    try {
-      // Use WorkspaceTransitionManager for coordinated state updates
-      await workspaceTransitionManager.transitionTo(workspace as WorkspaceType);
-
-      // Also call original switchWorkspace for ProjectContext compatibility
-      // TODO: Eventually migrate ProjectContext to use WorkspaceTransitionManager
-      switchWorkspace(workspace);
-    } catch (error) {
-      console.error('[WorkspaceSwitcher] Failed to switch workspace:', error);
-      // Optionally show error toast to user
-    }
-  };
-
-  // Guard: Hide if no workspaces enabled (shouldn't happen in practice)
-  if (enabledWorkspaces.length === 0) {
-    return null;
-  }
-
-  // Guard: Show as static text if only one workspace enabled
-  if (enabledWorkspaces.length === 1) {
-    const config = WORKSPACE_CONFIG[currentWorkspace];
-
-    return (
-      <div
-        className={cn(
-          'flex items-center gap-2 px-3 py-1.5 bg-muted/30 border-2 border-border/60 font-mono text-sm',
-          className
-        )}
-      >
-        <span className={cn('text-base', config.color)}>{config.icon}</span>
-        <span className="text-foreground">
-          {t(config.labelKey, currentWorkspace.toUpperCase())}
-        </span>
-      </div>
+export const WorkspaceSwitcher: React.FC<WorkspaceSwitcherProps> = () => {
+  // Console warning for developers
+  React.useEffect(() => {
+    console.warn(
+      '[WorkspaceSwitcher] DEPRECATED: This component is no longer functional.\n' +
+      'Workspace navigation is now handled via TanStack Router.\n' +
+      'See implementation in archived file: _bmad-ext/.archive/ProjectContext-2026-01-25.tsx'
     );
-  }
+  }, []);
 
-  const currentConfig = WORKSPACE_CONFIG[currentWorkspace];
-
-  return (
-    <DropdownMenu.Root>
-      {/* Trigger Button */}
-      <DropdownMenu.Trigger
-        className={cn(
-          'flex items-center gap-2 px-3 py-1.5 bg-muted/30 border-2 border-border/60',
-          'font-mono text-sm hover:bg-muted/50 hover:border-border transition-colors',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
-          'data-[state=open]:bg-muted/50 data-[state=open]:border-border',
-          className
-        )}
-      >
-        <span className={cn('text-base', currentConfig.color)}>
-          {currentConfig.icon}
-        </span>
-        <span className="text-foreground">
-          {t(currentConfig.labelKey, currentWorkspace.toUpperCase())}
-        </span>
-        <ChevronsUpDown className="h-4 w-4 text-muted-foreground ml-1" />
-      </DropdownMenu.Trigger>
-
-      {/* Dropdown Content */}
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          className={cn(
-            'min-w-[200px] bg-background border-2 border-border shadow-pixel z-50',
-            'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-            'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-            'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2',
-            'data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2'
-          )}
-          side="bottom"
-          align="start"
-        >
-          {/* Header: Project Name */}
-          <div className="px-3 py-2 border-b-2 border-border/40">
-            <p className="text-xs font-pixel text-muted-foreground uppercase tracking-widest">
-              {t('workspaceSwitcher.selectWorkspace', 'SELECT_WORKSPACE')}
-            </p>
-          </div>
-
-          {/* Workspace Items */}
-          {enabledWorkspaces.map((workspace) => {
-            const config = WORKSPACE_CONFIG[workspace];
-
-            // DEFERRED (ADR-034): Skip knowledge/study workspaces
-            if (config.isDeferred) {
-              return null;
-            }
-
-            const isActive = workspace === currentWorkspace;
-
-            return (
-              <DropdownMenu.Item
-                key={workspace}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2 font-mono text-sm',
-                  'hover:bg-primary/10 focus:bg-primary/10 focus:outline-none',
-                  'cursor-pointer transition-colors',
-                  isActive && 'bg-primary/10'
-                )}
-                onClick={() => handleWorkspaceSwitch(workspace)}
-              >
-                {/* Workspace Icon */}
-                <span className={cn('text-base', config.color)}>
-                  {config.icon}
-                </span>
-
-                {/* Workspace Label */}
-                <span className={cn(
-                  'flex-1',
-                  isActive ? 'text-foreground font-medium' : 'text-muted-foreground'
-                )}>
-                  {t(config.labelKey, workspace.toUpperCase())}
-                </span>
-
-                {/* Active Indicator */}
-                {isActive && (
-                  <span className="text-xs text-primary">✓</span>
-                )}
-              </DropdownMenu.Item>
-            );
-          }).filter(Boolean)}
-
-          {/* Footer Hint */}
-          <div className="px-3 py-2 border-t-2 border-border/40">
-            <p className="text-[10px] font-mono text-muted-foreground">
-              {t('workspaceSwitcher.lastWorkspacePersisted', 'PREFERENCE_SAVED')}
-            </p>
-          </div>
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
-  );
+  return null;
 };

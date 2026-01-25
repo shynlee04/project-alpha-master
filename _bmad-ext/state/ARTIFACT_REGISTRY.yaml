@@ -6,7 +6,7 @@
 
 schema_version: "1.0.0"
 created_at: "2026-01-18T11:30:00+07:00"
-last_updated: "2026-01-16T20:30:00+07:00"
+last_updated: "2026-01-25T23:48:00+07:00"
 
 registry:
   # Planning Artifacts
@@ -234,3 +234,45 @@ sessions:
     target_agent: "bmad-sprint-manager"
     urgency: "P0-BLOCKING"
     impact: "ARCH-03-01 completed with deprecated patterns, requires update"
+
+  # Architectural Review (2026-01-25)
+  - id: "fundamental-truths-arch-review"
+    type: "architectural-review"
+    name: "Architectural Review: new-fundamental-truths.md vs ADR-034"
+    path: "_bmad-output/sprint-artifacts/fundamental-truths-architectural-review-2026-01-25.yaml"
+    parent_id: "fundamental-truths-analysis"
+    created_at: "2026-01-25T18:00:00+07:00"
+    status: "completed"
+    source_agent: "architect-ext"
+    target_agent: "bmad-sprint-manager"
+    review_summary:
+      aligned_claims: 5
+      partial_alignments: 4
+      contradictions: 2
+    recommendations:
+      p0_items: 3
+      p1_items: 4
+      p2_items: 3
+    adrs_required:
+      - "ADR-034-AMENDMENT-002"
+      - "ADR-034-AMENDMENT-003"
+      - "ADR-034-AMENDMENT-004"
+      - "ADR-034-AMENDMENT-005"
+    blockers_identified: 5
+
+  - id: "arch-04-correct-course-2026-01-25"
+    type: "documentation"
+    name: "ARCH-04 Correct-Course Report"
+    path: "_bmad-output/planning-artifacts/ARCH-04-CORRECT-COURSE-2026-01-25.md"
+    parent_id: "adr-034"
+    created_at: "2026-01-25T23:48:00+07:00"
+    status: "completed"
+
+  - id: "arch-04-tech-writer-handoff-2026-01-25"
+    type: "handoff"
+    name: "ARCH-04 Tech Writer Handoff"
+    story_id: "ARCH-04"
+    path: "_bmad-output/handoffs/2026-01-25/ARCH-04-tech-writer-handoff.md"
+    parent_id: "arch-04-correct-course-2026-01-25"
+    created_at: "2026-01-25T23:48:00+07:00"
+    status: "pending"

@@ -1,4 +1,587 @@
 ---
+title: "New Fundamental Truths - Core Architecture Principles"
+version: "2.0.0"
+status: "ACTIVE"
+created: "2026-01-25"
+last_updated: "2026-01-25"
+author: "User (Product Owner), Architect Agent"
+
+related_adrs:
+  - "ADR-034: Project-Centric Architecture with Feature Plugins"
+  - "ADR-034-AMENDMENT-001: Platform-First Plugin Selection"
+
+phase_status:
+  epics:
+    - id: "EPIC-ARCH-01"
+      name: "Foundation"
+      status: "COMPLETE"
+      completed: "2026-01-20"
+    - id: "EPIC-ARCH-02"
+      name: "Feature Plugins"
+      status: "COMPLETE"
+      completed: "2026-01-21"
+    - id: "EPIC-ARCH-03"
+      name: "Layout System & UX"
+      status: "IN_PROGRESS"
+    - id: "EPIC-ARCH-04"
+      name: "Cleanup & Migration"
+      status: "PENDING"
+
+key_definitions:
+  platform: "Device type (desktop, tablet, mobile) determining available capabilities"
+  project: "Single source of truth containing files, folders, and project-level configuration"
+  plugin: "Self-contained feature module that renders into layout slots"
+  thread: "Conversation context tied to a project ID for RAG and agent interactions"
+
+---
+
+# Core Architecture Principles
+
+> **Document Purpose**: This document establishes the fundamental truths and guiding principles for the project-centric architecture. All implementation decisions must align with these principles.
+
+## 1. Project-Centric Architecture
+
+The architecture has shifted from **workspace-centric** to **project-centric** model. This fundamental change impacts every aspect of the application and requires systematic migration of all related systems.
+
+### 1.1 The Project-Centric Mental Model
+
+| Aspect | BEFORE (Workspace-Centric) | AFTER (Project-Centric) |
+|--------|---------------------------|------------------------|
+| **Route Structure** | `/ide/$projectId` → `/notes/$projectId` | Single `/$projectId` route |
+| **State Management** | Duplicated per workspace | Single source of truth per project |
+| **Feature Rendering** | Workspace determines features | Platform determines available plugins |
+| **User Experience** | User selects "workspace mode" | Platform shows available tools |
+
+### 1.2 Route Structure
+
+The application has exactly **two routes**:
+
+```
+/hub                      # Project management, no project loaded
+/$projectId               # Project loaded with feature plugins
+```
+
+**Key Principles:**
+- All deprecated routes redirect to `/$projectId`
+- No query parameters for "layout mode" (e.g., `?layout=ide`)
+- Platform determines which plugins are available, not user-selected modes
+
+### 1.3 Project ID and Routing
+
+**Project ID is NOT:**
+- Workspace-specific prefixed or suffixed
+- Tied to a particular plugin or feature
+- Modified based on device type
+
+**Project ID IS:**
+- A unique identifier for the entire project
+- Consistent across all plugins within the project
+- The anchor for threads, RAG indices, and project-level settings
+
+### 1.4 Platform-Aware Default Plugins
+
+Each platform type has platform-appropriate defaults. This replaces the "IDE mode" vs "Notes mode" concept.
+
+| Platform | Storage | Default Plugins | Notes |
+|----------|---------|-----------------|-------|
+| **Desktop (FSA)** | File System Access | `filetree`, `monaco`, `chat` | Full development experience |
+| **Desktop (IndexedDB)** | Browser Database | `filetree`, `notes`, `chat` | Notes-focused, no real files |
+| **Tablet** | Browser Database | `filetree`, `notes`, `chat` | Max 2 panels |
+| **Mobile** | Browser Database | `notes` | Single panel, chat via sidebar |
+
+**Default Layout Modes by Platform:**
+
+| Platform | Default Layout | Max Columns |
+|----------|---------------|-------------|
+| Mobile | 1-column | 1 |
+| Tablet | 2-column | 2 |
+| Desktop | 2-column | 3 |
+
+---
+
+## 2. Device Architecture Separation
+
+### 2.1 Desktop (FSA - File System Access API)
+
+**Characteristics:**
+- Real files on disk via native file system
+- Bidirectional sync with external editors
+- Full IDE capabilities (Monaco, Terminal)
+- Handle persistence in IndexedDB (not file system)
+
+**Requirements:**
+- Chrome 122+ for persistent permissions
+- FileSystemObserver (Chrome 129+) for file watching with polling fallback
+
+### 2.2 Mobile/Tablet (IndexedDB via Dexie.js)
+
+**Characteristics:**
+- Virtual files in browser database
+- No external editor sync needed
+- IDE features blocked (Monaco, Terminal unavailable)
+- Single source of truth (no sync conflicts)
+
+**Requirements:**
+- Dexie.js for persistence
+- Single default project (`notes:browser-mode`)
+- Fallback to Note-taking only
+
+### 2.3 IDE Access Policy
+
+| Platform | IDE Access | Behavior |
+|----------|-----------|----------|
+| Desktop (FSA) | ✅ Full | Monaco + Terminal + FileTree |
+| Desktop (IndexedDB) | ⚠️ Limited | FileTree + Notes only |
+| Tablet | ❌ Blocked | Notes + Chat only |
+| Mobile | ❌ Blocked | Notes + Chat only |
+
+---
+
+## 3. Feature Plugin Architecture
+
+### 3.1 FeaturePlugin Interface
+
+```typescript
+interface FeaturePlugin {
+  // Identification
+  id: 'filetree' | 'monaco' | 'notes' | 'terminal' | 'chat' | 'agents';
+  name: string;
+  icon: React.ReactNode;
+  
+  // Rendering
+  component: React.FC<FeaturePluginProps>;
+  sidebarComponent?: React.FC<SidebarPluginProps>;
+  
+  // Platform Requirements
+  requiresFSA: boolean;           // Requires desktop FSA
+  requiresProject: boolean;        // Requires project to be loaded
+  minWidth: number;                // Minimum layout width in pixels
+  maxInstances: 1 | 2 | 'unlimited';
+  
+  // State Management
+  usePluginStore: () => PluginState;
+}
+```
+
+### 3.2 Plugin Categories
+
+| Category | Description | Examples |
+|----------|-------------|----------|
+| **Always-Loaded** | Loaded in every project session | Project Management, Chat Cascade |
+| **Optional** | User-selectable up to 5 total | Monaco, Notes, Terminal |
+| **Platform-Restricted** | Only available on certain platforms | Terminal (desktop-only) |
+
+### 3.3 The Two Always-Loaded Plugins
+
+These plugins are mandatory for all sessions:
+
+#### Plugin 1: Project Management Plugin
+
+**Responsibilities:**
+- File tree navigation and display
+- Project switcher
+- Project creation and deletion
+- File/folder CRUD operations
+- Database and RAG management
+
+**UX Considerations:**
+- For mobile/portrait: Tabbed button navigation
+- Progressive disclosure for complex operations
+- Clear visual hierarchy
+
+#### Plugin 2: Chat Cascade + Thread Management Plugin
+
+**Responsibilities:**
+- Agent orchestration and coordination
+- Thread management (project-scoped)
+- RAG context indexing
+- Multi-format block rendering
+- Streaming conversation display
+
+**Key Principles:**
+- Threads are indexed and dependent on project ID
+- Context window limit: 150K tokens (90% threshold for compaction)
+- Compaction creates new thread with recapped, filtered context
+- All threads date/time stamped with names and hierarchy
+
+---
+
+## 4. BYOK (Bring Your Own Key) Vault
+
+### 4.1 Vault Architecture
+
+The BYOK Vault is a **project-scoped** configuration system for API keys. All LLM integrations must route through TanStack AI SDK.
+
+**Integration Points:**
+- Route: `/$projectId` (no separate `/setting` route)
+- Configuration stored per project
+- Keys securely persisted and conditionally distributed
+
+### 4.2 Supported LLM Providers
+
+#### First-Tier Support (Full Feature Parity)
+
+| Provider | Latest Models | Notes |
+|----------|---------------|-------|
+| **Google Gemini** | 3.0 Pro / 3.0 Flash (Jan 2026) | First-tier, image preview variants |
+| **OpenRouter** | 400+ models | OpenAI-compatible endpoints |
+| **OpenAI** | GPT-5.1-Codex-Max (Nov 2025) | Standard OpenAI API |
+| **Anthropic** | Claude Sonnet 4.5, Claude Opus 4.5 | Standard Claude API |
+
+#### Second-Tier Support (Basic Integration)
+
+| Provider | Notes |
+|----------|-------|
+| **Grok** | Basic completion only |
+| **Ollama (Local)** | Local model serving |
+
+#### Provider Integration Requirements
+
+All providers must support:
+- Multimodal input/output (text, images, audio, video)
+- Embedding endpoints (if available)
+- Model auto-loading
+- All supported parameters per model:
+  - Max tokens
+  - Thinking variants
+  - Streaming thinking
+  - Native tool calling
+  - Token caching
+
+### 4.3 Integration Guidelines
+
+1. **TanStack AI SDK First**: All LLM calls must use TanStack AI SDK with provider-specific adapters
+2. **No Direct Provider Calls**: Direct calls to provider packages are prohibited
+3. **Fallback Chain**: Implement provider → model fallback with graceful degradation
+4. **Secure Key Distribution**: Keys passed reactively only to required endpoints
+
+---
+
+## 5. Agent and Tool Architecture
+
+### 5.1 Agent Orchestrator Pattern
+
+The agent system follows a **hierarchical orchestrator pattern**:
+
+```
+User Input
+    ↓
+Orchestrator/Coordinator (read-only tools only)
+    ├─→ Mode Switching (to domain-specific agent)
+    └─→ Task Delegation (to sub-agents with isolated context)
+```
+
+#### Orchestrator Responsibilities
+
+- Conversational, user-guidance oriented
+- Context detection and task decomposition
+- Uses only read-related tools:
+  - `read-files`, `grep`, `glob`, `list-files`
+  - `todowrite`, `todoread`, `question`
+  - `switch-mode`, `delegate-tasks`
+
+#### Domain-Specific Agents
+
+Agents have focused tool groups and domain-specific system instructions:
+
+| Agent Type | Tools | Use Case |
+|------------|-------|----------|
+| **dev-ext** | File CRUD, bash, task | Code implementation |
+| **architect-ext** | Design docs, review | Architecture decisions |
+| **analyst-ext** | Research, analysis | Requirements gathering |
+| **ux-designer-ext** | UI/UX design | Interface design |
+| **tech-writer-ext** | Documentation | API docs, guides |
+
+### 5.2 Tool Architecture
+
+#### Tool Types
+
+| Type | Execution | Examples |
+|------|-----------|----------|
+| **Client Tools** | Browser-only | File read, glob, grep |
+| **Server Tools** | Server/Edge | LLM calls, database ops |
+| **Agent Tools** | Delegated | Complex multi-step tasks |
+
+#### Tool Permission Matrix
+
+| Agent Type | write | edit | bash | task | Notes |
+|------------|-------|------|------|------|-------|
+| **real-world-validator** | true | false | browser | true | Testing only |
+| **dev-ext** | true | true | limited | true | Implementation |
+| **architect-ext** | false | design | false | true | Architecture docs |
+| **analyst-ext** | false | false | false | true | Research only |
+| **ux-designer-ext** | false | false | false | true | Design only |
+
+#### Tool Approval
+
+- Per-agent permission controls: `ask`, `allow`, `deny`
+- Critical tools require explicit user approval
+- Permission changes tracked and auditable
+
+### 5.3 Agentic Cycle
+
+Reference: [TanStack AI Agentic Cycle](https://tanstack.com/ai/latest/docs/guides/agentic-cycle)
+
+**Key Patterns:**
+- Sequential tool execution with state
+- Conditional branching based on tool results
+- Error handling with retry strategies
+- Context management and compaction
+
+---
+
+## 6. Chat Cascade and Thread Management
+
+### 6.1 Thread Architecture
+
+Threads are **project-scoped** conversation contexts:
+
+```
+Project
+    └─→ Threads (indexed by project ID)
+        ├─→ Main Thread (user conversation)
+        ├─→ Sub-threads (agent delegations)
+        └─→ Compaction Threads (auto-generated at 90% context limit)
+```
+
+### 6.2 Context Management
+
+**Context Window:**
+- Default limit: 150K tokens
+- Auto-compaction at 90% threshold (135K tokens)
+
+**Compaction Process:**
+1. Trigger when context reaches 90%
+2. Run sub-agent to condense conversation turns
+3. Filter irrelevant/contextual information
+4. Generate new thread with recapped context
+5. Preserve file path references for linking
+
+### 6.3 Multi-Format Block Rendering
+
+The chat interface renders diverse content types:
+
+| Content Type | Rendering | Notes |
+|--------------|-----------|-------|
+| Code blocks | Syntax highlighted, copyable | Monaco integration |
+| Rich text | Tables, diagrams, markdown | Block-based rendering |
+| HTML artifacts | Embedded components | Interactive content |
+| Streaming tokens | Real-time display | Thinking/reasoning |
+| Tool outputs | Collapsible, status-coded | Success/failure indicators |
+| File references | Clickable paths | `@` mentions with context |
+
+### 6.4 Bi-Directional References
+
+**File-to-Chat References:**
+- `@filename` - Include entire file
+- `@folder/` - Include all child files
+- Selected text in Monaco - Include as context
+
+**Chat-to-File Operations:**
+- Insert AI output as new file
+- Insert at cursor position
+- Copy to clipboard
+
+---
+
+## 7. Generative AI Features
+
+### 7.1 Individual AI Features (Note Plugin)
+
+These features operate **independently** of the chat cascade:
+
+| Feature | Description |
+|---------|-------------|
+| **AI Commands** | Context-aware text generation |
+| **Prompt Chains** | Sequential transformations |
+| **Image Generation** | Context-aware visual creation |
+| **Text Selection** | Selected text transformation |
+
+**UX Patterns:**
+- Markdown block-based rendering
+- Rich media support (HTML, images, videos, presentations)
+- Asset indexing for RAG compatibility
+- PC and Non-PC parity
+
+### 7.2 Agent-Driven Features (Chat Plugin)
+
+These features operate **within the chat cascade** with full agent capabilities:
+
+| Feature | Description |
+|---------|-------------|
+| **Orchestrated Tasks** | Multi-step agent operations |
+| **Tool Execution** | CRUD operations via agents |
+| **Context-Aware Generation** | File-aware AI responses |
+
+---
+
+## 8. State Management and Persistence
+
+### 8.1 State Layers
+
+| Layer | Technology | Purpose | Scope |
+|-------|-----------|---------|-------|
+| **Client State** | Zustand v5 | UI state, ephemeral data | Component tree |
+| **Persisted State** | Dexie.js | Long-term storage | Project, settings |
+| **File System** | FSA/IndexedDB | File content | Project files |
+
+### 8.2 State Boundaries
+
+**Clear Separation:**
+- Zustand for client-only state (UI, interaction)
+- Dexie for persisted data (projects, threads, settings)
+- FSA for actual file content (desktop) or IndexedDB virtual files (mobile)
+
+**Conflict Prevention:**
+- Single source of truth per data type
+- Event-driven updates between layers
+- Optimistic updates with rollback
+
+### 8.3 Persistence Strategy
+
+**Desktop (FSA):**
+- Handle stored in IndexedDB for persistence
+- Minimize re-sync on project switch
+- Snapshot strategy for fast load
+
+**Mobile/Tablet (IndexedDB):**
+- All data in Dexie.js
+- No sync needed (single source)
+- Offline-first by default
+
+---
+
+## 9. CRUD Permissions and Concurrency
+
+### 9.1 Permission Model
+
+| Actor | Permissions | Constraints |
+|-------|-------------|-------------|
+| **Human User** | Full CRUD | Subject to UI validation |
+| **Agent** | Configurable per agent | Tool permission matrix |
+| **System** | Auto-save, indexing | No user-facing CRUD |
+
+### 9.2 Concurrency Handling
+
+**Agent-Human Conflicts:**
+- File locks during agent operations
+- Visual indicators of agent activity
+- Conflict resolution dialogs
+- Rollback capabilities
+
+**Multi-Agent Conflicts:**
+- Task delegation isolation
+- Shared context synchronization
+- Priority-based execution
+
+---
+
+## 10. Research and Reference Links
+
+### 10.1 TanStack AI Documentation
+
+| Topic | URL |
+|-------|-----|
+| Tools Guide | https://tanstack.com/ai/latest/docs/guides/tools |
+| Tool Architecture | https://tanstack.com/ai/latest/docs/guides/tool-architecture |
+| Server Tools | https://tanstack.com/ai/latest/docs/guides/server-tools |
+| Client Tools | https://tanstack.com/ai/latest/docs/guides/client-tools |
+| Tool Approval | https://tanstack.com/ai/latest/docs/guides/tool-approval |
+| Agentic Cycle | https://tanstack.com/ai/latest/docs/guides/agentic-cycle |
+| Dev Tools | https://tanstack.com/ai/latest/docs/getting-started/devtools |
+| Structured Outputs | https://tanstack.com/ai/latest/docs/guides/structured-outputs |
+| Streaming | https://tanstack.com/ai/latest/docs/guides/streaming |
+| Multimodal Content | https://tanstack.com/ai/latest/docs/guides/multimodal-content |
+| Observability | https://tanstack.com/ai/latest/docs/guides/observability |
+
+### 10.2 OpenCode Documentation
+
+| Topic | URL |
+|-------|-----|
+| Agents | https://opencode.ai/docs/agents/ |
+| Commands | https://opencode.ai/docs/commands/ |
+| Skills | https://opencode.ai/docs/skills/ |
+| Rules | https://opencode.ai/docs/rules/ |
+| Permissions | https://opencode.ai/docs/permissions/ |
+| Tools | https://opencode.ai/docs/tools/ |
+
+---
+
+## 11. Implementation Checklist
+
+### 11.1 Architecture Alignment
+
+- [ ] Single route `/$projectId` implemented
+- [ ] No workspace-specific routes or query params
+- [ ] Platform detection working correctly
+- [ ] Platform-aware default plugins configured
+- [ ] FeaturePlugin interface defined and implemented
+
+### 11.2 Plugin System
+
+- [ ] Two always-loaded plugins functioning
+- [ ] Plugin registry implemented
+- [ ] Plugin layout system operational
+- [ ] Maximum 5 plugins per project (2 always-loaded + 3 optional)
+- [ ] Plugin CRUD permissions configured
+
+### 11.3 BYOK Vault
+
+- [ ] TanStack AI SDK integration complete
+- [ ] Provider support: Gemini, OpenRouter, OpenAI, Anthropic
+- [ ] Secure key storage implemented
+- [ ] Fallback chain working
+- [ ] No direct provider package calls
+
+### 11.4 Agent System
+
+- [ ] Orchestrator pattern implemented
+- [ ] Domain-specific agents defined
+- [ ] Tool permission matrix configured
+- [ ] Agentic cycle following TanStack patterns
+- [ ] Sub-agent delegation working
+
+### 11.5 Thread Management
+
+- [ ] Project-scoped threads implemented
+- [ ] Context window limit (150K tokens)
+- [ ] Auto-compaction at 90% threshold
+- [ ] Multi-format block rendering
+- [ ] Bi-directional file references
+
+### 11.6 State and Persistence
+
+- [ ] Zustand/Dexie boundaries clear
+- [ ] Desktop FSA handling complete
+- [ ] Mobile IndexedDB handling complete
+- [ ] Event-driven sync working
+- [ ] No state duplication
+
+---
+
+## 12. Glossary
+
+| Term | Definition |
+|------|------------|
+| **FSA** | File System Access API (Desktop) |
+| **Platform** | Device type (desktop, tablet, mobile) |
+| **Plugin** | Self-contained feature module |
+| **Project** | Single source of truth for files/settings |
+| **Thread** | Conversation context tied to project |
+| **RAG** | Retrieval-Augmented Generation |
+| **BYOK** | Bring Your Own Key (API vault) |
+| **Orchestrator** | Agent coordinator with read-only tools |
+
+---
+
+*Last Updated: 2026-01-25*
+*Version: 2.0.0*
+*Related: ADR-034, ADR-034-AMENDMENT-001*
+---
+
+# RAW VERSION
+
+------
 
 # **Core Centralized Groups (User Flow Management):**
 

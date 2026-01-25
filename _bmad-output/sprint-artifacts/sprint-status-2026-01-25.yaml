@@ -1,0 +1,250 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS - ACTIVE SPRINTS (2026-01-25)
+# ═══════════════════════════════════════════════════════════════════════════
+# 
+# This file tracks ONLY active work. Historical sprints are archived.
+# Updated: 2026-01-25T21:30:00+07:00
+# Updated By: architect-ext
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+schema_version: "3.1.0"
+last_updated: "2026-01-25T22:30:00+07:00"
+updated_by: "sprint-manager"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT BLOCKER (P0)
+# ═══════════════════════════════════════════════════════════════════════════
+
+p0_blocker:
+  epic_id: "EPIC-ARCH-04"
+  story_id: "ARCH-04-01"
+  title: "Integrate FSA Handle Lifecycle into ProjectContextProvider"
+  status: "READY_FOR_DEV"
+  priority: "P0"
+  effort_hours: 3-4
+  blocking: "ALL_USER_JOURNEYS"
+  
+  description: |
+    App cannot create or load projects due to missing FSA handle integration.
+    Root cause: NEW ProjectContextProvider (ARCH-02-03) was built WITHOUT
+    FSA handle lifecycle that OLD context had.
+  
+  error: |
+    Failed to load project: No directory access granted. 
+    Call requestAccess() first.
+  
+  key_file: "src/infrastructure/context/project-context.tsx"
+  
+  artifacts:
+    epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md"
+    handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
+  
+  supersedes:
+    - "HOOKS-FIX-01"
+    - "HOOKS-FIX-02"
+  
+  completed_prerequisites:
+    - id: "HOOKS-FIX-01"
+      title: "Migrate imports from OLD to NEW context"
+      status: "COMPLETE"
+    - id: "HOOKS-FIX-02"
+      title: "Fix hooks violation (line 250)"
+      status: "COMPLETE"
+    - id: "EPIC-TS-DEBT"
+      title: "TypeScript errors (115 → 0)"
+      status: "COMPLETE"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ACTIVE EPIC: EPIC-ARCH-04 (Complete Migration)
+# ═══════════════════════════════════════════════════════════════════════════
+
+active_epics:
+  - epic_id: "EPIC-ARCH-04"
+    name: "Complete Architecture Migration & FSA Integration"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "0%"
+    started_at: "2026-01-25T21:00:00+07:00"
+    blocking: true
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md"
+      handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
+    
+    stories:
+      - id: "ARCH-04-01"
+        title: "Integrate FSA Handle Lifecycle into ProjectContextProvider"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "3-4h"
+        dependencies: []
+        blocking: ["ARCH-04-02", "ARCH-04-03", "ARCH-04-05"]
+        
+      - id: "ARCH-04-02"
+        title: "Pass FSA Handle from Wizard to Route"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "1-2h"
+        dependencies: ["ARCH-04-01"]
+        
+      - id: "ARCH-04-03"
+        title: "Integrate PermissionOverlay for NEW Architecture"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "1-2h"
+        dependencies: ["ARCH-04-01"]
+        
+      - id: "ARCH-04-05"
+        title: "End-to-End Flow Validation"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "1-2h"
+        dependencies: ["ARCH-04-01", "ARCH-04-02", "ARCH-04-03"]
+        
+      - id: "ARCH-04-04"
+        title: "Archive Legacy Files and Update Imports"
+        status: "READY_FOR_DEV"
+        priority: "P1"
+        effort: "2-3h"
+        dependencies: ["ARCH-04-05"]
+        
+      - id: "ARCH-04-06"
+        title: "Clean Up Deprecated Options in Wizard"
+        status: "READY_FOR_DEV"
+        priority: "P2"
+        effort: "1h"
+        dependencies: ["ARCH-04-05"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COMPLETED EPICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+  - epic_id: "EPIC-TS-DEBT"
+    name: "TypeScript Technical Debt Remediation"
+    status: "COMPLETE"
+    completed_at: "2026-01-25T10:00:00+07:00"
+    
+    metrics:
+      errors_before: 115
+      errors_after: 0
+      files_modified: 19
+      
+    stories:
+      - id: "TS-DEBT-01"
+        status: "DONE"
+      - id: "TS-DEBT-02"
+        status: "DONE"
+      - id: "TS-DEBT-03"
+        status: "DONE"
+      - id: "TS-DEBT-04"
+        status: "DONE"
+      - id: "TS-DEBT-05"
+        status: "DONE"
+
+  - epic_id: "EPIC-ARCH-03"
+    name: "Layout System & UX"
+    status: "BLOCKED"
+    progress: "85%"
+    blocked_by: "EPIC-ARCH-04"
+    
+    stories:
+      - id: "ARCH-03-00"
+        status: "DONE"
+      - id: "ARCH-03-01"
+        status: "DONE"
+      - id: "ARCH-03-02"
+        status: "DONE"
+      - id: "ARCH-03-03"
+        status: "DONE"
+      - id: "ARCH-03-04"
+        status: "PARTIAL"
+      - id: "ARCH-03-05"
+        status: "BLOCKED"
+      - id: "ARCH-03-06"
+        status: "DONE"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PENDING EPICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+pending_epics:
+  - epic_id: "EPIC-CTX-CLEAN"
+    name: "Context & Governance Document Remediation"
+    status: "DEFERRED"
+    deferred_until: "EPIC-ARCH-04 complete"
+    priority: "P1"
+    effort_hours: "4-6"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY ORDER
+# ═══════════════════════════════════════════════════════════════════════════
+
+priority_order:
+  1:
+    story: "ARCH-04-01"
+    epic: "EPIC-ARCH-04"
+    reason: "P0 - App completely non-functional (FSA handle integration)"
+    effort: "3-4 hours"
+    
+  2:
+    story: "ARCH-04-02"
+    reason: "P0 - Pass handle from wizard to route"
+    effort: "1-2 hours"
+    
+  3:
+    story: "ARCH-04-03"
+    reason: "P0 - Permission overlay integration"
+    effort: "1-2 hours"
+    
+  4:
+    story: "ARCH-04-05"
+    reason: "P0 - E2E validation (app works after this)"
+    effort: "1-2 hours"
+    
+  5:
+    story: "ARCH-04-04"
+    reason: "P1 - Archive legacy files"
+    effort: "2-3 hours"
+    
+  6:
+    epic: "EPIC-CTX-CLEAN"
+    reason: "P1 - Context document cleanup (after app works)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAMS
+# ═══════════════════════════════════════════════════════════════════════════
+
+teams:
+  dev_team:
+    status: "AVAILABLE"
+    last_completed: "HOOKS-FIX-02"
+    next_assignment: "ARCH-04-01"
+    assignment_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
+    
+  sprint_manager:
+    status: "READY"
+    last_completed: "Created EPIC-ARCH-04"
+    next_assignment: "Assign ARCH-04-01 to dev-team"
+    
+  architect_ext:
+    status: "COMPLETE"
+    completed: "EPIC-ARCH-04 epic and handoff creation"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE HEALTH
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance_health:
+  typescript_errors: 0
+  yaml_parse_errors: 0
+  stale_artifacts: 1
+  app_status: "NON_FUNCTIONAL"
+  overall_score: "75%"
+  
+  notes: |
+    TypeScript: Clean (0 errors)
+    YAML: Clean (this file and workflow-status)
+    App: Broken (FSA handle integration missing)
+    
+    Will reach 100% when ARCH-04-05 complete and app functional.

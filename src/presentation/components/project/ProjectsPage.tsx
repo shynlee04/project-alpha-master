@@ -146,7 +146,7 @@ export const ProjectsPage: React.FC = () => {
     setWizardOpen(true);
   };
 
-  const handleProjectCreated = (projectId: string) => {
+  const handleProjectCreated = (projectId: string, fsaHandle?: FileSystemDirectoryHandle | null) => {
     toast.success(t('projects.created', 'Project created successfully'), {
       description: t('projects.createdDesc', 'Your project is ready to use'),
     });
@@ -155,13 +155,14 @@ export const ProjectsPage: React.FC = () => {
     // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
     const project = useProjectStore.getState().getProject(projectId);
     const platform = getPlatformContract();
+    const navigationState = { fsaHandle };
     
     if (platform.canAccessIDE && project?.storageType === 'fsa') {
       // Desktop with FSA: Navigate to IDE (full file system access)
-      navigate({ to: '/ide/$projectId', params: { projectId } });
+      navigate({ to: '/ide/$projectId', params: { projectId }, state: navigationState });
     } else {
       // Mobile OR Desktop with IndexedDB: Navigate to Notes
-      navigate({ to: '/notes/$projectId', params: { projectId } });
+      navigate({ to: '/notes/$projectId', params: { projectId }, state: navigationState });
     }
   };
 

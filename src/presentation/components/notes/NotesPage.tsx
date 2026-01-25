@@ -59,7 +59,7 @@ import type { SynthesisExportData } from '@/infrastructure/events/event-bus';
 import type { NotesRAGIndexData } from '@/infrastructure/events/event-bus';
 import { toast } from 'sonner';
 // Use ProjectContext for projectId instead of IDE store
-import { useProjectContext } from '@/lib/workspace/ProjectContext';
+import { useProjectContext } from '@/infrastructure/context/project-context';
 // UJ-004: Cross-workspace reactivity - subscribe to FILE_SAVED events
 import { useStoreEvent, STORE_EVENTS } from '@/lib/events/store-events';
 import type { FileSavedPayload } from '@/lib/events/store-events';

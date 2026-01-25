@@ -35,6 +35,7 @@ import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interfa
 import type { PlatformContract } from '@/infrastructure/filesystem/storage-types';
 import { detectPlatform } from '@/infrastructure/filesystem/platform-detection';
 import { NULL_CHAT_SERVICE } from '@/infrastructure/services/chat-service';
+import { PermissionOverlay } from '@/presentation/components/layout/PermissionOverlay';
 
 // ============================================================================
 // ProjectContext Interface (ADR-034 Specification)
@@ -159,12 +160,15 @@ export const ProjectContextProvider: React.FC<{
   // ========================================================================
 
   const { getProject, setActiveProject } = useProjectStore();
+  const fileTreeStore = useFileTreeStore(); // ✅ MOVED TO TOP LEVEL (TEAM A - ARCH-04-01)
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [platform, setPlatform] = useState<PlatformContract | null>(null);
   const [gateway, setGateway] = useState<StorageGateway | null>(null);
-  const [fileTree, setFileTree] = useState<ReturnType<typeof useFileTreeStore> | null>(null);
+
+  // ARCH-04-03 TEAM B: Permission prompt state
+  const [showPermissionOverlay, setShowPermissionOverlay] = useState<boolean>(false);
 
   // ========================================================================
   // Initialize on Mount
@@ -246,14 +250,15 @@ export const ProjectContextProvider: React.FC<{
 
         setGateway(storageGateway);
 
-        // 4. Initialize file tree state
-        const fileTreeStore = useFileTreeStore();
-        setFileTree(fileTreeStore);
+        // 4. Initialize file tree state (using top-level hook)
+        // fileTreeStore is already available from component top level
 
         // Load initial file tree
         const entries = await storageGateway.list('.');
-        // Type assertion needed because ReturnType doesn't expose load method
-        (fileTree as any).load(entries);
+        // Use top-level fileTreeStore directly
+        if (fileTreeStore.load) {
+          fileTreeStore.load(entries);
+        }
 
         setLoading(false);
       } catch (err) {
@@ -270,11 +275,12 @@ export const ProjectContextProvider: React.FC<{
   // ========================================================================
 
   const refreshFileTree = useCallback(async () => {
-    if (!gateway || !fileTree) return;
+    if (!gateway) return;
     const entries = await gateway.list('.');
-    // Type assertion needed
-    (fileTree as any).load(entries);
-  }, [gateway, fileTree]);
+    if (fileTreeStore.load) {
+      fileTreeStore.load(entries);
+    }
+  }, [gateway, fileTreeStore]);
 
   const openFile = useCallback((path: string) => {
     console.log('[ProjectContext] Opening file:', path);
@@ -291,14 +297,14 @@ export const ProjectContextProvider: React.FC<{
   }, [gateway, refreshFileTree]);
 
   // Only provide context value when everything is loaded
-  const contextValue: ProjectContext | null = (loading || error || !project || !platform || !gateway || !fileTree)
+  const contextValue: ProjectContext | null = (loading || error || !project || !platform || !gateway)
     ? null
     : {
         project,
         projectId,
         gateway: gateway!,
         platform: platform!,
-        fileTree: fileTree!,
+        fileTree: fileTreeStore, // ✅ Use top-level hook result directly
         chatService: NULL_CHAT_SERVICE,
         openFile,
         saveFile,
@@ -339,6 +345,27 @@ export const ProjectContextProvider: React.FC<{
   return (
     <ProjectContext.Provider value={contextValue}>
       {children}
+
+      {/* ARCH-04-03 TEAM B: Permission Overlay */}
+      {showPermissionOverlay && project && (
+        <PermissionOverlay
+          projectId={project.id}
+          projectName={project.name}
+          onPermissionGranted={async (_handle) => {
+            // Handle granted - store and restart initialization
+            setShowPermissionOverlay(false);
+
+            // Trigger project reload with handle
+            // TODO: This needs proper FSA handle persistence integration (ARCH-04-02)
+            // For now, just hide overlay
+          }}
+          onCancel={() => {
+            // Cancel - navigate back to hub
+            setShowPermissionOverlay(false);
+            navigate({ to: '/' });
+          }}
+        />
+      )}
     </ProjectContext.Provider>
   );
 };
@@ -361,6 +388,20 @@ export function useProjectContext(): ProjectContext {
   }
 
   return context;
+}
+
+/**
+ * Safe version of useProjectContext that returns null instead of throwing
+ *
+ * Use this in components that may be rendered both inside and outside
+ * of ProjectContextProvider (e.g., components in header that can appear
+ * in non-project routes like the Hub).
+ *
+ * @returns Project context value or null if outside ProjectContextProvider
+ */
+export function useProjectContextSafe(): ProjectContext | null {
+  const context = useContext(ProjectContext);
+  return context ?? null;
 }
 
 // ============================================================================

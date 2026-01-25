@@ -3,8 +3,8 @@
 # ═════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.5.1"
-last_updated: "2026-01-17T12:00:00+07:00"
-updated_by: "BMAD Master - Orchestrator"
+last_updated: "2026-01-25T22:30:00+07:00"
+updated_by: "sprint-manager"
 previous_version: "bmm-workflow-status-v2.5.yaml"
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -192,18 +192,31 @@ research_artifacts:
 # ═══════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "epic-cc-arc-week3-2026-01-20"
-  status: "EPIC_CC_01_COMPLETE"
-  epic: "EPIC-CC-01"
-  story: "COMPLETE"
-  started_at: "2026-01-19T16:00:00+07:00"
-  completed_at: "2026-01-20T11:00:00+07:00"
-  team: "Team B (Orchestrator)"
-  story_status: "ALL_STORIES_COMPLETE"
-  story_summary: "EPIC-CC-01 (Project Space) fully implemented. PS-04, PS-05, PS-06 complete."
+  id: "epic-arch-04-sprint-planning-2026-01-25"
+  status: "READY_FOR_SPRINT_PLANNING"
+  epic: "EPIC-ARCH-04"
+  story: "ARCH-04-01"
+  started_at: "2026-01-25T22:30:00+07:00"
+  completed_at: null
+  team: "sprint-manager"
+  story_status: "READY_FOR_DEV"
+  story_summary: "Story files created for ARCH-04-01 through ARCH-04-06."
   depends_on: "None"
-  phase_e_complete: true
-  team_b_complete: true
+  phase_e_complete: false
+  team_b_complete: false
+
+epic_arch_04:
+  epic_id: "EPIC-ARCH-04"
+  name: "Complete Architecture Migration & FSA Integration"
+  status: "READY_FOR_SPRINT_PLANNING"
+  priority: "P0"
+  progress: 0
+  stories_total: 6
+  stories_ready_for_dev: 6
+  critical_story: "ARCH-04-01"
+  artifacts:
+    epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md"
+    handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
   
   # TypeScript fixes completed this session
   session_fixes:

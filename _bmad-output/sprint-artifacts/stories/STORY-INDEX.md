@@ -1,7 +1,7 @@
 # Story Index
 
-**Last Updated:** 2026-01-12T16:30:00+07:00
-**Updated By:** Team B - EPIC-FS COMPLETE + EPIC-PERF Started
+**Last Updated:** 2026-01-25T22:30:00+07:00
+**Updated By:** sprint-manager - EPIC-ARCH-04 story files created
 
 ---
 
@@ -11,7 +11,7 @@
 |--------|-------|
 | DONE | 24 |
 | IN_PROGRESS | 6 |
-| NOT_STARTED | 5 |
+| NOT_STARTED | 11 |
 | BLOCKED | 0 |
 | INTEGRATED (CHAT) | 5 |
 
@@ -87,6 +87,27 @@
 | FS-07 | Mobile File Picker | NOT_STARTED | EPIC-FS | phase-2 | 2026-01-09 |
 | 39-01 | 8-bit Design Audit | NOT_STARTED | EPIC-39 | phase-2 | 2026-01-09 |
 | 39-02 | Mobile-Friendly Redesign | NOT_STARTED | EPIC-39 | phase-2 | 2026-01-09 |
+| ARCH-04-01 | FSA Handle Lifecycle | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+| ARCH-04-02 | Handle from Wizard | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+| ARCH-04-03 | Permission Overlay | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+| ARCH-04-05 | E2E Flow Validation | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+| ARCH-04-04 | Archive Legacy Files | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+| ARCH-04-06 | Wizard Cleanup | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+
+---
+
+## EPIC-ARCH-04 (Complete Migration & FSA Integration)
+
+**Started:** 2026-01-25 | **Priority:** P0-CRITICAL
+
+| ID | Title | Status | File |
+|----|-------|--------|------|
+| ARCH-04-01 | Integrate FSA Handle Lifecycle into ProjectContextProvider | NOT_STARTED | ARCH-04-01-fsa-handle-lifecycle-2026-01-25.md |
+| ARCH-04-02 | Pass FSA Handle from Wizard to Route | NOT_STARTED | ARCH-04-02-handle-pass-route-2026-01-25.md |
+| ARCH-04-03 | Integrate PermissionOverlay for New Architecture | NOT_STARTED | ARCH-04-03-permission-overlay-2026-01-25.md |
+| ARCH-04-05 | End-to-End Flow Validation | NOT_STARTED | ARCH-04-05-e2e-flow-validation-2026-01-25.md |
+| ARCH-04-04 | Archive Legacy Files and Update Imports | NOT_STARTED | ARCH-04-04-archive-legacy-files-2026-01-25.md |
+| ARCH-04-06 | Clean Up Deprecated Options in Wizard | NOT_STARTED | ARCH-04-06-wizard-cleanup-2026-01-25.md |
 
 ---
 

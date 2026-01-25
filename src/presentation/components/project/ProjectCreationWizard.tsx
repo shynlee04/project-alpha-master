@@ -53,7 +53,7 @@ export interface ProjectCreationWizardProps {
   /** Callback when dialog open state changes */
   onOpenChange: (open: boolean) => void;
   /** Callback when project is created successfully */
-  onProjectCreated?: (projectId: string) => void;
+  onProjectCreated?: (projectId: string, fsaHandle?: FileSystemDirectoryHandle | null) => void;
 }
 
 /** Wizard step configuration */
@@ -125,9 +125,10 @@ const INITIAL_FORM_DATA: WizardFormData = {
  * <ProjectCreationWizard
  *   open={open}
  *   onOpenChange={setOpen}
- *   onProjectCreated={(projectId) => navigate({
+ *   onProjectCreated={(projectId, fsaHandle) => navigate({
  *     to: '/ide/$projectId',
- *     params: { projectId }
+ *     params: { projectId },
+ *     state: { fsaHandle },
  *   })}
  * />
  * ```
@@ -299,7 +300,7 @@ export const ProjectCreationWizard: React.FC<ProjectCreationWizardProps> = ({
 
       // Call success callback
       if (onProjectCreated) {
-        onProjectCreated(projectId);
+        onProjectCreated(projectId, formData.fsaHandle);
       }
     } catch (error) {
       console.error('[ProjectCreationWizard] Failed to create project:', error);

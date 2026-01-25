@@ -69,14 +69,9 @@ export type {
     FsaPermissionState,
 } from '@/infrastructure/persistence/stores/workspace';
 
-// Story WB-6: Cross-Workspace Navigation
-export {
-    ProjectProvider,
-    useProjectContext,
-    useProjectContextSafe,
-    type ProjectContextValue,
-    type ProjectProviderProps,
-} from './ProjectContext';
+// Story WB-6: Cross-Workspace Navigation (DEPRECATED - Migrated to unified ProjectContext)
+// Old ProjectContext has been archived to _bmad-ext/.archive/ProjectContext-2026-01-25.tsx
+// Use new unified context: import { useProjectContext } from '@/infrastructure/context/project-context'
 
 // Story 27-1b: Migrated to Zustand
 export {

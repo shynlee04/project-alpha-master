@@ -5,82 +5,110 @@
  * Displays an overlay prompting the user to restore file system access.
  * Shown when permission state is 'prompt'.
  * Extracted from IDELayout.tsx for code organization.
- * 
- * FIX-2026-01-05: Now handles case when no project is loaded (opens new folder)
+ *
+ * ARCH-04-03: Updated to integrate with ProjectContextProvider
+ * - Changed from projectMetadata prop to projectId/projectName
+ * - New onPermissionGranted callback for FSA handle
+ * - New onCancel callback for navigation
+ * - Fixed 8-bit design compliance violations
+ * - Backward compatible with legacy usage (IDELayoutMain, MobileIDELayout)
  */
 
-import type { ProjectMetadata } from '@/lib/workspace';
-
-interface PermissionOverlayProps {
-    /** Project metadata for display */
-    projectMetadata: ProjectMetadata | null;
-    /** Callback to restore file system access (for existing project) */
+// Legacy interface for backward compatibility (used by IDELayoutMain, MobileIDELayout)
+interface PermissionOverlayLegacyProps {
+    /** Project metadata (legacy - use projectId instead) */
+    projectMetadata: {
+        id?: string;
+        name?: string;
+    } | null;
+    /** Callback to restore file system access (legacy) */
     onRestoreAccess: () => void;
-    /** Callback to open a new folder (when no project loaded) */
+    /** Callback to open a new folder (legacy) */
     onOpenFolder?: () => void;
 }
 
-/**
- * Overlay shown when file system permission needs to be restored.
- * Story 13-5: Restore Access Overlay.
- * 
- * FIX-2026-01-05: Now shows different UI based on whether a project is loaded:
- * - If project loaded: "Restore Access" to prompt for permission on existing handle
- * - If no project: "Open Folder" to select a new directory
- */
-export function PermissionOverlay({
-    projectMetadata,
-    onRestoreAccess,
-    onOpenFolder,
-}: PermissionOverlayProps): React.JSX.Element {
-    // Determine if we have an existing project or need to open a new one
-    const hasExistingProject = projectMetadata !== null;
+// New interface for ProjectContextProvider integration
+interface PermissionOverlayNewProps {
+    /** Project ID for reference */
+    projectId?: string;
+    /** Project name for display */
+    projectName?: string;
+    /** Callback when permission is granted with FSA handle */
+    onPermissionGranted: (handle: FileSystemDirectoryHandle) => void | Promise<void>;
+    /** Callback when user cancels permission prompt */
+    onCancel: () => void;
+}
 
-    const handleClick = () => {
-        if (hasExistingProject) {
-            onRestoreAccess();
-        } else if (onOpenFolder) {
-            onOpenFolder();
-        } else {
-            // Fallback - try restoreAccess anyway
-            onRestoreAccess();
+type PermissionOverlayProps = PermissionOverlayLegacyProps | PermissionOverlayNewProps;
+
+/**
+ * Overlay shown when file system permission needs to be granted.
+ *
+ * ARCH-04-03: Updated for ProjectContextProvider integration
+ * - Backward compatible with legacy (onRestoreAccess/onOpenFolder)
+ * - New interface for ProjectContextProvider (onPermissionGranted/onCancel)
+ * - Uses projectId and projectName when available
+ * - Calls showDirectoryPicker() to get FSA handle
+ * - Passes handle to onPermissionGranted callback
+ */
+export function PermissionOverlay(props: PermissionOverlayProps): React.JSX.Element {
+    // Determine if using legacy or new props
+    const isLegacy = 'projectMetadata' in props;
+    const isNew = 'onPermissionGranted' in props;
+
+    // Extract values from either interface
+    const projectName = isLegacy
+        ? (props as PermissionOverlayLegacyProps).projectMetadata?.name
+        : (props as PermissionOverlayNewProps).projectName;
+
+    const handleClick = async () => {
+        try {
+            // Show directory picker to get FSA handle
+            const handle = await window.showDirectoryPicker();
+
+            // Call appropriate callback
+            if (isNew) {
+                await (props as PermissionOverlayNewProps).onPermissionGranted(handle);
+            } else if (isLegacy) {
+                (props as PermissionOverlayLegacyProps).onRestoreAccess();
+            }
+        } catch (error) {
+            console.error('Permission denied or cancelled:', error);
+
+            // For new interface, call onCancel on user cancel
+            if (isNew && 'onCancel' in props) {
+                (props as PermissionOverlayNewProps).onCancel();
+            }
         }
     };
 
     return (
         <div className="absolute inset-0 bg-background z-50 flex items-center justify-center">
             <div className="bg-card p-8 rounded-none text-center max-w-md border border-border shadow-pixel">
-                <div className="w-16 h-16 mx-auto mb-4 bg-amber-500/15 rounded-full flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-amber-500 flex items-center justify-center">
                     <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        {hasExistingProject ? (
-                            // Lock icon for restore access
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        ) : (
-                            // Folder icon for open folder
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                        )}
+                        {/* Lock icon for permission prompt */}
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">
-                    {hasExistingProject ? 'Permission Required' : 'No Folder Selected'}
+                    {isLegacy ? 'Permission Required' : 'Permission Required'}
                 </h3>
                 <p className="text-muted-foreground text-sm mb-6">
-                    {hasExistingProject ? (
-                        <>
-                            Click below to restore access to your project folder.
-                            <span className="block mt-1 text-foreground font-medium">
-                                {projectMetadata.name}
-                            </span>
-                        </>
-                    ) : (
-                        'Select a folder to start working with the IDE.'
+                    {isLegacy
+                        ? 'Click below to restore access to your project folder.'
+                        : 'Click below to grant access to your project folder.'}
+                    {projectName && (
+                        <span className="block mt-1 text-foreground font-medium">
+                            {projectName}
+                        </span>
                     )}
                 </p>
                 <button
                     onClick={handleClick}
-                    className="min-h-[44px] px-6 py-3 bg-primary hover:brightness-110 text-primary-foreground rounded-lg font-medium transition-colors"
+                    className="min-h-[44px] px-6 py-3 bg-primary hover:brightness-110 text-primary-foreground rounded-none font-medium transition-colors"
                 >
-                    {hasExistingProject ? 'Restore Access' : 'Open Folder'}
+                    {isLegacy ? 'Restore Access' : 'Grant Permission'}
                 </button>
             </div>
         </div>

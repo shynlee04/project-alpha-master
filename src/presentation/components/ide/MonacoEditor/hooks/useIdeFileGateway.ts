@@ -13,16 +13,14 @@
  * @created 2026-01-18
  */
 
-import { useMemo, useRef } from 'react';
-import { useProjectContext } from '@/lib/workspace/ProjectContext';
-import { createIdeFileGateway } from '@/infrastructure/filesystem/ide-file-gateway';
+import { useProjectContext } from '@/infrastructure/context/project-context';
 import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 
 /**
  * Hook to provide IDE file gateway for MonacoEditor
  *
- * Creates and caches StorageGateway instance for IDE workspace.
- * Uses ProjectContext to get projectId and fsaHandle.
+ * Gets gateway directly from ProjectContext (already initialized).
+ * No need to create new gateway - provider manages lifecycle.
  *
  * @returns StorageGateway instance or null if not available
  *
@@ -40,57 +38,12 @@ import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interfa
  * ```
  */
 export function useIdeFileGateway(): StorageGateway | null {
-    const project = useProjectContextSafe();
-
-    // Cache gateway in ref to prevent recreation on renders
-    const gatewayRef = useRef<StorageGateway | null>(null);
-
-    const gateway = useMemo(() => {
-        // Gateway already created - return cached instance
-        if (gatewayRef.current) {
-            return gatewayRef.current;
-        }
-
-        // Need project ID and FSA handle to create gateway
-        if (!project?.project || !project.fsaHandle) {
-            console.warn('[useIdeFileGateway] Cannot create gateway: missing project or handle');
-            return null;
-        }
-
-        try {
-            // Create IDE file gateway using factory
-            const gateway = createIdeFileGateway({
-                projectId: project.project.id,
-                fsaHandle: project.fsaHandle,
-            });
-
-            // Cache for future renders
-            gatewayRef.current = gateway;
-
-            console.log('[useIdeFileGateway] Gateway created:', {
-                projectId: project.project.id,
-                gateway: gateway.constructor.name,
-            });
-
-            return gateway;
-        } catch (error) {
-            console.error('[useIdeFileGateway] Failed to create gateway:', error);
-            return null;
-        }
-    }, [project?.project?.id, project?.fsaHandle]);
-
-    return gateway;
-}
-
-/**
- * Safe version of useProjectContext that returns null instead of throwing
- * when used outside of ProjectProvider.
- */
-function useProjectContextSafe() {
     try {
-        return useProjectContext();
+        // Get gateway directly from ProjectContext
+        const { gateway } = useProjectContext();
+        return gateway;
     } catch (error) {
-        console.warn('[useIdeFileGateway] Used outside ProjectProvider:', error);
+        console.warn('[useIdeFileGateway] Used outside ProjectContextProvider:', error);
         return null;
     }
 }

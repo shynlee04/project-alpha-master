@@ -175,7 +175,7 @@ export const HubHomePage: React.FC = () => {
     setProjectCreationWizardOpen(true);
   };
 
-  const handleProjectCreated = (projectId: string) => {
+  const handleProjectCreated = (projectId: string, fsaHandle?: FileSystemDirectoryHandle | null) => {
     toast.success(t('hub.projectCreated', 'Project created successfully'), {
       description: t('hub.projectCreatedDesc', 'Your project is ready to use'),
       duration: 3000,
@@ -196,12 +196,14 @@ export const HubHomePage: React.FC = () => {
       projectStorageType: project.storageType,
     });
 
+    const navigationState = { fsaHandle };
+
     // BUG-017 FIX: If user was navigating to a specific workspace (via ProjectPicker),
     // respect that choice instead of defaulting to IDE
     if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
       // User explicitly wanted this workspace (e.g., clicked Notes card → created project)
       console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
-      navigate({ to: `/${projectPickerWorkspace}/$projectId`, params: { projectId } });
+      navigate({ to: `/${projectPickerWorkspace}/$projectId`, params: { projectId }, state: navigationState });
       // Reset the picker workspace after navigation
       setProjectPickerWorkspace('ide');
       return;
@@ -211,10 +213,10 @@ export const HubHomePage: React.FC = () => {
     // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
     if (platform.canAccessIDE && project.storageType === 'fsa') {
       console.log('[HubHomePage] Navigating to IDE workspace (default for FSA)');
-      navigate({ to: '/ide/$projectId', params: { projectId } });
+      navigate({ to: '/ide/$projectId', params: { projectId }, state: navigationState });
     } else {
       console.log('[HubHomePage] Navigating to Notes workspace (default for non-FSA)');
-      navigate({ to: '/notes/$projectId', params: { projectId } });
+      navigate({ to: '/notes/$projectId', params: { projectId }, state: navigationState });
     }
   };
 

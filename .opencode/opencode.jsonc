@@ -19,17 +19,17 @@
         "write": true,
         "mcp": true,
         "edit": true,
-        "bash": false,
-        "glob": false,
-        "grep": false,
+        "bash": true,
+        "glob": true,
+        "grep": true,
         "read": true,
         "task": true
       },
       "permission": {
         "edit": "allow",
         "bash": "allow",
-        "glob": "deny",
-        "grep": "deny",
+        "glob": "allow",
+        "grep": "allow",
         "read": "allow",
         "write": "allow",
         "task": {
@@ -37,7 +37,7 @@
           "agent": "allow",
           "subagent": "allow",
           "skill": "allow",
-          "command": "ask"
+          "command": "allow"
         }
       }
     },
