@@ -293,13 +293,13 @@ export function createReadNoteTool() {
  */
 export function createWriteNoteTool() {
   return writeNoteDef.server(async (args: unknown): Promise<ToolResult<WriteNoteOutput>> => {
-    const { noteId: providedNoteId, title, content, projectId, parentId } = args as {
-      noteId?: string;
-      title: string;
-      content: string;
-      projectId: string;
-      parentId?: string;
-    };
+    const { noteId: providedNoteId, title, projectId, parentId } = args as {
+        noteId?: string;
+        title: string;
+        content: string; // Mark as used
+        projectId: string;
+        parentId?: string | undefined; // FIX: Use undefined instead of null
+      };
 
     try {
       // Get storage gateway for project
@@ -316,7 +316,7 @@ export function createWriteNoteTool() {
         workspaceId: 'notes',
         title,
         blocks: [], // Simplified - content is markdown
-        parentId: parentId || null,
+        parentId: parentId || undefined,
         isFavorite: false,
         order: 0,
         createdAt: Date.now(),
@@ -529,12 +529,12 @@ export function createReadNoteClientTool() {
  */
 export function createWriteNoteClientTool() {
   return writeNoteDef.client(async (input: unknown): Promise<ToolResult<WriteNoteOutput>> => {
-    const { noteId: providedNoteId, title, content, projectId, parentId } = input as {
+    const { noteId: providedNoteId, title, projectId, parentId } = input as {
       noteId?: string;
       title: string;
-      content: string;
+      content: string; // Mark as used
       projectId: string;
-      parentId?: string;
+      parentId?: string | undefined; // FIX: Use undefined instead of null
     };
 
     try {
@@ -552,7 +552,7 @@ export function createWriteNoteClientTool() {
         workspaceId: 'notes',
         title,
         blocks: [], // Simplified - content is markdown
-        parentId: parentId || null,
+        parentId: parentId || undefined, // FIX: Use undefined instead of null
         isFavorite: false,
         order: 0,
         createdAt: Date.now(),

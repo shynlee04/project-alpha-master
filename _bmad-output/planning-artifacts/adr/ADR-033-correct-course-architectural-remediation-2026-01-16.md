@@ -1,9 +1,18 @@
+---
+# ⚠️ SUPERSEDED DECISION RECORD
+**Status:** SUPERSEDED
+**Superseded By:** ADR-034-project-centric-architecture-2026-01-20.md
+**Superseded Date:** 2026-01-25
+**Reason:** Architectural consolidation - ADR-034 established project-centric architecture as primary authority
+---
+
 # ADR-033: Correct-Course Architectural Remediation
 
 **Date**: 2026-01-16
-**Status**: APPROVED FOR SPRINT PLANNING
+**Status**: SUPERSEDED (was: APPROVED FOR SPRINT PLANNING)
 **Decision Makers**: User + BMAD Master Orchestrator
 **Supersedes**: ADR-032 (Clean Storage Architecture - now incorporated)
+**Superseded By**: ADR-034
 
 ---
 

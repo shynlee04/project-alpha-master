@@ -18,7 +18,6 @@
  * @created 2026-01-23
  */
 
-import React from 'react';
 import { Menu } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -49,7 +48,7 @@ export interface SimpleHeaderProps {
  * 8-bit design: `border-2`, `border-black`, `bg-gray-50`, sharp corners.
  * i18n support for toggle button aria-label.
  */
-export function SimpleHeader({ onToggleSidebar, projectId }: SimpleHeaderProps) {
+export function SimpleHeader({ onToggleSidebar }: SimpleHeaderProps) {
   const { t } = useTranslation();
 
   return (

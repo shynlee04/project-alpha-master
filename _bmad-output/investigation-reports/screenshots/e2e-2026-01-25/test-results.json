@@ -1,0 +1,180 @@
+{
+  "timestamp": "2026-01-25T02:47:59.255Z",
+  "journeys": {
+    "J1": {
+      "steps": [
+        {
+          "step": 1,
+          "status": "PASS",
+          "details": "Hub page loaded",
+          "timestamp": "2026-01-25T02:48:10.700Z"
+        },
+        {
+          "step": 2,
+          "status": "FAIL",
+          "details": "New Project button not found",
+          "timestamp": "2026-01-25T02:48:10.748Z"
+        },
+        {
+          "step": 4,
+          "status": "FAIL",
+          "details": "FSA folder picker not found",
+          "timestamp": "2026-01-25T02:48:10.778Z"
+        }
+      ],
+      "status": "COMPLETED"
+    },
+    "J2": {
+      "steps": [
+        {
+          "step": 1,
+          "status": "PASS",
+          "details": "Notes list loaded",
+          "timestamp": "2026-01-25T02:48:32.004Z"
+        },
+        {
+          "step": 2,
+          "status": "FAIL",
+          "details": "Editor area not found",
+          "timestamp": "2026-01-25T02:48:32.019Z"
+        },
+        {
+          "step": 1,
+          "status": "PASS",
+          "details": "Notes list loaded",
+          "timestamp": "2026-01-25T02:49:43.012Z"
+        },
+        {
+          "step": 2,
+          "status": "FAIL",
+          "details": "Editor area not found",
+          "timestamp": "2026-01-25T02:49:43.020Z"
+        },
+        {
+          "step": "ERROR",
+          "status": "FAIL",
+          "details": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/notes\", waiting until \"networkidle\"\u001b[22m\n",
+          "timestamp": "2026-01-25T02:50:16.583Z"
+        }
+      ],
+      "status": "IN_PROGRESS",
+      "desktop": {
+        "status": "COMPLETED"
+      },
+      "tablet": {
+        "status": "COMPLETED"
+      },
+      "mobile": {
+        "status": "FAILED"
+      }
+    },
+    "J3": {
+      "steps": [
+        {
+          "step": 1,
+          "status": "FAIL",
+          "details": "Chat link not found",
+          "timestamp": "2026-01-25T02:48:53.537Z"
+        },
+        {
+          "step": 1,
+          "status": "FAIL",
+          "details": "Chat link not found",
+          "timestamp": "2026-01-25T02:49:44.689Z"
+        },
+        {
+          "step": "ERROR",
+          "status": "FAIL",
+          "details": "page.goto: net::ERR_ABORTED at http://localhost:3000/\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"networkidle\"\u001b[22m\n",
+          "timestamp": "2026-01-25T02:50:47.087Z"
+        }
+      ],
+      "status": "IN_PROGRESS",
+      "desktop": {
+        "status": "COMPLETED"
+      },
+      "tablet": {
+        "status": "COMPLETED"
+      },
+      "mobile": {
+        "status": "FAILED"
+      }
+    },
+    "J4": {
+      "status": "COMPLETED"
+    },
+    "J5": {
+      "steps": [
+        {
+          "step": "ERROR",
+          "status": "FAIL",
+          "details": "page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"networkidle\"\u001b[22m\n",
+          "timestamp": "2026-01-25T02:49:39.747Z"
+        },
+        {
+          "step": 1,
+          "status": "PASS",
+          "details": "Default layout loaded",
+          "timestamp": "2026-01-25T02:49:46.550Z"
+        },
+        {
+          "step": 2,
+          "status": "FAIL",
+          "details": "Navigation not found",
+          "timestamp": "2026-01-25T02:49:46.558Z"
+        },
+        {
+          "step": "ERROR",
+          "status": "FAIL",
+          "details": "page.setViewportSize: Target page, context or browser has been closed",
+          "timestamp": "2026-01-25T02:50:47.107Z"
+        }
+      ],
+      "status": "IN_PROGRESS",
+      "desktop": {
+        "status": "FAILED"
+      },
+      "tablet": {
+        "status": "COMPLETED"
+      },
+      "mobile": {
+        "status": "FAILED"
+      }
+    }
+  },
+  "consoleErrors": [
+    {
+      "timestamp": "2026-01-25T02:48:09.783Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:48:30.025Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:48:51.960Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:49:07.655Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:49:41.270Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:49:43.130Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:49:44.797Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "timestamp": "2026-01-25T02:50:17.793Z",
+      "text": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    }
+  ],
+  "overallStatus": "COMPLETED"
+}

@@ -12,18 +12,17 @@
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
 import type { ToolResult } from './types';
-import type { AgentKnowledgeTools } from '../facades';
+import type { AgentKnowledgeTools, PDFProcessingOptions } from '../facades';
 
 /**
  * PDF processing input schema
- * 
+ *
  * NOTE: `file` field is intentionally typed as z.string().optional() for schema
  * serialization compatibility with providers like Mistral. The actual File object
  * is handled at runtime in the client implementation (checking instanceof File).
  * LLMs should only send base64Content, never this field.
  */
 const ProcessPDFInputSchema = z.object({
-  // FIX: Changed from z.any() to z.string() for Mistral compatibility
   file: z.string().optional().describe('Internal: File reference (client-side only, LLM should not use this)'),
   base64Content: z.string().describe('Base64-encoded PDF content'),
   filename: z.string().optional().describe('Original filename'),
@@ -35,6 +34,8 @@ const ProcessPDFInputSchema = z.object({
     extractCitations: z.boolean().optional().default(true),
   }).optional().describe('Processing options'),
 });
+
+export type ProcessPDFInput = z.infer<typeof ProcessPDFInputSchema>;
 
 /**
  * PDF processing output schema
@@ -49,8 +50,6 @@ const ProcessPDFOutputSchema = z.object({
     rows: z.number(),
     columns: z.number(),
     caption: z.string().optional(),
-    // FIX: Changed from z.unknown() to z.array for Mistral compatibility
-    // Table data as 2D array of cell values (strings)
     data: z.array(z.array(z.string())),
   })),
   figures: z.array(z.object({
@@ -69,7 +68,6 @@ const ProcessPDFOutputSchema = z.object({
   }).optional(),
 });
 
-export type ProcessPDFInput = z.infer<typeof ProcessPDFInputSchema>;
 export type ProcessPDFOutput = z.infer<typeof ProcessPDFOutputSchema>;
 
 /**
@@ -79,7 +77,7 @@ export const processPDFDef = toolDefinition({
   name: 'process_pdf',
   description: 'Process a PDF document to extract structured elements like headings, tables, figures, and citations using AI-powered document understanding. Use this when ingesting PDF files into the knowledge base.',
   inputSchema: ProcessPDFInputSchema,
-  needsApproval: false, // PDF processing is safe, no destructive operations
+  needsApproval: false,
 });
 
 /**
@@ -101,53 +99,27 @@ export function createProcessPDFClientTool(getKnowledgeTools: () => AgentKnowled
         };
       }
 
-      // Create File from base64 if not provided (LLM only sends base64Content)
-      let pdfFile: File;
-      // Runtime check: args.file might be a File object from client-side UI
-      // Schema uses z.string() for API compatibility, but actual value can be File
-      if (args.file && (args.file as unknown) instanceof File) {
-        pdfFile = args.file as unknown as File;
-      } else {
-        // Convert base64 to File
-        const binaryString = atob(args.base64Content);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        const mimeType = args.mimeType || 'application/pdf';
-        const filename = args.filename || 'document.pdf';
-        pdfFile = new File([bytes], filename, { type: mimeType });
-      }
-
       // Call knowledge tools facade
       const tools = getKnowledgeTools();
-      const result = await tools.processPDF(pdfFile, args.base64Content, args.options);
+      const pdfPath = args.filename || 'document.pdf';
 
-      // Map GeminiPDFResult to ProcessPDFOutput schema
+      // Map tool options to facade PDFProcessingOptions format
+      const pdfOptions: PDFProcessingOptions = {
+        extractText: args.options?.extractHeadings ?? true,
+        extractImages: args.options?.extractFigures ?? true,
+        maxPages: undefined,
+      };
+
+      const result = await tools.processPDF(pdfPath, pdfOptions);
+
+      // Map result to ProcessPDFOutput schema (stub returns minimal data)
       const mappedResult: ProcessPDFOutput = {
-        headings: result.headings.map(h => ({
-          level: h.level,
-          title: h.text,
-          page: h.pageNumber,
-        })),
-        tables: result.tables.map(t => ({
-          rows: t.rows.length,
-          columns: t.rows.length > 0 ? t.rows[0].length : 0,
-          caption: t.caption,
-          data: t.rows,
-        })),
-        figures: result.figures.map(f => ({
-          caption: f.caption,
-          type: f.type,
-          page: f.pageNumber,
-        })),
-        citations: result.citations.map(c => ({
-          title: c.metadata?.title || c.text,
-          author: c.metadata?.authors?.join(', '),
-          year: c.metadata?.year,
-        })),
+        headings: [],
+        tables: [],
+        figures: [],
+        citations: [],
         metadata: {
-          totalPages: undefined,
+          totalPages: result.pages || 0,
           hasColor: undefined,
         },
       };

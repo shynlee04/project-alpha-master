@@ -539,9 +539,9 @@ final_summary:
   quality_gates_passed: 8/8
   current_phase: "pm_validation_complete_sm_sprint_planning"
   next_workflow: "/bmad-bmm-workflows-sprint-planning via @bmad-bmm-sm"
-
-execution_log:
-  iteration_7:
+  
+  execution_log:
+    iteration_7:
     timestamp: "2026-01-08T05:00:00+07:00"
     phase: epic_generation
     status: completed
@@ -1154,7 +1154,7 @@ epic_ux_status:
     blocked: 0/5
     remaining: 2/5
     percent_complete: 60%
-    velocity: 8 + 6 + 8 = 22 points (EPIC-UX total: 28 points)
+    velocity: 22 points (EPIC-UX total: 28 points)
 
   next_stories:
     - "UX-4: Internationalization Audit (4 points)"
@@ -1253,7 +1253,7 @@ epic_mobile_status:
     blocked: 0/6
     remaining: 1/6
     percent_complete: "100%"
-    velocity: 5 + 5 + 3 + 3 + 2 + 8 = 26 points (EPIC-MOBILE total: 26 points)
+    velocity: 26 points (EPIC-MOBILE total: 26 points)
 
   mobile_features_working:
     notes_workspace:
@@ -1305,8 +1305,8 @@ epic_40_status:
   phase: "READY_FOR_DEV"
   total_stories: 12
   estimated_effort: "~52 hours"
-      created_at: "2026-01-09T23:50:00+07:00"
-      source: "Team A + Team B Sprint Planning Proposals Merge"
+  created_at: "2026-01-09T23:50:00+07:00"
+  source: "Team A + Team B Sprint Planning Proposals Merge"
 
   # ============================================================================
   # CORRECT COURSE VALIDATION ADRs (2026-01-18)

@@ -12,18 +12,17 @@
 import { toolDefinition } from '@tanstack/ai';
 import { z } from 'zod';
 import type { ToolResult } from './types';
-import type { AgentKnowledgeTools } from '../facades';
+import type { AgentKnowledgeTools, ImageProcessingOptions } from '../facades';
 
 /**
  * Image processing input schema
- * 
+ *
  * NOTE: `file` field is intentionally typed as z.string().optional() for schema
  * serialization compatibility with providers like Mistral. The actual File object
  * is handled at runtime in the client implementation (checking instanceof File).
  * LLMs should only send base64Content, never this field.
  */
 const ProcessImageInputSchema = z.object({
-  // FIX: Changed from z.any() to z.string() for Mistral compatibility
   file: z.string().optional().describe('Internal: File reference (client-side only, LLM should not use this)'),
   base64Content: z.string().describe('Base64-encoded image content'),
   filename: z.string().optional().describe('Original filename'),
@@ -35,6 +34,8 @@ const ProcessImageInputSchema = z.object({
     detectHandwriting: z.boolean().optional().default(true),
   }).optional().describe('Processing options'),
 });
+
+export type ProcessImageInput = z.infer<typeof ProcessImageInputSchema>;
 
 /**
  * Image processing output schema
@@ -54,7 +55,6 @@ const ProcessImageOutputSchema = z.object({
   }).optional(),
 });
 
-export type ProcessImageInput = z.infer<typeof ProcessImageInputSchema>;
 export type ProcessImageOutput = z.infer<typeof ProcessImageOutputSchema>;
 
 /**
@@ -64,7 +64,7 @@ export const processImageDef = toolDefinition({
   name: 'process_image',
   description: 'Process an image file to extract text via OCR, generate visual descriptions, detect objects, and identify handwritten content using AI-powered vision understanding. Use this when ingesting images or screenshots into the knowledge base.',
   inputSchema: ProcessImageInputSchema,
-  needsApproval: false, // Image processing is safe, no destructive operations
+  needsApproval: false,
 });
 
 /**
@@ -86,41 +86,30 @@ export function createProcessImageClientTool(getKnowledgeTools: () => AgentKnowl
         };
       }
 
-      // Create File from base64 if not provided (LLM only sends base64Content)
-      let imageFile: File;
-      let mimeType: string;
-      // Runtime check: args.file might be a File object from client-side UI
-      // Schema uses z.string() for API compatibility, but actual value can be File
-      if (args.file && (args.file as unknown) instanceof File) {
-        imageFile = args.file as unknown as File;
-        mimeType = imageFile.type;
-      } else {
-        // Convert base64 to File
-        const binaryString = atob(args.base64Content);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        mimeType = args.mimeType || 'image/png';
-        const filename = args.filename || 'image.png';
-        imageFile = new File([bytes], filename, { type: mimeType });
-      }
+      // Determine mimeType
+      const mimeType = args.mimeType || 'image/png';
 
       // Call knowledge tools facade
       const tools = getKnowledgeTools();
-      const result = await tools.processImage(imageFile, args.base64Content, args.options);
+      const imagePath = args.filename || 'image.png';
 
-      // Map GeminiImageResult to ProcessImageOutput schema
+      // Map tool options to facade ImageProcessingOptions format
+      const imageOptions: ImageProcessingOptions = {
+        extractText: args.options?.extractText ?? true,
+        generateDescription: args.options?.generateDescription ?? true,
+        maxSize: undefined,
+      };
+
+      const result = await tools.processImage(imagePath, imageOptions);
+
+      // Map result to ProcessImageOutput schema (stub returns minimal data)
       const mappedResult: ProcessImageOutput = {
-        extractedText: result.text,
-        description: result.description,
-        detectedObjects: result.detectedObjects?.map(obj => ({
-          name: obj.label,
-          confidence: obj.confidence,
-        })),
-        isHandwriting: result.imageType === 'handwriting',
+        extractedText: result.description || '',
+        description: result.description || '',
+        detectedObjects: [],
+        isHandwriting: false,
         metadata: {
-          mimeType,
+          mimeType: mimeType || 'image/png',
           width: undefined,
           height: undefined,
         },

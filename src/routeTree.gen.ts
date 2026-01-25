@@ -180,7 +180,7 @@ export interface FileRoutesByFullPath {
   '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/workspace': typeof WorkspaceIndexRoute
+  '/workspace/': typeof WorkspaceIndexRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
@@ -261,7 +261,7 @@ export interface FileRouteTypes {
     | '/notes/$projectId'
     | '/webcontainer/$'
     | '/workspace/$projectId'
-    | '/workspace'
+    | '/workspace/'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
@@ -430,7 +430,7 @@ declare module '@tanstack/react-router' {
     '/workspace/': {
       id: '/workspace/'
       path: '/workspace'
-      fullPath: '/workspace'
+      fullPath: '/workspace/'
       preLoaderRoute: typeof WorkspaceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }

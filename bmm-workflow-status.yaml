@@ -1,48 +1,51 @@
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # BMM WORKFLOW STATUS v2.5 - EPIC-CC-ARC (Architectural Remediation Execution)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 
 schema_version: "2.5.1"
 last_updated: "2026-01-17T12:00:00+07:00"
 updated_by: "BMAD Master - Orchestrator"
 previous_version: "bmm-workflow-status-v2.5.yaml"
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 
 health_score: 95  # Team B complete, TypeScript: 0 errors
 context_ttl: "24h"
-  current_phase: "EPIC-INF-01-CORRECT-COURSE"
- 
-  # PHASE GUIDANCE
-  phase_guidance: |
-    EPIC-INF-01 - CORRECT-COURSE IMPLEMENTATION (Phase 0):
- 
-    ADR-033 APPROVED: All decisions finalized.
-    
-    PHASE 0 - DIAGNOSTIC LOCK-IN:
-    - Purpose: Lock in session state before implementation
-    - Deep Architectural Analysis created (deep-architectural-analysis-2026-01-21.md)
-    - 31 ADR violations identified
-    - 8 phases planned (EPIC-INF-02 through EPIC-INF-08)
-    - Each phase: 2-4 stories (24-32 stories total)
-    
-    NEXT: Phase 1 - Fix Hooks Error (EPIC-INF-02)
 
-  KEY ACHIEVEMENTS:
+# ═════════════════════════════════════════════════════════════════════════
+# PHASE GUIDANCE
+# ═══════════════════════════════════════════════════════════════════════
+
+phase_guidance: |
+  EPIC-INF-01 - CORRECT-COURSE IMPLEMENTATION (Phase 0):
+
+  ADR-033 APPROVED: All decisions finalized.
+
+  PHASE 0 - DIAGNOSTIC LOCK-IN:
+  - Purpose: Lock in session state before implementation
+  - Deep Architectural Analysis created (deep-architectural-analysis-2026-01-21.md)
+  - 31 ADR violations identified
+  - 8 phases planned (EPIC-INF-02 through EPIC-INF-08)
+  - Each phase: 2-4 stories (24-32 stories total)
+
+  NEXT: Phase 1 - Fix Hooks Error (EPIC-INF-02)
+
+key_achievements:
   - ✅ StorageGateway abstraction layer complete
   - ✅ FSAGateway + IDBGateway with watch() and file tree scanning
   - ✅ MarkdownSyncService with conflict resolution UI
   - ✅ TypeScript: 0 errors
 
-  KEY DECISIONS (from ADR-033):
-  - Desktop → FSA automatically (no user choice)
-  - Mobile/Tablet → IndexedDB automatically
-  - Notes on FSA Desktop → Real .md files in /project/notes/
-  - IDE → Desktop only (mobile blocked)
-
-  ADR: _bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md
+key_decisions:
+  description: "From ADR-033"
+  decisions:
+    - "Desktop → FSA automatically (no user choice)"
+    - "Mobile/Tablet → IndexedDB automatically"
+    - "Notes on FSA Desktop → Real .md files in /project/notes/"
+    - "IDE → Desktop only (mobile blocked)"
+  adr_path: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
 
 # TEAMS
 teams:
@@ -76,9 +79,9 @@ limits:
   max_blocked_items: 5
   max_file_lines: 200
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # RESEARCH ARTIFACTS (Temporary - For Deep-Scanning Preparation)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 
 research_artifacts:
   - id: "RES-ARCH-2026-01-17"
@@ -184,9 +187,9 @@ research_artifacts:
       - "Storage layer refactoring (when EPIC-CC-ARC unblocks)"
       - "WebContainer integration (when sandbox alternatives needed)"
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # CURRENT ACTIVE STATE (Only Live Data)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 
 current_workflow:
   id: "epic-cc-arc-week3-2026-01-20"
@@ -335,7 +338,7 @@ current_workflow:
       adr_reference: "ADR-033 Clean Architecture - Layer Separation"
       files_modified:
         - "src/infrastructure/persistence/stores/index.ts (fixed import path)"
-
+        
 parallel_workflows:
   - id: "cc-01-project-space-2026-01-15"
     status: "ACTIVE"
@@ -345,15 +348,15 @@ parallel_workflows:
     story_summary: "Platform Detection & Storage Routing"
     started_at: "2026-01-15T12:00:00+07:00"
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 
 active_epics:
-  # ═══════════════════════════════════════════════════════════════════════════
+  # ═════════════════════════════════════════════════════════════════════════
   # CORRECT-COURSE EPICS (ARCHITECTURAL REMEDIATION)
-  # ═══════════════════════════════════════════════════════════════════════════
-
+  # ═════════════════════════════════════════════════════════════════════════
+  
   - id: "EPIC-CC-01"
     name: "Project Space Foundation"
     status: "COMPLETE"
@@ -388,198 +391,6 @@ active_epics:
         severity: "MEDIUM"
         target_story: "PS-06"
         status: "BLOCKED"
-    stories:
-      # Completed Stories
-      - id: "PS-01"
-        name: "Split useWorkspaceFileSystem God Store"
-        status: "COMPLETED"
-        effort: "4h"
-        result: "571 lines → 119 lines orchestrator + 3 focused slices"
-      - id: "TS-CLEAN"
-        name: "TypeScript Zero Errors"
-        status: "COMPLETED"
-        effort: "3h"
-        result: "19 errors → 0 errors, app runs successfully"
-      - id: "FSA-ADAPTER"
-        name: "Create FSAStorageAdapter with watch()"
-        status: "COMPLETED"
-        effort: "6h"
-        result: "New adapter with watch() + SHA-256 hashing + polling"
-        files:
-          - "src/infrastructure/filesystem/fsa-storage-adapter.ts"
-      
-      - id: "PS-02-A"
-        name: "Platform Detection & Storage Routing"
-        status: "COMPLETED"
-        effort: "4h"
-        priority: "P0"
-        completed_at: "2026-01-15T19:00:00+07:00"
-        description: |
-          Create platform detection and route:
-          - Desktop → FSA (File System Access API)
-          - Mobile → IDB (IndexedDB via Dexie)
-          - WebContainer → for IDE preview only
-        depends_on: ["FSA-ADAPTER"]
-        files:
-          - "src/infrastructure/filesystem/platform-detection.ts"
-          - "src/infrastructure/filesystem/storage-types.ts"
-          - "src/infrastructure/filesystem/StorageAdapterFactory.ts"
-        result: |
-          Platform detection and storage routing complete.
-          - Desktop with FSA → FSAStorageAdapter
-          - Mobile/Tablet → UnifiedStorageAdapter (IndexedDB)
-          - WebContainer → UnifiedStorageAdapter (preview only)
-          TypeScript: 0 errors ✅
-      
-      # PS-02-B: Hot Reactive Sync - NOW IN PROGRESS (bugs fixed 2026-01-15)
-      - id: "PS-02-B"
-        name: "Hot Reactive Sync Integration"
-        status: "IN_PROGRESS"
-        effort: "4h"
-        priority: "P0"
-        completed_at: "2026-01-15T22:00:00+07:00"
-        addresses_issue: "URI-03"
-        description: |
-          Connect FSAStorageAdapter.watch() to:
-          - Monaco for external file change detection
-          - Sync status indicators
-          - Permission boundary enforcement
-        result: |
-          - Fixed projectId bug (was hardcoded, now uses useProjectId())
-          - Connected VFS sync slice to StatusBar store
-          - Monaco subscribes to crossWorkspaceEventBus for external changes
-        files:
-          - "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts"
-          - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
-
-      # Audit Fix Stories (P0 - Critical UX)
-      - id: "AUDIT-P0-01"
-         name: "Add Route Guards for Platform & Storage Type"
-         status: "COMPLETED"
-         effort: "2h"
-         priority: "P0"
-         addresses_audit: "PART 3 - VIOLATION #1, #2"
-         description: |
-           Add beforeLoad route guards in ide.$projectId.tsx:
-           - Redirect mobile users to Notes workspace
-           - Redirect non-FSA projects to Notes workspace
-         files:
-           - "src/routes/ide.$projectId.tsx"
-         result: |
-           - Mobile users auto-redirected to /notes/$projectId
-           - IndexDB projects auto-redirected to /notes/$projectId
-           - Console logging for debugging
-
-       - id: "AUDIT-P0-02"
-         name: "Fix FSA Handle Restoration Condition"
-         status: "COMPLETED"
-         effort: "1h"
-         priority: "P0"
-         addresses_audit: "PART 2 - Broken restoration condition"
-         description: |
-           Fix broken restoration condition at ide.$projectId.tsx:74
-           The condition `!restoredProject.storageMetadata` was always false.
-           Now restores handle for ALL FSA projects.
-         files:
-           - "src/routes/ide.$projectId.tsx"
-         result: |
-           - FSA handles now restored on every project load
-           - No more manual "Restore Access" clicks required
-
-       # Audit Fix Stories (P1 - UX Improvements)
-       - id: "AUDIT-P1-01"
-         name: "Platform Detection in Project Wizard"
-         status: "COMPLETED"
-         effort: "2h"
-         priority: "P1"
-         addresses_audit: "PART 1 - Default storage wrong for desktop"
-         description: |
-           Update ProjectDetailsStep.tsx:
-           - Auto-detect platform (mobile/tablet/desktop)
-           - Hide FSA option on mobile/tablet
-           - Auto-select 'indexeddb' on mobile
-           - Auto-select 'fsa' on desktop
-         files:
-           - "src/presentation/components/project/steps/ProjectDetailsStep.tsx"
-         result: |
-           - Desktop users default to File System Access
-           - Mobile users only see Browser Storage option
-           - No more confusing UX
-
-      # NEW: Critical Stories for User-Reported Issues
-      - id: "PS-04"
-        name: "Handle Persistence Architecture"
-        status: "COMPLETED"
-        effort: "6h"
-        priority: "P0"
-        completed_at: "2026-01-20T10:00:00+07:00"
-        addresses_issue: "URI-01"
-        description: |
-          Fix projects not persisting on browser refresh.
-          Implemented via HandlePersistenceService with metadata storage and silent restore.
-        files:
-          - "src/infrastructure/filesystem/handle-persistence.ts"
-          - "src/infrastructure/filesystem/handle-types.ts"
-          - "src/infrastructure/persistence/dexie-db-helpers/fsa-handle-helpers.ts"
-        result: |
-          - Handle persistence service implemented (573 lines)
-          - Chrome 129+ structured clone support
-          - Silent restore for Chrome 122+
-          - Metadata fallback for older browsers
-      
-      - id: "PS-05"
-        name: "Virtual File System Tree Structure"
-        status: "COMPLETED"
-        effort: "8h"
-        priority: "P0"
-        completed_at: "2026-01-20T10:30:00+07:00"
-        addresses_issue: "URI-02"
-        description: |
-          Fix folders-in-folders not displaying.
-          Implemented via FileTreeScanner with snapshot caching.
-        files:
-          - "src/infrastructure/filesystem/file-tree-scanner.ts"
-          - "src/infrastructure/filesystem/file-cache.ts"
-        result: |
-          - FileTreeScanner implemented (834 lines)
-          - Nested folder structure support
-          - Snapshot caching in .viagent/
-          - Background refresh with diffing
-          - Exclusion patterns and depth limits enforced
-      
-      - id: "PS-06"
-        name: "RAG Index Infrastructure"
-        status: "COMPLETED"
-        effort: "8h"
-        priority: "P1"
-        completed_at: "2026-01-20T11:00:00+07:00"
-        addresses_issue: "URI-04"
-        description: |
-          Implement RAG infrastructure for semantic search.
-          Full RAG pipeline with Orama index and vector embeddings.
-        files:
-          - "src/lib/rag/document-chunker.ts"
-          - "src/lib/rag/embedding-service.ts"
-          - "src/lib/rag/orama-index.ts"
-          - "src/lib/rag/incremental-indexing-service.ts"
-        result: |
-          - Complete RAG infrastructure verified
-          - Chunking, Embedding, and Indexing services exist
-          - Hybrid retriever implemented
-          - Dexie storage integration complete
-      
-      # Legacy Consolidation (Moved down, depends on PS-02-B)
-      - id: "PS-03"
-        name: "Consolidate Legacy Sync Code"
-        status: "BLOCKED_BY_PS-02-B"
-        effort: "4h"
-        priority: "P1"
-        description: |
-          Delete/archive:
-          - src/lib/filesync/ (re-exports only)
-          - src/lib/sync/ → merge into infrastructure/sync/
-          - Broken file watcher in src/lib/watcher/
-        depends_on: ["PS-02-B"]
 
   - id: "EPIC-CC-02"
     name: "BYOK Cleanup"
@@ -634,9 +445,9 @@ active_epics:
     team: "Team B"
     blocked_by: "EPIC-CC-01"
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # ARCHITECTURE DECISIONS (Quick Reference)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 
 architecture:
   storage_strategy:
@@ -654,13 +465,13 @@ architecture:
     - "ADR-031: Chat System Unification"
     - "ADR-030: Multimodal Integration"
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═════════════════════════════════════════════════════════════════════════
 # NEXT ACTIONS (Immediate)
-# ═══════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 
-# ═══════════════════════════════════════════════════════════════════════════
+  # ═════════════════════════════════════════════════════════════════════════
   # PUT ASIDE RESEARCH ARTIFACTS (Memorized for Later Resolution)
-  # ═══════════════════════════════════════════════════════════════════════════
+  # ═════════════════════════════════════════════════════════════════════════
   
   put_aside_research:
     - id: "RES-ARCH-2026-01-17"
@@ -687,9 +498,9 @@ architecture:
       deferred_until: "Deep-scanning system architecture remediation phase"
       governance_reference: "ADR-033 - Section on Storage Strategy"
   
-  # ═══════════════════════════════════════════════════════════════════════════
+  # ═════════════════════════════════════════════════════════════════════════
   # NEXT ACTIONS (Immediate)
-  # ═══════════════════════════════════════════════════════════════════════════
+  # ═══════════════════════════════════════════════════════════════════════
   
   next_actions:
   team_a:
@@ -742,9 +553,9 @@ architecture:
           - "src/domain/services/rag/embedding-service.ts (NEW)"
           - "src/domain/services/rag/index-service.ts (NEW)"
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 # USER-REPORTED ISSUES TRACKING
-# ═══════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 
 user_reported_issues:
   - id: "URI-01"
@@ -783,9 +594,9 @@ user_reported_issues:
     status: "BLOCKED_BY_PS-05"
     workaround: "Use keyword search only"
 
-# ═════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 # CORRECT-COURSE WORKFLOW STATUS - TRACK 3 RESOLUTION
-# ═════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════════════
 
 correct_course_workflow:
   track_3_epic_cc_11:

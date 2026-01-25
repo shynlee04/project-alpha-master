@@ -1,0 +1,4 @@
+
+> project-alpha@ typecheck /Users/apple/Documents/coding-projects/project-alpha-master
+> tsc -p tsconfig.check.json --noEmit --incremental
+
