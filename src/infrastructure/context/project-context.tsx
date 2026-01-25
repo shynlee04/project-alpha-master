@@ -26,15 +26,17 @@ import React, { createContext, useEffect, useState, useCallback, useContext } fr
 import type { ReactNode } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 
-import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { storageAdapterFactory } from '@/infrastructure/filesystem/StorageAdapterFactory';
-import { useFileTreeStore } from '@/infrastructure/persistence/stores/file-tree-store';
-import type { Project } from '@/domain/entities/project';
-import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
-import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
-import type { PlatformContract } from '@/infrastructure/filesystem/storage-types';
+import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import { detectPlatform } from '@/infrastructure/filesystem/platform-detection';
+import type { PlatformContract } from '@/infrastructure/filesystem/storage-types';
+import { useFileTreeStore } from '@/infrastructure/persistence/stores/file-tree-store';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { NULL_CHAT_SERVICE } from '@/infrastructure/services/chat-service';
+import type { Project } from '@/domain/entities/project';
+import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
+import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
+import { PermissionOverlay } from '@/presentation/components/layout/PermissionOverlay';
 
 // ============================================================================
 // ProjectContext Interface (ADR-034 Specification)
@@ -146,8 +148,9 @@ export const ProjectContext = ProjectContextInternal;
  */
 export const ProjectContextProvider: React.FC<{
   projectId: string;
+  initialHandle?: FileSystemDirectoryHandle | null;
   children: ReactNode;
-}> = ({ projectId, children }) => {
+}> = ({ projectId, initialHandle = null, children }) => {
   // ========================================================================
   // Router
   // ========================================================================
@@ -159,37 +162,116 @@ export const ProjectContextProvider: React.FC<{
   // ========================================================================
 
   const { getProject, setActiveProject } = useProjectStore();
+  const fileTreeStore = useFileTreeStore();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [platform, setPlatform] = useState<PlatformContract | null>(null);
   const [gateway, setGateway] = useState<StorageGateway | null>(null);
-  const [fileTree, setFileTree] = useState<ReturnType<typeof useFileTreeStore> | null>(null);
+  const [fsaHandle, setFsaHandle] = useState<FileSystemDirectoryHandle | null>(initialHandle);
+  const [showPermissionOverlay, setShowPermissionOverlay] = useState<boolean>(false);
 
   // ========================================================================
   // Initialize on Mount
   // ========================================================================
 
+  const buildStorageGateway = useCallback(async (
+    loadedProject: Project,
+    handle: FileSystemDirectoryHandle | null
+  ) => {
+    const storageAdapter: StorageAdapter = storageAdapterFactory.createAdapter({
+      projectId,
+      storageType: loadedProject.storageType,
+      handle,
+    });
+
+    const storageGateway: StorageGateway = {
+      read: async (path) => {
+        const result = await storageAdapter.readFile(path);
+        if (result.text !== undefined) {
+          return new TextEncoder().encode(result.text);
+        } else {
+          return result.data;
+        }
+      },
+      write: async (path, data) => {
+        await storageAdapter.writeFile(path, data);
+      },
+      delete: async (path) => {
+        await storageAdapter.deleteFile(path);
+      },
+      list: async (path) => {
+        const files = await storageAdapter.listFiles(path);
+        return files.map((file) => ({
+          path: file,
+          kind: 'file',
+          size: 0,
+          lastModified: 0,
+        }));
+      },
+      exists: async (path) => {
+        return await storageAdapter.exists(path);
+      },
+      watch: () => {
+        return { dispose: () => {} };
+      },
+    };
+
+    setGateway(storageGateway);
+
+    const entries = await storageGateway.list('.');
+    if (fileTreeStore.load) {
+      fileTreeStore.load(entries);
+    }
+  }, [fileTreeStore, projectId]);
+
+  const handleRestoreAccess = useCallback(async () => {
+    if (!project) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const restoreResult = await handlePersistenceService.restoreHandle(projectId);
+
+      if (!restoreResult.success || !restoreResult.handle) {
+        setShowPermissionOverlay(false);
+        setError(restoreResult.error ?? 'Failed to restore file system access.');
+        setLoading(false);
+        return;
+      }
+
+      setFsaHandle(restoreResult.handle);
+      setShowPermissionOverlay(false);
+
+      await buildStorageGateway(project, restoreResult.handle);
+      setLoading(false);
+    } catch (err) {
+      setShowPermissionOverlay(false);
+      setError(`Failed to restore file system access: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setLoading(false);
+    }
+  }, [buildStorageGateway, project, projectId]);
+
   useEffect(() => {
     async function initializeProject() {
       setLoading(true);
       setError(null);
+      setShowPermissionOverlay(false);
 
       try {
-        // 1. Get platform contract
         const platformInfo = detectPlatform();
         const platformContract: PlatformContract = {
           deviceType: platformInfo.type,
           storageType: platformInfo.storageType,
           canAccessFSA: platformInfo.isFSASupported,
-          canWatchFiles: false, // TODO: Implement file watching
+          canWatchFiles: false,
           canRunTerminal: platformInfo.isFSASupported && platformInfo.type === 'desktop',
           canDoAgenticCoding: platformInfo.isFSASupported && platformInfo.type === 'desktop',
-          canAccessIDE: true, // IDE always accessible
+          canAccessIDE: true,
         };
         setPlatform(platformContract);
 
-        // 2. Load project from Dexie
         const loadedProject = getProject(projectId);
 
         if (!loadedProject) {
@@ -201,60 +283,34 @@ export const ProjectContextProvider: React.FC<{
         setProject(loadedProject);
         setActiveProject(projectId);
 
-        // 3. Initialize gateway based on storageType
-        // Use StorageAdapterFactory with projectId
-        // Note: FSA handle will be retrieved from context when needed
-        const storageAdapter: StorageAdapter = storageAdapterFactory.createAdapter({
-          projectId,
-          storageType: loadedProject.storageType,
-        });
+        let resolvedHandle: FileSystemDirectoryHandle | null = initialHandle ?? fsaHandle;
 
-        // Create gateway from storage adapter
-        // Map StorageAdapter methods to StorageGateway interface
-        const storageGateway: StorageGateway = {
-          read: async (path) => {
-            const result = await storageAdapter.readFile(path);
-            if (result.text !== undefined) {
-              return new TextEncoder().encode(result.text);
-            } else {
-              return result.data;
+        if (loadedProject.storageType === 'fsa') {
+          if (initialHandle) {
+            await handlePersistenceService.persistHandle(projectId, initialHandle);
+            setFsaHandle(initialHandle);
+          } else {
+            const restoreResult = await handlePersistenceService.restoreHandle(projectId);
+
+            if (!restoreResult.success) {
+              if (restoreResult.requiresUserInteraction && restoreResult.restoredFromMetadata) {
+                setShowPermissionOverlay(true);
+                setLoading(false);
+                return;
+              }
+
+              setError(restoreResult.error ?? 'Failed to restore file system access.');
+              setLoading(false);
+              return;
             }
-          },
-          write: async (path, data) => {
-            await storageAdapter.writeFile(path, data);
-          },
-          delete: async (path) => {
-            await storageAdapter.deleteFile(path);
-          },
-          list: async (path) => {
-            const files = await storageAdapter.listFiles(path);
-            return files.map((file) => ({
-              path: file,
-              kind: 'file',
-              size: 0,
-              lastModified: 0,
-            }));
-          },
-          exists: async (path) => {
-            return await storageAdapter.exists(path);
-          },
-          watch: () => {
-            // TODO: Implement file watching
-            return { dispose: () => {} };
-          },
-        };
 
-        setGateway(storageGateway);
+            resolvedHandle = restoreResult.handle;
+            setFsaHandle(restoreResult.handle);
+          }
+        }
 
-        // 4. Initialize file tree state
-        const fileTreeStore = useFileTreeStore();
-        setFileTree(fileTreeStore);
-
-        // Load initial file tree
-        const entries = await storageGateway.list('.');
-        // Type assertion needed because ReturnType doesn't expose load method
-        (fileTree as any).load(entries);
-
+        const handleForAdapter = loadedProject.storageType === 'fsa' ? resolvedHandle : null;
+        await buildStorageGateway(loadedProject, handleForAdapter);
         setLoading(false);
       } catch (err) {
         setError(`Failed to load project: ${err instanceof Error ? err.message : 'Unknown error'}`);
@@ -263,18 +319,19 @@ export const ProjectContextProvider: React.FC<{
     }
 
     initializeProject();
-  }, [projectId]);
+  }, [buildStorageGateway, fsaHandle, getProject, initialHandle, projectId, setActiveProject]);
 
   // ========================================================================
   // Action Implementations
   // ========================================================================
 
   const refreshFileTree = useCallback(async () => {
-    if (!gateway || !fileTree) return;
+    if (!gateway) return;
     const entries = await gateway.list('.');
-    // Type assertion needed
-    (fileTree as any).load(entries);
-  }, [gateway, fileTree]);
+    if (fileTreeStore.load) {
+      fileTreeStore.load(entries);
+    }
+  }, [fileTreeStore, gateway]);
 
   const openFile = useCallback((path: string) => {
     console.log('[ProjectContext] Opening file:', path);
@@ -291,14 +348,14 @@ export const ProjectContextProvider: React.FC<{
   }, [gateway, refreshFileTree]);
 
   // Only provide context value when everything is loaded
-  const contextValue: ProjectContext | null = (loading || error || !project || !platform || !gateway || !fileTree)
+  const contextValue: ProjectContext | null = (loading || error || !project || !platform || !gateway)
     ? null
     : {
         project,
         projectId,
         gateway: gateway!,
         platform: platform!,
-        fileTree: fileTree!,
+        fileTree: fileTreeStore,
         chatService: NULL_CHAT_SERVICE,
         openFile,
         saveFile,
@@ -332,6 +389,18 @@ export const ProjectContextProvider: React.FC<{
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-gray-600">Loading project...</div>
+      </div>
+    );
+  }
+
+  if (showPermissionOverlay && project) {
+    return (
+      <div className="relative min-h-screen">
+        <PermissionOverlay
+          projectMetadata={project}
+          onRestoreAccess={handleRestoreAccess}
+          onOpenFolder={() => navigate({ to: '/' })}
+        />
       </div>
     );
   }
