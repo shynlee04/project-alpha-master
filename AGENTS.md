@@ -1,6 +1,22 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.5.0 | **Updated:** 2026-01-25T23:50+07:00 | **Health:** 55% (Parallel Execution)
+> **Version:** 2.6.0 | **Updated:** 2026-01-26T00:30+07:00 | **Health:** 45% (CC Remediation Required)
+
+---
+
+## 🚨 CRITICAL FINDING (2026-01-26)
+
+**Multi-Agent Audit Result**: EPIC-ARCH-02 and EPIC-ARCH-03 were prematurely marked complete.
+
+| Finding | Impact |
+|---------|--------|
+| Monaco is POC stub (textarea, not real editor) | No syntax highlighting |
+| 40+ i18n keys missing | UI shows raw translation keys |
+| Drag-drop layout causes broken UI | User experience broken |
+| PluginLayout.tsx = 1034 lines (god component) | Maintenance nightmare |
+| Store hydration race condition | Layout doesn't persist |
+
+**Resolution**: EPIC-CC-AR02AR03 created to remediate and align with Phase 1A.
 
 ---
 
@@ -8,7 +24,7 @@
 
 ### Team A: P0 BLOCKER - EPIC-ARCH-04-CC (FSA Handle Lifecycle)
 
-**Status**: IN_PROGRESS
+**Status**: 95% (CC-04 E2E Pending)
 
 | Story | Title | Status |
 |-------|-------|--------|
@@ -44,6 +60,27 @@
 - `src/plugins/monaco/MonacoPlugin.tsx`
 
 **Handoff**: `_bmad-output/handoffs/2026-01-25/TEAM-B-PARALLEL-SPRINT-HANDOFF-2026-01-25.md`
+
+---
+
+### Team A+B: P0 BLOCKER - EPIC-CC-AR02AR03 (Plugin System for Phase 1A)
+
+**Status**: READY_FOR_EXECUTION (After CC-04 Complete)
+
+| Story | Title | Status | Team | Effort |
+|-------|-------|--------|------|--------|
+| CC-AR-01 | Add All Missing i18n Translation Keys | READY | A | 2h |
+| CC-AR-02 | Wire platform-defaults.ts to Route | READY | A | 2-3h |
+| CC-AR-03 | Fix Store Hydration Race Condition | READY | B | 2-3h |
+| CC-AR-04 | Replace Drag-Drop with Toggle-Based Layout | READY | A | 4-6h |
+| CC-AR-05 | Replace Monaco POC with Real Monaco Editor | READY | B | 4-6h |
+| CC-AR-06 | Implement Preview Plugin (WebContainer) | READY | B | 4-6h |
+| CC-AR-07 | Archive Legacy/Duplicate Files | READY | A | 1h |
+| CC-AR-08 | Split PluginLayout.tsx | READY | B | 2-3h |
+
+**Remediates**: EPIC-ARCH-02 (70% true), EPIC-ARCH-03 (45% true)
+
+**Handoff**: `_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md`
 
 ---
 
@@ -620,20 +657,31 @@ EXCEPTIONAL DAYS:
 
 | Key | Value |
 |-----|-------|
-| **Current Phase** | Architecture Migration Completion |
-| **P0 Blocker** | EPIC-ARCH-04 (App Non-Functional) |
-| **Active Epic** | EPIC-ARCH-04 (0% - FSA Handle Integration) |
-| **Gate Story** | ARCH-04-01 (Integrate FSA Handle Lifecycle) |
-| **Team A Story** | ARCH-04-01 (READY_FOR_DEV) |
-| **Team B Story** | Available after ARCH-04-01 |
-| **Sprint File** | `sprint-status-2026-01-25.yaml` |
-| **Workflow File** | `workflow-status-2026-01-25.yaml` |
+| **Current Phase** | Plugin System Remediation (Phase 1A) |
+| **P0 Blocker** | EPIC-CC-AR02AR03 (Plugin System Rework) |
+| **Active Epic** | EPIC-CC-AR02AR03 (0% - Plugin System Rework for Phase 1A) |
+| **Secondary Epic** | EPIC-ARCH-04-CC (95% - CC-04 E2E Pending) |
+| **Gate Story** | CC-AR-01 (Add Missing i18n Keys) |
+| **Team A Story** | CC-AR-01 (READY) |
+| **Team B Story** | CC-AR-03 (READY) |
+| **Sprint File** | `sprint-status-2026-01-26.yaml` |
+| **Workflow File** | `workflow-status-2026-01-26.yaml` |
 | **ADR** | ADR-034 (APPROVED) |
 | **TypeScript Errors** | 0 ✅ (All 115 errors resolved - 2026-01-25) |
-| **App Status** | ❌ NON-FUNCTIONAL (FSA handle missing) |
-| **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md` |
-| **Handoff Artifact** | `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md` |
+| **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE (Plugin system stub) |
+| **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md` |
+| **Handoff Artifact** | `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md` |
 | **Completed Today** | EPIC-TS-DEBT, HOOKS-FIX-01, HOOKS-FIX-02 |
+
+### EPIC Corrected Status (As of 2026-01-26)
+
+| Epic | Previous Claim | TRUE Status | Action |
+|------|----------------|-------------|--------|
+| EPIC-ARCH-01 | 100% | 60% | Team B CONS stories |
+| EPIC-ARCH-02 | 100% | **70%** | EPIC-CC-AR02AR03 remediates |
+| EPIC-ARCH-03 | 85% | **45%** | EPIC-CC-AR02AR03 remediates |
+| EPIC-ARCH-04-CC | 90% | **95%** | CC-04 E2E pending |
+| **EPIC-CC-AR02AR03** | NEW | 0% | **P0 BLOCKER for Phase 1A** |
 
 ---
 

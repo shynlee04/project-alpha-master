@@ -108,10 +108,14 @@ export type LayoutMode = '1-column' | '2-column' | '3-column' | '2+1';
  * - User customization flag (prevents overwriting defaults)
  * - Responsive breakpoint state
  * - Current plugin for mobile single-view
+ * - Hydration completion flag (CC-AR-03 fix)
  *
  * Persisted via localStorage with project-specific key.
  */
 interface PluginLayoutState {
+  /** Hydration completion flag - true after persist middleware finishes loading */
+  _hasHydrated: boolean;
+
   /** Active plugin IDs in display order (1-5 plugins max) */
   activePlugins: PluginId[];
 
@@ -166,6 +170,9 @@ interface PluginLayoutState {
 
   /** Switch to previous plugin (for mobile swipe gestures) */
   switchToPreviousPlugin: () => void;
+
+  /** Set hydration completion flag (CC-AR-03 fix) */
+  setHasHydrated: (value: boolean) => void;
 }
 
 // ============================================================================
@@ -191,6 +198,9 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
       // ========================================================================
       // Initial State
       // ========================================================================
+
+      /** CC-AR-03: Hydration flag - false until onRehydrateStorage fires */
+      _hasHydrated: false,
 
       activePlugins: [],
       layoutMode: '2-column',
@@ -458,16 +468,38 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
             currentPlugin: state.activePlugins[prevIndex] || null,
           };
         }),
+
+      /**
+       * Set hydration completion flag (CC-AR-03 fix)
+       *
+       * @param value - Whether hydration is complete
+       * @remarks
+       * Called by onRehydrateStorage callback when persist middleware finishes
+       */
+      setHasHydrated: (value) => set({ _hasHydrated: value }),
     }),
 
     // ========================================================================
-    // Persist Configuration
+    // Persist Configuration (CC-AR-03: Added onRehydrateStorage)
     // ========================================================================
 
     {
       name: 'plugin-layout-storage', // Will be prefixed by projectSpecificStorage
       version: 1, // For migration support
       storage: projectSpecificStorage, // INT-02: Use project-specific storage
+      /**
+       * CC-AR-03: Hydration completion callback
+       *
+       * @remarks
+       * Called when persist middleware finishes loading state from storage.
+       * Sets _hasHydrated=true so components know when it's safe to read state.
+       */
+      onRehydrateStorage: () => (state) => {
+        // Called when hydration completes
+        if (state) {
+          state.setHasHydrated(true);
+        }
+      },
     }
   )
 );
