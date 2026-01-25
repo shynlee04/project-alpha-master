@@ -25,9 +25,6 @@ import type { PluginId } from '@/domain/types/plugin-types';
 // Plugin registry
 import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
 
-// CSS
-import './plugin-dnd.css';
-
 // ============================================================================
 // PluginPanel Props Interface
 // ============================================================================

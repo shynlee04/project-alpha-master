@@ -91,7 +91,10 @@ function UnifiedProjectRoute() {
   const location = useLocation();
   const fsaHandle = (location.state as { fsaHandle?: FileSystemDirectoryHandle | null } | undefined)?.fsaHandle ?? null;
 
-  console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, platform });
+  // CC-AR-03: Check hydration status before rendering layout
+  const hasHydrated = usePluginLayoutStore((s) => s._hasHydrated);
+
+  console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, platform, hasHydrated });
 
   // Initialize layout store with platform-appropriate defaults
   // Chỉ khởi tạo mặc định nếu người dùng chưa tùy chỉnh
@@ -103,6 +106,17 @@ function UnifiedProjectRoute() {
       layoutStore.initializeDefaults(defaultPlugins, defaultMode);
     }
   }, [project.id]);
+
+  // CC-AR-03: Show loading skeleton while store is hydrating
+  if (!hasHydrated) {
+    return (
+      <div className="h-full flex items-center justify-center bg-background">
+        <div className="animate-pulse text-muted-foreground font-mono text-sm">
+          Loading layout...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>

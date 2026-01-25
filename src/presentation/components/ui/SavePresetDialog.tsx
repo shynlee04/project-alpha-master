@@ -201,6 +201,7 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
       chat: t('plugins.chat.name', { defaultValue: 'AI Chat' }),
       notes: t('plugins.notes.name', { defaultValue: 'Notes' }),
       agents: t('plugins.agents.name', { defaultValue: 'Agents' }),
+      preview: t('plugins.preview.name', { defaultValue: 'Preview' }),
     };
     return pluginNames[pluginId] || pluginId;
   };

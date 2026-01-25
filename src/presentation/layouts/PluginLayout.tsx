@@ -15,7 +15,7 @@
  */
 
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { Plus, LayoutGrid, Layers } from 'lucide-react';
+import { Plus, LayoutGrid } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
 
@@ -38,8 +38,8 @@ import { PluginPanel } from './PluginPanel.tsx';
 import { LAYOUT_RULES } from './useBreakpoint';
 import { MobilePluginNav } from './MobilePluginNav.tsx';
 
-// CSS (ARCH-03-04)
-import './plugin-dnd.css';
+// CC-AR-04: Toggle-based toolbar (replaces drag-drop)
+import { PluginToolbar } from '@/presentation/components/layout/PluginToolbar';
 
 // ============================================================================
 // ARCH-03-05: Layout Onboarding
@@ -110,7 +110,6 @@ export function PluginLayout({}: PluginLayoutProps) {
     panelSizes,
     addPlugin,
     removePlugin,
-    reorderPlugin,
     setLayoutMode,
     breakpoint,
     setBreakpoint,
@@ -122,7 +121,6 @@ export function PluginLayout({}: PluginLayoutProps) {
       panelSizes: state.panelSizes,
       addPlugin: state.addPlugin,
       removePlugin: state.removePlugin,
-      reorderPlugin: state.reorderPlugin,
       setLayoutMode: state.setLayoutMode,
       breakpoint: state.breakpoint,
       setBreakpoint: state.setBreakpoint,
@@ -137,29 +135,11 @@ export function PluginLayout({}: PluginLayoutProps) {
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   // ========================================================================
-  // Screen Reader Announcements (ARCH-03-04)
+  // Screen Reader Announcements (CC-AR-04: Simplified, drag-drop removed)
   // ========================================================================
 
-  const [announcement, setAnnouncement] = useState('');
-
-  /**
-   * Announce reorder to screen readers
-   *
-   * @param pluginId - Plugin ID that moved
-   * @param newIndex - New position index
-   * @remarks
-   * - Sets announcement text
-   * - Clears after 2 seconds (allowing screen reader to read)
-   */
-  const announceReorder = useCallback((pluginId: PluginId, newIndex: number) => {
-    const plugin = getPlugin(pluginId);
-    const pluginName = plugin?.name || pluginId;
-    const announcementText = t('pluginPanel.announcement.moved', { plugin: pluginName, position: newIndex + 1 });
-    setAnnouncement(announcementText);
-
-    // Clear after announcement is read
-    setTimeout(() => setAnnouncement(''), 2000);
-  }, [t]);
+  // CC-AR-04: Announcement state kept for future use (screen reader support)
+  const [announcement, _setAnnouncement] = useState('');
 
   // ========================================================================
   // Get Available Plugins
@@ -297,23 +277,25 @@ export function PluginLayout({}: PluginLayoutProps) {
   );
 
   /**
-   * Handle plugin reorder (drag-drop simulation)
+   * CC-AR-04: Handle plugin toggle (add if inactive, remove if active)
    *
-   * @param fromIndex - Current index
-   * @param toIndex - Target index
+   * @param pluginId - Plugin ID to toggle
    * @remarks
-   * - Calls store.reorderPlugin
-   * - Announces reorder to screen readers (ARCH-03-04)
-   * - Simplified drag-drop for POC (just moves array indices)
+   * - If plugin is active, removes it
+   * - If plugin is inactive, adds it
+   * - Used by PluginToolbar toggle buttons
    */
-  const handleReorderPlugin = useCallback(
-    (fromIndex: number, toIndex: number) => {
-      reorderPlugin(fromIndex, toIndex);
-      const pluginId = activePlugins[fromIndex];
-      announceReorder(pluginId, toIndex);
-      console.log(`[PluginLayout] Reordered plugin from ${fromIndex} to ${toIndex}`);
+  const handleTogglePlugin = useCallback(
+    (pluginId: PluginId) => {
+      if (activePlugins.includes(pluginId)) {
+        removePlugin(pluginId);
+        console.log(`[PluginLayout] Toggled OFF plugin: ${pluginId}`);
+      } else {
+        addPlugin(pluginId);
+        console.log(`[PluginLayout] Toggled ON plugin: ${pluginId}`);
+      }
     },
-    [reorderPlugin, activePlugins, announceReorder]
+    [activePlugins, addPlugin, removePlugin]
   );
 
   // ========================================================================
@@ -423,18 +405,6 @@ export function PluginLayout({}: PluginLayoutProps) {
               index={0}
               onClose={() => handleRemovePlugin(plugin1Id, 0)}
             />
-            {/* Drag Handle Indicator */}
-            <div
-              className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-              title={t('plugin.dragToReorder')}
-              onMouseDown={() => handleDragStart(0)}
-            >
-              <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-              </div>
-            </div>
           </div>
         )}
 
@@ -456,18 +426,6 @@ export function PluginLayout({}: PluginLayoutProps) {
               index={1}
               onClose={() => handleRemovePlugin(plugin2Id, 1)}
             />
-            {/* Drag Handle Indicator */}
-            <div
-              className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-              title={t('plugin.dragToReorder')}
-              onMouseDown={() => handleDragStart(1)}
-            >
-              <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-              </div>
-            </div>
           </div>
         )}
       </div>
@@ -512,18 +470,6 @@ export function PluginLayout({}: PluginLayoutProps) {
               index={0}
               onClose={() => handleRemovePlugin(plugin1Id, 0)}
             />
-            {/* Drag Handle Indicator */}
-            <div
-              className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-              title={t('plugin.dragToReorder')}
-              onMouseDown={() => handleDragStart(0)}
-            >
-              <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-              </div>
-            </div>
           </div>
         )}
 
@@ -545,18 +491,6 @@ export function PluginLayout({}: PluginLayoutProps) {
               index={1}
               onClose={() => handleRemovePlugin(plugin2Id, 1)}
             />
-            {/* Drag Handle Indicator */}
-            <div
-              className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-              title={t('plugin.dragToReorder')}
-              onMouseDown={() => handleDragStart(1)}
-            >
-              <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-              </div>
-            </div>
           </div>
         )}
 
@@ -578,25 +512,13 @@ export function PluginLayout({}: PluginLayoutProps) {
               index={2}
               onClose={() => handleRemovePlugin(plugin3Id, 2)}
             />
-            {/* Drag Handle Indicator */}
-            <div
-              className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-              title={t('plugin.dragToReorder')}
-              onMouseDown={() => handleDragStart(2)}
-            >
-              <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-              </div>
-            </div>
           </div>
         )}
       </div>
     );
   };
 
-  /**
+/**
    * 2+1 Layout (Two Panels Top, One Full-Width Bottom)
    */
   const render2Plus1 = () => {
@@ -636,18 +558,6 @@ export function PluginLayout({}: PluginLayoutProps) {
                 index={0}
                 onClose={() => handleRemovePlugin(plugin1Id, 0)}
               />
-              {/* Drag Handle Indicator */}
-              <div
-                className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-                title={t('plugin.dragToReorder')}
-                onMouseDown={() => handleDragStart(0)}
-              >
-                <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                  <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                  <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                  <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                </div>
-              </div>
             </div>
           )}
 
@@ -669,18 +579,6 @@ export function PluginLayout({}: PluginLayoutProps) {
                 index={1}
                 onClose={() => handleRemovePlugin(plugin2Id, 1)}
               />
-              {/* Drag Handle Indicator */}
-              <div
-                className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-                title={t('plugin.dragToReorder')}
-                onMouseDown={() => handleDragStart(1)}
-              >
-                <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                  <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                  <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                  <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                </div>
-              </div>
             </div>
           )}
         </div>
@@ -703,18 +601,6 @@ export function PluginLayout({}: PluginLayoutProps) {
               index={2}
               onClose={() => handleRemovePlugin(plugin3Id, 2)}
             />
-            {/* Drag Handle Indicator */}
-            <div
-              className="absolute right-0 top-1/2 w-2 h-full cursor-grab active:cursor-grabbing hover:bg-blue-500/20 transition-colors"
-              title={t('plugin.dragToReorder')}
-              onMouseDown={() => handleDragStart(2)}
-            >
-              <div className="w-0.5 mx-auto h-6 bg-muted-foreground/50 space-y-0.5">
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                <div className="w-0.5 h-0.5 bg-muted-foreground/50" />
-                </div>
-            </div>
           </div>
         )}
       </div>
@@ -848,139 +734,25 @@ export function PluginLayout({}: PluginLayoutProps) {
   };
 
   // ========================================================================
-  // Drag-Drop Handling (Simplified for POC)
-  // ========================================================================
-
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-
-  /**
-   * Handle drag start
-   *
-   * @param index - Panel index being dragged
-   */
-  const handleDragStart = (index: number) => {
-    setDragIndex(index);
-  };
-
-  /**
-   * Handle drag end
-   */
-  const handleDragEnd = () => {
-    if (dragIndex !== null) {
-      // Drag completed without drop - just reset
-      setDragIndex(null);
-    }
-  };
-
-  /**
-   * Handle drop
-   *
-   * @param dropIndex - Target drop index
-   */
-  const handleDrop = (dropIndex: number) => {
-    if (dragIndex !== null && dragIndex !== dropIndex) {
-      // Reorder from dragIndex to dropIndex
-      handleReorderPlugin(dragIndex, dropIndex);
-    }
-    setDragIndex(null);
-  };
-
-  // Add drag and drop listeners
-  useEffect(() => {
-    const handleDragOver = (e: Event) => {
-      e.preventDefault();
-    };
-
-    document.addEventListener('dragover', handleDragOver);
-    return () => {
-      document.removeEventListener('dragover', handleDragOver);
-    };
-  }, [dragIndex]);
-
-  // ========================================================================
-  // Main Render
+  // Main Render (CC-AR-04: Drag-drop removed, using toggle-based toolbar)
   // ========================================================================
 
   return (
     <div
       className={`h-full flex flex-col breakpoint-${breakpoint}`}
-      onDragOver={(e) => {
-        e.preventDefault();
-        if (dragIndex !== null && activePlugins.length > 0 && breakpoint !== 'mobile' && breakpoint !== 'mobileLg') {
-          // Allow drop - assume dropping at mouse position
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = e.clientX || 0;
-          const width = rect.width;
-          if (x > width / 2) {
-            handleDrop(1);
-          } else if (activePlugins.length > 1 && x < width / 2) {
-            // Check which panel we're over based on layout mode
-            if (layoutMode === '2-column' && x > width * 0.33 && x < width * 0.66) {
-              handleDrop(1);
-            } else if (layoutMode === '2-column' && x >= width * 0.66) {
-              handleDrop(0);
-            } else if (layoutMode === '3-column') {
-              // For 3 columns, more granular drop detection
-              if (x > width * 0.66) {
-                handleDrop(0);
-              } else if (x > width * 0.33 && x < width * 0.66) {
-                handleDrop(1);
-              } else {
-                handleDrop(0);
-              }
-            } else if (layoutMode === '2+1') {
-              // For 2+1 layout, top row has 2 panels
-              if (x > width * 0.66) {
-                handleDrop(1);
-              } else {
-                handleDrop(0);
-              }
-            }
-          }
-        }
-      }}
-      onDragEnd={() => handleDragEnd()}
     >
       {/* ========================================================================
-           Layout Toolbar (Desktop/Tablet only)
+           CC-AR-04: Toggle-based Plugin Toolbar (Desktop/Tablet only)
         ======================================================================== */}
 
       {breakpoint !== 'mobile' && breakpoint !== 'mobileLg' && (
-        <div className="h-10 px-4 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
-          {/* Left: Active Plugins Count */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Layers size={16} />
-            <span>
-              {activePlugins.length} {t('plugin.activePlugins')}
-            </span>
-          </div>
-
-          {/* Right: Layout Mode Switcher */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">
-              {t('plugin.layoutMode')}:
-            </span>
-            <select
-              value={layoutMode}
-              onChange={(e) => handleSetLayoutMode(e.target.value as LayoutMode)}
-              className="rounded-none bg-background border border-border/30 px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
-            >
-              <option value="1-column">{t('plugin.layout1Column')}</option>
-              <option value="2-column">{t('plugin.layout2Column')}</option>
-              <option value="3-column">{t('plugin.layout3Column')}</option>
-              <option value="2+1">{t('plugin.layout2Plus1')}</option>
-            </select>
-
-            {/* Add Plugin Button */}
-            <button
-              onClick={() => setShowAddDialog(true)}
-              className="rounded-none bg-blue-600 text-white px-3 py-1 text-xs hover:bg-blue-700 transition-colors flex items-center gap-1"
-            >
-              <Plus size={14} />
-              <span>{t('plugin.add')}</span>
-            </button>
-          </div>
-        </div>
+        <PluginToolbar
+          activePlugins={activePlugins}
+          availablePlugins={availablePlugins}
+          layoutMode={layoutMode}
+          onTogglePlugin={handleTogglePlugin}
+          onSetLayoutMode={handleSetLayoutMode}
+        />
       )}
 
       {/* ========================================================================

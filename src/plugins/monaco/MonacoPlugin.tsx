@@ -1,31 +1,39 @@
 /**
- * @fileoverview Monaco Plugin - Simplified POC Version
+ * @fileoverview Monaco Plugin - Code Editor with Full Monaco Integration
  * @module plugins/monaco/MonacoPlugin
  *
- * **ARCH-02-05**: Monaco Feature Plugin (POC Simplified)
+ * **CC-AR-05**: Replace Monaco POC with Real Monaco Editor
  *
- * Simplified version for proof of concept.
- * Uses ProjectContext.gateway directly for file operations.
- * Integrates with @monaco-editor/react.
+ * Full Monaco Editor integration with:
+ * - Syntax highlighting for TypeScript, JavaScript, JSON, CSS, HTML, etc.
+ * - Language auto-detection from file extension
+ * - File loading from storage gateway
+ * - File saving with Cmd+S / Ctrl+S keyboard shortcut
+ * - FILE_OPENED event listening for FileTree integration
+ * - Dark theme (vs-dark)
  *
- * @epic EPIC-ARCH-02
- * @story ARCH-02-05
+ * @epic EPIC-CC-AR02AR03
+ * @story CC-AR-05
  * @team Team B
  * @created 2026-01-21
+ * @updated 2026-01-26
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Code2, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-// Monaco editor (full integration will come later - POC placeholder)
-// import Editor from '@monaco-editor/react';
+// Monaco Editor (CC-AR-05: Real Monaco integration)
+import Editor from '@monaco-editor/react';
 
 // Plugin system
 import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// Event bus for file open events (CC-AR-05)
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 
 // ============================================================================
 // Main Monaco Plugin Component
@@ -57,11 +65,43 @@ function MonacoComponent({ width, height }: PluginMainProps) {
   const { gateway, saveFile } = projectContext;
 
   // Local state for Monaco-specific UI
-  const [activePath, _setActivePath] = useState<string | null>(null);
+  const [activePath, setActivePath] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
-  const [isLoading, _setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModified, setIsModified] = useState(false);
+  const [language, setLanguage] = useState<string>('plaintext');
+
+  // ============================================================================
+  // Language Detection (CC-AR-05)
+  // ============================================================================
+
+  /**
+   * Detect language from file extension
+   */
+  const detectLanguage = useCallback((path: string): string => {
+    const ext = path.split('.').pop()?.toLowerCase();
+    const langMap: Record<string, string> = {
+      ts: 'typescript',
+      tsx: 'typescriptreact',
+      js: 'javascript',
+      jsx: 'javascriptreact',
+      json: 'json',
+      md: 'markdown',
+      css: 'css',
+      html: 'html',
+      py: 'python',
+      rs: 'rust',
+      go: 'go',
+      yaml: 'yaml',
+      yml: 'yaml',
+      scss: 'scss',
+      less: 'less',
+      sh: 'shell',
+      bash: 'shell',
+    };
+    return langMap[ext || ''] || 'plaintext';
+  }, []);
 
   // ============================================================================
   // Actions
@@ -89,15 +129,53 @@ function MonacoComponent({ width, height }: PluginMainProps) {
   // Effects
   // ============================================================================
 
-  // Load file when FileTree triggers openFile via ProjectContext
+  // Load file when activePath changes (CC-AR-05)
   useEffect(() => {
-    // Listen for file opening from FileTree or other sources
-    // For POC, this is a placeholder - full integration would
-    // listen to ProjectContext.openFile changes
+    if (!activePath || !gateway) return;
 
-    // Example: when FileTree selects a file, it calls context.openFile(path)
-    // This effect would detect that and load the file
-    console.log('[MonacoPlugin] Listening for file open events');
+    (async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const fileContent = await gateway.read(activePath);
+        const decoder = new TextDecoder();
+        setContent(decoder.decode(fileContent));
+        setLanguage(detectLanguage(activePath));
+        setIsModified(false);
+      } catch (err) {
+        setError(`Failed to load file: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        console.error('[MonacoPlugin] Error loading file:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [activePath, gateway, detectLanguage]);
+
+  // Keyboard shortcut for save (Cmd+S / Ctrl+S) - CC-AR-05
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleSave]);
+
+  // Listen for FILE_OPENED events from FileTree (CC-AR-05)
+  useEffect(() => {
+    const unsubscribe = eventBus.on(
+      DomainEventType.FILE_OPENED,
+      (event: { payload: { path: string; projectId: string } }) => {
+        console.log('[MonacoPlugin] Received FILE_OPENED event:', event.payload.path);
+        setActivePath(event.payload.path);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   // ============================================================================
@@ -172,23 +250,30 @@ function MonacoComponent({ width, height }: PluginMainProps) {
         </button>
       </div>
 
-      {/* Editor Content (POC: Textarea placeholder for Monaco) */}
-      {/* In full implementation, this would be <Editor /> from @monaco-editor/react */}
-      <div className="flex-1 overflow-auto p-4 bg-background">
-        <textarea
+      {/* Monaco Editor (CC-AR-05: Real Monaco integration) */}
+      <div className="flex-1">
+        <Editor
+          height="100%"
+          language={language}
           value={content}
-          onChange={(e) => {
-            setContent(e.target.value);
-            setIsModified(true);
+          onChange={(value) => {
+            if (value !== undefined) {
+              setContent(value);
+              setIsModified(true);
+            }
           }}
-          className="w-full h-full bg-transparent text-foreground font-mono text-sm resize-none outline-none border-none"
-          style={{
+          theme="vs-dark"
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
             fontFamily: 'Menlo, Monaco, Consolas, monospace',
-            fontSize: '14px',
-            lineHeight: '1.5',
+            lineNumbers: 'on',
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            tabSize: 2,
+            wordWrap: 'on',
+            renderWhitespace: 'selection',
           }}
-          spellCheck={false}
-          autoFocus
         />
       </div>
     </div>

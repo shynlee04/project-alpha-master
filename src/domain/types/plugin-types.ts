@@ -40,7 +40,8 @@ export type PluginId =
   | 'notes'
   | 'terminal'
   | 'chat'
-  | 'agents';
+  | 'agents'
+  | 'preview';
 
 /**
  * All Plugin IDs (constant array)
@@ -70,6 +71,7 @@ export const PLUGIN_IDS: PluginId[] = [
   'terminal',
   'chat',
   'agents',
+  'preview',
 ] as const;
 
 // ============================================================================
@@ -110,6 +112,7 @@ export const PLUGIN_CATEGORIES: Record<PluginId, PluginCategory> = {
   terminal: 'tool',
   chat: 'communication',
   agents: 'communication',
+  preview: 'tool',
 } as const;
 
 // ============================================================================

@@ -37,6 +37,7 @@ import { detectPlatform } from '@/infrastructure/filesystem/platform-detection';
 import { NULL_CHAT_SERVICE } from '@/infrastructure/services/chat-service';
 import { PermissionOverlay } from '@/presentation/components/layout/PermissionOverlay';
 import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
+import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 
 type HandleRestoreResult = Awaited<ReturnType<typeof handlePersistenceService.restoreHandle>>;
 
@@ -351,10 +352,13 @@ export const ProjectContextProvider: React.FC<{
 
   const openFile = useCallback((path: string) => {
     console.log('[ProjectContext] Opening file:', path);
-    // TODO: Implement file opening logic
-    // This will open file in Monaco editor or BlockNote
-    // For now, just log
-  }, []);
+    // Emit FILE_OPENED event for Monaco and other plugins to listen
+    eventBus.emit(DomainEventType.FILE_OPENED, {
+      path,
+      projectId,
+      timestamp: Date.now(),
+    });
+  }, [projectId]);
 
   const saveFile = useCallback(async (path: string, content: string) => {
     if (!gateway) return;

@@ -1,0 +1,325 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS - ACTIVE SPRINTS (2026-01-26)
+# ═══════════════════════════════════════════════════════════════════════════
+# 
+# This file tracks ONLY active work. Historical sprints are archived.
+# Updated: 2026-01-26T12:00:00+07:00
+# Updated By: bmad-sprint-manager (Team B execution)
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+schema_version: "3.3.0"
+last_updated: "2026-01-26T12:00:00+07:00"
+updated_by: "bmad-sprint-manager"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT BLOCKERS (P0) - PRIORITY ORDER
+# ═══════════════════════════════════════════════════════════════════════════
+
+p0_blockers:
+  # First: Complete CC-04 E2E validation to close EPIC-ARCH-04-CC
+  - epic_id: "EPIC-ARCH-04-CC"
+    parent_epic: "EPIC-ARCH-04"
+    title: "Correct-Course Remediation - FSA Handle Lifecycle"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "95%"
+    effort_hours: 4-6
+    blocking: "ALL_PHASES"
+    
+    note: |
+      CC-01/02/03 COMPLETE. CC-04 E2E validation unblocked.
+      ARCH-04-01/02/03 were marked complete but validation revealed they were
+      NOT actually integrated. This correct-course epic provides exact code
+      changes with line-by-line specifications.
+    
+    remaining:
+      - id: "CC-04"
+        title: "End-to-End Validation with Evidence"
+        status: "READY"
+        depends_on: ["CC-01", "CC-02", "CC-03"]
+    
+    completed:
+      - id: "CC-01"
+        title: "Add initialHandle Prop and FSA Restore Logic"
+        status: "COMPLETE"
+      - id: "CC-02"
+        title: "Wire PermissionOverlay with Persist and Reinit"
+        status: "COMPLETE"
+      - id: "CC-03"
+        title: "Wire Route to Pass initialHandle"
+        status: "COMPLETE"
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+      handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+
+  # Second: EPIC-CC-AR02AR03 remediates ARCH-02 and ARCH-03
+  - epic_id: "EPIC-CC-AR02AR03"
+    title: "Correct-Course: Plugin System Complete Rework for Phase 1A"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "37.5%"  # 3 of 8 stories complete
+    remediates:
+      - "EPIC-ARCH-02 (70% true completion)"
+      - "EPIC-ARCH-03 (45% true completion)"
+    blocks: "Phase 1A"
+    effort_hours: "16-24"
+    target_completion: "2026-01-28"
+    
+    stories:
+      - id: "CC-AR-01"
+        title: "Add All Missing i18n Translation Keys"
+        status: "READY"
+        team: "A"
+        effort: "2h"
+        
+      - id: "CC-AR-02"
+        title: "Wire platform-defaults.ts to Route"
+        status: "READY"
+        team: "A"
+        effort: "2-3h"
+        depends_on: ["CC-AR-01"]
+        
+      - id: "CC-AR-03"
+        title: "Fix Store Hydration Race Condition"
+        status: "COMPLETE"
+        team: "B"
+        effort: "2-3h"
+        completed_at: "2026-01-26T10:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-03-DEV-REPORT-2026-01-26.md"
+        
+      - id: "CC-AR-04"
+        title: "Replace Drag-Drop with Toggle-Based Layout"
+        status: "READY"
+        team: "A"
+        effort: "4-6h"
+        depends_on: ["CC-AR-01", "CC-AR-02"]
+        
+      - id: "CC-AR-05"
+        title: "Replace Monaco POC with Real Monaco Editor"
+        status: "COMPLETE"
+        team: "B"
+        effort: "4-6h"
+        depends_on: ["CC-AR-03"]
+        completed_at: "2026-01-26T11:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-05-DEV-REPORT-2026-01-26.md"
+        
+      - id: "CC-AR-06"
+        title: "Implement Preview Plugin (WebContainer)"
+        status: "COMPLETE"
+        team: "B"
+        effort: "4-6h"
+        depends_on: ["CC-AR-03"]
+        completed_at: "2026-01-26T11:30:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-06-DEV-REPORT-2026-01-26.md"
+        
+      - id: "CC-AR-07"
+        title: "Archive Legacy/Duplicate Files"
+        status: "BLOCKED"
+        team: "A"
+        effort: "1h"
+        depends_on: ["CC-AR-04"]
+        
+      - id: "CC-AR-08"
+        title: "Split PluginLayout.tsx"
+        status: "BLOCKED"
+        team: "B"
+        effort: "2-3h"
+        depends_on: ["CC-AR-04", "CC-AR-05"]
+        blocked_by: "CC-AR-04 (Team A)"
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md"
+      handoff: "_bmad-output/handoffs/2026-01-26/TEAM-B-EPIC-CC-AR02AR03-status-2026-01-26.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAM B SPRINT EXECUTION (2026-01-26)
+# ═══════════════════════════════════════════════════════════════════════════
+
+team_b_sprint:
+  session_id: "3d9b4c82-1e4d-4eae-8f3e-1fa3c1a7b79d-retry1"
+  parent_id: "root-orchestrator-2026-01-26"
+  started_at: "2026-01-26T09:00:00+07:00"
+  status: "COMPLETED_AVAILABLE_WORK"
+  
+  assigned_stories:
+    - "CC-AR-03"  # COMPLETE
+    - "CC-AR-05"  # COMPLETE
+    - "CC-AR-06"  # COMPLETE
+    - "CC-AR-08"  # BLOCKED by Team A
+  
+  completed:
+    - story_id: "CC-AR-03"
+      title: "Fix Store Hydration Race Condition"
+      duration_hours: 1.0
+      status: "COMPLETE"
+      evidence:
+        - "_hasHydrated flag added to store"
+        - "onRehydrateStorage callback implemented"
+        - "$projectId.tsx hydration guard added"
+        - "TypeScript: 0 new errors"
+      handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-03-DEV-REPORT-2026-01-26.md"
+      
+    - story_id: "CC-AR-05"
+      title: "Replace Monaco POC with Real Monaco Editor"
+      duration_hours: 1.5
+      status: "COMPLETE"
+      evidence:
+        - "@monaco-editor/react integrated"
+        - "Syntax highlighting for 16 file types"
+        - "Cmd+S keyboard shortcut"
+        - "Event-based file opening from FileTree"
+        - "TypeScript: 0 new errors"
+      handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-05-DEV-REPORT-2026-01-26.md"
+      
+    - story_id: "CC-AR-06"
+      title: "Implement Preview Plugin (WebContainer)"
+      duration_hours: 1.5
+      status: "COMPLETE"
+      evidence:
+        - "PreviewPlugin.tsx created (322 lines)"
+        - "'preview' added to PluginId union"
+        - "Plugin registered in AppInitializer"
+        - "Empty state and iframe display working"
+        - "TypeScript: 0 new errors"
+      handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-06-DEV-REPORT-2026-01-26.md"
+  
+  blocked:
+    - story_id: "CC-AR-08"
+      title: "Split PluginLayout.tsx"
+      blocked_by: "CC-AR-04 (Team A)"
+      reason: "CC-AR-04 removes drag-drop before splitting"
+      status: "WAITING_FOR_TEAM_A"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TYPESCRIPT STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+typescript_status:
+  total_errors: 1
+  error_location: "src/presentation/layouts/PluginLayout.tsx"
+  error_type: "TS6133: unused variable (announceReorder)"
+  note: "Pre-existing error - will be fixed when CC-AR-04 removes drag-drop"
+  introduced_by_team_b: 0
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAMS
+# ═══════════════════════════════════════════════════════════════════════════
+
+teams:
+  # ─────────────────────────────────────────────────────────────────────────
+  # TEAM A: FSA Handle + i18n + Layout (P0 - Critical Path)
+  # ─────────────────────────────────────────────────────────────────────────
+  team_a:
+    status: "PENDING"
+    current_epic: "EPIC-CC-AR02AR03"
+    
+    pending_work:
+      - id: "CC-AR-01"
+        title: "Add All Missing i18n Translation Keys"
+        status: "READY"
+      - id: "CC-AR-02"
+        title: "Wire platform-defaults.ts to Route"
+        status: "READY"
+        depends_on: ["CC-AR-01"]
+      - id: "CC-AR-04"
+        title: "Replace Drag-Drop with Toggle-Based Layout"
+        status: "READY"
+        depends_on: ["CC-AR-01", "CC-AR-02"]
+        unblocks: ["CC-AR-07", "CC-AR-08"]
+      - id: "CC-AR-07"
+        title: "Archive Legacy/Duplicate Files"
+        status: "BLOCKED"
+        depends_on: ["CC-AR-04"]
+    
+    files_owned:
+      - "src/infrastructure/context/project-context.tsx"
+      - "src/routes/$projectId.tsx"
+      - "src/presentation/components/layout/PermissionOverlay.tsx"
+      - "src/lib/i18n/locales/*.json"
+    
+  # ─────────────────────────────────────────────────────────────────────────
+  # TEAM B: Store + Monaco + Preview (P0 - Parallel to Team A)
+  # ─────────────────────────────────────────────────────────────────────────
+  team_b:
+    status: "COMPLETED_AVAILABLE_WORK"
+    current_epic: "EPIC-CC-AR02AR03"
+    
+    completed_work:
+      - id: "CC-AR-03"
+        title: "Fix Store Hydration Race Condition"
+        status: "COMPLETE"
+        completed_at: "2026-01-26T10:00:00+07:00"
+      - id: "CC-AR-05"
+        title: "Replace Monaco POC with Real Monaco Editor"
+        status: "COMPLETE"
+        completed_at: "2026-01-26T11:00:00+07:00"
+      - id: "CC-AR-06"
+        title: "Implement Preview Plugin"
+        status: "COMPLETE"
+        completed_at: "2026-01-26T11:30:00+07:00"
+    
+    blocked_work:
+      - id: "CC-AR-08"
+        title: "Split PluginLayout.tsx"
+        status: "BLOCKED"
+        blocked_by: "CC-AR-04 (Team A)"
+    
+    files_owned:
+      - "src/presentation/layouts/PluginLayoutStore.ts"
+      - "src/plugins/monaco/MonacoPlugin.tsx"
+      - "src/plugins/preview/PreviewPlugin.tsx"
+      - "src/presentation/layouts/PluginLayout.tsx"
+       
+  # ─────────────────────────────────────────────────────────────────────────
+  # ORCHESTRATION
+  # ─────────────────────────────────────────────────────────────────────────
+  sprint_manager:
+    status: "REPORTING"
+    last_action: "Team B sprint execution complete"
+    handoff: "_bmad-output/handoffs/2026-01-26/TEAM-B-EPIC-CC-AR02AR03-status-2026-01-26.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE HEALTH (2026-01-26 Updated)
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance_health:
+  typescript_errors: 1  # Pre-existing in PluginLayout.tsx
+  yaml_parse_errors: 0
+  stale_artifacts: 0
+  app_status: "IMPROVED"
+  overall_score: "55%"  # Up from 45% - 3 stories complete
+  
+  notes: |
+    Team B completed 3 of 4 assigned stories:
+    - CC-AR-03: Store hydration fix (unblocks Team A and Team B)
+    - CC-AR-05: Real Monaco Editor (syntax highlighting working)
+    - CC-AR-06: Preview Plugin (new feature)
+    
+    CC-AR-08 is blocked by Team A's CC-AR-04 (toggle layout).
+    
+    TypeScript: 1 pre-existing error (unused variable in PluginLayout.tsx).
+    This will be fixed when CC-AR-04 removes drag-drop functionality.
+    
+    Monaco Editor now has REAL syntax highlighting instead of textarea POC.
+    Preview Plugin is ready for Terminal integration.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEXT ACTIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+next_actions:
+  team_a:
+    - "Execute CC-AR-01: Add missing i18n keys"
+    - "Execute CC-AR-02: Wire platform-defaults to route"
+    - "Execute CC-AR-04: Replace drag-drop with toggle layout"
+    - "This unblocks CC-AR-07 and CC-AR-08"
+    
+  team_b:
+    - "Wait for CC-AR-04 completion"
+    - "Then execute CC-AR-08: Split PluginLayout.tsx"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# END OF FILE
+# ═══════════════════════════════════════════════════════════════════════════

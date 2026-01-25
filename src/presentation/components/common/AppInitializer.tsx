@@ -29,6 +29,7 @@ import { monacoPlugin } from '@/plugins/monaco';
 import { notesPlugin } from '@/plugins/notes';
 import { terminalPlugin } from '@/plugins/terminal';
 import { chatPlugin } from '@/plugins/chat';
+import { previewPlugin } from '@/plugins/preview';
 
 interface AppInitializerProps {
     children: ReactNode;
@@ -100,6 +101,8 @@ export function AppInitializer({ children }: AppInitializerProps) {
                  console.log('[AppInitializer] Terminal plugin registered');
                  registerPlugin(chatPlugin);
                  console.log('[AppInitializer] Chat plugin registered');
+                 registerPlugin(previewPlugin);
+                 console.log('[AppInitializer] Preview plugin registered');
 
                 // 5. Auto-fetch models for ALL providers with credentials
                 // This ensures "single source of truth" is populated regardless of active selection

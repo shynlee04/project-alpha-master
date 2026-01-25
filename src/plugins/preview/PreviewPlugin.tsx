@@ -1,0 +1,321 @@
+/**
+ * @fileoverview Preview Plugin - Dev Server Preview
+ * @module plugins/preview/PreviewPlugin
+ *
+ * **CC-AR-06**: Preview Plugin Implementation
+ *
+ * Displays running dev server output in iframe.
+ * Listens for 'dev-server-ready' event from Terminal plugin.
+ *
+ * Features:
+ * - Display iframe with dev server URL
+ * - Refresh button to reload iframe
+ * - External link to open in new tab
+ * - Empty state when no dev server running
+ *
+ * Constraints:
+ * - Desktop ONLY (requires real files for dev server)
+ * - FSA storage ONLY (IndexedDB has no file system access)
+ *
+ * @epic EPIC-CC-AR02AR03
+ * @story CC-AR-06
+ * @team Team B
+ * @created 2026-01-26
+ */
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Monitor, RefreshCw, ExternalLink, AlertCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+// Plugin system
+import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
+
+// Context
+import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// ============================================================================
+// Types
+// ============================================================================
+
+/**
+ * Dev Server Ready Event Detail
+ *
+ * @remarks
+ * Payload for 'dev-server-ready' custom event dispatched by Terminal plugin
+ * when a dev server starts and becomes available.
+ */
+interface DevServerReadyDetail {
+  url: string;
+  port?: number;
+}
+
+// ============================================================================
+// Main Preview Component
+// ============================================================================
+
+/**
+ * Preview Plugin - Main component for dev server preview
+ *
+ * @param props - PluginMainProps from plugin system
+ * @returns Preview JSX element
+ *
+ * @remarks
+ * Receives ProjectContext through plugin system.
+ * Displays iframe with dev server URL.
+ * Simplified version for POC - listens for dev-server-ready event.
+ *
+ * Features:
+ * - Display iframe with running dev server
+ * - URL bar showing current preview URL
+ * - Refresh button to reload iframe
+ * - External link button to open in new tab
+ * - Empty state when no dev server available
+ *
+ * Constraints:
+ * - Desktop ONLY (blocked on mobile per ADR-033)
+ * - FSA storage ONLY (IndexedDB has no file system access)
+ */
+function PreviewComponent({ width, height }: PluginMainProps) {
+  const { t } = useTranslation();
+
+  // Get context from provider
+  const projectContext = useProjectContext();
+  const { project } = projectContext;
+
+  // State
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // ============================================================================
+  // Event Listeners
+  // ============================================================================
+
+  /**
+   * Listen for dev server ready event from Terminal plugin
+   *
+   * @remarks
+   * Terminal plugin dispatches 'dev-server-ready' custom event when
+   * it detects a dev server URL in the terminal output.
+   */
+  useEffect(() => {
+    const handleDevServerReady = (event: CustomEvent<DevServerReadyDetail>) => {
+      console.log('[PreviewPlugin] Dev server ready:', event.detail.url);
+      setPreviewUrl(event.detail.url);
+      setIsLoading(false);
+    };
+
+    window.addEventListener('dev-server-ready', handleDevServerReady as EventListener);
+    return () => {
+      window.removeEventListener('dev-server-ready', handleDevServerReady as EventListener);
+    };
+  }, []);
+
+  // ============================================================================
+  // Handlers
+  // ============================================================================
+
+  /**
+   * Refresh the iframe by reassigning src
+   */
+  const handleRefresh = useCallback(() => {
+    if (iframeRef.current && previewUrl) {
+      setIsLoading(true);
+      iframeRef.current.src = previewUrl;
+    }
+  }, [previewUrl]);
+
+  /**
+   * Open preview URL in new browser tab
+   */
+  const handleOpenExternal = useCallback(() => {
+    if (previewUrl) {
+      window.open(previewUrl, '_blank');
+    }
+  }, [previewUrl]);
+
+  /**
+   * Handle iframe load complete
+   */
+  const handleIframeLoad = useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  // ============================================================================
+  // Validation: Device Type
+  // ============================================================================
+
+  /**
+   * Preview is blocked on mobile per ADR-033
+   */
+  if (project.deviceType !== 'desktop') {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-muted-foreground p-4">
+        <AlertCircle size={32} className="mb-2 text-muted-foreground/70" />
+        <p className="text-sm text-center font-semibold">{t('preview.mobileNotSupported')}</p>
+        <p className="text-xs text-muted-foreground/70 text-center mt-2">
+          {t('preview.desktopOnlyFeature')}
+        </p>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // Validation: Storage Type
+  // ============================================================================
+
+  /**
+   * Preview is blocked for IndexedDB (no file system access)
+   * Preview requires FSA for real file system operations
+   */
+  if (project.storageType !== 'fsa') {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-muted-foreground p-4">
+        <AlertCircle size={32} className="mb-2 text-muted-foreground/70" />
+        <p className="text-sm text-center font-semibold">{t('preview.fsaRequired')}</p>
+        <p className="text-xs text-muted-foreground/70 text-center mt-2">
+          {t('preview.fsaRequiredExplanation')}
+        </p>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // Empty State: No Preview Available
+  // ============================================================================
+
+  if (!previewUrl) {
+    return (
+      <div
+        className="h-full flex flex-col items-center justify-center text-muted-foreground"
+        style={{ width, height }}
+      >
+        <Monitor size={48} className="mb-4 opacity-50" />
+        <p className="text-sm font-medium">{t('preview.noPreviewAvailable')}</p>
+        <p className="text-xs opacity-70 mt-1">
+          {t('preview.runDevServerHint')}
+        </p>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // Main Render
+  // ============================================================================
+
+  return (
+    <div className="h-full flex flex-col" style={{ width, height }}>
+      {/* Preview Header */}
+      <div className="h-8 px-3 flex items-center justify-between border-b border-border bg-card shrink-0">
+        <span className="text-xs font-mono text-muted-foreground truncate flex-1 mr-2">
+          {previewUrl}
+        </span>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleRefresh}
+            className="p-1 hover:bg-muted text-muted-foreground hover:text-foreground"
+            title={t('preview.refresh')}
+            type="button"
+          >
+            <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+          </button>
+          <button
+            onClick={handleOpenExternal}
+            className="p-1 hover:bg-muted text-muted-foreground hover:text-foreground"
+            title={t('preview.openInNewTab')}
+            type="button"
+          >
+            <ExternalLink size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* Preview Iframe */}
+      <div className="flex-1 relative">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
+            <p className="text-sm text-muted-foreground">{t('preview.loading')}</p>
+          </div>
+        )}
+        <iframe
+          ref={iframeRef}
+          src={previewUrl}
+          className="w-full h-full border-none"
+          title={t('preview.title')}
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+          onLoad={handleIframeLoad}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Plugin Definition
+// ============================================================================
+
+/**
+ * Preview Feature Plugin
+ *
+ * @remarks
+ * Implements FeaturePlugin interface per ADR-034 Section 3.
+ * Registered in plugin-registry at app startup.
+ *
+ * Critical Constraints (per CORRECT-COURSE Part 8.3):
+ * - Desktop ONLY (blocked on mobile per ADR-033)
+ * - FSA storage ONLY (IndexedDB has no file system access)
+ */
+export const previewPlugin: FeaturePlugin = {
+  // ========================================================================
+  // Identity
+  // ========================================================================
+
+  id: 'preview',
+  name: 'Preview',
+  icon: React.createElement(Monitor, { size: 16 }),
+  description: 'Preview running dev server',
+
+  // ========================================================================
+  // Requirements
+  // ========================================================================
+
+  requirements: {
+    storageType: 'fsa', // FSA ONLY - Needs real files for dev server
+    deviceType: 'desktop', // Desktop ONLY - Mobile blocked per ADR-033
+    minWidth: 300, // Minimum 300px width for preview
+    maxInstances: 1, // Only one preview instance needed
+  },
+
+  // ========================================================================
+  // Rendering
+  // ========================================================================
+
+  MainComponent: PreviewComponent,
+
+  // No sidebar or toolbar components for POC
+  // SidebarComponent: undefined,
+  // ToolbarComponent: undefined,
+
+  // ========================================================================
+  // Lifecycle Hooks (POC: Minimal implementation)
+  // ========================================================================
+
+  onMount: async (context) => {
+    console.log('[PreviewPlugin] Mounted for project:', context.projectId);
+    // Preview will listen for dev-server-ready event when component mounts
+  },
+
+  onUnmount: async () => {
+    console.log('[PreviewPlugin] Unmounted');
+    // Cleanup if needed - iframe is disposed with component
+  },
+
+  onProjectChange: async (newProjectId) => {
+    console.log('[PreviewPlugin] Project changed to:', newProjectId);
+    // Preview will reset on project change via component re-render
+  },
+};
+
+// ============================================================================
+// No additional exports - plugin exported via index.ts
+// ============================================================================
