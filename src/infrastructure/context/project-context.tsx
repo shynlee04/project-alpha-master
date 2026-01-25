@@ -36,6 +36,9 @@ import type { PlatformContract } from '@/infrastructure/filesystem/storage-types
 import { detectPlatform } from '@/infrastructure/filesystem/platform-detection';
 import { NULL_CHAT_SERVICE } from '@/infrastructure/services/chat-service';
 import { PermissionOverlay } from '@/presentation/components/layout/PermissionOverlay';
+import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
+
+type HandleRestoreResult = Awaited<ReturnType<typeof handlePersistenceService.restoreHandle>>;
 
 // ============================================================================
 // ProjectContext Interface (ADR-034 Specification)
@@ -148,7 +151,8 @@ export const ProjectContext = ProjectContextInternal;
 export const ProjectContextProvider: React.FC<{
   projectId: string;
   children: ReactNode;
-}> = ({ projectId, children }) => {
+  initialHandle?: FileSystemDirectoryHandle | null;
+}> = ({ projectId, children, initialHandle }) => {
   // ========================================================================
   // Router
   // ========================================================================
@@ -169,6 +173,10 @@ export const ProjectContextProvider: React.FC<{
 
   // ARCH-04-03 TEAM B: Permission prompt state
   const [showPermissionOverlay, setShowPermissionOverlay] = useState<boolean>(false);
+
+  const [fsaHandle, setFsaHandle] = useState<FileSystemDirectoryHandle | null>(
+    initialHandle || null
+  );
 
   // ========================================================================
   // Initialize on Mount
@@ -208,9 +216,68 @@ export const ProjectContextProvider: React.FC<{
         // 3. Initialize gateway based on storageType
         // Use StorageAdapterFactory with projectId
         // Note: FSA handle will be retrieved from context when needed
+
+        // === FSA HANDLE LIFECYCLE - START ===
+        let resolvedHandle: FileSystemDirectoryHandle | null = fsaHandle;
+
+        if (loadedProject.storageType === 'fsa') {
+          // Use initialHandle if available (from wizard navigation)
+          if (initialHandle) {
+            console.log('[ProjectContext] Using initialHandle from navigation');
+            resolvedHandle = initialHandle;
+            setFsaHandle(initialHandle);
+            // Persist for future visits
+            try {
+              await handlePersistenceService.persistHandle(projectId, initialHandle, 'ide');
+              console.log('[ProjectContext] Handle persisted successfully');
+            } catch (persistError) {
+              console.warn('[ProjectContext] Failed to persist handle:', persistError);
+            }
+          } else if (resolvedHandle) {
+            console.log('[ProjectContext] Using existing FSA handle from state');
+          } else {
+            // Try to restore from IndexedDB
+            console.log('[ProjectContext] Attempting FSA handle restoration');
+            try {
+              const restoreResult: HandleRestoreResult =
+                await handlePersistenceService.restoreHandle(projectId);
+
+              if (restoreResult.success && restoreResult.handle) {
+                console.log('[ProjectContext] FSA handle restored successfully');
+                resolvedHandle = restoreResult.handle;
+                setFsaHandle(restoreResult.handle);
+              } else if (restoreResult.requiresUserInteraction) {
+                console.log(
+                  '[ProjectContext] FSA handle requires user interaction - showing overlay'
+                );
+                setShowPermissionOverlay(true);
+                setLoading(false);
+                return; // Wait for user to grant permission via overlay
+              } else {
+                console.error(
+                  '[ProjectContext] FSA handle restoration failed:',
+                  restoreResult.error
+                );
+                setError(
+                  `Failed to restore file access: ${restoreResult.error || 'Unknown error'}`
+                );
+                setLoading(false);
+                return;
+              }
+            } catch (restoreError) {
+              console.error('[ProjectContext] FSA handle restoration error:', restoreError);
+              setShowPermissionOverlay(true);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+        // === FSA HANDLE LIFECYCLE - END ===
+
         const storageAdapter: StorageAdapter = storageAdapterFactory.createAdapter({
           projectId,
           storageType: loadedProject.storageType,
+          handle: resolvedHandle,
         });
 
         // Create gateway from storage adapter
@@ -268,7 +335,7 @@ export const ProjectContextProvider: React.FC<{
     }
 
     initializeProject();
-  }, [projectId]);
+  }, [projectId, fsaHandle]);
 
   // ========================================================================
   // Action Implementations
@@ -351,13 +418,17 @@ export const ProjectContextProvider: React.FC<{
         <PermissionOverlay
           projectId={project.id}
           projectName={project.name}
-          onPermissionGranted={async (_handle) => {
-            // Handle granted - store and restart initialization
+          onPermissionGranted={async (handle: FileSystemDirectoryHandle) => {
+            setFsaHandle(handle);
+            try {
+              await handlePersistenceService.persistHandle(projectId, handle, 'ide');
+            } catch (persistError) {
+              console.warn('[ProjectContext] Failed to persist handle:', persistError);
+            }
             setShowPermissionOverlay(false);
-
-            // Trigger project reload with handle
-            // TODO: This needs proper FSA handle persistence integration (ARCH-04-02)
-            // For now, just hide overlay
+            setLoading(true);
+            setError(null);
+            setProject(null);
           }}
           onCancel={() => {
             // Cancel - navigate back to hub

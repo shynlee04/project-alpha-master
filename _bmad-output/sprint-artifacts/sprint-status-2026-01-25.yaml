@@ -3,24 +3,61 @@
 # ═══════════════════════════════════════════════════════════════════════════
 # 
 # This file tracks ONLY active work. Historical sprints are archived.
-# Updated: 2026-01-25T21:30:00+07:00
-# Updated By: architect-ext
+# Updated: 2026-01-25T21:24:19+07:00
+# Updated By: bmad-sprint-manager
 #
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "3.1.0"
-last_updated: "2026-01-25T22:30:00+07:00"
-updated_by: "sprint-manager"
+schema_version: "3.2.0"
+last_updated: "2026-01-25T22:04:51+07:00"
+updated_by: "bmad-sprint-manager"
 
 # ═══════════════════════════════════════════════════════════════════════════
-# CURRENT BLOCKER (P0)
+# CURRENT BLOCKER (P0) - CORRECT-COURSE EPIC CREATED
 # ═══════════════════════════════════════════════════════════════════════════
 
 p0_blocker:
+  epic_id: "EPIC-ARCH-04-CC"
+  parent_epic: "EPIC-ARCH-04"
+  title: "Correct-Course Remediation - FSA Handle Lifecycle"
+  status: "IN_PROGRESS"
+  priority: "P0"
+  effort_hours: 4-6
+  blocking: "ALL_PHASES"
+  
+  note: |
+    ARCH-04-01/02/03 were marked complete but validation revealed they were
+    NOT actually integrated. This correct-course epic provides exact code
+    changes with line-by-line specifications.
+  
+  stories:
+    - id: "CC-01"
+      title: "Add initialHandle Prop and FSA Restore Logic"
+      status: "BLOCKED"
+      assigned: "dev-ext"
+      note: "Reissued 2026-01-25T22:04:51+07:00 due to TS gate failing on navigation state typing."
+    - id: "CC-02"
+      title: "Wire PermissionOverlay with Persist and Reinit"
+      status: "READY"
+      depends_on: ["CC-01"]
+    - id: "CC-03"
+      title: "Wire Route to Pass initialHandle"
+      status: "READY"
+      depends_on: ["CC-01"]
+    - id: "CC-04"
+      title: "End-to-End Validation with Evidence"
+      status: "READY"
+      depends_on: ["CC-01", "CC-02", "CC-03"]
+  
+  artifacts:
+    epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+    handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+
+legacy_blocker:
   epic_id: "EPIC-ARCH-04"
   story_id: "ARCH-04-01"
   title: "Integrate FSA Handle Lifecycle into ProjectContextProvider"
-  status: "READY_FOR_DEV"
+  status: "SUPERSEDED_BY_CC"
   priority: "P0"
   effort_hours: 3-4
   blocking: "ALL_USER_JOURNEYS"
@@ -216,34 +253,68 @@ priority_order:
 # ═══════════════════════════════════════════════════════════════════════════
 
 teams:
-  dev_team:
-    status: "AVAILABLE"
+  # ─────────────────────────────────────────────────────────────────────────
+  # TEAM A: FSA Handle Lifecycle (P0 - Critical Path)
+  # ─────────────────────────────────────────────────────────────────────────
+  team_a:
+    status: "IN_PROGRESS"
+    epic: "EPIC-ARCH-04-CC"
+    stories: ["CC-01", "CC-02", "CC-03", "CC-04"]
     last_completed: "HOOKS-FIX-02"
-    next_assignment: "ARCH-04-01"
-    assignment_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
+    current_assignment: "CC-01 through CC-04"
+    assignment_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+    files_owned:
+      - "src/infrastructure/context/project-context.tsx"
+      - "src/routes/$projectId.tsx"
+      - "src/presentation/components/layout/PermissionOverlay.tsx"
     
+  # ─────────────────────────────────────────────────────────────────────────
+  # TEAM B: Consolidation Work (P1 - Parallel) - COMPLETED
+  # ─────────────────────────────────────────────────────────────────────────
+  team_b:
+    status: "COMPLETE"
+    epic: "EPIC-CONSOLIDATION"
+    stories: ["CONS-01", "CONS-02", "CONS-03"]
+    stories_completed: ["CONS-01", "CONS-02"]
+    stories_deferred: ["CONS-03"]
+    completed_at: "2026-01-26T00:05:00+07:00"
+    parallel_to: "EPIC-ARCH-04-CC"
+    current_assignment: "COMPLETE - See evidence package"
+    assignment_artifact: "_bmad-output/handoffs/2026-01-25/TEAM-B-PARALLEL-SPRINT-HANDOFF-2026-01-25.md"
+    evidence_artifact: "_bmad-output/handoffs/2026-01-25/TEAM-B-CONS-EVIDENCE-2026-01-25.md"
+    files_modified:
+      - "src/presentation/components/common/DatabaseRecoveryDialog.tsx"
+      - "src/routes/$__debug__.provider-playground.tsx"
+      - "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+    deferred_reason: "CONS-03 requires proper story - MonacoPlugin integration too complex for consolidation"
+    
+  # ─────────────────────────────────────────────────────────────────────────
+  # ORCHESTRATION
+  # ─────────────────────────────────────────────────────────────────────────
   sprint_manager:
-    status: "READY"
-    last_completed: "Created EPIC-ARCH-04"
-    next_assignment: "Assign ARCH-04-01 to dev-team"
+    status: "COORDINATING"
+    last_completed: "Created Team B parallel handoff"
+    coordinating:
+      - team_a: "CC-01 through CC-04"
+      - team_b: "CONS-01 through CONS-03"
     
   architect_ext:
     status: "COMPLETE"
-    completed: "EPIC-ARCH-04 epic and handoff creation"
+    completed: "EPIC-ARCH-04-CC and Team B handoff creation"
 
 # ═══════════════════════════════════════════════════════════════════════════
 # GOVERNANCE HEALTH
 # ═══════════════════════════════════════════════════════════════════════════
 
 governance_health:
-  typescript_errors: 0
+  typescript_errors: 5
   yaml_parse_errors: 0
   stale_artifacts: 1
   app_status: "NON_FUNCTIONAL"
-  overall_score: "75%"
+  overall_score: "70%"
   
   notes: |
-    TypeScript: Clean (0 errors)
+    TypeScript: FAIL (5 errors) - navigate state fsaHandle null typing in HubHomePage/ProjectsPage
     YAML: Clean (this file and workflow-status)
     App: Broken (FSA handle integration missing)
     

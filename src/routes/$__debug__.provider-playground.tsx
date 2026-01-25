@@ -134,7 +134,8 @@ const DEFAULT_PROVIDERS: UniversalProviderConfig[] = [
     defaultApiKey: '',
     requiresApiKey: true,
     defaultHeaders: {
-      'HTTP-Referer': typeof window !== 'undefined' ? window.location.href : '',
+      // ARCH-01-01: Use window.location.origin for referer header (not full URL)
+      'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : '',
       'X-Title': 'Provider Playground',
     },
     models: [

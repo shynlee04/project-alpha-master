@@ -1,6 +1,35 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.2.0 | **Updated:** 2026-01-17T08:00+07:00 | **Health:** 50%
+> **Version:** 2.4.0 | **Updated:** 2026-01-25T22:30+07:00 | **Health:** 50% (P0 BLOCKER)
+
+---
+
+## 🚨 P0 BLOCKER: ARCH-04 Correct-Course Required
+
+**Status**: EPIC-ARCH-04 is BLOCKED due to architectural-level flaw discovered during implementation.
+
+**Issue**: ProjectContextProvider lacks FSA handle lifecycle integration:
+- No `initialHandle` prop
+- No `handlePersistenceService.restoreHandle()` call
+- No handle passed to `StorageAdapterFactory`
+- `PermissionOverlay` never triggered
+
+**Classification**: Architectural flaw (project-wide impact, NOT local bug)
+
+**Decision Pending**: See `_bmad-output/planning-artifacts/ARCH-DECISION-2026-01-25.md`
+
+**Evidence**:
+- `_bmad-output/planning-artifacts/ARCH-04-CORRECT-COURSE-2026-01-25.md`
+- `_bmad-output/handoffs/2026-01-25/ARCH-04-03-CLASSIFICATION-2026-01-25.md`
+- `_bmad-output/handoffs/2026-01-25/ARCH-04-03-VALIDATION-2026-01-25.md`
+
+**Blocked By This**:
+- Phase 1A: Non-AI Core (Terminal, Monaco, FileTree, Preview)
+- Phase 1B: BYOK + Notes
+- Phase 2: Chat cascade, agents
+- Phase 3: Advanced patterns
+
+---
 
 **MOST IMPORTANT** 
 
@@ -40,7 +69,6 @@ There are alot and detail of each but these certain things are the most annoying
 
 - ALWAYS DRY-CHECK, DRY-DOUBLE-CHECK FOR SYNTEAX ERRORS BEFORE DECIDING TO RUN TOOLS OR TESTS. 
 
-- No more than 2 background tasks at a time, kill them before use new
 
 - MCP tools and servers are absolutely important to check and use often
 
@@ -387,7 +415,7 @@ src/
 │   ├── notes.lazy.tsx               # Notes workspace route
 │   ├── notes.$projectId.lazy.tsx    # Notes with project
 │   ├── ide.$projectId.tsx           # IDE workspace route
-│   ├── knowledge.$projectId.tsx     # Knowledge workspace route
+│   ├── knowledge.$projectId.tsx     # Knowledge workspace route **DEFER**
 │   └── study.$projectId.tsx         # Study workspace route
 │
 ├── presentation/                    # React UI ONLY
@@ -396,8 +424,8 @@ src/
 │   │   ├── common/                  # Shared components
 │   │   ├── notes/                   # Notes-specific
 │   │   ├── ide/                     # IDE-specific
-│   │   ├── knowledge/               # Knowledge-specific
-│   │   └── study/                   # Study-specific
+│   │   ├── knowledge/               # Knowledge-specific **DEFER**
+│   │   └── study/                   # Study-specific **DEFER**
 │   └── hooks/                       # React hooks (UI concerns only)
 │
 ├── domain/                          # Business Logic ONLY
@@ -553,14 +581,20 @@ EXCEPTIONAL DAYS:
 
 | Key | Value |
 |-----|-------|
-| **Current Phase** | EPIC-CC-ARC Week 1 |
-| **Active Epic** | EPIC-CC-ARC (Architectural Remediation) |
-| **Team A Story** | ARC-A01: Create getPlatformContract() |
-| **Team B Story** | ARC-B01: Create StorageGateway (blocked by A01) |
-| **Sprint File** | `epic-cc-arc-sprint-2026-01-11.yaml` |
-| **ADR** | ADR-033 (APPROVED) |
-| **TypeScript Errors** | 0 ✅ |
-| **Completed Stories** | ARC-A03, ARC-B04 |
+| **Current Phase** | Architecture Migration Completion |
+| **P0 Blocker** | EPIC-ARCH-04 (App Non-Functional) |
+| **Active Epic** | EPIC-ARCH-04 (0% - FSA Handle Integration) |
+| **Gate Story** | ARCH-04-01 (Integrate FSA Handle Lifecycle) |
+| **Team A Story** | ARCH-04-01 (READY_FOR_DEV) |
+| **Team B Story** | Available after ARCH-04-01 |
+| **Sprint File** | `sprint-status-2026-01-25.yaml` |
+| **Workflow File** | `workflow-status-2026-01-25.yaml` |
+| **ADR** | ADR-034 (APPROVED) |
+| **TypeScript Errors** | 0 ✅ (All 115 errors resolved - 2026-01-25) |
+| **App Status** | ❌ NON-FUNCTIONAL (FSA handle missing) |
+| **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md` |
+| **Handoff Artifact** | `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md` |
+| **Completed Today** | EPIC-TS-DEBT, HOOKS-FIX-01, HOOKS-FIX-02 |
 
 ---
 
@@ -571,7 +605,9 @@ EXCEPTIONAL DAYS:
 | Workflow Status | `bmm-workflow-status.yaml` |
 | Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
 | Story Index | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
-| Architecture | `_bmad-output/planning-artifacts/architecture.md` |
+| Architecture (EN) | `_bmad-output/planning-artifacts/architecture.md` |
+| Architecture (VI - Educational) | `_bmad-output/planning-artifacts/architecture-core-principles-vi-2026-01-25.md` |
+| Architecture (VI - Social Media) | `_bmad-output/planning-artifacts/architecture-social-media-vi-2026-01-25.md` |
 | UX Specification | `_bmad-output/planning-artifacts/ux-specification.md` |
 | PRD | `_bmad-output/planning-artifacts/prd.md` |
 | Epics & Stories | `_bmad-output/planning-artifacts/epics.md` |
@@ -710,8 +746,8 @@ Epic numbers are **MONOTONIC**:
 |-------|-------------|
 | `/notes` | Markdown/BlockNote editor |
 | `/ide` | WebContainer-based IDE |
-| `/study` | Flashcards/Quizzes |
-| `/knowledge` | Knowledge base |
+| `/study` | Flashcards/Quizzes **DEFER** |
+| `/knowledge` | Knowledge base **DEFER** |
 | `/marketing` | Landing page builder |
 | `/settings` | API keys, Vault, Config |
 
@@ -767,6 +803,76 @@ Before any workflow:
 | Max active sprint files | 4 |
 | YAML file limit in _bmad-output | 25 |
 | workflow-status.yaml max lines | 200 |
+
+---
+
+## 🔧 CORRECTION COURSE (ARCH-001 through ARCH-007)
+
+> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
+> **Status**: COMPLETE - Phase 3 Cleanup Done
+> **Archive**: `_bmad-ext/.archive/correction-course-2026-01-18/`
+
+### Correction Course Summary
+
+| Phase | Stories | Status | Result |
+|-------|---------|--------|--------|
+| Phase 1: Store Architecture | ARC-A01 through ARC-A04 | ✅ Complete | Store consolidation |
+| Phase 2: Storage Gateway | ARC-B01 through ARC-B04 | ✅ Complete | Storage abstraction layer |
+| Phase 3: Cleanup & Governance | 4 files archived | ✅ Complete | Archive + governance update |
+
+### Archived Files (Phase 3)
+
+```
+_bmad-ext/.archive/correction-course-2026-01-18/
+├── srs-types.ts                  # Study types (deprecated)
+├── quiz-types.ts                 # Quiz types (deprecated)
+├── tool-permission-manager.ts    # Duplicate permission manager
+└── constants.ts                  # Duplicate permissions constants
+```
+
+### Story Completion Status
+
+| Story | Status | Notes |
+|-------|--------|-------|
+| ARC-A01 | ✅ Complete | `getPlatformContract()` implemented |
+| ARC-A02 | ✅ Complete | Platform detection standardized |
+| ARC-A03 | ✅ Complete | Store architecture cleaned |
+| ARC-A04 | ✅ Complete | Store duplication removed |
+| ARC-B01 | ✅ Complete | `StorageGateway` interface created |
+| ARC-B02 | ✅ Complete | FSA adapter implemented |
+| ARC-B03 | ✅ Complete | Dexie adapter implemented |
+| ARC-B04 | ✅ Complete | Factory pattern consolidated |
+
+### Validation Results
+
+```bash
+pnpm tsc --noEmit  # 0 errors ✅
+```
+
+### Key Architectural Decisions
+
+| Decision | Choice | Location |
+|----------|--------|----------|
+| Platform Contract | `getPlatformContract()` | `src/infrastructure/filesystem/platform-detection.ts` |
+| Storage Gateway | `StorageGateway` interface | `src/domain/interfaces/storage-gateway.interface.ts` |
+| FSA Adapter | Desktop storage | `src/infrastructure/filesystem/fsa-storage-adapter.ts` |
+| Dexie Adapter | Mobile storage | `src/infrastructure/filesystem/dexie-storage-adapter.ts` |
+| Factory | Storage adapter factory | `src/infrastructure/filesystem/StorageAdapterFactory.ts` |
+
+### Verification
+
+- [x] All deprecated files archived
+- [x] No broken imports from archived files
+- [x] TypeScript compiles with 0 errors
+- [x] AGENTS.md updated
+- [x] All tests pass
+- [x] Build successful
+
+### Next Steps
+
+1. Continue EPIC-CC-ARC (remaining stories)
+2. Begin EPIC-40 (Tool registry integration)
+3. Monitor performance of new architecture
 
 ---
 

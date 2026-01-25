@@ -117,7 +117,10 @@ export const createProjectCrudSlice: StateCreator<
   projects: {},
   activeProjectId: null,
 
-  // Create new project
+  // INTERNAL: Called by canonical paths (createProjectFromFolder, getOrCreateBrowserModeProject, ProjectCreationWizard)
+  // Do NOT call directly from arbitrary UI components - use canonical paths instead
+  // See ARCH-01-02 for canonical project creation paths
+  //
   // FUNDAMENTAL TRUTH: Project ID does NOT include workspace prefix
   // Workspace is determined by routing, not by project ID
   createProject: async (input: CreateProjectInput) => {

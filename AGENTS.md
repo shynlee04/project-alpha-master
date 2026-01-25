@@ -1,6 +1,74 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.3.0 | **Updated:** 2026-01-25T21:30+07:00 | **Health:** 75%
+> **Version:** 2.5.0 | **Updated:** 2026-01-25T23:50+07:00 | **Health:** 55% (Parallel Execution)
+
+---
+
+## 🚨 ACTIVE PARALLEL SPRINTS
+
+### Team A: P0 BLOCKER - EPIC-ARCH-04-CC (FSA Handle Lifecycle)
+
+**Status**: IN_PROGRESS
+
+| Story | Title | Status |
+|-------|-------|--------|
+| CC-01 | Add initialHandle Prop and FSA Restore Logic | IN_PROGRESS |
+| CC-02 | Wire PermissionOverlay with Persist and Reinit | BLOCKED by CC-01 |
+| CC-03 | Wire Route to Pass initialHandle | BLOCKED by CC-01 |
+| CC-04 | End-to-End Validation with Evidence | BLOCKED by CC-01,02,03 |
+
+**Files Owned (DO NOT TOUCH from other teams)**:
+- `src/infrastructure/context/project-context.tsx`
+- `src/routes/$projectId.tsx`
+- `src/presentation/components/layout/PermissionOverlay.tsx`
+
+**Handoff**: `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md`
+
+---
+
+### Team B: P1 PARALLEL - EPIC-CONSOLIDATION
+
+**Status**: READY_FOR_EXECUTION (Parallel to Team A)
+
+| Story | Title | Status | Effort |
+|-------|-------|--------|--------|
+| CONS-01 | Remove remaining window.location.href | READY | 1h |
+| CONS-02 | Consolidate project creation deprecation | READY | 1.5h |
+| CONS-03 | Complete MonacoPlugin integration | READY | 2-3h |
+
+**Files Owned**:
+- `src/presentation/components/common/DatabaseRecoveryDialog.tsx`
+- `src/routes/$__debug__.provider-playground.tsx`
+- `src/lib/workspace/temp-project.ts`
+- `src/infrastructure/persistence/stores/project/project-crud-slice.ts`
+- `src/plugins/monaco/MonacoPlugin.tsx`
+
+**Handoff**: `_bmad-output/handoffs/2026-01-25/TEAM-B-PARALLEL-SPRINT-HANDOFF-2026-01-25.md`
+
+---
+
+### Original Issue (Context)
+
+**Issue**: ProjectContextProvider lacks FSA handle lifecycle integration:
+- No `initialHandle` prop
+- No `handlePersistenceService.restoreHandle()` call
+- No handle passed to `StorageAdapterFactory`
+- `PermissionOverlay` never triggered
+
+**Classification**: Architectural flaw (project-wide impact, NOT local bug)
+
+**Evidence**:
+- `_bmad-output/planning-artifacts/ARCH-04-CORRECT-COURSE-2026-01-25.md`
+- `_bmad-output/handoffs/2026-01-25/ARCH-04-03-CLASSIFICATION-2026-01-25.md`
+- `_bmad-output/handoffs/2026-01-25/ARCH-04-03-VALIDATION-2026-01-25.md`
+
+**Blocked By Team A Completion**:
+- Phase 1A: Non-AI Core (Terminal, Monaco, FileTree, Preview)
+- Phase 1B: BYOK + Notes
+- Phase 2: Chat cascade, agents
+- Phase 3: Advanced patterns
+
+---
 
 **MOST IMPORTANT** 
 
@@ -40,7 +108,6 @@ There are alot and detail of each but these certain things are the most annoying
 
 - ALWAYS DRY-CHECK, DRY-DOUBLE-CHECK FOR SYNTEAX ERRORS BEFORE DECIDING TO RUN TOOLS OR TESTS. 
 
-- No more than 2 background tasks at a time, kill them before use new
 
 - MCP tools and servers are absolutely important to check and use often
 

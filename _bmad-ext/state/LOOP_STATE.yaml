@@ -4,19 +4,25 @@
 # ══════════════════════════════════════════════════════════════
 
 schema_version: "2.0.0"
-last_updated: "2026-01-25T23:48:00+07:00"
+last_updated: "2026-01-25T22:04:51+07:00"
 updated_by: "bmad-sprint-manager"
-session_id: "epic-arch-04-team-b-kickoff-2026-01-25"
+session_id: "epic-arch-04-cc-run-2026-01-25"
 
 current:
   agent: "bmad-sprint-manager"
-  epic_id: "EPIC-ARCH-04"
-  story_id: "ARCH-04-03"
-  story_status: "completed"
-  workflow: "story-completion"
-  step: 5
-  active_team: "team-b"
-  mode: "COMPLETED"
+  epic_id: "EPIC-ARCH-04-CC"
+  story_id: "CC-01"
+  story_status: "blocked"
+  workflow: "story-cycle"
+  step: 4
+  active_team: "team-a"
+  mode: "ACTIVE"
+  notes: "CC-01 stalled on TS gate: HubHomePage/ProjectsPage navigate state fsaHandle includes null. Reissuing CC-01 evidence checklist; CC-02/CC-03 remain queued until CC-01 evidence completes."
+
+errors:
+  count: 1
+  last_error: "TypeScript gate failing: HubHomePage.tsx and ProjectsPage.tsx navigate state fsaHandle type mismatch (null passed)"
+  last_seen_at: "2026-01-25T21:24:19+07:00"
   
 # ══════════════════════════════════════════════════════════════
 # P0 BLOCKER - APPLICATION NON-FUNCTIONAL
@@ -319,8 +325,8 @@ authority:
 # ══════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent: "Create ARCH-04 story files and refresh sprint workflow status"
-  human_intent_timestamp: "2026-01-25T22:30:00+07:00"
+  human_intent: "Autonomously run EPIC-ARCH-04-CC to completion (CC-01..CC-04) with story-cycle v2.0 artifacts and evidence"
+  human_intent_timestamp: "2026-01-25T21:24:19+07:00"
   mode: "ORCHESTRATION"
   staleness_threshold_hours: 24
 
@@ -401,6 +407,28 @@ next_actions:
 # ══════════════════════════════════════════════════════════════
 
 active_delegations:
+  - delegation_id: "del_20260125_cc_01"
+    target: "dev-ext"
+    task: "CC-01: Add initialHandle Prop and FSA Restore Logic"
+    status: "reissued"
+    priority: "P0"
+    started_at: "2026-01-25T23:55:00+07:00"
+    reissued_at: "2026-01-25T22:04:51+07:00"
+    handoff_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+    story_file: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+    required_output: "_bmad-output/handoffs/2026-01-25/CC-01-DEV-REPORT-2026-01-25.md"
+    estimated_effort: "2 hours"
+    tool_constraints:
+      write: true
+      edit: true
+      bash: true
+      task: false
+    evidence_required:
+      - "TypeScript output saved to file"
+      - "Grep verification output captured"
+      - "Journey map + file:line AC checklist"
+    files_scoped:
+      - "src/infrastructure/context/project-context.tsx"
   - delegation_id: "del_20260125_p0_hooks_fix"
     target: "dev-ext"
     task: "HOOKS-FIX-01: Migrate to Unified ProjectContext"
@@ -624,3 +652,51 @@ active_delegations:
       - "Create ADR-034-AMENDMENT-003 for Agent/Tool architecture"
       - "Create ADR-034-AMENDMENT-004 for Thread management"
       - "Create ADR-034-AMENDMENT-005 for Generative AI features"
+
+# ══════════════════════════════════════════════════════════════
+# QUEUED DELEGATIONS (2026-01-25)
+# ══════════════════════════════════════════════════════════════
+
+queued_delegations:
+  - delegation_id: "del_20260125_cc_02"
+    target: "dev-ext"
+    task: "CC-02: Wire PermissionOverlay with Persist and Reinit"
+    status: "queued"
+    priority: "P0"
+    queued_at: "2026-01-25T23:59:00+07:00"
+    blocked_by: "CC-01 evidence"
+    handoff_artifact: "_bmad-output/handoffs/2026-01-25/CC-02-SPRINT-ASSIGNMENT-2026-01-25.md"
+    story_file: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+    required_output: "_bmad-output/handoffs/2026-01-25/CC-02-DEV-REPORT-2026-01-25.md"
+    estimated_effort: "1.5 hours"
+    tool_constraints:
+      write: true
+      edit: true
+      bash: true
+      task: false
+    evidence_required:
+      - "TypeScript output saved to file"
+      - "Grep verification output captured"
+    files_scoped:
+      - "src/infrastructure/context/project-context.tsx"
+  - delegation_id: "del_20260125_cc_03"
+    target: "dev-ext"
+    task: "CC-03: Wire Route to Pass initialHandle"
+    status: "queued"
+    priority: "P0"
+    queued_at: "2026-01-25T23:59:00+07:00"
+    blocked_by: "CC-01 evidence"
+    handoff_artifact: "_bmad-output/handoffs/2026-01-25/CC-03-SPRINT-ASSIGNMENT-2026-01-25.md"
+    story_file: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+    required_output: "_bmad-output/handoffs/2026-01-25/CC-03-DEV-REPORT-2026-01-25.md"
+    estimated_effort: "1 hour"
+    tool_constraints:
+      write: true
+      edit: true
+      bash: true
+      task: false
+    evidence_required:
+      - "TypeScript output saved to file"
+      - "Grep verification output captured"
+    files_scoped:
+      - "src/routes/$projectId.tsx"

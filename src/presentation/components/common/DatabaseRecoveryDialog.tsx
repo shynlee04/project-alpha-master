@@ -109,7 +109,8 @@ export function DatabaseRecoveryDialog({ onRecoveryComplete: _ }: DatabaseRecove
             ];
 
             for (const { pattern, type } of errors) {
-                if (pattern.test(window.location.href) || pattern.test(document.body.innerText)) {
+                // ARCH-01-01: Use window.location.pathname for pattern matching (not navigation)
+                if (pattern.test(window.location.pathname) || pattern.test(document.body.innerText)) {
                     return type;
                 }
             }
