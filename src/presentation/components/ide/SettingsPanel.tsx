@@ -15,11 +15,10 @@ import { useAdvancedLayouts } from '@/infrastructure/persistence/stores/user-pre
  * Shows when 'settings' is active in the activity bar.
  * Provides quick access to common settings categories.
  */
-
 interface SettingsCategory {
     id: string
     label: string
-    icon: React.ElementType
+    icon: React.ElementType<any, keyof React.JSX.IntrinsicElements>
     description?: string
 }
 
@@ -33,7 +32,7 @@ export function SettingsPanel({
     const { t } = useTranslation()
 
     // ARCH-03-05: Advanced layouts toggle
-    const { showAdvanced, setShow } = useAdvancedLayouts();
+    const { showAdvanced, toggle } = useAdvancedLayouts()
 
     const defaultCategories: SettingsCategory[] = [
         {
@@ -80,6 +79,9 @@ export function SettingsPanel({
                         key={category.id}
                         category={category}
                         onClick={() => onSelectCategory?.(category)}
+                        isAdvancedFeatures={category.id === 'advancedFeatures'}
+                        showAdvanced={showAdvanced}
+                        toggle={toggle}
                     />
                 ))}
             </div>
@@ -89,15 +91,19 @@ export function SettingsPanel({
 
 function SettingsCategoryItem({
     category,
-    onClick
+    onClick,
+    isAdvancedFeatures,
+    showAdvanced,
+    toggle
 }: {
     category: SettingsCategory
     onClick?: () => void
+    isAdvancedFeatures: boolean
+    showAdvanced?: boolean
+    toggle?: (checked: boolean) => void
 }) {
+    const { t } = useTranslation()
     const Icon = category.icon
-
-    // ARCH-03-05: Special handling for advanced features category
-    const isAdvancedFeatures = category.id === 'advancedFeatures'
 
     return (
         <button
@@ -115,28 +121,28 @@ function SettingsCategoryItem({
                     {category.label}
                 </p>
                 {category.description && (
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                         {category.description}
                     </p>
                 )}
+
+                {/* ARCH-03-05: Show advanced features checkbox for advanced features category */}
+                {isAdvancedFeatures && (
+                    <label className="flex items-center gap-2 ml-auto">
+                        <input
+                            type="checkbox"
+                            checked={showAdvanced}
+                            onChange={(e) => toggle?.(e.target.checked)}
+                            className="w-4 h-4 border-2 border-black"
+                            aria-label={t('settings.advancedFeatures.showAdvancedLayouts')}
+                        />
+                    </label>
+                )}
+
+                {!isAdvancedFeatures && (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
+                )}
             </div>
-
-            {/* ARCH-03-05: Show advanced features checkbox for advanced features category */}
-            {isAdvancedFeatures && (
-                <label className="flex items-center gap-2 ml-auto">
-                    <input
-                        type="checkbox"
-                        checked={showAdvanced}
-                        onChange={(e) => setShow(e.target.checked)}
-                        className="w-4 h-4 border-2 border-black"
-                        aria-label={t('settings.advancedFeatures.showAdvancedLayouts')}
-                    />
-                </label>
-            )}
-
-            {!isAdvancedFeatures && (
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
-            )}
         </button>
     )
 }

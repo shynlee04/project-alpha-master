@@ -100,6 +100,10 @@ export interface Project {
   autoCreated?: boolean;
   /** 45-04: Browser mode flag (special project showing all notes across projects) */
   isBrowserMode?: boolean;
+
+  // Platform detection support (TS-DEBT-01)
+  /** Device type for platform-specific behavior (desktop/mobile/tablet) */
+  deviceType?: 'desktop' | 'mobile' | 'tablet';
 }
 
 /**

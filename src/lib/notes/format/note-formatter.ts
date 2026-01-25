@@ -10,6 +10,7 @@
 import grayMatter from 'gray-matter';
 import type { NoteRecord } from '@/lib/notes/types';
 import type { Block } from '@blocknote/core';
+import { adaptBlocksFromUnknown } from '@/domain/adapters';
 
 // ============================================================================
 // Types
@@ -169,7 +170,7 @@ export function formatNoteForStorage(note: NoteRecord): string {
     const frontmatterStr = matterObject;
 
     // Convert blocks to markdown
-    const blocksMarkdown = blocksToMarkdown(note.blocks);
+    const blocksMarkdown = blocksToMarkdown(adaptBlocksFromUnknown(note.blocks));
 
     return `${frontmatterStr}\n${blocksMarkdown}`;
 }
@@ -295,9 +296,9 @@ function getBlockTextContent(block: Block): string {
  * // Returns: { frontmatter: {...}, blocks: [...], markdown: '...' }
  * ```
  */
-export function parseNoteFromStorage(
+  export function parseNoteFromStorage(
     markdown: string,
-    noteId: string,
+    _noteId: string,
 ): ParsedNote {
     // Parse with gray-matter
     const { data: frontmatter, content: markdownContent } =

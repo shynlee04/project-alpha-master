@@ -37,6 +37,10 @@ export interface KnowledgeSource {
   created: Date;
   /** Last update timestamp */
   updated: Date;
+
+  // Canvas linkage support (TS-DEBT-01)
+  /** Key concepts extracted from this knowledge source */
+  keyConcepts?: string[];
 }
 
 /**

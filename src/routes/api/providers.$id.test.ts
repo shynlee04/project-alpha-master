@@ -126,7 +126,6 @@ async function postProviderTest({
 // ============================================================================
 
 export const Route = createFileRoute('/api/providers/$id/test')({
-  // @ts-expect-error TanStack Start server.handlers types not fully exported in @tanstack/react-router 1.147.0
   server: {
     handlers: {
       POST: postProviderTest,

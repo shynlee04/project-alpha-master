@@ -1,0 +1,107 @@
+{
+  "structural_issues": [
+    "Inconsistent heading hierarchy: Uses '## 1.', '## 2.', '## 3.' then jumps to '### 4.' and '## **The plugins' - no clear section numbering scheme",
+    "Informal language throughout: 'THE TWO-ALWAYS-LOADED-PLUGINS', 'pretty much', 'these are just a few as I thought of', 'this is not enough', ' ultrathink for this matter'",
+    "Missing frontmatter: No title metadata, author, version, status, or date - violates BMAD artifact standards",
+    "Incomplete lists with 'etc.': Lines 22, 29, 40 use 'and so many more', 'etc.', 'and so on' - vague requirements",
+    "No table of contents or navigation: 163-line document with no TOC, making it hard to navigate",
+    "Mixed language styles: Contains informal bullet points alongside markdown code blocks, inconsistent with technical documentation standards",
+    "Line 149 references non-existent file 'fundamental-truth-check-list.md' - broken internal reference"
+  ],
+  "alignment_violations": [
+    {
+      "claim": "Routes mention '/ide/$projectId' and '/notes/$projectId' as active routes (lines 11, 29, 33-34, 38-39, 50, 61, 127-130)",
+      "adr_ref": "ADR-034-AMENDMENT-001",
+      "issue": "Amendment 001 explicitly ELIMINATES workspace-centric routes. Lines 208-211 state: 'No more `?layout=ide` or `?layout=notes` query params' and 'All navigation uses /$projectId (not /ide/$projectId or /notes/$projectId)'. Old routes are deprecated and should redirect to /$projectId without layout params"
+    },
+    {
+      "claim": "Document uses 'workspace' terminology throughout (lines 11, 23, 50, 150, 161)",
+      "adr_ref": "ADR-034-AMENDMENT-001",
+      "issue": "Amendment 001 lines 387-390 explicitly states: 'This eliminates: The concept of \"workspaces\" (IDE, Notes, etc.)'. The mental model should be 'User picks a project, platform determines available tools' - NOT workspace-centric"
+    },
+    {
+      "claim": "Lines 59-60 mention '2-always-loaded-plugins' with file-tree/project management + agent chat",
+      "adr_ref": "ADR-034",
+      "issue": "ADR-034 defines specific feature plugins (lines 85-103): 'filetree', 'monaco', 'notes', 'terminal', 'chat', 'agents'. The document doesn't map to these exact PluginId values, creating potential misalignment"
+    },
+    {
+      "claim": "Line 149: 'Multiple projects across workspaces (IDE, Notes - Knowledge/Study disabled for MVP)'",
+      "adr_ref": "ADR-034-AMENDMENT-001",
+      "issue": "Uses deprecated 'workspaces' terminology. Should be 'Multiple projects with platform-filtered features' since Knowledge/Study plugins are disabled for MVP"
+    }
+  ],
+  "inaccuracies": [
+    {
+      "claim": "Line 5: 'GPT 5.2 variants' and 'Claude 4.5' - references non-existent model versions",
+      "issue": "As of 2026-01-25, these model versions don't exist. GPT-5 is not released, Claude 4.5 is speculative. Should verify with official provider documentation before claiming support"
+    },
+    {
+      "claim": "Lines 147-148: 'Use Tanstack AI SDK & Tanstack Start' + 'Keys persisted in vault'",
+      "adr_ref": "ADR-033/AGENTS.md",
+      "issue": "AGENTS.md (line 705) lists AI as 'Google Gemini (via @tanstack/ai-gemini)' - but document claims Tanstack Start for BYOK vault which may not align with current implementation"
+    },
+    {
+      "claim": "Line 160: 'Clearly define and connect Zustand (client state) and Dexie (persisted data) usage'",
+      "issue": "Vague - doesn't reference existing ADR-033 store architecture decisions (StorageGateway, PlatformContract interfaces) which already define these boundaries"
+    }
+  ],
+  "missing_sections": [
+    "No API contracts defined for plugins: ADR-034 defines FeaturePlugin interface (lines 84-103) but document doesn't reference or elaborate on required API contracts",
+    "No error handling patterns: Critical topics like DexieDB quota handling, FSA permission failures, offline-first fallbacks are mentioned as concerns but not addressed",
+    "No sync strategy defined: Line 18 mentions 'synchronization' concerns for large projects but no concrete sync strategy is provided",
+    "No state management boundary specification: Line 20 mentions Zustand/Dexie conflicts but no resolution pattern is defined",
+    "No CRUD permission matrix: Lines 14-15, 54, 122 mention agent permissions but no concrete permission schema is provided",
+    "No RAG indexing strategy: Document mentions RAG features but provides no implementation approach for local RAG vectors",
+    "No mobile/tablet UX specification: Mentions 'portrait phone screen' but no concrete responsive layout patterns for plugins on small screens"
+  ],
+  "terminology_inconsistencies": [
+    {
+      "used": "DexieDB",
+      "should_be": "Dexie.js or ViaGentDatabase",
+      "evidence": "ADR-033 line 70-72: 'Single DexieDB (ViaGentDatabase)'. The project uses 'Dexie.js' as the library name and 'ViaGentDatabase' as the database instance name"
+    },
+    {
+      "used": "IndexedDB",
+      "should_be": "IndexedDB (via Dexie.js)",
+      "evidence": "Lines 149, 158 use 'IndexedDB' generically. Should clarify that IndexedDB is accessed via Dexie.js wrapper for consistency with ADR-033"
+    },
+    {
+      "used": "workspace",
+      "should_be": "project OR platform-filtered feature set",
+      "evidence": "ADR-034-AMENDMENT-001 eliminates workspace concept. Should use 'project' for the entity, and describe features as 'platform-filtered' or 'platform-appropriate'"
+    },
+    {
+      "used": "FSA (File System Access API)",
+      "should_be": "FSA (File System Access API) or 'desktop storage'",
+      "evidence": "Consistent but line 17 says 'file system for PC users' - should use 'FSA' consistently per ADR-033 terminology"
+    },
+    {
+      "used": "plugin vs. plugins vs. feature plugin",
+      "should_be": "Consistently 'Feature Plugin' or 'plugin'",
+      "evidence": "Lines 5, 13, 16, 59, 127-129 use variations: 'plugins enabled', 'always-loaded-plugins', '2-always-loaded-plugins', 'The plugins'. Should align with ADR-034's 'FeaturePlugin' interface naming"
+    },
+    {
+      "used": "BYOK Vault",
+      "should_be": "API Key Vault or Credentials Vault",
+      "evidence": "Lines 24-26 use 'BYOK Vault' but line 6 references '/setting' route. Should clarify naming convention - 'BYOK' (Bring Your Own Key) is a concept, not necessarily the UI label"
+    }
+  ],
+  "references_issues": [
+    {
+      "file": "fundamental-truth-check-list.md",
+      "issue": "Referenced on line 26 but file doesn't exist - broken internal reference",
+      "impact": "If this is meant to be created, it should be tracked as a deliverable; if it's existing, document should point to correct path"
+    },
+    {
+      "file": "ADR-034-Extensions-xx",
+      "issue": "Line 26 references potential future ADR but no ADR number is assigned",
+      "impact": "Forward reference without tracking - should be added to epic backlog with proper ADR编号"
+    }
+  ],
+  "summary": {
+    "critical_issues": 3,
+    "high_priority_issues": 5,
+    "medium_priority_issues": 8,
+    "recommendation": "Document needs substantial revision before it can serve as a valid reference. Priority actions: 1) Remove workspace-centric terminology, 2) Update route references to use /$projectId, 3) Add frontmatter metadata, 4) Define concrete API contracts for missing sections, 5) Align terminology with ADR-033/034"
+  }
+}

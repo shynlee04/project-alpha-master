@@ -17,7 +17,6 @@
 import { useTranslation } from 'react-i18next';
 import { HardDrive, Database } from 'lucide-react';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-import type { PlatformContract } from '@/infrastructure/filesystem/storage-types';
 
 /**
  * StorageBadge component props

@@ -222,24 +222,6 @@ export function LayoutPresetPicker() {
   );
 }
 
-/**
- * Get current project ID from localStorage
- * / Lấy ID dự án hiện tại từ localStorage
- */
-function getCurrentProjectId(): string | undefined {
-  try {
-    const projectStoreKey = 'project-storage';
-    const projectData = localStorage.getItem(projectStoreKey);
-    if (!projectData) return undefined;
-
-    const parsed = JSON.parse(projectData);
-    return parsed.state?.activeProjectId || undefined;
-  } catch (error) {
-    console.warn('[LayoutPresetPicker] Failed to read current project ID:', error);
-    return undefined;
-  }
-}
-
 // ============================================================================
 // Keyboard Shortcuts Hook
 // ============================================================================

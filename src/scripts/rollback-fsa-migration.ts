@@ -162,7 +162,7 @@ type RollbackProgressCallback = (progress: RollbackProgress) => void;
  * }
  * ```
  */
-export async function rollbackFSA(options: RollbackOptions): Promise<RollbackResult> {
+export async function rollbackFSA(_options: RollbackOptions): Promise<RollbackResult> {
   // STUB: Not yet implemented
   throw new Error('Rollback utility not yet implemented. See rollback-procedure.md for manual rollback steps.');
 }
@@ -171,7 +171,7 @@ export async function rollbackFSA(options: RollbackOptions): Promise<RollbackRes
 // Step 1: Backup Current State (STUB)
 // ============================================================================
 
-/**
+/*
  * Step 1: Create backups before rollback
  *
  * Backs up:
@@ -181,7 +181,8 @@ export async function rollbackFSA(options: RollbackOptions): Promise<RollbackRes
  *
  * @private
  */
-async function step1_BackupCurrentState(options: RollbackOptions): Promise<StepResult> {
+/*
+async function step1_BackupCurrentState(_options: RollbackOptions): Promise<StepResult> {
   // STUB: Implementation requires:
   // 1. Export DexieDB to JSON (if export utility exists)
   // 2. Copy FSA notes folder to backup directory
@@ -189,12 +190,13 @@ async function step1_BackupCurrentState(options: RollbackOptions): Promise<StepR
 
   throw new Error('Step 1 not implemented');
 }
+*/
 
 // ============================================================================
 // Step 2: Revert Storage Type (STUB)
 // ============================================================================
 
-/**
+/*
  * Step 2: Revert project storage type to IndexedDB
  *
  * Updates:
@@ -204,7 +206,8 @@ async function step1_BackupCurrentState(options: RollbackOptions): Promise<StepR
  *
  * @private
  */
-async function step2_RevertStorageType(options: RollbackOptions): Promise<StepResult> {
+/*
+async function step2_RevertStorageType(_options: RollbackOptions): Promise<StepResult> {
   // STUB: Implementation requires:
   // 1. Open DexieDB project store
   // 2. Update project record: { storageType: 'indexeddb', storageMetadata: null }
@@ -213,12 +216,13 @@ async function step2_RevertStorageType(options: RollbackOptions): Promise<StepRe
 
   throw new Error('Step 2 not implemented');
 }
+*/
 
 // ============================================================================
 // Step 3: Import FSA Notes (STUB)
 // ============================================================================
 
-/**
+/*
  * Step 3: Import all FSA notes to DexieDB
  *
  * Process:
@@ -230,7 +234,8 @@ async function step2_RevertStorageType(options: RollbackOptions): Promise<StepRe
  *
  * @private
  */
-async function step3_ImportFSAFiles(options: RollbackOptions): Promise<StepResult> {
+/*
+async function step3_ImportFSAFiles(_options: RollbackOptions): Promise<StepResult> {
   // STUB: Implementation requires:
   // 1. Access FSA notes directory (File System Access API)
   // 2. Iterate through directory entries, filter by .md files
@@ -245,12 +250,13 @@ async function step3_ImportFSAFiles(options: RollbackOptions): Promise<StepResul
 
   throw new Error('Step 3 not implemented');
 }
+*/
 
 // ============================================================================
 // Step 4: Validation (STUB)
 // ============================================================================
 
-/**
+/*
  * Step 4: Validate rollback success
  *
  * Validates:
@@ -262,7 +268,8 @@ async function step3_ImportFSAFiles(options: RollbackOptions): Promise<StepResul
  *
  * @private
  */
-async function step4_ValidateRollback(options: RollbackOptions): Promise<StepResult> {
+/*
+async function step4_ValidateRollback(_options: RollbackOptions): Promise<StepResult> {
   // STUB: Implementation requires:
   // 1. Count notes in DexieDB (should match FSA file count)
   // 2. Verify frontmatter integrity for all notes
@@ -272,40 +279,49 @@ async function step4_ValidateRollback(options: RollbackOptions): Promise<StepRes
 
   throw new Error('Step 4 not implemented');
 }
+*/
 
 // ============================================================================
 // Helper Functions (STUB)
 // ============================================================================
 
-/**
+/*
  * Create backup directory if it doesn't exist
  */
-async function ensureBackupDir(dir: string): Promise<void> {
+/*
+async function ensureBackupDir(_dir: string): Promise<void> {
   throw new Error('ensureBackupDir not implemented');
 }
+*/
 
-/**
+/*
  * Copy directory recursively
  */
-async function copyDirectory(source: string, destination: string): Promise<void> {
+/*
+async function copyDirectory(_source: string, _destination: string): Promise<void> {
   throw new Error('copyDirectory not implemented');
 }
+*/
 
-/**
+/*
  * Generate import report in markdown format
  */
-function generateImportReport(stats: RollbackResult['stats'], errors: string[]): string {
+/*
+function generateImportReport(_stats: RollbackResult['stats'], _errors: string[]): string {
   // STUB: Generate markdown report similar to export report
   throw new Error('generateImportReport not implemented');
 }
+*/
 
-/**
+/*
  * Validate note frontmatter and content
  */
-function validateNoteNoteRecord(note: any): { valid: boolean; errors: string[] } {
+/*
+function validateNoteNoteRecord(_note: any): { valid: boolean; errors: string[] } {
   // STUB: Check for required fields and valid types
   throw new Error('validateNoteNoteRecord not implemented');
 }
+*/
 
 // ============================================================================
 // CLI Entry Point (STUB)

@@ -26,6 +26,7 @@ export interface KnowledgeSource {
   createdAt: number;
   updatedAt: number;
   metadata?: Record<string, unknown>;
+  keyConcepts?: string[];
 }
 
 /**

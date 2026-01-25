@@ -69,6 +69,7 @@ import type {
 
 import type {
     FlashcardsTable,
+    FlashcardSetsTable,
     StudySessionsTable,
     StudyCardsTable,
     QuizzesTable,
@@ -216,7 +217,7 @@ export class ViaGentDatabase extends Dexie {
     // ========================================================================
 
     flashcards!: FlashcardsTable;
-    flashcardSets!: FlashcardsTable;
+    flashcardSets!: FlashcardSetsTable;
     studySessions!: StudySessionsTable;
     studyCards!: StudyCardsTable;
     quizzes!: QuizzesTable;

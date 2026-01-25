@@ -17,9 +17,7 @@
  * @created 2026-01-22
  */
 
-import React from 'react';
 import { MessageSquare, Plus } from 'lucide-react';
-import { useProjectContext } from '@/infrastructure/context/project-context';
 
 // ============================================================================
 // Props
@@ -37,16 +35,14 @@ export interface ChatThreadListProps {
 /**
  * ChatThreadList Component
  *
- * Displays chat threads for the current project.
+ * Displays chat threads for current project.
  * For now, shows placeholder since chat service is not yet implemented.
  *
  * @remarks
  * Full implementation will be in ARCH-02-08.
  * Will integrate with chatService from ProjectContext.
  */
-export function ChatThreadList({ currentProjectId }: ChatThreadListProps) {
-  const { chatService } = useProjectContext();
-
+export function ChatThreadList({ currentProjectId: _currentProjectId }: ChatThreadListProps) {
   // Placeholder: No chat threads yet
   // When ARCH-02-08 is complete, this will:
   // 1. Fetch threads from chatService
@@ -57,12 +53,7 @@ export function ChatThreadList({ currentProjectId }: ChatThreadListProps) {
   const handleNewThread = () => {
     console.warn('[ChatThreadList] New thread clicked - not implemented yet');
     // TODO: Will create new thread and open Chat plugin
-    // navigate({ to: '/$projectId?plugin=chat', params: { projectId: currentProjectId } });
-  };
-
-  const handleThreadClick = (threadId: string) => {
-    console.warn('[ChatThreadList] Thread clicked - not implemented yet');
-    // TODO: Will open specific thread in Chat plugin
+    // navigate({ to: '/$projectId?plugin=chat', params: { projectId: _currentProjectId } });
   };
 
   return (

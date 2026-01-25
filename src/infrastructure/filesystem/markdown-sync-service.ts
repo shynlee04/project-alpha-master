@@ -23,7 +23,7 @@ import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
 import type { StorageGateway, FileChangeEvent } from '@/domain/interfaces/storage-gateway.interface';
 import {
   parseMarkdownFile,
-  markdownToBlocks,
+  markdownToBlocks as parseMarkdownToBlocks,
   noteToMarkdown,
   blocksToMarkdown as blocksToMarkdownUtil,
 } from '@/infrastructure/sync/workspace-services/notes';
@@ -541,8 +541,8 @@ export class MarkdownSyncService {
    * @param markdown - Markdown content
    * @returns Array of BlockNote blocks
    */
-  markdownToBlocks(markdown: string): Block[] {
-    return markdownToBlocks(markdown);
+  async markdownToBlocks(markdown: string): Promise<Block[]> {
+    return parseMarkdownToBlocks(markdown);
   }
 
   /**

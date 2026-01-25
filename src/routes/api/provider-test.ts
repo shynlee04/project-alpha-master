@@ -246,7 +246,6 @@ async function postProviderTest({ request }: { request: Request }) {
  * Uses server.handlers pattern for proper route registration.
  */
 export const Route = createFileRoute('/api/provider-test')({
-  // @ts-expect-error TanStack Start server.handlers types not fully exported in @tanstack/react-router 1.147.0
   server: {
     handlers: {
       POST: postProviderTest,

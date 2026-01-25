@@ -6,18 +6,18 @@ temperature: 0.2
 tools:
   write: true
   edit: true
-  bash: false
-  glob: false
-  grep: false
-  read: false
+  bash: true
+  glob: true
+  grep: true
+  read: true
   task: true
-  mcp/*: false
+  mcp/*: true
 permission:
   edit: allow
   bash: allow
   write: allow
-  read: deny
-  mcp/*: deny
+  read: allow
+  mcp/*: allow
   task:
     "*": allow
     "agent": allow

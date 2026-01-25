@@ -17,7 +17,6 @@
  * @created 2026-01-22
  */
 
-import React from 'react';
 import { Bot, ChevronRight } from 'lucide-react';
 
 // ============================================================================
@@ -43,7 +42,7 @@ export interface AgentToolsPanelProps {
  * Full implementation will be in future agent-related epics.
  * Will integrate with agent registry and tool execution.
  */
-export function AgentToolsPanel({ currentProjectId }: AgentToolsPanelProps) {
+export function AgentToolsPanel({ currentProjectId: _currentProjectId }: AgentToolsPanelProps) {
   const handleExpand = () => {
     console.warn('[AgentToolsPanel] Expand clicked - not implemented yet');
     // TODO: Will expand to show available agents

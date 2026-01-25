@@ -40,11 +40,6 @@ const PROJECT_TYPE_LABELS = {
   learning: 'Learning',
 } as const;
 
-const WORKSPACE_TYPE_LABELS = {
-  webcontainer: 'WebContainer',
-  local: 'Local',
-} as const;
-
 const STORAGE_TYPE_LABELS = {
   indexeddb: 'Browser Database',
   fsa: 'File System Access',
@@ -183,19 +178,9 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
                   {WORKSPACE_BINDING_LABELS.ide}
                 </span>
               )}
-              {formData.workspaceBindings.knowledge && (
-                <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
-                  {WORKSPACE_BINDING_LABELS.knowledge}
-                </span>
-              )}
               {formData.workspaceBindings.notes && (
                 <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
                   {WORKSPACE_BINDING_LABELS.notes}
-                </span>
-              )}
-              {formData.workspaceBindings.study && (
-                <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
-                  {WORKSPACE_BINDING_LABELS.study}
                 </span>
               )}
             </div>
@@ -222,10 +207,10 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           <div className="space-y-2 text-sm">
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">
-                {t('wizard.fields.workspaceType.label')}
+                {t('wizard.fields.workspaceTemplate.label')}
               </span>
               <span className="font-medium text-foreground">
-                {WORKSPACE_TYPE_LABELS[formData.workspaceType]}
+                {TEMPLATE_LABELS[formData.workspaceTemplate]}
               </span>
             </div>
             <div className="flex justify-between py-2 border-b border-border">
@@ -249,60 +234,36 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           <div className="space-y-2 text-sm">
             <div className="flex justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">
-                {t('wizard.fields.selectedAgent.label')}
+                {t('wizard.fields.agentFullAccess.label')}
               </span>
               <span className="font-medium text-foreground">
-                {formData.selectedAgent}
+                {formData.agentFullAccess ? t('common.enabled') : t('common.disabled')}
               </span>
-            </div>
-            <div className="py-2 border-b border-border">
-              <div className="text-muted-foreground mb-1">
-                {t('wizard.fields.agentPermissions.label')}
-              </div>
-              <div className="flex gap-2">
-                {formData.agentPermissions.read && (
-                  <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
-                    {t('wizard.permissions.read')}
-                  </span>
-                )}
-                {formData.agentPermissions.write && (
-                  <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
-                    {t('wizard.permissions.write')}
-                  </span>
-                )}
-                {formData.agentPermissions.execute && (
-                  <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-[2px]">
-                    {t('wizard.permissions.execute')}
-                  </span>
-                )}
-              </div>
             </div>
           </div>
         </div>
       )}
 
       {/* File Setup Summary */}
-      {formData.fileSetupEnabled && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-semibold text-foreground">
-            {t('wizard.summary.fileSetup')}
-          </h4>
-          <div className="space-y-1 text-sm">
-            {formData.createReadme && (
-              <div className="flex items-center gap-2 py-1 text-foreground">
-                <Check className="w-4 h-4 text-success" />
-                <span>README.md</span>
-              </div>
-            )}
-            {formData.createGitignore && (
-              <div className="flex items-center gap-2 py-1 text-foreground">
-                <Check className="w-4 h-4 text-success" />
-                <span>.gitignore</span>
-              </div>
-            )}
-          </div>
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-foreground">
+          {t('wizard.summary.fileSetup')}
+        </h4>
+        <div className="space-y-1 text-sm">
+          {formData.createReadme && (
+            <div className="flex items-center gap-2 py-1 text-foreground">
+              <Check className="w-4 h-4 text-success" />
+              <span>README.md</span>
+            </div>
+          )}
+          {!formData.createReadme && (
+            <div className="flex items-center gap-2 py-1 text-muted-foreground">
+              <X className="w-4 h-4" />
+              <span>README.md</span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Error message */}
       {error && (

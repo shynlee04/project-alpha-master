@@ -15,6 +15,7 @@
 
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
+import { adaptDiagnosticTraceToEvent } from '@/domain/adapters';
 
 // ============================================================================
 // TYPES
@@ -376,7 +377,7 @@ export async function getRecentTraces(limit: number = 10): Promise<Trace[]> {
                   event.step === 'FAILED' ? 'failed' : 'running'
         });
       }
-      grouped.get(event.traceId)!.events.push(event);
+      grouped.get(event.traceId)!.events.push(adaptDiagnosticTraceToEvent(event));
     }
     
     return Array.from(grouped.values()).sort((a, b) => 
@@ -399,12 +400,7 @@ export async function clearTraces(): Promise<void> {
 }
 
 // ============================================================================
-// INDEX EXPORT
+// DEFAULT EXPORT
 // ============================================================================
 
-export {
-  createDiagnosticTrace as default,
-  completeTrace,
-  getRecentTraces,
-  clearTraces
-};
+export { createDiagnosticTrace as default };

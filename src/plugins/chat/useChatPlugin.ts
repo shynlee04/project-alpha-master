@@ -14,9 +14,7 @@
  */
 
 import { useContext } from 'react';
-
-// Context
-import { ProjectContextProvider } from '@/infrastructure/context/project-context';
+import { ProjectContext } from '@/infrastructure/context/project-context';
 
 // ============================================================================
 // Hook Types
@@ -79,7 +77,7 @@ export interface ChatPluginContext {
  * ```
  */
 export function useChatPlugin(): ChatPluginContext {
-  const context = useContext(ProjectContextProvider.Context);
+  const context = useContext(ProjectContext);
 
   // Extract chat-specific context from ProjectContext
   // For POC, we provide minimal context
@@ -88,11 +86,21 @@ export function useChatPlugin(): ChatPluginContext {
   // - Thread management functions
   // - Conversation state hooks
 
+  if (!context) {
+    return {
+      projectId: undefined,
+      projectName: undefined,
+      storageType: undefined,
+      deviceType: undefined,
+      hasChatService: false,
+    };
+  }
+
   return {
     projectId: context.project?.id,
     projectName: context.project?.name,
     storageType: context.project?.storageType,
-    deviceType: context.project?.deviceType,
+    deviceType: context.project?.deviceType === 'tablet' ? 'desktop' : context.project?.deviceType,
     hasChatService: !!context.chatService,
   };
 }

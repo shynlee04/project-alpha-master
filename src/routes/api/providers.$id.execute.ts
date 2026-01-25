@@ -105,7 +105,6 @@ async function postProviderExecute({
 // ============================================================================
 
 export const Route = createFileRoute('/api/providers/$id/execute')({
-  // @ts-expect-error TanStack Start server.handlers types not fully exported in @tanstack/react-router 1.147.0
   server: {
     handlers: {
       POST: postProviderExecute,

@@ -84,7 +84,7 @@ export class NoteSyncLayer {
   private changeCallbacks: Set<(noteId: string) => void> = new Set();
 
   constructor(
-    private adapter: StorageAdapter,
+    adapter: StorageAdapter,
     private options: SyncOptions = {}
   ) {
     this.cacheSync = new CacheSync(adapter);

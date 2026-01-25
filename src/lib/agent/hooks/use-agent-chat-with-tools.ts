@@ -24,6 +24,7 @@ import type { WorkspaceEventEmitter } from '../../events/workspace-events';
 import { buildMultimodalMessage, type ImageContent } from '../multimodal/message-builder';
 // EPIC-40 MM-03: Tool execution persistence to unified chat store
 import { useUnifiedChatStore } from '@/infrastructure/persistence/stores/chat';
+import { adaptToolsToClientTools } from '@/domain/adapters';
 
 /**
  * Options for useAgentChatWithTools hook
@@ -304,7 +305,7 @@ export function useAgentChatWithTools(
         if (agentTools) {
             return {
                 connection,
-                tools: agentTools.getClientTools(),
+                tools: adaptToolsToClientTools(agentTools.getClientTools()),
                 agentLoopStrategy: maxIterations(3), // MVP-3: Enable basic agentic loop (max 3 iterations)
             };
         }

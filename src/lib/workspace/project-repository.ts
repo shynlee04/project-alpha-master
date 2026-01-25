@@ -24,15 +24,15 @@
 
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
-import { 
-  createDiagnosticTrace, 
-  traceEvent, 
+import {
+  createDiagnosticTrace,
+  traceEvent,
   completeTrace,
-  traceVerifyHandleAccess,
   traceVerifyDexieRecord,
-  traceVerifyHandlePersistence 
+  traceVerifyHandlePersistence
 } from '@/lib/diagnostics';
 import type { Project } from '@/infrastructure/persistence/stores/project';
+import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db-core-types';
 
 // ============================================================================
 // TYPES
@@ -266,17 +266,19 @@ class ProjectRepositoryImpl implements ProjectRepository {
       }
       
       // Step 3: Create project record
-      const project: Project = {
+      const project: ProjectRecord = {
         id: projectId,
         name: input.name,
+        folderPath: input.name,
+        path: input.name,
+        workspaceId: 'ide',
         storageType: input.storageType,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        lastOpenedAt: Date.now(),
+        createdAt: new Date(),
+        lastOpened: new Date(),
         workspaceBindings: input.workspaceBindings || { ide: true },
-        fsaHandleId: input.storageType === 'fsa' ? projectId : undefined
+        autoSync: true
       };
-      
+
       await db.projects.put(project);
       
       traceEvent({
@@ -286,12 +288,12 @@ class ProjectRepositoryImpl implements ProjectRepository {
         ok: true,
         metadata: { projectId }
       });
-      
+
       completeTrace(trace.traceId, trace.flow, 'success');
-      
+
       return {
         status: 'ok',
-        project,
+        project: project as Project,
         traceId: trace.traceId
       };
       

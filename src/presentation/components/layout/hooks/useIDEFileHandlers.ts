@@ -64,9 +64,9 @@ export function useIDEFileHandlers({
     gatewayRef,
     eventBus,
     toast,
-}: UseIDEFileHandlersOptions): UseIDEFileHandlersResult {
+  }: UseIDEFileHandlersOptions): UseIDEFileHandlersResult {
     // Call hook at top level (React rules compliance)
-    const { isMobile, isTablet } = useDeviceType();
+    const { isMobile: _isMobile, isTablet: _isTablet } = useDeviceType();
 
     const handleFileSelect = useCallback(
         async (path: string, _handle: FileSystemFileHandle) => {

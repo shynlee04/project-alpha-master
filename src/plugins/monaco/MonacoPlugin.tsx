@@ -26,43 +26,6 @@ import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
-import type { EditorState, TabData } from './types';
-
-// ============================================================================
-// Language Detection
-// ============================================================================
-
-/**
- * Map file extensions to Monaco language IDs
- */
-const LANGUAGE_MAP: Record<string, string> = {
-  ts: 'typescript',
-  tsx: 'typescript',
-  js: 'javascript',
-  jsx: 'javascript',
-  json: 'json',
-  md: 'markdown',
-  css: 'css',
-  scss: 'scss',
-  html: 'html',
-  py: 'python',
-  rs: 'rust',
-  go: 'go',
-  java: 'java',
-  cpp: 'cpp',
-  c: 'c',
-  txt: 'plaintext',
-  yml: 'yaml',
-  yaml: 'yaml',
-};
-
-/**
- * Get Monaco language ID from file extension
- */
-function getLanguageFromPath(path: string): string {
-  const ext = path.split('.').pop()?.toLowerCase() || 'txt';
-  return LANGUAGE_MAP[ext] || 'plaintext';
-}
 
 // ============================================================================
 // Main Monaco Plugin Component
@@ -91,49 +54,18 @@ function MonacoComponent({ width, height }: PluginMainProps) {
 
   // Get context from provider
   const projectContext = useProjectContext();
-  const { project, gateway, openFile, saveFile, refreshFileTree } = projectContext;
+  const { gateway, saveFile } = projectContext;
 
   // Local state for Monaco-specific UI
-  const [activePath, setActivePath] = useState<string | null>(null);
+  const [activePath, _setActivePath] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, _setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModified, setIsModified] = useState(false);
 
   // ============================================================================
   // Actions
   // ============================================================================
-
-  /**
-   * Load file content from storage
-   */
-  const loadFile = useCallback(
-    async (path: string) => {
-      if (!gateway) {
-        setError('Storage gateway not available');
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        // Read file from storage
-        const data = await gateway.read(path);
-        const text = new TextDecoder().decode(data);
-        setContent(text);
-        setActivePath(path);
-        setIsModified(false);
-        console.log('[MonacoPlugin] Loaded file:', path);
-      } catch (err) {
-        setError(`Failed to load file: ${err instanceof Error ? err.message : 'Unknown error'}`);
-        console.error('[MonacoPlugin] Error loading file:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [gateway],
-  );
 
   /**
    * Save file content to storage
@@ -144,7 +76,6 @@ function MonacoComponent({ width, height }: PluginMainProps) {
     }
 
     try {
-      const data = new TextEncoder().encode(content);
       await saveFile(activePath, content); // Use ProjectContext.saveFile
       setIsModified(false);
       console.log('[MonacoPlugin] Saved file:', activePath);
@@ -222,7 +153,6 @@ function MonacoComponent({ width, height }: PluginMainProps) {
   // Main Render
   // ============================================================================
 
-  const language = getLanguageFromPath(activePath);
   const fileName = activePath.split('/').pop() || activePath;
 
   return (

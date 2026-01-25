@@ -9,8 +9,7 @@
 
 import type { StorageAdapter } from '@/domain/interfaces/storage-adapter.interface';
 import type { NoteRecord } from '@/lib/notes/types';
-import { formatNoteForStorage, parseNoteFromStorage, getNoteFilename, extractNoteId } from '@/lib/notes/format';
-import type { FileChangeEvent } from '@/domain/interfaces/storage-adapter.interface';
+import { formatNoteForStorage, parseNoteFromStorage, getNoteFilename } from '@/lib/notes/format';
 import { useNoteStore } from '@/lib/notes/note-store';
 
 // ============================================================================
@@ -76,14 +75,11 @@ export type ConflictResolution = 'keep-local' | 'keep-remote' | 'merge' | 'abort
  * ```
  */
 export class CacheSync {
-  private adapter: StorageAdapter;
   private syncInProgress: boolean = false;
 
   constructor(
     private adapter: StorageAdapter
-  ) {
-    this.adapter = adapter;
-  }
+  ) {}
 
   /**
    * Sync notes from DexieDB to FSA (write to files)
@@ -183,14 +179,17 @@ export class CacheSync {
         // Read from FSA
         try {
           const content = await this.adapter.readFile(filename);
-          const parsed = parseNoteFromStorage(content.text, noteId);
+          const parsed = parseNoteFromStorage(content.text || '', noteId);
 
           // Check if note exists in store
-          const existingNote = store.notes.find(n => n.id === noteId);
+          const existingNote = Array.from(store.notes.values()).find(n => n.id === noteId);
 
           if (existingNote) {
             // Update existing note
-            await store.updateNote(parsed.frontmatter);
+            await store.updateNote({
+              id: noteId,
+              ...parsed.frontmatter,
+            });
             results.push({
               noteId,
               success: true,
@@ -198,7 +197,9 @@ export class CacheSync {
             });
           } else {
             // Create new note
-            await store.addNote(parsed.frontmatter);
+            await store.createNote({
+              ...parsed.frontmatter,
+            });
             results.push({
               noteId,
               success: true,
@@ -259,15 +260,14 @@ export class CacheSync {
     // Simple implementation - track recent syncs
     syncHistory.push({
       timestamp: Date.now(),
-      synced: notes.filter(n => (n as any).lastSyncedAt !== undefined).length,
-      conflicts: notes.filter(n => (n as any).lastSyncedAt === 'conflict').length,
+      synced: Array.from(notes.values()).filter(n => (n as any).lastSyncedAt !== undefined).length,
+      conflicts: Array.from(notes.values()).filter(n => (n as any).lastSyncedAt === 'conflict').length,
     });
 
     return {
       lastSyncAt: Date.now(),
-      totalSynced: notes.filter(n => (n as any).lastSyncedAt !== undefined).length,
-      totalConflicts: notes.filter(n => (n as any).lastSyncedAt === 'conflict').length,
-      totalMerges: 0,
+      totalSynced: Array.from(notes.values()).filter(n => (n as any).lastSyncedAt !== undefined).length,
+      totalConflicts: Array.from(notes.values()).filter(n => (n as any).lastSyncedAt === 'conflict').length,
       syncHistory,
     };
   }

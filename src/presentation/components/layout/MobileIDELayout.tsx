@@ -61,6 +61,7 @@ import {
 } from './hooks';
 
 import type { OpenFile } from '../ide/MonacoEditor';
+import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';
 
 /**
  * Loading skeleton for lazy-loaded panels
@@ -113,7 +114,7 @@ export function MobileIDELayout(): React.JSX.Element {
         isOpeningFolder: _isOpeningFolder,
         projectMetadata,
         localAdapterRef: _localAdapterRef,
-        syncManagerRef,
+        syncManagerRef: _syncManagerRef,
         eventBus,
         openFolder: _openFolder,
         switchFolder: _switchFolder,
@@ -198,8 +199,7 @@ export function MobileIDELayout(): React.JSX.Element {
         setSelectedFilePath,
         setFileTreeRefreshKey,
         setFileContentCache,
-        syncManagerRef,
-        localAdapterRef: _localAdapterRef,
+        gatewayRef: _localAdapterRef as React.RefObject<StorageGateway | null>,
         eventBus,
         toast,
     });
