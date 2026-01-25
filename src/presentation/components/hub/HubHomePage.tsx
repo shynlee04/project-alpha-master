@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
+import type { HistoryState } from '@tanstack/history';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   Plus,
@@ -183,12 +184,12 @@ export const HubHomePage: React.FC = () => {
 
     // BUG-017 FIX: Navigate to the INTENDED workspace, not always IDE
     // When user clicks Notes → creates project, they want Notes, not IDE!
-    
+
     const project = useProjectStore.getState().getProject(projectId);
     if (!project) return;
-    
+
     const platform = getPlatformContract();
-    
+
     console.log('[HubHomePage] handleProjectCreated:', {
       projectId,
       projectPickerWorkspace, // The workspace user originally intended to access
@@ -196,14 +197,16 @@ export const HubHomePage: React.FC = () => {
       projectStorageType: project.storageType,
     });
 
-    const navigationState = { fsaHandle };
+    // CC-03.5 FIX: Use state updater function pattern for proper TanStack Router typing
+    // TanStack Router expects `state: (prev) => newState` for custom state objects
+    const stateUpdater = (prev: HistoryState): HistoryState => ({ ...prev, fsaHandle });
 
     // BUG-017 FIX: If user was navigating to a specific workspace (via ProjectPicker),
     // respect that choice instead of defaulting to IDE
     if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
       // User explicitly wanted this workspace (e.g., clicked Notes card → created project)
       console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
-      navigate({ to: `/${projectPickerWorkspace}/$projectId`, params: { projectId }, state: navigationState });
+      navigate({ to: `/${projectPickerWorkspace}/$projectId`, params: { projectId }, state: stateUpdater });
       // Reset the picker workspace after navigation
       setProjectPickerWorkspace('ide');
       return;
@@ -213,10 +216,10 @@ export const HubHomePage: React.FC = () => {
     // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
     if (platform.canAccessIDE && project.storageType === 'fsa') {
       console.log('[HubHomePage] Navigating to IDE workspace (default for FSA)');
-      navigate({ to: '/ide/$projectId', params: { projectId }, state: navigationState });
+      navigate({ to: '/ide/$projectId', params: { projectId }, state: stateUpdater });
     } else {
       console.log('[HubHomePage] Navigating to Notes workspace (default for non-FSA)');
-      navigate({ to: '/notes/$projectId', params: { projectId }, state: navigationState });
+      navigate({ to: '/notes/$projectId', params: { projectId }, state: stateUpdater });
     }
   };
 
@@ -254,20 +257,20 @@ export const HubHomePage: React.FC = () => {
       // BUG-017 FIX: Respect intended workspace if specified
       // ARCH-01-06: Handle is persisted by createProjectFromFolder(), no need to pass via state
       if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
-         console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
-         await navigate({
-            to: `/${projectPickerWorkspace}/$projectId`,
-            params: { projectId: newProjectId },
-         });
-         // Don't reset picker workspace immediately if we want to preserve context,
-         // but usually resetting is safer.
-         setProjectPickerWorkspace('ide');
+        console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
+        await navigate({
+          to: `/${projectPickerWorkspace}/$projectId`,
+          params: { projectId: newProjectId },
+        });
+        // Don't reset picker workspace immediately if we want to preserve context,
+        // but usually resetting is safer.
+        setProjectPickerWorkspace('ide');
       } else {
-         // Default to IDE for FSA projects
-         await navigate({
-            to: '/ide/$projectId',
-            params: { projectId: newProjectId },
-         });
+        // Default to IDE for FSA projects
+        await navigate({
+          to: '/ide/$projectId',
+          params: { projectId: newProjectId },
+        });
       }
 
     } catch (error) {
@@ -300,12 +303,12 @@ export const HubHomePage: React.FC = () => {
       navigate({ to: '/ide/$projectId', params: { projectId } });
     } else if (isEnabled(bindings?.knowledge)) {
       // Defer knowledge workspace to notes for now
-       navigate({ to: '/notes/$projectId', params: { projectId } });
+      navigate({ to: '/notes/$projectId', params: { projectId } });
     } else if (isEnabled(bindings?.notes)) {
       navigate({ to: '/notes/$projectId', params: { projectId } });
     } else if (isEnabled(bindings?.study)) {
       // Defer study workspace to notes for now
-       navigate({ to: '/notes/$projectId', params: { projectId } });
+      navigate({ to: '/notes/$projectId', params: { projectId } });
     } else {
       // No workspaces enabled - fall back to opening dialog for configuration
       setSelectedProject(project as unknown as Project);

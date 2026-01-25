@@ -12,15 +12,31 @@ declare global {
   /**
    * Augment TanStack Router's HistoryState to include custom FSA handle
    *
-   * PHASE-4-V4 FIX: Allows passing FileSystemDirectoryHandle via navigation state
-   * to avoid async restoration delay and second picker dialog.
+   * CC-03.5 FIX (2026-01-25): Properly extend BOTH modules to ensure
+   * navigate() accepts fsaHandle in state parameter.
    *
-   * @see HubHomePage.tsx - handleNewProject()
+   * TanStack Router internally imports HistoryState from @tanstack/history,
+   * but the navigate() function type checking also needs the react-router
+   * module augmentation for full TypeScript compatibility.
+   *
+   * @see HubHomePage.tsx - handleProjectCreated()
+   * @see ProjectsPage.tsx - handleProjectCreated()
    * @see ide.$projectId.tsx - IDEWorkspace()
+   * @see EPIC-ARCH-04-CC-AUDIT-AND-TAKEOVER-2026-01-25.md
    */
   module '@tanstack/history' {
     interface HistoryState {
-      fsaHandle?: FileSystemDirectoryHandle;
+      fsaHandle?: FileSystemDirectoryHandle | null;
+    }
+  }
+
+  /**
+   * CC-03.5 FIX: Also augment @tanstack/react-router to ensure navigate()
+   * type inference correctly accepts our custom state shape.
+   */
+  module '@tanstack/react-router' {
+    interface HistoryState {
+      fsaHandle?: FileSystemDirectoryHandle | null;
     }
   }
 
@@ -67,4 +83,4 @@ declare global {
   }
 }
 
-export {};
+export { };

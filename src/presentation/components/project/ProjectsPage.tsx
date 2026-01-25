@@ -12,6 +12,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
+import type { HistoryState } from '@tanstack/history';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   Plus,
@@ -150,19 +151,21 @@ export const ProjectsPage: React.FC = () => {
     toast.success(t('projects.created', 'Project created successfully'), {
       description: t('projects.createdDesc', 'Your project is ready to use'),
     });
-    
+
     // ARC-A06: Platform-aware redirect after project creation
     // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
     const project = useProjectStore.getState().getProject(projectId);
     const platform = getPlatformContract();
-    const navigationState = { fsaHandle };
-    
+
+    // CC-03.5 FIX: Use state updater function pattern for proper TanStack Router typing
+    const stateUpdater = (prev: HistoryState): HistoryState => ({ ...prev, fsaHandle });
+
     if (platform.canAccessIDE && project?.storageType === 'fsa') {
       // Desktop with FSA: Navigate to IDE (full file system access)
-      navigate({ to: '/ide/$projectId', params: { projectId }, state: navigationState });
+      navigate({ to: '/ide/$projectId', params: { projectId }, state: stateUpdater });
     } else {
       // Mobile OR Desktop with IndexedDB: Navigate to Notes
-      navigate({ to: '/notes/$projectId', params: { projectId }, state: navigationState });
+      navigate({ to: '/notes/$projectId', params: { projectId }, state: stateUpdater });
     }
   };
 
