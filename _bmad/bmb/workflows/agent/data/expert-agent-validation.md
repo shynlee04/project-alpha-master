@@ -7,7 +7,8 @@ Validate Expert agents meet BMAD quality standards.
 ## YAML Structure
 
 - [ ] YAML parses without errors
-- [ ] `agent.metadata` includes: `id`, `name`, `title`, `icon`, `module`
+- [ ] `agent.metadata` includes: `id`, `name`, `title`, `icon`, `module`, `hasSidecar`
+- [ ] `agent.metadata.hasSidecar` is `true` (Expert agents have sidecars)
 - [ ] `agent.metadata.module` is `stand-alone` or module code (`bmm`, `cis`, `bmgd`, etc.)
 - [ ] `agent.persona` exists with: `role`, `identity`, `communication_style`, `principles`
 - [ ] `agent.critical_actions` exists (MANDATORY for Expert)
@@ -133,7 +134,7 @@ Validate Expert agents meet BMAD quality standards.
 
 - [ ] No broken references or missing files
 - [ ] Indentation is consistent
-- [ ] Agent description is clear from reading persona
+- [ ] Agent purpose is clear from reading persona
 - [ ] Agent name/title are descriptive
 - [ ] Icon emoji is appropriate
 - [ ] Memory reference patterns feel natural

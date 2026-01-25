@@ -27,7 +27,7 @@ This project consists of {{parts_count}} distinct parts:
 
 - **Type:** {{project_type}}
 - **Location:** `{{root_path}}`
-- **description:** {{description}}
+- **Purpose:** {{purpose}}
 - **Tech Stack:** {{tech_stack}}
   {{/each}}
 

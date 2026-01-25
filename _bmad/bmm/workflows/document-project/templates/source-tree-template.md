@@ -14,7 +14,7 @@ This project is organized into {{parts_count}} distinct parts:
 
 {{#each project_parts}}
 
-- **{{part_name}}** (`{{root_path}}`): {{description}}
+- **{{part_name}}** (`{{root_path}}`): {{purpose}}
   {{/each}}
   {{/if}}
 
@@ -32,7 +32,7 @@ This project is organized into {{parts_count}} distinct parts:
 
 {{description}}
 
-**description:** {{description}}
+**Purpose:** {{purpose}}
 **Contains:** {{contents_summary}}
 {{#if entry_points}}**Entry Points:** {{entry_points}}{{/if}}
 {{#if integration_note}}**Integration:** {{integration_note}}{{/if}}
@@ -104,7 +104,7 @@ This project is organized into {{parts_count}} distinct parts:
 ### {{file_type}}
 
 - **Pattern:** `{{pattern}}`
-- **description:** {{description}}
+- **Purpose:** {{purpose}}
 - **Examples:** {{examples}}
   {{/each}}
 

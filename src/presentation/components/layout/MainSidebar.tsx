@@ -171,11 +171,14 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   ]);
 
   // Navigation items using global.sidebar.* i18n keys
+  // FIX-2026-01-26: Changed /ide and /notes to redirect to hub
+  // Per ADR-033, these are layout-presets, not routes
   const navItems = [
     { id: 'home', label: t('global.sidebar.home'), icon: Home, path: '/' },
-    { id: 'projects', label: t('global.sidebar.projects'), icon: Folder, path: '/workspace' },
-    { id: 'ide', label: t('global.sidebar.ide'), icon: Code, path: '/ide' },
-    { id: 'notes', label: t('global.sidebar.notes'), icon: NotebookPen, path: '/notes' },
+    { id: 'projects', label: t('global.sidebar.projects'), icon: Folder, path: '/projects' },
+    // IDE and Notes removed - access via project selection in hub
+    // { id: 'ide', label: t('global.sidebar.ide'), icon: Code, path: '/ide' },
+    // { id: 'notes', label: t('global.sidebar.notes'), icon: NotebookPen, path: '/notes' },
     // DEFERRED per ADR-033: Knowledge and Study workspaces
     // { id: 'knowledge', label: t('global.sidebar.knowledge'), icon: BookOpen, path: '/knowledge' },
     // { id: 'study', label: t('global.sidebar.study'), icon: GraduationCap, path: '/study' },

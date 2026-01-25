@@ -7,7 +7,7 @@ last-redoc-date: 2025-09-28
 **Type:** Interactive Document Workflow
 **Module:** Creative Intelligence System (CIS)
 
-## description
+## Purpose
 
 Applies systematic problem-solving methodologies to crack complex challenges. Guides through problem diagnosis, root cause analysis, creative solution generation, evaluation, and implementation planning using proven analytical frameworks.
 

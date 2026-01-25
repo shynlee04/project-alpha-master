@@ -1,7 +1,7 @@
 # Requirements Traceability & Gate Decision - Validation Checklist
 
 **Workflow:** `testarch-trace`
-**description:** Ensure complete traceability matrix with actionable gap analysis AND make deployment readiness decision (PASS/CONCERNS/FAIL/WAIVED)
+**Purpose:** Ensure complete traceability matrix with actionable gap analysis AND make deployment readiness decision (PASS/CONCERNS/FAIL/WAIVED)
 
 This checklist covers **two sequential phases**:
 

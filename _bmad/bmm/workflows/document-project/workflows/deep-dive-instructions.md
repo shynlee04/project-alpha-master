@@ -92,7 +92,7 @@ This will read EVERY file in this area. Proceed? [y/n]
       - Read complete file contents (all lines)
       - Extract all exports (functions, classes, types, interfaces, constants)
       - Extract all imports (dependencies)
-      - Identify description from comments and code structure
+      - Identify purpose from comments and code structure
       - Write 1-2 sentences (minimum) in natural language describing behaviour, side effects, assumptions, and anything a developer must know before modifying the file
       - Extract function signatures with parameter types and return types
       - Note any TODOs, FIXMEs, or comments
@@ -134,7 +134,7 @@ This will read EVERY file in this area. Proceed? [y/n]
     <action>Store all in file_inventory</action>
   </check>
 
-<action>For each file in file\*inventory, document: - **File Path:** Full path - **description:** What this file does (1-2 sentences) - **Lines of Code:** Total LOC - **Exports:** Complete list with signatures
+<action>For each file in file\*inventory, document: - **File Path:** Full path - **Purpose:** What this file does (1-2 sentences) - **Lines of Code:** Total LOC - **Exports:** Complete list with signatures
 
 - Functions: `functionName(param: Type): ReturnType` - Description
   - Classes: `ClassName` - Description with key methods

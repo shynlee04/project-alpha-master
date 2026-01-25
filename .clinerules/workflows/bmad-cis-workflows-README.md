@@ -16,7 +16,7 @@
 
 **storytelling**
 - Path: `_bmad/cis/workflows/storytelling/workflow.yaml`
-- Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any description.
+- Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any purpose.
 
 
 ## Execution

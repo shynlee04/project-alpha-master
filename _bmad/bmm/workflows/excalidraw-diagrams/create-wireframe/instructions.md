@@ -1,7 +1,7 @@
 # Create Wireframe - Workflow Instructions
 
 ```xml
-<critical>The workflow execution engine is governed by: {project_root}/_bmad/core/tasks/workflow.xml</critical>
+<critical>The workflow execution engine is governed by: {project-root}/_bmad/core/tasks/workflow.xml</critical>
 <critical>You MUST have already loaded and processed: {installed_path}/workflow.yaml</critical>
 <critical>This workflow creates website or app wireframes in Excalidraw format.</critical>
 
@@ -64,7 +64,7 @@
   </step>
 
   <step n="5" goal="Plan Wireframe Structure">
-    <action>List all screens and their descriptions</action>
+    <action>List all screens and their purposes</action>
     <action>Map navigation flow between screens</action>
     <action>Identify key UI elements for each screen</action>
     <action>Show planned structure, confirm with user</action>

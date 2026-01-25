@@ -587,7 +587,7 @@ Expands test automation coverage by generating comprehensive test suites at appr
 
 ## Step 5: Execute, Validate & Heal Generated Tests (NEW - Phase 2.5)
 
-**description**: Automatically validate generated tests and heal common failures before delivery
+**Purpose**: Automatically validate generated tests and heal common failures before delivery
 
 ### Actions
 

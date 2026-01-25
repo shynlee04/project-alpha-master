@@ -1,7 +1,7 @@
 # Non-Functional Requirements Assessment - Validation Checklist
 
 **Workflow:** `testarch-nfr`
-**description:** Ensure comprehensive and evidence-based NFR assessment with actionable recommendations
+**Purpose:** Ensure comprehensive and evidence-based NFR assessment with actionable recommendations
 
 ---
 

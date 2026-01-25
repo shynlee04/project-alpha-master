@@ -6,7 +6,7 @@ Core identification and classification properties for all agents.
 
 ## Property Reference
 
-| Property     | description                   | Format                                         |
+| Property     | Purpose                   | Format                                         |
 | ------------ | ------------------------- | ---------------------------------------------- |
 | `id`         | Compiled output path      | `_bmad/agents/{agent-name}/{agent-name}.md`    |
 | `name`       | Persona's name            | "First Last" or "Name Title"                   |

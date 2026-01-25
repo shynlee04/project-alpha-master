@@ -39,12 +39,13 @@ export interface GlobalHeaderProps {
 
 /**
  * Navigation items for the header
- * Note: IDE and Notes require project picker - for now link to index pages
+ * 
+ * FIX-2026-01-26: Removed /ide and /notes per ADR-033.
+ * These are layout-presets within /$projectId, NOT standalone routes.
+ * Users access workspaces by selecting a project from the Hub.
  */
 const NAV_ITEMS = [
   { key: 'home', path: '/', labelKey: 'navigation.home' },
-  { key: 'ide', path: '/ide', labelKey: 'navigation.ide' },
-  { key: 'notes', path: '/notes', labelKey: 'navigation.notes' },
 ] as const;
 
 // ============================================================================

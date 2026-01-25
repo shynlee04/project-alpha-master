@@ -1,7 +1,7 @@
 # Test Quality Review - Instructions v4.0
 
 **Workflow:** `testarch-test-review`
-**description:** Review test quality using TEA's comprehensive knowledge base and validate against best practices for maintainability, determinism, isolation, and flakiness prevention
+**Purpose:** Review test quality using TEA's comprehensive knowledge base and validate against best practices for maintainability, determinism, isolation, and flakiness prevention
 **Agent:** Test Architect (TEA)
 **Format:** Pure Markdown v4.0 (no XML blocks)
 

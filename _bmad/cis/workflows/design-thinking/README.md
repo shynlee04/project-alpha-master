@@ -7,7 +7,7 @@ last-redoc-date: 2025-09-28
 **Type:** Interactive Document Workflow
 **Module:** Creative Intelligence System (CIS)
 
-## description
+## Purpose
 
 Guides human-centered design processes through the complete design thinking methodology: Empathize, Define, Ideate, Prototype, and Test. Creates solutions deeply rooted in user needs by combining empathy-driven research with systematic creative problem-solving.
 

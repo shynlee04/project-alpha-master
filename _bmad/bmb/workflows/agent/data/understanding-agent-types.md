@@ -64,7 +64,7 @@ agent-name.agent.yaml (~250 lines max)
 ```
 
 **Choose when:**
-- Single-description utility
+- Single-purpose utility
 - Each session is independent (stateless)
 - All knowledge fits in the YAML
 - Menu handlers are 5-15 line prompts
@@ -121,7 +121,7 @@ critical_actions:
 
 ### Module Agent
 
-Two distinct descriptions:
+Two distinct purposes:
 
 #### 1. Extend an Existing Module
 
@@ -176,7 +176,7 @@ When requirements exceed single-agent scope, suggest the user **use BMAD Module 
 ## Selection Checklist
 
 **Choose Simple if:**
-- [ ] One clear description
+- [ ] One clear purpose
 - [ ] No need to remember past sessions
 - [ ] All logic fits in ~250 lines
 - [ ] Each interaction is independent

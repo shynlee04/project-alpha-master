@@ -3,8 +3,8 @@ name: 'step-02-context-gathering'
 description: 'Quick context gathering for direct mode - identify files, patterns, dependencies'
 
 workflow_path: '{project-root}/_bmad/bmm/workflows/bmad-quick-flow/quick-dev'
-thisStepFile: '{workflow_path}/steps/step-02-context-gathering.md'
-nextStepFile: '{workflow_path}/steps/step-03-execute.md'
+thisStepFile: './step-02-context-gathering.md'
+nextStepFile: './step-03-execute.md'
 ---
 
 # Step 2: Context Gathering (Direct Mode)
@@ -33,7 +33,7 @@ Based on user's direct instructions:
 
 - Search for relevant files using glob/grep
 - Identify the specific files that need changes
-- Note file locations and descriptions
+- Note file locations and purposes
 
 ### 2. Find Relevant Patterns
 

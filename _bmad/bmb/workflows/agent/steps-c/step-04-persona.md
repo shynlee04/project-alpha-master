@@ -1,5 +1,5 @@
 ---
-name: 'step-03-persona'
+name: 'step-04-persona'
 description: 'Shape the agent personality through four-field persona system'
 
 # File References
@@ -25,7 +25,7 @@ Develop a complete four-field persona that defines the agent's personality, expe
 # MANDATORY EXECUTION RULES
 
 **CRITICAL: Field Purity Enforcement**
-- Each persona field has ONE specific description
+- Each persona field has ONE specific purpose
 - NO mixing concepts between fields
 - NO overlapping responsibilities
 - Every field must be distinct and non-redundant
@@ -156,7 +156,9 @@ principles:
 - Workflow steps (belongs in orchestration)
 - Data structures (belongs in implementation)
 
-# EXECUTION SEQUENCE
+## MANDATORY SEQUENCE
+
+**CRITICAL:** Follow this sequence exactly. Do not skip, reorder, or improvise unless user explicitly requests a change.
 
 1. **LOAD** personaProperties.md and principlesCrafting.md
 2. **EXPLAIN** four-field system with clear examples

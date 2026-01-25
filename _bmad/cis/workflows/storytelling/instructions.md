@@ -3,8 +3,8 @@
 ## Workflow
 
 <workflow>
-<critical>The workflow execution engine is governed by: {project_root}/_bmad/core/tasks/workflow.xml</critical>
-<critical>You MUST have already loaded and processed: {project_root}/_bmad/cis/workflows/storytelling/workflow.yaml</critical>
+<critical>The workflow execution engine is governed by: {project-root}/_bmad/core/tasks/workflow.xml</critical>
+<critical>You MUST have already loaded and processed: {project-root}/_bmad/cis/workflows/storytelling/workflow.yaml</critical>
 <critical>Communicate all responses in {communication_language}</critical>
 <critical>⚠️ ABSOLUTELY NO TIME ESTIMATES - NEVER mention hours, days, weeks, months, or ANY time-based predictions. AI has fundamentally changed development speed - what once took teams weeks/months can now be done by one person in hours. DO NOT give ANY time estimates whatsoever.</critical>
 <critical>⚠️ CHECKPOINT PROTOCOL: After EVERY <template-output> tag, you MUST follow workflow.xml substep 2c: SAVE content to file immediately → SHOW checkpoint separator (━━━━━━━━━━━━━━━━━━━━━━━) → DISPLAY generated content → PRESENT options [a]Advanced Elicitation/[c]Continue/[p]Party-Mode/[y]YOLO → WAIT for user response. Never batch saves or skip checkpoints.</critical>
@@ -23,7 +23,7 @@
 
 <check if="no context data provided">
   <action>Proceed with context gathering</action>
-  <ask response="story_description">1. What's the description of this story? (e.g., marketing, pitch, brand narrative, case study)</ask>
+  <ask response="story_purpose">1. What's the purpose of this story? (e.g., marketing, pitch, brand narrative, case study)</ask>
   <ask response="target_audience">2. Who is your target audience?</ask>
   <ask response="key_messages">3. What key messages or takeaways do you want the audience to have?</ask>
   <ask>4. Any constraints? (length, tone, medium, existing brand guidelines)</ask>
@@ -31,7 +31,7 @@
 <critical>Wait for user response before proceeding. This context shapes the narrative approach.</critical>
 </check>
 
-<template-output>story_description, target_audience, key_messages</template-output>
+<template-output>story_purpose, target_audience, key_messages</template-output>
 
 </step>
 
@@ -64,14 +64,14 @@ I can help craft your story using these proven narrative frameworks:
 9. **Data Storytelling** - Transform insights into compelling narrative
 10. **Emotional Hooks** - Craft powerful opening and touchpoints
 
-Which framework best fits your description? (Enter 1-10, or ask for my recommendation)
+Which framework best fits your purpose? (Enter 1-10, or ask for my recommendation)
 </ask>
 
 <check if="user asks for recommendation">
-  <action>Analyze story_description, target_audience, and key_messages</action>
+  <action>Analyze story_purpose, target_audience, and key_messages</action>
   <action>Recommend best-fit framework with clear rationale</action>
   <example>
-  Based on your {{story_description}} for {{target_audience}}, I recommend:
+  Based on your {{story_purpose}} for {{target_audience}}, I recommend:
   **{{framework_name}}** because {{rationale}}
   </example>
 </check>
@@ -266,7 +266,7 @@ Polish and plan forward:
 <ask>What parts of the story feel strongest?</ask>
 <ask>What areas could use more refinement?</ask>
 <ask>What's the key resolution or call to action for your story?</ask>
-<ask>Do you need additional story versions for other audiences/descriptions?</ask>
+<ask>Do you need additional story versions for other audiences/purposes?</ask>
 <ask>How will you test this story with your audience?</ask>
 
 <template-output>resolution, refinement_opportunities, additional_versions, feedback_plan</template-output>

@@ -19,7 +19,7 @@ BMAD documentation standards and guidelines. Used by:
 - Various documentation workflows
 - Standards validation and review processes
 
-## description
+## Purpose
 
 Separates module-specific data from core workflow implementations, maintaining clean architecture:
 

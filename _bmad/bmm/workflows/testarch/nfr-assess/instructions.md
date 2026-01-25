@@ -1,7 +1,7 @@
 # Non-Functional Requirements Assessment - Instructions v4.0
 
 **Workflow:** `testarch-nfr`
-**description:** Assess non-functional requirements (performance, security, reliability, maintainability) before release with evidence-based validation
+**Purpose:** Assess non-functional requirements (performance, security, reliability, maintainability) before release with evidence-based validation
 **Agent:** Test Architect (TEA)
 **Format:** Pure Markdown v4.0 (no XML blocks)
 

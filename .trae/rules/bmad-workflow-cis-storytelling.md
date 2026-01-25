@@ -4,13 +4,13 @@ This rule defines the storytelling workflow.
 
 ## Workflow Description
 
-Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any description.
+Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any purpose.
 
 ## Workflow Definition
 
 # Storytelling Workflow Configuration
 name: "storytelling"
-description: "Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any description."
+description: "Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any purpose."
 author: "BMad"
 
 # Critical variables load from config_source

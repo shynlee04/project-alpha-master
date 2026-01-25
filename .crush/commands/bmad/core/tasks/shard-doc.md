@@ -4,7 +4,7 @@ When this command is used, execute the following task:
 
 ## Shard Document Task
 
-<tool id="_bmad/core/tasks/shard-doc" name="Shard Document"
+<task id="_bmad/core/tasks/shard-doc" name="Shard Document"
   description="Splits large markdown documents into smaller, organized files based on level 2 (default) sections" webskip="true"
   standalone="true">
   <objective>Split large markdown documents into smaller, organized files based on level 2 sections using @kayvan/markdown-tree-parser tool</objective>
@@ -65,7 +65,7 @@ When this command is used, execute the following task:
     </step>
 
     <step n="6" title="Handle Original Document">
-      <critical>Keeping both the original and sharded versions defeats the description of sharding and can cause confusion</critical>
+      <critical>Keeping both the original and sharded versions defeats the purpose of sharding and can cause confusion</critical>
       <action>Present user with options for the original document:</action>
 
       <ask>What would you like to do with the original document `[source-document-name]`?
@@ -73,7 +73,7 @@ When this command is used, execute the following task:
         Options:
         [d] Delete - Remove the original (recommended - shards can always be recombined)
         [m] Move to archive - Move original to a backup/archive location
-        [k] Keep - Leave original in place (NOT recommended - defeats sharding description)
+        [k] Keep - Leave original in place (NOT recommended - defeats sharding purpose)
 
         Your choice (d/m/k):</ask>
 
@@ -112,7 +112,7 @@ When this command is used, execute the following task:
   <halt-conditions critical="true">
     <i>HALT if npx command fails or produces no output files</i>
   </halt-conditions>
-</tool>
+</task>
 
 ## Command Usage
 

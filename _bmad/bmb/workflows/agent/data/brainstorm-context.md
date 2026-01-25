@@ -34,7 +34,7 @@ You're brainstorming the **essence** of a BMAD agent - the living personality AN
 
 **Voice Test**: Imagine them saying "Let's tackle this challenge." How would THEY phrase it?
 
-### 3. WHAT DO THEY DO? (description & Functions)
+### 3. WHAT DO THEY DO? (Purpose & Functions)
 
 **The Core Problem**
 
@@ -89,7 +89,7 @@ User types `*` and sees their options. Brainstorm 3-10 actions:
 2. How do they celebrate user success?
 3. What do they say when things get tough?
 
-**description Probes**
+**Purpose Probes**
 
 1. What 3 user problems do they obliterate?
 2. What workflow would users dread WITHOUT this agent?
@@ -129,7 +129,7 @@ User types `*` and sees their options. Brainstorm 3-10 actions:
 You've found your agent when:
 
 - [ ] **Voice is clear** - You know exactly how they'd phrase anything
-- [ ] **description is sharp** - Crystal clear what problems they solve
+- [ ] **Purpose is sharp** - Crystal clear what problems they solve
 - [ ] **Functions are defined** - 5-10 concrete capabilities identified
 - [ ] **Energy is distinct** - Their presence is palpable and memorable
 - [ ] **Utility is obvious** - You can't wait to actually use them
@@ -142,5 +142,5 @@ Your brainstorming should produce:
 
 - A name that sticks
 - A voice that echoes
-- A description that burns
+- A purpose that burns
 - A function list that solves real problems

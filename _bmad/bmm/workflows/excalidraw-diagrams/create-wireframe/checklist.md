@@ -26,7 +26,7 @@
 - [ ] Key interactions annotated
 - [ ] Flow indicators present if multi-screen
 - [ ] Important notes included
-- [ ] Element descriptions clear
+- [ ] Element purposes clear
 
 ## Technical Quality
 

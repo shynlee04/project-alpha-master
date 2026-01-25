@@ -97,3 +97,339 @@ this will be done later as I need to decide and research more indepth toward Ver
 All the Phase 2 and phase 3 should be address following “complexity layering” + “trial-errors with human feedbacks” → at most of them should be trial with a quick prototype of end-to-end then field test with `real-life-cases` as I will directly in-charge of the testing cases. 
 
 </aside>
+
+# Common pitfalls
+
+1. Lacking  in-depth understanding of workflows VS. the 4 phases >>> the below `tree` can show you are more overview of the 4 phases and BMAD workflows (as workflows are usually run with `commands` or `skill` by domain-specialist agents
+
+```markdown
+> tree
+.
+├── 1-analysis
+│   ├── create-product-brief
+│   │   ├── product-brief.template.md
+│   │   ├── steps
+│   │   │   ├── step-01-init.md
+│   │   │   ├── step-01b-continue.md
+│   │   │   ├── step-02-vision.md
+│   │   │   ├── step-03-users.md
+│   │   │   ├── step-04-metrics.md
+│   │   │   ├── step-05-scope.md
+│   │   │   └── step-06-complete.md
+│   │   └── workflow.md
+│   └── research
+│       ├── domain-steps
+│       │   ├── step-01-init.md
+│       │   ├── step-02-domain-analysis.md
+│       │   ├── step-03-competitive-landscape.md
+│       │   ├── step-04-regulatory-focus.md
+│       │   ├── step-05-technical-trends.md
+│       │   └── step-06-research-synthesis.md
+│       ├── market-steps
+│       │   ├── step-01-init.md
+│       │   ├── step-02-customer-behavior.md
+│       │   ├── step-02-customer-insights.md
+│       │   ├── step-03-customer-pain-points.md
+│       │   ├── step-04-customer-decisions.md
+│       │   ├── step-05-competitive-analysis.md
+│       │   └── step-06-research-completion.md
+│       ├── research.template.md
+│       ├── technical-steps
+│       │   ├── step-01-init.md
+│       │   ├── step-02-technical-overview.md
+│       │   ├── step-03-integration-patterns.md
+│       │   ├── step-04-architectural-patterns.md
+│       │   ├── step-05-implementation-research.md
+│       │   └── step-06-research-synthesis.md
+│       └── workflow.md
+├── 2-plan-workflows
+│   ├── create-ux-design
+│   │   ├── steps
+│   │   │   ├── step-01-init.md
+│   │   │   ├── step-01b-continue.md
+│   │   │   ├── step-02-discovery.md
+│   │   │   ├── step-03-core-experience.md
+│   │   │   ├── step-04-emotional-response.md
+│   │   │   ├── step-05-inspiration.md
+│   │   │   ├── step-06-design-system.md
+│   │   │   ├── step-07-defining-experience.md
+│   │   │   ├── step-08-visual-foundation.md
+│   │   │   ├── step-09-design-directions.md
+│   │   │   ├── step-10-user-journeys.md
+│   │   │   ├── step-11-component-strategy.md
+│   │   │   ├── step-12-ux-patterns.md
+│   │   │   ├── step-13-responsive-accessibility.md
+│   │   │   └── step-14-complete.md
+│   │   ├── ux-design-template.md
+│   │   └── workflow.md
+│   └── prd
+│       ├── data
+│       │   ├── domain-complexity.csv
+│       │   ├── prd-purpose.md
+│       │   └── project-types.csv
+│       ├── domain-complexity.csv.bak
+│       ├── project-types.csv.bak
+│       ├── steps
+│       ├── steps-c
+│       │   ├── step-01-init.md
+│       │   ├── step-01b-continue.md
+│       │   ├── step-02-discovery.md
+│       │   ├── step-03-success.md
+│       │   ├── step-04-journeys.md
+│       │   ├── step-05-domain.md
+│       │   ├── step-06-innovation.md
+│       │   ├── step-07-project-type.md
+│       │   ├── step-08-scoping.md
+│       │   ├── step-09-functional.md
+│       │   ├── step-10-nonfunctional.md
+│       │   ├── step-11-polish.md
+│       │   └── step-12-complete.md
+│       ├── steps-e
+│       │   ├── step-e-01-discovery.md
+│       │   ├── step-e-01b-legacy-conversion.md
+│       │   ├── step-e-02-review.md
+│       │   ├── step-e-03-edit.md
+│       │   └── step-e-04-complete.md
+│       ├── steps-v
+│       │   ├── step-v-01-discovery.md
+│       │   ├── step-v-02-format-detection.md
+│       │   ├── step-v-02b-parity-check.md
+│       │   ├── step-v-03-density-validation.md
+│       │   ├── step-v-04-brief-coverage-validation.md
+│       │   ├── step-v-05-measurability-validation.md
+│       │   ├── step-v-06-traceability-validation.md
+│       │   ├── step-v-07-implementation-leakage-validation.md
+│       │   ├── step-v-08-domain-compliance-validation.md
+│       │   ├── step-v-09-project-type-validation.md
+│       │   ├── step-v-10-smart-validation.md
+│       │   ├── step-v-11-holistic-quality-validation.md
+│       │   ├── step-v-12-completeness-validation.md
+│       │   └── step-v-13-report-complete.md
+│       ├── templates
+│       │   └── prd-template.md
+│       ├── validation-report-prd-workflow.md
+│       └── workflow.md
+├── 3-solutioning
+│   ├── check-implementation-readiness
+│   │   ├── steps
+│   │   │   ├── step-01-document-discovery.md
+│   │   │   ├── step-02-prd-analysis.md
+│   │   │   ├── step-03-epic-coverage-validation.md
+│   │   │   ├── step-04-ux-alignment.md
+│   │   │   ├── step-05-epic-quality-review.md
+│   │   │   └── step-06-final-assessment.md
+│   │   ├── templates
+│   │   │   └── readiness-report-template.md
+│   │   └── workflow.md
+│   ├── create-architecture
+│   │   ├── architecture-decision-template.md
+│   │   ├── data
+│   │   │   ├── domain-complexity.csv
+│   │   │   ├── domain-complexity.csv.bak
+│   │   │   ├── project-types.csv
+│   │   │   └── project-types.csv.bak
+│   │   ├── steps
+│   │   │   ├── step-01-init.md
+│   │   │   ├── step-01b-continue.md
+│   │   │   ├── step-02-context.md
+│   │   │   ├── step-03-starter.md
+│   │   │   ├── step-04-decisions.md
+│   │   │   ├── step-05-patterns.md
+│   │   │   ├── step-06-structure.md
+│   │   │   ├── step-07-validation.md
+│   │   │   └── step-08-complete.md
+│   │   └── workflow.md
+│   └── create-epics-and-stories
+│       ├── steps
+│       │   ├── step-01-validate-prerequisites.md
+│       │   ├── step-02-design-epics.md
+│       │   ├── step-03-create-stories.md
+│       │   └── step-04-final-validation.md
+│       ├── templates
+│       │   └── epics-template.md
+│       └── workflow.md
+├── 4-implementation
+│   ├── architectural-consolidation
+│   │   ├── steps
+│   │   │   ├── step-01-init.md
+│   │   │   ├── step-02-provider-foundation.md
+│   │   │   ├── step-03-agent-vault.md
+│   │   │   ├── step-04-chat-unification.md
+│   │   │   └── step-05-phase0-validation.md
+│   │   └── workflow.yaml
+│   ├── code-review
+│   │   ├── checklist.md
+│   │   ├── instructions.xml
+│   │   ├── instructions.xml.bak
+│   │   └── workflow.yaml
+│   ├── correct-course
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── create-story
+│   │   ├── checklist.md
+│   │   ├── instructions.xml
+│   │   ├── instructions.xml.bak
+│   │   ├── template.md
+│   │   └── workflow.yaml
+│   ├── dev-story
+│   │   ├── checklist.md
+│   │   ├── instructions.xml
+│   │   ├── instructions.xml.bak
+│   │   └── workflow.yaml
+│   ├── retrospective
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── sprint-planning
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   ├── sprint-status-template.yaml
+│   │   └── workflow.yaml
+│   └── sprint-status
+│       ├── instructions.md
+│       └── workflow.yaml
+├── bmad-quick-flow
+│   ├── create-tech-spec
+│   ├── quick-dev
+│   │   ├── steps
+│   │   │   ├── step-01-mode-detection.md
+│   │   │   ├── step-02-context-gathering.md
+│   │   │   ├── step-03-execute.md
+│   │   │   ├── step-04-self-check.md
+│   │   │   ├── step-05-adversarial-review.md
+│   │   │   └── step-06-resolve-findings.md
+│   │   └── workflow.md
+│   └── quick-spec
+│       ├── steps
+│       │   ├── step-01-understand.md
+│       │   ├── step-02-investigate.md
+│       │   ├── step-03-generate.md
+│       │   └── step-04-review.md
+│       ├── tech-spec-template.md
+│       └── workflow.md
+├── codebase-diagnostic
+│   ├── steps
+│   │   ├── step-01-structure.md
+│   │   ├── step-02-journeys.md
+│   │   ├── step-03-dataflow.md
+│   │   ├── step-04-performance.md
+│   │   ├── step-05-features.md
+│   │   ├── step-06-integration.md
+│   │   └── step-07-synthesis.md
+│   └── workflow.md
+├── document-project
+│   ├── checklist.md
+│   ├── documentation-requirements.csv
+│   ├── documentation-requirements.csv.bak
+│   ├── instructions.md
+│   ├── templates
+│   │   ├── deep-dive-template.md
+│   │   ├── index-template.md
+│   │   ├── project-overview-template.md
+│   │   ├── project-scan-report-schema.json
+│   │   ├── project-scan-report-schema.json.bak
+│   │   └── source-tree-template.md
+│   ├── workflow.yaml
+│   └── workflows
+│       ├── deep-dive-instructions.md
+│       ├── deep-dive.yaml
+│       ├── full-scan-instructions.md
+│       └── full-scan.yaml
+├── excalidraw-diagrams
+│   ├── _shared
+│   │   ├── excalidraw-library.json
+│   │   ├── excalidraw-library.json.bak
+│   │   └── excalidraw-templates.yaml
+│   ├── create-dataflow
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── create-diagram
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── create-flowchart
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   └── create-wireframe
+│       ├── checklist.md
+│       ├── instructions.md
+│       └── workflow.yaml
+├── generate-project-context
+│   ├── project-context-template.md
+│   ├── steps
+│   │   ├── step-01-discover.md
+│   │   ├── step-02-generate.md
+│   │   └── step-03-complete.md
+│   └── workflow.md
+├── testarch
+│   ├── atdd
+│   │   ├── atdd-checklist-template.md
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── automate
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── ci
+│   │   ├── checklist.md
+│   │   ├── github-actions-template.yaml
+│   │   ├── gitlab-ci-template.yaml
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── framework
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   └── workflow.yaml
+│   ├── nfr-assess
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   ├── nfr-report-template.md
+│   │   └── workflow.yaml
+│   ├── test-design
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   ├── test-design-template.md
+│   │   └── workflow.yaml
+│   ├── test-review
+│   │   ├── checklist.md
+│   │   ├── instructions.md
+│   │   ├── test-review-template.md
+│   │   └── workflow.yaml
+│   └── trace
+│       ├── checklist.md
+│       ├── instructions.md
+│       ├── trace-template.md
+│       └── workflow.yaml
+├── tree.md
+├── tree.xml
+└── workflow-status
+    ├── init
+    │   ├── instructions.md
+    │   └── workflow.yaml
+    ├── instructions.md
+    ├── paths
+    │   ├── enterprise-brownfield.yaml
+    │   ├── enterprise-greenfield.yaml
+    │   ├── method-brownfield.yaml
+    │   └── method-greenfield.yaml
+    ├── project-levels.yaml
+    ├── workflow-status-template.yaml
+    └── workflow.yaml
+```
+
+1. some BMAD workflows execution as certain events of a specific phase, stage of workflow-step (most of these are event-watch workflows executions - requiring BMAD-Master as orchestrator and coordinator to initiate as events detected). Those can be these
+    1. `*correct-course` workflow >> this workflow can happen in phase-4 `the implementation` → and as these are to address bugs, errors as they are detected → However, if played strictly by the `BMAD-play-book` - these can be either `story-level` - `epic-level` or `architecture-level` (as higher up more linked artifacts, documents, workflows must be executed to make updates, remediation of the artifacts and controlled documents first 
+    2. `*retrospective` workflow >> this belongs to phase 4 >> continue filling this
+    3. `*sprint-planning` → help me fill this
+    4. the rest of the status updating and validation workflows 
+    5. the updates and governance workflows to make sure artifacts, documents, are up-to-date, consolidated, clear-off poisoned context
+2. Lacking of organizing and cross-checking; cross-validating for integrations; completions; hierarchical alignments;  non-governance and mis-matched of meta data of key indicators , measures of success metrics, acceptance criteria, requirements of both functional and non-functional, edge cases etc (following sprint and agile project development). And the above lacks and inefficiently updated manners happen for the following entities
+    1.   artifacts, documents of the lower-level phase (phase-4) - and their higher-up-phase (Phase 3 and phase 2) controlled  documents - these are tons of flows when mentioning this sector:
+        1. the core and governance (of phase 2 and  phase 3 planning and solution workflows) documents are these following the phase 2: `prd.md` → [`ux-specification.md`](http://ux-specification.md) (optional in BMAD but required in our project)  then phase 3: [`architecture.md`](http://architecture.md) → `epics.md`(this include epics and stories and are extracted and derived from the previous 3 with all the meta data as I mentioned above ) — — SO, IN OTHER WORDS → these must always be checked and make upstream links, cross-referenced, with iterations of sections as level of changes happens in the project → these are the single-source-of-truth >> hence, only making updates and iterations and are located at `_bmad-output/planning-artifacts`
+        2. the above core documents are glued hierarchically by their related artifacts → but as these are wildly numbered, naming with all sorts of what come up to the agents’ mind → heavily context poisoning PLUS the main cause of incomplete address so
+            1. ADR documents → directly impact the [architecture.md](http://architecture.md) (so hand down this must make a section of log and updates → besides as ADR documents will resultin new epics (or additional stories to a planned epic) → not only *sprint-planning must be running to make relevant and oneness update to sprint-status.yaml → but also references into [epics.md](http://epics.md) and [prd.md](http://prd.md) (to the requirements sections) need to consider too
+            2. as so any sort of new epics or stories introduced as remediation or feature-add-in → these must be run with sprint-planning, audit and recompile the related documents and artifacts
+        3. and so many more but you may understand why this trouble some full of [dot.md](http://dot.md) files in `_bmad-output` are the causes and those are all from the neglected and careless works of you and the agents teams

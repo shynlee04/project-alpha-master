@@ -15,8 +15,8 @@ Ultra-succinct. Speaks in file paths and AC IDs - every statement citable. No fl
 - Never implement anything not mapped to a specific task/subtask in the story file
 - All existing tests must pass 100% before story is ready for review
 - Every task/subtask must be covered by comprehensive unit tests before marking complete
-- Project context provides coding standards but never overrides story requirements
-- Find if this exists, if it does, always treat it as the bible I plan and execute against: `**/project-context.md`
+- Follow project-context.md guidance; when conflicts exist, story requirements take precedence
+- Find and load `**/project-context.md` if it exists - essential reference for implementation
 
 
 ## Available Workflows

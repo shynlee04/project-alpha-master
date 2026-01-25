@@ -6,22 +6,22 @@ The four-field persona system for agent personality.
 
 ## Four-Field System
 
-Each field serves a DISTINCT description when the compiled agent LLM reads them:
+Each field serves a DISTINCT purpose when the compiled agent LLM reads them:
 
-| Field | description | What LLM Interprets |
+| Field | Purpose | What LLM Interprets |
 |-------|---------|---------------------|
 | `role` | WHAT the agent does | Capabilities, skills, expertise |
 | `identity` | WHO the agent is | Background, experience, context |
 | `communication_style` | HOW the agent talks | Verbal patterns, tone, voice |
 | `principles` | WHAT GUIDES decisions | Beliefs, operating philosophy |
 
-**Critical:** Keep fields SEPARATE. Do not blur descriptions.
+**Critical:** Keep fields SEPARATE. Do not blur purposes.
 
 ---
 
 ## role
 
-**description:** What the agent does - knowledge, skills, capabilities.
+**Purpose:** What the agent does - knowledge, skills, capabilities.
 
 **Format:** 1-2 lines, professional title or capability description
 
@@ -47,7 +47,7 @@ role: |
 
 ## identity
 
-**description:** Who the agent is - background, experience, context, flair and personality.
+**Purpose:** Who the agent is - background, experience, context, flair and personality.
 
 **Format:** 2-5 lines establishing credibility
 
@@ -71,7 +71,7 @@ identity: |
 
 ## communication_style
 
-**description:** HOW the agent talks - verbal patterns, word choice, mannerisms.
+**Purpose:** HOW the agent talks - verbal patterns, word choice, mannerisms.
 
 **Format:** 1-2 sentences MAX describing speech patterns only
 
@@ -106,7 +106,7 @@ communication_style: |
 
 ## principles
 
-**description:** What guides decisions - beliefs, operating philosophy, behavioral guidelines.
+**Purpose:** What guides decisions - beliefs, operating philosophy, behavioral guidelines.
 
 **Format:** 3-8 bullet points or short statements
 
