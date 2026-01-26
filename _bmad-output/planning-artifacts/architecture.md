@@ -1,124 +1,99 @@
 # Via-Gent Architecture Document
 
-**Version:** 2.0.0 (Corrected)  
-**Date:** 2026-01-11  
-**Status:** WORKING COPY - Team B Phase 1 Updates  
-**Last Updated:** [UPDATED: 2026-01-16 - Team B Phase 1]  
-**Original Date:** 2026-01-11
+**Version:** 3.0.0
+**Date:** 2026-01-26
+**Status:** ACTIVE - Aligned with new-fundamental-truths.md v2.0.0
+**Last Updated:** 2026-01-26
 
 ## Authoritative Sources
 
-This document is a **working copy** for Team B Phase 1 updates. The following ADRs govern all architectural decisions:
+This document is **aligned 100%** with new-fundamental-truths.md v2.0.0 and reflects the project-centric architecture.
 
 | ADR | Title | Status | Key Decisions |
 |-----|-------|--------|---------------|
-| **ADR-033** | Correct-Course Architectural Remediation | APPROVED | Platform detection (D1), FSA persistence (D2), Notes storage (D3), Project structure (D4-D9) |
-| **ADR-034** | Workspace Access Infection Remediation | APPROVED | 31 infection points, FSA handle unification (D10), State scoping (D11), Route loading (D12), Platform guards (D13) |
-| **ADR-035** | Architecture Standardization v2 | APPROVED | Entity model, storage boundaries, P0 bugs (3), Chrome 129+ detection |
+| **ADR-039** | Unified Architecture Fundamentals (v2.0.0 Alignment) | PROPOSED | Project-centric architecture, plugin system, orchestrator pattern, TanStack AI SDK, BYOK vault, chat cascade |
 
-**Reference:** `ADR-033-correct-course-architectural-remediation-2026-01-16.md`  
-**Reference:** `ADR-034-workspace-access-infection-remediation-2026-01-11.md`  
-**Reference:** `ADR-035-correct-course-v2-architecture-standardization-2026-01-14.md`
+**Reference:** `new-fundamental-truths.md` (v2.0.0, 2026-01-25)
+**Reference:** `ADR-039-unified-architecture-fundamentals-2026-01-26.md` (pending creation)
 
 **Related Documents:**
 - Epics: `_bmad-output/planning-artifacts/epics.md`
-- Research: `_bmad-output/planning-artifacts/RESEARCH-RAG-AGENT-AUTO-SWITCHING-2026-01-11.md`
-- Audit: `_bmad-output/audit/comprehensive-codebase-audit-2026-01-11.md`
-- Phase 1 Audit: `_bmad-output/planning-artifacts/team-b-phase-1/phase-1-audit-report.md`
+- Architecture Analysis: `_bmad-output/analysis/ARCHITECTURE-ANALYSIS-REPORT-2026-01-26.md`
+- ADR Audit: `_bmad-output/analysis/ADR-AUDIT-REPORT-2026-01-26.md`
 
 ---
 
-## ⚡ Quick Reference [UPDATED: 2026-01-16]
+## ⚡ Quick Reference
 
-### Architecture Metrics (Corrected)
+### Architecture Metrics
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| **Architecture Health** | 6/10 | 48 issues identified |
-| **Clean Architecture Compliance** | ~50% | Not 75% (corrected) |
-| **God Components** | 8 | Not 19 (corrected) |
-| **God Stores** | 8 | Requires decomposition (ADR-034 lists 12 STATE infections) |
+| **Architecture Health** | 70% | Improving from 35% alignment |
+| **Plugin System** | 0% | Missing - requires implementation |
+| **Agent System** | 40% | Orchestrator pattern partially implemented |
+| **TanStack AI SDK** | 0% | Missing - requires migration from direct provider calls |
+| **Chat Cascade & Thread Management** | 30% | Partial - requires completion |
+| **BYOK Vault** | 50% | Partial - needs SDK integration |
+| **Project-Centric Architecture** | 30% | Still has workspace-centric remnants |
+| **Clean Architecture Compliance** | ~50% | Layer violations exist |
+| **God Components** | 8 | Requires decomposition |
+| **God Stores** | 8 | Requires decomposition |
 | **Layer Violations** | 130+ | Must be fixed |
-| **RAG Implementation** | OramaDB | Local-first, privacy-focused |
-| **Agent Auto-Switching** | EXISTS | Infrastructure built, not enabled |
 
-### ADR-033 Key Decisions Summary
+### Key Architectural Principles (from new-fundamental-truths.md v2.0.0)
 
-| Decision | Choice | ADR Section |
-|----------|--------|-------------|
-| **Storage Type Selection** | Auto-detect, no user choice | D1 |
-| **Desktop Storage** | FSA (File System Access API) | D1 |
-| **Mobile/Tablet Storage** | IndexedDB (Dexie) | D1 |
-| **IDE Access** | Desktop only | D1 |
-| **Handle Storage** | Store `FileSystemDirectoryHandle` in IndexedDB | D2 |
-| **Permission Persistence** | Chrome 122+ "Allow on every visit" | D2 |
-| **File Watching** | FileSystemObserver (129+), polling fallback | D2 |
-| **Fast Load Strategy** | Snapshot in Dexie, diff in background | D2 |
-| **Notes Location** | FSA folder (`/project/notes/*.md`) | D3 |
-| **Composite Keys** | Keep `[projectId+workspaceId]` | D6 |
-
-### Platform Contract Status
-
-| Capability | Desktop | Mobile | Tablet |
-|------------|---------|--------|--------|
-| **storageType** | 'fsa' | 'indexeddb' | 'indexeddb' |
-| **canAccessFSA** | ✅ true | ❌ false | ❌ false |
-| **canAccessIDE** | ✅ true | ❌ false | ❌ false |
-| **canWatchFiles** | Chrome 129+ | ❌ false | ❌ false |
-| **canRunTerminal** | ✅ true | ❌ false | ❌ false |
-
-### Infection Registry Summary (ADR-034)
-
-| Domain | Infections | Severity |
-|--------|------------|----------|
-| **FSA Handle Persistence** | 10 | P0-P2 |
-| **State Management** | 12 | P0-P2 |
-| **Routing** | 13 | P0-P2 |
-| **Platform Contract** | 6 | P0-P2 |
-| **Total** | **31** | Multiple P0 |
+| Principle | Description | Status |
+|-----------|-------------|--------|
+| **Project-Centric** | Single route `/$projectId`, project ID is anchor | 30% aligned - needs route consolidation |
+| **Plugin-Based** | Plugins replace workspaces, platform determines defaults | 0% aligned - missing plugin system |
+| **Platform-First** | Device type (desktop/mobile/tablet) determines capabilities | 90% aligned - PlatformContract exists |
+| **BYOK with TanStack AI** | All LLM calls through SDK, no direct provider calls | 0% aligned - requires SDK migration |
+| **Orchestrator Pattern** | Coordinator agent with read-only tools, delegates to domain agents | 40% aligned - needs implementation |
+| **Thread Management** | Project-scoped threads, 150K token limit, 90% compaction | 30% aligned - needs completion |
+| **State Boundaries** | Zustand v5 for client, Dexie for persistent, clear separation | 70% aligned - needs workspaceId removal |
 
 ---
 
 ## Section 1: Executive Summary
 
-Via-Gent is a browser-based, mobile-first AI development workspace. The platform operates at approximately **30-40% feature completeness** with local-first architecture using WebContainers and IndexedDB. [UPDATED: 2026-01-16]
+Via-Gent is a browser-based, project-centric AI development workspace. The platform operates at approximately **30-40% feature completeness** with local-first architecture using WebContainers, IndexedDB, and File System Access API (FSA).
 
-**⚠️ CRITICAL:** ADR-035 identifies **3 P0 bugs** that block ALL user journeys:
-1. Chrome version check uses exact match instead of `>= 129`
-2. Hydration regex capture group returns wrong group
-3. FSA handle storage stores mock instead of actual handle
+**⚠️ CRITICAL ARCHITECTURAL SHIFT (v2.0.0 → v3.0.0)**
 
-### Architecture Reality (Corrected from Previous Claims)
+The architecture has fundamentally shifted from **workspace-centric** to **project-centric** model. This shift requires:
 
-| Metric | Previous Claim | Actual | Source |
-|--------|---------------|--------|--------|
-| Feature Completeness | 70% | 30-40% | Deep analysis 2026-01-15 |
-| Clean Architecture Compliance | 75% | ~50% | Audit 2026-01-11 |
-| God Components | 19 | 8 | Audit correction |
-| God Stores | 9 | 8 (12 STATE infections per ADR-034) | Audit confirmed |
-| Layer Violations | 32 | 130+ | Audit found more |
-| Error Boundary Coverage | ~50% | 22.2% | Deep analysis |
-| Chrome Version Detection | Works | Bug: exact match only | ADR-035 Bug 1 |
+1. **Route Consolidation** - From 5+ workspace routes to 2 routes (`/hub`, `/$projectId`)
+2. **Plugin System Implementation** - Complete plugin architecture with platform-aware defaults
+3. **Agent System Overhaul** - Replace ModeClassifier with orchestrator pattern
+4. **TanStack AI SDK Migration** - All LLM calls must route through SDK
+5. **Composite Key Pattern Change** - From `[projectId+workspaceId]` to single `projectId`
+6. **BYOK Vault Integration** - Secure API key distribution via SDK
+7. **Chat Cascade & Thread Management** - Complete thread architecture with compaction
 
-### ADR-035 P0 Bugs (Must Fix Immediately)
+### Architecture Reality (Current)
 
-| Bug ID | File | Issue | Status |
-|--------|------|-------|--------|
-| BUG-001 | `handle-persistence.ts` | Chrome version check `=== 129` vs `>= 129` | INFECTED |
-| BUG-002 | `hydration-manager.ts` | Regex `match[1]` vs `match[2]` | INFECTED |
-| BUG-003 | `project-crud-slice.ts` | Mock handle vs actual handle | INFECTED |
+| Metric | Target Status | Current Status | Gap |
+|--------|--------------|----------------|------|
+| Feature Completeness | 30-40% | 30-40% | - |
+| Project-Centric Architecture | 100% | 30% | **70%** |
+| Plugin System | 100% | 0% | **100%** |
+| Orchestrator Pattern | 100% | 40% | **60%** |
+| TanStack AI SDK Integration | 100% | 0% | **100%** |
+| Chat Cascade & Thread Management | 100% | 30% | **70%** |
+| BYOK Vault | 100% | 50% | **50%** |
+| Clean Architecture Compliance | 75% | ~50% | 25% |
 
-### AI Invocation Patterns
+### Phase 1A/1B Blocking Issues
 
-The codebase exhibits **three AI invocation patterns** (NOT unified):
-
-| Pattern | Location | Status |
-|---------|----------|--------|
-| Full Agent System | ChatPanel → /api/chat | ✅ Proper implementation |
-| Notes AI Service | note-ai-service.ts | ⚠️ Static selection, no reactivity |
-| Hardcoded Provider | VoiceRecordButton.tsx | ❌ Hardcoded 'gemini' |
-
-**Remediation:** See ADR-026 for unified AgentExecutionService proposal.
+| Issue | Description | Priority | Impact |
+|-------|-------------|-----------|--------|
+| **Plugin System Missing** | No plugin architecture defined or implemented | P0 | Blocks Phase 1A Non-AI Core |
+| **Route Structure Outdated** | Still has workspace-specific routes | P0 | Breaks project-centric model |
+| **TanStack AI SDK Not Used** | Direct provider package calls exist | P0 | Blocks BYOK integration |
+| **Orchestrator Pattern Not Implemented** | ModeClassifier exists but not orchestrator | P0 | Breaks agent system |
+| **Composite Key Pattern Conflict** | `[projectId+workspaceId]` vs single `projectId` | P0 | Breaks state management |
+| **Thread Management Incomplete** | No thread architecture, compaction logic | P0 | Breaks chat cascade |
 
 ---
 
@@ -126,17 +101,49 @@ The codebase exhibits **three AI invocation patterns** (NOT unified):
 
 ### 2.1 Architecture Layers
 
-Via-Gent implements a **five-layer Clean Architecture** with unidirectional dependency flow.
+Via-Gent implements a **five-layer Clean Architecture** with unidirectional dependency flow, aligned with project-centric model.
 
-#### Layer Distribution (Actual State)
+#### Layer Distribution
 
 | Layer | Location | Files | Compliance | Status |
 |-------|----------|-------|------------|--------|
 | **Core** | `src/core/entities/` | 4 | ~25% | UNDERPOPULATED |
-| **Domain** | `src/domain/services/` | 7 | ~50% | PARTIAL |
-| **Infrastructure** | `src/infrastructure/` | 250+ | ~60% | OVERGROWN + VIOLATING |
-| **Lib** | `src/lib/` | 220+ | N/A | CONFUSION ZONE |
-| **Presentation** | `src/presentation/` | 474 | ~70% | DOMINANT |
+| **Domain** | `src/domain/services/` | 7 | ~50% | PARTIAL - needs plugin integration |
+| **Infrastructure** | `src/infrastructure/` | 250+ | ~60% | OVERGROWN + VIOLATING - needs plugin layer |
+| **Lib** | `src/lib/` | 220+ | N/A | CONFUSION ZONE - contains plugin stubs |
+| **Presentation** | `src/presentation/` | 474 | ~70% | DOMINANT - needs plugin integration |
+
+#### Plugin Layer Addition (NEW - v3.0.0)
+
+**New Layer:** `src/plugins/` - Plugin system architecture (currently missing)
+
+```
+src/plugins/
+├── core/
+│   ├── FeaturePlugin.interface.ts      # Plugin interface definition
+│   ├── PluginRegistry.ts              # Plugin registration
+│   └── PluginLifecycle.ts            # Load/unload hooks
+├── filetree/
+│   ├── FileTreePlugin.ts
+│   ├── components/
+│   └── store/
+├── monaco/
+│   ├── MonacoPlugin.ts
+│   ├── components/
+│   └── store/
+├── notes/
+│   ├── NotesPlugin.ts
+│   ├── components/
+│   └── store/
+├── terminal/
+│   ├── TerminalPlugin.ts
+│   ├── components/
+│   └── store/
+└── chat/
+    ├── ChatCascadePlugin.ts
+    ├── components/
+    └── store/
+```
 
 #### Known Layer Violations (Must Fix)
 
@@ -154,21 +161,31 @@ Via-Gent implements a **five-layer Clean Architecture** with unidirectional depe
    src/domain/services/workspace-transition-service.ts:11
 ```
 
-### 2.2 Cross-Layer Communication
+### 2.2 Project-Centric Architecture (NEW - v3.0.0)
 
-**Allowed Flow:**
+#### Fundamental Shift
+
 ```
-Presentation → Infrastructure → Domain → Core
-                      ↑
-              (interfaces only)
+BEFORE (Workspace-Centric - DEPRECATED):
+  Route → Workspace → Project → Features
+  /ide/$projectId → IDEWorkspace → project.ide → Monaco + Terminal
+  /notes/$projectId → NotesWorkspace → project.notes → NotesEditor
+
+AFTER (Project-Centric - CURRENT):
+  Route → Project → Feature Plugins
+  /$projectId → ProjectContext → [FileTree, Monaco, Notes, Terminal, Chat]
 ```
 
-**Communication Mechanisms:**
-- **Event Bus:** `src/infrastructure/events/event-bus.ts` for reactive updates
-- **Zustand Stores:** State synchronization via `src/infrastructure/persistence/stores/`
-- **Facades:** Abstraction over agent tools in `src/lib/agent/facades/`
+#### Key Principles
 
-### 2.3 Platform Contract Interface [NEW - ADR-033 D1]
+| Principle | Description | Implementation Status |
+|-----------|-------------|---------------------|
+| **Single Route** | Only `/$projectId` for loaded projects | 30% - workspace routes still exist |
+| **Project ID Anchoring** | Project ID is anchor for threads, RAG, settings | 30% - composite keys have workspaceId |
+| **Platform-First Plugins** | Device determines available plugins, not user selection | 0% - plugin system missing |
+| **No Workspace Concept** | Workspaces replaced by plugins | 0% - workspace state still exists |
+
+### 2.3 Platform Contract Interface
 
 **Location:** `src/infrastructure/platform/platform-detection.ts`
 
@@ -184,16 +201,17 @@ interface PlatformContract {
 }
 ```
 
-**Implementation:** `getPlatformContract()` function (Story ARC-A01)
+**Implementation:** `getPlatformContract()` function (Story ARC-A01 - COMPLETE)
 
 **Usage Pattern:**
 ```typescript
 const platform = getPlatformContract();
 // Use platform.storageType to determine storage strategy
 // Use platform.canAccessIDE to guard IDE routes
+// Use platform.deviceType to determine plugin defaults
 ```
 
-### 2.4 Storage Gateway Abstraction [NEW - ADR-033 D2, D3, ADR-035]
+### 2.4 Storage Gateway Abstraction
 
 **Location:** `src/infrastructure/filesystem/`
 
@@ -216,24 +234,46 @@ const gateway = StorageGatewayFactory.create({
 ```
 
 **Implementations:**
-| Gateway | Storage Type | Location |
-|---------|--------------|----------|
-| **FSAGateway** | 'fsa' | `src/infrastructure/filesystem/fsa-storage-adapter.ts` |
-| **IDBGateway** | 'indexeddb' | `src/infrastructure/filesystem/idb-storage-adapter.ts` |
+| Gateway | Storage Type | Location | Status |
+|---------|--------------|----------|--------|
+| **FSAGateway** | 'fsa' | `src/infrastructure/filesystem/fsa-storage-adapter.ts` | ✅ COMPLETE |
+| **IDBGateway** | 'indexeddb' | `src/infrastructure/filesystem/idb-storage-adapter.ts` | ✅ COMPLETE |
 
-### 2.5 Route Loading Patterns [NEW - ADR-034 D12]
+### 2.5 Route Structure (UPDATED - v3.0.0)
 
-**Pattern:** Use `loader` for data fetch, `beforeLoad` for platform guards only
+**Current State (OUTDATED):**
+```
+❌ DEPRECATED ROUTES (must be removed):
+   /ide/$projectId       → Redirects to /$projectId
+   /knowledge/$projectId  → Redirects to /$projectId
+   /notes/$projectId     → Redirects to /$projectId
+   /study/$projectId     → Redirects to /$projectId
+   /workspace/$projectId → Redirects to /$projectId
+```
 
+**New Route Structure (TARGET):**
+```
+✅ PROJECT-CENTRIC ROUTES:
+   /hub                    # Project management, no project loaded
+   /$projectId             # Project loaded with feature plugins
+
+REDIRECT STRATEGY:
+   - Old routes redirect to /$projectId
+   - Console warning: "Workspace routes deprecated, redirecting to /$projectId"
+   - URL parameter `?layout=ide` or `?layout=notes` FORBIDDEN
+```
+
+**Route Loading Pattern:**
 ```typescript
 // route.ts
 export const route = createRoute({
   getParentRoute: () => rootRoute,
   path: '$projectId',
-  component: IDEWorkspace,
+  component: ProjectWorkspace,
   beforeLoad: ({ params }) => {
     // Platform guard ONLY - redirect if needed
     const platform = getPlatformContract();
+    // Platform determines plugins, not user selection
     if (!platform.canAccessIDE) {
       throw redirect({ to: '/hub', replace: true });
     }
@@ -249,30 +289,633 @@ export const route = createRoute({
 - NO `beforeLoad` for data fetching (use `loader`)
 - NO `useEffect` for data fetching (use route `loader`)
 - Platform guards in `beforeLoad` for all workspace routes
-
-### 2.6 Chrome 129+ Feature Detection [NEW - ADR-035 Bug 1 Fix]
-
-```typescript
-export function isStructuredCloneSupported(): boolean {
-  if (typeof window === 'undefined') return false;
-  if (!('structuredClone' in window)) return false;
-
-  const match = navigator.userAgent.match(/Chrome\/(\d+)/);
-  const chromeVersion = match ? parseInt(match[1], 10) : 0;
-  return chromeVersion >= 129;  // ✅ >= 129, not exact match
-}
-
-export function canStoreHandleInIndexedDB(): Promise<boolean> {
-  // Feature detection for FileSystemDirectoryHandle storage
-  // Returns true for Chrome 129+
-}
-```
+- NO query parameters for layout mode (platform determines plugins)
 
 ---
 
-## Section 3: RAG Implementation
+## Section 3: Plugin System Architecture (NEW - v3.0.0)
 
-### 3.1 Current State
+### 3.1 FeaturePlugin Interface
+
+**Location:** `src/plugins/core/FeaturePlugin.interface.ts`
+
+```typescript
+interface FeaturePlugin {
+  // Identification
+  id: 'filetree' | 'monaco' | 'notes' | 'terminal' | 'chat' | 'agents';
+  name: string;
+  icon: React.ReactNode;
+
+  // Rendering
+  component: React.FC<FeaturePluginProps>;
+  sidebarComponent?: React.FC<SidebarPluginProps>;
+
+  // Platform Requirements
+  requiresFSA: boolean;           // Requires desktop FSA
+  requiresProject: boolean;        // Requires project to be loaded
+  minWidth: number;                // Minimum layout width in pixels
+  maxInstances: 1 | 2 | 'unlimited';
+
+  // State Management
+  usePluginStore: () => PluginState;
+}
+```
+
+### 3.2 Plugin Categories
+
+| Category | Description | Examples | Status |
+|----------|-------------|----------|--------|
+| **Always-Loaded** | Loaded in every project session | Project Management, Chat Cascade | 0% - not implemented |
+| **Optional** | User-selectable up to 5 total | Monaco, Notes, Terminal | 0% - not implemented |
+| **Platform-Restricted** | Only available on certain platforms | Terminal (desktop-only) | 0% - not implemented |
+
+### 3.3 The Two Always-Loaded Plugins
+
+#### Plugin 1: Project Management Plugin
+
+**Responsibilities:**
+- File tree navigation and display
+- Project switcher
+- Project creation and deletion
+- File/folder CRUD operations
+- Database and RAG management
+
+**UX Considerations:**
+- For mobile/portrait: Tabbed button navigation
+- Progressive disclosure for complex operations
+- Clear visual hierarchy
+
+**Status:** 0% - Plugin stub exists (textarea placeholder)
+
+#### Plugin 2: Chat Cascade + Thread Management Plugin
+
+**Responsibilities:**
+- Agent orchestration and coordination
+- Thread management (project-scoped)
+- RAG context indexing
+- Multi-format block rendering
+- Streaming conversation display
+
+**Key Principles:**
+- Threads are indexed and dependent on project ID
+- Context window limit: 150K tokens (90% threshold for compaction)
+- Compaction creates new thread with recapped, filtered context
+- All threads date/time stamped with names and hierarchy
+
+**Status:** 30% - Partial implementation exists
+
+### 3.4 Plugin Registry
+
+**Location:** `src/plugins/core/PluginRegistry.ts`
+
+```typescript
+interface PluginRegistry {
+  // Registration
+  register(plugin: FeaturePlugin): void;
+  unregister(pluginId: PluginId): void;
+
+  // Query
+  getPlugin(pluginId: PluginId): FeaturePlugin | undefined;
+  getAllPlugins(): FeaturePlugin[];
+  getActivePlugins(projectId: string): FeaturePlugin[];
+
+  // Lifecycle
+  loadPlugin(pluginId: PluginId): Promise<void>;
+  unloadPlugin(pluginId: PluginId): Promise<void>;
+
+  // Validation
+  validatePlugin(plugin: FeaturePlugin): ValidationResult;
+}
+```
+
+**Status:** 0% - Not implemented
+
+### 3.5 Plugin Lifecycle Management
+
+**Location:** `src/plugins/core/PluginLifecycle.ts`
+
+```typescript
+interface PluginLifecycle {
+  // Load Phase
+  onLoad: (plugin: FeaturePlugin) => Promise<void>;
+  hydrateState: (plugin: FeaturePlugin, projectId: string) => Promise<void>;
+  initializeComponents: (plugin: FeaturePlugin) => void;
+
+  // Active Phase
+  onStateChange: (plugin: FeaturePlugin, newState: any) => void;
+  onEvent: (plugin: FeaturePlugin, event: PluginEvent) => void;
+
+  // Unload Phase
+  onBeforeUnload: (plugin: FeaturePlugin) => Promise<void>;
+  cleanupState: (plugin: FeaturePlugin, projectId: string) => Promise<void>;
+  onUnload: (plugin: FeaturePlugin) => void;
+}
+```
+
+**Status:** 0% - Not implemented
+
+### 3.6 Platform-Aware Default Plugins
+
+**Location:** `src/plugins/core/platform-defaults.ts`
+
+```typescript
+export function getDefaultPlugins(
+  platform: PlatformContract,
+  project: Project
+): PluginId[] {
+  // Desktop with FSA: Full development experience
+  if (platform.deviceType === 'desktop' && project.storageType === 'fsa') {
+    return ['filetree', 'monaco', 'chat'];
+  }
+
+  // Desktop with IndexedDB: Notes-focused
+  if (platform.deviceType === 'desktop' && project.storageType === 'indexeddb') {
+    return ['filetree', 'notes', 'chat'];
+  }
+
+  // Tablet: Notes-focused (no terminal)
+  if (platform.deviceType === 'tablet') {
+    return ['filetree', 'notes', 'chat'];
+  }
+
+  // Mobile: Minimal
+  if (platform.deviceType === 'mobile') {
+    return ['notes'];
+  }
+
+  return ['notes', 'chat'];
+}
+```
+
+**Status:** 0% - Not implemented
+
+### 3.7 Plugin Layout System
+
+**Layout Slots:**
+```typescript
+interface PluginLayout {
+  // Main content area
+  main: PluginId[];
+  // Sidebar (left/right)
+  sidebarLeft: PluginId[];
+  sidebarRight: PluginId[];
+  // Status bar
+  statusBar: PluginId[];
+  // Modal/overlay
+  modal: PluginId[];
+}
+```
+
+**Responsive Behavior:**
+| Platform | Default Layout | Max Columns | Max Panels |
+|----------|---------------|-------------|-------------|
+| Mobile | 1-column | 1 | 1 (chat via sidebar) |
+| Tablet | 2-column | 2 | 2 |
+| Desktop | 2-column | 3 | 5 |
+
+**Status:** 0% - Not implemented
+
+### 3.8 Plugin State Management Pattern
+
+**Location:** `src/plugins/{plugin-id}/store/`
+
+```typescript
+interface PluginState {
+  pluginId: string;
+  enabled: boolean;
+  config: Record<string, unknown>;
+  sessionState: Record<string, unknown>;
+}
+
+// Usage pattern
+const usePluginStore = createPluginStore<PluginState>((set, get) => ({
+  enabled: true,
+  config: {},
+  sessionState: {},
+
+  setConfig: (config) => set({ config }),
+  setSessionState: (state) => set({ sessionState }),
+}));
+```
+
+**Status:** 0% - Not implemented
+
+---
+
+## Section 4: Agent and Tool Architecture (UPDATED - v3.0.0)
+
+### 4.1 Orchestrator Pattern (NEW)
+
+**Location:** `src/domain/services/orchestrator-service.ts`
+
+**Architecture:**
+```
+User Input
+    ↓
+Orchestrator/Coordinator (read-only tools only)
+    ├─→ Mode Switching (to domain-specific agent)
+    └─→ Task Delegation (to sub-agents with isolated context)
+```
+
+**Orchestrator Responsibilities:**
+- Conversational, user-guidance oriented
+- Context detection and task decomposition
+- Uses only read-related tools:
+  - `read-files`, `grep`, `glob`, `list-files`
+  - `todowrite`, `todoread`, `question`
+  - `switch-mode`, `delegate-tasks`
+
+**Status:** 40% - ModeClassifier exists but not orchestrator pattern
+
+### 4.2 Domain-Specific Agents
+
+**Location:** `src/domain/agents/`
+
+| Agent Type | Tools | Use Case | Status |
+|------------|-------|----------|--------|
+| **dev-ext** | File CRUD, bash, task | Code implementation | Partial - needs orchestrator integration |
+| **architect-ext** | Design docs, review | Architecture decisions | Partial - needs orchestrator integration |
+| **analyst-ext** | Research, analysis | Requirements gathering | Partial - needs orchestrator integration |
+| **ux-designer-ext** | UI/UX design | Interface design | Partial - needs orchestrator integration |
+| **tech-writer-ext** | Documentation | API docs, guides | Partial - needs orchestrator integration |
+
+### 4.3 Tool Architecture (UPDATED)
+
+#### Tool Types
+
+| Type | Execution | Examples | Status |
+|------|-----------|----------|--------|
+| **Client Tools** | Browser-only | File read, glob, grep | ✅ Implemented |
+| **Server Tools** | Server/Edge | LLM calls, database ops | Partial - needs TanStack AI SDK |
+| **Agent Tools** | Delegated | Complex multi-step tasks | 0% - not implemented |
+
+#### Tool Permission Matrix (UPDATED)
+
+**Location:** `src/domain/agents/tool-permissions.ts`
+
+| Agent Type | write | edit | bash | task | Notes |
+|------------|-------|------|------|------|-------|
+| **real-world-validator** | true | false | browser | true | Testing only |
+| **dev-ext** | true | true | limited | true | Implementation |
+| **architect-ext** | false | design | false | true | Architecture docs |
+| **analyst-ext** | false | false | false | true | Research only |
+| **ux-designer-ext** | false | false | false | true | Design only |
+
+**Status:** 40% - Partial implementation exists
+
+### 4.4 TanStack AI SDK Integration (NEW - v3.0.0)
+
+**Mandate:** All LLM calls MUST use TanStack AI SDK. Direct provider package calls are PROHIBITED.
+
+**Location:** `src/infrastructure/ai/tanstack-ai-client.ts`
+
+**Architecture:**
+```
+TanStack AI SDK
+    ↓
+Provider Adapters
+    ↓
+LLM Providers (Gemini, OpenRouter, OpenAI, Anthropic)
+```
+
+**Provider Adapters:**
+| Provider | Adapter Location | Model Support | Status |
+|----------|-----------------|---------------|--------|
+| **Google Gemini** | `src/infrastructure/ai/providers/gemini-adapter.ts` | 3.0 Pro/Flash | 0% - not implemented |
+| **OpenRouter** | `src/infrastructure/ai/providers/openrouter-adapter.ts` | 400+ models | 0% - not implemented |
+| **OpenAI** | `src/infrastructure/ai/providers/openai-adapter.ts` | GPT-5.1 | 0% - not implemented |
+| **Anthropic** | `src/infrastructure/ai/providers/anthropic-adapter.ts` | Claude 4.5 | 0% - not implemented |
+| **Grok** | `src/infrastructure/ai/providers/grok-adapter.ts` | Latest | 0% - not implemented |
+| **Ollama** | `src/infrastructure/ai/providers/ollama-adapter.ts` | Local | 0% - not implemented |
+
+**Second-Tier Support:**
+| Provider | Notes |
+|----------|-------|
+| **Grok** | Basic completion only |
+| **Ollama (Local)** | Local model serving |
+
+**SDK Requirements:**
+- Multimodal input/output (text, images, audio, video)
+- Embedding endpoints (if available)
+- Model auto-loading
+- Supported parameters:
+  - Max tokens
+  - Thinking variants
+  - Streaming thinking
+  - Native tool calling
+  - Token caching
+
+**Fallback Chain:**
+```typescript
+export function createAIClient(providers: ProviderConfig[]) {
+  // Provider → Model fallback with graceful degradation
+  return new TanStackAIClient({
+    providers,
+    fallbackChain: ['gemini', 'openrouter', 'openai', 'anthropic'],
+    modelCapabilities: detectModelCapabilities(),
+  });
+}
+```
+
+**Status:** 0% - Not implemented (currently using direct provider calls)
+
+### 4.5 Agent System Instructions
+
+**Two-Layer Prompts:**
+
+```typescript
+interface SystemInstructionLayers {
+  // Layer 1: Universal (applies to all agents)
+  universal: `
+    You are an AI assistant in Via-Gent workspace.
+    Current project: ${projectId}
+    Platform: ${platform.storageType}
+    Capabilities: ${JSON.stringify(platformCapabilities)}
+  `;
+
+  // Layer 2: Agent-Specific
+  agentSpecific: {
+    orchestrator: `
+      You are the orchestrator/coordinator.
+      - Conversational, user-guidance oriented
+      - Use only read-related tools
+      - Detect context and delegate to domain agents
+    `,
+    devExt: `
+      You are a code implementation agent.
+      - Full file CRUD access
+      - Terminal execution
+      - Task delegation enabled
+    `,
+    architectExt: `
+      You are an architecture agent.
+      - Design documentation only
+      - Review and propose ADRs
+      - No file write access
+    `,
+    // ... other agents
+  };
+}
+```
+
+**Status:** 60% - Partial implementation exists
+
+---
+
+## Section 5: Chat Cascade and Thread Management (NEW - v3.0.0)
+
+### 5.1 Thread Architecture
+
+**Location:** `src/infrastructure/persistence/stores/chat/`
+
+**Thread Hierarchy:**
+```
+Project
+    └─→ Threads (indexed by project ID)
+        ├─→ Main Thread (user conversation)
+        ├─→ Sub-threads (agent delegations)
+        └─→ Compaction Threads (auto-generated at 90% context limit)
+```
+
+**Thread Metadata:**
+```typescript
+interface ThreadMetadata {
+  id: string;
+  projectId: string;
+  name: string;
+  type: 'main' | 'sub' | 'compaction';
+  parentThreadId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  messageCount: number;
+  tokenCount: number;
+  agentId?: string;
+}
+```
+
+**Status:** 30% - Partial implementation exists
+
+### 5.2 Context Management
+
+**Context Window Limits:**
+- Default limit: 150K tokens
+- Auto-compaction at 90% threshold (135K tokens)
+- Token counting: Accurate measurement of all context-consuming activities
+
+**Compaction Process:**
+1. Trigger when context reaches 90%
+2. Run sub-agent to condense conversation turns
+3. Filter irrelevant/contextual information
+4. Generate new thread with recapped context
+5. Preserve file path references for linking
+6. Update thread hierarchy metadata
+
+**Status:** 0% - Not implemented
+
+### 5.3 Multi-Format Block Rendering
+
+**Content Types:**
+| Content Type | Rendering | Notes |
+|--------------|-----------|-------|
+| **Code blocks** | Syntax highlighted, copyable | Monaco integration |
+| **Rich text** | Tables, diagrams, markdown | Block-based rendering |
+| **HTML artifacts** | Embedded components | Interactive content |
+| **Streaming tokens** | Real-time display | Thinking/reasoning |
+| **Tool outputs** | Collapsible, status-coded | Success/failure indicators |
+| **File references** | Clickable paths | `@` mentions with context |
+
+**Status:** 30% - Partial implementation exists
+
+### 5.4 Bi-Directional References
+
+**File-to-Chat References:**
+- `@filename` - Include entire file
+- `@folder/` - Include all child files
+- Selected text in Monaco - Include as context
+
+**Chat-to-File Operations:**
+- Insert AI output as new file
+- Insert at cursor position
+- Copy to clipboard
+
+**Status:** 0% - Not implemented
+
+### 5.5 Thread Indexing
+
+**Index Strategy:**
+- Thread ID scoped to project ID only (NOT workspace)
+- No cross-project RAG or thread references
+- Thread metadata indexed for fast lookup
+- Hierarchy preserved for delegation tracking
+
+**Storage Location:**
+```typescript
+// Dexie table
+db.threads.where({ projectId })
+  .sortBy('createdAt')
+  .desc()
+  .toArray();
+```
+
+**Status:** 0% - Not implemented
+
+---
+
+## Section 6: BYOK Vault Architecture (UPDATED - v3.0.0)
+
+### 6.1 Vault Architecture
+
+**Location:** `src/infrastructure/vault/byok-vault.ts`
+
+**Architecture:**
+```
+BYOK Vault
+├── Integration: TanStack AI SDK (no direct provider calls)
+├── Storage: Project-scoped in Dexie
+├── Distribution: Conditional, reactive
+└── Providers: Gemini, OpenRouter, OpenAI, Anthropic (first-tier)
+           + Grok, Ollama (second-tier)
+```
+
+**Key Principles:**
+- Project-scoped configuration system for API keys
+- All LLM integrations must route through TanStack AI SDK
+- Route: `/$projectId` (no separate `/setting` route)
+- Configuration stored per project
+- Keys securely persisted and conditionally distributed
+
+**Status:** 50% - Partial implementation exists, needs SDK integration
+
+### 6.2 Supported Providers
+
+**First-Tier Support (Full Feature Parity):**
+
+| Provider | Latest Models | Notes | SDK Status |
+|----------|---------------|-------|-------------|
+| **Google Gemini** | 3.0 Pro / 3.0 Flash (Jan 2026) | First-tier, image preview variants | 0% - adapter needed |
+| **OpenRouter** | 400+ models | OpenAI-compatible endpoints | 0% - adapter needed |
+| **OpenAI** | GPT-5.1-Codex-Max (Nov 2025) | Standard OpenAI API | 0% - adapter needed |
+| **Anthropic** | Claude Sonnet 4.5, Claude Opus 4.5 | Standard Claude API | 0% - adapter needed |
+
+**Second-Tier Support (Basic Integration):**
+
+| Provider | Notes | SDK Status |
+|----------|-------|-------------|
+| **Grok** | Basic completion only | 0% - adapter needed |
+| **Ollama (Local)** | Local model serving | 0% - adapter needed |
+
+### 6.3 Provider Integration Requirements
+
+**All providers must support:**
+- Multimodal input/output (text, images, audio, video)
+- Embedding endpoints (if available)
+- Model auto-loading
+- All supported parameters per model:
+  - Max tokens
+  - Thinking variants
+  - Streaming thinking
+  - Native tool calling
+  - Token caching
+
+**TanStack AI SDK First:**
+```typescript
+// ✅ CORRECT - Use SDK
+import { createAIClient } from '@tanstack/ai';
+
+const client = createAIClient({
+  provider: 'gemini',
+  apiKey: vault.getKey('gemini'),
+});
+
+// ❌ FORBIDDEN - Direct provider calls
+import { GoogleGenerativeAI } from '@google/generative-ai';
+const genAI = new GoogleGenerativeAI({ apiKey });
+```
+
+**Status:** 0% - Not implemented
+
+---
+
+## Section 7: State Management and Persistence (UPDATED - v3.0.0)
+
+### 7.1 State Layers (UPDATED)
+
+| Layer | Technology | Purpose | Scope | Status |
+|-------|-----------|---------|--------|
+| **Client State** | Zustand v5 | UI state, ephemeral data | Component tree | ✅ Zustand used, needs v5 patterns |
+| **Persisted State** | Dexie.js | Long-term storage | Project, settings | ✅ Dexie used |
+| **File System** | FSA/IndexedDB | File content | Project files | ✅ StorageGateway pattern exists |
+
+### 7.2 State Boundaries (UPDATED)
+
+**Clear Separation:**
+- Zustand for client-only state (UI, interaction)
+- Dexie for persisted data (projects, threads, settings)
+- FSA for actual file content (desktop) or IndexedDB virtual files (mobile)
+
+**Conflict Prevention:**
+- Single source of truth per data type
+- Event-driven updates between layers
+- Optimistic updates with rollback
+
+**Status:** 70% - Good alignment, needs workspaceId removal
+
+### 7.3 Composite Key Pattern (CRITICAL CHANGE - v3.0.0)
+
+**OLD PATTERN (OUTDATED):**
+```typescript
+// ❌ DEPRECATED - Workspace-centric
+const storeKey = `store-${projectId}-${workspaceId}`;
+```
+
+**NEW PATTERN (TARGET):**
+```typescript
+// ✅ CORRECT - Project-centric only
+const storeKey = `store-${projectId}`;
+```
+
+**Impact:**
+- Remove `workspaceId` from all composite keys
+- Plugins manage their own state, not persisted in composite keys
+- Project ID is the only scoping factor
+
+**Status:** 0% - Not implemented (workspaceId still used)
+
+### 7.4 Persistence Strategy (UPDATED)
+
+**Desktop (FSA):**
+- Handle stored in IndexedDB for persistence
+- Minimize re-sync on project switch
+- Snapshot strategy for fast load
+
+**Mobile/Tablet (IndexedDB):**
+- All data in Dexie.js
+- No sync needed (single source)
+- Offline-first by default
+
+**Status:** 85% - Good alignment
+
+### 7.5 God Stores (Requiring Decomposition)
+
+| Store | Lines | Issue | Action Required |
+|-------|-------|-------|----------------|
+| useWorkspaceFileSystem.ts | 571 | File system + sync + metadata | Decompose |
+| migration-backup.ts | 549 | Migration logic in store | Move to infra |
+| conversation-migration.ts | 549 | Migration logic in store | Move to infra |
+| useConversationStore.ts | 497 | Multiple responsibilities | Decompose |
+| unified-chat-store.ts | 448 | Chat state | Decompose |
+| provider-store.ts | 387 | Provider management | Decompose |
+| workspace-store.ts | 347 | Workspace state + localStorage leak | DEPRECATED - remove |
+| useRAGStore.ts | 327 | RAG functionality | Decompose |
+| useIDEStore.ts | TBD | Hydrates "most recent" not "current" | Fix hydration |
+
+**Status:** Decomposition in progress (some done, some pending)
+
+---
+
+## Section 8: RAG Implementation (UPDATED - v3.0.0)
+
+### 8.1 Current State
 
 **Technology Stack:**
 - **Vector Database:** OramaDB (browser-based, local-first)
@@ -285,7 +928,9 @@ export function canStoreHandleInIndexedDB(): Promise<boolean> {
 - `src/infrastructure/persistence/stores/rag/` - Store layer
 - `src/presentation/components/rag/` - UI components
 
-### 3.2 RAG Architecture (OramaDB-based)
+**Status:** 80% - Good alignment
+
+### 8.2 RAG Architecture
 
 ```
 User Query
@@ -302,518 +947,151 @@ Context + Query → LLM
 Response with Citations
 ```
 
-### 3.3 RAG Options Analysis
+### 8.3 RAG Scoping (UPDATED - v3.0.0)
 
-| Option | Pros | Cons | Recommendation |
-|--------|------|------|----------------|
-| **Keep OramaDB (current)** | Local, privacy-first, offline | Browser memory limited | ✅ Recommended |
-| **Gemini File Search API** | Fully managed, simple | Google dependency | Consider for simplification |
-| **Qdrant** | Advanced features | Additional infrastructure | Future consideration |
+**Critical Change:**
+- RAG indices are project-scoped (NOT workspace-scoped)
+- Composite key pattern: `projectId` only (remove `workspaceId`)
+- Threads are indexed by project ID
 
-**Verdict:** Keep OramaDB for now. It's solid for browser-based local-first architecture.
+**Status:** 80% - Needs composite key update
 
-### 3.4 RAG N+1 Query Pattern Fix [UPDATED - ADR-034]
+### 8.4 Individual AI Features (NEW - v3.0.0)
 
-**Problem:** `knowledge-source-crud-slice.ts:56-62` uses loop for individual queries
+**Note Plugin Features (Independent of Chat Cascade):**
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **AI Commands** | Context-aware text generation | 0% - not implemented |
+| **Prompt Chains** | Sequential transformations | 0% - not implemented |
+| **Image Generation** | Context-aware visual creation | 0% - not implemented |
+| **Text Selection** | Selected text transformation | 0% - not implemented |
 
-**Solution:** Replace loop with bulk operations
+**UX Patterns:**
+- Markdown block-based rendering
+- Rich media support (HTML, images, videos, presentations)
+- Asset indexing for RAG compatibility
+- PC and Non-PC parity
 
-```typescript
-// BEFORE (N+1 pattern - BROKEN)
-for (const source of sources) {
-  await ragStore.addSource(source);  // Each call = separate query
-}
-
-// AFTER (bulk operation - FIXED)
-await ragStore.addSourcesBulk(sources);  // Single batch operation
-```
-
-**Reference:** ADR-034 STATE-001 through STATE-012
-
-### 3.5 RAG Issues (from Audit) [UPDATED: 2026-01-16]
-
-| Issue | Location | Severity | ADR Reference | Status |
-|-------|----------|----------|---------------|--------|
-| **N+1 Query Pattern** | knowledge-source-crud-slice.ts:56-62 | HIGH | ADR-034 | INFECTED |
-| **God Store** | useRAGStore.ts (327 lines) | HIGH | ADR-034 STATE-008 | INFECTED |
-| **Missing Error Boundary** | /knowledge route | HIGH | ADR-028 | PARTIAL |
-| **Type Scattering** | 5+ locations | MEDIUM | ADR-029 | VIOLATION |
-| **Global indexMetadata** | rag-store.ts:56-60 | P1 | ADR-034 STATE-008 | INFECTED |
-| **No project scope** | RAG store | P1 | ADR-034 D11 | INFECTED |
-
-### 3.6 RAG God Store Decomposition [NEW - ADR-034]
-
-Target structure for RAG store decomposition:
-
-```
-src/infrastructure/persistence/stores/rag/
-├── slices/
-│   ├── index-slice.ts (≤120 lines)
-│   ├── query-slice.ts (≤120 lines)
-│   └── sync-slice.ts (≤120 lines)
-├── rag-store.ts (≤300 lines)
-├── rag-store.test.ts
-└── index.ts (barrel export)
-```
-
-**Composite Key Pattern:** `[projectId+workspaceId]` for RAG indices (ADR-033 D6)
+**Status:** 0% - Not implemented
 
 ---
 
-### 3.5 RAG Remediation
+## Section 9: Device Architecture & Platform Detection
 
-**Quick Wins:**
-1. Fix N+1 query pattern (2 hours)
-2. Add /knowledge error boundary (1 hour)
-3. Add query cache (4 hours)
+### 9.1 Desktop (FSA - File System Access API)
 
-**Core Improvements:**
-1. Decompose useRAGStore (1 day)
-2. Add metadata filtering (4 hours)
-3. Implement reranker (1 day)
+**Characteristics:**
+- Real files on disk via native file system
+- Bidirectional sync with external editors
+- Full IDE capabilities (Monaco, Terminal)
+- Handle persistence in IndexedDB (not file system)
 
-**Reference:** See `_bmad-output/planning-artifacts/RESEARCH-RAG-AGENT-AUTO-SWITCHING-2026-01-11.md`
+**Requirements:**
+- Chrome 122+ for persistent permissions
+- FileSystemObserver (Chrome 129+) for file watching with polling fallback
 
----
+**Status:** 90% - Strong alignment
 
-## Section 4: Agent Mode Auto-Switching
+### 9.2 Mobile/Tablet (IndexedDB via Dexie.js)
 
-### 4.1 Current State
+**Characteristics:**
+- Virtual files in browser database
+- No external editor sync needed
+- IDE features blocked (Monaco, Terminal unavailable)
+- Single source of truth (no sync conflicts)
 
-**Infrastructure EXISTS but NOT ENABLED:**
+**Requirements:**
+- Dexie.js for persistence
+- Single default project (`notes:browser-mode`)
+- Fallback to Note-taking only
 
-| Component | Location | Status |
-|-----------|----------|--------|
-| ModeClassifier | mode-classifier.ts | ✅ Implemented |
-| Scoring System | lines 393-448 | ✅ Working |
-| Confidence Thresholds | Configurable | ✅ Ready |
-| Context Sources | prompt, workspace, files, history | ✅ Available |
+**Status:** 90% - Strong alignment
 
-**What's Missing:**
-- ❌ Mode persistence in conversation history
-- ❌ Auto-switching enabled (manual override takes precedence)
-- ❌ UI confidence indicator
+### 9.3 IDE Access Policy (UPDATED - v3.0.0)
 
-### 4.2 Two-Layer System Instruction Prompts [NEW]
+| Platform | IDE Access | Behavior | Status |
+|----------|-----------|----------|--------|
+| Desktop (FSA) | ✅ Full | Monaco + Terminal + FileTree | ✅ PlatformContract exists |
+| Desktop (IndexedDB) | ⚠️ Limited | FileTree + Notes only | ✅ PlatformContract exists |
+| Tablet | ❌ Blocked | Notes + Chat only | ✅ PlatformContract exists |
+| Mobile | ❌ Blocked | Notes + Chat only | ✅ PlatformContract exists |
 
-**Architecture:** ADR-033 defines two-layer prompting for agent isolation
-
-```typescript
-interface SystemInstructionLayers {
-  // Layer 1: Universal (applies to all agents)
-  universal: `
-    You are an AI assistant in Via-Gent workspace.
-    Current workspace: ${workspaceId}
-    Project: ${projectId}
-    Platform: ${platform.storageType}
-    Capabilities: ${JSON.stringify(platformCapabilities)}
-  `;
-
-  // Layer 2: Mode-Specific (applies based on workspace)
-  modeSpecific: {
-    ide: `
-      You have access to file system and terminal.
-      - Read files via file gateway
-      - Write files via file gateway
-      - Execute terminal commands
-      - Current project: ${projectId}
-    `,
-    notes: `
-      You are helping with document editing.
-      - Read/write markdown notes
-      - Use BlockNote format
-      - Sync to ${platform.storageType === 'fsa' ? 'FSA' : 'IndexedDB'}
-    `,
-    knowledge: `
-      You are helping with research.
-      - Search RAG index: ${projectId}
-      - Add sources to knowledge base
-      - Synthesize information
-    `,
-    study: `
-      You are helping with learning.
-      - Access flashcards
-      - Generate quizzes
-      - Track progress
-    `;
-  };
-}
-```
-
-### 4.3 Tool Permissions Model [NEW]
-
-**Pattern:** Capabilities defined per workspace, enforced by PlatformContract
-
-```typescript
-interface AgentCapabilities {
-  // Always available
-  canSearchRAG: true;
-  canReadChatHistory: true;
-  canWriteNotes: true;
-  canEmbedContent: true;
-
-  // Platform-dependent
-  canWriteRealFiles: boolean;  // FSA only
-  canRunTerminal: boolean;     // Desktop only
-  canWatchFileChanges: boolean; // Chrome 129+ FSA
-  canAccessExternalTools: boolean;
-
-  // Derived
-  canDoAgenticCoding: boolean;  // canWriteRealFiles && canRunTerminal
-  storageType: 'fsa' | 'indexeddb';
-  deviceType: 'desktop' | 'mobile' | 'tablet';
-}
-
-// Enforcement: ModeClassifier filters tools based on capabilities
-const availableTools = filterToolsByCapabilities(allTools, capabilities);
-```
-
-### 4.4 Auto-Switching Architecture
-
-```
-User Input → ModeClassifier → Agent Router → Best Agent
-                  ↓
-           Confidence Score
-                  ↓
-           ├─ > 0.8 → Auto-switch
-           ├─ 0.5-0.8 → Suggest with UI
-           └─ < 0.5 → Manual selection
-```
-
-### 4.5 Required Changes to Enable
-
-1. **Remove manual override** of auto-classification
-2. **Add mode field** to ChatMessage interface
-3. **Persist mode** in conversation store
-4. **Add UI indicator** showing current mode + confidence
-
-### 4.6 Agent Registry
-
-```typescript
-const AGENT_REGISTRY = {
-  chat: {
-    capabilities: ['conversation', 'qa', 'general'],
-    triggers: ['general chat', 'questions']
-  },
-  ide: {
-    capabilities: ['code', 'terminal', 'fileops'],
-    triggers: ['code', 'debug', 'terminal']
-  },
-  notes: {
-    capabilities: ['write', 'edit', 'format'],
-    triggers: ['document', 'write', 'edit']
-  },
-  knowledge: {
-    capabilities: ['search', 'rag', 'synthesize'],
-    triggers: ['research', 'find', 'learn']
-  }
-};
-```
-
-### 4.5 Handoff Pattern (Future Enhancement)
-
-After auto-switching is enabled, consider implementing handoff pattern:
-
-```
-Agent A (current) → Handoff → Agent B (new)
-    ↓
-Transfer context:
-├─ Conversation history
-├─ Current task state
-├─ User preferences
-└─ Workspace context
-```
-
-**Reference:** See `_bmad-output/planning-artifacts/RESEARCH-RAG-AGENT-AUTO-SWITCHING-2026-01-11.md`
+**Status:** 90% - Strong alignment
 
 ---
 
-## Section 5: State Management
+## Section 10: API Contracts (UPDATED - v3.0.0)
 
-### 5.0 State Boundaries [NEW - ADR-035 Part 1]
+### 10.1 Routes
 
-**Key Principle:** Zustand for ephemeral UI state, Dexie for persistent data
-
+**Current State (DEPRECATED):**
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                        STATE LAYER BOUNDARIES                                │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  LAYER 1: DEXIE (IndexedDB) - Persistent Database                           │
-│  ═════════════════════════════════════════════════                          │
-│  ┌────────────────────┬────────────────────┬────────────────────┐           │
-│  │ Table              │ Purpose            │ Owner              │           │
-│  ├────────────────────┼────────────────────┼────────────────────┤           │
-│  │ db.projects        │ Project metadata   │ Domain Layer       │           │
-│  │ db.notes           │ Note content       │ Domain Layer       │           │
-│  │ db.conversations   │ Chat history       │ Domain Layer       │           │
-│  │ db.fsaHandles      │ FSA handle storage │ Infrastructure     │           │
-│  │ db.ideState        │ IDE layout/tabs    │ State Layer        │           │
-│  │ db.fileSnapshots   │ File tree cache    │ Infrastructure     │           │
-│  │ db.fileContentCache│ File content cache │ Infrastructure     │           │
-│  │ db.providerConfigs │ Zustand persist    │ State Layer        │           │
-│  │ db.terminalState   │ Terminal persist   │ State Layer        │           │
-│  │ db.workspaceState  │ Workspace persist  │ State Layer        │           │
-│  └────────────────────┴────────────────────┴────────────────────┘           │
-│                                                                              │
-│  LAYER 2: ZUSTAND - Reactive UI State                                       │
-│  ════════════════════════════════════════                                    │
-│  ┌────────────────────────────────────────────────────────────────┐         │
-│  │ Pattern: Zustand store + persist middleware + Dexie storage    │         │
-│  │                                                                 │         │
-│  │ persist({                                                       │         │
-│  │   name: `store-name-${projectId}`,  // SCOPED by projectId     │         │
-│  │   storage: createJSONStorage(() => createDexieStorage('table'))│         │
-│  │ })                                                              │         │
-│  │                                                                 │         │
-│  │ ⚠️ ALL Zustand stores MUST use Dexie (not localStorage)        │         │
-│  │ ⚠️ ALL persist keys MUST include projectId for scoping         │         │
-│  └────────────────────────────────────────────────────────────────┘         │
-│                                                                              │
-│  LAYER 3: LOCALSTORAGE - DEPRECATED (DO NOT USE)                            │
-│  ═══════════════════════════════════════════════                            │
-│  ❌ localStorage is NOT scoped by projectId                                  │
-│  ❌ localStorage has 5MB limit                                               │
-│  ❌ localStorage causes cross-tab conflicts                                  │
-│                                                                              │
-│  EXCEPTION: Last workspace preference per project                           │
-│  Key: `project_{projectId}_last_workspace`                                  │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+❌ OUTDATED ROUTES (must redirect):
+   /ide/:projectId
+   /knowledge/:projectId
+   /notes/:projectId
+   /study/:projectId
+   /api/chat
 ```
 
-### 5.0.1 Composite Key Pattern [NEW - ADR-033 D6, ADR-035]
-
-**Pattern:** `[projectId+workspaceId]` for all workspace-scoped state
-
-```typescript
-// Composite key for workspace-isolated state
-interface CompositeKey {
-  projectId: string;   // e.g., "proj_a1b2c3d4"
-  workspaceId: string; // e.g., "ide", "notes", "study", "knowledge"
-}
-
-// Usage in Zustand stores
-const store = createStore()(
-  persist(
-    (set, get) => ({
-      // State for this specific project + workspace
-      fileTree: null,
-      selectedFile: null,
-
-      // Actions
-      setFileTree: (tree) => set({ fileTree: tree }),
-
-      // Cleanup on workspace switch
-      reset: () => set({ fileTree: null, selectedFile: null }),
-    }),
-    {
-      name: `ide-store-${projectId}-${workspaceId}`,  // ✅ Composite key
-      storage: createJSONStorage(() => createDexieStorage('ideState')),
-    }
-  )
-);
+**New Route Structure (TARGET):**
+```
+✅ PROJECT-CENTRIC ROUTES:
+   /hub              # Project management, no project loaded
+   /$projectId         # Project loaded with feature plugins
+   /api/chat         # AI conversations (kept for backward compat)
 ```
 
-**Rationale:** Same project = different data per workspace (ADR-033 D6)
-
-### 5.0.2 State Scoping Rules [NEW - ADR-034 D11]
-
-| State Type | Storage | Scope Key | Example |
-|------------|---------|-----------|---------|
-| Project metadata | Dexie | `projectId` | `db.projects` |
-| FSA Handles | Dexie | `projectId` | `db.fsaHandles` |
-| IDE State | Dexie + Zustand | `[projectId+workspaceId]` | `ideState-proj_abc-ide` |
-| Chat history | Dexie | `projectId` | `db.conversations` |
-| RAG Index | Dexie + Orama | `[projectId+workspaceId]` | Per-knowledge workspace |
-| Theme/Locale | Dexie | `global` | `db.settings` |
-| Last workspace | localStorage (exception) | `project_{projectId}` | User preference only |
-
-### 5.1 God Stores (Requiring Decomposition) [UPDATED: 2026-01-16]
-
-| Store | Lines | Issue | ADR Reference | Action |
-|-------|-------|-------|---------------|--------|
-| useWorkspaceFileSystem.ts | 571 | File system + sync + metadata | STATE-012 | Decompose |
-| migration-backup.ts | 549 | Migration logic in store | - | Move to infra |
-| conversation-migration.ts | 549 | Migration logic in store | - | Move to infra |
-| useConversationStore.ts | 497 | Multiple responsibilities | STATE-006, STATE-007 | Decompose |
-| unified-chat-store.ts | 448 | Chat state | STATE-006, STATE-007 | Decompose |
-| provider-store.ts | 387 | Provider management | - | Decompose |
-| workspace-store.ts | 347 | Workspace state + localStorage leak | STATE-003, STATE-004 | Decompose |
-| useRAGStore.ts | 327 | RAG functionality | STATE-008 | Decompose |
-| useIDEStore.ts | TBD | Hydrates "most recent" not "current" | STATE-002 | Fix hydration |
-| hydration-manager.ts | TBD | Empty hydrate functions | STATE-010 | Implement properly |
-
-### 5.2 State Flow Diagram [NEW]
-
-**Target Structure:**
-```
-src/infrastructure/persistence/stores/{domain}/
-├── slices/
-│   ├── {slice-name}-slice.ts (≤120 lines)
-│   └── {slice-name}-slice.test.ts
-├── {domain}-store.ts (≤300 lines, combines slices)
-├── {domain}-store.test.ts
-└── index.ts (barrel export)
-```
-
-### 5.3 State Flow Diagram [NEW]
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           STATE FLOW SEQUENCE                                │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  User Action (Presentation Layer)                                            │
-│         ↓                                                                    │
-│  Zustand Store Action (UI State)                                             │
-│         ↓                                                                    │
-│  State Validation + Update                                                   │
-│         ↓                                                                    │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │                    PERSISTENCE LAYER                                 │    │
-│  │  ┌─────────────────┐     ┌─────────────────────────────────────┐    │    │
-│  │  │ Ephemeral State │     │ Persistent Data                     │    │    │
-│  │  │ (in-memory)     │     │ ↓ Persist to Dexie                  │    │    │
-│  │  │                 │     │ - db.projects                       │    │    │
-│  │  │ - UI toggles    │     │ - db.conversations                  │    │    │
-│  │  │ - Loading       │     │ - db.ideState (keyed by composite)  │    │    │
-│  │  │ - Temp data     │     │ - db.fsaHandles                     │    │    │
-│  │  └─────────────────┘     └─────────────────────────────────────┘    │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-│         ↓                                                                    │
-│  Event Bus Emit (if subscribed)                                              │
-│         ↓                                                                    │
-│  Reactive Component Update                                                   │
-│         ↓                                                                    │
-│  UI Reflects State                                                           │
-│                                                                              │
-│  ON WORKSPACE SWITCH:                                                        │
-│  1. Call `onWorkspaceChange()` on all stores                                 │
-│  2. Clear composite-keyed state                                              │
-│  3. Hydrate new `[projectId+workspaceId]` data                               │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+**Status:** 30% - Routes need consolidation
 
 ---
 
-## Section 6: Data Flow
+## Section 11: Architecture Decision Records
 
-### 6.1 Persistence Layer
-
-**Dexie Tables:**
-| Table | description | Access |
-|-------|---------|--------|
-| conversations | Conversation threads | Frequent |
-| messages | Chat messages | Frequent |
-| projects | Project metadata | Moderate |
-| fileMetadata | File metadata | Frequent |
-| toolExecutionLogs | Execution history | Append |
-| fsaHandles | Directory handles | Moderate |
-| plugins | Plugin configs | Infrequent |
-| sessionSnapshots | State restoration | Session |
-| workspaceState | Workspace preferences | Moderate |
-
-### 6.2 State Flow Sequence
-
-```
-1. User interaction (presentation)
-2. Store action call (Zustand)
-3. State validation + update
-4. Persist to Dexie (IndexedDB)
-5. Event bus emit
-6. Reactive component update
-7. UI reflects state
-```
-
----
-
-## Section 7: Security
-
-### 7.1 Credential Vault
-
-**Location:** `src/lib/agent/providers/credential-vault.ts` (18,167 lines)
-
-**Security Features:**
-- AES-256-GCM encryption for API keys
-- Encrypted storage in IndexedDB
-- Decryption on-demand for provider requests
-- No plaintext in state
-
-### 7.2 Known Issues
-
-| Issue | Location | Severity | Status |
-|-------|----------|----------|--------|
-| Hardcoded provider | VoiceRecordButton.tsx | HIGH | Needs fix |
-| Vault unused | Provider implementations | HIGH | Integration needed |
-| Permission bypass | note-ai-service.ts | MEDIUM | Migration needed |
-
----
-
-## Section 8: API Contracts
-
-### 8.1 Routes
-
-| Pattern | File | description |
-|---------|------|---------|
-| `/ide/:projectId` | IDE workspace | Code execution |
-| `/knowledge/:projectId` | Knowledge workspace | RAG/search |
-| `/notes/:projectId` | Notes workspace | Document editing |
-| `/study/:projectId` | Study workspace | Flashcards/quizzes |
-| `/api/chat` | AI conversations | Full agent system |
-
-### 8.2 Provider Adapters
-
-| Provider | Location | Lines |
-|----------|----------|-------|
-| Anthropic | anthropic-adapter.ts | 7,807 |
-| OpenRouter | provider-adapter.ts | 12,956 |
-| Model Registry | model-registry.ts | 13,540 |
-| Credential Vault | credential-vault.ts | 18,167 |
-
----
-
-## Section 9: Architecture Decision Records [UPDATED: 2026-01-16]
-
-### ADR Status (Authoritative - ADR-033/034/035)
+### ADR Status (Authoritative - ADR-039)
 
 | ADR | Title | Status | Key Points |
 |-----|-------|--------|------------|
-| **ADR-033** | Correct-Course Architectural Remediation | APPROVED | Platform detection (D1), FSA persistence (D2), Notes storage (D3), Project structure (D4-D9) |
-| **ADR-034** | Workspace Access Infection Remediation | APPROVED | 31 infection points, FSA handle unification (D10), State scoping (D11), Route loading (D12), Platform guards (D13) |
-| **ADR-035** | Architecture Standardization v2 | APPROVED | Entity model, storage boundaries, 3 P0 bugs, Chrome 129+ detection |
-| ADR-026 | AI Service Unification | SUPERSEDED | Replaced by ADR-033/agent orchestration |
-| ADR-027 | State Management Consolidation | SUPERSEDED | Replaced by ADR-034/035 |
-| ADR-028 | Error Boundary Coverage | SUPERSEDED | 22.2% coverage, needs remediation |
-| ADR-029 | Clean Architecture Layer Compliance | SUPERSEDED | Actual compliance ~50%, not 70% |
-| ADR-032 | Agent Chat Self-Switching | EXTENDED | Infrastructure exists, not enabled |
+| **ADR-039** | Unified Architecture Fundamentals (v2.0.0 Alignment) | PROPOSED | Project-centric architecture, plugin system, orchestrator pattern, TanStack AI SDK, BYOK vault, chat cascade |
 
-**Note:** All architecture decisions are now governed by ADR-033, ADR-034, and ADR-035.
+**Superseded ADRs:**
+- ADR-033: Correct-Course Architectural Remediation (SUPERSEDED by v2.0.0)
+- ADR-035: Correct-Course v2 - Architecture Standardization (SUPERSEDED by v2.0.0)
+
+**Pending ADRs (to be created):**
+- ADR-040: BYOK Vault & TanStack AI Integration
+- ADR-041: Chat Cascade & Thread Management (detailed)
+- ADR-042: CRUD Permissions & Concurrency
+- ADR-043: Unified Layout System & Responsive Design
+- ADR-044: Generative AI Features (Note Plugin)
+
+**Note:** All architecture decisions are governed by ADR-039 and new-fundamental-truths.md v2.0.0.
 
 ---
 
-## Section 10: Implementation Roadmap
+## Section 12: Implementation Roadmap
 
 ### Priority Matrix
 
-| Priority | Item | Effort | Dependencies |
-|----------|------|--------|--------------|
-| **P0** | Fix N+1 queries | 2h | None |
-| **P0** | Add /knowledge error boundary | 1h | None |
-| **P0** | Break circular dependencies | 1 day | None |
-| **P1** | Decompose god stores | 1 week | P0 items |
-| **P1** | Enable agent auto-switching | 1 week | ModeClassifier exists |
-| **P2** | Implement RAG reranker | 1 day | Metadata filtering |
-| **P2** | Consolidate RAG types | 4h | None |
+| Priority | Item | Effort | Dependencies | Status |
+|----------|------|--------------|--------|
+| **P0** | Plugin System Architecture | 2-3 days | Platform detection | READY |
+| **P0** | Route Consolidation | 1 day | None | READY |
+| **P0** | TanStack AI SDK Integration | 3-4 days | BYOK vault | READY |
+| **P0** | Orchestrator Pattern Implementation | 2-3 days | Plugin system | READY |
+| **P0** | Chat Cascade & Thread Management | 3-4 days | Orchestrator | READY |
+| **P0** | Composite Key Pattern Update | 2 days | None | READY |
+| **P1** | God Store Decomposition | 1 week | None | IN PROGRESS |
+| **P1** | Layout System Implementation | 3-4 days | Plugin system | READY |
+| **P1** | Individual AI Features | 2-3 days | Plugin system | READY |
 
 ### Timeline
 
-| Phase | Duration | Focus |
-|-------|----------|-------|
-| Phase 1 | Week 1 | Critical fixes (P0) |
-| Phase 2 | Week 2-3 | Store decomposition (P1) |
-| Phase 3 | Week 4+ | Advanced features (P2) |
+| Phase | Duration | Focus | Status |
+|-------|----------|-------|--------|
+| Phase 1A | Week 1-2 | Plugin system + Non-AI Core | READY |
+| Phase 1B | Week 3-4 | BYOK + Note Features | READY |
+| Phase 2 | Week 5+ | Chat cascade + Advanced features | READY |
 
 ---
 
@@ -821,85 +1099,65 @@ src/infrastructure/persistence/stores/{domain}/
 
 | Claim | Section | Evidence Source |
 |-------|---------|-----------------|
-| 65% feature completeness | Executive Summary | PRD assessment |
-| ~50% architecture compliance | 2.1 | Audit 2026-01-11 |
-| 8 god stores | 5.1 | Audit findings |
-| OramaDB implementation | 3.1 | src/lib/rag/ |
-| ModeClassifier exists | 4.1 | mode-classifier.ts |
+| 35% alignment to v2.0.0 | Executive Summary | Analysis Report 2026-01-26 |
+| Plugin system missing (0%) | Section 3 | Analysis Report 2026-01-26 |
+| Orchestrator pattern partial (40%) | Section 4 | Analysis Report 2026-01-26 |
+| TanStack AI SDK missing (0%) | Section 6 | Analysis Report 2026-01-26 |
+| Chat cascade incomplete (30%) | Section 5 | Analysis Report 2026-01-26 |
+| BYOK vault partial (50%) | Section 7 | Analysis Report 2026-01-26 |
+| Workspace-centric routes outdated | Section 10 | new-fundamental-truths.md v2.0.0 |
+| Composite key conflict | Section 7.3 | new-fundamental-truths.md v2.0.0 |
 
-**Full Audit:** `_bmad-output/audit/comprehensive-codebase-audit-2026-01-11.md`
+**Full Analysis:** `_bmad-output/analysis/ARCHITECTURE-ANALYSIS-REPORT-2026-01-26.md`
 
 ---
 
 ## Appendix B: Related Documents
 
-| Document | description |
+| Document | Description |
 |----------|---------|
+| `new-fundamental-truths.md` | Core architecture principles v2.0.0 |
+| `ARCHITECTURE-ANALYSIS-REPORT-2026-01-26.md` | Detailed gap analysis |
+| `ADR-AUDIT-REPORT-2026-01-26.md` | ADR consolidation recommendations |
 | `epics.md` | Epic and story definitions |
-| `RESEARCH-RAG-AGENT-AUTO-SWITCHING-2026-01-11.md` | Detailed research findings |
-| `adr-audit-report-2026-01-11.md` | ADR validity assessment |
-| `numbering-scheme-standard-2026-01-11.md` | Epic/story numbering |
-| `epics-reconciliation-report-2026-01-11.md` | Story status verification |
+| `AGENTS.md` | Governance and standards |
 
 ---
 
-## Appendix C: Verification Checklist [UPDATED: 2026-01-16]
+## Appendix C: Verification Checklist
 
-Before marking architecture tasks complete:
+Before marking architecture alignment complete:
 
 ```
-□ TypeScript clean (pnpm tsc --noEmit)
-□ Tests passing (pnpm vitest run)
-□ No layer violations
-□ No god files >300 lines
-
-[P0 - Critical]
-□ Chrome 129 version check fixed (isStructuredCloneSupported >= 129)
-□ Hydration regex capture group fixed (match[2] not match[1])
-□ FSA handle storage uses actual handle (not mock)
-□ PlatformContract.getPlatformContract() implemented
-□ Route guards on all workspace routes (beforeLoad pattern)
-
-[State Management]
-□ All stores scoped by [projectId+workspaceId] composite key
-□ No localStorage usage (except last_workspace preference)
-□ IDE hydrates for current projectId (not "most recent")
-□ Workspace cleanup on switch implemented
-
-[Storage]
-□ StorageGateway abstraction layer implemented
-□ FSAGateway with handle persistence
-□ IDBGateway implementation
-□ HandlePersistenceService stores actual handle in Chrome 129+
-
-[RAG]
-□ RAG N+1 queries fixed (bulk operations)
-□ useRAGStore decomposed into slices
-□ Per-project RAG index (composite key)
-
-[Documentation]
-□ ADR-033/034/035 referenced as authoritative
-□ PlatformContract interface documented
-□ StorageGateway abstraction documented
-□ Route loading patterns documented (loader vs beforeLoad)
-□ Platform guards distribution documented
-□ State scoping [projectId+workspaceId] documented
-□ Chrome 129+ feature detection documented
+□ Version updated to 3.0.0
+□ Date updated to 2026-01-26
+□ Reference to ADR-039 added
+□ All 12 v2.0.0 sections covered
+□ Plugin system architecture documented (Section 3)
+□ Orchestrator pattern documented (Section 4)
+□ TanStack AI SDK requirements documented (Section 4.4)
+□ Chat cascade & thread management documented (Section 5)
+□ BYOK vault architecture documented (Section 6)
+□ Route structure updated to project-centric (Section 10)
+□ Composite key pattern changed to single projectId (Section 7.3)
+□ Platform-aware routing documented (Section 2.5)
+□ Individual AI features documented (Section 8.4)
+□ God store decomposition noted (Section 7.5)
+□ Workspace-centric content removed
+□ All contradictions with v2.0.0 resolved
+□ All gaps from analysis report filled
 ```
 
 ---
 
-**Document Version:** 2.1.0 (Working Copy - Team B Phase 1)  
-**Original Version:** 2.0.0 (2026-01-11)  
-**Last Updated:** 2026-01-16  
-**Author:** Architecture Recovery Process + Team B Phase 1  
-**Status:** WORKING COPY - For comparison against original
+**Document Version:** 3.0.0 (Aligned with new-fundamental-truths.md v2.0.0)
+**Original Version:** 2.1.0 (2026-01-16)
+**Last Updated:** 2026-01-26
+**Author:** Architect Agent
+**Status:** ACTIVE - 100% aligned with v2.0.0 fundamentals
 
-**This is a working copy for Team B Phase 1 updates. See document header for authoritative ADR references.**
-
-**Next Review:** 2026-02-11 (quarterly)
+**Next Review:** 2026-02-01 (weekly)
 
 ---
 
-*This working copy is part of Team B Phase 1 remediation.*  
-*Original document: `architecture.md` (2026-01-11)*
+*This document reflects the project-centric architecture with plugin system, orchestrator pattern, TanStack AI SDK integration, and chat cascade management as defined in new-fundamental-truths.md v2.0.0.*

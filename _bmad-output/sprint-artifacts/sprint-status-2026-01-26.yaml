@@ -17,7 +17,75 @@ updated_by: "bmad-sprint-manager"
 # ═══════════════════════════════════════════════════════════════════════════
 
 p0_blockers:
-  # First: Complete CC-04 E2E validation to close EPIC-ARCH-04-CC
+  # === EPIC-0: PROJECT-CENTRIC FOUNDATION RESET (PHASE 1A BLOCKER) ===
+  - epic_id: "EPIC-0"
+    title: "Project-Centric Foundation Reset"
+    status: "READY"
+    priority: "P0-BLOCKER"
+    progress: "0%"
+    effort_hours: 20-30
+    blocking: "ALL_PHASES"
+    created: "2026-01-26T19:30:00+07:00"
+    
+    note: |
+      CRITICAL BLOCKER for Phase 1A. This epic must complete before ANY feature work.
+      Addresses: workspace-centric pollution, device routing chaos, route structure chaos.
+      Per new-fundamental-truths.md v2.0.0 and chaos analysis from 2026-01-26.
+    
+    stories:
+      - id: "EPIC-0-01"
+        title: "Deep Import/Export Scanning"
+        status: "READY"
+        team: "B"
+        effort: "2-3h"
+        
+      - id: "EPIC-0-02"
+        title: "Route Structure Cleanup"
+        status: "READY"
+        team: "A"
+        effort: "2-3h"
+        
+      - id: "EPIC-0-03"
+        title: "ProjectContext Race Condition Fix"
+        status: "READY"
+        team: "A"
+        effort: "3-4h"
+        depends_on: ["EPIC-0-02"]
+        
+      - id: "EPIC-0-04"
+        title: "Translation Key Migration"
+        status: "READY"
+        team: "B"
+        effort: "2-3h"
+        depends_on: ["EPIC-0-03"]
+        
+      - id: "EPIC-0-05"
+        title: "Duplicate Implementation Consolidation"
+        status: "BLOCKED"
+        team: "B"
+        effort: "6-8h"
+        depends_on: ["EPIC-0-01", "EPIC-0-03"]
+        
+      - id: "EPIC-0-06"
+        title: "Store Cleanup"
+        status: "BLOCKED"
+        team: "A"
+        effort: "4-6h"
+        depends_on: ["EPIC-0-01", "EPIC-0-03"]
+        
+      - id: "EPIC-0-07"
+        title: "End-to-End Validation"
+        status: "BLOCKED"
+        team: "A+B"
+        effort: "2-3h"
+        depends_on: ["EPIC-0-02", "EPIC-0-03", "EPIC-0-04"]
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-0-PROJECT-CENTRIC-RESET-2026-01-26.md"
+      chaos_analysis: "_bmad-output/diagnostics/COMPREHENSIVE-CHAOS-ANALYSIS-2026-01-26.md"
+      sub_agent_plan: "_bmad-output/diagnostics/SUB-AGENT-DELEGATION-PLAN-2026-01-26.md"
+
+  # === EPIC-ARCH-04-CC: FSA Handle Lifecycle (95% Complete) ===
   - epic_id: "EPIC-ARCH-04-CC"
     parent_epic: "EPIC-ARCH-04"
     title: "Correct-Course Remediation - FSA Handle Lifecycle"

@@ -13,7 +13,6 @@
       "description": "BMAD Master Orchestrator - Entry point for all _bmad-ext modules with full handoff protocol",
       "mode": "primary",
       "temperature": 0.3,
-      "prompt": "{file:agent/bmad-master.md}",
       "maxSteps": 2000,
       "tools": {
         "write": true,

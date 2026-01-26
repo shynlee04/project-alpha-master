@@ -1,0 +1,481 @@
+# Spike Persistence Pattern Analysis
+# Generated: 2026-01-17
+
+spike_persistence_analysis:
+  metadata:
+    analyzed_directory: /src/spike/
+    generated_at: 2026-01-17T08:00+07:00
+    analyzer: artifact-scanner
+    scope:
+      - infrastructure/persistence/
+      - infrastructure/filesystem/
+      - stores/ (duplicates)
+      - components/ (dexie usage)
+
+  # ==========================================================================
+  # 1. DIRECT DEXIE ACCESS
+  # ==========================================================================
+  direct_dexie_access:
+    description: "Components and slices that directly access Dexie database"
+    
+    useLiveQuery_calls:
+      - file: "src/spike/infrastructure/persistence/stores/project/use-fsa-projects.ts:5"
+        pattern: "import { useLiveQuery } from 'dexie-react-hooks'"
+        usage: "Line 22 - db.projects.toArray()"
+        impact: "MEDIUM - Infrastructure layer, acceptable"
+      - file: "src/spike/stores/use-fsa-projects.ts:5"
+        pattern: "import { useLiveQuery } from 'dexie-react-hooks'"
+        usage: "Line 22 - db.projects.toArray()"
+        impact: "MEDIUM - Duplicate file in stores/"
+      - file: "src/spike/components/common/ProjectPickerDialog.tsx:21"
+        pattern: "import { useLiveQuery } from 'dexie-react-hooks'"
+        usage: "Line 127 - db.projects.toArray()"
+        impact: "HIGH - Presentation layer direct DB access"
+
+    direct_db_operations:
+      - file: "src/spike/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        lines:
+          - 151: "db.projects.put(toRecord(project, workspaceType))"
+          - 198: "db.projects.put(toRecord(updated, workspaceType))"
+          - 218: "db.projects.delete(projectId)"
+        impact: "MEDIUM - Infrastructure CRUD layer"
+      - file: "src/spike/infrastructure/persistence/stores/project/project-bindings-slice.ts"
+        lines:
+          - 57: "db.projects.update(projectId, { workspaceBindings: updated.workspaceBindings })"
+        impact: "MEDIUM - Infrastructure bindings layer"
+      - file: "src/spike/infrastructure/persistence/stores/project/project-utils-slice.ts"
+        lines:
+          - 46: "db.projects.put(record).catch(...)"
+          - 57: "const records = await db.projects.toArray()"
+        impact: "MEDIUM - Infrastructure utils layer"
+      - file: "src/spike/stores/project-crud-slice.ts"
+        lines:
+          - 151: "db.projects.put(toRecord(project, workspaceType))"
+          - 198: "db.projects.put(toRecord(updated, workspaceType))"
+          - 218: "db.projects.delete(projectId)"
+        impact: "HIGH - Duplicate file with same issues"
+      - file: "src/spike/stores/project-bindings-slice.ts"
+        lines:
+          - 57: "db.projects.update(projectId, { workspaceBindings: updated.workspaceBindings })"
+        impact: "HIGH - Duplicate file with same issues"
+      - file: "src/spike/stores/project-utils-slice.ts"
+        lines:
+          - 46: "db.projects.put(record).catch(...)"
+          - 57: "const records = await db.projects.toArray()"
+        impact: "HIGH - Duplicate file with same issues"
+      - file: "src/spike/infrastructure/filesystem/idb-gateway.ts"
+        lines:
+          - 125: "const record = await db.idbFiles.get([this.projectId, path])"
+          - 162: "const existing = await db.idbFiles.get([this.projectId, path])"
+          - 175: "await db.idbFiles.put(record)"
+          - 207: "await db.idbFiles.delete([this.projectId, path])"
+          - 210: "const allFiles = await db.idbFiles..."
+        impact: "LOW - Gateway implementation, abstraction layer"
+
+    summary:
+      total_useLiveQuery_locations: 3
+      total_direct_db_operations: 7 files
+      high_impact_locations: 4 (presentation layer + duplicates)
+      medium_impact_locations: 4 (infrastructure layer)
+
+  # ==========================================================================
+  # 2. REPOSITORY ABSTRACTION
+  # ==========================================================================
+  repository_abstraction:
+    exists: false
+    interfaces_directory: "src/spike/domain/interfaces/"
+    interfaces_files_found: []
+    
+    interfaces:
+      - name: "StorageAdapter"
+        import_path: "@/domain/interfaces/storage-adapter.interface"
+        exists_in_main_app: true
+        exists_in_spike: false
+      - name: "StorageGateway"
+        import_path: "@/domain/interfaces/storage-gateway.interface"
+        exists_in_main_app: true
+        exists_in_spike: false
+      - name: "IFileCrudService"
+        import_path: "./file-crud-service"
+        exists_in_spike: true
+        exists_in_main_app: true
+
+    implementations:
+      - name: "FSAGateway"
+        file: "src/spike/infrastructure/filesystem/fsa-gateway.ts"
+        layer: "infrastructure/filesystem"
+        abstraction_level: "GOOD - implements StorageGateway"
+      - name: "IDBGateway"
+        file: "src/spike/infrastructure/filesystem/idb-gateway.ts"
+        layer: "infrastructure/filesystem"
+        abstraction_level: "GOOD - implements StorageGateway"
+      - name: "StorageGatewayFactory"
+        file: "src/spike/infrastructure/filesystem/storage-gateway-factory.ts"
+        layer: "infrastructure/filesystem"
+        abstraction_level: "GOOD - factory pattern"
+      - name: "UnifiedFileCrudService"
+        file: "src/spike/domain/services/file-crud/unified-file-crud.ts"
+        layer: "domain/services"
+        abstraction_level: "GOOD - domain service pattern"
+
+    missing_interfaces:
+      - name: "ProjectRepository"
+        reason: "No abstraction for project CRUD operations"
+        files_affected:
+          - "project-crud-slice.ts" (direct db.projects calls)
+          - "use-fsa-projects.ts" (direct db.projects queries)
+          - "ProjectPickerDialog.tsx" (direct db.projects queries)
+      - name: "SyncStatusRepository"
+        reason: "No abstraction for sync status operations"
+        files_affected:
+          - "dexie-db.ts" (direct db.syncStatus calls)
+      - name: "FileMetadataRepository"
+        reason: "No abstraction for file metadata operations"
+        files_affected:
+          - "dexie-db.ts" (direct db.fileMetadata calls)
+      - name: "FSAHandleRepository"
+        reason: "No abstraction for FSA handle operations"
+        files_affected:
+          - "dexie-db.ts" (direct db.fsaHandles calls)
+
+    assessment: "PARTIAL - Storage gateway abstraction exists for file operations, but NO repository abstraction for project/workspace entities"
+
+  # ==========================================================================
+  # 3. STORAGE TYPE HANDLING
+  # ==========================================================================
+  storage_type_handling:
+    platform_detection:
+      - file: "src/spike/infrastructure/filesystem/platform-detection.ts"
+        functions:
+          - "isFSASupported()"
+          - "getOptimalStorageType()"
+          - "getDeviceType()"
+          - "detectPlatform()"
+        pattern: "Feature detection with caching"
+        quality: "GOOD"
+      - file: "src/spike/infrastructure/filesystem/platform-contract.ts"
+        type: "PlatformContract interface"
+        quality: "GOOD"
+
+    fsa_patterns:
+      - file: "src/spike/infrastructure/filesystem/fsa-gateway.ts"
+        class: "FSAGateway"
+        implements: "StorageGateway"
+        features:
+          - "read(path): Promise<Uint8Array>"
+          - "write(path, data): Promise<void>"
+          - "delete(path): Promise<void>"
+          - "list(path): Promise<FileEntry[]>"
+          - "exists(path): Promise<boolean>"
+          - "watch(callback): WatchHandle"
+        handle_persistence: "IndexedDB via handle-persistence.ts"
+        file_watching: "FileSystemObserver (Chrome 129+) with polling fallback"
+        quality: "GOOD"
+      - file: "src/spike/infrastructure/filesystem/handle-persistence.ts"
+        purpose: "Persist FileSystemDirectoryHandle via structuredClone"
+        quality: "GOOD"
+
+    idb_patterns:
+      - file: "src/spike/infrastructure/filesystem/idb-gateway.ts"
+        class: "IDBGateway"
+        implements: "StorageGateway"
+        features:
+          - "read(path): Promise<Uint8Array>"
+          - "write(path, data): Promise<void>"
+          - "delete(path): Promise<void>"
+          - "list(path): Promise<FileEntry[]>"
+          - "exists(path): Promise<boolean>"
+          - "watch(callback): WatchHandle"
+        storage_table: "db.idbFiles with composite key [projectId, path]"
+        file_watching: "Polling only (no native IDB watching)"
+        quality: "GOOD"
+
+    adapter_selection:
+      - file: "src/spike/infrastructure/filesystem/storage-gateway-factory.ts"
+        pattern: "Factory with createFSAGateway() and createIDBGateway()"
+        logic: |
+          switch (platform.storageType):
+            case 'fsa': return new FSAGateway(directoryHandle)
+            case 'indexeddb': return new IDBGateway(projectId)
+        quality: "GOOD"
+
+    auto_detection:
+      - logic: |
+          if (isFSASupported() && isDesktopDevice()):
+            return 'fsa'
+          else:
+            return 'indexeddb'
+      - user_choice: false
+      - compliant_with_adr033: true
+
+  # ==========================================================================
+  # 4. MIGRATION PATTERNS
+  # ==========================================================================
+  migration_patterns:
+    schema_source: "RELATIVE IMPORT FROM MAIN APP"
+    files:
+      - import: "../../../infrastructure/persistence/dexie-db-class"
+        used_by: "src/spike/infrastructure/persistence/dexie-db.ts"
+        risk: "HIGH - Schema drift between spike and main app"
+      - import: "../../../infrastructure/persistence/dexie-db-core-types"
+        used_by: "src/spike/infrastructure/persistence/dexie-db.ts"
+        risk: "MEDIUM - Type drift"
+      - import: "../../../infrastructure/persistence/database-recovery.ts"
+        used_by: "src/spike/infrastructure/persistence/dexie-db.ts"
+        risk: "MEDIUM - Recovery logic drift"
+
+    inlined_functions_with_spiKE_FLAW:
+      - name: "queueItemToSyncStatus"
+        file: "src/spike/infrastructure/persistence/dexie-db.ts:244"
+        original_location: "dexie-db-helpers.ts"
+        warning: "[SPIKE FLAW] Using inlined queueItemToSyncStatus"
+      - name: "logDexieMigration"
+        file: "src/spike/infrastructure/persistence/dexie-db.ts:287"
+        original_location: "dexie-db-helpers.ts"
+        warning: "[SPIKE FLAW] Using inlined logDexieMigration - console.log is not production audit trail"
+      - name: "isMigrationApplied"
+        file: "src/spike/infrastructure/persistence/dexie-db.ts:317"
+        original_location: "dexie-db-helpers.ts"
+        warning: "[SPIKE FLAW] Using inlined isMigrationApplied - localStorage persistence is fragile"
+      - name: "markMigrationApplied"
+        file: "src/spike/infrastructure/persistence/dexie-db.ts:341"
+        original_location: "dexie-db-helpers.ts"
+        warning: "[SPIKE FLAW] Using inlined markMigrationApplied - localStorage persistence is fragile"
+
+    recovery_mechanism:
+      - file: "src/spike/infrastructure/persistence/dexie-db.ts"
+        function: "initializeDatabaseWithRecovery()"
+        purpose: "Handle Dexie migration failures from schema v20 primary key changes"
+        quality: "GOOD - handles edge case"
+
+    issues:
+      - priority: "P0"
+        issue: "Schema defined in main app, spike imports via relative paths"
+        impact: "Schema changes in main app won't automatically reflect in spike"
+        remediation: "Either sync schemas or re-define schemas in spike"
+      - priority: "P1"
+        issue: "Migration helpers using localStorage instead of Dexie table"
+        impact: "Fragile persistence, race conditions possible"
+        remediation: "Use dedicated migration tracking table"
+      - priority: "P1"
+        issue: "4 functions inlined with [SPIKE FLAW] warnings"
+        impact: "Deviation from production-grade code"
+        remediation: "Extract to spike-specific helpers module"
+
+  # ==========================================================================
+  # 5. TYPE SAFETY
+  # ==========================================================================
+  type_safety:
+    record_types:
+      - name: "ProjectRecord"
+        source: "../../../infrastructure/persistence/dexie-db-core-types"
+        used_in:
+          - "project-crud-slice.ts (toRecord/fromRecord)"
+          - "ProjectPickerDialog.tsx"
+      - name: "SyncStatusRecord"
+        source: "../../../infrastructure/persistence/dexie-db-session-types"
+        used_in: "dexie-db.ts (sync helpers)"
+      - name: "FileMetadataRecord"
+        source: "../../../infrastructure/persistence/dexie-db-session-types"
+        used_in: "dexie-db.ts (file metadata helpers)"
+      - name: "FSAHandleRecord"
+        source: "../../../infrastructure/persistence/dexie-db-session-types"
+        used_in: "handle-persistence.ts"
+      - name: "IDBFileRecord"
+        source: "../../../infrastructure/persistence/dexie-db-idb-file-types"
+        used_in: "idb-gateway.ts"
+
+    composite_keys:
+      - table: "fileMetadata"
+        key: "[projectId+path]"
+        usage: "getFileMetadata(projectId, path)"
+      - table: "idbFiles"
+        key: "[projectId, path]"
+        usage: "IDBGateway read/write/delete"
+      - table: "sources"
+        key: "[projectId+type]"
+        usage: "getSourcesByType(projectId, type)"
+      - table: "collections"
+        key: "id (simple)"
+        usage: "getCollection(collectionId)"
+
+    type_issues:
+      - file: "src/spike/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        line: 108
+        code: "export function fromRecord(record: any): Project"
+        issue: "any type for record parameter"
+        severity: "MEDIUM"
+        remediation: "Use ProjectRecord type with proper import"
+      - file: "src/spike/infrastructure/persistence/dexie-db.ts"
+        lines:
+          - 462: "return db.projects.orderBy('lastOpened').reverse().limit(limit).toArray()"
+        issue: "No explicit return type annotation"
+        severity: "LOW"
+      - file: "src/spike/components/common/ProjectPickerDialog.tsx"
+        line: 127
+        code: "const allProjectsFromDexie = useLiveQuery(() => db.projects.toArray(), [])"
+        issue: "No type annotation for Dexie query result"
+        severity: "LOW"
+
+  # ==========================================================================
+  # 6. DUPLICATE FILES
+  # ==========================================================================
+  duplicate_files:
+    description: "Files duplicated between infrastructure/persistence and stores/"
+    
+    duplicates:
+      - original: "src/spike/infrastructure/persistence/stores/project/use-fsa-projects.ts"
+        duplicate: "src/spike/stores/use-fsa-projects.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        duplicate: "src/spike/stores/project-crud-slice.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/project-bindings-slice.ts"
+        duplicate: "src/spike/stores/project-bindings-slice.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/project-utils-slice.ts"
+        duplicate: "src/spike/stores/project-utils-slice.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/project-types.ts"
+        duplicate: "src/spike/stores/project-types.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/useProjectStore.ts"
+        duplicate: "src/spike/stores/useProjectStore.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/useWorkspaceProjects.ts"
+        duplicate: "src/spike/stores/useWorkspaceProjects.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/project-permissions-slice.ts"
+        duplicate: "src/spike/stores/project-permissions-slice.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/project-layout-slice.ts"
+        duplicate: "src/spike/stores/project-layout-slice.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/migrate-bindings.ts"
+        duplicate: "src/spike/stores/migrate-bindings.ts"
+        identical: true
+      - original: "src/spike/infrastructure/persistence/stores/project/wait-for-hydration.ts"
+        duplicate: "src/spike/stores/wait-for-hydration.ts"
+        identical: true
+
+    impact: "10 duplicate files found, increasing maintenance burden"
+
+  # ==========================================================================
+  # 7. IMPORTS ANALYSIS
+  # ==========================================================================
+  imports_analysis:
+    relative_imports_from_main_app:
+      count: 23
+      files:
+        - "dexie-db.ts" (18 relative imports)
+        - "handle-persistence.ts" (1 relative import)
+        - "migrate-bindings.ts" (1 relative import)
+      purpose: "Reuse schema definitions, types, and helpers from main app"
+      risk: "HIGH - Coupling to main app structure"
+    
+    alias_imports:
+      - pattern: "@/infrastructure/*"
+        usage: "Infrastructure layer access"
+        count: 100+
+      - pattern: "@/domain/*"
+        usage: "Domain layer access (interfaces, types, services)"
+        count: 50+
+
+  # ==========================================================================
+  # RECOMMENDATIONS
+  # ==========================================================================
+  recommendations:
+    - priority: "P0"
+      action: "Create ProjectRepository interface and implementation"
+      effort: "4-6 hours"
+      files_affected:
+        - "src/spike/domain/interfaces/project-repository.interface.ts"
+        - "src/spike/infrastructure/persistence/project-repository.ts"
+      benefits:
+        - "Eliminates direct db.projects calls in slices"
+        - "Enables testability with mock implementations"
+        - "Provides single point for query optimization"
+
+    - priority: "P0"
+      action: "Remove duplicate files in stores/ directory"
+      effort: "2 hours"
+      files_to_delete:
+        - "src/spike/stores/project-*.ts"
+        - "src/spike/stores/use-*.ts"
+      actions:
+        - "Update imports in components to use infrastructure/persistence path"
+        - "Remove stores/ directory duplicates"
+      benefits:
+        - "Eliminates code duplication"
+        - "Single source of truth for project persistence"
+
+    - priority: "P1"
+      action: "Extract inlined helpers to spike-specific module"
+      effort: "2 hours"
+      files_to_create:
+        - "src/spike/infrastructure/persistence/spike-db-helpers.ts"
+      functions_to_extract:
+        - "queueItemToSyncStatus"
+        - "logDexieMigration"
+        - "isMigrationApplied"
+        - "markMigrationApplied"
+      benefits:
+        - "Removes [SPIKE FLAW] warnings"
+        - "Centralizes spike-specific helper logic"
+
+    - priority: "P1"
+      action: "Type record parameters properly in fromRecord()"
+      effort: "1 hour"
+      files_to_modify:
+        - "src/spike/infrastructure/persistence/stores/project/project-crud-slice.ts"
+      change: "Replace `record: any` with `record: ProjectRecord`"
+      benefits:
+        - "Compile-time type safety"
+        - "Early detection of schema mismatches"
+
+    - priority: "P2"
+      action: "Consider schema copy instead of relative import"
+      effort: "8-12 hours"
+      approach: |
+        1. Copy ViaGentDatabase class definition to spike
+        2. Rename to SpikeDatabase
+        3. Remove unused tables for smaller footprint
+        4. Update all type imports to use spike types
+      tradeoffs:
+        - Pros: "Full isolation, no main app coupling"
+        - Cons: "Schema drift risk, maintenance burden"
+      recommendation: "LOW PRIORITY - only if spike diverges significantly"
+
+    - priority: "P2"
+      action: "Add return type annotations to Dexie helpers"
+      effort: "2 hours"
+      files_to_modify:
+        - "src/spike/infrastructure/persistence/dexie-db.ts"
+      change: "Add explicit return types to all exported functions"
+      benefits:
+        - "Better IDE support"
+        - "Early error detection"
+        - "Self-documenting code"
+
+  # ==========================================================================
+  # SUMMARY
+  # ==========================================================================
+  summary:
+    overall_score: "6/10"
+    strengths:
+      - "Storage gateway abstraction for file operations is well-designed"
+      - "Platform detection and adapter selection follows ADR-033"
+      - "File watching implemented with observer and polling fallback"
+      - "Database recovery mechanism for migration failures"
+    weaknesses:
+      - "NO repository abstraction for project/workspace entities"
+      - "10 duplicate files between infrastructure/ and stores/"
+      - "Direct Dexie access in presentation layer (ProjectPickerDialog)"
+      - "Schema coupling to main app via relative imports"
+      - "4 inlined functions with [SPIKE FLAW] warnings"
+      - "Type safety issues (any type in fromRecord)"
+    next_steps:
+      - "Create ProjectRepository interface as priority"
+      - "Remove duplicate files in stores/ directory"
+      - "Extract inlined helpers to spike module"
+      - "Fix type safety issues in project-crud-slice.ts"

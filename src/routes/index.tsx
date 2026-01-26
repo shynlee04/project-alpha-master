@@ -10,5 +10,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { HubHomePage } from '@/presentation/components/hub/HubHomePage'
 
-export const Route = createFileRoute('/')({\n  component: () => <HubHomePage />,
+export const Route = createFileRoute('/')({
+    component: () => <HubHomePage />,
 })

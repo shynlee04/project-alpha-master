@@ -8,40 +8,28 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as TestErrorBoundaryRouteImport } from './routes/test-error-boundary'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProjectsRouteImport } from './routes/projects'
-import { Route as IdeRouteImport } from './routes/ide'
 import { Route as HubRouteImport } from './routes/hub'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ProjectIdRouteImport } from './routes/$projectId'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WorkspaceIndexRouteImport } from './routes/workspace/index'
-import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
-import { Route as NotesProjectIdRouteImport } from './routes/notes.$projectId'
-import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ProjectIdTestRouteImport } from './routes/$projectId.test'
+import { Route as ProjectIdDiagnosticRouteImport } from './routes/$projectId.diagnostic'
 import { Route as __debug_ProviderPlaygroundRouteImport } from './routes/$__debug__.provider-playground'
 import { Route as ApiProvidersIdRouteImport } from './routes/api/providers.$id'
 import { Route as ApiProvidersIdTestRouteImport } from './routes/api/providers.$id.test'
 import { Route as ApiProvidersIdExecuteRouteImport } from './routes/api/providers.$id.execute'
 
-const NotesLazyRouteImport = createFileRoute('/notes')()
-
-const NotesLazyRoute = NotesLazyRouteImport.update({
-  id: '/notes',
-  path: '/notes',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/notes.lazy').then((d) => d.Route))
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
   path: '/test-fs-adapter',
@@ -60,11 +48,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IdeRoute = IdeRouteImport.update({
-  id: '/ide',
-  path: '/ide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HubRoute = HubRouteImport.update({
@@ -97,30 +80,10 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WorkspaceIndexRoute = WorkspaceIndexRouteImport.update({
-  id: '/workspace/',
-  path: '/workspace/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WorkspaceProjectIdRoute = WorkspaceProjectIdRouteImport.update({
-  id: '/workspace/$projectId',
-  path: '/workspace/$projectId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   id: '/webcontainer/$',
   path: '/webcontainer/$',
   getParentRoute: () => rootRouteImport,
-} as any)
-const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => NotesLazyRoute,
-} as any)
-const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
-  id: '/$projectId',
-  path: '/$projectId',
-  getParentRoute: () => IdeRoute,
 } as any)
 const ApiProvidersRoute = ApiProvidersRouteImport.update({
   id: '/api/providers',
@@ -136,6 +99,16 @@ const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectIdTestRoute = ProjectIdTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => ProjectIdRoute,
+} as any)
+const ProjectIdDiagnosticRoute = ProjectIdDiagnosticRouteImport.update({
+  id: '/diagnostic',
+  path: '/diagnostic',
+  getParentRoute: () => ProjectIdRoute,
 } as any)
 const __debug_ProviderPlaygroundRoute =
   __debug_ProviderPlaygroundRouteImport.update({
@@ -161,52 +134,44 @@ const ApiProvidersIdExecuteRoute = ApiProvidersIdExecuteRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$projectId': typeof ProjectIdRoute
+  '/$projectId': typeof ProjectIdRouteWithChildren
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
-  '/ide': typeof IdeRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/notes': typeof NotesLazyRouteWithChildren
   '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/$projectId/diagnostic': typeof ProjectIdDiagnosticRoute
+  '/$projectId/test': typeof ProjectIdTestRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
-  '/ide/$projectId': typeof IdeProjectIdRoute
-  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
-  '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/workspace/': typeof WorkspaceIndexRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$projectId': typeof ProjectIdRoute
+  '/$projectId': typeof ProjectIdRouteWithChildren
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
-  '/ide': typeof IdeRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/notes': typeof NotesLazyRouteWithChildren
   '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/$projectId/diagnostic': typeof ProjectIdDiagnosticRoute
+  '/$projectId/test': typeof ProjectIdTestRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
-  '/ide/$projectId': typeof IdeProjectIdRoute
-  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
-  '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/workspace': typeof WorkspaceIndexRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
@@ -214,26 +179,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$projectId': typeof ProjectIdRoute
+  '/$projectId': typeof ProjectIdRouteWithChildren
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
   '/hub': typeof HubRoute
-  '/ide': typeof IdeRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
-  '/notes': typeof NotesLazyRouteWithChildren
   '/$__debug__/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/$projectId/diagnostic': typeof ProjectIdDiagnosticRoute
+  '/$projectId/test': typeof ProjectIdTestRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
-  '/ide/$projectId': typeof IdeProjectIdRoute
-  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
-  '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/workspace/': typeof WorkspaceIndexRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
@@ -247,21 +208,17 @@ export interface FileRouteTypes {
     | '/agents'
     | '/debug'
     | '/hub'
-    | '/ide'
     | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
-    | '/notes'
     | '/$__debug_/provider-playground'
+    | '/$projectId/diagnostic'
+    | '/$projectId/test'
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
-    | '/ide/$projectId'
-    | '/notes/$projectId'
     | '/webcontainer/$'
-    | '/workspace/$projectId'
-    | '/workspace/'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
@@ -273,21 +230,17 @@ export interface FileRouteTypes {
     | '/agents'
     | '/debug'
     | '/hub'
-    | '/ide'
     | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
-    | '/notes'
     | '/$__debug_/provider-playground'
+    | '/$projectId/diagnostic'
+    | '/$projectId/test'
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
-    | '/ide/$projectId'
-    | '/notes/$projectId'
     | '/webcontainer/$'
-    | '/workspace/$projectId'
-    | '/workspace'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
@@ -299,21 +252,17 @@ export interface FileRouteTypes {
     | '/agents'
     | '/debug'
     | '/hub'
-    | '/ide'
     | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
-    | '/notes'
     | '/$__debug__/provider-playground'
+    | '/$projectId/diagnostic'
+    | '/$projectId/test'
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
-    | '/ide/$projectId'
-    | '/notes/$projectId'
     | '/webcontainer/$'
-    | '/workspace/$projectId'
-    | '/workspace/'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
@@ -321,35 +270,24 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ProjectIdRoute: typeof ProjectIdRoute
+  ProjectIdRoute: typeof ProjectIdRouteWithChildren
   AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
   DebugRoute: typeof DebugRoute
   HubRoute: typeof HubRoute
-  IdeRoute: typeof IdeRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
   TestErrorBoundaryRoute: typeof TestErrorBoundaryRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
-  NotesLazyRoute: typeof NotesLazyRouteWithChildren
   __debug_ProviderPlaygroundRoute: typeof __debug_ProviderPlaygroundRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiProviderTestRoute: typeof ApiProviderTestRoute
   ApiProvidersRoute: typeof ApiProvidersRouteWithChildren
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
-  WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
-  WorkspaceIndexRoute: typeof WorkspaceIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/notes': {
-      id: '/notes'
-      path: '/notes'
-      fullPath: '/notes'
-      preLoaderRoute: typeof NotesLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/test-fs-adapter': {
       id: '/test-fs-adapter'
       path: '/test-fs-adapter'
@@ -376,13 +314,6 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ide': {
-      id: '/ide'
-      path: '/ide'
-      fullPath: '/ide'
-      preLoaderRoute: typeof IdeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hub': {
@@ -427,40 +358,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/workspace/': {
-      id: '/workspace/'
-      path: '/workspace'
-      fullPath: '/workspace/'
-      preLoaderRoute: typeof WorkspaceIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/workspace/$projectId': {
-      id: '/workspace/$projectId'
-      path: '/workspace/$projectId'
-      fullPath: '/workspace/$projectId'
-      preLoaderRoute: typeof WorkspaceProjectIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/webcontainer/$': {
       id: '/webcontainer/$'
       path: '/webcontainer/$'
       fullPath: '/webcontainer/$'
       preLoaderRoute: typeof WebcontainerSplatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/notes/$projectId': {
-      id: '/notes/$projectId'
-      path: '/$projectId'
-      fullPath: '/notes/$projectId'
-      preLoaderRoute: typeof NotesProjectIdRouteImport
-      parentRoute: typeof NotesLazyRoute
-    }
-    '/ide/$projectId': {
-      id: '/ide/$projectId'
-      path: '/$projectId'
-      fullPath: '/ide/$projectId'
-      preLoaderRoute: typeof IdeProjectIdRouteImport
-      parentRoute: typeof IdeRoute
     }
     '/api/providers': {
       id: '/api/providers'
@@ -482,6 +385,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/chat'
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/$projectId/test': {
+      id: '/$projectId/test'
+      path: '/test'
+      fullPath: '/$projectId/test'
+      preLoaderRoute: typeof ProjectIdTestRouteImport
+      parentRoute: typeof ProjectIdRoute
+    }
+    '/$projectId/diagnostic': {
+      id: '/$projectId/diagnostic'
+      path: '/diagnostic'
+      fullPath: '/$projectId/diagnostic'
+      preLoaderRoute: typeof ProjectIdDiagnosticRouteImport
+      parentRoute: typeof ProjectIdRoute
     }
     '/$__debug__/provider-playground': {
       id: '/$__debug__/provider-playground'
@@ -514,26 +431,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface IdeRouteChildren {
-  IdeProjectIdRoute: typeof IdeProjectIdRoute
+interface ProjectIdRouteChildren {
+  ProjectIdDiagnosticRoute: typeof ProjectIdDiagnosticRoute
+  ProjectIdTestRoute: typeof ProjectIdTestRoute
 }
 
-const IdeRouteChildren: IdeRouteChildren = {
-  IdeProjectIdRoute: IdeProjectIdRoute,
+const ProjectIdRouteChildren: ProjectIdRouteChildren = {
+  ProjectIdDiagnosticRoute: ProjectIdDiagnosticRoute,
+  ProjectIdTestRoute: ProjectIdTestRoute,
 }
 
-const IdeRouteWithChildren = IdeRoute._addFileChildren(IdeRouteChildren)
-
-interface NotesLazyRouteChildren {
-  NotesProjectIdRoute: typeof NotesProjectIdRoute
-}
-
-const NotesLazyRouteChildren: NotesLazyRouteChildren = {
-  NotesProjectIdRoute: NotesProjectIdRoute,
-}
-
-const NotesLazyRouteWithChildren = NotesLazyRoute._addFileChildren(
-  NotesLazyRouteChildren,
+const ProjectIdRouteWithChildren = ProjectIdRoute._addFileChildren(
+  ProjectIdRouteChildren,
 )
 
 interface ApiProvidersIdRouteChildren {
@@ -564,24 +473,20 @@ const ApiProvidersRouteWithChildren = ApiProvidersRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ProjectIdRoute: ProjectIdRoute,
+  ProjectIdRoute: ProjectIdRouteWithChildren,
   AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
   DebugRoute: DebugRoute,
   HubRoute: HubRoute,
-  IdeRoute: IdeRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
   TestErrorBoundaryRoute: TestErrorBoundaryRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
-  NotesLazyRoute: NotesLazyRouteWithChildren,
   __debug_ProviderPlaygroundRoute: __debug_ProviderPlaygroundRoute,
   ApiChatRoute: ApiChatRoute,
   ApiProviderTestRoute: ApiProviderTestRoute,
   ApiProvidersRoute: ApiProvidersRouteWithChildren,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
-  WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
-  WorkspaceIndexRoute: WorkspaceIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

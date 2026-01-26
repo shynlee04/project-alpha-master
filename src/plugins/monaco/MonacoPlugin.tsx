@@ -234,7 +234,7 @@ function MonacoComponent({ width, height }: PluginMainProps) {
   const fileName = activePath.split('/').pop() || activePath;
 
   return (
-    <div className="h-full flex flex-col" style={{ width, height }}>
+    <div className="h-full w-full flex flex-col">
       {/* Editor Header */}
       <div className="h-8 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

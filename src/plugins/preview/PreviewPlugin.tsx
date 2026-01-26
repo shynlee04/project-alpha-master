@@ -187,8 +187,7 @@ function PreviewComponent({ width, height }: PluginMainProps) {
   if (!previewUrl) {
     return (
       <div
-        className="h-full flex flex-col items-center justify-center text-muted-foreground"
-        style={{ width, height }}
+        className="h-full w-full flex flex-col items-center justify-center text-muted-foreground"
       >
         <Monitor size={48} className="mb-4 opacity-50" />
         <p className="text-sm font-medium">{t('preview.noPreviewAvailable')}</p>
@@ -204,7 +203,7 @@ function PreviewComponent({ width, height }: PluginMainProps) {
   // ============================================================================
 
   return (
-    <div className="h-full flex flex-col" style={{ width, height }}>
+    <div className="h-full w-full flex flex-col">
       {/* Preview Header */}
       <div className="h-8 px-3 flex items-center justify-between border-b border-border bg-card shrink-0">
         <span className="text-xs font-mono text-muted-foreground truncate flex-1 mr-2">

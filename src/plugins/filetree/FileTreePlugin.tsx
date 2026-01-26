@@ -282,9 +282,8 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
       items.push(
         <div key={node.path} style={{ paddingLeft: padding }}>
           <div
-            className={`flex items-center gap-2 py-1 px-2 cursor-pointer hover:bg-muted/80 ${
-              isSelected ? 'bg-blue-100' : ''
-            } ${isFocused ? 'outline-none ring-2 ring-blue-500' : ''}`}
+            className={`flex items-center gap-2 py-1 px-2 cursor-pointer hover:bg-muted/80 ${isSelected ? 'bg-blue-100' : ''
+              } ${isFocused ? 'outline-none ring-2 ring-blue-500' : ''}`}
             onClick={() => isDirectory ? handleToggle(node.path) : handleSelect(node)}
             onKeyDown={handleKeyDown}
             role="treeitem"
@@ -317,8 +316,7 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
 
   return (
     <div
-      className="h-full flex flex-col overflow-auto"
-      style={{ width, height }}
+      className="h-full w-full flex flex-col overflow-auto"
       role="tree"
       aria-label={t('ide.fileExplorer')}
       tabIndex={0}

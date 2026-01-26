@@ -1,0 +1,299 @@
+# Component Inventory by Workspace
+# Generated: 2026-01-07
+# Scanner: Codebase Analysis Agent
+# Scope: src/presentation/components/
+
+workspace_components:
+  ide:
+    count: 86
+    entry_point: src/routes/ide.$projectId.tsx
+    primary_components:
+      - path: src/presentation/components/ide/AgentChatPanel.tsx
+        purpose: AI agent chat interface for IDE workspace
+        lines: 650
+        dependencies:
+          - src/presentation/components/chat (chat UI components)
+          - src/lib/agent/hooks (agent hooks)
+          - src/infrastructure/persistence/stores/agents (agent store)
+      - path: src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx
+        purpose: Monaco editor integration with code editing
+        lines: 420
+        dependencies:
+          - @monaco-editor/react
+          - src/lib/editor (editor utilities)
+      - path: src/presentation/components/ide/FileTree/FileTree.tsx
+        purpose: File explorer tree view
+        lines: 380
+        dependencies:
+          - src/lib/filesystem (file system utilities)
+      - path: src/presentation/components/ide/XTerminal.tsx
+        purpose: Terminal panel with xterm.js
+        lines: 310
+        dependencies:
+          - @xterm/xterm
+          - src/lib/webcontainer (WebContainer shell)
+
+    supporting_components:
+      - AgentChatPanel/ (8 sub-components)
+      - FileTree/ (12 files including hooks, types, utils)
+      - MonacoEditor/ (4 files)
+      - PreviewPanel/ (3 files)
+      - statusbar/ (7 segments)
+      - CommandPalette.tsx
+      - FeatureSearch.tsx
+      - ExplorerPanel.tsx
+      - SearchPanel.tsx
+      - SettingsPanel.tsx
+      - QuickActionsMenu.tsx
+      - PanelShell.tsx
+      - IconSidebar.tsx
+      - StatusBar.tsx
+      - StreamingMessage.tsx
+
+  knowledge:
+    count: 23
+    entry_point: src/routes/knowledge.$projectId.lazy.tsx
+    primary_components:
+      - path: src/presentation/components/knowledge/KnowledgePage.tsx
+        purpose: Main knowledge workspace page
+        lines: 450
+        dependencies:
+          - src/presentation/components/knowledge/* (all knowledge components)
+          - src/infrastructure/persistence/stores/rag (RAG store)
+          - src/infrastructure/persistence/stores/canvas (canvas store)
+      - path: src/presentation/components/knowledge/SourceCardGrid.tsx
+        purpose: Grid display of knowledge sources
+        lines: 280
+      - path: src/presentation/components/knowledge/CollectionManager.tsx
+        purpose: Manage knowledge collections
+        lines: 320
+      - path: src/presentation/components/knowledge/RAGConfigurationPanel.tsx
+        purpose: RAG pipeline configuration UI
+        lines: 290
+
+    supporting_components:
+      - SourceCard.tsx
+      - SourceContextMenu.tsx
+      - SourceImportDialog.tsx
+      - SourcePreviewPanel.tsx
+      - SourceMetadataDialog.tsx
+      - MetadataDisplay.tsx
+      - MetadataEditor.tsx
+      - CollectionSelector.tsx
+      - CreateCollectionDialog.tsx
+      - RenameDialog.tsx
+      - SynthesisDialog.tsx
+      - StudyArtifactExportDialog.tsx
+      - FlashcardPreviewPanel.tsx
+      - QuizPreviewPanel.tsx
+      - IndexingProgressPanel.tsx
+      - UndoToast.tsx
+      - flashcard-preview.tsx
+      - hooks/ (2 hooks)
+
+  notes:
+    count: 17
+    entry_point: src/routes/notes.$projectId.lazy.tsx
+    primary_components:
+      - path: src/presentation/components/notes/NotesPage.tsx
+        purpose: Main notes workspace page
+        lines: 420
+        dependencies:
+          - src/presentation/components/notes/* (all notes components)
+          - @blocknote/core (block editor)
+      - path: src/presentation/components/notes/NoteEditor.tsx
+        purpose: Block-based note editor
+        lines: 380
+        dependencies:
+          - @blocknote/core
+          - @blocknote/react
+      - path: src/presentation/components/notes/NoteTree.tsx
+        purpose: Hierarchical note tree view
+        lines: 290
+      - path: src/presentation/components/notes/AISlashCommand.tsx
+        purpose: AI slash command menu
+        lines: 240
+
+    supporting_components:
+      - NoteTreeItem.tsx
+      - NoteSidebar.tsx
+      - NoteSidebarChat.tsx
+      - NoteContextMenu.tsx
+      - NoteStudyMenu.tsx
+      - NotesFilePicker.tsx
+      - ProjectFilesPanel.tsx
+      - NotesRAGSearch.tsx
+      - NotesIndexingButton.tsx
+      - AIPromptDialog.tsx
+      - AITransformMenu.tsx
+      - VoiceRecordButton.tsx
+      - MarkdownImportDialog.tsx
+      - MarkdownExportDialog.tsx
+      - MultiModalImport.tsx
+
+  study:
+    count: 12
+    entry_point: src/routes/study.$projectId.lazy.tsx
+    primary_components:
+      - path: src/presentation/components/study/StudyPage.tsx
+        purpose: Main study workspace page
+        lines: 350
+        dependencies:
+          - src/presentation/components/study/* (all study components)
+          - src/infrastructure/persistence/stores/flashcard (flashcard store)
+          - src/infrastructure/persistence/stores/study/quiz (quiz store)
+      - path: src/presentation/components/study/QuizContainer.tsx
+        purpose: Quiz taking container
+        lines: 380
+      - path: src/presentation/components/study/QuizQuestionView.tsx
+        purpose: Single question view
+        lines: 290
+      - path: src/presentation/components/study/flashcard.tsx
+        purpose: Flashcard display component
+        lines: 240
+
+    supporting_components:
+      - QuizStartScreen.tsx
+      - QuizResults.tsx
+      - QuizReview.tsx
+      - StudyFilePicker.tsx
+      - study-session.tsx
+      - study-stats.tsx
+      - quiz-preview.tsx
+
+shared_components:
+  chat:
+    count: 25
+    location: src/presentation/components/chat/
+    primary:
+      - ChatPanel.tsx (main chat UI)
+      - UnifiedChatPanel.tsx (unified chat interface)
+      - ChatConversation.tsx (message list)
+      - ApprovalOverlay.tsx (tool approval)
+      - BatchApprovalBar.tsx (bulk approval)
+      - AutoApproveSettings.tsx (approval config)
+    supporting:
+      - ToolCallBadge.tsx
+      - TimeoutWarning.tsx
+      - StreamdownRenderer.tsx
+      - CodeBlock.tsx
+      - DiffPreview.tsx
+      - ConversationCard.tsx
+      - ThreadCard.tsx
+      - ThreadsList.tsx
+      - SequentialExpansionOptions.tsx
+      - ChatBubble.tsx
+      - ChatBubbleOverlay.tsx
+      - ExpandableChatPanel.tsx
+
+  agent:
+    count: 35
+    location: src/presentation/components/agent/
+    primary:
+      - AgentConfigDialog.tsx (1,089 lines - GOD COMPONENT)
+      - UnifiedAgentSelector.tsx (247 lines)
+      - AgentManager.tsx (285 lines)
+      - WorkspaceToolPermissionsConfig.tsx
+      - ToolPermissionsConfig.tsx
+      - AgentWorkspaceBindingConfig.tsx
+      - ProviderSettings.tsx
+    sub_components:
+      - AgentConfigForm/ (5 sub-components)
+      - WorkspacePermissions/ (7 sub-components)
+      - ToolTrustLevels/ (3 sub-components)
+      - hooks/ (4 hooks)
+
+  layout:
+    count: 8
+    location: src/presentation/components/layout/
+    components:
+      - IDELayoutMain.tsx
+      - MobileIDELayout.tsx
+      - MainLayout.tsx
+      - MainSidebar.tsx
+      - ChatPanelWrapper.tsx
+      - TerminalPanel.tsx
+      - MobileTabBar.tsx
+
+  ui:
+    count: 150+
+    location: src/presentation/components/ui/
+    includes:
+      - buttons, inputs, dialogs
+      - tooltips, badges, progress indicators
+      - loading states, error states
+      - event indicators
+      - keyboard shortcuts overlay
+
+  other_shared:
+    - hub/ (HubHomePage, ProjectPickerDialog, ActivityLineChart)
+    - terminal/ (TerminalTabs, TerminalPanel)
+    - git/ (GitDiffViewer, GitCommitDialog, GitBranchManager, etc.)
+    - notifications/ (NotificationCenter, Toast, NotificationBadge)
+    - search/ (SearchResults, SearchFilters, SavedSearches)
+    - analytics/ (AnalyticsDashboard, MetricsChart)
+    - collaboration/ (LiveCursor, UserPresenceIndicator)
+    - diff/ (DiffViewer, MergeConflictResolver, LineDiff)
+    - plugins/ (PluginManager, PluginMarketplace, PluginSettings)
+    - settings/ (SettingsExportDialog, SettingsImportDialog)
+    - snippets/ (SnippetManager)
+    - keyboard/ (KeyboardShortcutsHelp)
+    - common/ (WorkspaceSwitcher, CrossWorkspaceFileReference)
+    - watcher/ (MonacoEditorWithWatcher, FileChangeDialog)
+
+total_component_count: 592
+total_files_scanned: 592
+
+component_categories:
+  by_workspace:
+    ide: 86
+    knowledge: 23
+    notes: 17
+    study: 12
+    shared: 454
+
+  by_type:
+    pages: 4 (main workspace pages)
+    panels: 120+ (sidebar panels, dialogs, overlays)
+    ui_components: 150+ (reusable UI components)
+    hooks: 80+ (custom React hooks)
+    types: 60+ (TypeScript type definitions)
+    utilities: 50+ (helper functions, utils)
+    tests: 128+ (__tests__ directories)
+
+architecture_patterns:
+  component_organization:
+    pattern: "Feature-based organization with workspace separation"
+    description: "Components organized by workspace (ide, knowledge, notes, study) with shared components in common directories"
+    verification: "File structure scan shows clear workspace boundaries"
+
+  composition:
+    pattern: "Component composition with sub-components"
+    description: "Complex components split into sub-directories (e.g., AgentChatPanel/, FileTree/, statusbar/)"
+    verification: "Directory structure shows component composition"
+
+  barrel_exports:
+    pattern: "Index files for clean imports"
+    description: "Each directory has index.ts for barrel exports"
+    verification: "Index files present in component directories"
+
+  separation_of_concerns:
+    pattern: "Presentation components separate from business logic"
+    description: "UI components in presentation/, business logic in lib/ and infrastructure/"
+    verification: "File path structure confirms separation"
+
+critical_components:
+  god_components:
+    - path: src/presentation/components/agent/AgentConfigDialog.tsx
+      lines: 1089
+      severity: HIGH
+      recommendation: "Split into focused sub-components (<300 lines each)"
+      epic_reference: "P1.1 - God Component Elimination"
+
+  entry_points:
+    ide: src/routes/ide.$projectId.tsx
+    knowledge: src/routes/knowledge.$projectId.lazy.tsx
+    notes: src/routes/notes.$projectId.lazy.tsx
+    study: src/routes/study.$projectId.lazy.tsx
+    hub: src/routes/hub.tsx
+    projects: src/routes/projects.tsx

@@ -29,7 +29,10 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 import { fromRecord } from '@/infrastructure/persistence/stores/project/project-crud-slice';
 import { ProjectContextProvider } from '@/infrastructure/context/project-context';
-import { PluginLayout } from '@/presentation/layouts/PluginLayout';
+// TEMPORARY: Bypassing PluginLayout - import plugins directly
+// import { PluginLayout } from '@/presentation/layouts/PluginLayout';
+import { fileTreePlugin } from '@/plugins/filetree';
+import { monacoPlugin } from '@/plugins/monaco';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
 import { getDefaultPlugins, getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
@@ -118,9 +121,22 @@ function UnifiedProjectRoute() {
     );
   }
 
+  // TEMPORARY: Direct FileTree render to verify core data pipeline
+  // This bypasses the broken PluginLayout to prove:
+  // Project → Handle Persistence → Gateway → FileTree works
   return (
     <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
-      <PluginLayout />  {/* No props - reads from store */}
+      <div className="h-full w-full flex">
+        {/* FileTree sidebar - always loaded plugin */}
+        <div className="w-64 h-full border-r border-border bg-card overflow-auto">
+          <fileTreePlugin.MainComponent width={256} height={window.innerHeight} />
+        </div>
+
+        {/* Monaco editor main area */}
+        <div className="flex-1 h-full overflow-hidden">
+          <monacoPlugin.MainComponent width={window.innerWidth - 256} height={window.innerHeight} />
+        </div>
+      </div>
     </ProjectContextProvider>
   );
 }

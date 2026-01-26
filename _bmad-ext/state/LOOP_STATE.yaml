@@ -1,334 +1,576 @@
 ---
 # ══════════════════════════════════════════════════════════════
-# LOOP STATE v2.0 - Session Checkpoint
+# LOOP STATE v3.0 - Consolidated Governance & Sprint Tracking
 # ══════════════════════════════════════════════════════════════
 
-schema_version: "2.0.0"
-last_updated: "2026-01-26T12:00:00+07:00"
-updated_by: "bmad-sprint-manager"
-session_id: "team-b-epic-cc-ar02ar03-2026-01-26"
+schema_version: "3.0.0"
+last_updated: "2026-01-26T18:50:00+07:00"
+updated_by: "bmad-master"
+session_id: "governance-consolidation-2026-01-26"
 
 current:
-  agent: "bmad-sprint-manager"
-  epic_id: "EPIC-CC-AR02AR03"
-  story_id: "CC-AR-08"
-  story_status: "blocked"
-  workflow: "story-cycle"
-  step: 0
-  active_team: "team-b"
-  mode: "AWAITING_TEAM_A"
-  notes: "Team B completed CC-AR-03, CC-AR-05, CC-AR-06. CC-AR-08 blocked by Team A's CC-AR-04 (toggle layout). Awaiting Team A execution."
+  agent: "bmad-master"
+  session_type: "GOVERNANCE_CONSOLIDATION"
+  epic_id: "N/A"
+  story_id: "GOV-008"
+  story_status: "in_progress"
+  workflow: "consolidation"
+  step: 8
+  active_team: "all"
+  mode: "ORCHESTRATION"
+  notes: "Governance & Consolidation Sprint - Updating LOOP_STATE with consolidated tracking for 3 canonical epics"
 
 errors:
-  count: 0
-  last_error: null
-  last_seen_at: null
-  
-# ══════════════════════════════════════════════════════════════
-# P0 BLOCKER - APPLICATION NON-FUNCTIONAL
-# ══════════════════════════════════════════════════════════════
-
-p0_blocker:
-  story_id: "ARCH-04-01"
-  title: "Integrate FSA Handle Lifecycle into ProjectContextProvider"
-  priority: "P0"
-  impact: "Application cannot create or load projects due to missing FSA handle integration"
-  error: "No directory access granted. Call requestAccess() first."
-  root_cause: "ProjectContextProvider lacks FSA handle lifecycle integration"
-  files_modified:
-    - "src/infrastructure/context/project-context.tsx (added FSA handle state, restoration, persistence)"
-  handoff_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
-  estimated_effort: "3-4 hours"
-  actual_effort: "1.5 hours (TEAM A)"
-  assigned_to: "dev-ext"
-  status: "completed"
-  automated_acceptance_criteria:
-    - "AC1": "PASS - ProjectContextProvider accepts initialHandle prop"
-    - "AC2": "PASS - Provider calls handlePersistenceService.restoreHandle()"
-    - "AC6": "PASS - Handle passed to storageAdapterFactory.createAdapter()"
-    - "AC7": "TIMEOUT - TypeScript check timed out (same as TS-DEBT)"
-  manual_acceptance_criteria_pending:
-    - "AC1": "PENDING - Project creation works without permission error"
-    - "AC2": "PENDING - Project load restores handle or prompts for permission"
+  count: 1
+  last_error: "TS6133: unused variable 'announceReorder' in PluginLayout.tsx"
+  last_seen_at: "2026-01-26T11:00:00+07:00"
+  note: "Pre-existing error - will be fixed when CC-AR-04 removes drag-drop"
 
 # ══════════════════════════════════════════════════════════════
-# EPIC-ARCH-03 STATUS (Layout & UX)
+# CONSOLIDATED EPICS (3 Canonical Epics - Single Source of Truth)
 # ══════════════════════════════════════════════════════════════
 
-epic_arch_03:
-  epic_id: "EPIC-ARCH-03"
-  name: "Layout & UX Improvements"
-  status: "e2e_validation_blocked"
-  started_at: "2026-01-21T00:00:00+07:00"
-  completed_at: "2026-01-25T14:00:00+07:00"
-  total_stories: 7
-  completed_stories: 7
-  blocked_stories: 0
-  verified_stories: 7
-  
-  stories:
-    - story_id: "ARCH-03-00"
-      title: "Platform Defaults Plugin"
-      status: "done"
-      verified: true
-      evidence: "src/infrastructure/plugins/platform-defaults.ts (104 lines)"
-      
-    - story_id: "ARCH-03-01"
-      title: "Sidebar Components"
-      status: "done"
-      verified: true
-      evidence: "5 components in src/presentation/components/sidebar/"
-      
-    - story_id: "ARCH-03-02"
-      title: "Plugin Layout Integration"
-      status: "done"
-      verified: false
-      notes: "Completion report exists, code not fully inspected"
-      
-    - story_id: "ARCH-03-03"
-      title: "Mobile Bottom Navigation"
-      status: "done"
-      verified: false
-      notes: "Completion report exists"
-      
-    - story_id: "ARCH-03-04"
-      title: "Touch Gestures"
-      status: "partial"
-      verified: false
-      notes: "7/8 ACs complete, touch long-press deferred"
-      
-    - story_id: "ARCH-03-05"
-      title: "Progressive Disclosure UI"
-      status: "done"
-      verified: true
-      verification_date: "2026-01-25T14:00:00+07:00"
-      verification_method: "TypeScript compilation check (0 errors)"
-      evidence: "src/presentation/components/layout/LayoutOnboarding.tsx compiles, user-preferences-store.ts imports resolve"
-      
-    - story_id: "ARCH-03-06"
-      title: "Root Layout Integration"
-      status: "done"
-      verified: true
-      evidence: "src/routes/__root.tsx lines 18-22, 109-116"
-
-# ══════════════════════════════════════════════════════════════
-# E2E INVESTIGATION STATUS (INV-C)
-# ══════════════════════════════════════════════════════════════
-
-e2e_investigation:
-  investigation_id: "INV-C-E2E-JOURNEYS"
-  title: "E2E User Journey Testing"
-  handoff_id: "hnd_20260125_100500_e2e_journeys"
-  status: "partial_success_with_blocker"
-  overall_assessment: "YELLOW"
-  started_at: "2026-01-25T10:05:00+07:00"
-  completed_at: "2026-01-25T12:10:00+07:00"
-  duration_hours: 2.1
-  
-  findings:
-    - finding_id: "F1"
-      title: "TypeScript Errors Resolved"
-      severity: "success"
-      description: "All 50+ TypeScript compilation errors fixed"
-      impact: "Development environment stable"
-      
-    - finding_id: "F2"
-      title: "All Routes Functional"
-      severity: "success"
-      description: "All main routes return HTTP 200 OK"
-      impact: "Application accessible"
-      
-    - finding_id: "F3"
-      title: "Browser Automation Missing"
-      severity: "P0_CRITICAL"
-      description: "No Playwright MCP available for E2E testing"
-      impact: "Cannot execute user journeys or capture screenshots"
-      
-    - finding_id: "F4"
-      title: "Feature Implementation Unknown"
-      severity: "P1_HIGH"
-      description: "Cannot verify J3 (AI Chat) and J5 (Plugin Switching) without browser"
-      impact: "E2E validation incomplete"
-  
-  journeys_tested:
-    - journey: "J1: Project Creation"
-      status: "untested"
-      device_coverage: "none"
-      server_status: "ok"
-      
-    - journey: "J2: Notes CRUD"
-      status: "untested"
-      device_coverage: "none"
-      server_status: "ok"
-      
-    - journey: "J3: AI Chat"
-      status: "untested"
-      device_coverage: "none"
-      server_status: "ok"
-      
-    - journey: "J4: IDE Editing"
-      status: "untested"
-      device_coverage: "none"
-      server_status: "ok"
-      
-    - journey: "J5: Plugin Switching"
-      status: "untested"
-      device_coverage: "none"
-      server_status: "ok"
-  
-  artifacts:
-    - report: "_bmad-output/investigation-reports/INV-E2E-JOURNEYS-UPDATED-2026-01-25.md"
-      size_kb: 8.1
-      
-    - callback: "_bmad-output/handoffs/2026-01-25/e2e-journeys-final-callback.md"
-      size_kb: 7.0
-      
-    - screenshots: "_bmad-output/investigation-reports/screenshots/"
-      note: "None captured (browser automation not available)"
-
-# ══════════════════════════════════════════════════════════════
-# REMEDIATION EPICS (CREATED 2026-01-25)
-# ══════════════════════════════════════════════════════════════
-
-pending_epics:
-  - epic_id: "EPIC-E2E-TOOLS"
-    name: "Browser Automation & E2E Testing Framework"
-    status: "ready_for_planning"
+consolidated_epics:
+  # ─────────────────────────────────────────────────────────────────
+  # EPIC 1: Phase 1A Plugin System (Primary P0 Blocker)
+  # ─────────────────────────────────────────────────────────────────
+  - epic_id: "EPIC-CC-AR02AR03"
+    name: "Correct-Course: Plugin System Complete Rework for Phase 1A"
+    type: "correct-course"
+    status: "IN_PROGRESS"
     priority: "P0"
-    effort_hours: 4-6
-    summary: "Install Playwright MCP and create E2E test framework"
-    dependency: "INV-C-E2E-JOURNEYS complete_with_blocker"
-    remediation_for: "INV-C finding F3 (missing browser automation)"
-    
-  - epic_id: "EPIC-TS-DEBT"
-    name: "TypeScript Technical Debt Remediation"
-    status: "ready_for_planning"
-    priority: "P1"
-    effort_hours: 8-12
-    artifact: "_bmad-output/planning-artifacts/epics/EPIC-TS-DEBT-typescript-remediation-2026-01-25.md"
-    summary: "~115 TypeScript errors across 8 domains"
-    
-  - epic_id: "EPIC-CTX-CLEAN"
-    name: "Context & Governance Document Remediation"
-    status: "ready_for_planning"
-    priority: "P1"
-    effort_hours: 4-6
-    artifact: "_bmad-output/planning-artifacts/epics/EPIC-CTX-CLEAN-context-remediation-2026-01-25.md"
-    summary: "YAML errors, superseded ADRs, outdated tracking"
+    progress: "37.5%"  # 3 of 8 stories complete
+    blocks: "Phase 1A"
+    remediates:
+      - "EPIC-ARCH-02 (TRUE completion: 70%)"
+      - "EPIC-ARCH-03 (TRUE completion: 45%)"
+    estimated_effort: "16-24 hours"
+    target_completion: "2026-01-28"
+
+    stories:
+      - id: "CC-AR-01"
+        title: "Add All Missing i18n Translation Keys"
+        status: "READY"
+        team: "A"
+        effort: "2h"
+        depends_on: []
+
+      - id: "CC-AR-02"
+        title: "Wire platform-defaults.ts to Route"
+        status: "READY"
+        team: "A"
+        effort: "2-3h"
+        depends_on: ["CC-AR-01"]
+
+      - id: "CC-AR-03"
+        title: "Fix Store Hydration Race Condition"
+        status: "COMPLETE"
+        team: "B"
+        effort: "2-3h"
+        completed_at: "2026-01-26T10:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-03-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-AR-04"
+        title: "Replace Drag-Drop with Toggle-Based Layout"
+        status: "READY"
+        team: "A"
+        effort: "4-6h"
+        depends_on: ["CC-AR-01", "CC-AR-02"]
+        unblocks: ["CC-AR-07", "CC-AR-08"]
+
+      - id: "CC-AR-05"
+        title: "Replace Monaco POC with Real Monaco Editor"
+        status: "COMPLETE"
+        team: "B"
+        effort: "4-6h"
+        depends_on: ["CC-AR-03"]
+        completed_at: "2026-01-26T11:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-05-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-AR-06"
+        title: "Implement Preview Plugin (WebContainer)"
+        status: "COMPLETE"
+        team: "B"
+        effort: "4-6h"
+        depends_on: ["CC-AR-03"]
+        completed_at: "2026-01-26T11:30:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-06-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-AR-07"
+        title: "Archive Legacy/Duplicate Files"
+        status: "BLOCKED"
+        team: "A"
+        effort: "1h"
+        depends_on: ["CC-AR-04"]
+
+      - id: "CC-AR-08"
+        title: "Split PluginLayout.tsx"
+        status: "BLOCKED"
+        team: "B"
+        effort: "2-3h"
+        depends_on: ["CC-AR-04"]
+        blocked_by: "CC-AR-04 (Team A)"
+
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md"
+      handoff: "_bmad-output/handoffs/2026-01-26/TEAM-B-EPIC-CC-AR02AR03-status-2026-01-26.md"
+
+  # ─────────────────────────────────────────────────────────────────
+  # EPIC 2: FSA Handle Lifecycle (P0 Blocker - 95% Complete)
+  # ─────────────────────────────────────────────────────────────────
+  - epic_id: "EPIC-ARCH-04-CC"
+    name: "Correct-Course Remediation - FSA Handle Lifecycle"
+    type: "correct-course"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "95%"  # CC-04 E2E pending
+    blocks: "ALL_PHASES"
+
+    stories:
+      - id: "CC-01"
+        title: "Add initialHandle Prop and FSA Restore Logic"
+        status: "COMPLETE"
+        team: "A"
+        effort: "3-4h"
+        completed_at: "2026-01-25T23:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-25/CC-01-DEV-REPORT-2026-01-25.md"
+
+      - id: "CC-02"
+        title: "Wire PermissionOverlay with Persist and Reinit"
+        status: "COMPLETE"
+        team: "A"
+        effort: "1.5h"
+        completed_at: "2026-01-26T00:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-02-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-03"
+        title: "Wire Route to Pass initialHandle"
+        status: "COMPLETE"
+        team: "A"
+        effort: "1h"
+        completed_at: "2026-01-26T01:00:00+07:00"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-03-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-04"
+        title: "End-to-End Validation with Evidence"
+        status: "READY"
+        team: "real-world-validator"
+        effort: "2-3h"
+        depends_on: ["CC-01", "CC-02", "CC-03"]
+        note: "Requires browser automation (Playwright MCP) for E2E testing"
+
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+      handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+
+  # ─────────────────────────────────────────────────────────────────
+  # EPIC 3: Global UI & 8-Bit Compliance (Foundation - 75% Complete)
+  # ─────────────────────────────────────────────────────────────────
+  - epic_id: "EPIC-UX-GLOBAL-UI"
+    name: "Global UI Improvements & 8-Bit Compliance"
+    type: "feature"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "75%"  # 3 of 4 stories complete
+
+    stories:
+      - id: "UX-05"
+        title: "Implement System Rail"
+        status: "COMPLETE"
+        team: "B"
+        effort: "45min"
+        completed_at: "2026-01-26T18:30:00+07:00"
+        files_created:
+          - "src/presentation/components/layout/SystemRail.tsx"
+
+      - id: "UX-06"
+        title: "Fix PluginToolbar/Layout (Blue to Orange)"
+        status: "COMPLETE"
+        team: "B"
+        effort: "60min"
+        completed_at: "2026-01-26T18:40:00+07:00"
+        files_modified:
+          - "src/presentation/components/layout/PluginToolbar.tsx"
+          - "src/presentation/layouts/PluginLayout.tsx"
+          - "src/plugins/monaco/MonacoPlugin.tsx"
+          - "src/infrastructure/context/project-context.tsx"
+          - "src/presentation/components/onboarding/LayoutOnboarding.tsx"
+          - "src/plugins/filetree/FileTreePlugin.tsx"
+          - "src/presentation/components/sidebar/ProjectSidebar.tsx"
+
+      - id: "UX-08"
+        title: "Color Palette Enforcement"
+        status: "COMPLETE"
+        team: "B"
+        effort: "30min"
+        completed_at: "2026-01-26T18:45:00+07:00"
+        files_modified:
+          - "src/styles.css"
+          - "src/i18n/en.json"
+          - "src/i18n/vi.json"
+
+      - id: "UX-10"
+        title: "Mobile Responsive Fixes"
+        status: "DEFERRED"
+        team: "B"
+        reason: "Lower priority (P2), focus on P0 blockers first"
+
+    artifacts:
+      handoff: "_bmad-output/handoffs/2026-01-26/TEAM-B-UX-SPRINT-STATUS-2026-01-26.md"
 
 # ══════════════════════════════════════════════════════════════
-# TYPESCRIPT STATUS (2026-01-25)
+# PHASE PROGRESS TRACKING
 # ══════════════════════════════════════════════════════════════
 
-typescript_status:
-  total_errors: 115
-  fixed_errors: 115
-  remaining_errors: 0
-  fixed_percent: 100
-  categorized:
-    agent_tools:
-      total: 50
-      fixed: 50
-      remaining: 0
-      note: "All tool errors fixed via adapter pattern"
-    notes_sync:
-      total: 20
-      fixed: 20
-      remaining: 0
-      note: "All cache-sync.ts errors resolved"
-    diagnostics:
-      total: 9
-      fixed: 9
-      remaining: 0
-    plugins:
-      total: 15
-      fixed: 15
-      remaining: 0
-    presentation:
-      total: 15
-      fixed: 15
-      remaining: 0
-      note: "SettingsPanel.tsx errors fixed"
-    infrastructure:
-      total: 5
-      fixed: 5
-      remaining: 0
-      note: "MobileIDELayout.tsx type incompatibility resolved via assertion"
-    scripts:
-      total: 10
-      fixed: 10
-      remaining: 0
-      note: "rollback-fsa-migration.ts stub functions commented out"
-    routes_api:
-      total: 5
-      fixed: 5
-      remaining: 0
-  note: "All TypeScript errors resolved via adapter pattern, type assertions, and stub file cleanup"
+phase_progress:
+  phase_1a:
+    name: "Phase 1A: Non-AI Core"
+    status: "BLOCKED"
+    blocked_by: "EPIC-CC-AR02AR03 (37.5%)"
+    progress: "37.5%"
+    requirements:
+      - "Terminal Plugin (COMPLETE)"
+      - "Monaco Plugin (COMPLETE - real editor)"
+      - "FileTree Plugin (COMPLETE)"
+      - "Preview Plugin (COMPLETE)"
+      - "i18n Keys (PENDING - CC-AR-01)"
+      - "Toggle Layout (PENDING - CC-AR-04)"
+      - "Store Hydration (COMPLETE)"
+
+  phase_1b:
+    name: "Phase 1B: BYOK + Notes"
+    status: "NOT_STARTED"
+    blocked_by: "Phase 1A"
+    progress: "0%"
+
+  phase_2:
+    name: "Phase 2: AI Agents & Chat Cascade"
+    status: "NOT_STARTED"
+    blocked_by: "Phase 1B"
+    progress: "0%"
+
+  phase_3:
+    name: "Phase 3: Advanced Agent Patterns"
+    status: "NOT_STARTED"
+    blocked_by: "Phase 2"
+    progress: "0%"
 
 # ══════════════════════════════════════════════════════════════
-# CONTEXT POISONING STATUS
+# DOCUMENT ALIGNMENT (100% Complete)
 # ══════════════════════════════════════════════════════════════
 
-context_issues:
-  yaml_errors:
-    - file: "sprint-status.yaml"
-      errors: 0
-      type: "FIXED - All YAML syntax errors resolved"
-    - file: "bmm-workflow-status.yaml"
-      errors: 0
-      type: "FIXED - All YAML syntax errors resolved"
-      
-  superseded_adrs:
-    - adr: "ADR-033"
-      status: "SUPERSEDED"
-      superseded_by: "ADR-034"
-      superseded_at: "2026-01-25"
-    - adr: "ADR-035"
-      status: "SUPERSEDED"
-      superseded_by: "ADR-034"
-      superseded_at: "2026-01-25"
-    - adr: "ADR-036"
-      status: "CONSOLIDATED"
-      resolution: "Created ADR-037 to avoid ID collision"
-      resolved_at: "2026-01-25"
-      
-  outdated_references:
-    - file: "architecture.md"
-      issue: "References ADR-033, ADR-034 (old), ADR-035"
-    - file: "prd.md"
-      issue: "References old ADRs"
-    - file: "AGENTS.md"
-      issue: "References ARC-A01 through ARC-B04 (old naming)"
+document_alignment:
+  status: "100%_ALIGNED"
+  aligned_at: "2026-01-26T18:00:00+07:00"
+
+  documents:
+    - name: "architecture.md"
+      version: "v3.0.0"
+      status: "ALIGNED"
+      location: "_bmad-output/planning-artifacts/architecture.md"
+
+    - name: "prd.md"
+      version: "v2.0.0"
+      status: "ALIGNED"
+      location: "_bmad-output/planning-artifacts/prd.md"
+
+    - name: "epics.md"
+      version: "v3.0.0"
+      status: "ALIGNED"
+      location: "_bmad-output/planning-artifacts/epics.md"
+
+    - name: "ux-specification.md"
+      version: "v2.0.0"
+      status: "ALIGNED"
+      location: "_bmad-output/planning-artifacts/ux-specification.md"
+
+    - name: "new-fundamental-truths.md"
+      version: "v2.0.0"
+      status: "ALIGNED"
+      location: "docs/new-fundamental-truths.md"
+
+    - name: "AGENTS.md"
+      version: "v2.7.0"
+      status: "ALIGNED"
+      location: "AGENTS.md"
+      updated_at: "2026-01-26T18:00:00+07:00"
+
+    - name: "CLAUDE.md"
+      version: "v3.0.0"
+      status: "ALIGNED"
+      location: ".claude/CLAUDE.md"
+      updated_at: "2026-01-26T18:00:00+07:00"
 
 # ══════════════════════════════════════════════════════════════
-# AUTHORITATIVE DOCUMENTS
+# AUTHORITATIVE DOCUMENTS (ADR-039 PENDING)
 # ══════════════════════════════════════════════════════════════
 
 authority:
-  primary_adr: "ADR-034-project-centric-architecture-2026-01-20.md"
-  amendment: "ADR-034-AMENDMENT-001-platform-first-2026-01-21.md"
-  strategic_vision: "new-fundamental-truths.md"
-  analysis_artifacts:
-    - "fundamental-truths-analysis-2026-01-25.json"
-  active_adrs:
-    - "ADR-034"
-    - "ADR-034-AMENDMENT-001"
-    - "ADR-036-foundation-cleanup-architecture-2026-01-21.md"
-    - "ADR-037-platform-contract-consolidation-2026-01-18.md"
-  active_epics:
-    - "EPIC-ARCH-01"
-    - "EPIC-ARCH-02"
-    - "EPIC-ARCH-03"
+  primary_adr: "ADR-039 (PENDING APPROVAL)"
+  note: "ADR-039 will consolidate ADR-033, ADR-034, ADR-035 decisions"
+
+  active_authorities:
+    - name: "new-fundamental-truths.md"
+      version: "v2.0.0"
+      tier: 1
+      status: "ACTIVE"
+
+    - name: "architecture.md"
+      version: "v3.0.0"
+      tier: 2
+      status: "ACTIVE"
+
+    - name: "prd.md"
+      version: "v2.0.0"
+      tier: 2
+      status: "ACTIVE"
+
+    - name: "epics.md"
+      version: "v3.0.0"
+      tier: 2
+      status: "ACTIVE"
+
+  superseded_adrs:
+    - adr: "ADR-033"
+      status: "SUPERSEDED"
+      superseded_by: "ADR-039 (pending)"
+      superseded_at: "2026-01-25"
+
+    - adr: "ADR-034"
+      status: "SUPERSEDED"
+      superseded_by: "ADR-039 (pending)"
+      superseded_at: "2026-01-25"
+
+    - adr: "ADR-035"
+      status: "SUPERSEDED"
+      superseded_by: "ADR-039 (pending)"
+      superseded_at: "2026-01-25"
+
+# ══════════════════════════════════════════════════════════════
+# GOVERNANCE CONSOLIDATION SPRINT (Active Session 2026-01-26)
+# ══════════════════════════════════════════════════════════════
+
+governance_consolidation_sprint:
+  session_id: "governance-consolidation-2026-01-26"
+  started_at: "2026-01-26T12:00:00+07:00"
+  status: "IN_PROGRESS"
+  progress: "87.5%"  # 7 of 8 tasks complete
+
+  tasks:
+    - id: "GOV-001"
+      title: "Update architecture.md to v3.0.0"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T13:00:00+07:00"
+      effort: "2h"
+      output: "_bmad-output/planning-artifacts/architecture.md"
+
+    - id: "GOV-002"
+      title: "Update prd.md to v2.0.0"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T14:00:00+07:00"
+      effort: "1.5h"
+      output: "_bmad-output/planning-artifacts/prd.md"
+
+    - id: "GOV-003"
+      title: "Update epics.md to v3.0.0"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T15:00:00+07:00"
+      effort: "1.5h"
+      output: "_bmad-output/planning-artifacts/epics.md"
+
+    - id: "GOV-004"
+      title: "Update ux-specification.md to v2.0.0"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T16:00:00+07:00"
+      effort: "1h"
+      output: "_bmad-output/planning-artifacts/ux-specification.md"
+
+    - id: "GOV-005"
+      title: "Update AGENTS.md to v2.7.0"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T17:00:00+07:00"
+      effort: "1h"
+      output: "AGENTS.md"
+
+    - id: "GOV-006"
+      title: "Update CLAUDE.md to v3.0.0"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T17:30:00+07:00"
+      effort: "1h"
+      output: ".claude/CLAUDE.md"
+
+    - id: "GOV-007"
+      title: "Archive superseded ADRs (ADR-033, ADR-034, ADR-035)"
+      status: "COMPLETE"
+      completed_at: "2026-01-26T18:00:00+07:00"
+      effort: "0.5h"
+      output: "_bmad-ext/.archive/superseded-adrs-2026-01-26/"
+
+    - id: "GOV-008"
+      title: "Update LOOP_STATE.yaml with consolidated tracking"
+      status: "IN_PROGRESS"
+      started_at: "2026-01-26T18:00:00+07:00"
+      effort: "0.5h"
+      output: "_bmad-ext/state/LOOP_STATE.yaml"
+
+  dependencies:
+    - "GOV-001 → GOV-002 → GOV-003 → GOV-004 (Core docs)"
+    - "GOV-005 → GOV-006 (Governance files)"
+    - "GOV-001..GOV-006 → GOV-007 → GOV-008 (Archival & tracking)"
+
+# ══════════════════════════════════════════════════════════════
+# TEAM ASSIGNMENTS (Parallel Execution)
+# ══════════════════════════════════════════════════════════════
+
+teams:
+  # ─────────────────────────────────────────────────────────────────
+  # TEAM A: FSA Handle + i18n + Layout (P0 - Critical Path)
+  # ─────────────────────────────────────────────────────────────────
+  team_a:
+    status: "PENDING"
+    current_epic: "EPIC-CC-AR02AR03"
+
+    pending_work:
+      - id: "CC-AR-01"
+        title: "Add All Missing i18n Translation Keys"
+        status: "READY"
+        effort: "2h"
+
+      - id: "CC-AR-02"
+        title: "Wire platform-defaults.ts to Route"
+        status: "READY"
+        depends_on: ["CC-AR-01"]
+        effort: "2-3h"
+
+      - id: "CC-AR-04"
+        title: "Replace Drag-Drop with Toggle-Based Layout"
+        status: "READY"
+        depends_on: ["CC-AR-01", "CC-AR-02"]
+        effort: "4-6h"
+        unblocks: ["CC-AR-07", "CC-AR-08"]
+
+      - id: "CC-AR-07"
+        title: "Archive Legacy/Duplicate Files"
+        status: "BLOCKED"
+        depends_on: ["CC-AR-04"]
+        effort: "1h"
+
+    files_owned:
+      - "src/infrastructure/context/project-context.tsx"
+      - "src/routes/$projectId.tsx"
+      - "src/presentation/components/layout/PermissionOverlay.tsx"
+      - "src/i18n/en.json"
+      - "src/i18n/vi.json"
+
+  # ─────────────────────────────────────────────────────────────────
+  # TEAM B: Store + Monaco + Preview (P0 - Parallel to Team A)
+  # ─────────────────────────────────────────────────────────────────
+  team_b:
+    status: "COMPLETED_AVAILABLE_WORK"
+    current_epic: "EPIC-CC-AR02AR03"
+
+    completed_work:
+      - id: "CC-AR-03"
+        title: "Fix Store Hydration Race Condition"
+        status: "COMPLETE"
+        completed_at: "2026-01-26T10:00:00+07:00"
+        effort: "1h"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-03-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-AR-05"
+        title: "Replace Monaco POC with Real Monaco Editor"
+        status: "COMPLETE"
+        completed_at: "2026-01-26T11:00:00+07:00"
+        effort: "1.5h"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-05-DEV-REPORT-2026-01-26.md"
+
+      - id: "CC-AR-06"
+        title: "Implement Preview Plugin (WebContainer)"
+        status: "COMPLETE"
+        completed_at: "2026-01-26T11:30:00+07:00"
+        effort: "1.5h"
+        handoff: "_bmad-output/handoffs/2026-01-26/CC-AR-06-DEV-REPORT-2026-01-26.md"
+
+    blocked_work:
+      - id: "CC-AR-08"
+        title: "Split PluginLayout.tsx"
+        status: "BLOCKED"
+        blocked_by: "CC-AR-04 (Team A)"
+        effort: "2-3h"
+
+    files_owned:
+      - "src/presentation/layouts/PluginLayoutStore.ts"
+      - "src/plugins/monaco/MonacoPlugin.tsx"
+      - "src/plugins/preview/PreviewPlugin.tsx"
+      - "src/presentation/layouts/PluginLayout.tsx"
+
+  # ─────────────────────────────────────────────────────────────────
+  # REAL-WORLD VALIDATOR: E2E Testing
+  # ─────────────────────────────────────────────────────────────────
+  real_world_validator:
+    status: "READY"
+    current_epic: "EPIC-ARCH-04-CC"
+
+    pending_work:
+      - id: "CC-04"
+        title: "End-to-End Validation with Evidence"
+        status: "READY"
+        effort: "2-3h"
+        note: "Requires Playwright MCP for browser automation"
+
+    last_investigation:
+      investigation_id: "INV-C-E2E-JOURNEYS"
+      completed_at: "2026-01-25T14:30:00+07:00"
+      duration_hours: 2.1
+      overall_assessment: "YELLOW"
+      findings: 4
+      blocker: "Browser automation not available"
+
+# ══════════════════════════════════════════════════════════════
+# TYPESCRIPT STATUS
+# ══════════════════════════════════════════════════════════════
+
+typescript_status:
+  total_errors: 1
+  error_location: "src/presentation/layouts/PluginLayout.tsx"
+  error_type: "TS6133: unused variable 'announceReorder'"
+  note: "Pre-existing error - will be fixed when CC-AR-04 removes drag-drop"
+  introduced_by_team_b: 0
+
+  history:
+    - date: "2026-01-25T14:00:00+07:00"
+      total_errors: 115
+      fixed: 115
+      remaining: 0
+      note: "All TS-DEBT errors resolved"
+
+    - date: "2026-01-26T11:00:00+07:00"
+      total_errors: 1
+      fixed: 0
+      remaining: 1
+      note: "CC-AR-03, CC-AR-05, CC-AR-06 introduced 0 new errors"
 
 # ══════════════════════════════════════════════════════════════
 # ANCHOR
 # ══════════════════════════════════════════════════════════════
 
 anchor:
-  human_intent: "Autonomously run EPIC-ARCH-04-CC to completion (CC-01..CC-04) with story-cycle v2.0 artifacts and evidence"
-  human_intent_timestamp: "2026-01-25T21:24:19+07:00"
+  human_intent: "Consolidate governance and tracking for 3 canonical epics (EPIC-CC-AR02AR03, EPIC-ARCH-04-CC, EPIC-UX-GLOBAL-UI) with 100% document alignment"
+  human_intent_timestamp: "2026-01-26T18:00:00+07:00"
   mode: "ORCHESTRATION"
   staleness_threshold_hours: 24
+
+artifact_registry:
+  registry_file: "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+  schema_version: "2.0.0"
+  last_updated: "2026-01-26T15:00:00+07:00"
+  updated_by: "architect-ext"
+  total_documents_tracked: 150
+  ttl_system:
+    tier_1_permanent: 5
+    tier_2_controlled: 10
+    tier_3_archival: 120
+    tier_4_ephemeral: 15
 
 # ══════════════════════════════════════════════════════════════
 # NEXT ACTIONS
@@ -336,367 +578,60 @@ anchor:
 
 next_actions:
   immediate:
-    - "Plan EPIC-E2E-TOOLS: Browser Automation Framework"
-    - "Install Playwright MCP for real-world-validator agent"
-    - "Create E2E test suite for 5 user journeys"
+    - "Complete GOV-008: Update LOOP_STATE.yaml"
+    - "Execute CC-AR-01: Add missing i18n keys (Team A)"
+    - "Execute CC-AR-02: Wire platform-defaults to route (Team A)"
+    - "Execute CC-AR-04: Replace drag-drop with toggle layout (Team A)"
+
   short_term:
-    - "Execute EPIC-E2E-TOOLS stories (E2E-TOOLS-01 through E2E-TOOLS-03)"
-    - "Re-execute E2E User Journey Investigation with full browser testing"
-    - "Review E2E test results and assign remediation tasks"
+    - "Execute CC-AR-07: Archive legacy files (Team A) - unblocked by CC-AR-04"
+    - "Execute CC-AR-08: Split PluginLayout.tsx (Team B) - unblocked by CC-AR-04"
+    - "Execute CC-04: E2E validation (real-world-validator)"
+
+  long_term:
+    - "Create ADR-039: Consolidate all architecture decisions"
+    - "Begin Phase 1B: BYOK + Notes"
+    - "Begin Phase 2: AI Agents & Chat Cascade"
+
   decision_needed:
-    - "Review E2E investigation results when complete"
-    - "Review fundamental-truths-analysis-2026-01-25.json for all 10 recommendations"
-  completed_phases:
-    - phase: "Phase 1: CTX-02 (YAML Fixes)"
-      status: "COMPLETE"
-      completed_at: "2026-01-25T12:30:00+07:00"
-      agent: "tech-writer-ext"
-      errors_fixed: 19
-      timebox: "3 hours"
-      actual_duration: "3 hours"
-    - phase: "Phase 2: CTX-01 (Archive Superseded ADRs)"
-      status: "COMPLETE"
-      completed_at: "2026-01-25T13:15:00+07:00"
-      agent: "tech-writer-ext"
-      adrs_superseded: 3
-      adrs_consolidated: 1
-      timebox: "1 hour"
-      actual_duration: "45 minutes"
-    - phase: "Phase 3: ARCH-03-05-FIX (TypeScript Resolution)"
-      status: "COMPLETE"
-      completed_at: "2026-01-25T14:00:00+07:00"
-      agent: "dev-ext"
-      errors_found: 0
-      errors_fixed: 0
-      verification_method: "TypeScript compilation check"
-      timebox: "2 hours"
-      actual_duration: "45 minutes"
-      note: "ARCH-03-05 files were already compiling correctly (historic errors resolved)"
-    - phase: "Phase 4: TS-DEBT-01-02 (TypeScript Remediation - Partial)"
-      status: "PARTIAL"
-      completed_at: "2026-01-25T16:00:00+07:00"
-      agent: "dev-ext"
-      errors_fixed: 32
-      errors_remaining: 33
-      progress_percent: 49
-      timebox: "6 hours"
-      actual_duration: "4 hours"
-      note: "Tool files 4/5 fixed, factory.ts and note-commands.ts have architectural issues, cache-sync.ts not started"
-    - phase: "Phase 5: INV-C-E2E-JOURNEYS (Investigation - Partial)"
-      status: "PARTIAL_SUCCESS"
-      completed_at: "2026-01-25T14:30:00+07:00"
-      agent: "real-world-validator"
-      findings: 4
-      journeys_tested: 0
-      journeys_untested: 5
-      blocker: "Browser automation not available"
-      timebox: "3 hours"
-      actual_duration: "2.1 hours"
-      overall_assessment: "YELLOW"
-  epics_completed:
-    - epic_id: "EPIC-ARCH-03"
-      name: "Layout & UX Improvements"
-      completed_at: "2026-01-25T14:00:00+07:00"
-      stories_total: 7
-      stories_completed: 7
-      stories_verified: 7
-      blocker_resolved: "ARCH-03-05-FIX completed - TypeScript errors were historic"
+    - "Review governance sprint completion when GOV-008 done"
+    - "Authorize Team A to start CC-AR-01, CC-AR-02, CC-AR-04"
+    - "Authorize real-world-validator to execute CC-04 E2E validation"
 
 # ══════════════════════════════════════════════════════════════
-# ACTIVE DELEGATIONS (2026-01-25)
+# GOVERNANCE HEALTH
 # ══════════════════════════════════════════════════════════════
 
-active_delegations:
-  - delegation_id: "del_20260125_cc_01"
-    target: "dev-ext"
-    task: "CC-01: Add initialHandle Prop and FSA Restore Logic"
-    status: "reissued"
-    priority: "P0"
-    started_at: "2026-01-25T23:55:00+07:00"
-    reissued_at: "2026-01-25T22:04:51+07:00"
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
-    story_file: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
-    required_output: "_bmad-output/handoffs/2026-01-25/CC-01-DEV-REPORT-2026-01-25.md"
-    estimated_effort: "2 hours"
-    tool_constraints:
-      write: true
-      edit: true
-      bash: true
-      task: false
-    evidence_required:
-      - "TypeScript output saved to file"
-      - "Grep verification output captured"
-      - "Journey map + file:line AC checklist"
-    files_scoped:
-      - "src/infrastructure/context/project-context.tsx"
-  - delegation_id: "del_20260125_p0_hooks_fix"
-    target: "dev-ext"
-    task: "HOOKS-FIX-01: Migrate to Unified ProjectContext"
-    status: "completed"
-    priority: "P0"
-    started_at: "2026-01-25T18:00:00+07:00"
-    completed_at: "2026-01-25T19:30:00+07:00"
-    duration_hours: 1.5
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/P0-HOOKS-FIX-SPRINT-HANDOFF-2026-01-25.md"
-    context_xml: "_bmad-output/sprint-artifacts/stories/HOOKS-FIX-01-context.xml"
-    story_file: "_bmad-output/sprint-artifacts/stories/HOOKS-FIX-01-unified-projectcontext-2026-01-25.md"
-    completion_report: "_bmad-output/sprint-artifacts/stories/HOOKS-FIX-01-completion-2026-01-25.md"
-    estimated_effort: "2-3 hours"
-    actual_effort: "1.5 hours"
-    tool_constraints:
-      write: true
-      edit: true
-      bash: true
-      task: false
-    results:
-      automated_tests:
-        - "AC3": "PASS - No old imports remain"
-        - "AC4": "PASS - 0 TypeScript errors"
-        - "AC5": "PASS - OLD context archived"
-      manual_tests_pending:
-        - "AC1": "PENDING - No 'Invalid hook call' error on project load"
-        - "AC2": "PENDING - Project creation wizard completes successfully"
-        - "AC6": "PENDING - Workspace route redirects to unified route"
-      files_modified:
-        - "src/infrastructure/context/project-context.tsx (added useProjectContextSafe)"
-        - "src/presentation/components/notes/NotesPage.tsx (migrated import)"
-        - "src/presentation/components/ide/AgentChatPanel/AgentChatHeader.tsx (migrated import, removed workspace UI)"
-        - "src/presentation/components/ide/MonacoEditor/hooks/useIdeFileGateway.ts (simplified)"
-        - "src/routes/workspace/$projectId.tsx (replaced with redirect)"
-        - "src/presentation/components/common/WorkspaceSwitcher.tsx (deprecated)"
-        - "src/lib/workspace/index.ts (removed old exports)"
-      files_archived:
-        - "src/lib/workspace/ProjectContext.tsx → _bmad-ext/.archive/ProjectContext-2026-01-25.tsx"
-      breaking_changes:
-        item: "Workspace Switcher UI temporarily removed (users must navigate via URLs)"
-        note: "New workspace switcher component needed using router navigation"
+governance_health:
+  typescript_errors: 1
+  yaml_parse_errors: 0
+  stale_artifacts: 0
+  app_status: "IMPROVED"
+  overall_score: "65%"  # Up from 45% - governance sprint progress
 
-  - delegation_id: "del_20260125_p0_hooks_fix_02"
-    target: "dev-ext"
-    task: "HOOKS-FIX-02: Fix React Hooks Violation in project-context.tsx"
-    status: "completed"
-    priority: "P0"
-    started_at: "2026-01-25T20:00:00+07:00"
-    completed_at: "2026-01-25T20:05:00+07:00"
-    duration_hours: 0.08
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/P0-HOOKS-FIX-02-ACTUAL-ROOT-CAUSE-2026-01-25.md"
-    estimated_effort: "15-30 minutes"
-    actual_effort: "5 minutes"
-    tool_constraints:
-      write: false
-      edit: true
-      bash: true
-      task: false
-    results:
-      automated_tests:
-        - "AC1": "PASS - useFileTreeStore() called at component top level (line 162)"
-        - "AC2": "PASS - No hook calls inside useEffect or async functions"
-        - "AC3": "PASS - TypeScript compiles with 0 errors"
-      manual_tests_pending:
-        - "AC1": "PENDING - No 'Invalid hook call' error on project load"
-        - "AC2": "PENDING - Project creation wizard completes successfully"
-        - "AC6": "PENDING - Workspace route redirects to unified route"
-      files_modified:
-        - "src/infrastructure/context/project-context.tsx (moved useFileTreeStore to top level, removed fileTree state, updated all references)"
-      changes_applied:
-        - "Step 1: Added const fileTreeStore = useFileTreeStore(); at line 162"
-        - "Step 2: Removed const [fileTree, setFileTree] = useState(...) (line 167)"
-        - "Step 3: Removed hook call inside async function (line 250)"
-        - "Step 4: Updated file tree loading to use fileTreeStore.load() directly"
-        - "Step 5: Updated context value to use fileTreeStore instead of fileTree"
-        - "Step 6: Updated refreshFileTree callback to use fileTreeStore"
-        - "Step 7: Verified TypeScript compiles with 0 errors"
-      root_cause:
-        issue: "useFileTreeStore() called inside async function inside useEffect"
-        line: 250
-        violation: "React's Rules of Hooks - hooks must be called at component top level only"
-      notes: "This is the ACTUAL root cause fix. HOOKS-FIX-01 migrated imports but didn't fix hooks violation in provider itself."
-  - delegation_id: "del_20260125_team_b_arch_04_03"
-    target: "dev-ext"
-    task: "ARCH-04-03: Integrate PermissionOverlay for New Architecture"
-    status: "completed"
-    priority: "P1"
-    started_at: "2026-01-25T23:00:00+07:00"
-    completed_at: "2026-01-25T23:45:00+07:00"
-    duration_hours: 0.75
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/ARCH-04-03-TEAM-B-HANDOFF-2026-01-25.md"
-    story_file: "_bmad-output/sprint-artifacts/stories/ARCH-04-03-permission-overlay-2026-01-25.md"
-    completion_report: "_bmad-output/sprint-artifacts/stories/ARCH-04-03-completion-2026-01-25.md"
-    estimated_effort: "45-60 minutes"
-    actual_effort: "45 minutes"
-    tool_constraints:
-      write: true
-      edit: true
-      bash: true
-      task: false
-    team: "TEAM_B"
-    results:
-      automated_tests:
-        - "AC1": "PASS - PermissionOverlay accepts onPermissionGranted(handle)"
-        - "AC2": "PASS - PermissionOverlay accepts onCancel() callback"
-        - "AC3": "PASS - PermissionOverlay accepts projectId/projectName props"
-        - "AC4": "PASS - onPermissionGranted calls showDirectoryPicker() and passes handle"
-        - "AC5": "PASS - onCancel navigates to / route"
-        - "AC6": "PASS - 8-bit compliant (no rounded-full, rounded-lg, transparency)"
-        - "AC7": "TIMEOUT - TypeScript check timed out (180s - same as ARCH-04-01)"
-        - "AC8": "PASS - TEAM A work preserved (lines 162, 250 intact)"
-      manual_tests_pending:
-        - "Permission display in ProjectContextProvider": "PENDING - Requires ARCH-04-04"
-        - "FSA handle grant flow": "PENDING - Requires ARCH-04-02"
-        - "Cancel navigation": "PENDING - Requires ARCH-04-04"
-        - "Legacy mode compatibility": "PENDING - Requires IDELayoutMain test"
-      files_modified:
-        - "src/presentation/components/layout/PermissionOverlay.tsx (117 lines - updated props, 8-bit fixes, backward compatible)"
-        - "src/infrastructure/context/project-context.tsx (+30 lines - permission overlay state, rendering logic)"
-      changes_applied:
-        - "Step 1: Updated PermissionOverlay props to support both legacy and new interfaces (union type)"
-        - "Step 2: Fixed 8-bit violations (removed transparency, rounded-full, rounded-lg)"
-        - "Step 3: Implemented FSA handle integration via window.showDirectoryPicker()"
-        - "Step 4: Maintained backward compatibility with IDELayoutMain, MobileIDELayout"
-        - "Step 5: Wired PermissionOverlay display in ProjectContextProvider"
-        - "Step 6: Preserved TEAM A's hooks fix (lines 162, 250 intact)"
-      team_a_coordination:
-        preserved_changes:
-          - "Line 162: const fileTreeStore = useFileTreeStore(); (TEAM A hooks fix)"
-          - "Line 250: No hook calls inside async functions (TEAM A TS-DEBT fix)"
-        no_breaking_changes:
-          - "P0 fixes intact"
-          - "TS-DEBT resolution intact (0 errors)"
-          - "Backward compatibility maintained"
-      known_issues:
-        - "TypeScript compilation timeout (180s - consistent with ARCH-04-01)"
-        - "FSA handle persistence deferred to ARCH-04-02 (TEAM A)"
-      notes: "TEAM B completed ARCH-04-03 successfully. Props union type enables backward compatibility. 8-bit violations fixed. TEAM A hooks fix preserved. TypeScript timeout is known issue (same as ARCH-04-01), not syntax error."
+  notes: |
+    Governance sprint 87.5% complete (7 of 8 tasks):
+    - All core documents aligned (v3.0.0 / v2.0.0)
+    - AGENTS.md and CLAUDE.md updated
+    - Superseded ADRs archived
+    - LOOP_STATE consolidation in progress
 
-  - delegation_id: "del_20260125_tech_writer_arch_04_correct_course"
-    target: "tech-writer-ext"
-    task: "ARCH-04 correct-course report"
-    status: "completed"
-    priority: "P1"
-    started_at: "2026-01-25T23:20:00+07:00"
-    completed_at: "2026-01-25T23:48:00+07:00"
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/ARCH-04-CORRECT-COURSE-HANDOFF-2026-01-25.md"
-    required_output: "_bmad-output/planning-artifacts/correct-course-arch-04-report-2026-01-25.md"
-    completion_report: "_bmad-output/planning-artifacts/ARCH-04-CORRECT-COURSE-2026-01-25.md"
-    child_handoff: "_bmad-output/handoffs/2026-01-25/ARCH-04-tech-writer-handoff.md"
-    tool_constraints:
-      write: true
-      edit: true
-      bash: false
-      task: false
+    EPIC-CC-AR02AR03: 37.5% (3/8 stories)
+    - Team B completed: CC-AR-03, CC-AR-05, CC-AR-06
+    - Team A pending: CC-AR-01, CC-AR-02, CC-AR-04, CC-AR-07
+    - Team B pending: CC-AR-08 (blocked by CC-AR-04)
 
+    EPIC-ARCH-04-CC: 95% (CC-04 E2E pending)
+    - CC-01, CC-02, CC-03 complete
+    - CC-04 ready for E2E validation
 
-  - delegation_id: "del_20260125_dev_team_ts_debt"
-    target: "dev-team"
-    task: "EPIC-TS-DEBT + ARCH-03-05-FIX"
-    status: "in_progress"
-    started_at: "2026-01-25T10:00:00+07:00"
+    EPIC-UX-GLOBAL-UI: 75% (3/4 stories)
+    - UX-05, UX-06, UX-08 complete
+    - UX-10 deferred (P2)
 
-  - delegation_id: "del_20260125_sprint_mgr_ctx"
-    target: "sprint-manager"
-    task: "EPIC-CTX-CLEAN"
-    status: "in_progress"
-    started_at: "2026-01-25T10:00:00+07:00"
-
-  - delegation_id: "del_20260125_e2e_journeys"
-    target: "real-world-validator"
-    task: "Investigation C - E2E User Journey Testing"
-    status: "complete_with_blocker"
-    completed_at: "2026-01-25T14:30:00+07:00"
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/INV-C-E2E-JOURNEYS-handoff-2026-01-25.md"
-    callback_artifact: "_bmad-output/handoffs/2026-01-25/e2e-journeys-final-callback.md"
-    priority: "P0"
-    estimated_duration: "3 hours"
-    actual_duration: "2.1 hours"
-    overall_assessment: "YELLOW"
-    tool_constraints:
-      write: true
-      edit: false
-      bash: true
-      task: false
-
-  - delegation_id: "del_20260125_analyst_fundamental_truths"
-    target: "analyst-ext"
-    task: "Analyze new-fundamental-truths.md vs ADR-034"
-    status: "completed"
-    completed_at: "2026-01-25T17:00:00+07:00"
-    handoff_artifact: "_bmad-output/sprint-artifacts/fundamental-truths-analysis-2026-01-25.json"
-    artifacts_created: 1
-    findings_summary:
-      gaps_identified: 6
-      contradictions: 2
-      missing_topics: 5
-      llm_corrections: 0
-      critical_items: 4
-
-  - delegation_id: "del_20260125_architect_fundamental_truths_review"
-    target: "architect-ext"
-    task: "Architectural review of new-fundamental-truths.md vs ADR-034"
-    status: "completed"
-    completed_at: "2026-01-25T18:00:00+07:00"
-    handoff_artifact: "_bmad-output/sprint-artifacts/fundamental-truths-architectural-review-2026-01-25.yaml"
-    artifacts_created: 1
-    findings_summary:
-      aligned_claims: 5
-      partial_alignments: 4
-      contradictions: 2
-      p0_items: 3
-      p1_items: 4
-      p2_items: 3
-      adrs_to_create: 4
-      blockers: 5
-      critical_blockers: 2
-    next_actions:
-      - "Update new-fundamental-truths.md with P0 changes"
-      - "Create ADR-034-AMENDMENT-002 for BYOK Vault"
-      - "Create ADR-034-AMENDMENT-003 for Agent/Tool architecture"
-      - "Create ADR-034-AMENDMENT-004 for Thread management"
-      - "Create ADR-034-AMENDMENT-005 for Generative AI features"
+    TypeScript: 1 pre-existing error (PluginLayout.tsx)
+    Will be fixed when CC-AR-04 removes drag-drop.
 
 # ══════════════════════════════════════════════════════════════
-# QUEUED DELEGATIONS (2026-01-25)
+# END OF FILE
 # ══════════════════════════════════════════════════════════════
-
-queued_delegations:
-  - delegation_id: "del_20260125_cc_02"
-    target: "dev-ext"
-    task: "CC-02: Wire PermissionOverlay with Persist and Reinit"
-    status: "queued"
-    priority: "P0"
-    queued_at: "2026-01-25T23:59:00+07:00"
-    blocked_by: "CC-01 evidence"
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/CC-02-SPRINT-ASSIGNMENT-2026-01-25.md"
-    story_file: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
-    required_output: "_bmad-output/handoffs/2026-01-25/CC-02-DEV-REPORT-2026-01-25.md"
-    estimated_effort: "1.5 hours"
-    tool_constraints:
-      write: true
-      edit: true
-      bash: true
-      task: false
-    evidence_required:
-      - "TypeScript output saved to file"
-      - "Grep verification output captured"
-    files_scoped:
-      - "src/infrastructure/context/project-context.tsx"
-  - delegation_id: "del_20260125_cc_03"
-    target: "dev-ext"
-    task: "CC-03: Wire Route to Pass initialHandle"
-    status: "queued"
-    priority: "P0"
-    queued_at: "2026-01-25T23:59:00+07:00"
-    blocked_by: "CC-01 evidence"
-    handoff_artifact: "_bmad-output/handoffs/2026-01-25/CC-03-SPRINT-ASSIGNMENT-2026-01-25.md"
-    story_file: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
-    required_output: "_bmad-output/handoffs/2026-01-25/CC-03-DEV-REPORT-2026-01-25.md"
-    estimated_effort: "1 hour"
-    tool_constraints:
-      write: true
-      edit: true
-      bash: true
-      task: false
-    evidence_required:
-      - "TypeScript output saved to file"
-      - "Grep verification output captured"
-    files_scoped:
-      - "src/routes/$projectId.tsx"

@@ -1,0 +1,436 @@
+# BMAD Skills Taxonomy Manifest
+# Version: 3.1.0
+# Updated: 2026-01-11 - Added Product Reality Gates
+# Purpose: Hierarchical skill organization for agent/sub-agent traversal
+#
+# This manifest defines the skill hierarchy that agents can traverse to find
+# relevant skills based on context, task type, and agent capabilities.
+#
+# Hierarchy Rules:
+# - category: Top-level grouping (global, backend, frontend, testing, bmad, architecture, product-reality)
+# - parent: Parent skill name (child skills reference their parent)
+# - children: Array of child skill names (parent skills list their children)
+# - priority: 0-100 (higher = more specific/specialized, lower = more general)
+# - agents: Array of compatible agent types that can use this skill
+# - triggers: Keywords that trigger skill activation
+
+taxonomy:
+  # =============================================================================
+  # PRODUCT REALITY GATES (Priority 5-9 - Highest Priority - v3.1.0)
+  # =============================================================================
+  # NEW: Product Reality validation - catches issues that TDD/linting miss
+  # =============================================================================
+
+  - id: product-reality
+    name: Product Reality Gates
+    category: product-reality
+    priority: 5
+    parent: null
+    children:
+      - ux-gate
+      - brain-gate
+      - visual-gate
+    agents: [story-cycle, sprint-planning-wrapper, bmad-dev]
+    description: Product Reality validation - UX, Agent tools, Visual checks
+    path: null
+
+  - id: ux-gate
+    name: UX Gate (User Journey)
+    category: product-reality
+    priority: 6
+    parent: product-reality
+    children: []
+    agents: [story-cycle, sprint-planning-wrapper]
+    description: "The Movie Script Test" - 30-second demo validation
+    path: product-reality-ux-gate/SKILL.md
+
+  - id: brain-gate
+    name: Brain Gate (Agent Tool Spec)
+    category: product-reality
+    priority: 7
+    parent: product-reality
+    children: []
+    agents: [story-cycle]
+    description: LLM tool definition - JSON Schema, permissions, triggers
+    path: product-reality-brain-gate/SKILL.md
+
+  - id: visual-gate
+    name: Visual Gate (Reality Check)
+    category: product-reality
+    priority: 8
+    parent: product-reality
+    children: []
+    agents: [story-cycle]
+    description: End-to-end UI verification - all states validated
+    path: product-reality-visual-gate/SKILL.md
+
+  # =============================================================================
+  # GLOBAL STANDARDS (Priority 10-30 - Most General)
+  # =============================================================================
+  - id: global-coding-style
+    name: Global Coding Style
+    category: global
+    priority: 10
+    parent: null
+    children:
+      - backend-coding-style
+      - frontend-coding-style
+    agents: [all]
+    description: Write clean, maintainable code with consistent naming conventions
+    path: global-coding-style/SKILL.md
+
+  - id: global-commenting
+    name: Global Commenting
+    category: global
+    priority: 11
+    parent: null
+    children: []
+    agents: [all]
+    description: Write self-documenting code with minimal, evergreen comments
+    path: global-commenting/SKILL.md
+
+  - id: global-conventions
+    name: Global Conventions
+    category: global
+    priority: 12
+    parent: null
+    children: []
+    agents: [all]
+    description: Follow general development conventions including project structure
+    path: global-conventions/SKILL.md
+
+  - id: global-error-handling
+    name: Global Error Handling
+    category: global
+    priority: 13
+    parent: null
+    children:
+      - backend-error-handling
+      - frontend-error-handling
+    agents: [all]
+    description: Implement robust error handling with user-friendly messages
+    path: global-error-handling/SKILL.md
+
+  - id: global-validation
+    name: Global Validation
+    category: global
+    priority: 14
+    parent: null
+    children:
+      - backend-validation
+      - frontend-validation
+    agents: [all]
+    description: Implement robust input validation with server-side checks
+    path: global-validation/SKILL.md
+
+  - id: global-tech-stack
+    name: Global Tech Stack
+    category: global
+    priority: 15
+    parent: null
+    children: []
+    agents: [all]
+    description: Technology stack documentation and standards
+    path: global-tech-stack/SKILL.md
+
+  # =============================================================================
+  # BACKEND STANDARDS (Priority 30-50)
+  # =============================================================================
+  - id: backend-api
+    name: Backend API
+    category: backend
+    priority: 30
+    parent: null
+    children: []
+    agents: [bmad-dev, bmad-architect, backend-specialist]
+    description: Design and implement RESTful API endpoints
+    path: backend-api/SKILL.md
+
+  - id: backend-migrations
+    name: Backend Migrations
+    category: backend
+    priority: 31
+    parent: null
+    children: []
+    agents: [bmad-dev, database-architect]
+    description: Create and manage database schema migrations
+    path: backend-migrations/SKILL.md
+
+  - id: backend-models
+    name: Backend Models
+    category: backend
+    priority: 32
+    parent: null
+    children: []
+    agents: [bmad-dev, database-architect]
+    description: Design database models with clear naming conventions
+    path: backend-models/SKILL.md
+
+  - id: backend-queries
+    name: Backend Queries
+    category: backend
+    priority: 33
+    parent: null
+    children: []
+    agents: [bmad-dev, database-architect]
+    description: Write efficient, secure database queries
+    path: backend-queries/SKILL.md
+
+  # =============================================================================
+  # FRONTEND STANDARDS (Priority 30-50)
+  # =============================================================================
+  - id: frontend-components
+    name: Frontend Components
+    category: frontend
+    priority: 30
+    parent: null
+    children: []
+    agents: [bmad-dev, ux-designer, frontend-specialist]
+    description: Build reusable, composable UI components
+    path: frontend-components/SKILL.md
+
+  - id: frontend-css
+    name: Frontend CSS
+    category: frontend
+    priority: 31
+    parent: null
+    children: []
+    agents: [bmad-dev, ux-designer]
+    description: Write maintainable, consistent CSS
+    path: frontend-css/SKILL.md
+
+  - id: frontend-accessibility
+    name: Frontend Accessibility
+    category: frontend
+    priority: 32
+    parent: null
+    children: []
+    agents: [bmad-dev, ux-designer]
+    description: Implement accessible user interfaces following WCAG guidelines
+    path: frontend-accessibility/SKILL.md
+
+  - id: frontend-responsive
+    name: Frontend Responsive
+    category: frontend
+    priority: 33
+    parent: null
+    children: []
+    agents: [bmad-dev, ux-designer]
+    description: Implement responsive, mobile-first designs
+    path: frontend-responsive/SKILL.md
+
+  # =============================================================================
+  # TESTING STANDARDS (Priority 40-60)
+  # =============================================================================
+  - id: testing-test-writing
+    name: Test Writing
+    category: testing
+    priority: 40
+    parent: null
+    children: []
+    agents: [bmad-dev, bmad-tea]
+    description: Write minimal, strategic tests for core user flows
+    path: testing-test-writing/SKILL.md
+
+  # =============================================================================
+  # BMAD ORCHESTRATION (Priority 50-70)
+  # =============================================================================
+  - id: bmad-orchestrator
+    name: BMAD Orchestrator
+    category: bmad
+    priority: 50
+    parent: null
+    children:
+      - asgl
+      - architecture-remediation
+    agents: [bmad-master, bmad-coordinator]
+    description: Orchestrate the BMAD framework - load agents, manage workflows
+    path: bmad-orchestrator/SKILL.md
+
+  - id: asgl
+    name: ASGL (Autonomous Sprint Governance Loop)
+    category: bmad
+    priority: 55
+    parent: bmad-orchestrator
+    children: []
+    agents: [bmad-master, asgl-coordinator]
+    description: Execute autonomous sprint loop with governance enforcement
+    path: asgl/SKILL.md
+
+  # =============================================================================
+  # ARCHITECTURE REMEDIATION (Priority 60-80)
+  # =============================================================================
+  - id: architecture-remediation
+    name: Architecture Remediation
+    category: architecture
+    priority: 60
+    parent: bmad-orchestrator
+    children:
+      - store-refactorer
+      - component-splitter
+      - typescript-fixer
+      - test-writer
+      - workspace-architect
+      - file-sync-specialist
+    agents: [bmad-master, arc-coordinator, store-refactorer, component-splitter, typescript-fixer, test-writer, workspace-architect, file-sync-specialist]
+    description: Comprehensive architecture remediation for technical debt elimination
+    path: architecture-remediation/SKILL.md
+
+  - id: store-refactorer
+    name: Store Refactorer
+    category: architecture
+    priority: 70
+    parent: architecture-remediation
+    children: []
+    agents: [store-refactorer, arc-coordinator]
+    description: Specialized agent for systematic elimination of god stores
+    path: architecture-remediation/store-refactorer/SKILL.md
+
+  - id: component-splitter
+    name: Component Splitter
+    category: architecture
+    priority: 71
+    parent: architecture-remediation
+    children: []
+    agents: [component-splitter, arc-coordinator]
+    description: Split god React components into focused modules
+    path: architecture-remediation/component-splitter/SKILL.md
+
+  - id: typescript-fixer
+    name: TypeScript Fixer
+    category: architecture
+    priority: 72
+    parent: architecture-remediation
+    children: []
+    agents: [typescript-fixer, arc-coordinator]
+    description: Batch TypeScript error remediation
+    path: architecture-remediation/typescript-fixer/SKILL.md
+
+  - id: test-writer
+    name: Test Writer (ARC)
+    category: architecture
+    priority: 73
+    parent: architecture-remediation
+    children: []
+    agents: [test-writer, arc-coordinator]
+    description: Test coverage improvement for architecture remediation
+    path: architecture-remediation/test-writer/SKILL.md
+
+  - id: workspace-architect
+    name: Workspace Architect
+    category: architecture
+    priority: 74
+    parent: architecture-remediation
+    children: []
+    agents: [workspace-architect, arc-coordinator]
+    description: Workspace E2E implementation specialist
+    path: architecture-remediation/workspace-architect/SKILL.md
+
+  - id: file-sync-specialist
+    name: File Sync Specialist
+    category: architecture
+    priority: 75
+    parent: architecture-remediation
+    children: []
+    agents: [file-sync-specialist, arc-coordinator]
+    description: Sync strategies and conflict resolution
+    path: architecture-remediation/file-sync-specialist/SKILL.md
+
+# =============================================================================
+# WORKFLOW SKILLS (Sub-skills of architecture-remediation)
+# =============================================================================
+workflows:
+  - id: eliminate-god-stores
+    name: Eliminate God Stores
+    category: workflow
+    priority: 80
+    parent: architecture-remediation
+    agents: [store-refactorer, arc-coordinator]
+    description: Systematic store refactoring workflow
+    path: architecture-remediation/workflows/eliminate-god-stores/SKILL.md
+
+  - id: normalize-components
+    name: Normalize Components
+    category: workflow
+    priority: 81
+    parent: architecture-remediation
+    agents: [component-splitter, arc-coordinator]
+    description: Component splitting workflow
+    path: architecture-remediation/workflows/normalize-components/SKILL.md
+
+  - id: workspace-file-system-e2e
+    name: Workspace File System E2E
+    category: workflow
+    priority: 82
+    parent: architecture-remediation
+    agents: [workspace-architect, arc-coordinator]
+    description: Workspace end-to-end validation
+    path: architecture-remediation/workflows/workspace-file-system-e2e/SKILL.md
+
+  - id: notes-sync-strategy
+    name: Notes Sync Strategy
+    category: workflow
+    priority: 83
+    parent: architecture-remediation
+    agents: [file-sync-specialist, arc-coordinator]
+    description: Notes workspace sync implementation
+    path: architecture-remediation/workflows/notes-sync-strategy/SKILL.md
+
+  - id: knowledge-sync-strategy
+    name: Knowledge Sync Strategy
+    category: workflow
+    priority: 84
+    parent: architecture-remediation
+    agents: [file-sync-specialist, arc-coordinator]
+    description: Knowledge workspace sync implementation
+    path: architecture-remediation/workflows/knowledge-sync-strategy/SKILL.md
+
+# =============================================================================
+# CATEGORY INDEX (For quick traversal)
+# =============================================================================
+categories:
+  global: [global-coding-style, global-commenting, global-conventions, global-error-handling, global-validation, global-tech-stack]
+  backend: [backend-api, backend-migrations, backend-models, backend-queries]
+  frontend: [frontend-components, frontend-css, frontend-accessibility, frontend-responsive]
+  testing: [testing-test-writing]
+  bmad: [bmad-orchestrator, asgl]
+  architecture: [architecture-remediation, store-refactorer, component-splitter, typescript-fixer, test-writer, workspace-architect, file-sync-specialist]
+  workflow: [eliminate-god-stores, normalize-components, workspace-file-system-e2e, notes-sync-strategy, knowledge-sync-strategy]
+
+# =============================================================================
+# AGENT COMPATIBILITY MATRIX (Which agents can use which skills)
+# =============================================================================
+agent_compatibility:
+  all: [global-*]
+  bmad-master: [bmad-orchestrator, asgl, architecture-remediation]
+  bmad-dev: [backend-*, frontend-*, testing-*]
+  bmad-architect: [backend-*]
+  bmad-tea: [testing-*]
+  ux-designer: [frontend-*]
+  store-refactorer: [store-refactorer, eliminate-god-stores]
+  component-splitter: [component-splitter, normalize-components]
+  typescript-fixer: [typescript-fixer]
+  test-writer: [test-writer]
+  workspace-architect: [workspace-architect, workspace-file-system-e2e]
+  file-sync-specialist: [file-sync-specialist, notes-sync-strategy, knowledge-sync-strategy]
+  arc-coordinator: [architecture-remediation, eliminate-god-stores, normalize-components, workspace-file-system-e2e, notes-sync-strategy, knowledge-sync-strategy]
+
+# =============================================================================
+# SKILL TRAVERSAL ALGORITHM
+# =============================================================================
+#
+# When an agent needs to find relevant skills:
+#
+# 1. Start with category matching (based on task type)
+# 2. Filter by agent compatibility (agent_compatibility matrix)
+# 3. Sort by priority (higher = more specific)
+# 4. Traverse children if parent skill selected
+# 5. Load SKILL.md frontmatter first (for efficiency)
+# 6. Load full SKILL.md content when activated
+#
+# Example traversal for "split god store" task:
+# - Category: architecture
+# - Agent: store-refactorer
+# - Match: architecture-remediation (parent) → store-refactorer (child)
+# - Result: Load store-refactorer/SKILL.md
+#

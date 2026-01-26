@@ -156,9 +156,10 @@ export const HubHomePage: React.FC = () => {
     });
 
     if (workspaceProjects.length === 1) {
-      // Only one project - navigate directly
+      // Only one project - navigate directly to project-centric route
+      // Per new-fundamental-truths.md: Platform determines plugins, not workspace routes
       await navigate({
-        to: `/${workspace}/$projectId`,
+        to: '/$projectId',
         params: { projectId: workspaceProjects[0].id }
       });
     } else {
@@ -192,7 +193,6 @@ export const HubHomePage: React.FC = () => {
     const project = useProjectStore.getState().getProject(projectId);
     if (!project) return;
 
-    const platform = getPlatformContract();
 
     console.log('[HubHomePage] handleProjectCreated:', {
       projectId,
@@ -207,24 +207,14 @@ export const HubHomePage: React.FC = () => {
 
     // BUG-017 FIX: If user was navigating to a specific workspace (via ProjectPicker),
     // respect that choice instead of defaulting to IDE
-    if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
-      // User explicitly wanted this workspace (e.g., clicked Notes card → created project)
-      console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
-      navigate({ to: `/${projectPickerWorkspace}/$projectId`, params: { projectId }, state: stateUpdater });
-      // Reset the picker workspace after navigation
-      setProjectPickerWorkspace('ide');
-      return;
-    }
+    // Project-centric navigation: Always navigate to /$projectId
+    // Platform detection will determine appropriate plugins
+    // Per new-fundamental-truths.md Section 1.2
 
-    // Default behavior: Platform-aware redirect (only when no specific workspace intended)
-    // Per ADR-033: Desktop FSA → IDE, Desktop IndexedDB → Notes, Mobile → Notes
-    if (platform.canAccessIDE && project.storageType === 'fsa') {
-      console.log('[HubHomePage] Navigating to IDE workspace (default for FSA)');
-      navigate({ to: '/ide/$projectId', params: { projectId }, state: stateUpdater });
-    } else {
-      console.log('[HubHomePage] Navigating to Notes workspace (default for non-FSA)');
-      navigate({ to: '/notes/$projectId', params: { projectId }, state: stateUpdater });
-    }
+    // Project-centric navigation: Always navigate to /$projectId
+    // Platform detection will determine appropriate plugins
+    console.log('[HubHomePage] Navigating to project-centric route:', projectId);
+    navigate({ to: '/$projectId', params: { projectId }, state: stateUpdater });
   };
 
   const handleNewProject = async () => {
@@ -260,22 +250,13 @@ export const HubHomePage: React.FC = () => {
       // 3. Navigate to Workspace
       // BUG-017 FIX: Respect intended workspace if specified
       // ARCH-01-06: Handle is persisted by createProjectFromFolder(), no need to pass via state
-      if (projectPickerWorkspace && projectPickerWorkspace !== 'ide') {
-        console.log(`[HubHomePage] Navigating to intended workspace: ${projectPickerWorkspace}`);
-        await navigate({
-          to: `/${projectPickerWorkspace}/$projectId`,
-          params: { projectId: newProjectId },
-        });
-        // Don't reset picker workspace immediately if we want to preserve context,
-        // but usually resetting is safer.
-        setProjectPickerWorkspace('ide');
-      } else {
-        // Default to IDE for FSA projects
-        await navigate({
-          to: '/ide/$projectId',
-          params: { projectId: newProjectId },
-        });
-      }
+      // Project-centric navigation: Always navigate to /$projectId
+      // Platform detection will determine appropriate plugins
+      console.log('[HubHomePage] Navigating to project-centric route:', newProjectId);
+      await navigate({
+        to: '/$projectId',
+        params: { projectId: newProjectId },
+      });
 
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
@@ -302,17 +283,11 @@ export const HubHomePage: React.FC = () => {
       return false;
     };
 
-    // Check workspaces in priority order
-    if (isEnabled(bindings?.ide)) {
-      navigate({ to: '/ide/$projectId', params: { projectId } });
-    } else if (isEnabled(bindings?.knowledge)) {
-      // Defer knowledge workspace to notes for now
-      navigate({ to: '/notes/$projectId', params: { projectId } });
-    } else if (isEnabled(bindings?.notes)) {
-      navigate({ to: '/notes/$projectId', params: { projectId } });
-    } else if (isEnabled(bindings?.study)) {
-      // Defer study workspace to notes for now
-      navigate({ to: '/notes/$projectId', params: { projectId } });
+    // Project-centric navigation: Always navigate to /$projectId
+    // Platform detection will determine appropriate plugins
+    // Per new-fundamental-truths.md Section 1.2
+    if (isEnabled(bindings?.ide) || isEnabled(bindings?.notes) || isEnabled(bindings?.knowledge) || isEnabled(bindings?.study)) {
+      navigate({ to: '/$projectId', params: { projectId } });
     } else {
       // No workspaces enabled - fall back to opening dialog for configuration
       setSelectedProject(project as unknown as Project);
@@ -322,7 +297,7 @@ export const HubHomePage: React.FC = () => {
 
   const handleWorkspaceBindingConfirm = async (
     bindings: WorkspaceBindings,
-    initialWorkspace: string
+    _initialWorkspace: string // Unused - project-centric navigation
   ) => {
     if (!selectedProject) return;
 
@@ -341,9 +316,10 @@ export const HubHomePage: React.FC = () => {
       // 2. Close dialog
       setDialogOpen(false);
 
-      // 3. Navigate to selected workspace
+      // 3. Navigate to project-centric route
+      // Platform detection determines plugins, not workspace selection
       await navigate({
-        to: `/${initialWorkspace}/$projectId`,
+        to: '/$projectId',
         params: { projectId: selectedProject.id }
       });
     } catch (error) {

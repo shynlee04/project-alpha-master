@@ -1,594 +1,646 @@
-# Via-Gent Epics and Stories (Working Copy)
+# Via-Gent Epics and Stories
 
-**Version:** 2.2.0 (Phase 1 Updated - Team B Working Copy)
-**Date:** 2026-01-16
-**Status:** WORKING COPY - DO NOT MODIFY ORIGINAL
-**Related Documents:**
-- Original: `_bmad-output/planning-artifacts/epics.md`
-- Audit: `_bmad-output/planning-artifacts/team-b-phase-1/phase-1-audit-report.md`
-- ADR-033: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
-- ADR-034: `_bmad-output/planning-artifacts/adr/ADR-034-workspace-access-infection-remediation-2026-01-11.md`
-
----
-
-> **[UPDATED: 2026-01-16 - Team B Phase 1 Task 1.4]**
-> This is a working copy of the epics document. Changes from the original are tracked in `epics-updates-summary.md`.
+**Version:** 3.0.0
+**Date:** 2026-01-26
+**Status:** ACTIVE - 100% Aligned with new-fundamental-truths.md v2.0.0
+**Last Updated:** 2026-01-26
 
 ---
 
 ## ⚡ Quick Reference
 
-| Epic | Name | Progress | Priority | Status |
-|------|------|----------|----------|--------|
-| **EPIC-CC-01** | Project Space Foundation | 40% | P0 | IN_PROGRESS |
-| **EPIC-CC-02** | BYOK Cleanup | 100% | P0 | COMPLETE |
-| **EPIC-CC-03** | Chat Flow Stabilization | 0% | P1 | BLOCKED |
-| **EPIC-CC-04** | Notes Refactoring | 0% | P1 | BLOCKED |
-| **EPIC-BYOK** | Complete BYOK Implementation | 0% | P0 | PROPOSED |
-| **EPIC-PS** | Project Space Foundation | 0% | P0 | PROPOSED |
-| **ARC Stories** | ADR-033 Remediation | See phases | P0 | IN_PROGRESS |
+### Phase Overview
 
-> **[NOTE: 2026-01-16]** EPIC-01 through EPIC-06 have been **REMOVED** from this working copy. They are superseded by EPIC-CC series and ARC stories. See original document for historical reference.
+| Phase | Epic | Progress | Priority | Status | Target Completion |
+|--------|-------|----------|----------|-----------------|
+| **Phase 1A** | EPIC-CC-AR02AR03 | 37.5% (3/8 stories) | P0 CRITICAL | 2026-01-28 |
+| **Foundation** | EPIC-ARCH-04-CC | 95% (CC-04 E2E pending) | P0 CRITICAL | 2026-01-26 |
+| **Foundation** | EPIC-UX-GLOBAL-UI | 75% (3/4 stories) | P0 CRITICAL | 2026-01-26 |
+| **Foundation** | EPIC-E2E-TOOLS | READY_FOR_PLANNING | P0 CRITICAL | - |
+| **Phase 1B** | EPIC-PH1B-BYOK-NOTES | READY_FOR_EXECUTION | P0 HIGH | 2026-02-01 |
+| **Phase 2** | EPIC-PH2-CHAT-AGENTS | READY_FOR_EXECUTION | P0 HIGH | 2026-02-02 |
+| **Phase 3** | EPIC-PH3-ADVANCED-PATTERNS | READY_FOR_EXECUTION | P1 HIGH | 2026-02-10 |
+
+### Active Epics Summary
+
+| Metric | Count |
+|--------|-------|
+| **Total Active Epics** | 7 (Single epic per phase) |
+| **P0 Blocker Epics** | 3 (Phase 1A + Foundation) |
+| **P1 High Priority Epics** | 4 (Phase 1B, 2, 3) |
+| **Archived Legacy Epics** | 22 (EPIC-ARCH-01/02/03, FS, 38, 39, 40, 45, 46, CC-01 through CC-12, etc.) |
 
 ---
 
-## EPIC-CC-01: Project Space Foundation
+## 📋 Authoritative Sources
 
-**Priority:** P0 (Critical)
-**Status:** IN_PROGRESS
-**Progress:** 40% (4/10 stories)
-**Team:** Team B
+This document is **100% aligned** with new-fundamental-truths.md v2.0.0 and architecture.md v3.0.0.
+
+| Document | Version | Alignment | Key Decisions |
+|---------|----------|-----------|---------------|
+| **new-fundamental-truths.md** | 2.0.0 | Project-centric architecture, plugin system, orchestrator pattern, TanStack AI SDK |
+| **architecture.md** | 3.0.0 | Clean Architecture with 5 layers, plugin system, 3-phase approach |
+| **prd.md** | 2.0.0 | Project-centric development environment, 3-phase approach |
+| **the-3-phase-approach.md** | - | Phase breakdown (1A, 1B, 2, 3) |
+| **EPIC-STORY-INVENTORY-2026-01-26** | - | Epic consolidation recommendations, gap analysis |
+| **ADR-039** | PROPOSED | Unified Architecture Fundamentals (v2.0.0 Alignment) |
+
+**Related Documents:**
+- `_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md`
+- `_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-fsa-handle-lifecycle-2026-01-26.md`
+- `_bmad-output/planning-artifacts/epics/EPIC-UX-GLOBAL-UI-2026-01-26.md`
+
+---
+
+## Phase 1A: Non-AI Core & Plugin System
+
+### Objective
+
+Establish project-centric architecture with plugin system, platform-aware defaults, and IDE foundation features (Terminal, Monaco, FileTree, Preview).
+
+### Entry Criteria
+
+- ADR-039 approved (Unified Architecture Fundamentals)
+- PlatformContract interface fully implemented
+- Plugin registry and FeaturePlugin interface defined
+- StorageGateway abstraction complete (FSA/IDB adapters)
+- Single `/$projectId` route operational
+- Chrome 122+ for FSA persistent permissions
+- Chrome 129+ for structured clone optimization
+
+### Current Progress: 45%
+
+According to `the-3-phase-approach.md` and `EPIC-STORY-INVENTORY-2026-01-26.md`:
+
+| Component | Status | Blockers |
+|-----------|--------|-----------|
+| **Project Management System** | PARTIAL | FSA handle lifecycle incomplete |
+| **Monaco Editor Plugin** | POC STUB | Real Monaco Editor missing |
+| **Terminal Plugin** | COMPLETE | ✅ WebContainer integration working |
+| **FileTree Plugin** | COMPLETE | ✅ Sync integration working |
+| **Notes Plugin** | PARTIAL | Markdown sync needs work |
+| **Plugin Layout System** | GOD COMPONENT | 1034 lines, drag-drop broken |
+| **Platform-First Defaults** | NOT WIRED | platform-defaults.ts exists but not used |
+
+---
+
+## EPIC-CC-AR02AR03: Plugin System Complete Rework for Phase 1A
+
+**Priority:** P0 CRITICAL
+**Status:** 37.5% COMPLETE (3 of 8 stories done)
+**Created:** 2026-01-26
+**Estimated:** 16-24 hours (2-3 days)
+**Target Completion:** 2026-01-28
+
+**Remediates:** EPIC-ARCH-02 (70% true), EPIC-ARCH-03 (45% true)
+
+**Blockers:**
+- EPIC-ARCH-04-CC (FSA handle lifecycle) - 95% complete, CC-04 E2E pending
+- EPIC-UX-GLOBAL-UI (75% complete) - foundation UI work
+
+**Description:**
+Remediate premature completion of EPIC-ARCH-02 (Feature Plugin Architecture) and EPIC-ARCH-03 (Layout System & UX). Fix all Phase 1A blockers: Monaco POC stub, PluginLayout god component, 40+ i18n keys missing, store hydration race condition, toggle-based layout.
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| PS-01 | Split useWorkspaceFileSystem God Store | 4h | P0 | DONE |
-| TS-CLEAN | TypeScript Zero Errors | 3h | P0 | DONE |
-| FSA-ADAPTER | Create FSAStorageAdapter with watch() | 6h | P0 | DONE |
-| PS-02-A | Platform Detection & Storage Routing | 4h | P0 | DONE |
-| PS-02-B | Hot Reactive Sync Integration | 4h | P0 | IN_PROGRESS |
-| AUDIT-P0-01 | Add Route Guards for Platform & Storage Type | 2h | P0 | DONE |
-| AUDIT-P0-02 | Fix FSA Handle Restoration Condition | 1h | P0 | DONE |
-| AUDIT-P1-01 | Platform Detection in Project Wizard | 2h | P1 | DONE |
-| PS-04 | Handle Persistence Architecture | 6h | P0 | DONE |
-| PS-05 | Virtual File System Tree Structure | 8h | P0 | DONE |
-| PS-06 | RAG Index Infrastructure | 8h | P1 | DONE |
+| Story | Title | Priority | Team | Effort | Status | Completed |
+|-------|-------|----------|------|----------|------------|
+| **CC-AR-01** | Add All Missing i18n Translation Keys | P0 | A | 2h | ⏳ READY |
+| **CC-AR-02** | Wire platform-defaults.ts to Route | P0 | A | 2-3h | ⏳ READY |
+| **CC-AR-03** | Fix Store Hydration Race Condition | P0 | B | 2-3h | ✅ COMPLETE (2026-01-26) |
+| **CC-AR-04** | Replace Drag-Drop with Toggle-Based Layout | P0 | A | 4-6h | ⏳ READY |
+| **CC-AR-05** | Replace Monaco POC with Real Monaco Editor | P1 | B | 4-6h | ✅ COMPLETE (2026-01-26) |
+| **CC-AR-06** | Implement Preview Plugin (WebContainer) | P1 | B | 4-6h | ✅ COMPLETE (2026-01-26) |
+| **CC-AR-07** | Archive Legacy/Duplicate Files | P2 | A | 1h | ⏳ BLOCKED (by CC-AR-04) |
+| **CC-AR-08** | Split PluginLayout.tsx (1034 Lines) | P2 | B | 2-3h | ⏳ BLOCKED (by CC-AR-04) |
+
+**Dependencies:**
+```
+CC-AR-01 (2h) → CC-AR-02 (3h) → CC-AR-04 (6h) → CC-AR-07 (1h)
+                              ↓
+                        CC-AR-08 (3h)
+
+CC-AR-03 (3h) → CC-AR-05 (6h) → CC-AR-06 (6h)
+```
+
+**Files Owned (Team A):**
+- `src/i18n/en.json`
+- `src/i18n/vi.json`
+- `src/routes/$projectId.tsx`
+- `src/presentation/layouts/PluginLayout.tsx`
+
+**Files Owned (Team B):**
+- `src/presentation/layouts/PluginLayoutStore.ts`
+- `src/plugins/monaco/MonacoPlugin.tsx`
+- `src/plugins/preview/PreviewPlugin.tsx`
 
 ---
 
-## EPIC-CC-02: BYOK Cleanup
+## EPIC-ARCH-04-CC: FSA Handle Lifecycle Integration
 
-**Priority:** P0
-**Status:** COMPLETE
-**Progress:** 100%
-**Team:** Team A
+**Priority:** P0 CRITICAL
+**Status:** 95% COMPLETE (CC-04 E2E pending)
+**Created:** 2026-01-25
+**Estimated:** 4-6 hours
+**Target Completion:** 2026-01-26
 
-| ID | Title | Status |
-|----|-------|--------|
-| BYOK-01 | Split Provider Credentials God Slice | DONE |
-| BYOK-02 | Add Zod Validation Schemas | DONE |
-| BYOK-03 | Archive Legacy Migration Code | DONE |
-| BYOK-04 | Add projectId to Tool Execution Logs | DONE |
+**Blocks:** ALL PHASES (1A, 1B, 2, 3) - FSA handle lifecycle is foundational
 
----
-
-## EPIC-CC-03: Chat Flow Stabilization
-
-**Priority:** P1
-**Status:** BLOCKED
-**Progress:** 0%
-**Blocked By:** EPIC-CC-01
-
----
-
-## EPIC-CC-04: Notes Refactoring
-
-**Priority:** P1
-**Status:** BLOCKED
-**Progress:** 0%
-**Blocked By:** EPIC-CC-01
-
----
-
-## EPIC-BYOK: Complete BYOK Implementation
-
-**Priority:** P0
-**Status:** PROPOSED
-**Progress:** 0%
-**Source:** Phase 1 Document Audit
+**Description:**
+Integrate FSA handle lifecycle into ProjectContextProvider. Add `initialHandle` prop, restore handle from IndexedDB, pass to StorageAdapterFactory, and wire PermissionOverlay for permission persistence/reinit.
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| BYOK-EXT-01 | Complete vault integration | 4h | P0 | TODO |
-| BYOK-EXT-02 | Provider adapter updates | 2h | P0 | TODO |
-| BYOK-EXT-03 | Permission enforcement | 2h | P0 | TODO |
-| BYOK-EXT-04 | UI for key management | 4h | P1 | TODO |
+| Story | Title | Priority | Team | Effort | Status | Completed |
+|-------|-------|----------|------|----------|------------|
+| **CC-01** | Add initialHandle Prop and FSA Restore Logic | P0 | A | 2h | ✅ COMPLETE (2026-01-26) |
+| **CC-02** | Wire PermissionOverlay with Persist and Reinit | P0 | A | 1h | ✅ COMPLETE (2026-01-26) |
+| **CC-03** | Wire Route to Pass initialHandle | P0 | A | 1h | ✅ COMPLETE (2026-01-26) |
+| **CC-04** | End-to-End Validation with Evidence | P0 | real-world-validator | 1.5h | ⏳ READY (E2E execution pending) |
+
+**Files Owned:**
+- `src/infrastructure/context/project-context.tsx`
+- `src/routes/$projectId.tsx`
+- `src/presentation/components/layout/PermissionOverlay.tsx`
 
 ---
 
-## EPIC-PS: Project Space Foundation (Alternative Naming)
+## EPIC-UX-GLOBAL-UI: Global UI Improvements & 8-Bit Compliance
 
-> **[NOTE: 2026-01-16]** This epic is an alternative name for EPIC-CC-01. See ADR-033 D1-D9 for canonical implementation.
+**Priority:** P0 CRITICAL
+**Status:** 75% COMPLETE (3 of 4 stories done)
+**Created:** 2026-01-26
+**Estimated:** 29-33 hours
 
-### Stories (If Used Separately)
-
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| PS-01 | Platform detection implementation | 2h | P0 | TODO |
-| PS-02 | Entry matrix implementation | 4h | P0 | TODO |
-| PS-03 | Desktop-only IDE guard | 2h | P0 | TODO |
-| PS-04 | Project selection hotload | 3h | P1 | TODO |
-| PS-05 | Direct landing routes | 2h | P1 | TODO |
-
----
-
-## ARC Stories: ADR-033 Architectural Remediation
-
-> **[ADDED: 2026-01-16]** ADR-033 stories for Correct-Course Architectural Remediation
-
-### Phase A: Identity & Routing (Team A)
-
-| Story ID | Title | Effort | Priority | Status |
-|----------|-------|--------|----------|--------|
-| ARC-A01 | Create `getPlatformContract()` service | 4h | P0 | TODO |
-| ARC-A02 | Implement route guards for all workspace routes | 6h | P0 | TODO |
-| ARC-A04 | Mobile → Notes redirect for IDE routes | 2h | P0 | TODO |
-| ARC-A05 | Hub card click data contract | 3h | P0 | TODO |
-| ARC-A06 | Post-creation redirect logic | 3h | P0 | TODO |
-
-### Phase B: Storage Contract (Team B)
-
-| Story ID | Title | Effort | Priority | Status |
-|----------|-------|--------|----------|--------|
-| ARC-B01 | Create `StorageGateway` abstraction layer | 6h | P0 | TODO |
-| ARC-B02 | Implement `FSAGateway` adapter with handle persistence | 6h | P0 | TODO |
-| ARC-B03 | Implement `IDBGateway` adapter | 4h | P0 | TODO |
-| ARC-B05 | Implement FileSystemObserver with polling fallback | 6h | P0 | TODO |
-| ARC-B06 | Implement snapshot caching for fast load | 4h | P1 | TODO |
-| ARC-B07 | Folder overlap detection and warning UI | 4h | P0 | TODO |
-| ARC-B08 | File tree exclusion patterns configuration | 3h | P1 | TODO |
-| ARC-B09 | Scan depth limits and warnings | 2h | P1 | TODO |
-| ARC-B10 | `.viagent/` metadata folder structure | 4h | P0 | TODO |
-| ARC-B11 | Notes ↔ Markdown bidirectional sync | 8h | P0 | TODO |
-| ARC-B12 | External change conflict resolution UI | 4h | P1 | TODO |
-
-### Phase C: State & Persistence (Team A)
-
-| Story ID | Title | Effort | Priority | Status |
-|----------|-------|--------|----------|--------|
-| ARC-C01 | Consolidate Project Store to infrastructure | 6h | P0 | TODO |
-| ARC-C02 | Create facade re-exports for old paths | 2h | P0 | TODO |
-| ARC-C03 | Fix `saveProject` STUB implementation | 2h | P0 | TODO |
-| ARC-C04 | Implement persist-first pattern for all stores | 4h | P1 | TODO |
-| ARC-C06 | Audit all STUB implementations | 4h | P0 | TODO |
-| ARC-C07 | Dependency graph analysis | 6h | P1 | TODO |
-| ARC-C08 | Identify and fix race conditions | 6h | P0 | TODO |
-| ARC-C09 | Permission model for human CRUD actions | 4h | P1 | TODO |
-| ARC-C10 | Concurrent CRUD handling (optimistic locking) | 4h | P2 | TODO |
-
-### Phase D: Entity Standardization (Team B)
-
-| Story ID | Title | Effort | Priority | Status |
-|----------|-------|--------|----------|--------|
-| ARC-D01 | Enforce ProjectId template literal type | 3h | P1 | TODO |
-| ARC-D02 | Fix `workspaceId || projectId` fallback bugs | 4h | P1 | TODO |
-| ARC-D03 | Rename `bindings` → `workspaceBindings` | 2h | P2 | TODO |
-
-### Phase E: File Tree Cleanup (Both Teams)
-
-| Story ID | Title | Effort | Priority | Status |
-|----------|-------|--------|----------|--------|
-| ARC-E01 | Delete dead `.bak` files | 0.5h | P0 | TODO |
-| ARC-E02 | Archive `src/lib/workspace/project-store/` | 1h | P1 | TODO |
-| ARC-E03 | Archive `src/lib/filesystem/` duplicates | 1h | P1 | TODO |
-| ARC-E04 | Update all imports to canonical paths | 4h | P2 | TODO |
-
----
-
-## EPIC-CC-05: Fix Hooks Error (Phase 1 - Alternative)
-
-**Priority:** P0
-**Status:** READY_FOR_DEV
-**Progress:** 0%
+**Description:**
+Implement system rail, fix color palette enforcement, ensure 8-bit design compliance, and mobile responsive fixes. Foundation work for all phases.
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-05-01 | Remove useLiveQuery hook | 30m | P0 | TODO |
-| CC-05-02 | Create custom useFSAProjects() hook | 20m | P0 | TODO |
-| CC-05-03 | Test Notes workspace (desktop + mobile) | 10m | P0 | TODO |
+| Story | Title | Priority | Team | Effort | Status | Completed |
+|-------|-------|----------|------|----------|------------|
+| **UX-05** | Implement System Rail | P0 | B | 4h | ✅ COMPLETE (2026-01-26) |
+| **UX-06** | Fix PluginToolbar/Layout (Blue to Orange) | P0 | B | 4h | ✅ COMPLETE (2026-01-26) |
+| **UX-08** | Color Palette Enforcement | P1 | B | 6h | ✅ COMPLETE (2026-01-26) |
+| **UX-10** | Mobile Responsive Fixes | P2 | B | 12h | ⏳ DEFERRED (lower priority) |
+
+**Files Owned:**
+- `src/styles/tokens.css`
+- `src/presentation/components/layout/SystemRail.tsx`
+- `src/presentation/components/layout/PluginToolbar.tsx`
+- `src/presentation/layouts/PluginLayout.tsx`
+- `src/plugins/monaco/MonacoPlugin.tsx`
+- `src/infrastructure/context/project-context.tsx`
+- `src/presentation/components/onboarding/LayoutOnboarding.tsx`
+- `src/plugins/filetree/FileTreePlugin.tsx`
+- `src/presentation/components/sidebar/ProjectSidebar.tsx`
+- `src/i18n/en.json`
+- `src/i18n/vi.json`
 
 ---
 
-## EPIC-CC-06: Fix Route Loading Race Condition (Phase 2 - Alternative)
+## EPIC-E2E-TOOLS: Browser Automation & E2E Testing Framework
 
-**Priority:** P0
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** EPIC-CC-05
+**Priority:** P0 CRITICAL
+**Status:** READY_FOR_PLANNING
+**Created:** 2026-01-25
+**Estimated:** 4-6 hours
+
+**Description:**
+Install Playwright dependencies, create E2E test framework, and re-execute E2E User Journey Investigation. Enables verification of user interactions, UI behavior, and feature completeness. EPIC-ARCH-03 cannot be marked "validated" without E2E validation.
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-06-01 | Create waitForHydration() function | 30m | P0 | TODO |
-| CC-06-02 | Update notes.$projectId loader | 20m | P0 | TODO |
-| CC-06-03 | Update ide.$projectId loader | 20m | P0 | TODO |
-| CC-06-04 | Query Dexie directly | 20m | P0 | TODO |
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|----------|
+| **E2E-TOOLS-01** | Install Playwright Dependencies | P0 | - | 1-2h | ⏳ READY |
+| **E2E-TOOLS-02** | Create E2E Test Framework | P0 | - | 2-3h | ⏳ READY |
+| **E2E-TOOLS-03** | Re-Execute E2E User Journey Investigation | P0 | - | 2-3h | ⏳ READY |
+
+**Success Criteria:**
+- All 5 user journeys can be executed via Playwright
+- Screenshots captured at each checkpoint
+- Comprehensive E2E report generated
+- Remediation backlog created (if issues found)
+- EPIC-ARCH-03 can be marked as "validated"
 
 ---
 
-## EPIC-CC-07: Fix FSA Handle Persistence (Phase 3 - Alternative)
+## Phase 1B: BYOK & Notes Features
 
-**Priority:** P0
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** EPIC-CC-06
+### Objective
+
+Implement TanStack AI SDK integration for all LLM calls and complete Notes plugin with AI features.
+
+### Entry Criteria
+
+- Phase 1A 100% complete
+- TanStack AI SDK integrated and tested
+- Provider adapters for all first-tier providers
+- Project-scoped BYOK vault operational
+- Notes plugin with BlockNote editor and AI commands
+- EPIC-CC-AR02AR03 100% complete
+
+### Current Progress: 0% (Not Started)
+
+---
+
+## EPIC-PH1B-BYOK-NOTES: BYOK Vault & Notes Plugin
+
+**Priority:** P0 HIGH
+**Status:** READY_FOR_EXECUTION
+**Created:** 2026-01-26
+**Estimated:** 20-30 hours (3-4 days)
+**Target Completion:** 2026-02-03
+
+**Depends On:** EPIC-CC-AR02AR03 (Phase 1A), EPIC-E2E-TOOLS
+
+**Description:**
+Complete TanStack AI SDK integration for all LLM calls. Implement provider adapters for first-tier providers (Gemini, OpenRouter, OpenAI, Anthropic) and second-tier providers (Grok, Ollama). Create project-scoped BYOK vault with AES-256-GCM encryption. Complete Notes plugin with BlockNote editor and AI features (summarize, expand, organize, cite), with bidirectional Markdown sync.
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-07-01 | Implement Chrome 129 detection | 20m | P0 | TODO |
-| CC-07-02 | Store actual FSA handle | 40m | P0 | TODO |
-| CC-07-03 | Implement silent restore | 30m | P0 | TODO |
-| CC-07-04 | Add handle to ProjectContext | 20m | P0 | TODO |
-| CC-07-05 | Update StorageGatewayFactory | 30m | P0 | TODO |
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|----------|
+| **BYOK-01** | Implement TanStack AI SDK Client | P0 | A | 4-6h | ⏳ READY |
+| **BYOK-02** | Create Gemini Provider Adapter | P0 | A | 2-3h | ⏳ READY |
+| **BYOK-03** | Create OpenRouter Provider Adapter | P0 | A | 2-3h | ⏳ READY |
+| **BYOK-04** | Create OpenAI Provider Adapter | P0 | A | 2-3h | ⏳ READY |
+| **BYOK-05** | Create Anthropic Provider Adapter | P0 | A | 2-3h | ⏳ READY |
+| **BYOK-06** | Create Grok Provider Adapter (Second-Tier) | P1 | A | 2h | ⏳ READY |
+| **BYOK-07** | Create Ollama Provider Adapter (Second-Tier) | P1 | A | 2h | ⏳ READY |
+| **BYOK-08** | Implement Fallback Chain | P0 | A | 3-4h | ⏳ READY |
+| **BYOK-09** | Create Project-Scoped BYOK Vault | P0 | A | 3h | ⏳ READY |
+| **BYOK-10** | Implement Secure Key Distribution | P0 | A | 4-6h | ⏳ READY |
+| **BYOK-11** | Migrate Existing Providers to TanStack AI SDK | P1 | A | 4h | ⏳ READY |
+| **BYOK-12** | Implement Settings UI Integration | P1 | B | 3h | ⏳ READY |
+| **NOTES-01** | Complete BlockNote Editor Integration | P0 | A | 6h | ⏳ READY |
+| **NOTES-02** | Implement AI Commands (Summarize) | P1 | A | 2h | ⏳ READY |
+| **NOTES-03** | Implement AI Commands (Expand) | P1 | A | 2h | ⏳ READY |
+| **NOTES-04** | Implement AI Commands (Organize) | P1 | A | 2h | ⏳ READY |
+| **NOTES-05** | Implement AI Commands (Cite) | P1 | A | 2h | ⏳ READY |
+| **NOTES-06** | Implement Prompt Chains | P1 | A | 2h | ⏳ READY |
+| **NOTES-07** | Implement Text Selection Transformations | P1 | A | 2h | ⏳ READY |
+| **NOTES-08** | Implement Notes ↔ Markdown Bidirectional Sync | P0 | A | 4-6h | ⏳ READY |
+| **NOTES-09** | Add Conflict Resolution UI | P1 | B | 3h | ⏳ READY |
+| **NOTES-10** | Test Desktop FSA and Mobile IndexedDB | P1 | - | 2h | ⏳ READY |
+| **NOTES-11** | Implement Asset Indexing for RAG | P2 | B | 3h | ⏳ READY |
+
+**Files Owned:**
+- `src/infrastructure/ai/tanstack-ai-client.ts`
+- `src/infrastructure/ai/providers/gemini-adapter.ts`
+- `src/infrastructure/ai/providers/openrouter-adapter.ts`
+- `src/infrastructure/ai/providers/openai-adapter.ts`
+- `src/infrastructure/ai/providers/anthropic-adapter.ts`
+- `src/infrastructure/ai/providers/grok-adapter.ts`
+- `src/infrastructure/ai/providers/ollama-adapter.ts`
+- `src/infrastructure/vault/byok-vault.ts`
+- `src/plugins/notes/NotesPlugin.tsx`
+- `src/presentation/components/settings/ProviderConfig.tsx`
 
 ---
 
-## EPIC-CC-08: Fix State Scoping (Phase 4 - Alternative)
+## Phase 2: Chat Cascade, Thread Management, Agents
 
-**Priority:** P1
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** EPIC-CC-07
+### Objective
+
+Implement chat cascade plugin with thread management, agent orchestrator pattern, and domain-specific agents.
+
+### Entry Criteria
+
+- Phase 1B 100% complete
+- TanStack AI SDK fully integrated
+- Plugin system operational
+- Agent tool registry defined
+
+### Current Progress: 0% (Not Started)
+
+---
+
+## EPIC-PH2-CHAT-AGENTS: Chat Cascade & Agent Orchestration
+
+**Priority:** P0 HIGH
+**Status:** READY_FOR_EXECUTION
+**Created:** 2026-01-26
+**Estimated:** 40-60 hours (5-8 days)
+**Target Completion:** 2026-02-15
+
+**Depends On:** EPIC-PH1B-BYOK-NOTES
+
+**Description:**
+Implement chat cascade plugin with project-scoped thread management, 150K token limit, 90% compaction threshold, multi-format block rendering (code, rich text, HTML artifacts, streaming tokens), and bi-directional file references. Implement orchestrator pattern with read-only tools, mode switching, task delegation. Create domain-specific agents (dev-ext, architect-ext, analyst-ext, ux-designer-ext, tech-writer-ext) with focused tool groups. Implement tool permission matrix with ask/allow/den workflows. Configure agent tool registry.
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-08-01 | Add project scope to IDE store | 30m | P1 | TODO |
-| CC-08-02 | Add project scope to workspace store | 30m | P1 | TODO |
-| CC-08-03 | Use Dexie for workspace state | 30m | P1 | TODO |
-| CC-08-04 | Add cleanup on workspace switch | 30m | P1 | TODO |
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|----------|
+| **CHAT-01** | Implement Chat Cascade Plugin Structure | P0 | A | 4-6h | ⏳ READY |
+| **CHAT-02** | Implement Thread Architecture (Main/Sub/Compaction) | P0 | A | 6h | ⏳ READY |
+| **CHAT-03** | Implement Context Window Management (150K limit) | P0 | A | 4-6h | ⏳ READY |
+| **CHAT-04** | Implement Auto-Compaction at 90% Threshold | P0 | A | 6h | ⏳ READY |
+| **CHAT-05** | Implement Multi-Format Block Rendering | P0 | A | 6-8h | ⏳ READY |
+| **CHAT-06** | Implement Bi-Directional File References (@ syntax) | P0 | A | 4-6h | ⏳ READY |
+| **CHAT-07** | Implement File-to-Chat Operations (Insert/Copy) | P1 | A | 3h | ⏳ READY |
+| **CHAT-08** | Implement Orchestrator Pattern | P0 | A | 6h | ⏳ READY |
+| **CHAT-09** | Create Domain-Specific Agents (5 agents) | P0 | A | 12h | ⏳ READY |
+| **CHAT-10** | Implement Tool Permission Matrix | P0 | A | 4h | ⏳ READY |
+| **CHAT-11** | Implement Tool Approval Workflows | P1 | A | 4h | ⏳ READY |
+| **CHAT-12** | Implement Agentic Cycle Pattern | P1 | A | 4h | ⏳ READY |
+| **CHAT-13** | Integrate Agents with Chat Cascade | P1 | A | 4h | ⏳ READY |
+| **CHAT-14** | Test Agent Execution with Tool Registry | P1 | - | 4h | ⏳ READY |
+
+**Files Owned:**
+- `src/plugins/chat/ChatCascadePlugin.tsx`
+- `src/infrastructure/persistence/stores/chat/`
+- `src/lib/agent/orchestrator/`
+- `src/lib/agent/agents/`
+- `src/lib/agent/tools/`
+- `src/lib/agent/tool-permissions.ts`
 
 ---
 
-## EPIC-CC-09: Fix Platform Guards (Phase 5 - Alternative)
+## Phase 3: Advanced Patterns
 
-**Priority:** P1
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** EPIC-CC-08
+### Objective
+
+Implement advanced patterns for multi-agent coordination, cross-plugin communication, RAG integration, and sophisticated tool usage.
+
+### Entry Criteria
+
+- Phase 2 100% complete
+- Chat cascade stable with thread management
+- Agent orchestrator operational
+- All domain-specific agents tested
+
+### Current Progress: 0% (Not Started)
+
+---
+
+## EPIC-PH3-ADVANCED-PATTERNS: Advanced Multi-Agent & RAG
+
+**Priority:** P1 HIGH
+**Status:** READY_FOR_EXECUTION
+**Created:** 2026-01-26
+**Estimated:** 60-80 hours (8-10 days)
+**Target Completion:** 2026-02-25
+
+**Depends On:** EPIC-PH2-CHAT-AGENTS
+
+**Description:**
+Implement advanced patterns for multi-agent coordination, cross-plugin communication, and RAG integration. Create event bus for cross-plugin notifications, shared state patterns, file reference passing between plugins. Implement multi-agent coordination with handoff patterns, context transfer, consensus mechanisms, and priority-based execution scheduling. Add RAG advanced features including metadata filtering, hybrid retriever optimization, and per-project RAG index management. Implement advanced agentic patterns including multi-agent consensus, conflict resolution, and priority-based execution. Create generative AI features distinction (individual AI in Notes vs agent-driven features in Chat).
 
 ### Stories
 
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-09-01 | Add guard to /ide route | 15m | P1 | TODO |
-| CC-09-02 | Add guard to /ide/$projectId | 15m | P1 | TODO |
-| CC-09-03 | Hide IDE icon on mobile | 15m | P1 | TODO |
-| CC-09-04 | Add toast messages | 15m | P1 | TODO |
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|----------|
+| **ADV-01** | Implement Event Bus for Cross-Plugin Communication | P0 | A | 6-8h | ⏳ READY |
+| **ADV-02** | Implement Shared State for Coordinated Operations | P1 | A | 4-6h | ⏳ READY |
+| **ADV-03** | Implement File Reference Passing Between Plugins | P1 | A | 4h | ⏳ READY |
+| **ADV-04** | Implement Multi-Agent Handoff Patterns | P1 | A | 6h | ⏳ READY |
+| **ADV-05** | Implement Multi-Agent Context Transfer | P1 | A | 4h | ⏳ READY |
+| **ADV-06** | Implement Multi-Agent Consensus Mechanisms | P1 | A | 4h | ⏳ READY |
+| **ADV-07** | Implement Priority-Based Execution Scheduling | P1 | A | 4h | ⏳ READY |
+| **ADV-08** | Implement RAG Advanced Features (Metadata Filtering) | P1 | B | 6h | ⏳ READY |
+| **ADV-09** | Implement Hybrid Retriever Optimization | P1 | B | 6h | ⏳ READY |
+| **ADV-10** | Implement Per-Project RAG Index Management | P0 | A | 4-6h | ⏳ READY |
+| **ADV-11** | Implement RAG Advanced Features (Embedding Endpoints) | P2 | B | 3h | ⏳ READY |
+| **ADV-12** | Implement Advanced Tool Patterns (Granular Permissions) | P1 | A | 6h | ⏳ READY |
+| **ADV-13** | Implement Advanced Agentic Patterns (Error Recovery) | P1 | A | 4h | ⏳ READY |
+| **ADV-14** | Distinguish Individual AI vs Agent-Driven Features | P2 | A | 4h | ⏳ READY |
 
----
-
-## EPIC-CC-10: Remove Temp Project (Phase 6 - Alternative)
-
-**Priority:** P1
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** EPIC-CC-09
-
-### Stories
-
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-10-01 | Remove temp project option | 20m | P1 | TODO |
-| CC-10-02 | Remove browser DB option on desktop | 20m | P1 | TODO |
-| CC-10-03 | Add project list | 20m | P1 | TODO |
-
----
-
-## EPIC-CC-11: Fix Terminal Loading (Phase 7 - Alternative)
-
-**Priority:** P2
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** EPIC-CC-10
-
-### Stories
-
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-11-01 | Investigate WebContainer boot | 30m | P2 | TODO |
-| CC-11-02 | Fix WebContainer config | 30m | P2 | TODO |
-| CC-11-03 | Add error feedback | 20m | P2 | TODO |
-
----
-
-## EPIC-CC-12: End-to-End Testing (Phase 8 - Alternative)
-
-**Priority:** P2
-**Status:** READY_FOR_DEV
-**Progress:** 0%
-**Blocker:** All previous epics
-
-### Stories
-
-| ID | Title | Effort | Priority | Status |
-|----|-------|--------|----------|--------|
-| CC-12-01 | Test desktop user journeys | 40m | P2 | TODO |
-| CC-12-02 | Test mobile user journeys | 30m | P2 | TODO |
-| CC-12-03 | Verify ADR compliance | 20m | P2 | TODO |
-
----
-
-## ADR-034 Infection Registry
-
-> **[ADDED: 2026-01-16]** 31 infection points identified in ADR-034
-
-### Domain 1: FSA Handle Persistence (10 Issues)
-
-| ID | File | Issue | Severity | Status |
-|----|------|-------|----------|--------|
-| FSA-001 | `fsa-handle-manager.ts:26-36` | Stores `handle as any` - throws DataCloneError | P0 | INFECTED |
-| FSA-002 | `fsa-handle-manager.ts:45-70` | `restoreHandle()` calls `showDirectoryPicker()` | P0 | INFECTED |
-| FSA-003 | `handle-persistence.ts:97-116` | Stores `handleData: null` intentionally | P0 | INFECTED |
-| FSA-004 | `handle-persistence.ts:190-207` | `trySilentRestore()` prompts user | P0 | INFECTED |
-| FSA-005 | `permission-lifecycle.ts:46-61` | `deserializeHandle()` always returns null | P1 | INFECTED |
-| FSA-006 | `storage-gateway-factory.ts:117-141` | Requires handle not available at call time | P1 | INFECTED |
-| FSA-007 | `ProjectContext.tsx` | No handle in context interface | P1 | INFECTED |
-| FSA-008 | `ide.$projectId.tsx:148-157` | Claims `useFileLoaderSlice` restores - doesn't exist | P1 | INFECTED |
-| FSA-009 | Multiple files | 3 different handle managers | P1 | INFECTED |
-| FSA-010 | `project-types.ts:39-41` | `lastKnownPermissionState` duplicates | P2 | INFECTED |
-
-### Domain 2: State Management (12 Issues)
-
-| ID | File | Issue | Severity | Status |
-|----|------|-------|----------|--------|
-| STATE-001 | `useProjectStore.ts:50-53` | No persistence, memory-only | P0 | INFECTED |
-| STATE-002 | `useIDEStore.ts:65-71` | Hydrates "most recent" not "current" | P0 | INFECTED |
-| STATE-003 | `workspace-store.ts:174-179` | localStorage leak, no project scope | P0 | INFECTED |
-| STATE-004 | `file-sync-status-store-refactored.ts:76-77` | Global persist, no project scope | P1 | INFECTED |
-| STATE-005 | `agent-selection-store.ts:43-56` | `activeAgentId` global, not per-project | P1 | INFECTED |
-| STATE-006 | `useConversationStore.ts:381-404` | Module-level subscription leak | P1 | INFECTED |
-| STATE-007 | `unified-chat-store.ts:338` | Global storage key | P1 | INFECTED |
-| STATE-008 | `rag-store.ts:56-60` | Global `indexMetadata` | P1 | INFECTED |
-| STATE-009 | `terminal-store.ts:304` | Uses localStorage, not Dexie | P2 | INFECTED |
-| STATE-010 | `hydration-manager.ts:46-61` | Empty hydrate functions | P1 | INFECTED |
-| STATE-011 | `project-crud-slice.ts:153` | Calls `persistHandle(null)` | P0 | INFECTED |
-| STATE-012 | Multiple stores | No cleanup on workspace switch | P1 | INFECTED |
-
-### Domain 3: Routing (13 Issues)
-
-| ID | File | Issue | Severity | Status |
-|----|------|-------|----------|--------|
-| ROUTE-001 | `ide.tsx:37-44` | No `beforeLoad` platform guard | P0 | INFECTED |
-| ROUTE-002 | `ide.tsx:89-101` | Uses `window.location` not Outlet | P1 | INFECTED |
-| ROUTE-003 | `ide.$projectId.tsx:86-131` | Double fetch (beforeLoad + loader) | P1 | INFECTED |
-| ROUTE-004 | `notes.$projectId.lazy.tsx:116-132` | useEffect instead of loader | P1 | INFECTED |
-| ROUTE-005 | `workspace/$projectId.tsx:75-93` | No platform guard | P1 | INFECTED |
-| ROUTE-006 | `HubHomePage.tsx:143-151` | Double-checks FSA + canAccessIDE | P1 | INFECTED |
-| ROUTE-007 | `WorkspaceSwitcher.tsx:119-133` | No platform validation for IDE | P1 | INFECTED |
-| ROUTE-008 | `ProjectContext.tsx:247-270` | Auto-switch to IDE on mobile | P2 | INFECTED |
-| ROUTE-009 | `ProjectContext.tsx:295-320` | `switchWorkspace` no platform check | P2 | INFECTED |
-| ROUTE-010 | `index.tsx` + `hub.tsx` | Duplicate routes for HubHomePage | P2 | INFECTED |
-| ROUTE-011 | `study.lazy.tsx`, `knowledge.lazy.tsx` | IDE buttons without platform check | P2 | INFECTED |
-| ROUTE-012 | Missing files | `knowledge.$projectId.tsx`, `study.$projectId.tsx` | P2 | INFECTED |
-| ROUTE-013 | `notes.lazy.tsx:50-127` | Dynamic import in useEffect | P2 | INFECTED |
-
-### Domain 4: Platform Contract (6 Issues)
-
-| ID | File | Issue | Severity | Status |
-|----|------|-------|----------|--------|
-| PLAT-001 | `ide.tsx` | Temp project shown on desktop | P0 | INFECTED |
-| PLAT-002 | `notes.lazy.tsx:43-46` | Hardcoded `browser-mode` only | P0 | INFECTED |
-| PLAT-003 | `MainSidebar.tsx:161-168` | Navigation bypasses platform checks | P1 | INFECTED |
-| PLAT-004 | Multiple routes | `getPlatformContract()` not called | P1 | INFECTED |
-| PLAT-005 | `temp-project.ts:180-188` | `shouldUseTempProject()` logic inverted | P1 | INFECTED |
-| PLAT-006 | Multiple stores | No platform-aware hydration | P2 | INFECTED |
+**Files Owned:**
+- `src/lib/events/event-bus.ts`
+- `src/lib/plugin/interfaces.ts`
+- `src/plugins/chat/components/shared-state/`
+- `src/lib/agent/handoff/`
+- `src/lib/agent/consensus/`
+- `src/infrastructure/persistence/stores/rag/`
+- `src/lib/agent/error-recovery/`
+- `src/plugins/notes/components/ai-commands/`
+- `src/plugins/chat/components/agent-features/`
 
 ---
 
 ## Dependency Graph
 
 ```
-EPIC-CC-01/PS (Project Space Foundation) [P0 - IN PROGRESS]
-├── EPIC-CC-02 (BYOK Cleanup) [COMPLETE]
-├── EPIC-CC-03 (Chat Flow) [BLOCKED - depends on CC-01]
-├── EPIC-CC-04 (Notes Refactoring) [BLOCKED - depends on CC-01]
-└── ARC Phases (ADR-033 Remediation) [BLOCKED - depends on CC-01]
+Foundation (Unblocks All Phases)
+├── EPIC-ARCH-04-CC [P0 - 95%]
+│   └── Blocks: Phase 1A, 1B, 2, 3
+├── EPIC-UX-GLOBAL-UI [P0 - 75%]
+│   └── Foundation for all phases
+└── EPIC-E2E-TOOLS [P0 - READY]
+    └── Enables Phase 2 validation
 
-ARC Phase A: Identity & Routing [BLOCKED - depends on ARC-A01 getPlatformContract]
-├── ARC-A01: getPlatformContract() service [P0 - START HERE]
-├── ARC-A02: Route guards [P0 - depends on A01]
-├── ARC-A04: Mobile→Notes redirect [P0 - depends on A01]
-├── ARC-A05: Hub card click data contract [P0 - depends on A01]
-└── ARC-A06: Post-creation redirect [P0 - depends on A02]
+Phase 1A (Plugin System)
+├── EPIC-CC-AR02AR03 [P0 - 37.5%]
+│   ├── CC-AR-01 (Team A)
+│   ├── CC-AR-02 (Team A)
+│   ├── CC-AR-03 (Team B) ✅
+│   ├── CC-AR-05 (Team B) ✅
+│   └── CC-AR-06 (Team B) ✅
+│       CC-AR-04 (Team A) ─→ CC-AR-07, CC-AR-08 (blocked)
+│
+└── Depends On: EPIC-ARCH-04-CC (CC-04 pending)
 
-ARC Phase B: Storage Contract [BLOCKED - depends on A01]
-├── ARC-B01: StorageGateway abstraction [P0 - depends on A01]
-├── ARC-B02: FSAGateway adapter [P0 - depends on B01]
-├── ARC-B03: IDBGateway adapter [P0 - depends on B01]
-├── ARC-B05: FileSystemObserver [P0 - depends on B02]
-└── ARC-B07 through B12 [Various dependencies]
+Phase 1B (BYOK + Notes)
+└── EPIC-PH1B-BYOK-NOTES [P0 - READY]
+    ├── Depends On: EPIC-CC-AR02AR03 (100%)
+    ├── BYOK Stories (10 stories)
+    └── NOTES Stories (11 stories)
 
-ARC Phase C: State & Persistence [BLOCKED - depends on B01]
-├── ARC-C01: Consolidate Project Store [P0]
-├── ARC-C04: Persist-first pattern [P1 - depends on C01]
-└── ARC-C06 through C10 [Various dependencies]
+Phase 2 (Chat + Agents)
+└── EPIC-PH2-CHAT-AGENTS [P0 - READY]
+    ├── Depends On: EPIC-PH1B-BYOK-NOTES (100%)
+    └── CHAT Stories (14 stories)
 
-ARC Phase D: Entity Standardization [BLOCKED - depends on C01]
-├── ARC-D01: Enforce ProjectId type [P1 - depends on C01]
-├── ARC-D02: Fix fallback bugs [P1 - depends on D01]
-└── ARC-D03: Rename bindings [P2 - depends on D01]
-
-ARC Phase E: File Tree Cleanup [BLOCKED - depends on C02, B01]
-├── ARC-E01: Delete .bak files [P0]
-├── ARC-E02: Archive project-store [P1 - depends on C02]
-├── ARC-E03: Archive filesystem duplicates [P1 - depends on B01]
-└── ARC-E04: Update imports [P2 - depends on E02, E03]
-
-Chrome 129 Detection [Standalone - can start immediately]
-└── CC-07-01: Implement Chrome 129 detection [P0 - Critical for FSA handle storage]
+Phase 3 (Advanced Patterns)
+└── EPIC-PH3-ADVANCED-PATTERNS [P1 - READY]
+    ├── Depends On: EPIC-PH2-CHAT-AGENTS (100%)
+    └── ADV Stories (14 stories)
 ```
 
 ---
 
-## Sprint Planning
+## Archived Legacy Epics
 
-### Week 1: Foundation & Platform Detection
+The following epics have been archived due to supersession, duplication, or consolidation:
 
-| Day | Focus | Stories |
-|-----|-------|---------|
-| 1 | getPlatformContract() | ARC-A01 |
-| 2 | Route guards | ARC-A02 |
-| 3 | Chrome 129 detection | CC-07-01 |
-| 4 | Platform guards | ARC-A04, ARC-A05 |
-| 5 | Redirect logic | ARC-A06 |
+### Superseded by v2.0.0 Architecture
 
-### Week 2: Storage Contract
+| Epic | Name | Superseded By | Reason |
+|-------|-------|---------------|--------|
+| **EPIC-ARCH-01** | EPIC-CC-AR02AR03 | Foundation cleanup consolidated into Phase 1A |
+| **EPIC-ARCH-02** | EPIC-CC-AR02AR03 | Plugin system rework (70% true, remediated) |
+| **EPIC-ARCH-03** | EPIC-CC-AR02AR03 | Layout system (45% true, remediated) |
+| **EPIC-FS** | Phase 1A (EPIC-CC-AR02AR03) | File system foundation consolidated |
+| **EPIC-39** | EPIC-UX-GLOBAL-UI | 8-bit design consolidated |
+| **EPIC-38** | EPIC-CC-AR02AR03 | Architecture extension consolidated |
+| **EPIC-40** | EPIC-PH2-CHAT-AGENTS | Agent chat remediation consolidated |
+| **EPIC-45** | EPIC-PH1B-BYOK-NOTES | BYOK/Notes consolidated |
+| **EPIC-46** | - | Consolidated into Phase epics |
 
-| Day | Focus | Stories |
-|-----|-------|---------|
-| 1-2 | StorageGateway | ARC-B01 |
-| 3-4 | FSAGateway adapter | ARC-B02 |
-| 5 | IDBGateway adapter | ARC-B03 |
+### Duplicate/Overlapping Epics Consolidated
 
-### Week 3-4: State & Entity
+| Epic | Consolidated Into | Reason |
+|-------|------------------|--------|
+| **EPIC-PH1A-COMPLETION** | EPIC-CC-AR02AR03 | Duplicate Phase 1A completion epic |
+| **EPIC-CONSOLIDATION** | EPIC-CC-AR02AR03 | Duplicate foundation cleanup epic |
+| **EPIC-CTX-CLEAN** | EPIC-PH3-ADVANCED-PATTERNS | Duplicate context remediation epic |
 
-| Week | Focus | Stories |
-|------|-------|---------|
-| 3 | Project Store consolidation | ARC-C01, C02, C03 |
-| 3 | State scoping | CC-08-01 through CC-08-04 |
-| 4 | Entity standardization | ARC-D01, D02, D03 |
-| 4 | File tree cleanup | ARC-E01 through E04 |
+### Correct-Course Series (Archived)
 
----
+| Epic Series | Consolidated Into | Reason |
+|------------|------------------|--------|
+| **EPIC-CC-01 through CC-12** | Various Phase epics | Correct-course series consolidated into canonical epics |
+| **ARC Stories** | EPIC-CC-AR02AR03, EPIC-PH2-CHAT-AGENTS | ADR-033 remediation stories merged into Phase epics |
 
-## Platform Guard Stories
+### Archive Location
 
-> **[ADDED: 2026-01-16]** Platform guards for all routes
-
-| Story ID | Route | Guard Type | Status |
-|----------|-------|------------|--------|
-| PG-01 | `/ide` | beforeLoad: canAccessIDE check | TODO |
-| PG-02 | `/ide/$projectId` | beforeLoad: mobile redirect | TODO |
-| PG-03 | `/notes` | No guard needed | N/A |
-| PG-04 | `/notes/$projectId` | No guard needed | N/A |
-| PG-05 | `/knowledge` | No guard needed | N/A |
-| PG-06 | `/knowledge/$projectId` | No guard needed | N/A |
-| PG-07 | `/study` | No guard needed | N/A |
-| PG-08 | `/study/$projectId` | No guard needed | N/A |
+Legacy epics are archived in:
+`_bmad-output/.archive/epics/legacy-epics-2026-01-26/`
 
 ---
 
-## Chrome 129 Detection Story
+## Epic Authority Model
 
-> **[ADDED: 2026-01-16]** Chrome 129 structured clone support
+### Principles
 
-### CC-07-01: Implement Chrome 129 detection
+1. **Single Authoritative Epic Per Phase**: Each phase has exactly ONE epic that represents ALL work for that phase
+2. **No Duplicate Scope**: Epics never overlap in requirements or deliverables
+3. **Clear Dependencies**: Epic dependencies are explicit and phase-based
+4. **Progress Tracking**: Each epic has clear progress metrics (stories done / total stories)
+5. **Completion Criteria**: Epic completion is defined by 100% story completion AND phase entry criteria met
 
-**Purpose:** Detect Chrome 129+ support for storing actual FileSystemDirectoryHandle in IndexedDB
+### Phase Entry Requirements
 
-**Changes:**
-- Add `supportsStructuredClone()` detection in `handle-persistence.ts`
-- Feature flag for conditional logic:
-  - Chrome 129+: Store actual handle (uses structuredClone)
-  - Older Chrome: Store metadata only (permission status)
-
-**Acceptance:**
-- [ ] Detects Chrome 129+ support
-- [ ] Falls back gracefully for older versions
-- [ ] Feature flag available for conditional logic
-
----
-
-## waitForHydration() Function Story
-
-> **[ADDED: 2026-01-16]** Route loading hydration wait utility
-
-### CC-06-01: Create waitForHydration() function
-
-**Purpose:** Event-driven hydration wait to prevent race conditions
-
-**Changes:**
-- Create `src/infrastructure/persistence/hydration-utils.ts`
-- Implement event-driven wait (not time-based)
-- Subscribe to Zustand store hydration state
-
-**Acceptance:**
-- [ ] Event-driven (not time-based)
-- [ ] Subscribes to Zustand store
-- [ ] Returns immediately if already hydrated
+| Phase | Prerequisite | Authority | Entry Criteria |
+|--------|--------------|----------|----------------|
+| **Phase 1A** | Foundation epics (ARCH-04-CC, UX-GLOBAL-UI, E2E-TOOLS) | EPIC-CC-AR02AR03 | ADR-039 approved, PlatformContract complete, plugin system defined |
+| **Phase 1B** | Phase 1A 100% + E2E-TOOLS | EPIC-PH1B-BYOK-NOTES | Phase 1A complete, TanStack AI SDK integrated |
+| **Phase 2** | Phase 1B 100% | EPIC-PH2-CHAT-AGENTS | TanStack AI SDK fully integrated, plugin system operational |
+| **Phase 3** | Phase 2 100% | EPIC-PH3-ADVANCED-PATTERNS | Chat cascade stable, agent orchestrator operational |
 
 ---
 
-## State Scoping by [projectId+workspaceId]
+## Timeline
 
-> **[ADDED: 2026-01-16]** State isolation per project and workspace
+### Week 1: Foundation & Phase 1A Completion (2026-01-20 to 2026-01-28)
 
-### CC-08 Stories: State Scoping
+| Day | Focus | Epics |
+|-----|-------|--------|
+| 1 | FSA Handle Lifecycle | EPIC-ARCH-04-CC (CC-04 E2E) |
+| 2-3 | Plugin System Rework | EPIC-CC-AR02AR03 (CC-AR-01, AR-02, AR-04) |
+| 4-5 | Team A Stories | EPIC-CC-AR02AR03 (CC-AR-07, AR-08) |
+| 6-7 | Global UI Cleanup | EPIC-UX-GLOBAL-UI (remaining stories) |
 
-| Story ID | Title | Acceptance |
-|----------|-------|------------|
-| CC-08-01 | Add project scope to IDE store | State scoped by [projectId+workspaceId] |
-| CC-08-02 | Add project scope to workspace store | Uses Dexie, not localStorage |
-| CC-08-03 | Use Dexie for workspace state | Direct Dexie queries, hot reactivity |
-| CC-08-04 | Add cleanup on workspace switch | State resets on switch, no stale data |
+**Target:** Foundation complete, Phase 1A 100% (Monaco editor real, PluginLayout split, i18n complete)
 
----
+### Week 2: E2E Framework & Phase 1B Planning (2026-01-29 to 2026-02-05)
 
-## Route Standardization (Loader Only Pattern)
+| Day | Focus | Epics |
+|-----|-------|--------|
+| 1-2 | E2E Testing | EPIC-E2E-TOOLS (3 stories) |
+| 3-5 | BYOK Foundation | EPIC-PH1B-BYOK-NOTES (BYOK-01 through BYOK-12) |
+| 6-7 | Notes Features | EPIC-PH1B-BYOK-NOTES (NOTES-01 through NOTES-11) |
 
-> **[ADDED: 2026-01-16]** Consistent TanStack Router patterns
+**Target:** E2E framework operational, Phase 1B 100% (BYOK SDK integrated, Notes complete)
 
-### Standard Pattern:
+### Week 3+: Phase 2 & 3 Execution (2026-02-06 onwards)
 
-```
-// ✅ CORRECT: Loader-only pattern
-route('$projectId', 'workspace', {
-  loader: async ({ params, context }) => {
-    await waitForHydration();
-    const project = await db.projects.get(params.projectId);
-    return { project };
-  },
-  beforeLoad: () => {
-    if (!platform.canAccessIDE) redirect('/notes');
-  },
-  component: Workspace,
-});
+| Week | Focus | Epics |
+|------|-------|--------|
+| 3-4 | Chat Cascade & Agents | EPIC-PH2-CHAT-AGENTS (CHAT-01 through CHAT-08) |
+| 5-7 | Agent Integration & Orchestration | EPIC-PH2-CHAT-AGENTS (CHAT-09 through CHAT-14) |
+| 8+ | Advanced Patterns & RAG | EPIC-PH3-ADVANCED-PATTERNS (all ADV stories) |
 
-// ❌ INCORRECT: Double-fetch pattern
-beforeLoad: async () => { fetch project... }
-loader: async () => { fetch project again... }
-```
+**Target:** Phase 2 100% (chat cascade, agents, threads), Phase 3 100% (advanced patterns)
 
 ---
 
 ## Summary Statistics
 
-| Metric | Count |
+### Epic Completion Status
+
+| Phase | Epic | Stories | Complete | In Progress | Pending | % Complete |
+|--------|-------|---------|------------|------------|------------|
+| **Phase 1A** | EPIC-CC-AR02AR03 | 3 | 5 | 0 | 37.5% |
+| **Foundation** | EPIC-ARCH-04-CC | 3 | 1 | 0 | 75% |
+| **Foundation** | EPIC-UX-GLOBAL-UI | 3 | 1 | 0 | 75% |
+| **Foundation** | EPIC-E2E-TOOLS | 0 | 0 | 3 | 0% |
+| **Phase 1B** | EPIC-PH1B-BYOK-NOTES | 0 | 0 | 21 | 0% |
+| **Phase 2** | EPIC-PH2-CHAT-AGENTS | 0 | 0 | 14 | 0% |
+| **Phase 3** | EPIC-PH3-ADVANCED-PATTERNS | 0 | 0 | 14 | 0% |
+
+### Overall Progress
+
+| Metric | Value |
 |--------|-------|
-| **Total Epics** | 12 |
-| **Total Stories** | 80+ |
-| **Completed Stories** | 14 |
-| **In Progress Stories** | 2 |
-| **TODO Stories** | 64+ |
-| **Infection Points (ADR-034)** | 31 |
-| **Resolved Infections** | 0 |
-| **Remaining Infections** | 31 |
+| **Total Active Epics** | 7 (single epic per phase) |
+| **Total Stories** | 74 |
+| **Stories Complete** | 9 (12.2%) |
+| **Stories In Progress** | 5 (6.8%) |
+| **Stories Pending** | 60 (81.1%) |
+| **Archived Epics** | 22 |
+| **Consolidation Reduction** | 69% (from 22 to 7 active) |
 
 ---
 
-**Document Version:** 2.2.0 (Working Copy)
-**Last Updated:** 2026-01-16
-**Author:** Team B Phase 1 Analyst
-**Status:** WORKING COPY - FOR REVIEW
+## Governance Alignment
 
-**Next Review:** 2026-01-29 (Weekly)
+### Compliance with ADR-039 (Unified Architecture Fundamentals v2.0.0)
+
+| ADR Principle | Status | Evidence |
+|--------------|--------|-----------|
+| **Project-Centric Architecture** | ✅ ALIGNED | Single route `/$projectId` defined, project ID as anchor |
+| **Plugin-Based** | ⏳ IN PROGRESS | Plugin system being built in Phase 1A |
+| **Platform-First** | ✅ ALIGNED | PlatformContract interface implemented (ARC-A01) |
+| **BYOK with TanStack AI** | ⏳ IN PROGRESS | TanStack AI SDK planned for Phase 1B |
+| **Orchestrator Pattern** | ⏳ IN PROGRESS | Planned for Phase 2 |
+| **Thread Management** | ⏳ IN PROGRESS | Planned for Phase 2 |
+| **Clean Architecture** | ⏳ IN PROGRESS | Layer violations being addressed across Phase 1A |
+
+### Compliance with new-fundamental-truths.md v2.0.0
+
+| Principle | Status | Notes |
+|-----------|--------|-------|
+| **Section 1: Project-Centric Architecture** | ✅ ALIGNED | Route structure consolidated, plugin system defined |
+| **Section 3.1: FeaturePlugin Interface** | ✅ ALIGNED | Interface documented in Phase 1A epic |
+| **Section 3.2: Two Always-Loaded Plugins** | ✅ ALIGNED | Project Management + Chat Cascade defined |
+| **Section 4: BYOK Vault** | ⏳ IN PROGRESS | Planned for Phase 1B |
+| **Section 5: Agent and Tool Architecture** | ⏳ IN PROGRESS | Planned for Phase 2 |
+| **Section 6: Chat Cascade** | ⏳ IN PROGRESS | Planned for Phase 2 |
+| **Section 8: State Management** | ⏳ IN PROGRESS | Composite key pattern being updated |
+
+### Compliance with architecture.md v3.0.0
+
+| Section | Status | Notes |
+|---------|--------|-------|
+| **Section 3: Plugin System** | ⏳ IN PROGRESS | Phase 1A building plugin system |
+| **Section 4: Agent and Tool Architecture** | ⏳ IN PROGRESS | Phase 2 planning agents and tools |
+| **Section 5: Chat Cascade** | ⏳ IN PROGRESS | Phase 2 planning chat cascade |
+| **Section 6: BYOK Vault** | ⏳ IN PROGRESS | Phase 1B planning BYOK integration |
+| **Section 7: State Management** | ⏳ IN PROGRESS | WorkspaceId removal across all stores |
+
+---
+
+## Related Documents
+
+| Document | Description |
+|----------|-------------|
+| `new-fundamental-truths.md` | Core architecture principles v2.0.0 |
+| `architecture.md` | System architecture v3.0.0 (100% aligned) |
+| `prd.md` | Product requirements v2.0.0 (100% aligned) |
+| `the-3-phase-approach.md` | Phase breakdown (1A, 1B, 2, 3) |
+| `EPIC-STORY-INVENTORY-2026-01-26.md` | Epic consolidation analysis |
+| `ADR-039` | Unified Architecture Fundamentals (PROPOSED) |
+
+---
+
+**Document Version:** 3.0.0
+**Original Version:** 2.2.0 (2026-01-16)
+**Last Updated:** 2026-01-26
+**Author:** Architect Agent (architect-ext)
+**Status:** ACTIVE - Single authoritative epic per phase, 100% aligned with new-fundamental-truths.md v2.0.0
+
+**Next Review:** 2026-02-02 (weekly)

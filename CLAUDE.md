@@ -1,33 +1,133 @@
-# AGENTS.md - Project Alpha Governance
+# CLAUDE.md - Platform-Specific Instructions
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.4.0 | **Updated:** 2026-01-25T22:30+07:00 | **Health:** 50% (P0 BLOCKER)
+> **Version:** 2.0.0 | **Updated:** 2026-01-26 | **Health:** 45% (CC Remediation Required) | **ADR Authority:** ADR-039 (Pending Approval)
 
 ---
 
-## 🚨 P0 BLOCKER: ARCH-04 Correct-Course Required
+## 🏛️ AUTHORITY HIERARCHY & GOVERNANCE STRUCTURE
 
-**Status**: EPIC-ARCH-04 is BLOCKED due to architectural-level flaw discovered during implementation.
+> **Primary Architecture Authority**: ADR-039 (Pending Approval - to be created after core docs complete)
+> **Implementation Authority**: architecture.md (v3.0.0 - 100% aligned with fundamental truths)
+> **Core Truth Authority**: new-fundamental-truths.md (v2.0.0 - Foundation for all decisions)
 
-**Issue**: ProjectContextProvider lacks FSA handle lifecycle integration:
-- No `initialHandle` prop
-- No `handlePersistenceService.restoreHandle()` call
-- No handle passed to `StorageAdapterFactory`
-- `PermissionOverlay` never triggered
+### Authority Hierarchy
 
-**Classification**: Architectural flaw (project-wide impact, NOT local bug)
+```
+┌─────────────────────────────────────────────────────────┐
+│  ADR-039 (Primary Architecture Authority)             │
+│  Status: PENDING APPROVAL                            │
+│  Purpose: Unified architecture decisions              │
+│  Replaces: ADR-033, ADR-034, ADR-035 cascade       │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  architecture.md (v3.0.0)                          │
+│  Status: 100% Aligned                               │
+│  Purpose: Technical implementation specification        │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  Implementation Layer                                 │
+│  - prd.md (v2.0.0)                                  │
+│  - epics.md (v3.0.0)                                 │
+│  - ux-specification.md (v2.0.0)                       │
+└─────────────────────────────────────────────────────────┘
+```
 
-**Decision Pending**: See `_bmad-output/planning-artifacts/ARCH-DECISION-2026-01-25.md`
+### Agent Authority Flows
 
-**Evidence**:
-- `_bmad-output/planning-artifacts/ARCH-04-CORRECT-COURSE-2026-01-25.md`
-- `_bmad-output/handoffs/2026-01-25/ARCH-04-03-CLASSIFICATION-2026-01-25.md`
-- `_bmad-output/handoffs/2026-01-25/ARCH-04-03-VALIDATION-2026-01-25.md`
+```
+architect-ext → Architecture Design → ADR-039 Approval
+                            ↓
+                     architecture.md (v3.0.0)
+                            ↓
+dev-ext → Implementation → Code + Tests
+                            ↓
+                     Real-World Validation
+```
 
-**Blocked By This**:
-- Phase 1A: Non-AI Core (Terminal, Monaco, FileTree, Preview)
-- Phase 1B: BYOK + Notes
-- Phase 2: Chat cascade, agents
-- Phase 3: Advanced patterns
+### Document Authority Matrix
+
+| Document | Version | Status | Authority Level | When to Use |
+|----------|---------|--------|----------------|-------------|
+| **ADR-039** | - | Pending Approval | Tier 1 (Primary) | All architecture decisions |
+| **new-fundamental-truths.md** | v2.0.0 | Active | Tier 1 (Foundation) | All strategic decisions |
+| **ADR-034** | v2026-01-20 | APPROVED - IN PROGRESS | Tier 1 (Project Architecture) | Project-centric model |
+| **architecture.md** | v3.0.0 | 100% Aligned | Tier 2 (Implementation) | Technical architecture |
+| **prd.md** | v2.0.0 | 100% Aligned | Tier 2 (Product) | Product requirements |
+| **epics.md** | v3.0.0 | 100% Aligned | Tier 2 (Planning) | Epic/story definitions |
+| **ux-specification.md** | v2.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements |
+| **AGENTS.md** | v2.7.0 | Active | Tier 2 (Governance) | Agent coordination |
+
+### Governance Files Hierarchy
+
+| File | Authority | Purpose | Update Frequency |
+|------|------------|---------|-----------------|
+| **AGENTS.md** | Master governance | Agent rules, authority structure | Every 3 stories |
+| **CLAUDE.md** | Platform-specific | Platform-specific instructions | Every session |
+| **LOOP_STATE.yaml** | Session state | Session tracking, delegations | Every state change |
+| **ARTIFACT_REGISTRY.yaml** | Document tracking | Artifact metadata, TTL | After artifact creation |
+
+### Consolidated Epic Authority Model
+
+**Single Authoritative Epic Per Phase**
+
+| Phase | Authoritative Epic | Status | Supersedes |
+|-------|-------------------|--------|------------|
+| **Phase 1A** | EPIC-CC-AR02AR03 (Plugin System) | 0% | EPIC-ARCH-02, EPIC-ARCH-03 |
+| **Phase 1B** | (To be defined) | Pending | N/A |
+| **Phase 2** | (To be defined) | Pending | N/A |
+| **Phase 3** | (To be defined) | Pending | N/A |
+
+**Epic De-Duplication Process**
+
+```
+1. Epic Draft → Analyze against fundamental truths
+2. Check for duplicate/similar epics
+3. Consolidate if overlap > 50%
+4. Assign single authoritative epic ID
+5. Archive duplicate definitions
+6. Update ADR-039 with consolidated model
+```
+
+**Phase-Based Progression**
+
+```
+Phase 1A (Non-AI Core):
+  - Terminal Plugin
+  - Monaco Plugin
+  - FileTree Plugin
+  - Preview Plugin
+  - Must complete → Phase 1B
+
+Phase 1B (BYOK + Notes):
+  - BYOK Infrastructure
+  - Notes Plugin
+  - Must complete → Phase 2
+
+Phase 2 (AI Agents):
+  - Chat cascade
+  - Agent orchestration
+  - Must complete → Phase 3
+
+Phase 3 (Advanced Patterns):
+  - Advanced agent workflows
+  - Performance optimization
+```
+
+## 🚨 CRITICAL FINDING (2026-01-26)
+
+**Multi-Agent Audit Result**: EPIC-ARCH-02 and EPIC-ARCH-03 were prematurely marked complete.
+
+| Finding | Impact |
+|---------|--------|
+| Monaco is POC stub (textarea, not real editor) | No syntax highlighting |
+| 40+ i18n keys missing | UI shows raw translation keys |
+| Drag-drop layout causes broken UI | User experience broken |
+| PluginLayout.tsx = 1034 lines (god component) | Maintenance nightmare |
+| Store hydration race condition | Layout doesn't persist |
+
+**Resolution**: EPIC-CC-AR02AR03 created to remediate and align with Phase 1A.
 
 ---
 
@@ -254,12 +354,19 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | `_bmad-ext/orchestrator/escalation-protocol.md` | Failure handling | On failure |
 | `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
-| `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md` | **Master ADR for architecture** | Before any refactoring |
+| **ADR-039** | **Primary Architecture Authority** (Pending Approval) | Before any architecture work |
+| **ADR-034** | **Project-Centric Architecture** (APPROVED - IN PROGRESS) | Project model, plugin system |
 | `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml` | Current sprint status | Check story assignments |
 
 ---
 
-## 🏛️ ADR-033: ARCHITECTURAL DECISIONS (PERMANENT - NEVER DEVIATE)
+## 🏛️ ADR-034: PROJECT-CENTRIC ARCHITECTURE (APPROVED - IN PROGRESS)
+
+> **Source**: `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md`
+> **Status**: APPROVED - IN PROGRESS (Phase 1-2 Complete, Phase 3-4 Pending)
+> **Transition**: All decisions to be preserved in ADR-039 (when created)
+
+### Core Architectural Decisions
 
 > **Source**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
 > **Status**: APPROVED - All decisions final
@@ -581,20 +688,31 @@ EXCEPTIONAL DAYS:
 
 | Key | Value |
 |-----|-------|
-| **Current Phase** | Architecture Migration Completion |
-| **P0 Blocker** | EPIC-ARCH-04 (App Non-Functional) |
-| **Active Epic** | EPIC-ARCH-04 (0% - FSA Handle Integration) |
-| **Gate Story** | ARCH-04-01 (Integrate FSA Handle Lifecycle) |
-| **Team A Story** | ARCH-04-01 (READY_FOR_DEV) |
-| **Team B Story** | Available after ARCH-04-01 |
-| **Sprint File** | `sprint-status-2026-01-25.yaml` |
-| **Workflow File** | `workflow-status-2026-01-25.yaml` |
-| **ADR** | ADR-034 (APPROVED) |
+| **Current Phase** | Plugin System Remediation (Phase 1A) |
+| **P0 Blocker** | EPIC-CC-AR02AR03 (Plugin System Rework) |
+| **Active Epic** | EPIC-CC-AR02AR03 (0% - Plugin System Rework for Phase 1A) |
+| **Secondary Epic** | EPIC-ARCH-04-CC (95% - CC-04 E2E Pending) |
+| **Gate Story** | CC-AR-01 (Add Missing i18n Keys) |
+| **Team A Story** | CC-AR-01 (READY) |
+| **Team B Story** | CC-AR-03 (READY) |
+| **Sprint File** | `sprint-status-2026-01-26.yaml` |
+| **Workflow File** | `workflow-status-2026-01-26.yaml` |
+| **ADR** | ADR-039 (Pending Approval), ADR-034 (APPROVED - IN PROGRESS) |
 | **TypeScript Errors** | 0 ✅ (All 115 errors resolved - 2026-01-25) |
-| **App Status** | ❌ NON-FUNCTIONAL (FSA handle missing) |
-| **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md` |
-| **Handoff Artifact** | `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md` |
+| **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE (Plugin system stub) |
+| **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md` |
+| **Handoff Artifact** | `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md` |
 | **Completed Today** | EPIC-TS-DEBT, HOOKS-FIX-01, HOOKS-FIX-02 |
+
+### EPIC Corrected Status (As of 2026-01-26)
+
+| Epic | Previous Claim | TRUE Status | Action |
+|------|----------------|-------------|--------|
+| EPIC-ARCH-01 | 100% | 60% | Team B CONS stories |
+| EPIC-ARCH-02 | 100% | **70%** | EPIC-CC-AR02AR03 remediates |
+| EPIC-ARCH-03 | 85% | **45%** | EPIC-CC-AR02AR03 remediates |
+| EPIC-ARCH-04-CC | 90% | **95%** | CC-04 E2E pending |
+| **EPIC-CC-AR02AR03** | NEW | 0% | **P0 BLOCKER for Phase 1A** |
 
 ---
 
@@ -605,14 +723,158 @@ EXCEPTIONAL DAYS:
 | Workflow Status | `bmm-workflow-status.yaml` |
 | Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
 | Story Index | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
-| Architecture (EN) | `_bmad-output/planning-artifacts/architecture.md` |
-| Architecture (VI - Educational) | `_bmad-output/planning-artifacts/architecture-core-principles-vi-2026-01-25.md` |
-| Architecture (VI - Social Media) | `_bmad-output/planning-artifacts/architecture-social-media-vi-2026-01-25.md` |
-| UX Specification | `_bmad-output/planning-artifacts/ux-specification.md` |
-| PRD | `_bmad-output/planning-artifacts/prd.md` |
-| Epics & Stories | `_bmad-output/planning-artifacts/epics.md` |
+| **ADR-039** | (To be created - Primary Architecture Authority) |
+| **ADR-034** | `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md` |
+| new-fundamental-truths.md | `docs/new-fundamental-truths.md` (v2.0.0) |
+| architecture.md | `_bmad-output/planning-artifacts/architecture.md` (v3.0.0) |
+| prd.md | `_bmad-output/planning-artifacts/prd.md` (v2.0.0) |
+| epics.md | `_bmad-output/planning-artifacts/epics.md` (v3.0.0) |
+| ux-specification.md | `_bmad-output/planning-artifacts/ux-specification.md` (v2.0.0) |
 | Standards | `agent-os/standards/` |
 | Governance Gates | `_bmad/modules/governance/checklists/` |
+
+---
+
+## 🔄 DOCUMENT LIFECYCLE MANAGEMENT
+
+> **Source**: BMAD Framework Constitution v2.0.0 | **Applies**: All documents and artifacts
+
+### Document Lifecycle Stages
+
+```
+1. CREATION
+   - Assign unique ID (UUID)
+   - Set TTL based on tier
+   - Register in artifact-registry.yaml
+   - Tag with module and workflow
+
+2. APPROVAL
+   - Governance gate validation
+   - Human approval (if Tier 1)
+   - Update authority matrix
+   - Mark as ACTIVE
+
+3. USAGE
+   - Reference by agents
+   - Track dependencies
+   - Monitor staleness
+   - Update version as needed
+
+4. SUPERSESSION
+   - New version approved
+   - Archive old version
+   - Update all references
+   - Maintain history
+
+5. ARCHIVAL
+   - Move to `_bmad-ext/.archive/`
+   - Compress large artifacts
+   - Update registry
+   - Generate summary
+```
+
+### TTL-Based Artifact Management
+
+| Tier | Name | TTL | Loading | Validation | Action |
+|------|------|-----|---------|------------|
+| 1 | Unchangeable (Constitution) | Permanent | Always | Read-only check | Never archive |
+| 2 | Controlled & Iterative | Permanent | On-demand | Full consumption | Version updates only |
+| 3 | Archival | 90 days | If <90 days old | Archive if stale | Move to `.archive/` |
+| 4 | Ephemeral | 24 hours | If <24h & validated | Ignore if stale | Delete if >24h |
+
+### Artifact Registry
+
+**Location**: `_bmad-ext/state/ARTIFACT_REGISTRY.yaml`
+
+**Tracked Metadata**:
+```yaml
+artifacts:
+  - id: "adr_039"
+    type: "adr"
+    tier: 1
+    status: "pending_approval"
+    created_at: "2026-01-26"
+    ttl: "permanent"
+    dependencies: []
+```
+
+**Update Frequency**: After every artifact creation/modification
+
+### Supersession Protocol
+
+```
+When New Document Approved:
+1. Update all references in codebase
+2. Archive old document to `_bmad-ext/.archive/{date}-{name}/`
+3. Update ARTIFACT_REGISTRY.yaml with new ID
+4. Document supersession chain in ADR-039
+5. Update governance files (AGENTS.md, CLAUDE.md)
+```
+
+### Version Control Strategy
+
+| Document Type | Versioning | Example |
+|--------------|-------------|----------|
+| ADRs | Date-based | ADR-039-2026-01-26.md |
+| Core Docs (architecture, prd, epics, ux) | Semantic | v3.0.0, v2.0.0 |
+| Fundamentals | Semantic | v2.0.0 |
+| Story/Planning Artifacts | Date-based | story-{id}-2026-01-26.md |
+
+---
+
+## 🌐 PLATFORM ROUTING (Claude Code vs OpenCode)
+
+> **Source**: BMAD Framework Constitution v2.0.0
+> **Purpose**: Optimal platform selection for task execution
+
+### Optimal Platform Selection Matrix
+
+| Task Type | Optimal Platform | Success Rate | Notes |
+|-----------|-----------------|--------------|-------|
+| **Code Generation** | Claude Code | 92% | Autocomplete, code synthesis |
+| **Documentation** | OpenCode | 89% | Writing docs, markdown |
+| **Real-World Testing** | Both | 95% | Browser automation, API validation |
+| **Sprint Execution** | Both | 91% | Story development, coordination |
+| **Architecture** | Claude Code | 94% | Design decisions, ADRs |
+| **File Analysis** | Claude Code | 95% | Symbolic tools, code navigation |
+
+### Handoff Protocol Between Platforms
+
+```
+1. Agent A (Platform X) completes task
+2. Creates handoff artifact with platform tags
+   - platform: "claude-code" | "opencode"
+   - session_id: "UUID"
+   - task_completion: "SUCCESS|PARTIAL|FAILED"
+3. Updates unified AGENT-STATE.yaml
+4. Platform Router routes to Platform Y
+5. Agent B (Platform Y) loads artifact and context
+6. Execution continues seamlessly
+```
+
+### Platform-Specific Instructions
+
+**Claude Code** (Primary for code):
+- Use symbolic tools (serena)
+- Direct file editing
+- Build/test execution
+- Real-time debugging
+
+**OpenCode** (Primary for documentation):
+- Focus on markdown generation
+- Use context-aware writing
+- Document formatting
+- Knowledge synthesis
+
+### Unified State Management
+
+**File**: `AGENT-STATE.yaml` (shared between platforms)
+
+**Purpose**:
+- Session continuity
+- Handoff coordination
+- State preservation
+- Progress tracking
 
 ---
 
@@ -753,11 +1015,12 @@ Epic numbers are **MONOTONIC**:
 
 ### Active Epics
 
-| ID | Name | Progress | Priority |
+| ID | Name | Progress | Priority | Notes |
 |----|------|----------|----------|
-| EPIC-FS | File System Foundation | 28.6% | P0 |
-| EPIC-39 | 8-bit Design Compliance | 0% | P1 |
-| EPIC-38 | Architecture Extension | BLOCKED | P2 |
+| **EPIC-CC-AR02AR03** | Plugin System Rework (Phase 1A) | 0% | **P0 BLOCKER** | Remediate ARCH-02/ARCH-03 |
+| **EPIC-ARCH-04-CC** | FSA Handle Lifecycle | 95% | P0 BLOCKER | CC-04 E2E Pending |
+| EPIC-ARCH-01 | Platform Foundation | 60% | P1 | Team B CONS stories |
+| EPIC-CONSOLIDATION | Technical Debt Cleanup | 0% | P1 | Parallel to CC-04 |
 
 ---
 
@@ -776,9 +1039,12 @@ Epic numbers are **MONOTONIC**:
 For detailed documentation:
 
 - **Full BMAD Framework**: `_bmad/FRAMEWORK.md`
-- **ADR Decisions**: `_bmad-output/planning-artifacts/architecture/adr/`
+- **ADR-039** (to be created): Primary Architecture Authority - consolidates ADR-033/034/035
+- **ADR-034**: `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md` - Project-centric model
+- **ADR Decisions**: `_bmad-output/planning-artifacts/adr/`
 - **Historical Content**: `_bmad-output/.archive/`
 - **Standards (Full)**: `agent-os/standards/`
+- **BMAD Constitution v2.0.0**: `.opencode/instructions/bmad-constitution.md` - Module structure, TTL, platform routing
 
 ---
 
@@ -791,6 +1057,29 @@ Before any workflow:
 3. **Epic Done**: Run `epic-done-gate.yaml` (requires human `APPROVED: EPIC-XX`)
 4. **Daily**: Run `sprint-rotation-gate.yaml`
 5. **All**: Check `artifact-freshness-gate.yaml` TTL tiers
+
+### Artifact Lifecycle Gates
+
+**Before Creating Any Document**:
+- [ ] Check if similar artifact exists (ARTIFACT_REGISTRY.yaml)
+- [ ] Verify document does not exceed 5000 lines (god artifact check)
+- [ ] Determine appropriate tier (1-4)
+- [ ] Set appropriate TTL based on tier
+- [ ] Assign unique UUID
+
+**Before Updating Governance Files**:
+- [ ] All dependencies documented
+- [ ] Version updated (if applicable)
+- [ ] Backward compatibility considered
+- [ ] Impact on other agents assessed
+- [ ] Update ARTIFACT_REGISTRY.yaml
+
+**Before Archiving**:
+- [ ] Verify TTL expiration
+- [ ] Check for active dependencies
+- [ ] Create summary document
+- [ ] Update all references
+- [ ] Move to `_bmad-ext/.archive/{date}-{name}/`
 
 ---
 
@@ -878,11 +1167,17 @@ pnpm tsc --noEmit  # 0 errors ✅
 
 ## 🚀 Quick Start for New Agent Session
 
-1. Read this file (AGENTS.md)
-2. Check `bmm-workflow-status.yaml` for current story
-3. Load `sprint-status.yaml` for active work
-4. Load story context: `stories/{story-id}-context.xml`
-5. Begin work using dev-story workflow
+1. Read this file (CLAUDE.md) - Platform-specific instructions
+2. Read AGENTS.md - Master governance and agent coordination
+3. Check `bmm-workflow-status.yaml` for current story
+4. Load `sprint-status.yaml` for active work
+5. Load story context: `stories/{story-id}-context.xml`
+6. Check authority hierarchy:
+   - ADR-039 (when created) for architecture decisions
+   - ADR-034 for project-centric model
+   - architecture.md (v3.0.0) for technical implementation
+   - new-fundamental-truths.md (v2.0.0) for strategic decisions
+7. Begin work using dev-story workflow
 
 ## DEVELOPMENT GUIDELINES -  THE RESEARCH USING INTERNET-BASED TOOLS OF MCP SERVERS ARE **NON-NEGOTIABLE**  (when these agents, tools uses, ai, llms, multimodality, endpoints, or any dependencies packages are arraised in the keywords - even you are dev agent, to start the session of context collecting you must at least make 3 successful and relevant call to online-based or pull official and relevant documents and guides to ensure following the 2026 patterns)
 

@@ -1,0 +1,338 @@
+# AI Integration Points
+# Generated: 2026-01-07
+# Scanner: Codebase Analysis Agent
+# Scope: AI agents, tools, permissions, providers
+
+agent_configuration:
+  location: src/lib/agent/
+  total_files: 60+
+  architecture: "Modular agent system with provider adapters, tools, and permissions"
+
+core_components:
+  factory:
+    - path: src/lib/agent/factory.ts
+      purpose: "Agent factory - creates configured agents"
+      lines: 450
+      responsibilities:
+        - "Provider adapter creation"
+        - "Tool registration and execution"
+        - "Prompt composition"
+        - "Agent lifecycle management"
+
+  providers:
+    location: src/lib/agent/providers/
+    adapters:
+      - anthropic-adapter.ts (Anthropic Claude)
+      - provider-adapter.ts (Base interface)
+      - openrouter-adapter.ts (OpenRouter - multiple providers)
+      - openai-compatible-adapter.ts (OpenAI-compatible APIs)
+      - gemini-adapter.ts (Google Gemini)
+
+    model_registry:
+      - path: src/lib/agent/providers/model-registry.ts
+        purpose: "Available AI models catalog"
+        models_tracked: 50+
+        providers_supported: 10+
+
+    credential_vault:
+      - path: src/lib/agent/providers/credential-vault.ts
+        purpose: "Encrypted API key storage"
+        encryption: "AES-256-GCM with PBKDF2 key derivation"
+        storage: "Dexie IndexedDB"
+        health_score: 10/10
+
+    validation:
+      - path: src/lib/agent/providers/agent-validation-service.ts
+        purpose: "Agent configuration validation"
+        validation_rules:
+          - "Model selection required"
+          - "Provider API key required"
+          - "Custom base URL validation (OpenAI Compatible)"
+          - "Custom model ID validation (OpenAI Compatible)"
+
+  tools:
+    location: src/lib/agent/tools/
+    total_tools: 11
+    tool_registry:
+      - read-file-tool.ts (Read file contents)
+      - write-file-tool.ts (Write/create files)
+      - list-files-tool.ts (Directory listing)
+      - execute-command-tool.ts (Shell command execution)
+      - execute-command-streaming.ts (Streaming command output)
+      - search-notes-tool.ts (RAG search in notes)
+      - process-pdf-tool.ts (PDF processing)
+      - process-url-tool.ts (URL content ingestion)
+      - process-image-tool.ts (Image understanding)
+      - synthesize-tool.ts (Knowledge synthesis)
+
+    tool_features:
+      - "Permission checking (workspace + trust level)"
+      - "Timeout protection (configurable per tool)"
+      - "Retry queue with exponential backoff"
+      - "Error handling and recovery"
+      - "Streaming output support (commands)"
+      - "Execution logging"
+
+    tool_facades:
+      location: src/lib/agent/facades/
+      facades:
+        - file-tools.ts (File operations abstraction)
+        - file-tools-impl.ts (File tools implementation)
+        - terminal-tools.ts (Terminal operations abstraction)
+        - terminal-tools-impl.ts (Terminal tools implementation)
+        - knowledge-tools.ts (Knowledge operations abstraction)
+        - knowledge-tools-impl.ts (Knowledge tools implementation)
+
+      purpose: "Abstract WebContainer/LocalFS operations for agents"
+      benefits:
+        - "Clean separation of concerns"
+        - "Testable interfaces"
+        - "Swappable implementations"
+
+  permissions:
+    tool_permission_manager:
+      - path: src/lib/agent/tool-permission-manager.ts
+        purpose: "Tool permission checking facade"
+        lines: 180
+        pattern: "Facade pattern over Zustand store"
+
+    workspace_permission_manager:
+      - path: src/lib/agent/workspace-permission-manager.ts
+        purpose: "Workspace-specific tool permissions"
+        lines: 220
+        features:
+          - "Agent availability checks per workspace"
+          - "Tool enablement checks per workspace"
+          - "Trust level validation (auto/prompt/block)"
+
+    permission_check:
+      - path: src/lib/agent/tools/permission-check.ts
+        purpose: "Unified permission checking for tools"
+        checks:
+          - "Agent available in workspace?"
+          - "Tool enabled for workspace?"
+          - "Trust level allows execution?"
+
+  hooks:
+    location: src/lib/agent/hooks/
+    hooks:
+      - use-agent-chat-with-tools.ts (Main agent chat hook)
+      - use-prompt-enhancer.ts (Prompt enhancement)
+
+workspace_integration:
+  agent_workspace_bindings:
+    definition: "Agents have workspace-specific availability and tool permissions"
+    implementation:
+      - "WorkspaceBinding[] on Agent entity"
+      - "isAvailable flag per workspace type"
+      - "uiVariant per workspace (full/compact/minimal)"
+      - "isDefault flag for default agents"
+
+    workspaces_supported:
+      - ide (Agent available in IDE)
+      - knowledge (Agent available in Knowledge)
+      - study (Agent available in Study)
+      - notes (Agent available in Notes)
+
+  tool_workspace_permissions:
+    definition: "Tools have workspace-scoped permissions"
+    implementation:
+      - "workspacePermissions object on AgentToolBinding"
+      - "Boolean flags per workspace (ide, knowledge, study, notes)"
+      - "isChecked by workspace permission manager"
+
+  domain_services:
+    location: src/domain/services/agent-workspace-utils.ts
+    purpose: "Pure functions for agent workspace operations"
+    functions:
+      - isAgentAvailableIn (Check if agent available in workspace)
+      - isAgentDefaultFor (Check if agent is default)
+      - getAgentsForWorkspace (Filter agents by workspace)
+      - getDefaultAgentForWorkspace (Find default agent)
+
+    benefits:
+      - "No circular dependencies (pure functions)"
+      - "Easier to test (no store mocking)"
+      - "Reusable across contexts"
+
+store_integration:
+  agent_store:
+    location: src/infrastructure/persistence/stores/agents/
+    pattern: "Slice-based Zustand store"
+    slices:
+      - agent-crud-slice.ts (CRUD operations)
+      - agent-selection-actions.ts (Selection actions)
+      - agent-selection-events.ts (Event emission)
+      - agent-selection-queries.ts (Query utilities)
+      - agent-selection-state.ts (Selection state)
+      - agent-selection-utils.ts (Utility functions)
+      - agent-validation-slice.ts (Validation logic)
+      - agent-workspace-bindings-slice.ts (Workspace bindings)
+
+    methods:
+      - "getAgentsForWorkspace(workspaceType)"
+      - "updateWorkspaceBinding(agentId, workspaceType, binding)"
+      - "isAgentAvailableInWorkspace(agentId, workspaceType)"
+
+  provider_store:
+    location: src/infrastructure/persistence/stores/providers/
+    pattern: "Slice-based Zustand store with encryption"
+    slices:
+      - provider-crud-slice.ts (Provider CRUD)
+      - provider-credentials-slice.ts (Encrypted API keys)
+      - provider-models-slice.ts (Model registry)
+      - provider-utils-slice.ts (Provider utilities)
+
+    methods:
+      - "addProvider(providerConfig)"
+      - "removeProvider(providerId)"
+      - "setCredential(providerId, apiKey)"
+      - "getCredential(providerId)"
+      - "fetchModels(providerId)"
+
+  permission_store:
+    location: src/infrastructure/persistence/stores/permissions/
+    pattern: "Zustand store with Dexie persistence"
+    store: tool-permission-store.ts
+
+    methods:
+      - "setTrustLevel(toolId, level)"
+      - "getTrustLevel(toolId)"
+      - "checkPermission(toolId)"
+
+    persistence:
+      - "Trust levels persist across browser sessions"
+      - "Session trust cleared on reload"
+      - "IndexedDB storage"
+
+ui_components:
+  agent_configuration:
+    - path: src/presentation/components/agent/AgentConfigDialog.tsx
+      lines: 1,089
+      severity: GOD_COMPONENT
+      features:
+        - "Basic config (name, description, provider, model)"
+        - "API key input with connection testing"
+        - "Workspace permissions editor"
+        - "Tool permissions editor"
+        - "Trust level manager"
+        - "Agent import/export"
+        - "Unsaved changes warning"
+
+    sub_components:
+      - AgentBasicConfig.tsx (323 lines)
+      - ApiKeyInputSection.tsx (185 lines)
+      - WorkspaceToolPermissionsConfig.tsx (340 lines)
+      - ToolPermissionsConfig.tsx (280 lines)
+      - AgentImportExport.tsx (175 lines)
+      - ToolTrustLevelManager.tsx (240 lines)
+      - WorkspacePermissionEditor.tsx (310 lines)
+      - AgentWorkspaceBindingConfig.tsx (290 lines)
+      - AgentCreationSuccess.tsx (180 lines)
+      - UnifiedAgentSelector.tsx (247 lines)
+      - AgentManager.tsx (285 lines)
+
+  hooks:
+    - useAgentFormState.ts (Form state + store subscriptions)
+    - useAgentFormValidation.ts (Zod schema validation)
+    - useAgentFormSubmission.ts (Save/update logic)
+    - useAgentFormActions.ts (Delete, import, export)
+    - useUnsavedChangesWarning.ts (Browser beforeunload)
+
+  approval_ui:
+    location: src/presentation/components/chat/
+    components:
+      - ApprovalOverlay.tsx (Tool approval dialog)
+      - BatchApprovalBar.tsx (Bulk approval)
+      - AutoApproveSettings.tsx (Approval configuration)
+      - ToolCallBadge.tsx (Tool indicator)
+
+agent_execution_flow:
+  1. User selects agent (UnifiedAgentSelector)
+  2. Agent config loaded (agent-selection-store)
+  3. Provider adapter created (factory.ts)
+  4. API key retrieved (credential-vault)
+  5. Tools registered (tool registry)
+  6. Permission checks (workspace + trust level)
+  7. User sends message (ChatPanel)
+  8. Agent processes message (use-agent-chat-with-tools)
+  9. Tools executed if needed (tool facades)
+  10. User approves tools (ApprovalOverlay)
+  11. Tool results returned to agent
+  12. Agent generates response
+  13. Response streamed to UI (StreamdownRenderer)
+
+special_features:
+  deep_thinking:
+    location: src/lib/agent/deep-think-hook.ts
+    purpose: "Reasoning mode for complex tasks"
+    implementation: "Special prompts + response parsing"
+
+  memory:
+    location: src/lib/agent/memory/
+    components:
+      - conversation-memory.ts (Conversation history)
+      - memory-index.ts (Memory vector index)
+      - insight-extractor.ts (Extract insights)
+
+  preferences:
+    location: src/lib/agent/preferences/
+    components:
+      - preference-tracker.ts (Track user preferences)
+      - user-profile.ts (User profile management)
+
+  multimodal:
+    location: src/lib/agent/message-builder.ts
+    purpose: "Multimodal message construction"
+
+  suggestions:
+    location: src/lib/agent/suggestion-engine.ts
+    purpose: "Generate action suggestions"
+
+critical_issues:
+  god_components:
+    - AgentConfigDialog.tsx (1,089 lines)
+      recommendation: "Split into focused sub-components"
+      epic_reference: "P1.1 - God Component Elimination"
+
+  circular_dependencies:
+    - agents-store.ts ↔ provider-store.ts (FIXED - now separate)
+    - Verification: "Check for direct imports between stores"
+
+  test_coverage:
+    - Agent system: 70% coverage
+    - Provider adapters: 60% coverage
+    - Tool execution: 80% coverage
+    - Permission system: 75% coverage
+
+architecture_compliance:
+  adr_025:
+    status: "COMPLIANT"
+    description: "Unified AI Service Design"
+    implementation: "Provider adapters, credential vault, model registry"
+
+  december_2025_patterns:
+    status: "COMPLIANT"
+    description: "Zustand best practices"
+    implementation: "Slice-based stores, event-driven, workspace-aware"
+
+  workspace_awareness:
+    status: "COMPLIANT"
+    description: "Workspace-specific agent availability"
+    implementation: "WorkspaceBinding + domain utilities"
+
+recommendations:
+  immediate:
+    - "Split AgentConfigDialog god component"
+    - "Improve test coverage to 80%+"
+    - "Add integration tests for agent execution"
+
+  medium_term:
+    - "Add agent analytics (usage tracking)"
+    - "Implement agent templates"
+    - "Add agent marketplace/community sharing"
+
+  long_term:
+    - "Multi-agent collaboration"
+    - "Agent chaining/workflows"
+    - "Custom agent creation wizard"

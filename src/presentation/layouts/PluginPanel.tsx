@@ -13,7 +13,7 @@
  * @created 2026-01-21
  */
 
- 
+
 import { X, GripHorizontal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useRef } from 'react';
@@ -263,8 +263,7 @@ export function PluginPanel({
   return (
     <div
       ref={panelRef}
-      className="h-full flex flex-col bg-background border border-border/30 plugin-panel"
-      style={{ width, height }}
+      className="h-full w-full flex flex-col bg-background border border-border/30 plugin-panel"
       tabIndex={0}
       role="region"
       aria-label={`${plugin.name} panel`}

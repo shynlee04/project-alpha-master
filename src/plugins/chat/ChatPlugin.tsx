@@ -79,8 +79,7 @@ function ChatComponent({ width, height }: PluginMainProps) {
 
   return (
     <div
-      className="h-full flex flex-col overflow-auto"
-      style={{ width, height }}
+      className="h-full w-full flex flex-col overflow-auto"
     >
       {/* Chat Header */}
       <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">

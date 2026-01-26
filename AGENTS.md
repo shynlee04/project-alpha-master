@@ -1,6 +1,6 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.6.0 | **Updated:** 2026-01-26T00:30+07:00 | **Health:** 45% (CC Remediation Required)
+> **Version:** 2.7.0 | **Updated:** 2026-01-26 | **Health:** 45% (CC Remediation Required) | **ADR Authority:** ADR-039 (Pending Approval)
 
 ---
 
@@ -330,16 +330,129 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | `_bmad-ext/orchestrator/escalation-protocol.md` | Failure handling | On failure |
 | `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
 | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
-| `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md` | **Master ADR for architecture** | Before any refactoring |
+| `ADR-039` | **Primary Architecture Authority** (Pending Approval) | Before any architecture work |
 | `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml` | Current sprint status | Check story assignments |
 
 ---
 
-## 🏛️ ADR-033: ARCHITECTURAL DECISIONS (PERMANENT - NEVER DEVIATE)
+## 🏛️ AUTHORITY HIERARCHY & GOVERNANCE STRUCTURE
 
-> **Source**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
-> **Status**: APPROVED - All decisions final
-> **Updated**: 2026-01-11
+> **Primary Architecture Authority**: ADR-039 (Pending Approval - to be created after core docs complete)
+> **Implementation Authority**: architecture.md (v3.0.0 - 100% aligned with fundamental truths)
+> **Core Truth Authority**: new-fundamental-truths.md (v2.0.0 - Foundation for all decisions)
+
+### Authority Hierarchy
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  ADR-039 (Primary Architecture Authority)             │
+│  Status: PENDING APPROVAL                            │
+│  Purpose: Unified architecture decisions              │
+│  Replaces: ADR-033, ADR-034, ADR-035 cascade       │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  architecture.md (v3.0.0)                          │
+│  Status: 100% Aligned                               │
+│  Purpose: Technical implementation specification        │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  Implementation Layer                                 │
+│  - prd.md (v2.0.0)                                  │
+│  - epics.md (v3.0.0)                                 │
+│  - ux-specification.md (v2.0.0)                       │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Agent Authority Flows
+
+```
+architect-ext → Architecture Design → ADR-039 Approval
+                            ↓
+                     architecture.md (v3.0.0)
+                            ↓
+dev-ext → Implementation → Code + Tests
+                            ↓
+                     Real-World Validation
+```
+
+### Document Authority Matrix
+
+| Document | Version | Status | Authority Level | When to Use |
+|----------|---------|--------|----------------|-------------|
+| **ADR-039** | - | Pending Approval | Tier 1 (Primary) | All architecture decisions |
+| **new-fundamental-truths.md** | v2.0.0 | Active | Tier 1 (Foundation) | All strategic decisions |
+| **architecture.md** | v3.0.0 | 100% Aligned | Tier 2 (Implementation) | Technical architecture |
+| **prd.md** | v2.0.0 | 100% Aligned | Tier 2 (Product) | Product requirements |
+| **epics.md** | v3.0.0 | 100% Aligned | Tier 2 (Planning) | Epic/story definitions |
+| **ux-specification.md** | v2.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements |
+| **AGENTS.md** | v2.7.0 | Active | Tier 2 (Governance) | Agent coordination |
+
+### Governance Files Hierarchy
+
+| File | Authority | Purpose | Update Frequency |
+|------|------------|---------|-----------------|
+| **AGENTS.md** | Master governance | Agent rules, authority structure | Every 3 stories |
+| **CLAUDE.md** | Platform-specific | Platform-specific instructions | Every session |
+| **LOOP_STATE.yaml** | Session state | Session tracking, delegations | Every state change |
+| **ARTIFACT_REGISTRY.yaml** | Document tracking | Artifact metadata, TTL | After artifact creation |
+
+### Consolidated Epic Authority Model
+
+**Single Authoritative Epic Per Phase**
+
+| Phase | Authoritative Epic | Status | Supersedes |
+|-------|-------------------|--------|------------|
+| **Phase 1A** | EPIC-CC-AR02AR03 (Plugin System) | 0% | EPIC-ARCH-02, EPIC-ARCH-03 |
+| **Phase 1B** | (To be defined) | Pending | N/A |
+| **Phase 2** | (To be defined) | Pending | N/A |
+| **Phase 3** | (To be defined) | Pending | N/A |
+
+**Epic De-Duplication Process**
+
+```
+1. Epic Draft → Analyze against fundamental truths
+2. Check for duplicate/similar epics
+3. Consolidate if overlap > 50%
+4. Assign single authoritative epic ID
+5. Archive duplicate definitions
+6. Update ADR-039 with consolidated model
+```
+
+**Phase-Based Progression**
+
+```
+Phase 1A (Non-AI Core):
+  - Terminal Plugin
+  - Monaco Plugin
+  - FileTree Plugin
+  - Preview Plugin
+  - Must complete → Phase 1B
+
+Phase 1B (BYOK + Notes):
+  - BYOK Infrastructure
+  - Notes Plugin
+  - Must complete → Phase 2
+
+Phase 2 (AI Agents):
+  - Chat cascade
+  - Agent orchestration
+  - Must complete → Phase 3
+
+Phase 3 (Advanced Patterns):
+  - Advanced agent workflows
+  - Performance optimization
+```
+
+---
+
+## 🏛️ ARCHITECTURE DECISIONS (Transition to ADR-039)
+
+> **Note**: All ADR-033/034/035 decisions will be consolidated into ADR-039
+> **ADR-039 Status**: PENDING APPROVAL (to be created after core docs alignment)
+
+**Key Decisions from ADR-033 (to be preserved in ADR-039):**
 
 ### Platform & Storage Decisions
 
@@ -666,7 +779,7 @@ EXCEPTIONAL DAYS:
 | **Team B Story** | CC-AR-03 (READY) |
 | **Sprint File** | `sprint-status-2026-01-26.yaml` |
 | **Workflow File** | `workflow-status-2026-01-26.yaml` |
-| **ADR** | ADR-034 (APPROVED) |
+| **ADR** | ADR-039 (Pending Approval) |
 | **TypeScript Errors** | 0 ✅ (All 115 errors resolved - 2026-01-25) |
 | **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE (Plugin system stub) |
 | **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md` |
@@ -689,17 +802,23 @@ EXCEPTIONAL DAYS:
 
 | What You Need | Where To Find It |
 |---------------|------------------|
+| **Primary Architecture Authority** | `ADR-039` (Pending Approval) |
+| **Architecture Specification** | `_bmad-output/planning-artifacts/architecture.md` (v3.0.0) |
+| **Fundamental Truths** | `docs/new-fundamental-truths.md` (v2.0.0) |
+| **Product Roadmap** | `_bmad-output/planning-artifacts/prd.md` (v2.0.0) |
+| **Epics & Stories** | `_bmad-output/planning-artifacts/epics.md` (v3.0.0) |
+| **UX Specification** | `_bmad-output/planning-artifacts/ux-specification.md` (v2.0.0) |
+| **Phase Roadmap** | `docs/the-3-phase-approach.md` |
 | Workflow Status | `bmm-workflow-status.yaml` |
 | Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
 | Story Index | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
-| Architecture (EN) | `_bmad-output/planning-artifacts/architecture.md` |
 | Architecture (VI - Educational) | `_bmad-output/planning-artifacts/architecture-core-principles-vi-2026-01-25.md` |
 | Architecture (VI - Social Media) | `_bmad-output/planning-artifacts/architecture-social-media-vi-2026-01-25.md` |
-| UX Specification | `_bmad-output/planning-artifacts/ux-specification.md` |
-| PRD | `_bmad-output/planning-artifacts/prd.md` |
-| Epics & Stories | `_bmad-output/planning-artifacts/epics.md` |
 | Standards | `agent-os/standards/` |
 | Governance Gates | `_bmad/modules/governance/checklists/` |
+| BMAD Framework | `_bmad-ext/constitution/` (v2.0.0) |
+| LOOP_STATE | `_bmad-ext/state/LOOP_STATE.yaml` |
+| ARTIFACT_REGISTRY | `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` |
 
 ---
 
@@ -863,9 +982,11 @@ Epic numbers are **MONOTONIC**:
 For detailed documentation:
 
 - **Full BMAD Framework**: `_bmad/FRAMEWORK.md`
-- **ADR Decisions**: `_bmad-output/planning-artifacts/architecture/adr/`
+- **ADR Decisions**: `_bmad-output/planning-artifacts/adr/` (ADR-033 archived, ADR-039 pending)
 - **Historical Content**: `_bmad-output/.archive/`
 - **Standards (Full)**: `agent-os/standards/`
+- **BMAD Constitution**: `_bmad-ext/constitution/` (v2.0.0)
+- **Analysis Reports**: `_bmad-output/analysis/` (all analysis findings)
 
 ---
 

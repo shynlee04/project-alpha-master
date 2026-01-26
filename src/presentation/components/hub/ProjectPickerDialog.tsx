@@ -156,19 +156,13 @@ export const ProjectPickerDialog: React.FC<ProjectPickerDialogProps> = ({
     // Update last opened timestamp
     useProjectStore.getState().updateLastOpened(project.id);
 
-    console.log('[ProjectPicker] Navigating to workspace:', targetWorkspace, 'with project:', project.id);
+    console.log('[ProjectPicker] Navigating to project-centric route:', project.id);
 
-    console.log('[ProjectPicker] Navigating to project:', project.id);
-
-    // ARCHITECT-FIX-2: Use SPA navigation instead of full page reload
-    // Determine target workspace based on project storage type
-    const navigateTarget = project.storageType === 'fsa' ? 'ide' : 'notes';
-
-    console.log('[ProjectPickerDialog] Target workspace:', navigateTarget, '| Project ID:', project.id);
-
-    // Use TanStack Router navigate() for proper SPA navigation
+    // Project-centric navigation: Always navigate to /$projectId
+    // Platform determines plugins, not workspace selection
+    // Per new-fundamental-truths.md Section 1.2
     navigate({
-      to: `/${navigateTarget}/$projectId`,
+      to: '/$projectId',
       params: { projectId: project.id },
     });
 
