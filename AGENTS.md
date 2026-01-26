@@ -4,6 +4,8 @@
 
 ---
 
+**DO NOT RUN FULL BUILD:** UNLESS  it is requested by the user, because the codebase is large and it is resource consuming
+
 ## 3-Step Validation Framework (NON-NEGOTIABLE)
 
 **Priority**: HIGHER than automated tests/tools

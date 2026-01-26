@@ -24,7 +24,7 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
-import { getPlatformContract, getPlatformInfoForLogging } from '@/infrastructure/filesystem/platform-contract';
+import { getPlatformInfoForLogging } from '@/infrastructure/filesystem/platform-contract';
 import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';

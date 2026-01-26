@@ -26,3 +26,8 @@ export type { AgentToolsPanelProps } from './AgentToolsPanel';
 
 export { SidebarSection } from './SidebarSection';
 export type { SidebarSectionProps } from './SidebarSection';
+
+// DEPRECATED: PluginSidebar replaced by CSS Grid PluginLayout (Phase 1)
+// Keeping export for backward compatibility until full migration
+export { PluginSidebar } from './PluginSidebar';
+export type { PluginSidebarProps } from './PluginSidebar';

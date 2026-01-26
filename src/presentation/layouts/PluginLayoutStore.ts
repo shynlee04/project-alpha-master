@@ -16,6 +16,7 @@
 import { create } from 'zustand';
 import { persist, type StorageValue } from 'zustand/middleware';
 import type { PluginId } from '@/domain/types/plugin-types';
+import { type WorkflowPreset, getPresetConfig } from './workflow-presets';
 // Import type { Breakpoint } from './useBreakpoint';
 
 // ============================================================================
@@ -134,6 +135,9 @@ interface PluginLayoutState {
   /** Current plugin for mobile single-view */
   currentPlugin: PluginId | null;
 
+  /** Current workflow preset (Phase 1: Fixed-ratio CSS Grid) */
+  currentPreset: WorkflowPreset;
+
   // ========================================================================
   // Actions
   // ========================================================================
@@ -173,6 +177,9 @@ interface PluginLayoutState {
 
   /** Set hydration completion flag (CC-AR-03 fix) */
   setHasHydrated: (value: boolean) => void;
+
+  /** Set workflow preset (Phase 1: Fixed-ratio CSS Grid) */
+  setPreset: (preset: WorkflowPreset) => void;
 }
 
 // ============================================================================
@@ -208,6 +215,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
       hasUserCustomized: false,
       breakpoint: 'desktop',
       currentPlugin: null,
+      currentPreset: 'default' as WorkflowPreset,
 
       // ========================================================================
       // Actions
@@ -469,14 +477,34 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
           };
         }),
 
-      /**
-       * Set hydration completion flag (CC-AR-03 fix)
-       *
-       * @param value - Whether hydration is complete
-       * @remarks
-       * Called by onRehydrateStorage callback when persist middleware finishes
-       */
+/**
+        * Set hydration completion flag (CC-AR-03 fix)
+        *
+        * @param value - Whether hydration is complete
+        * @remarks
+        * Called by onRehydrateStorage callback when persist middleware finishes
+        */
       setHasHydrated: (value) => set({ _hasHydrated: value }),
+
+      /**
+        * Set workflow preset (Phase 1: Fixed-ratio CSS Grid)
+        *
+        * @param preset - WorkflowPreset to apply
+        * @remarks
+        * - Updates activePlugins to match preset panels
+        * - Clears panelSizes (no longer used with fixed ratios)
+        * - Sets hasUserCustomized flag
+        */
+      setPreset: (preset) =>
+        set(() => {
+          const config = getPresetConfig(preset);
+          return {
+            currentPreset: preset,
+            activePlugins: config.panels,
+            hasUserCustomized: true,
+            panelSizes: {}, // Clear panel sizes - using fixed ratios now
+          };
+        }),
     }),
 
     // ========================================================================

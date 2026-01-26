@@ -74,7 +74,7 @@ export interface TreeNode {
  * - File selection with visual highlighting
  * - Keyboard navigation support
  */
-function FileTreeComponent({ width, height }: PluginMainProps) {
+function FileTreeComponent({ width: _width, height: _height }: PluginMainProps) {
   const { t } = useTranslation();
 
   // Get context from provider
@@ -257,11 +257,18 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
 
   /**
    * Render tree nodes recursively
+   * 
+   * BUG FIX: Look up fresh node objects from nodesMap instead of using
+   * stale references from parent.children array. When a child is toggled,
+   * the new node is in the Map, but parent.children still references the old object.
    */
   function renderTree(nodes: FileTreeNode[], depth: number = 0): React.JSX.Element[] {
     const items: React.JSX.Element[] = [];
 
-    for (const node of nodes) {
+    for (const nodeRef of nodes) {
+      // BUG FIX: Always get the FRESH node from the Map, not the stale child reference
+      const node = nodesMap.get(nodeRef.path) || nodeRef;
+      
       const isDirectory = node.kind === 'directory';
       const isExpanded = node.expanded;
       const isSelected = selectedPath === node.path;
@@ -269,6 +276,12 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
 
       // Calculate padding based on depth
       const padding = `${depth * 16}px`;
+
+      // BUG FIX (Bug 1): Get fresh children from Map for recursive rendering
+      // Use fallback to original child if Map lookup fails (defensive)
+      const freshChildren = isDirectory && isExpanded && node.children && node.children.length > 0
+        ? node.children.map(child => nodesMap.get(child.path) ?? child).filter((c): c is FileTreeNode => c !== undefined)
+        : [];
 
       items.push(
         <div key={node.path} style={{ paddingLeft: padding }}>
@@ -296,9 +309,9 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
              {!isDirectory && isDirty(node.path) && <span className="ml-2 text-orange-500 text-xs">●</span>}
            </div>
 
-          {/* Render children if directory is expanded */}
-          {isDirectory && isExpanded && node.children && node.children.length > 0 && (
-            <div>{renderTree(node.children, depth + 1)}</div>
+          {/* Render children if directory is expanded - using FRESH children from Map */}
+          {freshChildren.length > 0 && (
+            <div>{renderTree(freshChildren, depth + 1)}</div>
           )}
         </div>,
       );

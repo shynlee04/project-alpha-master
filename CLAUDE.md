@@ -3,6 +3,8 @@
 > **Version:** 2.8.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
 
 ---
+**DO NOT RUN FULL BUILD:** UNLESS  it is requested by the user, because the codebase is large and it is resource consuming
+
 
 ## 3-Step Validation Framework (NON-NEGOTIABLE)
 

@@ -202,8 +202,13 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
    * @remarks
    * EPIC-0.5-01 FIX: Builds hierarchy from flat file paths.
    * Gateway now returns full paths, store creates directory structure.
+   *
+   * BUG FIX: Preserves expandedPaths across reload to prevent state reset.
    */
   load: (entries) => {
+    // BUG FIX: Preserve existing expand state across reload
+    const { expandedPaths: existingExpandedPaths, selectedPath: existingSelectedPath } = get();
+    
     const nodes = new Map<string, FileTreeNode>();
     const rootPaths: string[] = [];
 
@@ -217,6 +222,8 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
         currentPath = currentPath ? `${currentPath}/${parts[i]}` : parts[i];
 
         if (!nodes.has(currentPath)) {
+          // BUG FIX: Restore expanded state from existing expandedPaths
+          const wasExpanded = existingExpandedPaths.has(currentPath);
           nodes.set(currentPath, {
             path: currentPath,
             name: parts[i],
@@ -224,7 +231,7 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
             size: 0,
             lastModified: 0,
             children: [],
-            expanded: false,
+            expanded: wasExpanded,
             level: i,
             selected: false,
           });
@@ -239,6 +246,7 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
       // Create the file node
       const fileName = parts[parts.length - 1];
       const fileLevel = parts.length - 1;
+      const isSelected = existingSelectedPath === entry.path;
       nodes.set(entry.path, {
         path: entry.path,
         name: fileName,
@@ -248,7 +256,7 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
         children: [],
         expanded: false,
         level: fileLevel,
-        selected: false,
+        selected: isSelected,
       });
 
       // If it's a root file (no directory - single segment path)
@@ -258,6 +266,8 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
     }
 
     // Second pass: Build parent-child relationships
+    // NOTE: Children are stored as path references, not object references
+    // Rendering must look up fresh objects from the Map
     for (const [path, node] of nodes) {
       if (path.includes('/')) {
         const parentPath = path.split('/').slice(0, -1).join('/');
@@ -279,9 +289,21 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
       }
     }
 
+    // BUG FIX (Bug 2): Third pass - Ensure all expanded paths have their nodes marked expanded
+    // This is a defensive fix to ensure expandedPaths Set and node.expanded flags stay in sync
+    for (const expandedPath of existingExpandedPaths) {
+      const node = nodes.get(expandedPath);
+      if (node && node.kind === 'directory') {
+        node.expanded = true;
+      }
+    }
+
+    // BUG FIX: Preserve expandedPaths and selectedPath across reload
     set({
       nodes,
       rootPaths,
+      expandedPaths: existingExpandedPaths,
+      selectedPath: existingSelectedPath,
       loading: false,
       error: null,
     });
@@ -343,27 +365,34 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
    *
    * @remarks
    * Clears previous selection, marks new file as selected.
+   * BUG FIX: Use immutable pattern - create new Map FIRST, then modify.
+   * This preserves expandedPaths and prevents state inconsistency.
    */
   selectFile: (path) => {
-    const { nodes, selectedPath } = get();
+    const { nodes, selectedPath, expandedPaths } = get();
 
-    // Clear previous selection
-    if (selectedPath && nodes.has(selectedPath)) {
-      const prevNode = nodes.get(selectedPath);
+    // BUG FIX: Create new Map FIRST (immutable pattern)
+    const newNodes = new Map(nodes);
+
+    // Clear previous selection (on the NEW map)
+    if (selectedPath && newNodes.has(selectedPath)) {
+      const prevNode = newNodes.get(selectedPath);
       if (prevNode) {
-        nodes.set(selectedPath, { ...prevNode, selected: false });
+        newNodes.set(selectedPath, { ...prevNode, selected: false });
       }
     }
 
-    // Set new selection
-    const newNode = nodes.get(path);
+    // Set new selection (on the NEW map)
+    const newNode = newNodes.get(path);
     if (newNode) {
-      nodes.set(path, { ...newNode, selected: true });
+      newNodes.set(path, { ...newNode, selected: true });
     }
 
+    // BUG FIX: Explicitly preserve expandedPaths to prevent state reset
     set({
-      nodes: new Map(nodes),
+      nodes: newNodes,
       selectedPath: path,
+      expandedPaths, // Explicitly preserve - critical for Bug 2 fix
     });
   },
 

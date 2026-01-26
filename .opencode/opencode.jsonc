@@ -116,23 +116,23 @@
       }
     },
     "explore": {
-      "description": "To run parallel for code-base investigation",
-      "mode": "all",
+      "description": "not-in-service",
+      "mode": "primary",
       "hidden": true,
       "model": "minimax/MiniMax-M2.1",
       "tools": {
-        "write": true,
+        "write": false,
         "edit": false,
         "bash": false,
-        "list": true,
-        "mkdir": true,
+        "list": false,
+        "mkdir": false,
         "rm": false,
-        "mv": true,
-        "cp": true,
-        "glob": true,
-        "grep": true,
-        "read": true,
-        "task": true,
+        "mv": false,
+        "cp": false,
+        "glob": false,
+        "grep": false,
+        "read": false,
+        "task": false,
       }
     },
     // === EXTENSION AGENTS (can be primary or subagent) ===
@@ -143,9 +143,9 @@
       "prompt": "{file:agent/dev-ext.md}",
       "maxSteps": 50,
       "tools": {
-        "write": true,
-        "edit": true,
-        "bash": true,
+        "write": false,
+        "edit": false,
+        "bash": false,
         "glob": true,
         "grep": true,
         "read": true

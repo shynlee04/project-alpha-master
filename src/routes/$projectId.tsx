@@ -23,19 +23,18 @@
  */
 
 import { useEffect } from 'react';
-import { createFileRoute, redirect, useLocation } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 import { fromRecord } from '@/infrastructure/persistence/stores/project/project-crud-slice';
 import { ProjectContextProvider } from '@/infrastructure/context/project-context';
-// TEMPORARY: Bypassing PluginLayout - import plugins directly
-// import { PluginLayout } from '@/presentation/layouts/PluginLayout';
-import { fileTreePlugin } from '@/plugins/filetree';
-import { monacoPlugin } from '@/plugins/monaco';
+// Phase 1: PluginLayout with CSS Grid (replaces PluginSidebar)
+import { PluginLayout } from '@/presentation/layouts/PluginLayout';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
-import { getDefaultPlugins, getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
+import { getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+import { getPresetConfig } from '@/presentation/layouts/workflow-presets';
 
 // ============================================================================
 // Route Definition
@@ -103,13 +102,20 @@ function UnifiedProjectRoute() {
   console.log('[UnifiedProjectRoute] Rendering:', { projectId, hasHydrated, storageType: project?.storageType });
 
   // Initialize layout store with platform-appropriate defaults
-  // Chỉ khởi tạo mặc định nếu người dùng chưa tùy chỉnh
+  // Phase 1: Use workflow presets instead of individual plugins
   useEffect(() => {
-    if (layoutStore.activePlugins.length === 0) {
-      const defaultPlugins = getDefaultPlugins(platform, project);
-      const defaultMode = getDefaultLayoutMode(platform);
-      console.log('[UnifiedProjectRoute] Initializing defaults:', { defaultPlugins, defaultMode });
-      layoutStore.initializeDefaults(defaultPlugins, defaultMode);
+    // Only initialize if user hasn't customized AND store has no active plugins
+    if (!layoutStore.hasUserCustomized && layoutStore.activePlugins.length === 0) {
+      const defaultPreset = layoutStore.currentPreset || 'default';
+      const presetConfig = getPresetConfig(defaultPreset);
+
+      console.log('[UnifiedProjectRoute] Initializing with preset:', {
+        preset: defaultPreset,
+        panels: presetConfig.panels,
+      });
+
+      // Use preset's panels as default plugins
+      layoutStore.initializeDefaults(presetConfig.panels, getDefaultLayoutMode(platform));
     }
   }, [project.id]);
 
@@ -124,20 +130,15 @@ function UnifiedProjectRoute() {
     );
   }
 
-  // TEMPORARY: Direct FileTree render to verify core data pipeline
-  // This bypasses the broken PluginLayout to prove:
-  // Project → Handle Persistence → Gateway → FileTree works
+  // Phase 1: CSS Grid Layout with Fixed-Ratio Presets
+  // PluginLayout now includes Chat, FileTree, and other panels in CSS Grid
+  // No separate PluginSidebar needed - all panels are in the grid
   return (
     <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
-      <div className="h-full w-full flex">
-        {/* FileTree sidebar - always loaded plugin */}
-        <div className="w-64 h-full border-r border-border bg-card overflow-auto">
-          <fileTreePlugin.MainComponent width={256} height={window.innerHeight} />
-        </div>
-
-        {/* Monaco editor main area */}
-        <div className="flex-1 h-full overflow-hidden">
-          <monacoPlugin.MainComponent width={window.innerWidth - 256} height={window.innerHeight} />
+      <div className="h-full w-full flex flex-col">
+        {/* Phase 1: PluginLayout with CSS Grid - panels determined by preset */}
+        <div className="flex-1 overflow-hidden">
+          <PluginLayout />
         </div>
       </div>
     </ProjectContextProvider>

@@ -49,7 +49,7 @@ import { AgentChatPanel } from '@/presentation/components/ide/AgentChatPanel';
  * - Workspace-aware system prompts
  * - Multi-agent support
  */
-function ChatComponent({ width, height }: PluginMainProps) {
+function ChatComponent(_props: PluginMainProps) {
   const { t } = useTranslation();
 
   // Get context from provider

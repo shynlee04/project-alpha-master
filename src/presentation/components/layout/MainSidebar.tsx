@@ -17,7 +17,6 @@ import { useNavigate, useLocation } from '@tanstack/react-router';
 import {
   Home,
   Folder,
-  Code,
   NotebookPen,
   // DEFERRED per ADR-033: Knowledge and Study workspace icons
   // BookOpen,
