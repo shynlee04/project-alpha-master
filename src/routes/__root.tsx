@@ -1,4 +1,4 @@
-import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { LocaleProvider } from '../i18n/LocaleProvider'
 import { AppErrorBoundary } from '@/presentation/components/common/AppErrorBoundary'
 import { AppInitializer } from '@/presentation/components/common/AppInitializer'
@@ -15,11 +15,8 @@ import { NotificationPermissionRequester } from '@/presentation/components/notif
 import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
 import { useCommandPalette } from '@/hooks/useCommandPalette'
 
-// UX-GLOBAL-UI: New Global Layout Components
-import { GlobalHeader } from '@/presentation/components/layout/GlobalHeader'
-import { MainSidebar } from '@/presentation/components/layout/MainSidebar'
-import { Breadcrumbs } from '@/presentation/components/layout/Breadcrumbs'
-import { SystemRail } from '@/presentation/components/layout/SystemRail'
+// UX-GLOBAL-UI: Project-aware layout (hides MainSidebar on project routes)
+import { ProjectAwareLayout } from '@/presentation/components/layout/ProjectAwareLayout'
 
 import appCss from '../styles.css?url'
 
@@ -93,30 +90,7 @@ export const Route = createRootRoute({
                       <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
                         <AppErrorBoundary>
                           {/* UX-GLOBAL-UI: New Global Layout Structure */}
-                          <div className="h-screen flex flex-col bg-canvas">
-                            {/* Fixed Header - Always visible at top */}
-                            <GlobalHeader />
-
-                            <div className="flex flex-1 overflow-hidden">
-                              {/* Collapsible Sidebar - Desktop: fixed, Mobile: overlay */}
-                              <MainSidebar />
-
-                              {/* Main Content Area */}
-                              <main className="flex-1 flex flex-col overflow-hidden">
-                                {/* Breadcrumbs - Navigation context */}
-                                <Breadcrumbs />
-
-                                {/* Page Content - Outlet renders child routes */}
-                                {/* pb-8 accounts for fixed SystemRail height (32px = h-8) */}
-                                <div className="flex-1 overflow-auto pb-8">
-                                  <Outlet />
-                                </div>
-                              </main>
-                            </div>
-
-                            {/* Fixed System Rail - Bottom status bar with terminal drawer */}
-                            <SystemRail />
-                          </div>
+                          <ProjectAwareLayout />
 
                           {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
                           {/* <OfflineIndicator /> */}

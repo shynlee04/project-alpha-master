@@ -84,20 +84,23 @@ export const Route = createFileRoute('/$projectId')({
  *
  * Renders unified project route with ProjectContextProvider and PluginLayout.
  * Uses platform-first defaults for plugin initialization.
- * Sử dụng mặc định ưu tiên nền tảng để khởi tạo plugin.
  */
 function UnifiedProjectRoute() {
   const { projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
   const layoutStore = usePluginLayoutStore();
   const platform = getPlatformContract();
-  const location = useLocation();
-  const fsaHandle = (location.state as { fsaHandle?: FileSystemDirectoryHandle | null } | undefined)?.fsaHandle ?? null;
+
+  // CRITICAL FIX: FileSystemDirectoryHandle is NOT serializable
+  // It cannot be passed through router state (becomes null after navigation)
+  // The handle will be restored from IndexedDB by ProjectContextProvider
+  // See: EPIC-0 Section 12.2 FLAW-01
+  const fsaHandle = null; // Let context restore from persistence
 
   // CC-AR-03: Check hydration status before rendering layout
   const hasHydrated = usePluginLayoutStore((s) => s._hasHydrated);
 
-  console.log('[UnifiedProjectRoute] Rendering with:', { projectId, project, platform, hasHydrated });
+  console.log('[UnifiedProjectRoute] Rendering:', { projectId, hasHydrated, storageType: project?.storageType });
 
   // Initialize layout store with platform-appropriate defaults
   // Chỉ khởi tạo mặc định nếu người dùng chưa tùy chỉnh

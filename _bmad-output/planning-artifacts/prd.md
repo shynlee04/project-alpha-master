@@ -1,5 +1,5 @@
 ---
-version: 2.0.0
+version: 2.1.0
 generated: 2026-01-26T00:00:00+07:00
 updated: 2026-01-26T00:00:00+07:00
 agent: architect-ext
@@ -16,7 +16,7 @@ stepsCompleted: [phase-1-research, phase-2-analysis, phase-3-synthesis, phase-1.
 > - **ADR-035**: Architecture Standardization v2 (Chrome 122+/129+ requirements)
 
 ## Document Control
-- **Version:** 2.0.0 (100% Aligned with new-fundamental-truths.md v2.0.0)
+- **Version:** 2.1.0 (100% Aligned with new-fundamental-truths.md v2.0.0 + EPIC-0 Learnings)
 - **Generated:** 2026-01-26
 - **Updated:** 2026-01-26
 - **Status:** Draft - Pending Review
@@ -240,6 +240,34 @@ Via-Gent v2.0.0 development follows a phased approach to ensure systematic imple
 - Platform detection accuracy 100%
 - Plugin load time < 500ms
 - All Phase 1A stories complete
+
+### Phase 1A Plugin Requirements (Updated from EPIC-0 Learnings)
+
+> **Source:** EPIC-0 implementation learnings | **Updated:** 2026-01-26
+
+#### FileTree Plugin Requirements
+
+1. **Hierarchical Display**: Must show folders with nested children, NOT flat file list
+2. **Event Subscription**: Must subscribe to FILE_CREATED, FILE_UPDATED, FILE_DELETED events
+3. **Location**: Renders in SIDEBAR TAB, not main panel area
+4. **Always Loaded**: Part of immediate loading strategy (P0)
+
+#### Monaco Plugin Requirements
+
+1. **Auto-Save**: Debounced save (500ms) on content change
+2. **Event Subscription**: Subscribe to FILE_UPDATED for external changes
+3. **Event Emission**: Emit FILE_SAVED after successful write
+4. **Dirty State**: Track unsaved changes with visual indicator
+5. **Location**: Main panel area (lazy loaded)
+
+#### EventBus Requirements
+
+1. **File Events**: FILE_CREATED, FILE_UPDATED, FILE_DELETED, FILE_MOVED, FILE_RENAMED
+2. **Singleton**: Single EventBus instance per project
+3. **Type Safety**: Typed event payloads
+4. **CRUD Integration**: All storage gateway operations emit events
+
+> **📋 Reference:** EPIC-0 implementation, [new-fundamental-truths.md Section 3] Plugin Architecture
 
 ### Phase 1B: BYOK & Notes Features
 
@@ -925,6 +953,52 @@ class StorageGatewayFactory {
 
 > **📋 Reference:** [new-fundamental-truths.md Section 8] State Management and Persistence, [ADR-033 D2-D3] Storage Layer Specification
 
+### Storage Gateway Contract (EPIC-0 Fix)
+
+> **Source:** EPIC-0 implementation learnings | **Updated:** 2026-01-26
+
+#### List Pattern Normalization
+
+The `list()` method must normalize path inputs to ensure consistent recursive file discovery:
+
+| Input | Output Pattern | Behavior |
+|-------|---------------|----------|
+| `'.'` | `'**/*'` | Recursive from root |
+| `''` | `'**/*'` | Recursive from root |
+| `'src'` | `'src/**/*'` | Recursive from src folder |
+
+#### Return Format
+
+```typescript
+interface FileEntry {
+  path: string;                    // Relative path from project root
+  kind: 'file' | 'directory';      // BOTH types required
+  size: number;                    // File size in bytes (0 for directories)
+  lastModified: number;            // Unix timestamp
+}
+```
+
+**Critical Requirements:**
+- `list()` MUST return both files AND directories
+- FileTree needs directories for hierarchical display
+- Empty directories MUST be included
+- Path normalization handles leading/trailing slashes
+
+#### Event Emission Pattern
+
+All StorageGateway CRUD operations MUST emit corresponding events:
+
+```typescript
+// After successful write
+eventBus.emit('FILE_CREATED', { path, projectId });
+eventBus.emit('FILE_UPDATED', { path, projectId });
+
+// After successful delete
+eventBus.emit('FILE_DELETED', { path, projectId });
+```
+
+> **📋 Reference:** EPIC-0 implementation, [new-fundamental-truths.md Section 8] Persistence
+
 **Chrome Version Requirements:**
 | Feature | Minimum Chrome Version | Notes |
 |---------|----------------------|-------|
@@ -1502,10 +1576,11 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 ## Document Control
 
 | Version | Date | Changes | Author |
-|----------|------|---------|---------|
+|----------|------|---------|---------
 | **1.0.0** | 2026-01-07 | Initial draft (workspace-centric) |
 | **1.1.0** | 2026-01-22 | Updated with ADR references, corrected completion claims |
 | **2.0.0** | 2026-01-26 | **Major Update:** 100% alignment with new-fundamental-truths.md v2.0.0, 3-phase structure, project-centric architecture, plugin system, TanStack AI SDK, agent orchestrator, chat cascade, thread management, advanced patterns |
+| **2.1.0** | 2026-01-26 | **EPIC-0 Learnings Update:** Added Phase 1A Plugin Requirements (FileTree, Monaco, EventBus), Storage Gateway Contract (list pattern normalization, FileEntry return format, event emission pattern) | architect-ext |
 | | | Changes in v2.0.0: |
 | | | 1. ✅ Replaced workspace-centric architecture with project-centric model |
 | | | 2. ✅ Updated route structure to single `/$projectId` |
@@ -1589,9 +1664,9 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 
 ---
 
-**Document Version:** 2.0.0
-**Status:** DRAFT - Pending Review
-**Alignment:** 100% with new-fundamental-truths.md v2.0.0
+**Document Version:** 2.1.0
+**Status:** DRAFT - Updated with EPIC-0 Learnings
+**Alignment:** 100% with new-fundamental-truths.md v2.0.0 + EPIC-0 learnings
 **Total Analysis Time:** 90 minutes (timebox met)
 **Generating Agent:** Architect-Ext (BMAD Framework)
 **Next Action:** Submit to governance committee for approval

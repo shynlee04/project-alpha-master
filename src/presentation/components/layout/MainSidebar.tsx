@@ -132,7 +132,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   const { resolvedTheme, setTheme } = useTheme();
   const { locale, setLocale } = useLocalePreference();
   const [mounted, setMounted] = React.useState(false);
-  
+
   // Get recent projects (limit 5)
   const recentProjects = useRecentProjects(5);
 
@@ -191,7 +191,8 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   };
 
   const handleProjectClick = (projectId: string) => {
-    navigate({ to: `/workspace/${projectId}` });
+    // FIXED: Navigate to /$projectId, not /workspace/$projectId
+    navigate({ to: '/$projectId', params: { projectId } });
     if (sidebarMobileOpen) setMobileMenuOpen(false);
   };
 
@@ -208,12 +209,12 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         className={cn(navItemVariants({ active: isActive, collapsed: isCollapsed, mobile: isMobile }))}
         title={isCollapsed ? item.label : undefined}
       >
-        <Icon 
-          size={isMobile ? 24 : 20} 
+        <Icon
+          size={isMobile ? 24 : 20}
           className={cn(
             'shrink-0 transition-colors',
             isActive ? 'text-orange-500' : 'text-zinc-400 group-hover:text-zinc-50'
-          )} 
+          )}
         />
         {!isCollapsed && (
           <TruncatedText text={item.label} className="truncate" noTooltip />
@@ -225,7 +226,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   // Recent projects section
   const renderRecentProjects = (isMobile: boolean = false) => {
     if (recentProjects.length === 0) return null;
-    
+
     const isCollapsed = !isMobile && sidebarCollapsed;
     if (isCollapsed) return null;
 
@@ -253,25 +254,25 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   // Bottom pinned section (Settings + Collapse toggle)
   const renderBottomSection = (isMobile: boolean = false) => {
     const isCollapsed = !isMobile && sidebarCollapsed;
-    
+
     return (
       <div className="border-t-2 border-zinc-700 bg-zinc-900 p-2 space-y-2">
         {/* Settings */}
         <div
           onClick={() => handleNavigation('/settings', 'settings')}
-          className={cn(navItemVariants({ 
-            active: location.pathname === '/settings', 
-            collapsed: isCollapsed, 
-            mobile: isMobile 
+          className={cn(navItemVariants({
+            active: location.pathname === '/settings',
+            collapsed: isCollapsed,
+            mobile: isMobile
           }))}
           title={isCollapsed ? t('global.sidebar.settings') : undefined}
         >
-          <Settings 
-            size={isMobile ? 24 : 20} 
+          <Settings
+            size={isMobile ? 24 : 20}
             className={cn(
               'shrink-0 transition-colors',
               location.pathname === '/settings' ? 'text-orange-500' : 'text-zinc-400 group-hover:text-zinc-50'
-            )} 
+            )}
           />
           {!isCollapsed && (
             <span className="truncate">{t('global.sidebar.settings')}</span>
@@ -322,15 +323,15 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
   return (
     <>
       {/* Mobile Backdrop */}
-      <div 
-        className={backdropVariants({ open: sidebarMobileOpen })} 
-        onClick={() => setMobileMenuOpen(false)} 
+      <div
+        className={backdropVariants({ open: sidebarMobileOpen })}
+        onClick={() => setMobileMenuOpen(false)}
       />
 
       {/* Mobile Sidebar */}
       <aside className={cn(
-        mobileSidebarVariants({ open: sidebarMobileOpen }), 
-        'md:hidden flex flex-col', 
+        mobileSidebarVariants({ open: sidebarMobileOpen }),
+        'md:hidden flex flex-col',
         className
       )}>
         {/* Mobile Header */}
@@ -352,7 +353,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         {/* Mobile Navigation */}
         <nav className="flex-1 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => renderNavItem(item, true))}
-          
+
           {/* Recent Projects (mobile) */}
           {renderRecentProjects(true)}
         </nav>
@@ -363,8 +364,8 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
 
       {/* Desktop Sidebar */}
       <aside className={cn(
-        sidebarVariants({ collapsed: sidebarCollapsed }), 
-        'hidden md:flex flex-col', 
+        sidebarVariants({ collapsed: sidebarCollapsed }),
+        'hidden md:flex flex-col',
         className
       )}>
         {/* Desktop Header */}
@@ -372,13 +373,13 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           'flex items-center h-16 border-b-2 border-zinc-700 transition-all duration-200',
           sidebarCollapsed ? 'justify-center px-0' : 'px-4'
         )}>
-          <img 
-            src="/via-gent-logo.svg" 
-            alt="Via-gent" 
+          <img
+            src="/via-gent-logo.svg"
+            alt="Via-gent"
             className={cn(
               'transition-all duration-200',
               sidebarCollapsed ? 'w-8 h-8' : 'w-8 h-8'
-            )} 
+            )}
           />
           {!sidebarCollapsed && (
             <span className="ml-3 font-bold font-pixel text-xl tracking-tight text-zinc-50 truncate">
@@ -390,7 +391,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         {/* Desktop Navigation */}
         <nav className="flex-1 py-4 space-y-1 overflow-y-auto scrollbar-thin">
           {navItems.map((item) => renderNavItem(item, false))}
-          
+
           {/* Recent Projects section */}
           {renderRecentProjects(false)}
         </nav>

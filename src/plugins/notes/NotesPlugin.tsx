@@ -14,9 +14,10 @@
  * @created 2026-01-21
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FileText, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 // Plugin system
 import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
@@ -26,6 +27,9 @@ import { useProjectContext } from '@/infrastructure/context/project-context';
 
 // NoteEditor (facade pattern - keep in original location)
 import { NoteEditor } from '@/presentation/components/notes/NoteEditor';
+
+// EPIC-0.5-02: File event bus for reactive updates
+import { useFileEventBus } from '@/infrastructure/events/file-event-bus';
 
 // ============================================================================
 // Main Notes Plugin Component
@@ -42,18 +46,16 @@ import { NoteEditor } from '@/presentation/components/notes/NoteEditor';
  * Uses gateway for file operations.
  * Simplified version for POC - wraps NoteEditor with storage abstraction.
  *
- * Features:
- * - Display BlockNote editor with 16 custom block types
- * - Load/save content from FSA or IndexedDB
- * - Detect external file changes (FSA mode only)
- * - Auto-save with debounce (handled by NoteEditor)
- */
-function NotesComponent({ width, height }: PluginMainProps) {
+ * Features:\n * - Display BlockNote editor with 16 custom block types\n * - Load/save content from FSA or IndexedDB\n * - Detect external file changes (FSA mode only)\n * - Auto-save with debounce (handled by NoteEditor)\n * - EPIC-0.5-02: Subscribe to file events for cross-plugin sync\n */
+function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
   const { t } = useTranslation();
 
   // Get context from provider
   const projectContext = useProjectContext();
   const { project, gateway } = projectContext;
+
+  // EPIC-0.5-02: External update notification state
+  const [externalUpdatePath, setExternalUpdatePath] = useState<string | null>(null);
 
   // ============================================================================
   // Storage Mode Detection
@@ -73,6 +75,39 @@ function NotesComponent({ width, height }: PluginMainProps) {
       return project.id;
     }
   }, [project]);
+
+  // ============================================================================
+  // EPIC-0.5-02: File Event Subscription
+  // ============================================================================
+
+  // Subscribe to file update events for cross-plugin synchronization
+  useEffect(() => {
+    if (!noteId) return;
+
+    const unsubscribe = useFileEventBus({
+      eventName: 'file:updated',
+      projectId: projectContext.projectId,
+      handler: (event) => {
+        // Only process events for the current note file
+        if (event.path === noteId || event.path.endsWith('note.md')) {
+          // Skip if the event source is 'user' (came from this plugin)
+          if (event.source === 'user') return;
+
+          console.log('[NotesPlugin] External FILE_UPDATED detected:', event.path);
+          setExternalUpdatePath(event.path);
+
+          // Show toast notification
+          toast.info('Note was updated externally', {
+            description: 'Reload the editor to see changes',
+          });
+        }
+      },
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [noteId, projectContext.projectId]);
 
   // ============================================================================
   // Render States
@@ -110,17 +145,21 @@ function NotesComponent({ width, height }: PluginMainProps) {
       className="h-full w-full flex flex-col overflow-auto"
     >
       {/* Notes Header */}
-      <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <FileText size={16} className="text-muted-foreground/70" />
-          <span className="font-semibold">
-            {project.storageType === 'fsa' ? 'note.md' : project.name}
-          </span>
+        <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <FileText size={16} className="text-muted-foreground/70" />
+            <span className="font-semibold">
+              {project.storageType === 'fsa' ? 'note.md' : project.name}
+            </span>
+            {/* EPIC-0.5-02: External update indicator */}
+            {externalUpdatePath && (
+              <span className="text-orange-500 text-[10px]">● external update</span>
+            )}
+          </div>
+          <div className="text-xs text-muted-foreground/70">
+            {project.storageType === 'fsa' ? 'FSA Mode' : 'IndexedDB Mode'}
+          </div>
         </div>
-        <div className="text-xs text-muted-foreground/70">
-          {project.storageType === 'fsa' ? 'FSA Mode' : 'IndexedDB Mode'}
-        </div>
-      </div>
 
       {/* NoteEditor - Facade Pattern */}
       {/* NoteEditor handles its own persistence, AI features, and all 16 block types */}

@@ -20,8 +20,9 @@
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Code2, AlertCircle } from 'lucide-react';
+import { Code2, AlertCircle, RotateCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 // Monaco Editor (CC-AR-05: Real Monaco integration)
 import Editor from '@monaco-editor/react';
@@ -34,6 +35,12 @@ import { useProjectContext } from '@/infrastructure/context/project-context';
 
 // Event bus for file open events (CC-AR-05)
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+
+// EPIC-0.5-02: File event bus for reactive updates
+import { useFileEventBus } from '@/infrastructure/events/file-event-bus';
+
+// EPIC-0.5-03: Debounced save hook
+import { useDebouncedSave } from '@/infrastructure/hooks/useDebouncedSave';
 
 // ============================================================================
 // Main Monaco Plugin Component
@@ -57,12 +64,12 @@ import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
  * - Tab interface for multiple open files
  * - Language detection based on file extension
  */
-function MonacoComponent({ width, height }: PluginMainProps) {
+function MonacoComponent({ width: _width, height: _height }: PluginMainProps) {
   const { t } = useTranslation();
 
   // Get context from provider
   const projectContext = useProjectContext();
-  const { gateway, saveFile } = projectContext;
+  const { gateway, saveFile, markDirty, markClean } = projectContext;
 
   // Local state for Monaco-specific UI
   const [activePath, setActivePath] = useState<string | null>(null);
@@ -71,6 +78,9 @@ function MonacoComponent({ width, height }: PluginMainProps) {
   const [error, setError] = useState<string | null>(null);
   const [isModified, setIsModified] = useState(false);
   const [language, setLanguage] = useState<string>('plaintext');
+
+  // EPIC-0.5-03: Save status for visual feedback
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   // ============================================================================
   // Language Detection (CC-AR-05)
@@ -104,11 +114,50 @@ function MonacoComponent({ width, height }: PluginMainProps) {
   }, []);
 
   // ============================================================================
+  // EPIC-0.5-03: Auto-Save Hook
+  // ========================================================================
+
+  // Debounced save hook - triggers 500ms after content changes
+  const debouncedSave = useDebouncedSave(
+    async (encoded: Uint8Array) => {
+      if (!activePath) throw new Error('No active file');
+
+      await gateway.write(activePath, encoded);
+
+      // Mark file as clean after save completes
+      markClean(activePath);
+    },
+    activePath || '',
+    projectContext.projectId,
+    {
+      debounceMs: 500,
+      onSaveStart: () => setSaveStatus('saving'),
+      onSaveComplete: () => setSaveStatus('saved'),
+      onSaveError: (error) => {
+        setError(`Auto-save failed: ${error.message}`);
+        setSaveStatus('idle');
+      },
+    }
+  );
+
+  // Auto-save on content change (debounced, 500ms)
+  useEffect(() => {
+    if (activePath && content && !isLoading) {
+      debouncedSave(content);
+      markDirty(activePath); // Mark dirty immediately on change
+
+      // Reset saved status after 2 seconds
+      const timer = setTimeout(() => setSaveStatus('idle'), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [content, activePath, debouncedSave, markDirty, isLoading]);
+
+  // ============================================================================
   // Actions
   // ============================================================================
 
   /**
-   * Save file content to storage
+   * Save file content to storage (manual Ctrl+S)
    */
   const handleSave = useCallback(async () => {
     if (!gateway || !activePath) {
@@ -116,14 +165,23 @@ function MonacoComponent({ width, height }: PluginMainProps) {
     }
 
     try {
-      await saveFile(activePath, content); // Use ProjectContext.saveFile
+      // Immediate save (bypasses debounce)
+      setSaveStatus('saving');
+      await saveFile(activePath, content);
       setIsModified(false);
-      console.log('[MonacoPlugin] Saved file:', activePath);
+      markClean(activePath); // Mark clean after manual save
+      setSaveStatus('saved');
+
+      // Reset saved status after 2 seconds
+      setTimeout(() => setSaveStatus('idle'), 2000);
+
+      console.log('[MonacoPlugin] Saved file (manual):', activePath);
     } catch (err) {
       setError(`Failed to save file: ${err instanceof Error ? err.message : 'Unknown error'}`);
       console.error('[MonacoPlugin] Error saving file:', err);
+      setSaveStatus('idle');
     }
-  }, [gateway, activePath, content, saveFile]);
+  }, [gateway, activePath, content, saveFile, markClean]);
 
   // ============================================================================
   // Effects
@@ -177,6 +235,44 @@ function MonacoComponent({ width, height }: PluginMainProps) {
       unsubscribe();
     };
   }, []);
+
+  // EPIC-0.5-02: Listen for FILE_UPDATED events from FileEventBus
+  // When a file is externally modified or saved by another plugin,
+  // reload file content if it's currently open in the editor
+  useEffect(() => {
+    if (!activePath) return;
+
+    const unsubscribe = useFileEventBus({
+      eventName: 'file:updated',
+      projectId: projectContext.projectId,
+      handler: (event) => {
+        // Skip if this is the file being edited by user
+        if (event.path === activePath && !isModified) {
+          console.log('[MonacoPlugin] External FILE_UPDATED detected, reloading:', event.path);
+
+          // Reload file content from storage
+          (async () => {
+            try {
+              const data = await gateway.read(event.path);
+              const content = new TextDecoder().decode(data);
+              setContent(content);
+              setIsModified(false); // Clear modified flag on external update
+
+              // Show notification to user
+              toast.info('File was updated externally, content reloaded');
+            } catch (err) {
+              console.error('[MonacoPlugin] Error reloading file:', err);
+              toast.error('Failed to reload file content');
+            }
+          })();
+        }
+      },
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [activePath, isModified, gateway, projectContext.projectId]);
 
   // ============================================================================
   // Render States
@@ -241,13 +337,28 @@ function MonacoComponent({ width, height }: PluginMainProps) {
           <span>{fileName}</span>
           {isModified && <span className="text-orange-500">●</span>}
         </div>
-        <button
-          onClick={handleSave}
-          disabled={!isModified}
-          className="rounded-none bg-primary text-primary-foreground px-2 py-0.5 text-xs hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        >
-          {t('ide.save')}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* EPIC-0.5-03: Save status indicator */}
+          {saveStatus === 'saving' && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <RotateCw size={12} className="animate-spin" />
+              <span>{t('editor.saving')}</span>
+            </div>
+          )}
+          {saveStatus === 'saved' && (
+            <div className="flex items-center gap-1 text-xs text-green-600">
+              <Code2 size={12} />
+              <span>{t('editor.saved')}</span>
+            </div>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={!isModified}
+            className="rounded-none bg-primary text-primary-foreground px-2 py-0.5 text-xs hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          >
+            {t('ide.save')}
+          </button>
+        </div>
       </div>
 
       {/* Monaco Editor (CC-AR-05: Real Monaco integration) */}

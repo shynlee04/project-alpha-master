@@ -200,34 +200,82 @@ export const useFileTreeStore = create<FileTreeState>()((set, get) => ({
    * @param entries - File entries from gateway.list()
    *
    * @remarks
-   * Converts flat entry list to tree structure.
-   * Identifies root nodes (no parent or parent not in entries).
+   * EPIC-0.5-01 FIX: Builds hierarchy from flat file paths.
+   * Gateway now returns full paths, store creates directory structure.
    */
   load: (entries) => {
     const nodes = new Map<string, FileTreeNode>();
     const rootPaths: string[] = [];
 
-    // First pass: create all nodes
+    // First pass: Create directory nodes from file paths
     for (const entry of entries) {
-      nodes.set(entry.path, entryToNode(entry));
+      const parts = entry.path.split('/');
+      let currentPath = '';
+
+      // Create intermediate directories
+      for (let i = 0; i < parts.length - 1; i++) {
+        currentPath = currentPath ? `${currentPath}/${parts[i]}` : parts[i];
+
+        if (!nodes.has(currentPath)) {
+          nodes.set(currentPath, {
+            path: currentPath,
+            name: parts[i],
+            kind: 'directory',
+            size: 0,
+            lastModified: 0,
+            children: [],
+            expanded: false,
+            level: i,
+            selected: false,
+          });
+
+          // Track root directories (first level)
+          if (i === 0 && !rootPaths.includes(currentPath)) {
+            rootPaths.push(currentPath);
+          }
+        }
+      }
+
+      // Create the file node
+      const fileName = parts[parts.length - 1];
+      const fileLevel = parts.length - 1;
+      nodes.set(entry.path, {
+        path: entry.path,
+        name: fileName,
+        kind: entry.kind || 'file',
+        size: entry.size || 0,
+        lastModified: entry.lastModified || 0,
+        children: [],
+        expanded: false,
+        level: fileLevel,
+        selected: false,
+      });
+
+      // If it's a root file (no directory - single segment path)
+      if (parts.length === 1 && !rootPaths.includes(entry.path)) {
+        rootPaths.push(entry.path);
+      }
     }
 
-    // Second pass: build tree structure and identify roots
-    for (const entry of entries) {
-      const node = nodes.get(entry.path);
-      if (!node) continue;
-
-      const parentPath = getParentPath(entry.path);
-
-      // If no parent or parent not in entries, it's a root
-      if (!parentPath || !nodes.has(parentPath)) {
-        rootPaths.push(entry.path);
-      } else {
-        // Add as child of parent
-        const parentNode = nodes.get(parentPath);
-        if (parentNode) {
-          parentNode.children.push(node);
+    // Second pass: Build parent-child relationships
+    for (const [path, node] of nodes) {
+      if (path.includes('/')) {
+        const parentPath = path.split('/').slice(0, -1).join('/');
+        const parent = nodes.get(parentPath);
+        if (parent && parent.kind === 'directory') {
+          parent.children.push(node);
         }
+      }
+    }
+
+    // Sort children alphabetically (directories first)
+    for (const [, node] of nodes) {
+      if (node.children.length > 0) {
+        node.children.sort((a, b) => {
+          if (a.kind === 'directory' && b.kind !== 'directory') return -1;
+          if (a.kind !== 'directory' && b.kind === 'directory') return 1;
+          return a.name.localeCompare(b.name);
+        });
       }
     }
 

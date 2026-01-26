@@ -21,8 +21,8 @@ import type { useSyncOperations } from './useSyncOperations';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { showMobileWorkspaceRedirect } from '@/lib/utils/mobile-error-handling';
 import {
-  serializeHandle,
-  handlePersistenceService,
+    serializeHandle,
+    handlePersistenceService,
 } from '@/infrastructure/filesystem/handle-persistence';
 
 type WorkspaceStateReturn = ReturnType<typeof useWorkspaceState>;
@@ -188,7 +188,7 @@ export function useWorkspaceActions(
             await performSync(handle, { fullSync: true });
 
             // Navigate to new project
-            navigate({ to: '/workspace/$projectId', params: { projectId: newProjectId } });
+            navigate({ to: '/$projectId', params: { projectId: newProjectId } });
         } catch (error) {
             if ((error as Error).name !== 'AbortError') {
                 // Check if mobile/tablet and redirect to Notes workspace

@@ -157,24 +157,42 @@ export const ProjectsPage: React.FC = () => {
     const project = useProjectStore.getState().getProject(projectId);
     const platform = getPlatformContract();
 
-    // CC-03.5 FIX: Use state updater function pattern for proper TanStack Router typing
-    const stateUpdater = (prev: HistoryState): HistoryState => ({ ...prev, fsaHandle });
+    // CRITICAL FIX: Pass the fsaHandle from wizard to route state
+    // The second parameter `fsaHandle` contains the handle user just picked
+    const stateUpdater = (prev: HistoryState): HistoryState => ({
+      ...prev,
+      fsaHandle: fsaHandle ?? null  // Use the handle from callback parameter
+    });
+
+    console.log('[ProjectsPage] Navigating with fsaHandle:', !!fsaHandle, 'project:', project?.name);
 
     if (platform.canAccessIDE && project?.storageType === 'fsa') {
       // Desktop with FSA: Navigate to IDE (full file system access)
-      navigate({ to: '/ide/$projectId', params: { projectId }, state: stateUpdater });
+      navigate({ to: '/$projectId', params: { projectId }, state: stateUpdater });
     } else {
       // Mobile OR Desktop with IndexedDB: Navigate to Notes
-      navigate({ to: '/notes/$projectId', params: { projectId }, state: stateUpdater });
+      navigate({ to: '/$projectId', params: { projectId }, state: stateUpdater });
     }
   };
 
-  const handleOpenProject = (projectId: string) => {
+  const handleOpenProject = async (projectId: string) => {
     const project = (projects || []).find(p => p.id === projectId);
     if (!project) return;
 
-    setSelectedProject(toProject(project));
-    setBindingDialogOpen(true);
+    // Update last opened timestamp
+    try {
+      const record = await db.projects.get(projectId);
+      if (record) {
+        await db.projects.update(projectId, { lastOpened: new Date() });
+      }
+    } catch (e) {
+      console.warn('[ProjectsPage] Failed to update lastOpened:', e);
+    }
+
+    // DIRECT NAVIGATION - no workspace picker dialog
+    // Just go to /$projectId - ProjectContextProvider handles the rest
+    console.log('[ProjectsPage] Opening project directly:', projectId);
+    navigate({ to: '/$projectId', params: { projectId } });
   };
 
   const handleWorkspaceBindingConfirm = async (

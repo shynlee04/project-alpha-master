@@ -32,6 +32,81 @@ errors:
 
 consolidated_epics:
   # ─────────────────────────────────────────────────────────────────
+  # EPIC 0: Project-Centric Reset (COMPLETE)
+  # ─────────────────────────────────────────────────────────────────
+  - epic_id: "EPIC-0"
+    name: "Project-Centric Foundation Reset"
+    type: "foundation"
+    status: "COMPLETE"
+    priority: "P0"
+    progress: "100%"
+    completed_at: "2026-01-26T23:30:00+07:00"
+    retrospective: "_bmad-output/retrospectives/EPIC-0-RETROSPECTIVE-2026-01-26.md"
+
+  # ─────────────────────────────────────────────────────────────────
+  # EPIC 0.5: FileTree & Plugin Maturity (NEW - P0 BLOCKER)
+  # ─────────────────────────────────────────────────────────────────
+  - epic_id: "EPIC-0.5"
+    name: "FileTree & Plugin System Maturity"
+    type: "foundation"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "33.3%"  # 2 of 6 stories complete
+    blocks: "Phase 1A"
+    estimated_effort: "24-32 hours"
+    target_completion: "2026-01-28"
+
+    stories:
+      - id: "EPIC-0.5-01"
+        title: "True Hierarchical FileTree"
+        status: "COMPLETE"
+        team: "A"
+        effort: "4-6h"
+        completed_at: "2026-01-27T00:30:00+07:00"
+        depends_on: []
+
+      - id: "EPIC-0.5-02"
+        title: "EventBus for File CRUD Sync"
+        status: "COMPLETE"
+        team: "B"
+        effort: "4-6h"
+        completed_at: "2026-01-27T00:35:00+07:00"
+        depends_on: []
+
+      - id: "EPIC-0.5-03"
+        title: "Plugin Auto-Save Contract"
+        status: "READY"
+        team: "A"
+        effort: "3-4h"
+        depends_on: ["EPIC-0.5-02"]
+        note: "EPIC-0.5-02 complete, ready to start"
+
+      - id: "EPIC-0.5-04"
+        title: "IndexedDB E2E Validation"
+        status: "SKIPPED"
+        team: "real-world-validator"
+        effort: "2-3h"
+        depends_on: ["EPIC-0.5-01", "EPIC-0.5-02"]
+        note: "SKIPPED per user directive - NO E2E TESTS"
+
+      - id: "EPIC-0.5-05"
+        title: "UX - FileTree as Sidebar Tab"
+        status: "READY"
+        team: "A"
+        effort: "4-6h"
+        depends_on: ["EPIC-0.5-01"]
+
+      - id: "EPIC-0.5-06"
+        title: "Progressive Plugin Loading"
+        status: "READY"
+        team: "B"
+        effort: "3-4h"
+        depends_on: ["EPIC-0.5-05"]
+
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-0.5-FILETREE-PLUGIN-MATURITY-2026-01-26.md"
+
+  # ─────────────────────────────────────────────────────────────────
   # EPIC 1: Phase 1A Plugin System (Primary P0 Blocker)
   # ─────────────────────────────────────────────────────────────────
   - epic_id: "EPIC-CC-AR02AR03"

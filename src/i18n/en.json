@@ -2133,5 +2133,13 @@
   "plugin.closePanel": "Close {{pluginName}}",
   "plugin.notFound": "Plugin not found",
 
-  "pluginPanel.dragHandleTooltip": "Drag to reorder"
+  "pluginPanel.dragHandleTooltip": "Drag to reorder",
+
+  "ide.save": "Save",
+  "ide.noFileOpen": "No file open",
+  "ide.openFolderToView": "Open a folder to view files",
+  "ide.loading": "Loading...",
+
+  "editor.saving": "Saving...",
+  "editor.saved": "Saved"
 }

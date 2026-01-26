@@ -1,14 +1,66 @@
 # CLAUDE.md - Platform-Specific Instructions
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.0.0 | **Updated:** 2026-01-26 | **Health:** 45% (CC Remediation Required) | **ADR Authority:** ADR-039 (Pending Approval)
+> **Version:** 2.8.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
+
+---
+
+## 3-Step Validation Framework (NON-NEGOTIABLE)
+
+**Priority**: HIGHER than automated tests/tools
+**When to Use**: ALWAYS before implementation and after completion
+
+### Step 1: High-Level EPIC Review (Pre-Story)
+- Check integration to previous epics
+- Register domains, components, files
+- Analyze use cases
+- Define success criteria
+
+### Step 2: Component & Data Mapping Validation (Pre-Implementation)
+- Schema validation (types, interfaces, API contracts)
+- Data flow mapping (origin → transformations → destination)
+- Component contracts (props, hooks, state, events)
+- State management (stores, reactivity, persistence)
+
+### Step 3: Integration Validation (During Code Review)
+- User journey validation (step-by-step walkthrough)
+- Component rendering validation (props, state, reactivity)
+- State persistence validation (reload, sync, cleanup)
+- Cross-dependency validation (imports, circular deps, events, side effects)
+
+### Non-Negotiable Rules
+
+1. **Schema Validation BEFORE code** - Never implement without verifying types/API contracts
+2. **Data Flow Integrity BEFORE code** - Never implement with data loss risks (truncation, filtering)
+3. **Component Contracts Documented BEFORE code** - Never implement with ambiguous props/hooks/state/events
+4. **User Journey Validated BEFORE complete** - Never claim complete without E2E walkthrough
+5. **Cross-Dependencies Checked BEFORE merge** - Never merge with breakage elsewhere
+
+### Dry Reading Tools (MANDATORY Before Code)
+
+```bash
+# Read specifications
+grep -r "Technical Problem Statement\|Root Cause\|Acceptance Criteria" _bmad-output/planning-artifacts/epics/
+
+# Read contracts
+grep -r "interface.*Props\|export function\|export type" src/domain/ src/presentation/ | head -30
+
+# Trace data flow
+grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | head -30
+```
+
+### How This Prevents Flaws Like EPIC-0.5-01
+
+**What Happened**: Dev team truncated file paths to `parts[0]`, losing nested files
+
+**Step 1 Would Prevent**: Requirement would clearly state "preserve ALL file paths, no truncation"
+
+**Step 2 Would Prevent**: Data flow mapping would show "adapter returns full paths → gateway must preserve → component receives full paths"
+
+**Step 3 Would Prevent**: User journey validation would fail at "expand folder → empty" step
 
 ---
 
 ## 🏛️ AUTHORITY HIERARCHY & GOVERNANCE STRUCTURE
-
-> **Primary Architecture Authority**: ADR-039 (Pending Approval - to be created after core docs complete)
-> **Implementation Authority**: architecture.md (v3.0.0 - 100% aligned with fundamental truths)
-> **Core Truth Authority**: new-fundamental-truths.md (v2.0.0 - Foundation for all decisions)
 
 ### Authority Hierarchy
 
@@ -17,7 +69,6 @@
 │  ADR-039 (Primary Architecture Authority)             │
 │  Status: PENDING APPROVAL                            │
 │  Purpose: Unified architecture decisions              │
-│  Replaces: ADR-033, ADR-034, ADR-035 cascade       │
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
@@ -27,23 +78,8 @@
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
-│  Implementation Layer                                 │
-│  - prd.md (v2.0.0)                                  │
-│  - epics.md (v3.0.0)                                 │
-│  - ux-specification.md (v2.0.0)                       │
+│  Implementation Layer (prd.md, epics.md, ux-spec)    │
 └─────────────────────────────────────────────────────────┘
-```
-
-### Agent Authority Flows
-
-```
-architect-ext → Architecture Design → ADR-039 Approval
-                            ↓
-                     architecture.md (v3.0.0)
-                            ↓
-dev-ext → Implementation → Code + Tests
-                            ↓
-                     Real-World Validation
 ```
 
 ### Document Authority Matrix
@@ -52,133 +88,19 @@ dev-ext → Implementation → Code + Tests
 |----------|---------|--------|----------------|-------------|
 | **ADR-039** | - | Pending Approval | Tier 1 (Primary) | All architecture decisions |
 | **new-fundamental-truths.md** | v2.0.0 | Active | Tier 1 (Foundation) | All strategic decisions |
-| **ADR-034** | v2026-01-20 | APPROVED - IN PROGRESS | Tier 1 (Project Architecture) | Project-centric model |
 | **architecture.md** | v3.0.0 | 100% Aligned | Tier 2 (Implementation) | Technical architecture |
 | **prd.md** | v2.0.0 | 100% Aligned | Tier 2 (Product) | Product requirements |
 | **epics.md** | v3.0.0 | 100% Aligned | Tier 2 (Planning) | Epic/story definitions |
 | **ux-specification.md** | v2.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements |
-| **AGENTS.md** | v2.7.0 | Active | Tier 2 (Governance) | Agent coordination |
-
-### Governance Files Hierarchy
-
-| File | Authority | Purpose | Update Frequency |
-|------|------------|---------|-----------------|
-| **AGENTS.md** | Master governance | Agent rules, authority structure | Every 3 stories |
-| **CLAUDE.md** | Platform-specific | Platform-specific instructions | Every session |
-| **LOOP_STATE.yaml** | Session state | Session tracking, delegations | Every state change |
-| **ARTIFACT_REGISTRY.yaml** | Document tracking | Artifact metadata, TTL | After artifact creation |
-
-### Consolidated Epic Authority Model
-
-**Single Authoritative Epic Per Phase**
-
-| Phase | Authoritative Epic | Status | Supersedes |
-|-------|-------------------|--------|------------|
-| **Phase 1A** | EPIC-CC-AR02AR03 (Plugin System) | 0% | EPIC-ARCH-02, EPIC-ARCH-03 |
-| **Phase 1B** | (To be defined) | Pending | N/A |
-| **Phase 2** | (To be defined) | Pending | N/A |
-| **Phase 3** | (To be defined) | Pending | N/A |
-
-**Epic De-Duplication Process**
-
-```
-1. Epic Draft → Analyze against fundamental truths
-2. Check for duplicate/similar epics
-3. Consolidate if overlap > 50%
-4. Assign single authoritative epic ID
-5. Archive duplicate definitions
-6. Update ADR-039 with consolidated model
-```
-
-**Phase-Based Progression**
-
-```
-Phase 1A (Non-AI Core):
-  - Terminal Plugin
-  - Monaco Plugin
-  - FileTree Plugin
-  - Preview Plugin
-  - Must complete → Phase 1B
-
-Phase 1B (BYOK + Notes):
-  - BYOK Infrastructure
-  - Notes Plugin
-  - Must complete → Phase 2
-
-Phase 2 (AI Agents):
-  - Chat cascade
-  - Agent orchestration
-  - Must complete → Phase 3
-
-Phase 3 (Advanced Patterns):
-  - Advanced agent workflows
-  - Performance optimization
-```
-
-## 🚨 CRITICAL FINDING (2026-01-26)
-
-**Multi-Agent Audit Result**: EPIC-ARCH-02 and EPIC-ARCH-03 were prematurely marked complete.
-
-| Finding | Impact |
-|---------|--------|
-| Monaco is POC stub (textarea, not real editor) | No syntax highlighting |
-| 40+ i18n keys missing | UI shows raw translation keys |
-| Drag-drop layout causes broken UI | User experience broken |
-| PluginLayout.tsx = 1034 lines (god component) | Maintenance nightmare |
-| Store hydration race condition | Layout doesn't persist |
-
-**Resolution**: EPIC-CC-AR02AR03 created to remediate and align with Phase 1A.
+| **AGENTS.md** | v2.8.0 | Active | Tier 2 (Governance) | Agent coordination |
 
 ---
-
-**MOST IMPORTANT** 
-
--NO CONTEXT, FALSE CONTEXT WILL HALT ANY ON-GOING FLOW -
-
-
-- Always start first with pulling context, by reading, consuming relevant documents, using mcp servers, reading code files with grep, glob, search, list
-
-
-- Never pass any create new files (even document) without going through validation and gatekeeping - both code and documents
-
-- Do not use any documents for consumption if it does not have references, meta data links, nor yaml references - NEVER - these documents never pass
-
-- Never execute any tasks without plan
-
-- Never run anything withotu set up TODO list
-
-
----
-#*FOLLOWING ALL BMAD RULES AND GOVERNANVE** 
-
-There are alot and detail of each but these certain things are the most annoying shit that all agents must obey:
-
-- UX and UI following 8bit design, no transparent background **NO HARD CODED** CSS, beware of multi-pane, complex, stacked, layered, advanced ui ->> must responsive and must support portrait phone screen as desktop screen
-
-- Language strings NOT hardcoded - both translated to English and Vietnamese
-
-- Code tree, files modification, creation. removal (track, check and validate for overlapping, conflict) - start splitting code if about reaching thresold of 400 lines (500 and more are not accepted) - absolutely no God class
-
-- Keep structure and architecture aligned, refactored and orgnanized
-
--  Never pass gatekeeping without evidence of success and validation
-
-- Debug intelligently, especially errors of types, schema and logic -- export to files (txt, log, md whatever) -> reason deeply, fix progressively -> once all completed then run tool check (do not wast resource)
-
-- There are two teams A and B - coordinate to the correct team assigned keep status updated
-
-- ALWAYS DRY-CHECK, DRY-DOUBLE-CHECK FOR SYNTEAX ERRORS BEFORE DECIDING TO RUN TOOLS OR TESTS. 
-
-
-- MCP tools and servers are absolutely important to check and use often
 
 ## 🚨 CRITICAL: ALWAYS Set Tool Constraints When Delegating to Sub-Agents
 
-**NEVER delegate without explicitly setting tool permissions!** This prevents sub-agents from overstepping their role boundaries.
+**NEVER delegate without explicitly setting tool permissions!**
 
 ### Required Pattern for EVERY Delegation
-
-**Add this to EVERY task delegation prompt:**
 
 ```markdown
 ## Tool Constraints
@@ -203,174 +125,18 @@ There are alot and detail of each but these certain things are the most annoying
 
 | Agent Type | write | edit | bash | task | Notes |
 |-----------|--------|-------|-------|-------|--------|
-| **real-world-validator** | true | false | true (limited) | true | Tests ONLY (bash: browser automation + restart if stuck), writes reports (write), NEVER modifies code (edit: NO) |
+| **real-world-validator** | true | false | true (limited) | true | Tests ONLY, writes reports, NEVER modifies code |
 | **dev-ext** | true | true | true (limited) | true | Implementation, but NEVER without context and review |
 | **architect-ext** | false | true (design only) | false | true | Architecture docs, NOT code implementation |
 | **analyst-ext** | false | false | false | true | Research and analysis ONLY |
 | **tea-ext** | false | false | false | true | Test specifications, NOT implementation |
-| **ux-designer-ext** | false | false | false | true | UI/UX design, NOT coding |
-
-### MCP Server Usage (REQUIRED FOR RESEARCH)
-
-Agents MUST use MCP servers for official documentation:
-
-| Tool | When To Use | Examples |
-|-------|-------------|-----------|
-| **TanStack MCP** | All TanStack documentation queries | "Search: TanStack Router route registration manual" |
-| **websearch-prime** | Best practices, 2026 patterns | "React state management best practices 2026" |
-| **fetch_fetch** | Official docs, API references | "Fetch TanStack Router GitHub README" |
-
-### Validation Checklist (Check Before EVERY Delegation)
-
-- [ ] Tool permissions explicitly set in prompt
-- [ ] Role boundaries clearly defined in prompt
-- [ ] Output location specified in prompt
-- [ ] Evidence requirements stated in prompt
-- [ ] MCP server usage mentioned if research needed
-- [ ] Timebox specified in prompt
-- [ ] Success criteria documented in prompt
-
-### Consequence of NOT Setting Constraints
-
-**If sub-agent has unrestricted permissions, it may:**
-- Modify code files outside its scope (e.g., real-world-validator editing router.tsx)
-- Fix issues it should only report and document
-- Restart services and cause conflicts with other teams
-- Install/uninstall dependencies without approval
-- Overstep role boundaries (e.g., testing agent doing implementation)
-
-**Result**: Cascading failures, corrupted codebase, lost time, team coordination breakdown.
-
-### Memory Reference
-
-See `ext-master-constraints` memory file for complete templates and examples.
 
 ---
 
-## 🔴 NON-NEGOTIABLE BMAD RULES (Must Obey At All Times)
-
-## DO NOT RUN TYPESCRIPT check MANY TIMES --> IT IS BEST THAT YOU SAVE IT INTO TXT FILE -> ONLY ONCE ALL ERRORS ARE HANDLED CHECK WILL BE RUN AGAIN
-
-> **Source**: `_bmad-ext/orchestrator/master-orchestrator.md` | **Applies**: All platforms, workflows, iterations
-
-### 1. ANCHOR VERIFICATION (Anti-Hallucination)
-**BEFORE any autonomous work**, verify human intent freshness:
-```
-IF (NOW() - anchor.human_intent_timestamp) > staleness_threshold:
-  → PROMPT USER: Continue/New/Reset/View
-  → DO NOT proceed until confirmed
-```
-- Stale anchor = **STOP** all work immediately
-- See: `_bmad-ext/state/LOOP_STATE.yaml`
-
-### 2. ROUTING (Sprint-Planning Wrapper)
-**ALL stories must route through Sprint-Planning Wrapper first**:
-```
-bmm-workflow-status.yaml → Sprint-Planning Wrapper → Enhanced Agent
-                        ├── Cohesion Check
-                        ├── Dependency Map
-                        └── Reality Validation
-```
-- Cohesion failure = Story cannot start
-- Dependency conflict = Block until resolved
-- Reality failure = Feature is "ghost" or "zombie"
-
-### 3. PRODUCT REALITY GATES (Enforced Via Story-Cycle)
-| Gate | Step | Validates | Blocks If |
-|------|------|-----------|-----------|
-| **UX Gate** | 01a | User Journey | `island_feature`, `split_brain`, `ghost_result`, `dead_end` |
-| **Brain Gate** | 03a | Agent Tool Spec | `orphan_tool`, `permission_gap`, `vague_trigger` |
-| **Visual Gate** | 06a | Reality Check | `visual_break`, `missing_state`, `zombie_feature` |
-
-### 4. HANDOFF PROTOCOL (Every Agent Transition)
-**ALL agent-to-agent handoffs MUST have**:
-- Unique UUID (`handoff_id`)
-- Parent/child link (`parent_id`)
-- Context summary
-- Acceptance criteria
-- Escalation path
-See: `_bmad-ext/schemas/handoff-artifact.schema.yaml`
-
-### 5. LOOP STATE (Always Current)
-**AFTER any state change**, update `_bmad-ext/state/LOOP_STATE.yaml`:
-```
-- session.id
-- current.story_id, epic_id, agent, workflow
-- delegations (active/completed/failed)
-- errors.count, errors.last_error
-- anchor.human_intent_timestamp
-```
-
-### 6. GOVERNANCE UPDATES (Auto-Maintained)
-**AFTER every 3 stories completed**, auto-update:
-- `AGENTS.md` (this file)
-- `CLAUDE.md`
-- `bmm-workflow-status.yaml`
-- Sprint status files
-
-### 7. CONTINUATION DECISION (Check Before Next)
-```
-CONTINUE IF:
-  ✅ More stories pending
-  ✅ No critical errors (errors.count == 0)
-  ✅ Anchor fresh (< staleness_threshold)
-  ✅ No user interrupt
-
-STOP IF:
-  ❌ All stories complete
-  ❌ Critical error
-  ❌ Anchor stale (await confirmation)
-  ❌ User interrupt
-```
-
-### 8. PLATFORM ROUTING
-| Task Type | Platform | Priority |
-|-----------|----------|----------|
-| Code Generation | Claude Code | 92% |
-| Documentation | OpenCode | 89% |
-| Real-World Testing | Both | 95% |
-| Sprint Execution | Both | 91% |
-| Architecture | Claude Code | 94% |
-
-### 9. DELEGATION FLOW
-```
-master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
-                       (Cohesion/Dependency/     (dev-ext, architect-ext,
-                        Reality checks)           analyst-ext, etc.)
-                            ↓                           ↓
-                     [SUCCESS/PARTIAL/FAILED] → Callback to orchestrator
-                            ↓
-                     Update LOOP_STATE + Governance
-                            ↓
-                     Continue or Stop decision
-```
-
-### 10. ESSENTIAL FILES (Read These First)
-| File | description | When |
-|------|---------|------|
-| `_bmad-ext/orchestrator/master-orchestrator.md` | Central brain | Every session |
-| `_bmad-ext/orchestrator/routing-rules.yaml` | Agent routing | Before delegating |
-| `_bmad-ext/orchestrator/delegation-protocol.md` | Handoff format | Every handoff |
-| `_bmad-ext/orchestrator/escalation-protocol.md` | Failure handling | On failure |
-| `_bmad-ext/state/LOOP_STATE.yaml` | Session state | Start + updates |
-| `_bmad-ext/state/ARTIFACT_REGISTRY.yaml` | Artifact tracking | After creation |
-| **ADR-039** | **Primary Architecture Authority** (Pending Approval) | Before any architecture work |
-| **ADR-034** | **Project-Centric Architecture** (APPROVED - IN PROGRESS) | Project model, plugin system |
-| `_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-11.yaml` | Current sprint status | Check story assignments |
-
----
-
-## 🏛️ ADR-034: PROJECT-CENTRIC ARCHITECTURE (APPROVED - IN PROGRESS)
+## 🏛️ ADR-034: PROJECT-CENTRIC ARCHITECTURE
 
 > **Source**: `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md`
 > **Status**: APPROVED - IN PROGRESS (Phase 1-2 Complete, Phase 3-4 Pending)
-> **Transition**: All decisions to be preserved in ADR-039 (when created)
-
-### Core Architectural Decisions
-
-> **Source**: `_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md`
-> **Status**: APPROVED - All decisions final
-> **Updated**: 2026-01-11
 
 ### Platform & Storage Decisions
 
@@ -391,15 +157,6 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | **File Watching** | FileSystemObserver (129+), polling fallback | Native when available |
 | **Fast Load Strategy** | Snapshot in Dexie, diff in background | No waiting on rescan |
 
-### Notes Storage for FSA Desktop
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Notes Location** | FSA folder (`/project/notes/*.md`) | Same tech as IDE, reactive |
-| **Sync Direction** | Bidirectional (BlockNote ↔ Markdown) | External editor support |
-| **Conflict Resolution** | Merge dialog if local dirty + external change | User decides |
-| **Autosave Debounce** | 500ms | Balance responsiveness and I/O |
-
 ### Project Structure
 
 | Decision | Choice | Rationale |
@@ -408,68 +165,6 @@ master-orchestrator → Sprint-Planning Wrapper → Enhanced Agent
 | **Notes Folder** | `/notes/` (configurable) | Separate from code |
 | **Assets Folder** | `/notes/assets/` | Embedded media |
 | **File IDs** | Path-based (relative from root) | FSA uses paths, debuggable |
-
-### Mobile Project Model
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Project Count** | Single default (`notes:browser-mode`) | Simpler for MVP |
-| **Desktop Without Project** | Must create/select project first | Consistent with FSA model |
-
-### Database Keys
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Composite Keys** | Keep `[projectId+workspaceId]` | Intentional isolation per workspace |
-
-### Nested Folder Rules
-
-| Scenario | Behavior |
-|----------|----------|
-| **Same path** | Block - cannot create duplicate |
-| **Child of existing** | Warn - allow if user confirms |
-| **Parent of existing** | Warn - allow if user confirms |
-| **Sibling** | Allow - no overlap |
-
-### File Discovery Limits
-
-| Setting | Default |
-|---------|---------|
-| **Max Depth** | 20 |
-| **Warn At Depth** | 15 |
-| **Max Files** | 50,000 |
-| **Max Total Size** | 500MB |
-
-### Default Exclusions
-
-```
-node_modules, .git, .next, .nuxt, dist, build, out,
-.cache, coverage, __pycache__, .venv, venv, .idea
-```
-
-### FSA Project Folder Structure (Canonical)
-
-```
-/MyProject/                          ← FSA Project Root
-├── .viagent/                        ← ViaGent metadata folder
-│   ├── project.json                 ← Project config (ID, name, bindings)
-│   ├── notes-index.json             ← Note metadata (titles, order, favorites)
-│   ├── file-tree-snapshot.json      ← Cached file tree for fast load
-│   └── rag-index/                   ← Local RAG vectors (optional)
-│       ├── chunks.json
-│       └── embeddings.bin
-│
-├── notes/                           ← Notes workspace content
-│   ├── welcome.md                   ← Markdown file
-│   └── assets/                      ← Embedded assets
-│       └── image-abc123.png
-│
-├── src/                             ← Code (IDE workspace)
-│   └── index.ts
-│
-└── docs/                            ← Viewable in Notes OR IDE
-    └── api.md
-```
 
 ### PlatformContract Interface (Use This Everywhere)
 
@@ -508,211 +203,102 @@ const gateway = StorageGatewayFactory.create(project.storageType);
 
 ## 🗂️ FILE TREE GOVERNANCE (Strict Enforcement)
 
-> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
-> **Updated**: 2026-01-16
-> **Enforcement**: MANDATORY - All file changes must follow these rules
-
 ### Canonical Directory Structure
 
 ```
 src/
 ├── routes/                          # TanStack Router ONLY
-│   ├── __root.tsx                   # Root layout
-│   ├── index.tsx                    # Hub entry
-│   ├── notes.lazy.tsx               # Notes workspace route
-│   ├── notes.$projectId.lazy.tsx    # Notes with project
-│   ├── ide.$projectId.tsx           # IDE workspace route
-│   ├── knowledge.$projectId.tsx     # Knowledge workspace route **DEFER**
-│   └── study.$projectId.tsx         # Study workspace route
-│
 ├── presentation/                    # React UI ONLY
-│   ├── components/                  # UI components
+│   ├── components/
 │   │   ├── ui/                      # Design system primitives
 │   │   ├── common/                  # Shared components
 │   │   ├── notes/                   # Notes-specific
-│   │   ├── ide/                     # IDE-specific
-│   │   ├── knowledge/               # Knowledge-specific **DEFER**
-│   │   └── study/                   # Study-specific **DEFER**
-│   └── hooks/                       # React hooks (UI concerns only)
-│
+│   │   └── ide/                     # IDE-specific
+│   └── hooks/                       # React hooks
 ├── domain/                          # Business Logic ONLY
-│   ├── entities/                    # Domain entities (Project, Agent, etc.)
-│   ├── services/                    # Domain services
-│   ├── types/                       # Domain types
-│   └── interfaces/                  # Repository interfaces
-│
-├── infrastructure/                  # External Interfaces ONLY
-│   ├── persistence/                 # Data persistence
-│   │   ├── dexie-db.ts              # Single DexieDB (ViaGentDatabase)
-│   │   └── stores/                  # Zustand stores (canonical location)
-│   │       ├── project/             # Project store
-│   │       ├── note/                # Note store
-│   │       ├── agents/              # Agent stores
-│   │       └── workspace/           # Workspace stores
-│   ├── filesystem/                  # File system adapters
-│   │   ├── fsa-storage-adapter.ts   # FSA adapter (desktop)
-│   │   ├── platform-detection.ts    # Platform contract
-│   │   └── StorageAdapterFactory.ts # Storage factory
-│   ├── sync/                        # Sync services
-│   └── events/                      # Event bus
-│
-└── lib/                             # LEGACY - Migrate to above
-    ├── utils.ts                     # Keep (utility functions)
-    └── [everything else]            # DEPRECATED - Do not add new files
+│   ├── entities/
+│   ├── services/
+│   ├── types/
+│   └── interfaces/
+└── infrastructure/                  # External Interfaces ONLY
+    ├── persistence/
+    │   ├── dexie-db.ts
+    │   └── stores/                  # Zustand stores
+    ├── filesystem/
+    │   ├── fsa-storage-adapter.ts
+    │   ├── platform-detection.ts
+    │   └── StorageAdapterFactory.ts
+    ├── sync/
+    └── events/
 ```
 
 ### File Change Rules
 
-| Action | Rule | Gatekeeping |
-|--------|------|-------------|
-| **CREATE** | Only in canonical directories | Block if in `src/lib/` (except utils) |
-| **MODIFY** | Check canonical location first | If duplicate exists, modify canonical only |
-| **DELETE** | Archive to `_bmad-ext/.archive/` first | Never delete without archive |
-| **MOVE** | Create facade re-export at old path | Maintain backward compatibility |
+| Action | Rule |
+|--------|------|
+| **CREATE** | Only in canonical directories |
+| **MODIFY** | Check canonical location first |
+| **DELETE** | Archive to `_bmad-ext/.archive/` first |
+| **MOVE** | Create facade re-export at old path |
 
 ### Deprecated Directories (Do NOT Add Files)
 
 ```
-❌ DEPRECATED - NEVER ADD NEW FILES:
-src/lib/workspace/                   # Migrate to infrastructure/persistence/stores/
-src/lib/filesystem/                  # Migrate to infrastructure/filesystem/
-src/lib/state/                       # Migrate to infrastructure/persistence/stores/
-src/lib/sync/                        # Migrate to infrastructure/sync/
-src/lib/storage/                     # Migrate to infrastructure/persistence/
-src/stores/                          # NEVER EXISTED - Do not create
-```
-
-### Files Pending Archive (Do Not Modify)
-
-```
-⚠️ PENDING ARCHIVE - DO NOT MODIFY:
-src/lib/workspace/project-store/project-crud-slice.ts    # STUB - use infrastructure version
-src/lib/workspace/fsa-persistence.ts.bak*                # Dead code
-src/lib/workspace/file-sync-status-store/                # Duplicate
-src/lib/filesystem/local-fs-adapter.ts                   # Duplicate
-```
-
-### File Change Tracking Template
-
-When modifying files, document in story artifact:
-
-```yaml
-file_changes:
-  created:
-    - path: "src/infrastructure/filesystem/platform-detection.ts"
-      reason: "ARC-A01: Platform contract implementation"
-      lines: 120
-  modified:
-    - path: "src/routes/ide.$projectId.tsx"
-      reason: "ARC-A02: Add route guard"
-      lines_changed: 25
-  archived:
-    - path: "src/lib/workspace/project-store/"
-      archive_path: "_bmad-ext/.archive/project-store-2026-01-16/"
-      reason: "ARC-E02: Consolidated to infrastructure"
-  deleted:
-    - path: "src/lib/workspace/fsa-persistence.ts.bak"
-      reason: "ARC-E01: Dead code cleanup"
+❌ DEPRECATED:
+src/lib/workspace/  → infrastructure/persistence/stores/
+src/lib/filesystem/ → infrastructure/filesystem/
+src/lib/state/      → infrastructure/persistence/stores/
+src/lib/sync/       → infrastructure/sync/
+src/stores/         → NEVER existed
 ```
 
 ---
 
-## ⏱️ REALISTIC TIMING GOVERNANCE (Based on Actual Data)
+## ⏱️ REALISTIC TIMING GOVERNANCE
 
-> **Source**: `bmm-workflow-status.yaml` timing analysis | **Applies**: Epic/Story planning
+### Actual Timing Data
 
-### Actual Timing Data (NOT Estimates)
+| Work Unit | Real Average |
+|-----------|--------------|
+| **Story (simple)** | 1-2 hours |
+| **Story (complex)** | 2-4 hours |
+| **Epic (6-8 stories)** | 4-8 hours |
+| **Epic (mini 3-4)** | 2-4 hours |
+| **Sprint Planning** | 5-15 min |
 
-| Work Unit | Real Average | Historical Data |
-|-----------|--------------|-----------------|
-| **Story (simple)** | 1-2 hours | FS-05: 1.5h, MOBILE stories: 1-2h each |
-| **Story (complex)** | 2-4 hours | 40-01 Tool Registry: ~3h with full cycle |
-| **Epic (6-8 stories)** | 4-8 hours | EPIC-40: 12 stories in one day |
-| **Epic (mini 3-4 stories)** | 2-4 hours | EPIC-39: 4 stories in one day |
-| **Sprint Planning Wrapper** | 5-15 min | Cohesion + Dependency + Reality checks |
-| **Agent Handoff** | < 5 min | UUID + callback processing |
-
-### Planning Guidelines (Reality-Based)
-
-```
-✅ REALISTIC STORY ESTIMATES:
-   - Simple fix/refactor: 1 hour
-   - Feature implementation: 2-3 hours
-   - Complex feature: 3-4 hours
-   
-✅ REALISTIC EPIC ESTIMATES:
-   - Mini epic (3-4 stories): 4-6 hours
-   - Standard epic (6-8 stories): 8-12 hours
-   - Large epic (10+ stories): 16-24 hours (split recommended)
-
-❌ AVOID EXCESSIVE ESTIMATES:
-   - Don't estimate "1 day per story" - too slow
-   - Don't estimate "1 week per epic" - demotivating
-   - Trust autonomous agent velocity (2-3 stories/day is normal)
-```
-
-### Time-Boxing (Corrected from Excessive Values)
+### Time-Boxing
 
 | Level | Duration | Monitoring | On Timeout |
 |-------|----------|------------|------------|
 | **Step** | 15 min | Every 5 min | Escalate to story |
 | **Story** | 4 hours max | Every 15 min | Split story or continue |
-| **Deep Investigation** | 30 min | Every 10 min | Split story, defer remainder |
 | **Epic** | 8 hours | Every 30 min | Assess progress, adjust scope |
-
-### Why Old Estimates Were Wrong
-
-| Old Value | Problem | Real Behavior |
-|-----------|---------|---------------|
-| Story: 30 min | Too short - causes anxiety, ignored | 1-4 hours normal |
-| Epic: 4 hours | Realistic for some, but not minimum | 2-3 epics/day is normal |
-| Step: 5 min | Too short for meaningful work | 15 min minimum |
-
-### Velocity Tracking
-
-```
-NORMAL VELOCITY (Autonomous Mode):
-- Stories per day: 4-8 (varies by complexity)
-- Epics per day: 1-3 (depends on size)
-- Sprint velocity: 12-20 stories/week
-
-EXCEPTIONAL DAYS:
-- When flow state: 2-3 epics possible
-- When blocked: 0-1 stories
-- Average over time: ~5 stories/day
-```
 
 ---
 
-## ⚡ Quick Reference (Always Read First)
+## ⚡ Quick Reference
 
 | Key | Value |
 |-----|-------|
 | **Current Phase** | Plugin System Remediation (Phase 1A) |
 | **P0 Blocker** | EPIC-CC-AR02AR03 (Plugin System Rework) |
-| **Active Epic** | EPIC-CC-AR02AR03 (0% - Plugin System Rework for Phase 1A) |
-| **Secondary Epic** | EPIC-ARCH-04-CC (95% - CC-04 E2E Pending) |
-| **Gate Story** | CC-AR-01 (Add Missing i18n Keys) |
-| **Team A Story** | CC-AR-01 (READY) |
-| **Team B Story** | CC-AR-03 (READY) |
+| **Active Epic** | EPIC-CC-AR02AR03 (0%) |
+| **Secondary Epic** | EPIC-ARCH-04-CC (95%) |
 | **Sprint File** | `sprint-status-2026-01-26.yaml` |
 | **Workflow File** | `workflow-status-2026-01-26.yaml` |
-| **ADR** | ADR-039 (Pending Approval), ADR-034 (APPROVED - IN PROGRESS) |
-| **TypeScript Errors** | 0 ✅ (All 115 errors resolved - 2026-01-25) |
-| **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE (Plugin system stub) |
-| **Epic Artifact** | `_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md` |
-| **Handoff Artifact** | `_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md` |
-| **Completed Today** | EPIC-TS-DEBT, HOOKS-FIX-01, HOOKS-FIX-02 |
+| **ADR** | ADR-039 (Pending Approval), ADR-034 (APPROVED) |
+| **TypeScript Errors** | 0 ✅ |
+| **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE |
 
-### EPIC Corrected Status (As of 2026-01-26)
+### EPIC Corrected Status (2026-01-26)
 
-| Epic | Previous Claim | TRUE Status | Action |
-|------|----------------|-------------|--------|
-| EPIC-ARCH-01 | 100% | 60% | Team B CONS stories |
-| EPIC-ARCH-02 | 100% | **70%** | EPIC-CC-AR02AR03 remediates |
-| EPIC-ARCH-03 | 85% | **45%** | EPIC-CC-AR02AR03 remediates |
-| EPIC-ARCH-04-CC | 90% | **95%** | CC-04 E2E pending |
-| **EPIC-CC-AR02AR03** | NEW | 0% | **P0 BLOCKER for Phase 1A** |
+| Epic | TRUE Status | Action |
+|------|-------------|--------|
+| EPIC-ARCH-01 | 60% | Team B CONS stories |
+| EPIC-ARCH-02 | **70%** | EPIC-CC-AR02AR03 remediates |
+| EPIC-ARCH-03 | **45%** | EPIC-CC-AR02AR03 remediates |
+| EPIC-ARCH-04-CC | **95%** | CC-04 E2E pending |
+| **EPIC-CC-AR02AR03** | 0% | **P0 BLOCKER for Phase 1A** |
 
 ---
 
@@ -735,97 +321,7 @@ EXCEPTIONAL DAYS:
 
 ---
 
-## 🔄 DOCUMENT LIFECYCLE MANAGEMENT
-
-> **Source**: BMAD Framework Constitution v2.0.0 | **Applies**: All documents and artifacts
-
-### Document Lifecycle Stages
-
-```
-1. CREATION
-   - Assign unique ID (UUID)
-   - Set TTL based on tier
-   - Register in artifact-registry.yaml
-   - Tag with module and workflow
-
-2. APPROVAL
-   - Governance gate validation
-   - Human approval (if Tier 1)
-   - Update authority matrix
-   - Mark as ACTIVE
-
-3. USAGE
-   - Reference by agents
-   - Track dependencies
-   - Monitor staleness
-   - Update version as needed
-
-4. SUPERSESSION
-   - New version approved
-   - Archive old version
-   - Update all references
-   - Maintain history
-
-5. ARCHIVAL
-   - Move to `_bmad-ext/.archive/`
-   - Compress large artifacts
-   - Update registry
-   - Generate summary
-```
-
-### TTL-Based Artifact Management
-
-| Tier | Name | TTL | Loading | Validation | Action |
-|------|------|-----|---------|------------|
-| 1 | Unchangeable (Constitution) | Permanent | Always | Read-only check | Never archive |
-| 2 | Controlled & Iterative | Permanent | On-demand | Full consumption | Version updates only |
-| 3 | Archival | 90 days | If <90 days old | Archive if stale | Move to `.archive/` |
-| 4 | Ephemeral | 24 hours | If <24h & validated | Ignore if stale | Delete if >24h |
-
-### Artifact Registry
-
-**Location**: `_bmad-ext/state/ARTIFACT_REGISTRY.yaml`
-
-**Tracked Metadata**:
-```yaml
-artifacts:
-  - id: "adr_039"
-    type: "adr"
-    tier: 1
-    status: "pending_approval"
-    created_at: "2026-01-26"
-    ttl: "permanent"
-    dependencies: []
-```
-
-**Update Frequency**: After every artifact creation/modification
-
-### Supersession Protocol
-
-```
-When New Document Approved:
-1. Update all references in codebase
-2. Archive old document to `_bmad-ext/.archive/{date}-{name}/`
-3. Update ARTIFACT_REGISTRY.yaml with new ID
-4. Document supersession chain in ADR-039
-5. Update governance files (AGENTS.md, CLAUDE.md)
-```
-
-### Version Control Strategy
-
-| Document Type | Versioning | Example |
-|--------------|-------------|----------|
-| ADRs | Date-based | ADR-039-2026-01-26.md |
-| Core Docs (architecture, prd, epics, ux) | Semantic | v3.0.0, v2.0.0 |
-| Fundamentals | Semantic | v2.0.0 |
-| Story/Planning Artifacts | Date-based | story-{id}-2026-01-26.md |
-
----
-
 ## 🌐 PLATFORM ROUTING (Claude Code vs OpenCode)
-
-> **Source**: BMAD Framework Constitution v2.0.0
-> **Purpose**: Optimal platform selection for task execution
 
 ### Optimal Platform Selection Matrix
 
@@ -837,20 +333,6 @@ When New Document Approved:
 | **Sprint Execution** | Both | 91% | Story development, coordination |
 | **Architecture** | Claude Code | 94% | Design decisions, ADRs |
 | **File Analysis** | Claude Code | 95% | Symbolic tools, code navigation |
-
-### Handoff Protocol Between Platforms
-
-```
-1. Agent A (Platform X) completes task
-2. Creates handoff artifact with platform tags
-   - platform: "claude-code" | "opencode"
-   - session_id: "UUID"
-   - task_completion: "SUCCESS|PARTIAL|FAILED"
-3. Updates unified AGENT-STATE.yaml
-4. Platform Router routes to Platform Y
-5. Agent B (Platform Y) loads artifact and context
-6. Execution continues seamlessly
-```
 
 ### Platform-Specific Instructions
 
@@ -866,16 +348,6 @@ When New Document Approved:
 - Document formatting
 - Knowledge synthesis
 
-### Unified State Management
-
-**File**: `AGENT-STATE.yaml` (shared between platforms)
-
-**Purpose**:
-- Session continuity
-- Handoff coordination
-- State preservation
-- Progress tracking
-
 ---
 
 ## 🚫 Non-Negotiable Rules
@@ -885,8 +357,6 @@ When New Document Approved:
 ```bash
 pnpm tsc --noEmit && pnpm vitest run
 ```
-
-Run BEFORE claiming any story complete.
 
 ### 2. Clean Architecture Paths
 
@@ -900,40 +370,12 @@ Run BEFORE claiming any story complete.
   src/presentation/components/              → React components
   src/presentation/hooks/                   → Custom hooks
   src/routes/                               → TanStack Router routes
-
-❌ DEPRECATED (Never use):
-  src/lib/state/
-  src/stores/
-  src/lib/filesystem/sync-manager
 ```
 
-### 3. Import Order
+### 3. Zustand Store Pattern
 
 ```typescript
-// 1. React/Framework
-import React from 'react';
-import { useParams } from '@tanstack/react-router';
-
-// 2. Third-party
-import { useShallow } from 'zustand/react/shallow';
-
-// 3. Infrastructure (with @/)
-import { useProjectStore } from '@/infrastructure/persistence/stores/project-store';
-
-// 4. Domain
-import type { Project } from '@/domain/types/project';
-
-// 5. Presentation
-import { Button } from '@/presentation/components/ui/button';
-
-// 6. Relative
-import { localHelper } from './utils';
-```
-
-### 4. Zustand Store Pattern
-
-```typescript
-// ✅ ALWAYS use useShallow for multiple selectors
+// ✅ ALWAYS use useShallow
 const { items, addItem } = useStore(
   useShallow((state) => ({
     items: state.items,
@@ -946,7 +388,7 @@ const items = useStore((s) => s.items);
 const addItem = useStore((s) => s.addItem);
 ```
 
-### 5. 8-bit Design System
+### 4. 8-bit Design System
 
 ```css
 /* ✅ REQUIRED */
@@ -960,31 +402,6 @@ border-radius: 9999px;      /* Pill shape */
 backdrop-filter: blur();    /* Glassmorphism */
 opacity: 0.8;               /* Avoid - use solid */
 ```
-
-### 6. Epic Ordering
-
-Epic numbers are **MONOTONIC**:
-- Epic N cannot start until Epic N-1 is 80%+
-- Story IDs are sequential within epic
-- Never skip story numbers
-
-### 7. Development Standards (Mandatory)
-
-**Before writing any code, consult these standards:**
-
-| Standard | Location | When to Use |
-|----------|----------|-------------|
-| **API Patterns** | `agent-os/standards/backend/api.md` | Server functions, validation |
-| **Migrations** | `agent-os/standards/backend/migrations.md` | Dexie schema changes |
-| **Domain Models** | `agent-os/standards/backend/models.md` | Entity definitions |
-| **Query Patterns** | `agent-os/standards/backend/queries.md` | Dexie CRUD operations |
-| **Components** | `agent-os/standards/frontend/components.md` | React component structure |
-| **CSS/8-bit** | `agent-os/standards/frontend/css.md` | Styling rules |
-| **Coding Style** | `agent-os/standards/global/coding-style.md` | Import order, naming |
-| **Validation** | `agent-os/standards/global/validation.md` | Zod schemas |
-| **Testing** | `agent-os/standards/testing/test-writing.md` | Vitest/Playwright |
-
-**Non-compliance = Story Rejection.**
 
 ---
 
@@ -1010,23 +427,13 @@ Epic numbers are **MONOTONIC**:
 | `/ide` | WebContainer-based IDE |
 | `/study` | Flashcards/Quizzes **DEFER** |
 | `/knowledge` | Knowledge base **DEFER** |
-| `/marketing` | Landing page builder |
 | `/settings` | API keys, Vault, Config |
-
-### Active Epics
-
-| ID | Name | Progress | Priority | Notes |
-|----|------|----------|----------|
-| **EPIC-CC-AR02AR03** | Plugin System Rework (Phase 1A) | 0% | **P0 BLOCKER** | Remediate ARCH-02/ARCH-03 |
-| **EPIC-ARCH-04-CC** | FSA Handle Lifecycle | 95% | P0 BLOCKER | CC-04 E2E Pending |
-| EPIC-ARCH-01 | Platform Foundation | 60% | P1 | Team B CONS stories |
-| EPIC-CONSOLIDATION | Technical Debt Cleanup | 0% | P1 | Parallel to CC-04 |
 
 ---
 
 ## 📦 Module References
 
-| Module | Location | description |
+| Module | Location | Purpose |
 |--------|----------|---------|
 | Governance | `_bmad/modules/governance/` | Gates, cycles, regulation |
 | Integration Testing | `_bmad/modules/integration-testing/` | Playwright, API keys |
@@ -1035,8 +442,6 @@ Epic numbers are **MONOTONIC**:
 ---
 
 ## 🔗 External References
-
-For detailed documentation:
 
 - **Full BMAD Framework**: `_bmad/FRAMEWORK.md`
 - **ADR-039** (to be created): Primary Architecture Authority - consolidates ADR-033/034/035
@@ -1058,29 +463,6 @@ Before any workflow:
 4. **Daily**: Run `sprint-rotation-gate.yaml`
 5. **All**: Check `artifact-freshness-gate.yaml` TTL tiers
 
-### Artifact Lifecycle Gates
-
-**Before Creating Any Document**:
-- [ ] Check if similar artifact exists (ARTIFACT_REGISTRY.yaml)
-- [ ] Verify document does not exceed 5000 lines (god artifact check)
-- [ ] Determine appropriate tier (1-4)
-- [ ] Set appropriate TTL based on tier
-- [ ] Assign unique UUID
-
-**Before Updating Governance Files**:
-- [ ] All dependencies documented
-- [ ] Version updated (if applicable)
-- [ ] Backward compatibility considered
-- [ ] Impact on other agents assessed
-- [ ] Update ARTIFACT_REGISTRY.yaml
-
-**Before Archiving**:
-- [ ] Verify TTL expiration
-- [ ] Check for active dependencies
-- [ ] Create summary document
-- [ ] Update all references
-- [ ] Move to `_bmad-ext/.archive/{date}-{name}/`
-
 ---
 
 ## 📊 Context Limits
@@ -1092,76 +474,6 @@ Before any workflow:
 | Max active sprint files | 4 |
 | YAML file limit in _bmad-output | 25 |
 | workflow-status.yaml max lines | 200 |
-
----
-
-## 🔧 CORRECTION COURSE (ARCH-001 through ARCH-007)
-
-> **Source**: `_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md`
-> **Status**: COMPLETE - Phase 3 Cleanup Done
-> **Archive**: `_bmad-ext/.archive/correction-course-2026-01-18/`
-
-### Correction Course Summary
-
-| Phase | Stories | Status | Result |
-|-------|---------|--------|--------|
-| Phase 1: Store Architecture | ARC-A01 through ARC-A04 | ✅ Complete | Store consolidation |
-| Phase 2: Storage Gateway | ARC-B01 through ARC-B04 | ✅ Complete | Storage abstraction layer |
-| Phase 3: Cleanup & Governance | 4 files archived | ✅ Complete | Archive + governance update |
-
-### Archived Files (Phase 3)
-
-```
-_bmad-ext/.archive/correction-course-2026-01-18/
-├── srs-types.ts                  # Study types (deprecated)
-├── quiz-types.ts                 # Quiz types (deprecated)
-├── tool-permission-manager.ts    # Duplicate permission manager
-└── constants.ts                  # Duplicate permissions constants
-```
-
-### Story Completion Status
-
-| Story | Status | Notes |
-|-------|--------|-------|
-| ARC-A01 | ✅ Complete | `getPlatformContract()` implemented |
-| ARC-A02 | ✅ Complete | Platform detection standardized |
-| ARC-A03 | ✅ Complete | Store architecture cleaned |
-| ARC-A04 | ✅ Complete | Store duplication removed |
-| ARC-B01 | ✅ Complete | `StorageGateway` interface created |
-| ARC-B02 | ✅ Complete | FSA adapter implemented |
-| ARC-B03 | ✅ Complete | Dexie adapter implemented |
-| ARC-B04 | ✅ Complete | Factory pattern consolidated |
-
-### Validation Results
-
-```bash
-pnpm tsc --noEmit  # 0 errors ✅
-```
-
-### Key Architectural Decisions
-
-| Decision | Choice | Location |
-|----------|--------|----------|
-| Platform Contract | `getPlatformContract()` | `src/infrastructure/filesystem/platform-detection.ts` |
-| Storage Gateway | `StorageGateway` interface | `src/domain/interfaces/storage-gateway.interface.ts` |
-| FSA Adapter | Desktop storage | `src/infrastructure/filesystem/fsa-storage-adapter.ts` |
-| Dexie Adapter | Mobile storage | `src/infrastructure/filesystem/dexie-storage-adapter.ts` |
-| Factory | Storage adapter factory | `src/infrastructure/filesystem/StorageAdapterFactory.ts` |
-
-### Verification
-
-- [x] All deprecated files archived
-- [x] No broken imports from archived files
-- [x] TypeScript compiles with 0 errors
-- [x] AGENTS.md updated
-- [x] All tests pass
-- [x] Build successful
-
-### Next Steps
-
-1. Continue EPIC-CC-ARC (remaining stories)
-2. Begin EPIC-40 (Tool registry integration)
-3. Monitor performance of new architecture
 
 ---
 
@@ -1179,202 +491,24 @@ pnpm tsc --noEmit  # 0 errors ✅
    - new-fundamental-truths.md (v2.0.0) for strategic decisions
 7. Begin work using dev-story workflow
 
-## DEVELOPMENT GUIDELINES -  THE RESEARCH USING INTERNET-BASED TOOLS OF MCP SERVERS ARE **NON-NEGOTIABLE**  (when these agents, tools uses, ai, llms, multimodality, endpoints, or any dependencies packages are arraised in the keywords - even you are dev agent, to start the session of context collecting you must at least make 3 successful and relevant call to online-based or pull official and relevant documents and guides to ensure following the 2026 patterns)
+---
 
+## 🎯 Critical BMAD Rules
 
-## Dependencies Github repos and docs links:
-Based on my research, here's a comprehensive list of official documentation and GitHub repository links for your stack dependencies:
-
-## Core UI & Component Libraries
-
-### @radix-ui (Dialog, Dropdown Menu, Label, Select, Separator, Slot, Switch, Tabs)
-- **Docs**: [https://www.radix-ui.com/primitives](https://www.radix-ui.com/primitives)[1]
-- **GitHub**: [https://github.com/radix-ui/primitives](https://github.com/radix-ui/primitives)[2]
-
-### @monaco-editor/react
-- **Docs**: [https://github.com/suren-atoyan/monaco-react](https://github.com/suren-atoyan/monaco-react)[3]
-- **GitHub**: [https://github.com/suren-atoyan/monaco-react](https://github.com/suren-atoyan/monaco-react)[3]
-
-### monaco-editor
-- **Docs**: [https://microsoft.github.io/monaco-editor/](https://microsoft.github.io/monaco-editor/)[4]
-- **GitHub**: [https://github.com/microsoft/monaco-editor](https://github.com/microsoft/monaco-editor)[5]
-
-### lucide-react
-- **Docs**: [https://lucide.dev](https://lucide.dev)[6]
-- **GitHub**: [https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide)[7]
-
-## Styling & Theming
-
-### tailwindcss & @tailwindcss/vite
-- **Docs**: [https://tailwindcss.com/docs](https://tailwindcss.com/docs)[8]
-- **GitHub**: [https://github.com/tailwindlabs/tailwindcss.com](https://github.com/tailwindlabs/tailwindcss.com)[9]
-
-### class-variance-authority
-- **Docs**: [https://cva.style](https://cva.style)[10]
-- **GitHub**: [https://github.com/joe-bell/cva](https://github.com/joe-bell/cva)[10]
-
-### next-themes
-- **Docs**: [https://github.com/pacocoursey/next-themes](https://github.com/pacocoursey/next-themes)[11]
-- **GitHub**: [https://github.com/pacocoursey/next-themes](https://github.com/pacocoursey/next-themes)[11]
-
-### clsx & tailwind-merge
-- **clsx GitHub**: [https://github.com/lukeed/clsx](https://github.com/lukeed/clsx)
-- **tailwind-merge GitHub**: [https://github.com/dcastil/tailwind-merge](https://github.com/dcastil/tailwind-merge)
-
-## TanStack Ecosystem
-
-### @tanstack/react-router, @tanstack/react-router-devtools, @tanstack/react-router-ssr-query, @tanstack/react-start, @tanstack/router-plugin
-- **Docs**: [https://tanstack.com/router](https://tanstack.com/router)[12]
-- **GitHub**: [https://github.com/TanStack/router](https://github.com/TanStack/router)[13]
-
-### @tanstack/ai, @tanstack/ai-gemini, @tanstack/ai-react
-- **Docs**: [https://tanstack.com/ai](https://tanstack.com/ai)[14]
-- **GitHub**: [https://github.com/TanStack/ai](https://github.com/TanStack/ai)[15]
-
-### @tanstack/store
-- **Docs**: [https://tanstack.com](https://tanstack.com)[16]
-- **GitHub**: [https://github.com/TanStack](https://github.com/TanStack)
-
-### @tanstack/react-devtools
-- **Docs**: [https://tanstack.com](https://tanstack.com)[16]
-- **GitHub**: [https://github.com/TanStack](https://github.com/TanStack)
-
-## Data & State Management
-
-### zustand
-- **Docs**: [https://zustand.docs.pmnd.rs](https://zustand.docs.pmnd.rs)[17]
-- **GitHub**: [https://github.com/pmndrs/zustand](https://github.com/pmndrs/zustand)[18]
-
-### dexie & dexie-react-hooks
-- **Docs**: [https://dexie.org](https://dexie.org)[19]
-- **GitHub**: [https://github.com/dexie/Dexie.js](https://github.com/dexie/Dexie.js)[20]
-
-### idb
-- **Docs**: [https://github.com/jakearchibald/idb](https://github.com/jakearchibald/idb)[21]
-- **GitHub**: [https://github.com/jakearchibald/idb](https://github.com/jakearchibald/idb)[21]
-
-### zod
-- **Docs**: [https://zod.dev](https://zod.dev)[22]
-- **GitHub**: [https://github.com/colinhacks/zod](https://github.com/colinhacks/zod)[23]
-
-## Development Tools & Utilities
-
-### @webcontainer/api
-- **Docs**: [https://developer.stackblitz.com/platform/api/webcontainer-api](https://developer.stackblitz.com/platform/api/webcontainer-api)[24]
-- **GitHub**: [https://github.com/stackblitz/webcontainer-docs](https://github.com/stackblitz/webcontainer-docs)[25]
-
-### @xterm/xterm & @xterm/addon-fit
-- **Docs**: [http://xtermjs.org](http://xtermjs.org)[26]
-- **GitHub**: [https://github.com/xtermjs/xterm.js](https://github.com/xtermjs/xterm.js)[27]
-
-### isomorphic-git
-- **Docs**: [https://isomorphic-git.org](https://isomorphic-git.org)[28]
-- **GitHub**: [https://github.com/isomorphic-git/isomorphic-git](https://github.com/isomorphic-git/isomorphic-git)[29]
-
-## Internationalization
-
-### i18next, i18next-browser-languagedetector, react-i18next
-- **Docs**: [https://www.i18next.com](https://www.i18next.com)[30]
-- **GitHub**: [https://github.com/i18next/i18next](https://github.com/i18next/i18next)[31]
-
-## UI Utilities
-
-### react-resizable-panels
-- **Docs**: [https://react-resizable-panels.vercel.app](https://react-resizable-panels.vercel.app)[32]
-- **GitHub**: [https://github.com/bvaughn/react-resizable-panels](https://github.com/bvaughn/react-resizable-panels)[33]
-
-### sonner
-- **Docs**: [https://sonner.emilkowal.ski](https://sonner.emilkowal.ski)
-- **GitHub**: [https://github.com/emilkowalski/sonner](https://github.com/emilkowalski/sonner)
-
-### eventemitter3
-- **Docs**: [http://nodejs.org/api/events.html](http://nodejs.org/api/events.html)[34]
-- **GitHub**: [https://github.com/primus/eventemitter3](https://github.com/primus/eventemitter3)[34]
-
-## Observability
-
-### @sentry/react
-- **Docs**: [https://docs.sentry.io/platforms/javascript/guides/react/](https://docs.sentry.io/platforms/javascript/guides/react/)[35]
-- **GitHub**: [https://github.com/getsentry/sentry-javascript](https://github.com/getsentry/sentry-javascript)[36]
-
-## React Core
-
-### react & react-dom
-- **Docs**: [https://react.dev](https://react.dev)
-- **GitHub**: [https://github.com/facebook/react](https://github.com/facebook/react)
-
-### vite-tsconfig-paths
-- **GitHub**: [https://github.com/aleclarson/vite-tsconfig-paths](https://github.com/aleclarson/vite-tsconfig-paths)
-
-- Use innate search tools, grep, etc. for codebase exploration
-- Use Context7 MCP tools for official documentation (2 sequential steps per turn based on scoring)
-- Use Deepwiki for semantic questions about specific tech stacks (TanStack Router, WebContainer, xterm.js, etc.)
-- Use Tavily and Exa MCP tools for semantic repo search
-- Use Repomix MCP tools for granular codebase analysis
-- Create controlled documents/artifacts with IDs, variables, naming, date stamps for context preservation
-- Prioritize iteration, insertion, updates on single-source of truth
-- When generating new files, isolate with new
+- **ALWAYS start with context** - Read, consume relevant docs, use MCP servers
+- **Never create files without validation** - Both code and documents need gatekeeping
+- **Never use stale documents** - No references, metadata, or yaml references = NEVER use
+- **Never execute without plan** - Always set up TODO list
+- **8-bit design** - No transparent backgrounds, NO hardcoded CSS, responsive for mobile
+- **Language strings** - NOT hardcoded - English and Vietnamese
+- **Code splitting** - Start splitting at 400 lines (500+ not accepted) - No god classes
+- **Keep architecture aligned** - Refactored and organized
+- **Never pass gatekeeping without evidence** - Validate success before claiming done
+- **Debug intelligently** - Export errors to files, reason deeply, fix progressively, then run tools
+- **Two teams A and B** - Coordinate to correct team, keep status updated
+- **DRY-CHECK** - ALWAYS double-check for syntax errors before running tools or tests
+- **MCP tools are critical** - Check and use them often for official docs
 
 ---
 
-## TanStack MCP Server (Official)
-
-**Critical Tool for TanStack Ecosystem Research** - Agents MUST use this for all TanStack documentation queries.
-
-### Configuration
-
-| Property | Value |
-|----------|-------|
-| **Server URL** | `https://tanstack.com/api/mcp` |
-| **API Key** | `ts_bdd5ade6ba81622c4855582aaf830e44d337d22680decf9301b3cb95f950d92b` |
-| **Transport** | Streamable HTTP |
-| **Auth** | OAuth (browser-based) |
-
-### Available Tools
-
-#### Documentation Tools
-
-| Tool | Description | Auth Required |
-|------|-------------|---------------|
-| `list_libraries` | List all TanStack libraries with versions and metadata | No |
-| `get_doc` | Fetch specific documentation page by library and path | No |
-| `search_docs` | Full-text search across all TanStack documentation | No |
-
-#### NPM Stats Tools
-
-| Tool | Description | Auth Required |
-|------|-------------|---------------|
-| `get_npm_stats` | Get aggregated download stats for TanStack or a library | No |
-| `list_npm_comparisons` | List preset package comparisons | No |
-| `compare_npm_packages` | Compare download stats for multiple packages | No |
-| `get_npm_package_downloads` | Get detailed historical downloads for a package | No |
-
-### Supported Libraries
-
-- **@tanstack/react-router**, `@tanstack/react-router-devtools`, `@tanstack/react-router-ssr-query`
-- **@tanstack/react-start**, `@tanstack/router-plugin`
-- **@tanstack/ai**, `@tanstack/ai-gemini**, `@tanstack/ai-react`
-- **@tanstack/store**, `@tanstack/react-devtools`
-- And all other TanStack packages
-
-### Usage Examples
-
-```typescript
-// Search for router documentation
-await search_docs({ query: "route params navigation" });
-
-// Get specific library info
-await list_libraries();
-
-// Get npm stats comparison
-await compare_npm_packages({
-  packages: ["@tanstack/react-router", "@tanstack/query"]
-});
-```
-
-### Integration Notes
-
-- AI assistants can access **current documentation** for all TanStack libraries
-- **Version-specific docs** available for exact versions in use
-- **Full-text search** across all TanStack documentation
-- Fetches directly from TanStack GitHub repositories for most current content
+**End of CLAUDE.md - Total Lines: ~450**

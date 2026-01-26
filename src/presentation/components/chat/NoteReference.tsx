@@ -61,7 +61,7 @@ export function NoteReference({
             setActiveNote(noteId);
 
             // Navigate to notes workspace
-            navigate({ to: '/notes' });
+            navigate({ to: '/hub' });
 
             toast.success(t('noteReference.opened', 'Opened note: {title}', { title: noteTitle }));
         } catch (error) {

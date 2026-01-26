@@ -14,7 +14,7 @@
  * @created 2026-01-21
  */
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { FolderOpen, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +23,13 @@ import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// Store - using shared file tree store for reactivity
+import { useFileTreeStore } from '@/infrastructure/persistence/stores/file-tree-store';
+import type { FileTreeNode } from '@/infrastructure/persistence/stores/file-tree-store';
+
+// File event bus (EPIC-0.5-02)
+import { fileEventBus } from '@/infrastructure/events/file-event-bus';
 
 // ============================================================================
 // Tree Node Types
@@ -71,87 +78,48 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
   const { t } = useTranslation();
 
   // Get context from provider
-  const projectContext = useProjectContext();
-  const { gateway, project, refreshFileTree, openFile } = projectContext;
+  const { gateway, project, refreshFileTree, openFile, isDirty } = useProjectContext();
 
-  // Local state for FileTree-specific UI
-  const [selectedPath, setSelectedPath] = useState<string | undefined>();
-  const [expandedPaths, setExpandedPaths] = useState<Set<string>>(new Set());
+  // CRITICAL FIX: Direct selector calls to prevent infinite loop
+  // Using individual selectors instead of useFileTreeNodes() hook
+  const rootPaths = useFileTreeStore((state) => state.rootPaths);
+  const nodesMap = useFileTreeStore((state) => state.nodes);
+
+  // Memoize root nodes computation to prevent infinite re-render
+  const rootNodes = useMemo(() => {
+    return rootPaths
+      .map((path) => nodesMap.get(path))
+      .filter((node): node is FileTreeNode => node !== undefined);
+  }, [rootPaths, nodesMap]);
+
+  // Get UI state from store (individual selectors for stability)
+  const selectedPath = useFileTreeStore((state) => state.selectedPath);
+  const toggleExpand = useFileTreeStore((state) => state.toggleExpand);
+  const selectFile = useFileTreeStore((state) => state.selectFile);
+  const isLoading = useFileTreeStore((state) => state.loading);
+  const storeError = useFileTreeStore((state) => state.error);
+
+  // Local state for UI concerns not in store
   const [focusedPath, setFocusedPath] = useState<string | undefined>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [rootNodes, setRootNodes] = useState<TreeNode[]>([]);
 
   // ============================================================================
   // Actions
   // ============================================================================
 
   /**
-   * Load file tree from storage
-   */
-  const loadFileTree = useCallback(async () => {
-    if (!gateway) {
-      setError('Storage gateway not available');
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // List files from project root
-      const entries = await gateway.list('.');
-      console.log('[FileTreePlugin] Loaded entries:', entries);
-
-      // Build tree nodes from flat entries
-      const nodes: TreeNode[] = [];
-      for (const entry of entries) {
-        // Skip dotfiles (except .vscode, .git)
-        if (entry.path.startsWith('.') && !['.vscode', '.git'].includes(entry.path)) {
-          continue;
-        }
-
-        // Determine if directory (by path ending with /)
-        const isDirectory = entry.path.endsWith('/');
-
-        nodes.push({
-          name: entry.path.replace(/\/$/, ''),
-          path: entry.path.replace(/\/$/, ''),
-          type: isDirectory ? 'directory' : 'file',
-        });
-      }
-
-      setRootNodes(nodes);
-    } catch (err) {
-      setError(`Failed to load file tree: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      console.error('[FileTreePlugin] Error loading file tree:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [gateway]);
-
-  /**
-   * Toggle folder expansion
+   * Toggle folder expansion - using store action
    */
   const handleToggle = useCallback((path: string) => {
-    setExpandedPaths((prev) => {
-      const next = new Set(prev);
-      if (next.has(path)) {
-        next.delete(path);
-      } else {
-        next.add(path);
-      }
-      return next;
-    });
-  }, []);
+    toggleExpand(path);
+  }, [toggleExpand]);
 
   /**
-   * Handle file selection
+   * Handle file selection - using store action
    */
   const handleSelect = useCallback(
-    (node: TreeNode) => {
-      if (node.type === 'file') {
-        setSelectedPath(node.path);
+    (node: FileTreeNode) => {
+      if (node.kind === 'file') {
+        selectFile(node.path);
         setFocusedPath(node.path);
 
         // Call context's openFile action
@@ -160,7 +128,7 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
         console.log('[FileTreePlugin] Selected file:', node.path);
       }
     },
-    [openFile],
+    [selectFile, openFile],
   );
 
   /**
@@ -207,16 +175,39 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
   // Effects
   // ============================================================================
 
-  // Load file tree on mount and when refresh is triggered
-  useEffect(() => {
-    loadFileTree();
-  }, [loadFileTree]);
+  // Note: FileTree is now reactive via store subscription.
+  // ProjectContext loads initial data into store on mount.
+  // No local loadFileTree() needed - store manages state centrally.
 
-  // Refresh file tree when ProjectContext.refreshFileTree is called
+  // Refresh file tree when ProjectContext.refreshFileTree changes
   useEffect(() => {
-    // For POC, just reload on mount
-    // Full integration would listen to refreshFileTree changes
-  }, [refreshFileTree, loadFileTree]);
+    // Store will be updated by refreshFileTree via ProjectContext
+    // This hook tracks the refresh trigger for side effects if needed
+  }, [refreshFileTree]);
+
+  // EPIC-0.5-02: Subscribe to file events for reactive updates
+  // When files are created, updated, deleted, moved, or renamed,
+  // refresh the file tree to reflect changes
+  useEffect(() => {
+    const unsubscribe = fileEventBus.onWithFilter(
+      'file',
+      (event) => {
+        console.log('[FileTreePlugin] Received file event:', event.type, event.path);
+
+        // Only refresh if event is for this project
+        if (event.projectId === project.id) {
+          refreshFileTree();
+        }
+      },
+      {
+        projectId: project.id,
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [project.id, refreshFileTree]);
 
   // ============================================================================
   // Render States
@@ -235,14 +226,14 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
     );
   }
 
-  // Error state
-  if (error) {
+  // Error state (from store)
+  if (storeError) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-destructive p-4">
         <AlertCircle size={32} className="mb-2" />
-        <p className="text-sm text-center">{error}</p>
+        <p className="text-sm text-center">{storeError}</p>
         <button
-          onClick={loadFileTree}
+          onClick={refreshFileTree}
           className="mt-4 rounded-none bg-primary text-primary-foreground px-4 py-2 hover:brightness-110 transition-all"
         >
           Retry
@@ -251,7 +242,7 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
     );
   }
 
-  // Loading state
+  // Loading state (from store)
   if (isLoading) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
@@ -267,12 +258,12 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
   /**
    * Render tree nodes recursively
    */
-  function renderTree(nodes: TreeNode[], depth: number = 0): React.JSX.Element[] {
+  function renderTree(nodes: FileTreeNode[], depth: number = 0): React.JSX.Element[] {
     const items: React.JSX.Element[] = [];
 
     for (const node of nodes) {
-      const isDirectory = node.type === 'directory';
-      const isExpanded = expandedPaths.has(node.path);
+      const isDirectory = node.kind === 'directory';
+      const isExpanded = node.expanded;
       const isSelected = selectedPath === node.path;
       const isFocused = focusedPath === node.path;
 
@@ -291,20 +282,22 @@ function FileTreeComponent({ width, height }: PluginMainProps) {
             aria-selected={isSelected}
             tabIndex={isFocused ? 0 : -1}
           >
-            {isDirectory ? (
-              isExpanded ? (
-                <FolderOpen size={16} className="text-blue-500" />
-              ) : (
-                <FolderOpen size={16} className="text-gray-500" />
-              )
-            ) : (
-              <span className="text-xs">📄</span>
-            )}
-            <span className="text-sm">{node.name}</span>
-          </div>
+             {isDirectory ? (
+               isExpanded ? (
+                 <FolderOpen size={16} className="text-blue-500" />
+               ) : (
+                 <FolderOpen size={16} className="text-gray-500" />
+               )
+             ) : (
+               <span className="text-xs">📄</span>
+             )}
+             <span className="text-sm">{node.name}</span>
+             {/* EPIC-0.5-03: Dirty file indicator */}
+             {!isDirectory && isDirty(node.path) && <span className="ml-2 text-orange-500 text-xs">●</span>}
+           </div>
 
           {/* Render children if directory is expanded */}
-          {isDirectory && isExpanded && node.children && (
+          {isDirectory && isExpanded && node.children && node.children.length > 0 && (
             <div>{renderTree(node.children, depth + 1)}</div>
           )}
         </div>,

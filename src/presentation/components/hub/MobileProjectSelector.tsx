@@ -113,7 +113,7 @@ export function MobileProjectSelector({
         // Store template in sessionStorage for demo mode
         sessionStorage.setItem('demo-template', JSON.stringify(template));
         // Navigate to IDE in demo mode
-        navigate({ to: '/ide', search: { demo: template.id } });
+        navigate({ to: '/hub' });
     };
 
     return (

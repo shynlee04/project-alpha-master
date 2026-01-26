@@ -86,3 +86,35 @@ export { crossWorkspaceEventBus };
  */
 export { DomainEventType } from './event-bus';
 export type { DomainEvent, EventHandler } from './event-bus';
+
+/**
+ * Re-export file event bus (EPIC-0.5-02)
+ */
+export { fileEventBus, useFileEventBus } from './file-event-bus';
+export {
+  emitFileCreated,
+  emitFileUpdated,
+  emitFileDeleted,
+  emitFileMoved,
+  emitFileRenamed,
+} from './file-event-bus';
+export type {
+  FileEvent,
+  FileEventType,
+  FileEventSource,
+  FileEventHandler,
+  FileEventSubscriberOptions,
+  FileEventBusEvents,
+  FileCreatedEvent,
+  FileUpdatedEvent,
+  FileDeletedEvent,
+  FileMovedEvent,
+  FileRenamedEvent,
+} from './types';
+export {
+  isFileCreatedEvent,
+  isFileUpdatedEvent,
+  isFileDeletedEvent,
+  isFileMovedEvent,
+  isFileRenamedEvent,
+} from './types';

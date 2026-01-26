@@ -38,6 +38,7 @@ import { NULL_CHAT_SERVICE } from '@/infrastructure/services/chat-service';
 import { PermissionOverlay } from '@/presentation/components/layout/PermissionOverlay';
 import { handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
+import { emitFileCreated, emitFileUpdated, emitFileDeleted } from '@/infrastructure/events/file-event-bus';
 
 type HandleRestoreResult = Awaited<ReturnType<typeof handlePersistenceService.restoreHandle>>;
 
@@ -108,6 +109,22 @@ export interface ProjectContext {
 
   /** Refresh file tree from storage */
   refreshFileTree: () => Promise<void>;
+
+  // ========================================================================
+  // Dirty State Tracking (EPIC-0.5-03)
+  // ========================================================================
+
+  /** Set of file paths that have unsaved changes */
+  dirtyFiles: Set<string>;
+
+  /** Mark a file as dirty (has unsaved changes) */
+  markDirty: (path: string) => void;
+
+  /** Mark a file as clean (all changes saved) */
+  markClean: (path: string) => void;
+
+  /** Check if a file has unsaved changes */
+  isDirty: (path: string) => boolean;
 }
 
 // ============================================================================
@@ -172,6 +189,9 @@ export const ProjectContextProvider: React.FC<{
   const [platform, setPlatform] = useState<PlatformContract | null>(null);
   const [gateway, setGateway] = useState<StorageGateway | null>(null);
 
+  // EPIC-0.5-03: Dirty file tracking
+  const [dirtyFiles, setDirtyFiles] = useState<Set<string>>(new Set());
+
   // ARCH-04-03 TEAM B: Permission prompt state
   const [showPermissionOverlay, setShowPermissionOverlay] = useState<boolean>(false);
 
@@ -219,12 +239,16 @@ export const ProjectContextProvider: React.FC<{
         // Note: FSA handle will be retrieved from context when needed
 
         // === FSA HANDLE LIFECYCLE - START ===
+        console.log('[ProjectContext] FSA Handle Lifecycle - projectId:', projectId);
+        console.log('[ProjectContext] initialHandle available?', !!initialHandle);
+        console.log('[ProjectContext] storageType:', loadedProject.storageType);
+
         let resolvedHandle: FileSystemDirectoryHandle | null = fsaHandle;
 
         if (loadedProject.storageType === 'fsa') {
           // Use initialHandle if available (from wizard navigation)
           if (initialHandle) {
-            console.log('[ProjectContext] Using initialHandle from navigation');
+            console.log('[ProjectContext] Using initialHandle from navigation - name:', initialHandle.name);
             resolvedHandle = initialHandle;
             setFsaHandle(initialHandle);
             // Persist for future visits
@@ -238,13 +262,20 @@ export const ProjectContextProvider: React.FC<{
             console.log('[ProjectContext] Using existing FSA handle from state');
           } else {
             // Try to restore from IndexedDB
-            console.log('[ProjectContext] Attempting FSA handle restoration');
+            console.log('[ProjectContext] Attempting FSA handle restoration from IndexedDB...');
             try {
               const restoreResult: HandleRestoreResult =
                 await handlePersistenceService.restoreHandle(projectId);
 
+              console.log('[ProjectContext] Restore result:', {
+                success: restoreResult.success,
+                hasHandle: !!restoreResult.handle,
+                requiresUserInteraction: restoreResult.requiresUserInteraction,
+                error: restoreResult.error,
+              });
+
               if (restoreResult.success && restoreResult.handle) {
-                console.log('[ProjectContext] FSA handle restored successfully');
+                console.log('[ProjectContext] FSA handle restored successfully - name:', restoreResult.handle.name);
                 resolvedHandle = restoreResult.handle;
                 setFsaHandle(restoreResult.handle);
               } else if (restoreResult.requiresUserInteraction) {
@@ -293,16 +324,38 @@ export const ProjectContextProvider: React.FC<{
             }
           },
           write: async (path, data) => {
+            // EPIC-0.5-02: Check if file exists before writing
+            const isNewFile = !(await storageAdapter.exists(path));
+            
             await storageAdapter.writeFile(path, data);
+
+            // EPIC-0.5-02: Emit FILE_CREATED or FILE_UPDATED event
+            const content = new TextDecoder().decode(data);
+            if (isNewFile) {
+              emitFileCreated(path, projectId, 'user', content, data.byteLength);
+            } else {
+              emitFileUpdated(path, projectId, 'user', content, data.byteLength);
+            }
           },
           delete: async (path) => {
             await storageAdapter.deleteFile(path);
+
+            // EPIC-0.5-02: Emit FILE_DELETED event
+            emitFileDeleted(path, projectId, 'user');
           },
           list: async (path) => {
-            const files = await storageAdapter.listFiles(path);
+            // Normalize common patterns to recursive glob
+            // '.' and '' are Unix-style "current directory" but adapters expect glob patterns
+            // '**/*' matches all files recursively
+            const pattern = (path === '.' || path === '') ? '**/*' : path;
+            const files = await storageAdapter.listFiles(pattern);
+
+            // EPIC-0.5-01 FIX: Preserve FULL paths - let file-tree-store build hierarchy
+            // Gateway returns flat list of full file paths
+            // Store is responsible for building directory structure
             return files.map((file) => ({
-              path: file,
-              kind: 'file',
+              path: file,  // FULL PATH preserved - e.g., "src/components/Button.tsx"
+              kind: 'file' as const,  // All entries from listFiles() are files
               size: 0,
               lastModified: 0,
             }));
@@ -312,7 +365,7 @@ export const ProjectContextProvider: React.FC<{
           },
           watch: () => {
             // TODO: Implement file watching
-            return { dispose: () => {} };
+            return { dispose: () => { } };
           },
         };
 
@@ -320,15 +373,22 @@ export const ProjectContextProvider: React.FC<{
 
         // 4. Initialize file tree state (using top-level hook)
         // fileTreeStore is already available from component top level
+        console.log('[ProjectContext] Gateway created, listing files...');
 
         // Load initial file tree
         const entries = await storageGateway.list('.');
+        console.log('[ProjectContext] Files listed:', entries.length, 'entries', entries.slice(0, 5));
+
         // Use top-level fileTreeStore directly
         if (fileTreeStore.load) {
+          console.log('[ProjectContext] Calling fileTreeStore.load with', entries.length, 'entries');
           fileTreeStore.load(entries);
+        } else {
+          console.error('[ProjectContext] fileTreeStore.load is undefined!');
         }
 
         setLoading(false);
+        console.log('[ProjectContext] ✅ Project initialized successfully:', projectId);
       } catch (err) {
         setError(`Failed to load project: ${err instanceof Error ? err.message : 'Unknown error'}`);
         setLoading(false);
@@ -364,23 +424,51 @@ export const ProjectContextProvider: React.FC<{
     if (!gateway) return;
     const data = new TextEncoder().encode(content);
     await gateway.write(path, data);
+
+    // EPIC-0.5-02: Emit FILE_UPDATED event through file event bus
+    emitFileUpdated(path, projectId, 'user', content, data.byteLength);
+
     await refreshFileTree();
-  }, [gateway, refreshFileTree]);
+  }, [gateway, refreshFileTree, projectId]);
+
+  // EPIC-0.5-03: Dirty state tracking functions
+  const markDirty = useCallback((path: string) => {
+    console.log('[ProjectContext] Marking file as dirty:', path);
+    setDirtyFiles(prev => new Set([...prev, path]));
+  }, []);
+
+  const markClean = useCallback((path: string) => {
+    console.log('[ProjectContext] Marking file as clean:', path);
+    setDirtyFiles(prev => {
+      const next = new Set(prev);
+      next.delete(path);
+      return next;
+    });
+  }, []);
+
+  const isDirty = useCallback((path: string) => {
+    return dirtyFiles.has(path);
+  }, [dirtyFiles]);
 
   // Only provide context value when everything is loaded
   const contextValue: ProjectContext | null = (loading || error || !project || !platform || !gateway)
     ? null
     : {
-        project,
-        projectId,
-        gateway: gateway!,
-        platform: platform!,
-        fileTree: fileTreeStore, // ✅ Use top-level hook result directly
-        chatService: NULL_CHAT_SERVICE,
-        openFile,
-        saveFile,
-        refreshFileTree,
-      };
+      project,
+      projectId,
+      gateway: gateway!,
+      platform: platform!,
+      fileTree: fileTreeStore, // ✅ Use top-level hook result directly
+      chatService: NULL_CHAT_SERVICE,
+      openFile,
+      saveFile,
+      refreshFileTree,
+      // EPIC-0.5-03: Dirty state tracking
+      dirtyFiles,
+      markDirty,
+      markClean,
+      isDirty,
+    };
 
   // ========================================================================
   // Render

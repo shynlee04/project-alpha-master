@@ -87,7 +87,7 @@ export default function Header() {
             <span className="font-medium">{t('navigation.home')}</span>
           </Link>
           <Link
-            to="/ide"
+            to="/projects"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors mb-2"
             activeProps={{

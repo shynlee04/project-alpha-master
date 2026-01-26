@@ -64,7 +64,7 @@ export const RecentProjectsSection: React.FC<RecentProjectsSectionProps> = ({
           {t('hub.recent.title', 'RECENT_DIRECTORIES')}
         </h2>
         <button
-          onClick={() => navigate({ to: '/workspace' })}
+          onClick={() => navigate({ to: '/projects' })}
           className="text-xs font-mono text-muted-foreground hover:text-primary hover:underline flex items-center gap-1 transition-colors"
         >
           {t('hub.actions.viewAll', 'VIEW_ALL >>')}

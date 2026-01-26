@@ -1,8 +1,8 @@
 # Via-Gent Architecture Document
 
-**Version:** 3.0.0
+**Version:** 3.1.0
 **Date:** 2026-01-26
-**Status:** ACTIVE - Aligned with new-fundamental-truths.md v2.0.0
+**Status:** ACTIVE - Aligned with new-fundamental-truths.md v2.0.0 + EPIC-0 Learnings
 **Last Updated:** 2026-01-26
 
 ## Authoritative Sources
@@ -211,7 +211,60 @@ const platform = getPlatformContract();
 // Use platform.deviceType to determine plugin defaults
 ```
 
-### 2.4 Storage Gateway Abstraction
+### 2.4 FSA Handle Lifecycle (ADR-039 Reference)
+
+**CRITICAL**: `FileSystemDirectoryHandle` is NOT serializable through router state.
+
+**Source:** EPIC-0 Learnings (2026-01-26)
+
+#### Handle Persistence Flow
+
+```
+1. Project Creation:
+   - User selects folder → FSA handle acquired
+   - handlePersistenceService.persist(projectId, handle)
+   - Handle stored in IndexedDB `fsaHandles` table
+   
+2. Project Access:
+   - Route loads project from Dexie
+   - handlePersistenceService.restoreHandle(projectId)
+   - If silent restore fails → PermissionOverlay
+   - User grants permission → handle valid
+   
+3. Handle Validation:
+   - Before any FSA operation, verify handle.queryPermission()
+   - If 'denied' → show PermissionOverlay
+   - If 'granted' → proceed with operation
+```
+
+#### Anti-Patterns (from EPIC-0 learnings)
+
+| Pattern | Status | Reason |
+|---------|--------|--------|
+| Pass handle through `navigate({ state: { handle } })` | ❌ NEVER | Not serializable |
+| Assume handle survives page reload | ❌ NEVER | Handle is lost |
+| Restore handle from IndexedDB on route mount | ✅ ALWAYS | Only reliable method |
+| Check permission before FSA operations | ✅ ALWAYS | May be revoked |
+
+#### Implementation Reference
+
+```typescript
+// ✅ CORRECT - Restore handle from persistence
+const handle = await handlePersistenceService.restoreHandle(projectId);
+if (!handle) {
+  // Show PermissionOverlay for re-grant
+  return;
+}
+
+// ❌ WRONG - Never pass through router state
+navigate({ to: `/${projectId}`, state: { handle } }); // FORBIDDEN
+```
+
+**Status:** ✅ Implemented in EPIC-0
+
+---
+
+### 2.5 Storage Gateway Abstraction
 
 **Location:** `src/infrastructure/filesystem/`
 
@@ -239,7 +292,53 @@ const gateway = StorageGatewayFactory.create({
 | **FSAGateway** | 'fsa' | `src/infrastructure/filesystem/fsa-storage-adapter.ts` | ✅ COMPLETE |
 | **IDBGateway** | 'indexeddb' | `src/infrastructure/filesystem/idb-storage-adapter.ts` | ✅ COMPLETE |
 
-### 2.5 Route Structure (UPDATED - v3.0.0)
+### 2.6 Storage Gateway Pattern Normalization (EPIC-0 Fix)
+
+**Source:** EPIC-0 Learnings (2026-01-26)
+
+**Problem Solved:** `gateway.list('.')` pattern returned empty results
+
+#### Pattern Normalization
+
+```typescript
+list: async (path) => {
+  // Normalize common patterns to recursive glob
+  const pattern = (path === '.' || path === '') ? '**/*' : path;
+  const files = await storageAdapter.listFiles(pattern);
+  // ...
+}
+```
+
+#### Supported Patterns
+
+| Input | Normalized | Result |
+|-------|-----------|--------|
+| `'.'` | `'**/*'` | All files recursively |
+| `''` | `'**/*'` | All files recursively |
+| `'src'` | `'src/**/*'` | All files in src recursively |
+| `'*.ts'` | `'*.ts'` | TypeScript files in root |
+
+#### Implementation Location
+
+**File:** `src/infrastructure/filesystem/fsa-storage-adapter.ts`
+
+```typescript
+// Gateway list method with normalization
+async list(path: string): Promise<FileEntry[]> {
+  const normalizedPath = this.normalizePath(path);
+  // ...
+}
+
+private normalizePath(path: string): string {
+  if (path === '.' || path === '') return '**/*';
+  if (!path.includes('*')) return `${path}/**/*`;
+  return path;
+}
+```
+
+**Status:** ✅ Implemented in EPIC-0
+
+### 2.7 Route Structure (UPDATED - v3.0.0)
 
 **Current State (OUTDATED):**
 ```
@@ -563,7 +662,61 @@ Orchestrator/Coordinator (read-only tools only)
 
 **Status:** 40% - Partial implementation exists
 
-### 4.4 TanStack AI SDK Integration (NEW - v3.0.0)
+### 4.4 Zustand Store Reactivity (EPIC-0 Learnings)
+
+**Source:** EPIC-0 Learnings (2026-01-26)
+
+**Problem Solved:** Infinite re-render loops with Zustand selectors
+
+#### Correct Pattern
+
+```typescript
+// ✅ CORRECT: Individual selectors + useMemo
+const rootPaths = useFileTreeStore((state) => state.rootPaths);
+const nodesMap = useFileTreeStore((state) => state.nodes);
+
+const rootNodes = useMemo(() => {
+  return rootPaths.map((path) => nodesMap.get(path))
+    .filter((node): node is FileTreeNode => node !== undefined);
+}, [rootPaths, nodesMap]);
+```
+
+#### Anti-Pattern
+
+```typescript
+// ❌ WRONG: Creates new array on every render
+const rootNodes = useFileTreeStore((state) => {
+  return state.rootPaths.map(p => state.nodes.get(p));
+});
+```
+
+#### Rule
+
+When selector computes derived data:
+1. Select primitive values or stable references separately
+2. Compute derived data with `useMemo`
+3. Never compute inline in selector function
+4. For multiple values, use `useShallow` from `zustand/react/shallow`
+
+#### Reference Implementation
+
+**File:** `src/presentation/components/ide/FileTree.tsx`
+
+```typescript
+import { useShallow } from 'zustand/react/shallow';
+
+// Multiple stable selectors
+const { items, addItem } = useStore(
+  useShallow((state) => ({
+    items: state.items,
+    addItem: state.addItem,
+  }))
+);
+```
+
+**Status:** ✅ Implemented in EPIC-0
+
+### 4.5 TanStack AI SDK Integration (NEW - v3.0.0)
 
 **Mandate:** All LLM calls MUST use TanStack AI SDK. Direct provider package calls are PROHIBITED.
 
@@ -619,7 +772,7 @@ export function createAIClient(providers: ProviderConfig[]) {
 
 **Status:** 0% - Not implemented (currently using direct provider calls)
 
-### 4.5 Agent System Instructions
+### 4.6 Agent System Instructions
 
 **Two-Layer Prompts:**
 
@@ -758,6 +911,71 @@ db.threads.where({ projectId })
 ```
 
 **Status:** 0% - Not implemented
+
+### 5.6 Plugin Data Contracts (EPIC-0.5 Requirement)
+
+**Source:** EPIC-0 Learnings (2026-01-26)
+
+**Status:** SPECIFICATION ONLY (Implementation in EPIC-0.5)
+
+#### File Data Interface
+
+```typescript
+interface FileData {
+  path: string;
+  content: string | Uint8Array;
+  encoding: 'utf-8' | 'binary';
+  lastModified: number;
+  dirty: boolean; // unsaved changes
+}
+```
+
+#### Plugin Save Contract
+
+```typescript
+interface PluginSaveContract {
+  // Called by plugin when content changes
+  saveFile(path: string, content: string): Promise<void>;
+  
+  // Debounce: 500ms
+  // Visual indicator: "Saving..." → "Saved"
+  // Emits: FILE_UPDATED event via EventBus
+}
+```
+
+#### EventBus Events (EPIC-0.5-02)
+
+```typescript
+type FileEvent = 
+  | { type: 'FILE_CREATED'; path: string }
+  | { type: 'FILE_UPDATED'; path: string; content: string }
+  | { type: 'FILE_DELETED'; path: string }
+  | { type: 'FILE_MOVED'; from: string; to: string }
+  | { type: 'FILE_RENAMED'; from: string; to: string };
+```
+
+#### Plugin Communication Flow
+
+```
+Plugin (Monaco/Notes) → Content Changed
+    ↓
+PluginSaveContract.saveFile()
+    ↓
+Debounce (500ms)
+    ↓
+StorageGateway.write()
+    ↓
+EventBus.emit(FILE_UPDATED)
+    ↓
+Other Plugins React (FileTree refresh, etc.)
+```
+
+**Implementation Notes:**
+- All plugins must use `PluginSaveContract` for file operations
+- Direct `StorageGateway` access is reserved for infrastructure layer
+- EventBus ensures cross-plugin reactivity
+
+**Status:** 📋 Specification only (pending EPIC-0.5 implementation)
 
 ---
 
@@ -1150,14 +1368,20 @@ Before marking architecture alignment complete:
 
 ---
 
-**Document Version:** 3.0.0 (Aligned with new-fundamental-truths.md v2.0.0)
+**Document Version:** 3.1.0 (Aligned with new-fundamental-truths.md v2.0.0 + EPIC-0 Learnings)
 **Original Version:** 2.1.0 (2026-01-16)
 **Last Updated:** 2026-01-26
 **Author:** Architect Agent
-**Status:** ACTIVE - 100% aligned with v2.0.0 fundamentals
+**Status:** ACTIVE - 100% aligned with v2.0.0 fundamentals + EPIC-0 learnings
+
+**EPIC-0 Additions (v3.1.0):**
+- Section 2.4: FSA Handle Lifecycle
+- Section 2.6: Storage Gateway Pattern Normalization  
+- Section 4.4: Zustand Store Reactivity
+- Section 5.6: Plugin Data Contracts
 
 **Next Review:** 2026-02-01 (weekly)
 
 ---
 
-*This document reflects the project-centric architecture with plugin system, orchestrator pattern, TanStack AI SDK integration, and chat cascade management as defined in new-fundamental-truths.md v2.0.0.*
+*This document reflects the project-centric architecture with plugin system, orchestrator pattern, TanStack AI SDK integration, and chat cascade management as defined in new-fundamental-truths.md v2.0.0, with EPIC-0 learnings incorporated.*

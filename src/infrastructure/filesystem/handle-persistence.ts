@@ -54,7 +54,7 @@ export function isStructuredCloneSupported(): boolean {
   // CC-V2-B01: Fixed Chrome version check - was exact match 'Chrome/129', now >= 129
   if (typeof window === 'undefined') return false;
   if (!('structuredClone' in window)) return false;
-  
+
   const match = navigator.userAgent.match(/Chrome\/(\d+)/);
   const chromeVersion = match ? parseInt(match[1], 10) : 0;
   return chromeVersion >= 129;  // Chrome 129+ supports structuredClone for FSA handles
@@ -204,8 +204,7 @@ export class HandlePersistenceService {
     });
 
     console.log(
-      `[HandlePersistence] Persisted ${
-        isStructuredCloneSupported() ? 'handle' : 'metadata'
+      `[HandlePersistence] Persisted ${isStructuredCloneSupported() ? 'handle' : 'metadata'
       } for project: ${projectId}`
     );
   }
@@ -217,10 +216,18 @@ export class HandlePersistenceService {
    * @returns HandleRestoreResult with handle or null
    */
   async restoreHandle(projectId: string): Promise<HandleRestoreResult> {
+    console.log(`[HandlePersistence] restoreHandle called for project: ${projectId}`);
+
     // Get stored metadata from Dexie
     const record = await getFSAHandle(projectId);
-    
+    console.log(`[HandlePersistence] Record from Dexie:`, record ? {
+      hasHandleData: !!record.handleData,
+      permissionStatus: record.permissionStatus,
+      directoryPath: record.directoryPath,
+    } : 'NO RECORD FOUND');
+
     if (!record) {
+      console.error(`[HandlePersistence] ❌ No stored handle found for project: ${projectId}`);
       return {
         success: false,
         handle: null,
@@ -319,7 +326,7 @@ export class HandlePersistenceService {
       try {
         // structuredClone can restore the actual FileSystemDirectoryHandle
         const handle = structuredClone(record.handleData) as FileSystemDirectoryHandle;
-        
+
         // CC-IDE-02-FIX: Verify permission is still granted after restoration
         // Even with structuredClone, permission may not persist if user only clicked "Allow this time"
         // instead of "Allow on every visit". We must verify permission before returning the handle.
@@ -327,14 +334,14 @@ export class HandlePersistenceService {
         const handleWithPermission = handle as FileSystemDirectoryHandle & {
           queryPermission?: (options: { mode: 'readwrite' | 'read' }) => Promise<PermissionState>;
         };
-        
+
         if (typeof handleWithPermission.queryPermission === 'function') {
           const permission = await handleWithPermission.queryPermission({ mode: 'readwrite' });
           if (permission === 'granted') {
             console.log(`[HandlePersistence] Handle restored with valid permission for project: ${projectId}`);
             return handle;
           }
-          
+
           console.log(
             `[HandlePersistence] Handle restored but permission not granted (status: ${permission}), ` +
             `will fall through to user interaction flow for project: ${projectId}`
@@ -579,7 +586,7 @@ export class HandlePersistenceService {
   async canSilentRestore(projectId: string): Promise<boolean> {
     const record = await getFSAHandle(projectId);
     if (!record) return false;
-    
+
     return record.permissionStatus === 'granted' && !!record.directoryPath;
   }
 }

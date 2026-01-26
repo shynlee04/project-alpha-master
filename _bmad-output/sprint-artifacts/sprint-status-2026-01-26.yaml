@@ -20,37 +20,51 @@ p0_blockers:
   # === EPIC-0: PROJECT-CENTRIC FOUNDATION RESET (PHASE 1A BLOCKER) ===
   - epic_id: "EPIC-0"
     title: "Project-Centric Foundation Reset"
+    status: "COMPLETE"
+    priority: "P0-BLOCKER"
+    progress: "100%"
+    completed_at: "2026-01-26T23:30:00+07:00"
+    
+  # NEW EPIC - FileTree & Plugin Maturity
+  - epic_id: "EPIC-0.5"
+    title: "FileTree & Plugin System Maturity"
     status: "READY"
     priority: "P0-BLOCKER"
     progress: "0%"
     effort_hours: 20-30
     blocking: "ALL_PHASES"
     created: "2026-01-26T19:30:00+07:00"
+    updated: "2026-01-26T19:52:00+07:00"
     
     note: |
-      CRITICAL BLOCKER for Phase 1A. This epic must complete before ANY feature work.
-      Addresses: workspace-centric pollution, device routing chaos, route structure chaos.
-      Per new-fundamental-truths.md v2.0.0 and chaos analysis from 2026-01-26.
+      CRITICAL BLOCKER for Phase 1A. 3/7 stories COMPLETE.
+      - EPIC-0-01: Scan complete (workspace dirs have 90+ imports, cannot archive)
+      - EPIC-0-02: Routes already cleaned (pre-existing)
+      - EPIC-0-03: Legacy route references fixed (10 files updated)
+      Next: EPIC-0-04 (i18n keys) then EPIC-0-07 (E2E validation)
     
     stories:
       - id: "EPIC-0-01"
         title: "Deep Import/Export Scanning"
-        status: "READY"
+        status: "COMPLETE"
         team: "B"
-        effort: "2-3h"
+        effort: "1h"
+        completed_at: "2026-01-26T19:45:00+07:00"
         
       - id: "EPIC-0-02"
         title: "Route Structure Cleanup"
-        status: "READY"
-        team: "A"
-        effort: "2-3h"
+        status: "COMPLETE"
+        team: "N/A"
+        effort: "0h"
+        note: "Pre-existing - routes already cleaned"
         
       - id: "EPIC-0-03"
-        title: "ProjectContext Race Condition Fix"
-        status: "READY"
+        title: "Legacy Route References Fix"
+        status: "COMPLETE"
         team: "A"
-        effort: "3-4h"
-        depends_on: ["EPIC-0-02"]
+        effort: "1h"
+        completed_at: "2026-01-26T19:51:00+07:00"
+        note: "Fixed 10 files with legacy route references"
         
       - id: "EPIC-0-04"
         title: "Translation Key Migration"
@@ -58,6 +72,7 @@ p0_blockers:
         team: "B"
         effort: "2-3h"
         depends_on: ["EPIC-0-03"]
+        note: "30 ide.* keys + 21 workspace keys (60 usages)"
         
       - id: "EPIC-0-05"
         title: "Duplicate Implementation Consolidation"
@@ -65,6 +80,7 @@ p0_blockers:
         team: "B"
         effort: "6-8h"
         depends_on: ["EPIC-0-01", "EPIC-0-03"]
+        note: "Scan found 90+ workspace imports - needs rename strategy, not archival"
         
       - id: "EPIC-0-06"
         title: "Store Cleanup"
@@ -75,10 +91,11 @@ p0_blockers:
         
       - id: "EPIC-0-07"
         title: "End-to-End Validation"
-        status: "BLOCKED"
+        status: "UNBLOCKED"
         team: "A+B"
         effort: "2-3h"
         depends_on: ["EPIC-0-02", "EPIC-0-03", "EPIC-0-04"]
+        note: "Can start after EPIC-0-04"
     
     artifacts:
       epic: "_bmad-output/planning-artifacts/epics/EPIC-0-PROJECT-CENTRIC-RESET-2026-01-26.md"

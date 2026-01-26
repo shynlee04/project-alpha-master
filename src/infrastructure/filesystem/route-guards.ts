@@ -25,11 +25,10 @@ export async function requireIDEAccess(projectId: string) {
 
   if (!platform.canAccessIDE) {
     console.warn(`[RouteGuard] IDE access denied on ${platform.deviceType}, redirecting to Notes`);
-    
+
     throw redirect({
-      to: '/notes/$projectId',
+      to: '/$projectId',
       params: { projectId },
-      search: { reason: 'mobile-not-supported' },
     });
   }
 }

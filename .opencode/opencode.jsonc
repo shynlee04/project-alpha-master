@@ -117,7 +117,7 @@
     },
     "explore": {
       "description": "To run parallel for code-base investigation",
-      "mode": "subagent",
+      "mode": "all",
       "hidden": true,
       "model": "minimax/MiniMax-M2.1",
       "tools": {

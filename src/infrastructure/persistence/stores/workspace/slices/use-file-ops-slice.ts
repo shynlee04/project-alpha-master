@@ -174,10 +174,10 @@ export function useFileOpsSlice({
 
       // Perform initial sync
       await performSync(handle, { fullSync: autoSync, projectId });
-      
+
       // FIX-2026-01-13: Navigate to the new IDE project page
       // Without this, user selects folder but URL stays on old project - nothing happens
-      navigate({ to: '/ide/$projectId', params: { projectId } });
+      navigate({ to: '/$projectId', params: { projectId } });
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         const { isMobile, isTablet } = deviceType;
@@ -256,7 +256,7 @@ export function useFileOpsSlice({
       await performSync(handle, { fullSync: true, projectId: newProjectId });
 
       // Navigate to new project
-      navigate({ to: '/workspace/$projectId', params: { projectId: newProjectId } });
+      navigate({ to: '/$projectId', params: { projectId: newProjectId } });
     } catch (error) {
       if ((error as Error).name !== 'AbortError') {
         const { isMobile, isTablet } = deviceType;
@@ -303,10 +303,10 @@ export function useFileOpsSlice({
         ...projectMetadata,
         storageMetadata: projectMetadata.storageMetadata
           ? {
-              ...projectMetadata.storageMetadata,
-              lastAccessTime: Date.now(),
-              permissionGranted: result === 'granted',
-            }
+            ...projectMetadata.storageMetadata,
+            lastAccessTime: Date.now(),
+            permissionGranted: result === 'granted',
+          }
           : undefined,
       };
       await saveProject(updatedProject);

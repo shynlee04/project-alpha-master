@@ -1728,5 +1728,13 @@
   "plugin.closePanel": "Đóng {{pluginName}}",
   "plugin.notFound": "Không tìm thấy plugin",
 
-  "pluginPanel.dragHandleTooltip": "Kéo để sắp xếp lại"
+  "pluginPanel.dragHandleTooltip": "Kéo để sắp xếp lại",
+
+  "ide.save": "Lưu",
+  "ide.noFileOpen": "Không có file nào đang mở",
+  "ide.openFolderToView": "Mở thư mục để xem files",
+  "ide.loading": "Đang tải...",
+
+  "editor.saving": "Đang lưu...",
+  "editor.saved": "Đã lưu"
 }

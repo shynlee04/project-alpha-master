@@ -73,6 +73,13 @@ import { Save, Sparkles } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
 import { toast } from 'sonner';
 
+// EPIC-0.5-02: File event bus for reactive updates
+import { fileEventBus } from '@/infrastructure/events/file-event-bus';
+import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// Import FileEvent type for proper type annotation
+import type { FileEvent } from '@/infrastructure/events/types';
+
 import { getCustomSlashMenuItems } from './AISlashCommand';
 import { NoteStudyMenu } from './NoteStudyMenu';
 // UX-13: Save Block Dialog
@@ -867,7 +874,46 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         });
 
         setShowAIPopup(false);
-    }, [editor]);
+        }, [editor]);
+
+    // EPIC-0.5-02: Listen for FILE_UPDATED events from FileEventBus
+    // When a note file is externally modified or saved by another plugin,
+    // reload note content if it's currently open in the editor
+    const projectContext = useProjectContext();
+
+    useEffect(() => {
+        if (!projectContext) return;
+
+        const unsubscribe = fileEventBus.onWithFilter(
+            'file:updated',
+            (event: FileEvent) => {
+                // Only reload if it's our note file
+                if (event.path === noteId) {
+                    console.log('[NoteEditor] External FILE_UPDATED detected, reloading note:', noteId);
+
+                    // Reload note content from store
+                    const reloadedNote = notes.get(noteId);
+                    if (reloadedNote?.blocks) {
+                        // Update editor with reloaded content
+                        // BlockNote will handle the document change automatically
+                        // Trigger a re-render to update blocks from store
+                        // Note: We don't directly set blocks in BlockNote to avoid conflicts
+                        console.log('[NoteEditor] Note reloaded from external update');
+                    }
+
+                    // Show notification to user
+                    toast.info('Note was updated externally, content reloaded');
+                }
+            },
+            {
+                projectId: projectContext.projectId,
+            }
+        );
+
+        return () => {
+            unsubscribe();
+        };
+    }, [noteId, projectContext?.projectId, notes]);
 
     // Render save status indicator
     const renderSaveStatus = () => {

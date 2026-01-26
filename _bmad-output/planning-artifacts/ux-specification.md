@@ -1,6 +1,6 @@
 # UX/UI Design Specification
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Date:** 2026-01-26
 **Project:** Via-Gent (Project Alpha v2.0)
 **Status:** ACTIVE - 100% Aligned with new-fundamental-truths.md v2.0.0
@@ -20,10 +20,11 @@
 | 5. Interaction Design | ✅ Complete | HIGH | Updated for plugin navigation |
 | 6. AI Interaction Guidelines | ✅ Complete | HIGH | Chat cascade patterns documented |
 | 7. Responsive Design | ✅ Complete | HIGH | Platform limits enforced |
-| 8. Accessibility | ✅ Complete | HIGH | WCAG 2.1 AA compliance |
-| 9. Motion & Animation | ✅ Complete | HIGH | 8-bit themed animations |
-| 10. Error Handling | ✅ Complete | HIGH | Error states covered |
-| 11. Design Tokens Reference | ✅ Complete | HIGH | CSS + TS tokens mapped |
+| 8. Plugin Panel Architecture | ✅ Complete | HIGH | NEW - Sidebar tabs, main panels, progressive disclosure |
+| 9. Accessibility | ✅ Complete | HIGH | WCAG 2.1 AA compliance |
+| 10. Motion & Animation | ✅ Complete | HIGH | 8-bit themed animations |
+| 11. Error Handling | ✅ Complete | HIGH | Error states covered |
+| 12. Design Tokens Reference | ✅ Complete | HIGH | CSS + TS tokens mapped |
 
 ---
 
@@ -36,9 +37,10 @@
 5. [AI Interaction Guidelines](#5-ai-interaction-guidelines)
 6. [Responsive Design](#6-responsive-design)
 7. [Accessibility](#7-accessibility)
-8. [Motion & Animation](#8-motion--animation)
-9. [Error Handling & Edge Cases](#9-error-handling--edge-cases)
-10. [Design Tokens Reference](#10-design-tokens-reference)
+8. [Plugin Panel Architecture](#8-plugin-panel-architecture) ← NEW (EPIC-0.5)
+9. [Motion & Animation](#9-motion--animation)
+10. [Error Handling & Edge Cases](#10-error-handling--edge-cases)
+11. [Design Tokens Reference](#11-design-tokens-reference)
 
 ---
 
@@ -1845,9 +1847,120 @@ useEffect(() => {
 
 ---
 
-## 8. Motion & Animation
+## 8. Plugin Panel Architecture (EPIC-0.5 Specification)
 
-### 8.1 Transition Principles
+### 8.1 Panel Types
+
+| Panel Type | Location | Examples | Loading |
+|------------|----------|----------|---------|
+| **Sidebar Tab** | Left sidebar (always visible) | FileTree, Chat | Immediate |
+| **Main Panel** | Center workspace | Monaco, Preview, Terminal | On-demand |
+| **Overlay** | Modal/drawer | Settings, Help | On-trigger |
+
+### 8.2 Sidebar Tabs
+
+**CRITICAL**: FileTree and Chat are NOT main panels.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ GlobalHeader                                            │
+├────────┬────────────────────────────────────┬───────────┤
+│ System │                                    │ Tool      │
+│ Rail   │     Main Panel Area                │ Rail      │
+│        │     (Monaco, Preview, Terminal)    │           │
+│ [🏠]   │                                    │ [⚙️]      │
+│ [📁]   ├────────────────────────────────────┤           │
+│ [💬]   │                                    │           │
+│ [🔍]   │     (Can have 2-4 panels in grid)  │           │
+│        │                                    │           │
+└────────┴────────────────────────────────────┴───────────┘
+```
+
+**System Rail Icons:**
+- 🏠 Hub (navigate to /hub)
+- 📁 FileTree tab (toggle sidebar content)
+- 💬 Chat tab (toggle sidebar content)
+- 🔍 Search (overlay)
+
+### 8.3 Sidebar Content Switching
+
+```typescript
+type SidebarTab = 'filetree' | 'chat' | 'search';
+
+// Only ONE tab content visible at a time
+// Sidebar is collapsible but never hidden on desktop
+```
+
+**Behavior:**
+1. Click 📁 → Show FileTree in sidebar
+2. Click 💬 → Show Chat in sidebar (FileTree hidden)
+3. Click same icon → Collapse sidebar
+4. Sidebar width: min 240px, max 400px, resizable
+
+### 8.4 Main Panel Grid
+
+**Desktop (>1024px):**
+- 1-4 panels in grid layout
+- Toggle via PluginToolbar
+- User can arrange (but NO drag-drop, only predefined layouts)
+
+**Predefined Layouts:**
+```
+[1] Single: Full width/height
+[2] Split Vertical: 50/50 left-right
+[3] Split Horizontal: 50/50 top-bottom
+[4] Quad: 2x2 grid
+```
+
+**Mobile (<768px):**
+- Single panel only
+- Swipe to switch panels
+- Sidebar as bottom sheet
+
+### 8.5 Progressive Disclosure
+
+**Immediate Load (P0):**
+- FileTree (sidebar)
+- Chat (sidebar)
+
+**On-Demand Load (P1):**
+- Monaco (when file selected)
+- Terminal (when toggled)
+- Preview (when toggled)
+- Notes (when toggled)
+
+**Implementation:**
+```typescript
+const pluginLoadStrategy: Record<string, 'immediate' | 'lazy'> = {
+  filetree: 'immediate',
+  chat: 'immediate',
+  monaco: 'lazy',
+  terminal: 'lazy',
+  preview: 'lazy',
+  notes: 'lazy',
+};
+```
+
+### 8.6 Plugin State Persistence
+
+Per-project persistence in Dexie:
+```typescript
+interface ProjectPluginState {
+  projectId: string;
+  sidebarTab: SidebarTab;
+  sidebarWidth: number;
+  sidebarCollapsed: boolean;
+  mainLayout: '1' | '2v' | '2h' | '4';
+  enabledPlugins: string[];
+  pluginPositions: Record<string, number>; // for grid
+}
+```
+
+---
+
+## 9. Motion & Animation
+
+### 9.1 Transition Principles
 
 **8-bit Animation Style:**
 - Snappy: Short durations (150-300ms)
@@ -1875,7 +1988,7 @@ useEffect(() => {
 }
 ```
 
-### 8.2 Loading States
+### 9.2 Loading States
 
 **Skeleton Loading:**
 
@@ -1910,7 +2023,7 @@ useEffect(() => {
 - Height: 8px (standard)
 - Use: File uploads, processing
 
-### 8.3 Micro-interactions
+### 9.3 Micro-interactions
 
 **Button Press:**
 
@@ -1952,7 +2065,7 @@ useEffect(() => {
 - No easing on hover
 - Reverse on mouse leave
 
-### 8.4 Animation Library
+### 9.4 Animation Library
 
 **Recommended: Framer Motion**
 
@@ -1997,9 +2110,9 @@ import { motion } from 'framer-motion';
 
 ---
 
-## 9. Error Handling & Edge Cases
+## 10. Error Handling & Edge Cases
 
-### 9.1 Error States
+### 10.1 Error States
 
 **Error Boundary Fallback:**
 
@@ -2049,7 +2162,7 @@ import { motion } from 'framer-motion';
 />
 ```
 
-### 9.2 Empty States
+### 10.2 Empty States
 
 **No Plugins Active:**
 
@@ -2083,7 +2196,7 @@ import { motion } from 'framer-motion';
 />
 ```
 
-### 9.3 Loading States
+### 10.3 Loading States
 
 **Full-Page Loading:**
 
@@ -2111,7 +2224,7 @@ import { motion } from 'framer-motion';
 - Pulse animation
 - Use for lists, cards, tables
 
-### 9.4 Recovery Flows
+### 10.4 Recovery Flows
 
 **Auto-Recovery:**
 
@@ -2179,9 +2292,9 @@ const handleDelete = () => {
 
 ---
 
-## 10. Design Tokens Reference
+## 11. Design Tokens Reference
 
-### 10.1 CSS Custom Properties
+### 11.1 CSS Custom Properties
 
 **Complete Token List (from design-tokens.css):**
 
@@ -2279,7 +2392,7 @@ const handleDelete = () => {
 --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
 ```
 
-### 10.2 TypeScript Constants
+### 11.2 TypeScript Constants
 
 **Token Access (from design-tokens.ts):**
 
@@ -2312,7 +2425,7 @@ type FontSizeToken = 'text-xs' | 'text-sm' | 'text-base' | ... | 'text-5xl';
 type LayoutToken = 'panel-2col-left' | 'sidebar-content-panel' | 'status-bar-height';
 ```
 
-### 10.3 Tailwind Configuration
+### 11.3 Tailwind Configuration
 
 **Custom Tailwind Config (extends design tokens):**
 
@@ -2375,16 +2488,17 @@ module.exports = {
 
 **Alignment with new-fundamental-truths.md v2.0.0:**
 
-| Category | Previous (v1.0.0) | Current (v2.0.0) | Change |
+| Category | Previous (v1.0.0) | Current (v2.1.0) | Change |
 |----------|---------------------|---------------------|--------|
 | **Architecture** | Workspace-Centric | Project-Centric | Fundamental shift ✅ |
 | **Plugin System UX** | 10% | 100% | **+90% - NEW section added** |
+| **Plugin Panel Architecture** | 0% | 100% | **+100% - NEW Section 8 (EPIC-0.5)** |
 | **Platform Responsiveness** | 40% | 100% | **+60% - Limits enforced** |
 | **8-bit Design Compliance** | 95% | 95% | ✅ Maintained |
 | **Layout System** | 0% | 100% | **+100% - Toggle-based presets** |
 | **Progressive Disclosure** | 20% | 100% | **+80% - Plugin disclosure levels** |
 
-**Overall Alignment:** 100% (5 categories average)
+**Overall Alignment:** 100% (7 categories average)
 
 **Key Updates:**
 
@@ -2395,37 +2509,51 @@ module.exports = {
    - Plugin management dialog
    - Progressive disclosure levels
 
-2. ✅ Updated Section 6: Responsive Design
+2. ✅ Added Section 8: Plugin Panel Architecture (NEW - EPIC-0.5)
+   - Panel Types (Sidebar Tab, Main Panel, Overlay)
+   - Sidebar tabs (FileTree, Chat as sidebar content, not main panels)
+   - Sidebar content switching behavior
+   - Main panel grid (predefined layouts, no drag-drop)
+   - Progressive disclosure for plugin loading
+   - Plugin state persistence per project
+
+3. ✅ Updated Section 6: Responsive Design
    - Mobile plugin limit (1 active plugin)
    - Tab bar for plugin switching
    - Platform capability indicators
    - Disabled plugin states
 
-3. ✅ Updated Section 4: Navigation Patterns
+4. ✅ Updated Section 4: Navigation Patterns
    - Project-centric header
    - Plugin-based navigation
    - Single route structure
 
-4. ✅ Updated Section 2: Component Library
+5. ✅ Updated Section 2: Component Library
    - Toggle-based layout system
    - Plugin count enforcement
    - Platform requirement badges
 
-5. ✅ Added Section 6.5: Platform Capability Matrix (NEW)
+6. ✅ Added Section 6.5: Platform Capability Matrix (NEW)
    - Plugin availability by platform
    - UX indicators for unavailable plugins
    - Progressive disclosure of limitations
 
-6. ✅ Removed all workspace-centric patterns
+7. ✅ Removed all workspace-centric patterns
    - No workspace icons
    - No workspace-specific routes
    - Project-centric mental model
 
-7. ✅ Version updated to 2.0.0
-8. ✅ Date updated to 2026-01-26
-9. ✅ Reference to ADR-039 added
-10. ✅ Reference to architecture.md v3.0.0 added
-11. ✅ Reference to prd.md v2.0.0 added
+8. ✅ Added Section 8: Plugin Panel Architecture (EPIC-0.5)
+   - FileTree and Chat as sidebar TABS
+   - Main area for editor plugins only
+   - Sidebar content switching
+   - Plugin state persistence
+
+9. ✅ Version updated to 2.1.0
+10. ✅ Date updated to 2026-01-26
+11. ✅ Reference to ADR-039 added
+12. ✅ Reference to architecture.md v3.0.0 added
+13. ✅ Reference to prd.md v2.0.0 added
 
 ---
 
@@ -2448,8 +2576,8 @@ module.exports = {
 
 **END OF DOCUMENT**
 
-**Document Version:** 2.0.0 (Aligned with new-fundamental-truths.md v2.0.0)
-**Previous Version:** 1.0.0 (2026-01-07)
+**Document Version:** 2.1.0 (Aligned with new-fundamental-truths.md v2.0.0)
+**Previous Version:** 2.0.0 (2026-01-26)
 **Last Updated:** 2026-01-26
 **Author:** Architect-Ext (BMAD Framework)
 **Status:** ACTIVE - 100% aligned with v2.0.0 fundamentals
@@ -2458,4 +2586,4 @@ module.exports = {
 
 ---
 
-*This document reflects project-centric architecture with plugin system, toggle-based layouts, platform-aware defaults, and progressive disclosure as defined in new-fundamental-truths.md v2.0.0.*
+*This document reflects project-centric architecture with plugin system, toggle-based layouts, platform-aware defaults, progressive disclosure, and sidebar tab architecture (FileTree/Chat as sidebar content, not main panels) as defined in new-fundamental-truths.md v2.0.0.*
