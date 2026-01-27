@@ -171,14 +171,14 @@ export function PresetSelector() {
         aria-controls={listboxId}
         className={cn(
           'flex items-center gap-2 px-3 py-1.5',
-          'border-2 border-zinc-700 bg-zinc-900',
-          'hover:border-orange-500 transition-colors',
-          'rounded-none font-mono text-sm text-zinc-100'
+          'border-2 border-border bg-card',
+          'hover:border-primary transition-colors',
+          'rounded-none font-mono text-sm text-foreground'
         )}
       >
-        <Layout className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+        <Layout className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <span>{t(currentConfig.labelKey, { defaultValue: currentConfig.label })}</span>
-        <ChevronDown className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+        <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
       </button>
 
       {isOpen && (
@@ -187,7 +187,7 @@ export function PresetSelector() {
           role="listbox"
           className={cn(
             'absolute left-0 top-full mt-1 w-52',
-            'bg-zinc-900 border-2 border-zinc-700',
+            'bg-card border-2 border-border',
             'rounded-none shadow-pixel z-50',
             'py-1'
           )}
@@ -208,17 +208,17 @@ export function PresetSelector() {
               className={cn(
                 'w-full px-3 py-2 text-left',
                 'text-sm font-mono rounded-none',
-                'hover:bg-zinc-800 focus:bg-zinc-800 focus:outline-none',
+                'hover:bg-accent focus:bg-accent focus:outline-none',
                 preset.id === currentPreset
-                  ? 'text-orange-500 bg-zinc-800'
-                  : 'text-zinc-100'
+                  ? 'text-primary bg-accent'
+                  : 'text-foreground'
               )}
             >
               <div>{t(preset.labelKey, { defaultValue: preset.label })}</div>
               <div
                 className={cn(
                   'text-xs',
-                  preset.id === currentPreset ? 'text-orange-300' : 'text-zinc-500'
+                  preset.id === currentPreset ? 'text-primary/80' : 'text-muted-foreground'
                 )}
               >
                 {t(preset.descriptionKey, { defaultValue: preset.description })}

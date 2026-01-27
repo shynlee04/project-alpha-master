@@ -636,13 +636,20 @@ team_a_sprint_uxui02:
   focus: "Layout Integration & Cleanup"
   status: "IN_PROGRESS"
   started: "2026-01-28"
-  updated: "2026-01-28T17:00:00+07:00"
+  updated: "2026-01-28T21:00:00+07:00"
+  progress: "83%"  # 10/12 stories complete
   
   # Team A Takeover from Team B (EXCALIBUR directive)
   takeover_note: |
     Team A takes over complex layout stories from Team B.
     Validated Team B work: WorkspaceLayout, ActivityBar, PluginDocker - all VALID.
     Starting with UXUI-02-03 (Integrate GlobalSidebar).
+    
+    Sprint Session 2026-01-28:
+    - UXUI-02-04: Plugin Drag-to-Panel COMPLETE
+    - UXUI-02-04b: Single Instance Constraint COMPLETE  
+    - UXUI-02-05: Wire ActivityBar + Docker COMPLETE
+    - UXUI-02-07: Apply Design Tokens COMPLETE
   
   stories:
     - id: "UXUI-02-00a"
@@ -695,34 +702,76 @@ team_a_sprint_uxui02:
     
     - id: "UXUI-02-04"
       title: "Plugin Drag-to-Panel"
-      status: "PENDING"
+      status: "DONE"
       effort: "2-3h"
+      assignee: "dev-ext"
+      started: "2026-01-28"
+      completed: "2026-01-28"
       depends_on: ["UXUI-02-02b"]
+      evidence:
+        - "ActivityBar.tsx +43 lines: draggable, onDragStart, onDragEnd"
+        - "PluginDocker.tsx +71 lines: onDragOver, onDrop, onPluginDrop"
+        - "ActivityBar.css +34 lines: drag states with steps() timing"
+        - "PluginDocker.css +45 lines: drop-target highlighting"
+        - "8-bit compliance: border-radius 0, steps(2, end) animations"
+        - "TypeScript: 0 new errors"
       
     - id: "UXUI-02-04b"
       title: "Single Instance Constraint"
-      status: "PENDING"
+      status: "DONE"
       effort: "2-3h"
+      assignee: "dev-ext"
+      started: "2026-01-28"
+      completed: "2026-01-28"
       depends_on: ["UXUI-02-04"]
+      evidence:
+        - "usePluginPlacement.ts created (289 lines)"
+        - "usePluginPlacement.test.ts created (288 lines, 17 tests)"
+        - "Single instance rule enforced: plugin in ONE panel only"
+        - "Move semantics: left→right MOVES, not duplicates"
+        - "getDefaultPlacements() helper for presets"
+        - "TypeScript: 0 new errors"
       
     - id: "UXUI-02-05"
       title: "Wire ActivityBar + Docker"
-      status: "PENDING"
+      status: "DONE"
       effort: "2-3h"
+      assignee: "dev-ext"
+      started: "2026-01-28"
+      completed: "2026-01-28"
       depends_on: ["UXUI-02-04b"]
+      evidence:
+        - "PluginActivityDockerWiring.tsx created (338 lines)"
+        - "PluginActivityDockerWiring.test.tsx created (248 lines, 13 tests)"
+        - "$projectId.tsx modified: integrated wiring pattern"
+        - "ActivityBar click toggles Docker"
+        - "Active state synchronized between ActivityBar and Docker"
+        - "47 tests passing across all related files"
+        - "TypeScript: 0 new errors"
       
     - id: "UXUI-02-07"
       title: "Apply Design Tokens"
-      status: "PENDING"
+      status: "DONE"
       effort: "3-4h"
+      assignee: "dev-ext"
+      started: "2026-01-28"
+      completed: "2026-01-28"
       depends_on: ["UXUI-02-05", "UXUI-02-06"]
+      evidence:
+        - "13 files modified: all hardcoded zinc-*/slate-*/gray-* replaced"
+        - "Conversions: bg-zinc-* → bg-card/bg-muted/bg-background"
+        - "Conversions: text-zinc-* → text-foreground/text-muted-foreground"
+        - "Conversions: border-zinc-* → border-border"
+        - "grep verification: 0 hardcoded colors remain"
+        - "Light theme toggle now affects all converted components"
+        - "TypeScript: 0 new errors"
       
     - id: "UXUI-02-08"
       title: "Archive Bento Grid"
-      status: "BLOCKED"
+      status: "READY"
       effort: "1-2h"
       depends_on: ["UXUI-02-07"]
-      blocker: "Waiting for UXUI-02-07 completion"
+      note: "Now READY - UXUI-02-07 complete, can proceed"
 
   team_b_sprint_uxui02:
     epic_id: "EPIC-UXUI-02"

@@ -230,10 +230,10 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
           className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
         >
           {/* 8-bit dialog content: sharp corners, solid colors, pixel shadows */}
-          <div className="bg-gray-50 border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,0.3)] rounded-none">
+          <div className="bg-card border-2 border-border shadow-[var(--shadow-pixel)] rounded-none">
             {/* Dialog Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b-2 border-black">
-              <Dialog.Title className="text-lg font-bold text-gray-900">
+            <div className="flex items-center justify-between px-4 py-3 border-b-2 border-border">
+              <Dialog.Title className="text-lg font-bold text-foreground">
                 {t('layoutPresets.saveDialog.title')}
               </Dialog.Title>
               <Dialog.Close asChild>
@@ -246,14 +246,14 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
             {/* Dialog Body */}
             <div className="p-4">
               {/* Current Layout Info */}
-              <div className="mb-4 p-3 bg-white border-2 border-black shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]">
-                <div className="text-sm font-semibold text-gray-900 mb-2">
+              <div className="mb-4 p-3 bg-muted border-2 border-border shadow-[var(--shadow-pixel-sm)]">
+                <div className="text-sm font-semibold text-foreground mb-2">
                   {t('layoutPresets.saveDialog.currentLayout')}
                 </div>
-                <div className="space-y-1 text-sm text-gray-700">
+                <div className="space-y-1 text-sm text-foreground">
                   {/* Plugins */}
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">
+                    <span className="text-muted-foreground">
                       {t('layoutPresets.saveDialog.plugins')}:
                     </span>
                     <span className="font-medium">
@@ -262,14 +262,14 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
                   </div>
                   {/* Layout Mode */}
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">
+                    <span className="text-muted-foreground">
                       {t('layoutPresets.saveDialog.layoutMode')}:
                     </span>
                     <span className="font-medium">{getLayoutModeName()}</span>
                   </div>
                   {/* Panel Count */}
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">
+                    <span className="text-muted-foreground">
                       {t('layoutPresets.saveDialog.panelCount')}:
                     </span>
                     <span className="font-medium">{activePlugins.length}</span>
@@ -281,7 +281,7 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
               <div className="mb-4">
                 <label
                   htmlFor="preset-name"
-                  className="block text-sm font-semibold text-gray-900 mb-2"
+                  className="block text-sm font-semibold text-foreground mb-2"
                 >
                   {t('layoutPresets.saveDialog.nameLabel')}
                 </label>
@@ -293,11 +293,11 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
                   placeholder={t('layoutPresets.saveDialog.namePlaceholder')}
                   maxLength={50}
                   className={`
-                    w-full px-3 py-2 border-2 border-black
-                    bg-white text-gray-900 placeholder-gray-500
+                    w-full px-3 py-2 border-2 border-border
+                    bg-background text-foreground placeholder-muted-foreground
                     rounded-none shadow-none
-                    focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2
-                    ${error ? 'border-red-600' : 'border-black'}
+                    focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2
+                    ${error ? 'border-destructive' : 'border-border'}
                   `}
                 />
                 {error && (
@@ -309,7 +309,7 @@ export function SavePresetDialog({ isOpen, onClose }: SavePresetDialogProps) {
             </div>
 
             {/* Dialog Footer */}
-            <div className="flex items-center justify-end gap-2 px-4 py-3 border-t-2 border-black">
+            <div className="flex items-center justify-end gap-2 px-4 py-3 border-t-2 border-border">
               {/* Cancel Button */}
               <Button variant="secondary" onClick={handleCancel}>
                 {t('common.cancel')}

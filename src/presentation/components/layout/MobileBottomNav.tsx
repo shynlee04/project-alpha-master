@@ -132,7 +132,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     'fixed bottom-0 left-0 right-0',
                     'flex items-center justify-around',
                     'h-14 pb-safe',
-                    'bg-zinc-900 border-t-2 border-zinc-700',
+                    'bg-card border-t-2 border-border',
                     'md:hidden',
                     className
                 )}
@@ -162,7 +162,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 'fixed bottom-0 left-0 right-0',
                 'flex items-center justify-around',
                 'h-14 pb-safe',
-                'bg-zinc-900 border-t-2 border-zinc-700',
+                'bg-card border-t-2 border-border',
                 'md:hidden',
                 'shadow-[0_-2px_0_0_rgba(0,0,0,0.5)]',
                 className
@@ -188,7 +188,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                             // Active state
                             active
                                 ? 'text-orange-500'
-                                : 'text-zinc-500 active:text-zinc-300'
+                                : 'text-muted-foreground active:text-foreground'
                         )}
                         aria-current={active ? 'page' : undefined}
                         aria-label={item.label}

@@ -150,7 +150,7 @@ export function LayoutPresetPicker() {
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content
-          className="bg-gray-50 border-2 border-black shadow-4 min-w-[250px] z-50"
+          className="bg-card border-2 border-border shadow-[var(--shadow-pixel)] min-w-[250px] z-50"
           align="end"
           sideOffset={4}
         >
@@ -159,16 +159,16 @@ export function LayoutPresetPicker() {
             {currentProjectPresets.map((preset) => (
               <DropdownMenu.Item
                 key={preset.id}
-                className="flex items-center justify-between px-3 py-2 hover:bg-gray-200 cursor-pointer border-0 bg-transparent"
+                className="flex items-center justify-between px-3 py-2 hover:bg-accent cursor-pointer border-0 bg-transparent"
                 onClick={() => handlePresetSelect(preset)}
               >
                 {/* Preset Name */}
                 <span className="flex items-center gap-2 flex-1">
                   {/* Checkmark for active preset */}
                   {isPresetActive(preset) && (
-                    <span className="text-green-600 font-bold">✓</span>
+                    <span className="text-success font-bold">✓</span>
                   )}
-                  <span className={isPresetActive(preset) ? 'font-bold text-gray-900' : 'text-gray-700'}>
+                  <span className={isPresetActive(preset) ? 'font-bold text-foreground' : 'text-foreground'}>
                     {preset.name}
                   </span>
                 </span>
@@ -187,15 +187,15 @@ export function LayoutPresetPicker() {
             ))}
 
             {/* Divider */}
-            <div className="border-t-2 border-black my-1" />
+            <div className="border-t-2 border-border my-1" />
 
             {/* Save Custom Layout Option */}
             <DropdownMenu.Item
-              className="flex items-center gap-2 px-3 py-2 hover:bg-gray-200 cursor-pointer border-0 bg-transparent"
+              className="flex items-center gap-2 px-3 py-2 hover:bg-accent cursor-pointer border-0 bg-transparent"
               onClick={handleSaveCustomLayout}
             >
               <Save size={16} />
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-foreground">
                 {t('layoutPresets.picker.saveCustomLayout')}
               </span>
             </DropdownMenu.Item>
@@ -206,7 +206,7 @@ export function LayoutPresetPicker() {
        {/* ARCH-03-05: More Layouts Toggle Button */}
        <button
          onClick={toggle}
-         className="ml-2 text-xs text-gray-600 hover:text-black transition-colors px-2 py-1 border-2 border-gray-300 bg-gray-50"
+         className="ml-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 border-2 border-border bg-card"
        >
          {showAdvanced
            ? t('layoutPresets.hideAdvanced')

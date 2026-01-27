@@ -9,8 +9,10 @@ export { AgentChatPanel } from './AgentChatPanel';
 export { AgentsPanel } from './AgentsPanel';
 
 // Discovery Components
-export { BentoGrid } from './BentoGrid';
-export { BentoCardPreview } from './BentoCardPreview';
+// ARCHIVED 2026-01-28 (UXUI-02-08): BentoGrid and BentoCardPreview archived
+// See _bmad-ext/.archive/bento-grid-2026-01-28/ for archived files
+// export { BentoGrid } from './BentoGrid';
+// export { BentoCardPreview } from './BentoCardPreview';
 export { CommandPalette } from './CommandPalette';
 export { FeatureSearch } from './FeatureSearch';
 
@@ -58,6 +60,7 @@ export type { CommandItem } from './CommandPalette';
 export type { CommandPaletteProps } from './CommandPalette';
 export type { FeatureItem } from './FeatureSearch';
 export type { FeatureSearchProps } from './FeatureSearch';
-export type { BentoCardProps } from './BentoGrid';
-export type { BentoGridProps } from './BentoGrid';
-export type { BentoCardPreviewProps } from './BentoCardPreview';
+// ARCHIVED 2026-01-28 (UXUI-02-08): Bento types archived
+// export type { BentoCardProps } from './BentoGrid';
+// export type { BentoGridProps } from './BentoGrid';
+// export type { BentoCardPreviewProps } from './BentoCardPreview';

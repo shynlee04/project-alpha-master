@@ -217,8 +217,8 @@ export const SidebarQuickActions: React.FC<SidebarQuickActionsProps> = ({
                             className={cn(
                                 'flex items-center justify-center w-10 h-10 mx-auto',
                                 'rounded-none border-2 border-transparent',
-                                'hover:border-zinc-700 hover:bg-zinc-950',
-                                'text-zinc-400 hover:text-zinc-50',
+                                'hover:border-border hover:bg-background',
+                                'text-muted-foreground hover:text-foreground',
                                 'transition-all duration-150',
                                 'active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]'
                             )}
@@ -234,7 +234,7 @@ export const SidebarQuickActions: React.FC<SidebarQuickActionsProps> = ({
     // Expanded view: 2-column grid with labels
     return (
         <div className={cn('px-4 py-3', className)}>
-            <h3 className="text-xs font-pixel uppercase tracking-wider text-zinc-500 mb-3">
+            <h3 className="text-xs font-pixel uppercase tracking-wider text-muted-foreground mb-3">
                 {t('sidebar.quickActions', 'Quick Actions')}
             </h3>
             <div className="grid grid-cols-2 gap-2">
@@ -244,9 +244,9 @@ export const SidebarQuickActions: React.FC<SidebarQuickActionsProps> = ({
                         onClick={action.onClick}
                         className={cn(
                             'flex flex-col items-center gap-1 p-2',
-                            'rounded-none border-2 border-zinc-800',
-                            'hover:border-zinc-600 hover:bg-zinc-950',
-                            'text-zinc-400 hover:text-zinc-50',
+                            'rounded-none border-2 border-border',
+                            'hover:border-muted hover:bg-background',
+                            'text-muted-foreground hover:text-foreground',
                             'transition-all duration-150',
                             'active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
                             'group'
@@ -254,11 +254,11 @@ export const SidebarQuickActions: React.FC<SidebarQuickActionsProps> = ({
                     >
                         <action.icon
                             size={18}
-                            className="text-zinc-500 group-hover:text-orange-500 transition-colors"
+                            className="text-muted-foreground group-hover:text-primary transition-colors"
                         />
                         <span className="text-xs font-medium truncate">{action.label}</span>
                         {action.shortcut && (
-                            <kbd className="text-[10px] text-zinc-600 font-mono">
+                            <kbd className="text-[10px] text-muted-foreground font-mono">
                                 {action.shortcut}
                             </kbd>
                         )}

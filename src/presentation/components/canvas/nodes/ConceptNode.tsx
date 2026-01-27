@@ -66,10 +66,10 @@ const ConceptNodeComponent = ({
   return (
     <div
       className={`
-        min-w-[150px] px-4 py-3 bg-gray-800 border-2 rounded-none
+        min-w-[150px] px-4 py-3 bg-card border-2 rounded-none
         transition-all duration-200 cursor-pointer
-        ${selected ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'border-gray-700'}
-        hover:border-gray-600
+        ${selected ? 'border-purple-500 shadow-lg shadow-purple-500/20' : 'border-border'}
+        hover:border-muted-foreground
       `}
       onDoubleClick={handleDoubleClick}
     >
@@ -77,7 +77,7 @@ const ConceptNodeComponent = ({
       <Handle
         type="target"
         position={Position.Top}
-        className="!bg-purple-500 !w-3 !h-3 !border-2 !border-gray-900"
+        className="!bg-purple-500 !w-3 !h-3 !border-2 !border-background"
       />
 
       {/* Title - either input or display */}
@@ -88,7 +88,7 @@ const ConceptNodeComponent = ({
           onChange={(e) => setEditValue(e.target.value)}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
-          className="w-full bg-gray-900 text-purple-100 text-sm font-semibold text-center outline-none border border-purple-500 rounded px-2 py-1"
+          className="w-full bg-background text-purple-100 text-sm font-semibold text-center outline-none border border-purple-500 rounded px-2 py-1"
           data-testid="concept-node-input"
         />
       ) : (
@@ -102,7 +102,7 @@ const ConceptNodeComponent = ({
 
       {/* Description if present */}
       {description && !isEditing && (
-        <p className="mt-1 text-xs text-gray-400 text-center line-clamp-2">
+        <p className="mt-1 text-xs text-muted-foreground text-center line-clamp-2">
           {description}
         </p>
       )}
@@ -111,7 +111,7 @@ const ConceptNodeComponent = ({
       <Handle
         type="source"
         position={Position.Bottom}
-        className="!bg-purple-500 !w-3 !h-3 !border-2 !border-gray-900"
+        className="!bg-purple-500 !w-3 !h-3 !border-2 !border-background"
       />
     </div>
   );

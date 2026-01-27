@@ -59,15 +59,15 @@ export function ChatThreadList({ currentProjectId: _currentProjectId }: ChatThre
   return (
     <div className="chat-threads">
       {/* Header with New Thread button */}
-      <div className="flex items-center justify-between px-3 py-2 bg-gray-100 border-b border-gray-300">
+      <div className="flex items-center justify-between px-3 py-2 bg-muted border-b border-border">
         <div className="flex items-center gap-2">
-          <MessageSquare size={16} className="text-gray-700" />
-          <span className="text-xs font-bold uppercase text-gray-800">Chat</span>
+          <MessageSquare size={16} className="text-foreground" />
+          <span className="text-xs font-bold uppercase text-foreground">Chat</span>
         </div>
         <button
           type="button"
           onClick={handleNewThread}
-          className="flex items-center gap-1 px-2 py-1 text-xs bg-white border-2 border-gray-300 hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-1 px-2 py-1 text-xs bg-card border-2 border-border hover:bg-accent transition-colors"
           title="New chat thread"
         >
           <Plus size={12} />
@@ -77,10 +77,10 @@ export function ChatThreadList({ currentProjectId: _currentProjectId }: ChatThre
 
       {/* Thread List - Placeholder */}
       <div className="max-h-96 overflow-y-auto">
-        <div className="px-3 py-8 text-center text-sm text-gray-500">
-          <MessageSquare size={32} className="mx-auto mb-2 text-gray-400" />
+        <div className="px-3 py-8 text-center text-sm text-muted-foreground">
+          <MessageSquare size={32} className="mx-auto mb-2 text-muted-foreground" />
           <p>Chat functionality coming soon</p>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             (ARCH-02-08 will implement Chat plugin)
           </p>
         </div>
@@ -92,12 +92,12 @@ export function ChatThreadList({ currentProjectId: _currentProjectId }: ChatThre
           <button
             key={thread.id}
             onClick={() => handleThreadClick(thread.id)}
-            className={`thread-item w-full text-left px-3 py-2 text-sm border-b border-gray-200 cursor-pointer ${
-              thread.id === activeThreadId ? 'bg-gray-800 text-white' : 'bg-white text-gray-800 hover:bg-gray-100'
+            className={`thread-item w-full text-left px-3 py-2 text-sm border-b border-border cursor-pointer ${
+              thread.id === activeThreadId ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
             }`}
           >
             <div className="truncate">{thread.title}</div>
-            <div className="text-xs text-gray-500">{formatTime(thread.updatedAt)}</div>
+            <div className="text-xs text-muted-foreground">{formatTime(thread.updatedAt)}</div>
           </button>
         ))}
       </div>

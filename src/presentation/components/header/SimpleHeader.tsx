@@ -45,14 +45,14 @@ export interface SimpleHeaderProps {
  * - Logo
  * - Project name placeholder
  *
- * 8-bit design: `border-2`, `border-black`, `bg-gray-50`, sharp corners.
+ * 8-bit design: `border-2`, `border-border`, `bg-card`, sharp corners.
  * i18n support for toggle button aria-label.
  */
 export function SimpleHeader({ onToggleSidebar }: SimpleHeaderProps) {
   const { t } = useTranslation();
 
   return (
-    <header className="header border-b-2 border-black bg-gray-50 px-4 py-3">
+    <header className="header border-b-2 border-border bg-card px-4 py-3">
       <div className="flex items-center justify-between">
         {/* Left side - Toggle button + Logo */}
         <div className="flex items-center gap-4">
@@ -60,7 +60,7 @@ export function SimpleHeader({ onToggleSidebar }: SimpleHeaderProps) {
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className="flex items-center justify-center p-2 border-2 border-black bg-gray-50 hover:bg-gray-200 active:bg-gray-300 transition-colors"
+              className="flex items-center justify-center p-2 border-2 border-border bg-card hover:bg-accent active:bg-muted transition-colors"
               aria-label={t('header.toggleSidebar')}
               aria-expanded={false}
               type="button"

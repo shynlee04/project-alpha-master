@@ -51,9 +51,9 @@ interface BreadcrumbItem {
  *
  * Features:
  * - Height: 32px (h-8)
- * - Background: bg-zinc-950
- * - Text: text-zinc-400 for paths, text-zinc-50 for current
- * - Separator: ChevronRight icon in text-zinc-600
+ * - Background: bg-background
+ * - Text: text-muted-foreground for paths, text-foreground for current
+ * - Separator: ChevronRight icon in text-muted-foreground/60
  * - Font: font-mono text-sm
  * - Mobile: Truncates to last 2 segments with ellipsis prefix
  *
@@ -136,8 +136,8 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
       className={cn(
         // Layout: Fixed height, flex container
         'flex items-center h-8 px-4',
-        // Colors: 8-bit compliant - solid bg-zinc-950
-        'bg-zinc-950',
+        // Colors: 8-bit compliant - solid bg-background
+        'bg-background',
         // Typography
         'text-sm font-mono',
         // No rounded corners (8-bit mandate)
@@ -152,7 +152,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
           <React.Fragment key={`${item.label}-${index}`}>
             {index > 0 && (
               <ChevronRight
-                className="w-4 h-4 mx-2 text-zinc-600 shrink-0"
+                className="w-4 h-4 mx-2 text-muted-foreground/60 shrink-0"
                 aria-hidden="true"
               />
             )}
@@ -160,7 +160,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
               <Link
                 to={item.path}
                 className={cn(
-                  'text-zinc-400 hover:text-zinc-50',
+                  'text-muted-foreground hover:text-foreground',
                   'transition-colors duration-150',
                   'truncate max-w-[200px]',
                   // 8-bit: NO rounded corners
@@ -172,7 +172,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
                 {item.label}
               </Link>
             ) : (
-              <span className="text-zinc-50 truncate max-w-[200px]">
+              <span className="text-foreground truncate max-w-[200px]">
                 {item.label}
               </span>
             )}
@@ -184,11 +184,11 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
       <div className="flex sm:hidden items-center">
         {isTruncated && (
           <>
-            <span className="text-zinc-600" aria-hidden="true">
+            <span className="text-muted-foreground/60" aria-hidden="true">
               ...
             </span>
             <ChevronRight
-              className="w-4 h-4 mx-1 text-zinc-600 shrink-0"
+              className="w-4 h-4 mx-1 text-muted-foreground/60 shrink-0"
               aria-hidden="true"
             />
           </>
@@ -197,7 +197,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
           <React.Fragment key={`mobile-${item.label}-${index}`}>
             {index > 0 && (
               <ChevronRight
-                className="w-4 h-4 mx-1 text-zinc-600 shrink-0"
+                className="w-4 h-4 mx-1 text-muted-foreground/60 shrink-0"
                 aria-hidden="true"
               />
             )}
@@ -205,7 +205,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
               <Link
                 to={item.path}
                 className={cn(
-                  'text-zinc-400 hover:text-zinc-50',
+                  'text-muted-foreground hover:text-foreground',
                   'transition-colors duration-150',
                   'truncate max-w-[100px]',
                   // 8-bit: NO rounded corners
@@ -217,7 +217,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
                 {item.label}
               </Link>
             ) : (
-              <span className="text-zinc-50 truncate max-w-[100px]">
+              <span className="text-foreground truncate max-w-[100px]">
                 {item.label}
               </span>
             )}

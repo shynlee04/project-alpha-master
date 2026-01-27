@@ -280,7 +280,7 @@ export function PluginSidebar({
 
       {/* Width indicator during drag */}
       {isDragging && (
-        <div className="absolute top-2 right-2 px-2 py-1 bg-gray-800 text-white text-xs font-mono z-50">
+        <div className="absolute top-2 right-2 px-2 py-1 bg-primary text-primary-foreground text-xs font-mono z-50">
           {Math.round(contentWidth)}px
         </div>
       )}

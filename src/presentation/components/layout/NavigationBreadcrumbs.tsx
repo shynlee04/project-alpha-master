@@ -173,7 +173,7 @@ export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({
                     {index > 0 && (
                         <ChevronRight
                             size={14}
-                            className="text-zinc-600 shrink-0"
+                            className="text-muted-foreground/60 shrink-0"
                             aria-hidden="true"
                         />
                     )}
@@ -188,8 +188,8 @@ export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({
                             'transition-all duration-150',
                             'max-w-[150px]',
                             item.isActive
-                                ? 'text-orange-500 font-medium cursor-default bg-zinc-900/50'
-                                : 'text-zinc-400 hover:text-zinc-50 hover:border-zinc-700 hover:bg-zinc-950',
+                                ? 'text-primary font-medium cursor-default bg-muted/50'
+                                : 'text-muted-foreground hover:text-foreground hover:border-border hover:bg-background',
                             'focus:outline-none focus-visible:ring-1 focus-visible:ring-orange-500'
                         )}
                         title={item.label}
@@ -199,7 +199,7 @@ export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({
                                 size={14}
                                 className={cn(
                                     'shrink-0',
-                                    item.isActive ? 'text-orange-500' : 'text-zinc-500'
+                                    item.isActive ? 'text-primary' : 'text-muted-foreground'
                                 )}
                             />
                         )}
@@ -216,7 +216,7 @@ export const NavigationBreadcrumbs: React.FC<NavigationBreadcrumbsProps> = ({
                 className={cn(
                     'ml-2 p-1',
                     'rounded-none border border-transparent',
-                    'text-zinc-600 hover:text-zinc-400 hover:border-zinc-700',
+                    'text-muted-foreground/60 hover:text-muted-foreground hover:border-border',
                     'transition-all duration-150',
                     'opacity-0 group-hover:opacity-100',
                     'focus:opacity-100 focus:outline-none'

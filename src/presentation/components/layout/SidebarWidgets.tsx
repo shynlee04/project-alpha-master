@@ -48,7 +48,7 @@ const statusColors: Record<WidgetStatus, string> = {
     success: 'text-green-500',
     warning: 'text-yellow-500',
     error: 'text-red-500',
-    neutral: 'text-zinc-400',
+    neutral: 'text-muted-foreground',
     loading: 'text-blue-400',
 };
 
@@ -56,7 +56,7 @@ const statusBgColors: Record<WidgetStatus, string> = {
     success: 'bg-green-500/10 border-green-500/30',
     warning: 'bg-yellow-500/10 border-yellow-500/30',
     error: 'bg-red-500/10 border-red-500/30',
-    neutral: 'bg-zinc-800 border-zinc-700',
+    neutral: 'bg-muted border-border',
     loading: 'bg-blue-500/10 border-blue-500/30',
 };
 
@@ -131,8 +131,8 @@ export const SidebarWidgets: React.FC<SidebarWidgetsProps> = ({
     }
 
     return (
-        <div className={cn('px-4 py-3 border-t border-zinc-800', className)}>
-            <h3 className="text-xs font-pixel uppercase tracking-wider text-zinc-500 mb-2">
+        <div className={cn('px-4 py-3 border-t border-border', className)}>
+            <h3 className="text-xs font-pixel uppercase tracking-wider text-muted-foreground mb-2">
                 {t('sidebar.status', 'Status')}
             </h3>
             <div className="space-y-1.5">
@@ -156,7 +156,7 @@ export const SidebarWidgets: React.FC<SidebarWidgetsProps> = ({
                                     widget.status === 'loading' && 'animate-spin'
                                 )}
                             />
-                            <span className="text-xs text-zinc-400">{widget.label}</span>
+                            <span className="text-xs text-muted-foreground">{widget.label}</span>
                         </div>
                         <span className={cn('text-xs font-medium', statusColors[widget.status])}>
                             {widget.value}

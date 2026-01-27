@@ -5,15 +5,11 @@ import type { HistoryState } from '@tanstack/history';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   Plus,
-  Terminal,
-  Cpu,
+  // ARCHIVED 2026-01-28: Terminal, Cpu, Settings, Notebook, Info removed with BentoGrid
   // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
   // Imports retained for backward compatibility, remove when implementing these workspaces
   // BookOpen,
-  Settings,
   // HardDrive,
-  Notebook,
-  Info,
   Search,
   FolderOpen,
   NotebookPen,
@@ -25,7 +21,8 @@ import { cn } from '@/lib/utils';
 import type { Project, WorkspaceBindings } from '@/infrastructure/persistence/stores/project/project-types';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { getPlatformInfoForLogging } from '@/infrastructure/filesystem/platform-contract';
-import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
+// ARCHIVED 2026-01-28 (UXUI-02-08): BentoGrid system archived
+// import { BentoGrid, type BentoCardProps } from '@/presentation/components/ide/BentoGrid';
 import { toast } from 'sonner';
 import { Button } from '@/presentation/components/ui/button';
 import { createProjectFromFolder } from '@/lib/workspace/fsa-persistence';
@@ -326,87 +323,7 @@ export const HubHomePage: React.FC = () => {
     }
   };
 
-  // -- Bento Cards Configuration --
-  const bentoCards: BentoCardProps[] = useMemo(() => [
-    {
-      id: 'new-project',
-      size: 'medium',
-      title: t('hub.menu.createProject', 'CREATE_PROJECT'),
-      description: t('hub.newProjectDesc', 'Initialize a new workspace entry'),
-      icon: <Plus className="h-8 w-8" />,
-      topic: 'Workspace',
-      onClick: handleOpenProjectCreationWizard,
-      className: 'bg-primary/5 border-primary/20 hover:border-primary/50',
-    },
-    {
-      id: 'notes',
-      size: 'medium',
-      title: t('hub.menu.notes', 'FIELD_NOTES'),
-      description: t('hub.notesDesc', 'Quick access to scratchpad'),
-      icon: <Notebook className="h-8 w-8" />,
-      topic: 'Notes',
-      onClick: () => navigateToWorkspace('notes'),
-      className: 'bg-green-500/5 border-green-500/20 hover:border-green-500/50',
-    },
-    {
-      id: 'ai-agents',
-      size: 'small',
-      title: t('hub.menu.agents', 'NEURAL_AGENTS'),
-      icon: <Cpu className="h-6 w-6" />,
-      topic: 'Agents',
-      onClick: () => {
-        toast.info("Agents Workspace Coming Soon", {
-          description: "The AI Agents workspace will be available in a future update.",
-        });
-      },
-    },
-    // TODO: ARCH-01-03 - Knowledge and Study workspaces DEFERRED per ADR-033
-    // Menu items removed from UI but backend types retained for backward compatibility
-    // {
-    //   id: 'knowledge',
-    //   size: 'small',
-    //   title: t('hub.menu.knowledge', 'DATA_BANK'),
-    //   icon: <HardDrive className="h-6 w-6" />,
-    //   topic: 'Knowledge',
-    //   onClick: () => navigateToWorkspace('knowledge'),
-    // },
-    // {
-    //   id: 'docs',
-    //   size: 'small',
-    //   title: t('hub.menu.study', 'STUDY_CORE'),
-    //   icon: <BookOpen className="h-6 w-6" />,
-    //   topic: 'Study',
-    //   onClick: () => navigateToWorkspace('study'),
-    // },
-    {
-      id: 'terminal',
-      size: 'small',
-      title: t('hub.terminal', 'TERMINAL'),
-      icon: <Terminal className="h-6 w-6" />,
-      topic: 'Terminal',
-      onClick: () => {
-        toast.info("Global Terminal Access Restricted", {
-          description: "Please access terminal via an active Workspace."
-        });
-      },
-    },
-    {
-      id: 'settings',
-      size: 'small',
-      title: t('hub.menu.settings', 'CONFIG_SYS'),
-      icon: <Settings className="h-6 w-6" />,
-      topic: 'Settings',
-      onClick: () => navigate({ to: '/settings' }),
-    },
-    {
-      id: 'about',
-      size: 'small',
-      title: t('hub.menu.about', 'SYS_INFO'),
-      icon: <Info className="h-6 w-6" />,
-      topic: 'About',
-      onClick: () => navigate({ to: '/about' }), // Assuming /about exists or will be caught
-    }
-  ], [t, navigate, handleNewProject, navigateToWorkspace]);
+
 
   return (
     <div className={cn(
@@ -472,11 +389,6 @@ export const HubHomePage: React.FC = () => {
 
       {/* Charts Grid */}
       <ChartsGrid metrics={metrics} />
-
-      {/* Main Grid - Bento Cards */}
-      <section>
-        <BentoGrid cards={bentoCards} />
-      </section>
 
       {/* Recent Projects Section */}
       <RecentProjectsSection

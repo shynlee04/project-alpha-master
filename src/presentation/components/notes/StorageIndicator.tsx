@@ -79,7 +79,7 @@ export function StorageIndicator({
 
   // Color variants based on storage type
   const isFSA = storageMode.isFSA;
-  const bgColor = isFSA ? 'bg-slate-900' : 'bg-orange-700';
+  const bgColor = isFSA ? 'bg-muted' : 'bg-orange-700';
   const borderColor = 'border-white';
   const textColor = 'text-white';
 

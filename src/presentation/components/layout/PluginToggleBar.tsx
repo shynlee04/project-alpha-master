@@ -191,8 +191,8 @@ export const PluginToggleBar: React.FC<PluginToggleBarProps> = ({
             className={cn(
                 'flex items-center gap-1',
                 'px-2 py-1',
-                'border-b border-zinc-800',
-                'bg-zinc-900/50',
+                'border-b border-border',
+                'bg-card/50',
                 'overflow-x-auto scrollbar-thin',
                 className
             )}
@@ -217,12 +217,12 @@ export const PluginToggleBar: React.FC<PluginToggleBarProps> = ({
                             'group',
                             // Active state
                             isActive
-                                ? 'border-orange-500 bg-zinc-900 text-zinc-50'
-                                : 'border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700 hover:bg-zinc-950',
+                                ? 'border-primary bg-card text-foreground'
+                                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border hover:bg-background',
                             // Locked indicator (always-on plugins)
-                            plugin.isLocked && isActive && 'border-orange-500/70',
+                            plugin.isLocked && isActive && 'border-primary/70',
                             // Focus style
-                            'focus:outline-none focus-visible:ring-1 focus-visible:ring-orange-500'
+                            'focus:outline-none focus-visible:ring-1 focus-visible:ring-primary'
                         )}
                         aria-pressed={isActive}
                         aria-label={`${plugin.name} ${isActive ? 'active' : 'inactive'}${plugin.isLocked ? ', always active' : ''}`}
@@ -231,7 +231,7 @@ export const PluginToggleBar: React.FC<PluginToggleBarProps> = ({
                             size={16}
                             className={cn(
                                 'shrink-0',
-                                isActive ? 'text-orange-500' : 'text-zinc-500 group-hover:text-zinc-300'
+                                isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
                             )}
                         />
                         {!compact && (
@@ -245,7 +245,7 @@ export const PluginToggleBar: React.FC<PluginToggleBarProps> = ({
                                 size={10}
                                 className={cn(
                                     'shrink-0',
-                                    isActive ? 'text-orange-400' : 'text-zinc-600'
+                                    isActive ? 'text-primary-400' : 'text-muted-foreground'
                                 )}
                             />
                         )}
@@ -254,10 +254,10 @@ export const PluginToggleBar: React.FC<PluginToggleBarProps> = ({
             })}
 
             {/* Separator */}
-            <div className="w-px h-6 bg-zinc-700 mx-1" />
+            <div className="w-px h-6 bg-border mx-1" />
 
             {/* Plugin Count */}
-            <div className="flex items-center gap-1 text-xs text-zinc-500 px-2">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground px-2">
                 <span>{activePlugins.length}</span>
                 <span>/</span>
                 <span>{MAX_PLUGINS_DESKTOP}</span>

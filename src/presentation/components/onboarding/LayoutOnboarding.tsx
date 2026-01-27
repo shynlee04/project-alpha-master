@@ -245,7 +245,7 @@ export function LayoutOnboarding({}: LayoutOnboardingProps) {
                 {currentHint.title}
               </h3>
             </div>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-muted-foreground">
               {currentHint.message}
             </p>
           </div>
@@ -253,7 +253,7 @@ export function LayoutOnboarding({}: LayoutOnboardingProps) {
           {/* Close Button / Nút đóng */}
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-gray-500 hover:text-black transition-colors border-0 bg-transparent p-1"
+            className="flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors border-0 bg-transparent p-1"
             aria-label={t('layoutOnboarding.close')}
           >
             <X size={16} />
@@ -261,8 +261,8 @@ export function LayoutOnboarding({}: LayoutOnboardingProps) {
         </div>
 
         {/* Progress Indicator / Chỉ số tiến trình */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t-2 border-gray-200">
-          <div className="text-xs text-gray-500">
+        <div className="flex items-center justify-between mt-3 pt-3 border-t-2 border-border">
+          <div className="text-xs text-muted-foreground">
             {t('layoutOnboarding.progress', {
               current: currentHintIndex + 1,
               total: hints.length,
@@ -272,7 +272,7 @@ export function LayoutOnboarding({}: LayoutOnboardingProps) {
           <div className="flex gap-2">
             <button
               onClick={handleSkip}
-              className="text-xs text-gray-600 hover:text-black transition-colors px-2 py-1 border-0 bg-transparent"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 border-0 bg-transparent"
             >
               {t('layoutOnboarding.skip')}
             </button>

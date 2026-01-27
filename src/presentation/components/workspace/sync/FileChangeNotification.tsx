@@ -109,9 +109,9 @@ function NotificationItem({
   };
 
   const changeTypeColors: Record<string, string> = {
-    created: '#22c55e',
-    modified: '#eab308',
-    deleted: '#ef4444',
+    created: 'hsl(var(--success))',
+    modified: 'hsl(var(--warning))',
+    deleted: 'hsl(var(--destructive))',
   };
 
   return (

@@ -70,7 +70,7 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
         // Base styles - 8-bit compliant
         'flex flex-col items-center justify-center gap-2',
         'min-w-[120px] min-h-[100px] p-4',
-        'bg-zinc-900 border-2 border-zinc-700',
+        'bg-card border-2 border-border',
         'rounded-none', // 8-bit: NO rounded corners
         'cursor-pointer select-none',
         'transition-all duration-150',
@@ -93,13 +93,13 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
       </div>
 
       {/* Label - mono font */}
-      <span className="font-mono text-sm text-zinc-50 text-center">
+      <span className="font-mono text-sm text-foreground text-center">
         {label}
       </span>
 
       {/* Optional description */}
       {description && (
-        <span className="font-mono text-xs text-zinc-400 text-center line-clamp-2">
+        <span className="font-mono text-xs text-muted-foreground text-center line-clamp-2">
           {description}
         </span>
       )}

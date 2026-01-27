@@ -55,21 +55,21 @@ export function AgentToolsPanel({ currentProjectId: _currentProjectId }: AgentTo
       <button
         type="button"
         onClick={handleExpand}
-        className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 hover:bg-gray-200 border-b border-gray-300 cursor-pointer transition-colors"
+        className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted hover:bg-accent border-b border-border cursor-pointer transition-colors"
         title="Agent tools (coming soon)"
       >
         <div className="flex items-center gap-2">
-          <Bot size={16} className="text-gray-700" />
-          <span className="text-gray-800">Agents</span>
+          <Bot size={16} className="text-foreground" />
+          <span className="text-foreground">Agents</span>
         </div>
-        <ChevronRight size={16} className="text-gray-600" />
+        <ChevronRight size={16} className="text-muted-foreground" />
       </button>
 
       {/* Placeholder hint */}
-      <div className="px-3 py-4 text-center text-xs text-gray-500">
-        <Bot size={24} className="mx-auto mb-2 text-gray-400" />
+      <div className="px-3 py-4 text-center text-xs text-muted-foreground">
+        <Bot size={24} className="mx-auto mb-2 text-muted-foreground" />
         <p>AI Agents coming soon</p>
-        <p className="text-gray-400 mt-1">
+        <p className="text-muted-foreground mt-1">
           Agents for code completion, refactoring, testing, and more
         </p>
       </div>
@@ -80,10 +80,10 @@ export function AgentToolsPanel({ currentProjectId: _currentProjectId }: AgentTo
           <button
             key={agent.id}
             onClick={() => handleAgentClick(agent.id)}
-            className="agent-item w-full text-left px-3 py-2 text-sm border-b border-gray-200 cursor-pointer bg-white hover:bg-gray-100"
+            className="agent-item w-full text-left px-3 py-2 text-sm border-b border-border cursor-pointer bg-card hover:bg-accent"
           >
             <div className="flex items-center gap-2">
-              <agent.icon size={16} className="text-gray-600" />
+              <agent.icon size={16} className="text-muted-foreground" />
               <span className="flex-1 truncate">{agent.name}</span>
               {agent.isActive && <span className="text-xs text-green-600">Active</span>}
             </div>

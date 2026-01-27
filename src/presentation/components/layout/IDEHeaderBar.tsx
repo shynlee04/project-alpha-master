@@ -312,7 +312,7 @@ function OpenFolderButton({
             type="button"
             onClick={onOpenFolder}
             disabled={isDisabled}
-            className={`min-h-[44px] text-xs flex items-center gap-1 transition-colors p-2 ${isDisabled ? 'text-slate-500 cursor-not-allowed' : 'text-slate-300 hover:text-white'
+            className={`min-h-[44px] text-xs flex items-center gap-1 transition-colors p-2 ${isDisabled ? 'text-muted-foreground cursor-not-allowed' : 'text-muted-foreground hover:text-foreground'
                 }`}
             title={t('ide.openFolder')}
         >

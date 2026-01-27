@@ -1,10 +1,10 @@
 /**
- * @fileoverview Plugin Toggles Component for Bento Grid
+ * @fileoverview Plugin Toggles Component
  * @module presentation/components/layout/PluginToggles
  *
- * **BENTO GRID PLUGIN TOGGLES**
+ * **PLUGIN TOGGLES**
  *
- * Toggle buttons for adding/removing plugins from the bento grid.
+ * Toggle buttons for adding/removing plugins from the layout.
  * Shows toggle state for each toggleable plugin with 8-bit design.
  *
  * Features:
@@ -14,9 +14,10 @@
  * - Plugin count indicator
  *
  * @epic EPIC-CC-AR02AR03
- * @story CC-AR-04
+ * @story UXUI-02-08
  * @team Team A
  * @created 2026-01-27
+ * @archived Bento Grid: 2026-01-28
  */
 
 import { useTranslation } from 'react-i18next';
@@ -24,8 +25,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { FileText, Code, Terminal, Eye, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { PluginId } from '@/domain/types/plugin-types';
-import { useBentoGridStore } from '@/presentation/layouts/BentoGridStore';
-import { MAX_PLUGINS, MIN_PLUGINS, ALWAYS_LOADED_PLUGINS } from '@/presentation/layouts/bento-layouts';
+import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
 
 // ============================================================================
 // Types
@@ -41,6 +41,15 @@ interface ToggleablePlugin {
 // ============================================================================
 // Constants
 // ============================================================================
+
+/** Always-loaded plugins (cannot be toggled off) */
+const ALWAYS_LOADED_PLUGINS: readonly PluginId[] = ['chat', 'filetree'] as const;
+
+/** Minimum number of plugins */
+const MIN_PLUGINS = 2;
+
+/** Maximum number of plugins */
+const MAX_PLUGINS = 5;
 
 /**
  * Toggleable plugins configuration
@@ -72,7 +81,7 @@ export interface PluginTogglesProps {
 // ============================================================================
 
 /**
- * PluginToggles Component - Toggle buttons for bento grid plugins
+ * PluginToggles Component - Toggle buttons for plugins
  *
  * @param props - PluginTogglesProps
  * @returns Toggle buttons JSX element
@@ -98,15 +107,13 @@ export function PluginToggles({ className, compact = false }: PluginTogglesProps
   const { t } = useTranslation();
 
   // ========================================================================
-  // Bento Grid Store (useShallow for optimal re-rendering)
+  // Plugin Layout Store (useShallow for optimal re-rendering)
   // ========================================================================
 
-  const { activePlugins, togglePlugin, isPluginActive, canToggle } = useBentoGridStore(
+  const { activePlugins, togglePlugin } = usePluginLayoutStore(
     useShallow((s) => ({
       activePlugins: s.activePlugins,
       togglePlugin: s.togglePlugin,
-      isPluginActive: s.isPluginActive,
-      canToggle: s.canToggle,
     }))
   );
 
@@ -118,6 +125,13 @@ export function PluginToggles({ className, compact = false }: PluginTogglesProps
   const canRemove = activePlugins.length > MIN_PLUGINS;
   const pluginCount = activePlugins.length;
 
+  // Helper to check if a plugin is active
+  const isPluginActive = (pluginId: PluginId): boolean => {
+    return activePlugins.includes(pluginId);
+  };
+
+
+
   // ========================================================================
   // Render
   // ========================================================================
@@ -128,9 +142,9 @@ export function PluginToggles({ className, compact = false }: PluginTogglesProps
       <div
         className={cn(
           'flex items-center gap-1 px-2 py-1.5',
-          'text-xs font-mono text-zinc-500',
-          'border-2 border-zinc-800 rounded-none',
-          'bg-zinc-900/50'
+          'text-xs font-mono text-muted-foreground',
+          'border-2 border-border rounded-none',
+          'bg-muted/50'
         )}
         title={t('plugins.alwaysLoaded', 'Chat and FileTree are always loaded')}
       >
@@ -139,12 +153,11 @@ export function PluginToggles({ className, compact = false }: PluginTogglesProps
       </div>
 
       {/* Separator */}
-      <div className="w-px h-6 bg-zinc-700 mx-1" />
+      <div className="w-px h-6 bg-border mx-1" />
 
       {/* Toggleable Plugin Buttons */}
       {TOGGLEABLE_PLUGINS.map(({ id, icon: Icon, labelKey, label }) => {
         const isActive = isPluginActive(id);
-        const canToggleThis = canToggle(id);
         const disabled = isActive ? !canRemove : !canAdd;
 
         return (
@@ -163,11 +176,11 @@ export function PluginToggles({ className, compact = false }: PluginTogglesProps
               // Active state
               isActive
                 ? 'bg-orange-500/10 text-orange-500 border-orange-500'
-                : 'bg-zinc-900 text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-zinc-300',
+                : 'bg-card text-muted-foreground border-border hover:border-muted-foreground/50 hover:text-muted-foreground',
               // Disabled state
               disabled && 'opacity-50 cursor-not-allowed',
               // Focus state
-              'focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 focus-visible:ring-offset-zinc-900'
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-1 focus-visible:ring-offset-card'
             )}
             aria-pressed={isActive}
             aria-label={`${t(labelKey, label)} ${isActive ? 'active' : 'inactive'}`}
@@ -179,11 +192,11 @@ export function PluginToggles({ className, compact = false }: PluginTogglesProps
       })}
 
       {/* Plugin Count */}
-      <div className="ml-2 flex items-center gap-1 text-xs font-mono text-zinc-500">
+      <div className="ml-2 flex items-center gap-1 text-xs font-mono text-muted-foreground">
         <span
           className={cn(
-            pluginCount >= MAX_PLUGINS && 'text-orange-500',
-            pluginCount <= MIN_PLUGINS && 'text-zinc-600'
+            pluginCount >= MAX_PLUGINS && 'text-primary',
+            pluginCount <= MIN_PLUGINS && 'text-muted-foreground/60'
           )}
         >
           {pluginCount}

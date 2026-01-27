@@ -82,7 +82,7 @@ export function Tooltip({ children, content, side = "top", align = "center", cla
       {isOpen && (
         <div
           className={cn(
-            "absolute z-50 px-2 py-1 text-xs text-white bg-gray-900 rounded shadow-lg pointer-events-none",
+            "absolute z-50 px-2 py-1 text-xs text-foreground bg-popover border border-border shadow-[var(--shadow-pixel-sm)] pointer-events-none",
             positions[side],
             alignments[align],
             className

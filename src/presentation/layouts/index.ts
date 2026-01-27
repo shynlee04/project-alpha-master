@@ -38,32 +38,15 @@ export {
 } from './PluginLayoutStore';
 
 // ============================================================================
-// Bento Grid System (CC-AR-04)
+// Bento Grid System (ARCHIVED 2026-01-28 - UXUI-02-08)
 // ============================================================================
-
-export { useBentoGridStore } from './BentoGridStore';
-export {
-  selectActivePlugins as selectBentoActivePlugins,
-  selectPluginOrder,
-  selectHasHydrated as selectBentoHasHydrated,
-} from './BentoGridStore';
-
-export {
-  BENTO_LAYOUTS,
-  getBentoLayout,
-  getCellByIndex,
-  clampPluginCount,
-  ALWAYS_LOADED_PLUGINS,
-  TOGGLEABLE_PLUGINS,
-  MIN_PLUGINS,
-  MAX_PLUGINS,
-} from './bento-layouts';
-export type {
-  PluginCount,
-  CellSizeVariant,
-  BentoCell,
-  BentoLayout,
-} from './bento-layouts';
+// The Bento Grid system has been archived. See _bmad-ext/.archive/bento-grid-2026-01-28/
+// for the archived files.
+//
+// The PluginLayoutStore now provides:
+// - usePluginLayoutStore: Main store for plugin state
+// - togglePlugin: Add/remove plugins
+// - selectIsPluginActive: Check if plugin is active
 
 // ============================================================================
 // Layout Presets (ARCH-03-03)

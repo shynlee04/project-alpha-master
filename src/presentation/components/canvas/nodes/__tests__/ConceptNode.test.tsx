@@ -125,7 +125,7 @@ describe('ConceptNode', () => {
     it('does not apply selected border class when node is not selected', () => {
       render(<ConceptNode {...defaultProps} selected={false} />);
       const container = screen.getByText('Test Concept').closest('div');
-      expect(container).toHaveClass('border-gray-700');
+      expect(container).toHaveClass('border-border');
     });
   });
 });

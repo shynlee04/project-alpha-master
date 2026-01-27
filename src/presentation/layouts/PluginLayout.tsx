@@ -1,27 +1,21 @@
 /**
- * @fileoverview PluginLayout - Bento Grid Layout System
+ * @fileoverview PluginLayout - Simplified Plugin Layout System
  * @module presentation/layouts/PluginLayout
  *
- * **BENTO GRID LAYOUT SYSTEM**
+ * **SIMPLIFIED PLUGIN LAYOUT SYSTEM**
  *
- * Main layout container using CSS Grid with asymmetric bento-style layouts.
- * Each plugin count (2-5) has a predefined optimal arrangement.
- *
- * Key Features:
- * - Asymmetric cell sizes (not equal columns)
- * - Toggle plugins ON/OFF → grid shape changes
- * - Drag to SWAP positions only (no resize)
- * - 2 always-loaded (Chat, FileTree) + 1-3 toggleable
+ * This is a temporary simplified layout following the archival of the Bento Grid system.
+ * It provides basic plugin rendering without the bento grid features.
  *
  * @epic EPIC-CC-AR02AR03
- * @story CC-AR-04
+ * @story UXUI-02-08
  * @team Team A
  * @created 2026-01-27
+ * @archived Bento Grid: 2026-01-28
  */
 
-import { useMemo } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 import { useTranslation } from 'react-i18next';
+import { useShallow } from 'zustand/react/shallow';
 import { LayoutGrid } from 'lucide-react';
 
 // Plugin system
@@ -32,11 +26,6 @@ import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interfa
 import { isPluginSupportedOnDevice, getPluginFallbackReason, getDeviceType } from '@/infrastructure/utils/device-detection';
 import { PluginFallback } from '@/presentation/components/common/PluginFallback';
 import type { PluginId } from '@/domain/types/plugin-types';
-
-// Bento grid system
-import { useBentoGridStore } from './BentoGridStore';
-import { getBentoLayout, type CellSizeVariant } from './bento-layouts';
-import { DraggableBentoCell } from './DraggableBentoCell';
 
 // Store for breakpoint detection
 import { usePluginLayoutStore } from './PluginLayoutStore';
@@ -54,9 +43,6 @@ import { LayoutOnboarding } from '@/presentation/components/onboarding/LayoutOnb
 
 /**
  * PluginLayout Props
- *
- * @remarks
- * No props required - reads state from bento grid store.
  */
 interface PluginLayoutProps {}
 
@@ -65,16 +51,13 @@ interface PluginLayoutProps {}
 // ============================================================================
 
 /**
- * PluginLayout Component - Bento Grid Layout System
+ * PluginLayout Component - Simplified Plugin Layout
  *
  * @returns Plugin layout JSX element
  *
  * @remarks
- * Implementation Features:
- * - CSS Grid layout with asymmetric bento arrangements
- * - 4 predefined layouts for 2, 3, 4, 5 plugins
- * - Plugin toggle changes grid shape
- * - Mobile: Single plugin view with bottom navigation
+ * This is a simplified version following Bento Grid archival.
+ * Uses PluginLayoutStore for plugin state management.
  *
  * 8-Bit Design:
  * - Sharp corners (border-radius: 0)
@@ -85,35 +68,17 @@ export function PluginLayout({}: PluginLayoutProps) {
   const { t } = useTranslation();
 
   // ========================================================================
-  // Bento Grid Store (useShallow for optimal re-rendering)
+  // Layout Store for Plugin State and Breakpoint Detection
   // ========================================================================
 
-  const { activePlugins, pluginOrder, getActiveCount } = useBentoGridStore(
-    useShallow((s) => ({
-      activePlugins: s.activePlugins,
-      pluginOrder: s.pluginOrder,
-      getActiveCount: s.getActiveCount,
-    }))
-  );
-
-  // ========================================================================
-  // Layout Store for Breakpoint Detection
-  // ========================================================================
-
-  const { breakpoint, switchPlugin } = usePluginLayoutStore(
+  const { breakpoint, switchPlugin, activePlugins, currentPlugin } = usePluginLayoutStore(
     useShallow((state) => ({
       breakpoint: state.breakpoint,
       switchPlugin: state.switchPlugin,
+      activePlugins: state.activePlugins,
+      currentPlugin: state.currentPlugin,
     }))
   );
-
-  // ========================================================================
-  // Get Bento Layout Configuration
-  // ========================================================================
-
-  const layout = useMemo(() => {
-    return getBentoLayout(getActiveCount());
-  }, [getActiveCount]);
 
   // ========================================================================
   // Apply Responsive Layout Rules
@@ -124,11 +89,11 @@ export function PluginLayout({}: PluginLayoutProps) {
 
   // For mobile: show limited plugins
   const visiblePlugins = isMobile
-    ? pluginOrder.filter((id) => activePlugins.includes(id)).slice(0, layoutRules.maxPlugins)
-    : pluginOrder.filter((id) => activePlugins.includes(id));
+    ? activePlugins.slice(0, layoutRules.maxPlugins)
+    : activePlugins;
 
   // Current plugin for mobile single-view
-  const currentPluginForMobile = usePluginLayoutStore((s) => s.currentPlugin) || visiblePlugins[0] || null;
+  const currentPluginForMobile = currentPlugin || visiblePlugins[0] || null;
 
   // ========================================================================
   // Render Mobile Single-View Layout
@@ -146,48 +111,45 @@ export function PluginLayout({}: PluginLayoutProps) {
 
     return (
       <div className="flex-1 h-full w-full">
-        <PluginRenderer pluginId={currentPluginId} sizeVariant="large" />
+        <PluginRenderer pluginId={currentPluginId} />
       </div>
     );
   };
 
   // ========================================================================
-  // Render Bento Grid Layout (Desktop/Tablet)
+  // Render Simple Grid Layout (Desktop/Tablet)
   // ========================================================================
 
-  const renderBentoGrid = () => {
+  const renderSimpleGrid = () => {
     if (visiblePlugins.length === 0) {
       return renderEmptyState();
     }
+
+    // Simple grid layout - equal columns
+    const gridCols = visiblePlugins.length === 1 ? '1fr' :
+                     visiblePlugins.length === 2 ? '1fr 1fr' :
+                     visiblePlugins.length === 3 ? '1fr 1fr 1fr' :
+                     '1fr 1fr 1fr 1fr';
 
     return (
       <div
         className="h-full w-full grid gap-0"
         style={{
-          gridTemplateColumns: layout.gridTemplate.columns,
-          gridTemplateRows: layout.gridTemplate.rows,
-          gridTemplateAreas: layout.gridTemplate.areas,
+          gridTemplateColumns: gridCols,
+          gridTemplateRows: '1fr',
         }}
-        data-bento-plugins={layout.count}
-        data-bento-layout={layout.name}
+        data-plugin-count={visiblePlugins.length}
       >
-        {visiblePlugins.map((pluginId, index) => {
-          const cell = layout.cells[index];
-          if (!cell) return null;
-
-          return (
-            <DraggableBentoCell
-              key={pluginId}
-              pluginId={pluginId}
-              gridArea={cell.gridArea}
-              sizeVariant={cell.sizeVariant}
-              cellId={cell.id}
-              isLast={index === visiblePlugins.length - 1}
-            >
-              <PluginRenderer pluginId={pluginId} sizeVariant={cell.sizeVariant} />
-            </DraggableBentoCell>
-          );
-        })}
+        {visiblePlugins.map((pluginId) => (
+          <div
+            key={pluginId}
+            className="relative h-full overflow-hidden border-r border-b border-zinc-700"
+            style={{ gridArea: 'auto' }}
+            data-plugin={pluginId}
+          >
+            <PluginRenderer pluginId={pluginId} />
+          </div>
+        ))}
       </div>
     );
   };
@@ -221,7 +183,7 @@ export function PluginLayout({}: PluginLayoutProps) {
          ================================================================ */}
 
       <div className="flex-1 min-h-0">
-        {isMobile ? renderMobileSingleView() : renderBentoGrid()}
+        {isMobile ? renderMobileSingleView() : renderSimpleGrid()}
       </div>
 
       {/* ================================================================
@@ -250,7 +212,6 @@ export function PluginLayout({}: PluginLayoutProps) {
 
 interface PluginRendererProps {
   pluginId: string;
-  sizeVariant: CellSizeVariant;
 }
 
 /**
@@ -262,11 +223,10 @@ interface PluginRendererProps {
  * @remarks
  * - Retrieves plugin from registry
  * - Checks device support (EPIC-0.6-10)
- * - Passes size variant to plugin
  * - Shows fallback for unsupported plugins
  * - Shows error state if plugin not found
  */
-function PluginRenderer({ pluginId, sizeVariant }: PluginRendererProps) {
+function PluginRenderer({ pluginId }: PluginRendererProps) {
   const { t } = useTranslation();
   const plugin = getPlugin(pluginId as Parameters<typeof getPlugin>[0]);
 
@@ -296,11 +256,10 @@ function PluginRenderer({ pluginId, sizeVariant }: PluginRendererProps) {
     );
   }
 
-  // Create plugin props with size variant
-  const pluginProps: PluginMainProps & { sizeVariant?: CellSizeVariant } = {
+  // Create plugin props
+  const pluginProps: PluginMainProps = {
     width: 0, // CSS Grid handles sizing
     height: 0,
-    sizeVariant,
   };
 
   return (

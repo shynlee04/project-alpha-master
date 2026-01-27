@@ -111,8 +111,8 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
       className={cn(
         // Layout: Fixed height, flex container
         'h-12 flex items-center justify-between shrink-0',
-        // Colors: 8-bit compliant - solid bg-zinc-900, border-zinc-700
-        'bg-zinc-900 border-b-2 border-zinc-700',
+        // Colors: 8-bit compliant - solid card bg, border
+        'bg-card border-b-2 border-border',
         // Spacing
         'px-3 md:px-4',
         // z-index for fixed positioning
@@ -138,7 +138,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
             // 8-bit: NO rounded corners
             'rounded-none',
             // Colors
-            'text-zinc-400 hover:text-zinc-50 hover:bg-zinc-950',
+            'text-muted-foreground hover:text-foreground hover:bg-background',
             // Transitions
             'transition-colors duration-150',
             // Touch
@@ -157,7 +157,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
           className={cn(
             'flex items-center gap-2',
             'hover:opacity-90 transition-opacity',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card',
             'rounded-none'
           )}
           aria-label={t('global.header.title')}
@@ -171,7 +171,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
               e.currentTarget.style.display = 'none';
             }}
           />
-          <span className="font-pixel text-base md:text-lg font-bold tracking-tight text-zinc-50">
+          <span className="font-pixel text-base md:text-lg font-bold tracking-tight text-foreground">
             {t('global.header.title')}
           </span>
         </Link>
@@ -197,8 +197,8 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
                 'border-2',
                 // Colors based on active state
                 isActivePath(item.path)
-                  ? 'border-orange-500 text-orange-500 bg-zinc-950'
-                  : 'border-transparent text-zinc-400 hover:text-zinc-50 hover:bg-zinc-950',
+                  ? 'border-primary text-primary bg-background'
+                  : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-background',
                 // Transitions
                 'transition-colors duration-150'
               )}
@@ -234,11 +234,11 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
             // Size
             'h-8 px-3',
             // 8-bit: NO rounded corners, solid border
-            'rounded-none border-2 border-zinc-700',
+            'rounded-none border-2 border-border',
             // Colors
-            'bg-black text-zinc-400',
+            'bg-background text-muted-foreground',
             // Hover state
-            'hover:border-zinc-600 hover:text-zinc-300',
+            'hover:border-muted hover:text-foreground',
             // Focus state
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500',
             // Transitions
@@ -259,8 +259,8 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
               'hidden md:inline-flex items-center gap-0.5',
               'px-1.5 py-0.5',
               'text-[10px] font-mono',
-              'rounded-none border border-zinc-700',
-              'bg-zinc-900 text-zinc-500',
+              'rounded-none border border-border',
+              'bg-card text-muted-foreground',
               'ml-auto'
             )}
           >
@@ -281,7 +281,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
             // 8-bit: NO rounded corners
             'rounded-none',
             // Colors: Ghost style
-            'text-zinc-400 hover:text-zinc-50 hover:bg-zinc-950',
+            'text-muted-foreground hover:text-foreground hover:bg-background',
             // Focus state
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500',
             // Transitions
@@ -307,7 +307,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
             // 8-bit: NO rounded corners
             'rounded-none',
             // Colors: Ghost style
-            'text-zinc-400 hover:text-zinc-50 hover:bg-zinc-950',
+            'text-muted-foreground hover:text-foreground hover:bg-background',
             // Focus state
             'focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500',
             // Transitions

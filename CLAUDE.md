@@ -1,4 +1,4 @@
-# AGENTS.md - Project Alpha Governance
+# CLAUDE.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
 > **Version:** 2.10.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
 
@@ -493,4 +493,74 @@ opacity: 0.8;            /* Avoid - use solid */
 
 ---
 
-**End of AGENTS.md - Total Lines: ~500**
+## ⚡ AI Agent Development Guidelines (2026-01-28)
+
+### Performance-First Tooling (MUST USE)
+
+```bash
+# Fast type checking (10x faster - prevents timeouts)
+pnpm typecheck:fast        # Uses tsgo native compiler
+pnpm typecheck:watch       # Watch mode
+
+# Fast testing (multi-core parallel)
+pnpm test:fast             # Thread pool execution
+pnpm test:ci               # CI-optimized
+
+# Type safety automation (prevents cross-dependency nightmares)
+pnpm types:generate        # Auto-generate types from schemas
+pnpm types:validate        # Validate contract consistency
+pnpm types:fix             # Auto-fix common type issues
+pnpm contracts:check       # Full validation pipeline
+
+# Dependency analysis
+pnpm deps:circular         # Check for circular dependencies
+pnpm deps:visualize        # Generate dependency graph
+```
+
+### Type Safety Automation (CRITICAL)
+
+**Always run before implementing:**
+```bash
+pnpm contracts:check       # Validates type contracts
+pnpm types:generate        # Generates fresh types
+```
+
+**Generated types location:**
+```typescript
+import type { Project, User } from '@/generated'  // Auto-generated
+```
+
+### Key Files for AI Agents
+
+| File | Purpose |
+|------|---------|
+| `PERFORMANCE-OPTIMIZATION-GUIDE.md` | Fast builds, testing, type checking |
+| `TYPE-SAFETY-AUTOMATION.md` | Automated type generation & validation |
+| `tsconfig.tsgo.json` | Native compiler config (10x faster) |
+| `vitest.config.ts` | Parallel test execution |
+
+### Contract-First Development Pattern
+
+```typescript
+// 1. Define Zod schema (single source of truth)
+const ProjectSchema = z.object({ id: z.string(), name: z.string() })
+
+// 2. Type auto-generated - use it
+import type { Project } from '@/generated'
+
+// 3. Route loader with explicit return type
+loader: async ({ params }): Promise<{ project: Project }> => {
+  return { project: await fetchProject(params.projectId) }
+}
+```
+
+### Common Pitfalls to Avoid
+
+1. **Never use implicit any** - Run `pnpm types:fix --apply`
+2. **Always use useShallow** - For Zustand store selectors
+3. **Route loaders need explicit return types** - Validated automatically
+4. **Check circular deps before merge** - `pnpm deps:circular`
+
+---
+
+**End of CLAUDE.md - Total Lines: ~550**

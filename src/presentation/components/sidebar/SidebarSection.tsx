@@ -68,17 +68,17 @@ export function SidebarSection({
       <button
         type="button"
         onClick={toggleExpanded}
-        className="sidebar-section-header w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-gray-600 bg-gray-100 hover:bg-gray-200 border-b border-gray-300 cursor-pointer transition-colors"
+        className="sidebar-section-header w-full flex items-center justify-between px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted hover:bg-accent border-b border-border cursor-pointer transition-colors"
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-2">
-          {Icon && <Icon size={16} className="text-gray-700" />}
-          <span className="text-gray-800">{title}</span>
+          {Icon && <Icon size={16} className="text-foreground" />}
+          <span className="text-foreground">{title}</span>
         </div>
         {isExpanded ? (
-          <ChevronDown size={16} className="text-gray-600" />
+          <ChevronDown size={16} className="text-muted-foreground" />
         ) : (
-          <ChevronRight size={16} className="text-gray-600" />
+          <ChevronRight size={16} className="text-muted-foreground" />
         )}
       </button>
 

@@ -121,7 +121,7 @@ export function ProjectSidebar({
   return (
     <div
       ref={sidebarRef}
-      className="project-sidebar flex flex-col bg-gray-50 border-r-2 border-gray-300 shadow-4"
+      className="project-sidebar flex flex-col bg-muted border-r-2 border-border shadow-[var(--shadow-pixel)]"
       style={{
         width: `${width}px`,
         minWidth: `${MIN_WIDTH}px`,
@@ -131,15 +131,15 @@ export function ProjectSidebar({
       aria-label="Project sidebar"
     >
       {/* Header with close button */}
-      <div className="flex items-center justify-between px-3 py-3 bg-gray-100 border-b-2 border-gray-300">
-        <h2 className="text-sm font-bold text-gray-800">Projects</h2>
+      <div className="flex items-center justify-between px-3 py-3 bg-muted border-b-2 border-border">
+        <h2 className="text-sm font-bold text-foreground">Projects</h2>
         <button
           type="button"
           onClick={onToggle}
-          className="p-1 hover:bg-gray-200 transition-colors"
+          className="p-1 hover:bg-accent transition-colors"
           aria-label="Close sidebar"
         >
-          <X size={18} className="text-gray-700" />
+          <X size={18} className="text-foreground" />
         </button>
       </div>
 
@@ -184,14 +184,14 @@ export function ProjectSidebar({
         {!isDragging && (
           <GripHorizontal
             size={16}
-            className="absolute top-1/2 right-1/2 -translate-y-1/2 -translate-x-1/2 text-gray-400"
+            className="absolute top-1/2 right-1/2 -translate-y-1/2 -translate-x-1/2 text-muted-foreground"
           />
         )}
       </div>
 
       {/* Width indicator during drag */}
       {isDragging && (
-        <div className="absolute top-1/2 right-4 -translate-y-1/2 px-2 py-1 bg-gray-800 text-white text-xs font-mono">
+        <div className="absolute top-1/2 right-4 -translate-y-1/2 px-2 py-1 bg-primary text-primary-foreground text-xs font-mono">
           {Math.round(width)}px
         </div>
       )}

@@ -180,6 +180,9 @@ interface PluginLayoutState {
 
   /** Set workflow preset (Phase 1: Fixed-ratio CSS Grid) */
   setPreset: (preset: WorkflowPreset) => void;
+
+  /** Toggle plugin on/off (convenience method for UI) */
+  togglePlugin: (pluginId: PluginId) => void;
 }
 
 // ============================================================================
@@ -487,14 +490,14 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
       setHasHydrated: (value) => set({ _hasHydrated: value }),
 
       /**
-        * Set workflow preset (Phase 1: Fixed-ratio CSS Grid)
-        *
-        * @param preset - WorkflowPreset to apply
-        * @remarks
-        * - Updates activePlugins to match preset panels
-        * - Clears panelSizes (no longer used with fixed ratios)
-        * - Sets hasUserCustomized flag
-        */
+         * Set workflow preset (Phase 1: Fixed-ratio CSS Grid)
+         *
+         * @param preset - WorkflowPreset to apply
+         * @remarks
+         * - Updates activePlugins to match preset panels
+         * - Clears panelSizes (no longer used with fixed ratios)
+         * - Sets hasUserCustomized flag
+         */
       setPreset: (preset) =>
         set(() => {
           const config = getPresetConfig(preset);
@@ -505,6 +508,43 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
             panelSizes: {}, // Clear panel sizes - using fixed ratios now
           };
         }),
+
+      /**
+       * Toggle plugin on/off
+       *
+       * @param pluginId - Plugin ID to toggle
+       * @remarks
+       * - Adds plugin if not active
+       * - Removes plugin if already active
+       * - Enforces min/max plugin limits
+       */
+      togglePlugin: (pluginId) =>
+        set((state) => {
+          const isActive = state.activePlugins.includes(pluginId);
+
+          if (isActive) {
+            // Remove plugin (enforce minimum of 2)
+            if (state.activePlugins.length <= 2) {
+              console.warn('[PluginLayoutStore] Cannot go below 2 plugins');
+              return state;
+            }
+            return {
+              activePlugins: state.activePlugins.filter((id) => id !== pluginId),
+              hasUserCustomized: true,
+            };
+          } else {
+            // Add plugin (enforce maximum of 5)
+            if (state.activePlugins.length >= 5) {
+              console.warn('[PluginLayoutStore] Cannot exceed 5 plugins');
+              return state;
+            }
+            return {
+              activePlugins: [...state.activePlugins, pluginId],
+              hasUserCustomized: true,
+            };
+          }
+        }),
+
     }),
 
     // ========================================================================
@@ -556,6 +596,21 @@ export const selectActivePlugins = (state: PluginLayoutState) =>
 export const selectLayoutMode = (state: PluginLayoutState) => state.layoutMode;
 
 export const selectPanelSizes = (state: PluginLayoutState) => state.panelSizes;
+
+/**
+ * Check if a plugin is active
+ *
+ * @param state - PluginLayoutState
+ * @param pluginId - Plugin ID to check
+ * @returns true if plugin is in activePlugins
+ *
+ * @example
+ * ```ts
+ * const isActive = usePluginLayoutStore(useShallow((s) => selectIsPluginActive(s, 'notes')));
+ * ```
+ */
+export const selectIsPluginActive = (state: PluginLayoutState, pluginId: PluginId): boolean =>
+  state.activePlugins.includes(pluginId);
 
 // ============================================================================
 // No additional exports - store and selectors exported above
