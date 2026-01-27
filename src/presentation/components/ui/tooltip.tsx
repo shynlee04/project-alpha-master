@@ -26,16 +26,16 @@ const TooltipContent = React.forwardRef<
             ref={ref}
             sideOffset={sideOffset}
             className={cn(
-                // Base styles
+                // Base styles with 8-bit aesthetic
                 "z-50 overflow-hidden px-3 py-1.5 text-xs",
-                // Pixel aesthetic - squared corners
-                "rounded-none border border-border",
-                "bg-popover text-popover-foreground !bg-opacity-100",
-                // Pixel shadow
-                "shadow-sm",
-                // Animation
-                "animate-in fade-in-0 zoom-in-95",
-                "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+                // Pixel aesthetic - squared corners, 2px border
+                "rounded-none border-2 border-border",
+                "bg-popover text-popover-foreground",
+                // 8-bit pixel shadow
+                "shadow-[var(--shadow-pixel-sm)]",
+                // 8-bit step animation (animate-pixel-fade-in or instant)
+                "animate-pixel-fade-in",
+                "data-[state=closed]:opacity-0",
                 "data-[side=bottom]:slide-in-from-top-2",
                 "data-[side=left]:slide-in-from-right-2",
                 "data-[side=right]:slide-in-from-left-2",

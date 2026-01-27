@@ -4,8 +4,8 @@
  * 8-bit Dialog Component
  * 
  * Features:
- * - Rounded corners (rounded-[4px])
- * - Soft shadows (shadow-[4px_4px_0_0_rgba(0,0,0,0.1)])
+ * - Sharp corners (rounded-none) - 8-bit aesthetic
+ * - Pixel shadows (shadow-[var(--shadow-pixel-lg)])
  * - CSS custom properties for light/dark theme support
  * - Size and State variants
  * - i18n support
@@ -51,7 +51,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 z-[var(--z-modal)] bg-[var(--color-overlay)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-opacity duration-200",
+        "fixed inset-0 z-[var(--z-modal)] bg-[var(--color-overlay)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
         className
       )}
       {...props}
@@ -65,7 +65,7 @@ function DialogOverlay({
  */
 const dialogContentVariants = cva(
   // Base styles with 8-bit aesthetic and theme-aware colors
-  "fixed left-[50%] top-[50%] z-[var(--z-modal)] grid w-[95vw] md:w-full translate-x-[-50%] translate-y-[-50%] gap-4 border-2 p-6 shadow-[4px_4px_0_0_rgba(0,0,0,0.1)] duration-200 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-[4px] outline-none max-h-[85vh] overflow-y-auto overflow-x-hidden focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+  "fixed left-[50%] top-[50%] z-[var(--z-modal)] grid w-[95vw] md:w-full translate-x-[-50%] translate-y-[-50%] gap-4 border-2 p-6 shadow-[var(--shadow-pixel-lg)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-none outline-none max-h-[85vh] overflow-y-auto overflow-x-hidden focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   {
     variants: {
       size: {
@@ -79,11 +79,11 @@ const dialogContentVariants = cva(
         // Default variant: card-like appearance
         default: "bg-[var(--card)] text-[var(--card-foreground)] border-[var(--border)]",
         // Error variant: red tinted
-        error: "bg-[var(--card)] text-[var(--destructive)] border-[var(--destructive)] shadow-[4px_4px_0_0_rgba(239,68,68,0.2)]",
+        error: "bg-[var(--card)] text-[var(--destructive)] border-[var(--destructive)] shadow-[4px_4px_0_0_rgba(239,68,68,0.4)]",
         // Success variant: green tinted
-        success: "bg-[var(--card)] text-[var(--success)] border-[var(--success)] shadow-[4px_4px_0_0_rgba(34,197,94,0.2)]",
+        success: "bg-[var(--card)] text-[var(--success)] border-[var(--success)] shadow-[4px_4px_0_0_rgba(34,197,94,0.4)]",
         // Warning variant: yellow tinted
-        warning: "bg-[var(--card)] text-[var(--warning)] border-[var(--warning)] shadow-[4px_4px_0_0_rgba(245,158,11,0.2)]",
+        warning: "bg-[var(--card)] text-[var(--warning)] border-[var(--warning)] shadow-[4px_4px_0_0_rgba(245,158,11,0.4)]",
       },
     },
     defaultVariants: {
@@ -122,7 +122,7 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close
-            className="absolute right-4 top-4 rounded-[4px] opacity-70 ring-offset-background transition-opacity duration-150 hover:opacity-100 hover:bg-[var(--muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-[var(--muted)] data-[state=open]:text-[var(--muted-foreground)] p-1"
+            className="absolute right-4 top-4 rounded-none opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-[var(--muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-[var(--muted)] data-[state=open]:text-[var(--muted-foreground)] p-1"
             aria-label={t("common.close", { defaultValue: "Close" })}
           >
             <XIcon className="h-4 w-4" />

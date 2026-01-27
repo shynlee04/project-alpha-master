@@ -69,7 +69,7 @@ export function MissingApiKeyWarning({
 
     if (variant === 'inline') {
         return (
-            <div className={`flex items-center gap-2 px-3 py-2 bg-destructive/10 border border-destructive/20 rounded-md ${className}`}>
+            <div className={`flex items-center gap-2 px-3 py-2 bg-destructive/10 border-2 border-destructive/20 rounded-none ${className}`}>
                 <AlertTriangle className="h-4 w-4 text-destructive" />
                 <span className="text-sm text-destructive">
                     {message || defaultMessage}
@@ -88,9 +88,10 @@ export function MissingApiKeyWarning({
     }
 
     return (
-        <div className={`flex flex-col items-center justify-center gap-4 p-6 bg-muted/50 border border-dashed border-muted-foreground/30 rounded-none ${className}`}>
+        <div className={`flex flex-col items-center justify-center gap-4 p-6 bg-muted/50 border-2 border-dashed border-muted-foreground/30 rounded-none ${className}`}>
             <div className="flex items-center gap-3">
-                <div className="p-3 bg-destructive/10 rounded-full">
+                {/* 8-bit: using rounded-none for icon container */}
+                <div className="p-3 bg-destructive/10 rounded-none">
                     <Key className="h-6 w-6 text-destructive" />
                 </div>
                 <div className="text-left">

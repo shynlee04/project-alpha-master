@@ -34,7 +34,7 @@ export interface InputProps
  */
 const inputVariants = cva(
   // Base styles with 8-bit aesthetic and theme-aware colors - UX-02: strict rounded-none
-  "flex h-10 w-full items-center gap-2 rounded-none border-2 bg-[var(--background)] text-[var(--foreground)] px-3 py-2 text-sm transition-[border-color] duration-150 outline-none placeholder:text-[var(--muted-foreground)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] disabled:cursor-not-allowed disabled:opacity-50 file:border-0 file:bg-transparent file:text-sm file:font-medium",
+  "flex h-10 w-full items-center gap-2 rounded-none border-2 bg-[var(--background)] text-[var(--foreground)] px-3 py-2 text-sm font-mono transition-[border-color] duration-150 outline-none placeholder:text-[var(--muted-foreground)] focus-visible:outline-none focus-visible:border-[hsl(var(--primary))] focus-visible:shadow-[var(--shadow-pixel)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium",
   {
     variants: {
       size: {
@@ -43,9 +43,9 @@ const inputVariants = cva(
         lg: "h-12 px-4 text-base min-h-[48px]",
       },
       state: {
-        default: "border-[var(--input)] hover:border-[var(--border)] focus-visible:border-[var(--primary)] focus-visible:ring-[var(--primary)]",
-        error: "border-[var(--destructive)] hover:border-[var(--destructive)] focus-visible:border-[var(--destructive)] focus-visible:ring-[var(--destructive)]",
-        success: "border-[var(--success)] hover:border-[var(--success)] focus-visible:border-[var(--success)] focus-visible:ring-[var(--success)]",
+        default: "border-[var(--input)] hover:border-[var(--border)] focus-visible:border-[hsl(var(--primary))]",
+        error: "border-[var(--destructive)] hover:border-[var(--destructive)] focus-visible:border-[hsl(var(--destructive))] focus-visible:shadow-[2px_2px_0_0_hsl(var(--destructive))]",
+        success: "border-[var(--success)] hover:border-[var(--success)] focus-visible:border-[hsl(var(--success))]",
         disabled: "border-[var(--neutral-200)] bg-[var(--muted)] text-[var(--muted-foreground)] cursor-not-allowed",
       },
     },

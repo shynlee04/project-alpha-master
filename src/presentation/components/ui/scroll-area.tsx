@@ -1,5 +1,11 @@
 "use client"
 
+/**
+ * ScrollArea Component
+ * 
+ * 8-bit styled scroll area with rounded-none scrollbar thumb
+ */
+
 import * as React from "react"
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
 
@@ -40,7 +46,8 @@ const ScrollBar = React.forwardRef<
     )}
     {...props}
   >
-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+    {/* 8-bit: rounded-none thumb, not rounded-full */}
+    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-none bg-border" />
   </ScrollAreaPrimitive.ScrollAreaScrollbar>
 ))
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName

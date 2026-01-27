@@ -280,4 +280,68 @@ useEffect(() => {
 
 ---
 
+## 7.7 Plugin Drag-to-Panel Behavior
+
+Plugins can be moved between panels via drag-and-drop. The **ONE INSTANCE RULE** ensures each plugin runs in only one panel at a time.
+
+### Drag Behavior
+
+| Behavior | Description |
+|----------|-------------|
+| **Draggable** | All Activity Bar items can be dragged |
+| **Drop Zones** | Left Activity Bar, Main Activity Bar, Right Activity Bar |
+| **Single Instance** | Plugin can only exist in ONE panel at a time |
+| **Move Semantics** | Dragging MOVES the plugin (never duplicates) |
+| **Default Positions** | FileTree→LEFT, Chat→RIGHT, Notes→MAIN (can be moved) |
+
+### Implementation Pattern
+
+```typescript
+interface PluginPlacement {
+  pluginId: PluginId;
+  panel: 'left' | 'main' | 'right';
+}
+
+// Store tracks which plugin is in which panel
+type PluginPlacements = Map<PluginId, 'left' | 'main' | 'right'>;
+
+// On drag-drop:
+function handlePluginDrop(pluginId: PluginId, targetPanel: Panel) {
+  const currentPanel = pluginPlacements.get(pluginId);
+  
+  if (currentPanel === targetPanel) return; // No action needed
+  
+  if (currentPanel) {
+    // Plugin in another panel - MOVE it
+    removeFromPanel(pluginId, currentPanel);
+    toast.info(`Moving ${pluginName} to ${targetPanel} panel`);
+  }
+  
+  // Place in new panel
+  pluginPlacements.set(pluginId, targetPanel);
+  activateInPanel(pluginId, targetPanel);
+}
+```
+
+### Visual Indicators
+
+| Indicator | Location | Purpose |
+|-----------|----------|---------|
+| **Panel Dot** | Activity Bar item corner | Shows which panel hosts plugin |
+| **Drag Ghost** | Follows cursor | 50% opacity clone during drag |
+| **Drop Zone Highlight** | Target Activity Bar | Primary color border when valid |
+| **Invalid Highlight** | Target Activity Bar | Destructive color when invalid |
+
+### User Feedback
+
+| Action | Feedback |
+|--------|----------|
+| Start drag | Ghost icon follows, source dims |
+| Hover valid zone | Blue/primary border highlight |
+| Hover same panel | No highlight (no-op) |
+| Drop success | Toast: "Moving [plugin] to [panel]" |
+| Drop cancel | Snap back to source |
+
+---
+
 <- [Route & Navigation](./06-route-navigation.md) | [Index](./index.md) | [Activity Bar & Docker](./08-activity-bar-docker.md) ->

@@ -32,8 +32,8 @@ export interface CardProps extends React.ComponentProps<"div"> {
  * Uses CSS custom properties for light/dark theme support
  */
 const cardVariants = cva(
-  // Base styles with 8-bit aesthetic - UX-02: strict rounded-none, border-2
-  "flex flex-col gap-6 rounded-none border-2 outline-none transition-[border-color,background-color,shadow] duration-150 ease-out focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+  // Base styles with 8-bit aesthetic - UX-02: strict rounded-none, border-2, pixel shadow
+  "flex flex-col gap-6 rounded-none border-2 outline-none transition-[border-color,background-color,shadow] duration-150 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
   {
     variants: {
       size: {
@@ -42,14 +42,14 @@ const cardVariants = cva(
         lg: "py-8 px-8",
       },
       variant: {
-        // Default variant: neutral background with subtle border
-        default: "bg-[var(--card)] text-[var(--card-foreground)] border-[var(--border)] focus-visible:ring-[var(--primary)] shadow-[0_2px_8px_rgba(0,0,0,0.08)]",
-        // Error variant: red tint for error states
-        error: "bg-[var(--destructive-50)] text-[var(--destructive)] border-[var(--destructive-200)] focus-visible:ring-[var(--destructive)] shadow-[0_2px_8px_rgba(239,68,68,0.1)]",
-        // Success variant: green tint for success states
-        success: "bg-[var(--success-50)] text-[var(--success)] border-[var(--success-200)] focus-visible:ring-[var(--success)] shadow-[0_2px_8px_rgba(34,197,94,0.1)]",
-        // Warning variant: yellow tint for warning states
-        warning: "bg-[var(--warning-50)] text-[var(--warning)] border-[var(--warning-200)] focus-visible:ring-[var(--warning)] shadow-[0_2px_8px_rgba(245,158,11,0.1)]",
+        // Default variant: neutral background with pixel shadow (8-bit aesthetic)
+        default: "bg-[var(--card)] text-[var(--card-foreground)] border-[var(--border)] focus-visible:ring-[var(--primary)] shadow-[var(--shadow-pixel)]",
+        // Error variant: red tint for error states with pixel shadow
+        error: "bg-[hsl(var(--destructive-50))] text-[hsl(var(--destructive))] border-[hsl(var(--destructive-200))] focus-visible:ring-[hsl(var(--destructive))] shadow-[var(--shadow-pixel)]",
+        // Success variant: green tint for success states with pixel shadow
+        success: "bg-[hsl(var(--success-50))] text-[hsl(var(--success))] border-[hsl(var(--success-200))] focus-visible:ring-[hsl(var(--success))] shadow-[var(--shadow-pixel)]",
+        // Warning variant: yellow tint for warning states with pixel shadow
+        warning: "bg-[hsl(var(--warning-50))] text-[hsl(var(--warning))] border-[hsl(var(--warning-200))] focus-visible:ring-[hsl(var(--warning))] shadow-[var(--shadow-pixel)]",
       },
     },
     defaultVariants: {

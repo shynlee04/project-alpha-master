@@ -2,7 +2,7 @@
 subtask: true
 description: Software Architect & System Designer - Clean Architecture, DDD, ADRs with handoff protocol
 mode: all
-model: chutes/MiniMaxAI/MiniMax-M2.1-TEE
+model: chutes/zai-org/GLM-4.7-FP8
 temperature: 0.1
 tools:
   write: true

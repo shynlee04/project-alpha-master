@@ -35,8 +35,8 @@ const tabsVariants = cva(
  * Uses CSS custom properties for light/dark theme support
  */
 const tabsListVariants = cva(
-  // Base styles with 8-bit aesthetic and theme-aware colors
-  "inline-flex items-center justify-center p-1 border rounded-[4px] transition-[background-color,border-color] duration-150",
+  // Base styles with 8-bit aesthetic (rounded-sm = 2px max) and theme-aware colors
+  "inline-flex items-center justify-center p-1 border-2 rounded-sm transition-[background-color,border-color] duration-150",
   {
     variants: {
       orientation: {
@@ -44,8 +44,8 @@ const tabsListVariants = cva(
         vertical: "h-fit w-12",
       },
       theme: {
-        dark: "bg-[var(--neutral-900)] border-[var(--neutral-700)]",
-        light: "bg-[var(--neutral-100)] border-[var(--neutral-300)]",
+        dark: "bg-[hsl(var(--neutral-900))] border-[hsl(var(--neutral-700))]",
+        light: "bg-[hsl(var(--neutral-100))] border-[hsl(var(--neutral-300))]",
       },
     },
   }
@@ -56,8 +56,8 @@ const tabsListVariants = cva(
  * Uses CSS custom properties for light/dark theme support
  */
 const tabsTriggerVariants = cva(
-  // Base styles with theme-aware colors
-  "inline-flex items-center justify-center gap-1.5 border border-transparent font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow] duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+  // Base styles with 8-bit aesthetic (rounded-none) and theme-aware colors
+  "inline-flex items-center justify-center gap-1.5 border border-transparent font-medium whitespace-nowrap rounded-none transition-[color,background-color,border-color,box-shadow] duration-150 disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]",
   {
     variants: {
       orientation: {
@@ -71,11 +71,11 @@ const tabsTriggerVariants = cva(
       },
       state: {
         // Default state: muted text
-        default: "text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[var(--muted)]",
-        // Active state: primary background
-        active: "bg-[var(--primary)] text-[var(--primary-foreground)] shadow-[0_2px_4px_rgba(0,0,0,0.1)]",
+        default: "text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]",
+        // Active state: primary background with 8-bit pixel shadow
+        active: "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-[var(--shadow-pixel-sm)]",
         // Disabled state
-        disabled: "text-[var(--muted-foreground)] cursor-not-allowed opacity-50",
+        disabled: "text-[hsl(var(--muted-foreground))] cursor-not-allowed opacity-50",
       },
     },
   }

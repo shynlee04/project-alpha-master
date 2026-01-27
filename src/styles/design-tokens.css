@@ -38,6 +38,25 @@
                       text-decoration-color, fill, stroke, opacity, box-shadow,
                       transform, filter, backdrop-filter;
   /* Theme-specific properties that change during theme switching */
+
+  /* ==========================================================================
+     ANIMATION DURATIONS (UXUI-01-04)
+     8-bit animation timing tokens
+     ========================================================================== */
+  --duration-instant: 0ms;
+  /* No animation */
+  --duration-fastest: 50ms;
+  /* Micro-interactions */
+  --duration-fast: 100ms;
+  /* Quick feedback */
+  --duration-normal: 150ms;
+  /* Standard transitions */
+  --duration-slow: 200ms;
+  /* Deliberate animations */
+  --duration-slower: 300ms;
+  /* Complex animations */
+  --duration-slowest: 500ms;
+  /* Page transitions */
 }
 
 /* =============================================================================
@@ -111,6 +130,84 @@
   /* #18181b - Surface dark */
   --neutral-950: 240 6% 4%;
   /* #0f0f11 - Deepest dark */
+
+  /* ==========================================================================
+     TYPOGRAPHY TOKENS (UXUI-01-02)
+     Comprehensive font system for VIA-GENT Design System
+     ========================================================================== */
+
+  /* Font Families */
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  --font-pixel: 'VT323', 'Press Start 2P', monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Font Size Scale (rem-based, 16px base) */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+
+  /* Line Heights (Unitless ratios) */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 2;
+
+  /* Vietnamese Line Heights (+0.1 for diacritic clearance) */
+  --leading-vi-tight: 1.35;
+  --leading-vi-snug: 1.475;
+  --leading-vi-normal: 1.6;
+  --leading-vi-relaxed: 1.725;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.05em;
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  /* Vietnamese Letter Spacing (slightly tighter) */
+  --tracking-vi-normal: -0.01em;
+  --tracking-vi-tight: -0.03em;
+
+  /* Font Weights */
+  --font-thin: 100;
+  --font-extralight: 200;
+  --font-light: 300;
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  --font-black: 900;
+
+  /* ==========================================================================
+     SPACING TOKENS (UXUI-01-03)
+     4px Grid System - Base unit 0.25rem (4px)
+     ========================================================================== */
+
+  /* 4px Grid Scale */
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
 
   /* ==========================================================================
      SURFACE COLORS (Background Hierarchy)
@@ -359,22 +456,24 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
-  /* ===== 8-Bit Aesthetic ===== */
-  --radius: 0rem;
-  /* Squared corners by default */
-  --radius-sm: 0.125rem;
-  /* 2px - subtle rounding */
-  --radius-md: 0.25rem;
-  /* 4px */
-  --radius-lg: 0.375rem;
-  /* 6px */
+  /* ==========================================================================
+     8-BIT BORDER RADIUS (UXUI-01-03)
+     Maximum 2px - Sharp corners are the 8-bit aesthetic
+     ========================================================================== */
+  --radius: 0;           /* Default - sharp corners */
+  --radius-none: 0;      /* Explicit sharp corners */
+  --radius-sm: 2px;      /* MAXIMUM allowed - subtle rounding */
+  /* --radius-md and --radius-lg REMOVED - violate 8-bit aesthetic */
 
-  /* ===== Pixel Shadows ===== */
-  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
-  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
-  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
-  --shadow-pixel-inset: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.05),
-    inset -1px -1px 0px 0px rgba(0, 0, 0, 0.5);
+  /* ==========================================================================
+     8-BIT PIXEL SHADOWS (UXUI-01-03)
+     Hard drop shadows with 4px offset for authentic retro feel
+     ========================================================================== */
+  --shadow-pixel: 4px 4px 0 0 rgba(0, 0, 0, 0.5);
+  --shadow-pixel-sm: 2px 2px 0 0 rgba(0, 0, 0, 0.5);
+  --shadow-pixel-lg: 6px 6px 0 0 rgba(0, 0, 0, 0.5);
+  --shadow-pixel-primary: 4px 4px 0 0 #c2410c;
+  --shadow-inset: inset 2px 2px 0 0 rgba(0, 0, 0, 0.3);
 
   /* ===== Editor Specific ===== */
   --editor-bg: 240 6% 3.5%;
@@ -790,22 +889,24 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
-  /* ===== 8-Bit Aesthetic ===== */
-  --radius: 0rem;
-  /* Squared corners by default */
-  --radius-sm: 0.125rem;
-  /* 2px - subtle rounding */
-  --radius-md: 0.25rem;
-  /* 4px */
-  --radius-lg: 0.375rem;
-  /* 6px */
+  /* ==========================================================================
+     8-BIT BORDER RADIUS (UXUI-01-03) - Light Theme
+     Maximum 2px - Sharp corners are the 8-bit aesthetic
+     ========================================================================== */
+  --radius: 0;           /* Default - sharp corners */
+  --radius-none: 0;      /* Explicit sharp corners */
+  --radius-sm: 2px;      /* MAXIMUM allowed - subtle rounding */
+  /* --radius-md and --radius-lg REMOVED - violate 8-bit aesthetic */
 
-  /* ===== Pixel Shadows ===== */
-  --shadow-pixel: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
-  --shadow-pixel-primary: 2px 2px 0px 0px #c2410c;
-  --shadow-pixel-sm: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
-  --shadow-pixel-inset: inset 1px 1px 0px 0px rgba(255, 255, 255, 0.05),
-    inset -1px -1px 0px 0px rgba(0, 0, 0, 0.5);
+  /* ==========================================================================
+     8-BIT PIXEL SHADOWS (UXUI-01-03) - Light Theme
+     Hard drop shadows with 4px offset for authentic retro feel
+     ========================================================================== */
+  --shadow-pixel: 4px 4px 0 0 rgba(0, 0, 0, 0.3);
+  --shadow-pixel-sm: 2px 2px 0 0 rgba(0, 0, 0, 0.3);
+  --shadow-pixel-lg: 6px 6px 0 0 rgba(0, 0, 0, 0.3);
+  --shadow-pixel-primary: 4px 4px 0 0 #c2410c;
+  --shadow-inset: inset 2px 2px 0 0 rgba(0, 0, 0, 0.15);
 
   /* ===== Editor Specific ===== */
   --editor-bg: 0 0% 98%;

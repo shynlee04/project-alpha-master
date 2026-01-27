@@ -253,13 +253,32 @@ code {
 }
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  /* ==========================================================================
+     8-BIT BORDER RADIUS (UXUI-01-03)
+     Sharp corners are the 8-bit aesthetic - NO rounded corners
+     ========================================================================== */
+  --radius: 0;
+  --radius-none: 0;
+  --radius-sm: 2px;      /* MAXIMUM allowed - subtle rounding */
+  /* --radius-md, --radius-lg, etc. REMOVED - violate 8-bit aesthetic */
+
+  /* ==========================================================================
+     SPACING SCALE (UXUI-01-03)
+     4px Grid System - Maps to design-tokens.css --space-* variables
+     ========================================================================== */
+  --spacing-0: var(--space-0);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+  --spacing-24: var(--space-24);
 
   /* Color mappings - wrap HSL values with hsl() for Tailwind utilities */
   --color-background: hsl(var(--background));
@@ -404,10 +423,64 @@ code {
   --color-border-strong: hsl(var(--border-strong));
   --color-border-muted: hsl(var(--border-muted));
 
-  /* Pixel Shadow Utilities */
+  /* ===== Typography Tokens (UXUI-01-02) ===== */
+  /* Font Families - reference CSS variables from design-tokens.css */
+  --font-family-mono: var(--font-mono);
+  --font-family-pixel: var(--font-pixel);
+  --font-family-sans: var(--font-sans);
+
+  /* Font Size Scale */
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
+  --font-size-3xl: var(--text-3xl);
+  --font-size-4xl: var(--text-4xl);
+  --font-size-5xl: var(--text-5xl);
+
+  /* Line Heights */
+  --line-height-none: var(--leading-none);
+  --line-height-tight: var(--leading-tight);
+  --line-height-snug: var(--leading-snug);
+  --line-height-normal: var(--leading-normal);
+  --line-height-relaxed: var(--leading-relaxed);
+  --line-height-loose: var(--leading-loose);
+
+  /* Vietnamese Line Heights */
+  --line-height-vi-tight: var(--leading-vi-tight);
+  --line-height-vi-snug: var(--leading-vi-snug);
+  --line-height-vi-normal: var(--leading-vi-normal);
+  --line-height-vi-relaxed: var(--leading-vi-relaxed);
+
+  /* Letter Spacing */
+  --letter-spacing-tighter: var(--tracking-tighter);
+  --letter-spacing-tight: var(--tracking-tight);
+  --letter-spacing-normal: var(--tracking-normal);
+  --letter-spacing-wide: var(--tracking-wide);
+  --letter-spacing-wider: var(--tracking-wider);
+  --letter-spacing-widest: var(--tracking-widest);
+
+  /* Font Weights */
+  --font-weight-thin: var(--font-thin);
+  --font-weight-extralight: var(--font-extralight);
+  --font-weight-light: var(--font-light);
+  --font-weight-normal: var(--font-normal);
+  --font-weight-medium: var(--font-medium);
+  --font-weight-semibold: var(--font-semibold);
+  --font-weight-bold: var(--font-bold);
+  --font-weight-extrabold: var(--font-extrabold);
+  --font-weight-black: var(--font-black);
+
+  /* ==========================================================================
+     8-BIT PIXEL SHADOW UTILITIES (UXUI-01-03)
+     ========================================================================== */
   --shadow-pixel: var(--shadow-pixel);
-  --shadow-pixel-primary: var(--shadow-pixel-primary);
   --shadow-pixel-sm: var(--shadow-pixel-sm);
+  --shadow-pixel-lg: var(--shadow-pixel-lg);
+  --shadow-pixel-primary: var(--shadow-pixel-primary);
+  --shadow-inset: var(--shadow-inset);
 
   /* ===== Mobile Responsive Tokens (Epic-MRT) ===== */
   /* Touch target minimum size (WCAG 2.5.5) */

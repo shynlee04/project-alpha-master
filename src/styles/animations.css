@@ -16,9 +16,44 @@
   --animation-duration-fast: 100ms;
   --animation-duration-medium: 150ms;
   --animation-duration-slow: 200ms;
-  
+
   --animation-easing-8bit: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --animation-easing-linear: linear;
+
+  /* ==========================================================================
+     8-BIT STEP-BASED TIMING (UXUI-01-04)
+     Step-based timing functions for 8-bit aesthetic
+     ========================================================================== */
+  --timing-8bit: steps(5, end);
+  /* Default 8-bit */
+  --timing-8bit-fast: steps(3, end);
+  /* Quick 8-bit */
+  --timing-8bit-snap: steps(2, end);
+  /* Instant snap */
+  --timing-8bit-smooth: steps(8, end);
+  /* Smoother 8-bit */
+  --timing-linear: linear;
+  /* Continuous motion */
+
+  /* ==========================================================================
+     ANIMATION DELAYS (UXUI-01-04)
+     Delay tokens for staggered animations
+     ========================================================================== */
+  --delay-none: 0ms;
+  --delay-short: 50ms;
+  --delay-medium: 100ms;
+  --delay-long: 200ms;
+
+  /* ==========================================================================
+     STAGGER DELAYS FOR LISTS (UXUI-01-04)
+     Pre-calculated delays for list item animations
+     ========================================================================== */
+  --stagger-1: 0ms;
+  --stagger-2: 50ms;
+  --stagger-3: 100ms;
+  --stagger-4: 150ms;
+  --stagger-5: 200ms;
+  --stagger-6: 250ms;
 }
 
 /* === Micro-interaction Animations === */
@@ -327,6 +362,7 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -345,6 +381,97 @@
 .delay-100 { animation-delay: 100ms; }
 .delay-150 { animation-delay: 150ms; }
 .delay-200 { animation-delay: 200ms; }
+
+/* =============================================================================
+   8-BIT PIXEL ANIMATIONS (UXUI-01-04)
+   Frame-by-frame animations with step timing for authentic 8-bit feel
+   ============================================================================= */
+
+/* 8-bit fade with step effect */
+@keyframes pixel-fade-in {
+  0% { opacity: 0; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* 8-bit slide up with pixel steps */
+@keyframes pixel-slide-up {
+  0% { transform: translateY(4px); opacity: 0; }
+  50% { transform: translateY(2px); opacity: 0.5; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 8-bit bounce (whole pixels only) */
+@keyframes pixel-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* 8-bit pulse */
+@keyframes pixel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 8-bit slide down */
+@keyframes pixel-slide-down {
+  0% { transform: translateY(-4px); opacity: 0; }
+  50% { transform: translateY(-2px); opacity: 0.5; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 8-bit scale in */
+@keyframes pixel-scale-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  50% { transform: scale(0.95); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =============================================================================
+   8-BIT ANIMATION UTILITIES (UXUI-01-04)
+   Utility classes for applying 8-bit animations
+   ============================================================================= */
+
+/* Hover transition utility */
+.animate-8bit-hover {
+  transition: transform var(--duration-fast) var(--timing-8bit),
+              box-shadow var(--duration-fast) var(--timing-8bit);
+}
+
+/* Press/click transition utility */
+.animate-8bit-press {
+  transition: transform var(--duration-instant);
+}
+
+/* Pixel fade in animation */
+.animate-pixel-fade-in {
+  animation: pixel-fade-in var(--duration-normal) var(--timing-8bit) forwards;
+}
+
+/* Pixel slide up animation */
+.animate-pixel-slide-up {
+  animation: pixel-slide-up var(--duration-slow) var(--timing-8bit) forwards;
+}
+
+/* Pixel slide down animation */
+.animate-pixel-slide-down {
+  animation: pixel-slide-down var(--duration-slow) var(--timing-8bit) forwards;
+}
+
+/* Pixel scale in animation */
+.animate-pixel-scale-in {
+  animation: pixel-scale-in var(--duration-slow) var(--timing-8bit) forwards;
+}
+
+/* Pixel bounce animation (infinite) */
+.animate-pixel-bounce {
+  animation: pixel-bounce var(--duration-slow) var(--timing-8bit) infinite;
+}
+
+/* Pixel pulse animation (infinite) */
+.animate-pixel-pulse {
+  animation: pixel-pulse 1s var(--timing-8bit-smooth) infinite;
+}
 
 /* =============================================================================
    ENHANCED MICRO-ANIMATIONS (UX/UI Overhaul 2025-12-27)

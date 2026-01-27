@@ -52,8 +52,8 @@ export interface SelectTriggerProps extends React.ComponentProps<typeof SelectPr
  * Uses CSS custom properties for light/dark theme support
  */
 const selectTriggerVariants = cva(
-  // Base styles with theme-aware colors
-  'flex items-center justify-between gap-2 whitespace-nowrap rounded-none font-medium transition-[border-color,background-color] duration-150 ease-out outline-none disabled:pointer-events-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+  // Base styles with 8-bit aesthetic (border-2, rounded-none)
+  'flex items-center justify-between gap-2 whitespace-nowrap rounded-none font-mono transition-[border-color,background-color] duration-150 outline-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none focus-visible:outline-none focus-visible:border-[hsl(var(--primary))] focus-visible:shadow-[var(--shadow-pixel)]',
   {
     variants: {
       size: {
@@ -62,10 +62,10 @@ const selectTriggerVariants = cva(
         lg: 'h-12 px-6 text-lg min-h-[48px]',
       },
       state: {
-        default: 'border border-[var(--input)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--primary)]',
-        error: 'border border-[var(--destructive)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--destructive)] focus:ring-[var(--destructive)]',
-        success: 'border border-[var(--success)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--success)] focus:ring-[var(--success)]',
-        warning: 'border border-[var(--warning)] bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--muted)] focus:border-[var(--warning)] focus:ring-[var(--warning)]',
+        default: 'border-2 border-[hsl(var(--input))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]',
+        error: 'border-2 border-[hsl(var(--destructive))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))] focus-visible:border-[hsl(var(--destructive))] focus-visible:shadow-[2px_2px_0_0_hsl(var(--destructive))]',
+        success: 'border-2 border-[hsl(var(--success))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]',
+        warning: 'border-2 border-[hsl(var(--warning))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]',
       },
     },
     defaultVariants: {

@@ -51,16 +51,16 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
  * Uses CSS custom properties for light/dark theme support
  */
 const checkboxVariants = cva(
-  // Base styles with theme-aware colors
-  'inline-flex items-center justify-center rounded-[4px] border border-[var(--border)] transition-[background-color,border-color] duration-150 ease-out outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]',
+  // Base styles with 8-bit aesthetic (rounded-sm = 2px max)
+  'inline-flex items-center justify-center rounded-sm border-2 border-[hsl(var(--border))] transition-[background-color,border-color] duration-150 outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-[hsl(var(--ring))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--background))]',
   {
     variants: {
       variant: {
-        default: 'bg-[var(--background)] text-[var(--foreground)] focus-visible:border-[var(--primary)]',
-        primary: 'bg-[var(--primary)] text-[var(--primary-foreground)] border-[var(--primary)]',
-        success: 'bg-[var(--success)] text-white border-[var(--success)]',
-        warning: 'bg-[var(--warning)] text-white border-[var(--warning)]',
-        error: 'bg-[var(--destructive)] text-white border-[var(--destructive)]',
+        default: 'bg-[hsl(var(--background))] text-[hsl(var(--foreground))] focus-visible:border-[hsl(var(--primary))]',
+        primary: 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))]',
+        success: 'bg-[hsl(var(--success))] text-white border-[hsl(var(--success))]',
+        warning: 'bg-[hsl(var(--warning))] text-white border-[hsl(var(--warning))]',
+        error: 'bg-[hsl(var(--destructive))] text-white border-[hsl(var(--destructive))]',
       },
       size: {
         sm: 'w-4 h-4',

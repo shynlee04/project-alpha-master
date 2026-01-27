@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
  * 
  * Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.
  * Re-implementation of Radix UI Progress without the dependency.
+ * 
+ * 8-bit aesthetic: rounded-none, border-2
  */
 const Progress = React.forwardRef<
     HTMLDivElement,
@@ -14,7 +16,8 @@ const Progress = React.forwardRef<
     <div
         ref={ref}
         className={cn(
-            "relative h-4 w-full overflow-hidden rounded-full bg-secondary",
+            // 8-bit aesthetic: rounded-none, border-2
+            "relative h-4 w-full overflow-hidden rounded-none border-2 border-border bg-secondary",
             className
         )}
         {...props}

@@ -9,12 +9,13 @@ import { cn } from '@/lib/utils';
 import { type VariantProps, cva } from 'class-variance-authority';
 
 const alertVariants = cva(
-  'relative w-full rounded-none border p-4',
+  // 8-bit aesthetic: rounded-none, border-2, pixel shadow
+  'relative w-full rounded-none border-2 p-4 shadow-[var(--shadow-pixel-sm)]',
   {
     variants: {
       variant: {
-        default: 'bg-background text-foreground',
-        destructive: 'border-destructive/50 text-destructive dark:border-destructive',
+        default: 'bg-background text-foreground border-border',
+        destructive: 'border-destructive/50 text-destructive dark:border-destructive bg-destructive/5',
       },
     },
     defaultVariants: {

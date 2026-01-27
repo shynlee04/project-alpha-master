@@ -1,21 +1,21 @@
 # ═════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.8 - EPIC-UXUI-01 REGISTERED
+# BMM WORKFLOW STATUS v2.9 - EPIC-UXUI-02 REGISTERED
 # ═════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.8.0"
-last_updated: "2026-01-27T23:00:00+07:00"
-updated_by: "bmad-governance"
-previous_version: "bmm-workflow-status-v2.7.yaml"
+schema_version: "2.9.0"
+last_updated: "2026-01-28T10:00:00+07:00"
+updated_by: "bmad-sprint-manager"
+previous_version: "bmm-workflow-status-v2.8.yaml"
 
 # ═════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═════════════════════════════════════════════════════════════════════════
 
-current_epic: "EPIC-0.6"
-current_story: "COMPLETE"
-workflow_phase: "COMPLETE"
-health_score: 75
-notes: "EPIC-0.6 Plugin Coordination Layer COMPLETE - 12/12 stories done"
+current_epic: "EPIC-UXUI-02"
+current_story: "UXUI-02-01"
+workflow_phase: "READY_FOR_EXECUTION"
+health_score: 80
+notes: "EPIC-UXUI-02 Main Layout Overhaul READY - Replace Bento Grid with 6-column CSS Grid"
 context_ttl: "24h"
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -561,13 +561,14 @@ active_epics:
 
   - id: EPIC-UXUI-01
     name: "Design System Foundation & 8-bit Styling"
-    status: READY_FOR_EXECUTION
+    status: COMPLETE
     priority: P1
     owner: "Team B (UX)"
     created: "2026-01-27"
+    completed: "2026-01-28"
     estimated_effort: "18-26h"
     stories_total: 8
-    stories_completed: 0
+    stories_completed: 8
     blocked_by: null
     blocks: "EPIC-UXUI-02"
     files:
@@ -581,16 +582,66 @@ active_epics:
       - "src/routes/$projectId.tsx"
       - "src/presentation/components/layout/PermissionOverlay.tsx"
 
+  - id: EPIC-UXUI-02
+    name: "Main Layout Overhaul - UX Spec v3.0.0 Implementation"
+    status: READY_FOR_EXECUTION
+    priority: P0
+    owner: "Team B (UX)"
+    created: "2026-01-28"
+    estimated_effort: "18-26h"
+    stories_total: 8
+    stories_completed: 0
+    blocked_by: null
+    blocks: "EPIC-UXUI-03"
+    files:
+      - "_bmad-output/planning-artifacts/epics/EPIC-UXUI-02-main-layout-overhaul-2026-01-28.md"
+    safe_zones:
+      - "src/presentation/layouts/WorkspaceLayout.tsx"
+      - "src/presentation/components/layout/ActivityBar*.tsx"
+      - "src/presentation/components/layout/StatusBar.tsx"
+      - "src/presentation/components/layout/MainSidebar.tsx"
+      - "src/styles/*.css"
+      - "src/routes/$projectId.tsx"
+    do_not_touch:
+      - "src/infrastructure/context/project-context.tsx"
+      - "src/infrastructure/filesystem/*"
+      - "src/domain/*"
+    stories:
+      - "UXUI-02-01: Create WorkspaceLayout Shell (3-4h)"
+      - "UXUI-02-02: Implement ActivityBar Component (3-4h)"
+      - "UXUI-02-03: Integrate GlobalSidebar (2-3h)"
+      - "UXUI-02-04: Lock Plugin Positions (2-3h)"
+      - "UXUI-02-05: Wire ActivityBar to Plugins (2-3h)"
+      - "UXUI-02-06: Implement StatusBar (2-3h)"
+      - "UXUI-02-07: Apply Design Tokens (3-4h)"
+      - "UXUI-02-08: Archive Bento Grid (1-2h)"
+
 # ═════════════════════════════════════════════════════════════════════════
 # UX WORK QUEUE
 # ═════════════════════════════════════════════════════════════════════════
 
 ux_work_queue:
-  current_epic: EPIC-UXUI-01
-  current_story: null
+  current_epic: EPIC-UXUI-02
+  current_story: "UXUI-02-01: Create WorkspaceLayout Shell"
   team: "Team B"
-  phase: "Phase 1: Foundation"
-  next_action: "Start UXUI-01-01 (Color Tokens)"
+  phase: "READY_FOR_EXECUTION"
+  next_action: "Create WorkspaceLayout.tsx with 6-column CSS Grid"
+  completed_epics:
+    - "EPIC-UXUI-01: Design System Foundation (8/8 stories = 100%)"
+  completed_stories:
+    - "UXUI-01-01: Color Tokens (2026-01-27)"
+    - "UXUI-01-02: Typography Tokens (2026-01-27)"
+    - "UXUI-01-03: Spacing & Border Tokens (2026-01-28)"
+    - "UXUI-01-04: Animation Tokens (2026-01-28)"
+    - "UXUI-01-05: Button Components (2026-01-28)"
+    - "UXUI-01-06: Input Components (2026-01-28)"
+    - "UXUI-01-07: Dialog/Modal Components (2026-01-28)"
+    - "UXUI-01-08: Remaining Primitives (2026-01-28)"
+  progress: "EPIC-UXUI-02 IN_PROGRESS (0/8 = 0%)"
+  goal: |
+    Replace Bento Grid with 6-column CSS Grid layout per UX Spec v3.0.0.
+    Light theme toggle MUST work after completion.
+    All components use design tokens (no hardcoded zinc-*).
 
 # ═════════════════════════════════════════════════════════════════════════
 # ARCHITECTURE DECISIONS (Quick Reference)

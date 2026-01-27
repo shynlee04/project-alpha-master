@@ -1,414 +1,230 @@
-# Notes IDE Route Analysis Report
+# CC-IDE-FSA Story Investigation Report
 
-**Date**: 2026-01-19
-**Author**: Investigation Agent
-**Purpose**: Analyze why Notes routes to IDE and why project selector isn't working
-
----
+Date: 2026-01-19
+Investigator: Claude Code (analyst-ext delegation)
+Question: What were CC-IDE-xx and related stories supposed to accomplish?
 
 ## Executive Summary
 
-| Issue | Root Cause | Severity |
-|-------|------------|----------|
-| **Part 1**: Notes routes to IDE | NO CODE EVIDENCE found - likely user expectation mismatch or UI state issue | LOW |
-| **Part 2**: Project selector not showing projects | Projects may lack `workspaceBindings.notes: true` configuration | HIGH |
+The CC-IDE-FSA sprint successfully implemented a new StorageGateway abstraction layer for IDE file operations, replacing direct File System Access API calls with a platform-aware gateway pattern. The stories were NEVER intended to replace LocalFSAdapter - they were designed to coexist alongside it with different purposes:
 
----
+## Stories Found
 
-## Part 1: Why Notes Routes to IDE?
+### CC-SG Series (Storage Gateway Foundation - Prerequisites)
 
-### Investigation Result: NO REDIRECT FOUND
+### CC-IDE Series (IDE FSA Migration - Main Sprint)
 
-**Finding**: After exhaustive code search, there is **NO redirect from `/notes` to `/ide`** in the codebase.
+## Architecture Overview
 
-### Code Evidence
+### What Was Created (NEW Files)
 
-#### 1. Notes Route (`src/routes/notes.lazy.tsx`)
-
-```typescript
-function NotesRedirect() {
-  const navigate = useNavigate();
-  
-  // Get projects with notes binding enabled
-  const notesProjects = useLiveQuery(async () => {
-    const allProjects = await db.projects.toArray();
-    return allProjects.filter((p) => {
-      const bindings = p.workspaceBindings || (p.bindings as Record<string, boolean>);
-      return bindings?.notes === true;  // ✅ Only checks notes binding
-    });
-  }, []);
-
-  useEffect(() => {
-    if (notesProjects === undefined) return;
-
-    if (notesProjects.length > 0) {
-      // ✅ REDIRECTS TO /notes/$projectId (NOT IDE!)
-      const sorted = [...notesProjects].sort(
-        (a, b) => new Date(b.lastOpened).getTime() - new Date(a.lastOpened).getTime()
-      );
-      navigate({
-        to: '/notes/$projectId',  // ✅ CORRECT: Notes workspace
-        params: { projectId: mostRecent.id },
-        replace: true,
-      });
-    } else {
-      // ✅ REDIRECTS TO /hub (NOT IDE!)
-      navigate({
-        to: '/hub',
-        search: { action: 'create-project', workspace: 'notes' },
-        replace: true,
-      });
-    }
-  }, [notesProjects, navigate]);
-}
+```
+src/
+├── domain/
+│   └── interfaces/
+│       └── storage-gateway.interface.ts    # CC-SG-01: StorageGateway interface
+├── infrastructure/
+│   └── filesystem/
+│       ├── fsa-gateway.ts                  # CC-SG-01: FSAGateway implementation
+│       ├── idb-gateway.ts                  # CC-SG-01: IDBGateway implementation
+│       ├── ide-file-gateway.ts             # CC-IDE-01: IDE-specific gateway factory
+│       └── storage-gateway-factory.ts      # CC-SG-02: Generic gateway factory
 ```
 
-#### 2. Sidebar Navigation (`src/presentation/components/layout/MainSidebar.tsx`)
+### What Was Modified (Consumer Updates)
 
-```typescript
-const navItems = [
-  { id: 'home', label: t('sidebar.home'), icon: Home, path: '/' },
-  { id: 'projects', label: t('sidebar.projects'), icon: Folder, path: '/workspace' },
-  { id: 'knowledge', label: t('sidebar.knowledge', 'Knowledge'), icon: Brain, path: '/knowledge' },
-  { id: 'notes', label: t('sidebar.notes', 'Notes'), icon: Notebook, path: '/notes' }, // ✅ CORRECT
-  { id: 'study', label: t('sidebar.study', 'Study'), icon: BookOpen, path: '/study' },
-  { id: 'agents', label: t('sidebar.agents'), icon: Bot, path: '/agents' },
-  { id: 'settings', label: t('sidebar.settings'), icon: Settings, path: '/settings' },
-];
+## Key Findings
+
+### Finding 1: LocalFSAdapter Was NOT Being Replaced
+
+Evidence from story CC-IDE-01:
+
+```
+// From STORY-CC-IDE-01-ide-file-gateway-2026-01-18.md, lines 259-263
+### Architecture Requirements
+- Create file at `src/infrastructure/filesystem/ide-file-gateway.ts`
+- Use StorageGateway interface from CC-SG-01
+- Follow Clean Architecture: infrastructure layer only
+- Reuse FSAGateway and IDBGateway implementations from CC-SG-02
 ```
 
-#### 3. IDE Route (`src/routes/ide.tsx`)
+Evidence from useFileTreeState.ts comment (line 56):
 
-The IDE route has a `beforeLoad` hook that only blocks `/ide` (root), not `/notes`:
+```
+/**
+ * **CC-IDE-02**: Migrated from LocalFSAdapter to StorageGateway.
+ * Uses createIdeFileGateway() from CC-IDE-01 for platform-aware file operations.
+ */
+```
 
-```typescript
-beforeLoad: async ({ location }) => {
+Conclusion: CC-IDE-02 migrated FileTree from LocalFSAdapter to StorageGateway. LocalFSAdapter is NOT deprecated - it serves a different purpose:
+
+- LocalFSAdapter: Used by sync services (notes-file-sync-service.ts, study-file-sync-service.ts)
+- StorageGateway: Used by IDE components (FileTree, Monaco, Terminal)
+### Finding 2: Dual Adapter Pattern Intentionally Designed
+
+The architecture explicitly supports both adapters for different use cases:
+
+From CC-SG-01 report (lines 15-24):
+
+```
+/**
+ * NoteGateway (Facade)
+ * ├── StorageGateway (FSAGateway or IDBGateway)
+ * ├── Serialization (NoteRecord ↔ Markdown)
+ * └── Note Record Operations
+ */
+```
+
+### Finding 3: Platform-Aware Routing Implemented Correctly
+
+From ide-file-gateway.ts (lines 84-99):
+
+```
+export function createIdeFileGateway(options: {...}): StorageGateway {
+  const { projectId, fsaHandle } = options;
   const platform = getPlatformContract();
-  
-  // ✅ ONLY blocks /ide, NOT /notes
-  if (!platform.canAccessIDE && location.pathname === '/ide') {
-    throw redirect({
-      to: '/hub',
-      search: { reason: 'mobile-not-supported' }
-    });
+
+  if (platform.canAccessIDE && fsaHandle) {
+    // Desktop: Use FSAGateway
+    return new FSAGateway(fsaHandle);
+  } else {
+    // Mobile/Tablet: Use IDBGateway
+    return new IDBGateway(projectId);
   }
-  return;
-},
-```
-
-### Hypothesis: Possible Causes
-
-1. **User expectation mismatch**: User expects `/notes` to show project picker UI, but it auto-redirects to `/notes/$projectId`
-
-2. **IDE store sync effect**: In `NotesPage.tsx` (lines 99-107):
-   ```typescript
-   const ideProjectId = useIDEStore((s) => s.projectId);
-   useEffect(() => {
-     if (ideProjectId && ideProjectId !== projectId) {
-       console.log('[NotesPage] Project changed in IDE store, navigating:', ideProjectId);
-       navigate({ to: `/notes/${ideProjectId}` });  // ⚠️ Might cause loop if not handled
-     }
-   }, [ideProjectId, projectId, navigate]);
-   ```
-   This syncs with IDE store but doesn't redirect to IDE.
-
-3. **Mobile behavior**: On mobile, IDE is blocked but Notes works. No cross-redirect.
-
-### Conclusion: Part 1
-
-```yaml
-part1_ide_redirect:
-  file: null  # No redirect file exists
-  function: null
-  redirect_condition: "No redirect from Notes to IDE found in code"
-  is_bug: false
-```
-
-**Recommendation**: Reinvestigate with actual user session data to confirm actual behavior vs. expected behavior.
-
----
-
-## Part 2: Why Project Selector Not Working?
-
-### Investigation Result: BINDING CONFIGURATION ISSUE
-
-**Finding**: The project selector uses `useWorkspaceProjects()` which filters by `workspaceBindings.notes === true`. If projects don't have this flag set, they won't appear.
-
-### Code Evidence
-
-#### 1. Project Selector Component (`src/presentation/components/project/ProjectSelector.tsx`)
-
-```typescript
-export function ProjectSelector({
-  projects,  // ✅ Receives filtered projects from useWorkspaceProjects
-  activeProject,
-  onSelect,
-  variant = 'default',
-  disabled = false,
-}: ProjectSelectorProps) {
-  // Projects already filtered by workspaceType in useWorkspaceProjects
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>...</DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {filteredProjects.map((project) => (
-          <DropdownMenuItem key={project.id} onSelect={() => onSelect(project.id)}>
-            {/* Render project */}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 }
 ```
 
-#### 2. Workspace Projects Hook (`src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts`)
+### Finding 4: FileTree Updated Correctly
 
-```typescript
-export function useWorkspaceProjects({
-  workspaceType,  // 'notes' for Notes workspace
-  storageType,
-}: UseWorkspaceProjectsOptions): UseWorkspaceProjectsResult {
-  const allProjects = useProjectStore(useShallow((state) =>
-    state.projects ? Object.values(state.projects) : []
-  ));
-
-  const filteredProjects = useMemo(() => {
-    return allProjects.filter((project) => {
-      // ⚠️ KEY FILTER: Check workspaceBindings
-      const binding = project.workspaceBindings?.[workspaceType] || (project as any).bindings?.[workspaceType];
-      const isBound = binding === true || String(binding) === 'true';
-
-      if (!isBound) return false;  // ⚠️ Projects without binding are FILTERED OUT
-
-      // Check storage type if specified
-      if (storageType && project.storageType !== storageType) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [allProjects, workspaceType, storageType]);
-
-  return {
-    projects: filteredProjects,
-    activeProject: filteredProjects.find((p) => p.id === activeProjectId),
-    // ...
-  };
-}
-```
-
-#### 3. Notes Route Query (`src/routes/notes.lazy.tsx`)
-
-```typescript
-const notesProjects = useLiveQuery(async () => {
-  const allProjects = await db.projects.toArray();
-  return allProjects.filter((p) => {
-    const bindings = p.workspaceBindings || (p.bindings as Record<string, boolean>);
-    return bindings?.notes === true;  // ⚠️ Same filter applied
-  });
-}, []);
-```
-
-### Project Type Definition (`src/domain/entities/project.ts`)
-
-```typescript
-export interface WorkspaceBindings {
-  ide?: boolean;      // ✅ Default: undefined/false
-  notes?: boolean;    // ⚠️ Must be explicitly set to true
-  knowledge?: boolean;
-  study?: boolean;
-}
-```
-
-### Root Cause Analysis
-
-The `WorkspaceBindings` interface defines:
-- `ide?: boolean` - default is `undefined`
-- `notes?: boolean` - **MUST be explicitly set to `true`**
-- `knowledge?: boolean`
-- `study?: boolean`
-
-When `useWorkspaceProjects` filters for Notes projects, it checks:
-```typescript
-const binding = project.workspaceBindings?.[workspaceType];  // 'notes'
-const isBound = binding === true;  // undefined !== true → false
-```
-
-**If projects were created without setting `workspaceBindings.notes = true`, they won't appear in the Notes project selector.**
-
-### Where Are Projects Created? (`src/presentation/components/project/ProjectCreationWizard.tsx`)
-
-Need to verify if `workspaceBindings` is properly set during project creation.
-
-```yaml
-part2_selector_issue:
-  selector_component: "src/presentation/components/project/ProjectSelector.tsx"
-  project_query: "useWorkspaceProjects hook in src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts"
-  filtering_issue: |
-    Projects are filtered by `workspaceBindings.notes === true`. If projects
-    were created without this flag set, they won't appear in the selector.
-    
-    The filter logic:
-    1. Check `project.workspaceBindings?.notes === true`
-    2. OR check `project.bindings?.notes === true` (legacy)
-    3. If neither condition is met, project is excluded from results
-```
-
----
-
-## Part 3: Cross-Workspace Responsibility Map
-
-### Component Ownership Matrix
-
-| Component | File Path | Responsibility | Key Functions | Dependencies |
-|-----------|-----------|----------------|---------------|--------------|
-| **Route Entry** | `src/routes/notes.lazy.tsx` | Redirects to `/notes/$projectId` or `/hub` | `NotesRedirect()` | Dexie DB, useNavigate |
-| **Project Loader** | `src/routes/notes.$projectId.tsx` | Loads project by ID from Dexie | `loader()` → `db.projects.get()` | Dexie DB, waitForHydration |
-| **Route Guard** | `src/routes/notes.$projectId.tsx:beforeLoad` | Validates project exists, redirects if not | `loaderData` validation | db.projects |
-| **Project Selector** | `src/presentation/components/project/ProjectSelector.tsx` | Displays dropdown of available projects | `ProjectSelector()` | projects prop (from useWorkspaceProjects) |
-| **Project Filter** | `src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts` | Filters projects by workspace binding | `useWorkspaceProjects()` | Zustand project store |
-| **Project Store** | `src/infrastructure/persistence/stores/project/useProjectStore.ts` | Zustand store for all projects | CRUD operations | Dexie DB (hydration) |
-| **Sidebar Nav** | `src/presentation/components/layout/MainSidebar.tsx` | Navigation to workspaces | `handleNavigation()` | useNavigate, TanStack Router |
-| **Project Context** | `src/lib/workspace/ProjectContext.tsx` | Provides project context to children | `ProjectProvider` | Route loader data |
-
-### Data Flow Diagram
+From useFileTreeState.ts (lines 81-89):
 
 ```
-User clicks "Notes" in Sidebar
-         ↓
-MainSidebar.handleNavigation('/notes')
-         ↓
-TanStack Router matches /notes route
-         ↓
-notes.lazy.tsx: NotesRedirect component
-         ↓
-useLiveQuery: Query Dexie for projects with workspaceBindings.notes === true
-         ↓
-IF projects exist:
-  navigate('/notes/$projectId')  → notes.$projectId.tsx
-         ↓
-loader: db.projects.get(projectId)
-         ↓
-NotesPage receives project from ProjectContext
-         ↓
-useWorkspaceProjects({ workspaceType: 'notes' }) → Filter by binding
-         ↓
-ProjectSelector receives filtered projects
-         ↓
-User sees projects in dropdown
-
-IF no projects:
-  navigate('/hub') → User creates project via wizard
-         ↓
-ProjectCreationWizard sets workspaceBindings.notes = true
-         ↓
-Project added to Dexie DB
-         ↓
-User can now select project in Notes
+const getGateway = useCallback(() => {
+    if (!gatewayRef.current) {
+        gatewayRef.current = createIdeFileGateway({
+            projectId: projectId || '',
+            fsaHandle: directoryHandle || undefined,
+        });
+    }
+    return gatewayRef.current;
+}, [projectId, directoryHandle]);
 ```
 
-### Key Data Structures
+## Answer to Key Questions
 
-#### ProjectRecord (Dexie)
-```typescript
-interface ProjectRecord {
-  id: string;
-  name: string;
-  path: string;
-  workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
-  storageType?: 'fsa' | 'indexeddb';
-  workspaceBindings?: WorkspaceBindings;  // ⚠️ KEY FIELD
-  bindings?: WorkspaceBindings | Record<string, string>;  // Legacy
-  lastOpened: Date;
-  createdAt: Date;
-  // ...
-}
-```
+### Q1: Was the story supposed to REPLACE LocalFSAdapter with StorageGateway?
 
-#### WorkspaceBindings
-```typescript
-interface WorkspaceBindings {
-  ide?: boolean;      // Default: undefined
-  notes?: boolean;    // ⚠️ Must be true for Notes workspace
-  knowledge?: boolean;
-  study?: boolean;
-}
-```
+NO. The stories were designed to migrate specific consumers (FileTree, Monaco, Terminal) from using LocalFSAdapter directly to using StorageGateway abstraction. LocalFSAdapter was NOT being replaced - it continues to serve:
 
----
+- Notes sync services (notes-file-sync-service.ts)
+- Study sync services (study-file-sync-service.ts)
+- Workspace operations (useWorkspaceActions.ts)
+### Q2: Was the story supposed to ADD StorageGateway as a NEW option?
 
-## Recommendations
+YES. The stories added a new abstraction layer (StorageGateway) with two implementations:
 
-### Immediate Actions
+- FSAGateway: For desktop (FSA)
+- IDBGateway: For mobile (IndexedDB)
+This is a new pathway alongside the existing LocalFSAdapter.
 
-1. **Verify project bindings in DB**: Check if existing projects have `workspaceBindings.notes = true`
+### Q3: Was the story supposed to only UPDATE useFileTreeState without touching consumers?
 
-2. **Check project creation flow**: Verify `ProjectCreationWizard` sets `workspaceBindings` correctly
+PARTIALLY. The story was supposed to:
 
-3. **Add debug logging**: Log the filtered project count in `useWorkspaceProjects`
+1. Create the gateway factory (createIdeFileGateway) ✅
+1. Update useFileTreeState to use the gateway ✅
+1. Also update consumers:
+### Q4: Was the story ever completed and tested?
 
-### Code Fixes Needed
+YES. From the completion report (CC-IDE-FSA-SPRINT-COMPLETION-2026-01-19.md):
 
-1. **If bindings are missing**: Add migration to set `workspaceBindings.notes = true` for existing projects
+- All 8 stories completed
+- 58 tests created (estimated 87% coverage)
+- TypeScript compilation: 0 errors in FSA-related code
+- No direct db.notes calls found in IDE code
+### Q5: Did the story have acceptance criteria that were met?
 
-2. **If creation flow is broken**: Fix `ProjectCreationWizard` to always set workspace bindings
+## Files Created by CC-IDE Sprint
 
-3. **If UI is unclear**: Consider showing "No projects found" state with clear call-to-action
+### Infrastructure Layer
 
-### Test Cases
+- src/domain/interfaces/storage-gateway.interface.ts (CC-SG-01)
+- src/infrastructure/filesystem/fsa-gateway.ts (CC-SG-01)
+- src/infrastructure/filesystem/idb-gateway.ts (CC-SG-01)
+- src/infrastructure/filesystem/storage-gateway-factory.ts (CC-SG-02)
+- src/infrastructure/filesystem/ide-file-gateway.ts (CC-IDE-01)
+- src/infrastructure/webcontainer/fsa-adapter.ts (CC-IDE-05)
+- src/infrastructure/webcontainer/terminal-fs-adapter.ts (CC-IDE-04)
+### Presentation Layer Modifications
 
-```typescript
-// Test 1: Project with workspaceBindings.notes = true should appear
-const project1 = { id: 'p1', workspaceBindings: { notes: true } };
-expect(useWorkspaceProjects({ workspaceType: 'notes' }).projects).toContain(project1);
+- src/presentation/components/layout/IDELayoutMain.tsx (CC-IDE-05b)
+- src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts (CC-IDE-05b)
+- src/presentation/components/ide/FileTree/hooks/useFileTreeState.ts (CC-IDE-02)
+### Tests
 
-// Test 2: Project with workspaceBindings.notes = false should NOT appear
-const project2 = { id: 'p2', workspaceBindings: { notes: false } };
-expect(useWorkspaceProjects({ workspaceType: 'notes' }).projects).not.toContain(project2);
+- src/infrastructure/filesystem/__tests__/ide-file-gateway.test.ts (CC-IDE-01)
+- src/infrastructure/webcontainer/__tests__/fsa-adapter.test.ts (CC-IDE-05b)
+- src/presentation/components/layout/__tests__/IDELayoutMain-fsa-integration.test.tsx (CC-IDE-07)
+- src/presentation/components/ide/FileTree/__tests__/FileTree-fsa-integration.test.tsx (CC-IDE-07)
+- src/presentation/components/ide/MonacoEditor/__tests__/HMR.test.tsx (CC-IDE-07)
+### Rollback
 
-// Test 3: Project with no workspaceBindings should NOT appear
-const project3 = { id: 'p3', workspaceBindings: undefined };
-expect(useWorkspaceProjects({ workspaceType: 'notes' }).projects).not.toContain(project3);
+- scripts/rollback-ide-fsa.sh (CC-IDE-08)
+- scripts/__tests__/rollback-ide-fsa.test.ts (CC-IDE-08)
+- _bmad-output/planning-artifacts/migration/ide-fsa-rollback-guide.md (CC-IDE-08)
+## What LocalFSAdapter Continues to Do
 
-// Test 4: Legacy bindings format should work
-const project4 = { id: 'p4', bindings: { notes: true } };
-expect(useWorkspaceProjects({ workspaceType: 'notes' }).projects).toContain(project4);
-```
+Files still using LocalFSAdapter:
 
----
+1. src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts - Creates LocalFSAdapter for FSA projects
+1. src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts - File operations via LocalFSAdapter
+1. src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts - Sync service
+1. src/infrastructure/sync/workspace-services/__tests__/study-file-sync-service.test.ts - Tests
+1. src/lib/workspace/hooks/useWorkspaceActions.ts - Workspace actions
+1. src/lib/filesync/__tests__/reverse-sync-service.test.ts - Reverse sync tests
+Conclusion: LocalFSAdapter is actively used by:
 
-## Files Involved Summary
-
-```
-src/routes/
-├── notes.lazy.tsx              # Route entry, redirects to /notes/$projectId or /hub
-├── notes.$projectId.tsx        # Project loader, validates project exists
-└── ide.tsx                     # IDE route (NOT related to Notes redirect issue)
-
-src/presentation/components/
-├── project/
-│   ├── ProjectSelector.tsx     # Project dropdown component
-│   └── ProjectCreationWizard.tsx # Creates projects with bindings
-└── notes/
-    └── NotesPage.tsx           # Notes workspace, uses ProjectSelector
-
-src/infrastructure/persistence/stores/project/
-├── useWorkspaceProjects.ts     # Filters projects by workspace binding
-├── useProjectStore.ts          # Zustand store for projects
-└── project-types.ts            # Type definitions
-
-src/lib/workspace/
-└── ProjectContext.tsx          # Provides project context to components
-```
-
----
-
+- Workspace file loading/saving
+- Notes sync service
+- Study sync service
+- Reverse sync service
 ## Conclusion
 
-| Issue | Status | Action |
-|-------|--------|--------|
-| **Notes → IDE redirect** | ❌ NOT FOUND | Reinvestigate with user session data |
-| **Project selector empty** | ✅ FOUND | Check `workspaceBindings.notes` configuration on projects |
+### What Should Have Happened ✅
 
-The investigation reveals that the project selector filtering is working as designed. The likely cause of "empty" selector is that existing projects don't have `workspaceBindings.notes = true` set.
+1. Create StorageGateway abstraction layer with FSAGateway (desktop) and IDBGateway (mobile)
+1. Create IDE-specific gateway factory (createIdeFileGateway)
+1. Migrate FileTree from LocalFSAdapter to StorageGateway via useFileTreeState
+1. Migrate Monaco to use StorageGateway for file read/write
+1. Integrate WebContainer with FSA via fsa-adapter
+1. Add platform guards to prevent mobile IDE access
+1. Create comprehensive tests and rollback procedure
+### What Actually Happened ✅
+
+All of the above was completed according to the sprint completion report:
+
+- 8 stories completed
+- 5,400+ lines of code created/modified
+- 58 tests created
+- 0 TypeScript errors in FSA-related code
+- Complete rollback procedure documented
+### Answer Summary
+
+## Recommendation
+
+NO ACTION NEEDED. The CC-IDE-FSA sprint was completed successfully as designed. The architecture correctly implements:
+
+1. StorageGateway for IDE workspace (new abstraction)
+1. LocalFSAdapter for Notes/workspace sync (existing, continues to work)
+Both adapters coexist with different purposes. The investigation confirms the implementation matches the original story requirements.
+
+Report Generated: 2026-01-19
+Based On:
+
+- Story files in _bmad-output/sprint-artifacts/stories/
+- Sprint completion report CC-IDE-FSA-SPRINT-COMPLETION-2026-01-19.md
+- Source code in src/infrastructure/filesystem/
+- Source code in src/presentation/components/ide/FileTree/
+
+

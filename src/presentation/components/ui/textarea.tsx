@@ -40,15 +40,15 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
  * Uses design tokens from 8-bit design system
  */
 const textareaVariants = cva(
-  // Base styles
-  'flex w-full rounded-none border-2 font-mono transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary-500/50',
+  // Base styles with 8-bit aesthetic
+  'flex w-full rounded-none border-2 font-mono transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none focus-visible:outline-none focus-visible:border-[hsl(var(--primary))] focus-visible:shadow-[var(--shadow-pixel)]',
   {
     variants: {
       variant: {
-        default: 'border-neutral-700 bg-neutral-900/80 text-neutral-100 placeholder:text-neutral-500 focus:border-primary-500 focus:ring-primary-500/50',
-        success: 'border-success-500 bg-success-950/50 text-success-100 placeholder:text-success-400 focus:border-success-400 focus:ring-success-500/50',
-        error: 'border-error-500 bg-error-950/50 text-error-100 placeholder:text-error-400 focus:border-error-400 focus:ring-error-500/50',
-        warning: 'border-warning-500 bg-warning-950/50 text-warning-100 placeholder:text-warning-400 focus:border-warning-400 focus:ring-warning-500/50',
+        default: 'border-[hsl(var(--border))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]',
+        success: 'border-[hsl(var(--success))] bg-[hsl(var(--success)/0.1)] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]',
+        error: 'border-[hsl(var(--destructive))] bg-[hsl(var(--destructive)/0.1)] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))] focus-visible:border-[hsl(var(--destructive))] focus-visible:shadow-[2px_2px_0_0_hsl(var(--destructive))]',
+        warning: 'border-[hsl(var(--warning))] bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--muted-foreground))]',
       },
       size: {
         sm: 'px-3 py-2 text-sm min-h-[80px]',
@@ -109,7 +109,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="text-sm font-medium text-neutral-300 mb-1"
+            className="text-sm font-medium text-[hsl(var(--foreground))] mb-1"
           >
             {label}
           </label>
@@ -120,7 +120,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={minRows}
           className={cn(
             textareaVariants({ variant, size, resizable }),
-            error && 'border-error-500 ring-2 ring-error-500/50',
+            error && 'border-[hsl(var(--destructive))] shadow-[2px_2px_0_0_hsl(var(--destructive))]',
             className
           )}
           disabled={disabled}
@@ -135,7 +135,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {error && (
           <p
             id={errorId}
-            className="text-sm text-error-400 mt-1 flex items-center gap-1"
+            className="text-sm text-[hsl(var(--destructive))] mt-1 flex items-center gap-1"
             role="alert"
             aria-live="polite"
           >
@@ -145,7 +145,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {helperText && !error && (
           <p
             id={helperTextId}
-            className="text-sm text-neutral-500 mt-1"
+            className="text-sm text-[hsl(var(--muted-foreground))] mt-1"
           >
             {helperText}
           </p>
