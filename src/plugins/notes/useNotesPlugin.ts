@@ -81,17 +81,18 @@ export function useNotesPlugin(projectContext: ProjectContext): NotesPluginState
   }, [project.storageType]);
 
   /**
-   * Determine note ID based on storage mode
+   * Note ID - now undefined by default to match NotesPlugin.tsx behavior.
+   * The hook is retained for API compatibility but NotesPlugin.tsx uses
+   * inline logic instead.
+   * 
+   * FIX: Removed hardcoded fallback to 'note.md' - Notes now waits for
+   * user to select a markdown file from FileTree.
    */
   const noteId: string | undefined = useMemo(() => {
-    if (storageMode === 'fsa') {
-      // FSA mode: Use project folder path
-      return `${project.folderPath}/notes/note.md`;
-    } else {
-      // IndexedDB mode: Use project ID
-      return project.id;
-    }
-  }, [project, storageMode]);
+    // FIX: No automatic fallback - wait for user to select a file
+    // This matches Monaco behavior (shows "No file open" until selection)
+    return undefined;
+  }, []);
 
   // ============================================================================
   // Load Content

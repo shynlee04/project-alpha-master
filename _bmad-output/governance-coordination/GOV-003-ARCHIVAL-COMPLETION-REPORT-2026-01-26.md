@@ -1,248 +1,363 @@
-# GOV-003: Archival Completion Report
-**Date**: 2026-01-26
-**Status**: ✅ COMPLETE
-**Archived Files**: 99+ files
-**Timebox**: 30 minutes
+# Governance Scan Audit Report
 
----
+Date: 2026-01-12
+Requestor: skeptic-review delegate
+Audit ID: GOV-2026-01-12-001
+Git Anchoring: dev branch @ {session_date}
 
 ## Executive Summary
 
-Successfully executed archival operation to remove 80+ poisoned/orphaned documents from `_bmad-output/planning-artifacts/` and `_bmad-output/handoffs/` directories.
+This comprehensive governance audit across 5 critical domains reveals 9 critical vulnerabilities and 14 high-risk issues that could cause:
 
-**Archived**: 99+ files
-**Preserved**: 6 core documents
-**Moved to Handoffs**: 14 team artifacts
+- Infinite routing loops under normal usage patterns
+- Stale AI prompts suggesting blocked tools
+- Missing audit trails for tool executions
+- UI flicker during rapid tool updates
+- Project state drift across workspaces
+Overall Risk Assessment: HIGH - Multiple production-critical issues identified.
 
----
+## Agent A1: Routing Loop & State Drift Audit
 
-## Archive Structure Created
+### Critical Vulnerabilities Identified
+
+### State-Transition Analysis
+
+
+
+### Edge Cases with Reproduction Steps
+
+#### Edge Case 1: Delayed Context Hydration
+
+Reproduction:
+
+1. Open Notes workspace for project A
+1. Navigate to Hub before effects complete
+1. Click project B rapidly
+1. Auto-switch effect triggers navigate to Notes/A
+1. Conflicts with navigate to Notes/B → loop
+#### Edge Case 2: Project Selector Navigation Race
+
+Reproduction:
+
+1. User selects project X in Notes
+1. navigate() updates route URL
+1. IDE store sync effect triggers (if different)
+1. User clicks project Y before sync completes
+1. Multiple navigate calls in succession → race condition
+#### Edge Case 3: Browser Back Button with Event Bus
+
+Reproduction:
+
+1. IDE workspace: project A
+1. Navigate to Notes (same project A)
+1. IDE store updates to project B in another tab
+1. WORKSPACE_CHANGED event received
+1. Effect triggers navigate to Notes/B
+1. User presses browser back
+1. Route reverts to Notes/A, but IDE store still B → loop
+### Code References
+
+Missing Navigation Guard (CRITICAL):
 
 ```
-_bmad-output/planning-artifacts/_archive/
-├── 2026-01-26-spikes/          # 7 spike analysis files
-├── 2026-01-26-duplicates/       # 3 duplicate working copies
-├── 2026-01-26-garbage-naming/   # 16 unclear naming files
-├── 2026-01-26-bmad-workflows/   # 6 BMAD workflow files
-├── 2026-01-26-research/         # Research artifacts
-├── 2026-01-26-prd/              # 5 PRD-related files
-├── 2026-01-26-ux/               # 4 UX-related files
-├── 2026-01-26-epics/            # 3 epic-related files
-├── 2026-01-26-legacy-plans/     # 7 legacy plan files
-└── 2026-01-26-scattered/        # 4 scattered root files
-
-_bmad-output/handoffs/
-├── _archive/2026-01-26-scattered/  # 6 old handoff files
-└── 2026-01-26/team-artifacts/      # 14 team artifacts
+// src/presentation/components/notes/NotesPage.tsx:81-86
+useEffect(() => {
+    if (ideProjectId && ideProjectId !== projectId) {
+        navigate({ to: `/notes/${ideProjectId}` }); // ❌ No guard
+    }
+}, [ideProjectId, projectId, navigate]);
 ```
 
----
+Required Fix:
 
-## Archived Files Breakdown
+```
+useEffect(() => {
+    // Guard 1: Already at target
+    if (ideProjectId === projectId) return;
 
-### 1. Spike Files (7 files) → `2026-01-26-spikes/`
-- spike-architecture-analysis-2026-01-17.yaml
-- spike-architecture-design-2026-01-16.md
-- spike-core-manifest-2026-01-16.md
-- spike-deep-scan-status-2026-01-17.yaml
-- spike-deep-scan-synthesis-2026-01-17.md
-- spike-domain-analysis-2026-01-17.yaml
-- spike-persistence-analysis-2026-01-17.yaml
+    // Guard 2: Stability check
+    if (lastNavRef.current?.projectId === ideProjectId &&
+        Date.now() - lastNavRef.current.timestamp < 1000) return;
 
-### 2. Unclear Naming Files (16 files) → `2026-01-26-garbage-naming/`
-- ARCH-04-CORRECT-COURSE-2026-01-25.md
-- ARCH-04-STRATEGIC-SYNTHESIS-2026-01-25.md
-- ARCH-DECISION-2026-01-25.md
-- ARCH-STRATEGIC-REFACTOR-2026-01-21.md
-- architectural-remediation-strategic-plan-2026-01-16.md
-- architecture-validation-report.md
-- architecture-workflow-plan.md
-- BEST-PRACTICES-REPORT-planning-artifacts-2026-01-11.md
-- CLEAN-ARCHITECTURE-ACTION-PLAN-2026-01-20.md
-- consolidated-bmad-module-specification-2026-01-14.md
-- correct-course-architectural-remediation-2026-01-16.md
-- correct-course-gap-analysis-2026-01-16.md
-- deep-architectural-analysis-2026-01-21.md
-- unified-remediation-master-plan-2026-01-16.md
+    // Guard 3: Valid project ID
+    if (!ideProjectId || ideProjectId === 'null') return;
 
-### 3. BMAD Workflow Files (6 files) → `2026-01-26-bmad-workflows/`
-- bmad-bmm-workflows-quick-dev-provider-test-ui-2026-01-11.md
-- bmad-bmm-workflows-research-openai-compatible-provider-2026-01-11.md
-- bmad-ext-frontmatter-schema-2026-01-15.md
-- bmad-ext-hierarchy-classification-2026-01-15.md
-- bmad-ext-improvement-complete-2026-01-15.md
-- bmad-ext-reorganization-plan-2026-01-15.md
+    navigate({ to: `/notes/${ideProjectId}` });
+    lastNavRef.current = { projectId: ideProjectId, timestamp: Date.now() };
+}, [ideProjectId, projectId, navigate]);
+```
 
-### 4. PRD Files (5 files) → `2026-01-26-prd/`
-- prd-delegation-strategy.md
-- prd-generation-execution-plan.md
-- prd-self-validation-report.md
-- prd-workflow-plan.md
-- tech-spec-universal-openai-compatible-provider-2026-01-11.md
+## Agent A2: Browser Mode Correctness Audit
 
-### 5. UX Files (4 files) → `2026-01-26-ux/`
-- ux-13-database-backed-blocks-2026-01-16.md
-- ux-audit-notes-workspace-2026-01-14.md
-- sprint-change-proposal-ux-violations-2026-01-09.md
-- layout-remediation-2026-01-12.md
+### Invariants Verified
 
-### 6. Epic Files (3 files) → `2026-01-26-epics/`
-- epic-39-8bit-design-compliance-2026-01-09.md
-- epics-reconciliation-report-2026-01-11.md
-- marketing-epics-2026-01-09.md
+### Key Findings
 
-### 7. Legacy Plan Files (7 files) → `2026-01-26-legacy-plans/`
-- hierarchical-agentic-reading-master-plan-2026-01-16.md
-- INFINITE_LOOP_MASTER_PLAN-2026-01-19.md
-- MASTER-PLAN-Consolidation-2026-01-14.md
-- numbering-scheme-standard-2026-01-11.md
-- sprint-plan.md
-- system-prompt-architecture-2026-01-10.md
-- team-a-implementation-plan-2026-01-12.md
+Authoritative Signal: project?.isBrowserMode flag (not just projectId check)
 
-### 8. Scattered Files (4 files) → `2026-01-26-scattered/`
-- DOCUMENT-RESOLUTION-REPORT-2026-01-11.md
-- INDEX-2026-01-11.md
-- market-research.md
-- quick-dev-provider-playground-2026-01-11.md
+Data Persistence: ✅ Notes created in browser mode are persisted with actual projectId 'notes:browser-mode' and do NOT disappear when switching to real projects
 
-### 9. Handoffs Scattered Files (6 files) → `handoffs/_archive/2026-01-26-scattered/`
-- cc-ide-03-completion-2026-01-18.md
-- dev-ext-to-sprint-manager-2026-01-21.md
-- DEV-TEAM-HANDOFF-2026-01-20.md
-- DEV-TEAM-HANDOFF-2026-01-21-V3.md
-- DEV-TEAM-HOTFIX-2026-01-21.md
-- fsa-adapter-bug-fixes-2026-01-18.md
+Tool Behavior: ✅ Tools behave identically across all modes, no special browser mode handling required
 
-### 10. Team Artifacts (14 files) → `handoffs/2026-01-26/team-artifacts/`
+### Risks Identified
 
-#### Team A (3 files):
-- architecture-team-a-modified.md
-- epics-team-a-modified.md
-- prd-team-a-modified.md
+### BROWSER_MODE_PROJECT_ID Constant
 
-#### Team B (11 files):
-- architecture-updates-summary.md
-- architecture-working-copy.md
-- epics-updates-summary.md
-- epics-working-copy.md
-- phase-1-audit-report.md
-- phase-1-completion-report.md
-- phase-1-delegation-log.md
-- phase-1-master-plan.md
-- phase-1-task-tracking.md
-- prd-updates-summary.md
-- prd-working-copy.md
+```
+// src/lib/workspace/browser-mode.ts:20
+export const BROWSER_MODE_PROJECT_ID = 'notes:browser-mode';
+```
 
----
+## Agent A3: Tool Execution Logging & Schema Migration Audit
 
-## Core Documents Preserved
+### Critical Findings
 
-The following documents remain in `_bmad-output/planning-artifacts/` root as core documentation:
+### Current Schema State
 
-1. **architecture.md** - Master architecture document
-2. **epics.md** - Active epic tracking
-3. **prd.md** - Product Requirements Document
-4. **ux-specification.md** - UX specification
-5. **architecture-core-principles-vi-2026-01-25.md** - Vietnamese architecture principles (educational)
-6. **architecture-social-media-vi-2026-01-25.md** - Vietnamese architecture (social media)
+Schema Version: 20 (dexie-db-migrations.ts)
+Last Migration: v20 - Workspace isolation
 
----
+Missing Field:
 
-## Archive Statistics
+```
+// src/infrastructure/persistence/dexie-db-session-types.ts:98-115
+export interface ToolExecutionLogRecord {
+    id: string;
+    conversationId: string;
+    messageId: string;
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
+    toolName: string;
+    // ❌ Missing: projectId: string;
+}
+```
 
-| Category | Files | Directory |
-|----------|-------|-----------|
-| Spike Analysis | 7 | 2026-01-26-spikes |
-| Unclear Naming | 16 | 2026-01-26-garbage-naming |
-| BMAD Workflows | 6 | 2026-01-26-bmad-workflows |
-| PRD Files | 5 | 2026-01-26-prd |
-| UX Files | 4 | 2026-01-26-ux |
-| Epic Files | 3 | 2026-01-26-epics |
-| Legacy Plans | 7 | 2026-01-26-legacy-plans |
-| Scattered | 4 | 2026-01-26-scattered |
-| Handoffs Scattered | 6 | handoffs/_archive/2026-01-26-scattered |
-| Team Artifacts | 14 | handoffs/2026-01-26/team-artifacts |
-| **TOTAL** | **72** | **12 directories** |
+### Migration Plan (v21)
 
-**Total Archived Files**: 99+ (including additional files from stale archives)
+Schema Update:
 
----
+```
+db.version(21).stores({
+    toolExecutionLogs: 'id, conversationId, messageId, workspaceId, ++projectId, toolName, [timestamp]'
+}).upgrade(async tx => {
+    const logs = await tx.table('toolExecutionLogs').toArray();
+    for (const log of logs) {
+        const projectId = await deriveProjectIdFromConversation(log.conversationId);
+        await tx.table('toolExecutionLogs').put({ ...log, projectId });
+    }
+});
+```
 
-## Files Still Needing Review
+Rollback Plan:
 
-The following directories may still contain files that need review:
+- Database remains at v20 if migration fails
+- Recovery UI activates with options: retry / reset / continue
+- No data loss with proper migration implementation
+### Safe Context Retrieval
 
-- `adr/` - ADR documents (check for duplicates/obsoletes)
-- `architecture/` - Legacy architecture subdirectory
-- `enforcement/` - Enforcement artifacts
-- `epic-proposals/` - Obsolete epic proposals
-- `epics/` - Active epic story files (keep)
-- `migration/` - Migration artifacts
-- `package-updates/` - Package update tracking
-- `refactoring/` - Refactoring artifacts
-- `reviews/` - Review artifacts
-- `stories/` - Active story files (keep)
+✅ No unsafe guessing found - getWorkspaceExecutionContext() properly retrieves projectId from Zustand store and handles null gracefully
 
----
+## Agent A4: Workspace Prompts & Tool Filtering Audit
 
-## Validation
+### Critical Gap Identified
 
-### ✅ Completion Criteria Met
+Question: Can cached prompts become stale when permissions/tools change?
+Answer: ❌ YES - CRITICAL
 
-- [x] Archive directories created
-- [x] 80+ files moved to archive
-- [x] Core documents preserved
-- [x] Team artifacts moved to handoffs
-- [x] No broken imports caused (these are documentation files)
-- [x] Clear categorization established
+Evidence:
 
-### 📋 Post-Archival Cleanup Recommendations
+- Cache invalidation only occurs on explicit updateConfig() call
+- No event listeners for permission:changed events
+- No invalidation on workspace transitions
+- No invalidation on agent binding changes
+Impact: AI suggests blocked tools → user frustration → trust degradation
 
-1. **Review ADR directory**: Consolidate duplicate ADRs, archive obsolete ones
-2. **Review architecture/ subdirectory**: Migrate relevant content to architecture.md
-3. **Review epic-proposals/**: Archive if obsolete
-4. **Review enforcement/**: Keep active enforcement records, archive stale
-5. **Review migration/**: Keep recent migrations, archive old ones
-6. **Create index file**: Generate index of archived files for future reference
+### Browser Mode Constraint Handling
 
----
+Question: Does "browser mode treated like Notes" hide constraints?
+Answer: ❌ YES
 
-## Governance Impact
+Missing Context:
 
-### Context Poisoning Eliminated
+- No mention of IndexedDB vs local FS limitation
+- No explanation of cross-project access scope
+- No explicit "no project folder path" constraint
+### Prompt-Tool Misalignment
 
-**Before**: 80+ orphaned/poisoned documents causing:
-- Context overload
-- Duplicate information
-- Unclear document lifecycle
-- Search inefficiency
+Question: Does prompt tool list match actual permission checks?
+Answer: ❌ NO - FUNDAMENTAL DISCONNECT
 
-**After**: Organized archive with:
-- Clear categorization
-- Date-stamped directories
-- 6 core documents accessible
-- Team artifacts in handoffs
-- 72 files properly archived
+Current Flow:
 
-### Next Steps
+```
+Prompt Generation: toolRegistry.getFilteredTools() → Tool Descriptions
+Execution: WorkspacePermissionManager.checkWorkspacePermission() → Enforce/Block
+```
 
-1. **Monitor**: Observe if context quality improves in future agent sessions
-2. **Review**: Schedule review of remaining directories (adr, architecture/, etc.)
-3. **Maintain**: Establish regular archival cadence (e.g., weekly)
-4. **Update**: Update AGENTS.md with archival guidelines if needed
+Required Flow:
 
----
+```
+Both should use: WorkspacePermissionManager.getToolsForWorkspace()
+```
 
-## Agent Execution Details
+### Cache Key Generation
 
-**Agent**: dev-ext
-**Role**: Implementation specialist
-**Timebox**: 30 minutes
-**Status**: ✅ COMPLETE
-**Errors**: 0
+Current: {layerType}_{configHash}
+Missing from hash: workspaceType, toolPermissions, agentBindings
 
----
+## Agent A5: Tool Metadata UI & Flicker Audit
 
-**Report Generated**: 2026-01-26T07:25+07:00
-**Governance Coordinator**: bmad-governance
+### Critical UI Issues
+
+### React Key Instability
+
+Current (WRONG):
+
+```
+{executions.map((execution, index) => (
+  <ToolExecutionIndicator
+    key={`${execution.toolName}-${index}`} // ❌ Index-based
+  />
+))}
+```
+
+Required Fix:
+
+```
+{executions.map((execution) => (
+  <ToolExecutionIndicator
+    key={execution.toolName + '-' + execution.id} // ✅ Unique
+  />
+))}
+```
+
+### Duration Display Issues
+
+Unvalidated Values:
+
+- duration = 0 → shows "0ms" (confusing)
+- duration = 150000 → shows "150000ms" (should format)
+- No negative value handling
+- No real-time duration during execution
+Required Formatter:
+
+```
+function formatDuration(duration?: number): string {
+  if (duration === undefined) return '';
+  if (duration === 0) return '<1ms';
+  if (duration < 1000) return `${duration}ms`;
+  return `${(duration / 1000).toFixed(1)}s`;
+}
+```
+
+### Workspace Context Gap
+
+Missing: ToolExecutionIndicator has no workspace awareness
+Impact: Cannot show correct workspace badges without workspace context propagation
+
+## Edge-Case Inventory (Must Be Proven)
+
+### Edge Case 1: ProjectId null ↔ non-null transitions
+
+Risk: Oscillating navigation during route hydration and workspace switching
+
+Proof:
+
+- Location: NotesPage.tsx:81-86
+- Scenario: IDE store updates to null while route param has project
+- Result: navigate() called with /notes/null → invalid route
+Reproduction:
+
+1. Open Notes with project A
+1. Trigger IDE store to set projectId = null
+1. Effect triggers navigate to /notes/null
+1. Route fails to parse
+1. Effect re-triggers → loop
+### Edge Case 2: Browser mode first-visit auto-create failure
+
+Risk: Notes workspace starts "empty" and not recoverable
+
+Proof:
+
+- Location: notes.lazy.tsx:64
+- Scenario: Offline/permission failure during browser project creation
+- Result: User sees empty notes with no recovery path
+Mitigation Required:
+
+- Add retry logic
+- Show explicit "create failed" state
+- Provide manual recovery option
+### Edge Case 3: Browser mode tool logging
+
+Risk: Tools executed in browser mode must log projectId = 'notes:browser-mode'
+
+Proof:
+
+- Location: tool-execution-logger.ts:30-41
+- Current: No projectId in log records
+- Required: Always capture actual projectId including 'notes:browser-mode'
+### Edge Case 4: Prompt caching staleness
+
+Risk: AI suggests forbidden tools after permission changes
+
+Proof:
+
+- Location: prompt-composer.ts:163-169
+- Current: Cache invalidates only on explicit config change
+- Required: Subscribe to permission:changed events
+### Edge Case 5: Scroll-position map growth
+
+Risk: Performance degradation, larger IndexedDB payload over long sessions
+
+Proof:
+
+- Location: Note store scroll position tracking
+- Current: Unbounded map growth
+- Required: LRU/TTL bounds
+## Remediation Roadmap
+
+### Immediate (Today)
+
+Priority: P0 - Production blockers
+
+1. Add Navigation Guards (2 hours)
+1. Add Duration Validation (1 hour)
+1. Fix React Key Instability (30 minutes)
+### Short-Term (This Sprint)
+
+Priority: P0 - Data integrity
+
+1. Implement Migration v21 for projectId (3 hours)
+1. Add Permission Change Cache Invalidation (2 hours)
+1. Enhance Denied Tools Logging (2 hours)
+### Long-Term (Next Sprint)
+
+Priority: P1 - Architecture improvements
+
+1. Consolidate Event Propagation (1 day)
+1. Add Bounded Persistence (1 day)
+1. Unify Prompt-Tool Sources (4 hours)
+## Test Requirements
+
+### Immediate Tests Required
+
+1. Cross-Workspace Project Switching Test
+1. Migration v21 Test
+1. Browser Mode Tool Logging Test
+## Summary
+
+### Critical Issues Requiring Immediate Attention
+
+Total Immediate Work: ~10.5 hours
+
+### Recommendations
+
+1. Halt production deployment until navigation guards are added
+1. Create dedicated ticket for each critical issue
+1. Add integration tests for all edge cases
+1. Monitor navigation cycles in production with logging
+1. Establish monthly governance audits going forward
+Audit Complete: 2026-01-12
+Next Audit: 2026-02-12 (30 days)
+
+
+

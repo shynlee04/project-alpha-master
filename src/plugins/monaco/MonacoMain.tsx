@@ -142,6 +142,12 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
           markClean(activePath);
           setIsModified(false);
           setLastSaved(new Date());
+          
+          // BUG-5 FIX: Update coordination content after save
+          if (coordination) {
+            coordination.updateActiveDocumentContent(newContent);
+          }
+          
           console.log('[MonacoPlugin] Auto-saved:', activePath);
         } catch (err) {
           const message = err instanceof Error ? err.message : 'Unknown error';
@@ -211,6 +217,11 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       setIsModified(false);
       markClean(activePath); // Mark clean after manual save
       setLastSaved(new Date());
+      
+      // BUG-5 FIX: Update coordination content after save
+      if (coordination) {
+        coordination.updateActiveDocumentContent(content);
+      }
 
       console.log('[MonacoPlugin] Saved file (manual):', activePath);
     } catch (err) {

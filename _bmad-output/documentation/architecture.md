@@ -1,876 +1,352 @@
-# Architecture Documentation
+# Governance Scan Audit Report
 
-**Generated:** 2026-01-07
-**Last Updated:** 2026-01-16
-**Scan Mode:** Exhaustive
-**Status:** Aligned with ADR-033, Fundamental Truth Checklist
+Date: 2026-01-12
+Requestor: skeptic-review delegate
+Audit ID: GOV-2026-01-12-001
+Git Anchoring: dev branch @ {session_date}
 
----
+## Executive Summary
 
-## Table of Contents
+This comprehensive governance audit across 5 critical domains reveals 9 critical vulnerabilities and 14 high-risk issues that could cause:
 
-1. [System Architecture](#system-architecture)
-2. [Platform Contract & Device Detection](#platform-contract--device-detection)
-3. [Layer Responsibilities](#layer-responsibilities)
-4. [State Management Boundaries](#state-management-boundaries)
-5. [Key Architectural Decisions](#key-architectural-decisions)
-6. [Data Flow Patterns](#data-flow-patterns)
-7. [Project Space Routing](#project-space-routing)
-8. [BYOK Architecture](#byok-architecture)
-9. [Store Architecture](#store-architecture)
-10. [Component Architecture](#component-architecture)
-11. [Integration Points](#integration-points)
-12. [Technology Rationale](#technology-rationale)
-13. [Architecture Concerns](#architecture-concerns)
+- Infinite routing loops under normal usage patterns
+- Stale AI prompts suggesting blocked tools
+- Missing audit trails for tool executions
+- UI flicker during rapid tool updates
+- Project state drift across workspaces Overall Risk Assessment: HIGH - Multiple production-critical issues identified.
+## Agent A1: Routing Loop & State Drift Audit
 
----
 
-## System Architecture
 
-Via-gent follows **4-Layer Clean Architecture** with dependency inversion:
+### Critical Vulnerabilities Identified
+
+### State-Transition Analysis
+
+### Edge Cases with Reproduction Steps
+
+#### Edge Case 1: Delayed Context Hydration
+
+Reproduction:
+
+1. Open Notes workspace for project A
+1. Navigate to Hub before effects complete
+1. Click project B rapidly
+1. Auto-switch effect triggers navigate to Notes/A
+1. Conflicts with navigate to Notes/B → loop
+#### Edge Case 2: Project Selector Navigation Race
+
+Reproduction:
+
+1. User selects project X in Notes
+1. navigate() updates route URL
+1. IDE store sync effect triggers (if different)
+1. User clicks project Y before sync completes
+1. Multiple navigate calls in succession → race condition
+#### Edge Case 3: Browser Back Button with Event Bus
+
+Reproduction:
+
+1. IDE workspace: project A
+1. Navigate to Notes (same project A)
+1. IDE store updates to project B in another tab
+1. WORKSPACE_CHANGED event received
+1. Effect triggers navigate to Notes/B
+1. User presses browser back
+1. Route reverts to Notes/A, but IDE store still B → loop
+### Code References
+
+Missing Navigation Guard (CRITICAL):
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         PRESENTATION LAYER                         │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │  React Components (468 files)                                │  │
-│  │  - Workspace pages (IDE, Knowledge, Notes, Study)           │  │
-│  │  - UI components (dialogs, inputs, buttons)                 │  │
-│  │  - Layout components (panels, resizable)                     │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-│                              ↓                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│                        APPLICATION LAYER                           │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │  Application Services                                        │  │
-│  │  - Agent orchestration                                       │  │
-│  │  - Workspace switching                                       │  │
-│  │  - File synchronization                                      │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-│                              ↓                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│                           DOMAIN LAYER                             │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │  Entities & Value Objects                                     │  │
-│  │  - Agent (with workspace bindings)                           │  │
-│  │  - Workspace (type, state)                                  │  │
-│  │  - Tool permissions                                          │  │
-│  │  - Domain services (pure functions)                          │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-│                              ↓                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│                        INFRASTRUCTURE LAYER                        │
-│  ┌───────────────────┐  ┌───────────────────┐  ┌──────────────┐  │
-│  │  Zustand Stores    │  │  Dexie IndexedDB  │  │ WebContainer │  │
-│  │  - UI State        │  │  - Persistence     │  │ - Code exec  │  │
-│  │  - Reactivity      │  │  - Queries         │  │              │  │
-│  └───────────────────┘  └───────────────────┘  └──────────────┘  │
-│  ┌─────────────────────────────────────────────────────────────┐  │
-│  │  Cross-Workspace Event Bus                                   │  │
-│  │  - Provider config changes                                   │  │
-│  │  - Agent updates                                             │  │
-│  │  - File changes                                              │  │
-│  └─────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Platform Contract & Device Detection
-
-### PlatformContract Interface (P0-4)
-
-Platform detection is performed **ONCE at app start**. The contract is immutable and used throughout the application.
-
-```typescript
-// Platform detection - done ONCE at app start
-interface PlatformContract {
-  deviceType: 'desktop' | 'mobile' | 'tablet';
-  storageType: 'fsa' | 'indexeddb';
-  canAccessFSA: boolean;        // Desktop only
-  canWatchFiles: boolean;       // Desktop with FSA
-  canRunTerminal: boolean;      // Desktop with WebContainer
-  canDoAgenticCoding: boolean;  // Desktop with FSA + Terminal
-  canAccessIDE: boolean;        // Desktop only
-}
-
-// ✅ CORRECT: Call once, use everywhere
-const platform = getPlatformContract();
-if (!platform.canAccessIDE) {
-  redirect({ to: '/notes/$projectId', params });
-}
-
-// ❌ WRONG: Check device type at call site
-if (navigator.userAgent.match(/mobile/i)) { ... }  // NEVER
-if (window.innerWidth < 768) { ... }  // NEVER for routing
-```
-
-### Device Detection Strategy
-
-| Device Type | Storage | IDE Access | Terminal | Agentic Coding |
-|-------------|---------|------------|----------|----------------|
-| **Desktop** | FSA | Full | Yes | Yes |
-| **Tablet** | IndexedDB | Blocked | No | No |
-| **Mobile** | IndexedDB | Blocked | No | No |
-
-### ADR-033 Key Decisions (Non-Negotiable)
-
-| Decision | Rule | Enforcement |
-|----------|------|-------------|
-| **D1: Platform Detection** | Auto-detect ONCE at app start. Desktop=FSA, Mobile=IndexedDB | Never check device type at call sites |
-| **D2: Storage Immutable** | Storage type set at project creation, never changes | Never decide FSA vs IndexedDB per operation |
-| **D3: IDE Desktop Only** | IDE workspace blocked on mobile/tablet | Always redirect mobile to Notes |
-| **D4: Notes on FSA** | Desktop notes save as `.md` files in `/project/notes/` | Same tech as IDE, bidirectional sync |
-| **D5: Persist First** | Write to DexieDB FIRST, then update Zustand | Never update Zustand without DB success |
-| **D6: Single Database** | Only `ViaGentDatabase` for all tables | Never create new Dexie databases |
-| **D7: Path-Based IDs** | File IDs are relative paths from project root | Never use UUIDs for file identity |
-| **D8: Metadata Folder** | `.viagent/` at project root for metadata | Never scatter metadata files |
-
----
-
-## Layer Responsibilities
-
-### Presentation Layer (`src/presentation/`)
-
-**Responsibility:** UI rendering and user interaction
-
-**Key Patterns:**
-- Component composition over inheritance
-- Custom hooks for state access
-- Event handlers delegate to application layer
-- No business logic, only UI logic
-
-**Key Files:**
-```
-src/presentation/components/
-├── ide/              # IDE workspace components
-├── knowledge/         # Knowledge workspace components
-├── notes/             # Notes workspace components
-├── study/             # Study workspace components
-├── agent/             # Agent configuration UI
-├── chat/              # Chat interface components
-└── ui/                # Reusable UI components
-```
-
-### Application Layer (`src/application/`)
-
-**Responsibility:** Orchestration and workflow coordination
-
-**Key Patterns:**
-- Services coordinate between domain and infrastructure
-- Use cases encapsulate business workflows
-- Hooks bridge presentation to application
-
-**Key Files:**
-```
-src/application/services/
-├── AgentOrchestrationService.ts
-├── WorkspaceTransitionService.ts
-└── ...
-
-src/domain/use-cases/
-├── switch-workspace-use-case.ts
-└── ...
-```
-
-### Domain Layer (`src/domain/`)
-
-**Responsibility:** Core business logic and rules
-
-**Key Patterns:**
-- Pure functions (no side effects)
-- No framework dependencies
-- Entity-driven design
-- Domain services for cross-entity operations
-
-**Key Files:**
-```
-src/domain/
-├── entities/
-│   ├── agent.ts           # Agent entity with workspace bindings
-│   └── ...
-├── value-objects/
-│   ├── workspace-type.ts
-│   ├── tool-permission.ts
-│   └── ...
-└── services/
-    ├── agent-workspace-utils.ts    # Pure functions
-    └── ...
-```
-
-### Infrastructure Layer (`src/infrastructure/`)
-
-**Responsibility:** External concerns and persistence
-
-**Key Patterns:**
-- Zustand stores with Dexie persistence
-- Event bus for cross-workspace communication
-- Adapter pattern for external services
-
-**Key Files:**
-```
-src/infrastructure/
-├── persistence/
-│   ├── stores/           # Zustand stores
-│   ├── dexie-db.ts       # IndexedDB schema
-│   └── dexie-storage.ts  # Dexie adapter
-├── events/
-│   └── cross-workspace-event-bus.ts
-└── sync/
-    └── ...
-```
-
----
-
-## State Management Boundaries
-
-### Zustand vs Dexie Responsibilities (P0-5)
-
-**Zustand** (Reactive UI State):
-- Triggers React re-renders
-- Temporary UI state (modals, selections, loading states)
-- In-memory operations
-- Fast access for component consumption
-
-**Dexie IndexedDB** (Persistent Storage):
-- Survives page reloads
-- Cross-session data
-- Source of truth for all application data
-- Indexed queries for performance
-
-### Persist-First Pattern (ADR-033 D5)
-
-```typescript
-// ✅ CORRECT: Persist first, then Zustand
-async createNote(input: CreateNoteInput): Promise<Note> {
-  const note = generateNote(input);
-
-  // Step 1: Persist to DexieDB FIRST (fail-fast)
-  await db.notes.put(note);
-
-  // Step 2: Update Zustand ONLY after persistence succeeds
-  set((state) => ({ notes: [...state.notes, note] }));
-
-  return note;
-}
-
-// ❌ WRONG: Zustand first (data loss risk)
-async createNote(input: CreateNoteInput): Promise<Note> {
-  const note = generateNote(input);
-  set((state) => ({ notes: [...state.notes, note] }));  // Lost if DB fails!
-  await db.notes.put(note);
-  return note;
-}
-```
-
-### Hydration Strategy
-
-**Rules:**
-1. Wait for hydration before querying Dexie from Zustand stores
-2. Use event-driven detection (not time-based)
-3. Show loading state during hydration
-4. Never assume data is available before hydration completes
-
-```typescript
-// ✅ CORRECT: Wait for hydration
-const useProjectStore = create<ProjectStore>()(
-  persist(
-    (set, get) => ({
-      projects: [],
-      hydrated: false,
-      setHydrated: () => set({ hydrated: true })
-    }),
-    {
-      name: 'projects-storage',
-      onRehydrateStorage: () => (state) => {
-        state?.setHydrated();
-      }
+// src/presentation/components/notes/NotesPage.tsx:81-86
+useEffect(() => {
+    if (ideProjectId && ideProjectId !== projectId) {
+        navigate({ to: `/notes/${ideProjectId}` }); // ❌ No guard
     }
-  )
-);
-
-// Usage: always check hydration
-const { projects, hydrated } = useProjectStore();
-if (!hydrated) return <LoadingSpinner />;
+}, [ideProjectId, projectId, navigate]);
 ```
 
-### Responsibility Matrix
+Required Fix:
 
-| Concern | Zustand | Dexie |
-|---------|---------|-------|
-| UI State (modals, selections) | ✅ | ❌ |
-| Projects | ✅ (cached) | ✅ (source) |
-| Notes | ✅ (cached) | ✅ (source) |
-| Agents | ✅ | ✅ |
-| Conversations | ✅ | ✅ |
-| Settings | ✅ | ✅ |
-| File System | ❌ | ✅ (IndexedDB mode only) |
+```
+useEffect(() => {
+    // Guard 1: Already at target
+    if (ideProjectId === projectId) return;
 
----
+    // Guard 2: Stability check
+    if (lastNavRef.current?.projectId === ideProjectId &&
+        Date.now() - lastNavRef.current.timestamp < 1000) return;
 
-## Key Architectural Decisions
+    // Guard 3: Valid project ID
+    if (!ideProjectId || ideProjectId === 'null') return;
 
-### 1. Single Bounded Store (Zustand v5)
-
-**Decision:** Combine related state into single bounded stores instead of multiple scattered stores.
-
-**Rationale:**
-- Eliminates circular dependencies
-- Simplifies cross-slice communication via `get()`
-- Single hydration point for persisted state
-
-**Example:**
-```typescript
-// Agent store combines 5 slices
-export const useAgentsStore = create<AgentsStore>()(
-  persist(
-    (...a) => ({
-      ...createAgentCrudSlice(...a),
-      ...createAgentWorkspaceBindingsSlice(...a),
-      ...createAgentValidationSlice(...a),
-      ...createAgentEventsSlice(...a),
-      ...createAgentUtilsSlice(...a),
-    }),
-    { name: 'agents-storage', ... }
-  )
-);
+    navigate({ to: `/notes/${ideProjectId}` });
+    lastNavRef.current = { projectId: ideProjectId, timestamp: Date.now() };
+}, [ideProjectId, projectId, navigate]);
 ```
 
-### 2. Cross-Workspace Event Bus
+## Agent A2: Browser Mode Correctness Audit
 
-**Decision:** Use event bus for workspace-to-workspace communication.
+### Invariants Verified
 
-**Rationale:**
-- Workspaces are isolated but need to sync state
-- Agent configuration changes should propagate
-- File changes need to be visible across workspaces
+### Key Findings
 
-**Example:**
-```typescript
-crossWorkspaceEventBus.emitAgentConfigChange({
-  workspaceId: 'ide',
-  agentId: 'agent-123',
-  changeType: 'updated'
+Authoritative Signal: project?.isBrowserMode flag (not just projectId check)
+
+Data Persistence: ✅ Notes created in browser mode are persisted with actual projectId 'notes:browser-mode' and do NOT disappear when switching to real projects
+
+Tool Behavior: ✅ Tools behave identically across all modes, no special browser mode handling required
+
+### Risks Identified
+
+### BROWSER_MODE_PROJECT_ID Constant
+
+
+
+```
+// src/lib/workspace/browser-mode.ts:20
+export const BROWSER_MODE_PROJECT_ID = 'notes:browser-mode';
+```
+
+## Agent A3: Tool Execution Logging & Schema Migration Audit
+
+### Critical Findings
+
+### Current Schema State
+
+Schema Version: 20 (dexie-db-migrations.ts)
+Last Migration: v20 - Workspace isolation
+
+Missing Field:
+
+```
+// src/infrastructure/persistence/dexie-db-session-types.ts:98-115
+export interface ToolExecutionLogRecord {
+    id: string;
+    conversationId: string;
+    messageId: string;
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
+    toolName: string;
+    // ❌ Missing: projectId: string;
+}
+```
+
+### Migration Plan (v21)
+
+Schema Update:
+
+```
+db.version(21).stores({
+    toolExecutionLogs: 'id, conversationId, messageId, workspaceId, ++projectId, toolName, [timestamp]'
+}).upgrade(async tx => {
+    const logs = await tx.table('toolExecutionLogs').toArray();
+    for (const log of logs) {
+        const projectId = await deriveProjectIdFromConversation(log.conversationId);
+        await tx.table('toolExecutionLogs').put({ ...log, projectId });
+    }
 });
 ```
 
-### 3. Facade Pattern for Legacy Code
+Rollback Plan:
 
-**Decision:** Keep legacy paths as facades during migration.
+- Database remains at v20 if migration fails
+- Recovery UI activates with options: retry / reset / continue
+- No data loss with proper migration implementation
+### Safe Context Retrieval
 
-**Rationale:**
-- Zero breaking changes during refactoring
-- Gradual migration path
-- Clear deprecation warnings
+✅ No unsafe guessing found - getWorkspaceExecutionContext() properly retrieves projectId from Zustand store and handles null gracefully
 
-**Example:**
-```typescript
-// src/lib/state (deprecated)
-export * from '@/infrastructure/persistence/stores/ide';
+## Agent A4: Workspace Prompts & Tool Filtering Audit
+
+### Critical Gap Identified
+
+Question: Can cached prompts become stale when permissions/tools change?
+Answer: ❌ YES - CRITICAL
+
+Evidence:
+
+- Cache invalidation only occurs on explicit updateConfig() call
+- No event listeners for permission:changed events
+- No invalidation on workspace transitions
+- No invalidation on agent binding changes Impact: AI suggests blocked tools → user frustration → trust degradation
+### Browser Mode Constraint Handling
+
+Question: Does "browser mode treated like Notes" hide constraints?
+Answer: ❌ YES
+
+Missing Context:
+
+- No mention of IndexedDB vs local FS limitation
+- No explanation of cross-project access scope
+- No explicit "no project folder path" constraint
+### Prompt-Tool Misalignment
+
+Question: Does prompt tool list match actual permission checks?
+Answer: ❌ NO - FUNDAMENTAL DISCONNECT
+
+Current Flow:
+
+```
+Prompt Generation: toolRegistry.getFilteredTools() → Tool Descriptions
+Execution: WorkspacePermissionManager.checkWorkspacePermission() → Enforce/Block
 ```
 
-### 4. Workspace-Aware Agents
+Required Flow:
 
-**Decision:** Agents have workspace-specific availability and tool permissions.
+```
+Both should use: WorkspacePermissionManager.getToolsForWorkspace()
+```
 
-**Rationale:**
-- Not all agents are useful in all workspaces
-- Tools may have different permissions per workspace
-- User needs control over agent capabilities
+### Cache Key Generation
 
-**Data Structure:**
-```typescript
-interface Agent {
-  id: string;
-  name: string;
-  workspaceBindings: WorkspaceBinding[];  // Per-workspace availability
-  tools: AgentToolBinding[];              // Per-workspace permissions
+Current: {layerType}_{configHash}
+Missing from hash: workspaceType, toolPermissions, agentBindings
+
+## Agent A5: Tool Metadata UI & Flicker Audit
+
+### Critical UI Issues
+
+### React Key Instability
+
+Current (WRONG):
+
+```
+{executions.map((execution, index) => (
+  <ToolExecutionIndicator
+    key={`${execution.toolName}-${index}`} // ❌ Index-based
+  />
+))}
+```
+
+Required Fix:
+
+```
+{executions.map((execution) => (
+  <ToolExecutionIndicator
+    key={execution.toolName + '-' + execution.id} // ✅ Unique
+  />
+))}
+```
+
+### Duration Display Issues
+
+Unvalidated Values:
+
+- duration = 0 → shows "0ms" (confusing)
+- duration = 150000 → shows "150000ms" (should format)
+- No negative value handling
+- No real-time duration during execution Required Formatter:
+```
+function formatDuration(duration?: number): string {
+  if (duration === undefined) return '';
+  if (duration === 0) return '<1ms';
+  if (duration < 1000) return `${duration}ms`;
+  return `${(duration / 1000).toFixed(1)}s`;
 }
 ```
 
-### 5. Local-First with IndexedDB
-
-**Decision:** Use Dexie (IndexedDB wrapper) for all persistent state.
-
-**Rationale:**
-- Works offline
-- Better than localStorage (async, larger capacity)
-- Indexed by queries
-- Transactional integrity
-
-### 6. Platform Contract (ADR-033)
-
-**Decision:** Single platform detection at app start, immutable thereafter.
-
-**Rationale:**
-- Eliminates device detection scattered across codebase
-- Consistent behavior throughout session
-- Enables proper feature gating per device type
-
----
-
-## Data Flow Patterns
-
-### Agent Tool Execution Flow
-
-```
-┌─────────────┐
-│   User      │  "Run npm install"
-└──────┬──────┘
-       ↓
-┌─────────────────────────────────────────────────────────┐
-│  Presentation: AgentChatPanel                           │
-│  - Displays user message                                  │
-│  - Shows tool approval UI                                 │
-└──────┬──────────────────────────────────────────────────┘
-       ↓
-┌─────────────────────────────────────────────────────────┐
-│  Application: useAgentChatWithTools                      │
-│  - Orchestrates chat + tools                              │
-│  - Handles streaming responses                             │
-└──────┬──────────────────────────────────────────────────┘
-       ↓
-┌─────────────────────────────────────────────────────────┐
-│  Domain: WorkspacePermissionManager                      │
-│  - Validates tool permissions for workspace              │
-│  - Checks trust level (auto/prompt/block)                │
-└──────┬──────────────────────────────────────────────────┘
-       ↓
-┌─────────────────────────────────────────────────────────┐
-│  Infrastructure: ToolExecutor                            │
-│  - Delegates to file/terminal facades                    │
-│  - Executes in WebContainer                               │
-└──────┬──────────────────────────────────────────────────┘
-       ↓
-┌─────────────────────────────────────────────────────────┐
-│  External: WebContainer                                   │
-│  - Runs shell command                                      │
-│  - Streams output back                                   │
-└─────────────────────────────────────────────────────────┘
-```
-
-### File Synchronization Flow
-
-```
-Local FS (FSA)          LocalFSAdapter          SyncManager          WebContainer
-     │                        │                        │                     │
-     │ 1. Read file           │                        │                     │
-     ├──────────────────────>│                        │                     │
-     │                        │ 2. Detect change       │                     │
-     │                        ├──────────────────────>│                     │
-     │                        │                        │ 3. Queue sync       │
-     │                        │                        ├──────────────────> │
-     │                        │                        │                     │ 4. Write file
-     │                        │                        │<──────────────────┤
-     │                        │ 5. Confirm synced       │
-     │                        │<───────────────────────┤
-     │ 6. Update UI           │                        │
-     │<───────────────────────┤                        │
-```
-
-### Hydration Flow
-
-```
-App Start
-    ↓
-Get Platform Contract (once)
-    ↓
-Initialize Zustand Stores with Persist
-    ↓
-Wait for onRehydrateStorage callback
-    ↓
-Mark store as hydrated
-    ↓
-Allow UI to render with data
-```
-
-### Project Selection Flow
-
-```
-Homepage
-    ↓
-Platform Check → Device Type
-    ↓
-    ├─ Desktop: Show project list + create new
-    └─ Mobile/Tablet: Show create new only
-    ↓
-Select/Create Project
-    ↓
-Generate projectId: "proj_{uuid}"
-    ↓
-Determine storageType: FSA (desktop) or IndexedDB (mobile)
-    ↓
-Show Workspace Selection
-    ↓
-    ├─ IDE (desktop only) → redirect to /ide/$projectId
-    ├─ Notes → redirect to /notes/$projectId
-    ├─ Knowledge → redirect to /knowledge/$projectId
-    └─ Study → redirect to /study/$projectId
-```
-
----
-
-## Project Space Routing
-
-### Project ID Format
-
-**Canonical Format:** `proj_{uuid}`
-
-Example: `proj_a1b2c3d4-e5f6-7890-abcd-ef1234567890`
-
-### Entry Matrix
-
-| User Type | Device | Entry Point | Options |
-|-----------|--------|-------------|---------|
-| **New User** | Desktop | Homepage | Create project → select workspace |
-| **New User** | Mobile/Tablet | Homepage | Create project → select workspace (IDE blocked) |
-| **Returned User** | Desktop | Homepage | Select from list OR create new → select workspace |
-| **Returned User** | Mobile/Tablet | Homepage | Create new (no list, IndexedDB only) → select workspace |
-
-### Route Structure
-
-| Route | Workspace | Device Restriction | Storage |
-|-------|-----------|-------------------|---------|
-| `/ide/$projectId` | IDE | Desktop only | FSA |
-| `/notes/$projectId` | Notes | All devices | FSA (desktop) / IndexedDB (mobile) |
-| `/knowledge/$projectId` | Knowledge | All devices | FSA (desktop) / IndexedDB (mobile) |
-| `/study/$projectId` | Study | Disabled (MVP) | N/A |
-
-### Route Guard Pattern
-
-```typescript
-// ✅ CORRECT: Every workspace route has beforeLoad guard
-export const Route = createFileRoute('/ide/$projectId')({
-  beforeLoad: async ({ params }) => {
-    const platform = getPlatformContract();
-
-    // Platform check
-    if (!platform.canAccessIDE) {
-      throw redirect({
-        to: '/notes/$projectId',
-        params,
-        search: { error: 'ide-desktop-only' }
-      });
-    }
-
-    // Project validation
-    const project = await db.projects.get(params.projectId);
-    if (!project) {
-      throw redirect({ to: '/hub', search: { error: 'not-found' } });
-    }
-
-    return { project, platform };
-  }
-});
-```
-
-### Workspace Rules
-
-1. **No workspace without project**: All workspace routes require valid `projectId`
-2. **IDE desktop only**: Mobile/tablet users redirected to Notes with toast
-3. **Direct landing**: Once project + workspace selected, direct navigation to workspace
-4. **Hotload switching**: Project selection within workspace is reactive (no page reload)
-5. **Storage immutable**: Storage type set at project creation, never changes
-
----
-
-## BYOK Architecture
-
-### Architecture Diagram (P1-1)
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Credential Vault                      │
-│  - AES-256-GCM encrypted                                 │
-│  - Provider: API Key mapping                             │
-│  - Workspace-specific access                             │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│                  AgentExecutionService                   │
-│  - Retrieves key from vault                              │
-│  - Passes to provider adapter                            │
-│  - Enforces workspace permissions                        │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│                  Provider Adapters                       │
-│  - Anthropic, OpenAI, Gemini, OpenRouter                 │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Key Components
-
-**Credential Vault:**
-- AES-256-GCM encryption for all stored keys
-- Maps provider IDs to encrypted API keys
-- Workspace-specific key access control
-- Secure retrieval only during agent execution
-
-**Provider Adapters:**
-```typescript
-interface ProviderAdapter {
-  chat(messages: Message[]): AsyncGenerator<Chunk>;
-  fetchModels(): Promise<Model[]>;
-}
-
-// Implementations:
-// - AnthropicAdapter
-// - OpenRouterAdapter
-// - OpenAIAdapter
-// - GeminiAdapter
-```
-
-**Conditional Usage:**
-- Keys retrieved only when agent needs them
-- Workspace-specific permissions enforced
-- Audit logging for all key access events
-
-### Security Considerations
-
-1. **No Runtime Persistence**: Keys never stored in memory between operations
-2. **Workspace Isolation**: Keys scoped to specific workspace contexts
-3. **Audit Trail**: All key accesses logged for security monitoring
-4. **Key Rotation**: Support for periodic key rotation (planned feature)
-
----
-
-## Store Architecture
-
-### Store Slicing Strategy
-
-**Rule:** Each slice <= 120 lines
-
-**God Stores (>300 lines) to Split:**
-1. `use-app-store.ts` (367 lines) -> Split into 8 agent + 3 provider slices
-2. `plugins-store.ts` (316 lines) -> Split into marketplace, UI, filters
-3. `terminal-store.ts` (307 lines) -> Split into shell, session, history
-
-### Store Naming Convention
-
-```
-src/infrastructure/persistence/stores/
-├── {domain}/
-│   ├── {domain}-store.ts        # Main store (facade/barrel)
-│   ├── slices/
-│   │   ├── {domain}-{feature}-slice.ts
-│   │   └── index.ts              # Barrel export
-│   ├── types.ts                  # Domain types
-│   └── index.ts                  # Public exports
-```
-
-### Persistence Strategy
-
-```typescript
-// Apply persist to combined store ONLY
-export const useStore = create<Store>()(
-  persist(
-    (...a) => ({
-      ...createSlice1(...a),
-      ...createSlice2(...a),
-    }),
-    {
-      name: 'storage-key',
-      partialize: (state) => ({
-        // Only persist critical fields
-        data: state.data,
-        // NOT persisted: uiState, loading
-      }),
-    }
-  )
-);
-```
-
-### Hydration Strategy (Expanded)
-
-**Requirements:**
-1. Wait for hydration before querying Dexie
-2. Use event-driven detection (not time-based)
-3. Show loading state during hydration
-4. Handle hydration failures gracefully
-
-```typescript
-// Hydration pattern for all stores
-export const useProjectStore = create<ProjectStore>()(
-  persist(
-    (set, get) => ({
-      projects: [],
-      hydrated: false,
-
-      createProject: async (input) => {
-        // Persist to Dexie FIRST
-        const project = await db.projects.add(input);
-
-        // Then update Zustand
-        set((state) => ({
-          projects: [...state.projects, project]
-        }));
-
-        return project;
-      }
-    }),
-    {
-      name: 'projects-storage',
-      onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true);
-      }
-    }
-  )
-);
-```
-
----
-
-## Component Architecture
-
-### Component Size Limits
-
-| Type | Limit | Rationale |
-|------|-------|-----------|
-| Components | 300 lines | Maintainability |
-| Hooks | 150 lines | Focus |
-| Utilities | 120 lines | Simplicity |
-| Store slices | 120 lines | Modularity |
-
-### God Components (>300 lines)
-
-Top offenders:
-1. `MonacoEditor.tsx` (768 lines)
-2. `resizable.tsx` (745 lines)
-3. `NotesPage.tsx` (712 lines)
-4. `KnowledgePage.tsx` (690 lines)
-5. `IndexingProgressPanel.tsx` (593 lines)
-
-### Component Patterns
-
-**Composition over Props:**
-```tsx
-// ❌ Anti-pattern: Pass everything as props
-<ComplexComponent
-  data={data}
-  onEdit={onEdit}
-  onDelete={onDelete}
-  // ... 20 more props
-/>
-
-// ✅ Pattern: Compose smaller components
-<ComplexComponent>
-  <DataView data={data} />
-  <ActionToolbar onEdit={onEdit} onDelete={onDelete} />
-</ComplexComponent>
-```
-
----
-
-## Integration Points
-
-### WebContainer Integration
-
-**Entry Point:** `src/lib/webcontainer/manager.ts`
-
-**Key Operations:**
-- Boot WebContainer instance
-- Start shell with project path
-- Execute commands
-- Stream output
-- File system operations
-
-### File System Integration
-
-**Adapter Pattern:**
-```typescript
-// Abstract over File System Access API + WebContainer FS
-interface FileSystemAdapter {
-  readFile(path: string): Promise<string>;
-  writeFile(path: string, content: string): Promise<void>;
-  listFiles(path: string): Promise<string[]>;
-}
-```
-
-**Implementations:**
-- `LocalFSAdapter` - Browser File System Access API
-- `WebContainerFSAdapter` - WebContainer virtual FS
-- `Facades` - Unified interface for agents
-
-### Agent Integration
-
-**Provider Adapter Pattern:**
-```typescript
-interface ProviderAdapter {
-  chat(messages: Message[]): AsyncGenerator<Chunk>;
-  fetchModels(): Promise<Model[]>;
-}
-
-// Implementations:
-// - AnthropicAdapter
-// - OpenRouterAdapter
-// - OpenAIAdapter
-// - GeminiAdapter
-```
-
----
-
-## Technology Rationale
-
-| Technology | Why Chosen |
-|-------------|-------------|
-| Zustand v5 | Simple, no boilerplate, TypeScript-first |
-| Dexie | Type-safe IndexedDB, Promise-based |
-| TanStack Router | File-based, type-safe, SSR-ready |
-| Radix UI | Accessible, unstyled, composable |
-| Monaco Editor | Industry standard, VS Code core |
-| Orama | WASM vector DB, local-first RAG |
-| WebContainer | Run Node.js in browser |
-| TanStack AI SDK | BYOK support, provider abstraction |
-
----
-
-## Architecture Concerns
-
-### Known Issues
-
-1. **Layer Violations:** 20+ presentation components import directly from infrastructure
-2. **God Stores:** 3 stores exceed 300-line limit
-3. **God Components:** 18+ components exceed 300-line limit
-4. **TypeScript Errors:** 1363 errors in production code
-5. **Viral `any` Types:** 234 explicit `: any` usages
-6. **Store Fragmentation:** Multiple store locations across codebase
-
-### Remediation Plan
-
-See [Master Risk Register](../quality/reports/MASTER-RISK-REGISTER.md) for detailed remediation steps.
-
-### Conflict Resolution (Planned)
-
-**Issue:** Agent CRUD operations may conflict with human edits on the same file.
-
-**Strategy:**
-1. File locking mechanism during agent operations
-2. Optimistic concurrency control with versioning
-3. Merge conflict resolution UI
-4. Audit trail for all file modifications
-
----
-
-## References
-
-### Architecture Decision Records
-- [ADR-033: PlatformContract & StorageGateway](../planning-artifacts/architecture/ADR-033-platform-contract-2026-01-11.md)
-- [ADR-024: State Management Consolidation](../project-planning-artifacts/adr-state-consolidation-2026-01-04.md)
-
-### Project Governance
-- [CLAUDE.md](../../CLAUDE.md) - Project governance
-- [AGENTS.md](../../AGENTS.md) - Agent patterns
-- [Fundamental Truth Checklist](../../check-list-for-fundamental-truth.md)
-
-### External Research
-- BYOK Best Practices (2026) - AES-256-GCM, audit logging, key rotation
-- Zustand vs IndexedDB Patterns (2025-2026) - Reactivity vs persistence
-- Agent Tool Permissions (2026) - Orchestrator pattern, parallel execution
-- RAG Infrastructure (2026) - Browser vector DB, local embeddings
-
----
-
-**Document Version:** 2.0.0
-**Last Updated:** 2026-01-16
-**Status:** Aligned with ADR-033, Fundamental Truth Checklist
+### Workspace Context Gap
+
+Missing: ToolExecutionIndicator has no workspace awareness
+Impact: Cannot show correct workspace badges without workspace context propagation
+
+## Edge-Case Inventory (Must Be Proven)
+
+### Edge Case 1: ProjectId null ↔ non-null transitions
+
+Risk: Oscillating navigation during route hydration and workspace switching
+
+Proof:
+
+- Location: NotesPage.tsx:81-86
+- Scenario: IDE store updates to null while route param has project
+- Result: navigate() called with /notes/null → invalid route Reproduction:
+1. Open Notes with project A
+1. Trigger IDE store to set projectId = null
+1. Effect triggers navigate to /notes/null
+1. Route fails to parse
+1. Effect re-triggers → loop
+### Edge Case 2: Browser mode first-visit auto-create failure
+
+Risk: Notes workspace starts "empty" and not recoverable
+
+Proof:
+
+- Location: notes.lazy.tsx:64
+- Scenario: Offline/permission failure during browser project creation
+- Result: User sees empty notes with no recovery path Mitigation Required:
+- Add retry logic
+- Show explicit "create failed" state
+- Provide manual recovery option
+### Edge Case 3: Browser mode tool logging
+
+Risk: Tools executed in browser mode must log projectId = 'notes:browser-mode'
+
+Proof:
+
+- Location: tool-execution-logger.ts:30-41
+- Current: No projectId in log records
+- Required: Always capture actual projectId including 'notes:browser-mode'
+### Edge Case 4: Prompt caching staleness
+
+Risk: AI suggests forbidden tools after permission changes
+
+Proof:
+
+- Location: prompt-composer.ts:163-169
+- Current: Cache invalidates only on explicit config change
+- Required: Subscribe to permission:changed events
+### Edge Case 5: Scroll-position map growth
+
+Risk: Performance degradation, larger IndexedDB payload over long sessions
+
+Proof:
+
+- Location: Note store scroll position tracking
+- Current: Unbounded map growth
+- Required: LRU/TTL bounds
+## Remediation Roadmap
+
+### Immediate (Today)
+
+Priority: P0 - Production blockers
+
+1. Add Navigation Guards (2 hours)
+1. Add Duration Validation (1 hour)
+1. Fix React Key Instability (30 minutes)
+### Short-Term (This Sprint)
+
+Priority: P0 - Data integrity
+
+1. Implement Migration v21 for projectId (3 hours)
+1. Add Permission Change Cache Invalidation (2 hours)
+1. Enhance Denied Tools Logging (2 hours)
+### Long-Term (Next Sprint)
+
+Priority: P1 - Architecture improvements
+
+1. Consolidate Event Propagation (1 day)
+1. Add Bounded Persistence (1 day)
+1. Unify Prompt-Tool Sources (4 hours)
+## Test Requirements
+
+### Immediate Tests Required
+
+1. Cross-Workspace Project Switching Test
+1. Migration v21 Test
+1. Browser Mode Tool Logging Test
+## Summary
+
+### Critical Issues Requiring Immediate Attention
+
+Total Immediate Work: ~10.5 hours
+
+### Recommendations
+
+1. Halt production deployment until navigation guards are added
+1. Create dedicated ticket for each critical issue
+1. Add integration tests for all edge cases
+1. Monitor navigation cycles in production with logging
+1. Establish monthly governance audits going forward Audit Complete: 2026-01-12 Next Audit: 2026-02-12 (30 days)
+
+

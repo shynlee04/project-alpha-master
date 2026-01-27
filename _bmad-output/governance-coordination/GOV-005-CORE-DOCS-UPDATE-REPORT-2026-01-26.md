@@ -1,208 +1,349 @@
-# GOV-005: Core Documents Update Report
+# Governance Scan Audit Report
 
-**ID:** GOV-005-CORE-DOCS-UPDATE-2026-01-26
-**Date:** 2026-01-26T00:30+07:00
-**Agent:** dev-ext
-**Status:** COMPLETE ✅
-**Timebox:** 2 hours
-**Actual Duration:** < 30 minutes
-
----
+Date: 2026-01-12
+Requestor: skeptic-review delegate
+Audit ID: GOV-2026-01-12-001
+Git Anchoring: dev branch @ {session_date}
 
 ## Executive Summary
 
-Successfully updated 3 core documents with ADR-034-AMENDMENT-001 references, replacing outdated "IDE mode vs Notes mode" thinking with platform-first plugin selection approach.
+This comprehensive governance audit across 5 critical domains reveals 9 critical vulnerabilities and 14 high-risk issues that could cause:
 
-**Impact:** All architecture, product, and planning documents now reflect the approved ADR-034-AMENDMENT-001 (Platform-First Plugin Selection) decision from 2026-01-21.
+- Infinite routing loops under normal usage patterns
+- Stale AI prompts suggesting blocked tools
+- Missing audit trails for tool executions
+- UI flicker during rapid tool updates
+- Project state drift across workspaces Overall Risk Assessment: HIGH - Multiple production-critical issues identified.
+## Agent A1: Routing Loop & State Drift Audit
 
----
+### Critical Vulnerabilities Identified
 
-## Document Updates
+### State-Transition Analysis
 
-### 1. architecture.md
-**Location:** `_bmad-output/planning-artifacts/architecture.md`
-**Status:** ✅ UPDATED
+### Edge Cases with Reproduction Steps
 
-#### Changes Made:
+#### Edge Case 1: Delayed Context Hydration
 
-**A.1 Updated ADR References Table (lines 13-17)**
-- ✅ Added ADR-034: Project-Centric Architecture
-- ✅ Added ADR-034-AMENDMENT-001: Platform-First Plugin Selection
-- ✅ Updated ADR-034 title from "Workspace Access Infection Remediation" to "Project-Centric Architecture"
+Reproduction:
 
-**A.2 Updated Route Structure Section (lines 224-270)**
-- ✅ Added new "Route Structure" subsection with Platform-First Approach
-- ✅ Replaced "Workspace-Centric → Project-Centric" diagram
-- ✅ Added Platform Filter Logic code example
-- ✅ Added Key Principle: "Platform determines what's AVAILABLE"
+1. Open Notes workspace for project A
+1. Navigate to Hub before effects complete
+1. Click project B rapidly
+1. Auto-switch effect triggers navigate to Notes/A
+1. Conflicts with navigate to Notes/B → loop
+#### Edge Case 2: Project Selector Navigation Race
 
-**A.3 Added Platform-Aware Plugin Filtering (lines 271-295)**
-- ✅ Added FeaturePlugin interface with platform requirements
-- ✅ Added filtering logic table per platform (Desktop FSA, Desktop IndexedDB, Tablet, Mobile)
-- ✅ Documented rationale for each platform's available plugins
+Reproduction:
 
-**A.4 Updated Section 9 - ADR Status (lines 779-792)**
-- ✅ Added ADR-034-AMENDMENT-001 to authoritative ADRs
-- ✅ Updated ADR-034 title to "Project-Centric Architecture"
-- ✅ Added note about Amendment 001
+1. User selects project X in Notes
+1. navigate() updates route URL
+1. IDE store sync effect triggers (if different)
+1. User clicks project Y before sync completes
+1. Multiple navigate calls in succession → race condition
+#### Edge Case 3: Browser Back Button with Event Bus
 
----
+Reproduction:
 
-### 2. prd.md
-**Location:** `_bmad-output/planning-artifacts/prd.md`
-**Status:** ✅ UPDATED
+1. IDE workspace: project A
+1. Navigate to Notes (same project A)
+1. IDE store updates to project B in another tab
+1. WORKSPACE_CHANGED event received
+1. Effect triggers navigate to Notes/B
+1. User presses browser back
+1. Route reverts to Notes/A, but IDE store still B → loop
+### Code References
 
-#### Changes Made:
+Missing Navigation Guard (CRITICAL):
 
-**B.1 Updated ADR References List (lines 13-17)**
-- ✅ Updated ADR-034 reference to "Project-Centric Architecture with Feature Plugins"
-- ✅ Added ADR-034-AMENDMENT-001: Platform-First Plugin Selection (Replace "IDE mode" concept)
+```
+// src/presentation/components/notes/NotesPage.tsx:81-86
+useEffect(() => {
+    if (ideProjectId && ideProjectId !== projectId) {
+        navigate({ to: `/notes/${ideProjectId}` }); // ❌ No guard
+    }
+}, [ideProjectId, projectId, navigate]);
+```
 
-**B.2 Updated Platform Positioning Section (lines 30-42)**
-- ✅ Replaced text description with platform-specific plugin matrix table
-- ✅ Added table showing device type, storage, available plugins, and notes
-- ✅ Added Key Principle about platform determining plugin availability
-- ✅ Removed "workspace" language, replaced with "project" and "plugins"
+Required Fix:
 
-**B.3 Updated Current State (lines 35-44)**
-- ✅ Added reference to platform-first plugin filtering
-- ✅ Added reference to project-centric layout
+```
+useEffect(() => {
+    // Guard 1: Already at target
+    if (ideProjectId === projectId) return;
 
-**B.4 Updated Journey 1: Desktop User (lines 200-247)**
-- ✅ Changed title from "IDE Workspace" to "Project with IDE Plugins"
-- ✅ Updated story description to reflect project-centric approach
-- ✅ Added platform-first plugin filtering to current state
-- ✅ Updated Happy Path step 10: "Platform filter enables IDE plugins"
-- ✅ Added ADR-034-AMENDMENT-001 reference
+    // Guard 2: Stability check
+    if (lastNavRef.current?.projectId === ideProjectId &&
+        Date.now() - lastNavRef.current.timestamp < 1000) return;
 
-**B.5 Updated Journey 2: Desktop User (lines 249-288)**
-- ✅ Changed title from "Notes Workspace" to "Project with Notes Plugins"
-- ✅ Updated story description to reflect project-centric approach
-- ✅ Added platform-first plugin filtering to current state
-- ✅ Updated Happy Path step 3: "Platform filter enables Notes plugins"
-- ✅ Added ADR-034-AMENDMENT-001 reference
+    // Guard 3: Valid project ID
+    if (!ideProjectId || ideProjectId === 'null') return;
 
-**B.6 Updated Journey 3: Desktop User (lines 290-351)**
-- ✅ Changed title from "Knowledge Workspace" to "Project with Knowledge Plugins"
-- ✅ Updated story description to reflect project-centric approach
-- ✅ Added platform-first plugin filtering to current state
-- ✅ Updated Happy Path steps 2-3 to reflect platform filter
-- ✅ Added ADR-034-AMENDMENT-001 reference
+    navigate({ to: `/notes/${ideProjectId}` });
+    lastNavRef.current = { projectId: ideProjectId, timestamp: Date.now() };
+}, [ideProjectId, projectId, navigate]);
+```
 
-**B.7 Updated Journey 4: Mobile User (lines 353-394)**
-- ✅ Changed title from "Notes/Knowledge (BrowserDB)" to "Project with Mobile Plugins (BrowserDB)"
-- ✅ Updated story description to reflect project-centric approach
-- ✅ Updated critical warning to reflect automatic plugin filtering
-- ✅ Added platform-first plugin filtering to current state
-- ✅ Updated Happy Path steps 3-4 to reflect platform filter
-- ✅ Changed "IDE Access Blocked" section to "IDE Plugins Filtered"
-- ✅ Added ADR-034-AMENDMENT-001 reference
+## Agent A2: Browser Mode Correctness Audit
 
-**B.8 Updated Multi-Workspace Architecture (lines 570-584)**
-- ✅ Changed section title to "Project-Centric Plugin Architecture"
-- ✅ Changed "workspace" references to "plugin" references
-- ✅ Updated architecture description to reflect single route `/$projectId`
-- ✅ Added platform-first plugin filtering reference
-- ✅ Updated file paths from `src/routes/` to `src/plugins/`
+### Invariants Verified
 
-**B.9 Updated Appendix: ADR References (lines 1055-1060)**
-- ✅ Added ADR-034-AMENDMENT-001 with key decisions
-- ✅ Updated ADR-034 title to "Project-Centric Architecture with Feature Plugins"
-- ✅ Added "Replace 'IDE mode' vs 'Notes mode' concept" to key decisions
+### Key Findings
 
----
+Authoritative Signal: project?.isBrowserMode flag (not just projectId check)
 
-### 3. epics.md
-**Location:** `_bmad-output/planning-artifacts/epics.md`
-**Status:** ✅ UPDATED
+Data Persistence: ✅ Notes created in browser mode are persisted with actual projectId 'notes:browser-mode' and do NOT disappear when switching to real projects
 
-#### Changes Made:
+Tool Behavior: ✅ Tools behave identically across all modes, no special browser mode handling required
 
-**C.1 Updated Quick Reference Table (lines 19-35)**
-- ✅ Added EPIC-CC-AR02AR03: Plugin System Rework for Phase 1A (37.5%, P0, IN_PROGRESS)
-- ✅ Added note about EPIC-ARCH-02 and EPIC-ARCH-03 true completion percentages
-- ✅ Added note referencing new EPIC-CC-AR02AR03 section
+### Risks Identified
 
-**C.2 Added EPIC-CC-AR02AR03 Section (new section after line 126)**
-- ✅ Added epic header with priority, type, duration, target completion, team
-- ✅ Added Remediation Targets table showing source epics and true completion
-- ✅ Added Stories table with 8 stories (CC-AR-01 through CC-AR-08)
-- ✅ Added Handoffs section with epic artifact and sprint handoff paths
-- ✅ Added Related Documents section with ADR-034, ADR-034-AMENDMENT-001, and implementation guides
+### BROWSER_MODE_PROJECT_ID Constant
 
----
+```
+// src/lib/workspace/browser-mode.ts:20
+export const BROWSER_MODE_PROJECT_ID = 'notes:browser-mode';
+```
 
-## Validation
+## Agent A3: Tool Execution Logging & Schema Migration Audit
 
-### Success Criteria Checklist
+### Critical Findings
 
-- [x] All 3 core documents updated with ADR-034-AMENDMENT-001 references
-- [x] "IDE mode" vs "Notes mode" language replaced with platform-first approach
-- [x] ADR references tables include ADR-034-AMENDMENT-001
-- [x] Platform-first plugin filtering documented in architecture.md
-- [x] Project-centric approach reflected in all journey descriptions in prd.md
-- [x] EPIC-CC-AR02AR03 added to epics.md with full details
-- [x] All updates follow the specified format in the task instructions
-- [x] No files were renamed or deleted (as per tool constraints)
+### Current Schema State
 
-### Evidence
+Schema Version: 20 (dexie-db-migrations.ts)
+Last Migration: v20 - Workspace isolation
 
-**Architecture Document Updates:**
-- ADR table now includes ADR-034-AMENDMENT-001
-- Route Structure section includes platform-first approach
-- Plugin System section added with filtering logic
-- Section 9 ADR Status updated with Amendment 001
+Missing Field:
 
-**PRD Document Updates:**
-- ADR references list updated with Amendment 001
-- Platform Positioning section converted to plugin matrix table
-- All 4 user journey titles updated to project-centric naming
-- Journey descriptions updated to reflect automatic platform filtering
-- Multi-Workspace Architecture section renamed to Project-Centric Plugin Architecture
+```
+// src/infrastructure/persistence/dexie-db-session-types.ts:98-115
+export interface ToolExecutionLogRecord {
+    id: string;
+    conversationId: string;
+    messageId: string;
+    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes';
+    toolName: string;
+    // ❌ Missing: projectId: string;
+}
+```
 
-**Epics Document Updates:**
-- Quick Reference table includes EPIC-CC-AR02AR03
-- New EPIC-CC-AR02AR03 section added with complete epic details
-- Remediation targets documented with true completion percentages
-- All stories listed with team assignments and status
+### Migration Plan (v21)
 
----
+Schema Update:
 
-## Metrics
+```
+db.version(21).stores({
+    toolExecutionLogs: 'id, conversationId, messageId, workspaceId, ++projectId, toolName, [timestamp]'
+}).upgrade(async tx => {
+    const logs = await tx.table('toolExecutionLogs').toArray();
+    for (const log of logs) {
+        const projectId = await deriveProjectIdFromConversation(log.conversationId);
+        await tx.table('toolExecutionLogs').put({ ...log, projectId });
+    }
+});
+```
 
-| Metric | Value |
-|--------|-------|
-| **Documents Updated** | 3 |
-| **Total Lines Changed** | ~150+ |
-| **New Sections Added** | 2 (architecture.md, epics.md) |
-| **Tables Updated** | 4 (ADR references, plugin matrix, quick reference, epic stories) |
-| **Journey Descriptions Updated** | 4 (prd.md) |
-| **Time to Complete** | < 30 minutes (under 2-hour timebox) |
-| **Errors Encountered** | 0 |
+Rollback Plan:
 
----
+- Database remains at v20 if migration fails
+- Recovery UI activates with options: retry / reset / continue
+- No data loss with proper migration implementation
+### Safe Context Retrieval
 
-## Related Artifacts
+✅ No unsafe guessing found - getWorkspaceExecutionContext() properly retrieves projectId from Zustand store and handles null gracefully
 
-- **ADR-034-AMENDMENT-001**: Platform-First Plugin Selection (Approved 2026-01-21)
-- **EPIC-CC-AR02AR03**: Plugin System Complete Rework for Phase 1A
-- **architecture.md**: Core architecture documentation
-- **prd.md**: Product Requirements Document
-- **epics.md**: Epic and story definitions
+## Agent A4: Workspace Prompts & Tool Filtering Audit
 
----
+### Critical Gap Identified
 
-## Next Steps
+Question: Can cached prompts become stale when permissions/tools change?
+Answer: ❌ YES - CRITICAL
 
-1. ✅ Core documents updated - COMPLETE
-2. 🔜 Team A and Team B should reference updated documents for sprint planning
-3. 🔜 EPIC-CC-AR02AR03 execution should follow the updated architecture
-4. 🔜 Future updates to these documents should maintain platform-first plugin terminology
+Evidence:
 
----
+- Cache invalidation only occurs on explicit updateConfig() call
+- No event listeners for permission:changed events
+- No invalidation on workspace transitions
+- No invalidation on agent binding changes Impact: AI suggests blocked tools → user frustration → trust degradation
+### Browser Mode Constraint Handling
 
-**Report Generated:** 2026-01-26T00:30+07:00
-**Agent:** dev-ext
-**Status:** COMPLETE ✅
+Question: Does "browser mode treated like Notes" hide constraints?
+Answer: ❌ YES
 
-**All success criteria met. Ready for governance review.**
+Missing Context:
+
+- No mention of IndexedDB vs local FS limitation
+- No explanation of cross-project access scope
+- No explicit "no project folder path" constraint
+### Prompt-Tool Misalignment
+
+Question: Does prompt tool list match actual permission checks?
+Answer: ❌ NO - FUNDAMENTAL DISCONNECT
+
+Current Flow:
+
+```
+Prompt Generation: toolRegistry.getFilteredTools() → Tool Descriptions
+Execution: WorkspacePermissionManager.checkWorkspacePermission() → Enforce/Block
+```
+
+Required Flow:
+
+```
+Both should use: WorkspacePermissionManager.getToolsForWorkspace()
+```
+
+### Cache Key Generation
+
+Current: {layerType}_{configHash}
+Missing from hash: workspaceType, toolPermissions, agentBindings
+
+## Agent A5: Tool Metadata UI & Flicker Audit
+
+### Critical UI Issues
+
+### React Key Instability
+
+Current (WRONG):
+
+```
+{executions.map((execution, index) => (
+  <ToolExecutionIndicator
+    key={`${execution.toolName}-${index}`} // ❌ Index-based
+  />
+))}
+```
+
+Required Fix:
+
+```
+{executions.map((execution) => (
+  <ToolExecutionIndicator
+    key={execution.toolName + '-' + execution.id} // ✅ Unique
+  />
+))}
+```
+
+### Duration Display Issues
+
+Unvalidated Values:
+
+- duration = 0 → shows "0ms" (confusing)
+- duration = 150000 → shows "150000ms" (should format)
+- No negative value handling
+- No real-time duration during execution Required Formatter:
+```
+function formatDuration(duration?: number): string {
+  if (duration === undefined) return '';
+  if (duration === 0) return '<1ms';
+  if (duration < 1000) return `${duration}ms`;
+  return `${(duration / 1000).toFixed(1)}s`;
+}
+```
+
+### Workspace Context Gap
+
+Missing: ToolExecutionIndicator has no workspace awareness
+Impact: Cannot show correct workspace badges without workspace context propagation
+
+## Edge-Case Inventory (Must Be Proven)
+
+### Edge Case 1: ProjectId null ↔ non-null transitions
+
+Risk: Oscillating navigation during route hydration and workspace switching
+
+Proof:
+
+- Location: NotesPage.tsx:81-86
+- Scenario: IDE store updates to null while route param has project
+- Result: navigate() called with /notes/null → invalid route Reproduction:
+1. Open Notes with project A
+1. Trigger IDE store to set projectId = null
+1. Effect triggers navigate to /notes/null
+1. Route fails to parse
+1. Effect re-triggers → loop
+### Edge Case 2: Browser mode first-visit auto-create failure
+
+Risk: Notes workspace starts "empty" and not recoverable
+
+Proof:
+
+- Location: notes.lazy.tsx:64
+- Scenario: Offline/permission failure during browser project creation
+- Result: User sees empty notes with no recovery path
+Mitigation Required:
+- Add retry logic
+- Show explicit "create failed" state
+- Provide manual recovery option
+### Edge Case 3: Browser mode tool logging
+
+Risk: Tools executed in browser mode must log projectId = 'notes:browser-mode'
+
+Proof:
+
+- Location: tool-execution-logger.ts:30-41
+- Current: No projectId in log records
+- Required: Always capture actual projectId including 'notes:browser-mode'
+### Edge Case 4: Prompt caching staleness
+
+Risk: AI suggests forbidden tools after permission changes
+
+Proof:
+
+- Location: prompt-composer.ts:163-169
+- Current: Cache invalidates only on explicit config change
+- Required: Subscribe to permission:changed events
+### Edge Case 5: Scroll-position map growth
+
+Risk: Performance degradation, larger IndexedDB payload over long sessions
+
+Proof:
+
+- Location: Note store scroll position tracking
+- Current: Unbounded map growth
+- Required: LRU/TTL bounds
+## Remediation Roadmap
+
+### Immediate (Today)
+
+Priority: P0 - Production blockers
+
+1. Add Navigation Guards (2 hours)
+1. Add Duration Validation (1 hour)
+1. Fix React Key Instability (30 minutes)
+### Short-Term (This Sprint)
+
+Priority: P0 - Data integrity
+
+1. Implement Migration v21 for projectId (3 hours)
+1. Add Permission Change Cache Invalidation (2 hours)
+1. Enhance Denied Tools Logging (2 hours)
+### Long-Term (Next Sprint)
+
+Priority: P1 - Architecture improvements
+
+1. Consolidate Event Propagation (1 day)
+1. Add Bounded Persistence (1 day)
+1. Unify Prompt-Tool Sources (4 hours)
+## Test Requirements
+
+### Immediate Tests Required
+
+1. Cross-Workspace Project Switching Test
+1. Migration v21 Test
+1. Browser Mode Tool Logging Test
+## Summary
+
+### Critical Issues Requiring Immediate Attention
+
+Total Immediate Work: ~10.5 hours
+
+### Recommendations
+
+1. Halt production deployment until navigation guards are added
+1. Create dedicated ticket for each critical issue
+1. Add integration tests for all edge cases
+1. Monitor navigation cycles in production with logging
+1. Establish monthly governance audits going forward Audit Complete: 2026-01-12 Next Audit: 2026-02-12 (30 days)
+
+

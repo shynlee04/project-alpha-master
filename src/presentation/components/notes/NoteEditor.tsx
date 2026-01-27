@@ -794,6 +794,29 @@ export function NoteEditor({
         initialContent,
     });
 
+    // BUG-4 FIX: Update editor when external content changes (file switch or external update)
+    // useCreateBlockNote only uses initialContent on first render, so we need to manually
+    // update the editor when the external path changes
+    const prevExternalPathRef = useRef<string | undefined>(externalPath);
+    useEffect(() => {
+        // Only for external mode, when path changes, replace all blocks
+        if (!isExternalMode || !externalBlocks || !editor) return;
+        
+        // Check if path changed (meaning new file selected)
+        if (prevExternalPathRef.current !== externalPath) {
+            console.log('[NoteEditor] BUG-4 FIX: External path changed, replacing editor blocks');
+            prevExternalPathRef.current = externalPath;
+            
+            // Replace all blocks with new external content
+            try {
+                editor.replaceBlocks(editor.document, externalBlocks as any);
+                console.log('[NoteEditor] Editor blocks replaced for new file:', externalPath);
+            } catch (error) {
+                console.error('[NoteEditor] Failed to replace blocks:', error);
+            }
+        }
+    }, [isExternalMode, externalPath, externalBlocks, editor]);
+
     // 43-04: Track note content for AI suggestions
     const [noteContent, setNoteContent] = useState<string>('');
     const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
@@ -1001,8 +1024,10 @@ export function NoteEditor({
     // reload note content if it's currently open in the editor
     const projectContext = useProjectContext();
 
+    // BUG-2 FIX: Listen for FILE_UPDATED events for INTERNAL notes (noteId-based)
     useEffect(() => {
-        if (!projectContext) return;
+        if (!projectContext || isExternalMode) return; // Only for internal mode
+        if (!noteId) return;
 
         const unsubscribe = fileEventBus.onWithFilter(
             'file:updated',
@@ -1033,7 +1058,51 @@ export function NoteEditor({
         return () => {
             unsubscribe();
         };
-    }, [noteId, projectContext?.projectId, notes]);
+    }, [noteId, projectContext?.projectId, notes, isExternalMode]);
+
+    // BUG-2 FIX: Listen for FILE_UPDATED events for EXTERNAL files (FSA files from FileTree)
+    // This re-reads from FSA instead of store (which doesn't have external files)
+    useEffect(() => {
+        if (!projectContext || !isExternalMode) return; // Only for external mode
+        if (!externalPath) return;
+        if (!projectContext.gateway) return;
+
+        const gateway = projectContext.gateway;
+        const unsubscribe = fileEventBus.onWithFilter(
+            'file:updated',
+            async (event: FileEvent) => {
+                // Only reload if it's our external file AND not from our own save
+                if (event.path === externalPath && event.source !== 'user') {
+                    console.log('[NoteEditor] External FILE_UPDATED detected for FSA file, reloading:', externalPath);
+
+                    try {
+                        // BUG-2 FIX: Re-read from FSA, not from store
+                        const data = await gateway.read(externalPath);
+                        const content = new TextDecoder().decode(data);
+                        const blocks = await markdownToBlocks(content);
+                        
+                        // BUG-4 FIX: Replace editor content with new blocks
+                        if (editor) {
+                            editor.replaceBlocks(editor.document, blocks as any);
+                            console.log('[NoteEditor] Editor content replaced with FSA reload');
+                        }
+                        
+                        toast.info('File was updated externally, content reloaded');
+                    } catch (error) {
+                        console.error('[NoteEditor] Failed to reload external file:', error);
+                        toast.error('Failed to reload file content');
+                    }
+                }
+            },
+            {
+                projectId: projectContext.projectId,
+            }
+        );
+
+        return () => {
+            unsubscribe();
+        };
+    }, [isExternalMode, externalPath, projectContext?.gateway, projectContext?.projectId, editor]);
 
     // Render save status indicator
     const renderSaveStatus = () => {
