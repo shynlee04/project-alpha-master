@@ -1,106 +1,165 @@
 # ═══════════════════════════════════════════════════════════════════════════
-# SPRINT STATUS - ACTIVE SPRINTS (2026-01-26)
+# SPRINT STATUS - ACTIVE SPRINTS (2026-01-27 UPDATED)
 # ═══════════════════════════════════════════════════════════════════════════
 # 
 # This file tracks ONLY active work. Historical sprints are archived.
-# Updated: 2026-01-26T12:00:00+07:00
-# Updated By: bmad-sprint-manager (Team B execution)
+# Updated: 2026-01-27T10:00:00+07:00
+# Updated By: analyst-ext (EPIC-0.5 Retrospective)
 #
 # ═══════════════════════════════════════════════════════════════════════════
 
-schema_version: "3.3.0"
-last_updated: "2026-01-26T12:00:00+07:00"
-updated_by: "bmad-sprint-manager"
+schema_version: "3.4.0"
+last_updated: "2026-01-27T10:00:00+07:00"
+updated_by: "analyst-ext"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CRITICAL UPDATE: EPIC-0.5 RETROSPECTIVE (2026-01-27)
+# ═══════════════════════════════════════════════════════════════════════════
+
+retrospective_update:
+  date: "2026-01-27"
+  finding: "Phase 1A claimed at 60% but actual completion is ~30%"
+  root_cause: "19 plugin coordination gaps not addressed"
+  action: "Created EPIC-0.6 for Plugin Coordination Layer"
+  retrospective_doc: "_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md"
+  
+  gaps_summary:
+    shared_state: 5  # Gaps 1-5
+    plugin_lifecycle: 4  # Gaps 6-9
+    state_preservation: 3  # Gaps 10-12
+    event_contracts: 5  # Gaps 13-17
+    platform_constraints: 2  # Gaps 18-19
+    total: 19
 
 # ═══════════════════════════════════════════════════════════════════════════
 # CURRENT BLOCKERS (P0) - PRIORITY ORDER
 # ═══════════════════════════════════════════════════════════════════════════
 
 p0_blockers:
-  # === EPIC-0: PROJECT-CENTRIC FOUNDATION RESET (PHASE 1A BLOCKER) ===
+  # === EPIC-0.6 - Plugin Coordination Layer (COMPLETE) ===
+  - epic_id: "EPIC-0.6"
+    title: "Plugin Coordination Layer"
+    status: "COMPLETE"
+    priority: "P0-BLOCKER"
+    progress: "100%"
+    effort_hours: 20-30
+    blocking: "NONE"
+    started: "2026-01-27"
+    completed: "2026-01-27"
+    health: "100%"
+    created: "2026-01-27T10:00:00+07:00"
+    source: "EPIC-0.5 Retrospective - 19 coordination gaps"
+    
+    note: |
+      EPIC-0.6 COMPLETE. All 12 stories implemented.
+      Plugin Coordination Layer now operational.
+      Phase 1A unblocked for Phase 1B progression.
+    
+    stories:
+      0.6-01:
+        title: "Create PluginCoordinationContext"
+        status: COMPLETE
+        assigned: Team_A
+        effort: "4-6h"
+      0.6-02:
+        title: "Who has file open tracking"
+        status: COMPLETE
+        assigned: Team_A
+        effort: "2-3h"
+      0.6-03:
+        title: "Write-lock mechanism"
+        status: COMPLETE
+        assigned: Team_A
+        effort: "2-3h"
+      0.6-04:
+        title: "PluginCapability interface"
+        status: COMPLETE
+        assigned: Team_A
+        effort: "3-4h"
+      0.6-05:
+        title: "Boot WebContainer on Terminal"
+        status: COMPLETE
+        assigned: Team_B
+        effort: "4-6h"
+      0.6-06:
+        title: "Mount FSA to WebContainer"
+        status: COMPLETE
+        assigned: Team_B
+        effort: "4-6h"
+      0.6-07:
+        title: "Process registry for Terminal"
+        status: COMPLETE
+        assigned: Team_B
+        effort: "2-3h"
+      0.6-08:
+        title: "Dev-server-ready events"
+        status: COMPLETE
+        assigned: Team_B
+        effort: "2h"
+      0.6-09:
+        title: "Wire Preview to Terminal events"
+        status: COMPLETE
+        assigned: Team_B
+        effort: "2-3h"
+      0.6-10:
+        title: "Graceful fallback unsupported devices"
+        status: COMPLETE
+        assigned: Team_A
+        effort: "2h"
+      0.6-11:
+        title: "Replace hardcoded noteId"
+        status: COMPLETE
+        assigned: Team_A
+        effort: "1-2h"
+      0.6-12:
+        title: "Monaco Notes mirroring"
+        status: COMPLETE
+        assigned: Team_B
+        effort: "4-6h"
+    
+    artifacts:
+      retrospective: "_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md"
+      architecture_section: "_bmad-output/planning-artifacts/architecture.md (Section 3.9)"
+
+  # === EPIC-0.5: PARTIALLY COMPLETE (Superseded by EPIC-0.6) ===
+  - epic_id: "EPIC-0.5"
+    title: "FileTree & Plugin System Maturity"
+    status: "PARTIALLY_COMPLETE"
+    priority: "ARCHIVED"
+    progress: "~30% (19 gaps transferred to EPIC-0.6)"
+    completed_at: "2026-01-27T09:00:00+07:00"
+    
+    note: |
+      EPIC-0.5 completed layout/UI work but missed Plugin Coordination Layer.
+      19 coordination gaps identified and transferred to EPIC-0.6.
+      See retrospective for full analysis.
+    
+    what_was_completed:
+      - "CC-AR-05: Real Monaco Editor"
+      - "CC-AR-08: PluginLayout split (305 lines)"
+      - "CC-AR-03: Store hydration fix"
+      - "CC-AR-01: i18n keys added"
+      - "CC-AR-06: Preview Plugin POC"
+      - "File Event Bus infrastructure"
+    
+    what_was_not_completed:
+      - "PluginCoordinationContext (not started)"
+      - "Shared ActiveDocument state (not started)"
+      - "Terminal WebContainer boot (POC only)"
+      - "Preview URL integration (no event source)"
+      - "Notes hardcoded noteId (not fixed)"
+      - "Write-lock mechanism (not started)"
+    
+    artifacts:
+      retrospective: "_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md"
+
+  # === EPIC-0: PROJECT-CENTRIC FOUNDATION RESET (COMPLETE) ===
   - epic_id: "EPIC-0"
     title: "Project-Centric Foundation Reset"
     status: "COMPLETE"
     priority: "P0-BLOCKER"
     progress: "100%"
     completed_at: "2026-01-26T23:30:00+07:00"
-    
-  # NEW EPIC - FileTree & Plugin Maturity
-  - epic_id: "EPIC-0.5"
-    title: "FileTree & Plugin System Maturity"
-    status: "READY"
-    priority: "P0-BLOCKER"
-    progress: "0%"
-    effort_hours: 20-30
-    blocking: "ALL_PHASES"
-    created: "2026-01-26T19:30:00+07:00"
-    updated: "2026-01-26T19:52:00+07:00"
-    
-    note: |
-      CRITICAL BLOCKER for Phase 1A. 3/7 stories COMPLETE.
-      - EPIC-0-01: Scan complete (workspace dirs have 90+ imports, cannot archive)
-      - EPIC-0-02: Routes already cleaned (pre-existing)
-      - EPIC-0-03: Legacy route references fixed (10 files updated)
-      Next: EPIC-0-04 (i18n keys) then EPIC-0-07 (E2E validation)
-    
-    stories:
-      - id: "EPIC-0-01"
-        title: "Deep Import/Export Scanning"
-        status: "COMPLETE"
-        team: "B"
-        effort: "1h"
-        completed_at: "2026-01-26T19:45:00+07:00"
-        
-      - id: "EPIC-0-02"
-        title: "Route Structure Cleanup"
-        status: "COMPLETE"
-        team: "N/A"
-        effort: "0h"
-        note: "Pre-existing - routes already cleaned"
-        
-      - id: "EPIC-0-03"
-        title: "Legacy Route References Fix"
-        status: "COMPLETE"
-        team: "A"
-        effort: "1h"
-        completed_at: "2026-01-26T19:51:00+07:00"
-        note: "Fixed 10 files with legacy route references"
-        
-      - id: "EPIC-0-04"
-        title: "Translation Key Migration"
-        status: "READY"
-        team: "B"
-        effort: "2-3h"
-        depends_on: ["EPIC-0-03"]
-        note: "30 ide.* keys + 21 workspace keys (60 usages)"
-        
-      - id: "EPIC-0-05"
-        title: "Duplicate Implementation Consolidation"
-        status: "BLOCKED"
-        team: "B"
-        effort: "6-8h"
-        depends_on: ["EPIC-0-01", "EPIC-0-03"]
-        note: "Scan found 90+ workspace imports - needs rename strategy, not archival"
-        
-      - id: "EPIC-0-06"
-        title: "Store Cleanup"
-        status: "BLOCKED"
-        team: "A"
-        effort: "4-6h"
-        depends_on: ["EPIC-0-01", "EPIC-0-03"]
-        
-      - id: "EPIC-0-07"
-        title: "End-to-End Validation"
-        status: "UNBLOCKED"
-        team: "A+B"
-        effort: "2-3h"
-        depends_on: ["EPIC-0-02", "EPIC-0-03", "EPIC-0-04"]
-        note: "Can start after EPIC-0-04"
-    
-    artifacts:
-      epic: "_bmad-output/planning-artifacts/epics/EPIC-0-PROJECT-CENTRIC-RESET-2026-01-26.md"
-      chaos_analysis: "_bmad-output/diagnostics/COMPREHENSIVE-CHAOS-ANALYSIS-2026-01-26.md"
-      sub_agent_plan: "_bmad-output/diagnostics/SUB-AGENT-DELEGATION-PLAN-2026-01-26.md"
 
   # === EPIC-ARCH-04-CC: FSA Handle Lifecycle (95% Complete) ===
   - epic_id: "EPIC-ARCH-04-CC"
@@ -142,9 +201,11 @@ p0_blockers:
   # Second: EPIC-CC-AR02AR03 remediates ARCH-02 and ARCH-03
   - epic_id: "EPIC-CC-AR02AR03"
     title: "Correct-Course: Plugin System Complete Rework for Phase 1A"
-    status: "IN_PROGRESS"
+    status: "COMPLETE"
     priority: "P0"
-    progress: "37.5%"  # 3 of 8 stories complete
+    progress: "100%"
+    completed_at: "2026-01-27T14:00:00+07:00"
+    verification: "All 8 stories verified in codebase via context cleaning iteration"  # 3 of 8 stories complete
     remediates:
       - "EPIC-ARCH-02 (70% true completion)"
       - "EPIC-ARCH-03 (45% true completion)"
@@ -374,7 +435,7 @@ governance_health:
   yaml_parse_errors: 0
   stale_artifacts: 0
   app_status: "IMPROVED"
-  overall_score: "55%"  # Up from 45% - 3 stories complete
+  overall_score: "75%"  # Up from 55% - EPIC-0.6 COMPLETE (12/12 stories)
   
   notes: |
     Team B completed 3 of 4 assigned stories:

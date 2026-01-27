@@ -14,7 +14,7 @@
  * @created 2026-01-21
  */
 
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { FolderOpen, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +23,9 @@ import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// EPIC-0.6-02: Plugin Coordination for file open tracking
+import { usePluginCoordinationSafe } from '@/infrastructure/context/plugin-coordination-context';
 
 // Store - using shared file tree store for reactivity
 import { useFileTreeStore } from '@/infrastructure/persistence/stores/file-tree-store';
@@ -80,6 +83,13 @@ function FileTreeComponent({ width: _width, height: _height }: PluginMainProps) 
   // Get context from provider
   const { gateway, project, refreshFileTree, openFile, isDirty } = useProjectContext();
 
+  // EPIC-0.6-02: Plugin coordination for file open tracking
+  const coordination = usePluginCoordinationSafe();
+
+  // CRITICAL FIX: Use ref to break infinite loop (coordination object changes on every render)
+  const coordinationRef = useRef(coordination);
+  coordinationRef.current = coordination;
+
   // CRITICAL FIX: Direct selector calls to prevent infinite loop
   // Using individual selectors instead of useFileTreeNodes() hook
   const rootPaths = useFileTreeStore((state) => state.rootPaths);
@@ -115,9 +125,11 @@ function FileTreeComponent({ width: _width, height: _height }: PluginMainProps) 
 
   /**
    * Handle file selection - using store action
+   * EPIC-0.6-02: Also register with plugin coordination
+   * CRITICAL FIX: Use coordinationRef to avoid re-creating callback on coordination change
    */
   const handleSelect = useCallback(
-    (node: FileTreeNode) => {
+    async (node: FileTreeNode) => {
       if (node.kind === 'file') {
         selectFile(node.path);
         setFocusedPath(node.path);
@@ -125,10 +137,25 @@ function FileTreeComponent({ width: _width, height: _height }: PluginMainProps) 
         // Call context's openFile action
         openFile?.(node.path);
 
+        // EPIC-0.6-02: Register with plugin coordination
+        const coord = coordinationRef.current;
+        if (coord && gateway) {
+          try {
+            // Read file content and set as active document
+            const content = await gateway.read(node.path);
+            const decoder = new TextDecoder();
+            coord.setActiveDocument(node.path, decoder.decode(content));
+            coord.openDocument(node.path, 'filetree');
+            console.log('[FileTreePlugin] Registered with coordination:', node.path);
+          } catch (err) {
+            console.error('[FileTreePlugin] Failed to read file for coordination:', err);
+          }
+        }
+
         console.log('[FileTreePlugin] Selected file:', node.path);
       }
     },
-    [selectFile, openFile],
+    [selectFile, openFile, gateway], // CRITICAL: coordination removed, using ref instead
   );
 
   /**
@@ -274,6 +301,12 @@ function FileTreeComponent({ width: _width, height: _height }: PluginMainProps) 
       const isSelected = selectedPath === node.path;
       const isFocused = focusedPath === node.path;
 
+      // EPIC-0.6-02: Get editors that have this file open
+      const editors = !isDirectory && coordination
+        ? coordination.getEditorsForPath(node.path)
+        : [];
+      const openInOtherEditors = editors.filter((e) => e !== 'filetree').length;
+
       // Calculate padding based on depth
       const padding = `${depth * 16}px`;
 
@@ -307,6 +340,12 @@ function FileTreeComponent({ width: _width, height: _height }: PluginMainProps) 
              <span className="text-sm">{node.name}</span>
              {/* EPIC-0.5-03: Dirty file indicator */}
              {!isDirectory && isDirty(node.path) && <span className="ml-2 text-orange-500 text-xs">●</span>}
+             {/* EPIC-0.6-02: Open in other editors indicator */}
+             {openInOtherEditors > 0 && (
+               <span className="ml-1 text-blue-500 text-[10px]" title={`Open in ${editors.join(', ')}`}>
+                 [{openInOtherEditors}]
+               </span>
+             )}
            </div>
 
           {/* Render children if directory is expanded - using FRESH children from Map */}

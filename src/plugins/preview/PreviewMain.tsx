@@ -5,7 +5,7 @@
  * **CC-AR-06**: Preview Plugin Implementation
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Monitor, RefreshCw, ExternalLink, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,7 @@ import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interfa
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
+import { usePluginCoordinationSafe } from '@/infrastructure/context/plugin-coordination-context';
 
 // ============================================================================
 // Types
@@ -64,6 +65,13 @@ function PreviewMain(_props: PluginMainProps) {
   const projectContext = useProjectContext();
   const { project } = projectContext;
 
+  // EPIC-0.6-09: Plugin coordination for deferred URL consumption
+  const coordination = usePluginCoordinationSafe();
+
+  // CRITICAL FIX: Use ref to break infinite loop (coordination object changes on every render)
+  const coordinationRef = useRef(coordination);
+  coordinationRef.current = coordination;
+
   // State
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,17 +82,37 @@ function PreviewMain(_props: PluginMainProps) {
   // ============================================================================
 
   /**
+   * EPIC-0.6-09: Check for deferred URL on mount
+   *
+   * @remarks
+   * If Preview was toggled OFF when dev server started, the URL was
+   * queued in coordination store. Consume it on mount to restore preview.
+   * CRITICAL FIX: Run ONCE on mount only via empty deps + ref pattern
+   */
+  useEffect(() => {
+    const coord = coordinationRef.current;
+    if (!coord) return;
+
+    const deferredUrl = coord.consumePreviewUrl();
+    if (deferredUrl) {
+      console.log('[PreviewPlugin] Consuming deferred URL:', deferredUrl);
+      setPreviewUrl(deferredUrl);
+      setIsLoading(true); // Loading state for iframe
+    }
+  }, []); // CRITICAL: Empty deps = run once on mount
+
+  /**
    * Listen for dev server ready event from Terminal plugin
    *
    * @remarks
    * Terminal plugin dispatches 'dev-server-ready' custom event when
-   * it detects a dev server URL in the terminal output.
+   * it detects a dev server URL in terminal output.
    */
   useEffect(() => {
     const handleDevServerReady = (event: CustomEvent<DevServerReadyDetail>) => {
       console.log('[PreviewPlugin] Dev server ready:', event.detail.url);
       setPreviewUrl(event.detail.url);
-      setIsLoading(false);
+      setIsLoading(true); // Show loading while iframe loads
     };
 
     window.addEventListener('dev-server-ready', handleDevServerReady as EventListener);

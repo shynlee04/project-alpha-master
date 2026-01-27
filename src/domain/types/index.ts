@@ -55,3 +55,26 @@ export type { ViagentNoteFolder } from './viagent-metadata';
 export type { ViagentFileTreeEntry } from './viagent-metadata';
 export type { ViagentFileTreeSnapshot } from './viagent-metadata';
 export type { ViagentScanConfig } from './viagent-metadata';
+
+// ============================================================================
+// Plugin Coordination Types (EPIC-0.6-01)
+// ============================================================================
+
+export type {
+  SharedDocument,
+  OpenDocumentInfo,
+  WriteLock,
+  ProcessInfo,
+  DevServerInfo,
+  DeferredCapabilities,
+  SessionData,
+  PluginCoordinationState,
+  PluginCoordinationActions,
+  PluginCoordinationStore,
+} from './plugin-coordination.types';
+
+export {
+  DEFAULT_WRITE_LOCK_TIMEOUT,
+  MAX_DEFERRED_URLS,
+  MAX_OPEN_DOCUMENTS,
+} from './plugin-coordination.types';

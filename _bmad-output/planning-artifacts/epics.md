@@ -1,9 +1,21 @@
 # Via-Gent Epics and Stories
 
-**Version:** 3.0.0
-**Date:** 2026-01-26
-**Status:** ACTIVE - 100% Aligned with new-fundamental-truths.md v2.0.0
-**Last Updated:** 2026-01-26
+**Version:** 3.1.0
+**Date:** 2026-01-27
+**Status:** ACTIVE - Updated with EPIC-0.5 Retrospective Findings
+**Last Updated:** 2026-01-27
+
+---
+
+## ⚠️ CRITICAL UPDATE (2026-01-27)
+
+**Phase 1A Reality Check**: Claimed at 60% but analysis reveals **~30% true completion**.
+
+**Root Cause**: EPIC-0 and EPIC-0.5 focused on layout/UI improvements but missed **Plugin Coordination Layer**.
+
+**19 Coordination Gaps Identified** - See EPIC-0.6 for remediation.
+
+**Retrospective**: `_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md`
 
 ---
 
@@ -13,22 +25,24 @@
 
 | Phase | Epic | Progress | Priority | Status | Target Completion |
 |--------|-------|----------|----------|-----------------|
+| **Phase 1A Coordination** | EPIC-0.6 | 0% | **P0 BLOCKER** | 2026-01-29 |
+| **Phase 1A Remediation** | EPIC-0.5 | PARTIALLY_COMPLETE (19 gaps) | P0 CRITICAL | INCOMPLETE |
 | **Phase 1A** | EPIC-CC-AR02AR03 | 37.5% (3/8 stories) | P0 CRITICAL | 2026-01-28 |
 | **Foundation** | EPIC-ARCH-04-CC | 95% (CC-04 E2E pending) | P0 CRITICAL | 2026-01-26 |
 | **Foundation** | EPIC-UX-GLOBAL-UI | 75% (3/4 stories) | P0 CRITICAL | 2026-01-26 |
 | **Foundation** | EPIC-E2E-TOOLS | READY_FOR_PLANNING | P0 CRITICAL | - |
-| **Phase 1B** | EPIC-PH1B-BYOK-NOTES | READY_FOR_EXECUTION | P0 HIGH | 2026-02-01 |
-| **Phase 2** | EPIC-PH2-CHAT-AGENTS | READY_FOR_EXECUTION | P0 HIGH | 2026-02-02 |
-| **Phase 3** | EPIC-PH3-ADVANCED-PATTERNS | READY_FOR_EXECUTION | P1 HIGH | 2026-02-10 |
+| **Phase 1B** | EPIC-PH1B-BYOK-NOTES | BLOCKED_BY_EPIC-0.6 | P0 HIGH | 2026-02-01 |
+| **Phase 2** | EPIC-PH2-CHAT-AGENTS | BLOCKED_BY_PHASE_1A | P0 HIGH | 2026-02-02 |
+| **Phase 3** | EPIC-PH3-ADVANCED-PATTERNS | BLOCKED_BY_PHASE_2 | P1 HIGH | 2026-02-10 |
 
 ### Active Epics Summary
 
 | Metric | Count |
 |--------|-------|
-| **Total Active Epics** | 7 (Single epic per phase) |
-| **P0 Blocker Epics** | 3 (Phase 1A + Foundation) |
+| **Total Active Epics** | 8 (Including EPIC-0.6) |
+| **P0 Blocker Epics** | 4 (EPIC-0.6 + Phase 1A + Foundation) |
 | **P1 High Priority Epics** | 4 (Phase 1B, 2, 3) |
-| **Archived Legacy Epics** | 22 (EPIC-ARCH-01/02/03, FS, 38, 39, 40, 45, 46, CC-01 through CC-12, etc.) |
+| **Archived Legacy Epics** | 23 (EPIC-ARCH-01/02/03, FS, 38, 39, 40, 45, 46, CC-01 through CC-12, EPIC-0.5 partial) |
 
 ---
 
@@ -68,19 +82,108 @@ Establish project-centric architecture with plugin system, platform-aware defaul
 - Chrome 122+ for FSA persistent permissions
 - Chrome 129+ for structured clone optimization
 
-### Current Progress: 45%
+### Current Progress: 30% (CORRECTED 2026-01-27)
 
-According to `the-3-phase-approach.md` and `EPIC-STORY-INVENTORY-2026-01-26.md`:
+**Previous Claim**: 45% → **Actual**: 30% after EPIC-0.5 retrospective.
 
-| Component | Status | Blockers |
-|-----------|--------|-----------|
-| **Project Management System** | PARTIAL | FSA handle lifecycle incomplete |
-| **Monaco Editor Plugin** | POC STUB | Real Monaco Editor missing |
-| **Terminal Plugin** | COMPLETE | ✅ WebContainer integration working |
-| **FileTree Plugin** | COMPLETE | ✅ Sync integration working |
-| **Notes Plugin** | PARTIAL | Markdown sync needs work |
-| **Plugin Layout System** | GOD COMPONENT | 1034 lines, drag-drop broken |
-| **Platform-First Defaults** | NOT WIRED | platform-defaults.ts exists but not used |
+| Component | Status | Blockers | Corrected Status |
+|-----------|--------|-----------|------------------|
+| **Project Management System** | PARTIAL | FSA handle lifecycle incomplete | PARTIAL |
+| **Monaco Editor Plugin** | ~~POC STUB~~ | ~~Real Monaco Editor missing~~ | ✅ REAL MONACO (CC-AR-05) |
+| **Terminal Plugin** | ~~COMPLETE~~ | ~~WebContainer integration working~~ | ⚠️ POC ONLY (no process registry) |
+| **FileTree Plugin** | ~~COMPLETE~~ | ~~Sync integration working~~ | ⚠️ 80% (no coordination contract) |
+| **Notes Plugin** | PARTIAL | Markdown sync needs work | PARTIAL (hardcoded noteId) |
+| **Plugin Layout System** | ~~GOD COMPONENT~~ | ~~1034 lines~~ | ✅ 305 lines (CC-AR-08) |
+| **Platform-First Defaults** | NOT WIRED | platform-defaults.ts exists but not used | NOT WIRED |
+| **Plugin Coordination Layer** | **NOT STARTED** | **19 gaps identified** | **P0 BLOCKER** |
+
+---
+
+## EPIC-0.6: Plugin Coordination Layer (P0 BLOCKER)
+
+**Priority:** P0 BLOCKER - Must complete before Phase 1B
+**Status:** 0% (New Epic)
+**Created:** 2026-01-27
+**Estimated:** 20-30 hours (3-4 days)
+**Target Completion:** 2026-01-29
+
+**Source**: EPIC-0.5 Retrospective - 19 coordination gaps identified
+
+**Description:**
+Create the missing Plugin Coordination Layer. EPIC-0 and EPIC-0.5 focused on individual plugin fixes but plugins remain isolated islands. This epic establishes shared state coordination between plugins.
+
+### P0 Stories (Coordination Core)
+
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|--------|--------|
+| **0.6-01** | Create PluginCoordinationContext with SharedDocument state | P0 | A | 4-6h | ⏳ READY |
+| **0.6-02** | Add "who has file open" tracking to coordination context | P0 | A | 2-3h | ⏳ BLOCKED (by 0.6-01) |
+| **0.6-03** | Implement write-lock mechanism for concurrent edit prevention | P0 | B | 2-3h | ⏳ BLOCKED (by 0.6-01) |
+| **0.6-04** | Create PluginCapability interface and registry | P0 | A | 3-4h | ⏳ READY |
+
+### P1 Stories (Terminal Production)
+
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|--------|--------|
+| **0.6-05** | Boot WebContainer on Terminal mount | P1 | B | 4-6h | ⏳ READY |
+| **0.6-06** | Mount FSA files to WebContainer | P1 | B | 4-6h | ⏳ BLOCKED (by 0.6-05) |
+| **0.6-07** | Implement process registry for Terminal | P1 | B | 2-3h | ⏳ BLOCKED (by 0.6-05) |
+| **0.6-08** | Emit preview URL events from Terminal | P1 | B | 2h | ⏳ BLOCKED (by 0.6-07) |
+
+### P1 Stories (Preview Integration)
+
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|--------|--------|
+| **0.6-09** | Wire Preview to Terminal URL events | P1 | A | 2-3h | ⏳ BLOCKED (by 0.6-08) |
+| **0.6-10** | Implement graceful fallback for unsupported devices | P1 | A | 2h | ⏳ READY |
+
+### P2 Stories (Notes Mirroring)
+
+| Story | Title | Priority | Team | Effort | Status |
+|-------|-------|----------|------|--------|--------|
+| **0.6-11** | Replace hardcoded noteId with route parameter | P2 | A | 1-2h | ⏳ READY |
+| **0.6-12** | Implement Monaco ↔ Notes mirroring via coordination context | P2 | B | 4-6h | ⏳ BLOCKED (by 0.6-01, 0.6-11) |
+
+**Acceptance Criteria:**
+1. Plugins can share state about which file is currently being edited
+2. Write-lock prevents concurrent edits to same file from different plugins
+3. Terminal boots WebContainer and mounts FSA files
+4. Preview displays URL from Terminal output
+5. Notes uses route parameter for noteId, not hardcoded
+
+**Dependencies:**
+- EPIC-ARCH-04-CC (CC-04 E2E complete)
+- `file-event-bus.ts` exists (infrastructure ready)
+
+**Artifacts:**
+- Retrospective: `_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md`
+- Gap Analysis: 19 coordination gaps documented in retrospective
+
+---
+
+## EPIC-0.5: FileTree & Plugin System Maturity (PARTIALLY_COMPLETE)
+
+**Priority:** ARCHIVED - Superseded by EPIC-0.6
+**Status:** PARTIALLY_COMPLETE - 19 coordination gaps transferred to EPIC-0.6
+**Completed:** 2026-01-27
+**Retrospective:** `_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md`
+
+**What Was Completed:**
+- ✅ Real Monaco Editor (CC-AR-05)
+- ✅ PluginLayout split (305 lines from 1034)
+- ✅ Store hydration fix (_hasHydrated flag)
+- ✅ i18n keys added
+- ✅ Preview Plugin created (POC)
+- ✅ File Event Bus infrastructure
+
+**What Was NOT Completed (19 Gaps):**
+- ❌ PluginCoordinationContext (not started)
+- ❌ Shared ActiveDocument state (not started)
+- ❌ Terminal WebContainer boot (POC only)
+- ❌ Preview URL integration (no event source)
+- ❌ Notes hardcoded noteId (not fixed)
+- ❌ Write-lock mechanism (not started)
+- ❌ Plugin capability declarations (not started)
 
 ---
 

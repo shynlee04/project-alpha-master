@@ -1,0 +1,10 @@
+{
+  "title": "Terminal",
+  "bootingWebContainer": "Booting WebContainer...",
+  "mountingFiles": "Mounting project files...",
+  "initializing": "Initializing...",
+  "loading": "Loading...",
+  "bootError": "Failed to boot WebContainer",
+  "mountError": "Failed to mount project files",
+  "unavailable": "Terminal unavailable"
+}

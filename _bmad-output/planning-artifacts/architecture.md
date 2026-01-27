@@ -599,6 +599,116 @@ const usePluginStore = createPluginStore<PluginState>((set, get) => ({
 
 **Status:** 0% - Not implemented
 
+### 3.9 Plugin Coordination Architecture (CRITICAL GAP - v3.1.0)
+
+**Source**: EPIC-0.5 Retrospective (2026-01-27) - 19 coordination gaps identified
+
+**Problem Statement:**
+Plugins are functional in isolation but cannot coordinate on shared resources (files, processes, state). The file event bus (`file-event-bus.ts`) provides infrastructure for CRUD events but no coordination context exists.
+
+**Location (Target):** `src/infrastructure/context/plugin-coordination-context.tsx`
+
+#### 3.9.1 PluginCoordinationContext Interface
+
+```typescript
+interface PluginCoordinationContext {
+  // Shared Document State (Gap 1-3)
+  activeDocument: SharedDocument | null;
+  openDocuments: Map<string, OpenDocumentInfo>;
+  acquireWriteLock: (path: string, pluginId: PluginId) => Promise<boolean>;
+  releaseWriteLock: (path: string, pluginId: PluginId) => void;
+  
+  // Plugin Capabilities (Gap 6-9)
+  capabilities: Map<PluginId, PluginCapability[]>;
+  registerCapability: (pluginId: PluginId, capability: PluginCapability) => void;
+  queryCapability: (capability: PluginCapability) => PluginId[];
+  
+  // State Preservation (Gap 10-12)
+  pluginState: Map<PluginId, PluginPersistentState>;
+  preserveState: (pluginId: PluginId, state: unknown) => void;
+  restoreState: (pluginId: PluginId) => unknown | null;
+}
+
+interface SharedDocument {
+  path: string;
+  content: string;
+  lastModified: number;
+  openedBy: PluginId[];
+  writeLock: { pluginId: PluginId; acquiredAt: number } | null;
+}
+
+interface OpenDocumentInfo {
+  path: string;
+  pluginId: PluginId;
+  openedAt: number;
+  hasUnsavedChanges: boolean;
+}
+
+interface PluginCapability {
+  type: 'file-editor' | 'process-runner' | 'preview' | 'ai-assist';
+  fileTypes?: string[];
+  processTypes?: string[];
+}
+```
+
+#### 3.9.2 Gap Categories (19 Total)
+
+| Category | Gaps | Status | EPIC |
+|----------|------|--------|------|
+| **Shared State** | 1-5 | NOT STARTED | EPIC-0.6-01 to 0.6-03 |
+| **Plugin Lifecycle** | 6-9 | NOT STARTED | EPIC-0.6-04 |
+| **State Preservation** | 10-12 | NOT STARTED | EPIC-0.6 (P2) |
+| **Event Contracts** | 13-17 | PARTIAL | file-event-bus exists |
+| **Platform Constraints** | 18-19 | NOT STARTED | EPIC-0.6-10 |
+
+#### 3.9.3 Detailed Gap Analysis
+
+**Category 1: Shared State (5 gaps)**
+
+| Gap | Description | Solution |
+|-----|-------------|----------|
+| 1 | No shared ActiveDocument state | `PluginCoordinationContext.activeDocument` |
+| 2 | No "who has file open" tracking | `OpenDocumentInfo.openedBy[]` |
+| 3 | No write-lock mechanism | `acquireWriteLock()/releaseWriteLock()` |
+| 4 | No deferred capability queue | `PluginCapability` registry |
+| 5 | Monaco active file not shared | Migrate to `SharedDocument` |
+
+**Category 2: Plugin Lifecycle (4 gaps)**
+
+| Gap | Description | Solution |
+|-----|-------------|----------|
+| 6 | No process registry | `TerminalProcessRegistry` |
+| 7 | No capability declarations | `PluginCapability` interface |
+| 8 | No dependency declarations | Plugin manifest `requires[]` |
+| 9 | No onEnable/onDisable hooks | `PluginLifecycle` interface |
+
+**Category 3: State Preservation (3 gaps)**
+
+| Gap | Description | Solution |
+|-----|-------------|----------|
+| 10 | No state preservation across toggle | `preserveState()/restoreState()` |
+| 11 | No lazy resource booting | Deferred initialization pattern |
+| 12 | No dependency checker | Plugin prerequisite resolver |
+
+**Category 4: Event Contracts (5 gaps)**
+
+| Gap | Description | Solution |
+|-----|-------------|----------|
+| 13 | No event schema contracts | Runtime Zod validation |
+| 14 | No event ordering/priority | Event queue with priority |
+| 15 | No cross-plugin documentation | JSDoc + ADR |
+| 16 | No prerequisite resolution | Event dependency graph |
+| 17 | FileTree selection not coordinated | Emit `FILE_SELECTED` event |
+
+**Category 5: Platform Constraints (2 gaps)**
+
+| Gap | Description | Solution |
+|-----|-------------|----------|
+| 18 | No device-type enforcement | `PlatformContract` guard in registry |
+| 19 | No graceful fallback | Plugin fallback UI component |
+
+**Status:** 0% - Specification only (pending EPIC-0.6 implementation)
+
 ---
 
 ## Section 4: Agent and Tool Architecture (UPDATED - v3.0.0)

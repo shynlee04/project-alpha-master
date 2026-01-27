@@ -38,6 +38,34 @@ export {
 } from './PluginLayoutStore';
 
 // ============================================================================
+// Bento Grid System (CC-AR-04)
+// ============================================================================
+
+export { useBentoGridStore } from './BentoGridStore';
+export {
+  selectActivePlugins as selectBentoActivePlugins,
+  selectPluginOrder,
+  selectHasHydrated as selectBentoHasHydrated,
+} from './BentoGridStore';
+
+export {
+  BENTO_LAYOUTS,
+  getBentoLayout,
+  getCellByIndex,
+  clampPluginCount,
+  ALWAYS_LOADED_PLUGINS,
+  TOGGLEABLE_PLUGINS,
+  MIN_PLUGINS,
+  MAX_PLUGINS,
+} from './bento-layouts';
+export type {
+  PluginCount,
+  CellSizeVariant,
+  BentoCell,
+  BentoLayout,
+} from './bento-layouts';
+
+// ============================================================================
 // Layout Presets (ARCH-03-03)
 // ============================================================================
 

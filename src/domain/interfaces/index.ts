@@ -65,3 +65,31 @@ export type {
   PluginRegistryEntry,
   ProjectContext,
 } from './feature-plugin.interface';
+
+// ============================================================================
+// Plugin Capability Interface (EPIC-0.6-04)
+// ============================================================================
+
+export type {
+  PluginCapabilityType,
+  DeviceType,
+  ServiceRequirement,
+  PluginCapability,
+  PluginDeclaration,
+} from './plugin-capability.interface';
+
+export {
+  FILE_TREE_DECLARATION,
+  MONACO_DECLARATION,
+  NOTES_DECLARATION,
+  TERMINAL_DECLARATION,
+  PREVIEW_DECLARATION,
+  CHAT_DECLARATION,
+  PLUGIN_DECLARATIONS,
+  getPluginsForFileType,
+  getBestPluginForFileType,
+  getPluginsForDevice,
+  canPluginRun,
+  getUnsatisfiedDependencies,
+  getPluginDeclaration,
+} from './plugin-capability.interface';

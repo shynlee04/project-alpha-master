@@ -11,6 +11,9 @@ import { Terminal as TerminalIcon } from 'lucide-react';
 // Plugin system
 import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
 
+// WebContainer manager
+import { boot, isBooted } from '@/lib/webcontainer';
+
 const TerminalMain = lazy(() => import('./TerminalMain'));
 
 function TerminalMainWrapper(props: PluginMainProps) {
@@ -75,8 +78,15 @@ export const terminalPlugin: FeaturePlugin = {
 
   onMount: async (context) => {
     console.log('[TerminalPlugin] Mounted for project:', context.projectId);
-    // TerminalPanel will initialize xterm.js when component mounts
-    // WebContainer boot is handled by existing infrastructure
+
+    // Boot WebContainer if not already booted
+    if (!isBooted()) {
+      console.log('[TerminalPlugin] Booting WebContainer...');
+      await boot();
+      console.log('[TerminalPlugin] WebContainer booted successfully');
+    } else {
+      console.log('[TerminalPlugin] WebContainer already booted');
+    }
   },
 
   onUnmount: async () => {

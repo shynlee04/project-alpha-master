@@ -104,6 +104,10 @@ import {
 
 import './NoteEditor.css';
 
+// External markdown parser/writer for FSA files
+import { markdownToBlocks } from '@/infrastructure/sync/workspace-services/notes/note-markdown-parser';
+import { blocksToMarkdown } from '@/infrastructure/sync/workspace-services/notes/note-markdown-writer';
+
 // ============================================================================
 // Helper: Extract text from blocks
 // ============================================================================
@@ -375,12 +379,18 @@ const schema = BlockNoteSchema.create({
 // ============================================================================
 
 interface NoteEditorProps {
-    /** Note ID to edit */
-    noteId: string;
+    /** Note ID to edit (for internal notes from note store) */
+    noteId?: string;
     /** Optional CSS class */
     className?: string;
     /** Whether editor is read-only */
     readOnly?: boolean;
+    /** External file content - for FSA files opened via FileTree */
+    externalContent?: string;
+    /** External file path - for display and save operations */
+    externalPath?: string;
+    /** Callback when external content changes (for saving back to FSA) */
+    onExternalContentChange?: (content: string, path: string) => void;
 }
 
 // ============================================================================
@@ -449,15 +459,87 @@ function SelectionInfo({ editor }: SelectionInfoProps) {
 // Component
 // ============================================================================
 
-export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorProps) {
+export function NoteEditor({ 
+    noteId, 
+    className, 
+    readOnly = false,
+    externalContent,
+    externalPath,
+    onExternalContentChange,
+}: NoteEditorProps) {
     const { t } = useTranslation();
     const updateNote = useNoteStore((state) => state.updateNote);
     const notes = useNoteStore((state) => state.notes);
-    const note = notes.get(noteId);
+    
+    // Determine if we're in external file mode
+    const isExternalMode = !!(externalContent !== undefined && externalPath);
+    
+    // Effective ID for scroll position and other tracking (use externalPath if in external mode)
+    const effectiveId = isExternalMode ? externalPath : noteId;
+    
+    // Get note from store only if we have a noteId and NOT in external mode
+    const note = noteId && !isExternalMode ? notes.get(noteId) : undefined;
+    
     const saveStatus = useNoteSaveStatus();
-    const isIndexing = useIsNoteIndexing(noteId);
-    const isNoteDirty = useNoteStore((state) => state.isNoteDirty(noteId));
+    const isIndexing = noteId ? useIsNoteIndexing(noteId) : false;
+    const isNoteDirtyFn = useNoteStore((state) => state.isNoteDirty);
+    const isNoteDirty = noteId ? isNoteDirtyFn(noteId) : false;
     const saveNoteToFile = useNoteStore((state) => state.saveNoteToFile);
+    
+    // State for parsed external content blocks
+    const [externalBlocks, setExternalBlocks] = useState<BlockNoteBlock[] | undefined>(undefined);
+    const [externalLoading, setExternalLoading] = useState(false);
+    const [externalError, setExternalError] = useState<string | null>(null);
+    
+    // EPIC-NOTES-FIX: Parse external markdown content when it changes
+    useEffect(() => {
+        if (!isExternalMode || !externalContent) {
+            setExternalBlocks(undefined);
+            setExternalLoading(false);
+            setExternalError(null);
+            return;
+        }
+        
+        let cancelled = false;
+        
+        async function parseExternalContent() {
+            setExternalLoading(true);
+            setExternalError(null);
+            
+            try {
+                console.log('[NoteEditor] Parsing external markdown content:', externalPath);
+                const blocks = await markdownToBlocks(externalContent!);
+                
+                if (!cancelled) {
+                    console.log('[NoteEditor] Parsed external markdown:', blocks.length, 'blocks');
+                    setExternalBlocks(blocks as BlockNoteBlock[]);
+                }
+            } catch (error) {
+                console.error('[NoteEditor] Failed to parse external markdown:', error);
+                if (!cancelled) {
+                    setExternalError('Failed to parse markdown content');
+                    // Create a simple text block as fallback
+                    setExternalBlocks([{
+                        id: crypto.randomUUID(),
+                        type: 'paragraph',
+                        props: { textColor: 'default', backgroundColor: 'default' },
+                        content: [{ type: 'text', text: externalContent || '', styles: {} }],
+                        children: []
+                    }]);
+                }
+            } finally {
+                if (!cancelled) {
+                    setExternalLoading(false);
+                }
+            }
+        }
+        
+        parseExternalContent();
+        
+        return () => {
+            cancelled = true;
+        };
+    }, [isExternalMode, externalContent, externalPath]);
 
     // UX-13: Save Block Dialog state
     const saveBlockDialog = useSaveBlockDialog();
@@ -469,7 +551,21 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
 
     // Get initial content from note
     // Fixed: Include noteId in dependencies to ensure proper reactivity on note switch
+    // EPIC-NOTES-FIX: Handle external content from FileTree (markdown files)
     const initialContent = useMemo(() => {
+        // EXTERNAL MODE: Parse markdown content from FileTree
+        if (isExternalMode && externalBlocks) {
+            console.log('[NoteEditor] Using external blocks from FileTree:', externalBlocks.length);
+            return externalBlocks;
+        }
+        
+        // EXTERNAL MODE: Content being parsed, show loading (undefined = default paragraph)
+        if (isExternalMode && !externalBlocks) {
+            console.log('[NoteEditor] External content loading, returning undefined');
+            return undefined;
+        }
+        
+        // INTERNAL MODE: Normal note from store
         // Always log for debugging
         console.log('[NoteEditor] Computing initialContent for note:', noteId, 'has note:', !!note);
 
@@ -689,7 +785,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             console.error('[NoteEditor] Error stack:', (error as Error).stack);
             return undefined; // Return undefined to let BlockNote create empty editor
         }
-    }, [noteId, note?.blocks]); // Recompute when noteId OR blocks change
+    }, [isExternalMode, externalBlocks, noteId, note?.blocks]); // Recompute when noteId OR blocks change, or external mode
 
     // Create BlockNote editor instance
     // P1.5-03: Pass custom schema with file rendering blocks
@@ -721,7 +817,10 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
 
     // 45-05: Restore scroll position when note changes
     useEffect(() => {
-        if (noteId !== previousNoteIdRef.current) {
+        const currentId = effectiveId;
+        if (!currentId) return; // Skip if no ID
+        
+        if (currentId !== previousNoteIdRef.current) {
             // Save previous note's scroll position before switching
             if (previousNoteIdRef.current && contentRef.current) {
                 const scrollTop = contentRef.current.scrollTop;
@@ -732,7 +831,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             // Use requestAnimationFrame to ensure DOM is ready
             requestAnimationFrame(() => {
                 if (contentRef.current) {
-                    const savedScrollTop = getNoteScrollPosition(noteId);
+                    const savedScrollTop = getNoteScrollPosition(currentId);
                     // Clamp to valid range (handle case where content got shorter)
                     const maxScroll = contentRef.current.scrollHeight - contentRef.current.clientHeight;
                     const clampedScrollTop = Math.min(savedScrollTop, Math.max(0, maxScroll));
@@ -740,14 +839,14 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 }
             });
 
-            previousNoteIdRef.current = noteId;
+            previousNoteIdRef.current = currentId;
         }
-    }, [noteId, getNoteScrollPosition, setNoteScrollPosition]);
+    }, [effectiveId, getNoteScrollPosition, setNoteScrollPosition]);
 
     // 45-05: Save scroll position on scroll (throttled)
     useEffect(() => {
         const contentElement = contentRef.current;
-        if (!contentElement) return;
+        if (!contentElement || !effectiveId) return;
 
         let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -755,7 +854,9 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             if (timeoutId) clearTimeout(timeoutId);
             // Throttle scroll position saving to 100ms
             timeoutId = setTimeout(() => {
-                setNoteScrollPosition(noteId, contentElement.scrollTop);
+                if (effectiveId) {
+                    setNoteScrollPosition(effectiveId, contentElement.scrollTop);
+                }
             }, 100);
         };
 
@@ -765,12 +866,14 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             contentElement.removeEventListener('scroll', handleScroll);
             if (timeoutId) clearTimeout(timeoutId);
         };
-    }, [noteId, setNoteScrollPosition]);
+    }, [effectiveId, setNoteScrollPosition]);
 
     // Debounced save handler (500ms)
+    // Only used for internal notes, external mode saves via onExternalContentChange
     const debouncedSave = useDebouncedCallback(
         async (blocks: any[]) => {
-            if (readOnly) return;
+            if (readOnly || isExternalMode) return;
+            if (!noteId) return;
 
             await updateNote({
                 id: noteId,
@@ -784,14 +887,28 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
     const handleChange = useCallback(() => {
         if (readOnly) return;
         const blocks = editor.document;
-        debouncedSave(blocks);
+        
+        if (isExternalMode && onExternalContentChange && externalPath) {
+            // External mode: convert blocks to markdown and notify parent for save
+            try {
+                const markdown = blocksToMarkdown(blocks as unknown as import('@blocknote/core').Block[]);
+                console.log('[NoteEditor] External mode change - saving to FSA:', externalPath, 'blocks:', blocks.length);
+                onExternalContentChange(markdown, externalPath);
+            } catch (error) {
+                console.error('[NoteEditor] Failed to convert blocks to markdown:', error);
+            }
+        } else {
+            debouncedSave(blocks);
+        }
+        
         // 43-04: Update note content for AI suggestions
         setNoteContent(extractTextFromBlocks(blocks));
-    }, [editor, debouncedSave, readOnly]);
+    }, [editor, debouncedSave, readOnly, isExternalMode, onExternalContentChange, externalPath]);
 
     // NS-2026-01-07: Handle inserting multi-modal content (PDF, images)
     const handleInsertContent = useCallback((content: string, title: string) => {
-        if (readOnly) return;
+        if (readOnly || isExternalMode) return;
+        if (!noteId) return;
 
         // Insert content at cursor position or append to document
         const currentBlocks = editor.document;
@@ -814,11 +931,12 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         });
 
         toast.success(t('notes.contentInserted', 'Content inserted'));
-    }, [editor, noteId, readOnly, updateNote, t]);
+    }, [editor, noteId, readOnly, updateNote, t, isExternalMode]);
 
     // NS-2026-01-07: Handle inserting voice transcript
     const handleInsertTranscript = useCallback((transcript: string) => {
-        if (readOnly) return;
+        if (readOnly || isExternalMode) return;
+        if (!noteId) return;
 
         // Insert transcript at cursor position or append to document
         const currentBlocks = editor.document;
@@ -834,10 +952,12 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         });
 
         toast.success(t('notes.transcriptInserted', 'Transcript inserted'));
-    }, [editor, noteId, readOnly, updateNote, t]);
+    }, [editor, noteId, readOnly, updateNote, t, isExternalMode]);
 
     // Handle manual save to file
     const handleManualSave = useCallback(async () => {
+        if (!noteId || isExternalMode) return;
+        
         try {
             await saveNoteToFile(noteId);
             toast.success(t('notes.savedToFile', 'Saved to file'));
@@ -850,7 +970,7 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
                 }
             );
         }
-    }, [noteId, saveNoteToFile, t]);
+    }, [noteId, saveNoteToFile, t, isExternalMode]);
 
     // UX-07: Handle AI action selection from InBlockAIPopup
     // UX-08: Updated to support below_cursor mode
@@ -964,7 +1084,31 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
         }
     };
 
-    if (!note) {
+    // EPIC-NOTES-FIX: Handle external mode (no note from store)
+    // Show loading state if external content is being parsed
+    if (isExternalMode && externalLoading) {
+        return (
+            <div className={cn('note-editor note-editor--loading', className)}>
+                <p className="note-editor__empty-text">
+                    {t('notes.loading', 'Loading...')}
+                </p>
+            </div>
+        );
+    }
+    
+    // Show error if external content failed to parse
+    if (isExternalMode && externalError) {
+        return (
+            <div className={cn('note-editor note-editor--error', className)}>
+                <p className="note-editor__empty-text text-destructive">
+                    {externalError}
+                </p>
+            </div>
+        );
+    }
+    
+    // Neither internal note nor external mode - show empty state
+    if (!note && !isExternalMode) {
         return (
             <div className={cn('note-editor note-editor--empty', className)}>
                 <p className="note-editor__empty-text">
@@ -973,16 +1117,22 @@ export function NoteEditor({ noteId, className, readOnly = false }: NoteEditorPr
             </div>
         );
     }
+    
+    // Determine display info
+    const displayTitle = isExternalMode 
+        ? (externalPath ? externalPath.split('/').pop() : 'External File')
+        : note?.title;
+    const displayEmoji = isExternalMode ? '📄' : note?.emoji;
 
     return (
         <div className={cn('note-editor relative', className)}>
             {/* Status bar */}
             <div className="note-editor__status-bar">
-                {note.emoji && <span className="note-editor__emoji">{note.emoji}</span>}
-                <span className="note-editor__title">{note.title}</span>
+                {displayEmoji && <span className="note-editor__emoji">{displayEmoji}</span>}
+                <span className="note-editor__title">{displayTitle}</span>
                 <div className="note-editor__status-spacer" />
                 <div className="flex items-center gap-2">
-                    <NoteStudyMenu noteId={noteId} />
+                    {!isExternalMode && noteId && <NoteStudyMenu noteId={noteId} />}
                     {/* 43-04: Toggle AI Suggestions Panel */}
                     <Button
                         size="sm"

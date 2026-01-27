@@ -17,7 +17,7 @@ import { useNavigate, useLocation } from '@tanstack/react-router';
 import {
   Home,
   Folder,
-  NotebookPen,
+  // NotebookPen - DEFERRED per ADR-033 (Notes workspace is commented out in navItems)
   // DEFERRED per ADR-033: Knowledge and Study workspace icons
   // BookOpen,
   // GraduationCap,

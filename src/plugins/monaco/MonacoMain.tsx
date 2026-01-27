@@ -5,8 +5,8 @@
  * **CC-AR-05**: Replace Monaco POC with Real Monaco Editor
  */
 
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Code2, AlertCircle } from 'lucide-react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { Code2, AlertCircle, Lock, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -19,6 +19,9 @@ import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interfa
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// EPIC-0.6-02: Plugin Coordination for file open tracking
+import { usePluginCoordinationSafe } from '@/infrastructure/context/plugin-coordination-context';
 
 // Event bus for file open events (CC-AR-05)
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
@@ -78,6 +81,18 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
   const projectContext = useProjectContext();
   const { gateway, saveFile, markDirty, markClean } = projectContext;
 
+  // EPIC-0.6-02: Plugin coordination for file open tracking
+  const coordination = usePluginCoordinationSafe();
+
+  // P0 FIX: Store coordination functions in ref to prevent infinite loop
+  // The context object changes on every store update, but functions are stable
+  const coordinationRef = useRef(coordination);
+  coordinationRef.current = coordination;
+
+  // P0 FIX: Track the active document path separately for stable comparison
+  const activeDocPath = coordination?.activeDocument?.path ?? null;
+  const activeDocContent = coordination?.activeDocument?.content ?? null;
+
   // Local state for Monaco-specific UI
   const [activePath, setActivePath] = useState<string | null>(null);
   const [content, setContent] = useState<string>('');
@@ -96,6 +111,7 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
 
   // ============================================================================
   // Auto-Save (Debounced, In-Component)
+  // EPIC-0.6-03: Acquire write lock before saving
   // ============================================================================
 
   const debouncedSave = useCallback(
@@ -106,6 +122,17 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
 
       saveTimeoutRef.current = setTimeout(async () => {
         if (!activePath || !gateway) return;
+
+        // EPIC-0.6-03: Acquire write lock before saving
+        if (coordination) {
+          const hasLock = coordination.acquireWriteLock(activePath, 'monaco');
+          if (!hasLock) {
+            const holder = coordination.getWriteLockHolder(activePath);
+            console.warn('[MonacoPlugin] Cannot save - lock held by:', holder);
+            toast.warning(t('editor.lockHeldByOther', { plugin: holder }));
+            return;
+          }
+        }
 
         setIsSaving(true);
 
@@ -122,10 +149,14 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
           console.error('[MonacoPlugin] Auto-save failed:', err);
         } finally {
           setIsSaving(false);
+          // EPIC-0.6-03: Release write lock after saving
+          if (coordination) {
+            coordination.releaseWriteLock(activePath, 'monaco');
+          }
         }
       }, 500);
     },
-    [activePath, gateway, markClean]
+    [activePath, gateway, markClean, coordination, t]
   );
 
   useEffect(() => {
@@ -155,10 +186,22 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
 
   /**
    * Save file content to storage (manual Ctrl+S)
+   * EPIC-0.6-03: Acquire write lock before saving
    */
   const handleSave = useCallback(async () => {
     if (!gateway || !activePath) {
       return;
+    }
+
+    // EPIC-0.6-03: Acquire write lock before saving
+    if (coordination) {
+      const hasLock = coordination.acquireWriteLock(activePath, 'monaco');
+      if (!hasLock) {
+        const holder = coordination.getWriteLockHolder(activePath);
+        console.warn('[MonacoPlugin] Cannot save - lock held by:', holder);
+        toast.warning(t('editor.lockHeldByOther', { plugin: holder }));
+        return;
+      }
     }
 
     try {
@@ -175,8 +218,12 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       console.error('[MonacoPlugin] Error saving file:', err);
     } finally {
       setIsSaving(false);
+      // EPIC-0.6-03: Release write lock after saving
+      if (coordination) {
+        coordination.releaseWriteLock(activePath, 'monaco');
+      }
     }
-  }, [gateway, activePath, content, saveFile, markClean]);
+  }, [gateway, activePath, content, saveFile, markClean, coordination, t]);
 
   // ============================================================================
   // Effects
@@ -229,6 +276,41 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       unsubscribe();
     };
   }, []);
+
+  // EPIC-0.6-02: Subscribe to activeDocument from coordination context
+  // This allows Monaco to receive file selections from FileTree via coordination
+  // P0 FIX: Use stable primitives instead of object references to prevent infinite loop
+  useEffect(() => {
+    // Only sync if activeDocPath changed AND is different from current activePath
+    if (activeDocPath && activeDocPath !== activePath && activeDocContent !== null) {
+      console.log('[MonacoPlugin] ActiveDocument changed via coordination:', activeDocPath);
+      setActivePath(activeDocPath);
+      setContent(activeDocContent);
+    }
+  }, [activeDocPath, activeDocContent, activePath]);
+
+  // EPIC-0.6-02: Register/unregister as editor when file opens/closes
+  // P0 FIX: Use ref for coordination functions to prevent infinite loop
+  // The functions themselves are stable, but the context object changes on store updates
+  useEffect(() => {
+    const coord = coordinationRef.current;
+    if (!coord || !activePath) return;
+
+    // Register Monaco as having this file open
+    coord.openDocument(activePath, 'monaco');
+    console.log('[MonacoPlugin] Registered as editor for:', activePath);
+
+    // Cleanup: unregister on unmount or path change
+    // Capture activePath in closure to ensure correct path is unregistered
+    const pathToClose = activePath;
+    return () => {
+      const currentCoord = coordinationRef.current;
+      if (currentCoord) {
+        currentCoord.closeDocument(pathToClose, 'monaco');
+        console.log('[MonacoPlugin] Unregistered as editor for:', pathToClose);
+      }
+    };
+  }, [activePath]); // Only depend on activePath, not coordination
 
   // EPIC-0.5-02: Listen for FILE_UPDATED events from FileEventBus
   // When a file is externally modified or saved by another plugin,
@@ -323,6 +405,14 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
 
   const fileName = activePath.split('/').pop() || activePath;
 
+  // EPIC-0.6-03: Check if another plugin holds the write lock
+  const lockHolder = coordination?.getWriteLockHolder(activePath);
+  const isLockedByOther = lockHolder !== null && lockHolder !== 'monaco';
+
+  // EPIC-0.6-12: Check if file is also open in other plugins
+  const otherEditors = coordination?.getEditorsForPath(activePath) || [];
+  const otherEditorNames = otherEditors.filter(id => id !== 'monaco');
+
   return (
     <div className="h-full w-full flex flex-col">
       {/* Editor Header */}
@@ -330,6 +420,20 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span>{fileName}</span>
           {isModified && <span className="text-orange-500">●</span>}
+          {/* EPIC-0.6-03: Write lock indicator */}
+          {isLockedByOther && (
+            <span className="flex items-center gap-1 text-yellow-600" title={t('editor.lockedBy', { plugin: lockHolder })}>
+              <Lock size={12} />
+              <span className="text-[10px]">{lockHolder}</span>
+            </span>
+          )}
+          {/* EPIC-0.6-12: Also open in indicator */}
+          {otherEditorNames.length > 0 && (
+            <span className="flex items-center gap-1 text-blue-600" title={t('editor.alsoOpenIn', { plugins: otherEditorNames.join(', ') })}>
+              <Users size={12} />
+              <span className="text-[10px]">{otherEditorNames.join(', ')}</span>
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {/* EPIC-0.5-03: Save status indicator */}

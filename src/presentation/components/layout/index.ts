@@ -21,3 +21,5 @@ export { MobileTabBar, useMobilePanel, type MobilePanelType } from './MobileTabB
 // Navigation components (Epic-UX-GLOBAL-UI)
 export { Breadcrumbs, type BreadcrumbsProps } from './Breadcrumbs';
 
+// Bento Grid Plugin Controls (CC-AR-04)
+export { PluginToggles, type PluginTogglesProps } from './PluginToggles';

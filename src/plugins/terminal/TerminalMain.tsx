@@ -2,12 +2,22 @@
  * @fileoverview Terminal Plugin Main Component
  * @module plugins/terminal/TerminalMain
  *
- * **ARCH-02-07**: Terminal Feature Plugin (POC Simplified)
+ * **EPIC-0.6-05 & EPIC-0.6-06**: WebContainer Boot & FSA Mount
+ *
+ * Boots WebContainer when Terminal plugin mounts.
+ * Mounts FSA files to WebContainer at /project.
+ * Shows loading skeleton during boot/mount and handles errors gracefully.
+ *
+ * @epic EPIC-0.6
+ * @story 0.6-05, 0.6-06
+ * @team Team B
+ * @created 2026-01-27
  */
 
-import React from 'react';
+// No React import needed - JSX transform handles it
 import { Terminal as TerminalIcon, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 // Plugin system
 import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
@@ -15,8 +25,15 @@ import type { PluginMainProps } from '@/domain/interfaces/feature-plugin.interfa
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
 
+// WebContainer
+import { useWebContainer } from '@/infrastructure/webcontainer/useWebContainer';
+import { useFSAMount } from '@/infrastructure/webcontainer/useFSAMount';
+
 // Terminal components (existing - facade pattern)
 import { TerminalPanel } from '@/presentation/components/terminal/TerminalPanel';
+
+// Terminal skeleton
+import { TerminalSkeleton } from './TerminalSkeleton';
 
 // ============================================================================
 // Main Terminal Plugin Component
@@ -50,6 +67,28 @@ function TerminalMain(_props: PluginMainProps) {
   // Get context from provider
   const projectContext = useProjectContext();
   const { project, gateway } = projectContext;
+
+  // WebContainer hook
+  const { state: wcState, boot, instance: wcInstance } = useWebContainer();
+
+  // FSA mount hook
+  const { state: mountState, mount } = useFSAMount({
+    gateway,
+    webContainer: wcInstance,
+    eventBus: undefined, // Optional event bus
+  });
+
+  // Boot WebContainer on mount
+  useEffect(() => {
+    boot();
+  }, [boot]);
+
+  // Mount FSA after WebContainer is ready
+  useEffect(() => {
+    if (wcState.status === 'ready' && wcInstance) {
+      mount();
+    }
+  }, [wcState.status, wcInstance, mount]);
 
   // ============================================================================
   // Validation: Device Type
@@ -105,6 +144,54 @@ function TerminalMain(_props: PluginMainProps) {
         <p className="text-xs text-muted-foreground/70 text-center mt-1">
           {t('ide.openFolderToView')}
         </p>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // WebContainer Boot Status
+  // ============================================================================
+
+  /**
+   * Show loading skeleton while WebContainer boots
+   */
+  if (wcState.status === 'booting') {
+    return <TerminalSkeleton status="booting" />;
+  }
+
+  /**
+   * Show error if WebContainer boot failed
+   */
+  if (wcState.status === 'error') {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-red-500 p-4">
+        <AlertCircle size={32} className="mb-2" />
+        <p className="text-sm font-semibold text-center">{t('terminal.bootError')}</p>
+        <p className="text-xs text-center mt-2">{wcState.error}</p>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // FSA Mount Status
+  // ============================================================================
+
+  /**
+   * Show loading skeleton while FSA files mount
+   */
+  if (mountState.status === 'mounting') {
+    return <TerminalSkeleton status="mounting" />;
+  }
+
+  /**
+   * Show error if FSA mount failed
+   */
+  if (mountState.status === 'error') {
+    return (
+      <div className="h-full flex flex-col items-center justify-center text-red-500 p-4">
+        <AlertCircle size={32} className="mb-2" />
+        <p className="text-sm font-semibold text-center">{t('terminal.mountError')}</p>
+        <p className="text-xs text-center mt-2">{mountState.error}</p>
       </div>
     );
   }

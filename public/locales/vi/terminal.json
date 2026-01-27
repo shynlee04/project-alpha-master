@@ -1,0 +1,10 @@
+{
+  "title": "Terminal",
+  "bootingWebContainer": "Đang khởi động WebContainer...",
+  "mountingFiles": "Đang tải tệp dự án...",
+  "initializing": "Đang khởi tạo...",
+  "loading": "Đang tải...",
+  "bootError": "Không thể khởi động WebContainer",
+  "mountError": "Không thể tải tệp dự án",
+  "unavailable": "Terminal không khả dụng"
+}

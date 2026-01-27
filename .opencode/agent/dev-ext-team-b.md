@@ -2,8 +2,7 @@
 subtask: true
 description: Senior Software Engineer - executes delegated development tasks with full handoff protocol. Team-B variant
 mode: all
-model: openai/gpt-5.2-codex
-reasoningEffort: xhigh
+model: chutes/zai-org/GLM-4.7-TEE
 temperature: 0.2
 tools:
   write: true

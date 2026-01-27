@@ -29,6 +29,8 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 import { waitForHydration } from '@/infrastructure/persistence/stores/project/wait-for-hydration';
 import { fromRecord } from '@/infrastructure/persistence/stores/project/project-crud-slice';
 import { ProjectContextProvider } from '@/infrastructure/context/project-context';
+// EPIC-0.6-01: Plugin Coordination Context for cross-plugin coordination
+import { PluginCoordinationProvider } from '@/infrastructure/context/plugin-coordination-context';
 // Phase 1: PluginLayout with CSS Grid (replaces PluginSidebar)
 import { PluginLayout } from '@/presentation/layouts/PluginLayout';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
@@ -133,14 +135,17 @@ function UnifiedProjectRoute() {
   // Phase 1: CSS Grid Layout with Fixed-Ratio Presets
   // PluginLayout now includes Chat, FileTree, and other panels in CSS Grid
   // No separate PluginSidebar needed - all panels are in the grid
+  // EPIC-0.6-01: Wrap with PluginCoordinationProvider for cross-plugin coordination
   return (
-    <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
-      <div className="h-full w-full flex flex-col">
-        {/* Phase 1: PluginLayout with CSS Grid - panels determined by preset */}
-        <div className="flex-1 overflow-hidden">
-          <PluginLayout />
-        </div>
-      </div>
-    </ProjectContextProvider>
+    <PluginCoordinationProvider>
+      <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
+        <div className="h-full w-full flex flex-col">
+            {/* Phase 1: PluginLayout with CSS Grid - panels determined by preset */}
+            <div className="flex-1 overflow-hidden">
+              <PluginLayout />
+            </div>
+          </div>
+      </ProjectContextProvider>
+    </PluginCoordinationProvider>
   );
 }

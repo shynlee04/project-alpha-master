@@ -14,8 +14,8 @@
  * @created 2026-01-21
  */
 
-import React, { useEffect, useState } from 'react';
-import { FileText, AlertCircle } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { FileText, AlertCircle, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -24,6 +24,9 @@ import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature
 
 // Context
 import { useProjectContext } from '@/infrastructure/context/project-context';
+
+// EPIC-0.6-02: Plugin Coordination for file open tracking
+import { usePluginCoordinationSafe } from '@/infrastructure/context/plugin-coordination-context';
 
 // NoteEditor (facade pattern - keep in original location)
 import { NoteEditor } from '@/presentation/components/notes/NoteEditor';
@@ -54,6 +57,13 @@ function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
   const projectContext = useProjectContext();
   const { project, gateway } = projectContext;
 
+  // EPIC-0.6-02: Plugin coordination for file open tracking
+  const coordination = usePluginCoordinationSafe();
+
+  // CRITICAL FIX: Use ref to break infinite loop (coordination object changes on every render)
+  const coordinationRef = useRef(coordination);
+  coordinationRef.current = coordination;
+
   // EPIC-0.5-02: External update notification state
   const [externalUpdatePath, setExternalUpdatePath] = useState<string | null>(null);
 
@@ -63,10 +73,35 @@ function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
 
   /**
    * Determine note ID based on storage mode
+   * EPIC-0.6-11: Use activeDocument from coordination if it's a markdown file
+   * EPIC-NOTES-FIX: Detect external files from FileTree vs internal notes
    */
+  
+  // Helper to detect if a path is an external file (from FileTree) vs internal note
+  const isExternalFile = React.useCallback((path: string | null | undefined): boolean => {
+    if (!path) return false;
+    // External files are FSA paths (contain / and end with .md/.mdx)
+    // Internal notes are UUIDs or simple IDs like project.id
+    return path.includes('/') && (path.endsWith('.md') || path.endsWith('.mdx'));
+  }, []);
+  
+  // Get active document from coordination
+  const activeDocPath = coordination?.activeDocument?.path;
+  const activeDocContent = coordination?.activeDocument?.content;
+  
+  // Is the current active document an external file from FileTree?
+  const isExternal = isExternalFile(activeDocPath);
+  
   const noteId = React.useMemo(() => {
-    // Only work with FSA mode for POC
-    // IndexedDB mode integration will be added in full implementation
+    // EPIC-NOTES-FIX: If this is an external file, we'll pass content directly
+    // Don't use the path as noteId since NoteEditor can't look it up
+    if (isExternal && activeDocPath) {
+      console.log('[NotesPlugin] External file detected from FileTree:', activeDocPath);
+      // Return undefined for noteId - we'll use externalContent/externalPath props instead
+      return undefined;
+    }
+
+    // Fallback: Use default note path based on storage mode
     if (project.storageType === 'fsa') {
       // FSA mode: Use project folder path + notes/note.md
       return `${project.folderPath}/notes/note.md`;
@@ -74,11 +109,40 @@ function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
       // IndexedDB mode: Use project ID as note ID
       return project.id;
     }
-  }, [project]);
+  }, [project, isExternal, activeDocPath]);
+
+  // EPIC-0.6-12: Check if file is also open in other plugins
+  // Use the appropriate path for checking - either the internal noteId or external path
+  const pathForEditorCheck = isExternal ? activeDocPath : noteId;
+  const otherEditors = pathForEditorCheck ? (coordination?.getEditorsForPath(pathForEditorCheck) || []) : [];
+  const otherEditorNames = otherEditors.filter(id => id !== 'notes');
 
   // ============================================================================
   // EPIC-0.5-02: File Event Subscription
   // ============================================================================
+
+  // EPIC-0.6-02: Register/unregister as editor when note opens/closes
+  useEffect(() => {
+    const coord = coordinationRef.current;
+    if (!coord || !noteId) return;
+
+    // Only register if this is a markdown file
+    if (noteId.endsWith('.md') || noteId.endsWith('.mdx')) {
+      coord.openDocument(noteId, 'notes');
+      console.log('[NotesPlugin] Registered as editor for:', noteId);
+    }
+
+    // Capture noteId for cleanup
+    const noteIdToClose = noteId;
+    
+    // Cleanup: unregister on unmount or noteId change
+    return () => {
+      if (noteIdToClose.endsWith('.md') || noteIdToClose.endsWith('.mdx')) {
+        coordinationRef.current?.closeDocument(noteIdToClose, 'notes');
+        console.log('[NotesPlugin] Unregistered as editor for:', noteIdToClose);
+      }
+    };
+  }, [noteId]); // CRITICAL: Only noteId in deps, coordination via ref
 
   // Subscribe to file update events for cross-plugin synchronization
   useEffect(() => {
@@ -126,8 +190,9 @@ function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
     );
   }
 
-  // No note ID error state
-  if (!noteId) {
+  // EPIC-NOTES-FIX: Allow external file mode (no noteId but has activeDocPath)
+  // Only show "note not found" if neither internal noteId nor external file
+  if (!noteId && !isExternal) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-muted-foreground p-4">
         <AlertCircle size={32} className="mb-2 text-muted-foreground/70" />
@@ -135,6 +200,14 @@ function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
       </div>
     );
   }
+  
+  // Determine what to display in header
+  const displayFileName = isExternal 
+    ? (activeDocPath?.split('/').pop() || 'External File')
+    : (project.storageType === 'fsa' ? 'note.md' : project.name);
+  const displayMode = isExternal 
+    ? 'External File'
+    : (project.storageType === 'fsa' ? 'FSA Mode' : 'IndexedDB Mode');
 
   // ============================================================================
   // Main Render
@@ -149,23 +222,46 @@ function NotesComponent({ width: _width, height: _height }: PluginMainProps) {
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <FileText size={16} className="text-muted-foreground/70" />
             <span className="font-semibold">
-              {project.storageType === 'fsa' ? 'note.md' : project.name}
+              {displayFileName}
             </span>
             {/* EPIC-0.5-02: External update indicator */}
             {externalUpdatePath && (
               <span className="text-orange-500 text-[10px]">● external update</span>
             )}
+            {/* EPIC-0.6-12: Also open in indicator */}
+            {otherEditorNames.length > 0 && (
+              <span className="flex items-center gap-1 text-blue-600" title={`Also open in: ${otherEditorNames.join(', ')}`}>
+                <Users size={12} />
+                <span className="text-[10px]">{otherEditorNames.join(', ')}</span>
+              </span>
+            )}
           </div>
           <div className="text-xs text-muted-foreground/70">
-            {project.storageType === 'fsa' ? 'FSA Mode' : 'IndexedDB Mode'}
+            {displayMode}
           </div>
         </div>
 
       {/* NoteEditor - Facade Pattern */}
       {/* NoteEditor handles its own persistence, AI features, and all 16 block types */}
+      {/* EPIC-NOTES-FIX: Pass external content from FileTree coordination */}
       <div className="flex-1 overflow-auto">
         <NoteEditor
           noteId={noteId}
+          externalContent={isExternal ? activeDocContent : undefined}
+          externalPath={isExternal ? activeDocPath : undefined}
+          onExternalContentChange={isExternal ? async (markdown, path) => {
+            // Save back to FSA via the storage gateway
+            if (gateway && path) {
+              try {
+                const encoder = new TextEncoder();
+                await gateway.write(path, encoder.encode(markdown));
+                console.log('[NotesPlugin] Saved external file to FSA:', path);
+              } catch (error) {
+                console.error('[NotesPlugin] Failed to save external file:', error);
+                toast.error(t('notes.saveToFileFailed', 'Failed to save to file'));
+              }
+            }
+          } : undefined}
           readOnly={false}
         />
       </div>

@@ -222,6 +222,29 @@ export interface FeaturePlugin {
 
   /** Called when active project changes */
   onProjectChange?: (newProjectId: string) => Promise<void>;
+
+  // ========================================================================
+  // Capability Declarations (EPIC-0.6-04)
+  // ========================================================================
+
+  /**
+   * Plugin capabilities (optional - for advanced plugin coordination)
+   *
+   * @remarks
+   * Declares what this plugin can do (edit files, run processes, etc.)
+   * Used for intelligent plugin suggestions and dependency resolution.
+   * See plugin-capability.interface.ts for full type definitions.
+   */
+  capabilities?: import('./plugin-capability.interface').PluginCapability[];
+
+  /**
+   * Plugin dependencies (optional)
+   *
+   * @remarks
+   * Other plugins this plugin depends on.
+   * Used for dependency resolution and loading order.
+   */
+  dependsOn?: PluginId[];
 }
 
 // ============================================================================

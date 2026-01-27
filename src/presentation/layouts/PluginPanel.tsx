@@ -38,6 +38,7 @@ import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
  * - height: Panel height in pixels
  * - index: Panel position in activePlugins array (for reordering)
  * - onClose: Callback when close button clicked
+ * - showHeader: Whether to show the panel header (default: false for grid layout)
  */
 interface PluginPanelProps {
   /** Plugin ID to render */
@@ -54,6 +55,15 @@ interface PluginPanelProps {
 
   /** Callback when close button clicked */
   onClose: () => void;
+
+  /**
+   * Whether to show the panel header (default: false)
+   * 
+   * @remarks
+   * Phase 1 grid layout: Plugins have their own headers, so PluginPanel header is hidden.
+   * Set to true for contexts where the plugin header is not shown.
+   */
+  showHeader?: boolean;
 }
 
 // ============================================================================
@@ -90,6 +100,7 @@ export function PluginPanel({
   height,
   index: _index, // Prefix with underscore to indicate intentionally unused
   onClose,
+  showHeader = false, // Default: hidden for grid layout (plugins have their own headers)
 }: PluginPanelProps) {
   const { t } = useTranslation();
 
@@ -270,35 +281,40 @@ export function PluginPanel({
       onKeyDown={handleKeyDown}
     >
       {/* ========================================================================
-           Panel Header
-        ======================================================================== */}
+           Panel Header (conditionally shown)
+           
+           Phase 1 Grid Layout: Hidden by default (plugins have their own headers)
+           Legacy/Other contexts: Can be shown with showHeader={true}
+         ======================================================================== */}
 
-      <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
-        {/* Drag Handle Indicator - GripHorizontal Icon (ARCH-03-04) */}
-        <div
-          className="plugin-drag-handle flex items-center"
-          aria-hidden="true"
-          title={t('pluginPanel.dragHandleTooltip')}
-        >
-          <GripHorizontal size={14} />
+      {showHeader && (
+        <div className="h-7 px-3 flex items-center justify-between border-b border-border/30 bg-card/30 shrink-0">
+          {/* Drag Handle Indicator - GripHorizontal Icon (ARCH-03-04) */}
+          <div
+            className="plugin-drag-handle flex items-center"
+            aria-hidden="true"
+            title={t('pluginPanel.dragHandleTooltip')}
+          >
+            <GripHorizontal size={14} />
+          </div>
+
+          {/* Plugin Icon and Name */}
+          <span className="flex items-center gap-2 text-xs text-muted-foreground">
+            {plugin.icon}
+            <span className="font-semibold">{plugin.name}</span>
+          </span>
+
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="rounded-none bg-transparent text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1 transition-colors"
+            aria-label={t('plugin.closePanel', { pluginName: plugin.name })}
+            title={t('plugin.closePanel', { pluginName: plugin.name })}
+          >
+            <X size={14} />
+          </button>
         </div>
-
-        {/* Plugin Icon and Name */}
-        <span className="flex items-center gap-2 text-xs text-muted-foreground">
-          {plugin.icon}
-          <span className="font-semibold">{plugin.name}</span>
-        </span>
-
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="rounded-none bg-transparent text-muted-foreground hover:text-destructive hover:bg-destructive/10 p-1 transition-colors"
-          aria-label={t('plugin.closePanel', { pluginName: plugin.name })}
-          title={t('plugin.closePanel', { pluginName: plugin.name })}
-        >
-          <X size={14} />
-        </button>
-      </div>
+      )}
 
       {/* ========================================================================
            Plugin Content
