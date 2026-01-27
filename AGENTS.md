@@ -274,6 +274,7 @@ src/stores/         → NEVER existed
 | **ADR** | ADR-039 (Pending Approval) |
 | **TypeScript Errors** | 0 ✅ |
 | **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE |
+| **UX Spec Version** | 3.0.0 (2026-01-27) |
 
 ### EPIC Corrected Status (2026-01-26)
 
@@ -296,7 +297,7 @@ src/stores/         → NEVER existed
 | **Fundamental Truths** | `docs/new-fundamental-truths.md` |
 | **Product Roadmap** | `_bmad-output/planning-artifacts/prd.md` |
 | **Epics & Stories** | `_bmad-output/planning-artifacts/epics.md` |
-| **UX Specification** | `_bmad-output/planning-artifacts/ux-specification.md` |
+| **UX Specification** | `_bmad-output/planning-artifacts/ux-specification/` (sharded - see index.md) |
 | **Workflow Status** | `bmm-workflow-status.yaml` |
 | **Sprint Status** | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
 | **Story Index** | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
