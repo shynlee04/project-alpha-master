@@ -3,34 +3,5 @@
     "@nick-vi/opencode-type-inject"
   ],
   "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "serena": {
-      "type": "local",
-      "command": ["uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "ide", "--project-from-cwd"],
-      "enabled": true,
-      "environment": {},
-      "timeout": 30000
-    },
-    "context7": {
-      "type": "local",
-      "command": ["npx", "-y", "context7"],
-      "enabled": true,
-      "environment": {},
-      "timeout": 15000
-    },
-    "repomix": {
-      "type": "local",
-      "command": ["npx", "-y", "repomix"],
-      "enabled": true,
-      "environment": {},
-      "timeout": 15000
-    },
-    "tavily": {
-      "type": "local",
-      "command": ["npx", "-y", "tavily"],
-      "enabled": true,
-      "environment": {},
-      "timeout": 15000
-    }
-  }
+  "mcp": {}
 }

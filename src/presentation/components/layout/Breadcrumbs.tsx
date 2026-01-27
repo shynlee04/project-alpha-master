@@ -114,9 +114,6 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ className }) => {
       crumbs.push({ label: t('sidebar.knowledge', 'Knowledge') });
     } else if (path.startsWith('/about')) {
       crumbs.push({ label: t('about.title', 'About') });
-    } else if (path.startsWith('/hub')) {
-      // Already on hub
-      crumbs[0].path = undefined;
     }
 
     return crumbs;

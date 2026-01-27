@@ -216,7 +216,7 @@ export const Route = createFileRoute('/$projectId/test')({
 
         if (!record) {
             console.error('[TestRoute.loader] Project not found:', projectId);
-            throw redirect({ to: '/hub' });
+            throw redirect({ to: '/' });
         }
 
         const project = fromRecord(record);

@@ -1,16 +1,18 @@
 ---
 id: EPIC-UXUI-02
 title: Main Layout Overhaul - UX Spec v3.0.0 Implementation
-version: 1.0.0
+version: 1.1.0
 created: 2026-01-28
+updated: 2026-01-28
 status: READY_FOR_EXECUTION
 priority: P0
-owner: Team B (UX)
+owner: Team A (Cleanup) + Team B (UX)
 blocked_by: null
 blocks: EPIC-UXUI-03
-estimated_effort: 22-32h
+estimated_effort: 26-38h
 sprint: SPRINT-2026-01-28
 ux_spec_version: 3.0.0
+story_count: 12
 ---
 
 # EPIC-UXUI-02: Main Layout Overhaul
@@ -85,31 +87,264 @@ Team B has FULL AUTHORITY to overhaul the layout.
 
 ---
 
-## Stories (10 Total)
+## Stories (12 Total)
+
+### Story Summary Table
+
+| # | Story ID | Title | Effort | Team | Dependencies |
+|---|----------|-------|--------|------|--------------|
+| 0a | UXUI-02-00a | Hub Component Cleanup | 1h | A | NONE |
+| 0b | UXUI-02-00b | Hub Route Consolidation | 1h | A | 00a |
+| 1 | UXUI-02-01 | WorkspaceLayout Shell | 3-4h | B | UXUI-01 |
+| 2 | UXUI-02-02 | ActivityBar Component | 3-4h | B | 02-01 |
+| 3 | UXUI-02-02b | Plugin Docker Component | 3-4h | B | 02-02 |
+| 4 | UXUI-02-03 | Integrate GlobalSidebar | 2-3h | B | 02-01, 02-02 |
+| 5 | UXUI-02-04 | Plugin Drag-to-Panel | 2-3h | B | 02-02b |
+| 6 | UXUI-02-04b | Single Instance Constraint | 2-3h | B | 02-04 |
+| 7 | UXUI-02-05 | Wire ActivityBar + Docker | 2-3h | B | 02-04b |
+| 8 | UXUI-02-06 | StatusBar | 2-3h | B | 02-01 |
+| 9 | UXUI-02-07 | Apply Design Tokens | 3-4h | B | All previous |
+| 10 | UXUI-02-08 | Archive Bento Grid | 1-2h | A | 02-07 |
+
+### Team Assignment Summary
+
+- **Team A (Cleanup)**: UXUI-02-00a, UXUI-02-00b, UXUI-02-08 = 3-4h total
+- **Team B (New Layout)**: UXUI-02-01 through UXUI-02-07 = 23-34h total
+
+### Parallel Execution Map
+
+```
+PHASE 1 (Parallel):
+├── Team A: UXUI-02-00a (Hub Cleanup) ─┐
+└── Team B: UXUI-02-01 (WorkspaceLayout Shell) ─┘
+
+PHASE 2 (Parallel):
+├── Team A: UXUI-02-00b (Hub Route Consolidation)
+└── Team B: UXUI-02-02 (ActivityBar)
+
+PHASE 3 (Team B Sequential):
+└── UXUI-02-02b → 03 → 04 → 04b
+
+PHASE 4 (Parallel):
+├── Team B: UXUI-02-05 (Wire ActivityBar)
+└── Team B: UXUI-02-06 (StatusBar) ← can overlap
+
+PHASE 5:
+└── Team B: UXUI-02-07 (Apply Design Tokens)
+
+PHASE 6:
+└── Team A: UXUI-02-08 (Archive Bento Grid)
+```
+
+### Critical Path
+
+```
+UXUI-02-01 → 02 → 02b → 04 → 04b → 05 → 07 → 08
+(WorkspaceLayout → ActivityBar → Docker → Drag → Instance → Wire → Tokens → Archive)
+```
 
 ### Story Dependency Graph
 
 ```
-UXUI-02-01 (WorkspaceLayout Shell)
+                    UXUI-02-00a (Hub Cleanup) [Team A]
+                          ↓
+                    UXUI-02-00b (Hub Route) [Team A]
+                          
+UXUI-02-01 (WorkspaceLayout Shell) [Team B]
     ↓
 UXUI-02-02 (ActivityBar Component)
     ↓
-UXUI-02-02b (Plugin Docker Component) ← NEW
+UXUI-02-02b (Plugin Docker Component)
     ↓
-UXUI-02-03 (Integrate GlobalSidebar)
+UXUI-02-03 (Integrate GlobalSidebar) ←──── UXUI-02-02
     ↓
 UXUI-02-04 (Plugin Drag-to-Panel Behavior)
     ↓
 UXUI-02-04b (Single Instance Plugin Constraint)
     ↓
 UXUI-02-05 (Wire ActivityBar + Docker to Plugins)
-    ↓
-UXUI-02-06 (StatusBar)
+    ↓                    ↑
+    │              UXUI-02-06 (StatusBar) ←── UXUI-02-01
     ↓
 UXUI-02-07 (Apply Design Tokens)
     ↓
-UXUI-02-08 (Archive Bento Grid)
+UXUI-02-08 (Archive Bento Grid) [Team A]
 ```
+
+---
+
+### UXUI-02-00a: Hub Component Cleanup
+
+| Property | Value |
+|----------|-------|
+| **Status** | READY |
+| **Effort** | 1h |
+| **Priority** | P0 |
+| **Team** | A |
+| **Depends On** | NONE |
+
+#### Description
+
+Delete 13 orphaned/useless hub components identified in `hub-route-trash-audit-2026-01-28.md`. These files are never imported in active code and waste bundle size.
+
+#### Files to DELETE (13 files)
+
+```bash
+# Orphaned components (never imported in active code)
+src/presentation/components/hub/TopicCard.tsx
+src/presentation/components/hub/TopicPortalCard.tsx
+src/presentation/components/hub/ProjectDistribution.tsx
+src/presentation/components/hub/ProjectFilter.tsx
+src/presentation/components/hub/ProjectBadge.tsx
+src/presentation/components/hub/MobileProjectSelector.tsx
+src/presentation/components/hub/WorkspaceFilter.tsx
+src/presentation/components/hub/NavigationBreadcrumbs.tsx
+
+# Useless placeholders
+src/presentation/components/hub/ActivityLineChart.tsx    # "Coming Soon" - renders nothing
+src/presentation/components/hub/BootSequence.tsx         # Instantly completes - useless
+
+# Dead tests
+src/presentation/components/hub/__tests__/TopicCard.test.tsx
+src/presentation/components/hub/__tests__/TopicPortalCard.test.tsx
+src/presentation/components/hub/__tests__/NavigationBreadcrumbs.test.tsx
+```
+
+**Total Lines to Delete**: ~1,383 lines
+
+#### Files to MODIFY (3 files)
+
+| File | Action |
+|------|--------|
+| `src/presentation/components/hub/index.ts` | Remove exports for deleted components |
+| `src/presentation/components/hub/HubHomePage.tsx` | Remove BootSequence import and usage |
+| `src/presentation/components/hub/ChartsGrid.tsx` | Remove ActivityLineChart import and render |
+
+#### Modification Details
+
+**hub/index.ts** - Remove these lines:
+```typescript
+// REMOVE
+export { TopicCard } from './TopicCard';
+export { TopicPortalCard } from './TopicPortalCard';
+export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
+export { BootSequence } from './BootSequence';
+export { ActivityLineChart } from './ActivityLineChart';
+// ... any other deleted component exports
+```
+
+**HubHomePage.tsx** - Remove BootSequence:
+```diff
+- import { BootSequence } from './BootSequence';
+
+// Remove booting state and logic
+- const [booting, setBooting] = useState(true);
+- const handleBootComplete = () => {...};
+- if (booting) { return <BootSequence onComplete={handleBootComplete} />; }
+```
+
+**ChartsGrid.tsx** - Remove ActivityLineChart:
+```diff
+- import { ActivityLineChart } from './ActivityLineChart';
+
+  return (
+    <section className={...}>
+-     <ActivityLineChart days={30} />
+      <WorkspacePieChart ... />
+    </section>
+  );
+```
+
+#### Acceptance Criteria
+
+- [ ] All 13 orphaned/useless files deleted
+- [ ] hub/index.ts exports updated (no dead exports)
+- [ ] HubHomePage no longer imports or uses BootSequence
+- [ ] ChartsGrid no longer imports or renders ActivityLineChart
+- [ ] TypeScript compiles: `pnpm tsc --noEmit`
+- [ ] Tests pass: `pnpm vitest run` (some tests deleted)
+- [ ] No console errors in browser
+
+---
+
+### UXUI-02-00b: Hub Route Consolidation
+
+| Property | Value |
+|----------|-------|
+| **Status** | READY |
+| **Effort** | 1h |
+| **Priority** | P0 |
+| **Team** | A |
+| **Depends On** | UXUI-02-00a |
+
+#### Description
+
+Delete duplicate `hub.tsx` route and update all redirects from `/hub` to `/`. Per `lazy-route-audit-2026-01-28.md`, both `/` and `/hub` render the same `HubHomePage` component, causing user confusion and layout inconsistency.
+
+#### File to DELETE
+
+```bash
+src/routes/hub.tsx
+```
+
+**Current Content** (redundant):
+```typescript
+export const Route = createFileRoute('/hub')({
+  component: () => (
+    <ErrorBoundary>
+      <MainLayout>
+        <HubHomePage />
+      </MainLayout>
+    </ErrorBoundary>
+  ),
+})
+```
+
+This wraps `HubHomePage` in `ErrorBoundary` + `MainLayout`, but `index.tsx` renders it directly. The root layout already provides `ProjectAwareLayout`.
+
+#### Files to UPDATE (10 files - change `/hub` to `/`)
+
+| File | Line(s) | Current | Change To |
+|------|---------|---------|-----------|
+| `src/routes/$projectId.tsx` | ~62 | `redirect({ to: '/hub' })` | `redirect({ to: '/' })` |
+| `src/routes/debug.tsx` | ~92 | `navigate({ to: '/hub' })` | `navigate({ to: '/' })` |
+| `src/presentation/components/hub/HubHomePage.tsx` | ~98 | `to: '/hub'` | `to: '/'` |
+| `src/presentation/components/layout/ProjectAwareLayout.tsx` | ~42 | `'/hub'` | `'/'` |
+| `src/presentation/components/layout/MainSidebar.tsx` | TBD | Any `/hub` refs | `'/'` |
+| `src/presentation/components/common/Header.tsx` | TBD | Any `/hub` refs | `'/'` |
+| `src/presentation/components/notes/NoteReference.tsx` | TBD | `navigate({ to: '/hub' })` | `navigate({ to: '/' })` |
+| `src/lib/workspace/hooks/useWorkspaceActions.ts` | TBD | Any `/hub` refs | `'/'` |
+| `src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts` | TBD | Any `/hub` refs | `'/'` |
+| `src/routes/helpers/route-guards.ts` | TBD | Any `/hub` refs | `'/'` |
+
+**NOTE**: Some files may not have `/hub` references. Run grep to confirm:
+```bash
+grep -r "'/hub'" src/
+grep -r '"/hub"' src/
+```
+
+#### Post-Delete Actions
+
+1. **Regenerate routeTree.gen.ts**:
+   ```bash
+   pnpm run dev  # TanStack Router auto-regenerates
+   ```
+
+2. **Verify route tree**:
+   - `hub.tsx` should NOT appear in `src/routeTree.gen.ts`
+
+#### Acceptance Criteria
+
+- [ ] hub.tsx deleted
+- [ ] All files updated with `/` instead of `/hub`
+- [ ] routeTree.gen.ts regenerated (no HubRoute)
+- [ ] Navigating to `/hub` → 404 (expected after delete)
+- [ ] All navigation works via `/`
+- [ ] TypeScript compiles: `pnpm tsc --noEmit`
+- [ ] Tests pass: `pnpm vitest run`
+- [ ] No console errors in browser
+- [ ] Quick Actions work from `/`
+- [ ] Project creation works from `/`
 
 ---
 
@@ -1344,7 +1579,7 @@ grep -r "#[0-9a-fA-F]" src/presentation/layouts/
 | **Status** | READY |
 | **Effort** | 1-2h |
 | **Priority** | P2 |
-| **Team** | B |
+| **Team** | A |
 | **Depends On** | UXUI-02-01 through UXUI-02-07 |
 
 #### Description
@@ -1422,7 +1657,29 @@ Every component in this EPIC must pass:
 
 ## Coordination Notes
 
-### Safe Zones (Team B Full Authority)
+### Team A Safe Zones (Cleanup Authority)
+
+**UXUI-02-00a (Hub Component Cleanup)**:
+- `src/presentation/components/hub/TopicCard.tsx` (DELETE)
+- `src/presentation/components/hub/TopicPortalCard.tsx` (DELETE)
+- `src/presentation/components/hub/ProjectDistribution.tsx` (DELETE)
+- `src/presentation/components/hub/ProjectFilter.tsx` (DELETE)
+- `src/presentation/components/hub/ProjectBadge.tsx` (DELETE)
+- `src/presentation/components/hub/MobileProjectSelector.tsx` (DELETE)
+- `src/presentation/components/hub/WorkspaceFilter.tsx` (DELETE)
+- `src/presentation/components/hub/NavigationBreadcrumbs.tsx` (DELETE)
+- `src/presentation/components/hub/ActivityLineChart.tsx` (DELETE)
+- `src/presentation/components/hub/BootSequence.tsx` (DELETE)
+- `src/presentation/components/hub/__tests__/*.tsx` (DELETE dead tests)
+- `src/presentation/components/hub/index.ts` (MODIFY - remove dead exports)
+- `src/presentation/components/hub/HubHomePage.tsx` (MODIFY - remove BootSequence)
+- `src/presentation/components/hub/ChartsGrid.tsx` (MODIFY - remove ActivityLineChart)
+
+**UXUI-02-00b (Hub Route Consolidation)**:
+- `src/routes/hub.tsx` (DELETE)
+- All files with `/hub` redirects (UPDATE to `/`)
+
+### Team B Safe Zones (Full Authority)
 
 - `src/presentation/layouts/WorkspaceLayout.tsx` (NEW)
 - `src/presentation/components/layout/ActivityBar*.tsx` (NEW)
@@ -1451,6 +1708,8 @@ Every component in this EPIC must pass:
 
 | Document | Path |
 |----------|------|
+| **Hub Component Audit** | `_bmad-output/analysis/hub-route-trash-audit-2026-01-28.md` |
+| **Lazy Route Audit** | `_bmad-output/analysis/lazy-route-audit-2026-01-28.md` |
 | UX Specification Index | `_bmad-output/planning-artifacts/ux-specification/index.md` |
 | Responsive Grid | `_bmad-output/planning-artifacts/ux-specification/04-responsive-grid.md` |
 | Global Components | `_bmad-output/planning-artifacts/ux-specification/05-global-components.md` |
@@ -1464,25 +1723,29 @@ Every component in this EPIC must pass:
 
 ## Progress Tracking
 
-| Story | Status | Assignee | Started | Completed |
-|-------|--------|----------|---------|-----------|
-| UXUI-02-01 | READY | - | - | - |
-| UXUI-02-02 | READY | - | - | - |
-| UXUI-02-02b | READY | - | - | - |
-| UXUI-02-03 | READY | - | - | - |
-| UXUI-02-04 | READY | - | - | - |
-| UXUI-02-04b | READY | - | - | - |
-| UXUI-02-05 | READY | - | - | - |
-| UXUI-02-06 | READY | - | - | - |
-| UXUI-02-07 | READY | - | - | - |
-| UXUI-02-08 | READY | - | - | - |
+| Story | Status | Team | Effort | Started | Completed |
+|-------|--------|------|--------|---------|-----------|
+| UXUI-02-00a | ✅ DONE | A | 1h | 2026-01-28 | 2026-01-28 |
+| UXUI-02-00b | ✅ DONE | A | 1h | 2026-01-28 | 2026-01-28 |
+| UXUI-02-01 | ✅ DONE | B | 3-4h | 2026-01-28 | 2026-01-28 |
+| UXUI-02-02 | READY | B | 3-4h | - | - |
+| UXUI-02-02b | READY | B | 3-4h | - | - |
+| UXUI-02-03 | READY | B | 2-3h | - | - |
+| UXUI-02-04 | READY | B | 2-3h | - | - |
+| UXUI-02-04b | READY | B | 2-3h | - | - |
+| UXUI-02-05 | READY | B | 2-3h | - | - |
+| UXUI-02-06 | READY | B | 2-3h | - | - |
+| UXUI-02-07 | READY | B | 3-4h | - | - |
+| UXUI-02-08 | BLOCKED | A | 1-2h | - | - |
 
-**Epic Progress**: 0/10 stories complete (0%)
-**Epic Status**: READY_FOR_EXECUTION
+**Epic Progress**: 3/12 stories complete (25%)
+**Epic Status**: IN_PROGRESS
+**Total Effort**: 26-38h (Team A: 3-4h, Team B: 23-34h)
 
 ---
 
 **Created**: 2026-01-28
+**Updated**: 2026-01-28
 **Author**: bmad-sprint-manager
 **Epic ID**: EPIC-UXUI-02
-**Lines**: ~700
+**Lines**: ~1750

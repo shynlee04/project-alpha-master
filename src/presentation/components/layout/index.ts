@@ -23,3 +23,9 @@ export { Breadcrumbs, type BreadcrumbsProps } from './Breadcrumbs';
 
 // Bento Grid Plugin Controls (CC-AR-04)
 export { PluginToggles, type PluginTogglesProps } from './PluginToggles';
+
+// Activity Bar (UXUI-02-02)
+export { ActivityBar, type ActivityBarProps, type ActivityBarItem } from './ActivityBar';
+
+// Plugin Docker (UXUI-02-02b)
+export { PluginDocker, type PluginDockerProps } from './PluginDocker';

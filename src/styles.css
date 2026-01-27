@@ -4,6 +4,12 @@
 /* VIA-GENT Design System Imports */
 @import "./styles/design-tokens.css";
 @import "./styles/animations.css";
+@import "./styles/workspace-layout.css";
+
+/* Layout Component Styles */
+@import "./presentation/components/layout/ActivityBar.css";
+@import "./presentation/components/layout/PluginDocker.css";
+@import "./presentation/components/layout/StatusBar.css";
 
 /* Custom variants for dark/light mode - Tailwind CSS 4 approach */
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *));

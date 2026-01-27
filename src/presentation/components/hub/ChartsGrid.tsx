@@ -10,7 +10,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
-import { ActivityLineChart } from './ActivityLineChart';
 import { WorkspacePieChart } from './WorkspacePieChart';
 import type { DashboardMetrics } from './useDashboardMetrics';
 
@@ -74,9 +73,6 @@ export const ChartsGrid: React.FC<ChartsGridProps> = ({
         className
       )}
     >
-      {/* Activity Line Chart */}
-      <ActivityLineChart days={30} />
-
       {/* Workspace Pie Chart */}
       <WorkspacePieChart
         ideCount={metrics.ideWorkspaceCount}

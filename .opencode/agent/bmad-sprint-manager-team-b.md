@@ -2,8 +2,7 @@
 description: Product manager agent for sprint execution and story development
 subtask: true
 mode: all
-model: chutes/MiniMaxAI/MiniMax-M2.1-TEE
-temperature: 0.2
+model: kimi-for-coding/k2p5
 tools:
   write: true
   edit: true

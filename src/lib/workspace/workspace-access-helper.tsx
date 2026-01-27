@@ -302,11 +302,11 @@ export function useWorkspaceAccess(
       if (result) {
         navigate({ to: `/${workspace}/$projectId`, params: { projectId: result.id } });
       } else {
-        navigate({ to: '/hub', search: { action: 'create-project' } });
+        navigate({ to: '/', search: { action: 'create-project' } });
       }
     } catch (error) {
       console.error('[useWorkspaceAccess] Failed to create temp project:', error);
-      navigate({ to: '/hub', search: { action: 'create-project' } });
+      navigate({ to: '/', search: { action: 'create-project' } });
     } finally {
       setIsCreatingTemp(false);
     }
@@ -314,7 +314,7 @@ export function useWorkspaceAccess(
 
   const handleEnable = useCallback(async () => {
     if (!mostRecentProject) {
-      navigate({ to: '/hub' });
+      navigate({ to: '/' });
       return;
     }
     
@@ -327,18 +327,18 @@ export function useWorkspaceAccess(
       navigate({ to: `/${workspace}/$projectId`, params: { projectId: mostRecentProject.id } });
     } catch (error) {
       console.error('[useWorkspaceAccess] Failed to enable workspace:', error);
-      navigate({ to: '/hub' });
+      navigate({ to: '/' });
     } finally {
       setIsEnabling(false);
     }
   }, [navigate, workspace, mostRecentProject]);
 
   const handleNavigateToCreate = useCallback(() => {
-    navigate({ to: '/hub', search: { action: 'create-project' } });
+    navigate({ to: '/', search: { action: 'create-project' } });
   }, [navigate]);
 
   const handleNavigateToHub = useCallback(() => {
-    navigate({ to: '/hub', search: { workspace } });
+    navigate({ to: '/', search: { workspace } });
   }, [workspace, navigate]);
 
   const state: WorkspaceAccessState = {

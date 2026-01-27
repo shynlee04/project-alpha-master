@@ -13,7 +13,6 @@ import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
 import { Route as TestErrorBoundaryRouteImport } from './routes/test-error-boundary'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProjectsRouteImport } from './routes/projects'
-import { Route as HubRouteImport } from './routes/hub'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
@@ -24,7 +23,6 @@ import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as ProjectIdTestRouteImport } from './routes/$projectId.test'
-import { Route as ProjectIdDiagnosticRouteImport } from './routes/$projectId.diagnostic'
 import { Route as __debug_ProviderPlaygroundRouteImport } from './routes/$__debug__.provider-playground'
 import { Route as ApiProvidersIdRouteImport } from './routes/api/providers.$id'
 import { Route as ApiProvidersIdTestRouteImport } from './routes/api/providers.$id.test'
@@ -48,11 +46,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HubRoute = HubRouteImport.update({
-  id: '/hub',
-  path: '/hub',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DebugRoute = DebugRouteImport.update({
@@ -105,11 +98,6 @@ const ProjectIdTestRoute = ProjectIdTestRouteImport.update({
   path: '/test',
   getParentRoute: () => ProjectIdRoute,
 } as any)
-const ProjectIdDiagnosticRoute = ProjectIdDiagnosticRouteImport.update({
-  id: '/diagnostic',
-  path: '/diagnostic',
-  getParentRoute: () => ProjectIdRoute,
-} as any)
 const __debug_ProviderPlaygroundRoute =
   __debug_ProviderPlaygroundRouteImport.update({
     id: '/$__debug__/provider-playground',
@@ -138,13 +126,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
-  '/hub': typeof HubRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
-  '/$projectId/diagnostic': typeof ProjectIdDiagnosticRoute
   '/$projectId/test': typeof ProjectIdTestRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
@@ -160,13 +146,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
-  '/hub': typeof HubRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
-  '/$projectId/diagnostic': typeof ProjectIdDiagnosticRoute
   '/$projectId/test': typeof ProjectIdTestRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
@@ -183,13 +167,11 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
-  '/hub': typeof HubRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
   '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
   '/$__debug__/provider-playground': typeof __debug_ProviderPlaygroundRoute
-  '/$projectId/diagnostic': typeof ProjectIdDiagnosticRoute
   '/$projectId/test': typeof ProjectIdTestRoute
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
@@ -207,13 +189,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents'
     | '/debug'
-    | '/hub'
     | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
     | '/$__debug_/provider-playground'
-    | '/$projectId/diagnostic'
     | '/$projectId/test'
     | '/api/chat'
     | '/api/provider-test'
@@ -229,13 +209,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents'
     | '/debug'
-    | '/hub'
     | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
     | '/$__debug_/provider-playground'
-    | '/$projectId/diagnostic'
     | '/$projectId/test'
     | '/api/chat'
     | '/api/provider-test'
@@ -251,13 +229,11 @@ export interface FileRouteTypes {
     | '/about'
     | '/agents'
     | '/debug'
-    | '/hub'
     | '/projects'
     | '/settings'
     | '/test-error-boundary'
     | '/test-fs-adapter'
     | '/$__debug__/provider-playground'
-    | '/$projectId/diagnostic'
     | '/$projectId/test'
     | '/api/chat'
     | '/api/provider-test'
@@ -274,7 +250,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AgentsRoute: typeof AgentsRoute
   DebugRoute: typeof DebugRoute
-  HubRoute: typeof HubRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
   TestErrorBoundaryRoute: typeof TestErrorBoundaryRoute
@@ -314,13 +289,6 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hub': {
-      id: '/hub'
-      path: '/hub'
-      fullPath: '/hub'
-      preLoaderRoute: typeof HubRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/debug': {
@@ -393,13 +361,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectIdTestRouteImport
       parentRoute: typeof ProjectIdRoute
     }
-    '/$projectId/diagnostic': {
-      id: '/$projectId/diagnostic'
-      path: '/diagnostic'
-      fullPath: '/$projectId/diagnostic'
-      preLoaderRoute: typeof ProjectIdDiagnosticRouteImport
-      parentRoute: typeof ProjectIdRoute
-    }
     '/$__debug__/provider-playground': {
       id: '/$__debug__/provider-playground'
       path: '/$__debug_/provider-playground'
@@ -432,12 +393,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface ProjectIdRouteChildren {
-  ProjectIdDiagnosticRoute: typeof ProjectIdDiagnosticRoute
   ProjectIdTestRoute: typeof ProjectIdTestRoute
 }
 
 const ProjectIdRouteChildren: ProjectIdRouteChildren = {
-  ProjectIdDiagnosticRoute: ProjectIdDiagnosticRoute,
   ProjectIdTestRoute: ProjectIdTestRoute,
 }
 
@@ -477,7 +436,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AgentsRoute: AgentsRoute,
   DebugRoute: DebugRoute,
-  HubRoute: HubRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,
   TestErrorBoundaryRoute: TestErrorBoundaryRoute,

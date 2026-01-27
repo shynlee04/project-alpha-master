@@ -1,10 +1,10 @@
-# CLAUDE.md - Platform-Specific Instructions
+# AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.8.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
+> **Version:** 2.10.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
 
 ---
-**DO NOT RUN FULL BUILD:** UNLESS  it is requested by the user, because the codebase is large and it is resource consuming
 
+**DO NOT RUN FULL BUILD:** UNLESS  it is requested by the user, because the codebase is large and it is resource consuming
 
 ## 3-Step Validation Framework (NON-NEGOTIABLE)
 
@@ -62,42 +62,6 @@ grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | h
 
 ---
 
-## 🏛️ AUTHORITY HIERARCHY & GOVERNANCE STRUCTURE
-
-### Authority Hierarchy
-
-```
-┌─────────────────────────────────────────────────────────┐
-│  ADR-039 (Primary Architecture Authority)             │
-│  Status: PENDING APPROVAL                            │
-│  Purpose: Unified architecture decisions              │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│  architecture.md (v3.0.0)                          │
-│  Status: 100% Aligned                               │
-│  Purpose: Technical implementation specification        │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│  Implementation Layer (prd.md, epics.md, ux-spec)    │
-└─────────────────────────────────────────────────────────┘
-```
-
-### Document Authority Matrix
-
-| Document | Version | Status | Authority Level | When to Use |
-|----------|---------|--------|----------------|-------------|
-| **ADR-039** | - | Pending Approval | Tier 1 (Primary) | All architecture decisions |
-| **new-fundamental-truths.md** | v2.0.0 | Active | Tier 1 (Foundation) | All strategic decisions |
-| **architecture.md** | v3.0.0 | 100% Aligned | Tier 2 (Implementation) | Technical architecture |
-| **prd.md** | v2.0.0 | 100% Aligned | Tier 2 (Product) | Product requirements |
-| **epics.md** | v3.0.0 | 100% Aligned | Tier 2 (Planning) | Epic/story definitions |
-| **ux-specification.md** | v2.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements |
-| **AGENTS.md** | v2.8.0 | Active | Tier 2 (Governance) | Agent coordination |
-
----
-
 ## 🚨 CRITICAL: ALWAYS Set Tool Constraints When Delegating to Sub-Agents
 
 **NEVER delegate without explicitly setting tool permissions!**
@@ -135,71 +99,114 @@ grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | h
 
 ---
 
-## 🏛️ ADR-034: PROJECT-CENTRIC ARCHITECTURE
+## 🚨 ACTIVE PARALLEL SPRINTS
 
-> **Source**: `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md`
-> **Status**: APPROVED - IN PROGRESS (Phase 1-2 Complete, Phase 3-4 Pending)
+### Team A: P0 BLOCKER - EPIC-ARCH-04-CC (FSA Handle Lifecycle)
 
-### Platform & Storage Decisions
+**Status**: 95% (CC-04 E2E Pending)
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Storage Type Selection** | Auto-detect, NO user choice | Desktop=FSA, Mobile=IndexedDB. Simplifies UX |
-| **Desktop Storage** | FSA (File System Access API) | Required for agentic coding |
-| **Mobile/Tablet Storage** | IndexedDB (Dexie) | FSA not supported on mobile |
-| **IDE Access** | Desktop only | FSA required for file CRUD |
-| **Mobile IDE Behavior** | Block and redirect to Notes | Clear UX boundary |
+| Story | Title | Status |
+|-------|-------|--------|
+| CC-01 | Add initialHandle Prop and FSA Restore Logic | IN_PROGRESS |
+| CC-02 | Wire PermissionOverlay with Persist and Reinit | BLOCKED by CC-01 |
+| CC-03 | Wire Route to Pass initialHandle | BLOCKED by CC-01 |
+| CC-04 | End-to-End Validation with Evidence | BLOCKED by CC-01,02,03 |
 
-### FSA & Handle Persistence
+**Files Owned (DO NOT TOUCH from other teams)**:
+- `src/infrastructure/context/project-context.tsx`
+- `src/routes/$projectId.tsx`
+- `src/presentation/components/layout/PermissionOverlay.tsx`
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Handle Storage** | Store `FileSystemDirectoryHandle` in IndexedDB | Chrome DevRel recommended |
-| **Permission Persistence** | Use Chrome 122+ "Allow on every visit" | Research confirmed |
-| **File Watching** | FileSystemObserver (129+), polling fallback | Native when available |
-| **Fast Load Strategy** | Snapshot in Dexie, diff in background | No waiting on rescan |
+---
 
-### Project Structure
+### Team B: P1 PARALLEL - EPIC-CONSOLIDATION
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| **Metadata Folder** | `.viagent/` at project root | Hidden, consistent |
-| **Notes Folder** | `/notes/` (configurable) | Separate from code |
-| **Assets Folder** | `/notes/assets/` | Embedded media |
-| **File IDs** | Path-based (relative from root) | FSA uses paths, debuggable |
+**Status**: READY_FOR_EXECUTION
 
-### PlatformContract Interface (Use This Everywhere)
+| Story | Title | Status | Effort |
+|-------|-------|--------|--------|
+| CONS-01 | Remove remaining window.location.href | READY | 1h |
+| CONS-02 | Consolidate project creation deprecation | READY | 1.5h |
+| CONS-03 | Complete MonacoPlugin integration | READY | 2-3h |
 
-```typescript
-interface PlatformContract {
-  deviceType: 'desktop' | 'mobile' | 'tablet';
-  storageType: 'fsa' | 'indexeddb';
-  canAccessFSA: boolean;
-  canWatchFiles: boolean;
-  canRunTerminal: boolean;
-  canDoAgenticCoding: boolean;
-  canAccessIDE: boolean;
-}
+---
 
-// Usage: Call ONCE, use everywhere
-const platform = getPlatformContract();
+### Team A+B: P0 BLOCKER - EPIC-CC-AR02AR03 (Plugin System for Phase 1A)
+
+**Status**: READY_FOR_EXECUTION (After CC-04 Complete)
+
+| Story | Title | Status | Team | Effort |
+|-------|-------|--------|------|--------|
+| CC-AR-01 | Add All Missing i18n Translation Keys | READY | A | 2h |
+| CC-AR-02 | Wire platform-defaults.ts to Route | READY | A | 2-3h |
+| CC-AR-03 | Fix Store Hydration Race Condition | READY | B | 2-3h |
+| CC-AR-04 | Replace Drag-Drop with Toggle-Based Layout | READY | A | 4-6h |
+| CC-AR-05 | Replace Monaco POC with Real Monaco Editor | READY | B | 4-6h |
+| CC-AR-06 | Implement Preview Plugin (WebContainer) | READY | B | 4-6h |
+| CC-AR-07 | Archive Legacy/Duplicate Files | READY | A | 1h |
+| CC-AR-08 | Split PluginLayout.tsx | READY | B | 2-3h |
+
+**Remediates**: EPIC-ARCH-02 (70% true), EPIC-ARCH-03 (45% true)
+
+---
+
+### Team B: P1 PARALLEL - EPIC-UXUI-01 (Design System Foundation)
+
+**Status**: READY_FOR_EXECUTION
+
+| Story | Title | Status | Effort |
+|-------|-------|--------|--------|
+| UXUI-01-01 | Implement Color Design Tokens | READY | 2-3h |
+| UXUI-01-02 | Implement Typography Tokens | READY | 1-2h |
+| UXUI-01-03 | Implement Spacing & Border Tokens | READY | 1-2h |
+| UXUI-01-04 | Implement Animation Tokens | READY | 2-3h |
+| UXUI-01-05 | Style Button Components | READY | 2-3h |
+| UXUI-01-06 | Style Input Components | READY | 2-3h |
+| UXUI-01-07 | Style Dialog/Modal Components | READY | 2-3h |
+| UXUI-01-08 | Style Remaining UI Primitives | READY | 3-4h |
+
+**Safe Zones (Team B Can Modify)**:
+- `src/styles.css`
+- `src/styles/*.css`
+- `src/presentation/components/ui/`
+
+**Validation**: Must pass `ux-specification/VALIDATION-CHECKLIST.md`
+
+---
+
+## 🏛️ AUTHORITY HIERARCHY
+
+### Authority Hierarchy
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  ADR-039 (Primary Architecture Authority)             │
+│  Status: PENDING APPROVAL                            │
+│  Purpose: Unified architecture decisions              │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  architecture.md (v3.0.0)                          │
+│  Status: 100% Aligned                               │
+│  Purpose: Technical implementation specification        │
+└─────────────────────────────────────────────────────────┘
+                          ↓
+┌─────────────────────────────────────────────────────────┐
+│  Implementation Layer (prd.md, epics.md, ux-spec)    │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### StorageGateway Interface (Use This for All I/O)
+### Document Authority Matrix
 
-```typescript
-interface StorageGateway {
-  read(path: string): Promise<Uint8Array>;
-  write(path: string, data: Uint8Array): Promise<void>;
-  delete(path: string): Promise<void>;
-  list(path: string): Promise<FileEntry[]>;
-  exists(path: string): Promise<boolean>;
-  watch(callback: FileChangeCallback): () => void;
-}
-
-// Usage: Get from factory based on project.storageType
-const gateway = StorageGatewayFactory.create(project.storageType);
-```
+| Document | Version | Status | Authority Level | When to Use |
+|----------|---------|--------|----------------|-------------|
+| **ADR-039** | - | Pending Approval | Tier 1 (Primary) | All architecture decisions |
+| **new-fundamental-truths.md** | v2.0.0 | Active | Tier 1 (Foundation) | All strategic decisions |
+| **architecture.md** | v3.0.0 | 100% Aligned | Tier 2 (Implementation) | Technical architecture |
+| **prd.md** | v2.0.0 | 100% Aligned | Tier 2 (Product) | Product requirements |
+| **epics.md** | v3.0.0 | 100% Aligned | Tier 2 (Planning) | Epic/story definitions |
+| **ux-specification/** | v3.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements (15 sharded sections) |
+| **AGENTS.md** | v2.8.0 | Active | Tier 2 (Governance) | Agent coordination |
 
 ---
 
@@ -209,23 +216,23 @@ const gateway = StorageGatewayFactory.create(project.storageType);
 
 ```
 src/
-├── routes/                          # TanStack Router ONLY
-├── presentation/                    # React UI ONLY
+├── routes/                    # TanStack Router ONLY
+├── presentation/              # React UI ONLY
 │   ├── components/
-│   │   ├── ui/                      # Design system primitives
-│   │   ├── common/                  # Shared components
-│   │   ├── notes/                   # Notes-specific
-│   │   └── ide/                     # IDE-specific
-│   └── hooks/                       # React hooks
-├── domain/                          # Business Logic ONLY
+│   │   ├── ui/               # Design system primitives
+│   │   ├── common/           # Shared components
+│   │   ├── notes/            # Notes-specific
+│   │   └── ide/              # IDE-specific
+│   └── hooks/                # React hooks
+├── domain/                    # Business Logic ONLY
 │   ├── entities/
 │   ├── services/
 │   ├── types/
 │   └── interfaces/
-└── infrastructure/                  # External Interfaces ONLY
+└── infrastructure/            # External Interfaces ONLY
     ├── persistence/
     │   ├── dexie-db.ts
-    │   └── stores/                  # Zustand stores
+    │   └── stores/          # Zustand stores
     ├── filesystem/
     │   ├── fsa-storage-adapter.ts
     │   ├── platform-detection.ts
@@ -288,9 +295,12 @@ src/stores/         → NEVER existed
 | **Secondary Epic** | EPIC-ARCH-04-CC (95%) |
 | **Sprint File** | `sprint-status-2026-01-26.yaml` |
 | **Workflow File** | `workflow-status-2026-01-26.yaml` |
-| **ADR** | ADR-039 (Pending Approval), ADR-034 (APPROVED) |
+| **ADR** | ADR-039 (Pending Approval) |
 | **TypeScript Errors** | 0 ✅ |
 | **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE |
+| **UX Spec Version** | 3.0.0 (2026-01-27) |
+| **UX Spec Sections** | 15 (including Light Theme + Animations) |
+| **Active UX EPIC** | EPIC-UXUI-01 (0%) |
 
 ### EPIC Corrected Status (2026-01-26)
 
@@ -301,6 +311,7 @@ src/stores/         → NEVER existed
 | EPIC-ARCH-03 | **45%** | EPIC-CC-AR02AR03 remediates |
 | EPIC-ARCH-04-CC | **95%** | CC-04 E2E pending |
 | **EPIC-CC-AR02AR03** | 0% | **P0 BLOCKER for Phase 1A** |
+| **EPIC-UXUI-01** | 0% | **Team B - Design System Foundation** |
 
 ---
 
@@ -308,47 +319,19 @@ src/stores/         → NEVER existed
 
 | What You Need | Where To Find It |
 |---------------|------------------|
-| Workflow Status | `bmm-workflow-status.yaml` |
-| Sprint Status | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
-| Story Index | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
-| **ADR-039** | (To be created - Primary Architecture Authority) |
-| **ADR-034** | `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md` |
-| new-fundamental-truths.md | `docs/new-fundamental-truths.md` (v2.0.0) |
-| architecture.md | `_bmad-output/planning-artifacts/architecture.md` (v3.0.0) |
-| prd.md | `_bmad-output/planning-artifacts/prd.md` (v2.0.0) |
-| epics.md | `_bmad-output/planning-artifacts/epics.md` (v3.0.0) |
-| ux-specification.md | `_bmad-output/planning-artifacts/ux-specification.md` (v2.0.0) |
-| Standards | `agent-os/standards/` |
-| Governance Gates | `_bmad/modules/governance/checklists/` |
-
----
-
-## 🌐 PLATFORM ROUTING (Claude Code vs OpenCode)
-
-### Optimal Platform Selection Matrix
-
-| Task Type | Optimal Platform | Success Rate | Notes |
-|-----------|-----------------|--------------|-------|
-| **Code Generation** | Claude Code | 92% | Autocomplete, code synthesis |
-| **Documentation** | OpenCode | 89% | Writing docs, markdown |
-| **Real-World Testing** | Both | 95% | Browser automation, API validation |
-| **Sprint Execution** | Both | 91% | Story development, coordination |
-| **Architecture** | Claude Code | 94% | Design decisions, ADRs |
-| **File Analysis** | Claude Code | 95% | Symbolic tools, code navigation |
-
-### Platform-Specific Instructions
-
-**Claude Code** (Primary for code):
-- Use symbolic tools (serena)
-- Direct file editing
-- Build/test execution
-- Real-time debugging
-
-**OpenCode** (Primary for documentation):
-- Focus on markdown generation
-- Use context-aware writing
-- Document formatting
-- Knowledge synthesis
+| **Primary Architecture Authority** | `ADR-039` (Pending Approval) |
+| **Architecture Specification** | `_bmad-output/planning-artifacts/architecture.md` |
+| **Fundamental Truths** | `docs/new-fundamental-truths.md` |
+| **Product Roadmap** | `_bmad-output/planning-artifacts/prd.md` |
+| **Epics & Stories** | `_bmad-output/planning-artifacts/epics.md` |
+| **UX Specification** | `_bmad-output/planning-artifacts/ux-specification/` (sharded - see index.md) |
+| **Workflow Status** | `bmm-workflow-status.yaml` |
+| **Sprint Status** | `_bmad-output/sprint-artifacts/sprint-status.yaml` |
+| **Story Index** | `_bmad-output/sprint-artifacts/stories/STORY-INDEX.md` |
+| **Standards** | `agent-os/standards/` |
+| **Governance Gates** | `_bmad/modules/governance/checklists/` |
+| **BMAD Framework** | `_bmad-ext/constitution/` |
+| **LOOP_STATE** | `_bmad-ext/state/LOOP_STATE.yaml` |
 
 ---
 
@@ -364,14 +347,14 @@ pnpm tsc --noEmit && pnpm vitest run
 
 ```
 ✅ CORRECT:
-  src/infrastructure/persistence/stores/    → Zustand stores
-  src/infrastructure/persistence/dexie/     → Dexie DB
-  src/infrastructure/sync/                  → File sync logic
-  src/domain/services/                      → Domain services
-  src/domain/types/                         → Domain types
-  src/presentation/components/              → React components
-  src/presentation/hooks/                   → Custom hooks
-  src/routes/                               → TanStack Router routes
+  src/infrastructure/persistence/stores/  → Zustand stores
+  src/infrastructure/persistence/dexie/   → Dexie DB
+  src/infrastructure/sync/                → File sync logic
+  src/domain/services/                    → Domain services
+  src/domain/types/                       → Domain types
+  src/presentation/components/             → React components
+  src/presentation/hooks/                  → Custom hooks
+  src/routes/                             → TanStack Router routes
 ```
 
 ### 3. Zustand Store Pattern
@@ -394,16 +377,20 @@ const addItem = useStore((s) => s.addItem);
 
 ```css
 /* ✅ REQUIRED */
-border-radius: 0;           /* Sharp corners */
-border-radius: 2px;         /* Minimal rounding only */
-box-shadow: 4px 4px 0 0;    /* Pixel shadows */
+border-radius: 0;         /* Sharp corners */
+border-radius: 2px;       /* Minimal rounding only */
+box-shadow: 4px 4px 0 0;  /* Pixel shadows */
 
 /* ❌ FORBIDDEN */
-border-radius: 0.5rem;      /* Too rounded */
-border-radius: 9999px;      /* Pill shape */
-backdrop-filter: blur();    /* Glassmorphism */
-opacity: 0.8;               /* Avoid - use solid */
+border-radius: 0.5rem;   /* Too rounded */
+backdrop-filter: blur();  /* Glassmorphism */
+opacity: 0.8;            /* Avoid - use solid */
 ```
+
+**Extended Specifications**:
+- **Light Theming**: See `ux-specification/14-light-theming.md`
+- **Micro Animations**: See `ux-specification/15-micro-animations.md`
+- **Validation Checklist**: See `ux-specification/VALIDATION-CHECKLIST.md`
 
 ---
 
@@ -419,7 +406,7 @@ opacity: 0.8;               /* Avoid - use solid */
 | Styling | Tailwind CSS + Radix UI |
 | Build | Vite + TanStack Start |
 | Testing | Vitest + Playwright |
-| AI | Google Gemini (via @tanstack/ai-gemini) |
+| AI | Google Gemini (@tanstack/ai-gemini) |
 
 ### Workspaces
 
@@ -427,9 +414,61 @@ opacity: 0.8;               /* Avoid - use solid */
 |-------|-------------|
 | `/notes` | Markdown/BlockNote editor |
 | `/ide` | WebContainer-based IDE |
-| `/study` | Flashcards/Quizzes **DEFER** |
-| `/knowledge` | Knowledge base **DEFER** |
 | `/settings` | API keys, Vault, Config |
+
+---
+
+## 📊 Context Limits
+
+| Limit | Value |
+|-------|-------|
+| Max active epics | 4 |
+| Max stories per epic | 8 |
+| Max active sprint files | 4 |
+| YAML file limit in _bmad-output | 25 |
+| workflow-status.yaml max lines | 200 |
+
+---
+
+## 🔒 Governance Rules
+
+### Before Any Workflow
+
+1. **Story Start**: Run `story-start-gate.yaml` checks
+2. **Story Done**: Run `story-done-gate.yaml` checks
+3. **Epic Done**: Run `epic-done-gate.yaml` (requires human `APPROVED: EPIC-XX`)
+4. **Daily**: Run `sprint-rotation-gate.yaml`
+5. **All**: Check `artifact-freshness-gate.yaml` TTL tiers
+
+---
+
+## 🚀 Quick Start for New Agent Session
+
+1. Read this file (AGENTS.md)
+2. Check `bmm-workflow-status.yaml` for current story
+3. Load `sprint-status.yaml` for active work
+4. Load story context: `stories/{story-id}-context.xml`
+5. Begin work using dev-story workflow
+
+---
+
+## 🎯 Critical BMAD Rules
+
+- **ALWAYS start with context** - Read, consume relevant docs, use MCP servers
+- **Never create files without validation** - Both code and documents need gatekeeping
+- **Never use stale documents** - No references, metadata, or yaml references = NEVER use
+- **Never execute without plan** - Always set up TODO list
+- **8-bit design** - No transparent backgrounds, NO hardcoded CSS, responsive for mobile
+- **Animation 8-bit style** - Use `steps(N, end)` timing, no smooth easing, respect prefers-reduced-motion
+- **Theme support** - Dark-first, light theme uses warm whites (Stone palette), no pure white
+- **Language strings** - NOT hardcoded - English and Vietnamese
+- **Code splitting** - Start splitting at 400 lines (500+ not accepted) - No god classes
+- **Keep architecture aligned** - Refactored and organized
+- **Never pass gatekeeping without evidence** - Validate success before claiming done
+- **Debug intelligently** - Export errors to files, reason deeply, fix progressively, then run tools
+- **Two teams A and B** - Coordinate to correct team, keep status updated
+- **DRY-CHECK** - ALWAYS double-check for syntax errors before running tools or tests
+- **MCP tools are critical** - Check and use them often for official docs
 
 ---
 
@@ -446,71 +485,12 @@ opacity: 0.8;               /* Avoid - use solid */
 ## 🔗 External References
 
 - **Full BMAD Framework**: `_bmad/FRAMEWORK.md`
-- **ADR-039** (to be created): Primary Architecture Authority - consolidates ADR-033/034/035
-- **ADR-034**: `_bmad-output/planning-artifacts/adr/ADR-034-project-centric-architecture-2026-01-20.md` - Project-centric model
 - **ADR Decisions**: `_bmad-output/planning-artifacts/adr/`
 - **Historical Content**: `_bmad-output/.archive/`
 - **Standards (Full)**: `agent-os/standards/`
-- **BMAD Constitution v2.0.0**: `.opencode/instructions/bmad-constitution.md` - Module structure, TTL, platform routing
+- **BMAD Constitution**: `_bmad-ext/constitution/`
+- **Analysis Reports**: `_bmad-output/analysis/`
 
 ---
 
-## 📋 Governance Gates
-
-Before any workflow:
-
-1. **Story Start**: Run `story-start-gate.yaml` checks
-2. **Story Done**: Run `story-done-gate.yaml` checks
-3. **Epic Done**: Run `epic-done-gate.yaml` (requires human `APPROVED: EPIC-XX`)
-4. **Daily**: Run `sprint-rotation-gate.yaml`
-5. **All**: Check `artifact-freshness-gate.yaml` TTL tiers
-
----
-
-## 📊 Context Limits
-
-| Limit | Value |
-|-------|-------|
-| Max active epics | 4 |
-| Max stories per epic | 8 |
-| Max active sprint files | 4 |
-| YAML file limit in _bmad-output | 25 |
-| workflow-status.yaml max lines | 200 |
-
----
-
-## 🚀 Quick Start for New Agent Session
-
-1. Read this file (CLAUDE.md) - Platform-specific instructions
-2. Read AGENTS.md - Master governance and agent coordination
-3. Check `bmm-workflow-status.yaml` for current story
-4. Load `sprint-status.yaml` for active work
-5. Load story context: `stories/{story-id}-context.xml`
-6. Check authority hierarchy:
-   - ADR-039 (when created) for architecture decisions
-   - ADR-034 for project-centric model
-   - architecture.md (v3.0.0) for technical implementation
-   - new-fundamental-truths.md (v2.0.0) for strategic decisions
-7. Begin work using dev-story workflow
-
----
-
-## 🎯 Critical BMAD Rules
-
-- **ALWAYS start with context** - Read, consume relevant docs, use MCP servers
-- **Never create files without validation** - Both code and documents need gatekeeping
-- **Never use stale documents** - No references, metadata, or yaml references = NEVER use
-- **Never execute without plan** - Always set up TODO list
-- **8-bit design** - No transparent backgrounds, NO hardcoded CSS, responsive for mobile
-- **Language strings** - NOT hardcoded - English and Vietnamese
-- **Code splitting** - Start splitting at 400 lines (500+ not accepted) - No god classes
-- **Keep architecture aligned** - Refactored and organized
-- **Never pass gatekeeping without evidence** - Validate success before claiming done
-- **Debug intelligently** - Export errors to files, reason deeply, fix progressively, then run tools
-- **Two teams A and B** - Coordinate to correct team, keep status updated
-- **DRY-CHECK** - ALWAYS double-check for syntax errors before running tools or tests
-- **MCP tools are critical** - Check and use them often for official docs
-
----
-
-**End of CLAUDE.md - Total Lines: ~450**
+**End of AGENTS.md - Total Lines: ~500**

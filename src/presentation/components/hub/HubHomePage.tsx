@@ -33,7 +33,6 @@ import { createProjectFromFolder } from '@/lib/workspace/fsa-persistence';
 // import { serializeHandle, handlePersistenceService } from '@/infrastructure/filesystem/handle-persistence';
 
 // Hub subcomponents
-import { BootSequence } from './BootSequence';
 import { HubHero } from './HubHero';
 import { QuickActionCard } from './QuickActionCard';
 import { RecentProjectsSection } from './RecentProjectsSection';
@@ -63,8 +62,7 @@ export const HubHomePage: React.FC = () => {
   const { workspace, action, message } = searchParams;
 
   // State management
-  const [booting, setBooting] = useState(true);
-  const [showContent, setShowContent] = useState(false);
+  const [showContent] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [projectPickerOpen, setProjectPickerOpen] = useState(false);
   const [projectCreationWizardOpen, setProjectCreationWizardOpen] = useState(false);
@@ -95,7 +93,7 @@ export const HubHomePage: React.FC = () => {
       // DEFERRED (ADR-034): Redirect knowledge/study workspace requests to 'notes'
       if (workspace === 'knowledge' || workspace === 'study') {
         navigate({
-          to: '/hub',
+          to: '/',
           search: { workspace: 'notes', action: 'create-project' },
           replace: true,
         });
@@ -409,15 +407,6 @@ export const HubHomePage: React.FC = () => {
       onClick: () => navigate({ to: '/about' }), // Assuming /about exists or will be caught
     }
   ], [t, navigate, handleNewProject, navigateToWorkspace]);
-
-  const handleBootComplete = () => {
-    setBooting(false);
-    setTimeout(() => setShowContent(true), 100);
-  };
-
-  if (booting) {
-    return <BootSequence onComplete={handleBootComplete} />;
-  }
 
   return (
     <div className={cn(

@@ -33,6 +33,9 @@ import { ProjectContextProvider } from '@/infrastructure/context/project-context
 import { PluginCoordinationProvider } from '@/infrastructure/context/plugin-coordination-context';
 // Phase 1: PluginLayout with CSS Grid (replaces PluginSidebar)
 import { PluginLayout } from '@/presentation/layouts/PluginLayout';
+import { WorkspaceLayout } from '@/presentation/layouts/WorkspaceLayout';
+// UXUI-02-03: GlobalSidebar integration
+import { MainSidebar } from '@/presentation/components/layout/MainSidebar';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
 import { getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
@@ -59,7 +62,7 @@ export const Route = createFileRoute('/$projectId')({
 
     if (!record) {
       console.error('[ProjectRoute.loader] Project not found in Dexie:', projectId);
-      throw redirect({ to: '/hub' });
+      throw redirect({ to: '/' });
     }
 
     // Convert record to Project type using fromRecord for proper defaults
@@ -136,15 +139,14 @@ function UnifiedProjectRoute() {
   // PluginLayout now includes Chat, FileTree, and other panels in CSS Grid
   // No separate PluginSidebar needed - all panels are in the grid
   // EPIC-0.6-01: Wrap with PluginCoordinationProvider for cross-plugin coordination
+  // UXUI-02-03: WorkspaceLayout integration with MainSidebar as GlobalSidebar
   return (
     <PluginCoordinationProvider>
       <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
-        <div className="h-full w-full flex flex-col">
-            {/* Phase 1: PluginLayout with CSS Grid - panels determined by preset */}
-            <div className="flex-1 overflow-hidden">
-              <PluginLayout />
-            </div>
-          </div>
+        <WorkspaceLayout
+          globalSidebar={<MainSidebar />}
+          mainContent={<PluginLayout />}
+        />
       </ProjectContextProvider>
     </PluginCoordinationProvider>
   );

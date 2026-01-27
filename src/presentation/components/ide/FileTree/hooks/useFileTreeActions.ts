@@ -140,7 +140,7 @@ export function useFileTreeActions(
                     setError(null); // Clear error state for toast handling
                     showMobileWorkspaceError('permissionDenied', () => {
                         // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
-                        navigate({ to: '/hub' });
+                        navigate({ to: '/' });
                     });
                 } else {
                     setError(t('errors.workspace.permissionDenied.description', 'Permission was denied to access this folder. Please grant access in your browser settings.'));
@@ -151,7 +151,7 @@ export function useFileTreeActions(
                     setError(null); // Clear error state for toast handling
                     showMobileWorkspaceError('openFailed', () => {
                         // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
-                        navigate({ to: '/hub' });
+                        navigate({ to: '/' });
                     });
                 } else {
                     setError(t('errors.workspace.openFailed.description', `Error loading directory: ${err.message}`));
@@ -162,7 +162,7 @@ export function useFileTreeActions(
                     setError(null); // Clear error state for toast handling
                     showMobileWorkspaceError('openFailed', () => {
                         // ARCH-01-01: Use TanStack Router navigation instead of window.location.href
-                        navigate({ to: '/hub' });
+                        navigate({ to: '/' });
                     });
                 } else {
                     setError(t('errors.workspace.openFailed.description', `Error loading directory: ${err instanceof Error ? err.message : String(err)}`));

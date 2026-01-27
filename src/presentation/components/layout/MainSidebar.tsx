@@ -38,9 +38,9 @@ import { useLocalePreference } from '@/i18n/LocaleProvider';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { ShortcutDefinitions } from '@/lib/keyboard/shortcuts';
 
-// 8-bit compliant sidebar variants
+// 8-bit compliant sidebar variants - uses semantic tokens for theming
 const sidebarVariants = cva(
-  'flex flex-col h-screen border-r-2 border-zinc-700 bg-zinc-900 transition-all duration-200 ease-in-out',
+  'flex flex-col h-screen border-r-2 border-border bg-card transition-all duration-200 ease-in-out',
   {
     variants: {
       collapsed: {
@@ -54,14 +54,14 @@ const sidebarVariants = cva(
   }
 );
 
-// 8-bit compliant nav item with active orange left border
+// 8-bit compliant nav item with active primary left border
 const navItemVariants = cva(
   'flex items-center gap-3 mx-2 rounded-none cursor-pointer transition-all duration-200 font-pixel tracking-wide text-base group relative touch-manipulation',
   {
     variants: {
       active: {
-        true: 'border-l-2 border-orange-500 bg-zinc-900 text-zinc-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
-        false: 'border-l-2 border-transparent text-zinc-400 hover:bg-zinc-950 hover:text-zinc-50',
+        true: 'border-l-2 border-primary bg-card text-foreground shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
+        false: 'border-l-2 border-transparent text-muted-foreground hover:bg-accent hover:text-foreground',
       },
       collapsed: {
         true: 'justify-center px-1 py-3',
@@ -82,7 +82,7 @@ const navItemVariants = cva(
 
 // 8-bit mobile sidebar (full screen overlay)
 const mobileSidebarVariants = cva(
-  'fixed inset-y-0 left-0 z-50 h-screen w-[320px] bg-zinc-900 border-r-2 border-zinc-700 transition-transform duration-200 ease-in-out shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+  'fixed inset-y-0 left-0 z-50 h-screen w-[320px] bg-card border-r-2 border-border transition-transform duration-200 ease-in-out shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
   {
     variants: {
       open: {
@@ -98,7 +98,7 @@ const mobileSidebarVariants = cva(
 
 // Backdrop for mobile
 const backdropVariants = cva(
-  'fixed inset-0 bg-black/60 z-40 transition-opacity duration-200',
+  'fixed inset-0 bg-background/60 z-40 transition-opacity duration-200',
   {
     variants: {
       open: {
@@ -212,7 +212,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           size={isMobile ? 24 : 20}
           className={cn(
             'shrink-0 transition-colors',
-            isActive ? 'text-orange-500' : 'text-zinc-400 group-hover:text-zinc-50'
+            isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
           )}
         />
         {!isCollapsed && (
@@ -231,7 +231,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
 
     return (
       <div className="px-4 py-2">
-        <h3 className="text-xs font-pixel uppercase tracking-wider text-zinc-500 mb-2">
+        <h3 className="text-xs font-pixel uppercase tracking-wider text-muted-foreground mb-2">
           {t('global.sidebar.recentProjects')}
         </h3>
         <ul className="space-y-1">
@@ -239,9 +239,9 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             <li
               key={project.id}
               onClick={() => handleProjectClick(project.id)}
-              className="flex items-center gap-2 px-2 py-1.5 text-sm text-zinc-400 hover:text-zinc-50 hover:bg-zinc-950 rounded-none cursor-pointer transition-colors"
+              className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-none cursor-pointer transition-colors"
             >
-              <span className="text-zinc-600">•</span>
+              <span className="text-muted-foreground/50">•</span>
               <TruncatedText text={project.name} className="truncate" />
             </li>
           ))}
@@ -255,7 +255,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
     const isCollapsed = !isMobile && sidebarCollapsed;
 
     return (
-      <div className="border-t-2 border-zinc-700 bg-zinc-900 p-2 space-y-2">
+      <div className="border-t-2 border-border bg-card p-2 space-y-2">
         {/* Settings */}
         <div
           onClick={() => handleNavigation('/settings', 'settings')}
@@ -270,7 +270,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             size={isMobile ? 24 : 20}
             className={cn(
               'shrink-0 transition-colors',
-              location.pathname === '/settings' ? 'text-orange-500' : 'text-zinc-400 group-hover:text-zinc-50'
+              location.pathname === '/settings' ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
             )}
           />
           {!isCollapsed && (
@@ -286,7 +286,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           )}>
             <button
               onClick={handleToggleTheme}
-              className="flex items-center justify-center h-10 rounded-none border-2 border-transparent hover:border-zinc-700 hover:bg-zinc-950 text-zinc-400 hover:text-zinc-50 transition-all"
+              className="flex items-center justify-center h-10 rounded-none border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
               title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
@@ -294,7 +294,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
 
             <button
               onClick={handleToggleLocale}
-              className="flex items-center justify-center h-10 rounded-none border-2 border-transparent hover:border-zinc-700 hover:bg-zinc-950 text-zinc-400 hover:text-zinc-50 transition-all"
+              className="flex items-center justify-center h-10 rounded-none border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
               title={locale === 'en' ? 'Tiếng Việt' : 'English'}
             >
               <span className="font-pixel text-sm font-bold">{locale.toUpperCase()}</span>
@@ -307,8 +307,8 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
           <button
             onClick={() => toggleSidebar()}
             className={cn(
-              'flex items-center justify-center w-full h-8 rounded-none hover:bg-zinc-950 text-zinc-400 hover:text-zinc-50 transition-colors',
-              !isCollapsed && 'border-t border-zinc-700/50 pt-2 mt-2'
+              'flex items-center justify-center w-full h-8 rounded-none hover:bg-accent text-muted-foreground hover:text-foreground transition-colors',
+              !isCollapsed && 'border-t border-border/50 pt-2 mt-2'
             )}
             title={sidebarCollapsed ? t('global.sidebar.expand') : t('global.sidebar.collapse')}
           >
@@ -334,18 +334,18 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
         className
       )}>
         {/* Mobile Header */}
-        <div className="flex items-center justify-between h-16 border-b-2 border-zinc-700 px-4 bg-zinc-900">
+        <div className="flex items-center justify-between h-16 border-b-2 border-border px-4 bg-card">
           <div className="flex items-center gap-3">
             <img src="/via-gent-logo.svg" alt="Via-gent" className="w-10 h-10" />
-            <span className="font-bold font-pixel text-xl tracking-wide text-zinc-50">
+            <span className="font-bold font-pixel text-xl tracking-wide text-foreground">
               Via-gent
             </span>
           </div>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-transparent hover:border-zinc-700 active:bg-zinc-950 transition-colors"
+            className="flex items-center justify-center w-10 h-10 rounded-none border-2 border-transparent hover:border-border active:bg-accent transition-colors"
           >
-            <X size={24} className="text-zinc-50" />
+            <X size={24} className="text-foreground" />
           </button>
         </div>
 
@@ -369,7 +369,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
       )}>
         {/* Desktop Header */}
         <div className={cn(
-          'flex items-center h-16 border-b-2 border-zinc-700 transition-all duration-200',
+          'flex items-center h-16 border-b-2 border-border transition-all duration-200',
           sidebarCollapsed ? 'justify-center px-0' : 'px-4'
         )}>
           <img
@@ -381,7 +381,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             )}
           />
           {!sidebarCollapsed && (
-            <span className="ml-3 font-bold font-pixel text-xl tracking-tight text-zinc-50 truncate">
+            <span className="ml-3 font-bold font-pixel text-xl tracking-tight text-foreground truncate">
               Via-gent
             </span>
           )}

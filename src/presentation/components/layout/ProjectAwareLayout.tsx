@@ -39,7 +39,7 @@ function isProjectRoute(pathname: string): boolean {
     // Hub, projects, settings, about, agents, debug routes are NOT project routes
     const globalRoutes = [
         '/',
-        '/hub',
+        '/',
         '/projects',
         '/settings',
         '/about',

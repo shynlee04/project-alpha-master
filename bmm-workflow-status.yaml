@@ -1,21 +1,21 @@
 # ═════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.9 - EPIC-UXUI-02 REGISTERED
+# BMM WORKFLOW STATUS v2.10 - EPIC-UXUI-02 FINALIZED WITH CLEANUP STORIES
 # ═════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.9.0"
-last_updated: "2026-01-28T10:00:00+07:00"
+schema_version: "2.10.0"
+last_updated: "2026-01-28T14:30:00+07:00"
 updated_by: "bmad-sprint-manager"
-previous_version: "bmm-workflow-status-v2.8.yaml"
+previous_version: "bmm-workflow-status-v2.9.yaml"
 
 # ═════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═════════════════════════════════════════════════════════════════════════
 
 current_epic: "EPIC-UXUI-02"
-current_story: "UXUI-02-01"
-workflow_phase: "READY_FOR_EXECUTION"
-health_score: 80
-notes: "EPIC-UXUI-02 Main Layout Overhaul READY - Replace Bento Grid with 6-column CSS Grid"
+current_story: "UXUI-02-00a (Team A) | UXUI-02-01 (Team B)"
+workflow_phase: "EXECUTION"
+health_score: 85
+notes: "EPIC-UXUI-02 sprint execution started. Team A + Team B parallel execution in progress."
 context_ttl: "24h"
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -586,10 +586,11 @@ active_epics:
     name: "Main Layout Overhaul - UX Spec v3.0.0 Implementation"
     status: READY_FOR_EXECUTION
     priority: P0
-    owner: "Team B (UX)"
+    owner: "Team A (Cleanup) + Team B (UX)"
     created: "2026-01-28"
-    estimated_effort: "18-26h"
-    stories_total: 8
+    updated: "2026-01-28"
+    estimated_effort: "26-38h"
+    stories_total: 12
     stories_completed: 0
     blocked_by: null
     blocks: "EPIC-UXUI-03"
@@ -600,32 +601,62 @@ active_epics:
       - "src/presentation/components/layout/ActivityBar*.tsx"
       - "src/presentation/components/layout/StatusBar.tsx"
       - "src/presentation/components/layout/MainSidebar.tsx"
+      - "src/presentation/components/hub/*"
       - "src/styles/*.css"
       - "src/routes/$projectId.tsx"
+      - "src/routes/hub.tsx"
     do_not_touch:
       - "src/infrastructure/context/project-context.tsx"
       - "src/infrastructure/filesystem/*"
       - "src/domain/*"
     stories:
-      - "UXUI-02-01: Create WorkspaceLayout Shell (3-4h)"
-      - "UXUI-02-02: Implement ActivityBar Component (3-4h)"
-      - "UXUI-02-03: Integrate GlobalSidebar (2-3h)"
-      - "UXUI-02-04: Lock Plugin Positions (2-3h)"
-      - "UXUI-02-05: Wire ActivityBar to Plugins (2-3h)"
-      - "UXUI-02-06: Implement StatusBar (2-3h)"
-      - "UXUI-02-07: Apply Design Tokens (3-4h)"
-      - "UXUI-02-08: Archive Bento Grid (1-2h)"
+      - "UXUI-02-00a: Hub Component Cleanup (1h, Team A)"
+      - "UXUI-02-00b: Hub Route Consolidation (1h, Team A)"
+      - "UXUI-02-01: Create WorkspaceLayout Shell (3-4h, Team B)"
+      - "UXUI-02-02: Implement ActivityBar Component (3-4h, Team B)"
+      - "UXUI-02-02b: Plugin Docker Component (3-4h, Team B)"
+      - "UXUI-02-03: Integrate GlobalSidebar (2-3h, Team B)"
+      - "UXUI-02-04: Plugin Drag-to-Panel (2-3h, Team B)"
+      - "UXUI-02-04b: Single Instance Constraint (2-3h, Team B)"
+      - "UXUI-02-05: Wire ActivityBar + Docker (2-3h, Team B)"
+      - "UXUI-02-06: Implement StatusBar (2-3h, Team B)"
+      - "UXUI-02-07: Apply Design Tokens (3-4h, Team B)"
+      - "UXUI-02-08: Archive Bento Grid (1-2h, Team A)"
 
 # ═════════════════════════════════════════════════════════════════════════
 # UX WORK QUEUE
 # ═════════════════════════════════════════════════════════════════════════
 
+active_work:
+  epic_id: "EPIC-UXUI-02"
+  epic_title: "Main Layout Overhaul"
+  phase: "EXECUTION"
+  
+  team_a:
+    current_story: "UXUI-02-00a"
+    status: "IN_PROGRESS"
+    agent: "dev-ext"
+    
+  team_b:
+    current_story: "UXUI-02-01"
+    status: "IN_PROGRESS"
+    agent: "dev-ext-team-b"
+    
+  execution_mode: "PARALLEL"
+  started: "2026-01-28"
+
 ux_work_queue:
   current_epic: EPIC-UXUI-02
-  current_story: "UXUI-02-01: Create WorkspaceLayout Shell"
-  team: "Team B"
-  phase: "READY_FOR_EXECUTION"
-  next_action: "Create WorkspaceLayout.tsx with 6-column CSS Grid"
+  current_story: "UXUI-02-00a: Hub Component Cleanup (Team A) | UXUI-02-01: WorkspaceLayout Shell (Team B)"
+  team: "Team A (Cleanup) + Team B (UX)"
+  phase: "EXECUTION"
+  next_action: |
+    Team A: Delete 13 orphaned hub components (UXUI-02-00a)
+    Team B: Create WorkspaceLayout.tsx with 6-column CSS Grid (UXUI-02-01)
+    PARALLEL EXECUTION: Phase 1 started - both teams executing simultaneously
+  audit_artifacts:
+    - "_bmad-output/analysis/hub-route-trash-audit-2026-01-28.md"
+    - "_bmad-output/analysis/lazy-route-audit-2026-01-28.md"
   completed_epics:
     - "EPIC-UXUI-01: Design System Foundation (8/8 stories = 100%)"
   completed_stories:
@@ -637,11 +668,12 @@ ux_work_queue:
     - "UXUI-01-06: Input Components (2026-01-28)"
     - "UXUI-01-07: Dialog/Modal Components (2026-01-28)"
     - "UXUI-01-08: Remaining Primitives (2026-01-28)"
-  progress: "EPIC-UXUI-02 IN_PROGRESS (0/8 = 0%)"
+  progress: "EPIC-UXUI-02 IN_PROGRESS (0/12 = 0%)"
   goal: |
     Replace Bento Grid with 6-column CSS Grid layout per UX Spec v3.0.0.
     Light theme toggle MUST work after completion.
     All components use design tokens (no hardcoded zinc-*).
+    Team A cleanup work removes 13 orphaned components and consolidates hub route.
 
 # ═════════════════════════════════════════════════════════════════════════
 # ARCHITECTURE DECISIONS (Quick Reference)

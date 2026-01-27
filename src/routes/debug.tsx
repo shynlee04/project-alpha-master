@@ -89,7 +89,7 @@ function DebugPage() {
             log('Redirecting to Hub in 2 seconds...');
 
             setTimeout(() => {
-                navigate({ to: '/hub' });
+                navigate({ to: '/' });
             }, 2000);
 
         } catch (error) {

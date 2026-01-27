@@ -2,7 +2,7 @@
 subtask: true
 description: Software Architect & System Designer - Clean Architecture, DDD, ADRs with handoff protocol
 mode: all
-model: chutes/zai-org/GLM-4.7-FP8
+model: kimi-for-coding/k2p
 temperature: 0.1
 tools:
   write: true
