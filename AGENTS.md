@@ -1,6 +1,6 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.8.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
+> **Version:** 2.10.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
 
 ---
 
@@ -150,6 +150,30 @@ grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | h
 
 ---
 
+### Team B: P1 PARALLEL - EPIC-UXUI-01 (Design System Foundation)
+
+**Status**: READY_FOR_EXECUTION
+
+| Story | Title | Status | Effort |
+|-------|-------|--------|--------|
+| UXUI-01-01 | Implement Color Design Tokens | READY | 2-3h |
+| UXUI-01-02 | Implement Typography Tokens | READY | 1-2h |
+| UXUI-01-03 | Implement Spacing & Border Tokens | READY | 1-2h |
+| UXUI-01-04 | Implement Animation Tokens | READY | 2-3h |
+| UXUI-01-05 | Style Button Components | READY | 2-3h |
+| UXUI-01-06 | Style Input Components | READY | 2-3h |
+| UXUI-01-07 | Style Dialog/Modal Components | READY | 2-3h |
+| UXUI-01-08 | Style Remaining UI Primitives | READY | 3-4h |
+
+**Safe Zones (Team B Can Modify)**:
+- `src/styles.css`
+- `src/styles/*.css`
+- `src/presentation/components/ui/`
+
+**Validation**: Must pass `ux-specification/VALIDATION-CHECKLIST.md`
+
+---
+
 ## 🏛️ AUTHORITY HIERARCHY
 
 ### Authority Hierarchy
@@ -181,7 +205,7 @@ grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | h
 | **architecture.md** | v3.0.0 | 100% Aligned | Tier 2 (Implementation) | Technical architecture |
 | **prd.md** | v2.0.0 | 100% Aligned | Tier 2 (Product) | Product requirements |
 | **epics.md** | v3.0.0 | 100% Aligned | Tier 2 (Planning) | Epic/story definitions |
-| **ux-specification.md** | v2.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements |
+| **ux-specification/** | v3.0.0 | 100% Aligned | Tier 2 (UX) | UX requirements (15 sharded sections) |
 | **AGENTS.md** | v2.8.0 | Active | Tier 2 (Governance) | Agent coordination |
 
 ---
@@ -275,6 +299,8 @@ src/stores/         → NEVER existed
 | **TypeScript Errors** | 0 ✅ |
 | **App Status** | ⚠️ FUNCTIONAL BUT INCOMPLETE |
 | **UX Spec Version** | 3.0.0 (2026-01-27) |
+| **UX Spec Sections** | 15 (including Light Theme + Animations) |
+| **Active UX EPIC** | EPIC-UXUI-01 (0%) |
 
 ### EPIC Corrected Status (2026-01-26)
 
@@ -285,6 +311,7 @@ src/stores/         → NEVER existed
 | EPIC-ARCH-03 | **45%** | EPIC-CC-AR02AR03 remediates |
 | EPIC-ARCH-04-CC | **95%** | CC-04 E2E pending |
 | **EPIC-CC-AR02AR03** | 0% | **P0 BLOCKER for Phase 1A** |
+| **EPIC-UXUI-01** | 0% | **Team B - Design System Foundation** |
 
 ---
 
@@ -360,6 +387,11 @@ backdrop-filter: blur();  /* Glassmorphism */
 opacity: 0.8;            /* Avoid - use solid */
 ```
 
+**Extended Specifications**:
+- **Light Theming**: See `ux-specification/14-light-theming.md`
+- **Micro Animations**: See `ux-specification/15-micro-animations.md`
+- **Validation Checklist**: See `ux-specification/VALIDATION-CHECKLIST.md`
+
 ---
 
 ## 🏗️ Architecture Overview
@@ -427,6 +459,8 @@ opacity: 0.8;            /* Avoid - use solid */
 - **Never use stale documents** - No references, metadata, or yaml references = NEVER use
 - **Never execute without plan** - Always set up TODO list
 - **8-bit design** - No transparent backgrounds, NO hardcoded CSS, responsive for mobile
+- **Animation 8-bit style** - Use `steps(N, end)` timing, no smooth easing, respect prefers-reduced-motion
+- **Theme support** - Dark-first, light theme uses warm whites (Stone palette), no pure white
 - **Language strings** - NOT hardcoded - English and Vietnamese
 - **Code splitting** - Start splitting at 400 lines (500+ not accepted) - No god classes
 - **Keep architecture aligned** - Refactored and organized

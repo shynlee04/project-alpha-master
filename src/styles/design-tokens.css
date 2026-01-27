@@ -42,20 +42,102 @@
 
 /* =============================================================================
    DARK THEME (DEFAULT)
+   VIA-GENT Design System - 8-bit Aesthetic Color Tokens
+   
+   Palette Philosophy:
+   - Primary: Orange (#f97316) - MistralAI inspired, warm and inviting
+   - Neutrals: Stone/Zinc with warm undertones for 8-bit feel
+   - Semantics: Vibrant but not neon - readable on dark backgrounds
+   - NO transparency/opacity on colors (except disabled states)
+   - NO gradients in solid colors - pure solid colors only
    ============================================================================= */
 :root {
-  /* ===== Core Brand Colors ===== */
+  /* ==========================================================================
+     PRIMARY COLORS (Orange Spectrum)
+     Brand identity - used for interactive elements, focus states, emphasis
+     ========================================================================== */
   --primary: 24.6 95% 53.1%;
-  /* #f97316 - Orange accent */
+  /* #f97316 - Brand primary */
   --primary-foreground: 0 0% 100%;
-  /* White */
+  /* White text on primary */
+  
+  /* Primary Color Scale (50-950) */
+  --primary-50: 24.6 100% 96.5%;
+  /* #fff7ed - Subtle background tint */
+  --primary-100: 24.6 100% 91.8%;
+  /* #ffedd5 - Light background */
+  --primary-200: 24.6 96.6% 83.1%;
+  /* #fed7aa - Hover background */
+  --primary-300: 24.6 97.2% 72.4%;
+  /* #fdba74 - Active state */
+  --primary-400: 24.6 96.3% 61.2%;
+  /* #fb923c - Emphasis */
+  --primary-500: 24.6 95% 53.1%;
+  /* #f97316 - Primary (same as --primary) */
+  --primary-600: 24.6 90.4% 48%;
+  /* #ea580c - Hover state */
+  --primary-700: 24.6 88.5% 40.4%;
+  /* #c2410c - Pressed state */
+  --primary-800: 24.6 79% 32.7%;
+  /* #9a3412 - Dark accent */
+  --primary-900: 24.6 74.5% 27.8%;
+  /* #7c2d12 - Deepest accent */
+  --primary-950: 24.6 81.2% 14.5%;
+  /* #431407 - Near black */
 
-  /* ===== Surface Colors ===== */
+  /* ==========================================================================
+     NEUTRAL COLORS (Stone/Zinc Palette)
+     Warm grays for 8-bit aesthetic - used for text, backgrounds, borders
+     ========================================================================== */
+  --neutral-50: 0 0% 98%;
+  /* #fafafa - Brightest (light mode bg) */
+  --neutral-100: 0 0% 96%;
+  /* #f5f5f5 - Light gray */
+  --neutral-200: 0 0% 90%;
+  /* #e5e5e5 - Dividers on light */
+  --neutral-300: 0 0% 83%;
+  /* #d4d4d4 - Borders on light */
+  --neutral-400: 0 0% 64%;
+  /* #a3a3a3 - Disabled/muted text */
+  --neutral-500: 0 0% 45%;
+  /* #737373 - Secondary text */
+  --neutral-600: 0 0% 32%;
+  /* #525252 - Dark secondary */
+  --neutral-700: 0 0% 25%;
+  /* #404040 - Headings on light */
+  --neutral-800: 240 4% 16%;
+  /* #27272a - Elevated surface dark */
+  --neutral-900: 240 4% 10%;
+  /* #18181b - Surface dark */
+  --neutral-950: 240 6% 4%;
+  /* #0f0f11 - Deepest dark */
+
+  /* ==========================================================================
+     SURFACE COLORS (Background Hierarchy)
+     Layer system for depth and elevation in dark theme
+     ========================================================================== */
   --background: 240 6% 4%;
-  /* #0f0f11 - Deep black */
+  /* #0f0f11 - Base app background */
   --foreground: 0 0% 95%;
   /* Near white text */
 
+  /* Surface Hierarchy (bg-0 through bg-3) */
+  --bg-0: 240 6% 4%;
+  /* #0f0f11 - Deepest background (canvas) */
+  --bg-1: 240 4% 10%;
+  /* #18181b - Primary surface (cards, panels) */
+  --bg-2: 240 4% 16%;
+  /* #27272a - Elevated surface */
+  --bg-3: 240 4% 22%;
+  /* #3f3f46 - Highest elevation */
+
+  /* Surface Token Aliases */
+  --surface-0: var(--bg-0);
+  --surface-1: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --surface-3: var(--bg-3);
+
+  /* ShadcnUI Surface Mappings */
   --card: 240 4% 10%;
   /* #18181b - Card/panel background */
   --card-foreground: 0 0% 95%;
@@ -73,17 +155,40 @@
   --accent: 240 4% 16%;
   --accent-foreground: 0 0% 95%;
 
-  --destructive: 0 84% 60%;
-  /* Red for errors */
-  --destructive-foreground: 0 0% 100%;
+  /* ==========================================================================
+     TEXT COLORS
+     Semantic text color tokens for consistent typography
+     ========================================================================== */
+  --text-primary: 0 0% 95%;
+  /* #f2f2f2 - Primary text (body, headings) */
+  --text-secondary: 0 0% 75%;
+  /* #bfbfbf - Secondary text (descriptions) */
+  --text-muted: 0 0% 60%;
+  /* #999999 - Muted text (hints, captions) */
+  --text-disabled: 0 0% 40%;
+  /* #666666 - Disabled text (inactive states) */
 
+  /* ==========================================================================
+     BORDER COLORS
+     Consistent border styling across the application
+     ========================================================================== */
   --border: 240 4% 16%;
-  /* #27272a - Borders */
+  /* #27272a - Default border */
+  --border-default: 240 4% 16%;
+  /* #27272a - Standard borders */
+  --border-strong: 240 4% 25%;
+  /* #3f3f46 - Emphasized borders */
+  --border-muted: 240 4% 12%;
+  /* #1e1e21 - Subtle borders */
+  
   --input: 240 4% 16%;
   --ring: 24.6 95% 53.1%;
   /* Orange focus ring */
 
-  /* ===== Sidebar Specific ===== */
+  /* ==========================================================================
+     SIDEBAR SPECIFIC
+     Darker sidebar for visual hierarchy
+     ========================================================================== */
   --sidebar: 240 6% 6%;
   /* Slightly darker sidebar */
   --sidebar-foreground: 0 0% 95%;
@@ -94,16 +199,134 @@
   --sidebar-border: 240 4% 16%;
   --sidebar-ring: 24.6 95% 53.1%;
 
-  /* ===== Semantic Colors ===== */
+  /* ==========================================================================
+     SEMANTIC COLORS - SUCCESS (Green)
+     Used for positive feedback, confirmations, success states
+     ========================================================================== */
   --success: 142 71% 45%;
-  /* #22c55e - Green */
+  /* #22c55e - Base success */
   --success-foreground: 0 0% 100%;
+  
+  /* Success Color Scale (50-950) */
+  --success-50: 142 76% 96.7%;
+  /* #f0fdf4 - Subtle background */
+  --success-100: 142 71% 92.5%;
+  /* #dcfce7 - Light background */
+  --success-200: 142 70% 85.1%;
+  /* #bbf7d0 - Hover background */
+  --success-300: 142 78% 73.1%;
+  /* #86efac - Active state */
+  --success-400: 142 70% 58%;
+  /* #4ade80 - Emphasis */
+  --success-500: 142 71% 45.3%;
+  /* #22c55e - Primary success */
+  --success-600: 142 76% 36.3%;
+  /* #16a34a - Hover state */
+  --success-700: 142 72% 29.2%;
+  /* #15803d - Pressed state */
+  --success-800: 142 64% 24.1%;
+  /* #166534 - Dark accent */
+  --success-900: 142 61% 20.2%;
+  /* #14532d - Deepest */
+  --success-950: 142 80% 10%;
+  /* #052e16 - Near black */
+
+  /* ==========================================================================
+     SEMANTIC COLORS - WARNING (Amber)
+     Used for caution states, pending actions, attention needed
+     ========================================================================== */
   --warning: 38 92% 50%;
-  /* #f59e0b - Amber */
+  /* #f59e0b - Base warning */
   --warning-foreground: 0 0% 0%;
+  /* Black text on warning (better contrast) */
+  
+  /* Warning Color Scale (50-950) */
+  --warning-50: 38 100% 96.3%;
+  /* #fffbeb - Subtle background */
+  --warning-100: 38 96% 88.8%;
+  /* #fef3c7 - Light background */
+  --warning-200: 38 97% 76.7%;
+  /* #fde68a - Hover background */
+  --warning-300: 38 96% 64.7%;
+  /* #fcd34d - Active state */
+  --warning-400: 38 96% 56.3%;
+  /* #fbbf24 - Emphasis */
+  --warning-500: 38 92% 50.2%;
+  /* #f59e0b - Primary warning */
+  --warning-600: 38 95% 43.7%;
+  /* #d97706 - Hover state */
+  --warning-700: 38 91% 36.9%;
+  /* #b45309 - Pressed state */
+  --warning-800: 38 83% 31.4%;
+  /* #92400e - Dark accent */
+  --warning-900: 38 78% 26.5%;
+  /* #78350f - Deepest */
+  --warning-950: 38 92% 14.1%;
+  /* #451a03 - Near black */
+
+  /* ==========================================================================
+     SEMANTIC COLORS - INFO (Blue)
+     Used for informational messages, links, neutral feedback
+     ========================================================================== */
   --info: 217 91% 60%;
-  /* #3b82f6 - Blue */
+  /* #3b82f6 - Base info */
   --info-foreground: 0 0% 100%;
+  
+  /* Info Color Scale (50-950) */
+  --info-50: 217 100% 96.9%;
+  /* #eff6ff - Subtle background */
+  --info-100: 217 94% 92.7%;
+  /* #dbeafe - Light background */
+  --info-200: 217 97% 87.3%;
+  /* #bfdbfe - Hover background */
+  --info-300: 217 96% 78.4%;
+  /* #93c5fd - Active state */
+  --info-400: 217 94% 68%;
+  /* #60a5fa - Emphasis */
+  --info-500: 217 91% 59.8%;
+  /* #3b82f6 - Primary info */
+  --info-600: 217 83% 53.3%;
+  /* #2563eb - Hover state */
+  --info-700: 217 76% 48%;
+  /* #1d4ed8 - Pressed state */
+  --info-800: 217 71% 40.2%;
+  /* #1e40af - Dark accent */
+  --info-900: 217 64% 32.9%;
+  /* #1e3a8a - Deepest */
+  --info-950: 217 57% 21%;
+  /* #172554 - Near black */
+
+  /* ==========================================================================
+     SEMANTIC COLORS - DESTRUCTIVE/ERROR (Red)
+     Used for errors, destructive actions, critical warnings
+     ========================================================================== */
+  --destructive: 0 84% 60%;
+  /* #ef4444 - Base destructive */
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Destructive Color Scale (50-950) */
+  --destructive-50: 0 100% 97.3%;
+  /* #fef2f2 - Subtle background */
+  --destructive-100: 0 100% 94.1%;
+  /* #fee2e2 - Light background */
+  --destructive-200: 0 100% 89.4%;
+  /* #fecaca - Hover background */
+  --destructive-300: 0 94% 81.8%;
+  /* #fca5a5 - Active state */
+  --destructive-400: 0 91% 70.8%;
+  /* #f87171 - Emphasis */
+  --destructive-500: 0 84% 60.2%;
+  /* #ef4444 - Primary destructive */
+  --destructive-600: 0 70% 50.6%;
+  /* #dc2626 - Hover state */
+  --destructive-700: 0 74% 41.8%;
+  /* #b91c1c - Pressed state */
+  --destructive-800: 0 70% 35.3%;
+  /* #991b1b - Dark accent */
+  --destructive-900: 0 63% 30.6%;
+  /* #7f1d1d - Deepest */
+  --destructive-950: 0 75% 15.5%;
+  /* #450a0a - Near black */
 
   /* ===== Gradient Colors for Topic Cards ===== */
   --gradient-orange-start: #f97316;
@@ -343,23 +566,45 @@
 
 /* =============================================================================
    LIGHT THEME (OPTIONAL - DARK IS DEFAULT)
+   VIA-GENT Light Theme - Warm whites (Stone palette) for 8-bit aesthetic
+   
+   Light Theme Philosophy:
+   - Use warm whites (Stone palette) - NO pure white backgrounds
+   - Higher contrast for readability on light backgrounds
+   - Same 8-bit aesthetic principles as dark theme
    ============================================================================= */
 .light {
+  /* ==========================================================================
+     SURFACE COLORS (Light Theme)
+     ========================================================================== */
   --background: 0 0% 98%;
-  /* Near white */
+  /* #fafafa - Warm near-white */
   --foreground: 240 6% 10%;
-  /* Near black */
+  /* #171717 - Near black text */
 
+  /* Surface Hierarchy (bg-0 through bg-3) - Light Theme */
+  --bg-0: 0 0% 98%;
+  /* #fafafa - Base background */
+  --bg-1: 0 0% 100%;
+  /* #ffffff - Primary surface (cards, panels) */
+  --bg-2: 0 0% 96%;
+  /* #f5f5f5 - Elevated surface */
+  --bg-3: 0 0% 92%;
+  /* #ebebeb - Highest elevation */
+
+  /* Surface Token Aliases */
+  --surface-0: var(--bg-0);
+  --surface-1: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --surface-3: var(--bg-3);
+
+  /* ShadcnUI Surface Mappings */
   --card: 0 0% 100%;
-  /* White */
+  /* White cards */
   --card-foreground: 240 6% 10%;
 
   --popover: 0 0% 100%;
   --popover-foreground: 240 6% 10%;
-
-  --primary: 24.6 95% 45%;
-  /* Slightly darker orange for contrast */
-  --primary-foreground: 0 0% 100%;
 
   --secondary: 240 4% 95%;
   /* Light gray */
@@ -371,13 +616,72 @@
   --accent: 240 4% 95%;
   --accent-foreground: 240 6% 10%;
 
-  --destructive: 0 84% 50%;
-  --destructive-foreground: 0 0% 100%;
+  /* ==========================================================================
+     PRIMARY COLORS (Light Theme)
+     Slightly darker orange for better contrast on light backgrounds
+     ========================================================================== */
+  --primary: 24.6 95% 45%;
+  /* Darker orange for contrast */
+  --primary-foreground: 0 0% 100%;
 
+  /* Primary Color Scale (50-950) - Same as dark, contextually lighter */
+  --primary-50: 24.6 100% 96.5%;
+  --primary-100: 24.6 100% 91.8%;
+  --primary-200: 24.6 96.6% 83.1%;
+  --primary-300: 24.6 97.2% 72.4%;
+  --primary-400: 24.6 96.3% 61.2%;
+  --primary-500: 24.6 95% 53.1%;
+  --primary-600: 24.6 90.4% 48%;
+  --primary-700: 24.6 88.5% 40.4%;
+  --primary-800: 24.6 79% 32.7%;
+  --primary-900: 24.6 74.5% 27.8%;
+  --primary-950: 24.6 81.2% 14.5%;
+
+  /* ==========================================================================
+     NEUTRAL COLORS (Light Theme)
+     ========================================================================== */
+  --neutral-50: 0 0% 98%;
+  --neutral-100: 0 0% 96%;
+  --neutral-200: 0 0% 90%;
+  --neutral-300: 0 0% 83%;
+  --neutral-400: 0 0% 64%;
+  --neutral-500: 0 0% 45%;
+  --neutral-600: 0 0% 32%;
+  --neutral-700: 0 0% 25%;
+  --neutral-800: 0 0% 15%;
+  --neutral-900: 0 0% 9%;
+  --neutral-950: 0 0% 4%;
+
+  /* ==========================================================================
+     TEXT COLORS (Light Theme)
+     ========================================================================== */
+  --text-primary: 240 6% 10%;
+  /* #171717 - Primary text */
+  --text-secondary: 0 0% 32%;
+  /* #525252 - Secondary text */
+  --text-muted: 0 0% 45%;
+  /* #737373 - Muted text */
+  --text-disabled: 0 0% 64%;
+  /* #a3a3a3 - Disabled text */
+
+  /* ==========================================================================
+     BORDER COLORS (Light Theme)
+     ========================================================================== */
   --border: 240 4% 90%;
+  /* #e5e5e5 - Default border */
+  --border-default: 240 4% 90%;
+  /* Standard borders */
+  --border-strong: 240 4% 80%;
+  /* Emphasized borders */
+  --border-muted: 240 4% 94%;
+  /* Subtle borders */
+
   --input: 240 4% 90%;
   --ring: 24.6 95% 45%;
 
+  /* ==========================================================================
+     SIDEBAR (Light Theme)
+     ========================================================================== */
   --sidebar: 240 4% 97%;
   --sidebar-foreground: 240 6% 10%;
   --sidebar-primary: 24.6 95% 45%;
@@ -387,16 +691,73 @@
   --sidebar-border: 240 4% 90%;
   --sidebar-ring: 24.6 95% 45%;
 
-  /* ===== Semantic Colors ===== */
+  /* ==========================================================================
+     SEMANTIC COLORS - SUCCESS (Light Theme)
+     ========================================================================== */
   --success: 142 71% 45%;
-  /* Green */
   --success-foreground: 0 0% 100%;
+  --success-50: 142 76% 96.7%;
+  --success-100: 142 71% 92.5%;
+  --success-200: 142 70% 85.1%;
+  --success-300: 142 78% 73.1%;
+  --success-400: 142 70% 58%;
+  --success-500: 142 71% 45.3%;
+  --success-600: 142 76% 36.3%;
+  --success-700: 142 72% 29.2%;
+  --success-800: 142 64% 24.1%;
+  --success-900: 142 61% 20.2%;
+  --success-950: 142 80% 10%;
+
+  /* ==========================================================================
+     SEMANTIC COLORS - WARNING (Light Theme)
+     ========================================================================== */
   --warning: 38 92% 50%;
-  /* Amber */
   --warning-foreground: 0 0% 0%;
+  --warning-50: 38 100% 96.3%;
+  --warning-100: 38 96% 88.8%;
+  --warning-200: 38 97% 76.7%;
+  --warning-300: 38 96% 64.7%;
+  --warning-400: 38 96% 56.3%;
+  --warning-500: 38 92% 50.2%;
+  --warning-600: 38 95% 43.7%;
+  --warning-700: 38 91% 36.9%;
+  --warning-800: 38 83% 31.4%;
+  --warning-900: 38 78% 26.5%;
+  --warning-950: 38 92% 14.1%;
+
+  /* ==========================================================================
+     SEMANTIC COLORS - INFO (Light Theme)
+     ========================================================================== */
   --info: 217 91% 60%;
-  /* Blue */
   --info-foreground: 0 0% 100%;
+  --info-50: 217 100% 96.9%;
+  --info-100: 217 94% 92.7%;
+  --info-200: 217 97% 87.3%;
+  --info-300: 217 96% 78.4%;
+  --info-400: 217 94% 68%;
+  --info-500: 217 91% 59.8%;
+  --info-600: 217 83% 53.3%;
+  --info-700: 217 76% 48%;
+  --info-800: 217 71% 40.2%;
+  --info-900: 217 64% 32.9%;
+  --info-950: 217 57% 21%;
+
+  /* ==========================================================================
+     SEMANTIC COLORS - DESTRUCTIVE (Light Theme)
+     ========================================================================== */
+  --destructive: 0 84% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-50: 0 100% 97.3%;
+  --destructive-100: 0 100% 94.1%;
+  --destructive-200: 0 100% 89.4%;
+  --destructive-300: 0 94% 81.8%;
+  --destructive-400: 0 91% 70.8%;
+  --destructive-500: 0 84% 60.2%;
+  --destructive-600: 0 70% 50.6%;
+  --destructive-700: 0 74% 41.8%;
+  --destructive-800: 0 70% 35.3%;
+  --destructive-900: 0 63% 30.6%;
+  --destructive-950: 0 75% 15.5%;
 
   /* ===== Gradient Colors for Topic Cards ===== */
   --gradient-orange-start: #f97316;

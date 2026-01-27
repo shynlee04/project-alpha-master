@@ -1,6 +1,6 @@
 # Appendix
 
-<- [Agent Governance](./12-agent-governance.md) | [Index](./index.md)
+<- [Agent Governance](./12-agent-governance.md) | [Index](./index.md) | [Light Theming](./14-light-theming.md) ->
 
 ---
 
@@ -194,11 +194,11 @@ Schedule regular audits:
 ---
 
 **Document Statistics**:
-- **Total Sections**: 13
+- **Total Sections**: 14 (15 planned)
 - **Version**: 3.0.0
 - **Date**: 2026-01-27
 - **Author**: ux-designer-ext (BMAD Framework)
 
 ---
 
-<- [Agent Governance](./12-agent-governance.md) | [Index](./index.md)
+<- [Agent Governance](./12-agent-governance.md) | [Index](./index.md) | [Light Theming](./14-light-theming.md) ->

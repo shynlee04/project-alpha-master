@@ -56,6 +56,11 @@ structure: sharded
 12. [Agent Governance Rules](./12-agent-governance.md) - 10 Commandments, validation checklists
 13. [Appendix](./13-appendix.md) - Glossary, references, quick reference cards
 
+### Extended Specifications (Part D)
+
+14. [Light Theming](./14-light-theming.md) - Light mode tokens, ThemeProvider, accessibility
+15. [Micro Animations & Effects](./15-micro-animations.md) - 8-bit step animations, transitions, feedback, loading states
+
 ---
 
 ## Document Authority
@@ -99,6 +104,6 @@ NEVER: blur shadows, gradients, rounded-lg, backdrop-blur
 
 ---
 
-**Total Lines Across All Sections**: ~4,200  
-**Created**: 2026-01-27  
+**Total Lines Across All Sections**: ~5,750
+**Created**: 2026-01-27
 **Author**: ux-designer-ext (BMAD Framework)

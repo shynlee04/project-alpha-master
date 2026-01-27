@@ -2,7 +2,7 @@
    VIA-GENT Light Theme Tokens
    - All color tokens defined in HSL format for CSS custom properties
    - Foundation: light-theme-design-system-foundation-2026-01-03.md
-   - Total: 13 primary + 52 semantic + 13 neutral + 13 surface = 91 tokens
+   - Updated: UXUI-01-01 - Complete color token implementation
    ============================================================================= */
 
 :root {
@@ -21,8 +21,7 @@
   --primary-900: 24.6 74.5% 27.8%; /* #7c2d12 - Deepest accent */
   --primary-950: 24.6 81.2% 14.5%; /* #431407 - Text on light backgrounds */
 
-  /* ===== Semantic Colors (52 values) ===== */
-  /* Success Colors (13 values) */
+  /* ===== Semantic Colors - Success (13 values) ===== */
   --success: 142 71% 45.3%; /* Base success #22c55e */
   --success-foreground: 0 0% 100%; /* White on success */
   --success-50: 142 76% 96.7%; /* #f0fdf4 */
@@ -37,7 +36,7 @@
   --success-900: 142 61% 20.2%; /* #14532d */
   --success-950: 142 80% 10%; /* #052e16 */
 
-  /* Warning Colors (13 values) */
+  /* ===== Semantic Colors - Warning (13 values) ===== */
   --warning: 38 92% 50.2%; /* Base warning #f59e0b */
   --warning-foreground: 0 0% 0%; /* Black on warning */
   --warning-50: 38 100% 96.3%; /* #fffbeb */
@@ -52,7 +51,7 @@
   --warning-900: 38 78% 26.5%; /* #78350f */
   --warning-950: 38 92% 14.1%; /* #451a03 */
 
-  /* Destructive/Error Colors (13 values) */
+  /* ===== Semantic Colors - Destructive/Error (13 values) ===== */
   --destructive: 0 84% 60.2%; /* Base error #ef4444 */
   --destructive-foreground: 0 0% 100%; /* White on error */
   --destructive-50: 0 100% 97.3%; /* #fef2f2 */
@@ -67,7 +66,7 @@
   --destructive-900: 0 63% 30.6%; /* #7f1d1d */
   --destructive-950: 0 75% 15.5%; /* #450a0a */
 
-  /* Info Colors (13 values) */
+  /* ===== Semantic Colors - Info (13 values) ===== */
   --info: 217 91% 59.8%; /* Base info #3b82f6 */
   --info-foreground: 0 0% 100%; /* White on info */
   --info-50: 217 100% 96.9%; /* #eff6ff */
@@ -97,7 +96,30 @@
   --neutral-900: 0 0% 9%; /* #171717 - Deepest text */
   --neutral-950: 0 0% 4%; /* #0a0a0a - Text on light backgrounds */
 
-  /* ===== Surface Colors (13 values) ===== */
+  /* ===== Surface Hierarchy (Light Theme) ===== */
+  --bg-0: 0 0% 98%; /* #fafafa - Base background (canvas) */
+  --bg-1: 0 0% 100%; /* #ffffff - Primary surface (cards, panels) */
+  --bg-2: 0 0% 96%; /* #f5f5f5 - Elevated surface */
+  --bg-3: 0 0% 92%; /* #ebebeb - Highest elevation */
+  
+  /* Surface Token Aliases */
+  --surface-0: var(--bg-0);
+  --surface-1: var(--bg-1);
+  --surface-2: var(--bg-2);
+  --surface-3: var(--bg-3);
+
+  /* ===== Text Colors (Light Theme) ===== */
+  --text-primary: 240 6% 10%; /* #171717 - Primary text */
+  --text-secondary: 0 0% 32%; /* #525252 - Secondary text */
+  --text-muted: 0 0% 45%; /* #737373 - Muted text */
+  --text-disabled: 0 0% 64%; /* #a3a3a3 - Disabled text */
+
+  /* ===== Border Colors (Light Theme) ===== */
+  --border-default: 0 0% 90%; /* #e5e5e5 - Standard borders */
+  --border-strong: 0 0% 80%; /* #cccccc - Emphasized borders */
+  --border-muted: 0 0% 94%; /* #f0f0f0 - Subtle borders */
+
+  /* ===== Surface Colors (ShadcnUI Compatibility) ===== */
   --card: 0 0% 100%; /* Card/panel background #ffffff */
   --card-foreground: 240 6% 6.7%; /* Card text #0f0f11 */
   --popover: 0 0% 100%; /* Popover background #ffffff */

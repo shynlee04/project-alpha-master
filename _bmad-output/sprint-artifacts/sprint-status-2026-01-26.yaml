@@ -522,6 +522,83 @@ epic_ux_global_ui:
   artifacts:
     handoff: "_bmad-output/handoffs/2026-01-26/TEAM-B-UX-SPRINT-STATUS-2026-01-26.md"
 
+# ============================================
+# EPIC-UXUI-01: Design System Foundation
+# ============================================
+epic_uxui_01:
+  id: EPIC-UXUI-01
+  title: "Design System Foundation & 8-bit Styling"
+  status: READY_FOR_EXECUTION
+  priority: P1
+  team: "Team B"
+  created: "2026-01-27"
+  
+  phases:
+    phase_1_foundation:
+      status: READY
+      stories:
+        - id: UXUI-01-01
+          title: "Implement Color Design Tokens"
+          status: READY
+          effort: "2-3h"
+          assignee: null
+        - id: UXUI-01-02
+          title: "Implement Typography Tokens"
+          status: READY
+          effort: "1-2h"
+          assignee: null
+        - id: UXUI-01-03
+          title: "Implement Spacing & Border Tokens"
+          status: READY
+          effort: "1-2h"
+          assignee: null
+        - id: UXUI-01-04
+          title: "Implement Animation Tokens"
+          status: READY
+          effort: "2-3h"
+          assignee: null
+          
+    phase_2_primitives:
+      status: READY
+      stories:
+        - id: UXUI-01-05
+          title: "Style Button Components"
+          status: READY
+          effort: "2-3h"
+          assignee: null
+        - id: UXUI-01-06
+          title: "Style Input Components"
+          status: READY
+          effort: "2-3h"
+          assignee: null
+        - id: UXUI-01-07
+          title: "Style Dialog/Modal Components"
+          status: READY
+          effort: "2-3h"
+          assignee: null
+        - id: UXUI-01-08
+          title: "Style Remaining UI Primitives"
+          status: READY
+          effort: "3-4h"
+          assignee: null
+          
+  safe_zones:
+    - "src/styles.css"
+    - "src/styles/*.css"
+    - "src/presentation/components/ui/"
+    
+  do_not_touch:
+    - "src/infrastructure/context/project-context.tsx"
+    - "src/routes/$projectId.tsx"
+    - "src/presentation/components/layout/PermissionOverlay.tsx"
+    
+  validation_checklist: "_bmad-output/planning-artifacts/ux-specification/VALIDATION-CHECKLIST.md"
+  
+  notes: |
+    Team B can start immediately on Phase 1-2.
+    No backend conflicts in safe zones.
+    All stories must pass VALIDATION-CHECKLIST.md before completion.
+
 # ═══════════════════════════════════════════════════════════════════════════
 # END OF FILE
 # ═══════════════════════════════════════════════════════════════════════════

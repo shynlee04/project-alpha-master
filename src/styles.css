@@ -3,7 +3,6 @@
 
 /* VIA-GENT Design System Imports */
 @import "./styles/design-tokens.css";
-@import "./styles/light-theme-tokens.css";
 @import "./styles/animations.css";
 
 /* Custom variants for dark/light mode - Tailwind CSS 4 approach */
@@ -381,6 +380,29 @@ code {
   --color-neutral-800: hsl(var(--neutral-800));
   --color-neutral-900: hsl(var(--neutral-900));
   --color-neutral-950: hsl(var(--neutral-950));
+
+  /* Surface Hierarchy (bg-0 through bg-3) */
+  --color-bg-0: hsl(var(--bg-0));
+  --color-bg-1: hsl(var(--bg-1));
+  --color-bg-2: hsl(var(--bg-2));
+  --color-bg-3: hsl(var(--bg-3));
+  
+  /* Surface Token Aliases */
+  --color-surface-0: hsl(var(--surface-0));
+  --color-surface-1: hsl(var(--surface-1));
+  --color-surface-2: hsl(var(--surface-2));
+  --color-surface-3: hsl(var(--surface-3));
+
+  /* Text Colors */
+  --color-text-primary: hsl(var(--text-primary));
+  --color-text-secondary: hsl(var(--text-secondary));
+  --color-text-muted: hsl(var(--text-muted));
+  --color-text-disabled: hsl(var(--text-disabled));
+
+  /* Border Colors */
+  --color-border-default: hsl(var(--border-default));
+  --color-border-strong: hsl(var(--border-strong));
+  --color-border-muted: hsl(var(--border-muted));
 
   /* Pixel Shadow Utilities */
   --shadow-pixel: var(--shadow-pixel);

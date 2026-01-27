@@ -1,11 +1,11 @@
 # ═════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.7 - EPIC-UX-OVERHAUL COMPLETE
+# BMM WORKFLOW STATUS v2.8 - EPIC-UXUI-01 REGISTERED
 # ═════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.7.0"
-last_updated: "2026-01-27T21:30:00+07:00"
+schema_version: "2.8.0"
+last_updated: "2026-01-27T23:00:00+07:00"
 updated_by: "bmad-governance"
-previous_version: "bmm-workflow-status-v2.6.yaml"
+previous_version: "bmm-workflow-status-v2.7.yaml"
 
 # ═════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
@@ -554,6 +554,43 @@ active_epics:
     priority: "P1"
     team: "Team B"
     blocked_by: "EPIC-CC-01"
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # UX/UI DESIGN SYSTEM EPICS
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - id: EPIC-UXUI-01
+    name: "Design System Foundation & 8-bit Styling"
+    status: READY_FOR_EXECUTION
+    priority: P1
+    owner: "Team B (UX)"
+    created: "2026-01-27"
+    estimated_effort: "18-26h"
+    stories_total: 8
+    stories_completed: 0
+    blocked_by: null
+    blocks: "EPIC-UXUI-02"
+    files:
+      - "_bmad-output/planning-artifacts/epics/EPIC-UXUI-01-design-system-foundation.md"
+    safe_zones:
+      - "src/styles.css"
+      - "src/styles/*.css"
+      - "src/presentation/components/ui/"
+    do_not_touch:
+      - "src/infrastructure/context/project-context.tsx"
+      - "src/routes/$projectId.tsx"
+      - "src/presentation/components/layout/PermissionOverlay.tsx"
+
+# ═════════════════════════════════════════════════════════════════════════
+# UX WORK QUEUE
+# ═════════════════════════════════════════════════════════════════════════
+
+ux_work_queue:
+  current_epic: EPIC-UXUI-01
+  current_story: null
+  team: "Team B"
+  phase: "Phase 1: Foundation"
+  next_action: "Start UXUI-01-01 (Color Tokens)"
 
 # ═════════════════════════════════════════════════════════════════════════
 # ARCHITECTURE DECISIONS (Quick Reference)
