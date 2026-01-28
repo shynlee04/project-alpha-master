@@ -192,6 +192,7 @@ function UnifiedProjectRoute() {
 
   // ========================================================================
   // UXUI-02-05: Plugin Placement State (Single Instance Constraint)
+  // UXUI-03-07: Plugin placement persistence (keyed by projectId)
   // ========================================================================
 
   const {
@@ -200,7 +201,12 @@ function UnifiedProjectRoute() {
     movePluginToPanel,
     closePlugin,
     getPluginsInPanel,
-  } = usePluginPlacement(getDefaultPlacements('default'));
+    getActivePluginForPanel,
+    setActivePluginForPanel,
+  } = usePluginPlacement({
+    projectId,
+    initialPlacements: getDefaultPlacements('default'),
+  });
 
   // ========================================================================
   // UXUI-03-05: Floating Plugin Docker State
@@ -300,6 +306,8 @@ function UnifiedProjectRoute() {
     movePluginToPanel,
     closePlugin,
     getPluginsInPanel,
+    getActivePluginForPanel,
+    setActivePluginForPanel,
     renderPlugin: renderPluginContent,  // CC-UX-02: Wire plugin renderer
   });
 
@@ -316,6 +324,8 @@ function UnifiedProjectRoute() {
     movePluginToPanel,
     closePlugin,
     getPluginsInPanel,
+    getActivePluginForPanel,
+    setActivePluginForPanel,
     renderPlugin: renderPluginContent,  // CC-UX-02: Wire plugin renderer
   });
 

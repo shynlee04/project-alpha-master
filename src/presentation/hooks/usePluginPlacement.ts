@@ -273,6 +273,29 @@ export interface UsePluginPlacementReturn {
    * @param defaults - Default placements to reset to
    */
   resetToDefaults: (defaults?: PluginPlacementEntry[]) => void;
+
+  /**
+   * Get the currently active (visible) plugin for a panel
+   * @param panel - Panel to query ('left' | 'main' | 'right')
+   * @returns PluginId or null if no active plugin
+   *
+   * @remarks
+   * This is different from getPluginsInPanel - multiple plugins can be
+   * placed in a panel, but only ONE is "active" (visible) at a time.
+   * Clicking an ActivityBar item switches the active plugin.
+   */
+  getActivePluginForPanel: (panel: 'left' | 'main' | 'right') => PluginId | null;
+
+  /**
+   * Set the active (visible) plugin for a panel
+   * @param panel - Target panel
+   * @param pluginId - Plugin to make active (must be placed in that panel)
+   *
+   * @remarks
+   * Only sets active if the plugin is actually placed in that panel.
+   * Does not trigger toast notifications (silent switch).
+   */
+  setActivePluginForPanel: (panel: 'left' | 'main' | 'right', pluginId: PluginId) => void;
 }
 
 // ============================================================================
@@ -280,14 +303,30 @@ export interface UsePluginPlacementReturn {
 // ============================================================================
 
 /**
+ * Hook Options Interface
+ */
+export interface UsePluginPlacementOptions {
+  /** Project ID for per-project persistence (required for persistence) */
+  projectId?: string;
+  /** Initial placements (used as fallback if no saved config) */
+  initialPlacements?: PluginPlacementEntry[];
+}
+
+/**
  * usePluginPlacement Hook
  *
- * @param initialPlacements - Optional initial plugin placements
+ * @param options - Hook options including projectId and initialPlacements
  * @returns UsePluginPlacementReturn - State and actions for plugin placement
  *
  * @remarks
  * This hook manages the single-instance constraint for plugins.
  * A plugin can only exist in ONE panel at a time.
+ *
+ * **UXUI-03-07**: Persistence Feature
+ * - Placements are saved to localStorage keyed by projectId
+ * - On mount: loads from localStorage OR falls back to initialPlacements
+ * - On change: automatically saves to localStorage
+ * - resetToDefaults: clears saved config and resets to platform defaults
  *
  * @example
  * ```tsx
@@ -295,10 +334,14 @@ export interface UsePluginPlacementReturn {
  *   getPluginPanel,
  *   movePluginToPanel,
  *   getPluginsInPanel,
- * } = usePluginPlacement([
- *   { pluginId: 'filetree', panel: 'left' },
- *   { pluginId: 'chat', panel: 'right' },
- * ]);
+ *   isHydrated,
+ * } = usePluginPlacement({
+ *   projectId: 'my-project',
+ *   initialPlacements: [
+ *     { pluginId: 'filetree', panel: 'left' },
+ *     { pluginId: 'chat', panel: 'right' },
+ *   ],
+ * });
  *
  * // In PluginDocker:
  * <PluginDocker
@@ -312,15 +355,32 @@ export interface UsePluginPlacementReturn {
  * ```
  */
 export function usePluginPlacement(
-  initialPlacements: PluginPlacementEntry[] = []
+  optionsOrInitialPlacements: UsePluginPlacementOptions | PluginPlacementEntry[] = []
 ): UsePluginPlacementReturn {
+  // ========================================================================
+  // Normalize Options (backward compatibility)
+  // ========================================================================
+
+  const options: UsePluginPlacementOptions = Array.isArray(optionsOrInitialPlacements)
+    ? { initialPlacements: optionsOrInitialPlacements }
+    : optionsOrInitialPlacements;
+
+  const { projectId, initialPlacements = [] } = options;
+
   // ========================================================================
   // Toast Hook for Notifications
   // ========================================================================
   const { toast } = useToast();
 
   // ========================================================================
-  // State
+  // State: Hydration Status (UXUI-03-07)
+  // ========================================================================
+
+  const [isHydrated, setIsHydrated] = useState(false);
+  const isInitialMount = useRef(true);
+
+  // ========================================================================
+  // State: Placements
   // ========================================================================
 
   /**
@@ -328,15 +388,90 @@ export function usePluginPlacement(
    *
    * @remarks
    * Using Map for O(1) lookup and type-safe key management.
-   * Initialized from initialPlacements array.
+   * Initialized from localStorage (if projectId provided) OR initialPlacements.
    */
   const [placements, setPlacements] = useState<Map<PluginId, PanelPosition>>(() => {
+    // Try to load from localStorage if projectId is provided
+    if (projectId) {
+      const saved = loadPlacements(projectId);
+      if (saved && saved.size > 0) {
+        console.log(`[usePluginPlacement] Initialized from localStorage for project ${projectId}`);
+        return saved;
+      }
+    }
+
+    // Fallback to initial placements
     const map = new Map<PluginId, PanelPosition>();
     initialPlacements.forEach((entry) => {
       map.set(entry.pluginId, entry.panel);
     });
+    console.log('[usePluginPlacement] Initialized from default placements');
     return map;
   });
+
+  // ========================================================================
+  // State: Active Plugins Per Panel (UXUI-03-XX: Activity Bar Switching)
+  // ========================================================================
+
+  /**
+   * Map of panel position to currently active (visible) plugin
+   *
+   * @remarks
+   * This is SEPARATE from placements. Multiple plugins can be "placed" in a panel,
+   * but only ONE is "active" (visible) at a time. Clicking an ActivityBar item
+   * changes which plugin is active without moving plugins between panels.
+   *
+   * Initialized based on first placed plugin per panel from localStorage/defaults.
+   */
+  const [activePlugins, setActivePlugins] = useState<Map<'left' | 'main' | 'right', PluginId | null>>(() => {
+    const map = new Map<'left' | 'main' | 'right', PluginId | null>([
+      ['left', null],
+      ['main', null],
+      ['right', null],
+    ]);
+
+    // Set initial active plugin for each panel based on placements
+    // (first plugin found in each panel)
+    const panels: ('left' | 'main' | 'right')[] = ['left', 'main', 'right'];
+    panels.forEach((panel) => {
+      // Find first plugin in this panel from initial placements
+      for (const entry of initialPlacements) {
+        if (entry.panel === panel) {
+          map.set(panel, entry.pluginId);
+          break;
+        }
+      }
+    });
+
+    console.log('[usePluginPlacement] Initialized active plugins:', Object.fromEntries(map));
+    return map;
+  });
+
+  // ========================================================================
+  // Effect: Mark Hydration Complete
+  // ========================================================================
+
+  useEffect(() => {
+    // Mark as hydrated after initial render
+    setIsHydrated(true);
+  }, []);
+
+  // ========================================================================
+  // Effect: Save Placements on Change (UXUI-03-07)
+  // ========================================================================
+
+  useEffect(() => {
+    // Skip save on initial mount (we just loaded from storage)
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Save to localStorage if projectId is provided
+    if (projectId && placements.size > 0) {
+      savePlacements(projectId, placements);
+    }
+  }, [projectId, placements]);
 
   // ========================================================================
   // Actions
@@ -472,6 +607,100 @@ export function usePluginPlacement(
     [initialPlacements]
   );
 
+  /**
+   * Reset placements to defaults and clear saved storage (UXUI-03-07)
+   *
+   * @param defaults - Optional default placements to reset to
+   *
+   * @remarks
+   * This clears the saved localStorage for this project and resets
+   * to the provided defaults (or initialPlacements if not provided).
+   */
+  const resetToDefaults = useCallback(
+    (defaults?: PluginPlacementEntry[]): void => {
+      // Clear saved storage
+      if (projectId) {
+        clearSavedPlacements(projectId);
+      }
+
+      // Reset to defaults
+      const map = new Map<PluginId, PanelPosition>();
+      const entries = defaults ?? initialPlacements;
+      entries.forEach((entry) => {
+        map.set(entry.pluginId, entry.panel);
+      });
+      setPlacements(map);
+
+      toast('Plugin layout reset to defaults', 'info', 3000);
+      console.log('[usePluginPlacement] Reset to defaults and cleared storage', entries);
+    },
+    [projectId, initialPlacements, toast]
+  );
+
+  // ========================================================================
+  // Actions: Active Plugin Per Panel (Activity Bar Switching)
+  // ========================================================================
+
+  /**
+   * Get the currently active (visible) plugin for a panel
+   *
+   * @remarks
+   * This returns which plugin is currently being displayed in the Docker.
+   * Multiple plugins can be "placed" in a panel, but only one is visible.
+   */
+  const getActivePluginForPanel = useCallback(
+    (panel: 'left' | 'main' | 'right'): PluginId | null => {
+      const activeId = activePlugins.get(panel);
+
+      // If no active plugin set but there are plugins in this panel,
+      // return the first one (fallback for backwards compatibility)
+      if (!activeId) {
+        const pluginsInPanel = getPluginsInPanel(panel);
+        return pluginsInPanel[0] ?? null;
+      }
+
+      // Verify the active plugin is still placed in this panel
+      const currentPlacement = placements.get(activeId);
+      if (currentPlacement !== panel) {
+        // Active plugin was moved or closed, return first available
+        const pluginsInPanel = getPluginsInPanel(panel);
+        return pluginsInPanel[0] ?? null;
+      }
+
+      return activeId;
+    },
+    [activePlugins, placements, getPluginsInPanel]
+  );
+
+  /**
+   * Set the active (visible) plugin for a panel
+   *
+   * @remarks
+   * This is a SILENT switch - no toast notifications.
+   * Used when clicking ActivityBar items to switch between plugins in same panel.
+   */
+  const setActivePluginForPanel = useCallback(
+    (panel: 'left' | 'main' | 'right', pluginId: PluginId): void => {
+      // Verify plugin is actually placed in that panel
+      const currentPlacement = placements.get(pluginId);
+      if (currentPlacement !== panel) {
+        console.warn(
+          `[usePluginPlacement] Cannot set ${pluginId} as active for ${panel}: ` +
+            `plugin is in ${currentPlacement ?? 'no panel'}`
+        );
+        return;
+      }
+
+      setActivePlugins((prev) => {
+        const next = new Map(prev);
+        next.set(panel, pluginId);
+        console.log(`[usePluginPlacement] Set ${pluginId} as active in ${panel} panel`);
+        return next;
+      });
+    },
+    [placements]
+  );
+
   // ========================================================================
   // Return Hook Interface
   // ========================================================================
@@ -479,21 +708,29 @@ export function usePluginPlacement(
   return useMemo(
     () => ({
       placements,
+      isHydrated,
       getPluginPanel,
       movePluginToPanel,
       closePlugin,
       getPluginsInPanel,
       isPluginPlaced,
       resetPlacements,
+      resetToDefaults,
+      getActivePluginForPanel,
+      setActivePluginForPanel,
     }),
     [
       placements,
+      isHydrated,
       getPluginPanel,
       movePluginToPanel,
       closePlugin,
       getPluginsInPanel,
       isPluginPlaced,
       resetPlacements,
+      resetToDefaults,
+      getActivePluginForPanel,
+      setActivePluginForPanel,
     ]
   );
 }

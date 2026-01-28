@@ -13,6 +13,9 @@
 @import "./presentation/components/layout/PluginDocker.css";
 @import "./presentation/components/layout/FloatingPluginDocker.css";
 @import "./presentation/components/layout/StatusBar.css";
+@import "./presentation/components/layout/BottomNav.css";
+@import "./presentation/components/layout/BottomSheet.css";
+@import "./presentation/components/layout/TabletPortraitLayout.css";
 
 /* Custom variants for dark/light mode - Tailwind CSS 4 approach */
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *));

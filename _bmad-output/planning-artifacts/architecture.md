@@ -1,3 +1,12 @@
+---
+document_id: ARCH-001
+title: Project Alpha Architecture Specification
+tier: 2
+status: ACTIVE
+last_updated: 2026-01-28
+authority: ADR-039
+---
+
 # Via-Gent Architecture Document
 
 **Version:** 3.1.0
@@ -14,7 +23,7 @@ This document is **aligned 100%** with new-fundamental-truths.md v2.0.0 and refl
 | **ADR-039** | Unified Architecture Fundamentals (v2.0.0 Alignment) | PROPOSED | Project-centric architecture, plugin system, orchestrator pattern, TanStack AI SDK, BYOK vault, chat cascade |
 
 **Reference:** `new-fundamental-truths.md` (v2.0.0, 2026-01-25)
-**Reference:** `ADR-039-unified-architecture-fundamentals-2026-01-26.md` (pending creation)
+**Reference:** `ADR-039-unified-architecture.md`
 
 **Related Documents:**
 - Epics: `_bmad-output/planning-artifacts/epics.md`

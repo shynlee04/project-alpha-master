@@ -88,6 +88,12 @@ export interface PluginActivityDockerWiringProps {
   /** Get all plugins in a specific panel */
   getPluginsInPanel: (panel: 'left' | 'right') => PluginId[];
 
+  /** Get the currently active (visible) plugin for a panel */
+  getActivePluginForPanel: (panel: 'left' | 'main' | 'right') => PluginId | null;
+
+  /** Set the active (visible) plugin for a panel */
+  setActivePluginForPanel: (panel: 'left' | 'main' | 'right', pluginId: PluginId) => void;
+
   /** Optional plugin renderer function */
   renderPlugin?: (props: PluginRendererProps) => ReactNode;
 
@@ -161,7 +167,9 @@ export function usePluginActivityDockerWiring({
   getPluginPanel,
   movePluginToPanel,
   closePlugin,
-  getPluginsInPanel,
+  // getPluginsInPanel - Not used directly, kept in props for interface compatibility
+  getActivePluginForPanel,
+  setActivePluginForPanel,
   renderPlugin,
   activityBarClassName = '',
   dockerClassName = '',
@@ -170,10 +178,9 @@ export function usePluginActivityDockerWiring({
   // Derived State
   // ========================================================================
 
-  // Get the active plugin for this side
-  const pluginsInPanel = getPluginsInPanel(position);
-  // Only ONE plugin can be active per side (single instance rule)
-  const activePluginId = pluginsInPanel[0] ?? null;
+  // Get the active plugin for this side using the NEW active plugin tracking
+  // This is the CORRECT approach: use getActivePluginForPanel instead of deriving
+  const activePluginId = getActivePluginForPanel(position);
 
   // Find the active item's label for Docker title
   const activeItem = items.find(item => item.id === activePluginId);
@@ -190,26 +197,40 @@ export function usePluginActivityDockerWiring({
    * Handle ActivityBar item click
    *
    * @remarks
-   * Click behavior:
-   * - If Docker is closed and plugin clicked → Open Docker with that plugin
-   * - If Docker is open with same plugin → Close Docker
-   * - If Docker is open with different plugin → Switch to clicked plugin
+   * FIXED Click behavior per UX specification (08-activity-bar-docker.md):
+   * - Click = Toggle between plugins on SAME bar (fast switching)
+   * - If plugin is already active in this panel → close it (toggle off)
+   * - If plugin is in this panel but not active → make it active (switch)
+   * - If plugin is not in this panel → move it here and make active
    */
   const handleItemClick = useCallback((id: string) => {
     const pluginId = id as PluginId;
     const currentPanel = getPluginPanel(pluginId);
+    const currentActivePlugin = getActivePluginForPanel(position);
 
     if (currentPanel === position) {
-      // Same panel, same plugin → close it (toggle off)
-      closePlugin(pluginId);
-      console.log(`[PluginActivityDockerWiring] Closed ${pluginId} from ${position}`);
-    } else {
-      // Different panel or not placed → open here
-      // This also handles the case of switching plugins
+      // Plugin is in THIS panel
+      if (currentActivePlugin === pluginId) {
+        // Same plugin that's active → close it (toggle off)
+        closePlugin(pluginId);
+        console.log(`[PluginActivityDockerWiring] Closed ${pluginId} from ${position}`);
+      } else {
+        // Different plugin in same panel → switch to it (fast switching)
+        setActivePluginForPanel(position, pluginId);
+        console.log(`[PluginActivityDockerWiring] Switched to ${pluginId} in ${position}`);
+      }
+    } else if (currentPanel === null) {
+      // Plugin not placed anywhere → add to this panel and make active
       movePluginToPanel(pluginId, position);
-      console.log(`[PluginActivityDockerWiring] Opened ${pluginId} in ${position}`);
+      setActivePluginForPanel(position, pluginId);
+      console.log(`[PluginActivityDockerWiring] Added ${pluginId} to ${position} panel`);
+    } else {
+      // Plugin in DIFFERENT panel → move it here and make active
+      movePluginToPanel(pluginId, position);
+      setActivePluginForPanel(position, pluginId);
+      console.log(`[PluginActivityDockerWiring] Moved ${pluginId} from ${currentPanel} to ${position}`);
     }
-  }, [position, getPluginPanel, movePluginToPanel, closePlugin]);
+  }, [position, getPluginPanel, getActivePluginForPanel, movePluginToPanel, closePlugin, setActivePluginForPanel]);
 
   /**
    * Handle Docker close button click

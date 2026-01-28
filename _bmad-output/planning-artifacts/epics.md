@@ -1,19 +1,25 @@
 # Via-Gent Epics and Stories
 
-**Version:** 3.1.0
-**Date:** 2026-01-27
-**Status:** ACTIVE - Updated with EPIC-0.5 Retrospective Findings
-**Last Updated:** 2026-01-27
+**Version:** 3.2.0
+**Date:** 2026-01-28
+**Status:** ACTIVE - EPIC-UXUI Series Added, EPIC-0.6 Complete
+**Last Updated:** 2026-01-28
+
+> **Change Note (2026-01-28)**: Added EPIC-UXUI-01/02/03 (completed), updated EPIC-0.6 to COMPLETE, corrected Phase 1A progress to 60%.
 
 ---
 
-## ⚠️ CRITICAL UPDATE (2026-01-27)
+## ⚠️ CRITICAL UPDATE (2026-01-28)
 
-**Phase 1A Reality Check**: Claimed at 60% but analysis reveals **~30% true completion**.
+**Phase 1A Progress**: Corrected to **60%** after EPIC-UXUI series completion.
 
-**Root Cause**: EPIC-0 and EPIC-0.5 focused on layout/UI improvements but missed **Plugin Coordination Layer**.
+**Major Completions (2026-01-28)**:
+- ✅ **EPIC-UXUI-01**: Design System Foundation (8 stories) - COMPLETE
+- ✅ **EPIC-UXUI-02**: Main Layout Overhaul (12 stories) - COMPLETE
+- ✅ **EPIC-UXUI-03**: Plugin Layout System (17 stories) - COMPLETE
+- ✅ **EPIC-0.6**: Plugin Coordination Layer (12 stories) - All 19 gaps resolved
 
-**19 Coordination Gaps Identified** - See EPIC-0.6 for remediation.
+**Previous Issue Resolved**: Plugin Coordination Layer gaps have been fully addressed.
 
 **Retrospective**: `_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md`
 
@@ -24,25 +30,29 @@
 ### Phase Overview
 
 | Phase | Epic | Progress | Priority | Status | Target Completion |
-|--------|-------|----------|----------|-----------------|
-| **Phase 1A Coordination** | EPIC-0.6 | 0% | **P0 BLOCKER** | 2026-01-29 |
-| **Phase 1A Remediation** | EPIC-0.5 | PARTIALLY_COMPLETE (19 gaps) | P0 CRITICAL | INCOMPLETE |
-| **Phase 1A** | EPIC-CC-AR02AR03 | 37.5% (3/8 stories) | P0 CRITICAL | 2026-01-28 |
-| **Foundation** | EPIC-ARCH-04-CC | 95% (CC-04 E2E pending) | P0 CRITICAL | 2026-01-26 |
-| **Foundation** | EPIC-UX-GLOBAL-UI | 75% (3/4 stories) | P0 CRITICAL | 2026-01-26 |
-| **Foundation** | EPIC-E2E-TOOLS | READY_FOR_PLANNING | P0 CRITICAL | - |
-| **Phase 1B** | EPIC-PH1B-BYOK-NOTES | BLOCKED_BY_EPIC-0.6 | P0 HIGH | 2026-02-01 |
-| **Phase 2** | EPIC-PH2-CHAT-AGENTS | BLOCKED_BY_PHASE_1A | P0 HIGH | 2026-02-02 |
-| **Phase 3** | EPIC-PH3-ADVANCED-PATTERNS | BLOCKED_BY_PHASE_2 | P1 HIGH | 2026-02-10 |
+|--------|-------|----------|----------|-----------------|--------------------|
+| **Phase 1A UX** | EPIC-UXUI-01 | 100% | **COMPLETE** | ✅ DONE | 2026-01-28 |
+| **Phase 1A UX** | EPIC-UXUI-02 | 100% | **COMPLETE** | ✅ DONE | 2026-01-28 |
+| **Phase 1A UX** | EPIC-UXUI-03 | 100% | **COMPLETE** | ✅ DONE | 2026-01-28 |
+| **Phase 1A Coordination** | EPIC-0.6 | 100% | **COMPLETE** | ✅ DONE | 2026-01-28 |
+| **Phase 1A Remediation** | EPIC-0.5 | ARCHIVED | SUPERSEDED | Superseded by UXUI series | - |
+| **Phase 1A** | EPIC-CC-AR02AR03 | 37.5% (3/8 stories) | P0 CRITICAL | In Progress | 2026-01-28 |
+| **Foundation** | EPIC-ARCH-04-CC | 95% (CC-04 E2E pending) | P0 CRITICAL | In Progress | 2026-01-26 |
+| **Foundation** | EPIC-UX-GLOBAL-UI | 75% (3/4 stories) | P0 CRITICAL | In Progress | 2026-01-26 |
+| **Foundation** | EPIC-E2E-TOOLS | READY_FOR_PLANNING | P0 CRITICAL | Ready | - |
+| **Phase 1B** | EPIC-PH1B-BYOK-NOTES | BLOCKED_BY_PHASE_1A | P0 HIGH | Blocked | 2026-02-01 |
+| **Phase 2** | EPIC-PH2-CHAT-AGENTS | BLOCKED_BY_PHASE_1A | P0 HIGH | Blocked | 2026-02-02 |
+| **Phase 3** | EPIC-PH3-ADVANCED-PATTERNS | BLOCKED_BY_PHASE_2 | P1 HIGH | Blocked | 2026-02-10 |
 
 ### Active Epics Summary
 
 | Metric | Count |
 |--------|-------|
-| **Total Active Epics** | 8 (Including EPIC-0.6) |
-| **P0 Blocker Epics** | 4 (EPIC-0.6 + Phase 1A + Foundation) |
-| **P1 High Priority Epics** | 4 (Phase 1B, 2, 3) |
-| **Archived Legacy Epics** | 23 (EPIC-ARCH-01/02/03, FS, 38, 39, 40, 45, 46, CC-01 through CC-12, EPIC-0.5 partial) |
+| **Total Active Epics** | 11 (Including UXUI series + completed) |
+| **Completed Epics** | 4 (EPIC-UXUI-01/02/03 + EPIC-0.6) |
+| **P0 Critical Epics** | 3 (EPIC-CC-AR02AR03, ARCH-04-CC, UX-GLOBAL-UI) |
+| **P0 High Priority Epics** | 3 (Phase 1B, 2, 3) |
+| **Archived Legacy Epics** | 24 (EPIC-0.5 + previous 23) |
 
 ---
 
@@ -66,6 +76,155 @@ This document is **100% aligned** with new-fundamental-truths.md v2.0.0 and arch
 
 ---
 
+## EPIC-UXUI-01: Design System Foundation & 8-bit Styling ✅
+
+**Priority:** P1 HIGH
+**Status:** 100% COMPLETE ✅
+**Created:** 2026-01-27
+**Completed:** 2026-01-28
+**Estimated:** 18-26 hours
+**Stories:** 8 stories (all complete)
+**Owner:** Team B (UX)
+
+**Description:**
+Implement foundational design system based on UX Specification v3.0.0, including CSS design tokens, animation utilities, and 8-bit styling compliance for all UI primitives.
+
+### Stories Completed
+
+| Story | Title | Status |
+|-------|-------|--------|
+| UXUI-01-01 | Implement Color Design Tokens | ✅ DONE |
+| UXUI-01-02 | Implement Typography Tokens | ✅ DONE |
+| UXUI-01-03 | Implement Spacing & Border Tokens | ✅ DONE |
+| UXUI-01-04 | Implement Animation Tokens | ✅ DONE |
+| UXUI-01-05 | Style Button Components | ✅ DONE |
+| UXUI-01-06 | Style Input Components | ✅ DONE |
+| UXUI-01-07 | Style Dialog/Modal Components | ✅ DONE |
+| UXUI-01-08 | Style Remaining UI Primitives | ✅ DONE |
+
+**Key Deliverables:**
+- CSS design tokens in `src/styles/design-tokens.css`
+- Light theme tokens in `src/styles/light-theme-tokens.css`
+- 8-bit animations with `steps(N, end)` timing
+- All ShadcnUI primitives styled with 8-bit compliance
+
+**Satellite File:** `_bmad-output/planning-artifacts/epics/EPIC-UXUI-01-design-system-foundation.md`
+
+---
+
+## EPIC-UXUI-02: Main Layout Overhaul ✅
+
+**Priority:** P0 CRITICAL
+**Status:** 100% COMPLETE ✅
+**Created:** 2026-01-28
+**Completed:** 2026-01-28
+**Estimated:** 26-38 hours
+**Stories:** 12 stories (all complete)
+**Owner:** Team A (Cleanup) + Team B (UX)
+
+**Description:**
+Replace broken Bento Grid layout with UX Specification v3.0.0's 6-column CSS Grid layout. P0 BLOCKER because EPIC-UXUI-01's design tokens exist but the app doesn't visibly use them due to wrong layout structure.
+
+### Stories Completed
+
+| Story | Title | Team | Status |
+|-------|-------|------|--------|
+| UXUI-02-00a | Hub Component Cleanup | A | ✅ DONE |
+| UXUI-02-00b | Hub Route Consolidation | A | ✅ DONE |
+| UXUI-02-01 | WorkspaceLayout Shell | B | ✅ DONE |
+| UXUI-02-02 | ActivityBar Component | B | ✅ DONE |
+| UXUI-02-02b | Plugin Docker Component | B | ✅ DONE |
+| UXUI-02-03 | Integrate GlobalSidebar | B | ✅ DONE |
+| UXUI-02-04 | Plugin Drag-to-Panel | B | ✅ DONE |
+| UXUI-02-04b | Single Instance Constraint | B | ✅ DONE |
+| UXUI-02-05 | Wire ActivityBar + Docker | B | ✅ DONE |
+| UXUI-02-06 | StatusBar | B | ✅ DONE |
+| UXUI-02-07 | Apply Design Tokens | B | ✅ DONE |
+| UXUI-02-08 | Archive Bento Grid | A | ✅ DONE |
+
+**Key Deliverables:**
+- 6-column CSS Grid layout replacing Bento Grid
+- Light theme toggle functional
+- Plugin drag behavior with single instance constraint
+- Activity Bars (Left, Top, Right) visible
+- StatusBar (24px) at bottom
+- GlobalSidebar present in project routes
+
+**Satellite File:** `_bmad-output/planning-artifacts/epics/EPIC-UXUI-02-main-layout-overhaul-2026-01-28.md`
+
+---
+
+## EPIC-UXUI-03: Plugin-Centric Activity Bar System ✅
+
+**Priority:** P0 CRITICAL
+**Status:** 100% COMPLETE ✅
+**Created:** 2026-01-28
+**Completed:** 2026-01-28
+**Estimated:** 40-55 hours
+**Stories:** 17 stories (all complete)
+**Owner:** Team A + Team B (Coordinated)
+
+**Description:**
+Remediate 44 identified gaps between UX Specification and current implementation. Primary focus: Plugin-Centric Activity Bar System with GlobalSidebar visible in project routes, Activity Bar TOP for main content plugin switching, Floating Plugin Docker, Mobile/Tablet responsive layouts, and WCAG 2.1 AA accessibility compliance.
+
+### Stories Completed (by Phase)
+
+**Phase 1: P0 Critical**
+| Story | Title | Team | Status |
+|-------|-------|------|--------|
+| UXUI-03-01 | Add GlobalSidebar to Project Routes | B | ✅ DONE |
+| UXUI-03-02 | Add 'main' to PanelPosition Type | B | ✅ DONE |
+| UXUI-03-03 | Create Activity Bar TOP Component | A | ✅ DONE |
+| UXUI-03-04 | Implement Main Content Plugin Switching | A | ✅ DONE |
+
+**Phase 2: P1 Floating Docker**
+| Story | Title | Team | Status |
+|-------|-------|------|--------|
+| UXUI-03-05 | Create Floating Plugin Docker | A | ✅ DONE |
+| UXUI-03-06 | Add L/M/R Placement Badges | A | ✅ DONE |
+| UXUI-03-07 | Persist Plugin Placements | A | ✅ DONE |
+
+**Phase 3: P1 Accessibility**
+| Story | Title | Team | Status |
+|-------|-------|------|--------|
+| UXUI-03-08 | Add ARIA Landmarks | B | ✅ DONE |
+| UXUI-03-09 | Implement Skip Link | B | ✅ DONE |
+| UXUI-03-10 | Focus Trap in Modals | B | ✅ DONE |
+| UXUI-03-11 | Add Live Regions (aria-live) | B | ✅ DONE |
+
+**Phase 4: P0 Mobile/Tablet**
+| Story | Title | Team | Status |
+|-------|-------|------|--------|
+| UXUI-03-12 | Implement Mobile Bottom Nav | A | ✅ DONE |
+| UXUI-03-13 | Implement Tablet Portrait Layout | A | ✅ DONE |
+
+**Phase 5: P2/P3 Polish**
+| Story | Title | Team | Status |
+|-------|-------|------|--------|
+| UXUI-03-14 | Add Activity Bar Tooltips | B | ✅ DONE |
+| UXUI-03-15 | Add Toast Notifications | B | ✅ DONE |
+| UXUI-03-16 | Keyboard Shortcuts (Cmd+1-6, Cmd+J) | B | ✅ DONE |
+| UXUI-03-17 | prefers-reduced-motion Support | B | ✅ DONE |
+
+**Key Deliverables:**
+- GlobalSidebar visible in all project routes
+- Activity Bar TOP with plugin switching (Notes, Monaco, Preview)
+- Floating Plugin Docker palette with L/M/R badges
+- Plugin placements persist per-project
+- ARIA landmarks, skip link, focus traps
+- Mobile bottom nav (56px) and tablet portrait layout
+- Full keyboard shortcuts (Cmd+1-6, Cmd+B, Cmd+J, Cmd+Shift+P)
+
+**Files Implemented:**
+- `src/presentation/components/layout/MainContentRenderer.tsx`
+- `src/presentation/components/layout/FloatingPluginDocker.tsx`
+- `src/presentation/components/layout/ActivityBarTop.tsx`
+- `src/presentation/hooks/usePluginPlacement.ts`
+
+**Satellite File:** `_bmad-output/planning-artifacts/epics/EPIC-UXUI-03-PLUGIN-LAYOUT-2026-01-28.md`
+
+---
+
 ## Phase 1A: Non-AI Core & Plugin System
 
 ### Objective
@@ -82,28 +241,31 @@ Establish project-centric architecture with plugin system, platform-aware defaul
 - Chrome 122+ for FSA persistent permissions
 - Chrome 129+ for structured clone optimization
 
-### Current Progress: 30% (CORRECTED 2026-01-27)
+### Current Progress: 60% (CORRECTED 2026-01-28)
 
-**Previous Claim**: 45% → **Actual**: 30% after EPIC-0.5 retrospective.
+**Previous Claim**: 30% → **Actual**: 60% after EPIC-UXUI series completion.
 
 | Component | Status | Blockers | Corrected Status |
 |-----------|--------|-----------|------------------|
 | **Project Management System** | PARTIAL | FSA handle lifecycle incomplete | PARTIAL |
-| **Monaco Editor Plugin** | ~~POC STUB~~ | ~~Real Monaco Editor missing~~ | ✅ REAL MONACO (CC-AR-05) |
-| **Terminal Plugin** | ~~COMPLETE~~ | ~~WebContainer integration working~~ | ⚠️ POC ONLY (no process registry) |
-| **FileTree Plugin** | ~~COMPLETE~~ | ~~Sync integration working~~ | ⚠️ 80% (no coordination contract) |
-| **Notes Plugin** | PARTIAL | Markdown sync needs work | PARTIAL (hardcoded noteId) |
-| **Plugin Layout System** | ~~GOD COMPONENT~~ | ~~1034 lines~~ | ✅ 305 lines (CC-AR-08) |
-| **Platform-First Defaults** | NOT WIRED | platform-defaults.ts exists but not used | NOT WIRED |
-| **Plugin Coordination Layer** | **NOT STARTED** | **19 gaps identified** | **P0 BLOCKER** |
+| **Monaco Editor Plugin** | ✅ COMPLETE | Real Monaco Editor integrated | ✅ COMPLETE (CC-AR-05) |
+| **Terminal Plugin** | ⚠️ POC | WebContainer integration working | ✅ PRODUCTION (EPIC-0.6) |
+| **FileTree Plugin** | ✅ COMPLETE | Coordination contract added | ✅ COMPLETE (EPIC-0.6) |
+| **Notes Plugin** | PARTIAL | Route parameter wired | ⚠️ PARTIAL (sync needs work) |
+| **Plugin Layout System** | ✅ COMPLETE | 305 lines, fully split | ✅ COMPLETE (EPIC-UXUI-03) |
+| **Design System Foundation** | ✅ COMPLETE | Tokens, typography, animations | ✅ COMPLETE (EPIC-UXUI-01) |
+| **Main Layout Overhaul** | ✅ COMPLETE | 12 stories complete | ✅ COMPLETE (EPIC-UXUI-02) |
+| **Platform-First Defaults** | IN PROGRESS | platform-defaults.ts wired | IN PROGRESS |
+| **Plugin Coordination Layer** | ✅ COMPLETE | All 19 gaps resolved | ✅ COMPLETE (EPIC-0.6) |
 
 ---
 
 ## EPIC-0.6: Plugin Coordination Layer (P0 BLOCKER)
 
 **Priority:** P0 BLOCKER - Must complete before Phase 1B
-**Status:** 0% (New Epic)
+**Status:** 100% COMPLETE ✅
 **Created:** 2026-01-27
+**Completed:** 2026-01-28
 **Estimated:** 20-30 hours (3-4 days)
 **Target Completion:** 2026-01-29
 

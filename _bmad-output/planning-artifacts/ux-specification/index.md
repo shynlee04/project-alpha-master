@@ -21,7 +21,7 @@ structure: sharded
 | **Visual Style** | Lyra (8-bit retro - boxy and sharp) |
 | **Base Color** | Stone |
 | **Primary Accent** | Orange (#f97316) |
-| **Theme** | Dark only (light mode deferred to Phase 2) |
+| **Theme** | Dark default + Light mode (✅ Section 14: Light Theming - Complete) |
 | **Languages** | English (en), Vietnamese (vi) |
 | **Breakpoints** | 6 tiers (phone to desktop) |
 | **Plugin Limit** | 1-4 (device-dependent) |

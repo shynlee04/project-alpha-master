@@ -35,3 +35,26 @@ export { FloatingPluginDocker, type FloatingPluginDockerProps } from './Floating
 
 // Live Region for Screen Reader Announcements (UXUI-03-11)
 export { LiveRegion, type LiveRegionProps, type LiveRegionSyncStatus } from './LiveRegion';
+
+// Mobile Bottom Navigation (UXUI-03-12)
+export { MobileBottomNav, type MobileBottomNavProps } from './MobileBottomNav';
+export { BottomSheet, type BottomSheetProps } from './BottomSheet';
+
+// Tablet Portrait Layout (UXUI-03-13)
+export {
+  TabletPortraitLayout,
+  TabletPortraitHeader,
+  SidebarDrawer,
+  type TabletPortraitLayoutProps,
+  type TabletPortraitHeaderProps,
+  type SidebarDrawerProps,
+} from './TabletPortraitLayout';
+
+// Responsive Layout Switcher (UXUI-03-13)
+export {
+  ResponsiveLayoutSwitcher,
+  useResponsiveLayout,
+  getLayoutType,
+  type ResponsiveLayoutSwitcherProps,
+  type ResponsiveLayoutState,
+} from './ResponsiveLayoutSwitcher';
