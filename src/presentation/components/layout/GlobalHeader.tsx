@@ -24,8 +24,7 @@ import { Menu, Search, Settings, User, Command } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useCommandPalette } from '@/hooks/useCommandPalette';
-// DEBUG: PresetSelector import commented out - testing black area
-// import { PresetSelector } from './PresetSelector';
+import { PresetSelector } from './PresetSelector';
 // ============================================================================
 // Types
 // ============================================================================
@@ -175,7 +174,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
         <nav
           className="hidden md:flex items-center gap-1 ml-4"
           role="navigation"
-          aria-label="Main navigation"
+          aria-label={t('layout.globalHeader.mainNavigation')}
         >
           {NAV_ITEMS.map((item) => (
             <Link
@@ -204,10 +203,10 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
           ))}
         </nav>
 
-        {/* DEBUG: Workflow Preset Selector commented out - testing black area */}
-        {/* <div className="hidden md:flex items-center">
+        {/* Workflow Preset Selector - Route-conditional (LC-07) */}
+        <div className="hidden md:flex items-center ml-2">
           <PresetSelector />
-        </div> */}
+        </div>
       </div>
 
       {/* Right Section: Search + Actions */}

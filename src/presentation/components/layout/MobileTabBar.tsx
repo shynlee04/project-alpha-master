@@ -103,7 +103,7 @@ export const MobileTabBar: React.FC<MobileTabBarProps> = ({
                 className
             )}
             role="tablist"
-            aria-label="IDE Panel Navigation"
+            aria-label={t('layout.mobileTabBar.ariaLabel', 'IDE Panel Navigation')}
         >
             {TABS.map((tab) => {
                 const isActive = activePanel === tab.id;

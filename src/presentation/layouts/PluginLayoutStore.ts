@@ -139,6 +139,16 @@ interface PluginLayoutState {
   currentPreset: WorkflowPreset;
 
   // ========================================================================
+  // LC-02: Sidebar State (consolidated from layout-store.ts)
+  // ========================================================================
+
+  /** Sidebar collapse state (for desktop/tablet) */
+  sidebarCollapsed: boolean;
+
+  /** Mobile sidebar open state (for mobile overlay) */
+  sidebarMobileOpen: boolean;
+
+  // ========================================================================
   // Actions
   // ========================================================================
 
@@ -183,6 +193,19 @@ interface PluginLayoutState {
 
   /** Toggle plugin on/off (convenience method for UI) */
   togglePlugin: (pluginId: PluginId) => void;
+
+  // ========================================================================
+  // LC-02: Sidebar Actions (consolidated from layout-store.ts)
+  // ========================================================================
+
+  /** Toggle sidebar collapse state */
+  toggleSidebar: () => void;
+
+  /** Set sidebar collapse state */
+  setSidebarCollapsed: (collapsed: boolean) => void;
+
+  /** Set mobile menu open state */
+  setMobileMenuOpen: (open: boolean) => void;
 }
 
 // ============================================================================
@@ -219,6 +242,10 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
       breakpoint: 'desktop',
       currentPlugin: null,
       currentPreset: 'default' as WorkflowPreset,
+
+      // LC-02: Sidebar state (from layout-store.ts)
+      sidebarCollapsed: false,
+      sidebarMobileOpen: false,
 
       // ========================================================================
       // Actions
@@ -545,6 +572,30 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
           }
         }),
 
+      // ========================================================================
+      // LC-02: Sidebar Actions (consolidated from layout-store.ts)
+      // ========================================================================
+
+      /**
+       * Toggle sidebar collapse state
+       */
+      toggleSidebar: () =>
+        set((state) => ({
+          sidebarCollapsed: !state.sidebarCollapsed,
+        })),
+
+      /**
+       * Set sidebar collapse state
+       */
+      setSidebarCollapsed: (collapsed) =>
+        set({ sidebarCollapsed: collapsed }),
+
+      /**
+       * Set mobile menu open state
+       */
+      setMobileMenuOpen: (open) =>
+        set({ sidebarMobileOpen: open }),
+
     }),
 
     // ========================================================================
@@ -611,6 +662,14 @@ export const selectPanelSizes = (state: PluginLayoutState) => state.panelSizes;
  */
 export const selectIsPluginActive = (state: PluginLayoutState, pluginId: PluginId): boolean =>
   state.activePlugins.includes(pluginId);
+
+// ============================================================================
+// LC-02: Sidebar Selectors (consolidated from layout-store.ts)
+// ============================================================================
+
+export const selectSidebarCollapsed = (state: PluginLayoutState) => state.sidebarCollapsed;
+
+export const selectSidebarMobileOpen = (state: PluginLayoutState) => state.sidebarMobileOpen;
 
 // ============================================================================
 // No additional exports - store and selectors exported above

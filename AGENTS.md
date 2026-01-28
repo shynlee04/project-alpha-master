@@ -1,6 +1,6 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.12.0 | **Updated:** 2026-01-28 | **Health:** 85% (EPIC-UXUI-03 COMPLETE)
+> **Version:** 2.13.0 | **Updated:** 2026-01-29 | **Health:** 87% (EPIC-LAYOUT-CONSOLIDATION ACTIVE)
 
 ---
 # **THE EXTREME AND ABSOLUTE CONSTITUTIONS WHEN IT COMES TO CREATE/CONSUME ANY DOCUMENTS AND/OR ARTIFACTS**
@@ -382,6 +382,98 @@ opacity: 0.8;            /* Avoid - use solid */
 - **Light Theming**: See `ux-specification/14-light-theming.md`
 - **Micro Animations**: See `ux-specification/15-micro-animations.md`
 - **Validation Checklist**: See `ux-specification/VALIDATION-CHECKLIST.md`
+
+---
+
+## 🏗️ Layout Governance Rules (2026-01-29)
+
+### Single Source of Truth
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| **WorkspaceLayout** | Canonical layout for project routes | `src/presentation/layouts/WorkspaceLayout.tsx` |
+| **ProjectAwareLayout** | Route-aware layout switcher | `src/presentation/components/layout/ProjectAwareLayout.tsx` |
+| **PluginLayoutStore** | Single store for all layout state | `src/presentation/layouts/PluginLayoutStore.ts` |
+
+**Rules**:
+- All project routes (`/$projectId`) MUST use `WorkspaceLayout`
+- No intermediate layout wrappers allowed (no `MainLayout` wrappers)
+- Global routes (`/`, `/settings`, `/agents`, etc.) render through `ProjectAwareLayout`
+- Facade exports exist for backward compatibility - use them
+
+### Z-Index Scale (design-tokens.css)
+
+| Token | Value | Use For |
+|-------|-------|---------|
+| `--z-base` | 0 | Default content (no z-index) |
+| `--z-dropdown` | 10 | Dropdowns, hover states |
+| `--z-sticky` | 20 | Sticky headers, navigation |
+| `--z-sidebar` | 30 | Fixed sidebars, panels |
+| `--z-panel` | 40 | Fixed panels, status overlays |
+| `--z-modal` | 50 | Modals, dialogs, important overlays |
+| `--z-toast` | 60 | Toast notifications |
+| `--z-popover` | 70 | Priority popovers, dropdown menus |
+| `--z-overlay` | 80 | Full-screen overlays, command palettes |
+| `--z-alert` | 90 | Critical alerts |
+| `--z-debug` | 100 | Highest level (debug overlays, devtools) |
+
+**Usage**:
+```css
+/* CSS */
+z-index: var(--z-modal);
+
+/* Inline style */
+style={{ zIndex: 'var(--z-modal)' }}
+
+/* Tailwind arbitrary value */
+className="[&]:z-[var(--z-modal)]"
+```
+
+### Overflow Strategy
+
+```
+✅ CORRECT:
+  html, body, #root     → overflow: hidden
+  WorkspaceLayout       → overflow: hidden
+  Content areas ONLY    → overflow-y: auto
+
+❌ FORBIDDEN:
+  Nested scrollable containers
+  overflow: scroll on parent and child
+  Multiple scroll contexts in same panel
+```
+
+**Rule**: Only leaf content areas (main content, plugin panels) should scroll. Never nest scrollable containers.
+
+### Layout Store Pattern
+
+```typescript
+// ✅ CORRECT: Use usePluginLayoutStore with useShallow
+import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
+import { useShallow } from 'zustand/react/shallow';
+
+const { activePlugins, layoutMode } = usePluginLayoutStore(
+  useShallow((s) => ({
+    activePlugins: s.activePlugins,
+    layoutMode: s.layoutMode,
+  }))
+);
+
+// ❌ FORBIDDEN: Multiple selector calls
+const activePlugins = usePluginLayoutStore((s) => s.activePlugins);
+const layoutMode = usePluginLayoutStore((s) => s.layoutMode);
+```
+
+### Route Layout Matrix
+
+| Route Pattern | Layout Component | Sidebar | Notes |
+|--------------|------------------|---------|-------|
+| `/$projectId` | `WorkspaceLayout` | GlobalSidebar (48px) | Full 6-column grid |
+| `/` | `ProjectAwareLayout` | MainSidebar | Hub home page |
+| `/settings` | `ProjectAwareLayout` | MainSidebar | Settings page |
+| `/agents` | `ProjectAwareLayout` | MainSidebar | Agent management |
+| `/projects` | `ProjectAwareLayout` | MainSidebar | Projects list |
+| `/debug` | None | None | Standalone debug UI |
 
 ---
 

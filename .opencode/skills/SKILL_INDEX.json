@@ -1,0 +1,337 @@
+{
+    "version": "3.0.0",
+    "description": "Beast-Mode Skill Index - Maps plugin skill references to actual skill directories",
+    "updated": "2026-01-29T03:50:00+07:00",
+    "non_negotiable_skills": {
+        "description": "Skills that must ALWAYS be loaded for specific scenarios (from Meta-Framework Analysis)",
+        "skills": {
+            "using-superpowers": {
+                "trigger": "Every conversation start",
+                "path": ".agent/skills/using-superpowers/SKILL.md"
+            },
+            "brainstorming": {
+                "trigger": "Before ANY creative work",
+                "path": ".agent/skills/brainstorming/SKILL.md"
+            },
+            "writing-plans": {
+                "trigger": "Before writing implementation plans",
+                "path": ".agent/skills/writing-plans/SKILL.md"
+            },
+            "verification-before-completion": {
+                "trigger": "Before claiming 'done'",
+                "path": ".agent/skills/verification-before-completion/SKILL.md"
+            },
+            "test-driven-development": {
+                "trigger": "Before implementing features",
+                "path": ".agent/skills/test-driven-development/SKILL.md"
+            },
+            "systematic-debugging": {
+                "trigger": "On any bug/error",
+                "path": ".agent/skills/systematic-debugging/SKILL.md"
+            },
+            "receiving-code-review": {
+                "trigger": "When receiving feedback",
+                "path": ".agent/skills/receiving-code-review/SKILL.md"
+            },
+            "ui-layout-contract": {
+                "trigger": "When creating UI",
+                "path": ".agent/skills/ui-layout-contract/SKILL.md"
+            },
+            "global-validation": {
+                "trigger": "When working with state",
+                "path": ".agent/skills/global-validation/SKILL.md"
+            },
+            "dispatching-parallel-agents": {
+                "trigger": "Multiple independent tasks",
+                "path": ".agent/skills/dispatching-parallel-agents/SKILL.md"
+            },
+            "finishing-a-development-branch": {
+                "trigger": "Completing branch work",
+                "path": ".agent/skills/finishing-a-development-branch/SKILL.md"
+            }
+        }
+    },
+    "skill_chains": {
+        "description": "Auto-composed skill chains triggered by beast-mode-orchestrator",
+        "chains": {
+            "code_request": {
+                "trigger": "add|create|implement|build|fix|refactor",
+                "skills": [
+                    "brainstorming",
+                    "writing-plans",
+                    "context-first"
+                ]
+            },
+            "story_context": {
+                "trigger": "Story file active or stories/ directory",
+                "skills": [
+                    "story-load",
+                    "tdd-red",
+                    "sprint-update",
+                    "story-cycle"
+                ]
+            },
+            "code_review": {
+                "trigger": "review|pr|pull request",
+                "skills": [
+                    "adversarial-review",
+                    "code-review-enhanced",
+                    "brownfield-guard"
+                ]
+            },
+            "architecture": {
+                "trigger": "refactor|split|god|architecture",
+                "skills": [
+                    "architecture-remediation",
+                    "adr-patterns",
+                    "domain-scanner"
+                ]
+            },
+            "bug_fix": {
+                "trigger": "Bug/error detected",
+                "skills": [
+                    "systematic-debugging",
+                    "correct-course",
+                    "root-cause-analysis"
+                ]
+            },
+            "completion": {
+                "trigger": "done|complete|finished|ready",
+                "skills": [
+                    "verification-before-completion",
+                    "e2e-journey",
+                    "dod-checklist"
+                ]
+            },
+            "state_work": {
+                "trigger": "State file modified",
+                "skills": [
+                    "global-validation",
+                    "state-boundary-audit"
+                ]
+            },
+            "documentation": {
+                "trigger": "Doc edit",
+                "skills": [
+                    "tech-writer",
+                    "bi-directional-sync"
+                ]
+            }
+        }
+    },
+    "trap_to_skill_mapping": {
+        "description": "Maps 10 TRAPs from Meta-Framework to defensive skills",
+        "TRAP_1_Premature_Implementation": {
+            "skills": [
+                "brainstorming",
+                "writing-plans",
+                "context-first"
+            ],
+            "defense": "3-Step Validation before any implementation"
+        },
+        "TRAP_2_Context_Poisoning": {
+            "skills": [
+                "stale-check",
+                "artifact-scanner"
+            ],
+            "defense": "Check artifact freshness, enforce TTL"
+        },
+        "TRAP_3_Scope_Creep_Spiral": {
+            "skills": [
+                "scope-boundary",
+                "writing-plans"
+            ],
+            "defense": "Decompose > 4hr requests into EPICs"
+        },
+        "TRAP_4_State_Boundary_Violation": {
+            "skills": [
+                "global-validation",
+                "state-boundary-audit"
+            ],
+            "defense": "No Zustand persist for Dexie data"
+        },
+        "TRAP_5_Temporary_Code_Permanence": {
+            "skills": [
+                "paired-revert-story",
+                "story-done"
+            ],
+            "defense": "Create paired revert story"
+        },
+        "TRAP_6_File_Tree_Anarchy": {
+            "skills": [
+                "brownfield-guard",
+                "global-conventions"
+            ],
+            "defense": "ADR-039 canonical paths only"
+        },
+        "TRAP_7_God_Component_Syndrome": {
+            "skills": [
+                "component-splitter",
+                "size-monitor"
+            ],
+            "defense": "Max 300 LOC per file"
+        },
+        "TRAP_8_TypeScript_Only_Validation": {
+            "skills": [
+                "verification-before-completion",
+                "e2e-journey"
+            ],
+            "defense": "E2E evidence required before done"
+        },
+        "TRAP_9_Nonsense_Sprint_Cohesion": {
+            "skills": [
+                "cohesion-scanner",
+                "dependency-scanner"
+            ],
+            "defense": "Scan sprint cohesion > 0.7"
+        },
+        "TRAP_10_Documentation_Drift": {
+            "skills": [
+                "tech-writer",
+                "bi-directional-sync"
+            ],
+            "defense": "Sync docs with implementation"
+        }
+    },
+    "existing_skills_index": {
+        "description": "All 35 skills found in .agent/skills/",
+        "skills": [
+            "architecture-remediation",
+            "asgl",
+            "backend-api",
+            "backend-migrations",
+            "backend-models",
+            "backend-queries",
+            "bmad-core-integration",
+            "bmm-workflows",
+            "brainstorming",
+            "dispatching-parallel-agents",
+            "executing-plans",
+            "finishing-a-development-branch",
+            "frontend-accessibility",
+            "frontend-components",
+            "frontend-css",
+            "frontend-responsive",
+            "global-coding-style",
+            "global-commenting",
+            "global-conventions",
+            "global-error-handling",
+            "global-tech-stack",
+            "global-validation",
+            "receiving-code-review",
+            "requesting-code-review",
+            "story-cycle",
+            "subagent-driven-development",
+            "systematic-debugging",
+            "test-driven-development",
+            "testing-test-writing",
+            "ui-layout-contract",
+            "using-git-worktrees",
+            "using-superpowers",
+            "verification-before-completion",
+            "writing-plans",
+            "writing-skills"
+        ]
+    },
+    "missing_skills_needed": {
+        "description": "Skills referenced by beast-mode-orchestrator but not yet created",
+        "to_create": [
+            {
+                "name": "context-first",
+                "purpose": "Load context before any action"
+            },
+            {
+                "name": "scope-boundary",
+                "purpose": "Decompose > 4hr requests"
+            },
+            {
+                "name": "story-load",
+                "purpose": "Load story context on story file open"
+            },
+            {
+                "name": "tdd-red",
+                "purpose": "Write failing tests first"
+            },
+            {
+                "name": "sprint-update",
+                "purpose": "Update sprint-status.yaml"
+            },
+            {
+                "name": "adversarial-review",
+                "purpose": "Find 3-10 problems in every review"
+            },
+            {
+                "name": "code-review-enhanced",
+                "purpose": "Extended code review with TRAP checks"
+            },
+            {
+                "name": "brownfield-guard",
+                "purpose": "ADR-039 path enforcement"
+            },
+            {
+                "name": "adr-patterns",
+                "purpose": "Architecture decision patterns"
+            },
+            {
+                "name": "domain-scanner",
+                "purpose": "Scan domain boundaries"
+            },
+            {
+                "name": "correct-course",
+                "purpose": "Route bug fixes and course corrections"
+            },
+            {
+                "name": "root-cause-analysis",
+                "purpose": "Find root cause before fixing"
+            },
+            {
+                "name": "e2e-journey",
+                "purpose": "Walk through E2E user journey"
+            },
+            {
+                "name": "dod-checklist",
+                "purpose": "Definition of Done checklist"
+            },
+            {
+                "name": "state-boundary-audit",
+                "purpose": "Audit Zustand/Dexie boundaries"
+            },
+            {
+                "name": "tech-writer",
+                "purpose": "Technical documentation writing"
+            },
+            {
+                "name": "bi-directional-sync",
+                "purpose": "Sync docs with implementation"
+            },
+            {
+                "name": "paired-revert-story",
+                "purpose": "Create revert story for temp code"
+            },
+            {
+                "name": "stale-check",
+                "purpose": "Check artifact staleness"
+            },
+            {
+                "name": "artifact-scanner",
+                "purpose": "Scan artifacts for issues"
+            },
+            {
+                "name": "component-splitter",
+                "purpose": "Split oversized components"
+            },
+            {
+                "name": "size-monitor",
+                "purpose": "Monitor file sizes"
+            },
+            {
+                "name": "cohesion-scanner",
+                "purpose": "Check sprint cohesion"
+            },
+            {
+                "name": "dependency-scanner",
+                "purpose": "Map dependencies"
+            }
+        ]
+    }
+}

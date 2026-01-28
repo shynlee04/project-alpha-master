@@ -287,7 +287,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             <button
               onClick={handleToggleTheme}
               className="flex items-center justify-center h-10 rounded-none border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
-              title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+              title={isDark ? t('layout.mainSidebar.switchToLight') : t('layout.mainSidebar.switchToDark')}
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -295,7 +295,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({ className }) => {
             <button
               onClick={handleToggleLocale}
               className="flex items-center justify-center h-10 rounded-none border-2 border-transparent hover:border-border hover:bg-accent text-muted-foreground hover:text-foreground transition-all"
-              title={locale === 'en' ? 'Tiếng Việt' : 'English'}
+              title={locale === 'en' ? t('layout.mainSidebar.switchToVietnamese') : t('layout.mainSidebar.switchToEnglish')}
             >
               <span className="font-pixel text-sm font-bold">{locale.toUpperCase()}</span>
             </button>

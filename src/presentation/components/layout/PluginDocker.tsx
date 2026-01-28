@@ -21,6 +21,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // ============================================================================
 // Types & Interfaces
@@ -145,6 +146,8 @@ export function PluginDocker({
   className = '',
   onPluginDrop,
 }: PluginDockerProps) {
+  const { t } = useTranslation();
+
   // Calculate default width based on position
   const calculatedDefaultWidth = defaultWidth ?? (
     position === 'left' ? DEFAULT_LEFT_WIDTH : DEFAULT_RIGHT_WIDTH
@@ -331,7 +334,7 @@ export function PluginDocker({
         onMouseDown={handleResizeStart}
         role="separator"
         aria-orientation="vertical"
-        aria-label={`Resize ${position} panel`}
+        aria-label={t('layout.pluginDocker.resizePanel', { position })}
         tabIndex={isOpen ? 0 : -1}
         onKeyDown={(e) => {
           if (!isOpen) return;
@@ -369,8 +372,8 @@ export function PluginDocker({
                 type="button"
                 className="plugin-docker__close-btn"
                 onClick={onClose}
-                aria-label="Close panel"
-                title="Close panel"
+                aria-label={t('layout.pluginDocker.closePanel')}
+                title={t('layout.pluginDocker.closePanel')}
               >
                 ×
               </button>

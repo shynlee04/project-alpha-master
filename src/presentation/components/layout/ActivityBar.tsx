@@ -25,6 +25,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 // ============================================================================
@@ -126,6 +127,8 @@ export function ActivityBar({
   onDragStart,
   onDragEnd,
 }: ActivityBarProps) {
+  const { t } = useTranslation();
+
   // Track which item is being dragged
   const [draggingId, setDraggingId] = useState<string | null>(null);
   
@@ -172,7 +175,7 @@ export function ActivityBar({
       <nav
         className={`activity-bar ${positionClass} ${className}`}
         role="toolbar"
-        aria-label={`Activity bar ${position}`}
+        aria-label={t('layout.activityBar.ariaLabel', { position })}
       >
         <div className="activity-bar__content">
           {items.map((item) => {

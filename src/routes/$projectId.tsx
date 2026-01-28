@@ -41,12 +41,11 @@ import { MainSidebar } from '@/presentation/components/layout/MainSidebar';
 // CC-UX-01: StatusBar integration
 import { StatusBar } from '@/presentation/components/layout/StatusBar';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
-import { getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
+import { getDefaultLayoutMode, getDefaultPlugins, getDefaultMainPlugin, getDefaultPluginPlacements } from '@/infrastructure/plugins/platform-defaults';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-import { getPresetConfig } from '@/presentation/layouts/workflow-presets';
 // UXUI-02-05: ActivityBar + Docker Wiring
 import { usePluginActivityDockerWiring } from '@/presentation/components/layout/PluginActivityDockerWiring';
-import { usePluginPlacement, type PluginPlacementEntry } from '@/presentation/hooks/usePluginPlacement';
+import { usePluginPlacement } from '@/presentation/hooks/usePluginPlacement';
 import type { ActivityBarItem } from '@/presentation/components/layout/ActivityBar';
 // CC-UX-02: Plugin Registry for rendering
 import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
@@ -146,31 +145,14 @@ const RIGHT_ACTIVITY_ITEMS: ActivityBarItem[] = [
  * Integrates ActivityBar + Docker wiring for panel management (UXUI-02-05).
  * 
  * ============================================================================
- * DEBUG PHASE 2: 2026-01-28
- * ISOLATING CHAT AND NOTES PLUGINS
- * - All plugins ENABLED except 'notes' and 'chat'
- * - If black rectangle RETURNS → Problem is in FileTree/Terminal/Preview/Monaco
- * - If black rectangle GONE → Problem is in Notes or Chat plugins
+ * CC-AR-02: Platform-First Plugin Wiring
+ * - Platform detection determines default layout, plugins, and placements
+ * - Desktop with FSA: Monaco as main, FileTree left, Chat right
+ * - Desktop with IndexedDB: Notes as main, FileTree left, Chat right
+ * - Tablet: Notes as main, FileTree left
+ * - Mobile: Notes only, single column
  * ============================================================================
  */
-
-// DEBUG PHASE 2: Plugins to DISABLE for testing
-const DEBUG_DISABLED_PLUGINS: PluginId[] = ['notes', 'chat'];
-
-// DEBUG PHASE 2: Filter activity items to exclude disabled plugins
-const DEBUG_LEFT_ACTIVITY_ITEMS = LEFT_ACTIVITY_ITEMS.filter(
-  (item) => !DEBUG_DISABLED_PLUGINS.includes(item.id as PluginId)
-);
-const DEBUG_RIGHT_ACTIVITY_ITEMS = RIGHT_ACTIVITY_ITEMS.filter(
-  (item) => !DEBUG_DISABLED_PLUGINS.includes(item.id as PluginId)
-);
-
-// DEBUG PHASE 2: Default placements without disabled plugins
-const DEBUG_DEFAULT_PLACEMENTS: PluginPlacementEntry[] = [
-  { pluginId: 'filetree', panel: 'left' },
-  { pluginId: 'terminal', panel: 'right' },
-  // NOTE: 'chat' and 'notes' are DISABLED for this debug phase
-];
 
 function UnifiedProjectRoute() {
   const { projectId } = Route.useParams();
@@ -187,27 +169,34 @@ function UnifiedProjectRoute() {
   // CC-AR-03: Check hydration status before rendering layout
   const hasHydrated = usePluginLayoutStore((s) => s._hasHydrated);
 
-  console.log('[UnifiedProjectRoute] DEBUG PHASE 2 - Rendering:', { 
+  // ========================================================================
+  // CC-AR-02: Platform-Aware Default Plugins
+  // ========================================================================
+  
+  // Get platform-specific defaults
+  const defaultPlugins = getDefaultPlugins(platform, project);
+  const defaultMainPlugin = getDefaultMainPlugin(platform, project);
+  const defaultPlacements = getDefaultPluginPlacements(platform, project);
+
+  console.log('[UnifiedProjectRoute] Platform-aware defaults:', { 
     projectId, 
     hasHydrated, 
     storageType: project?.storageType,
-    disabledPlugins: DEBUG_DISABLED_PLUGINS,
+    deviceType: platform.deviceType,
+    defaultMainPlugin,
+    defaultPlugins,
+    defaultPlacements,
   });
 
   // ========================================================================
-  // DEBUG PHASE 2: MAIN CONTENT PLUGIN STATE RE-ENABLED
+  // CC-AR-02: MAIN CONTENT PLUGIN STATE (Platform-Aware)
   // ========================================================================
   // 
   // UXUI-03-04: Main Content Plugin State (Notes/Monaco/Preview Switching)
-  // NOTE: Default to 'monaco' since 'notes' is disabled
+  // Uses platform-detected default main plugin
   // 
-  const [activeMainPluginId, setActiveMainPluginId] = useState<PluginId>('monaco');
+  const [activeMainPluginId, setActiveMainPluginId] = useState<PluginId>(defaultMainPlugin);
   const handleMainPluginChange = useCallback((pluginId: PluginId) => {
-    // DEBUG: Block disabled plugins from being activated
-    if (DEBUG_DISABLED_PLUGINS.includes(pluginId)) {
-      console.warn(`[DEBUG PHASE 2] Plugin ${pluginId} is DISABLED for testing`);
-      return;
-    }
     console.log('[UnifiedProjectRoute] Main plugin changed:', pluginId);
     setActiveMainPluginId(pluginId);
   }, []);
@@ -216,12 +205,18 @@ function UnifiedProjectRoute() {
   }, []);
 
   // ========================================================================
-  // DEBUG PHASE 2: PLUGIN PLACEMENT STATE RE-ENABLED
+  // CC-AR-02: PLUGIN PLACEMENT STATE (Platform-Aware)
   // ========================================================================
   // 
   // UXUI-02-05: Plugin Placement State (Single Instance Constraint)
   // UXUI-03-07: Plugin placement persistence (keyed by projectId)
+  // Uses platform-detected default placements
   //
+  const initialPlacements = defaultPlacements.map((p) => ({
+    pluginId: p.pluginId,
+    panel: p.panel,
+  }));
+  
   const {
     placements,
     getPluginPanel,
@@ -232,11 +227,11 @@ function UnifiedProjectRoute() {
     setActivePluginForPanel,
   } = usePluginPlacement({
     projectId,
-    initialPlacements: DEBUG_DEFAULT_PLACEMENTS,
+    initialPlacements,
   });
 
   // ========================================================================
-  // DEBUG PHASE 2: FLOATING DOCKER STATE RE-ENABLED
+  // CC-AR-02: FLOATING DOCKER STATE (Platform-Aware)
   // ========================================================================
   const [isFloatingDockerOpen, setIsFloatingDockerOpen] = useState(false);
   const toggleFloatingDocker = useCallback(() => {
@@ -244,11 +239,6 @@ function UnifiedProjectRoute() {
   }, []);
   const handleFloatingDockerPluginClick = useCallback(
     (pluginId: PluginId, defaultPanel: 'left' | 'main' | 'right') => {
-      // DEBUG: Block disabled plugins
-      if (DEBUG_DISABLED_PLUGINS.includes(pluginId)) {
-        console.warn(`[DEBUG PHASE 2] Plugin ${pluginId} is DISABLED for testing`);
-        return;
-      }
       const currentPanel = getPluginPanel(pluginId);
       if (currentPanel === null || currentPanel === undefined) {
         movePluginToPanel(pluginId, defaultPanel);
@@ -261,7 +251,7 @@ function UnifiedProjectRoute() {
   );
 
   // ========================================================================
-  // DEBUG PHASE 2: KEYBOARD SHORTCUT HANDLER RE-ENABLED
+  // CC-AR-02: KEYBOARD SHORTCUT HANDLER
   // ========================================================================
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -275,22 +265,10 @@ function UnifiedProjectRoute() {
   }, [toggleFloatingDocker]);
 
   // ========================================================================
-  // DEBUG PHASE 2: PLUGIN RENDERER CALLBACK RE-ENABLED
+  // CC-AR-02: PLUGIN RENDERER CALLBACK
   // ========================================================================
   const renderPluginContent = useCallback(
     ({ pluginId, position }: { pluginId: PluginId; position: 'left' | 'right' }) => {
-      // DEBUG: Block disabled plugins from rendering
-      if (DEBUG_DISABLED_PLUGINS.includes(pluginId)) {
-        return (
-          <div className="h-full flex items-center justify-center bg-amber-900/20 border border-amber-500/30 p-4">
-            <span className="text-amber-400 font-mono text-xs text-center">
-              [DEBUG PHASE 2]<br />
-              {pluginId} DISABLED
-            </span>
-          </div>
-        );
-      }
-      
       const plugin = getPlugin(pluginId);
       if (!plugin) {
         console.warn(`[UnifiedProjectRoute] Plugin not found: ${pluginId}`);
@@ -309,11 +287,11 @@ function UnifiedProjectRoute() {
   );
 
   // ========================================================================
-  // DEBUG PHASE 2: LEFT/RIGHT WIRING RE-ENABLED
+  // CC-AR-02: LEFT/RIGHT WIRING (Platform-Aware)
   // ========================================================================
   const leftWiring = usePluginActivityDockerWiring({
     position: 'left',
-    items: DEBUG_LEFT_ACTIVITY_ITEMS, // Filtered items
+    items: LEFT_ACTIVITY_ITEMS, // Full left items (filetree, notes)
     minWidth: 200,
     maxWidth: 320,
     getPluginPanel,
@@ -326,7 +304,7 @@ function UnifiedProjectRoute() {
   });
   const rightWiring = usePluginActivityDockerWiring({
     position: 'right',
-    items: DEBUG_RIGHT_ACTIVITY_ITEMS, // Filtered items
+    items: RIGHT_ACTIVITY_ITEMS, // Full right items (chat, terminal, preview)
     minWidth: 250,
     maxWidth: 400,
     getPluginPanel,
@@ -339,17 +317,17 @@ function UnifiedProjectRoute() {
   });
 
   // ========================================================================
-  // DEBUG PHASE 2: LAYOUT STORE INITIALIZATION RE-ENABLED
+  // CC-AR-02: LAYOUT STORE INITIALIZATION (Platform-Aware)
   // ========================================================================
   useEffect(() => {
     if (!layoutStore.hasUserCustomized && layoutStore.activePlugins.length === 0) {
-      const defaultPreset = layoutStore.currentPreset || 'default';
-      const presetConfig = getPresetConfig(defaultPreset);
-      console.log('[UnifiedProjectRoute] Initializing with preset:', {
-        preset: defaultPreset,
-        panels: presetConfig.panels,
+      // Use platform-specific default plugins instead of preset
+      console.log('[UnifiedProjectRoute] Initializing with platform defaults:', {
+        deviceType: platform.deviceType,
+        storageType: project.storageType,
+        defaultPlugins,
       });
-      layoutStore.initializeDefaults(presetConfig.panels, getDefaultLayoutMode(platform));
+      layoutStore.initializeDefaults(defaultPlugins, getDefaultLayoutMode(platform));
     }
   }, [project.id]);
 
@@ -365,15 +343,14 @@ function UnifiedProjectRoute() {
   }
 
   // ============================================================================
-  // DEBUG PHASE 2: RE-ENABLED PLUGINS (except notes and chat)
+  // CC-AR-02: PLATFORM-AWARE LAYOUT RENDERING
   // ============================================================================
   // 
-  // ISOLATING CHAT AND NOTES PLUGINS:
-  // - If black rectangle RETURNS → Problem is in FileTree/Terminal/Preview/Monaco
-  // - If black rectangle GONE → Problem is in Notes or Chat plugins
-  //
-  // Disabled: notes, chat
-  // Enabled: filetree, monaco, terminal, preview
+  // Platform-first plugin defaults:
+  // - Desktop with FSA: Monaco(main), FileTree(left), Chat(right)
+  // - Desktop with IndexedDB: Notes(main), FileTree(left), Chat(right)
+  // - Tablet: Notes(main), FileTree(left)
+  // - Mobile: Notes(main) only
   //
   
   return (
@@ -383,13 +360,13 @@ function UnifiedProjectRoute() {
           // GlobalSidebar - Real MainSidebar component
           globalSidebar={<MainSidebar />}
           
-          // Left ActivityBar - Using leftWiring (notes filtered out)
+          // Left ActivityBar - Full activity items
           activityBarLeft={leftWiring.activityBar}
           
           // Left Plugin Panel - Using leftWiring docker
           pluginLeft={leftWiring.docker}
           
-          // Main Content Area - Using MainContentRenderer (notes filtered out)
+          // Main Content Area - Platform-aware default plugin
           mainContent={
             <MainContentRenderer
               activePluginId={activeMainPluginId}
@@ -399,10 +376,7 @@ function UnifiedProjectRoute() {
                 <div className="h-full flex items-center justify-center bg-background">
                   <div className="text-center">
                     <span className="text-muted-foreground font-mono text-sm block">
-                      [DEBUG PHASE 2] Main Content
-                    </span>
-                    <span className="text-muted-foreground/60 font-mono text-xs block mt-2">
-                      Notes plugin DISABLED - Testing isolation
+                      Loading main content...
                     </span>
                   </div>
                 </div>
@@ -410,17 +384,17 @@ function UnifiedProjectRoute() {
             />
           }
           
-          // Right Plugin Panel - Using rightWiring docker (chat filtered out)
+          // Right Plugin Panel - Using rightWiring docker
           pluginRight={rightWiring.docker}
           
-          // Right ActivityBar - Using rightWiring (chat filtered out)
+          // Right ActivityBar - Full activity items
           activityBarRight={rightWiring.activityBar}
           
           // StatusBar - Real StatusBar component
           statusBar={<StatusBar />}
         />
         
-        {/* FloatingPluginDocker - Re-enabled with disabled plugins filtered */}
+        {/* FloatingPluginDocker - Plugin placement management */}
         <FloatingPluginDocker
           placements={placements}
           onPluginClick={handleFloatingDockerPluginClick}

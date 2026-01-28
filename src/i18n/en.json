@@ -2154,5 +2154,72 @@
   "ide.loading": "Loading...",
 
   "editor.saving": "Saving...",
-  "editor.saved": "Saved"
+  "editor.saved": "Saved",
+
+  "layout.floatingDocker.ariaLabel": "Plugin Docker",
+  "layout.floatingDocker.controls": "Plugin Docker Controls",
+  "layout.floatingDocker.expand": "Expand docker",
+  "layout.floatingDocker.minimize": "Minimize docker",
+  "layout.floatingDocker.close": "Close docker",
+  "layout.floatingDocker.closeEsc": "Close (Esc)",
+  "layout.floatingDocker.unplacedCount": "{{count}} UNPLACED",
+  "layout.floatingDocker.allPlaced": "ALL PLACED",
+  "layout.floatingDocker.help": "Click to toggle • Cmd+Shift+P to hide",
+  "layout.floatingDocker.pluginBadge": "{{name}} ({{badge}})",
+  "layout.floatingDocker.pluginPanelBadge": "{{name}} - Panel {{badge}}",
+  "layout.floatingDocker.pluginClickToPlace": "{{name}} - Click to place",
+
+  "layout.pluginDocker.resizePanel": "Resize {{position}} panel",
+  "layout.pluginDocker.closePanel": "Close panel",
+
+  "layout.activityBar.ariaLabel": "Activity bar {{position}}",
+
+  "layout.activityBarTop.ariaLabel": "Main content activity bar",
+
+  "layout.globalHeader.mainNavigation": "Main navigation",
+
+  "layout.mainSidebar.switchToLight": "Switch to Light mode",
+  "layout.mainSidebar.switchToDark": "Switch to Dark mode",
+  "layout.mainSidebar.switchToVietnamese": "Tiếng Việt",
+  "layout.mainSidebar.switchToEnglish": "English",
+
+  "layout.mobileTabBar.ariaLabel": "IDE Panel Navigation",
+
+  "layout.bottomSheet.label": "Actions menu",
+  "layout.bottomSheet.close": "Close menu",
+
+  "layout.pluginSidebar.expandSidebar": "Expand sidebar",
+  "layout.pluginSidebar.collapseSidebar": "Collapse sidebar",
+  "layout.pluginSidebar.resizeSidebar": "Resize sidebar",
+
+  "layout.projectSidebar.ariaLabel": "Project sidebar",
+  "layout.projectSidebar.closeSidebar": "Close sidebar",
+  "layout.projectSidebar.resizeSidebar": "Resize sidebar",
+
+  "layout.presetSelector.ariaLabel": "Select layout preset",
+  "layout.presetSelector.menuLabel": "Layout presets",
+
+  "layout.preset.default": "Default",
+  "layout.preset.defaultDescription": "Chat + FileTree + Note",
+  "layout.preset.focus": "Focus",
+  "layout.preset.focusDescription": "Agent-focused mode",
+  "layout.preset.code": "Code",
+  "layout.preset.codeDescription": "Development layout",
+  "layout.preset.fullEditor": "Full Editor",
+  "layout.preset.fullEditorDescription": "Maximized editor",
+
+  "accessibility.skipLinks": "Skip links",
+  "accessibility.notification.dismiss": "Dismiss notification",
+  "accessibility.toast.dismiss": "Dismiss notification",
+
+  "syncStatus.ariaLabel": "Sync status: {{status}}",
+  "syncStatus.pendingChanges": "{{count}} pending changes",
+
+  "storage.ariaLabel": "Storage mode: {{mode}}",
+
+  "notes.view.notes": "Notes view",
+  "notes.view.files": "Files view",
+  "notes.view.rag": "AI Search view",
+  "notes.slashCommands.manage": "Manage Slash Commands",
+  "notes.import.reImport": "Re-import from files"
 }

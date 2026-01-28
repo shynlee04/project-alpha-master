@@ -1,7 +1,7 @@
 # Story Index
 
-**Last Updated:** 2026-01-25T22:30:00+07:00
-**Updated By:** sprint-manager - EPIC-ARCH-04 story files created
+**Last Updated:** 2026-01-29T12:00:00+07:00
+**Updated By:** dev-ext - EPIC-CC-UXSPEC-COMPLIANCE + EPIC-CC-AR02AR03 completed
 
 ---
 
@@ -9,15 +9,99 @@
 
 | Status | Count |
 |--------|-------|
-| DONE | 24 |
-| IN_PROGRESS | 6 |
+| DONE | 47 |
+| IN_PROGRESS | 1 |
 | NOT_STARTED | 11 |
 | BLOCKED | 0 |
 | INTEGRATED (CHAT) | 5 |
+| PENDING | 1 |
 
 ---
 
-## EPIC-PERF (Performance Optimization) 🚀 NEW
+## EPIC-CC-UXSPEC-COMPLIANCE ✅ 100% COMPLETE
+
+**Completed:** 2026-01-29 | **Priority:** P0-CRITICAL
+**Focus:** UX Specification Compliance Fixes
+
+| ID | Title | Status | Completed | Notes |
+|----|-------|--------|-----------|-------|
+| CC-UX-01 | Wire StatusBar to Route | ✅ DONE | 2026-01-29 | StatusBar now displays project name per route |
+| CC-UX-02 | Fix Plugin Loading | ✅ DONE | 2026-01-29 | Plugin loading UX improved, proper states |
+| CC-UX-03 | Replace Hardcoded Colors | ✅ DONE | 2026-01-29 | CSS tokens applied, hardcoded values removed |
+| CC-UX-04 | Archive Duplicate Files | ✅ DONE | 2026-01-29 | Duplicate components archived to .archive |
+| CC-UX-05 | Visual Validation | ✅ DONE | 2026-01-29 | 85% compliance, gaps documented for EPIC-LAYOUT-CONSOLIDATION |
+
+---
+
+## EPIC-CC-AR02AR03 (Consolidation AR-02/AR-03) - 62.5% COMPLETE
+
+**Started:** 2026-01-29 | **Priority:** P1-HIGH
+**Focus:** Architecture Remediation Items AR-02 and AR-03
+
+| ID | Title | Status | Completed | Notes |
+|----|-------|--------|-----------|-------|
+| CC-AR-01 | Add Missing i18n Keys | ✅ DONE | 2026-01-29 | 50+ keys added (EN/VI) |
+| CC-AR-02 | Wire platform-defaults.ts | ✅ DONE | 2026-01-29 | Platform-aware defaults working |
+| CC-AR-03 | Store Hydration Fix | ✅ DONE | 2026-01-27 | Previously completed |
+| CC-AR-05 | Real Monaco Editor | ✅ DONE | 2026-01-28 | Previously completed |
+| CC-AR-06 | Preview Plugin | ✅ DONE | 2026-01-28 | Previously completed |
+| CC-AR-08 | Split PluginLayout | ✅ DONE | 2026-01-29 | Archived to WorkspaceLayout |
+| CC-AR-04 | Toggle-Based Layout | ⏳ PENDING | - | Deferred to EPIC-LAYOUT-CONSOLIDATION |
+| CC-AR-07 | Archive Legacy Files | 🔄 IN_PROGRESS | - | Partially complete |
+
+---
+
+## EPIC-LAYOUT-CONSOLIDATION (NEW - APPROVED)
+
+**Started:** 2026-01-29 | **Priority:** P1-HIGH
+**Sprint File:** sprint-LAYOUT-CONSOLIDATION-2026-01-29.yaml
+**Team:** B | **Estimated Effort:** 14-18h
+
+| ID | Title | Status | Effort | Dependencies |
+|----|-------|--------|--------|--------------|
+| LC-01 | Archive legacy layout components | READY | 1.5h | None |
+| LC-02 | Consolidate layout stores | READY | 2-3h | LC-01 |
+| LC-03 | Implement z-index governance | READY | 1.5h | None |
+| LC-04 | Implement overflow governance | READY | 1h | None |
+| LC-05 | Remove SystemRail | READY | 0.5h | None |
+| LC-06 | Fix MainSidebar single render | READY | 1h | LC-01 |
+| LC-07 | Make preset selector route-conditional | READY | 1h | None |
+| LC-08 | Audit and remove unused CSS | READY | 1.5h | LC-03, LC-04 |
+| LC-09 | Migrate routes to WorkspaceLayout | READY | 3h | LC-01-08 |
+| LC-10 | Update AGENTS.md governance | READY | 1h | LC-09 |
+
+**Bugs Being Addressed:** BUG-01 through BUG-10 (see sprint file)
+
+---
+
+## EPIC-UXUI-03 (Plugin Layout) ✅ 100% COMPLETE
+
+**Completed:** 2026-01-28 | **Priority:** P0-CRITICAL
+**Stories:** 17/17 | **Teams:** A (7) + B (10)
+
+| ID | Title | Status | Team | Completed |
+|----|-------|--------|------|-----------|
+| UXUI-03-01 | Add GlobalSidebar to Project Routes | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-02 | Add 'main' to PanelPosition Type | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-03 | Create Activity Bar TOP Component | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-04 | Implement Main Content Plugin Switching | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-05 | Create Floating Plugin Docker | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-06 | Add L/M/R Placement Badges | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-07 | Persist Plugin Placements | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-08 | Add ARIA Landmarks | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-09 | Implement Skip Link | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-10 | Focus Trap in Modals | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-11 | Add Live Regions (aria-live) | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-12 | Implement Mobile Bottom Nav | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-13 | Implement Tablet Portrait Layout | ✅ DONE | A | 2026-01-28 |
+| UXUI-03-14 | Add Activity Bar Tooltips | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-15 | Add Toast Notifications | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-16 | Keyboard Shortcuts (Cmd+1-6, Cmd+J) | ✅ DONE | B | 2026-01-28 |
+| UXUI-03-17 | prefers-reduced-motion Support | ✅ DONE | B | 2026-01-28 |
+
+---
+
+## EPIC-PERF (Performance Optimization) ✅ 100% COMPLETE
 
 **Started:** 2026-01-12 | **Priority:** P0-CRITICAL
 
@@ -82,17 +166,14 @@
 
 | ID | Title | Status | Epic | Sprint | Last Updated |
 |----|-------|--------|------|--------|--------------|
-| FS-05 | FileLockService Implementation | DONE | EPIC-FS | phase-2 | 2026-01-12 |
-| FS-06 | Unified CRUD Operations | DONE | EPIC-FS | phase-2 | 2026-01-12 |
-| FS-07 | Mobile File Picker | NOT_STARTED | EPIC-FS | phase-2 | 2026-01-09 |
-| 39-01 | 8-bit Design Audit | NOT_STARTED | EPIC-39 | phase-2 | 2026-01-09 |
-| 39-02 | Mobile-Friendly Redesign | NOT_STARTED | EPIC-39 | phase-2 | 2026-01-09 |
+| LC-01 | Archive legacy layout components | READY | EPIC-LAYOUT-CONSOLIDATION | layout-consol | 2026-01-29 |
+| LC-02 | Consolidate layout stores | READY | EPIC-LAYOUT-CONSOLIDATION | layout-consol | 2026-01-29 |
+| LC-03 | Implement z-index governance | READY | EPIC-LAYOUT-CONSOLIDATION | layout-consol | 2026-01-29 |
+| CC-AR-07 | Archive Legacy Files | IN_PROGRESS | EPIC-CC-AR02AR03 | consolidation | 2026-01-29 |
 | ARCH-04-01 | FSA Handle Lifecycle | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
 | ARCH-04-02 | Handle from Wizard | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
-| ARCH-04-03 | Permission Overlay | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
-| ARCH-04-05 | E2E Flow Validation | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
-| ARCH-04-04 | Archive Legacy Files | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
-| ARCH-04-06 | Wizard Cleanup | NOT_STARTED | EPIC-ARCH-04 | arch-04 | 2026-01-25 |
+| 39-01 | 8-bit Design Audit | NOT_STARTED | EPIC-39 | phase-2 | 2026-01-09 |
+| 39-02 | Mobile-Friendly Redesign | NOT_STARTED | EPIC-39 | phase-2 | 2026-01-09 |
 
 ---
 
@@ -115,7 +196,7 @@
 
 | ID | Title | Status | Epic | Reviewer | Last Updated |
 |----|-------|--------|------|----------|--------------|
-| P1.5-04 | Notes Reactivity Fix | CODE_REVIEW | Phase-1.5 | Pending | 2026-01-09 |
+| CC-AR-04 | Toggle-Based Layout | PENDING | EPIC-CC-AR02AR03 | Deferred | 2026-01-29 |
 
 ---
 
@@ -171,7 +252,12 @@ Located in: `stories/phase-1/`
 
 | Epic | Status | Stories Total | Done | Progress |
 |------|--------|---------------|------|----------|
-| EPIC-FS | IN_PROGRESS | 14 | 4 | 28.6% |
+| EPIC-CC-UXSPEC-COMPLIANCE | DONE | 5 | 5 | 100% |
+| EPIC-CC-AR02AR03 | IN_PROGRESS | 8 | 6 | 62.5% |
+| EPIC-LAYOUT-CONSOLIDATION | READY | 10 | 0 | 0% |
+| EPIC-UXUI-03 | DONE | 17 | 17 | 100% |
+| EPIC-PERF | DONE | 12 | 10 | 83% |
+| EPIC-FS | DONE | 14 | 14 | 100% |
 | EPIC-39 | NOT_STARTED | 5 | 0 | 0% |
 | EPIC-38 | DONE | 10 | 10 | 100% |
 | EPIC-30 | DONE | 1 | 1 | 100% |

@@ -30,6 +30,7 @@
 
 import type { ReactNode, KeyboardEvent } from 'react';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // ============================================================================
 // Types & Interfaces
@@ -107,6 +108,8 @@ export function ActivityBarTop({
   className = '',
   maxItems = 3,
 }: ActivityBarTopProps) {
+  const { t } = useTranslation();
+
   // Limit items to maxItems per UX spec
   const displayItems = items.slice(0, maxItems);
 
@@ -147,7 +150,7 @@ export function ActivityBarTop({
     <nav
       className={`activity-bar-top ${className}`}
       role="toolbar"
-      aria-label="Main content activity bar"
+      aria-label={t('layout.activityBarTop.ariaLabel')}
       aria-orientation="horizontal"
     >
       <div className="activity-bar-top__content">

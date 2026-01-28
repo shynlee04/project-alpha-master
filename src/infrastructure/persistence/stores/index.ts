@@ -131,7 +131,8 @@ export {
 
 export {
   useLayoutStore,
-  type LayoutState
+  type LayoutState,
+  type NavItem
 } from './layout-store';
 
 export {

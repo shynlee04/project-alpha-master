@@ -99,5 +99,106 @@ export function getDefaultLayoutMode(
 }
 
 // ============================================================================
+// Get Default Main Plugin Based on Platform and Project
+// ============================================================================
+
+/**
+ * Get default main content plugin based on platform and project
+ * / Lấy plugin nội dung chính mặc định dựa trên nền tảng và dự án
+ *
+ * @remarks
+ * - Desktop with FSA: Monaco (full IDE experience)
+ * - Desktop with IndexedDB: Notes (no real files)
+ * - Tablet: Notes (touch-optimized)
+ * - Mobile: Notes (single plugin view)
+ *
+ * @param platform - Platform contract from getPlatformContract()
+ * @param project - Project entity with storage type
+ * @returns Plugin ID for main content area
+ */
+export function getDefaultMainPlugin(
+  platform: PlatformContract,
+  project: Project
+): PluginId {
+  // Desktop with FSA: Monaco (full IDE)
+  if (platform.deviceType === 'desktop' && project.storageType === 'fsa') {
+    return 'monaco';
+  }
+
+  // Everything else: Notes (simpler experience)
+  return 'notes';
+}
+
+// ============================================================================
+// Get Default Plugin Placements Based on Platform
+// ============================================================================
+
+/**
+ * Plugin placement entry for panel position
+ */
+export interface DefaultPluginPlacement {
+  pluginId: PluginId;
+  panel: 'left' | 'main' | 'right';
+}
+
+/**
+ * Get default plugin placements for panels
+ * / Lấy vị trí plugin mặc định cho các panel
+ *
+ * @remarks
+ * - Desktop with FSA: FileTree(left) + Monaco(main) + Chat(right)
+ * - Desktop with IndexedDB: FileTree(left) + Notes(main) + Chat(right)
+ * - Tablet: FileTree(left) + Notes(main)
+ * - Mobile: Notes(main) only
+ *
+ * @param platform - Platform contract from getPlatformContract()
+ * @param project - Project entity with storage type
+ * @returns Array of plugin placements
+ */
+export function getDefaultPluginPlacements(
+  platform: PlatformContract,
+  project: Project
+): DefaultPluginPlacement[] {
+  // Desktop with FSA: Full development layout
+  if (platform.deviceType === 'desktop' && project.storageType === 'fsa') {
+    return [
+      { pluginId: 'filetree', panel: 'left' },
+      { pluginId: 'monaco', panel: 'main' },
+      { pluginId: 'chat', panel: 'right' },
+    ];
+  }
+
+  // Desktop with IndexedDB: Notes-focused layout
+  if (platform.deviceType === 'desktop' && project.storageType === 'indexeddb') {
+    return [
+      { pluginId: 'filetree', panel: 'left' },
+      { pluginId: 'notes', panel: 'main' },
+      { pluginId: 'chat', panel: 'right' },
+    ];
+  }
+
+  // Tablet: 2-column layout (no right panel by default)
+  if (platform.deviceType === 'tablet') {
+    return [
+      { pluginId: 'filetree', panel: 'left' },
+      { pluginId: 'notes', panel: 'main' },
+    ];
+  }
+
+  // Mobile: Single column (main only)
+  if (platform.deviceType === 'mobile') {
+    return [
+      { pluginId: 'notes', panel: 'main' },
+    ];
+  }
+
+  // Fallback: Notes-focused
+  return [
+    { pluginId: 'notes', panel: 'main' },
+    { pluginId: 'chat', panel: 'right' },
+  ];
+}
+
+// ============================================================================
 // No additional exports - functions exported above
 // ============================================================================

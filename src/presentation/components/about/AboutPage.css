@@ -3,7 +3,7 @@
 /* Root container */
 .about-page {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
   padding: var(--spacing-xl);
   background: var(--color-background);
   color: var(--color-foreground);

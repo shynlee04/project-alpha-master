@@ -150,7 +150,7 @@
   box-shadow: 4px 4px 0 0 hsl(var(--border));
 
   /* Z-index */
-  z-index: 1000;
+  z-index: var(--z-debug, 100);
 }
 
 .sync-status-indicator:hover .sync-status-tooltip {
@@ -334,7 +334,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 9999;
+  z-index: var(--z-debug, 100);
   max-width: 400px;
 }
 

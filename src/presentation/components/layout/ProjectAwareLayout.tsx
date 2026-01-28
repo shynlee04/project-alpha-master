@@ -11,13 +11,11 @@
  * - MainSidebar (navigation to projects, settings)
  * - Breadcrumbs
  * - Outlet (page content)
- * - SystemRail (bottom bar)
  *
  * ON PROJECT ROUTE (/$projectId):
  * - GlobalHeader (always)
  * - NO MainSidebar (FileTree plugin handles project navigation as tabbed component)
  * - Outlet (renders ProjectContextProvider → FileTree tabbed panel + Monaco)
- * - SystemRail (bottom bar)
  *
  * This follows new-fundamental-truths.md:
  * - FileTree is the "always-loaded-plugin" for project management
@@ -29,8 +27,6 @@ import { Outlet, useLocation } from '@tanstack/react-router';
 import { GlobalHeader } from './GlobalHeader';
 import { MainSidebar } from './MainSidebar';
 import { Breadcrumbs } from './Breadcrumbs';
-// DEBUG: SystemRail import commented out - testing black area at bottom
-// import { SystemRail } from './SystemRail';
 
 /**
  * Detects if current route is a project route (/$projectId)
@@ -100,16 +96,11 @@ export function ProjectAwareLayout() {
                     <Breadcrumbs />
 
                     {/* Page Content - Outlet renders child routes */}
-                    {/* DEBUG: pb-8 removed since SystemRail is commented out */}
                     <div className="flex-1 overflow-auto">
                         <Outlet />
                     </div>
                 </main>
             </div>
-
-            {/* DEBUG: bottom panel suspect - SystemRail commented out to test black area */}
-            {/* <SystemRail /> */}
-            {null}
         </div>
     );
 }

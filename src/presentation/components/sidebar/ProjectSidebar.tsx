@@ -15,6 +15,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { X, GripHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useSidebarStore } from '@/infrastructure/persistence/stores/sidebar-store';
 import { ProjectList } from './ProjectList';
 import { ChatThreadList } from './ChatThreadList';
@@ -67,6 +68,7 @@ export function ProjectSidebar({
   onToggle,
   currentProjectId,
 }: ProjectSidebarProps) {
+  const { t } = useTranslation();
   const { width, setWidth } = useSidebarStore();
   const [isDragging, setIsDragging] = useState(false);
 
@@ -128,7 +130,7 @@ export function ProjectSidebar({
         maxWidth: `${MAX_WIDTH}px`,
       }}
       role="complementary"
-      aria-label="Project sidebar"
+      aria-label={t('layout.projectSidebar.ariaLabel', 'Project sidebar')}
     >
       {/* Header with close button */}
       <div className="flex items-center justify-between px-3 py-3 bg-muted border-b-2 border-border">
@@ -137,7 +139,7 @@ export function ProjectSidebar({
           type="button"
           onClick={onToggle}
           className="p-1 hover:bg-accent transition-colors"
-          aria-label="Close sidebar"
+          aria-label={t('layout.projectSidebar.closeSidebar', 'Close sidebar')}
         >
           <X size={18} className="text-foreground" />
         </button>
@@ -175,8 +177,8 @@ export function ProjectSidebar({
         onMouseDown={handleDragStart}
         role="separator"
         aria-orientation="vertical"
-        aria-label="Resize sidebar"
-        title="Drag to resize sidebar"
+        aria-label={t('layout.projectSidebar.resizeSidebar', 'Resize sidebar')}
+        title={t('layout.projectSidebar.resizeSidebar', 'Drag to resize sidebar')}
       >
         {isDragging && (
           <div className="absolute inset-0 bg-primary" />

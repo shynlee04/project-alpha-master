@@ -230,8 +230,8 @@ export function PluginSidebar({
           type="button"
           onClick={handleCollapseToggle}
           className="flex items-center justify-center w-12 h-10 hover:bg-muted/50 text-muted-foreground transition-colors"
-          title={collapsed ? t('ide.expandSidebar', 'Expand sidebar') : t('ide.collapseSidebar', 'Collapse sidebar')}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={collapsed ? t('layout.pluginSidebar.expandSidebar', 'Expand sidebar') : t('layout.pluginSidebar.collapseSidebar', 'Collapse sidebar')}
+          aria-label={collapsed ? t('layout.pluginSidebar.expandSidebar', 'Expand sidebar') : t('layout.pluginSidebar.collapseSidebar', 'Collapse sidebar')}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
@@ -273,7 +273,7 @@ export function PluginSidebar({
             onMouseDown={handleResizeStart}
             role="separator"
             aria-orientation="vertical"
-            aria-label="Resize sidebar"
+            aria-label={t('layout.pluginSidebar.resizeSidebar', 'Resize sidebar')}
           />
         </div>
       )}

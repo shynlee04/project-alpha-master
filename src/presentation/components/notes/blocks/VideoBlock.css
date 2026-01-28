@@ -254,7 +254,7 @@
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  z-index: 10;
+  z-index: var(--z-dropdown, 10);
   min-width: 200px;
   border: 2px solid var(--border);
   border-radius: 0;

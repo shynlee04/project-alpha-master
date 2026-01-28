@@ -25,6 +25,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Minus, GripHorizontal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { PLUGIN_IDS, type PluginId } from '@/domain/types/plugin-types';
 import type { PanelPosition } from '@/presentation/hooks/usePluginPlacement';
 import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
@@ -60,14 +61,6 @@ interface DragPosition {
 // ============================================================================
 // Constants
 // ============================================================================
-
-// DEBUG PHASE 2: Plugins to DISABLE for testing
-const DEBUG_DISABLED_DOCKER_PLUGINS: PluginId[] = ['notes', 'chat'];
-
-// DEBUG PHASE 2: Filter out disabled plugins
-const DEBUG_ENABLED_PLUGIN_IDS = PLUGIN_IDS.filter(
-  (id) => !DEBUG_DISABLED_DOCKER_PLUGINS.includes(id)
-);
 
 /** Default position (bottom-right) */
 const DEFAULT_POSITION = {
@@ -230,6 +223,12 @@ export function FloatingPluginDocker({
   className = '',
 }: FloatingPluginDockerProps) {
   // ========================================================================
+  // Hooks
+  // ========================================================================
+
+  const { t } = useTranslation();
+
+  // ========================================================================
   // State
   // ========================================================================
 
@@ -241,10 +240,10 @@ export function FloatingPluginDocker({
   const dockerRef = useRef<HTMLDivElement>(null);
 
   // ========================================================================
-  // Calculate unplaced plugins count (DEBUG: Only count enabled plugins)
+  // Calculate unplaced plugins count
   // ========================================================================
 
-  const unplacedCount = DEBUG_ENABLED_PLUGIN_IDS.filter((id) => {
+  const unplacedCount = PLUGIN_IDS.filter((id) => {
     const placement = placements.get(id);
     return placement === null || placement === undefined;
   }).length;
@@ -356,7 +355,7 @@ export function FloatingPluginDocker({
         top: position.y,
       }}
       role="dialog"
-      aria-label="Plugin Docker"
+      aria-label={t('layout.floatingDocker.ariaLabel')}
       aria-hidden={!isOpen}
     >
       {/* Header (Draggable) */}
@@ -364,14 +363,14 @@ export function FloatingPluginDocker({
         className="floating-docker__header"
         onMouseDown={handleMouseDown}
         role="toolbar"
-        aria-label="Plugin Docker Controls"
+        aria-label={t('layout.floatingDocker.controls')}
       >
         <div className="floating-docker__title">
           <GripHorizontal size={14} className="floating-docker__grip" />
           <span>
             {unplacedCount > 0
-              ? `${unplacedCount} UNPLACED`
-              : 'ALL PLACED'}
+              ? t('layout.floatingDocker.unplacedCount', { count: unplacedCount })
+              : t('layout.floatingDocker.allPlaced')}
           </span>
         </div>
         <div className="floating-docker__controls">
@@ -379,8 +378,8 @@ export function FloatingPluginDocker({
             type="button"
             className="floating-docker__btn"
             onClick={() => setIsMinimized(!isMinimized)}
-            aria-label={isMinimized ? 'Expand docker' : 'Minimize docker'}
-            title={isMinimized ? 'Expand' : 'Minimize'}
+            aria-label={isMinimized ? t('layout.floatingDocker.expand') : t('layout.floatingDocker.minimize')}
+            title={isMinimized ? t('layout.floatingDocker.expand') : t('layout.floatingDocker.minimize')}
           >
             <Minus size={14} />
           </button>
@@ -388,8 +387,8 @@ export function FloatingPluginDocker({
             type="button"
             className="floating-docker__btn floating-docker__btn--close"
             onClick={onClose}
-            aria-label="Close docker"
-            title="Close (Esc)"
+            aria-label={t('layout.floatingDocker.close')}
+            title={t('layout.floatingDocker.closeEsc')}
           >
             <X size={14} />
           </button>
@@ -412,8 +411,8 @@ export function FloatingPluginDocker({
                   type="button"
                   className={`floating-docker__item ${isPlaced ? 'floating-docker__item--placed' : ''}`}
                   onClick={() => onPluginClick(pluginId, defaultPanel)}
-                  aria-label={`${getPluginDisplayName(pluginId)}${badge ? ` (${badge})` : ''}`}
-                  title={`${getPluginDisplayName(pluginId)}${badge ? ` - Panel ${badge}` : ' - Click to place'}`}
+                  aria-label={badge ? t('layout.floatingDocker.pluginBadge', { name: getPluginDisplayName(pluginId), badge }) : getPluginDisplayName(pluginId)}
+                  title={badge ? t('layout.floatingDocker.pluginPanelBadge', { name: getPluginDisplayName(pluginId), badge }) : t('layout.floatingDocker.pluginClickToPlace', { name: getPluginDisplayName(pluginId) })}
                 >
                   <div className="floating-docker__item-icon">
                     {getPluginIcon(pluginId)}
@@ -431,7 +430,7 @@ export function FloatingPluginDocker({
 
           {/* Help text */}
           <div className="floating-docker__help">
-            Click to toggle • Cmd+Shift+P to hide
+            {t('layout.floatingDocker.help')}
           </div>
         </div>
       )}

@@ -1,0 +1,295 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "skill-map-v2.0.0",
+    "version": "2.0.0",
+    "title": "BMAD Beast Mode Skill Map",
+    "description": "Maps 18 Prompt Types (A1-F3) to on-demand skills for Less-for-More loading strategy",
+    "generated": "2026-01-29T01:42:00+07:00",
+    "prompt_types": {
+        "A1": {
+            "name": "Greenfield Feature",
+            "entry_agent": "product-management-ext",
+            "required_skills": [
+                "brainstorming",
+                "story-cycle",
+                "create-story-enhanced"
+            ],
+            "context_files": [
+                "docs/prd.md",
+                "docs/ux-specification/index.md"
+            ]
+        },
+        "A2": {
+            "name": "Feature Extension",
+            "entry_agent": "product-management-ext",
+            "required_skills": [
+                "story-cycle",
+                "validate-story"
+            ],
+            "context_files": [
+                "docs/prd.md",
+                "docs/architecture.md"
+            ]
+        },
+        "A3": {
+            "name": "Cross-cutting Concern",
+            "entry_agent": "architect-ext",
+            "required_skills": [
+                "architecture-remediation",
+                "domain-scanner"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "docs/adrs/ADR-039.md"
+            ]
+        },
+        "B1": {
+            "name": "Quick Patch",
+            "entry_agent": "dev-ext",
+            "required_skills": [
+                "correct-course",
+                "git-ops"
+            ],
+            "context_files": [
+                "_bmad-output/sprint-artifacts/sprint-status.yaml",
+                "AGENTS.md"
+            ]
+        },
+        "B2": {
+            "name": "Feature Fix",
+            "entry_agent": "dev-ext",
+            "required_skills": [
+                "story-cycle",
+                "test-driven-development",
+                "systematic-debugging"
+            ],
+            "context_files": [
+                "$story_id[frontmatter,acceptance_criteria]",
+                "_bmad-output/sprint-artifacts/sprint-status.yaml"
+            ]
+        },
+        "B3": {
+            "name": "Architectural Conflict",
+            "entry_agent": "architect-ext",
+            "required_skills": [
+                "architecture-remediation",
+                "expert-analysis"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "docs/adrs/ADR-039.md"
+            ]
+        },
+        "C1": {
+            "name": "Component Splitting",
+            "entry_agent": "dev-ext",
+            "required_skills": [
+                "component-splitter",
+                "normalize-components"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "docs/new-fundamental-truths.md"
+            ]
+        },
+        "C2": {
+            "name": "Store Elimination",
+            "entry_agent": "dev-ext",
+            "required_skills": [
+                "store-refactorer",
+                "eliminate-god-stores"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "AGENTS.md"
+            ]
+        },
+        "C3": {
+            "name": "Migration/Consolidation",
+            "entry_agent": "architect-ext",
+            "required_skills": [
+                "writing-plans",
+                "architecture-remediation"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "_bmad-output/ARTIFACT_REGISTRY.yaml"
+            ]
+        },
+        "D1": {
+            "name": "Architecture Decision",
+            "entry_agent": "architect-ext",
+            "required_skills": [
+                "writing-skills",
+                "Global Conventions"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "docs/adrs/ADR-039.md"
+            ]
+        },
+        "D2": {
+            "name": "Technical Research",
+            "entry_agent": "analyst-ext",
+            "required_skills": [
+                "Research Trigger",
+                "Expert Analysis"
+            ],
+            "context_files": []
+        },
+        "D3": {
+            "name": "Sprint Planning",
+            "entry_agent": "bmad-sprint-manager",
+            "required_skills": [
+                "story-cycle",
+                "pre-planning",
+                "bmad-ext-sprint-planning-bridge"
+            ],
+            "context_files": [
+                "_bmad-output/sprint-artifacts/sprint-status.yaml",
+                "docs/epics.md"
+            ]
+        },
+        "E1": {
+            "name": "API Documentation",
+            "entry_agent": "tech-writer-ext",
+            "required_skills": [
+                "tech-writer-ext",
+                "Global Commenting"
+            ],
+            "context_files": [
+                "docs/architecture.md"
+            ]
+        },
+        "E2": {
+            "name": "User Guides",
+            "entry_agent": "tech-writer-ext",
+            "required_skills": [
+                "writing-skills"
+            ],
+            "context_files": [
+                "docs/ux-specification/index.md"
+            ]
+        },
+        "E3": {
+            "name": "Architecture Docs",
+            "entry_agent": "architect-ext",
+            "required_skills": [
+                "writing-plans"
+            ],
+            "context_files": [
+                "docs/architecture.md",
+                "docs/adrs/ADR-039.md"
+            ]
+        },
+        "F1": {
+            "name": "Unclear Intent",
+            "entry_agent": "bmad-governance",
+            "required_skills": [
+                "Expert Analysis",
+                "analyst"
+            ],
+            "context_files": [
+                "AGENTS.md",
+                ".opencode/state/LOOP_STATE.yaml"
+            ]
+        },
+        "F2": {
+            "name": "Multi-concern Request",
+            "entry_agent": "bmad-governance",
+            "required_skills": [
+                "brainstorming",
+                "writing-plans"
+            ],
+            "context_files": [
+                "AGENTS.md",
+                "docs/new-fundamental-truths.md"
+            ]
+        },
+        "F3": {
+            "name": "Contradictory Request",
+            "entry_agent": "bmad-governance",
+            "required_skills": [
+                "Expert Analysis",
+                "escalation-protocol"
+            ],
+            "context_files": [
+                "AGENTS.md",
+                "docs/architecture.md"
+            ]
+        }
+    },
+    "all_skills": [
+        "architecture-remediation",
+        "bmad-ext-sprint-planning-bridge",
+        "brainstorming",
+        "component-splitter",
+        "correct-course",
+        "create-story-enhanced",
+        "domain-scanner",
+        "eliminate-god-stores",
+        "escalation-protocol",
+        "expert-analysis",
+        "git-ops",
+        "Global Commenting",
+        "Global Conventions",
+        "normalize-components",
+        "pre-planning",
+        "Research Trigger",
+        "store-refactorer",
+        "story-cycle",
+        "systematic-debugging",
+        "tech-writer-ext",
+        "test-driven-development",
+        "validate-story",
+        "writing-plans",
+        "writing-skills"
+    ],
+    "agent_to_skills": {
+        "ext-master": [],
+        "dev-ext": [
+            "story-cycle",
+            "test-driven-development",
+            "systematic-debugging",
+            "correct-course",
+            "git-ops",
+            "component-splitter",
+            "store-refactorer",
+            "normalize-components",
+            "eliminate-god-stores"
+        ],
+        "architect-ext": [
+            "architecture-remediation",
+            "domain-scanner",
+            "expert-analysis",
+            "writing-plans",
+            "writing-skills",
+            "Global Conventions"
+        ],
+        "bmad-sprint-manager": [
+            "story-cycle",
+            "pre-planning",
+            "bmad-ext-sprint-planning-bridge"
+        ],
+        "analyst-ext": [
+            "Research Trigger",
+            "Expert Analysis"
+        ],
+        "tea-ext": [
+            "test-driven-development",
+            "systematic-debugging"
+        ],
+        "tech-writer-ext": [
+            "tech-writer-ext",
+            "writing-skills",
+            "Global Commenting"
+        ],
+        "bmad-governance": [
+            "Expert Analysis",
+            "analyst",
+            "brainstorming",
+            "writing-plans",
+            "escalation-protocol"
+        ]
+    }
+}

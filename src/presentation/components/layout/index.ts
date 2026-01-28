@@ -45,9 +45,6 @@ export { StatusBar } from './StatusBar';
 // Activity Bar Top (UXUI-03-03)
 export { ActivityBarTop, type ActivityBarTopProps } from './ActivityBarTop';
 
-// System Rail
-export { SystemRail } from './SystemRail';
-
 // Permission Overlay
 export { PermissionOverlay } from './PermissionOverlay';
 

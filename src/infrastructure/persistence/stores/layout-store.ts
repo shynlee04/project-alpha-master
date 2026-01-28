@@ -1,141 +1,108 @@
 /**
- * @fileoverview Layout State Store
- * @module lib/state/layout-store
- * @governance LAYOUT-1
- * @ai-observable false
- * 
- * Unified Zustand store for home page layout state management.
- * Manages sidebar collapse, mobile menu, navigation state, and path history.
- * 
- * Story LAYOUT-1: Create Unified Layout Store
- * 
+ * @fileoverview Layout Store - FACADE
+ * @module infrastructure/persistence/stores/layout-store
+ * @governance LC-02 - Layout Consolidation
+ *
+ * FACADE: Re-exports from PluginLayoutStore for backward compatibility.
+ *
+ * This file previously contained standalone layout state. As of LC-02,
+ * all layout state is consolidated into PluginLayoutStore.
+ *
+ * Navigation state (activeNavItem, previousPath) has been moved to
+ * NavigationStore as it belongs there conceptually.
+ *
+ * @deprecated Import directly from '@/presentation/layouts/PluginLayoutStore'
+ * @see presentation/layouts/PluginLayoutStore.ts
+ *
  * @example
  * ```tsx
- * import { useLayoutStore } from '@/infrastructure/persistence/stores';
- * 
- * function Component() {
- *   const sidebarCollapsed = useLayoutStore(s => s.sidebarCollapsed);
- *   const toggleSidebar = useLayoutStore(s => s.toggleSidebar);
- *   
- *   return (
- *     <button onClick={toggleSidebar}>
- *       {sidebarCollapsed ? 'Expand' : 'Collapse'}
- *     </button>
- *   );
- * }
+ * // Old usage (still works via facade)
+ * import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
+ *
+ * // New preferred usage
+ * import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
  * ```
  */
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
+import { useNavigationStore } from './navigation-store';
 
 // ============================================================================
-// Types
+// Types (preserved for backward compatibility)
 // ============================================================================
 
 export type NavItem = 'home' | 'projects' | 'agents' | 'quality' | 'settings';
 
 /**
- * Layout State shape
+ * Layout State shape - DEPRECATED
+ * @deprecated Use PluginLayoutStore directly
  */
 export interface LayoutState {
-    // =========================================================================
-    // State
-    // =========================================================================
+  // From PluginLayoutStore
+  sidebarCollapsed: boolean;
+  sidebarMobileOpen: boolean;
 
-    /** Sidebar collapse state */
-    sidebarCollapsed: boolean;
+  // From NavigationStore (facade combines both)
+  activeNavItem: NavItem;
+  previousPath: string | null;
 
-    /** Mobile menu open state */
-    sidebarMobileOpen: boolean;
+  // Actions from PluginLayoutStore
+  toggleSidebar: () => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
+  setMobileMenuOpen: (open: boolean) => void;
 
-    /** Currently active navigation item */
-    activeNavItem: NavItem;
-
-    /** Previous navigation path */
-    previousPath: string | null;
-
-    // =========================================================================
-    // Actions
-    // =========================================================================
-
-    /** Toggle sidebar collapse state */
-    toggleSidebar: () => void;
-
-    /** Set sidebar collapse state */
-    setSidebarCollapsed: (collapsed: boolean) => void;
-
-    /** Set mobile menu open state */
-    setMobileMenuOpen: (open: boolean) => void;
-
-    /** Set active navigation item */
-    setActiveNavItem: (item: NavItem) => void;
-
-    /** Set previous navigation path */
-    setPreviousPath: (path: string | null) => void;
+  // Actions from NavigationStore
+  setActiveNavItem: (item: NavItem) => void;
+  setPreviousPath: (path: string | null) => void;
 }
 
 // ============================================================================
-// Default State
-// ============================================================================
-
-const defaultState = {
-    sidebarCollapsed: false,
-    sidebarMobileOpen: false,
-    activeNavItem: 'home' as NavItem,
-    previousPath: null,
-};
-
-// ============================================================================
-// Store
+// Facade Store Hook
 // ============================================================================
 
 /**
- * Main layout state store with localStorage persistence
- * 
- * Uses Zustand with persist middleware connected to localStorage.
- * Only user preferences (sidebarCollapsed, activeNavItem) are persisted.
- * Ephemeral state (sidebarMobileOpen, previousPath) is not persisted.
+ * @deprecated Use usePluginLayoutStore for sidebar state and useNavigationStore for nav state
+ *
+ * This facade combines state from two stores for backward compatibility.
+ * Consumers should migrate to using the canonical stores directly:
+ * - Sidebar state: usePluginLayoutStore
+ * - Navigation state: useNavigationStore
  */
-export const useLayoutStore = create<LayoutState>()(
-    persist(
-        (set, get) => ({
-            // Initial state
-            ...defaultState,
+export function useLayoutStore(): LayoutState;
+export function useLayoutStore<T>(selector: (state: LayoutState) => T): T;
+export function useLayoutStore<T>(selector?: (state: LayoutState) => T) {
+  // Get sidebar state from PluginLayoutStore
+  const pluginLayoutState = usePluginLayoutStore();
 
-            // =========================================================
-            // Actions
-            // =========================================================
+  // Get navigation state from NavigationStore
+  const navigationState = useNavigationStore();
 
-            toggleSidebar: () => {
-                const { sidebarCollapsed } = get();
-                set({ sidebarCollapsed: !sidebarCollapsed });
-            },
+  // Compose the combined state
+  const combinedState: LayoutState = {
+    // Sidebar state from PluginLayoutStore
+    sidebarCollapsed: pluginLayoutState.sidebarCollapsed,
+    sidebarMobileOpen: pluginLayoutState.sidebarMobileOpen,
+    toggleSidebar: pluginLayoutState.toggleSidebar,
+    setSidebarCollapsed: pluginLayoutState.setSidebarCollapsed,
+    setMobileMenuOpen: pluginLayoutState.setMobileMenuOpen,
 
-            setSidebarCollapsed: (collapsed) => {
-                set({ sidebarCollapsed: collapsed });
-            },
+    // Navigation state from NavigationStore
+    // Map activePanel to NavItem for compatibility
+    activeNavItem: (navigationState.activePanel as NavItem) || 'home',
+    previousPath: null, // previousPath is no longer persisted, use null
 
-            setMobileMenuOpen: (open) => {
-                set({ sidebarMobileOpen: open });
-            },
+    // Navigation actions (delegated to NavigationStore)
+    setActiveNavItem: (item: NavItem) => navigationState.setActivePanel(item),
+    setPreviousPath: (_path: string | null) => {
+      // previousPath is deprecated, no-op
+      console.warn('[LayoutStore] setPreviousPath is deprecated and has no effect');
+    },
+  };
 
-            setActiveNavItem: (item) => {
-                set({ activeNavItem: item });
-            },
+  // Apply selector if provided
+  if (selector) {
+    return selector(combinedState);
+  }
 
-            setPreviousPath: (path) => {
-                set({ previousPath: path });
-            },
-        }),
-        {
-            name: 'via-gent-layout-storage',
-
-            // Only persist user preferences, not ephemeral state
-            partialize: (state) => ({
-                sidebarCollapsed: state.sidebarCollapsed,
-                activeNavItem: state.activeNavItem,
-            }),
-        },
-    ),
-);
+  return combinedState;
+}

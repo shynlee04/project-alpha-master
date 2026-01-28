@@ -1749,5 +1749,72 @@
   "ide.loading": "Đang tải...",
 
   "editor.saving": "Đang lưu...",
-  "editor.saved": "Đã lưu"
+  "editor.saved": "Đã lưu",
+
+  "layout.floatingDocker.ariaLabel": "Plugin Docker",
+  "layout.floatingDocker.controls": "Điều khiển Plugin Docker",
+  "layout.floatingDocker.expand": "Mở rộng docker",
+  "layout.floatingDocker.minimize": "Thu nhỏ docker",
+  "layout.floatingDocker.close": "Đóng docker",
+  "layout.floatingDocker.closeEsc": "Đóng (Esc)",
+  "layout.floatingDocker.unplacedCount": "{{count}} CHƯA ĐẶT",
+  "layout.floatingDocker.allPlaced": "TẤT CẢ ĐÃ ĐẶT",
+  "layout.floatingDocker.help": "Nhấp để bật/tắt • Cmd+Shift+P để ẩn",
+  "layout.floatingDocker.pluginBadge": "{{name}} ({{badge}})",
+  "layout.floatingDocker.pluginPanelBadge": "{{name}} - Bảng {{badge}}",
+  "layout.floatingDocker.pluginClickToPlace": "{{name}} - Nhấp để đặt",
+
+  "layout.pluginDocker.resizePanel": "Thay đổi kích thước bảng {{position}}",
+  "layout.pluginDocker.closePanel": "Đóng bảng",
+
+  "layout.activityBar.ariaLabel": "Thanh hoạt động {{position}}",
+
+  "layout.activityBarTop.ariaLabel": "Thanh hoạt động nội dung chính",
+
+  "layout.globalHeader.mainNavigation": "Điều hướng chính",
+
+  "layout.mainSidebar.switchToLight": "Chuyển sang chế độ Sáng",
+  "layout.mainSidebar.switchToDark": "Chuyển sang chế độ Tối",
+  "layout.mainSidebar.switchToVietnamese": "Tiếng Việt",
+  "layout.mainSidebar.switchToEnglish": "English",
+
+  "layout.mobileTabBar.ariaLabel": "Điều hướng bảng IDE",
+
+  "layout.bottomSheet.label": "Menu hành động",
+  "layout.bottomSheet.close": "Đóng menu",
+
+  "layout.pluginSidebar.expandSidebar": "Mở rộng thanh bên",
+  "layout.pluginSidebar.collapseSidebar": "Thu gọn thanh bên",
+  "layout.pluginSidebar.resizeSidebar": "Thay đổi kích thước thanh bên",
+
+  "layout.projectSidebar.ariaLabel": "Thanh bên dự án",
+  "layout.projectSidebar.closeSidebar": "Đóng thanh bên",
+  "layout.projectSidebar.resizeSidebar": "Thay đổi kích thước thanh bên",
+
+  "layout.presetSelector.ariaLabel": "Chọn bố cục giao diện",
+  "layout.presetSelector.menuLabel": "Bố cục giao diện",
+
+  "layout.preset.default": "Mặc định",
+  "layout.preset.defaultDescription": "Chat + Cây thư mục + Ghi chú",
+  "layout.preset.focus": "Tập trung",
+  "layout.preset.focusDescription": "Chế độ tập trung vào Agent",
+  "layout.preset.code": "Lập trình",
+  "layout.preset.codeDescription": "Bố cục phát triển",
+  "layout.preset.fullEditor": "Toàn màn hình",
+  "layout.preset.fullEditorDescription": "Trình soạn thảo tối đa",
+
+  "accessibility.skipLinks": "Liên kết bỏ qua",
+  "accessibility.notification.dismiss": "Bỏ qua thông báo",
+  "accessibility.toast.dismiss": "Bỏ qua thông báo",
+
+  "syncStatus.ariaLabel": "Trạng thái đồng bộ: {{status}}",
+  "syncStatus.pendingChanges": "{{count}} thay đổi đang chờ",
+
+  "storage.ariaLabel": "Chế độ lưu trữ: {{mode}}",
+
+  "notes.view.notes": "Chế độ xem Ghi chú",
+  "notes.view.files": "Chế độ xem Tệp",
+  "notes.view.rag": "Chế độ xem Tìm kiếm AI",
+  "notes.slashCommands.manage": "Quản lý lệnh Slash",
+  "notes.import.reImport": "Nhập lại từ tệp"
 }
