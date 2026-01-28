@@ -9,7 +9,9 @@
 /* Layout Component Styles */
 @import "./presentation/components/layout/ActivityBar.css";
 @import "./presentation/components/layout/ActivityBarTop.css";
+@import "./presentation/components/layout/MainContentRenderer.css";
 @import "./presentation/components/layout/PluginDocker.css";
+@import "./presentation/components/layout/FloatingPluginDocker.css";
 @import "./presentation/components/layout/StatusBar.css";
 
 /* Custom variants for dark/light mode - Tailwind CSS 4 approach */
@@ -182,6 +184,47 @@ code {
       #23272a 0%,
       #18181b 50%,
       #000000 100%);
+}
+
+/* =============================================================================
+   PREFERS-REDUCED-MOTION SUPPORT (UXUI-03-17)
+   Accessibility: Disable animations for users with motion sensitivity
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all custom animations defined in this file */
+  .animate-float,
+  .animate-spin-slow,
+  .animate-spin-slow-reverse,
+  .animate-pulse-slow {
+    animation: none !important;
+  }
+
+  /* Panel animations - instant state changes */
+  .panel-enter,
+  .panel-exit {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Retro transitions - instant */
+  .retro-transition,
+  .retro-hover,
+  .retro-hover-primary {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  /* Global transition reduction for all elements */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @keyframes float {

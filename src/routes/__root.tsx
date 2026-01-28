@@ -14,6 +14,7 @@ import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/wo
 import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
 import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
 import { useCommandPalette } from '@/hooks/useCommandPalette'
+import { SkipLinks } from '@/presentation/components/ui/SkipLinks'
 
 // UX-GLOBAL-UI: Project-aware layout (hides MainSidebar on project routes)
 import { ProjectAwareLayout } from '@/presentation/components/layout/ProjectAwareLayout'
@@ -80,6 +81,8 @@ export const Route = createRootRoute({
         {/* BUG-FIX-2026-01-11: Add suppressHydrationWarning to body to prevent locale mismatch warnings
             Server renders in English (fallbackLng), client may render in saved locale (vi/en) */}
         <body suppressHydrationWarning>
+          {/* Skip Links - First focusable element for accessibility */}
+          <SkipLinks />
           <ThemeProvider>
             <LocaleProvider>
               <TooltipProvider>

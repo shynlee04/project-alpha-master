@@ -31,6 +31,7 @@
 
 import { useTranslation } from 'react-i18next';
 import { Bot, Loader2, AlertCircle, RefreshCw, TriangleAlert, Terminal, Cloud, CloudOff } from 'lucide-react';
+import { LiveRegion } from './LiveRegion';
 
 // ============================================================================
 // Types & Interfaces
@@ -252,6 +253,9 @@ export function StatusBar({
           </div>
         )}
       </div>
+
+      {/* Live Region for Screen Reader Announcements */}
+      <LiveRegion syncStatus={syncStatus} />
     </footer>
   );
 }

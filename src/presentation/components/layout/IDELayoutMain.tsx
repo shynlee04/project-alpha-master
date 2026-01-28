@@ -123,6 +123,11 @@ export function IDELayout(): React.JSX.Element {
     useIDEKeyboardShortcuts({
         onChatToggle: () => setChatVisible(true),
         onCommandPaletteOpen: () => layoutState.setIsCommandPaletteOpen(true),
+        onToggleRightPanel: () => setChatVisible(!chatVisible),
+        onSwitchPlugin: (index: number) => {
+            // Dispatch custom event for MainContentRenderer to handle plugin switching
+            window.dispatchEvent(new CustomEvent('ide.switch-plugin', { detail: { index } }));
+        },
     });
 
     const { previewUrl, previewPort } = useWebContainerBoot({ 

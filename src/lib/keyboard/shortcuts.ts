@@ -37,6 +37,15 @@ export const SHORTCUT_IDS = {
   TOGGLE_TERMINAL: 'toggle-terminal',
   TOGGLE_SETTINGS: 'toggle-settings',
   TOGGLE_THEME: 'toggle-theme',
+  TOGGLE_RIGHT_PANEL: 'toggle-right-panel',
+
+  // Plugin Navigation (Cmd/Ctrl+1-6)
+  SWITCH_PLUGIN_1: 'switch-plugin-1',
+  SWITCH_PLUGIN_2: 'switch-plugin-2',
+  SWITCH_PLUGIN_3: 'switch-plugin-3',
+  SWITCH_PLUGIN_4: 'switch-plugin-4',
+  SWITCH_PLUGIN_5: 'switch-plugin-5',
+  SWITCH_PLUGIN_6: 'switch-plugin-6',
 
   // Tools
   SEARCH_FILES: 'search-files',
@@ -262,6 +271,104 @@ export const ShortcutDefinitions = {
   }),
 
   /**
+   * Toggle Right Panel: Cmd/Ctrl+J
+   * Shows/hides the right panel (chat panel)
+   */
+  toggleRightPanel: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.TOGGLE_RIGHT_PANEL,
+    description: 'keyboardShortcuts.toggleRightPanel',
+    key: 'j',
+    metaKey: true,
+    handler,
+    priority: 85,
+    category: 'view',
+  }),
+
+  /**
+   * Switch to Plugin 1: Cmd/Ctrl+1
+   * Switches to the first plugin in Activity Bar TOP
+   */
+  switchPlugin1: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.SWITCH_PLUGIN_1,
+    description: 'keyboardShortcuts.switchPlugin1',
+    key: '1',
+    metaKey: true,
+    handler,
+    priority: 80,
+    category: 'navigation',
+  }),
+
+  /**
+   * Switch to Plugin 2: Cmd/Ctrl+2
+   * Switches to the second plugin in Activity Bar TOP
+   */
+  switchPlugin2: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.SWITCH_PLUGIN_2,
+    description: 'keyboardShortcuts.switchPlugin2',
+    key: '2',
+    metaKey: true,
+    handler,
+    priority: 80,
+    category: 'navigation',
+  }),
+
+  /**
+   * Switch to Plugin 3: Cmd/Ctrl+3
+   * Switches to the third plugin in Activity Bar TOP
+   */
+  switchPlugin3: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.SWITCH_PLUGIN_3,
+    description: 'keyboardShortcuts.switchPlugin3',
+    key: '3',
+    metaKey: true,
+    handler,
+    priority: 80,
+    category: 'navigation',
+  }),
+
+  /**
+   * Switch to Plugin 4: Cmd/Ctrl+4
+   * Switches to the fourth plugin in Activity Bar TOP
+   */
+  switchPlugin4: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.SWITCH_PLUGIN_4,
+    description: 'keyboardShortcuts.switchPlugin4',
+    key: '4',
+    metaKey: true,
+    handler,
+    priority: 80,
+    category: 'navigation',
+  }),
+
+  /**
+   * Switch to Plugin 5: Cmd/Ctrl+5
+   * Switches to the fifth plugin in Activity Bar TOP
+   */
+  switchPlugin5: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.SWITCH_PLUGIN_5,
+    description: 'keyboardShortcuts.switchPlugin5',
+    key: '5',
+    metaKey: true,
+    handler,
+    priority: 80,
+    category: 'navigation',
+  }),
+
+  /**
+   * Switch to Plugin 6: Cmd/Ctrl+6
+   * Switches to the sixth plugin in Activity Bar TOP
+   */
+  switchPlugin6: (handler: (event: KeyboardEvent) => void): KeyboardShortcut => ({
+    id: SHORTCUT_IDS.SWITCH_PLUGIN_6,
+    description: 'keyboardShortcuts.switchPlugin6',
+    key: '6',
+    metaKey: true,
+    handler,
+    priority: 80,
+    category: 'navigation',
+  }),
+
+  /**
    * Search Files: Cmd/Ctrl+Shift+F
    * Open file search dialog
    */
@@ -339,6 +446,13 @@ export function getDefaultShortcutDefinitions(): Array<{
     { id: SHORTCUT_IDS.TOGGLE_TERMINAL, key: '`', metaKey: true },
     { id: SHORTCUT_IDS.TOGGLE_SETTINGS, key: ',', metaKey: true },
     { id: SHORTCUT_IDS.TOGGLE_THEME, key: 't', metaKey: true, shiftKey: true },
+    { id: SHORTCUT_IDS.TOGGLE_RIGHT_PANEL, key: 'j', metaKey: true },
+    { id: SHORTCUT_IDS.SWITCH_PLUGIN_1, key: '1', metaKey: true },
+    { id: SHORTCUT_IDS.SWITCH_PLUGIN_2, key: '2', metaKey: true },
+    { id: SHORTCUT_IDS.SWITCH_PLUGIN_3, key: '3', metaKey: true },
+    { id: SHORTCUT_IDS.SWITCH_PLUGIN_4, key: '4', metaKey: true },
+    { id: SHORTCUT_IDS.SWITCH_PLUGIN_5, key: '5', metaKey: true },
+    { id: SHORTCUT_IDS.SWITCH_PLUGIN_6, key: '6', metaKey: true },
     { id: SHORTCUT_IDS.SEARCH_FILES, key: 'f', metaKey: true, shiftKey: true },
     { id: SHORTCUT_IDS.OPEN_FILE, key: 'o', metaKey: true },
   ];

@@ -16,13 +16,16 @@
  * └────────┴────────┴──────────┴────────────────┴──────────┴────────┘
  *
  * @epic EPIC-UXUI-01
- * @story UXUI-02-02
+ * @story UXUI-03-14
  * @team Team B
  * @created 2026-01-28
+ * @updated 2026-01-28
  */
 
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import * as Tooltip from '@radix-ui/react-tooltip';
+import { cn } from '@/lib/utils';
 
 // ============================================================================
 // Types & Interfaces
@@ -165,13 +168,14 @@ export function ActivityBar({
   };
 
   return (
-    <nav
-      className={`activity-bar ${positionClass} ${className}`}
-      role="toolbar"
-      aria-label={`Activity bar ${position}`}
-    >
-      <div className="activity-bar__content">
-        {items.map((item) => {
+    <Tooltip.Provider delayDuration={300} skipDelayDuration={0}>
+      <nav
+        className={`activity-bar ${positionClass} ${className}`}
+        role="toolbar"
+        aria-label={`Activity bar ${position}`}
+      >
+        <div className="activity-bar__content">
+          {items.map((item) => {
           const isActive = activeItem === item.id;
           const isDragging = draggingId === item.id;
           const itemClasses = [
@@ -184,34 +188,59 @@ export function ActivityBar({
             .join(' ');
 
           return (
-            <button
-              key={item.id}
-              type="button"
-              className={itemClasses}
-              onClick={() => handleItemClick(item.id, item.disabled)}
-              onKeyDown={(e) => handleKeyDown(e, item.id, item.disabled)}
-              disabled={item.disabled}
-              aria-pressed={isActive}
-              aria-label={item.label}
-              title={item.label}
-              // Drag-and-drop attributes
-              draggable={draggable && !item.disabled}
-              onDragStart={draggable ? (e) => handleDragStart(e, item.id) : undefined}
-              onDragEnd={draggable ? () => handleDragEnd(item.id) : undefined}
-            >
-              <span className="activity-bar__icon">
-                {renderIcon(item.icon)}
-              </span>
-              {item.badge !== undefined && item.badge > 0 && (
-                <span className="activity-bar__badge">
-                  {formatBadge(item.badge)}
-                </span>
-              )}
-            </button>
+            <Tooltip.Root key={item.id} delayDuration={300}>
+              <Tooltip.Trigger asChild>
+                <button
+                  type="button"
+                  className={itemClasses}
+                  onClick={() => handleItemClick(item.id, item.disabled)}
+                  onKeyDown={(e) => handleKeyDown(e, item.id, item.disabled)}
+                  disabled={item.disabled}
+                  aria-pressed={isActive}
+                  aria-label={item.label}
+                  // Drag-and-drop attributes
+                  draggable={draggable && !item.disabled}
+                  onDragStart={draggable ? (e) => handleDragStart(e, item.id) : undefined}
+                  onDragEnd={draggable ? () => handleDragEnd(item.id) : undefined}
+                >
+                  <span className="activity-bar__icon">
+                    {renderIcon(item.icon)}
+                  </span>
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <span className="activity-bar__badge">
+                      {formatBadge(item.badge)}
+                    </span>
+                  )}
+                </button>
+              </Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  className={cn(
+                    // Base styles
+                    'z-50 px-3 py-1.5 text-xs font-mono',
+                    // 8-bit aesthetic - sharp corners, 2px border
+                    'rounded-none border-2 border-border',
+                    'bg-popover text-popover-foreground',
+                    // Pixel shadow
+                    'shadow-[4px_4px_0_0_rgba(0,0,0,0.5)]',
+                    // Animation
+                    'data-[state=delayed-open]:animate-in data-[state=closed]:animate-out',
+                    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+                    'data-[state=open]:zoom-in-95'
+                  )}
+                  side={position === 'left' ? 'right' : 'left'}
+                  sideOffset={8}
+                  align="center"
+                >
+                  {item.label}
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
           );
         })}
       </div>
-    </nav>
+      </nav>
+    </Tooltip.Provider>
   );
 }
 

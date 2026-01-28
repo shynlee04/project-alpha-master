@@ -1,0 +1,295 @@
+/**
+ * MainContentRenderer Component Styles
+ * =====================================
+ *
+ * 8-bit aesthetic styling for the main content plugin switcher.
+ * Contains Activity Bar TOP + plugin content area.
+ *
+ * Design Principles:
+ * - Sharp corners (border-radius: 0)
+ * - No transparency or blur
+ * - Flex column layout
+ * - CSS variable-based theming
+ *
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-04
+ * @team Team A
+ * @created 2026-01-28
+ */
+
+/* ============================================================================
+   MAIN CONTAINER
+   ============================================================================ */
+
+.main-content-renderer {
+  /* Fill available space from WorkspaceLayout */
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+
+  /* Flex column: ActivityBarTop at top, content fills rest */
+  display: flex;
+  flex-direction: column;
+
+  /* 8-bit: No rounded corners */
+  border-radius: 0;
+
+  /* Background */
+  background-color: hsl(var(--background));
+
+  /* Prevent overflow */
+  overflow: hidden;
+}
+
+/* ============================================================================
+   ACTIVITY BAR (TOP)
+   ============================================================================ */
+
+.main-content-renderer__activity-bar {
+  /* Fixed height - already set in ActivityBarTop.css */
+  flex-shrink: 0;
+}
+
+/* ============================================================================
+   PLUGIN CONTENT AREA
+   ============================================================================ */
+
+.main-content-renderer__content {
+  /* Fill remaining space after ActivityBarTop */
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+
+  /* Allow plugin to fill container */
+  display: flex;
+  flex-direction: column;
+
+  /* Prevent overflow at container level */
+  overflow: hidden;
+
+  /* Background */
+  background-color: hsl(var(--background));
+
+  /* Position for absolute children */
+  position: relative;
+}
+
+/* Plugin content children should fill space */
+.main-content-renderer__content > * {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.main-content-renderer__empty {
+  /* Center content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4, 1rem);
+
+  /* Fill available space */
+  flex: 1;
+  width: 100%;
+  height: 100%;
+
+  /* Typography */
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-family-mono);
+  text-align: center;
+
+  /* Padding */
+  padding: var(--space-8, 2rem);
+}
+
+.main-content-renderer__empty-icon {
+  font-size: 3rem;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.main-content-renderer__empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.main-content-renderer__empty-message {
+  font-size: 0.875rem;
+  max-width: 300px;
+}
+
+/* ============================================================================
+   PLUGIN NOT FOUND STATE
+   ============================================================================ */
+
+.main-content-renderer__not-found {
+  /* Center content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4, 1rem);
+
+  /* Fill available space */
+  flex: 1;
+  width: 100%;
+  height: 100%;
+
+  /* Typography */
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-family-mono);
+  text-align: center;
+
+  /* Padding */
+  padding: var(--space-8, 2rem);
+
+  /* Warning styling */
+  background-color: hsl(var(--warning) / 0.05);
+}
+
+.main-content-renderer__not-found-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.main-content-renderer__not-found-message {
+  font-size: 0.875rem;
+}
+
+.main-content-renderer__not-found-message code {
+  padding: 0.125rem 0.375rem;
+  background-color: hsl(var(--muted));
+  border-radius: 0;
+  font-family: var(--font-family-mono);
+  font-size: 0.8125rem;
+}
+
+/* ============================================================================
+   ERROR STATE
+   ============================================================================ */
+
+.main-content-renderer__error {
+  /* Center content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4, 1rem);
+
+  /* Fill available space */
+  flex: 1;
+  width: 100%;
+  height: 100%;
+
+  /* Typography */
+  color: hsl(var(--muted-foreground));
+  font-family: var(--font-family-mono);
+  text-align: center;
+
+  /* Padding */
+  padding: var(--space-8, 2rem);
+
+  /* Error styling - subtle red background */
+  background-color: hsl(var(--destructive) / 0.05);
+}
+
+.main-content-renderer__error-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.main-content-renderer__error-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: hsl(var(--destructive));
+}
+
+.main-content-renderer__error-message {
+  font-size: 0.875rem;
+  max-width: 400px;
+}
+
+.main-content-renderer__error-message code {
+  padding: 0.125rem 0.375rem;
+  background-color: hsl(var(--muted));
+  border-radius: 0;
+  font-family: var(--font-family-mono);
+  font-size: 0.8125rem;
+}
+
+.main-content-renderer__error-retry {
+  /* Button reset */
+  border: 2px solid hsl(var(--border));
+  background: hsl(var(--background));
+  cursor: pointer;
+
+  /* 8-bit styling */
+  border-radius: 0;
+  padding: var(--space-2, 0.5rem) var(--space-4, 1rem);
+
+  /* Typography */
+  font-family: var(--font-family-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+
+  /* Transition */
+  transition: background-color var(--duration-fast, 100ms) steps(2, end);
+}
+
+.main-content-renderer__error-retry:hover {
+  background-color: hsl(var(--muted));
+}
+
+.main-content-renderer__error-retry:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   RESPONSIVE STYLES
+   ============================================================================ */
+
+/* Mobile: Smaller spacing */
+@media (max-width: 639px) {
+  .main-content-renderer__empty,
+  .main-content-renderer__not-found,
+  .main-content-renderer__error {
+    padding: var(--space-4, 1rem);
+    gap: var(--space-3, 0.75rem);
+  }
+
+  .main-content-renderer__empty-icon,
+  .main-content-renderer__not-found-icon,
+  .main-content-renderer__error-icon {
+    font-size: 2rem;
+  }
+
+  .main-content-renderer__empty-title,
+  .main-content-renderer__error-title {
+    font-size: 0.875rem;
+  }
+
+  .main-content-renderer__empty-message,
+  .main-content-renderer__not-found-message,
+  .main-content-renderer__error-message {
+    font-size: 0.75rem;
+  }
+}
+
+/* ============================================================================
+   REDUCED MOTION (ACCESSIBILITY)
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .main-content-renderer__error-retry {
+    transition: none;
+  }
+}

@@ -94,7 +94,7 @@ export function ProjectAwareLayout() {
                 <MainSidebar />
 
                 {/* Main Content Area */}
-                <main className="flex-1 flex flex-col overflow-hidden">
+                <main id="main-content" className="flex-1 flex flex-col overflow-hidden" tabIndex={-1}>
                     {/* Breadcrumbs - Navigation context */}
                     <Breadcrumbs />
 

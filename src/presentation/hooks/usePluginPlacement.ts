@@ -3,6 +3,7 @@
  * @module presentation/hooks/usePluginPlacement
  *
  * **UXUI-02-04b**: Single Instance Constraint
+ * **UXUI-03-07**: Persist Plugin Placements (localStorage per projectId)
  *
  * Implements the ONE INSTANCE RULE: Plugin can only be open in ONE panel at a time.
  * If already open in left Docker, dragging to right Docker MOVES it (closes in left, opens in right).
@@ -11,15 +12,163 @@
  * - Plugin can only exist in ONE panel at a time (left or right)
  * - Dragging MOVES the plugin (never duplicates)
  * - Same panel drop is a no-op
+ * - Placements persist to localStorage keyed by projectId (UXUI-03-07)
+ * - Fallback to defaults if no saved config
  *
- * @epic EPIC-UXUI-02
- * @story UXUI-02-04b
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-07
  * @team Team A
  * @created 2026-01-28
+ * @updated 2026-01-28
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { PluginId } from '@/domain/types/plugin-types';
+import { useToast } from '@/presentation/components/ui/Toast/ToastContext';
+
+// ============================================================================
+// Persistence Constants & Types (UXUI-03-07)
+// ============================================================================
+
+/**
+ * LocalStorage key prefix for plugin placements
+ * Format: plugin-placements-{projectId}
+ */
+const STORAGE_KEY_PREFIX = 'plugin-placements';
+
+/**
+ * Storage format version for migration support
+ */
+const STORAGE_VERSION = 1;
+
+/**
+ * Stored placement data structure
+ */
+interface StoredPlacementData {
+  version: number;
+  placements: Record<string, PanelPosition>;
+}
+
+// ============================================================================
+// Persistence Helper Functions (UXUI-03-07)
+// ============================================================================
+
+/**
+ * Generate storage key for a specific project
+ *
+ * @param projectId - Project identifier
+ * @returns localStorage key
+ */
+function getStorageKey(projectId: string): string {
+  return `${STORAGE_KEY_PREFIX}-${projectId}`;
+}
+
+/**
+ * Save placements to localStorage
+ *
+ * @param projectId - Project identifier
+ * @param placements - Map of plugin placements
+ *
+ * @remarks
+ * Converts Map to plain object for JSON serialization.
+ * Includes version number for future migration support.
+ */
+export function savePlacements(
+  projectId: string,
+  placements: Map<PluginId, PanelPosition>
+): void {
+  if (!projectId) {
+    console.warn('[usePluginPlacement] Cannot save: no projectId provided');
+    return;
+  }
+
+  try {
+    const data: StoredPlacementData = {
+      version: STORAGE_VERSION,
+      placements: Object.fromEntries(placements),
+    };
+    localStorage.setItem(getStorageKey(projectId), JSON.stringify(data));
+    console.log(`[usePluginPlacement] Saved placements for project ${projectId}`, data);
+  } catch (error) {
+    console.error('[usePluginPlacement] Failed to save placements:', error);
+  }
+}
+
+/**
+ * Load placements from localStorage
+ *
+ * @param projectId - Project identifier
+ * @returns Map of plugin placements or null if not found
+ *
+ * @remarks
+ * Handles migration from old storage format.
+ * Returns null if no saved data or invalid data.
+ */
+export function loadPlacements(
+  projectId: string
+): Map<PluginId, PanelPosition> | null {
+  if (!projectId) {
+    console.warn('[usePluginPlacement] Cannot load: no projectId provided');
+    return null;
+  }
+
+  try {
+    const raw = localStorage.getItem(getStorageKey(projectId));
+    if (!raw) {
+      console.log(`[usePluginPlacement] No saved placements for project ${projectId}`);
+      return null;
+    }
+
+    const parsed = JSON.parse(raw);
+
+    // Handle versioned format
+    if (parsed.version && parsed.placements) {
+      const data = parsed as StoredPlacementData;
+      const map = new Map<PluginId, PanelPosition>();
+      Object.entries(data.placements).forEach(([key, value]) => {
+        // Validate panel position
+        if (value === 'left' || value === 'main' || value === 'right' || value === null) {
+          map.set(key as PluginId, value);
+        }
+      });
+      console.log(`[usePluginPlacement] Loaded placements for project ${projectId}`, data);
+      return map;
+    }
+
+    // Handle legacy format (direct object without version)
+    if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+      const map = new Map<PluginId, PanelPosition>();
+      Object.entries(parsed).forEach(([key, value]) => {
+        if (value === 'left' || value === 'main' || value === 'right' || value === null) {
+          map.set(key as PluginId, value as PanelPosition);
+        }
+      });
+      console.log(`[usePluginPlacement] Migrated legacy placements for project ${projectId}`);
+      return map;
+    }
+
+    console.warn('[usePluginPlacement] Invalid storage format, returning null');
+    return null;
+  } catch (error) {
+    console.error('[usePluginPlacement] Failed to load placements:', error);
+    return null;
+  }
+}
+
+/**
+ * Clear saved placements for a project
+ *
+ * @param projectId - Project identifier
+ */
+export function clearSavedPlacements(projectId: string): void {
+  if (!projectId) return;
+  try {
+    localStorage.removeItem(getStorageKey(projectId));
+    console.log(`[usePluginPlacement] Cleared placements for project ${projectId}`);
+  } catch (error) {
+    console.error('[usePluginPlacement] Failed to clear placements:', error);
+  }
+}
 
 // ============================================================================
 // Types
@@ -69,6 +218,9 @@ export interface UsePluginPlacementReturn {
   /** Map of plugin ID to panel position */
   placements: Map<PluginId, PanelPosition>;
 
+  /** Whether placements have been loaded from storage (hydrated) */
+  isHydrated: boolean;
+
   /**
    * Get the current panel for a plugin
    * @param pluginId - Plugin to check
@@ -115,6 +267,12 @@ export interface UsePluginPlacementReturn {
    * @param initialPlacements - Optional new initial placements
    */
   resetPlacements: (initialPlacements?: PluginPlacementEntry[]) => void;
+
+  /**
+   * Reset placements to defaults and clear saved storage
+   * @param defaults - Default placements to reset to
+   */
+  resetToDefaults: (defaults?: PluginPlacementEntry[]) => void;
 }
 
 // ============================================================================
@@ -156,6 +314,11 @@ export interface UsePluginPlacementReturn {
 export function usePluginPlacement(
   initialPlacements: PluginPlacementEntry[] = []
 ): UsePluginPlacementReturn {
+  // ========================================================================
+  // Toast Hook for Notifications
+  // ========================================================================
+  const { toast } = useToast();
+
   // ========================================================================
   // State
   // ========================================================================
@@ -217,12 +380,24 @@ export function usePluginPlacement(
         return next;
       });
 
-      // Log the move operation
+      // Show toast notification for the move operation
+      const panelLabel = targetPanel === 'main' ? 'center' : targetPanel;
       if (currentPanel) {
+        const fromLabel = currentPanel === 'main' ? 'center' : currentPanel;
+        toast(
+          `Moving ${getPluginDisplayName(pluginId)} from ${fromLabel} to ${panelLabel} panel`,
+          'info',
+          3000
+        );
         console.log(
           `[usePluginPlacement] Moved ${pluginId} from ${currentPanel} to ${targetPanel}`
         );
       } else {
+        toast(
+          `Moving ${getPluginDisplayName(pluginId)} to ${panelLabel} panel`,
+          'info',
+          3000
+        );
         console.log(
           `[usePluginPlacement] Added ${pluginId} to ${targetPanel} panel`
         );
@@ -326,6 +501,31 @@ export function usePluginPlacement(
 // ============================================================================
 // Helper Functions
 // ============================================================================
+
+/**
+ * Get human-readable display name for a plugin
+ *
+ * @param pluginId - Plugin identifier
+ * @returns Human-readable name for the plugin
+ *
+ * @example
+ * ```ts
+ * getPluginDisplayName('filetree'); // 'File Tree'
+ * getPluginDisplayName('monaco'); // 'Code Editor'
+ * ```
+ */
+function getPluginDisplayName(pluginId: PluginId): string {
+  const displayNames: Record<PluginId, string> = {
+    filetree: 'File Tree',
+    monaco: 'Code Editor',
+    notes: 'Notes',
+    terminal: 'Terminal',
+    chat: 'Chat',
+    agents: 'Agents',
+    preview: 'Preview',
+  };
+  return displayNames[pluginId] ?? pluginId;
+}
 
 /**
  * Create default plugin placements for a project

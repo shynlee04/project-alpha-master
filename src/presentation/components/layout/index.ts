@@ -29,3 +29,9 @@ export { ActivityBar, type ActivityBarProps, type ActivityBarItem } from './Acti
 
 // Plugin Docker (UXUI-02-02b)
 export { PluginDocker, type PluginDockerProps } from './PluginDocker';
+
+// Floating Plugin Docker (UXUI-03-05)
+export { FloatingPluginDocker, type FloatingPluginDockerProps } from './FloatingPluginDocker';
+
+// Live Region for Screen Reader Announcements (UXUI-03-11)
+export { LiveRegion, type LiveRegionProps, type LiveRegionSyncStatus } from './LiveRegion';

@@ -5,9 +5,10 @@
  * Tests for the ActivityBar component following 8-bit design system.
  *
  * @epic EPIC-UXUI-01
- * @story UXUI-02-02
+ * @story UXUI-03-14
  * @team Team B
  * @created 2026-01-28
+ * @updated 2026-01-28
  */
 
 // @vitest-environment jsdom
@@ -188,7 +189,7 @@ describe('ActivityBar', () => {
       expect(screen.getByRole('toolbar')).toBeInTheDocument();
     });
 
-    it('provides title attribute for tooltips', () => {
+    it('provides aria-label for accessibility', () => {
       render(
         <ActivityBar
           position="left"
@@ -197,7 +198,7 @@ describe('ActivityBar', () => {
       );
 
       const filesButton = screen.getByLabelText('Files');
-      expect(filesButton).toHaveAttribute('title', 'Files');
+      expect(filesButton).toHaveAttribute('aria-label', 'Files');
     });
 
     it('disabled items have correct disabled attribute', () => {
