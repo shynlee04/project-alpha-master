@@ -24,7 +24,7 @@
  * @created 2026-01-22
  */
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ErrorBoundary } from '@/presentation/components/error';
 import { db } from '@/infrastructure/persistence/dexie-db';
@@ -38,6 +38,8 @@ import { PluginLayout } from '@/presentation/layouts/PluginLayout';
 import { WorkspaceLayout } from '@/presentation/layouts/WorkspaceLayout';
 // UXUI-02-03: GlobalSidebar integration
 import { MainSidebar } from '@/presentation/components/layout/MainSidebar';
+// CC-UX-01: StatusBar integration
+import { StatusBar } from '@/presentation/components/layout/StatusBar';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
 import { getDefaultLayoutMode } from '@/infrastructure/plugins/platform-defaults';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
@@ -46,6 +48,9 @@ import { getPresetConfig } from '@/presentation/layouts/workflow-presets';
 import { usePluginActivityDockerWiring } from '@/presentation/components/layout/PluginActivityDockerWiring';
 import { usePluginPlacement, getDefaultPlacements } from '@/presentation/hooks/usePluginPlacement';
 import type { ActivityBarItem } from '@/presentation/components/layout/ActivityBar';
+// CC-UX-02: Plugin Registry for rendering
+import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
+import type { PluginId } from '@/domain/types/plugin-types';
 // Icons for ActivityBar
 import { FolderTree, Search, MessageSquare, Code, Bot, Terminal, Eye } from 'lucide-react';
 
@@ -166,6 +171,37 @@ function UnifiedProjectRoute() {
   } = usePluginPlacement(getDefaultPlacements('default'));
 
   // ========================================================================
+  // CC-UX-02: Plugin Renderer Callback
+  // ========================================================================
+
+  /**
+   * Render plugin content for ActivityBar/Docker
+   * Uses plugin registry to get the MainComponent
+   */
+  const renderPluginContent = useCallback(
+    ({ pluginId, position }: { pluginId: PluginId; position: 'left' | 'right' }) => {
+      const plugin = getPlugin(pluginId);
+      
+      if (!plugin) {
+        console.warn(`[UnifiedProjectRoute] Plugin not found: ${pluginId}`);
+        return (
+          <div className="p-4 font-mono text-sm text-muted-foreground">
+            Plugin not found: {pluginId}
+          </div>
+        );
+      }
+
+      const Component = plugin.MainComponent;
+      // Default dimensions - Docker handles resize
+      const width = position === 'left' ? 240 : 300;
+      const height = 500; // Will fill available space via CSS
+
+      return <Component width={width} height={height} />;
+    },
+    []
+  );
+
+  // ========================================================================
   // UXUI-02-05: Left Side Wiring (ActivityBar + Docker)
   // ========================================================================
 
@@ -178,6 +214,7 @@ function UnifiedProjectRoute() {
     movePluginToPanel,
     closePlugin,
     getPluginsInPanel,
+    renderPlugin: renderPluginContent,  // CC-UX-02: Wire plugin renderer
   });
 
   // ========================================================================
@@ -193,6 +230,7 @@ function UnifiedProjectRoute() {
     movePluginToPanel,
     closePlugin,
     getPluginsInPanel,
+    renderPlugin: renderPluginContent,  // CC-UX-02: Wire plugin renderer
   });
 
   // Initialize layout store with platform-appropriate defaults
@@ -240,6 +278,7 @@ function UnifiedProjectRoute() {
           mainContent={<PluginLayout />}
           pluginRight={rightWiring.docker}
           activityBarRight={rightWiring.activityBar}
+          statusBar={<StatusBar />}
         />
       </ProjectContextProvider>
     </PluginCoordinationProvider>

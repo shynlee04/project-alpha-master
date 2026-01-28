@@ -1,4 +1,15 @@
 /**
+ * ARCHIVED FILE - CC-UX-04
+ * Original: src/presentation/components/ide/StatusBar.tsx
+ * Archived: 2026-01-28
+ * Reason: Duplicate of src/presentation/components/layout/StatusBar.tsx
+ * Story: CC-UX-04
+ * 
+ * This file was archived per AGENTS.md governance rules.
+ * The active version is now at: src/presentation/components/layout/StatusBar.tsx
+ */
+
+/**
  * @fileoverview IDE StatusBar Component
  * @module components/ide/StatusBar
  *

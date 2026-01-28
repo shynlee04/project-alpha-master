@@ -634,10 +634,11 @@ team_a_sprint_uxui02:
   epic_title: "Main Layout Overhaul - UX Spec v3.0.0"
   team: "A"
   focus: "Layout Integration & Cleanup"
-  status: "IN_PROGRESS"
+  status: "COMPLETE"
   started: "2026-01-28"
+  completed: "2026-01-28"
   updated: "2026-01-28T21:00:00+07:00"
-  progress: "83%"  # 10/12 stories complete
+  progress: "100%"  # 12/12 stories complete
   
   # Team A Takeover from Team B (EXCALIBUR directive)
   takeover_note: |
@@ -768,20 +769,27 @@ team_a_sprint_uxui02:
       
     - id: "UXUI-02-08"
       title: "Archive Bento Grid"
-      status: "READY"
+      status: "DONE"
+      completed: "2026-01-28"
+      team: "B"
       effort: "1-2h"
       depends_on: ["UXUI-02-07"]
-      note: "Now READY - UXUI-02-07 complete, can proceed"
+      evidence:
+        - "Archive created at _bmad-ext/.archive/bento-grid-2026-01-28/"
+        - "7 files archived (1,255 lines)"
+        - "ARCHIVE-MANIFEST.md created"
+        - "No broken imports after archival"
 
   team_b_sprint_uxui02:
     epic_id: "EPIC-UXUI-02"
     epic_title: "Main Layout Overhaul - UX Spec v3.0.0"
     team: "B"
     focus: "Simpler Remaining Tasks (Team Swap)"
-    status: "IN_PROGRESS"
+    status: "COMPLETE"
     started: "2026-01-28"
+    completed: "2026-01-28"
     updated: "2026-01-28"
-    current_story: "UXUI-02-08"  # Blocked, waiting for Team A
+    current_story: "UXUI-02-08"  # DONE
     
     session_summary:
       story_completed: "UXUI-02-06"
@@ -884,11 +892,17 @@ team_a_sprint_uxui02:
         
       - id: "UXUI-02-08"
         title: "Archive Bento Grid"
-        status: "BLOCKED"
+        status: "DONE"
+        completed: "2026-01-28"
+        team: "B"
         effort: "1-2h"
         assignee: "dev-ext-team-b"
-        blocked_by: "UXUI-02-07"
-        note: "Blocked until Team A completes UXUI-02-07"
+        depends_on: ["UXUI-02-07"]
+        evidence:
+          - "Archive created at _bmad-ext/.archive/bento-grid-2026-01-28/"
+          - "7 files archived (1,255 lines)"
+          - "ARCHIVE-MANIFEST.md created"
+          - "No broken imports after archival"
     
     # === TRANSFERRED TO TEAM A (Complex Layout Stories) ===
     transferred_to_team_a:
@@ -920,6 +934,86 @@ team_a_sprint_uxui02:
     - phase: 4
       stories: ["UXUI-02-05", "UXUI-02-06"]
       note: "StatusBar can overlap with Wire ActivityBar"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-CC-UXSPEC-COMPLIANCE: UX Specification Compliance (2026-01-28)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_cc_uxspec_compliance:
+  epic_id: "EPIC-CC-UXSPEC-COMPLIANCE"
+  title: "UX Specification Compliance - Hardcoded Colors & Duplicates"
+  status: "COMPLETE"
+  priority: "P1"
+  team: "B"
+  started: "2026-01-28"
+  completed: "2026-01-28"
+  progress: "100%"
+  
+  stories:
+    - id: "CC-UX-03"
+      title: "Replace 3 Hardcoded Colors in PluginLayout.tsx"
+      status: "DONE"
+      effort: "30min"
+      assignee: "dev-ext-team-b"
+      started: "2026-01-28"
+      completed: "2026-01-28"
+      duration_minutes: 15
+      
+      changes:
+        - file: "src/presentation/layouts/PluginLayout.tsx"
+          line_146: "border-zinc-700 → border-border"
+          line_251: "text-zinc-500 → text-muted-foreground"
+          line_251b: "bg-zinc-900/50 → bg-background/50"
+      
+      evidence:
+        - "No zinc-* classes remain in PluginLayout.tsx code"
+        - "Design tokens now active for light theme support"
+        - "TypeScript: 0 new errors introduced"
+      
+      handoff: "_bmad-output/handoffs/2026-01-28/CC-UX-03-completion-2026-01-28.md"
+      
+    - id: "CC-UX-04"
+      title: "Archive Duplicate Component Files"
+      status: "DONE"
+      effort: "60min"
+      assignee: "dev-ext-team-b"
+      started: "2026-01-28"
+      completed: "2026-01-28"
+      duration_minutes: 15
+      
+      files_archived:
+        - source: "src/presentation/components/ide/StatusBar.tsx"
+          archive: "_bmad-ext/.archive/duplicate-components-2026-01-28/presentation/components/ide/StatusBar.tsx"
+          reason: "Duplicate of layout/StatusBar.tsx"
+        - source: "src/presentation/layouts/PluginToggleBar.tsx"
+          archive: "_bmad-ext/.archive/duplicate-components-2026-01-28/presentation/components/layout/PluginToggleBar.tsx"
+          reason: "Unused (PluginToggles is active)"
+      
+      import_updates:
+        - file: "src/presentation/layouts/IDELayoutMain.tsx"
+          change: "Updated import from '../ide/StatusBar' to './StatusBar'"
+        - file: "src/presentation/components/ide/index.ts"
+          change: "Removed archived file reference from exports"
+      
+      evidence:
+        - "2 files moved to archive (NOT deleted)"
+        - "No broken imports remaining"
+        - "TypeScript compiles (4 pre-existing warnings only)"
+        - "Net file reduction: 2 files"
+      
+      handoff: "_bmad-output/handoffs/2026-01-28/CC-UX-04-completion-2026-01-28.md"
+  
+  validation_summary:
+    light_theme_works: true
+    build_passes: true
+    net_file_reduction: 2
+    typescript_errors_new: 0
+  
+  notes: |
+    Both stories completed successfully within timeboxes.
+    UX Specification compliance improved - hardcoded zinc colors
+    replaced with semantic design tokens supporting light theme.
+    Duplicate files archived per AGENTS.md governance rules.
 
 # ═══════════════════════════════════════════════════════════════════════════
 # END OF FILE

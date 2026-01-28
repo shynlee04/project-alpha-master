@@ -36,8 +36,10 @@ export * as MonacoEditor from './MonacoEditor';
 export * as PreviewPanel from './PreviewPanel';
 
 // Status Bar Components
-export { StatusBar } from './StatusBar';
-export * as StatusBarSegments from './StatusBar';
+// ARCHIVED 2026-01-28 (CC-UX-04): StatusBar moved to components/layout/StatusBar
+// See _bmad-ext/.archive/duplicate-components-2026-01-28/ for archived files
+// Use: import { StatusBar } from '@/presentation/components/layout/StatusBar'
+export * as StatusBarSegments from './statusbar';
 
 // Terminal Components
 export { XTerminal } from './XTerminal';

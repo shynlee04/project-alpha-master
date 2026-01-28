@@ -143,7 +143,7 @@ export function PluginLayout({}: PluginLayoutProps) {
         {visiblePlugins.map((pluginId) => (
           <div
             key={pluginId}
-            className="relative h-full overflow-hidden border-r border-b border-zinc-700"
+            className="relative h-full overflow-hidden border-r border-b border-border"
             style={{ gridArea: 'auto' }}
             data-plugin={pluginId}
           >
@@ -248,7 +248,7 @@ function PluginRenderer({ pluginId }: PluginRendererProps) {
 
   if (!plugin) {
     return (
-      <div className="h-full w-full flex items-center justify-center p-4 text-zinc-500 bg-zinc-900/50">
+      <div className="h-full w-full flex items-center justify-center p-4 text-muted-foreground bg-background/50">
         <p className="text-sm font-mono">
           {t('plugin.notFound', 'Plugin not found')}: {pluginId}
         </p>

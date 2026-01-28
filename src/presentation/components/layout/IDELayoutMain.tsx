@@ -22,7 +22,7 @@ import { MobileCapabilityBanner } from '@/presentation/components/ui/MobileCapab
 import { LoadingSpinner } from '@/presentation/components/ui/LoadingSpinner';
 import { PermissionOverlay } from './PermissionOverlay';
 import { IDEHeaderBar } from './IDEHeaderBar';
-import { StatusBar } from '../ide/StatusBar';
+import { StatusBar } from './StatusBar';
 import { MobileIDELayout } from './MobileIDELayout';
 import { useResponsive } from '@/hooks/useResponsive';
 import {

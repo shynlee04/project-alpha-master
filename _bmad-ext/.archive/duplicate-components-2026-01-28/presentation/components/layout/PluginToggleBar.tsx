@@ -1,4 +1,15 @@
 /**
+ * ARCHIVED FILE - CC-UX-04
+ * Original: src/presentation/components/layout/PluginToggleBar.tsx
+ * Archived: 2026-01-28
+ * Reason: Unused - PluginToggles.tsx is the active version
+ * Story: CC-UX-04
+ * 
+ * This file was archived per AGENTS.md governance rules.
+ * The active version is: src/presentation/components/layout/PluginToggles.tsx
+ */
+
+/**
  * @fileoverview Plugin Toggle Bar Component
  * @module components/layout/PluginToggleBar
  * @created 2026-01-26
