@@ -1,21 +1,21 @@
 # ═════════════════════════════════════════════════════════════════════════
-# BMM WORKFLOW STATUS v2.10 - EPIC-UXUI-02 FINALIZED WITH CLEANUP STORIES
+# BMM WORKFLOW STATUS v2.11 - EPIC-UXUI-03 READY FOR EXECUTION
 # ═════════════════════════════════════════════════════════════════════════
 
-schema_version: "2.10.0"
-last_updated: "2026-01-28T14:30:00+07:00"
-updated_by: "bmad-sprint-manager"
-previous_version: "bmm-workflow-status-v2.9.yaml"
+schema_version: "2.11.0"
+last_updated: "2026-01-28T08:39:00+07:00"
+updated_by: "dev-ext"
+previous_version: "bmm-workflow-status-v2.10.yaml"
 
 # ═════════════════════════════════════════════════════════════════════════
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═════════════════════════════════════════════════════════════════════════
 
-current_epic: "EPIC-UXUI-02"
-current_story: "UXUI-02-00a (Team A) | UXUI-02-01 (Team B)"
-workflow_phase: "EXECUTION"
-health_score: 85
-notes: "EPIC-UXUI-02 sprint execution started. Team A + Team B parallel execution in progress."
+current_epic: "EPIC-UXUI-03-BENTO-GRID"
+current_story: null
+workflow_phase: "READY_FOR_EXECUTION"
+health_score: 50
+notes: "EPIC-ARCH references removed. EPIC-UXUI-03-BENTO-GRID is now the active epic, ready for execution."
 context_ttl: "24h"
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -44,6 +44,30 @@ completed_workflows:
       - 6 responsive breakpoints
       - i18n support for EN/VI
       - Agent governance rules for UI validation
+
+  - id: EPIC-UXUI-01
+    name: "Design System Foundation"
+    status: COMPLETE
+    completed_at: "2026-01-28T00:00:00+07:00"
+    deliverables:
+      - "_bmad-output/planning-artifacts/epics/EPIC-UXUI-01-design-system-foundation.md"
+    summary: |
+      8 stories completed: Color tokens, Typography, Spacing/Border,
+      Animation tokens, Button styling, Input styling, Dialog styling,
+      and remaining UI primitives.
+
+  - id: EPIC-UXUI-02
+    name: "Main Layout Overhaul"
+    status: COMPLETE
+    completed_at: "2026-01-28T21:00:00+07:00"
+    deliverables:
+      - "_bmad-output/planning-artifacts/epics/EPIC-UXUI-02-main-layout-overhaul-2026-01-28.md"
+    summary: |
+      12 stories completed: Hub cleanup, Hub route consolidation,
+      WorkspaceLayout shell, ActivityBar, PluginDocker, GlobalSidebar
+      integration, Plugin drag-to-panel, Single instance constraint,
+      ActivityBar+Docker wiring, StatusBar, Design tokens application,
+      and Bento Grid archival.
 
 # ═════════════════════════════════════════════════════════════════════════
 # CRITICAL UPDATE: EPIC-0.5 RETROSPECTIVE (2026-01-27)
@@ -85,12 +109,12 @@ phase_guidance: |
   - All 19 plugin coordination gaps RESOLVED
 
   NEXT ACTIONS:
-  1. Begin Phase 1B planning
-  2. Execute remaining EPIC-ARCH-04-CC work (CC-04 E2E)
+  1. Begin EPIC-UXUI-03-BENTO-GRID execution
+  2. Execute landing page Bento Grid layout stories
   3. Plan Phase 2 AI Agents integration
 
   UNBLOCKED:
-  - Phase 1B can now begin
+  - EPIC-UXUI-03 can now begin
   - All plugin coordination working
   - Preview/Terminal/Monaco integrated
 
@@ -104,6 +128,8 @@ key_achievements:
   - ✅ Terminal WebContainer boot (COMPLETE)
   - ✅ Preview URL integration (COMPLETE)
   - ✅ UX Specification Complete Overhaul (EPIC-UX-OVERHAUL COMPLETE)
+  - ✅ EPIC-UXUI-01 Design System Foundation (COMPLETE)
+  - ✅ EPIC-UXUI-02 Main Layout Overhaul (COMPLETE)
 
 key_decisions:
   description: "From EPIC-0.5 Retrospective"
@@ -118,19 +144,19 @@ key_decisions:
 teams:
   - id: "Team A"
     name: "Identity & Routing Squad"
-    focus: "EPIC-CC-ARC Phase A → Phase C (State)"
-    assigned_epic: "EPIC-CC-ARC"
-    assigned_phase: "C"
-    current_story: "ARC-C04"
-    status: "ACTIVE"
+    focus: "EPIC-UXUI-03-BENTO-GRID"
+    assigned_epic: "EPIC-UXUI-03-BENTO-GRID"
+    assigned_phase: "Phase 1B"
+    current_story: null
+    status: "READY"
 
   - id: "Team B"
     name: "Storage Contract Squad"
-    focus: "EPIC-CC-ARC Phase B → Phase D (Entity)"
-    assigned_epic: "EPIC-CC-ARC"
-    assigned_phase: "B/D"
-    current_story: "ARC-B08"
-    status: "ACTIVE"
+    focus: "EPIC-UXUI-03-BENTO-GRID"
+    assigned_epic: "EPIC-UXUI-03-BENTO-GRID"
+    assigned_phase: "Phase 1B"
+    current_story: null
+    status: "READY"
 
 # NUMBERING RULES
 numbering:
@@ -259,302 +285,60 @@ research_artifacts:
 # ═══════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "epic-0.6-plugin-coordination-2026-01-27"
-  status: "COMPLETE"
-  started_at: "2026-01-27T14:00:00+07:00"
-  completed_at: "2026-01-27T23:59:00+07:00"
-  coordinator: "ext-master-enhanced"
-  epic: "EPIC-0.6"
-  story: "COMPLETE"
+  id: "epic-uxui-03-bento-grid-2026-01-28"
+  status: "READY_FOR_EXECUTION"
+  started_at: null
+  coordinator: null
+  epic: "EPIC-UXUI-03-BENTO-GRID"
+  story: null
   team: "Team A + Team B"
-  story_status: "COMPLETE"
+  story_status: "READY"
   story_summary: |
-    EPIC-0.6 COMPLETE - All 12 stories implemented.
-    19 plugin coordination gaps resolved.
-    Phase 1A at 60% completion, ready for Phase 1B.
-  depends_on: "EPIC-ARCH-04-CC (CC-04 E2E complete)"
+    EPIC-UXUI-03 ready for execution. 6 stories planned:
+    - UXUI-03-01: Landing Page Bento Grid Layout
+    - UXUI-03-02: Responsive Breakpoint System
+    - UXUI-03-03: Card Component Variants
+    - UXUI-03-04: Animation & Micro-interactions
+    - UXUI-03-05: Mobile-First Grid Adaptation
+    - UXUI-03-06: Integration & E2E Validation
+  depends_on: "EPIC-UXUI-02 (COMPLETE)"
   blockers: "NONE"
 
 next_workflow:
-  id: "epic-0.6-sprint-execution"
+  id: "epic-uxui-03-story-execution"
   status: "READY"
-  epic: "EPIC-0.6"
+  epic: "EPIC-UXUI-03-BENTO-GRID"
   stories_ready:
-    - "0.6-01: Create PluginCoordinationContext (P0)"
-    - "0.6-04: Create PluginCapability interface (P0)"
-    - "0.6-05: Boot WebContainer on Terminal (P1)"
-    - "0.6-10: Graceful fallback for unsupported devices (P1)"
-    - "0.6-11: Replace hardcoded noteId (P2)"
-  
-epic_0_6:
-  epic_id: "EPIC-0.6"
-  name: "Plugin Coordination Layer"
-  status: "COMPLETE"
-  priority: "P0-BLOCKER"
-  progress: 100
-  stories_total: 12
-  stories_complete: 12
-  stories_blocked: 0
-  completed: "2026-01-27"
-  source: "EPIC-0.5 Retrospective - 19 coordination gaps RESOLVED"
-  artifacts:
-    retrospective: "_bmad-output/retrospectives/EPIC-0.5-RETROSPECTIVE-2026-01-27.md"
-    architecture: "_bmad-output/planning-artifacts/architecture.md (Section 3.9)"
-    epics: "_bmad-output/planning-artifacts/epics.md (EPIC-0.6 section)"
+    - "UXUI-03-01: Landing Page Bento Grid Layout (Team A)"
+    - "UXUI-03-02: Responsive Breakpoint System (Team B)"
+    - "UXUI-03-03: Card Component Variants (Team A)"
+    - "UXUI-03-04: Animation & Micro-interactions (Team B)"
+    - "UXUI-03-05: Mobile-First Grid Adaptation (Team A)"
+    - "UXUI-03-06: Integration & E2E Validation (Team A+B)"
 
-epic_arch_04:
-  epic_id: "EPIC-ARCH-04"
-  name: "Complete Architecture Migration & FSA Integration"
-  status: "READY_FOR_SPRINT_PLANNING"
+epic_uxui_03:
+  epic_id: "EPIC-UXUI-03-BENTO-GRID"
+  name: "Landing Page Bento Grid System"
+  status: "READY_FOR_EXECUTION"
   priority: "P0"
   progress: 0
   stories_total: 6
   stories_ready_for_dev: 6
-  critical_story: "ARCH-04-01"
+  critical_story: "UXUI-03-01"
   artifacts:
-    epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md"
-    handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
+    epic: "_bmad-output/planning-artifacts/epics/EPIC-UXUI-03-bento-grid-2026-01-28.md"
+    handoff: "_bmad-output/handoffs/2026-01-28/EPIC-UXUI-03-SPRINT-HANDOFF-2026-01-28.md"
   
-  # TypeScript fixes completed this session
-  session_fixes:
-    - id: "TS-FIX-01"
-      description: "Add FileChangeCallback export to sync-result-types.ts"
-      status: "COMPLETED"
-    - id: "TS-FIX-02"
-      description: "Add video modality to buildRequestPayload"
-      status: "COMPLETED"
-    - id: "TS-FIX-03"
-      description: "Fix dexieDB → db ESM import"
-      status: "COMPLETED"
-    - id: "TS-FIX-04"
-      description: "Fix require() → ES imports for INITIAL_PROVIDERS"
-      status: "COMPLETED"
-    - id: "TS-FIX-05"
-      description: "Add @ts-expect-error for TanStack server.handlers"
-      status: "COMPLETED"
-    - id: "TS-FIX-06"
-      description: "Fix implicit any types in schema-migrations.ts"
-      status: "COMPLETED"
-    - id: "BUILD-FIX-01"
-      description: "Fix Vercel SSR build errors (recharts, mermaid, blocknote exports)"
-      status: "COMPLETED"
-  
-  completed_stories:
-    - id: "PS-01"
-      name: "Split useWorkspaceFileSystem God Store"
-      completed_at: "2026-01-14T21:30:00+07:00"
-      result: "571 lines → 119 lines orchestrator + 3 focused slices"
-    - id: "TS-CLEAN"
-      name: "TypeScript Zero Errors"
-      completed_at: "2026-01-15T11:00:00+07:00"
-      result: "19 errors → 0 errors, app runs successfully"
-    - id: "FSA-ADAPTER"
-      name: "Create FSAStorageAdapter"
-      completed_at: "2026-01-15T11:30:00+07:00"
-      result: "New adapter with watch() + SHA-256 hashing"
-      files:
-        - "src/infrastructure/filesystem/fsa-storage-adapter.ts"
-        - "src/infrastructure/filesystem/index.ts"
-        - "src/infrastructure/sync/core/sync-result-types.ts"
-    - id: "PRV-WIRING"
-      name: "Wire All Providers with TanStack AI SDK"
-      completed_at: "2026-01-14T23:00:00+07:00"
-      result: "Groq, Mistral, chutes.ai adapters created + Gemini 3.0 models + video/audio support"
-      status: "REVIEW"
-    - id: "BYOK-01"
-      name: "Split Provider Credentials God Slice"
-      completed_at: "2026-01-14T23:30:00+07:00"
-      result: "396 lines → 48 lines orchestrator + vault-slice (134) + crud-slice (397)"
-      team: "Team A"
-    - id: "ARC-D03"
-      name: "Rename bindings → workspaceBindings"
-      completed_at: "2026-01-19T16:00:00+07:00"
-      result: "25 files updated: domain entity, dexie schema, stores, components, routes. TypeScript: 0 errors"
-      team: "Team B"
-      adr_reference: "ADR-033 Decision D4"
-      files_modified:
-        - "src/domain/entities/project.ts"
-        - "src/infrastructure/persistence/dexie-db-core-types.ts"
-        - "src/infrastructure/persistence/stores/project/project-types.ts"
-        - "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
-        - "src/infrastructure/persistence/stores/project/project-bindings-slice.ts"
-        - "src/infrastructure/persistence/stores/project/migrate-bindings.ts"
-        - "src/domain/entities/__tests__/project.test.ts"
-        - "src/lib/settings/settings-serializer.ts"
-        - "src/lib/settings/settings-importer.ts"
-        - "src/lib/workspace/project-store.ts"
-        - "src/lib/workspace/browser-mode.ts"
-        - "src/lib/workspace/hooks/useWorkspaceActions.ts"
-        - "src/lib/workspace/ProjectContext.tsx"
-        - "src/lib/workspace/temp-project.ts"
-        - "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
-        - "src/presentation/components/hub/useWorkspaceBindingState.ts"
-        - "src/presentation/components/hub/ProjectCard.tsx"
-        - "src/presentation/components/hub/useDashboardMetrics.ts"
-        - "src/presentation/components/hub/ProjectPickerDialog.tsx"
-        - "src/presentation/components/hub/HubHomePage.tsx"
-        - "src/presentation/components/project/ProjectsPage.tsx"
-        - "src/infrastructure/persistence/stores/project/useWorkspaceProjects.ts"
-        - "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
-        - "src/routes/notes.lazy.tsx"
-        - "src/routes/debug.tsx"
-        - "src/lib/workspace/workspace-access-helper.tsx"
-    - id: "ARC-E01"
-      name: "Delete legacy lib/workspace/project-store.ts"
-      completed_at: "2026-01-19T18:00:00+07:00"
-      result: "16 files migrated, legacy file deleted, facade integrated into canonical index.ts. Build: SUCCESS (12.61s)"
-      team: "Team B"
-      adr_reference: "ADR-033 Clean Architecture - Single Source of Truth"
-      files_modified:
-        - "src/infrastructure/persistence/stores/project/index.ts (facade integrated)"
-        - "src/routes/ide.$projectId.tsx"
-        - "src/routes/notes.$projectId.lazy.tsx"
-        - "src/routes/study.$projectId.lazy.tsx"
-        - "src/routes/workspace/$projectId.tsx"
-        - "src/routes/knowledge.$projectId.lazy.tsx"
-        - "src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts"
-        - "src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts"
-        - "src/infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts"
-        - "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
-        - "src/lib/workspace/browser-mode.ts"
-        - "src/lib/workspace/temp-project.ts"
-        - "src/lib/workspace/hooks/useWorkspaceActions.ts"
-        - "src/lib/workspace/hooks/useWorkspaceState.ts"
-        - "src/lib/workspace/workspace-types.ts"
-        - "src/lib/workspace/index.ts (barrel re-export)"
-        - "src/lib/workspace/project-store.ts (DELETED)"
-    - id: "ARC-E02"
-      name: "Delete legacy lib/workspace/file-sync-status-store.ts"
-      completed_at: "2026-01-19T18:30:00+07:00"
-      result: "2 files migrated, facade file deleted, subdirectory index.ts used for imports. Build: SUCCESS (4m 15s)"
-      team: "Team B"
-      adr_reference: "ADR-033 Clean Architecture - Single Source of Truth"
-      files_modified:
-        - "src/lib/workspace/index.ts (barrel re-export)"
-        - "src/presentation/components/ui/activity-indicators/SyncStatusPanel.tsx (import path)"
-        - "src/lib/workspace/file-sync-status-store.ts (DELETED - was a facade)"
-    - id: "ARC-E03"
-      name: "Delete lib/state/ directory (deprecated imports)"
-      completed_at: "2026-01-19T19:00:00+07:00"
-      result: "Directory does not exist - already deleted or never created. No imports found."
-      team: "Team B"
-      adr_reference: "ADR-033 Clean Architecture"
-      files_modified: []
-    - id: "ARC-E04"
-      name: "Consolidate file tree implementations"
-      completed_at: "2026-01-19T20:00:00+07:00"
-      result: "Analysis: No duplicate implementations - each tree type serves different purpose. Fixed broken file-sync import in stores/index.ts"
-      team: "Team B"
-      adr_reference: "ADR-033 Clean Architecture - Layer Separation"
-      files_modified:
-        - "src/infrastructure/persistence/stores/index.ts (fixed import path)"
-        
-parallel_workflows:
-  - id: "cc-01-project-space-2026-01-15"
-    status: "ACTIVE"
-    epic: "EPIC-CC-01"
-    story: "PS-02-A"
-    team: "Team B"
-    story_summary: "Platform Detection & Storage Routing"
-    started_at: "2026-01-15T12:00:00+07:00"
+  files_owned:
+    - "src/routes/index.tsx"
+    - "src/presentation/components/landing/"
+    - "src/styles/bento-grid.css"
 
 # ═════════════════════════════════════════════════════════════════════════
 # ACTIVE EPICS (Max 4)
 # ═══════════════════════════════════════════════════════════════════════
 
 active_epics:
-  # ═════════════════════════════════════════════════════════════════════════
-  # CORRECT-COURSE EPICS (ARCHITECTURAL REMEDIATION)
-  # ═════════════════════════════════════════════════════════════════════════
-  
-  - id: "EPIC-CC-01"
-    name: "Project Space Foundation"
-    status: "COMPLETE"
-    progress: 100  # All 6 stories complete
-    stories_total: 6
-    stories_done: 6
-    priority: "P0"
-    team: "Team B"
-    blocked_by: null
-    adr: "ADR-032"
-    completed_at: "2026-01-18T07:00:00+07:00"
-    actual_duration_hours: 2.75
-    estimated_duration_hours: 22
-    user_reported_issues:
-      - id: "URI-01"
-        description: "Project IDs not persistent - need to open folder every time"
-        severity: "CRITICAL"
-        target_story: "PS-04"
-        status: "RESOLVED"
-      - id: "URI-02"
-        description: "Folders in folders not displayed - flat structure only"
-        severity: "CRITICAL"
-        target_story: "PS-05"
-        status: "UNBLOCKED"
-      - id: "URI-03"
-        description: "External file changes not detected - watch() disconnected"
-        severity: "HIGH"
-        target_story: "PS-02-B"
-        status: "BLOCKED"
-      - id: "URI-04"
-        description: "No RAG indexing for semantic search"
-        severity: "MEDIUM"
-        target_story: "PS-06"
-        status: "BLOCKED"
-
-  - id: "EPIC-CC-02"
-    name: "BYOK Cleanup"
-    status: "COMPLETED"
-    progress: 100
-    stories_total: 4
-    stories_done: 4
-    priority: "P0"
-    team: "Team A"
-    blocked_by: null
-    parallel_with: "EPIC-CC-01"
-    completed_at: "2026-01-15T12:00:00+07:00"
-    stories:
-      - id: "BYOK-01"
-        name: "Split Provider Credentials God Slice"
-        status: "COMPLETED"
-        completed_at: "2026-01-13T11:00:00+07:00"
-        result: "396 lines → 48 lines orchestrator + vault-slice (134) + crud-slice (397)"
-      - id: "BYOK-02"
-        name: "Add Zod Validation Schemas"
-        status: "COMPLETED"
-        completed_at: "2026-01-13T11:23:00+07:00"
-        result: "schemas.ts created + crud-slice updated with Zod validation"
-      - id: "BYOK-03"
-        name: "Archive Legacy Migration Code"
-        status: "COMPLETED"
-        completed_at: "2026-01-13T11:31:00+07:00"
-        result: "Archive created at _bmad-ext/.archive/providers/api-key-migration-2026-01-13/"
-      - id: "BYOK-04"
-        name: "Add projectId to Tool Execution Logs"
-        status: "COMPLETED"
-        completed_at: "2026-01-15T11:38:00+07:00"
-        result: "Added projectId field to ToolExecutionLogRecord, updated ToolExecutionLogger"
-
-  - id: "EPIC-CC-03"
-    name: "Chat Flow Stabilization"
-    status: "BLOCKED"
-    progress: 0
-    stories_total: 5
-    stories_done: 0
-    priority: "P1"
-    team: "Team A"
-    blocked_by: "EPIC-CC-01"
-
-  - id: "EPIC-CC-04"
-    name: "Notes Refactoring"
-    status: "BLOCKED"
-    progress: 0
-    stories_total: 5
-    stories_done: 0
-    priority: "P1"
-    team: "Team B"
-    blocked_by: "EPIC-CC-01"
-
   # ═════════════════════════════════════════════════════════════════════════
   # UX/UI DESIGN SYSTEM EPICS
   # ═════════════════════════════════════════════════════════════════════════
@@ -570,7 +354,6 @@ active_epics:
     stories_total: 8
     stories_completed: 8
     blocked_by: null
-    blocks: "EPIC-UXUI-02"
     files:
       - "_bmad-output/planning-artifacts/epics/EPIC-UXUI-01-design-system-foundation.md"
     safe_zones:
@@ -610,85 +393,65 @@ active_epics:
       - "src/infrastructure/context/project-context.tsx"
       - "src/infrastructure/filesystem/*"
       - "src/domain/*"
-    stories:
-      - "UXUI-02-00a: Hub Component Cleanup (1h, Team A)"
-      - "UXUI-02-00b: Hub Route Consolidation (1h, Team A)"
-      - "UXUI-02-01: Create WorkspaceLayout Shell (3-4h, Team B)"
-      - "UXUI-02-02: Implement ActivityBar Component (3-4h, Team B)"
-      - "UXUI-02-02b: Plugin Docker Component (3-4h, Team B)"
-      - "UXUI-02-03: Integrate GlobalSidebar (2-3h, Team B)"
-      - "UXUI-02-04: Plugin Drag-to-Panel (2-3h, Team B)"
-      - "UXUI-02-04b: Single Instance Constraint (2-3h, Team B)"
-      - "UXUI-02-05: Wire ActivityBar + Docker (2-3h, Team B)"
-      - "UXUI-02-06: Implement StatusBar (2-3h, Team B)"
-      - "UXUI-02-07: Apply Design Tokens (3-4h, Team B)"
-      - "UXUI-02-08: Archive Bento Grid (1-2h, Team A)"
+
+  - id: EPIC-UXUI-03
+    name: "Landing Page Bento Grid System"
+    status: READY_FOR_EXECUTION
+    priority: P0
+    owner: "Team A + Team B"
+    created: "2026-01-28"
+    estimated_effort: "14-19h"
+    stories_total: 6
+    stories_completed: 0
+    blocked_by: null
+    files:
+      - "_bmad-output/planning-artifacts/epics/EPIC-UXUI-03-bento-grid-2026-01-28.md"
+    safe_zones:
+      - "src/routes/index.tsx"
+      - "src/presentation/components/landing/"
+      - "src/styles/bento-grid.css"
 
 # ═════════════════════════════════════════════════════════════════════════
 # UX WORK QUEUE
 # ═════════════════════════════════════════════════════════════════════════
 
 active_work:
-  epic_id: null
-  epic_title: null
-  phase: "COMPLETE"
+  epic_id: "EPIC-UXUI-03-BENTO-GRID"
+  epic_title: "Landing Page Bento Grid System"
+  phase: "READY_FOR_EXECUTION"
   
   team_a:
     current_story: null
-    status: "IDLE"
+    status: "READY"
     agent: null
     
   team_b:
     current_story: null
-    status: "IDLE"
+    status: "READY"
     agent: null
     
   execution_mode: null
   started: null
-  completed: "2026-01-28"
+  completed: null
 
 ux_work_queue:
-  current_epic: null
+  current_epic: "EPIC-UXUI-03-BENTO-GRID"
   current_story: null
   team: null
-  phase: "COMPLETE"
+  phase: "READY_FOR_EXECUTION"
   next_action: |
-    EPIC-UXUI-02 COMPLETE - All 12 stories finished.
-    Bento Grid system archived to _bmad-ext/.archive/bento-grid-2026-01-28/
-    Next: EPIC-UXUI-03 or new sprint planning
-  audit_artifacts:
-    - "_bmad-output/analysis/hub-route-trash-audit-2026-01-28.md"
-    - "_bmad-output/analysis/lazy-route-audit-2026-01-28.md"
+    EPIC-UXUI-03 ready for execution.
+    Begin with UXUI-03-01 (Team A) and UXUI-03-02 (Team B) in parallel.
   completed_epics:
     - "EPIC-UXUI-01: Design System Foundation (8/8 stories = 100%)"
     - "EPIC-UXUI-02: Main Layout Overhaul (12/12 stories = 100%)"
-  completed_stories:
-    - "UXUI-01-01: Color Tokens (2026-01-27)"
-    - "UXUI-01-02: Typography Tokens (2026-01-27)"
-    - "UXUI-01-03: Spacing & Border Tokens (2026-01-28)"
-    - "UXUI-01-04: Animation Tokens (2026-01-28)"
-    - "UXUI-01-05: Button Components (2026-01-28)"
-    - "UXUI-01-06: Input Components (2026-01-28)"
-    - "UXUI-01-07: Dialog/Modal Components (2026-01-28)"
-    - "UXUI-01-08: Remaining Primitives (2026-01-28)"
-    - "UXUI-02-00a: Hub Component Cleanup (2026-01-28)"
-    - "UXUI-02-00b: Hub Route Consolidation (2026-01-28)"
-    - "UXUI-02-01: Create WorkspaceLayout Shell (2026-01-28)"
-    - "UXUI-02-02: Implement ActivityBar Component (2026-01-28)"
-    - "UXUI-02-02b: Plugin Docker Component (2026-01-28)"
-    - "UXUI-02-03: Integrate GlobalSidebar (2026-01-28)"
-    - "UXUI-02-04: Plugin Drag-to-Panel (2026-01-28)"
-    - "UXUI-02-04b: Single Instance Constraint (2026-01-28)"
-    - "UXUI-02-05: Wire ActivityBar + Docker (2026-01-28)"
-    - "UXUI-02-06: Implement StatusBar (2026-01-28)"
-    - "UXUI-02-07: Apply Design Tokens (2026-01-28)"
-    - "UXUI-02-08: Archive Bento Grid (2026-01-28)"
-  progress: "EPIC-UXUI-02 COMPLETE (12/12 = 100%)"
+  progress: "EPIC-UXUI-03 READY (0/6 = 0%)"
   goal: |
-    Replace Bento Grid with 6-column CSS Grid layout per UX Spec v3.0.0.
-    Light theme toggle MUST work after completion.
-    All components use design tokens (no hardcoded zinc-*).
-    Team A cleanup work removes 13 orphaned components and consolidates hub route.
+    Implement landing page Bento Grid layout per UX Spec v3.0.0.
+    6-column CSS Grid with responsive breakpoints.
+    Card component variants with 8-bit styling.
+    Animation and micro-interactions.
+    Mobile-first grid adaptation.
 
 # ═════════════════════════════════════════════════════════════════════════
 # ARCHITECTURE DECISIONS (Quick Reference)
@@ -714,173 +477,19 @@ architecture:
 # NEXT ACTIONS (Immediate)
 # ═══════════════════════════════════════════════════════════════════════
 
-  # ═════════════════════════════════════════════════════════════════════════
-  # PUT ASIDE RESEARCH ARTIFACTS (Memorized for Later Resolution)
-  # ═════════════════════════════════════════════════════════════════════════
-  
-  put_aside_research:
-    - id: "RES-ARCH-2026-01-17"
-      decision_outcomes:
-        storage_architecture:
-          decision: "PROCEED with FSA + DexieDB Dual Storage"
-          confidence: "High"
-          evidence: "Chrome DevRel official recommendation"
-          rejection_reasons:
-            - "DexieDB-only unified storage REJECTED"
-            - "3x-4x slower than FSA/OPFS"
-            - "2GB quota insufficient for IDE workloads"
-            - "Breaks local file system integration"
-        performance_optimization:
-          decision: "Implement file tree snapshot index (P0)"
-          confidence: "High"
-          evidence: "OPFS 3x-4x faster than IndexedDB"
-          benefit: "Enables instant project switching"
-        sandboxing_alternatives:
-          decision: "Documented SWOT for 7 open-source options"
-          confidence: "Medium"
-          evidence: "Feature comparison matrix created"
-          when_to_use: "When WebContainer limitations encountered"
-      deferred_until: "Deep-scanning system architecture remediation phase"
-      governance_reference: "ADR-033 - Section on Storage Strategy"
-  
-  # ═════════════════════════════════════════════════════════════════════════
-  # NEXT ACTIONS (Immediate)
-  # ═══════════════════════════════════════════════════════════════════════
-  
-  next_actions:
+next_actions:
   team_a:
-    current_story: "BYOK-02"
-    task: "Add Zod validation schemas for credentials"
-    files:
-      - "src/infrastructure/persistence/stores/providers/credentials/schemas.ts"
-      - "src/infrastructure/persistence/stores/providers/credentials/vault-slice.ts"
-
+    - "Execute UXUI-03-01: Landing Page Bento Grid Layout"
+    - "Execute UXUI-03-03: Card Component Variants"
+    - "Execute UXUI-03-05: Mobile-First Grid Adaptation"
+    
   team_b:
-    current_sprint: "ADR-034-INFECTION-REMEDIATION"
-    status: "WAITING_FOR_USER_CONFIRMATION"
-
-    # Priority order based on user-reported issues
-    priority_1_stories:
-      - id: "PS-02-A"
-        task: "Complete platform detection and storage routing"
-        files:
-          - "src/infrastructure/filesystem/platform-detection.ts (NEW)"
-          - "src/infrastructure/filesystem/storage-adapter-factory.ts (NEW)"
-      - id: "PS-04"
-        task: "Implement handle persistence architecture"
-        user_issue: "URI-01 - Projects don't persist on refresh"
-        files:
-          - "src/infrastructure/filesystem/handle-persistence.ts (NEW)"
-          - "src/infrastructure/filesystem/handle-types.ts (NEW)"
-          - "src/infrastructure/persistence/stores/project/project-handler-service.ts (NEW)"
-
-    priority_2_stories:
-      - id: "PS-02-B"
-        task: "Connect watch() to UI for hot reactive sync"
-        user_issue: "URI-03 - External file changes not detected"
-        files:
-          - "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts (NEW)"
-          - "src/presentation/components/workspace/sync-status-indicator.tsx (NEW)"
-      - id: "PS-05"
-        task: "Implement VFS tree structure for nested folders"
-        user_issue: "URI-02 - Folders in folders not displayed"
-        files:
-          - "src/domain/storage/IVirtualFileSystem.ts (NEW)"
-          - "src/infrastructure/filesystem/vfs-builder.ts (NEW)"
-          - "src/infrastructure/filesystem/file-cache.ts (NEW)"
-
-    priority_3_stories:
-      - id: "PS-06"
-        task: "Implement RAG index infrastructure"
-        user_issue: "URI-04 - No semantic search"
-        files:
-          - "src/domain/services/rag/chunking-service.ts (NEW)"
-          - "src/domain/services/rag/embedding-service.ts (NEW)"
-          - "src/domain/services/rag/index-service.ts (NEW)"
-
-# ═══════════════════════════════════════════════════════════════════════
-# USER-REPORTED ISSUES TRACKING
-# ═══════════════════════════════════════════════════════════════════════
-
-user_reported_issues:
-  - id: "URI-01"
-    description: "Project IDs not persistent - need to open folder every time"
-    severity: "CRITICAL"
-    reported_by: "User (via PROMPT.md)"
-    target_epic: "EPIC-CC-01"
-    target_story: "PS-04"
-    status: "READY"
-    workaround: "None - must re-open folder each session"
+    - "Execute UXUI-03-02: Responsive Breakpoint System"
+    - "Execute UXUI-03-04: Animation & Micro-interactions"
     
-  - id: "URI-02"
-    description: "Folders in folders not displayed - flat structure only"
-    severity: "CRITICAL"
-    reported_by: "User (via PROMPT.md)"
-    target_epic: "EPIC-CC-01"
-    target_story: "PS-05"
-    status: "BLOCKED_BY_PS-04"
-    workaround: "Limited folder navigation"
-    
-  - id: "URI-03"
-    description: "External file changes not detected - watch() disconnected"
-    severity: "HIGH"
-    reported_by: "User (via PROMPT.md)"
-    target_epic: "EPIC-CC-01"
-    target_story: "PS-02-B"
-    status: "BLOCKED_BY_PS-02-A"
-    workaround: "Manual refresh required"
-    
-  - id: "URI-04"
-    description: "No RAG indexing for semantic search"
-    severity: "MEDIUM"
-    reported_by: "User (via PROMPT.md)"
-    target_epic: "EPIC-CC-01"
-    target_story: "PS-06"
-    status: "BLOCKED_BY_PS-05"
-    workaround: "Use keyword search only"
+  both_teams:
+    - "Execute UXUI-03-06: Integration & E2E Validation"
 
 # ═══════════════════════════════════════════════════════════════════════
-# CORRECT-COURSE WORKFLOW STATUS - TRACK 3 RESOLUTION
+# END OF FILE
 # ═══════════════════════════════════════════════════════════════════════
-
-correct_course_workflow:
-  track_3_epic_cc_11:
-    name: "God Store Decomposition"
-    status: "COMPLETE"
-    completed_at: "2026-01-22T08:45:00+07:00"
-    assignee: "Team B (store-refactorer agent)"
-    effort: "2 hours"
-    resolution_artifact: "_bmad-output/correct-course-resolution-track3-epic-cc-11-2026-01-22.md"
-
-    stories_completed:
-      - id: "CC-11-01"
-        title: "Extract Chat Persistence Slice"
-        status: "COMPLETED"
-        artifact: "_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-01.md"
-
-      - id: "CC-11-02"
-        title: "Verify Context Window Slice"
-        status: "COMPLETED"
-        artifact: "_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-02.md"
-
-      - id: "CC-11-03"
-        title: "Update Main Store (Compose)"
-        status: "COMPLETED"
-        artifact: "_bmad-output/planning-artifacts/stories/EPIC-CC-11/story-cc-11-03.md"
-
-    metrics:
-      lines_extracted: 300
-      lines_removed_inline: 257
-      main_store_final: 200
-      reduction_percentage: 55
-      ts_errors: 0
-      regressions: 0
-
-    governance_compliance:
-      - "ADR-033: God Store pattern eliminated ✅"
-      - "ADR-014: Slice pattern implemented (S-014b) ✅"
-      - "ADR-035: Store in canonical infrastructure path ✅"
-      - "Clean Architecture: Main file composes, slices implement ✅"
-
-  workflow_status: "COMPLETE"
-  completed_at: "2026-01-22T14:45:00+07:00"

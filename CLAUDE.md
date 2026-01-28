@@ -4,6 +4,15 @@
 
 ---
 
+---
+# **THE EXTREME AND ABSOLUTE CONSTITUTIONS WHEN IT COMES TO CREATE/CONSUME ANY DOCUMENTS AND/OR ARTIFACTS**
+
+- all of the `dot md` files must all come with both in naming and the frontmatter the exact DATE abd TIME stamps (epic-level and story-level artifacts and documents must have time-stamps)
+
+- do not consume (without real investigation of code) any below-epic levels that are more than 2-hour stale (validate them and if they are true , refresh with new stamps) 
+
+- the same goes for any that lacks validation, nor broken, untrackable ID, no references to any status files, nor the higher-up controlled documents
+
 **DO NOT RUN FULL BUILD:** UNLESS  it is requested by the user, because the codebase is large and it is resource consuming
 
 ## 3-Step Validation Framework (NON-NEGOTIABLE)

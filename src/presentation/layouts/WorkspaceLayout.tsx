@@ -16,10 +16,24 @@
  * - Columns: 48px 48px minmax(200px, 320px) 1fr minmax(250px, 400px) 48px
  * - Rows: 1fr 24px
  *
- * @epic EPIC-UXUI-01
- * @story UXUI-02-01
+ * **ARIA LANDMARKS**
+ *
+ * This component implements semantic HTML with ARIA landmarks for accessibility:
+ * - `<nav aria-label="Main navigation">` - Global sidebar navigation
+ * - `<main role="main" aria-label="Project workspace">` - Main content area
+ * - `<aside aria-label="Plugin sidebar">` - Plugin panels (left and right)
+ * - `<footer role="contentinfo" aria-label="Status bar">` - Status bar
+ *
+ * Screen reader users can navigate between these landmarks using shortcuts:
+ * - VoiceOver: VO+U (Landmarks rotor)
+ * - NVDA: D (next landmark), Shift+D (previous landmark)
+ * - JAWS: R (next region), Shift+R (previous region)
+ *
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-08
  * @team Team B
  * @created 2026-01-28
+ * @updated 2026-01-28
  */
 
 import type { ReactNode } from 'react';
@@ -74,11 +88,17 @@ export interface WorkspaceLayoutProps {
  * - 8-bit design compliance (sharp corners, pixel borders)
  * - Responsive breakpoints for tablet and mobile
  * - All slots are optional - renders empty if not provided
+ * - ARIA landmarks for screen reader navigation
  *
  * 8-Bit Design:
  * - Sharp corners (border-radius: 0)
  * - 2px solid borders using CSS variables
  * - No glassmorphism or transparency
+ *
+ * Accessibility:
+ * - Semantic HTML elements (nav, main, aside, footer)
+ * - ARIA labels for all landmark regions
+ * - Screen reader landmark navigation support
  */
 export function WorkspaceLayout({
   globalSidebar,
@@ -92,10 +112,14 @@ export function WorkspaceLayout({
   return (
     <div className="workspace-layout">
       {/* Global Sidebar - 48px fixed width */}
+      {/* ARIA Landmark: Navigation region for main navigation */}
       {globalSidebar && (
-        <div className="workspace-layout__global-sidebar">
+        <nav
+          className="workspace-layout__global-sidebar"
+          aria-label="Main navigation"
+        >
           {globalSidebar}
-        </div>
+        </nav>
       )}
 
       {/* Activity Bar Left - 48px fixed width */}
@@ -106,24 +130,37 @@ export function WorkspaceLayout({
       )}
 
       {/* Plugin Left Panel - 200-320px flexible */}
+      {/* ARIA Landmark: Complementary region for plugin sidebar */}
       {pluginLeft && (
-        <div className="workspace-layout__plugin-left">
+        <aside
+          className="workspace-layout__plugin-left"
+          aria-label="Plugin sidebar"
+        >
           {pluginLeft}
-        </div>
+        </aside>
       )}
 
       {/* Main Content Area - flexible 1fr */}
+      {/* ARIA Landmark: Main region for project workspace content */}
       {mainContent && (
-        <div className="workspace-layout__main-content">
+        <main
+          className="workspace-layout__main-content"
+          role="main"
+          aria-label="Project workspace"
+        >
           {mainContent}
-        </div>
+        </main>
       )}
 
       {/* Plugin Right Panel - 250-400px flexible */}
+      {/* ARIA Landmark: Complementary region for plugin sidebar */}
       {pluginRight && (
-        <div className="workspace-layout__plugin-right">
+        <aside
+          className="workspace-layout__plugin-right"
+          aria-label="Plugin sidebar"
+        >
           {pluginRight}
-        </div>
+        </aside>
       )}
 
       {/* Activity Bar Right - 48px fixed width */}
@@ -134,10 +171,15 @@ export function WorkspaceLayout({
       )}
 
       {/* Status Bar - 24px fixed height at bottom */}
+      {/* ARIA Landmark: Contentinfo region for status information */}
       {statusBar && (
-        <div className="workspace-layout__status-bar">
+        <footer
+          className="workspace-layout__status-bar"
+          role="contentinfo"
+          aria-label="Status bar"
+        >
           {statusBar}
-        </div>
+        </footer>
       )}
     </div>
   );

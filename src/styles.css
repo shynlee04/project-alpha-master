@@ -8,6 +8,7 @@
 
 /* Layout Component Styles */
 @import "./presentation/components/layout/ActivityBar.css";
+@import "./presentation/components/layout/ActivityBarTop.css";
 @import "./presentation/components/layout/PluginDocker.css";
 @import "./presentation/components/layout/StatusBar.css";
 

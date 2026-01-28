@@ -42,12 +42,38 @@ Via-Gent uses a **plugin-centric architecture** where all functionality is deliv
 
 | Plugin ID | Name | Description | Always Loaded | Default Position |
 |-----------|------|-------------|---------------|------------------|
-| `file-tree-project-management` | Project Files | File explorer, project switcher, CRUD | **Yes** | Left panel |
-| `notes` | Notes Editor | Markdown/BlockNote document editing | **Yes** | Main content |
-| `agent-chat-cascade` | AI Chat | Thread management, agent orchestration | **Yes** | Right panel |
+| `file-tree-project-management` | Project Files | File explorer, project switcher, CRUD | **Yes** | **LEFT panel** (vertical activity bar) |
+| `notes` | Notes Editor | Markdown/BlockNote document editing | **Yes** | **TOP bar (Main Content)** - primary editing area |
+| `agent-chat-cascade` | AI Chat | Thread management, agent orchestration | **Yes** | **RIGHT panel** (vertical activity bar) |
 | `monaco-editor` | Code Editor | Full Monaco IDE experience | No | Main content |
 | `preview` | Live Preview | WebContainer preview (POST-MVP) | No | Main content |
 | `terminal` | Terminal | Command line interface (POST-MVP) | No | Bottom panel |
+
+### Default Plugin Position Specification
+
+**EXPLICIT DEFAULTS** - These positions are used on first load and reset:
+
+| Plugin | Activity Bar | Rationale |
+|--------|--------------|-----------|
+| **FileTree** | LEFT | Traditional file explorer position, vertical scrolling |
+| **Notes** | TOP (Main) | Primary content area for document editing |
+| **Chat** | RIGHT | Companion pane for AI interaction, vertical scrolling |
+
+```typescript
+const DEFAULT_PLUGIN_POSITIONS: Record<PluginId, ActivityBar> = {
+  'file-tree-project-management': 'left',
+  'notes': 'top',                    // Main content area
+  'agent-chat-cascade': 'right',
+  'monaco-editor': 'top',            // Main content when activated
+  'preview': 'top',                  // Main content when activated
+  'terminal': 'bottom',              // POST-MVP
+};
+```
+
+**Position Modification:**
+- Users CAN move plugins between bars via drag-drop
+- Modified positions persist to localStorage
+- "Reset to Defaults" restores the above configuration
 
 ### TypeScript Plugin Interface
 

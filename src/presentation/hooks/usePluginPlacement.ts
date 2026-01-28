@@ -31,10 +31,15 @@ import type { PluginId } from '@/domain/types/plugin-types';
  * @remarks
  * Defines which panel a plugin is currently placed in:
  * - 'left': Plugin is in the left docker panel
+ * - 'main': Plugin is in the main content area (Activity Bar TOP)
  * - 'right': Plugin is in the right docker panel
  * - null: Plugin is not placed in any panel (closed/hidden)
+ *
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-02
+ * @gap GAP-04, GAP-14
  */
-export type PanelPosition = 'left' | 'right' | null;
+export type PanelPosition = 'left' | 'main' | 'right' | null;
 
 /**
  * Plugin Placement Entry
@@ -42,12 +47,15 @@ export type PanelPosition = 'left' | 'right' | null;
  * @remarks
  * Represents the initial placement of a plugin.
  * Used for initializing the hook with default placements.
+ *
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-02
  */
 export interface PluginPlacementEntry {
   /** Plugin identifier */
   pluginId: PluginId;
   /** Panel the plugin is placed in */
-  panel: 'left' | 'right';
+  panel: 'left' | 'main' | 'right';
 }
 
 /**
@@ -72,7 +80,7 @@ export interface UsePluginPlacementReturn {
    * Move a plugin to a target panel (implements single instance rule)
    *
    * @param pluginId - Plugin to move
-   * @param targetPanel - Target panel ('left' | 'right')
+   * @param targetPanel - Target panel ('left' | 'main' | 'right')
    * @returns boolean - true if moved, false if already in target panel
    *
    * @remarks
@@ -80,7 +88,7 @@ export interface UsePluginPlacementReturn {
    * - If plugin is in other panel: removes from old, adds to new, returns true
    * - If plugin is not placed: adds to target panel, returns true
    */
-  movePluginToPanel: (pluginId: PluginId, targetPanel: 'left' | 'right') => boolean;
+  movePluginToPanel: (pluginId: PluginId, targetPanel: 'left' | 'main' | 'right') => boolean;
 
   /**
    * Close a plugin (remove from any panel)
@@ -90,10 +98,10 @@ export interface UsePluginPlacementReturn {
 
   /**
    * Get all plugins currently in a specific panel
-   * @param panel - Panel to query ('left' | 'right')
+   * @param panel - Panel to query ('left' | 'main' | 'right')
    * @returns Array of plugin IDs in that panel
    */
-  getPluginsInPanel: (panel: 'left' | 'right') => PluginId[];
+  getPluginsInPanel: (panel: 'left' | 'main' | 'right') => PluginId[];
 
   /**
    * Check if a plugin is currently placed in any panel
@@ -191,7 +199,7 @@ export function usePluginPlacement(
    * - If plugin is not placed → add to target (return true)
    */
   const movePluginToPanel = useCallback(
-    (pluginId: PluginId, targetPanel: 'left' | 'right'): boolean => {
+    (pluginId: PluginId, targetPanel: 'left' | 'main' | 'right'): boolean => {
       const currentPanel = placements.get(pluginId);
 
       // Already in target panel - no-op
@@ -250,7 +258,7 @@ export function usePluginPlacement(
    * when placements haven't changed.
    */
   const getPluginsInPanel = useCallback(
-    (panel: 'left' | 'right'): PluginId[] => {
+    (panel: 'left' | 'main' | 'right'): PluginId[] => {
       const result: PluginId[] = [];
       placements.forEach((p, pluginId) => {
         if (p === panel) {

@@ -66,7 +66,7 @@ export function SkipLinks({ links = defaultSkipLinks }: SkipLinksProps) {
                         focus:fixed focus:top-2 focus:left-2 focus:z-[var(--z-alert)]
                         focus:px-4 focus:py-2
                         focus:bg-primary focus:text-primary-foreground
-                        focus:rounded focus:shadow-lg
+                        focus:rounded-none focus:shadow-[4px_4px_0_0_rgba(0,0,0,0.5)]
                         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring
                         font-medium text-sm
                     "

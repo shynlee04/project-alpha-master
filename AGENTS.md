@@ -1,8 +1,17 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.10.0 | **Updated:** 2026-01-27 | **Health:** 45% (CC Remediation Required)
+> **Version:** 2.11.0 | **Updated:** 2026-01-28 | **Health:** 50% (EPIC-UXUI-03 Ready)
 
 ---
+# **THE EXTREME AND ABSOLUTE CONSTITUTIONS WHEN IT COMES TO CREATE/CONSUME ANY DOCUMENTS AND/OR ARTIFACTS**
+
+- all of the `dot md` files must all come with both in naming and the frontmatter the exact DATE abd TIME stamps (epic-level and story-level artifacts and documents must have time-stamps) -> DO NOT MAKE UP THESE VALUES , YOU MUST RUN ACTUAL DATE AND TIME COMMANDS
+
+- do not consume (without real investigation of code) any below-epic levels that are more than 2-hour stale (validate them and if they are true , refresh with new stamps) 
+
+- the same goes for any that lacks validation, nor broken, untrackable ID, no references to any status files, nor the higher-up controlled documents
+
+- the reasons for the above is because this project is totally build by AI agents >> therefore a story completion can take only 20-30 mminutes. 
 
 **DO NOT RUN FULL BUILD:** UNLESS  it is requested by the user, because the codebase is large and it is resource consuming
 
@@ -101,21 +110,23 @@ grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | h
 
 ## 🚨 ACTIVE PARALLEL SPRINTS
 
-### Team A: P0 BLOCKER - EPIC-ARCH-04-CC (FSA Handle Lifecycle)
+### Team A+B: P0 ACTIVE - EPIC-UXUI-03-PLUGIN-LAYOUT
 
-**Status**: 95% (CC-04 E2E Pending)
+**Status**: 0% (Ready for Execution)
 
-| Story | Title | Status |
-|-------|-------|--------|
-| CC-01 | Add initialHandle Prop and FSA Restore Logic | IN_PROGRESS |
-| CC-02 | Wire PermissionOverlay with Persist and Reinit | BLOCKED by CC-01 |
-| CC-03 | Wire Route to Pass initialHandle | BLOCKED by CC-01 |
-| CC-04 | End-to-End Validation with Evidence | BLOCKED by CC-01,02,03 |
+| Story | Title | Status | Team | Effort |
+|-------|-------|--------|------|--------|
+| UXUI-03-01 | Landing Page Plugin-Centric Layout | READY | A | 3-4h |
+| UXUI-03-02 | Responsive Breakpoint System | READY | B | 2-3h |
+| UXUI-03-03 | Card Component Variants | READY | A | 2-3h |
+| UXUI-03-04 | Animation & Micro-interactions | READY | B | 2-3h |
+| UXUI-03-05 | Mobile-First Grid Adaptation | READY | A | 2-3h |
+| UXUI-03-06 | Integration & E2E Validation | READY | A+B | 2h |
 
-**Files Owned (DO NOT TOUCH from other teams)**:
-- `src/infrastructure/context/project-context.tsx`
-- `src/routes/$projectId.tsx`
-- `src/presentation/components/layout/PermissionOverlay.tsx`
+**Files Owned (Coordinate access)**:
+- `src/routes/index.tsx`
+- `src/presentation/components/landing/`
+- `src/styles/plugin-layout.css`
 
 ---
 
@@ -128,25 +139,6 @@ grep -r "StorageGateway\|FileEntry\|Project" src/infrastructure/ src/domain/ | h
 | CONS-01 | Remove remaining window.location.href | READY | 1h |
 | CONS-02 | Consolidate project creation deprecation | READY | 1.5h |
 | CONS-03 | Complete MonacoPlugin integration | READY | 2-3h |
-
----
-
-### Team A+B: P0 BLOCKER - EPIC-CC-AR02AR03 (Plugin System for Phase 1A)
-
-**Status**: READY_FOR_EXECUTION (After CC-04 Complete)
-
-| Story | Title | Status | Team | Effort |
-|-------|-------|--------|------|--------|
-| CC-AR-01 | Add All Missing i18n Translation Keys | READY | A | 2h |
-| CC-AR-02 | Wire platform-defaults.ts to Route | READY | A | 2-3h |
-| CC-AR-03 | Fix Store Hydration Race Condition | READY | B | 2-3h |
-| CC-AR-04 | Replace Drag-Drop with Toggle-Based Layout | READY | A | 4-6h |
-| CC-AR-05 | Replace Monaco POC with Real Monaco Editor | READY | B | 4-6h |
-| CC-AR-06 | Implement Preview Plugin (WebContainer) | READY | B | 4-6h |
-| CC-AR-07 | Archive Legacy/Duplicate Files | READY | A | 1h |
-| CC-AR-08 | Split PluginLayout.tsx | READY | B | 2-3h |
-
-**Remediates**: EPIC-ARCH-02 (70% true), EPIC-ARCH-03 (45% true)
 
 ---
 
@@ -289,10 +281,10 @@ src/stores/         → NEVER existed
 
 | Key | Value |
 |-----|-------|
-| **Current Phase** | Plugin System Remediation (Phase 1A) |
-| **P0 Blocker** | EPIC-CC-AR02AR03 (Plugin System Rework) |
-| **Active Epic** | EPIC-CC-AR02AR03 (0%) |
-| **Secondary Epic** | EPIC-ARCH-04-CC (95%) |
+| **Current Phase** | UX Specification Alignment (Phase 1B) |
+| **P0 Blocker** | None - ready for execution |
+| **Active Epic** | EPIC-UXUI-03-PLUGIN-LAYOUT (0%) |
+| **Secondary Epic** | None |
 | **Sprint File** | `sprint-status-2026-01-26.yaml` |
 | **Workflow File** | `workflow-status-2026-01-26.yaml` |
 | **ADR** | ADR-039 (Pending Approval) |
@@ -302,16 +294,11 @@ src/stores/         → NEVER existed
 | **UX Spec Sections** | 15 (including Light Theme + Animations) |
 | **Active UX EPIC** | EPIC-UXUI-01 (0%) |
 
-### EPIC Corrected Status (2026-01-26)
+### Active EPICs (2026-01-28)
 
-| Epic | TRUE Status | Action |
-|------|-------------|--------|
-| EPIC-ARCH-01 | 60% | Team B CONS stories |
-| EPIC-ARCH-02 | **70%** | EPIC-CC-AR02AR03 remediates |
-| EPIC-ARCH-03 | **45%** | EPIC-CC-AR02AR03 remediates |
-| EPIC-ARCH-04-CC | **95%** | CC-04 E2E pending |
-| **EPIC-CC-AR02AR03** | 0% | **P0 BLOCKER for Phase 1A** |
-| **EPIC-UXUI-01** | 0% | **Team B - Design System Foundation** |
+| Epic | Status | Team | Priority |
+|------|--------|------|----------|
+| EPIC-UXUI-03-PLUGIN-LAYOUT | 0% | A+B | P0 |
 
 ---
 

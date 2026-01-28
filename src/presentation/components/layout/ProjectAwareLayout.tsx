@@ -79,9 +79,6 @@ export function ProjectAwareLayout() {
                 <div className="flex-1 overflow-hidden">
                     <Outlet />
                 </div>
-
-                {/* System rail for terminal, status */}
-                <SystemRail />
             </div>
         );
     }

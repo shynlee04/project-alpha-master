@@ -19,13 +19,12 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate, useLocation, useParams } from '@tanstack/react-router';
+import { Link, useNavigate, useLocation } from '@tanstack/react-router';
 import { Menu, Search, Settings, User, Command } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useCommandPalette } from '@/hooks/useCommandPalette';
 import { PresetSelector } from './PresetSelector';
-import { PluginToggles } from './PluginToggles';
 // ============================================================================
 // Types
 // ============================================================================
@@ -72,13 +71,8 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const params = useParams({ strict: false });
   const { setMobileMenuOpen } = useLayoutStore();
   const { open: openCommandPalette } = useCommandPalette();
-
-  // Check if we're on a project route (show plugin toggles)
-  const projectId = (params as { projectId?: string }).projectId;
-  const isProjectRoute = Boolean(projectId);
 
   // Handlers
   const handleMobileMenuToggle = useCallback(() => {
@@ -213,13 +207,6 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
         <div className="hidden md:flex items-center">
           <PresetSelector />
         </div>
-
-        {/* Plugin Toggles - Desktop Only, Project Route Only */}
-        {isProjectRoute && (
-          <div className="hidden lg:flex items-center ml-2">
-            <PluginToggles compact />
-          </div>
-        )}
       </div>
 
       {/* Right Section: Search + Actions */}

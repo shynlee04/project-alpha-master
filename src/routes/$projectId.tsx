@@ -33,10 +33,10 @@ import { fromRecord } from '@/infrastructure/persistence/stores/project/project-
 import { ProjectContextProvider } from '@/infrastructure/context/project-context';
 // EPIC-0.6-01: Plugin Coordination Context for cross-plugin coordination
 import { PluginCoordinationProvider } from '@/infrastructure/context/plugin-coordination-context';
-// Phase 1: PluginLayout with CSS Grid (replaces PluginSidebar)
-import { PluginLayout } from '@/presentation/layouts/PluginLayout';
+// REMOVED: PluginLayout - ActivityBar + Docker now handles plugin rendering
+// import { PluginLayout } from '@/presentation/layouts/PluginLayout';
 import { WorkspaceLayout } from '@/presentation/layouts/WorkspaceLayout';
-// UXUI-02-03: GlobalSidebar integration
+// UXUI-03-01: GlobalSidebar integration - MainSidebar as global sidebar per UX spec
 import { MainSidebar } from '@/presentation/components/layout/MainSidebar';
 // CC-UX-01: StatusBar integration
 import { StatusBar } from '@/presentation/components/layout/StatusBar';
@@ -52,7 +52,9 @@ import type { ActivityBarItem } from '@/presentation/components/layout/ActivityB
 import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
 import type { PluginId } from '@/domain/types/plugin-types';
 // Icons for ActivityBar
-import { FolderTree, Search, MessageSquare, Code, Bot, Terminal, Eye } from 'lucide-react';
+import { FolderTree, StickyNote, MessageSquare, Terminal, Eye } from 'lucide-react';
+// CC-AR-05: Monaco editor as main content area
+import MonacoMain from '@/plugins/monaco/MonacoMain';
 
 // ============================================================================
 // Route Definition
@@ -110,7 +112,7 @@ export const Route = createFileRoute('/$projectId')({
  */
 const LEFT_ACTIVITY_ITEMS: ActivityBarItem[] = [
   { id: 'filetree', icon: <FolderTree size={24} />, label: 'Files' },
-  { id: 'search', icon: <Search size={24} />, label: 'Search' },
+  { id: 'notes', icon: <StickyNote size={24} />, label: 'Notes' },
 ];
 
 /**
@@ -119,16 +121,15 @@ const LEFT_ACTIVITY_ITEMS: ActivityBarItem[] = [
  * @remarks
  * Plugins typically shown on the right:
  * - Chat: AI chat assistant
- * - Monaco: Code editor
  * - Terminal: Command line
  * - Preview: Live preview
+ * 
+ * NOTE: Monaco is now the MAIN content area (not a sidebar plugin)
  */
 const RIGHT_ACTIVITY_ITEMS: ActivityBarItem[] = [
   { id: 'chat', icon: <MessageSquare size={24} />, label: 'Chat' },
-  { id: 'monaco', icon: <Code size={24} />, label: 'Editor' },
   { id: 'terminal', icon: <Terminal size={24} />, label: 'Terminal' },
   { id: 'preview', icon: <Eye size={24} />, label: 'Preview' },
-  { id: 'agents', icon: <Bot size={24} />, label: 'Agents' },
 ];
 
 // ============================================================================
@@ -275,7 +276,7 @@ function UnifiedProjectRoute() {
           globalSidebar={<MainSidebar />}
           activityBarLeft={leftWiring.activityBar}
           pluginLeft={leftWiring.docker}
-          mainContent={<PluginLayout />}
+          mainContent={<MonacoMain width={0} height={0} />}
           pluginRight={rightWiring.docker}
           activityBarRight={rightWiring.activityBar}
           statusBar={<StatusBar />}

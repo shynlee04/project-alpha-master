@@ -134,6 +134,21 @@ The Plugin Docker allows drag-and-drop management of plugins across activity bar
 | **Single instance per plugin** | **YES** | **Plugin can only exist in ONE panel** |
 | Panel position lock | NO | Plugins CAN be moved between panels |
 
+### Max Plugins Per Activity Bar
+
+Each Activity Bar has a maximum number of plugin icons it can display. Excess plugins remain in the Docker until space becomes available.
+
+| Device | Max Per Bar | Total Across 3 Bars | Rationale |
+|--------|-------------|---------------------|-----------|
+| Desktop (≥1280px) | 3 | 9 | Balanced UI, prevents icon overload |
+| Tablet (768-1279px) | 2 | 6 | Reduced screen real estate |
+| Mobile (<768px) | 1 | 3 | Touch-first, essential plugins only |
+
+**Enforcement:**
+- Activity Bar refuses additional icons when at capacity
+- User must REMOVE a plugin from bar to add another
+- Docker shows "Bar full" indicator when dropping on full bar
+
 ### Single Instance Rule
 
 Each plugin can only run in ONE panel at a time. If a user drags a plugin to a different Activity Bar, it **MOVES** (not duplicates).
@@ -220,27 +235,57 @@ The Plugin Docker is a **floating panel** that provides a centralized location f
 
 | Purpose | Description |
 |---------|-------------|
-| Plugin Discovery | Shows ALL available plugins in one place |
-| Drag Source | Primary source for dragging plugins to panels |
-| Placement Tracking | Shows where each plugin is currently placed |
-| Plugin Management | Central UI for managing plugin layout |
+| Unplaced Plugin Storage | Shows ONLY plugins NOT currently in any Activity Bar |
+| Drag Source | Primary source for dragging unplaced plugins to panels |
+| Placement Indicator | Empty Docker = all plugins placed in bars |
+| Plugin Management | Central UI for adding plugins to Activity Bars |
+
+### Docker Content Rule
+
+**CRITICAL**: The Docker shows ONLY unplaced plugins:
+
+| Plugin State | In Docker? | In Activity Bar? |
+|--------------|------------|------------------|
+| Placed in LEFT bar | ❌ No | ✅ Yes (LEFT) |
+| Placed in TOP bar | ❌ No | ✅ Yes (TOP) |
+| Placed in RIGHT bar | ❌ No | ✅ Yes (RIGHT) |
+| **NOT placed** | ✅ Yes | ❌ No |
+
+**Behavior:**
+- When user drags plugin FROM Docker TO Activity Bar → plugin leaves Docker
+- When user removes plugin FROM Activity Bar → plugin returns to Docker
+- Docker can be empty (all plugins placed)
+- Docker shows count indicator: "2 unplaced plugins"
 
 ### Docker Visual Layout
 
+The Docker shows ONLY unplaced plugins. Placed plugins appear in their Activity Bars, NOT in the Docker.
+
 ```
 ┌─────────────────────────────────────────────────────┐
-│  PLUGIN DOCKER                              [─] [×] │
+│  UNPLACED PLUGINS (2)                       [─] [×] │
 ├─────────────────────────────────────────────────────┤
-│  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐     │
-│  │Files │ │Notes │ │Code  │ │Term  │ │Preview│     │
-│  │  📁  │ │  📝  │ │  💻  │ │  >_  │ │  👁   │     │
-│  │  L   │ │  M   │ │      │ │      │ │      │     │
-│  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘     │
-│  ┌──────┐                                          │
-│  │Chat  │  ← Draggable icons                       │
-│  │  💬  │  ← "L/M/R" badge shows panel             │
-│  │  R   │  ← Drag to MOVE between panels          │
-│  └──────┘                                          │
+│  ┌──────┐ ┌──────┐                                  │
+│  │Term  │ │Preview│  ← Only unplaced plugins shown  │
+│  │  >_  │ │  👁   │  ← No badges (not in any bar)   │
+│  │      │ │      │  ← Drag to Activity Bar to place │
+│  └──────┘ └──────┘                                  │
+│                                                     │
+│  (FileTree, Notes, Chat are in Activity Bars)      │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+**Empty State:**
+```
+┌─────────────────────────────────────────────────────┐
+│  UNPLACED PLUGINS (0)                       [─] [×] │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│       All plugins are placed in Activity Bars       │
+│                                                     │
+│   Remove a plugin from its bar to see it here      │
+│                                                     │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -280,14 +325,16 @@ The Plugin Docker is a **floating panel** that provides a centralized location f
 
 ### Docker Item States
 
+Since Docker only shows UNPLACED plugins, the states are simplified:
+
 | State | Visual Indicator | Behavior |
 |-------|------------------|----------|
-| **Available** (not placed) | Normal opacity, no badge | Drag to any Activity Bar |
-| **Placed in LEFT** | "L" badge, 70% opacity | Drag to MOVE to different panel |
-| **Placed in MAIN** | "M" badge, 70% opacity | Drag to MOVE to different panel |
-| **Placed in RIGHT** | "R" badge, 70% opacity | Drag to MOVE to different panel |
+| **Available** (unplaced) | Normal opacity, no badge | Drag to any Activity Bar to place |
 | **Dragging** | Ghost follows cursor, 50% opacity | Drop on Activity Bar to place |
 | **Hover** | Border highlight, bg-accent | - |
+| **Bar Full** | Red border on drop target | Cannot drop - target bar at capacity |
+
+**Note:** Placed plugins do NOT appear in Docker. They are visible only in their assigned Activity Bar.
 
 ### Docker-to-ActivityBar Drag Flow
 
@@ -463,11 +510,34 @@ RIGHT ACTIVITY BAR
 
 | Action | Behavior | Keyboard |
 |--------|----------|----------|
-| **Click** | Activate plugin, show in panel | - |
+| **Click/Tap** | Toggle between plugins on SAME bar | - |
 | **Double-click** | Expand/maximize plugin panel | - |
 | **Keyboard** | Quick switch to plugin | `Cmd/Ctrl + 1-6` |
-| **Touch tap** | Same as click | - |
+| **Touch tap** | Same as click (toggle on same bar) | - |
 | **Touch hold** | Open context menu | - |
+
+### Tap-to-Toggle Behavior (Single Bar)
+
+When multiple plugins are in the SAME Activity Bar, single tap/click **toggles** between them:
+
+```
+Activity Bar (LEFT) has: [FileTree] [Search] [Git]
+                           ^active
+
+User taps [Search]:
+  → FileTree deactivates, Search activates
+  → Panel content switches to Search plugin
+
+User taps [FileTree]:
+  → Search deactivates, FileTree activates
+  → Panel content switches back to FileTree
+```
+
+**Key Distinction:**
+- **Tap/Click** = Toggle plugins WITHIN same bar (fast switching)
+- **Drag-Drop** = MOVE plugins BETWEEN bars (reorganization)
+
+This is the primary interaction for switching plugins. Drag-drop is used only for changing panel assignments.
 
 ### Keyboard Shortcuts
 
