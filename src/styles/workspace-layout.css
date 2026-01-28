@@ -209,25 +209,59 @@
    ========================================================================== */
 
 /* ==========================================================================
-   VISIBILITY UTILITIES (Fixed grid, only toggle visibility)
+   GRID COLLAPSE UTILITIES (Dynamic column collapse)
    
-   FIX: Removed dynamic column collapse rules that caused empty space.
-   Grid columns are now FIXED. Only visibility toggles.
+   FIX: Use display: none with grid-template-columns to collapse empty panels.
+   This removes empty space and allows main content to expand.
    ========================================================================== */
 
-/* Hide elements when empty but keep grid structure intact */
+/* Collapse left plugin panel - column width becomes 0 */
+.workspace-layout--no-plugin-left {
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    0                       /* plugin-left (collapsed) */
+    1fr                     /* main-content (expands) */
+    minmax(250px, 400px)    /* plugin-right */
+    48px;                   /* activity-bar-right */
+}
+
+.workspace-layout--no-plugin-left .workspace-layout__plugin-left {
+  display: none;
+}
+
+/* Collapse right plugin panel - column width becomes 0 */
+.workspace-layout--no-plugin-right {
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    minmax(200px, 320px)    /* plugin-left */
+    1fr                     /* main-content (expands) */
+    0                       /* plugin-right (collapsed) */
+    48px;                   /* activity-bar-right */
+}
+
+.workspace-layout--no-plugin-right .workspace-layout__plugin-right {
+  display: none;
+}
+
+/* Collapse both plugin panels - both columns become 0 */
+.workspace-layout--no-plugin-left.workspace-layout--no-plugin-right {
+  grid-template-columns:
+    48px                    /* global-sidebar */
+    48px                    /* activity-bar-left */
+    0                       /* plugin-left (collapsed) */
+    1fr                     /* main-content (expands fully) */
+    0                       /* plugin-right (collapsed) */
+    48px;                   /* activity-bar-right */
+}
+
+/* Hide global sidebar but keep column width (fixed UI element) */
 .workspace-layout--no-global-sidebar .workspace-layout__global-sidebar {
   visibility: hidden;
 }
 
-.workspace-layout--no-plugin-left .workspace-layout__plugin-left {
-  visibility: hidden;
-}
-
-.workspace-layout--no-plugin-right .workspace-layout__plugin-right {
-  visibility: hidden;
-}
-
+/* Hide status bar completely (no grid impact) */
 .workspace-layout--no-status-bar .workspace-layout__status-bar {
   display: none;
 }

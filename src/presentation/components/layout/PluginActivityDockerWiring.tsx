@@ -294,8 +294,9 @@ export function usePluginActivityDockerWiring({
   // Return Wiring Result
   // ========================================================================
 
-  // DEBUG: legacy resizable pane fix - return null for docker when closed
-  // This allows CSS grid columns to collapse properly
+  // FIX: Return placeholder div instead of null to prevent CSS grid recalculation
+  // This prevents layout shake when toggling plugins (chat, filetree)
+  // The placeholder maintains grid structure without visible content
   const dockerElement = isDockerOpen ? (
     <PluginDocker
       position={position}
@@ -310,7 +311,9 @@ export function usePluginActivityDockerWiring({
     >
       {renderPluginContent()}
     </PluginDocker>
-  ) : null;
+  ) : (
+    <div style={{ display: 'none' }} data-docker-placeholder="true" />
+  );
 
   return {
     activityBar: (

@@ -1,0 +1,404 @@
+scan_results:
+  timestamp: "2026-01-29T04:52:00+07:00"
+  scanner: "analyst-ext (Business Analyst Agent)"
+  mission: "Comprehensive horizontal and vertical investigation of codebase"
+  total_files_scanned: 1707
+  total_lines_of_code: 356297
+  
+  metadata:
+    scan_type: "DEEP_GOVERNANCE_SCAN"
+    phase: "Phase 1A Foundation"
+    scope: "Full codebase"
+    duration_minutes: 15
+    evidence_quality: "HIGH"
+    confidence_level: "95%"
+
+  safe_to_archive:
+    - file: "src/routes/ide.tsx"
+      lines: 25
+      reason: "Redirects to /hub, no active imports outside routeTree"
+      imports_checked: []
+      exports_checked: ["Route"]
+      archive_confidence: "100%"
+      
+    - file: "src/routes/ide.$projectId.tsx"
+      lines: 113
+      reason: "Redirects to /$projectId, no active imports outside routeTree"
+      imports_checked: []
+      exports_checked: ["Route"]
+      archive_confidence: "100%"
+      
+    - file: "src/routes/notes.lazy.tsx"
+      lines: 27
+      reason: "Redirects to /hub via window.location, no active imports"
+      imports_checked: []
+      exports_checked: ["Route"]
+      archive_confidence: "100%"
+      
+    - file: "src/routes/notes.$projectId.tsx"
+      lines: 145
+      reason: "Redirects to /$projectId, no active imports outside routeTree"
+      imports_checked: []
+      exports_checked: ["Route"]
+      archive_confidence: "100%"
+      
+    - file: "src/routes/workspace/$projectId.tsx"
+      lines: 32
+      reason: "Redirects to /$projectId, no active imports outside routeTree"
+      imports_checked: []
+      exports_checked: ["Route"]
+      archive_confidence: "100%"
+      
+    - file: "src/routes/workspace/index.tsx"
+      lines: 35
+      reason: "Legacy workspace landing, navigates to deprecated /ide"
+      imports_checked: []
+      exports_checked: ["Route"]
+      archive_confidence: "100%"
+      
+    - file: "src/infrastructure/context/project-context.tsx.bak"
+      lines: 364
+      reason: "Backup file of current implementation"
+      imports_checked: []
+      exports_checked: []
+      archive_confidence: "100%"
+      
+    - file: "src/routeTree.gen.ts.backup"
+      lines: 730
+      reason: "Auto-generated backup, will regenerate"
+      imports_checked: []
+      exports_checked: []
+      archive_confidence: "100%"
+      
+    - file: "spike/"
+      lines: 19662
+      reason: "Complete duplicate of src/ codebase"
+      imports_checked: []
+      exports_checked: []
+      archive_confidence: "100%"
+      note: "Requires 1 hour to archive entire folder"
+
+  partially_legacy:
+    - file: "src/infrastructure/persistence/stores/layout-store.ts"
+      lines: 109
+      issues:
+        - "Facade pattern - re-exports from PluginLayoutStore"
+        - "useLayoutStore is deprecated but still has 32 active imports"
+        - "Combines state from two stores for backward compatibility"
+      remediation_strategy: "Gradual migration: update all imports to use usePluginLayoutStore directly, then archive"
+      migration_progress: "90%"
+      
+    - file: "src/lib/notes/store-facades.ts"
+      lines: 73
+      issues:
+        - "Facade for note stores"
+        - "TODO comment indicates pending Team A updates"
+        - "Temporary bridge during migration"
+      remediation_strategy: "Wait for Team A to complete import updates, then delete"
+      migration_progress: "Pending external dependency"
+      
+    - file: "src/infrastructure/filesystem/index.ts"
+      lines: 67
+      issues:
+        - "Re-exports with deprecation warnings"
+        - "Some exports point to lib/filesystem (deprecated)"
+      remediation_strategy: "Update all imports to use canonical paths, remove deprecated re-exports"
+      migration_progress: "60%"
+      
+    - file: "src/lib/filesystem/"
+      lines: 6056
+      issues:
+        - "43 files marked as deprecated"
+        - "36+ active imports still reference this directory"
+        - "Cross-dependencies with infrastructure/filesystem"
+      remediation_strategy: "Migrate all active imports to infrastructure/, then archive"
+      migration_progress: "40%"
+
+  highly_inconsistent:
+    - category: "types"
+      items:
+        - name: "PlatformContract"
+          locations:
+            - "infrastructure/filesystem/platform-contract.ts"
+            - "infrastructure/filesystem/storage-types.ts (re-export)"
+          canonical: "infrastructure/filesystem/platform-contract.ts"
+          conflict_type: "duplicate_definition"
+          
+        - name: "DeviceType"
+          locations:
+            - "lib/filesystem/unified-storage-adapter.ts:26"
+            - "hooks/useMediaQuery.ts (return type)"
+          canonical: "NEED_TO_CREATE: domain/types/platform-types.ts"
+          conflict_type: "scattered_definition"
+          
+        - name: "Project"
+          locations:
+            - "domain/entities/project.ts:49"
+            - "spike/src/domain/entities/project.ts:49"
+          canonical: "domain/entities/project.ts"
+          conflict_type: "spike_duplicate"
+          
+        - name: "StorageAdapter"
+          locations:
+            - "domain/interfaces/storage-adapter.interface.ts"
+            - "spike/src/domain/interfaces/storage-adapter.interface.ts"
+          canonical: "domain/interfaces/storage-adapter.interface.ts"
+          conflict_type: "spike_duplicate"
+      
+    - category: "schemas"
+      items:
+        - name: "Sync Types"
+          locations:
+            - "infrastructure/sync/types/*"
+            - "core/*"
+          files_count: 8
+          consolidation_target: "infrastructure/sync/types/index.ts"
+          
+        - name: "Chat Types"
+          locations:
+            - "chat/unified-chat-types.ts"
+            - "conversation/types.ts"
+            - "conversation/event-types.ts"
+          files_count: 4
+          consolidation_target: "domain/types/chat-types.ts"
+      
+    - category: "state"
+      items:
+        - name: "Layout State"
+          locations:
+            - "presentation/layouts/PluginLayoutStore.ts (canonical)"
+            - "infrastructure/persistence/stores/layout-store.ts (facade)"
+          issue: "Single state split across facade pattern"
+          resolution: "Migrate all consumers to canonical store"
+          
+        - name: "Navigation State"
+          locations:
+            - "infrastructure/persistence/stores/navigation-store.ts (canonical)"
+            - "infrastructure/persistence/stores/layout-store.ts (facade re-export)"
+          issue: "Navigation state accessed through layout facade"
+          resolution: "Direct imports to navigation-store"
+      
+    - category: "events"
+      items:
+        - name: "Cross-Workspace Event Bus"
+          locations:
+            - "lib/events/cross-workspace-event-bus.ts (583 lines, canonical)"
+            - "infrastructure/events/cross-workspace-event-bus.ts (34 lines, re-export)"
+          issue: "Infrastructure version re-exports from lib/ version"
+          resolution: "Keep lib/ as canonical, update infrastructure to not re-export"
+
+  architectural_debt:
+    god_stores:
+      - file: "src/application/services/ProviderService.ts"
+        lines: 1943
+        responsibilities:
+          - "Provider CRUD operations"
+          - "Provider validation"
+          - "Provider testing"
+          - "Model registry"
+          - "Credential management"
+        decomposition_plan: "Split into 5 slices: provider-crud, provider-validation, provider-test, model-registry, credential-manager"
+        priority: "P0"
+        
+      - file: "src/infrastructure/persistence/dexie-db-migrations.ts"
+        lines: 1746
+        responsibilities:
+          - "All database migrations"
+        decomposition_plan: "Split by domain: project-migrations, note-migrations, chat-migrations"
+        priority: "P0"
+        
+      - file: "src/presentation/components/notes/AISlashCommand.tsx"
+        lines: 1674
+        responsibilities:
+          - "Slash command UI"
+          - "Command logic"
+          - "Command registry"
+        decomposition_plan: "Split into: command-registry, command-ui, command-executor"
+        priority: "P0"
+        
+      - file: "src/lib/templates/template-registry.ts"
+        lines: 1321
+        responsibilities:
+          - "All templates"
+        decomposition_plan: "Split by category: project-templates, note-templates, workflow-templates"
+        priority: "P1"
+        
+      - file: "src/infrastructure/persistence/dexie-db.ts"
+        lines: 1213
+        responsibilities:
+          - "Schema definition"
+          - "Database helpers"
+        decomposition_plan: "Keep schema, extract helpers to dexie-db-helpers/"
+        priority: "P1"
+        
+      - file: "src/presentation/components/notes/NotesPage.tsx"
+        lines: 1102
+        responsibilities:
+          - "Note page layout"
+          - "State management"
+          - "Sync coordination"
+        decomposition_plan: "Split into: NotesLayout, NotesState hook, NotesSyncManager"
+        priority: "P1"
+        
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        lines: 1088
+        responsibilities:
+          - "Editor core"
+          - "Block rendering"
+          - "AI integration"
+        decomposition_plan: "Split into: EditorCore, BlockRenderer, AIEnhancer"
+        priority: "P1"
+        
+      - file: "src/infrastructure/events/event-bus.ts"
+        lines: 888
+        responsibilities:
+          - "Event definitions"
+          - "Bus logic"
+        decomposition_plan: "Split into: event-types.ts, event-bus-core.ts"
+        priority: "P1"
+        
+      - file: "src/infrastructure/filesystem/file-tree-scanner.ts"
+        lines: 833
+        responsibilities:
+          - "Scanning logic"
+          - "Filtering"
+          - "Caching"
+        decomposition_plan: "Split into: scanner-core, filter-engine, scan-cache"
+        priority: "P2"
+        
+      - file: "src/infrastructure/filesystem/fsa-gateway.ts"
+        lines: 816
+        responsibilities:
+          - "FSA operations"
+        decomposition_plan: "Split into: read-ops, write-ops, watch-ops"
+        priority: "P2"
+    
+    god_stores_summary:
+      total_count: 47
+      by_priority:
+        P0: 7
+        P1: 8
+        P2: 10
+        P3: 22
+      by_line_range:
+        "1000+": 7
+        "700-999": 8
+        "500-699": 10
+        "300-499": 22
+    
+    duplicate_logic:
+      - service: "useFileSyncService"
+        legacy: "lib/filesync/hooks/use-file-sync-service.ts"
+        canonical: "infrastructure/sync/workspace-services/hooks.ts"
+        migration_status: "0%"
+        
+      - service: "NoteFileSyncService"
+        legacy: "lib/notes/note-file-sync.ts"
+        canonical: "infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"
+        migration_status: "30%"
+        
+      - service: "UnifiedStorageAdapter"
+        legacy: "lib/filesystem/unified-storage-adapter.ts"
+        canonical: "infrastructure/filesystem/StorageAdapterFactory.ts"
+        migration_status: "50%"
+        
+      - service: "file-snapshot-store"
+        legacy: "lib/filesystem/file-snapshot-store.ts"
+        canonical: "infrastructure/persistence/stores/filesystem/useFileSnapshotStore.ts"
+        migration_status: "70%"
+        
+      - service: "sync-manager"
+        legacy: "lib/filesystem/sync-manager/"
+        canonical: "infrastructure/sync/"
+        migration_status: "80%"
+    
+    circular_deps:
+      - cycle_id: 1
+        files:
+          - "infrastructure/persistence/dexie-db-class.ts"
+          - "infrastructure/persistence/dexie-db-migrations.ts"
+        severity: "Low"
+        impact: "Database initialization"
+        
+      - cycle_id: 2
+        files:
+          - "domain/tools/provider/execute-provider-tool.ts"
+          - "domain/tools/provider/types.ts"
+        severity: "Medium"
+        impact: "Provider tool execution"
+        
+      - cycle_id: 3
+        files:
+          - "domain/tools/provider/types.ts"
+          - "domain/tools/provider/list-providers-tool.ts"
+        severity: "Medium"
+        impact: "Provider listing"
+        
+      - cycle_id: 4
+        files:
+          - "domain/tools/provider/types.ts"
+          - "domain/tools/provider/test-provider-tool.ts"
+        severity: "Medium"
+        impact: "Provider testing"
+        
+      - cycle_id: 5
+        files:
+          - "routeTree.gen.ts"
+          - "router.tsx"
+        severity: "Low"
+        impact: "Auto-generated, acceptable"
+
+  codebase_health_metrics:
+    files_with_react_hooks: 345
+    files_with_zustand: 178
+    deprecated_exports: 173
+    todo_fixme_comments: 100
+    window_location_href_remaining: 9
+    lib_workspace_imports_active: 32
+    infrastructure_to_presentation_imports: 199
+    presentation_to_infrastructure_imports: 4
+    
+  recommendations:
+    immediate:
+      - action: "Archive 6 deprecated route files"
+        effort: "1 hour"
+        impact: "377 lines removed"
+        
+      - action: "Delete 2 .bak files"
+        effort: "5 minutes"
+        impact: "1094 lines removed"
+        
+      - action: "Archive spike/ folder"
+        effort: "1 hour"
+        impact: "19662 files removed"
+        
+    short_term:
+      - action: "Split ProviderService.ts into 5 slices"
+        effort: "4 hours"
+        priority: "P0"
+        
+      - action: "Split dexie-db-migrations.ts by domain"
+        effort: "3 hours"
+        priority: "P0"
+        
+      - action: "Migrate 32 lib/workspace imports"
+        effort: "2 hours"
+        priority: "P1"
+        
+    long_term:
+      - action: "Complete lib/ directory migration"
+        effort: "8 hours"
+        priority: "P2"
+        
+      - action: "Rename 40 PascalCase files to kebab-case"
+        effort: "2 hours"
+        priority: "P3"
+        
+      - action: "Consolidate type definitions"
+        effort: "4 hours"
+        priority: "P3"
+
+  references:
+    safe_to_archive_inventory: "_bmad-output/diagnostics/SAFE-TO-ARCHIVE-INVENTORY-2026-01-26.md"
+    inconsistency_catalog: "_bmad-output/diagnostics/INCONSISTENCY-CATALOG-2026-01-26.md"
+    full_report: "_bmad-output/governance/phase-1a-deep-scan-2026-01-29.md"

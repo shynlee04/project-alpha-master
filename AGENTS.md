@@ -1,6 +1,50 @@
 # AGENTS.md - Project Alpha Governance
 **USING REAL TIME AND DATE TO STAMP - AND STOP MEASURING LIKE IT SHOULD A DAY 2 AI AGENT TEAMS CAN DEVELOP 2 EPIC**
-> **Version:** 2.13.0 | **Updated:** 2026-01-29 | **Health:** 87% (EPIC-LAYOUT-CONSOLIDATION ACTIVE)
+> **Version:** 2.14.0 | **Updated:** 2026-01-29T12:30:00+07:00 | **Health:** 65% (PHASE 1A REMEDIATION ACTIVE)
+
+---
+
+## 🚨 CURRENT STATUS: PHASE 1A REMEDIATION
+
+**Date**: 2026-01-29
+**Phase**: 1A - Foundation & Non-AI Core
+**Priority**: P0 - Fix broken layout, stabilize core plugins
+
+### What Just Happened
+1. **309 Phase 2+ files archived** to `_phase2-archive/`
+2. **Context isolation** via `.aiexclude`
+3. **Governance documents created** in `_bmad-output/governance/`
+
+### Archived (Phase 2+)
+| Directory | Status | Restore |
+|-----------|--------|---------|
+| `src/presentation/components/agent/` | ARCHIVED | `_phase2-archive/` |
+| `src/lib/agent/` | ARCHIVED | `_phase2-archive/` |
+| `src/domain/tools/` | ARCHIVED | `_phase2-archive/` |
+| `src/infrastructure/persistence/stores/agents/` | ARCHIVED | `_phase2-archive/` |
+| `src/infrastructure/persistence/stores/providers/` | ARCHIVED | `_phase2-archive/` |
+| `src/infrastructure/persistence/stores/conversation/` | ARCHIVED | `_phase2-archive/` |
+
+### Phase 1A Focus (NOW)
+| Priority | Task | Status |
+|----------|------|--------|
+| P0 | Fix broken layout (screen shaking, empty space) | IN PROGRESS |
+| P0 | Stabilize FileTree plugin | PENDING |
+| P0 | Stabilize Monaco editor | PENDING |
+| P0 | Stabilize Terminal/Preview | PENDING |
+| P1 | Archive safe legacy files (21K lines) | PENDING |
+| P1 | Migrate lib/filesystem imports | PENDING |
+
+### Key Governance Documents
+| Document | Location |
+|----------|----------|
+| Phase 1A Foundation | `_bmad-output/governance/PHASE-1A-FOUNDATION-2026-01-29.md` |
+| Phase 1A Registry | `_bmad-output/governance/PHASE-1A-REGISTRY-2026-01-29.md` |
+| Deep Scan Results | `_bmad-output/governance/phase-1a-deep-scan-2026-01-29.yaml` |
+| Phase 2 Staging Plan | `_bmad-output/governance/PHASE2-STAGING-PLAN-2026-01-29.md` |
+| Phase 2 Archive Manifest | `_phase2-archive/MANIFEST.md` |
+
+---
 
 ---
 # **THE EXTREME AND ABSOLUTE CONSTITUTIONS WHEN IT COMES TO CREATE/CONSUME ANY DOCUMENTS AND/OR ARTIFACTS**

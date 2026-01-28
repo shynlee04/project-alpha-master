@@ -14,7 +14,6 @@ import { Route as TestErrorBoundaryRouteImport } from './routes/test-error-bound
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as DebugRouteImport } from './routes/debug'
-import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ProjectIdRouteImport } from './routes/$projectId'
 import { Route as IndexRouteImport } from './routes/index'
@@ -51,11 +50,6 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const DebugRoute = DebugRouteImport.update({
   id: '/debug',
   path: '/debug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AgentsRoute = AgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -124,7 +118,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$projectId': typeof ProjectIdRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -144,7 +137,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$projectId': typeof ProjectIdRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -165,7 +157,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$projectId': typeof ProjectIdRouteWithChildren
   '/about': typeof AboutRoute
-  '/agents': typeof AgentsRoute
   '/debug': typeof DebugRoute
   '/projects': typeof ProjectsRoute
   '/settings': typeof SettingsRoute
@@ -187,7 +178,6 @@ export interface FileRouteTypes {
     | '/'
     | '/$projectId'
     | '/about'
-    | '/agents'
     | '/debug'
     | '/projects'
     | '/settings'
@@ -207,7 +197,6 @@ export interface FileRouteTypes {
     | '/'
     | '/$projectId'
     | '/about'
-    | '/agents'
     | '/debug'
     | '/projects'
     | '/settings'
@@ -227,7 +216,6 @@ export interface FileRouteTypes {
     | '/'
     | '/$projectId'
     | '/about'
-    | '/agents'
     | '/debug'
     | '/projects'
     | '/settings'
@@ -248,7 +236,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProjectIdRoute: typeof ProjectIdRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AgentsRoute: typeof AgentsRoute
   DebugRoute: typeof DebugRoute
   ProjectsRoute: typeof ProjectsRoute
   SettingsRoute: typeof SettingsRoute
@@ -296,13 +283,6 @@ declare module '@tanstack/react-router' {
       path: '/debug'
       fullPath: '/debug'
       preLoaderRoute: typeof DebugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/agents': {
-      id: '/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -434,7 +414,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProjectIdRoute: ProjectIdRouteWithChildren,
   AboutRoute: AboutRoute,
-  AgentsRoute: AgentsRoute,
   DebugRoute: DebugRoute,
   ProjectsRoute: ProjectsRoute,
   SettingsRoute: SettingsRoute,

@@ -2,7 +2,7 @@
  * BMAD Beast Mode v2.0.0 - Brownfield Guard Plugin
  * 
  * Prevents access to deprecated paths (src/lib, src/stores).
- * Enforces ADR-039 canonical path requirements for Project Alpha.
+ * Enforces canonical path requirements based on project architecture.
  * 
  * @location .opencode/plugins/pre-execution/brownfield-guard.ts
  * @version 1.0.0
@@ -41,11 +41,11 @@ interface Plugin {
 const DEPRECATED_PATHS = {
     "src/lib": {
         replacement: "src/infrastructure",
-        reason: "Legacy pattern replaced by Clean Architecture (ADR-039)"
+        reason: "Legacy pattern replaced by Clean Architecture"
     },
     "src/stores": {
         replacement: "src/infrastructure/persistence/stores",
-        reason: "Stores belong in infrastructure layer per ADR-039"
+        reason: "Stores belong in infrastructure layer per architecture"
     },
     "src/lib/workspace": {
         replacement: "src/infrastructure/persistence/stores",
@@ -158,7 +158,7 @@ export const BrownfieldGuard: Plugin = {
 
 **Correct Action**: Use "${deprecated.info.replacement}" instead.
 
-**ADR-039 Canonical Paths**:
+**Architecture Canonical Paths**:
 - \`src/infrastructure/\` - Persistence, APIs, external services
 - \`src/domain/\` - Business logic, entities, value objects
 - \`src/presentation/\` - React components, views
@@ -194,7 +194,7 @@ This enforcement protects:
 
 **Attempted Path**: ${filePath}
 
-This path does not follow ADR-039 canonical structure.
+This path does not follow the canonical structure.
 
 **Canonical Paths**:
 - \`src/infrastructure/\` - Persistence, APIs, external

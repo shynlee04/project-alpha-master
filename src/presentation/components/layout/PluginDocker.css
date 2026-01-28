@@ -18,12 +18,6 @@
  * @created 2026-01-28
  */
 
-/* DEBUG: nested resizable - Hide resize handle to debug layout issues */
-.plugin-docker__resize-handle {
-  display: none !important;
-  pointer-events: none !important;
-}
-
 /* ============================================================================
    PLUGIN DOCKER CONTAINER
    ============================================================================ */

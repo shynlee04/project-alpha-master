@@ -179,22 +179,15 @@ export function PluginDocker({
 
   /**
    * Handles the start of a resize operation
-   * DEBUG: nested resizable - DISABLED to debug layout issues
    */
-  const handleResizeStart = useCallback((_event: React.MouseEvent) => {
-    // DEBUG: nested resizable - START
-    // Temporarily disabled to test if this is causing layout issues
-    console.log('[PluginDocker] Resize disabled for debugging');
-    return; // Exit early - no resize
+  const handleResizeStart = useCallback((event: React.MouseEvent) => {
+    event.preventDefault();
+    setIsResizing(true);
+    startXRef.current = event.clientX;
+    startWidthRef.current = width;
     
-    // _event.preventDefault();
-    // setIsResizing(true);
-    // startXRef.current = _event.clientX;
-    // startWidthRef.current = width;
-    // 
-    // // Add resizing class to body for cursor
-    // document.body.classList.add('plugin-docker--resizing');
-    // DEBUG: nested resizable - END
+    // Add resizing class to body for cursor
+    document.body.classList.add('plugin-docker--resizing');
   }, [width]);
 
   /**
