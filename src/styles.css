@@ -22,6 +22,34 @@
 @custom-variant light (&:is(.light *, [data-theme="light"] *));
 
 /* =============================================================================
+   CRITICAL: Root-Level Overflow Fix (FIX-2026-01-28)
+   
+   Purpose: Prevent phantom scrollbar at document level.
+   - html, body, #root must have explicit overflow: hidden
+   - Use dvh (dynamic viewport height) for proper mobile support
+   - Box-sizing must be border-box to prevent dimension overflow
+   ============================================================================= */
+
+html,
+body {
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+#root {
+  height: 100% !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* =============================================================================
    VIA-GENT Typography System (UX-09 Standardized)
    
    Font Stack:

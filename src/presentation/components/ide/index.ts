@@ -55,7 +55,7 @@ export { CacheIndicator } from './CacheIndicator';
 export * from './hooks';
 
 // EPIC-MOBILE: Mobile Layout Components
-export { IDEMobileLayout } from './IDEMobileLayout';
+// ARCHIVED 2026-01-28: IDEMobileLayout moved to _bmad-ext/.archive/layout-cleanup-2026-01-28/
 
 // Types
 export type { CommandItem } from './CommandPalette';

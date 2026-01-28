@@ -1,10 +1,11 @@
 ---
 title: "New Fundamental Truths - Core Architecture Principles"
-version: "2.0.0"
+version: "2.2.0"
 status: "ACTIVE"
 created: "2026-01-25"
-last_updated: "2026-01-25"
+last_updated: "2026-01-28T15:30:00Z"
 author: "User (Product Owner), Architect Agent"
+research_validated: "2026-01-28"
 
 related_adrs:
   - "ADR-034: Project-Centric Architecture with Feature Plugins"
@@ -94,8 +95,25 @@ Each platform type has platform-appropriate defaults. This replaces the "IDE mod
 | Platform | Default Layout | Max Columns |
 |----------|---------------|-------------|
 | Mobile | 1-column | 1 |
-| Tablet | 2-column | 2 |
-| Desktop | 2-column | 3 |
+
+### 1.5 Nested Project Policy (Added 2026-01-28)
+
+**Decision**: Block nested project creation
+**Rationale**: VSCode and Obsidian both advise against nested workspaces/vaults due to data corruption risks and sync complexity.
+
+**UX Pattern**:
+1. User selects folder inside existing project
+2. Show: "This folder is inside project X. Open that instead?"
+3. Offer "Project Groups" feature for monorepo workflows (future)
+
+**Edge Cases Detected**:
+| Scenario | Detection | Response |
+|----------|-----------|----------|
+| Git clone creates nested structure | `.git` detection | Prompt: "Promote to separate project?" |
+| Download into existing project | Parent project ID check | Migration dialog |
+| Monorepo with sub-projects | Multiple `package.json` | Suggest "Project Groups" |
+
+**REFERENCE**: architecture-validation-2026-01-28.md (Section 1)
 
 ---
 
@@ -113,18 +131,67 @@ Each platform type has platform-appropriate defaults. This replaces the "IDE mod
 - Chrome 122+ for persistent permissions
 - FileSystemObserver (Chrome 129+) for file watching with polling fallback
 
-### 2.2 Mobile/Tablet (IndexedDB via Dexie.js)
+### 2.2 Mobile/Tablet Storage Strategy (Updated 2026-01-28)
+
+**CRITICAL UPDATE**: IndexedDB alone is NOT sufficient for production use.
+
+#### Primary: SQLite WASM + OPFS (Origin Private File System)
+- Full SQL capabilities with ACID transactions
+- Near-native performance via Web Workers
+- FTS5 full-text search for RAG indices
+- Works on Chrome 102+, Firefox 111+, Safari 15.2+
+
+#### Fallback: IndexedDB via Dexie.js
+- For older browsers without OPFS support
+- Feature detection determines storage layer
 
 **Characteristics:**
 - Virtual files in browser database
-- No external editor sync needed
 - IDE features blocked (Monaco, Terminal unavailable)
 - Single source of truth (no sync conflicts)
 
-**Requirements:**
-- Dexie.js for persistence
-- Single default project (`notes:browser-mode`)
-- Fallback to Note-taking only
+#### Storage Architecture
+
+```
+Layer 1: SQLite WASM + OPFS (Primary)
+├── Notes metadata
+├── Project structure
+├── RAG embeddings
+├── Search indices (FTS5)
+
+Layer 2: IndexedDB (Fallback + Blobs)
+├── Note content (Markdown/HTML)
+├── File attachments
+├── Sync queue
+├── Browser compatibility fallback
+
+Layer 3: Cache API (Static Assets Only)
+├── App shell
+├── Fonts, icons
+├── Static images
+```
+
+#### CRITICAL: Safari iOS 7-Day Eviction Policy
+
+Safari evicts ALL IndexedDB/OPFS data after 7 days of no use.
+
+**Mitigations (MANDATORY for Safari)**:
+1. **Require PWA installation** on mobile Safari
+2. PWA-installed apps are NOT subject to eviction
+3. Show "Add to Home Screen" banner with clear explanation
+4. Implement re-sync on first launch after potential eviction
+5. Storage quota monitoring with user warnings
+
+**Browser Support Matrix**:
+
+| Browser | OPFS Support | SQLite WASM | Notes |
+|---------|--------------|-------------|-------|
+| Chrome 102+ | ✅ | ✅ | Recommended |
+| Firefox 111+ | ✅ | ✅ | Full support |
+| Safari 15.2+ | ✅ | ✅ | Requires PWA for persistence |
+| Older browsers | ❌ | ❌ | Dexie.js fallback |
+
+**REFERENCE**: architecture-validation-2026-01-28.md (Section 3)
 
 ### 2.3 IDE Access Policy
 
@@ -217,23 +284,38 @@ The BYOK Vault is a **project-scoped** configuration system for API keys. All LL
 - Configuration stored per project
 - Keys securely persisted and conditionally distributed
 
-### 4.2 Supported LLM Providers
+### 4.2 Supported LLM Providers (Updated 2026-01-28)
 
-#### First-Tier Support (Full Feature Parity)
+**Provider Priority Order** (based on cost, capabilities, and integration):
 
-| Provider | Latest Models | Notes |
-|----------|---------------|-------|
-| **Google Gemini** | 3.0 Pro / 3.0 Flash (Jan 2026) | First-tier, image preview variants |
-| **OpenRouter** | 400+ models | OpenAI-compatible endpoints |
-| **OpenAI** | GPT-5.1-Codex-Max (Nov 2025) | Standard OpenAI API |
-| **Anthropic** | Claude Sonnet 4.5, Claude Opus 4.5 | Standard Claude API |
+| Priority | Provider | Models (2026) | Key Advantage | Notes |
+|----------|----------|---------------|---------------|-------|
+| **P1** | Google Gemini | Gemini 3.0 Pro, 3.0 Flash | **FREE embeddings**, 2M context, 75% caching savings | Primary choice |
+| **P2** | Anthropic Claude | Claude Sonnet 4.5, Opus 4.5 | 90% caching savings, extended thinking, MCP native | Best reasoning |
+| **P3** | OpenAI | GPT-5.2 variants | Ecosystem maturity, stable APIs | Fallback |
+| **P4** | OpenRouter | 400+ models | Model variety, fallback routing | Universal fallback |
+| **P5** | Ollama (Local) | Any GGUF model | Privacy mode, offline capable | Local-only |
 
-#### Second-Tier Support (Basic Integration)
+#### Embedding Provider Strategy (CRITICAL for RAG)
 
-| Provider | Notes |
-|----------|-------|
-| **Grok** | Basic completion only |
-| **Ollama (Local)** | Local model serving |
+```yaml
+Primary: Google Text Embedding 004
+  Cost: FREE
+  Quality: Excellent for RAG
+  
+Fallback: OpenAI text-embedding-3-small
+  Cost: $0.02/1M tokens
+  
+Note: Anthropic does NOT provide embedding endpoints
+```
+
+#### Context Caching Strategy
+
+| Provider | Caching | Cost Reduction | Implementation |
+|----------|---------|----------------|----------------|
+| Anthropic | Prompt caching | 90% on cached | Automatic for repeated context |
+| Gemini | Context caching | 75% on cached | Explicit cache creation |
+| OpenAI | None | N/A | No caching available |
 
 #### Provider Integration Requirements
 
@@ -248,12 +330,63 @@ All providers must support:
   - Native tool calling
   - Token caching
 
-### 4.3 Integration Guidelines
+**REFERENCE**: architecture-validation-2026-01-28.md (Section 6)
 
+### 4.3 Integration Guidelines (Confirmed 2026-01-28)
+
+**SDK Choice: TanStack AI SDK** ✅ CONFIRMED
+
+Research conclusively validates TanStack AI over Vercel AI SDK for Project Alpha.
+
+| Criterion | TanStack AI | Vercel SDK v6 | Winner |
+|-----------|-------------|---------------|--------|
+| Client-side tools | ✅ First-class `.client()` | ⚠️ Callback-based | TanStack |
+| Tool approval | ✅ `needsApproval` flag | ⚠️ Manual output flow | TanStack |
+| TanStack integration | ✅ Native | ⚠️ Compatible | TanStack |
+| Provider switching | ✅ Runtime type-safe | ✅ Runtime | Tie |
+
+**Rationale**: TanStack AI's `.client()` modifier enables true browser-side tool execution, solving the user's core concern about client-side tooling.
+
+**Client-Side Tools Pattern**:
+
+```typescript
+import { toolDefinition } from '@tanstack/ai';
+
+// Tool that executes in browser (not server)
+const deleteLocalData = toolDefinition({
+  name: "delete_local_data",
+  description: "Delete data from browser storage",
+  parameters: z.object({
+    key: z.string().describe("Storage key to delete"),
+  }),
+  needsApproval: true,  // Requires user confirmation
+}).client((input) => {
+  localStorage.removeItem(input.key);
+  return { deleted: true, key: input.key };
+});
+
+// Tool for file operations (FSA)
+const writeFile = toolDefinition({
+  name: "write_file",
+  parameters: z.object({
+    path: z.string(),
+    content: z.string(),
+  }),
+  needsApproval: true,
+}).client(async (input) => {
+  await syncEngine.writeFile(input.path, input.content);
+  return { written: true, path: input.path };
+});
+```
+
+**Integration Rules**:
 1. **TanStack AI SDK First**: All LLM calls must use TanStack AI SDK with provider-specific adapters
 2. **No Direct Provider Calls**: Direct calls to provider packages are prohibited
 3. **Fallback Chain**: Implement provider → model fallback with graceful degradation
 4. **Secure Key Distribution**: Keys passed reactively only to required endpoints
+5. **Use `.client()` for browser operations**: File CRUD, storage, IndexedDB access
+
+**REFERENCE**: architecture-validation-2026-01-28.md (Section 4)
 
 ---
 
@@ -417,20 +550,77 @@ These features operate **within the chat cascade** with full agent capabilities:
 
 ## 8. State Management and Persistence
 
-### 8.1 State Layers
+### 8.1 State Layers (Updated 2026-01-28)
 
-| Layer | Technology | Purpose | Scope |
-|-------|-----------|---------|-------|
-| **Client State** | Zustand v5 | UI state, ephemeral data | Component tree |
-| **Persisted State** | Dexie.js | Long-term storage | Project, settings |
-| **File System** | FSA/IndexedDB | File content | Project files |
+| Layer | Technology | Purpose | Scope | TTL |
+|-------|-----------|---------|-------|-----|
+| **UI State** | Zustand v5 (NO persist) | UI state, transient data | Component tree | Session |
+| **Session State** | Zustand + Dexie Hydration | Active context, layout prefs | Tab/Window | Session |
+| **Persisted State** | Dexie.js | Long-term storage, source of truth | Project, settings | Permanent |
+| **File State** | FSA/SQLite+OPFS | File content, sync engine | Project files | Permanent |
 
-### 8.2 State Boundaries
+#### Layer 1: UI State (Zustand ONLY)
+- Panel open/closed states
+- Selection state
+- Hover/focus states
+- Transient form values
+- **Technology**: Zustand with NO persist middleware
+
+#### Layer 2: Session State (Zustand + Dexie Hydration) ← NEW
+- Active project ID
+- Open editor tabs
+- Panel layout preferences
+- **Technology**: Zustand with `hydrateProjects()` from Dexie on mount
+
+#### Layer 3: Persisted State (Dexie.js Source of Truth)
+- Projects metadata
+- Conversation threads
+- User preferences
+- **Technology**: `useLiveQuery()` for reactivity
+
+#### Layer 4: File State (FSA/SQLite+OPFS Adapters)
+- Source code files
+- Markdown notes
+- **Technology**: Sync engine orchestrates via adapters
+
+**REFERENCE**: architecture-validation-2026-01-28.md (Section 5)
+
+### 8.2 State Boundaries (Updated 2026-01-28)
 
 **Clear Separation:**
 - Zustand for client-only state (UI, interaction)
 - Dexie for persisted data (projects, threads, settings)
-- FSA for actual file content (desktop) or IndexedDB virtual files (mobile)
+- FSA/SQLite+OPFS for actual file content
+
+**Critical Boundary Rules** (NON-NEGOTIABLE):
+
+1. **Never use Zustand persist middleware for Dexie-owned data**
+2. **Always use `useShallow()` for Zustand selectors** (prevents re-render cascades)
+3. **Always use `useLiveQuery()` for Dexie data** (ensures reactivity)
+4. **File operations MUST go through sync engine** (never direct FSA/IDB access)
+
+**Anti-Patterns to Avoid**:
+
+```typescript
+// ❌ WRONG: Zustand persist for Dexie data
+const useProjectStore = create(
+  persist((set) => ({
+    projects: [], // This should be in Dexie!
+  }), { name: 'projects' })
+);
+
+// ✅ CORRECT: Hydrate from Dexie on mount
+const useProjectStore = create((set) => ({
+  activeProjectId: null,
+  setActiveProject: (id) => set({ activeProjectId: id }),
+}));
+
+// In component:
+useEffect(() => {
+  const lastProject = await db.projects.orderBy('lastAccessed').last();
+  if (lastProject) setActiveProject(lastProject.id);
+}, []);
+```
 
 **Conflict Prevention:**
 - Single source of truth per data type
@@ -574,12 +764,15 @@ These features operate **within the chat cascade** with full agent capabilities:
 
 ---
 
-*Last Updated: 2026-01-25*
-*Version: 2.0.0*
+*Last Updated: 2026-01-28T15:30:00Z*
+*Version: 2.2.0*
+*Research Validated: 2026-01-28*
 *Related: ADR-034, ADR-034-AMENDMENT-001*
 ---
 
 # RAW VERSION
+
+> **RESEARCH VALIDATION STATUS**: Questions reviewed against architecture-validation-2026-01-28.md
 
 ------
 
@@ -591,18 +784,59 @@ with this complete shift to project-centric (instead of workspace-centric like b
 
 1. ID of the project vs routing → id IS NOT SET INTO ~~workspace-specific prefix or suffixes~~    ; ids are representations of A PROJECT and all its children files and sub-folders (THIS WILL RESULT IN THESE **ISSUES** >>
     1. for PC-USERS → how do we handle users creating projects which are children of another-already-created-project folder
+    
+    > **STATUS**: ✅ RESOLVED (2026-01-28)
+    > **ANSWER**: Block nested project creation with detection + migration prompts. VSCode/Obsidian both advise against.
+    > **REFERENCE**: architecture-validation-2026-01-28.md (Section 1), See §1.5 above
+    
     2. for NON-PC-USERS → yet we are all aware that `ide-related-plugins` are not loaded for `Non-pc-entries` → for other features like `notion-like-note` and `knowledge-synthesis` and `rag-related` features which pretty much involve with other file types and hierarchical set up to ensure `NON-PC-Clients` do not have to compromise too much of the provided features → HOW do we manage this?
+    
+    > **STATUS**: ✅ RESOLVED (2026-01-28)
+    > **ANSWER**: Tiered feature model (Essential, Enhanced, Desktop-only). Never silently fail - show clear messaging. SQLite WASM + OPFS provides near-native storage on mobile.
+    > **REFERENCE**: architecture-validation-2026-01-28.md (Section 1, 3)
+    
     3. Design of the `plugins` → these need to be extremely well-thought-out in terms of the complexity mentioned above and below - plus the layout and designs of ux ui to fit `progressive disclosure patterns` concepts. AND Please remember the following
+    
+    > **STATUS**: ⚠️ PARTIALLY RESOLVED (2026-01-28)
+    > **ANSWER**: Event bus pattern for plugin communication. State isolation rules defined. 5-plugin limit validated.
+    > **GAP**: Plugin lazy loading implementation details not fully researched.
+    > **REFERENCE**: architecture-validation-2026-01-28.md (Section 2)
+    
         1. **THE TWO-ALWAYS-LOADED-PLUGINS** ARE (as for phone or portrait screen make it tabbed button):
             1.  The `project management`  plugin (the one with filetree, project switcher, creation, files CRUD, database and RAG management) 
             2. The `agent chat cascade + thread management` plugin - connecting agents + tools and the ecosystem of them - to thread managements for RAG that are indexed and are dependent on the project (take the project id as anchor - so meaning when switching project → the persistent threads are changed too → this approach lessens the confusions of conversation drift to non-related project
         2. plugins are various in features, responsibilities and provided capabilities → so be carefully with data mapping and api contracts as these increase when loaded together (up-to-5 in desktops including the 2-always-loaded ones - there are 3 multiplication of variants in the total number of plugins) → these must be really ultrathink for this matter
-2. Project storage types vs. client’s device 
+2. Project storage types vs. client's device 
     1. → finalize on file system for PC users (if dexiedb exists for PC users - they are the supportive persistent layer to help with indexing and reduce resynchronization every time users switch between projects) → think of all the edge cases above + handle states, persistent and hot load reactive for this as for eventbus + autosave + CRUD vs. files synchronization for large project (it will be a nightmare if every time 1000+ files need resynchronizing from beginning → so think of the solutions)
+    
+    > **STATUS**: ✅ RESOLVED (2026-01-28)
+    > **ANSWER**: Layered delta sync architecture. FileSystemObserver + mtime cache + content hash. Target: <3s initial sync, <200ms incremental for 1000+ files.
+    > **REFERENCE**: architecture-validation-2026-01-28.md (Section 3)
+    
     2. → as for NON-PC users → finalize of using browserdb → but as issues I have mentioned in 1 → I feel this is not enough
+    
+    > **STATUS**: ✅ RESOLVED (2026-01-28)
+    > **ANSWER**: User was RIGHT. SQLite WASM + OPFS required as primary storage. Safari eviction requires PWA installation. See §2.2 above.
+    > **REFERENCE**: architecture-validation-2026-01-28.md (Section 3)
 3. Handling of States vs. Store vs. Persistence vs. Hooks and all of the conflicts calls (and later indexed, query and RAG??? - those that belongs to Zustand, ReAct, Dexiedb, indexdb, fsa, eventemitter etc) → if these are not regulated and mapped out from the begging - a collapsing chains of runtime errors and those similar types of errors will get stacked up as the complexity of `plugins`
+
+> **STATUS**: ✅ RESOLVED (2026-01-28)
+> **ANSWER**: 4-layer state architecture defined: UI State (Zustand NO persist), Session State (Zustand + Dexie hydration), Persisted State (Dexie.js), File State (FSA/SQLite+OPFS). Critical boundary rules established.
+> **REFERENCE**: architecture-validation-2026-01-28.md (Section 5), See §8.1 and §8.2 above
+
 4. Consolidate and remake the project creation + revamp the navigation (both ux and ui) and if necessary eliminate those that cause conflicts and confusion and create new ones for this new architecture
+
+> **STATUS**: ❌ NOT ADDRESSED (2026-01-28)
+> **ANSWER**: Research focused on technical aspects. UX for project creation not explored.
+> **NEEDS**: Separate UX research
+> **REFERENCE**: architecture-validation-2026-01-28.md (Section 7)
+
 5. The rest of the matrix of complexity when counting CRUD permissions (for both clients and agents using tools), RAG features, Multimodality input and output and the edge cases — those will be discussed in much details after the next section.
+
+> **STATUS**: ⚠️ PARTIALLY ADDRESSED (2026-01-28)
+> **ANSWER**: TanStack AI `needsApproval` flag confirmed for tool permissions. Tool permission matrix defined.
+> **GAP**: Full permission matrix per agent type needs detailed specification.
+> **REFERENCE**: architecture-validation-2026-01-28.md (Section 4)
 
 ## **2. BYOK (Bring Your Own Key) Vault:**
 
@@ -673,6 +907,11 @@ and the nature. These should be design and implement based on `complexity-layeri
 this is the only document contains agentic cycle https://tanstack.com/ai/latest/docs/guides/agentic-cycle 
 though I feel Tanstack AI lacks pretty many agentic patterns compared to `AI SDK of Vercel` https://ai-sdk.dev/docs/introduction - though what prevent me from using AI-SDK is its lacking of client-side tooling system. And if we can resolve such short-comings of `AI-SDK version 6 of Vercel` - may be switching to it can give us an upperhand in designing more advanced agentic features
 
+> **STATUS**: ✅ RESOLVED (2026-01-28)
+> **ANSWER**: TanStack AI CONFIRMED. The `.client()` modifier enables true browser-side tool execution, solving the user's core concern. Vercel SDK v6 still lacks first-class client tools.
+> **DECISION**: Use TanStack AI. Do NOT switch to Vercel AI SDK.
+> **REFERENCE**: architecture-validation-2026-01-28.md (Section 4), See §4.3 above
+
 #### Dev tool and some other guides:
 - https://tanstack.com/ai/latest/docs/getting-started/devtools
 - https://tanstack.com/ai/latest/docs/guides/structured-outputs
@@ -726,21 +965,42 @@ the above types of features are pretty much instantaneous and belong to `content
 
 ## Keywords check list (some of the below are no longer valid while many are still true - update and consider the new architecture)
 
-1. **Client-Side Only:** Server interaction limited to LLM/API calls via browser.
-2. **BYOK Implementation:** Use Tanstack AI SDK & Tanstack Start. Keys persisted in vault, reactively passed to agents.
-3. **Project-Centric:** Multiple projects across workspaces (IDE, Notes - Knowledge/Study disabled for MVP). Unique Project IDs.
-4. **Device Parity:** Desktop = FSA. Non-Desktop = IndexedDB (Dexie). **NO IDE on Non-Desktop.**
-5. **Thread Management:** Chat cascade threads tied to Project ID and Workspace for RAG context.
+> **VALIDATION STATUS (2026-01-28)**: Reviewed and annotated below
+
+1. **Client-Side Only:** Server interaction limited to LLM/API calls via browser. ✅ STILL VALID
+2. **BYOK Implementation:** Use Tanstack AI SDK & Tanstack Start. Keys persisted in vault, reactively passed to agents. ✅ STILL VALID
+3. **Project-Centric:** Multiple projects across workspaces (IDE, Notes - Knowledge/Study disabled for MVP). Unique Project IDs. ✅ STILL VALID - nested projects blocked
+4. **Device Parity:** Desktop = FSA. Non-Desktop = IndexedDB (Dexie). **NO IDE on Non-Desktop.** ⚠️ UPDATE: Non-Desktop = SQLite WASM + OPFS (primary), Dexie (fallback)
+5. **Thread Management:** Chat cascade threads tied to Project ID and Workspace for RAG context. ✅ STILL VALID
 6. **Consistent UX (State/Persistence):**
-    1. FSA: Minimize compromise (persistent permissions, no reload/state loss). Handle non-MD file rendering in block notes.
-    2. Non-Desktop: Prevent conflicts in RAG, agentic actions, and tool usage.
-    3. CRUD Permissions: Prevent conflicts between agents and humans (esp. concurrent edits).
-    4. RAG: Ensure conflict-free operation across environments.
-    5. Multimodality: Prevent input/output access conflicts.
-7. **Agent Permissions:** Control CRUD on files via tools.
-8. **Rendering:** Support diverse file types and AI-generated content across workspaces and chat.
-9. **State Management Boundaries:** Clearly define and connect Zustand (client state) and Dexie (persisted data) usage.
-10. **Technical Hygiene:** Implement robust hooks, hydration, ID-based routing, and reactive persistence.
-11. **Research:** Evaluate if DexieDB should augment FSA for persistence/reactivity. Refactor stores if needed.
-12. **Edge Cases:** Address scenarios like agent CRUD operations during human file edits.
-13. **Gap Analysis:** Identify and resolve any architectural or functional gaps.
+    1. FSA: Minimize compromise (persistent permissions, no reload/state loss). Handle non-MD file rendering in block notes. ✅ STILL VALID
+    2. Non-Desktop: Prevent conflicts in RAG, agentic actions, and tool usage. ✅ STILL VALID
+    3. CRUD Permissions: Prevent conflicts between agents and humans (esp. concurrent edits). ✅ STILL VALID - use `needsApproval` flag
+    4. RAG: Ensure conflict-free operation across environments. ✅ STILL VALID
+    5. Multimodality: Prevent input/output access conflicts. ✅ STILL VALID
+7. **Agent Permissions:** Control CRUD on files via tools. ✅ STILL VALID - TanStack AI `needsApproval`
+8. **Rendering:** Support diverse file types and AI-generated content across workspaces and chat. ✅ STILL VALID
+9. **State Management Boundaries:** Clearly define and connect Zustand (client state) and Dexie (persisted data) usage. ✅ RESOLVED - See §8.1 (4-layer architecture)
+10. **Technical Hygiene:** Implement robust hooks, hydration, ID-based routing, and reactive persistence. ✅ STILL VALID
+11. **Research:** Evaluate if DexieDB should augment FSA for persistence/reactivity. Refactor stores if needed. ✅ RESOLVED - Yes, Dexie for metadata/handles, FSA for files
+12. **Edge Cases:** Address scenarios like agent CRUD operations during human file edits. ⚠️ PARTIALLY ADDRESSED - file locks, visual indicators defined
+13. **Gap Analysis:** Identify and resolve any architectural or functional gaps. ✅ COMPLETED - See architecture-validation-2026-01-28.md
+
+---
+
+## Research Resolution Summary (2026-01-28)
+
+| Question | Status | Answer Reference |
+|----------|--------|-----------------|
+| Nested projects (PC) | ✅ RESOLVED | Block with detection + migration |
+| Non-PC storage | ✅ RESOLVED | SQLite WASM + OPFS |
+| Large project sync | ✅ RESOLVED | Delta sync, <3s initial |
+| State management | ✅ RESOLVED | 4-layer architecture |
+| AI SDK choice | ✅ RESOLVED | TanStack AI confirmed |
+| LLM provider priority | ✅ RESOLVED | Gemini P1 (FREE embeddings) |
+| Safari eviction | ✅ RESOLVED | PWA installation required |
+| Plugin communication | ⚠️ PARTIAL | Event bus pattern |
+| Project creation UX | ❌ NOT ADDRESSED | Needs UX research |
+| Bi-directional references | ❌ NOT ADDRESSED | Needs research |
+
+**Next Steps**: Create ADRs for major decisions (ADR-040 through ADR-047)

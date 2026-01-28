@@ -46,7 +46,7 @@ import { getPlatformContract } from '@/infrastructure/filesystem/platform-contra
 import { getPresetConfig } from '@/presentation/layouts/workflow-presets';
 // UXUI-02-05: ActivityBar + Docker Wiring
 import { usePluginActivityDockerWiring } from '@/presentation/components/layout/PluginActivityDockerWiring';
-import { usePluginPlacement, getDefaultPlacements } from '@/presentation/hooks/usePluginPlacement';
+import { usePluginPlacement, type PluginPlacementEntry } from '@/presentation/hooks/usePluginPlacement';
 import type { ActivityBarItem } from '@/presentation/components/layout/ActivityBar';
 // CC-UX-02: Plugin Registry for rendering
 import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
@@ -144,7 +144,34 @@ const RIGHT_ACTIVITY_ITEMS: ActivityBarItem[] = [
  * Renders unified project route with ProjectContextProvider and PluginLayout.
  * Uses platform-first defaults for plugin initialization.
  * Integrates ActivityBar + Docker wiring for panel management (UXUI-02-05).
+ * 
+ * ============================================================================
+ * DEBUG PHASE 2: 2026-01-28
+ * ISOLATING CHAT AND NOTES PLUGINS
+ * - All plugins ENABLED except 'notes' and 'chat'
+ * - If black rectangle RETURNS → Problem is in FileTree/Terminal/Preview/Monaco
+ * - If black rectangle GONE → Problem is in Notes or Chat plugins
+ * ============================================================================
  */
+
+// DEBUG PHASE 2: Plugins to DISABLE for testing
+const DEBUG_DISABLED_PLUGINS: PluginId[] = ['notes', 'chat'];
+
+// DEBUG PHASE 2: Filter activity items to exclude disabled plugins
+const DEBUG_LEFT_ACTIVITY_ITEMS = LEFT_ACTIVITY_ITEMS.filter(
+  (item) => !DEBUG_DISABLED_PLUGINS.includes(item.id as PluginId)
+);
+const DEBUG_RIGHT_ACTIVITY_ITEMS = RIGHT_ACTIVITY_ITEMS.filter(
+  (item) => !DEBUG_DISABLED_PLUGINS.includes(item.id as PluginId)
+);
+
+// DEBUG PHASE 2: Default placements without disabled plugins
+const DEBUG_DEFAULT_PLACEMENTS: PluginPlacementEntry[] = [
+  { pluginId: 'filetree', panel: 'left' },
+  { pluginId: 'terminal', panel: 'right' },
+  // NOTE: 'chat' and 'notes' are DISABLED for this debug phase
+];
+
 function UnifiedProjectRoute() {
   const { projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
@@ -160,41 +187,41 @@ function UnifiedProjectRoute() {
   // CC-AR-03: Check hydration status before rendering layout
   const hasHydrated = usePluginLayoutStore((s) => s._hasHydrated);
 
-  console.log('[UnifiedProjectRoute] Rendering:', { projectId, hasHydrated, storageType: project?.storageType });
+  console.log('[UnifiedProjectRoute] DEBUG PHASE 2 - Rendering:', { 
+    projectId, 
+    hasHydrated, 
+    storageType: project?.storageType,
+    disabledPlugins: DEBUG_DISABLED_PLUGINS,
+  });
 
   // ========================================================================
+  // DEBUG PHASE 2: MAIN CONTENT PLUGIN STATE RE-ENABLED
+  // ========================================================================
+  // 
   // UXUI-03-04: Main Content Plugin State (Notes/Monaco/Preview Switching)
-  // ========================================================================
-
-  /**
-   * Active plugin ID for the main content area.
-   * Default: 'monaco' (code editor as primary workspace tool)
-   */
+  // NOTE: Default to 'monaco' since 'notes' is disabled
+  // 
   const [activeMainPluginId, setActiveMainPluginId] = useState<PluginId>('monaco');
-
-  /**
-   * Handler for main content plugin switching
-   * Called when user clicks a tab in the ActivityBarTop
-   */
   const handleMainPluginChange = useCallback((pluginId: PluginId) => {
+    // DEBUG: Block disabled plugins from being activated
+    if (DEBUG_DISABLED_PLUGINS.includes(pluginId)) {
+      console.warn(`[DEBUG PHASE 2] Plugin ${pluginId} is DISABLED for testing`);
+      return;
+    }
     console.log('[UnifiedProjectRoute] Main plugin changed:', pluginId);
     setActiveMainPluginId(pluginId);
   }, []);
-
-  /**
-   * Handler for plugin errors in main content area
-   * Logs errors and could trigger error reporting
-   */
   const handlePluginError = useCallback((pluginId: PluginId, error: Error) => {
     console.error('[UnifiedProjectRoute] Plugin error:', { pluginId, error });
-    // Could add error reporting/analytics here
   }, []);
 
   // ========================================================================
+  // DEBUG PHASE 2: PLUGIN PLACEMENT STATE RE-ENABLED
+  // ========================================================================
+  // 
   // UXUI-02-05: Plugin Placement State (Single Instance Constraint)
   // UXUI-03-07: Plugin placement persistence (keyed by projectId)
-  // ========================================================================
-
+  //
   const {
     placements,
     getPluginPanel,
@@ -205,40 +232,28 @@ function UnifiedProjectRoute() {
     setActivePluginForPanel,
   } = usePluginPlacement({
     projectId,
-    initialPlacements: getDefaultPlacements('default'),
+    initialPlacements: DEBUG_DEFAULT_PLACEMENTS,
   });
 
   // ========================================================================
-  // UXUI-03-05: Floating Plugin Docker State
+  // DEBUG PHASE 2: FLOATING DOCKER STATE RE-ENABLED
   // ========================================================================
-
-  /**
-   * Whether the floating plugin docker is visible
-   * Toggled via Cmd+Shift+P keyboard shortcut
-   */
   const [isFloatingDockerOpen, setIsFloatingDockerOpen] = useState(false);
-
-  /**
-   * Toggle floating docker visibility
-   */
   const toggleFloatingDocker = useCallback(() => {
     setIsFloatingDockerOpen((prev) => !prev);
   }, []);
-
-  /**
-   * Handle plugin click from floating docker
-   * Opens the plugin in its default or current panel
-   */
   const handleFloatingDockerPluginClick = useCallback(
     (pluginId: PluginId, defaultPanel: 'left' | 'main' | 'right') => {
+      // DEBUG: Block disabled plugins
+      if (DEBUG_DISABLED_PLUGINS.includes(pluginId)) {
+        console.warn(`[DEBUG PHASE 2] Plugin ${pluginId} is DISABLED for testing`);
+        return;
+      }
       const currentPanel = getPluginPanel(pluginId);
-      
       if (currentPanel === null || currentPanel === undefined) {
-        // Plugin not placed - place it in default panel
         movePluginToPanel(pluginId, defaultPanel);
         console.log(`[UnifiedProjectRoute] Placed ${pluginId} in ${defaultPanel} panel`);
       } else {
-        // Plugin already placed - just log (could toggle visibility)
         console.log(`[UnifiedProjectRoute] ${pluginId} already in ${currentPanel} panel`);
       }
     },
@@ -246,34 +261,37 @@ function UnifiedProjectRoute() {
   );
 
   // ========================================================================
-  // UXUI-03-05: Keyboard Shortcut Handler (Cmd+Shift+P)
+  // DEBUG PHASE 2: KEYBOARD SHORTCUT HANDLER RE-ENABLED
   // ========================================================================
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd+Shift+P (Mac) or Ctrl+Shift+P (Windows/Linux) to toggle floating docker
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'p') {
         e.preventDefault();
         toggleFloatingDocker();
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleFloatingDocker]);
 
   // ========================================================================
-  // CC-UX-02: Plugin Renderer Callback
+  // DEBUG PHASE 2: PLUGIN RENDERER CALLBACK RE-ENABLED
   // ========================================================================
-
-  /**
-   * Render plugin content for ActivityBar/Docker
-   * Uses plugin registry to get the MainComponent
-   */
   const renderPluginContent = useCallback(
     ({ pluginId, position }: { pluginId: PluginId; position: 'left' | 'right' }) => {
-      const plugin = getPlugin(pluginId);
+      // DEBUG: Block disabled plugins from rendering
+      if (DEBUG_DISABLED_PLUGINS.includes(pluginId)) {
+        return (
+          <div className="h-full flex items-center justify-center bg-amber-900/20 border border-amber-500/30 p-4">
+            <span className="text-amber-400 font-mono text-xs text-center">
+              [DEBUG PHASE 2]<br />
+              {pluginId} DISABLED
+            </span>
+          </div>
+        );
+      }
       
+      const plugin = getPlugin(pluginId);
       if (!plugin) {
         console.warn(`[UnifiedProjectRoute] Plugin not found: ${pluginId}`);
         return (
@@ -282,24 +300,20 @@ function UnifiedProjectRoute() {
           </div>
         );
       }
-
       const Component = plugin.MainComponent;
-      // Default dimensions - Docker handles resize
       const width = position === 'left' ? 240 : 300;
-      const height = 500; // Will fill available space via CSS
-
+      const height = 500;
       return <Component width={width} height={height} />;
     },
     []
   );
 
   // ========================================================================
-  // UXUI-02-05: Left Side Wiring (ActivityBar + Docker)
+  // DEBUG PHASE 2: LEFT/RIGHT WIRING RE-ENABLED
   // ========================================================================
-
   const leftWiring = usePluginActivityDockerWiring({
     position: 'left',
-    items: LEFT_ACTIVITY_ITEMS,
+    items: DEBUG_LEFT_ACTIVITY_ITEMS, // Filtered items
     minWidth: 200,
     maxWidth: 320,
     getPluginPanel,
@@ -308,16 +322,11 @@ function UnifiedProjectRoute() {
     getPluginsInPanel,
     getActivePluginForPanel,
     setActivePluginForPanel,
-    renderPlugin: renderPluginContent,  // CC-UX-02: Wire plugin renderer
+    renderPlugin: renderPluginContent,
   });
-
-  // ========================================================================
-  // UXUI-02-05: Right Side Wiring (ActivityBar + Docker)
-  // ========================================================================
-
   const rightWiring = usePluginActivityDockerWiring({
     position: 'right',
-    items: RIGHT_ACTIVITY_ITEMS,
+    items: DEBUG_RIGHT_ACTIVITY_ITEMS, // Filtered items
     minWidth: 250,
     maxWidth: 400,
     getPluginPanel,
@@ -326,23 +335,20 @@ function UnifiedProjectRoute() {
     getPluginsInPanel,
     getActivePluginForPanel,
     setActivePluginForPanel,
-    renderPlugin: renderPluginContent,  // CC-UX-02: Wire plugin renderer
+    renderPlugin: renderPluginContent,
   });
 
-  // Initialize layout store with platform-appropriate defaults
-  // Phase 1: Use workflow presets instead of individual plugins
+  // ========================================================================
+  // DEBUG PHASE 2: LAYOUT STORE INITIALIZATION RE-ENABLED
+  // ========================================================================
   useEffect(() => {
-    // Only initialize if user hasn't customized AND store has no active plugins
     if (!layoutStore.hasUserCustomized && layoutStore.activePlugins.length === 0) {
       const defaultPreset = layoutStore.currentPreset || 'default';
       const presetConfig = getPresetConfig(defaultPreset);
-
       console.log('[UnifiedProjectRoute] Initializing with preset:', {
         preset: defaultPreset,
         panels: presetConfig.panels,
       });
-
-      // Use preset's panels as default plugins
       layoutStore.initializeDefaults(presetConfig.panels, getDefaultLayoutMode(platform));
     }
   }, [project.id]);
@@ -358,34 +364,63 @@ function UnifiedProjectRoute() {
     );
   }
 
-  // Phase 1: CSS Grid Layout with Fixed-Ratio Presets
-  // PluginLayout now includes Chat, FileTree, and other panels in CSS Grid
-  // No separate PluginSidebar needed - all panels are in the grid
-  // EPIC-0.6-01: Wrap with PluginCoordinationProvider for cross-plugin coordination
-  // UXUI-02-03: WorkspaceLayout integration with MainSidebar as GlobalSidebar
-  // UXUI-02-05: ActivityBar + Docker wiring for panel management
-  // UXUI-03-04: MainContentRenderer replaces hardcoded MonacoMain for plugin switching
-  // UXUI-03-05: FloatingPluginDocker for centralized plugin management (Cmd+Shift+P)
+  // ============================================================================
+  // DEBUG PHASE 2: RE-ENABLED PLUGINS (except notes and chat)
+  // ============================================================================
+  // 
+  // ISOLATING CHAT AND NOTES PLUGINS:
+  // - If black rectangle RETURNS → Problem is in FileTree/Terminal/Preview/Monaco
+  // - If black rectangle GONE → Problem is in Notes or Chat plugins
+  //
+  // Disabled: notes, chat
+  // Enabled: filetree, monaco, terminal, preview
+  //
+  
   return (
     <PluginCoordinationProvider>
       <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
         <WorkspaceLayout
+          // GlobalSidebar - Real MainSidebar component
           globalSidebar={<MainSidebar />}
+          
+          // Left ActivityBar - Using leftWiring (notes filtered out)
           activityBarLeft={leftWiring.activityBar}
+          
+          // Left Plugin Panel - Using leftWiring docker
           pluginLeft={leftWiring.docker}
+          
+          // Main Content Area - Using MainContentRenderer (notes filtered out)
           mainContent={
             <MainContentRenderer
               activePluginId={activeMainPluginId}
               onPluginChange={handleMainPluginChange}
               onPluginError={handlePluginError}
+              fallback={
+                <div className="h-full flex items-center justify-center bg-background">
+                  <div className="text-center">
+                    <span className="text-muted-foreground font-mono text-sm block">
+                      [DEBUG PHASE 2] Main Content
+                    </span>
+                    <span className="text-muted-foreground/60 font-mono text-xs block mt-2">
+                      Notes plugin DISABLED - Testing isolation
+                    </span>
+                  </div>
+                </div>
+              }
             />
           }
+          
+          // Right Plugin Panel - Using rightWiring docker (chat filtered out)
           pluginRight={rightWiring.docker}
+          
+          // Right ActivityBar - Using rightWiring (chat filtered out)
           activityBarRight={rightWiring.activityBar}
+          
+          // StatusBar - Real StatusBar component
           statusBar={<StatusBar />}
         />
         
-        {/* UXUI-03-05: Floating Plugin Docker - Toggle via Cmd+Shift+P */}
+        {/* FloatingPluginDocker - Re-enabled with disabled plugins filtered */}
         <FloatingPluginDocker
           placements={placements}
           onPluginClick={handleFloatingDockerPluginClick}

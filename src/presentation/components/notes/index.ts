@@ -5,7 +5,7 @@
  */
 
 export { NoteEditor, NoteEditorEmpty } from './NoteEditor';
-export { NotesPage } from './NotesPage';
+// ARCHIVED 2026-01-28: NotesPage moved to _bmad-ext/.archive/layout-cleanup-2026-01-28/
 export { NoteSidebar } from './NoteSidebar';
 export { NoteTree } from './NoteTree';
 export { NoteTreeItem } from './NoteTreeItem';
@@ -40,5 +40,5 @@ export { MultiModalImport } from './MultiModalImport';
 export { VoiceRecordButton } from './VoiceRecordButton';
 
 // EPIC-MOBILE: Mobile Layout Components
-export { NotesMobileLayout, NotesMobileLayoutWithState } from './NotesMobileLayout';
+// ARCHIVED 2026-01-28: NotesMobileLayout moved to _bmad-ext/.archive/layout-cleanup-2026-01-28/
 

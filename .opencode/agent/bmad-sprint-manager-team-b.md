@@ -2,7 +2,9 @@
 description: Product manager agent for sprint execution and story development
 subtask: true
 mode: all
-model: kimi-for-coding/k2p5
+# model: kimi-for-coding/k2p5
+# model: chutes/moonshotai/Kimi-K2.5-TEE
+model: chutes/zai-org/GLM-4.7-FP8
 tools:
   write: true
   edit: true

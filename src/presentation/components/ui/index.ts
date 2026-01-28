@@ -54,9 +54,7 @@ export { KeyboardShortcutsOverlay } from './keyboard-shortcuts-overlay';
 export { ApprovalOverlay } from './ApprovalOverlay';
 export type { ApprovalDecision, PermissionRequest, RiskLevel } from './ApprovalOverlay';
 
-// Layout Presets (ARCH-03-03)
-export {
-  LayoutPresetPicker,
-  useLayoutShortcuts,
-} from './LayoutPresetPicker';
-export { SavePresetDialog, type SavePresetDialogProps } from './SavePresetDialog';
+// Layout Presets - ARCHIVED 2026-01-28
+// See: _bmad-ext/.archive/layout-cleanup-2026-01-28/
+// - LayoutPresetPicker → archived
+// - SavePresetDialog → archived

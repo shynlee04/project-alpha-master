@@ -70,17 +70,23 @@ export const monacoPlugin: FeaturePlugin = {
   // ========================================================================
 
   onMount: async (context) => {
-    console.log('[MonacoPlugin] Mounted for project:', context.projectId);
+    if (import.meta.env.DEV) {
+      console.log('[MonacoPlugin] Mounted for project:', context.projectId);
+    }
     // Monaco editor will load when user selects a file
   },
 
   onUnmount: async () => {
-    console.log('[MonacoPlugin] Unmounted');
+    if (import.meta.env.DEV) {
+      console.log('[MonacoPlugin] Unmounted');
+    }
     // Cleanup if needed
   },
 
   onProjectChange: async (newProjectId) => {
-    console.log('[MonacoPlugin] Project changed to:', newProjectId);
+    if (import.meta.env.DEV) {
+      console.log('[MonacoPlugin] Project changed to:', newProjectId);
+    }
     // Clear editor state on project change
     // In full implementation, this would close all open tabs
   },

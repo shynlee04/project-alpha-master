@@ -40,7 +40,7 @@ import { ShortcutDefinitions } from '@/lib/keyboard/shortcuts';
 
 // 8-bit compliant sidebar variants - uses semantic tokens for theming
 const sidebarVariants = cva(
-  'flex flex-col h-screen border-r-2 border-border bg-card transition-all duration-200 ease-in-out',
+  'flex flex-col h-full border-r-2 border-border bg-card transition-all duration-200 ease-in-out',
   {
     variants: {
       collapsed: {
@@ -82,7 +82,7 @@ const navItemVariants = cva(
 
 // 8-bit mobile sidebar (full screen overlay)
 const mobileSidebarVariants = cva(
-  'fixed inset-y-0 left-0 z-50 h-screen w-[320px] bg-card border-r-2 border-border transition-transform duration-200 ease-in-out shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
+  'fixed inset-y-0 left-0 z-50 h-dvh w-[320px] bg-card border-r-2 border-border transition-transform duration-200 ease-in-out shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
   {
     variants: {
       open: {

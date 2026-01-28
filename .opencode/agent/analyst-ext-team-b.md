@@ -2,7 +2,9 @@
 subtask: true
 description: Business Analyst - Requirements gathering, user story breakdown, competitive analysis with handoff protocol
 mode: all
-model: kimi-for-coding/k2p5
+# model: kimi-for-coding/k2p5
+# model: chutes/moonshotai/Kimi-K2.5-TEE
+model: chutes/zai-org/GLM-4.7-FP8
 temperature: 0.2
 tools:
   write: true

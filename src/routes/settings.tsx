@@ -4,6 +4,10 @@
  * Routes to the Settings and Preferences page.
  * Wraps AgentConfigDialog with proper state management.
  *
+ * FIX-2026-01-28: Removed MainLayout wrapper.
+ * ProjectAwareLayout (in __root.tsx) already provides MainSidebar for global routes.
+ * Using MainLayout here caused DOUBLE MainSidebar rendering.
+ *
  * @epic Epic-MRT Mobile Responsive Transformation
  * @story MRT-9 Dashboard Responsive
  * 
@@ -13,7 +17,6 @@
 
 import { useState } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog';
 import { ErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 import { SettingsIcon, PlusIcon } from '@/presentation/components/ui/icons';
@@ -77,11 +80,11 @@ function SettingsPage() {
     };
 
     return (
-        <MainLayout>
-            <div className={cn(
-                'max-w-4xl mx-auto',
-                isMobile ? 'p-4' : 'p-6'
-            )}>
+        // Content renders directly - MainSidebar is provided by ProjectAwareLayout
+        <div className={cn(
+            'max-w-4xl mx-auto',
+            isMobile ? 'p-4' : 'p-6'
+        )}>
                 <div className="flex items-center gap-3 mb-6">
                     <SettingsIcon className="text-primary" />
                     <h1 className={cn(
@@ -527,6 +530,5 @@ function SettingsPage() {
                     </div>
                 )}
             </div>
-        </MainLayout>
     );
 }

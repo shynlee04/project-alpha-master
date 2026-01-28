@@ -1,22 +1,16 @@
 /**
  * @fileoverview Layouts Module Exports
  * @module presentation/layouts
+ * @updated 2026-01-28
  *
- * Exports all layout components and stores.
+ * Exports layout components and hooks.
+ * Legacy layout components archived to: _bmad-ext/.archive/layout-cleanup-2026-01-28/
  *
  * @epic EPIC-ARCH-02
  * @story ARCH-02-09
  * @team Team B
  * @created 2026-01-21
  */
-
-// ============================================================================
-// Main Layout Components
-// ============================================================================
-
-export { PluginLayout } from './PluginLayout';
-export { PluginPanel } from './PluginPanel';
-export { MobilePluginNav } from './MobilePluginNav';
 
 // ============================================================================
 // Layout Hooks
@@ -26,11 +20,35 @@ export { useBreakpoint, BREAKPOINTS, LAYOUT_RULES } from './useBreakpoint';
 export type { Breakpoint } from './useBreakpoint';
 
 // ============================================================================
-// Layout Stores
+// Workspace Layout (6-Column Grid)
 // ============================================================================
 
-export { usePluginLayoutStore } from './PluginLayoutStore';
-export type { LayoutMode } from './PluginLayoutStore';
+export { WorkspaceLayout, type WorkspaceLayoutProps } from './WorkspaceLayout';
+
+// ============================================================================
+// Add Plugin Dialog
+// ============================================================================
+
+export { AddPluginDialog } from './AddPluginDialog';
+
+// ============================================================================
+// Workflow Presets
+// ============================================================================
+
+export {
+  WORKFLOW_PRESETS,
+  type WorkflowPreset,
+  type PresetConfig,
+  getPresetConfig,
+  getAllPresets,
+  getDefaultPresetForDevice,
+} from './workflow-presets';
+
+// ============================================================================
+// Plugin Layout Store (Restored - still in use)
+// ============================================================================
+
+export { usePluginLayoutStore, type LayoutMode } from './PluginLayoutStore';
 export {
   selectActivePlugins,
   selectLayoutMode,
@@ -38,26 +56,10 @@ export {
 } from './PluginLayoutStore';
 
 // ============================================================================
-// Bento Grid System (ARCHIVED 2026-01-28 - UXUI-02-08)
-// ============================================================================
-// The Bento Grid system has been archived. See _bmad-ext/.archive/bento-grid-2026-01-28/
-// for the archived files.
-//
-// The PluginLayoutStore now provides:
-// - usePluginLayoutStore: Main store for plugin state
-// - togglePlugin: Add/remove plugins
-// - selectIsPluginActive: Check if plugin is active
-
-// ============================================================================
-// Layout Presets (ARCH-03-03)
-// ============================================================================
-
-export {
-  useLayoutPresetsStore,
-  type LayoutPreset,
-  BUILT_IN_PRESETS,
-} from '@/infrastructure/persistence/stores/layout-presets-store';
-
-// ============================================================================
-// No additional exports
+// Archived Components (2026-01-28):
+// - PluginLayout → archived
+// - PluginPanel → archived
+// - MobilePluginNav → archived
+// - layout-presets-store → archived
+// See: _bmad-ext/.archive/layout-cleanup-2026-01-28/
 // ============================================================================

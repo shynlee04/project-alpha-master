@@ -58,13 +58,13 @@ export type PanelId = 'chat' | 'filetree' | 'notes' | 'monaco' | 'preview' | 'te
 export { getPlugin, getAllPlugins } from '@/infrastructure/plugins/plugin-registry';
 
 /**
- * PluginPanel Component
+ * PluginPanel Component - ARCHIVED 2026-01-28
  *
  * @remarks
- * The actual panel wrapper that renders any plugin.
- * Provides optional header with drag handle and close button.
+ * PluginPanel has been archived to: _bmad-ext/.archive/layout-cleanup-2026-01-28/
+ * Use getPlugin(panelId).MainComponent directly instead.
  */
-export { PluginPanel } from '@/presentation/layouts/PluginPanel';
+// export { PluginPanel } from '@/presentation/layouts/PluginPanel';
 
 /**
  * Workflow Presets

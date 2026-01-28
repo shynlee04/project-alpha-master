@@ -3,7 +3,7 @@ subtask: true
 description: UX/UI Designer - 8-bit aesthetic, accessibility (WCAG), wireframing with handoff protocol. This is the team-b variant of ux-designer-ext.
 mode: all 
 temperature: 0.3
-model: chutes/zai-org/GLM-4.7-TEE
+model: chutes/moonshotai/Kimi-K2.5-TEE
 tools:
   write: true
   edit: true

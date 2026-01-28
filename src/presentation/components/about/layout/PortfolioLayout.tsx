@@ -1,6 +1,13 @@
+/**
+ * PortfolioLayout Component
+ * 
+ * FIX-2026-01-28: Removed MainLayout wrapper.
+ * ProjectAwareLayout (in __root.tsx) already provides MainSidebar for global routes.
+ * Using MainLayout here caused DOUBLE MainSidebar rendering.
+ */
+
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { MainLayout } from '@/presentation/components/layout/MainLayout';
 
 interface PortfolioLayoutProps {
     children: React.ReactNode;
@@ -9,13 +16,11 @@ interface PortfolioLayoutProps {
 
 export function PortfolioLayout({ children, className }: PortfolioLayoutProps) {
     return (
-        <MainLayout className="h-screen w-screen overflow-hidden">
-            {/* Scrollable Container for Portfolio Content */}
-            <div className={cn("h-full w-full overflow-y-auto overflow-x-hidden bg-background font-sans text-foreground", className)}>
-                <main className="relative flex flex-col min-h-full">
-                    {children}
-                </main>
-            </div>
-        </MainLayout>
+        // Content renders directly - MainSidebar is provided by ProjectAwareLayout
+        <div className={cn("h-full w-full overflow-y-auto overflow-x-hidden bg-background font-sans text-foreground", className)}>
+            <main className="relative flex flex-col min-h-full">
+                {children}
+            </main>
+        </div>
     );
 }

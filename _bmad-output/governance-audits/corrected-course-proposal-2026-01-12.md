@@ -1,35 +1,28 @@
-# Corrected Course Proposal: Governance Scan Validation
-**Date:** 2026-01-12
-**Reference Audit:** GOV-2026-01-12-001
-**Status:** CORRECTED - Ready for Sprint Planning
-**Health Score:** 19/30 (production usability at risk; correctness not yet provable under stress)
+# Corrected Course Proposal: Governance Scan
 
----
+Date: 2026-01-12
+Reference Audit: GOV-2026-01-12-001
+Status: CORRECTED - Ready for Sprint Planning
+Health Score: 19/30 (production usability at risk; correctness not yet provable under stress)
+
+--
 
 ## Executive Summary
 
-This document validates and corrects the original governance scan against actual sprint artifacts and codebase implementation. The original audit was **directionally correct** on high-impact failure modes but contained **3 overstated claims** and **1 factual error** that must be reconciled before remediation work begins.
+This document validates and corrects the original governance scan against actual sprint artifacts and codebase implementation. The original audit was directionally correct on high-impact failure modes but contained 3 overstated claims and 1 factual error that must be reconciled before remediation work begins.
 
 ### Key Corrections
-
-| Original Claim | Correction | Source |
-|----------------|------------|--------|
-| `BROWSER_MODE_PROJECT_ID = 'notesbrowser-mode'` | `BROWSER_MODE_PROJECT_ID = 'notes:browser-mode'` | 45-04 artifact, browser-mode.ts:21 |
-| "No visual distinction for browser mode" | AC3: "Browser mode clearly indicated in UI" - COMPLETED | 45-04 artifact:84-87 |
-| "Tool context includes actual projectId ✅ VERIFIED" | "projectId not logged" - NEEDS VERIFICATION | 46-01 artifact:44-46, 62-66 |
-| "Missing navigation guards" | **VERIFIED** - Confirmed vulnerability | NotesPage.tsx:161-168 |
-
----
 
 ## Validation Against Sprint Artifacts
 
 ### Verified Against 45-03: Unified Project State
 
-**Claim:** No navigation guards before navigate() calls
-**Status:** ✅ **CONFIRMED TRUE**
+Claim: No navigation guards before navigate() calls
+Status: ✅ CONFIRMED TRUE
 
-**Evidence:**
-```typescript
+Evidence:
+
+```
 // src/presentation/components/notes/NotesPage.tsx:161-168
 const ideProjectId = useIDEStore((s) => s.projectId);
 useEffect(() => {
@@ -40,28 +33,24 @@ useEffect(() => {
 }, [ideProjectId, projectId, navigate]);
 ```
 
-**Sprint Artifact Alignment:** 45-03 explicitly documents this route-sync approach as the chosen architecture:
+Sprint Artifact Alignment: 45-03 explicitly documents this route-sync approach as the chosen architecture:
+
 > "This approach: 1. ✅ Maintains backward compatibility 2. ✅ Uses IDE store as single source of truth 3. ✅ Provides reactivity via event-driven navigation"
 
-**The vulnerability is BY DESIGN according to the sprint artifact.** This is not a bug but an **inherent risk** of the chosen architecture that requires mitigation.
+The vulnerability is BY DESIGN according to the sprint artifact. This is not a bug but an inherent risk of the chosen architecture that requires mitigation.
 
-**Remediation:** Add navigation idempotency guards without changing the fundamental architecture.
-
----
+Remediation: Add navigation idempotency guards without changing the fundamental architecture.
 
 ### Verified Against 45-04: Browser Space Mode
 
-**Claim:** Browser mode project ID mismatch
-**Status:** ✅ **CORRECTED** - Audit had wrong ID
+Claim: Browser mode project ID mismatch
+Status: ✅ CORRECTED - Audit had wrong ID
 
-**Correction:**
-| Audit Claim | Actual Value | Source |
-|-------------|--------------|--------|
-| `'notesbrowser-mode'` | `'notes:browser-mode'` | browser-mode.ts:21 |
-| Checks ID only | Checks BOTH ID and flag | browser-mode.ts:149 |
+Correction:
 
-**Actual Implementation:**
-```typescript
+Actual Implementation:
+
+```
 // src/lib/workspace/browser-mode.ts
 export const BROWSER_MODE_PROJECT_ID = 'notes:browser-mode';
 
@@ -70,28 +59,28 @@ export function isBrowserModeProject(project: Project | null): boolean {
 }
 ```
 
-**Claim:** "No visual distinction for browser mode"
-**Status:** ❌ **INCORRECT** - Sprint artifact shows COMPLETED
+Claim: "No visual distinction for browser mode"
+Status: ❌ INCORRECT - Sprint artifact shows COMPLETED
 
-**Evidence from 45-04 AC3:**
-```markdown
+Evidence from 45-04 AC3:
+
+```
 ### AC3: Visual Distinction
 - [x] Browser mode clearly indicated in UI
 - [x] Project-scoped notes show project badge/indicator
 - [ ] Filter by project available in browser mode (DEFERRED)
 ```
 
-**Correction:** The visual distinction EXISTS. The deferred item is only the filter-by-project feature.
-
----
+Correction: The visual distinction EXISTS. The deferred item is only the filter-by-project feature.
 
 ### Verified Against 46-01: Tool Context Propagation
 
-**Claim:** "Tool context includes actual projectId ✅ VERIFIED"
-**Status:** ❌ **OVERSTATED** - Should be "NOT YET VERIFIED"
+Claim: "Tool context includes actual projectId ✅ VERIFIED"
+Status: ❌ OVERSTATED - Should be "NOT YET VERIFIED"
 
-**Evidence from 46-01:**
-```markdown
+Evidence from 46-01:
+
+```
 ### ❌ What's Missing
 | Gap | Impact | Fix |
 |-----|--------|-----|
@@ -109,8 +98,9 @@ export function isBrowserModeProject(project: Project | null): boolean {
 **Status: NEEDS VERIFICATION**
 ```
 
-**Verification against codebase:**
-```typescript
+Verification against codebase:
+
+```
 // src/infrastructure/persistence/dexie-db-session-types.ts:97-114
 export interface ToolExecutionLogRecord {
     id: string;
@@ -128,17 +118,16 @@ export interface ToolExecutionLogRecord {
 }
 ```
 
-**Correction:** The audit sub-agent A2's claim was **OVERSTATED**. The sprint artifact correctly identifies this as "NEEDS VERIFICATION."
-
----
+Correction: The audit sub-agent A2's claim was OVERSTATED. The sprint artifact correctly identifies this as "NEEDS VERIFICATION."
 
 ### Verified Against 46-02: Workspace Prompts
 
-**Claim:** Stale prompt cache after permission changes
-**Status:** ✅ **CONFIRMED TRUE**
+Claim: Stale prompt cache after permission changes
+Status: ✅ CONFIRMED TRUE
 
-**Evidence:**
-```typescript
+Evidence:
+
+```
 // src/lib/agent/prompt-composer.ts:163-169
 public updateConfig(config: Partial<PromptComposerConfig>): void {
   const newConfig = { ...this.getConfig(), ...config };
@@ -154,24 +143,21 @@ private invalidateCache(): void {
 }
 ```
 
-**No event subscriptions found for:**
-- `permission:changed` events
-- `workspace:transition:complete` events
-- Tool availability changes
+No event subscriptions found for:
 
-**Sprint Artifact Alignment:** 46-02 AC1 explicitly requires "Prompt lists tools available in current workspace" and AC2 requires "Prompt explains unavailable tools" - both of which depend on non-stale cache.
-
-**The vulnerability is REAL** and blocks 46-02 completion.
-
----
+- permission:changed events
+- workspace:transition:complete events
+- Tool availability changes Sprint Artifact Alignment: 46-02 AC1 explicitly requires "Prompt lists tools available in current workspace" and AC2 requires "Prompt explains unavailable tools" - both of which depend on non-stale cache.
+The vulnerability is REAL and blocks 46-02 completion.
 
 ### Verified Against EPIC-45 Retrospective
 
-**Claim:** Scroll-position map growth causes performance degradation
-**Status:** ✅ **CONFIRMED** - Acknowledged as technical debt
+Claim: Scroll-position map growth causes performance degradation
+Status: ✅ CONFIRMED - Acknowledged as technical debt
 
-**Evidence from retrospective:**
-```markdown
+Evidence from retrospective:
+
+```
 ### 2. Scroll Position Storage Unbounded
 **Impact:** `noteScrollPositions` map grows indefinitely
 
@@ -180,50 +166,29 @@ private invalidateCache(): void {
 **Action:** Consider cleanup strategy if user reports issues
 ```
 
-**This is KNOWN technical debt**, not a newly discovered issue. The audit correctly identified it but mischaracterized the severity (user called it out specifically, so it may be more impactful than "Low").
-
----
+This is KNOWN technical debt, not a newly discovered issue. The audit correctly identified it but mischaracterized the severity (user called it out specifically, so it may be more impactful than "Low").
 
 ## Corrected Risk Assessment
 
 ### Proven Vulnerabilities (Require Action)
 
-| ID | Vulnerability | Evidence Source | Severity | Action Required |
-|----|---------------|-----------------|----------|-----------------|
-| V1 | Navigation loop without idempotency guards | NotesPage.tsx:161-168 + 45-03 | HIGH | Add guards |
-| V2 | Missing `projectId` in tool execution logs | dexie-db-session-types.ts:97-114 + 46-01 | HIGH | Add field + migration |
-| V3 | Stale prompt cache on permission changes | prompt-composer.ts:163-169 + 46-02 | CRITICAL | Add event subscriptions |
-| V4 | Unbounded scroll position storage | EPIC-45 retrospective + note-navigation-store | MEDIUM | Add LRU/TTL |
-| V5 | Browser mode tool handling unverified | 46-01 AC4 status | HIGH | Create test matrix |
-
 ### Overstated Claims (Must Correct)
 
-| ID | Overstated Claim | Correction | Action |
-|----|------------------|-----------|--------|
-| O1 | `BROWSER_MODE_PROJECT_ID = 'notesbrowser-mode'` | Correct ID: `'notes:browser-mode'` | Update docs |
-| O2 | "No visual distinction for browser mode" | AC3 COMPLETED in 45-04 | Remove from risk list |
-| O3 | "Tool context includes projectId ✅ VERIFIED" | Status: "NEEDS VERIFICATION" per 46-01 | Correct claim |
-
 ### Factual Error (Must Fix)
-
-| ID | Error | Correction |
-|----|-------|-----------|
-| E1 | Agent A2 reported wrong browser mode ID | Sub-agent used inconsistent naming | Anchor to sprint artifacts |
-
----
 
 ## Corrected Remediation Roadmap
 
 ### Phase 1: Immediate (Today) - Production Blockers
 
-**Priority: P0 - Stop the Bleed**
+Priority: P0 - Stop the Bleed
 
 #### 1.1 Navigation Idempotency Guards (2 hours)
-**Reference:** V1, 45-03 architecture
 
-**Approach:** Add guards WITHOUT changing route-sync architecture
+Reference: V1, 45-03 architecture
 
-```typescript
+Approach: Add guards WITHOUT changing route-sync architecture
+
+```
 // src/presentation/components/notes/NotesPage.tsx
 const lastNavRef = useRef<{ projectId: string | null; timestamp: number }>();
 
@@ -244,23 +209,17 @@ useEffect(() => {
 }, [ideProjectId, projectId, navigate]);
 ```
 
-**Apply same pattern to:**
-- `KnowledgePage.tsx`
-- `StudyPage.tsx`
+Apply same pattern to:
 
-**Acceptance Criteria:**
-- [ ] No infinite loops during 50 rapid project switches
-- [ ] Null/invalid project IDs are ignored
-- [ ] Already-at-target navigations are skipped
-
----
-
+- KnowledgePage.tsx
+- StudyPage.tsx Acceptance Criteria:
 #### 1.2 Prompt Cache Invalidation Fix (2 hours)
-**Reference:** V3, 46-02 AC1-AC4
 
-**Approach:** Subscribe to permission and workspace transition events
+Reference: V3, 46-02 AC1-AC4
 
-```typescript
+Approach: Subscribe to permission and workspace transition events
+
+```
 // src/lib/agent/prompt-composer.ts
 import { eventBus, DomainEventType } from '@/infrastructure/events/event-bus';
 
@@ -283,24 +242,21 @@ private setupCacheInvalidation(): void {
 }
 ```
 
-**Note:** May need to add new event types to `DomainEventType` enum if not present.
+Note: May need to add new event types to DomainEventType enum if not present.
 
-**Acceptance Criteria:**
-- [ ] Prompt cache invalidates within 100ms of permission change
-- [ ] AI never suggests blocked tools after permission change
-- [ ] No performance degradation from frequent invalidation
-
----
+Acceptance Criteria:
 
 ### Phase 2: Short-Term (This Sprint) - Data Integrity
 
-**Priority: P0 - Correctness**
+Priority: P0 - Correctness
 
-#### 2.1 Add `projectId` to Tool Execution Logs (3 hours)
-**Reference:** V2, 46-01 AC2
+#### 2.1 Add projectId to Tool Execution Logs (3 hours)
 
-**Schema Change:**
-```typescript
+Reference: V2, 46-01 AC2
+
+Schema Change:
+
+```
 // src/infrastructure/persistence/dexie-db-session-types.ts
 export interface ToolExecutionLogRecord {
     id: string;
@@ -313,8 +269,9 @@ export interface ToolExecutionLogRecord {
 }
 ```
 
-**Migration v21:**
-```typescript
+Migration v21:
+
+```
 db.version(21).stores({
     toolExecutionLogs: 'id, conversationId, messageId, workspaceId, ++projectId, toolName, [timestamp]'
 }).upgrade(async tx => {
@@ -327,48 +284,30 @@ db.version(21).stores({
 });
 ```
 
-**Acceptance Criteria:**
-- [ ] All new tool logs include projectId
-- [ ] Migration preserves existing data (projectId = 'unknown' for legacy)
-- [ ] Rollback works without data loss
-
----
+Acceptance Criteria:
 
 #### 2.2 Browser Mode Tool Verification (2 hours)
-**Reference:** V5, 46-01 AC4
 
-**Test Matrix:**
+Reference: V5, 46-01 AC4
 
-| Tool | IDE | Notes (project) | Notes (browser) | Knowledge | Study |
-|------|-----|----------------|-----------------|-----------|-------|
-| create_note | ✓ | ✓ | ✓ (VERIFIED) | ✓ | ✓ |
-| read_note | ✓ | ✓ | ✓ | ✓ | ✓ |
-| update_note | ✓ | ✓ | ✓ | ✓ | ✓ |
-| delete_note | ✓ | ✓ | ✓ | ✓ | ✓ |
-| list_notes | ✓ | ✓ | ✓ (all projects) | ✓ | ✓ |
+Test Matrix:
 
-**Each test must verify:**
+Each test must verify:
+
 1. Tool executes without error
-2. `projectId` logged correctly
-3. Browser mode notes persist correctly
-
-**Acceptance Criteria:**
-- [ ] All note CRUD tools work in browser mode
-- [ ] Browser mode notes show `projectId = 'notes:browser-mode'` in logs
-- [ ] No data loss when switching between browser mode and project mode
-
----
-
+1. projectId logged correctly
+1. Browser mode notes persist correctly Acceptance Criteria:
 ### Phase 3: Long-Term (Next Sprint) - Architecture Hardening
 
-**Priority: P1 - Best-in-Class**
+Priority: P1 - Best-in-Class
 
 #### 3.1 Bounded Scroll Position Storage (4 hours)
-**Reference:** V4, EPIC-45 retrospective
 
-**Approach:** Add LRU cache with TTL
+Reference: V4, EPIC-45 retrospective
 
-```typescript
+Approach: Add LRU cache with TTL
+
+```
 // src/lib/notes/stores/note-navigation-store.ts
 class BoundedScrollStorage {
     private maxEntries = 100;
@@ -405,19 +344,15 @@ class BoundedScrollStorage {
 }
 ```
 
-**Acceptance Criteria:**
-- [ ] Scroll position cache limited to 100 entries
-- [ ] Entries expire after 7 days
-- [ ] No performance degradation over long sessions
-
----
+Acceptance Criteria:
 
 #### 3.2 Prompt-Tool Source Unification (3 hours)
-**Reference:** V3, 46-02 design
 
-**Approach:** Use same permission manager for prompts and execution
+Reference: V3, 46-02 design
 
-```typescript
+Approach: Use same permission manager for prompts and execution
+
+```
 // src/lib/agent/workspace-prompt-builder.ts
 import { WorkspacePermissionManager } from './workspace-permission-manager';
 
@@ -449,71 +384,34 @@ export function buildToolListPrompt(
 }
 ```
 
-**Acceptance Criteria:**
-- [ ] Prompt tool list matches executable tools 100%
-- [ ] Blocked tools show explanation and alternative workspace
-- [ ] No "stale prompt" issues after permission changes
-
----
+Acceptance Criteria:
 
 ## Impact Map (User-Facing)
 
 ### What Breaks What
 
-| Impact Group | Primary Risk | User-Visible Symptom | Frequency |
-|--------------|--------------|---------------------|----------|
-| Routing churn | Missing nav guards | App freezes, "spinning loader" | Low (fast switching) |
-| Wrong tool suggestions | Stale prompt cache | AI suggests blocked tools → error | Medium (permission changes) |
-| Missing audit trail | No projectId in logs | Can't debug which project affected | Low (debugging only) |
-| Browser mode data loss | Unverified tool handling | Notes disappear | Unknown (needs testing) |
-| Long-session lag | Unbounded scroll storage | App gets slower over time | Medium (power users) |
-
----
-
 ## Test Requirements
 
 ### Must-Prove Edge Cases
-
-| Edge Case | Reproduction Steps | Expected Fix |
-|-----------|-------------------|--------------|
-| Route-sync oscillation | Navigate projects rapidly during hydration | Guard prevents loop |
-| Null project transition | Set IDE store projectId to null | Guard prevents `/notes/null` |
-| Browser mode tools | Execute all note tools in browser mode | All succeed, correct logs |
-| Stale prompt | Change permissions mid-conversation | Cache invalidates, prompt updates |
-| Scroll growth | Use app for weeks with many notes | LRU bounds storage |
-
----
 
 ## Document Corrections Required
 
 ### Original Audit Documents
 
-| Document | Correction |
-|----------|------------|
-| `governance-scan-report-2026-01-12.md` | Update BROWSER_MODE_PROJECT_ID, remove "no visual distinction" claim, correct "verified" status for tool context |
-| `edge-case-inventory-2026-01-12.md` | Update browser mode section with correct ID |
-| `remediation-roadmap-2026-01-12.md` | Update browser mode section with correct AC3 status |
-
----
-
 ## Next Steps
 
 ### Immediate (Today)
+
 1. Review and approve this corrected course proposal
-2. Create GitHub issues for Phase 1 tasks with acceptance criteria
-3. Assign priority labels
-
+1. Create GitHub issues for Phase 1 tasks with acceptance criteria
+1. Assign priority labels
 ### This Sprint
+
 1. Implement Phase 1 items (navigation guards, prompt cache)
-2. Start Phase 2 (projectId logging, browser mode verification)
-
+1. Start Phase 2 (projectId logging, browser mode verification)
 ### Next Sprint
+
 1. Complete Phase 2
-2. Implement Phase 3 (bounded storage, prompt-tool unification)
+1. Implement Phase 3 (bounded storage, prompt-tool unification) Prepared By: Governance Scan Validation Date: 2026-01-12 Status: Ready for Sprint Planning Review Confidence: HIGH - All claims verified against sprint artifacts and codebase
 
----
 
-**Prepared By:** Governance Scan Validation
-**Date:** 2026-01-12
-**Status:** Ready for Sprint Planning Review
-**Confidence:** HIGH - All claims verified against sprint artifacts and codebase

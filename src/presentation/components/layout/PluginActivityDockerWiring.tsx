@@ -294,6 +294,24 @@ export function usePluginActivityDockerWiring({
   // Return Wiring Result
   // ========================================================================
 
+  // DEBUG: legacy resizable pane fix - return null for docker when closed
+  // This allows CSS grid columns to collapse properly
+  const dockerElement = isDockerOpen ? (
+    <PluginDocker
+      position={position}
+      minWidth={calculatedMinWidth}
+      maxWidth={calculatedMaxWidth}
+      defaultWidth={calculatedDefaultWidth}
+      isOpen={isDockerOpen}
+      title={dockerTitle}
+      onClose={handleDockerClose}
+      onPluginDrop={handlePluginDrop}
+      className={dockerClassName}
+    >
+      {renderPluginContent()}
+    </PluginDocker>
+  ) : null;
+
   return {
     activityBar: (
       <ActivityBar
@@ -305,21 +323,7 @@ export function usePluginActivityDockerWiring({
         className={activityBarClassName}
       />
     ),
-    docker: (
-      <PluginDocker
-        position={position}
-        minWidth={calculatedMinWidth}
-        maxWidth={calculatedMaxWidth}
-        defaultWidth={calculatedDefaultWidth}
-        isOpen={isDockerOpen}
-        title={dockerTitle}
-        onClose={handleDockerClose}
-        onPluginDrop={handlePluginDrop}
-        className={dockerClassName}
-      >
-        {renderPluginContent()}
-      </PluginDocker>
-    ),
+    docker: dockerElement,
   };
 }
 

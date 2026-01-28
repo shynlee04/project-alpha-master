@@ -105,12 +105,18 @@ interface PluginErrorBoundaryProps {
  * - Notes: BlockNote markdown editor
  * - Monaco: Code editor (default)
  * - Preview: Live preview
+ * 
+ * DEBUG PHASE 2: Notes plugin DISABLED for isolation testing
  */
+
+// DEBUG PHASE 2: Plugins to DISABLE for testing
+const DEBUG_DISABLED_MAIN_PLUGINS: string[] = ['notes'];
+
 const MAIN_ACTIVITY_ITEMS: ActivityBarTopItem[] = [
   { pluginId: 'notes', icon: <StickyNote size={20} />, label: 'Notes', shortcut: 'Cmd+1' },
   { pluginId: 'monaco', icon: <Code size={20} />, label: 'Code', shortcut: 'Cmd+2' },
   { pluginId: 'preview', icon: <Eye size={20} />, label: 'Preview', shortcut: 'Cmd+3' },
-];
+].filter(item => !DEBUG_DISABLED_MAIN_PLUGINS.includes(item.pluginId));
 
 // ============================================================================
 // Plugin Error Boundary Component

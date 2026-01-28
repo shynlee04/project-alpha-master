@@ -84,7 +84,7 @@
   max-width: 320px;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden; /* FIX: Prevent unwanted scrollbar */
   border-radius: 0;
   border-right: 2px solid hsl(var(--border));
   background-color: hsl(var(--card));
@@ -95,7 +95,7 @@
   min-width: 400px;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden; /* FIX: Prevent unwanted scrollbar */
   border-radius: 0;
   background-color: hsl(var(--background));
 }
@@ -106,7 +106,7 @@
   max-width: 400px;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden; /* FIX: Prevent unwanted scrollbar */
   border-radius: 0;
   border-left: 2px solid hsl(var(--border));
   background-color: hsl(var(--card));
@@ -208,67 +208,31 @@
    UTILITY CLASSES
    ========================================================================== */
 
-/* Hide specific panels when not needed */
+/* ==========================================================================
+   VISIBILITY UTILITIES (Fixed grid, only toggle visibility)
+   
+   FIX: Removed dynamic column collapse rules that caused empty space.
+   Grid columns are now FIXED. Only visibility toggles.
+   ========================================================================== */
+
+/* Hide elements when empty but keep grid structure intact */
 .workspace-layout--no-global-sidebar .workspace-layout__global-sidebar {
-  display: none;
+  visibility: hidden;
 }
 
-.workspace-layout--no-left-plugin .workspace-layout__plugin-left {
-  display: none;
+.workspace-layout--no-plugin-left .workspace-layout__plugin-left {
+  visibility: hidden;
 }
 
-.workspace-layout--no-right-plugin .workspace-layout__plugin-right {
-  display: none;
+.workspace-layout--no-plugin-right .workspace-layout__plugin-right {
+  visibility: hidden;
 }
 
 .workspace-layout--no-status-bar .workspace-layout__status-bar {
   display: none;
 }
 
-/* Collapsed state for plugin panels */
-.workspace-layout__plugin-left--collapsed,
-.workspace-layout__plugin-right--collapsed {
-  width: 0;
-  min-width: 0;
-  overflow: hidden;
-  border: none;
-}
-
 /* ==========================================================================
-   SCROLLBAR STYLING (8-bit aesthetic)
+   NOTE: Scrollbar styles removed - overflow: hidden prevents scrollbars
+   If individual child components need scrolling, they manage their own overflow.
    ========================================================================== */
-
-.workspace-layout__plugin-left::-webkit-scrollbar,
-.workspace-layout__plugin-right::-webkit-scrollbar,
-.workspace-layout__main-content::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.workspace-layout__plugin-left::-webkit-scrollbar-track,
-.workspace-layout__plugin-right::-webkit-scrollbar-track,
-.workspace-layout__main-content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.workspace-layout__plugin-left::-webkit-scrollbar-thumb,
-.workspace-layout__plugin-right::-webkit-scrollbar-thumb,
-.workspace-layout__main-content::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
-  border-radius: 0;
-  border: 2px solid hsl(var(--card));
-}
-
-.workspace-layout__plugin-left::-webkit-scrollbar-thumb:hover,
-.workspace-layout__plugin-right::-webkit-scrollbar-thumb:hover,
-.workspace-layout__main-content::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
-}
-
-/* Firefox scrollbar */
-.workspace-layout__plugin-left,
-.workspace-layout__plugin-right,
-.workspace-layout__main-content {
-  scrollbar-width: thin;
-  scrollbar-color: hsl(var(--border)) transparent;
-}

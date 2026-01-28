@@ -2,7 +2,8 @@
 subtask: true
 description: Software Architect & System Designer - Clean Architecture, DDD, ADRs with handoff protocol
 mode: all
-model: kimi-for-coding/k2p
+# model: kimi-for-coding/k2p
+model: chutes/moonshotai/Kimi-K2.5-TEE
 temperature: 0.1
 tools:
   write: true

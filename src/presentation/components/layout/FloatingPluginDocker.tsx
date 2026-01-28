@@ -61,6 +61,14 @@ interface DragPosition {
 // Constants
 // ============================================================================
 
+// DEBUG PHASE 2: Plugins to DISABLE for testing
+const DEBUG_DISABLED_DOCKER_PLUGINS: PluginId[] = ['notes', 'chat'];
+
+// DEBUG PHASE 2: Filter out disabled plugins
+const DEBUG_ENABLED_PLUGIN_IDS = PLUGIN_IDS.filter(
+  (id) => !DEBUG_DISABLED_DOCKER_PLUGINS.includes(id)
+);
+
 /** Default position (bottom-right) */
 const DEFAULT_POSITION = {
   x: typeof window !== 'undefined' ? window.innerWidth - 304 : 1000,
@@ -86,7 +94,30 @@ const DEFAULT_PLUGIN_PANELS: Record<PluginId, 'left' | 'main' | 'right'> = {
 // ============================================================================
 
 /**
+ * Validate and constrain position to viewport bounds
+ * Handles NaN, null, undefined, and out-of-bounds values
+ */
+function validatePosition(pos: Partial<DragPosition> | null | undefined): DragPosition {
+  if (typeof window === 'undefined') return DEFAULT_POSITION;
+  
+  const maxX = window.innerWidth - 280; // Docker width
+  const maxY = window.innerHeight - 200; // Minimum visible height
+  
+  // Handle NaN, null, undefined, and out-of-bounds
+  const x = typeof pos?.x === 'number' && !Number.isNaN(pos.x)
+    ? Math.max(0, Math.min(pos.x, maxX))
+    : Math.max(0, maxX - 24); // Default: 24px from right edge
+    
+  const y = typeof pos?.y === 'number' && !Number.isNaN(pos.y)
+    ? Math.max(0, Math.min(pos.y, maxY))
+    : Math.max(0, maxY - 80); // Default: 80px from bottom
+  
+  return { x, y };
+}
+
+/**
  * Load persisted position from localStorage
+ * Returns validated position, falling back to safe defaults
  */
 function loadPersistedPosition(): DragPosition {
   if (typeof window === 'undefined') return DEFAULT_POSITION;
@@ -94,19 +125,18 @@ function loadPersistedPosition(): DragPosition {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored) as DragPosition;
-      // Validate position is within viewport
-      const maxX = window.innerWidth - 280;
-      const maxY = window.innerHeight - 200;
-      return {
-        x: Math.max(0, Math.min(maxX, parsed.x)),
-        y: Math.max(0, Math.min(maxY, parsed.y)),
-      };
+      const parsed = JSON.parse(stored);
+      return validatePosition(parsed);
     }
   } catch {
-    // localStorage not available or parse error
+    // localStorage not available or parse error - clear corrupted data
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore cleanup failure
+    }
   }
-  return DEFAULT_POSITION;
+  return validatePosition(null);
 }
 
 /**
@@ -211,10 +241,10 @@ export function FloatingPluginDocker({
   const dockerRef = useRef<HTMLDivElement>(null);
 
   // ========================================================================
-  // Calculate unplaced plugins count
+  // Calculate unplaced plugins count (DEBUG: Only count enabled plugins)
   // ========================================================================
 
-  const unplacedCount = PLUGIN_IDS.filter((id) => {
+  const unplacedCount = DEBUG_ENABLED_PLUGIN_IDS.filter((id) => {
     const placement = placements.get(id);
     return placement === null || placement === undefined;
   }).length;
@@ -304,19 +334,12 @@ export function FloatingPluginDocker({
 
   useEffect(() => {
     const handleResize = () => {
-      setPosition((prev) => {
-        const maxX = window.innerWidth - 280;
-        const maxY = window.innerHeight - (isMinimized ? 40 : 200);
-        return {
-          x: Math.max(0, Math.min(maxX, prev.x)),
-          y: Math.max(0, Math.min(maxY, prev.y)),
-        };
-      });
+      setPosition((prev) => validatePosition(prev));
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isMinimized]);
+  }, []);
 
   // ========================================================================
   // Render

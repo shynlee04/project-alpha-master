@@ -34,6 +34,9 @@
       {"type":"file","name":"./data/mock-sources.json"}
     ]},
     {"type":"directory","name":"./domain","contents":[
+      {"type":"directory","name":"./domain/adapters","contents":[
+        {"type":"file","name":"./domain/adapters/index.ts"}
+      ]},
       {"type":"directory","name":"./domain/entities","contents":[
         {"type":"file","name":"./domain/entities/agent.ts"},
         {"type":"file","name":"./domain/entities/chat.ts"},
@@ -43,6 +46,14 @@
         {"type":"file","name":"./domain/entities/rag.ts"},
         {"type":"file","name":"./domain/entities/study.ts"},
         {"type":"file","name":"./domain/entities/workspace.ts"}
+      ]},
+      {"type":"directory","name":"./domain/interfaces","contents":[
+        {"type":"file","name":"./domain/interfaces/feature-plugin.interface.ts"},
+        {"type":"file","name":"./domain/interfaces/file-operations-adapter.interface.ts"},
+        {"type":"file","name":"./domain/interfaces/index.ts"},
+        {"type":"file","name":"./domain/interfaces/plugin-capability.interface.ts"},
+        {"type":"file","name":"./domain/interfaces/storage-adapter.interface.ts"},
+        {"type":"file","name":"./domain/interfaces/storage-gateway.interface.ts"}
       ]},
       {"type":"directory","name":"./domain/services","contents":[
         {"type":"file","name":"./domain/services/agent-orchestration-service.ts"},
@@ -55,6 +66,8 @@
           {"type":"file","name":"./domain/services/file-crud/unified-file-crud.ts"}
         ]},
         {"type":"file","name":"./domain/services/index.ts"},
+        {"type":"file","name":"./domain/services/note-gateway.ts"},
+        {"type":"file","name":"./domain/services/project-creation-service.ts"},
         {"type":"file","name":"./domain/services/project-registry-types.ts"},
         {"type":"file","name":"./domain/services/ProjectRegistry.ts"},
         {"type":"file","name":"./domain/services/universal-adapter-factory.ts"},
@@ -83,13 +96,18 @@
         {"type":"file","name":"./domain/tools/tool-permissions.ts"}
       ]},
       {"type":"directory","name":"./domain/types","contents":[
+        {"type":"file","name":"./domain/types/index.ts"},
         {"type":"directory","name":"./domain/types/llm","contents":[
           {"type":"file","name":"./domain/types/llm/adapter-types.ts"},
           {"type":"file","name":"./domain/types/llm/credential-types.ts"},
           {"type":"file","name":"./domain/types/llm/index.ts"},
           {"type":"file","name":"./domain/types/llm/model-types.ts"},
           {"type":"file","name":"./domain/types/llm/provider-types.ts"}
-        ]}
+        ]},
+        {"type":"file","name":"./domain/types/plugin-coordination.types.ts"},
+        {"type":"file","name":"./domain/types/plugin-types.ts"},
+        {"type":"file","name":"./domain/types/project-ids.ts"},
+        {"type":"file","name":"./domain/types/viagent-metadata.ts"}
       ]},
       {"type":"directory","name":"./domain/use-cases","contents":[
         {"type":"file","name":"./domain/use-cases/switch-workspace-use-case.ts"}
@@ -100,7 +118,12 @@
         {"type":"file","name":"./domain/value-objects/workspace-type.ts"}
       ]}
     ]},
-    {"type":"directory","name":"./e2e"},
+    {"type":"directory","name":"./e2e","contents":[
+      {"type":"file","name":"./e2e/ide-fsa-crud.spec.ts"},
+      {"type":"file","name":"./e2e/ide-mobile-guard.spec.ts"},
+      {"type":"file","name":"./e2e/ide-terminal-fsa.spec.ts"},
+      {"type":"file","name":"./e2e/ide-webcontainer.spec.ts"}
+    ]},
     {"type":"file","name":"./global-types.d.ts"},
     {"type":"directory","name":"./hooks","contents":[
       {"type":"file","name":"./hooks/index.ts"},
@@ -130,10 +153,8 @@
       {"type":"file","name":"./hooks/usePlugins.ts"},
       {"type":"file","name":"./hooks/useProcessManager.ts"},
       {"type":"file","name":"./hooks/useProjectTemplates.ts"},
-      {"type":"file","name":"./hooks/useQuizSession.ts"},
       {"type":"file","name":"./hooks/useQuizTimer.ts"},
       {"type":"file","name":"./hooks/useResponsive.ts"},
-      {"type":"file","name":"./hooks/useResponsiveBreakpoint.ts"},
       {"type":"file","name":"./hooks/useStoreHydration.ts"},
       {"type":"file","name":"./hooks/useTaskScheduler.ts"},
       {"type":"file","name":"./hooks/useTerminal.ts"},
@@ -148,7 +169,6 @@
         {"type":"file","name":"./i18n/en/voice.json"}
       ]},
       {"type":"file","name":"./i18n/en.json"},
-      {"type":"file","name":"./i18n/en.json.backup"},
       {"type":"file","name":"./i18n/LocaleProvider.tsx"},
       {"type":"directory","name":"./i18n/vi","contents":[
         {"type":"file","name":"./i18n/vi/chat.json"},
@@ -156,33 +176,59 @@
         {"type":"file","name":"./i18n/vi/voice.json"}
       ]},
       {"type":"file","name":"./i18n/vi.json"},
-      {"type":"file","name":"./i18n/vi.json.backup"},
       {"type":"file","name":"./i18n/vi.json.tmp"}
     ]},
     {"type":"directory","name":"./infrastructure","contents":[
       {"type":"file","name":"./infrastructure/codetree-2026-01-04.md"},
       {"type":"file","name":"./infrastructure/codetree-for-analysis.md"},
+      {"type":"directory","name":"./infrastructure/context","contents":[
+        {"type":"file","name":"./infrastructure/context/plugin-coordination-context.tsx"},
+        {"type":"file","name":"./infrastructure/context/project-context.tsx"}
+      ]},
       {"type":"directory","name":"./infrastructure/events","contents":[
         {"type":"file","name":"./infrastructure/events/cross-workspace-event-bus.ts"},
         {"type":"file","name":"./infrastructure/events/event-bus.ts"},
-        {"type":"file","name":"./infrastructure/events/index.ts"}
+        {"type":"file","name":"./infrastructure/events/file-event-bus.ts"},
+        {"type":"file","name":"./infrastructure/events/index.ts"},
+        {"type":"file","name":"./infrastructure/events/types.ts"}
       ]},
       {"type":"directory","name":"./infrastructure/filesystem","contents":[
         {"type":"file","name":"./infrastructure/filesystem/dir-ops.ts"},
         {"type":"file","name":"./infrastructure/filesystem/file-ops.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/file-tree-scanner.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/folder-overlap-service.ts"},
         {"type":"file","name":"./infrastructure/filesystem/fs-errors.ts"},
         {"type":"file","name":"./infrastructure/filesystem/fs-handle-utils.ts"},
         {"type":"file","name":"./infrastructure/filesystem/fs-types.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/fsa-gateway.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/fsa-storage-adapter.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/handle-persistence.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/handle-types.ts"},
         {"type":"file","name":"./infrastructure/filesystem/handle-utils.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/idb-gateway.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/ide-file-gateway.ts"},
         {"type":"file","name":"./infrastructure/filesystem/index.ts"},
         {"type":"file","name":"./infrastructure/filesystem/local-fs-adapter.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/markdown-sync-service.ts"},
         {"type":"file","name":"./infrastructure/filesystem/path-guard.ts"},
-        {"type":"file","name":"./infrastructure/filesystem/path-utils.ts"}
+        {"type":"file","name":"./infrastructure/filesystem/path-utils.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/platform-contract.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/platform-detection.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/route-guards.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/storage-gateway-factory.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/storage-types.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/StorageAdapterFactory.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/terminal-fs-adapter.ts"},
+        {"type":"file","name":"./infrastructure/filesystem/viagent-service.ts"}
+      ]},
+      {"type":"directory","name":"./infrastructure/hooks","contents":[
+        {"type":"file","name":"./infrastructure/hooks/useDebouncedSave.ts"}
       ]},
       {"type":"directory","name":"./infrastructure/persistence","contents":[
         {"type":"file","name":"./infrastructure/persistence/codetree-2026-01-04.md"},
         {"type":"file","name":"./infrastructure/persistence/database-recovery.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-ai-types.ts"},
+        {"type":"file","name":"./infrastructure/persistence/dexie-db-block-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-class.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-core-types.ts"},
         {"type":"directory","name":"./infrastructure/persistence/dexie-db-helpers","contents":[
@@ -204,11 +250,13 @@
           {"type":"file","name":"./infrastructure/persistence/dexie-db-helpers/tool-execution-log-helpers.ts"}
         ]},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-helpers.ts"},
+        {"type":"file","name":"./infrastructure/persistence/dexie-db-idb-file-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-knowledge-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-migrations.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-plugin-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-session-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-snippet-types.ts"},
+        {"type":"file","name":"./infrastructure/persistence/dexie-db-study-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db-workflow-types.ts"},
         {"type":"file","name":"./infrastructure/persistence/dexie-db.ts"},
@@ -216,6 +264,10 @@
         {"type":"file","name":"./infrastructure/persistence/index.ts"},
         {"type":"file","name":"./infrastructure/persistence/rag-store-helpers.ts"},
         {"type":"file","name":"./infrastructure/persistence/rag-store-types.ts"},
+        {"type":"directory","name":"./infrastructure/persistence/services","contents":[
+          {"type":"file","name":"./infrastructure/persistence/services/db-consolidation-service.ts"},
+          {"type":"file","name":"./infrastructure/persistence/services/project-handle-service.ts"}
+        ]},
         {"type":"file","name":"./infrastructure/persistence/state-orchestrator.ts"},
         {"type":"directory","name":"./infrastructure/persistence/stores","contents":[
           {"type":"directory","name":"./infrastructure/persistence/stores/agents","contents":[
@@ -259,6 +311,7 @@
             {"type":"file","name":"./infrastructure/persistence/stores/chat/index.ts"},
             {"type":"directory","name":"./infrastructure/persistence/stores/chat/slices","contents":[
               {"type":"file","name":"./infrastructure/persistence/stores/chat/slices/chat-metadata-slice.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/chat/slices/chat-persistence-slice.ts"},
               {"type":"directory","name":"./infrastructure/persistence/stores/chat/slices/context-window","contents":[
                 {"type":"file","name":"./infrastructure/persistence/stores/chat/slices/context-window/internal.ts"},
                 {"type":"file","name":"./infrastructure/persistence/stores/chat/slices/context-window/setters.ts"}
@@ -287,6 +340,7 @@
             {"type":"directory","name":"./infrastructure/persistence/stores/conversation/migration","contents":[
               {"type":"file","name":"./infrastructure/persistence/stores/conversation/migration/conversation-migration.ts"}
             ]},
+            {"type":"file","name":"./infrastructure/persistence/stores/conversation/persistence.ts"},
             {"type":"directory","name":"./infrastructure/persistence/stores/conversation/slices","contents":[
               {"type":"file","name":"./infrastructure/persistence/stores/conversation/slices/create-context-window-slice.ts"},
               {"type":"file","name":"./infrastructure/persistence/stores/conversation/slices/create-hierarchy-slice.ts"},
@@ -298,8 +352,7 @@
             ]},
             {"type":"file","name":"./infrastructure/persistence/stores/conversation/thread-management-slice.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/conversation/types.ts"},
-            {"type":"file","name":"./infrastructure/persistence/stores/conversation/useConversationStore.ts"},
-            {"type":"file","name":"./infrastructure/persistence/stores/conversation/useConversationStore.ts.backup"}
+            {"type":"file","name":"./infrastructure/persistence/stores/conversation/useConversationStore.ts"}
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/conversation-auto-restore.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/editor-tabs","contents":[
@@ -309,10 +362,10 @@
             {"type":"file","name":"./infrastructure/persistence/stores/editor-tabs/index.ts"}
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/editor-tabs-store.ts"},
-          {"type":"file","name":"./infrastructure/persistence/stores/editor-tabs-store.ts.backup"},
           {"type":"directory","name":"./infrastructure/persistence/stores/events","contents":[
             {"type":"file","name":"./infrastructure/persistence/stores/events/event-status-store.ts"}
           ]},
+          {"type":"file","name":"./infrastructure/persistence/stores/file-tree-store.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/file-watcher-store.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/filesystem","contents":[
             {"type":"file","name":"./infrastructure/persistence/stores/filesystem/index.ts"},
@@ -344,7 +397,6 @@
             {"type":"file","name":"./infrastructure/persistence/stores/git/index.ts"}
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/git-store.ts"},
-          {"type":"file","name":"./infrastructure/persistence/stores/git-store.ts.backup"},
           {"type":"file","name":"./infrastructure/persistence/stores/hub-store.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/hydration-manager.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/ide","contents":[
@@ -361,22 +413,18 @@
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/index.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/knowledge","contents":[
-            {"type":"file","name":"./infrastructure/persistence/stores/knowledge/index.ts"},
-            {"type":"file","name":"./infrastructure/persistence/stores/knowledge/knowledge-store.ts"},
-            {"type":"directory","name":"./infrastructure/persistence/stores/knowledge/slices","contents":[
-              {"type":"file","name":"./infrastructure/persistence/stores/knowledge/slices/knowledge-collection-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/knowledge/slices/knowledge-metadata-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/knowledge/slices/knowledge-preview-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/knowledge/slices/knowledge-source-crud-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/knowledge/slices/knowledge-synthesis-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/knowledge/slices/knowledge-undo-slice.ts"}
-            ]},
-            {"type":"file","name":"./infrastructure/persistence/stores/knowledge/types.ts"}
+            {"type":"file","name":"./infrastructure/persistence/stores/knowledge/index.ts"}
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/layout-store.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/navigation-store.ts"},
+          {"type":"directory","name":"./infrastructure/persistence/stores/notes","contents":[
+            {"type":"file","name":"./infrastructure/persistence/stores/notes/index.ts"},
+            {"type":"file","name":"./infrastructure/persistence/stores/notes/note-context-tracker.ts"},
+            {"type":"directory","name":"./infrastructure/persistence/stores/notes/slash-commands","contents":[
+              {"type":"file","name":"./infrastructure/persistence/stores/notes/slash-commands/index.ts"}
+            ]}
+          ]},
           {"type":"file","name":"./infrastructure/persistence/stores/notification-store.ts"},
-          {"type":"file","name":"./infrastructure/persistence/stores/notification-store.ts.backup"},
           {"type":"directory","name":"./infrastructure/persistence/stores/notifications","contents":[
             {"type":"file","name":"./infrastructure/persistence/stores/notifications/index.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/notifications/notification-crud-slice.ts"},
@@ -395,7 +443,9 @@
             {"type":"file","name":"./infrastructure/persistence/stores/permissions/tool-permission-store.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/permissions/types.ts"}
           ]},
+          {"type":"file","name":"./infrastructure/persistence/stores/plugin-coordination-store.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/plugins-store.ts"},
+          {"type":"file","name":"./infrastructure/persistence/stores/process-registry-store.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/project","contents":[
             {"type":"file","name":"./infrastructure/persistence/stores/project/index.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/project/migrate-bindings.ts"},
@@ -405,11 +455,19 @@
             {"type":"file","name":"./infrastructure/persistence/stores/project/project-permissions-slice.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/project/project-types.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/project/project-utils-slice.ts"},
+            {"type":"file","name":"./infrastructure/persistence/stores/project/use-fsa-projects.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/project/useProjectStore.ts"},
-            {"type":"file","name":"./infrastructure/persistence/stores/project/useWorkspaceProjects.ts"}
+            {"type":"file","name":"./infrastructure/persistence/stores/project/useWorkspaceProjects.ts"},
+            {"type":"file","name":"./infrastructure/persistence/stores/project/wait-for-hydration.ts"}
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/prompt-enhancement-store.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/providers","contents":[
+            {"type":"directory","name":"./infrastructure/persistence/stores/providers/credentials","contents":[
+              {"type":"file","name":"./infrastructure/persistence/stores/providers/credentials/crud-slice.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/providers/credentials/index.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/providers/credentials/schemas.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/providers/credentials/vault-slice.ts"}
+            ]},
             {"type":"file","name":"./infrastructure/persistence/stores/providers/google-model-fetcher.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/providers/index.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts"},
@@ -435,25 +493,12 @@
           ]},
           {"type":"file","name":"./infrastructure/persistence/stores/schema-migrations.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/session-snapshot-manager.ts"},
+          {"type":"file","name":"./infrastructure/persistence/stores/sidebar-store.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/statusbar-store.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/study","contents":[
-            {"type":"file","name":"./infrastructure/persistence/stores/study/index.ts"},
-            {"type":"directory","name":"./infrastructure/persistence/stores/study/quiz","contents":[
-              {"type":"file","name":"./infrastructure/persistence/stores/study/quiz/quiz-db.ts"},
-              {"type":"directory","name":"./infrastructure/persistence/stores/study/quiz/slices","contents":[
-                {"type":"file","name":"./infrastructure/persistence/stores/study/quiz/slices/question-management-slice.ts"},
-                {"type":"file","name":"./infrastructure/persistence/stores/study/quiz/slices/quiz-management-slice.ts"},
-                {"type":"file","name":"./infrastructure/persistence/stores/study/quiz/slices/quiz-query-slice.ts"},
-                {"type":"file","name":"./infrastructure/persistence/stores/study/quiz/slices/quiz-ui-slice.ts"}
-              ]},
-              {"type":"file","name":"./infrastructure/persistence/stores/study/quiz/types.ts"}
-            ]},
             {"type":"file","name":"./infrastructure/persistence/stores/study/quiz-store.ts"},
             {"type":"directory","name":"./infrastructure/persistence/stores/study/slices","contents":[
-              {"type":"file","name":"./infrastructure/persistence/stores/study/slices/study-database-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/study/slices/study-navigation-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/study/slices/study-session-slice.ts"},
-              {"type":"file","name":"./infrastructure/persistence/stores/study/slices/study-stats-slice.ts"}
+              {"type":"file","name":"./infrastructure/persistence/stores/study/slices/study-database-slice.ts"}
             ]},
             {"type":"file","name":"./infrastructure/persistence/stores/study/study-store-refactored.ts"}
           ]},
@@ -462,21 +507,40 @@
           {"type":"file","name":"./infrastructure/persistence/stores/terminal-store.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/types.ts"},
           {"type":"file","name":"./infrastructure/persistence/stores/use-app-store.ts"},
+          {"type":"file","name":"./infrastructure/persistence/stores/user-preferences-store.ts"},
           {"type":"directory","name":"./infrastructure/persistence/stores/workspace","contents":[
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/index.ts"},
+            {"type":"directory","name":"./infrastructure/persistence/stores/workspace/slices","contents":[
+              {"type":"file","name":"./infrastructure/persistence/stores/workspace/slices/index.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/workspace/slices/use-file-loader-slice.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts"},
+              {"type":"file","name":"./infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"}
+            ]},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/unified-workspace-context.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/useCornerstoneStores.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/useWorkspaceSwitching.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/workspace-context.ts"},
+            {"type":"file","name":"./infrastructure/persistence/stores/workspace/workspace-provider-slice.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/workspace-provider.tsx"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/workspace-store.ts"},
             {"type":"file","name":"./infrastructure/persistence/stores/workspace/workspace-types.ts"}
-          ]}
+          ]},
+          {"type":"file","name":"./infrastructure/persistence/stores/workspace-store-facade.ts"},
+          {"type":"file","name":"./infrastructure/persistence/stores/workspace-store-factory.ts"}
         ]},
         {"type":"file","name":"./infrastructure/persistence/workflow-persistence.test.ts"},
         {"type":"file","name":"./infrastructure/persistence/workflow-persistence.ts"}
+      ]},
+      {"type":"directory","name":"./infrastructure/plugins","contents":[
+        {"type":"file","name":"./infrastructure/plugins/index.ts"},
+        {"type":"file","name":"./infrastructure/plugins/platform-defaults.ts"},
+        {"type":"file","name":"./infrastructure/plugins/plugin-registry.ts"}
+      ]},
+      {"type":"directory","name":"./infrastructure/services","contents":[
+        {"type":"file","name":"./infrastructure/services/chat-service.ts"}
       ]},
       {"type":"directory","name":"./infrastructure/sync","contents":[
         {"type":"directory","name":"./infrastructure/sync/adapters","contents":[
@@ -521,6 +585,7 @@
           {"type":"file","name":"./infrastructure/sync/core/sync-types.ts"}
         ]},
         {"type":"file","name":"./infrastructure/sync/index.ts"},
+        {"type":"file","name":"./infrastructure/sync/pointer-sync-service.ts"},
         {"type":"directory","name":"./infrastructure/sync/strategies","contents":[
           {"type":"file","name":"./infrastructure/sync/strategies/bidirectional-sync-core.ts"},
           {"type":"file","name":"./infrastructure/sync/strategies/bidirectional-sync.ts"},
@@ -556,15 +621,10 @@
           {"type":"directory","name":"./infrastructure/sync/workspace-services/hooks","contents":[
             {"type":"file","name":"./infrastructure/sync/workspace-services/hooks/index.ts"}
           ]},
+          {"type":"file","name":"./infrastructure/sync/workspace-services/hooks.ts"},
           {"type":"file","name":"./infrastructure/sync/workspace-services/ide-file-sync-service.ts"},
           {"type":"file","name":"./infrastructure/sync/workspace-services/index.ts"},
           {"type":"file","name":"./infrastructure/sync/workspace-services/knowledge-file-sync-service.ts"},
-          {"type":"directory","name":"./infrastructure/sync/workspace-services/knowledge-sync","contents":[
-            {"type":"file","name":"./infrastructure/sync/workspace-services/knowledge-sync/index.ts"},
-            {"type":"file","name":"./infrastructure/sync/workspace-services/knowledge-sync/knowledge-source-store.ts"},
-            {"type":"file","name":"./infrastructure/sync/workspace-services/knowledge-sync/knowledge-sync-service-core.ts"},
-            {"type":"file","name":"./infrastructure/sync/workspace-services/knowledge-sync/knowledge-sync-types.ts"}
-          ]},
           {"type":"directory","name":"./infrastructure/sync/workspace-services/notes","contents":[
             {"type":"file","name":"./infrastructure/sync/workspace-services/notes/index.ts"},
             {"type":"file","name":"./infrastructure/sync/workspace-services/notes/note-crud-operations.ts"},
@@ -577,13 +637,7 @@
           ]},
           {"type":"file","name":"./infrastructure/sync/workspace-services/notes-file-sync-service.ts"},
           {"type":"file","name":"./infrastructure/sync/workspace-services/project-knowledge-sync.ts"},
-          {"type":"file","name":"./infrastructure/sync/workspace-services/study-file-sync-service.ts"},
-          {"type":"directory","name":"./infrastructure/sync/workspace-services/study-sync","contents":[
-            {"type":"file","name":"./infrastructure/sync/workspace-services/study-sync/index.ts"},
-            {"type":"file","name":"./infrastructure/sync/workspace-services/study-sync/study-import-utils.ts"},
-            {"type":"file","name":"./infrastructure/sync/workspace-services/study-sync/study-sync-service-core.ts"},
-            {"type":"file","name":"./infrastructure/sync/workspace-services/study-sync/study-sync-types.ts"}
-          ]}
+          {"type":"file","name":"./infrastructure/sync/workspace-services/study-file-sync-service.ts"}
         ]}
       ]},
       {"type":"directory","name":"./infrastructure/tools","contents":[
@@ -593,6 +647,15 @@
       ]},
       {"type":"directory","name":"./infrastructure/ui","contents":[
         {"type":"file","name":"./infrastructure/ui/AgentWorkspaceSync.tsx"}
+      ]},
+      {"type":"directory","name":"./infrastructure/utils","contents":[
+        {"type":"file","name":"./infrastructure/utils/device-detection.ts"}
+      ]},
+      {"type":"directory","name":"./infrastructure/webcontainer","contents":[
+        {"type":"file","name":"./infrastructure/webcontainer/fsa-adapter.ts"},
+        {"type":"file","name":"./infrastructure/webcontainer/useDevServerDetection.ts"},
+        {"type":"file","name":"./infrastructure/webcontainer/useFSAMount.ts"},
+        {"type":"file","name":"./infrastructure/webcontainer/useWebContainer.ts"}
       ]}
     ]},
     {"type":"directory","name":"./lib","contents":[
@@ -647,14 +710,19 @@
         {"type":"file","name":"./lib/agent/prompt-composer-types.ts"},
         {"type":"file","name":"./lib/agent/prompt-composer.ts"},
         {"type":"file","name":"./lib/agent/prompt-orchestrator.ts"},
+        {"type":"file","name":"./lib/agent/provider-fallback.ts"},
         {"type":"directory","name":"./lib/agent/providers","contents":[
           {"type":"file","name":"./lib/agent/providers/agent-validation-service.ts"},
           {"type":"file","name":"./lib/agent/providers/anthropic-adapter.ts"},
+          {"type":"file","name":"./lib/agent/providers/chutes-adapter.ts"},
           {"type":"file","name":"./lib/agent/providers/credential-encryption.ts"},
           {"type":"file","name":"./lib/agent/providers/credential-storage.ts"},
           {"type":"file","name":"./lib/agent/providers/credential-vault.ts"},
           {"type":"file","name":"./lib/agent/providers/gemini-adapter.ts"},
+          {"type":"file","name":"./lib/agent/providers/groq-adapter.ts"},
+          {"type":"file","name":"./lib/agent/providers/hardcoded-models.ts"},
           {"type":"file","name":"./lib/agent/providers/index.ts"},
+          {"type":"file","name":"./lib/agent/providers/mistral-adapter.ts"},
           {"type":"file","name":"./lib/agent/providers/model-registry.ts"},
           {"type":"file","name":"./lib/agent/providers/provider-adapter.ts"},
           {"type":"file","name":"./lib/agent/providers/types.ts"}
@@ -690,6 +758,7 @@
           {"type":"file","name":"./lib/agent/tools/execute-command-tool.ts"},
           {"type":"file","name":"./lib/agent/tools/index.ts"},
           {"type":"file","name":"./lib/agent/tools/list-files-tool.ts"},
+          {"type":"file","name":"./lib/agent/tools/note-commands.ts"},
           {"type":"file","name":"./lib/agent/tools/permission-check.ts"},
           {"type":"file","name":"./lib/agent/tools/process-image-tool.ts"},
           {"type":"file","name":"./lib/agent/tools/process-pdf-tool.ts"},
@@ -765,12 +834,16 @@
       {"type":"directory","name":"./lib/demo","contents":[
         {"type":"file","name":"./lib/demo/sample-conversations.json"}
       ]},
+      {"type":"directory","name":"./lib/diagnostics","contents":[
+        {"type":"file","name":"./lib/diagnostics/async-timeout.ts"},
+        {"type":"file","name":"./lib/diagnostics/index.ts"},
+        {"type":"file","name":"./lib/diagnostics/trace-system.ts"}
+      ]},
       {"type":"directory","name":"./lib/diff","contents":[
         {"type":"file","name":"./lib/diff/diff-generator.ts"},
         {"type":"file","name":"./lib/diff/index.ts"}
       ]},
       {"type":"directory","name":"./lib/editor","contents":[
-        {"type":"file","name":"./lib/editor/index.ts"},
         {"type":"file","name":"./lib/editor/language-utils.ts"},
         {"type":"file","name":"./lib/editor/tab-manager.ts"},
         {"type":"file","name":"./lib/editor/tab-persistence.ts"}
@@ -794,11 +867,11 @@
         {"type":"file","name":"./lib/filesync/file-sync-service.ts"},
         {"type":"directory","name":"./lib/filesync/hooks","contents":[
           {"type":"file","name":"./lib/filesync/hooks/index.ts"},
-          {"type":"file","name":"./lib/filesync/hooks/use-file-sync-service.ts"}
+          {"type":"file","name":"./lib/filesync/hooks/use-file-sync-service.ts"},
+          {"type":"file","name":"./lib/filesync/hooks/use-markdown-sync-service.ts"}
         ]},
         {"type":"file","name":"./lib/filesync/hooks.ts"},
         {"type":"file","name":"./lib/filesync/ide-file-sync-service.ts"},
-        {"type":"file","name":"./lib/filesync/index.ts"},
         {"type":"file","name":"./lib/filesync/knowledge-file-sync-service.ts"},
         {"type":"file","name":"./lib/filesync/notes-file-sync-service.ts"},
         {"type":"file","name":"./lib/filesync/project-knowledge-sync.ts"},
@@ -823,12 +896,10 @@
         {"type":"file","name":"./lib/filesystem/fs-errors.ts"},
         {"type":"file","name":"./lib/filesystem/fs-handle-utils.ts"},
         {"type":"file","name":"./lib/filesystem/fs-types.ts"},
-        {"type":"file","name":"./lib/filesystem/fsa-handle-manager.ts"},
         {"type":"file","name":"./lib/filesystem/handle-utils.ts"},
         {"type":"file","name":"./lib/filesystem/hash-utils.ts"},
         {"type":"file","name":"./lib/filesystem/index.ts"},
         {"type":"file","name":"./lib/filesystem/local-fs-adapter.ts"},
-        {"type":"file","name":"./lib/filesystem/path-guard.ts"},
         {"type":"file","name":"./lib/filesystem/path-utils.ts"},
         {"type":"file","name":"./lib/filesystem/permission-lifecycle.test.ts"},
         {"type":"file","name":"./lib/filesystem/permission-lifecycle.ts"},
@@ -872,7 +943,6 @@
         {"type":"file","name":"./lib/git/git-credentials.ts"}
       ]},
       {"type":"directory","name":"./lib/hooks","contents":[
-        {"type":"file","name":"./lib/hooks/index.ts"},
         {"type":"file","name":"./lib/hooks/use-theme.ts"},
         {"type":"file","name":"./lib/hooks/useProviderEvents.ts"}
       ]},
@@ -880,70 +950,16 @@
         {"type":"file","name":"./lib/ide/code-analysis-bridge.ts"},
         {"type":"file","name":"./lib/ide/code-analyzer.ts"}
       ]},
-      {"type":"directory","name":"./lib/init","contents":[
-        {"type":"file","name":"./lib/init/seed-api-keys.ts"},
-        {"type":"file","name":"./lib/init/seed-workspace-permissions.ts"}
-      ]},
+      {"type":"directory","name":"./lib/init"},
       {"type":"directory","name":"./lib/keyboard","contents":[
         {"type":"file","name":"./lib/keyboard/index.ts"},
         {"type":"file","name":"./lib/keyboard/KeyboardShortcutManager.ts"},
         {"type":"file","name":"./lib/keyboard/shortcuts.ts"}
       ]},
       {"type":"directory","name":"./lib/knowledge","contents":[
-        {"type":"file","name":"./lib/knowledge/flashcard-exporter.ts"},
-        {"type":"file","name":"./lib/knowledge/flashcard-generator.ts"},
-        {"type":"file","name":"./lib/knowledge/flashcard-utils.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-image-mocks.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-image-processor.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-image-prompts.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-image-types.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-pdf-api.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-pdf-mocks.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-pdf-processor.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-pdf-prompts.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-pdf-types.ts"},
-        {"type":"file","name":"./lib/knowledge/gemini-url-processor.ts"},
-        {"type":"directory","name":"./lib/knowledge/graph","contents":[
-          {"type":"file","name":"./lib/knowledge/graph/graph-crud.ts"},
-          {"type":"file","name":"./lib/knowledge/graph/graph-persistence.ts"},
-          {"type":"file","name":"./lib/knowledge/graph/graph-queries.ts"},
-          {"type":"file","name":"./lib/knowledge/graph/graph-traversal.ts"},
-          {"type":"file","name":"./lib/knowledge/graph/graph-utils.ts"},
-          {"type":"file","name":"./lib/knowledge/graph/index.ts"}
-        ]},
-        {"type":"file","name":"./lib/knowledge/index.ts"},
-        {"type":"file","name":"./lib/knowledge/knowledge-graph-types.ts"},
-        {"type":"file","name":"./lib/knowledge/knowledge-graph.ts"},
-        {"type":"file","name":"./lib/knowledge/metadata-extractor.ts"},
-        {"type":"file","name":"./lib/knowledge/note-chunker.ts"},
-        {"type":"file","name":"./lib/knowledge/organization-engine.ts"},
-        {"type":"file","name":"./lib/knowledge/organization-strategies.ts"},
-        {"type":"file","name":"./lib/knowledge/organization-types.ts"},
-        {"type":"file","name":"./lib/knowledge/pdf-parser.ts"},
-        {"type":"file","name":"./lib/knowledge/recommendation-generator.ts"},
-        {"type":"file","name":"./lib/knowledge/relevancy-factors.ts"},
-        {"type":"file","name":"./lib/knowledge/relevancy-scorer.ts"},
-        {"type":"file","name":"./lib/knowledge/relevancy-types.ts"},
-        {"type":"file","name":"./lib/knowledge/source-import-handlers.ts"},
-        {"type":"file","name":"./lib/knowledge/source-import-types.ts"},
-        {"type":"file","name":"./lib/knowledge/source-import-validators.ts"},
-        {"type":"file","name":"./lib/knowledge/source-import.ts"},
-        {"type":"file","name":"./lib/knowledge/source-rag-bridge.ts"},
-        {"type":"file","name":"./lib/knowledge/subject-classifier-types.ts"},
-        {"type":"file","name":"./lib/knowledge/subject-classifier.ts"},
-        {"type":"file","name":"./lib/knowledge/subject-scoring.ts"},
-        {"type":"file","name":"./lib/knowledge/subject-taxonomy.ts"},
-        {"type":"file","name":"./lib/knowledge/synthesis-api-types.ts"},
-        {"type":"file","name":"./lib/knowledge/synthesis-mocks.ts"},
-        {"type":"file","name":"./lib/knowledge/synthesis-prompts.ts"},
         {"type":"file","name":"./lib/knowledge/synthesis-service.ts"},
         {"type":"file","name":"./lib/knowledge/synthesis-types.ts"},
-        {"type":"file","name":"./lib/knowledge/types.ts"},
-        {"type":"file","name":"./lib/knowledge/url-fetcher-content-extractor.ts"},
-        {"type":"file","name":"./lib/knowledge/url-fetcher-types.ts"},
-        {"type":"file","name":"./lib/knowledge/url-fetcher.ts"},
-        {"type":"file","name":"./lib/knowledge/vault-analyzer.ts"},
-        {"type":"file","name":"./lib/knowledge/verify-rag-bridge.ts"}
+        {"type":"file","name":"./lib/knowledge/types.ts"}
       ]},
       {"type":"directory","name":"./lib/media","contents":[
         {"type":"file","name":"./lib/media/image-attachments.ts"},
@@ -976,6 +992,15 @@
         {"type":"file","name":"./lib/notes/ai-video-service.ts"},
         {"type":"file","name":"./lib/notes/ai-vision-service.ts"},
         {"type":"file","name":"./lib/notes/embedding-worker-bridge.ts"},
+        {"type":"directory","name":"./lib/notes/export","contents":[
+          {"type":"file","name":"./lib/notes/export/index.ts"},
+          {"type":"file","name":"./lib/notes/export/note-exporter.ts"}
+        ]},
+        {"type":"directory","name":"./lib/notes/format","contents":[
+          {"type":"file","name":"./lib/notes/format/index.ts"},
+          {"type":"file","name":"./lib/notes/format/note-formatter.ts"}
+        ]},
+        {"type":"directory","name":"./lib/notes/hooks"},
         {"type":"file","name":"./lib/notes/index.ts"},
         {"type":"file","name":"./lib/notes/markdown-converter.ts"},
         {"type":"file","name":"./lib/notes/note-ai-service.ts"},
@@ -992,6 +1017,7 @@
         {"type":"file","name":"./lib/notes/prompt-suggestion-service.ts"},
         {"type":"file","name":"./lib/notes/prompt-suggestion-store.ts"},
         {"type":"file","name":"./lib/notes/prompt-templates-data.ts"},
+        {"type":"file","name":"./lib/notes/saved-blocks-store.ts"},
         {"type":"file","name":"./lib/notes/slash-command-store.ts"},
         {"type":"directory","name":"./lib/notes/slices","contents":[
           {"type":"file","name":"./lib/notes/slices/note-crud-slice.ts"},
@@ -1001,6 +1027,13 @@
           {"type":"file","name":"./lib/notes/slices/note-query-slice.ts"},
           {"type":"file","name":"./lib/notes/slices/note-sync-slice.ts"},
           {"type":"file","name":"./lib/notes/slices/note-ui-slice.ts"}
+        ]},
+        {"type":"file","name":"./lib/notes/store-facades.ts"},
+        {"type":"directory","name":"./lib/notes/sync","contents":[
+          {"type":"file","name":"./lib/notes/sync/cache-sync.ts"},
+          {"type":"file","name":"./lib/notes/sync/file-watcher.ts"},
+          {"type":"file","name":"./lib/notes/sync/index.ts"},
+          {"type":"file","name":"./lib/notes/sync/note-sync-layer.ts"}
         ]},
         {"type":"file","name":"./lib/notes/types-embedding.ts"},
         {"type":"file","name":"./lib/notes/types-slice.ts"},
@@ -1023,8 +1056,7 @@
         {"type":"file","name":"./lib/pdf/pdf-vision-types.ts"}
       ]},
       {"type":"directory","name":"./lib/persistence","contents":[
-        {"type":"file","name":"./lib/persistence/db.ts"},
-        {"type":"file","name":"./lib/persistence/index.ts"}
+        {"type":"file","name":"./lib/persistence/db.ts"}
       ]},
       {"type":"directory","name":"./lib/plugins","contents":[
         {"type":"directory","name":"./lib/plugins/builtins","contents":[
@@ -1102,18 +1134,12 @@
         {"type":"file","name":"./lib/snippets/snippet-templates.ts"}
       ]},
       {"type":"directory","name":"./lib/study","contents":[
-        {"type":"file","name":"./lib/study/index.ts"},
         {"type":"file","name":"./lib/study/quiz-generator.ts"},
         {"type":"file","name":"./lib/study/quiz-session.ts"},
-        {"type":"file","name":"./lib/study/quiz-types.ts"},
-        {"type":"file","name":"./lib/study/srs-types.ts"}
+        {"type":"file","name":"./lib/study/quiz-types.ts"}
       ]},
       {"type":"directory","name":"./lib/sync","contents":[
-        {"type":"file","name":"./lib/sync/event-types.ts"},
-        {"type":"file","name":"./lib/sync/file-metadata-cache.ts"},
-        {"type":"file","name":"./lib/sync/index.ts"},
-        {"type":"file","name":"./lib/sync/reverse-sync-service.ts"},
-        {"type":"file","name":"./lib/sync/sync-event-bus.ts"}
+        {"type":"file","name":"./lib/sync/file-metadata-cache.ts"}
       ]},
       {"type":"directory","name":"./lib/templates","contents":[
         {"type":"file","name":"./lib/templates/template-engine.ts"},
@@ -1128,6 +1154,7 @@
         {"type":"file","name":"./lib/utils/dynamic-imports.ts"},
         {"type":"file","name":"./lib/utils/error-classification.ts"},
         {"type":"file","name":"./lib/utils/error-handling.ts"},
+        {"type":"file","name":"./lib/utils/hash.ts"},
         {"type":"file","name":"./lib/utils/mobile-error-handling.ts"},
         {"type":"file","name":"./lib/utils/platform-detection.ts"},
         {"type":"file","name":"./lib/utils/security.ts"}
@@ -1194,7 +1221,6 @@
           {"type":"file","name":"./lib/workspace/file-sync-status-store/sync-progress-slice.ts"},
           {"type":"file","name":"./lib/workspace/file-sync-status-store/types.ts"}
         ]},
-        {"type":"file","name":"./lib/workspace/file-sync-status-store.ts"},
         {"type":"file","name":"./lib/workspace/fsa-persistence.ts"},
         {"type":"directory","name":"./lib/workspace/hooks","contents":[
           {"type":"file","name":"./lib/workspace/hooks/useEventBusEffects.ts"},
@@ -1204,20 +1230,11 @@
           {"type":"file","name":"./lib/workspace/hooks/useWorkspaceState.ts"}
         ]},
         {"type":"file","name":"./lib/workspace/index.ts"},
+        {"type":"file","name":"./lib/workspace/migrate-projects.ts"},
         {"type":"file","name":"./lib/workspace/note-context-tracker.ts"},
-        {"type":"directory","name":"./lib/workspace/project-store","contents":[
-          {"type":"file","name":"./lib/workspace/project-store/project-crud-slice.ts"},
-          {"type":"file","name":"./lib/workspace/project-store/project-layout-slice.ts"},
-          {"type":"file","name":"./lib/workspace/project-store/project-permissions-slice.ts"},
-          {"type":"file","name":"./lib/workspace/project-store/project-store-refactored.ts"},
-          {"type":"file","name":"./lib/workspace/project-store/project-utils-slice.ts"},
-          {"type":"file","name":"./lib/workspace/project-store/project-workspace-bindings-slice.ts"},
-          {"type":"file","name":"./lib/workspace/project-store/types.ts"}
-        ]},
+        {"type":"file","name":"./lib/workspace/project-repository.ts"},
         {"type":"file","name":"./lib/workspace/project-store.test.ts"},
-        {"type":"file","name":"./lib/workspace/project-store.ts"},
         {"type":"file","name":"./lib/workspace/project-types.ts"},
-        {"type":"file","name":"./lib/workspace/ProjectContext.tsx"},
         {"type":"file","name":"./lib/workspace/session-snapshot.ts"},
         {"type":"file","name":"./lib/workspace/temp-project.ts"},
         {"type":"file","name":"./lib/workspace/threads-store.ts"},
@@ -1233,6 +1250,45 @@
     {"type":"file","name":"./logo.svg"},
     {"type":"directory","name":"./mocks","contents":[
       {"type":"file","name":"./mocks/agents.ts"}
+    ]},
+    {"type":"directory","name":"./plugins","contents":[
+      {"type":"directory","name":"./plugins/chat","contents":[
+        {"type":"file","name":"./plugins/chat/ChatPlugin.tsx"},
+        {"type":"file","name":"./plugins/chat/index.ts"},
+        {"type":"file","name":"./plugins/chat/useChatPlugin.ts"}
+      ]},
+      {"type":"directory","name":"./plugins/filetree","contents":[
+        {"type":"file","name":"./plugins/filetree/FileTreePlugin.tsx"},
+        {"type":"file","name":"./plugins/filetree/index.ts"},
+        {"type":"file","name":"./plugins/filetree/types.ts"},
+        {"type":"file","name":"./plugins/filetree/useFileTreePlugin.ts"}
+      ]},
+      {"type":"directory","name":"./plugins/monaco","contents":[
+        {"type":"file","name":"./plugins/monaco/index.ts"},
+        {"type":"file","name":"./plugins/monaco/MonacoMain.tsx"},
+        {"type":"file","name":"./plugins/monaco/MonacoPlugin.tsx"},
+        {"type":"file","name":"./plugins/monaco/types.ts"},
+        {"type":"file","name":"./plugins/monaco/useMonacoPlugin.ts"}
+      ]},
+      {"type":"directory","name":"./plugins/notes","contents":[
+        {"type":"file","name":"./plugins/notes/index.ts"},
+        {"type":"file","name":"./plugins/notes/NotesPlugin.tsx"},
+        {"type":"file","name":"./plugins/notes/types.ts"},
+        {"type":"file","name":"./plugins/notes/useNotesPlugin.ts"}
+      ]},
+      {"type":"directory","name":"./plugins/preview","contents":[
+        {"type":"file","name":"./plugins/preview/index.ts"},
+        {"type":"file","name":"./plugins/preview/PreviewMain.tsx"},
+        {"type":"file","name":"./plugins/preview/PreviewPlugin.tsx"}
+      ]},
+      {"type":"directory","name":"./plugins/terminal","contents":[
+        {"type":"file","name":"./plugins/terminal/index.ts"},
+        {"type":"file","name":"./plugins/terminal/TerminalMain.tsx"},
+        {"type":"file","name":"./plugins/terminal/TerminalPlugin.tsx"},
+        {"type":"file","name":"./plugins/terminal/TerminalSkeleton.tsx"},
+        {"type":"file","name":"./plugins/terminal/types.ts"},
+        {"type":"file","name":"./plugins/terminal/useTerminalPlugin.ts"}
+      ]}
     ]},
     {"type":"directory","name":"./presentation","contents":[
       {"type":"directory","name":"./presentation/components","contents":[
@@ -1469,7 +1525,7 @@
             {"type":"file","name":"./presentation/components/common/hooks/useUnsavedChangesWarning.ts"}
           ]},
           {"type":"file","name":"./presentation/components/common/index.ts"},
-          {"type":"file","name":"./presentation/components/common/MobileDetection.tsx"},
+          {"type":"file","name":"./presentation/components/common/PluginFallback.tsx"},
           {"type":"file","name":"./presentation/components/common/UnsavedChangesDialog.tsx"},
           {"type":"file","name":"./presentation/components/common/WorkspaceSwitcher.tsx"}
         ]},
@@ -1512,30 +1568,28 @@
           {"type":"file","name":"./presentation/components/git/GitSettings.tsx"},
           {"type":"file","name":"./presentation/components/git/index.ts"}
         ]},
+        {"type":"directory","name":"./presentation/components/header","contents":[
+          {"type":"file","name":"./presentation/components/header/SimpleHeader.tsx"}
+        ]},
         {"type":"file","name":"./presentation/components/Header.tsx"},
         {"type":"directory","name":"./presentation/components/hub","contents":[
           {"type":"file","name":"./presentation/components/hub/ActivityCard.tsx"},
-          {"type":"file","name":"./presentation/components/hub/ActivityLineChart.tsx"},
-          {"type":"file","name":"./presentation/components/hub/BootSequence.tsx"},
           {"type":"file","name":"./presentation/components/hub/ChartsGrid.tsx"},
           {"type":"file","name":"./presentation/components/hub/DeleteProjectDialog.tsx"},
           {"type":"file","name":"./presentation/components/hub/HubHero.tsx"},
           {"type":"file","name":"./presentation/components/hub/HubHomePage.tsx"},
           {"type":"file","name":"./presentation/components/hub/index.ts"},
           {"type":"file","name":"./presentation/components/hub/InitialWorkspaceSelector.tsx"},
-          {"type":"file","name":"./presentation/components/hub/MobileProjectSelector.tsx"},
-          {"type":"file","name":"./presentation/components/hub/NavigationBreadcrumbs.tsx"},
           {"type":"file","name":"./presentation/components/hub/ProjectActionsMenu.tsx"},
           {"type":"file","name":"./presentation/components/hub/ProjectCard.tsx"},
           {"type":"file","name":"./presentation/components/hub/ProjectCountCard.tsx"},
           {"type":"file","name":"./presentation/components/hub/ProjectMetadataDialog.tsx"},
           {"type":"file","name":"./presentation/components/hub/ProjectPickerDialog.tsx"},
           {"type":"file","name":"./presentation/components/hub/ProjectSearchBar.tsx"},
+          {"type":"file","name":"./presentation/components/hub/QuickActionCard.tsx"},
           {"type":"file","name":"./presentation/components/hub/RecentProjectsSection.tsx"},
           {"type":"file","name":"./presentation/components/hub/StorageUsageCard.tsx"},
           {"type":"file","name":"./presentation/components/hub/SummaryCardsGrid.tsx"},
-          {"type":"file","name":"./presentation/components/hub/TopicCard.tsx"},
-          {"type":"file","name":"./presentation/components/hub/TopicPortalCard.tsx"},
           {"type":"file","name":"./presentation/components/hub/useDashboardMetrics.ts"},
           {"type":"file","name":"./presentation/components/hub/useMetricsCollection.ts"},
           {"type":"file","name":"./presentation/components/hub/useProjectSearch.ts"},
@@ -1549,7 +1603,6 @@
           {"type":"file","name":"./presentation/components/hub/WorkspaceBindingToggle.tsx"},
           {"type":"file","name":"./presentation/components/hub/WorkspaceCheckboxItem.tsx"},
           {"type":"file","name":"./presentation/components/hub/WorkspaceCheckboxList.tsx"},
-          {"type":"file","name":"./presentation/components/hub/WorkspaceFilter.tsx"},
           {"type":"file","name":"./presentation/components/hub/WorkspacePieChart.tsx"}
         ]},
         {"type":"directory","name":"./presentation/components/ide","contents":[
@@ -1567,8 +1620,6 @@
           ]},
           {"type":"file","name":"./presentation/components/ide/AgentChatPanel.tsx"},
           {"type":"file","name":"./presentation/components/ide/AgentsPanel.tsx"},
-          {"type":"file","name":"./presentation/components/ide/BentoCardPreview.tsx"},
-          {"type":"file","name":"./presentation/components/ide/BentoGrid.tsx"},
           {"type":"file","name":"./presentation/components/ide/CacheIndicator.tsx"},
           {"type":"file","name":"./presentation/components/ide/CommandPalette.tsx"},
           {"type":"file","name":"./presentation/components/ide/EnhancedChatInterface.tsx"},
@@ -1602,13 +1653,13 @@
             {"type":"file","name":"./presentation/components/ide/hooks/useLazyFileContent.ts"}
           ]},
           {"type":"file","name":"./presentation/components/ide/IconSidebar.tsx"},
-          {"type":"file","name":"./presentation/components/ide/IDEMobileLayout.tsx"},
           {"type":"file","name":"./presentation/components/ide/index.ts"},
           {"type":"directory","name":"./presentation/components/ide/MonacoEditor","contents":[
             {"type":"file","name":"./presentation/components/ide/MonacoEditor/EditorTabBar.legacy.tsx"},
             {"type":"file","name":"./presentation/components/ide/MonacoEditor/EditorTabBar.tsx"},
             {"type":"directory","name":"./presentation/components/ide/MonacoEditor/hooks","contents":[
               {"type":"file","name":"./presentation/components/ide/MonacoEditor/hooks/index.ts"},
+              {"type":"file","name":"./presentation/components/ide/MonacoEditor/hooks/useIdeFileGateway.ts"},
               {"type":"file","name":"./presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts"},
               {"type":"file","name":"./presentation/components/ide/MonacoEditor/hooks/useMonacoEventSubscriptions.ts"}
             ]},
@@ -1634,7 +1685,7 @@
             {"type":"file","name":"./presentation/components/ide/statusbar/SyncStatusSegment.tsx"},
             {"type":"file","name":"./presentation/components/ide/statusbar/WebContainerStatus.tsx"}
           ]},
-          {"type":"file","name":"./presentation/components/ide/StatusBar.tsx"},
+          {"type":"file","name":"./presentation/components/ide/StorageBadge.tsx"},
           {"type":"file","name":"./presentation/components/ide/StreamingMessage.tsx"},
           {"type":"file","name":"./presentation/components/ide/SyncEditWarning.tsx"},
           {"type":"file","name":"./presentation/components/ide/SyncStatusIndicator.tsx"},
@@ -1650,38 +1701,20 @@
           {"type":"file","name":"./presentation/components/keyboard/index.ts"},
           {"type":"file","name":"./presentation/components/keyboard/KeyboardShortcutsHelp.tsx"}
         ]},
-        {"type":"directory","name":"./presentation/components/knowledge","contents":[
-          {"type":"file","name":"./presentation/components/knowledge/CollectionManager.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/CollectionSelector.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/CreateCollectionDialog.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/flashcard-preview.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/FlashcardPreviewPanel.tsx"},
-          {"type":"directory","name":"./presentation/components/knowledge/hooks","contents":[
-            {"type":"file","name":"./presentation/components/knowledge/hooks/index.ts"},
-            {"type":"file","name":"./presentation/components/knowledge/hooks/useAPIKeyRetrieval.ts"}
-          ]},
-          {"type":"file","name":"./presentation/components/knowledge/index.ts"},
-          {"type":"file","name":"./presentation/components/knowledge/IndexingProgressPanel.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/KnowledgeMobileLayout.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/KnowledgePage.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/MetadataDisplay.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/MetadataEditor.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/QuizPreviewPanel.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/RAGConfigurationPanel.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/RenameDialog.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SourceCard.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SourceCardGrid.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SourceContextMenu.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SourceImportDialog.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SourceMetadataDialog.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SourcePreviewPanel.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/StudyArtifactExportDialog.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/SynthesisDialog.tsx"},
-          {"type":"file","name":"./presentation/components/knowledge/UndoToast.tsx"}
-        ]},
         {"type":"file","name":"./presentation/components/LanguageSwitcher.tsx"},
         {"type":"directory","name":"./presentation/components/layout","contents":[
+          {"type":"file","name":"./presentation/components/layout/ActivityBar.css"},
+          {"type":"file","name":"./presentation/components/layout/ActivityBar.tsx"},
+          {"type":"file","name":"./presentation/components/layout/ActivityBarTop.css"},
+          {"type":"file","name":"./presentation/components/layout/ActivityBarTop.tsx"},
+          {"type":"file","name":"./presentation/components/layout/BottomNav.css"},
+          {"type":"file","name":"./presentation/components/layout/BottomSheet.css"},
+          {"type":"file","name":"./presentation/components/layout/BottomSheet.tsx"},
+          {"type":"file","name":"./presentation/components/layout/Breadcrumbs.tsx"},
           {"type":"file","name":"./presentation/components/layout/ChatPanelWrapper.tsx"},
+          {"type":"file","name":"./presentation/components/layout/FloatingPluginDocker.css"},
+          {"type":"file","name":"./presentation/components/layout/FloatingPluginDocker.tsx"},
+          {"type":"file","name":"./presentation/components/layout/GlobalHeader.tsx"},
           {"type":"directory","name":"./presentation/components/layout/hooks","contents":[
             {"type":"file","name":"./presentation/components/layout/hooks/index.ts"},
             {"type":"file","name":"./presentation/components/layout/hooks/useIDEFileHandlers.ts"},
@@ -1690,33 +1723,23 @@
             {"type":"file","name":"./presentation/components/layout/hooks/useWebContainerBoot.ts"}
           ]},
           {"type":"file","name":"./presentation/components/layout/IDEHeaderBar.tsx"},
-          {"type":"directory","name":"./presentation/components/layout/IDELayout","contents":[
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEChatPanel.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEDiscoveryMechanisms.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEEditorPanel.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEEditorPreviewGroup.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEErrorBoundaryWrapper.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEPreviewPanel.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDEResizableLayout.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDESidebarPanelComponents.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDESidebarPanels.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/IDETerminalPanel.tsx"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/index.ts"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/types.ts"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/useIDELayoutDiscoveryState.ts"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/useIDELayoutFileState.ts"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/useIDELayoutPanelRefs.ts"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/useIDELayoutState.ts"},
-            {"type":"file","name":"./presentation/components/layout/IDELayout/useIDELayoutWorkspaceState.ts"}
-          ]},
-          {"type":"file","name":"./presentation/components/layout/IDELayoutMain.tsx"},
           {"type":"file","name":"./presentation/components/layout/index.ts"},
-          {"type":"file","name":"./presentation/components/layout/MainLayout.tsx"},
+          {"type":"file","name":"./presentation/components/layout/LiveRegion.tsx"},
+          {"type":"file","name":"./presentation/components/layout/MainContentRenderer.css"},
+          {"type":"file","name":"./presentation/components/layout/MainContentRenderer.tsx"},
           {"type":"file","name":"./presentation/components/layout/MainSidebar.tsx"},
           {"type":"file","name":"./presentation/components/layout/MinViewportWarning.tsx"},
-          {"type":"file","name":"./presentation/components/layout/MobileIDELayout.tsx"},
           {"type":"file","name":"./presentation/components/layout/MobileTabBar.tsx"},
+          {"type":"file","name":"./presentation/components/layout/NavigationBreadcrumbs.tsx"},
           {"type":"file","name":"./presentation/components/layout/PermissionOverlay.tsx"},
+          {"type":"file","name":"./presentation/components/layout/PluginActivityDockerWiring.tsx"},
+          {"type":"file","name":"./presentation/components/layout/PluginDocker.css"},
+          {"type":"file","name":"./presentation/components/layout/PluginDocker.tsx"},
+          {"type":"file","name":"./presentation/components/layout/ProjectAwareLayout.tsx"},
+          {"type":"file","name":"./presentation/components/layout/SidebarWidgets.tsx"},
+          {"type":"file","name":"./presentation/components/layout/StatusBar.css"},
+          {"type":"file","name":"./presentation/components/layout/StatusBar.tsx"},
+          {"type":"file","name":"./presentation/components/layout/SystemRail.tsx"},
           {"type":"file","name":"./presentation/components/layout/TerminalPanel.tsx"}
         ]},
         {"type":"directory","name":"./presentation/components/notes","contents":[
@@ -1732,8 +1755,14 @@
             {"type":"file","name":"./presentation/components/notes/blocks/AIVisionBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/ArtifactBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/ArtifactBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/ArtifactGalleryBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/CalloutBlock.css"},
+            {"type":"file","name":"./presentation/components/notes/blocks/CalloutBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/ChartDiagramBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/CodeFileBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/CodeFileBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/ColumnBlock.css"},
+            {"type":"file","name":"./presentation/components/notes/blocks/ColumnBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/embed-block-types.ts"},
             {"type":"file","name":"./presentation/components/notes/blocks/EmbedBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/EmbedBlock.tsx"},
@@ -1742,9 +1771,17 @@
             {"type":"file","name":"./presentation/components/notes/blocks/ImageBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/ImageBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/index.ts"},
+            {"type":"file","name":"./presentation/components/notes/blocks/MultiStepGenerationBlock.css"},
+            {"type":"file","name":"./presentation/components/notes/blocks/MultiStepGenerationBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/ReferenceBlock.css"},
+            {"type":"file","name":"./presentation/components/notes/blocks/ReferenceBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/SlidesExportBlock.css"},
+            {"type":"file","name":"./presentation/components/notes/blocks/SlidesExportBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/StoryboardBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/StoryboardBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/SyncedBlock.css"},
+            {"type":"file","name":"./presentation/components/notes/blocks/SyncedBlock.tsx"},
+            {"type":"file","name":"./presentation/components/notes/blocks/TransformPipelineBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/TTSBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/TTSBlock.tsx"},
             {"type":"file","name":"./presentation/components/notes/blocks/VideoBlock.css"},
@@ -1752,9 +1789,12 @@
             {"type":"file","name":"./presentation/components/notes/blocks/VideoGenerationBlock.css"},
             {"type":"file","name":"./presentation/components/notes/blocks/VideoGenerationBlock.tsx"}
           ]},
+          {"type":"directory","name":"./presentation/components/notes/hooks"},
+          {"type":"file","name":"./presentation/components/notes/InBlockAIPopup.tsx"},
           {"type":"file","name":"./presentation/components/notes/index.ts"},
           {"type":"file","name":"./presentation/components/notes/MarkdownExportDialog.tsx"},
           {"type":"file","name":"./presentation/components/notes/MarkdownImportDialog.tsx"},
+          {"type":"file","name":"./presentation/components/notes/MarkdownSyncConflictDialog.tsx"},
           {"type":"file","name":"./presentation/components/notes/MultiModalImport.tsx"},
           {"type":"file","name":"./presentation/components/notes/NoteCodeBlock.css"},
           {"type":"file","name":"./presentation/components/notes/NoteCodeBlock.tsx"},
@@ -1765,8 +1805,6 @@
           {"type":"file","name":"./presentation/components/notes/NoteSidebar.tsx"},
           {"type":"file","name":"./presentation/components/notes/NoteSidebarChat.tsx"},
           {"type":"file","name":"./presentation/components/notes/NotesIndexingButton.tsx"},
-          {"type":"file","name":"./presentation/components/notes/NotesMobileLayout.tsx"},
-          {"type":"file","name":"./presentation/components/notes/NotesPage.tsx"},
           {"type":"file","name":"./presentation/components/notes/NotesRAGSearch.tsx"},
           {"type":"file","name":"./presentation/components/notes/NoteStudyMenu.tsx"},
           {"type":"file","name":"./presentation/components/notes/NoteTree.tsx"},
@@ -1777,8 +1815,11 @@
           {"type":"file","name":"./presentation/components/notes/PromptShareDialog.tsx"},
           {"type":"file","name":"./presentation/components/notes/PromptSuggestionsPanel.tsx"},
           {"type":"file","name":"./presentation/components/notes/PromptTemplatesDialog.tsx"},
+          {"type":"file","name":"./presentation/components/notes/ReplacementPreviewDialog.tsx"},
+          {"type":"file","name":"./presentation/components/notes/SaveBlockDialog.tsx"},
           {"type":"file","name":"./presentation/components/notes/SlashCommandManager.tsx"},
           {"type":"file","name":"./presentation/components/notes/SlashCommandsDialog.tsx"},
+          {"type":"file","name":"./presentation/components/notes/StorageIndicator.tsx"},
           {"type":"file","name":"./presentation/components/notes/VoiceRecordButton.tsx"}
         ]},
         {"type":"directory","name":"./presentation/components/notifications","contents":[
@@ -1790,6 +1831,10 @@
         ]},
         {"type":"directory","name":"./presentation/components/offline","contents":[
           {"type":"file","name":"./presentation/components/offline/OfflineIndicator.tsx"}
+        ]},
+        {"type":"directory","name":"./presentation/components/onboarding"},
+        {"type":"directory","name":"./presentation/components/panels","contents":[
+          {"type":"file","name":"./presentation/components/panels/index.ts"}
         ]},
         {"type":"directory","name":"./presentation/components/plugins","contents":[
           {"type":"file","name":"./presentation/components/plugins/index.ts"},
@@ -1806,7 +1851,6 @@
             {"type":"file","name":"./presentation/components/project/steps/FileSetupStep.tsx"},
             {"type":"file","name":"./presentation/components/project/steps/ProjectDetailsStep.tsx"},
             {"type":"file","name":"./presentation/components/project/steps/ReviewStep.tsx"},
-            {"type":"file","name":"./presentation/components/project/steps/TemplateSelectionStep.tsx"},
             {"type":"file","name":"./presentation/components/project/steps/WorkspaceSetupStep.tsx"}
           ]},
           {"type":"file","name":"./presentation/components/project/wizard-types.ts"}
@@ -1837,23 +1881,18 @@
           {"type":"file","name":"./presentation/components/settings/SettingsExportDialog.tsx"},
           {"type":"file","name":"./presentation/components/settings/SettingsImportDialog.tsx"}
         ]},
+        {"type":"directory","name":"./presentation/components/sidebar","contents":[
+          {"type":"file","name":"./presentation/components/sidebar/AgentToolsPanel.tsx"},
+          {"type":"file","name":"./presentation/components/sidebar/ChatThreadList.tsx"},
+          {"type":"file","name":"./presentation/components/sidebar/index.ts"},
+          {"type":"file","name":"./presentation/components/sidebar/PluginSidebar.tsx"},
+          {"type":"file","name":"./presentation/components/sidebar/ProjectList.tsx"},
+          {"type":"file","name":"./presentation/components/sidebar/ProjectSidebar.tsx"},
+          {"type":"file","name":"./presentation/components/sidebar/SidebarSection.tsx"}
+        ]},
         {"type":"directory","name":"./presentation/components/snippets","contents":[
           {"type":"file","name":"./presentation/components/snippets/SnippetEditor.tsx"},
           {"type":"file","name":"./presentation/components/snippets/SnippetManager.tsx"}
-        ]},
-        {"type":"directory","name":"./presentation/components/study","contents":[
-          {"type":"file","name":"./presentation/components/study/flashcard.tsx"},
-          {"type":"file","name":"./presentation/components/study/index.ts"},
-          {"type":"file","name":"./presentation/components/study/quiz-preview.tsx"},
-          {"type":"file","name":"./presentation/components/study/QuizContainer.tsx"},
-          {"type":"file","name":"./presentation/components/study/QuizQuestionView.tsx"},
-          {"type":"file","name":"./presentation/components/study/QuizResults.tsx"},
-          {"type":"file","name":"./presentation/components/study/QuizReview.tsx"},
-          {"type":"file","name":"./presentation/components/study/QuizStartScreen.tsx"},
-          {"type":"file","name":"./presentation/components/study/study-session.tsx"},
-          {"type":"file","name":"./presentation/components/study/study-stats.tsx"},
-          {"type":"file","name":"./presentation/components/study/StudyFilePicker.tsx"},
-          {"type":"file","name":"./presentation/components/study/StudyPage.tsx"}
         ]},
         {"type":"directory","name":"./presentation/components/templates","contents":[
           {"type":"file","name":"./presentation/components/templates/TemplateCustomization.tsx"},
@@ -1938,6 +1977,7 @@
           {"type":"file","name":"./presentation/components/ui/MissingApiKeyWarning.tsx"},
           {"type":"file","name":"./presentation/components/ui/MobileCapabilityBanner.tsx"},
           {"type":"file","name":"./presentation/components/ui/ModelLoadingSpinner.tsx"},
+          {"type":"file","name":"./presentation/components/ui/OverlayRoot.tsx"},
           {"type":"file","name":"./presentation/components/ui/pixel-badge.tsx"},
           {"type":"file","name":"./presentation/components/ui/progress-indicator.tsx"},
           {"type":"file","name":"./presentation/components/ui/progress.tsx"},
@@ -1977,62 +2017,67 @@
           {"type":"file","name":"./presentation/components/watcher/MonacoEditorWithWatcher.tsx"}
         ]},
         {"type":"directory","name":"./presentation/components/workspace","contents":[
+          {"type":"file","name":"./presentation/components/workspace/FolderOverlapWarningDialog.tsx"},
           {"type":"file","name":"./presentation/components/workspace/FolderPickerDialog.tsx"},
           {"type":"file","name":"./presentation/components/workspace/index.ts"},
+          {"type":"directory","name":"./presentation/components/workspace/sync","contents":[
+            {"type":"file","name":"./presentation/components/workspace/sync/FileChangeNotification.tsx"},
+            {"type":"file","name":"./presentation/components/workspace/sync/index.ts"},
+            {"type":"file","name":"./presentation/components/workspace/sync/sync-status.css"},
+            {"type":"file","name":"./presentation/components/workspace/sync/SyncStatusIndicator.tsx"}
+          ]},
           {"type":"file","name":"./presentation/components/workspace/TempProjectBanner.tsx"},
-          {"type":"file","name":"./presentation/components/workspace/WorkspaceEnhancedSwitcher.tsx"}
+          {"type":"file","name":"./presentation/components/workspace/WorkspaceEnhancedSwitcher.tsx"},
+          {"type":"file","name":"./presentation/components/workspace/WorkspaceSettings.tsx"}
         ]}
       ]},
       {"type":"directory","name":"./presentation/hooks","contents":[
         {"type":"file","name":"./presentation/hooks/useArtifactPreview.ts"},
+        {"type":"file","name":"./presentation/hooks/useBreakpointEnhanced.ts"},
         {"type":"file","name":"./presentation/hooks/useChatExport.ts"},
+        {"type":"file","name":"./presentation/hooks/useMarkdownSyncConflict.ts"},
+        {"type":"file","name":"./presentation/hooks/usePluginPlacement.ts"},
+        {"type":"file","name":"./presentation/hooks/useStorageMode.ts"},
         {"type":"file","name":"./presentation/hooks/useThreadManager.ts"}
+      ]},
+      {"type":"directory","name":"./presentation/layouts","contents":[
+        {"type":"file","name":"./presentation/layouts/AddPluginDialog.tsx"},
+        {"type":"file","name":"./presentation/layouts/index.ts"},
+        {"type":"file","name":"./presentation/layouts/PluginLayoutStore.ts"},
+        {"type":"file","name":"./presentation/layouts/useBreakpoint.ts"},
+        {"type":"file","name":"./presentation/layouts/workflow-presets.ts"},
+        {"type":"file","name":"./presentation/layouts/WorkspaceLayout.tsx"}
       ]}
     ]},
     {"type":"file","name":"./router.tsx"},
     {"type":"directory","name":"./routes","contents":[
       {"type":"file","name":"./routes/$__debug__.provider-playground.tsx"},
+      {"type":"file","name":"./routes/$projectId.test.tsx"},
+      {"type":"file","name":"./routes/$projectId.tsx"},
       {"type":"file","name":"./routes/about.lazy.tsx"},
       {"type":"file","name":"./routes/about.tsx"},
       {"type":"file","name":"./routes/agents.tsx"},
       {"type":"directory","name":"./routes/api","contents":[
         {"type":"file","name":"./routes/api/chat.ts"},
-        {"type":"directory","name":"./routes/api/flashcards","contents":[
-          {"type":"file","name":"./routes/api/flashcards/generate.ts"}
-        ]},
         {"type":"file","name":"./routes/api/provider-test.ts"},
         {"type":"file","name":"./routes/api/providers.$id.execute.ts"},
         {"type":"file","name":"./routes/api/providers.$id.test.ts"},
         {"type":"file","name":"./routes/api/providers.$id.ts"},
-        {"type":"file","name":"./routes/api/providers.ts"},
-        {"type":"directory","name":"./routes/api/quizzes","contents":[
-          {"type":"file","name":"./routes/api/quizzes/generate.ts"}
-        ]}
+        {"type":"file","name":"./routes/api/providers.ts"}
       ]},
       {"type":"file","name":"./routes/debug.tsx"},
-      {"type":"file","name":"./routes/hub.tsx"},
-      {"type":"file","name":"./routes/ide.$projectId.tsx"},
-      {"type":"file","name":"./routes/ide.$projectId.tsx.bak"},
-      {"type":"file","name":"./routes/ide.tsx"},
       {"type":"file","name":"./routes/index.tsx"},
-      {"type":"file","name":"./routes/knowledge.$projectId.lazy.tsx"},
-      {"type":"file","name":"./routes/knowledge.lazy.tsx"},
       {"type":"directory","name":"./routes/notes"},
-      {"type":"file","name":"./routes/notes.$projectId.lazy.tsx"},
-      {"type":"file","name":"./routes/notes.lazy.tsx"},
       {"type":"file","name":"./routes/projects.tsx"},
       {"type":"file","name":"./routes/settings.tsx"},
-      {"type":"file","name":"./routes/study.$projectId.lazy.tsx"},
-      {"type":"file","name":"./routes/study.lazy.tsx"},
       {"type":"file","name":"./routes/test-error-boundary.tsx"},
       {"type":"file","name":"./routes/test-fs-adapter.tsx"},
-      {"type":"file","name":"./routes/webcontainer.$.tsx"},
-      {"type":"directory","name":"./routes/workspace","contents":[
-        {"type":"file","name":"./routes/workspace/$projectId.tsx"},
-        {"type":"file","name":"./routes/workspace/index.tsx"}
-      ]}
+      {"type":"file","name":"./routes/webcontainer.$.tsx"}
     ]},
     {"type":"file","name":"./routeTree.gen.ts"},
+    {"type":"directory","name":"./scripts","contents":[
+      {"type":"file","name":"./scripts/rollback-fsa-migration.ts"}
+    ]},
     {"type":"file","name":"./server.ts"},
     {"type":"directory","name":"./shared","contents":[
       {"type":"directory","name":"./shared/types","contents":[
@@ -2044,7 +2089,8 @@
       {"type":"file","name":"./styles/animations.css"},
       {"type":"file","name":"./styles/design-tokens.css"},
       {"type":"file","name":"./styles/design-tokens.ts"},
-      {"type":"file","name":"./styles/light-theme-tokens.css"}
+      {"type":"file","name":"./styles/light-theme-tokens.css"},
+      {"type":"file","name":"./styles/workspace-layout.css"}
     ]},
     {"type":"file","name":"./styles.css"},
     {"type":"file","name":"./tree-2025-12-24.md"},
@@ -2065,5 +2111,5 @@
     ]}
   ]}
 ,
-  {"type":"report","directories":247,"files":1575}
+  {"type":"report","directories":266,"files":1586}
 ]

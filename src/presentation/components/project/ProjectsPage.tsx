@@ -100,7 +100,7 @@ export const ProjectsPage: React.FC = () => {
   });
   const [wizardOpen, setWizardOpen] = useState(false);
   const [bindingDialogOpen, setBindingDialogOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedProject, _setSelectedProject] = useState<Project | null>(null);
 
   // Filter and sort projects
   const filteredProjects = useMemo(() => {

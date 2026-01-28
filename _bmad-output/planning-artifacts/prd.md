@@ -1,11 +1,12 @@
 ---
-version: 2.1.0
+version: 2.2.0
 generated: 2026-01-26T00:00:00+07:00
-updated: 2026-01-26T00:00:00+07:00
+updated: 2026-01-28T17:00:00+07:00
 agent: architect-ext
 phase: planning
 status: ACTIVE
-stepsCompleted: [phase-1-research, phase-2-analysis, phase-3-synthesis, phase-1.2-fundamental-truth-updates, phase-1.3-prd-alignment]
+research_validated: 2026-01-28
+stepsCompleted: [phase-1-research, phase-2-analysis, phase-3-synthesis, phase-1.2-fundamental-truth-updates, phase-1.3-prd-alignment, phase-1.4-architecture-validation]
 ---
 
 # Product Requirements Document: Via-Gent (Project Alpha v2.0)
@@ -16,14 +17,15 @@ stepsCompleted: [phase-1-research, phase-2-analysis, phase-3-synthesis, phase-1.
 > - **ADR-035**: Architecture Standardization v2 (Chrome 122+/129+ requirements)
 
 ## Document Control
-- **Version:** 2.1.0 (100% Aligned with new-fundamental-truths.md v2.0.0 + EPIC-0 Learnings)
+- **Version:** 2.2.0 (Research-Validated 2026-01-28)
 - **Generated:** 2026-01-26
-- **Updated:** 2026-01-26
+- **Updated:** 2026-01-28
 - **Status:** ACTIVE
+- **Research Validated:** 2026-01-28
 - **Generating Agent:** Architect-Ext (BMAD Framework)
-- **Confidence Level:** HIGH (based on comprehensive alignment with v2.0.0 fundamentals + 3-phase approach)
-- **Reference Document:** new-fundamental-truths.md v2.0.0 (2026-01-25)
-- **Related:** ADR-039 (Proposed), ADR-034 (Partial), ADR-035 (Superseded by ADR-039)
+- **Confidence Level:** HIGH (research-validated architecture decisions)
+- **Reference Document:** new-fundamental-truths.md v2.2.0 (2026-01-28)
+- **Related:** ADR-039 (APPROVED), ADR-040–047 (Proposed)
 
 ## Executive Summary
 
@@ -63,6 +65,106 @@ Via-Gent is a **Project-Centric Development Environment with Platform-Aware Plug
 
 **Market Position:**
 Via-Gent occupies a unique position as a **project-centric browser IDE with platform-aware plugins**. Unlike Cursor (desktop-only), Windsurf (open-source alternative), or v0.dev (UI generation only), Via-Gent combines browser-based execution with plugin-based architecture allowing progressive feature rollout. The platform is distinguished by its unified project model where the same project ID works across all plugins, with platform-aware defaults optimizing experience per device type.
+
+---
+
+## Architecture Shifts (Research-Validated 2026-01-28)
+
+> **📋 Reference:** [architecture-validation-2026-01-28.md] Research validation report
+
+The following architecture shifts have been validated through comprehensive research and formalized in ADR-040 through ADR-047:
+
+### Shift 1: Storage Strategy — SQLite WASM + OPFS
+
+| Aspect | Previous Decision | Validated Decision | ADR |
+|--------|-------------------|-------------------|-----|
+| **Mobile/Tablet Storage** | IndexedDB via Dexie.js only | SQLite WASM + OPFS (primary), Dexie.js (fallback) | ADR-041 |
+| **Rationale** | IndexedDB alone is insufficient for production use | SQLite provides ACID transactions, FTS5 for RAG, near-native performance via Web Workers |
+| **Impact** | Major architectural change | Requires SQLite WASM build integration, Web Worker for sync file access, OPFS feature detection |
+
+**Browser Support Matrix:**
+| Browser | OPFS Support | SQLite WASM | Status |
+|---------|--------------|-------------|--------|
+| Chrome 102+ | ✅ | ✅ | Recommended |
+| Firefox 111+ | ✅ | ✅ | Full support |
+| Safari 15.2+ | ✅ | ✅ | Requires PWA for persistence |
+| Older browsers | ❌ | ❌ | Dexie.js fallback |
+
+### Shift 2: AI SDK Confirmation — TanStack AI
+
+| Aspect | Previous State | Validated Decision | ADR |
+|--------|---------------|-------------------|-----|
+| **SDK Choice** | "TanStack AI SDK First" (with uncertainty) | TanStack AI **CONFIRMED** | ADR-040 |
+| **Rationale** | Vercel SDK v6 lacks client-side tool system | TanStack AI's `.client()` modifier enables true browser-side tool execution |
+| **Key Advantage** | N/A | `needsApproval` flag for tool approval workflows |
+
+**Comparison Summary:**
+| Criterion | TanStack AI | Vercel SDK v6 | Winner |
+|-----------|-------------|---------------|--------|
+| Client-side tools | ✅ First-class `.client()` | ⚠️ Callback-based | TanStack |
+| Tool approval | ✅ `needsApproval` flag | ⚠️ Manual output flow | TanStack |
+| TanStack integration | ✅ Native | ⚠️ Compatible | TanStack |
+
+### Shift 3: State Management — 4-Layer Architecture
+
+| Aspect | Previous Decision | Validated Decision | ADR |
+|--------|-------------------|-------------------|-----|
+| **State Layers** | 3 layers (Client, Persisted, File System) | 4 layers (UI, Session, Persisted, File) | ADR-042 |
+| **New Layer** | N/A | Session State (Zustand + Dexie Hydration) |
+| **Boundary Rules** | Generic | Explicit conflict prevention rules |
+
+**4-Layer Architecture:**
+```
+Layer 1: UI State (Zustand NO persist) → Transient UI state
+Layer 2: Session State (Zustand + Dexie hydration) → Active context
+Layer 3: Persisted State (Dexie.js useLiveQuery) → Source of truth
+Layer 4: File State (FSA/SQLite+OPFS) → Source code, notes
+```
+
+### Shift 4: LLM Provider Priority — Gemini P1
+
+| Aspect | Previous Decision | Validated Decision | ADR |
+|--------|-------------------|-------------------|-----|
+| **Provider Priority** | All first-tier equal | Gemini P1 (FREE embeddings, 2M context) | ADR-044 |
+| **Embedding Strategy** | Not defined | Google Text Embedding 004 (FREE) as primary | ADR-044 |
+| **Context Caching** | Not defined | Anthropic 90%, Gemini 75% cost reduction | ADR-046 |
+
+**Updated Priority Order:**
+| Priority | Provider | Key Advantage |
+|----------|----------|---------------|
+| **P1** | Google Gemini | FREE embeddings, 2M context, 75% caching savings |
+| **P2** | Anthropic Claude | 90% caching savings, extended thinking, MCP native |
+| **P3** | OpenAI | Ecosystem maturity, stable APIs |
+| **P4** | OpenRouter | 400+ models, fallback routing |
+| **P5** | Ollama | Privacy mode, offline capable |
+
+### Shift 5: Nested Project Policy — Block Creation
+
+| Aspect | Previous Decision | Validated Decision | ADR |
+|--------|-------------------|-------------------|-----|
+| **Nested Projects** | Not addressed | Block with detection + migration prompts | ADR-034 (amended) |
+| **Rationale** | N/A | VSCode/Obsidian both advise against due to data corruption risks |
+| **UX Pattern** | N/A | Detection → Dialog → Migration/Promotion option |
+
+### Shift 6: Plugin Contract — Event Bus Pattern
+
+| Aspect | Previous Decision | Validated Decision | ADR |
+|--------|-------------------|-------------------|-----|
+| **Plugin Communication** | Not defined | Event Bus pattern for cross-plugin notifications | ADR-043 |
+| **State Isolation** | Not defined | Plugin-scoped stores + global read-only subscriptions | ADR-043 |
+| **Lifecycle Hooks** | Not defined | `onLoad`, `onUnload`, `onActivate`, `onDeactivate` | ADR-043 |
+
+**Expanded FeaturePlugin Interface:**
+```typescript
+interface FeaturePlugin {
+  // ...existing properties
+  capabilities: PluginCapability[];           // NEW
+  onLoad(context: PluginContext): Promise<void>;   // NEW
+  onUnload(): Promise<void>;                  // NEW
+  onActivate?(): Promise<void>;               // NEW
+  onDeactivate?(): Promise<void>;             // NEW
+}
+```
 
 ---
 
@@ -1493,6 +1595,7 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 - **Key Result 1.4:** Complete IDE foundation features (Terminal, Monaco, FileTree, Preview)
 - **Key Result 1.5:** Single `/$projectId` route operational
 - **Key Result 1.6:** Eliminate all workspace-centric routes
+- **Key Result 1.7:** Safari PWA installation flow implemented (CRITICAL for data persistence)
 - **Timeline:** 4-6 weeks
 
 **Objective 2: Complete Phase 1B (BYOK & Notes)**
@@ -1502,6 +1605,7 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 - **Key Result 2.4:** Implement fallback chain (provider → model fallback)
 - **Key Result 2.5:** Complete Notes plugin with AI features
 - **Key Result 2.6:** Implement Notes ↔ Markdown bidirectional sync
+- **Key Result 2.7:** Implement SQLite WASM + OPFS storage layer with Dexie.js fallback
 - **Timeline:** 4-6 weeks
 
 **Objective 3: Complete Phase 2 (Chat Cascade, Threads, Agents)**
@@ -1530,7 +1634,23 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 - **TypeScript Errors:** 0 in production code
 - **Error Boundary Coverage:** 80%+ (currently: 22.2%)
 - **Bundle Size:** <2MB gzipped (currently: 1.5MB - maintain)
-- **Architecture Compliance:** 100% (PRD v2.0.0 fully aligned with new-fundamental-truths.md)
+- **Architecture Compliance:** 100% (PRD v2.2.0 research-validated)
+
+**Storage Layer Performance (NEW - Research-Validated):**
+| Metric | Target | Notes |
+|--------|--------|-------|
+| Initial sync (1000+ files) | <3 seconds | Delta sync with mtime cache |
+| Incremental sync | <200ms | FileSystemObserver + content hash |
+| SQLite query latency | <50ms | FTS5 for RAG indices |
+| Storage quota utilization | <80% of browser limit | With user warnings at 70% |
+
+**Safari PWA Requirements (CRITICAL):**
+| Requirement | Status | Notes |
+|-------------|--------|-------|
+| PWA installation prompt | Required | Safari evicts data after 7 days without PWA |
+| "Add to Home Screen" banner | Required | With clear explanation of data persistence |
+| Re-sync on first launch | Required | After potential eviction |
+| Storage quota monitoring | Required | User warnings at 70% threshold |
 
 ---
 
@@ -1542,15 +1662,19 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 1. **Platform Contract (ADR-039 D1)** → All platform-aware features
 2. **Plugin System (ADR-039 D3)** → All plugin-based features
 3. **StorageGateway (ADR-033 D2-D3)** → All persistence
-4. **TanStack AI SDK (ADR-039 D5)** → All LLM integration
+4. **TanStack AI SDK (ADR-040)** → All LLM integration ✅ CONFIRMED
 5. **Agent Orchestrator (ADR-039 D6)** → All agent operations
 6. **Chat Cascade (ADR-039 D8)** → All chat/thread management
+7. **SQLite WASM + OPFS (ADR-041)** → Mobile/tablet storage ⚠️ NEW
+8. **PWA Installation (ADR-047)** → Safari data persistence ⚠️ CRITICAL
 
 **External Dependencies:**
 - **TanStack AI:** Streaming responses, tool integration (actively maintained)
 - **TanStack Start:** Full-stack React framework (v1.0+)
 - **WebContainers API:** Browser-based Node.js (StackBlitz, stable)
 - **File System Access API:** Local filesystem integration (W3C standard, evolving)
+- **SQLite WASM:** Browser-based SQL (wa-sqlite, sql.js - actively maintained) ⚠️ NEW
+- **OPFS (Origin Private File System):** Browser file storage (Chrome 102+, Firefox 111+, Safari 15.2+) ⚠️ NEW
 - **xterm.js:** Terminal emulation (stable, mature)
 - **Monaco Editor:** Code editing (Microsoft, stable)
 - **Dexie:** IndexedDB wrapper (stable, mature)
@@ -1559,17 +1683,34 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 ### Risks
 
 **Technical Risks:**
-1. **Plugin System Implementation Complexity** - New architecture requires significant refactoring
-2. **TanStack AI SDK Integration** - All provider calls must be migrated
-3. **Agent Orchestrator Pattern** - Complex multi-agent coordination
-4. **Thread Management** - Context compaction and thread hierarchy complexity
-5. **Cross-Plugin Communication** - Event bus and shared state patterns
+
+| Risk | Severity | Mitigation | ADR |
+|------|----------|------------|-----|
+| **Safari 7-day eviction** | CRITICAL | PWA installation mandatory for Safari; "Add to Home Screen" banner with explanation; re-sync on first launch | ADR-047 |
+| **SQLite WASM browser support** | HIGH | Feature detection with Dexie.js fallback; target Chrome 102+, Firefox 111+, Safari 15.2+ | ADR-041 |
+| **PWA installation friction** | MEDIUM | Clear value proposition in banner; explain data persistence benefit; track installation rate | ADR-047 |
+| **Plugin System Complexity** | HIGH | Event bus pattern; state isolation rules; comprehensive testing | ADR-043 |
+| **TanStack AI SDK Integration** | HIGH | All provider calls must migrate; use `.client()` for browser tools | ADR-040 |
+| **Agent Orchestrator Pattern** | HIGH | Complex multi-agent coordination; comprehensive testing | ADR-039 |
+| **Thread Management** | MEDIUM | Context compaction and thread hierarchy complexity | ADR-039 |
+| **Cross-Plugin Communication** | MEDIUM | Event bus and shared state patterns | ADR-043 |
+
+**Browser Support Risks:**
+
+| Browser | Risk Level | Mitigation |
+|---------|-----------|------------|
+| Safari iOS | CRITICAL | PWA installation required; eviction warning; re-sync capability |
+| Chrome <102 | HIGH | Dexie.js fallback; graceful degradation |
+| Firefox <111 | HIGH | Dexie.js fallback; graceful degradation |
+| Older browsers | MEDIUM | Feature detection; clear messaging on limitations |
 
 **Mitigation Strategies:**
 - Phase-by-phase implementation (1A, 1B, 2, 3)
 - Incremental delivery with clear entry criteria
 - Comprehensive testing at each phase gate
 - Documentation and knowledge sharing across team
+- Storage layer abstraction with automatic fallback
+- PWA installation tracking with analytics
 
 ---
 
@@ -1581,6 +1722,24 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 | **1.1.0** | 2026-01-22 | Updated with ADR references, corrected completion claims |
 | **2.0.0** | 2026-01-26 | **Major Update:** 100% alignment with new-fundamental-truths.md v2.0.0, 3-phase structure, project-centric architecture, plugin system, TanStack AI SDK, agent orchestrator, chat cascade, thread management, advanced patterns |
 | **2.1.0** | 2026-01-26 | **EPIC-0 Learnings Update:** Added Phase 1A Plugin Requirements (FileTree, Monaco, EventBus), Storage Gateway Contract (list pattern normalization, FileEntry return format, event emission pattern) | architect-ext |
+| **2.2.0** | 2026-01-28 | **Research Validation Update:** Added Architecture Shifts section (6 validated shifts), Updated Success Criteria (Safari PWA, storage performance metrics), Updated Dependencies & Risks (Safari eviction CRITICAL, SQLite WASM, PWA friction), Updated frontmatter with research_validated date, ADR references updated (ADR-040 through ADR-047) | tech-writer-ext |
+| | | Changes in v2.2.0: |
+| | | 1. ✅ Added Architecture Shifts section with 6 research-validated shifts |
+| | | 2. ✅ Shift 1: Storage Strategy (SQLite WASM + OPFS) - ADR-041 |
+| | | 3. ✅ Shift 2: AI SDK Confirmation (TanStack AI) - ADR-040 |
+| | | 4. ✅ Shift 3: State Management (4-layer architecture) - ADR-042 |
+| | | 5. ✅ Shift 4: LLM Provider Priority (Gemini P1) - ADR-044 |
+| | | 6. ✅ Shift 5: Nested Project Policy (block) - ADR-034 (amended) |
+| | | 7. ✅ Shift 6: Plugin Contract (event bus) - ADR-043 |
+| | | 8. ✅ Added Safari PWA installation requirement to Success Criteria |
+| | | 9. ✅ Added SQLite WASM + OPFS implementation to Key Results |
+| | | 10. ✅ Added storage layer performance metrics |
+| | | 11. ✅ Added Safari 7-day eviction as CRITICAL risk |
+| | | 12. ✅ Added SQLite WASM browser support risk |
+| | | 13. ✅ Added PWA installation friction risk |
+| | | 14. ✅ Added browser support risk matrix |
+| | | 15. ✅ Updated ADR references to include ADR-040 through ADR-047 |
+| | | 16. ✅ Updated frontmatter with research_validated field |
 | | | Changes in v2.0.0: |
 | | | 1. ✅ Replaced workspace-centric architecture with project-centric model |
 | | | 2. ✅ Updated route structure to single `/$projectId` |
@@ -1615,9 +1774,17 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 
 | ADR | Title | Status | Key Decisions |
 |-----|-------|--------|---------------|
-| **ADR-039** | Unified Architecture Fundamentals (v2.0.0 Alignment) | PROPOSED | Project-centric architecture, plugin system, TanStack AI SDK, agent orchestrator, chat cascade, thread management |
-| **ADR-034** | Project-Centric Architecture with Feature Plugins | PARTIAL (superseded by ADR-039) | Plugin system, unified routing, device architecture |
-| **ADR-035** | Correct-Course v2 - Architecture Standardization | SUPERSEDED (superseded by ADR-039) | Entity model, storage layers, P0 bug fixes, route flow standards |
+| **ADR-039** | Unified Architecture Fundamentals (v2.0.0 Alignment) | APPROVED | Project-centric architecture, plugin system, TanStack AI SDK, agent orchestrator, chat cascade, thread management |
+| **ADR-040** | TanStack AI SDK Selection | PROPOSED | Confirmed TanStack AI; `.client()` for browser tools; `needsApproval` for tool approval |
+| **ADR-041** | Storage Strategy (SQLite WASM + OPFS) | PROPOSED | SQLite WASM primary, Dexie.js fallback; OPFS for mobile/tablet; Safari eviction mitigation |
+| **ADR-042** | State Management Boundaries | PROPOSED | 4-layer architecture; conflict prevention rules; useShallow(), useLiveQuery() patterns |
+| **ADR-043** | Plugin Contract v1.0 | PROPOSED | Event bus pattern; state isolation; lifecycle hooks; plugin versioning |
+| **ADR-044** | LLM Provider Priority | PROPOSED | Gemini P1 (FREE embeddings); embedding strategy; context caching |
+| **ADR-045** | Delta Sync Architecture | PROPOSED | Large project handling (1000+ files); <3s initial, <200ms incremental |
+| **ADR-046** | Context Caching Strategy | PROPOSED | 75-90% cost reduction with Anthropic/Gemini caching |
+| **ADR-047** | PWA Requirements | PROPOSED | Safari data persistence; offline support; installation flow |
+| **ADR-034** | Project-Centric Architecture with Feature Plugins | AMENDED | Added nested project blocking (Amendment-001) |
+| **ADR-035** | Correct-Course v2 - Architecture Standardization | SUPERSEDED | Superseded by ADR-039 |
 
 ### ADR-039 Structure (Proposed - Primary Reference)
 
@@ -1664,14 +1831,14 @@ async createNote(input: CreateNoteInput): Promise<Note> {
 
 ---
 
-**Document Version:** 2.1.0
-**Status:** DRAFT - Updated with EPIC-0 Learnings
-**Alignment:** 100% with new-fundamental-truths.md v2.0.0 + EPIC-0 learnings
-**Total Analysis Time:** 90 minutes (timebox met)
-**Generating Agent:** Architect-Ext (BMAD Framework)
-**Next Action:** Submit to governance committee for approval
+**Document Version:** 2.2.0
+**Status:** ACTIVE - Research Validated
+**Alignment:** 100% with new-fundamental-truths.md v2.2.0 + Research Validation 2026-01-28
+**Research Validated:** 2026-01-28
+**Generating Agent:** tech-writer-ext (BMAD Framework)
+**Next Action:** ADR-040 through ADR-047 creation and approval
 
 ---
 
-*Document generated by architect-ext (BMAD Framework)*
+*Document updated by tech-writer-ext (BMAD Framework)*
 *Output: `_bmad-output/planning-artifacts/prd.md`*

@@ -29,7 +29,8 @@ import { Outlet, useLocation } from '@tanstack/react-router';
 import { GlobalHeader } from './GlobalHeader';
 import { MainSidebar } from './MainSidebar';
 import { Breadcrumbs } from './Breadcrumbs';
-import { SystemRail } from './SystemRail';
+// DEBUG: SystemRail import commented out - testing black area at bottom
+// import { SystemRail } from './SystemRail';
 
 /**
  * Detects if current route is a project route (/$projectId)
@@ -70,7 +71,7 @@ export function ProjectAwareLayout() {
     // Project route: minimal chrome, FileTree plugin handles navigation
     if (inProjectRoute) {
         return (
-            <div className="h-screen flex flex-col bg-canvas">
+            <div className="h-dvh flex flex-col bg-canvas overflow-hidden">
                 {/* Minimal header for project context */}
                 <GlobalHeader />
 
@@ -85,7 +86,7 @@ export function ProjectAwareLayout() {
 
     // Global routes: full layout with MainSidebar
     return (
-        <div className="h-screen flex flex-col bg-canvas">
+        <div className="h-dvh flex flex-col bg-canvas overflow-hidden">
             {/* Fixed Header - Always visible at top */}
             <GlobalHeader />
 
@@ -99,15 +100,16 @@ export function ProjectAwareLayout() {
                     <Breadcrumbs />
 
                     {/* Page Content - Outlet renders child routes */}
-                    {/* pb-8 accounts for fixed SystemRail height (32px = h-8) */}
-                    <div className="flex-1 overflow-auto pb-8">
+                    {/* DEBUG: pb-8 removed since SystemRail is commented out */}
+                    <div className="flex-1 overflow-auto">
                         <Outlet />
                     </div>
                 </main>
             </div>
 
-            {/* Fixed System Rail - Bottom status bar with terminal drawer */}
-            <SystemRail />
+            {/* DEBUG: bottom panel suspect - SystemRail commented out to test black area */}
+            {/* <SystemRail /> */}
+            {null}
         </div>
     );
 }

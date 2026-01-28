@@ -109,8 +109,18 @@ export function WorkspaceLayout({
   activityBarRight,
   statusBar,
 }: WorkspaceLayoutProps) {
+  // DEBUG: legacy resizable pane fix - use conditional CSS classes
+  // Build dynamic class based on which slots are filled
+  const layoutClasses = [
+    'workspace-layout',
+    !globalSidebar && 'workspace-layout--no-global-sidebar',
+    !pluginLeft && 'workspace-layout--no-plugin-left',
+    !pluginRight && 'workspace-layout--no-plugin-right',
+    !statusBar && 'workspace-layout--no-status-bar',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className="workspace-layout">
+    <div className={layoutClasses}>
       {/* Global Sidebar - 48px fixed width */}
       {/* ARIA Landmark: Navigation region for main navigation */}
       {globalSidebar && (

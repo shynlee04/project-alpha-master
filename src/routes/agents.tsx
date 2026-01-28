@@ -4,6 +4,10 @@
  * Routes to the Agent configuration and management hub.
  * Wires the legacy AgentsPanel into the new Hub navigation.
  *
+ * FIX-2026-01-28: Removed MainLayout wrapper.
+ * ProjectAwareLayout (in __root.tsx) already provides MainSidebar for global routes.
+ * Using MainLayout here caused DOUBLE MainSidebar rendering.
+ *
  * @epic Epic-MRT Mobile Responsive Transformation
  * @story MRT-9 Dashboard Responsive
  * 
@@ -12,7 +16,6 @@
  */
 
 import { createFileRoute } from '@tanstack/react-router';
-import { MainLayout } from '@/presentation/components/layout/MainLayout';
 import { AgentsPanel } from '@/presentation/components/ide/AgentsPanel';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useMediaQuery';
@@ -26,21 +29,20 @@ function AgentsPage() {
     const { isMobile } = useDeviceType();
 
     return (
-        <MainLayout>
-            <div className={cn(
-                'max-w-6xl mx-auto',
-                isMobile ? 'p-4' : 'p-6'
+        // Content renders directly - MainSidebar is provided by ProjectAwareLayout
+        <div className={cn(
+            'max-w-6xl mx-auto',
+            isMobile ? 'p-4' : 'p-6'
+        )}>
+            <h1 className={cn(
+                'font-bold font-mono mb-6 text-foreground',
+                isMobile ? 'text-xl' : 'text-3xl'
             )}>
-                <h1 className={cn(
-                    'font-bold font-mono mb-6 text-foreground',
-                    isMobile ? 'text-xl' : 'text-3xl'
-                )}>
-                    Agent Center
-                </h1>
-                <div className="border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]">
-                    <AgentsPanel />
-                </div>
+                Agent Center
+            </h1>
+            <div className="border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]">
+                <AgentsPanel />
             </div>
-        </MainLayout>
+        </div>
     );
 }

@@ -128,7 +128,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
           const hasLock = coordination.acquireWriteLock(activePath, 'monaco');
           if (!hasLock) {
             const holder = coordination.getWriteLockHolder(activePath);
-            console.warn('[MonacoPlugin] Cannot save - lock held by:', holder);
+            if (import.meta.env.DEV) {
+              console.warn('[MonacoPlugin] Cannot save - lock held by:', holder);
+            }
             toast.warning(t('editor.lockHeldByOther', { plugin: holder }));
             return;
           }
@@ -147,12 +149,16 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
           if (coordination) {
             coordination.updateActiveDocumentContent(newContent);
           }
-          
-          console.log('[MonacoPlugin] Auto-saved:', activePath);
+
+          if (import.meta.env.DEV) {
+            console.log('[MonacoPlugin] Auto-saved:', activePath);
+          }
         } catch (err) {
           const message = err instanceof Error ? err.message : 'Unknown error';
           setError(`Auto-save failed: ${message}`);
-          console.error('[MonacoPlugin] Auto-save failed:', err);
+          if (import.meta.env.DEV) {
+            console.error('[MonacoPlugin] Auto-save failed:', err);
+          }
         } finally {
           setIsSaving(false);
           // EPIC-0.6-03: Release write lock after saving
@@ -204,7 +210,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       const hasLock = coordination.acquireWriteLock(activePath, 'monaco');
       if (!hasLock) {
         const holder = coordination.getWriteLockHolder(activePath);
-        console.warn('[MonacoPlugin] Cannot save - lock held by:', holder);
+        if (import.meta.env.DEV) {
+          console.warn('[MonacoPlugin] Cannot save - lock held by:', holder);
+        }
         toast.warning(t('editor.lockHeldByOther', { plugin: holder }));
         return;
       }
@@ -217,16 +225,20 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       setIsModified(false);
       markClean(activePath); // Mark clean after manual save
       setLastSaved(new Date());
-      
+
       // BUG-5 FIX: Update coordination content after save
       if (coordination) {
         coordination.updateActiveDocumentContent(content);
       }
 
-      console.log('[MonacoPlugin] Saved file (manual):', activePath);
+      if (import.meta.env.DEV) {
+        console.log('[MonacoPlugin] Saved file (manual):', activePath);
+      }
     } catch (err) {
       setError(`Failed to save file: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      console.error('[MonacoPlugin] Error saving file:', err);
+      if (import.meta.env.DEV) {
+        console.error('[MonacoPlugin] Error saving file:', err);
+      }
     } finally {
       setIsSaving(false);
       // EPIC-0.6-03: Release write lock after saving
@@ -254,7 +266,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
         setIsModified(false);
       } catch (err) {
         setError(`Failed to load file: ${err instanceof Error ? err.message : 'Unknown error'}`);
-        console.error('[MonacoPlugin] Error loading file:', err);
+        if (import.meta.env.DEV) {
+          console.error('[MonacoPlugin] Error loading file:', err);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -278,7 +292,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
     const unsubscribe = eventBus.on(
       DomainEventType.FILE_OPENED,
       (event: { payload: { path: string; projectId: string } }) => {
-        console.log('[MonacoPlugin] Received FILE_OPENED event:', event.payload.path);
+        if (import.meta.env.DEV) {
+          console.log('[MonacoPlugin] Received FILE_OPENED event:', event.payload.path);
+        }
         setActivePath(event.payload.path);
       }
     );
@@ -294,7 +310,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
   useEffect(() => {
     // Only sync if activeDocPath changed AND is different from current activePath
     if (activeDocPath && activeDocPath !== activePath && activeDocContent !== null) {
-      console.log('[MonacoPlugin] ActiveDocument changed via coordination:', activeDocPath);
+      if (import.meta.env.DEV) {
+        console.log('[MonacoPlugin] ActiveDocument changed via coordination:', activeDocPath);
+      }
       setActivePath(activeDocPath);
       setContent(activeDocContent);
     }
@@ -309,7 +327,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
 
     // Register Monaco as having this file open
     coord.openDocument(activePath, 'monaco');
-    console.log('[MonacoPlugin] Registered as editor for:', activePath);
+    if (import.meta.env.DEV) {
+      console.log('[MonacoPlugin] Registered as editor for:', activePath);
+    }
 
     // Cleanup: unregister on unmount or path change
     // Capture activePath in closure to ensure correct path is unregistered
@@ -318,7 +338,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       const currentCoord = coordinationRef.current;
       if (currentCoord) {
         currentCoord.closeDocument(pathToClose, 'monaco');
-        console.log('[MonacoPlugin] Unregistered as editor for:', pathToClose);
+        if (import.meta.env.DEV) {
+          console.log('[MonacoPlugin] Unregistered as editor for:', pathToClose);
+        }
       }
     };
   }, [activePath]); // Only depend on activePath, not coordination
@@ -335,7 +357,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
       handler: (event) => {
         // Skip if this is the file being edited by user
         if (event.path === activePath && !isModified) {
-          console.log('[MonacoPlugin] External FILE_UPDATED detected, reloading:', event.path);
+          if (import.meta.env.DEV) {
+            console.log('[MonacoPlugin] External FILE_UPDATED detected, reloading:', event.path);
+          }
 
           // Reload file content from storage
           (async () => {
@@ -348,7 +372,9 @@ function MonacoMain({ width: _width, height: _height }: PluginMainProps) {
               // Show notification to user
               toast.info('File was updated externally, content reloaded');
             } catch (err) {
-              console.error('[MonacoPlugin] Error reloading file:', err);
+              if (import.meta.env.DEV) {
+                console.error('[MonacoPlugin] Error reloading file:', err);
+              }
               toast.error('Failed to reload file content');
             }
           })();

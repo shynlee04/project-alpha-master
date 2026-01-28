@@ -24,7 +24,8 @@ import { Menu, Search, Settings, User, Command } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
 import { useCommandPalette } from '@/hooks/useCommandPalette';
-import { PresetSelector } from './PresetSelector';
+// DEBUG: PresetSelector import commented out - testing black area
+// import { PresetSelector } from './PresetSelector';
 // ============================================================================
 // Types
 // ============================================================================
@@ -203,10 +204,10 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({ className }) => {
           ))}
         </nav>
 
-        {/* Workflow Preset Selector - Desktop Only */}
-        <div className="hidden md:flex items-center">
+        {/* DEBUG: Workflow Preset Selector commented out - testing black area */}
+        {/* <div className="hidden md:flex items-center">
           <PresetSelector />
-        </div>
+        </div> */}
       </div>
 
       {/* Right Section: Search + Actions */}
