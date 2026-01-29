@@ -8,12 +8,25 @@
 
 console.log('[Phase 2] Tool permissions disabled during Phase 1A');
 
-export type ToolRiskLevel = 'low' | 'medium' | 'high' | 'critical';
+export type ToolRiskLevel = 'low' | 'medium' | 'high' | 'critical' | 'auto' | 'prompt' | 'block';
 
 // Alias for compatibility
 export type ToolTrustLevel = ToolRiskLevel;
 
-export type ToolCategory = 'file' | 'terminal' | 'note' | 'web' | 'system';
+export type ToolCategory = 
+  | 'file' 
+  | 'files'       // Plural alias  
+  | 'terminal' 
+  | 'note' 
+  | 'notes'       // Plural alias
+  | 'web' 
+  | 'system'
+  | 'knowledge'   // Phase 2 category
+  | 'vision'      // Phase 2 category
+  | 'search'      // Phase 2 category
+  | 'unified'     // Cross-workspace unified operations
+  | 'composite'   // Composite agentic workflows
+  | 'provider';   // LLM provider operations
 
 export interface ToolPermission {
   toolName: string;

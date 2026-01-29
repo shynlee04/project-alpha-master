@@ -7,5 +7,7 @@
  */
 
 export { FileWatcher } from './file-watcher';
-export { CacheSync, BatchSyncResult, ConflictResolution, SyncStatistics } from './cache-sync';
-export { NoteSyncLayer, SyncOptions } from './note-sync-layer';
+export { CacheSync } from './cache-sync';
+export type { BatchSyncResult, ConflictResolution, SyncStatistics } from './cache-sync';
+export { NoteSyncLayer } from './note-sync-layer';
+export type { SyncOptions } from './note-sync-layer';

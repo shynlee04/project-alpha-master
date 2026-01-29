@@ -11,6 +11,17 @@
  */
 
 /**
+ * Credential interface for stored credentials
+ */
+export interface Credential {
+  key: string;
+  value: string;
+  providerId?: string;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
+/**
  * Stub CredentialVault class for compatibility with code expecting the class
  */
 export class CredentialVault {
@@ -21,8 +32,8 @@ export class CredentialVault {
     return true;
   };
 
-  getCredential = async (_key: string) => null;
-  getCredentials = async (_providerId: string) => null;
+  getCredential = async (_key: string): Promise<Credential | null> => null;
+  getCredentials = async (_providerId: string): Promise<Credential[] | null> => null;
 
   setCredential = async (_key: string, _value: string) => {
     console.log('[CredentialVault STUB] Phase 2 feature - credential not stored');
@@ -33,7 +44,7 @@ export class CredentialVault {
   };
 
   hasCredential = async (_key: string) => false;
-  listCredentials = async () => [];
+  listCredentials = async (): Promise<Credential[]> => [];
 
   clear = async () => {
     console.log('[CredentialVault STUB] Phase 2 feature - vault not cleared');

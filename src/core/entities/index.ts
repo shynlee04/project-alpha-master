@@ -32,4 +32,4 @@ export * from '../../domain/entities/study';
 // Value objects (classes + types)
 export * from '../../domain/value-objects/workspace-binding';
 export * from '../../domain/value-objects/tool-permission';
-export { WorkspaceType } from '../../domain/value-objects/workspace-type';
+export type { WorkspaceType } from '../../domain/value-objects/workspace-type';

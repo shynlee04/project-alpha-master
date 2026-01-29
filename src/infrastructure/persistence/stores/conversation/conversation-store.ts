@@ -15,8 +15,11 @@ export const useConversationStore = create<ConversationState>()(() => ({
   activeConversationId: null,
   pendingApprovals: [],
   _hasHydrated: true,
+  activeThreadId: null,
+  threads: {},
   getConversation: () => null,
   getConversationsByProject: () => [],
+  getConversationsByWorkspace: () => [],
   setActiveConversation: () => {
     console.log('[ConversationStore STUB] Phase 2 feature - setActiveConversation skipped');
   },
@@ -53,6 +56,16 @@ export const useConversationStore = create<ConversationState>()(() => ({
   searchConversationsByTag: (): ConversationMetadataWithId[] => {
     console.log('[ConversationStore STUB] Phase 2 feature - searchConversationsByTag skipped');
     return [];
+  },
+  getCurrentConversation: () => {
+    console.log('[ConversationStore STUB] Phase 2 feature - getCurrentConversation skipped');
+    return null;
+  },
+  persistConversation: async () => {
+    console.log('[ConversationStore STUB] Phase 2 feature - persistConversation skipped');
+  },
+  setActiveThread: () => {
+    console.log('[ConversationStore STUB] Phase 2 feature - setActiveThread skipped');
   },
 }));
 

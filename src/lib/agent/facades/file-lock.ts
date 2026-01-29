@@ -12,8 +12,8 @@ export interface FileLock {
   filePath: string;
   lockedBy: string;
   lockedAt: number;
-  acquire(): boolean;
-  release(): boolean;
+  acquire(path: string, timeout?: number): Promise<boolean>;
+  release(path: string): boolean;
 }
 
 export class FileLockManager {
@@ -39,17 +39,18 @@ export class FileLockManager {
 export const fileLockManager = new FileLockManager();
 
 // Export a default fileLock instance for compatibility
-export const fileLock = {
-  acquire: (_filePath: string, _agentId: string) => {
+// This matches the interface expected by unified-file-crud.ts
+export const fileLock: FileLock = {
+  filePath: '',
+  lockedBy: '',
+  lockedAt: 0,
+  acquire: async (_path: string, _timeout?: number): Promise<boolean> => {
     console.log('[Phase 2] File lock acquire disabled during Phase 1A');
-    return false;
+    return true; // Return true to not block operations
   },
-  release: (_filePath: string, _agentId: string) => {
+  release: (_path: string): boolean => {
     console.log('[Phase 2] File lock release disabled during Phase 1A');
-    return false;
-  },
-  isLocked: (_filePath: string) => {
-    return false;
+    return true;
   },
 };
 

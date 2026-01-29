@@ -7,7 +7,7 @@
  * @created 2026-01-29
  */
 
-export type ProviderType = 'openai' | 'anthropic' | 'google' | 'local';
+export type ProviderType = 'openai' | 'anthropic' | 'google' | 'local' | 'openai-compatible';
 
 export interface ProviderConfig {
   id: string;
@@ -15,6 +15,12 @@ export interface ProviderConfig {
   name: string;
   apiKey?: string;
   baseUrl?: string;
+}
+
+export interface OpenAICompatibleConfig extends ProviderConfig {
+  type: 'openai-compatible';
+  baseUrl: string;
+  modelId?: string;
 }
 
 export const providers: ProviderConfig[] = [];

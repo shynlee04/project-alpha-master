@@ -32,18 +32,33 @@ export function estimateMessageTokens(messages: Array<{ role: string; content: s
   };
 }
 
-// Alias for compatibility
+/** Estimate tokens for a single message, returns number */
+export function estimateSingleMessageTokens(message: { role: string; content: string }): number {
+  return Math.ceil(message.content.length / 4);
+}
+
+// Aliases for compatibility
 export const estimateMessagesTokens = estimateMessageTokens;
+export const estimateTextTokens = estimateTokens;
 
 export function getContextCapacity(
+  currentTokens: number | TokenEstimate,
   maxTokens: number,
   reservedTokens: number = 1024
-): { maxTokens: number; reservedTokens: number; availableTokens: number } {
+): { maxTokens: number; reservedTokens: number; availableTokens: number; remaining: number; used: number; percentage: number } {
   console.log('[Phase 2] Context capacity calculation disabled during Phase 1A');
+  const used = typeof currentTokens === 'number' ? currentTokens : currentTokens.totalTokens;
+  const available = maxTokens - reservedTokens;
+  const remaining = Math.max(0, available - used);
+  const percentage = available > 0 ? Math.round((used / available) * 100) : 0;
+  
   return {
     maxTokens,
     reservedTokens,
-    availableTokens: maxTokens - reservedTokens,
+    availableTokens: available,
+    remaining,
+    used,
+    percentage,
   };
 }
 

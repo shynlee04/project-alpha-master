@@ -89,7 +89,10 @@ export function searchMessages(
     if (role && message.role !== role) continue;
     if (agentId && message.agentId !== agentId) continue;
     if (dateRange) {
-      if (message.timestamp < dateRange.start || message.timestamp > dateRange.end) {
+      const msgTimestamp = typeof message.timestamp === 'string' 
+        ? new Date(message.timestamp).getTime() 
+        : message.timestamp;
+      if (msgTimestamp < dateRange.start || msgTimestamp > dateRange.end) {
         continue;
       }
     }

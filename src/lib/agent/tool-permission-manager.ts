@@ -7,6 +7,27 @@
  * @created 2026-01-29
  */
 
+let _instance: ToolPermissionManager | null = null;
+
+export class ToolPermissionManager {
+  static getInstance(): ToolPermissionManager {
+    if (!_instance) {
+      _instance = new ToolPermissionManager();
+    }
+    return _instance;
+  }
+
+  checkPermission(_agentId: string, _toolName: string): boolean {
+    console.log('[Phase 2] Tool permission check disabled during Phase 1A');
+    return true;
+  }
+
+  getPermissions(_agentId: string): Record<string, boolean> {
+    console.log('[Phase 2] Tool permissions disabled during Phase 1A');
+    return {};
+  }
+}
+
 export function checkToolPermission(_agentId: string, _toolName: string): boolean {
   console.log('[Phase 2] Tool permission check disabled during Phase 1A');
   return true;

@@ -39,10 +39,11 @@ export interface ConversationState {
   activeConversationId: string | null;
   pendingApprovals: PendingToolApproval[];
   _hasHydrated: boolean;
-  getConversation: (id: string) => unknown | null;
+  getConversation: (id: string) => ConversationMetadataWithId | null;
   getConversationsByProject: (projectId: string) => unknown[];
+  getConversationsByWorkspace: (workspaceType: string) => unknown[];
   setActiveConversation: (id: string | null) => void;
-  createConversation: (workspaceType: string, projectId: string, agentId: string) => string;
+  createConversation: (workspaceType: string, projectId: string | null, agentId: string) => string;
   loadConversationByProject: (projectId: string) => Promise<void>;
   deleteConversation: (id: string) => Promise<void>;
   addMessage: (conversationId: string, message: unknown) => void;
@@ -50,10 +51,17 @@ export interface ConversationState {
   setHasHydrated: (hasHydrated: boolean) => void;
   reset: () => void;
   // Additional methods for compatibility
-  getAllConversations?: () => ConversationMetadataWithId[];
-  updateConversationMetadata?: (id: string, updates: Partial<ConversationMetadata>) => void;
-  searchConversations?: (query: string) => ConversationMetadataWithId[];
-  searchConversationsByTag?: (tags: string[]) => ConversationMetadataWithId[];
+  getAllConversations: () => ConversationMetadataWithId[];
+  updateConversationMetadata: (id: string, updates: Partial<ConversationMetadata>) => void;
+  searchConversations: (query: string) => ConversationMetadataWithId[];
+  searchConversationsByTag: (tags: string[]) => ConversationMetadataWithId[];
+  // Additional methods used by consumers
+  getCurrentConversation: () => ConversationState | null;
+  persistConversation: () => Promise<void>;
+  // Thread-related methods
+  activeThreadId?: string | null;
+  threads?: Record<string, unknown>;
+  setActiveThread?: (threadId: string | null) => void;
 }
 
 export type ConversationStoreState = ConversationState;

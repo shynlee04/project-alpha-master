@@ -18,6 +18,8 @@ export interface AgentSelectionState {
   setActiveAgent: (agentId: string | null, workspaceType: string) => void;
   setDefaultAgent: (agentId: string, workspaceType: string) => void;
   getActiveAgent: () => AgentData | null;
+  getAgentForWorkspace: (workspaceType: string) => AgentData | null;
+  selectAgentForWorkspace: (workspaceType: string) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
   reset: () => void;
 }
@@ -34,6 +36,10 @@ export const useAgentSelectionStore = create<AgentSelectionState>()(() => ({
     console.log('[AgentSelectionStore STUB] Phase 2 feature - setDefaultAgent skipped');
   },
   getActiveAgent: () => null,
+  getAgentForWorkspace: () => null,
+  selectAgentForWorkspace: () => {
+    console.log('[AgentSelectionStore STUB] Phase 2 feature - selectAgentForWorkspace skipped');
+  },
   setHasHydrated: () => {},
   reset: () => {},
 }));

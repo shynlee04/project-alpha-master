@@ -70,13 +70,16 @@ export const DEFAULT_YOLO_DURATION_HOURS = 24;
  * Default category approvals (all disabled)
  */
 export const DEFAULT_CATEGORY_APPROVALS: CategoryApprovalState = {
+    file: false,
     files: false,
     terminal: false,
+    note: false,
+    notes: false,  // Added for story 40-05 (Note CRUD tools)
     knowledge: false,
     vision: false,
     search: false,
     web: false,
-    notes: false,  // Added for story 40-05 (Note CRUD tools)
+    system: false,
     unified: false,  // EPIC-TOOLS: Cross-workspace unified operations
     composite: false,  // EPIC-TOOLS: Multi-step agentic workflows
     provider: false,  // EPIC-PRV: LLM provider operations

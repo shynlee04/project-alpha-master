@@ -34,6 +34,11 @@ export function useActiveConversation(): null {
   return null;
 }
 
+export function useActiveThread(): null {
+  console.log('[Phase 2] useActiveThread disabled during Phase 1A');
+  return null;
+}
+
 export function usePendingApprovals(): [] {
   return [];
 }

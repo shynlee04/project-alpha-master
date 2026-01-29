@@ -3,7 +3,10 @@
 > **Version:** 2.14.0 | **Updated:** 2026-01-29T12:30:00+07:00 | **Health:** 65% (PHASE 1A REMEDIATION ACTIVE)
 
 ---
-
+## USING SKILLS
+- everytime for whatever tasks you do, at any given conditions, even by one or two words response of user -> look at SKILLS list, check  for what SKILLS, or SKILL set to use
+- not using any SKILL? - Reply with 3 paragraphs explaining why
+- still not using SKILL? - Explain with another 5 paragraphs what stop you from using SKILL
 ## 🚨 CURRENT STATUS: PHASE 1A REMEDIATION
 
 **Date**: 2026-01-29

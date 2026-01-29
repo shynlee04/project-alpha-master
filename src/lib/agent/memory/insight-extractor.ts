@@ -14,6 +14,11 @@ export interface Insight {
   timestamp: string;
 }
 
+export interface CoreMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
 export function extractInsights(_text: string): Insight[] {
   console.log('[Phase 2] Insight extraction disabled during Phase 1A');
   return [];

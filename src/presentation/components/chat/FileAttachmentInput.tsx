@@ -7,15 +7,18 @@
  * @created 2026-01-29
  */
 
+import * as React from 'react';
+
 export interface FileAttachment {
   id: string;
   name: string;
   type: string;
   size: number;
   content?: string;
+  file?: File;
 }
 
-export function FileAttachmentInput(): JSX.Element | null {
+export function FileAttachmentInput(): React.ReactElement | null {
   console.log('[Phase 2] FileAttachmentInput disabled during Phase 1A');
   return null;
 }
