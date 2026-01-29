@@ -11,7 +11,7 @@
  */
 
 import type { MessageWithId } from '../../unified-chat-types';
-import { estimateMessageTokens, estimateMessagesTokens } from '@/lib/agent/utils/token-estimator';
+import { estimateMessagesTokens, estimateSingleMessageTokens } from '@/lib/agent/utils/token-estimator';
 
 /**
  * Compression strategy type
@@ -44,11 +44,12 @@ export function identifyMessagesToRemove(
   const nonSystemMessages = messages.filter(m => m.role !== 'system');
   const systemMessages = messages.filter(m => m.role === 'system');
 
-  let accumulatedTokens = estimateMessagesTokens(systemMessages);
+  const systemTokensResult = estimateMessagesTokens(systemMessages);
+  let accumulatedTokens = systemTokensResult.totalTokens;
   const messagesToRemove: string[] = [];
 
   for (const msg of nonSystemMessages) {
-    const msgTokens = estimateMessageTokens(msg);
+    const msgTokens = estimateSingleMessageTokens(msg);
     if (accumulatedTokens + msgTokens > targetTokens) {
       messagesToRemove.push(msg.id);
     } else {

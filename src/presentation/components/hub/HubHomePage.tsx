@@ -360,7 +360,7 @@ export const HubHomePage: React.FC = () => {
           <QuickActionCard
             icon={<Bot size={24} />}
             label={t('hub.quickActions.newAgent', 'New Agent')}
-            onClick={() => navigate({ to: '/agents' })}
+            onClick={() => navigate({ to: '/settings' })}
           />
         </div>
       </section>

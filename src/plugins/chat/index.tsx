@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import { MessageSquare } from 'lucide-react';
 import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
 
 /**
@@ -35,15 +36,15 @@ function ChatStubComponent({ width: _width, height: _height }: PluginMainProps) 
 export const chatPlugin: FeaturePlugin = {
   id: 'chat',
   name: 'Chat',
+  icon: <MessageSquare size={16} />,
   description: 'AI Chat Assistant (Phase 2 - Staged)',
-  category: 'communication',
-  defaultPosition: 'right',
+  requirements: {
+    storageType: 'any',
+    deviceType: 'any',
+    minWidth: 300,
+    maxInstances: 1,
+  },
   MainComponent: ChatStubComponent,
-  isAvailable: () => false,
-  getStatusInfo: () => ({
-    status: 'idle',
-    message: 'Phase 2 feature - not available',
-  }),
 };
 
 export default chatPlugin;

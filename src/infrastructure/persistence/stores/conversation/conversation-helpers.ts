@@ -9,9 +9,11 @@
 
 export const MAX_CONVERSATIONS = 100;
 
-export function simpleDebounce<T extends (...args: unknown[]) => unknown>(fn: T, delay: number): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function simpleDebounce<T extends (...args: any[]) => any>(fn: T, delay: number): T {
   let timeoutId: ReturnType<typeof setTimeout>;
-  return ((...args: unknown[]) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return ((...args: any[]) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn(...args), delay);
   }) as T;

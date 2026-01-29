@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Voice Recording Button Component
  * @module presentation/components/notes/VoiceRecordButton

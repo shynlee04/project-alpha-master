@@ -21,6 +21,12 @@ export interface OpenAICompatibleConfig extends ProviderConfig {
   type: 'openai-compatible';
   baseUrl: string;
   modelId?: string;
+  createdAt?: string;
+  lastTestResult?: {
+    success: boolean;
+    error?: string;
+    testedAt: number;
+  };
 }
 
 export const providers: ProviderConfig[] = [];

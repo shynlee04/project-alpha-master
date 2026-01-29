@@ -25,6 +25,7 @@ export interface WorkflowEdge {
 export interface Workflow {
   id: string;
   name: string;
+  description?: string;
   nodes: WorkflowNode[];
   edges: WorkflowEdge[];
   createdAt: number;

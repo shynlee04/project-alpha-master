@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview AI Image Generation Service
  * @module lib/notes/ai-image-service

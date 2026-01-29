@@ -8,6 +8,7 @@
  */
 
 import type { StateCreator } from 'zustand';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 // Default agent for initialization
 export const DEFAULT_AGENT = {
@@ -22,10 +23,10 @@ export const DEFAULT_AGENT = {
   topP: 1.0,
   maxTokens: 4096,
   workspaceBindings: [
-    { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
-    { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'full', isDefault: true },
-    { workspaceType: 'study', isAvailable: true, uiVariant: 'full', isDefault: true },
-    { workspaceType: 'notes', isAvailable: true, uiVariant: 'full', isDefault: true },
+    { workspaceType: 'ide' as WorkspaceType, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
+    { workspaceType: 'knowledge' as WorkspaceType, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
+    { workspaceType: 'study' as WorkspaceType, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
+    { workspaceType: 'notes' as WorkspaceType, isAvailable: true, uiVariant: 'full' as const, isDefault: true },
   ],
   tools: [
     { toolId: 'read_file', toolName: 'Read File', isEnabled: true, workspacePermissions: { ide: true, knowledge: true, study: true, notes: true } },

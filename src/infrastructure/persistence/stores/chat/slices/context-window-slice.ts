@@ -97,7 +97,8 @@ export const createContextWindowSlice: StateCreator<
     if (!thread) return;
 
     const maxTokens = thread.contextWindow?.maxTokens ?? DEFAULT_MAX_TOKENS;
-    const currentTokens = estimateMessagesTokens(messages);
+    const currentTokensResult = estimateMessagesTokens(messages);
+    const currentTokens = currentTokensResult.totalTokens;
 
     set({
       threads: {

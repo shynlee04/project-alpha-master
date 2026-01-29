@@ -4,7 +4,6 @@ description: "Software Architect (Team-B) - Alternative model for simpler design
 mode: all
 model: chutes/zai-org/GLM-4.7-FP8
 temperature: 0.1
-
 tools:
   write: true
   edit: true
@@ -12,30 +11,28 @@ tools:
   glob: true
   grep: true
   read: true
-
 permission:
   edit: allow
   bash: allow
   task:
     "*": allow
-    "explore": deny
-    "skill": deny
-
-phase: "2"
-status: "active"
-category: "design"
-parent_agent: "ext-master"
-team: "B"
-updated: "2026-01-29"
+    "agent": allow
+    "subagent": allow
+    "skill": allow
+    "skills": allow
 
 integration_points:
   receives_from:
     - "ext-master"
+    - "analyst-ext"
+    - "product-management-ext"
+    -
   sends_to:
     - "ext-master"
   coordinates_with:
     - "architect-ext"
     - "dev-ext-team-b"
+    - 
 
 entry_points:
   commands:

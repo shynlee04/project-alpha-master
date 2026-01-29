@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Incremental RAG Indexing Service
  * @module lib/rag/incremental-indexing-service

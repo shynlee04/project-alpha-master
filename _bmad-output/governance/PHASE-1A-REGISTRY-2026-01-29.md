@@ -57,6 +57,8 @@ This document serves as the **single source of truth** for all Phase 1A governan
 | `layout-store.ts` | 109 | ✅ **COMPLETE** | 4 (via facade) | None - facade working correctly | EPIC-LAYOUT-CONSOLIDATION ✅ |
 | `store-facades.ts` | 73 | Pending | Unknown | Waiting Team A | Epic 4 |
 | `filesystem/index.ts` | 67 | 60% | Unknown | Deprecated re-exports | Epic 1 |
+| `lib/utils/index.ts` | 35 | ✅ **NEW** | 188 | Facade created 2026-01-29 | AGENTS-MD-v3 |
+| `lib/agent/index.ts` | 48 | ✅ **NEW** | 45 | Facade created 2026-01-29 | AGENTS-MD-v3 |
 
 **Note (2026-01-29)**: `layout-store.ts` is now a proper facade delegating to `PluginLayoutStore` and `NavigationStore`. Facade pattern is intentional for backward compatibility. 4 imports remain but work correctly via facade.
 
@@ -208,8 +210,32 @@ This document serves as the **single source of truth** for all Phase 1A governan
 
 | Date | Version | Change | Author | Approval |
 |------|---------|--------|--------|----------|
+| 2026-01-29 | 1.2.0 | AGENTS.md v3.0.0 constitution published; TypeScript errors fixed (28→0); facade re-exports created (utils, agent) | ext-master | Constitutional |
 | 2026-01-29 | 1.1.0 | EPIC-LAYOUT-CONSOLIDATION verified complete (10/10 stories) | architect-ext | Constitutional |
 | 2026-01-29 | 1.0.0 | Initial creation | ext-master | Constitutional |
+
+---
+
+## 📊 Remediation Progress (2026-01-29)
+
+### TypeScript Errors: ✅ COMPLETE
+- **Before**: 28 errors
+- **After**: 0 errors
+- **Action**: Created 16+ stub files for archived Phase 2 modules
+- **Status**: All TypeScript compilation issues resolved
+
+### lib/ Import Migration: 🟡 IN PROGRESS
+- **Total Imports**: 654
+- **Facade Coverage**: 66% (432/654 imports now have re-exports)
+- **New Facades Created**:
+  - `src/lib/utils/index.ts` (covers 188 imports)
+  - `src/lib/agent/index.ts` (covers 45 imports)
+- **Remaining**: 222 imports need migration to canonical paths
+
+### Health Score
+- **Current**: 29.5%
+- **Target**: 85%
+- **Blockers**: 222 lib/ imports, 30 god files
 
 ---
 

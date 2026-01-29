@@ -27,10 +27,10 @@ import type { ConversationThread, ThreadMessage } from '@/infrastructure/persist
 function toRecord(thread: ConversationThread): ConversationThreadRecord {
     return {
         id: thread.id,
-        projectId: thread.projectId,
-        workspaceId: thread.workspaceType || 'ide', // CHAT-024: Standardized naming
-        title: thread.title,
-        preview: thread.preview,
+        projectId: thread.projectId ?? '',
+        workspaceId: (thread.workspaceType || 'ide') as 'ide' | 'knowledge' | 'notes' | 'study',
+        title: thread.title ?? '',
+        preview: thread.preview ?? '',
         messages: thread.messages.map(m => ({
             id: m.id,
             role: m.role,
@@ -38,21 +38,21 @@ function toRecord(thread: ConversationThread): ConversationThreadRecord {
             agentId: m.agentId,
             agentName: m.agentName,
             agentModel: m.agentModel,
-            timestamp: m.timestamp,
+            timestamp: typeof m.timestamp === 'string' ? new Date(m.timestamp).getTime() : (m.timestamp as unknown as number) ?? Date.now(),
             toolCalls: m.toolCalls?.map(tc => ({
                 id: tc.id,
                 name: tc.name,
-                status: tc.status,
+                status: tc.status as 'pending' | 'running' | 'success' | 'error',
                 input: tc.input,
                 output: tc.output,
                 duration: tc.duration,
             })),
         })),
-        agentsUsed: thread.agentsUsed,
-        messageCount: thread.messageCount,
+        agentsUsed: thread.agentsUsed ?? [],
+        messageCount: thread.messageCount ?? thread.messages.length,
         scrollPosition: 0, // Default scroll position (Story 24-3 feature)
-        createdAt: thread.createdAt,
-        updatedAt: thread.updatedAt,
+        createdAt: thread.createdAt ?? Date.now(),
+        updatedAt: thread.updatedAt ?? Date.now(),
     };
 }
 
@@ -72,7 +72,7 @@ function fromRecord(record: ConversationThreadRecord): ConversationThread {
             agentId: m.agentId,
             agentName: m.agentName,
             agentModel: m.agentModel,
-            timestamp: m.timestamp,
+            timestamp: new Date(m.timestamp).toISOString(),
             toolCalls: m.toolCalls?.map(tc => ({
                 id: tc.id,
                 name: tc.name,
@@ -81,7 +81,7 @@ function fromRecord(record: ConversationThreadRecord): ConversationThread {
                 output: tc.output,
                 duration: tc.duration,
             })),
-        })) as ThreadMessage[],
+        })) as unknown as ThreadMessage[],
         agentsUsed: record.agentsUsed,
         messageCount: record.messageCount,
         createdAt: record.createdAt,

@@ -3,7 +3,6 @@ subtask: true
 description: "Business Analyst - Requirements gathering, research, competitive analysis with handoff protocol"
 mode: all
 temperature: 0.2
-
 tools:
   write: true
   edit: true
@@ -11,7 +10,6 @@ tools:
   glob: true
   grep: true
   read: true
-
 permission:
   edit: allow
   bash: allow
@@ -20,6 +18,7 @@ permission:
     "agent": allow
     "subagent": allow
     "skill": allow
+    "skills": allow
 
 phase: "1"
 status: "active"
@@ -39,12 +38,6 @@ integration_points:
     - "product-management-ext"
     - "dev-ext"
 
-sub_agents:
-  count: 2
-  list:
-    - "deep-scan-*"
-    - "domain-scanner"
-
 entry_points:
   commands:
     - "/analyst"
@@ -58,6 +51,9 @@ triggers:
   - "research"
   - "investigation"
   - "competitive analysis"
+  - "implement"
+  - "code"
+  - "fix"
 ---
 
 # analyst-ext: Business Analyst

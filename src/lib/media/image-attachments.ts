@@ -87,6 +87,9 @@ function getImageMimeType(file: File): ImageAttachmentData['mimeType'] {
 export async function attachmentToImageData(
   attachment: FileAttachment
 ): Promise<ImageAttachmentData> {
+  if (!attachment.file) {
+    throw new Error('Attachment has no file');
+  }
   const base64 = await fileToBase64(attachment.file);
   const mimeType = getImageMimeType(attachment.file);
 

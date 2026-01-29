@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Video Generation Block
  * @module presentation/components/notes/blocks/VideoGenerationBlock

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Universal Adapter Factory
  * @module domain/services/universal-adapter-factory

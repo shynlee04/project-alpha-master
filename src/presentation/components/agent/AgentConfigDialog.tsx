@@ -12,6 +12,8 @@ import React from 'react';
 export interface AgentConfigDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onSuccess?: (agentId: string) => void;
+  agentId?: string | null;
 }
 
 /**

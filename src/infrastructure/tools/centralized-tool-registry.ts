@@ -22,17 +22,17 @@ export interface ToolRegistry {
 }
 
 export class CentralizedToolRegistry implements ToolRegistry {
-  private tools = new Map<string, ToolDefinition>();
+  private _tools = new Map<string, ToolDefinition>();
 
-  register(tool: ToolDefinition): void {
+  register(_tool: ToolDefinition): void {
     console.log('[Phase 2] Tool registration disabled during Phase 1A');
   }
 
-  unregister(name: string): void {
+  unregister(_name: string): void {
     console.log('[Phase 2] Tool unregistration disabled during Phase 1A');
   }
 
-  get(name: string): ToolDefinition | undefined {
+  get(_name: string): ToolDefinition | undefined {
     console.log('[Phase 2] Tool retrieval disabled during Phase 1A');
     return undefined;
   }
@@ -40,6 +40,15 @@ export class CentralizedToolRegistry implements ToolRegistry {
   list(): ToolDefinition[] {
     console.log('[Phase 2] Tool listing disabled during Phase 1A');
     return [];
+  }
+
+  getServerExposedTools(): ToolDefinition[] {
+    console.log('[Phase 2] getServerExposedTools disabled during Phase 1A');
+    return [];
+  }
+
+  get count(): number {
+    return this._tools.size;
   }
 }
 

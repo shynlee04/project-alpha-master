@@ -4,7 +4,6 @@ description: "Business Analyst (Team-B) - Alternative model for simpler analysis
 mode: all
 model: chutes/zai-org/GLM-4.7-FP8
 temperature: 0.2
-
 tools:
   write: true
   edit: true
@@ -12,15 +11,16 @@ tools:
   glob: true
   grep: true
   read: true
-
 permission:
   edit: allow
   bash: allow
   task:
     "*": allow
-    "explore": deny
-    "skill": deny
-
+    "agent": allow
+    "subagent": allow
+    "skill": allow
+    "skills": allow
+    
 phase: "1"
 status: "active"
 category: "analysis"

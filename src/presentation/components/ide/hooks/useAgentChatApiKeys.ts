@@ -43,7 +43,13 @@ export function useAgentChatApiKeys(agent: Agent | undefined): UseAgentChatApiKe
     const fetchApiKey = useCallback(async () => {
         try {
             await credentialVault.initialize();
-            let key = await credentialVault.getCredentials(providerId);
+            const credentials = await credentialVault.getCredentials(providerId);
+
+            // Extract key from credentials array (Phase 2 returns Credential[])
+            // For Phase 1A stub, this returns null, which is fine
+            const key = Array.isArray(credentials) && credentials.length > 0 
+                ? credentials[0].value 
+                : (typeof credentials === 'string' ? credentials : null);
 
             setApiKey(key);
             if (!key) {

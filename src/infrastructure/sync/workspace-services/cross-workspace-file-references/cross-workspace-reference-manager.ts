@@ -11,7 +11,6 @@
 import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 import type { FileSyncService } from '../file-sync-service';
 import { WorkspacePermissionManager } from '@/lib/agent/workspace-permission-manager';
-import { ToolPermissionManager } from '@/lib/agent/tool-permission-manager';
 import type {
     CrossWorkspaceFileReference,
     ResolvedReference,
@@ -32,8 +31,8 @@ export class CrossWorkspaceReferenceManager {
     constructor() {
         this.references = new Map();
         this.fileSyncServices = new Map();
-        const basePermissionManager = ToolPermissionManager.getInstance();
-        this.permissionManager = new WorkspacePermissionManager(basePermissionManager);
+        // WorkspacePermissionManager constructor takes no arguments (singleton pattern)
+        this.permissionManager = new WorkspacePermissionManager();
     }
 
     registerFileSyncService(workspace: WorkspaceType, service: FileSyncService): void {

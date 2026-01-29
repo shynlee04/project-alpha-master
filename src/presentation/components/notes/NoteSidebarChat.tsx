@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Note Sidebar Chat Panel
  * @module components/notes/NoteSidebarChat

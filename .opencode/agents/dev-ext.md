@@ -32,8 +32,13 @@ updated: "2026-01-29"
 integration_points:
   receives_from:
     - "ext-master"
+    - "analyst-ext"
+    - "architect-ext"
+    - "ux-designer-ext"
+    - "bmad-sprint-manager"
   sends_to:
     - "ext-master"
+    - "bmad-sprint-manager"
   registers_with:
     - ".opencode/state/ARTIFACT_REGISTRY.yaml"
   coordinates_with:

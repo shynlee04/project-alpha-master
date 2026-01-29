@@ -21,6 +21,9 @@ export interface ConversationMetadata {
   pinned?: boolean;
   status?: 'active' | 'archived';
   tags?: string[];
+  scrollPosition?: number;
+  metadata?: Record<string, unknown>;
+  messages?: unknown[];
 }
 
 // Extended metadata type for useChatHistory compatibility

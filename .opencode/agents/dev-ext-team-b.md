@@ -4,7 +4,6 @@ description: "Senior Software Engineer (Team-B) - Alternative model for parallel
 mode: all
 model: chutes/zai-org/GLM-4.7-FP8
 temperature: 0.2
-
 tools:
   write: true
   edit: true
@@ -12,17 +11,15 @@ tools:
   glob: true
   grep: true
   read: true
-
 permission:
   edit: allow
   bash: allow
   task:
     "*": allow
-    "tea-ext": allow
-    "architect-ext": allow
-    "ux-designer-ext": allow
-    "explore": deny    # Team-B restriction
-    "skill": deny      # Team-B restriction
+    "agent": allow
+    "subagent": allow
+    "skill": allow
+    "skills": allow
 
 phase: "4"
 status: "active"
@@ -34,6 +31,8 @@ updated: "2026-01-29"
 
 integration_points:
   receives_from:
+    - "analyst-ext-team-b"
+    - "architect-ext-team-b"
     - "ext-master"
   sends_to:
     - "ext-master"

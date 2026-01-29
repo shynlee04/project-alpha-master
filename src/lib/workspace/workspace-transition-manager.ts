@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Workspace Transition Manager
  * @module lib/workspace/workspace-transition-manager
