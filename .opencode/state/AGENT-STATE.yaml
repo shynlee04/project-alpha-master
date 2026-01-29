@@ -1,125 +1,86 @@
-# BMAD Beast Mode - Agent State
-# Last Updated: 2026-01-29T16:00:00+07:00
+# ═══════════════════════════════════════════════════════════════
+# AGENT-STATE.yaml - State Injection Template
+# This file is written by /compact and read by /start
+# ═══════════════════════════════════════════════════════════════
 
-session_id: "agents_md_update_2026_01_29"
-last_updated: "2026-01-29T16:00:00+07:00"
-current_agent: ext-master
-current_story: null
-current_phase: "Phase-1A-Foundation"
-
-last_action:
-  type: "constitution_update"
-  agent: "ext-master"
-  result: "success"
-  description: "Updated AGENTS.md to v3.0.0 - focused on constitution and onboarding"
-
-governance_scan:
-  timestamp: "2026-01-29T16:00:00+07:00"
-  health_score: 29.5
-  agenst_md_version: "3.0.0"
-  
-  checks:
-    typescript:
-      status: "PASS"
-      errors: 0
-      notes: "All TypeScript errors fixed - stubs created for archived modules"
-      
-    circular_deps:
-      status: "PASS"
-      cycles: 2
-      acceptable: ["routeTree.gen.ts ↔ router.tsx"]
-      
-    file_size:
-      status: "FAIL"
-      god_files: 30
-      top_offenders:
-        - "src/__tests__/epic-40-integration.test.ts: 679 lines"
-        - "src/__tests__/chat.test.ts: 640 lines"
-        - "src/plugins/monaco/MonacoMain.tsx: 534 lines"
-      
-    lib_imports:
-      status: "FAIL"
-      count: 654
-      target: 0
-      facades_created: ["src/lib/utils/index.ts", "src/lib/agent/index.ts"]
-      coverage: "66% (432/654 imports now have facade re-exports)"
-      
-    todo_fixme:
-      status: "WARN"
-      count: 104
-      target: 50
-      
-    window_location:
-      status: "WARN"
-      count: 9
-      target: 0
-
-  p0_blockers:
-    - "654 @/lib/ imports violating canonical paths (facades created, migration pending)"
-    - "30 god files exceeding size limits"
-
-  completed_actions:
-    - "Created 16+ stub files for archived Phase 2 modules"
-    - "Fixed all 28 TypeScript errors"
-    - "Created facade re-exports for utils (188 imports) and agent (45 imports)"
-    - "Updated AGENTS.md to v3.0.0 constitution format"
-
-delegation_chain:
-  - agent: ext-master
-    timestamp: "2026-01-29T16:00:00+07:00"
-    action: "constitution_update"
-    result: "AGENTS.md v3.0.0 published"
-    team: "A+B"
-    description: "Refactored AGENTS.md to focus on constitution, onboarding, and non-negotiable rules"
-
-context_loaded:
-  - "AGENTS.md (v3.0.0)"
-  - "_bmad-output/governance/PHASE-1A-REGISTRY-2026-01-29.md"
-  - "package.json (scripts reference)"
-
-artifacts_modified:
-  - "AGENTS.md (v3.0.0 - complete rewrite)"
-  - ".opencode/state/AGENT-STATE.yaml"
-
-constitution_violations_history:
-  - violation: "AGENTS.md v2.x contained project status instead of constitution"
-    resolution: "Rewrote AGENTS.md v3.0.0 to focus on constitution, onboarding, and rules"
-    date: "2026-01-29"
+state_injection:
+  meta:
+    captured_at: "2026-01-30T00:42:00+07:00"
+    session_id: "template"
+    version: "4.0"
+    note: "This is a template. Real state will be written by /compact command."
     
-  - violation: "654 @/lib/ imports violating canonical paths"
-    resolution: "Created facade re-exports, migration in progress"
-    status: "66% covered with facades"
-    date: "2026-01-29"
-
-bmad_compliance:
-  agenst_md_location: "/Users/apple/Documents/coding-projects/project-alpha-master/AGENTS.md"
-  agenst_md_version: "3.0.0"
-  last_updated: "2026-01-29T16:00:00+07:00"
-  status: "COMPLIANT"
-  
-  required_sections:
-    - "SKILLS ARE MANDATORY": ✅ Present
-    - "DOCUMENT STAMPING": ✅ Present
-    - "STALENESS CHECK": ✅ Present
-    - "TOOL CONSTRAINTS": ✅ Present
-    - "VERIFICATION BEFORE CLAIMS": ✅ Present
-    - "PROJECT STRUCTURE": ✅ Present
-    - "CODE STANDARDS": ✅ Present
-    - "WORKFLOW PROTOCOL": ✅ Present
-    - "ARCHITECTURE PRINCIPLES": ✅ Present
-    - "STATUS FILES": ✅ Present
-    - "COMMON PITFALLS": ✅ Present
-    - "ESSENTIAL REFERENCES": ✅ Present
-
-completed_epics:
-  - id: "EPIC-LAYOUT-CONSOLIDATION"
-    date: "2026-01-29"
-    stories: 10
-    agent: "architect-ext"
-
-next_actions:
-  - "Migrate remaining @/lib/ imports (654 total, 432 covered)"
-  - "Split god files >300 lines (30 files)"
-  - "Address 104 TODO/FIXME markers"
-  - "Update bmm-workflow-status.yaml with current state"
-  - "Update PHASE-1A-REGISTRY with remediation progress"
+  # ─────────────────────────────────────────────────────────────
+  # ANCHOR: ORIGINAL INTENT (TURN 1-2) - VERBATIM
+  # ─────────────────────────────────────────────────────────────
+  original_intent:
+    turn_1_verbatim: |
+      [USER'S FIRST MESSAGE GOES HERE]
+    turn_2_understanding: |
+      [INITIAL UNDERSTANDING/CLARIFICATION]
+    primary_goal: "[ONE LINE SUMMARY]"
+    success_criteria: "[WHAT DEFINES DONE]"
+    
+  # ─────────────────────────────────────────────────────────────
+  # RECENT: LAST 4 TURNS - CURRENT STATE
+  # ─────────────────────────────────────────────────────────────
+  recent_context:
+    turn_minus_4: "[ACTOR]: [BRIEF SUMMARY]"
+    turn_minus_3: "[ACTOR]: [BRIEF SUMMARY]"
+    turn_minus_2: "[ACTOR]: [BRIEF SUMMARY]"
+    turn_minus_1: "[ACTOR]: [DETAILED - MOST RECENT]"
+    pending_action: "[WHAT WAS JUST REQUESTED]"
+    
+  # ─────────────────────────────────────────────────────────────
+  # ROLE & HIERARCHY
+  # ─────────────────────────────────────────────────────────────
+  role:
+    current: "ext-master"
+    type: "coordinator"
+    constraints: "DELEGATE only, never execute tools directly"
+    
+  delegation:
+    chain: "ext-master → ext-sprint-manager → ext-dev"
+    pending_handoffs: []
+    
+  # ─────────────────────────────────────────────────────────────
+  # PROJECT STATE
+  # ─────────────────────────────────────────────────────────────
+  project:
+    phase: "REMEDIATION_ACTIVE"
+    active_epic: "EPIC-CONSOLIDATION"
+    active_story: null
+    work_type: "project"
+    
+  # ─────────────────────────────────────────────────────────────
+  # ARTIFACTS GENERATED THIS SESSION
+  # ─────────────────────────────────────────────────────────────
+  artifacts:
+    created: []
+    modified: []
+    key_deliverable: null
+    
+  # ─────────────────────────────────────────────────────────────
+  # DECISIONS MADE (FINAL, NOT SUPERSEDED)
+  # ─────────────────────────────────────────────────────────────
+  decisions: []
+      
+  # ─────────────────────────────────────────────────────────────
+  # FILTERED OUT (POISONED - DO NOT RESURRECT)
+  # ─────────────────────────────────────────────────────────────
+  filtered_out: []
+    
+  # ─────────────────────────────────────────────────────────────
+  # NEXT ACTION
+  # ─────────────────────────────────────────────────────────────
+  next_action:
+    description: "[WHAT SHOULD HAPPEN NEXT]"
+    priority: "P0"
+    blocker: null
+    
+  # ─────────────────────────────────────────────────────────────
+  # ACTIVE SKILLS
+  # ─────────────────────────────────────────────────────────────
+  skills_loaded:
+    - "context-first"
+    - "verification-before-completion"

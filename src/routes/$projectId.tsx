@@ -41,21 +41,20 @@ import { MainSidebar } from '@/presentation/components/layout/MainSidebar';
 // CC-UX-01: StatusBar integration
 import { StatusBar } from '@/presentation/components/layout/StatusBar';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
-import { getDefaultLayoutMode, getDefaultPlugins, getDefaultMainPlugin, getDefaultPluginPlacements } from '@/infrastructure/plugins/platform-defaults';
+import { getDefaultPlugins } from '@/infrastructure/plugins/platform-defaults';
 import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
-// UXUI-02-05: ActivityBar + Docker Wiring
-import { usePluginActivityDockerWiring } from '@/presentation/components/layout/PluginActivityDockerWiring';
-import { usePluginPlacement } from '@/presentation/hooks/usePluginPlacement';
-import type { ActivityBarItem } from '@/presentation/components/layout/ActivityBar';
-// CC-UX-02: Plugin Registry for rendering
-import { getPlugin } from '@/infrastructure/plugins/plugin-registry';
-import type { PluginId } from '@/domain/types/plugin-types';
-// Icons for ActivityBar
-import { FolderTree, StickyNote, MessageSquare, Terminal, Eye } from 'lucide-react';
-// UXUI-03-04: MainContentRenderer for plugin switching in main content area
-import { MainContentRenderer } from '@/presentation/components/layout/MainContentRenderer';
-// UXUI-03-05: FloatingPluginDocker for centralized plugin management
-import { FloatingPluginDocker } from '@/presentation/components/layout/FloatingPluginDocker';
+// EPIC-UXUI-04: Archived components - will be replaced with new 3-bar system
+// TODO-UXUI-04-02: Replace with GlobalSidebar + ActivityBarLeft/Right + PluginDocker
+// import { usePluginActivityDockerWiring } from '@/presentation/components/layout/PluginActivityDockerWiring';
+// import { usePluginPlacement } from '@/presentation/hooks/usePluginPlacement';
+// import type { ActivityBarItem } from '@/presentation/components/layout/ActivityBar';
+// Icons for placeholder
+import { FolderTree, StickyNote, MessageSquare } from 'lucide-react';
+// EPIC-UXUI-04: Archived components - will be replaced with new 3-bar system
+// TODO-UXUI-04-03: Replace with ActivityBarMainTop + PluginPanelMain
+// import { MainContentRenderer } from '@/presentation/components/layout/MainContentRenderer';
+// TODO-UXUI-04-04: Replace with new PluginDocker (source panel, not floating)
+// import { FloatingPluginDocker } from '@/presentation/components/layout/FloatingPluginDocker';
 
 // ============================================================================
 // Route Definition
@@ -104,34 +103,19 @@ export const Route = createFileRoute('/$projectId')({
 // ============================================================================
 
 /**
- * Left side ActivityBar items
- *
- * @remarks
- * Plugins typically shown on the left:
- * - FileTree: File browser for project navigation
- * - Search: Search within project files
+ * EPIC-UXUI-04: ActivityBar items - will be replaced with new 3-bar system
+ * TODO-UXUI-04-03: Define items for ActivityBarLeft, ActivityBarMainTop, ActivityBarRight
  */
-const LEFT_ACTIVITY_ITEMS: ActivityBarItem[] = [
-  { id: 'filetree', icon: <FolderTree size={24} />, label: 'Files' },
-  { id: 'notes', icon: <StickyNote size={24} />, label: 'Notes' },
-];
+// const LEFT_ACTIVITY_ITEMS: ActivityBarItem[] = [
+//   { id: 'filetree', icon: <FolderTree size={24} />, label: 'Files' },
+//   { id: 'notes', icon: <StickyNote size={24} />, label: 'Notes' },
+// ];
 
-/**
- * Right side ActivityBar items
- *
- * @remarks
- * Plugins typically shown on the right:
- * - Chat: AI chat assistant
- * - Terminal: Command line
- * - Preview: Live preview
- * 
- * NOTE: Monaco is now the MAIN content area (not a sidebar plugin)
- */
-const RIGHT_ACTIVITY_ITEMS: ActivityBarItem[] = [
-  { id: 'chat', icon: <MessageSquare size={24} />, label: 'Chat' },
-  { id: 'terminal', icon: <Terminal size={24} />, label: 'Terminal' },
-  { id: 'preview', icon: <Eye size={24} />, label: 'Preview' },
-];
+// const RIGHT_ACTIVITY_ITEMS: ActivityBarItem[] = [
+//   { id: 'chat', icon: <MessageSquare size={24} />, label: 'Chat' },
+//   { id: 'terminal', icon: <Terminal size={24} />, label: 'Terminal' },
+//   { id: 'preview', icon: <Eye size={24} />, label: 'Preview' },
+// ];
 
 // ============================================================================
 // Main Route Component
@@ -157,179 +141,22 @@ const RIGHT_ACTIVITY_ITEMS: ActivityBarItem[] = [
 function UnifiedProjectRoute() {
   const { projectId } = Route.useParams();
   const { project } = Route.useLoaderData();
-  const layoutStore = usePluginLayoutStore();
   const platform = getPlatformContract();
 
   // CRITICAL FIX: FileSystemDirectoryHandle is NOT serializable
-  // It cannot be passed through router state (becomes null after navigation)
-  // The handle will be restored from IndexedDB by ProjectContextProvider
-  // See: EPIC-0 Section 12.2 FLAW-01
-  const fsaHandle = null; // Let context restore from persistence
+  const fsaHandle = null;
 
-  // CC-AR-03: Check hydration status before rendering layout
+  // CC-AR-03: Check hydration status
   const hasHydrated = usePluginLayoutStore((s) => s._hasHydrated);
 
-  // ========================================================================
-  // CC-AR-02: Platform-Aware Default Plugins
-  // ========================================================================
-  
   // Get platform-specific defaults
   const defaultPlugins = getDefaultPlugins(platform, project);
-  const defaultMainPlugin = getDefaultMainPlugin(platform, project);
-  const defaultPlacements = getDefaultPluginPlacements(platform, project);
 
-  console.log('[UnifiedProjectRoute] Platform-aware defaults:', { 
+  console.log('[UnifiedProjectRoute] EPIC-UXUI-04 Archive Phase:', { 
     projectId, 
     hasHydrated, 
-    storageType: project?.storageType,
-    deviceType: platform.deviceType,
-    defaultMainPlugin,
-    defaultPlugins,
-    defaultPlacements,
+    message: 'Old components archived. New 3-bar system coming in Story 2+',
   });
-
-  // ========================================================================
-  // CC-AR-02: MAIN CONTENT PLUGIN STATE (Platform-Aware)
-  // ========================================================================
-  // 
-  // UXUI-03-04: Main Content Plugin State (Notes/Monaco/Preview Switching)
-  // Uses platform-detected default main plugin
-  // 
-  const [activeMainPluginId, setActiveMainPluginId] = useState<PluginId>(defaultMainPlugin);
-  const handleMainPluginChange = useCallback((pluginId: PluginId) => {
-    console.log('[UnifiedProjectRoute] Main plugin changed:', pluginId);
-    setActiveMainPluginId(pluginId);
-  }, []);
-  const handlePluginError = useCallback((pluginId: PluginId, error: Error) => {
-    console.error('[UnifiedProjectRoute] Plugin error:', { pluginId, error });
-  }, []);
-
-  // ========================================================================
-  // CC-AR-02: PLUGIN PLACEMENT STATE (Platform-Aware)
-  // ========================================================================
-  // 
-  // UXUI-02-05: Plugin Placement State (Single Instance Constraint)
-  // UXUI-03-07: Plugin placement persistence (keyed by projectId)
-  // Uses platform-detected default placements
-  //
-  const initialPlacements = defaultPlacements.map((p) => ({
-    pluginId: p.pluginId,
-    panel: p.panel,
-  }));
-  
-  const {
-    placements,
-    getPluginPanel,
-    movePluginToPanel,
-    closePlugin,
-    getPluginsInPanel,
-    getActivePluginForPanel,
-    setActivePluginForPanel,
-  } = usePluginPlacement({
-    projectId,
-    initialPlacements,
-  });
-
-  // ========================================================================
-  // CC-AR-02: FLOATING DOCKER STATE (Platform-Aware)
-  // ========================================================================
-  const [isFloatingDockerOpen, setIsFloatingDockerOpen] = useState(false);
-  const toggleFloatingDocker = useCallback(() => {
-    setIsFloatingDockerOpen((prev) => !prev);
-  }, []);
-  const handleFloatingDockerPluginClick = useCallback(
-    (pluginId: PluginId, defaultPanel: 'left' | 'main' | 'right') => {
-      const currentPanel = getPluginPanel(pluginId);
-      if (currentPanel === null || currentPanel === undefined) {
-        movePluginToPanel(pluginId, defaultPanel);
-        console.log(`[UnifiedProjectRoute] Placed ${pluginId} in ${defaultPanel} panel`);
-      } else {
-        console.log(`[UnifiedProjectRoute] ${pluginId} already in ${currentPanel} panel`);
-      }
-    },
-    [getPluginPanel, movePluginToPanel]
-  );
-
-  // ========================================================================
-  // CC-AR-02: KEYBOARD SHORTCUT HANDLER
-  // ========================================================================
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'p') {
-        e.preventDefault();
-        toggleFloatingDocker();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleFloatingDocker]);
-
-  // ========================================================================
-  // CC-AR-02: PLUGIN RENDERER CALLBACK
-  // ========================================================================
-  const renderPluginContent = useCallback(
-    ({ pluginId, position }: { pluginId: PluginId; position: 'left' | 'right' }) => {
-      const plugin = getPlugin(pluginId);
-      if (!plugin) {
-        console.warn(`[UnifiedProjectRoute] Plugin not found: ${pluginId}`);
-        return (
-          <div className="p-4 font-mono text-sm text-muted-foreground">
-            Plugin not found: {pluginId}
-          </div>
-        );
-      }
-      const Component = plugin.MainComponent;
-      const width = position === 'left' ? 240 : 300;
-      const height = 500;
-      return <Component width={width} height={height} />;
-    },
-    []
-  );
-
-  // ========================================================================
-  // CC-AR-02: LEFT/RIGHT WIRING (Platform-Aware)
-  // ========================================================================
-  const leftWiring = usePluginActivityDockerWiring({
-    position: 'left',
-    items: LEFT_ACTIVITY_ITEMS, // Full left items (filetree, notes)
-    minWidth: 200,
-    maxWidth: 320,
-    getPluginPanel,
-    movePluginToPanel,
-    closePlugin,
-    getPluginsInPanel,
-    getActivePluginForPanel,
-    setActivePluginForPanel,
-    renderPlugin: renderPluginContent,
-  });
-  const rightWiring = usePluginActivityDockerWiring({
-    position: 'right',
-    items: RIGHT_ACTIVITY_ITEMS, // Full right items (chat, terminal, preview)
-    minWidth: 250,
-    maxWidth: 400,
-    getPluginPanel,
-    movePluginToPanel,
-    closePlugin,
-    getPluginsInPanel,
-    getActivePluginForPanel,
-    setActivePluginForPanel,
-    renderPlugin: renderPluginContent,
-  });
-
-  // ========================================================================
-  // CC-AR-02: LAYOUT STORE INITIALIZATION (Platform-Aware)
-  // ========================================================================
-  useEffect(() => {
-    if (!layoutStore.hasUserCustomized && layoutStore.activePlugins.length === 0) {
-      // Use platform-specific default plugins instead of preset
-      console.log('[UnifiedProjectRoute] Initializing with platform defaults:', {
-        deviceType: platform.deviceType,
-        storageType: project.storageType,
-        defaultPlugins,
-      });
-      layoutStore.initializeDefaults(defaultPlugins, getDefaultLayoutMode(platform));
-    }
-  }, [project.id]);
 
   // CC-AR-03: Show loading skeleton while store is hydrating
   if (!hasHydrated) {
@@ -343,64 +170,86 @@ function UnifiedProjectRoute() {
   }
 
   // ============================================================================
-  // CC-AR-02: PLATFORM-AWARE LAYOUT RENDERING
+  // EPIC-UXUI-04: PLACEHOLDER LAYOUT
   // ============================================================================
-  // 
-  // Platform-first plugin defaults:
-  // - Desktop with FSA: Monaco(main), FileTree(left), Chat(right)
-  // - Desktop with IndexedDB: Notes(main), FileTree(left), Chat(right)
-  // - Tablet: Notes(main), FileTree(left)
-  // - Mobile: Notes(main) only
-  //
+  // Old components archived. New 3-bar + docker system will be implemented in:
+  // - Story 2: GlobalSidebar
+  // - Story 3: Three Activity Bar System
+  // - Story 4: Plugin Docker Component
+  // - Story 5: Plugin Panel System
+  // ============================================================================
   
   return (
     <PluginCoordinationProvider>
       <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
         <WorkspaceLayout
-          // GlobalSidebar - Real MainSidebar component
+          // GlobalSidebar - Will be replaced with new GlobalSidebar in Story 2
           globalSidebar={<MainSidebar />}
           
-          // Left ActivityBar - Full activity items
-          activityBarLeft={leftWiring.activityBar}
-          
-          // Left Plugin Panel - Using leftWiring docker
-          pluginLeft={leftWiring.docker}
-          
-          // Main Content Area - Platform-aware default plugin
-          mainContent={
-            <MainContentRenderer
-              activePluginId={activeMainPluginId}
-              onPluginChange={handleMainPluginChange}
-              onPluginError={handlePluginError}
-              fallback={
-                <div className="h-full flex items-center justify-center bg-background">
-                  <div className="text-center">
-                    <span className="text-muted-foreground font-mono text-sm block">
-                      Loading main content...
-                    </span>
-                  </div>
-                </div>
-              }
-            />
+          // Left ActivityBar - PLACEHOLDER (Story 3)
+          activityBarLeft={
+            <div className="h-full w-12 bg-muted border-r border-border flex flex-col items-center py-2">
+              <FolderTree size={20} className="text-muted-foreground" />
+            </div>
           }
           
-          // Right Plugin Panel - Using rightWiring docker
-          pluginRight={rightWiring.docker}
+          // Left Plugin Panel - PLACEHOLDER (Story 5)
+          pluginLeft={
+            <div className="h-full bg-background border-r border-border p-4">
+              <div className="font-mono text-sm text-muted-foreground">
+                EPIC-UXUI-04: Story 5 - PluginPanelLeft
+              </div>
+            </div>
+          }
           
-          // Right ActivityBar - Full activity items
-          activityBarRight={rightWiring.activityBar}
+          // Main Content Area - PLACEHOLDER (Story 3)
+          mainContent={
+            <div className="h-full flex flex-col bg-background">
+              {/* ActivityBarMainTop - PLACEHOLDER */}
+              <div className="h-12 border-b border-border flex items-center px-4 gap-2">
+                <StickyNote size={16} />
+                <span className="font-mono text-sm">Notes</span>
+              </div>
+              {/* Main Content */}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-4xl mb-4">🚧</div>
+                  <div className="font-mono text-sm text-muted-foreground">
+                    EPIC-UXUI-04: True Plugin Layout Architecture
+                  </div>
+                  <div className="font-mono text-xs text-muted-foreground mt-2">
+                    Story 1 Complete - Archive Phase Done
+                  </div>
+                  <div className="font-mono text-xs text-muted-foreground">
+                    Stories 2-10 In Progress
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
           
-          // StatusBar - Real StatusBar component
+          // Right Plugin Panel - PLACEHOLDER (Story 5)
+          pluginRight={
+            <div className="h-full bg-background border-l border-border p-4">
+              <div className="font-mono text-sm text-muted-foreground">
+                EPIC-UXUI-04: Story 5 - PluginPanelRight
+              </div>
+            </div>
+          }
+          
+          // Right ActivityBar - PLACEHOLDER (Story 3)
+          activityBarRight={
+            <div className="h-full w-12 bg-muted border-l border-border flex flex-col items-center py-2">
+              <MessageSquare size={20} className="text-muted-foreground" />
+            </div>
+          }
+          
+          // StatusBar
           statusBar={<StatusBar />}
         />
         
-        {/* FloatingPluginDocker - Plugin placement management */}
-        <FloatingPluginDocker
-          placements={placements}
-          onPluginClick={handleFloatingDockerPluginClick}
-          isOpen={isFloatingDockerOpen}
-          onClose={toggleFloatingDocker}
-        />
+        {/* PluginDocker - PLACEHOLDER (Story 4) */}
+        {/* TODO-UXUI-04-04: Add new PluginDocker component */}
       </ProjectContextProvider>
     </PluginCoordinationProvider>
   );

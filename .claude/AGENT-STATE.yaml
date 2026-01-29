@@ -1,0 +1,23 @@
+# AGENT-STATE.yaml - Compact-Resilient State
+# Survives all compactions and session resets
+# MAXIMUM 50 LINES - Keep minimal
+
+session:
+  id: "sess_20260129_000000"
+  started: "2026-01-29T00:00:00Z"
+  last_sync: "2026-01-29T00:00:00Z"
+
+workflow:
+  current_step: 0
+  step_name: "NOT_STARTED"
+  status: "IDLE"
+  story_id: null
+
+artifacts:
+  created: []
+  modified: []
+
+governance:
+  violations: 0
+  last_check: "2026-01-29T00:00:00Z"
+  stale_warnings: 0

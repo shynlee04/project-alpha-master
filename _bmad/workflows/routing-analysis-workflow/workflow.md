@@ -2,6 +2,7 @@
 name: routing-analysis-workflow
 description: Comprehensive scan and analysis workflow for client-side Agentic RAG platform routing problems
 web_bundle: true
+version: 1.0.0
 created: 2026-01-07T10:51:00+07:00
 created_by: Admin
 workflow_type: analysis
@@ -43,18 +44,24 @@ target_workspaces: [notes, ide]
 
 ## INITIALIZATION SEQUENCE
 
-### Current Status: STEP 01 - INITIALIZATION
+### 1. Configuration Loading
 
-**Workflow Metadata:**
+Load and read full config from {project-root}/_bmad/bmm/config.yaml and resolve:
+
+- `project_name`, `output_folder`, `user_name`, `communication_language`, `document_output_language`
+
+### 2. Workflow Metadata
+
 - Created: 2026-01-07T10:51:00+07:00
 - Creator: Admin
 - Target Workspaces: notes, ide
 - Analysis Type: routing-inconsistencies
-
-**Analysis Parameters:**
 - Methodology: Skeptical Product Manager Approach
 - Coverage: Full user journey mapping
 - Tools: Multi-iterative code inspection
 - Output: Comprehensive diagnostic report
 
-**Next Action:** Proceed to Step 2 - Entry Point Analysis
+### 3. First Step Execution
+
+Load, read the full file and then execute `./steps/step-01-init.md` to begin the workflow.
+

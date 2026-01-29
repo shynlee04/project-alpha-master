@@ -7,11 +7,7 @@
 @import "./styles/workspace-layout.css";
 
 /* Layout Component Styles */
-@import "./presentation/components/layout/ActivityBar.css";
-@import "./presentation/components/layout/ActivityBarTop.css";
-@import "./presentation/components/layout/MainContentRenderer.css";
-@import "./presentation/components/layout/PluginDocker.css";
-@import "./presentation/components/layout/FloatingPluginDocker.css";
+/* ARCHIVED (UXUI-04-01): ActivityBar.css, ActivityBarTop.css, MainContentRenderer.css, PluginDocker.css, FloatingPluginDocker.css */
 @import "./presentation/components/layout/StatusBar.css";
 @import "./presentation/components/layout/BottomNav.css";
 @import "./presentation/components/layout/BottomSheet.css";

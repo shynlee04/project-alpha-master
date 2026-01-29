@@ -1,10 +1,15 @@
 /**
  * @fileoverview Layout Components Barrel Export
  * @module components/layout
- * @updated 2026-01-28
+ * @updated 2026-01-30
  *
  * Exports active layout components.
- * Legacy layout components archived to: _bmad-ext/.archive/layout-cleanup-2026-01-28/
+ * Legacy EPIC-UXUI-03 components archived to: _bmad-ext/.archive/epic-uxui-04/
+ *
+ * Archived components (2026-01-30):
+ * - ActivityBar, ActivityBarTop, FloatingPluginDocker
+ * - MainContentRenderer, PluginDocker
+ * - PluginActivityDockerWiring, usePluginPlacement
  */
 
 // Core Layout Components
@@ -24,17 +29,17 @@ export { BottomSheet, type BottomSheetProps } from './BottomSheet';
 // Navigation Components
 export { Breadcrumbs, type BreadcrumbsProps } from './Breadcrumbs';
 
-// Activity Bar (UXUI-02-02)
-export { ActivityBar, type ActivityBarProps, type ActivityBarItem } from './ActivityBar';
+// Activity Bar (UXUI-02-02) - ARCHIVED 2026-01-30
+// export { ActivityBar, type ActivityBarProps, type ActivityBarItem } from './ActivityBar';
 
-// Plugin Docker (UXUI-02-02b)
-export { PluginDocker, type PluginDockerProps } from './PluginDocker';
+// Plugin Docker (UXUI-02-02b) - ARCHIVED 2026-01-30
+// export { PluginDocker, type PluginDockerProps } from './PluginDocker';
 
-// Floating Plugin Docker (UXUI-03-05)
-export { FloatingPluginDocker, type FloatingPluginDockerProps } from './FloatingPluginDocker';
+// Floating Plugin Docker (UXUI-03-05) - ARCHIVED 2026-01-30
+// export { FloatingPluginDocker, type FloatingPluginDockerProps } from './FloatingPluginDocker';
 
-// Main Content Renderer (UXUI-03-04)
-export { MainContentRenderer, type MainContentRendererProps } from './MainContentRenderer';
+// Main Content Renderer (UXUI-03-04) - ARCHIVED 2026-01-30
+// export { MainContentRenderer, type MainContentRendererProps } from './MainContentRenderer';
 
 // Live Region for Screen Reader Announcements (UXUI-03-11)
 export { LiveRegion, type LiveRegionProps, type LiveRegionSyncStatus } from './LiveRegion';
@@ -42,8 +47,8 @@ export { LiveRegion, type LiveRegionProps, type LiveRegionSyncStatus } from './L
 // Status Bar
 export { StatusBar } from './StatusBar';
 
-// Activity Bar Top (UXUI-03-03)
-export { ActivityBarTop, type ActivityBarTopProps } from './ActivityBarTop';
+// Activity Bar Top (UXUI-03-03) - ARCHIVED 2026-01-30
+// export { ActivityBarTop, type ActivityBarTopProps } from './ActivityBarTop';
 
 // Permission Overlay
 export { PermissionOverlay } from './PermissionOverlay';
@@ -57,5 +62,5 @@ export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 // Min Viewport Warning
 export { MinViewportWarning } from './MinViewportWarning';
 
-// Plugin Activity Docker Wiring (UXUI-03-03)
-export { usePluginActivityDockerWiring } from './PluginActivityDockerWiring';
+// Plugin Activity Docker Wiring (UXUI-03-03) - ARCHIVED 2026-01-30
+// export { usePluginActivityDockerWiring } from './PluginActivityDockerWiring';

@@ -23,6 +23,21 @@ permission:
     "subagent": allow
     "skill": allow
     "command": ask
+
+capabilities:
+  - "Task routing based on 18 Prompt Types"
+  - "Team-A vs Team-B delegation"
+  - "Parallel task coordination"
+  - "State management"
+  - "Sprint coordination"
+  - "Governance enforcement"
+
+constraints:
+  - "Never implement code directly"
+  - "Never run bash commands"
+  - "Always route to appropriate agent"
+  - "Update AGENT-STATE on every delegation"
+  - "Never skip intent classification"
 ---
 
 **EXTREMELY IMPORTANT - YOU ARE THE COORDINATOR**
@@ -41,39 +56,64 @@ READ THIS
 
 
 ```
-.opencode/agents/analyst-ext-team-b.md
-.opencode/agents/analyst-ext.md
-.opencode/agents/architect-ext-team-b.md
-.opencode/agents/architect-ext.md
-.opencode/agents/bmad-governance.md
-.opencode/agents/bmad-sprint-manager-team-b.md
-.opencode/agents/bmad-sprint-manager.md
-.opencode/agents/deep-scan-agent-rag-scanner.md
-.opencode/agents/deep-scan-architecture-scanner.md
-.opencode/agents/deep-scan-evidence-synthesizer.md
-.opencode/agents/deep-scan-orchestrator.md
-.opencode/agents/deep-scan-performance-scanner.md
-.opencode/agents/deep-scan-persistence-scanner.md
-.opencode/agents/deep-scan-security-scanner.md
-.opencode/agents/deep-scan-state-scanner.md
-.opencode/agents/deep-scan-types-scanner.md
-.opencode/agents/deep-scan-ux-scanner.md
-.opencode/agents/deep-scan-workspace-scanner.md
-.opencode/agents/dev-ext-team-b.md
-.opencode/agents/dev-ext.md
-.opencode/agents/dev.md
-.opencode/agents/domain-scanner.md
-.opencode/agents/ext-master-enhanced.md
-.opencode/agents/ext-master-legacy.md
-.opencode/agents/ext-master.md
-.opencode/agents/product-management-ext-team-b.md
-.opencode/agents/product-management-ext.md
-.opencode/agents/reviewer.md
-.opencode/agents/tea-ext.md
-.opencode/agents/tech-writer-ext copy.md
-.opencode/agents/tech-writer-ext.md
-.opencode/agents/ux-designer-ext-team-b.md
-.opencode/agents/ux-designer-ext.md
+.opencode/agent
+.opencode/agent/_template-enhanced-agent.md
+.opencode/agent/agent-delegation-architecture.md
+.opencode/agent/analyst-ext-team-b.md
+.opencode/agent/analyst-ext.md
+.opencode/agent/architect-ext-team-b.md
+.opencode/agent/architect-ext.md
+.opencode/agent/artifact-scanner.md
+.opencode/agent/bmad-agent-bmb-agent-builder.md
+.opencode/agent/bmad-agent-bmb-module-builder.md
+.opencode/agent/bmad-agent-bmb-workflow-builder.md
+.opencode/agent/bmad-agent-bmm-analyst.md
+.opencode/agent/bmad-agent-bmm-architect.md
+.opencode/agent/bmad-agent-bmm-dev.md
+.opencode/agent/bmad-agent-bmm-pm.md
+.opencode/agent/bmad-agent-bmm-quick-flow-solo-dev.md
+.opencode/agent/bmad-agent-bmm-sm.md
+.opencode/agent/bmad-agent-bmm-tea.md
+.opencode/agent/bmad-agent-bmm-tech-writer.md
+.opencode/agent/bmad-agent-bmm-ux-designer.md
+.opencode/agent/bmad-agent-cis-brainstorming-coach.md
+.opencode/agent/bmad-agent-cis-creative-problem-solver.md
+.opencode/agent/bmad-agent-cis-design-thinking-coach.md
+.opencode/agent/bmad-agent-cis-innovation-strategist.md
+.opencode/agent/bmad-agent-cis-presentation-master.md
+.opencode/agent/bmad-agent-cis-storyteller.md
+.opencode/agent/bmad-agent-core-bmad-master.md
+.opencode/agent/bmad-governance.md
+.opencode/agent/bmad-sprint-manager-team-b.md
+.opencode/agent/bmad-sprint-manager.md
+.opencode/agent/component-splitter.md
+.opencode/agent/deep-scan-agent-rag-scanner.md
+.opencode/agent/deep-scan-architecture-scanner.md
+.opencode/agent/deep-scan-evidence-synthesizer.md
+.opencode/agent/deep-scan-orchestrator.md
+.opencode/agent/deep-scan-performance-scanner.md
+.opencode/agent/deep-scan-persistence-scanner.md
+.opencode/agent/deep-scan-security-scanner.md
+.opencode/agent/deep-scan-state-scanner.md
+.opencode/agent/deep-scan-types-scanner.md
+.opencode/agent/deep-scan-ux-scanner.md
+.opencode/agent/deep-scan-workspace-scanner.md
+.opencode/agent/dev-ext-team-b.md
+.opencode/agent/dev-ext.md
+.opencode/agent/domain-scanner.md
+.opencode/agent/ext-master-enhanced.md
+.opencode/agent/ext-master.md
+.opencode/agent/file-sync-specialist.md
+.opencode/agent/master-architect.md
+.opencode/agent/module-builder-ext.md
+.opencode/agent/platform-router.md
+.opencode/agent/product-management-ext.md
+.opencode/agent/product-manager-rigorous.md
+.opencode/agent/real-world-validator.md
+.opencode/agent/tea-ext.md
+.opencode/agent/tech-writer-ext.md
+.opencode/agent/ux-designer-ext-team-b.md
+.opencode/agent/ux-designer-ext.md
 ```
 
 

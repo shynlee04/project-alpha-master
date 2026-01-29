@@ -11,22 +11,34 @@ previous_version: "bmm-workflow-status-v2.13.yaml"
 # GOVERNANCE FRONTMATTER (Always Read First)
 # ═════════════════════════════════════════════════════════════════════════
 
-current_epic: "EPIC-CONSOLIDATION"
-current_story: null
-workflow_phase: "REMEDIATION_ACTIVE"
+current_epic: "EPIC-UXUI-04"
+current_story: "UXUI-04-01"
+workflow_phase: "ARCHIVE_COMPLETE_AWAITING_APPROVAL"
 health_score: 29.5
 notes: |
-  🏛️ AGENTS.md v3.0.0 CONSTITUTION PUBLISHED
+  🚨 CRITICAL ARCHITECTURE CORRECTION INITIATED
   
-  Major Changes:
-  - Refactored AGENTS.md to focus on CONSTITUTION (not project status)
-  - Added 5 non-negotiable rules (SKILLS, STAMPING, STALENESS, TOOLS, VERIFICATION)
-  - Updated all status files with current remediation progress
-  - TypeScript errors: 28 → 0 (ALL FIXED)
-  - Created facade re-exports for 66% of @/lib/ imports
+  EPIC-UXUI-04: True Plugin Layout Architecture
+  - Status: INITIATED (2026-01-30)
+  - Priority: P0 - BLOCKS Phase 1A completion
+  - Teams: Team A + Team B
   
-  📊 Phase 1A: 72% → 72% (TypeScript clean, lib/ migration in progress)
-  🎯 Next: Complete lib/ import migration, split god files
+  Problem: EPIC-UXUI-03 created generic plugin system, NOT the specified 3-bar architecture
+  Solution: Implement correct [0.5:0.5:2:4:2.5:0.5] grid with 3 Activity Bars + Docker
+  
+  Stories: 10 stories, 42-59 hours estimated
+  - UXUI-04-01: Global Sidebar Auto-Collapse
+  - UXUI-04-02: Three Activity Bar System
+  - UXUI-04-03: Plugin Docker Component
+  - UXUI-04-04: Plugin Panel System
+  - UXUI-04-05: Drag-Drop System
+  - UXUI-04-06: Responsive Layout Implementation
+  - UXUI-04-07: Plugin Coordination Integration
+  - UXUI-04-08: Persistence & State Management
+  - UXUI-04-09: Archive Old Layout Components
+  - UXUI-04-10: Integration & E2E Validation
+  
+  ⏸️ PAUSED: lib/ import migration, god file splitting (resumed after architecture fix)
 context_ttl: "24h"
 
 # ═════════════════════════════════════════════════════════════════════════
@@ -157,50 +169,67 @@ remediation_status:
 # ═════════════════════════════════════════════════════════════════════════
 
 teams:
-  - id: "Team A"
-    name: "Identity & Routing Squad"
-    focus: "EPIC-CONSOLIDATION"
-    assigned_epic: "EPIC-CONSOLIDATION"
-    assigned_phase: "Phase 1B"
-    current_story: null
+  - id: "Single Team"
+    name: "EPIC-UXUI-04 Execution Team"
+    focus: "EPIC-UXUI-04"
+    assigned_epic: "EPIC-UXUI-04"
+    assigned_phase: "Phase 1A"
+    current_story: "UXUI-04-01"
     status: "READY"
-
-  - id: "Team B"
-    name: "Storage Contract Squad"
-    focus: "EPIC-UXUI-01"
-    assigned_epic: "EPIC-UXUI-01"
-    assigned_phase: "Phase 1B"
-    current_story: null
-    status: "READY"
+    execution_model: "SEQUENTIAL (Not Parallel)"
+    governance: "ABSOLUTE - Archive before build"
+    tracking: "DAILY - Full audit trail"
+    story_sequence:
+      - "UXUI-04-01: ARCHIVE Phase (MUST complete first)"
+      - "UXUI-04-02: Global Sidebar Auto-Collapse"
+      - "UXUI-04-03: Three Activity Bar System"
+      - "UXUI-04-04: Plugin Docker Component"
+      - "UXUI-04-05: Plugin Panel System"
+      - "UXUI-04-06: Drag-Drop System"
+      - "UXUI-04-07: Responsive Layout Implementation"
+      - "UXUI-04-08: Plugin Coordination Integration"
+      - "UXUI-04-09: Persistence & State Management"
+      - "UXUI-04-10: FINAL VERIFICATION"
+    notes: |
+      SINGLE TEAM EXECUTION - No parallel work
+      Archive-first approach: Clean old code BEFORE creating new
+      Daily checkpoints mandatory
+      Full tracking and audit trail required
 
 # ═════════════════════════════════════════════════════════════════════════
 # CURRENT ACTIVE STATE
 # ═════════════════════════════════════════════════════════════════════════
 
 current_workflow:
-  id: "remediation-phase-1a-2026-01-29"
+  id: "epic-uxui-04-architecture-correction"
   status: "IN_PROGRESS"
-  started_at: "2026-01-29T16:00:00+07:00"
-  coordinator: "ext-master"
-  epic: "EPIC-CONSOLIDATION"
-  story: null
-  team: "Team A + Team B"
-  story_status: "READY"
+  started_at: "2026-01-30T14:35:00+07:00"
+  coordinator: "bmad-sprint-manager"
+  epic: "EPIC-UXUI-04"
+  story: "UXUI-04-01"
+  team: "Team A ONLY"
+  story_status: "COMPLETE"
   story_summary: |
-    Phase 1A Remediation Active:
-    - TypeScript: ✅ 0 errors (fixed)
-    - lib/ imports: 🟡 66% covered with facades
-    - God files: 🔴 30 files pending split
-    - AGENTS.md: ✅ v3.0.0 constitution published
+    ✅ STORY 1 COMPLETE - Archive Phase
+    
+    Team A (dev-ext) successfully completed archive phase:
+    - 7 files archived to _bmad-ext/.archive/epic-uxui-04/
+    - 12 source files removed from src/
+    - Build verification: TypeScript 0 errors, governance passed
+    - Archive manifest and daily log updated
+    
+    Status: AWAITING USER APPROVAL to proceed to Story 2
+    Next: UXUI-04-02 - Global Sidebar Auto-Collapse
 
 next_workflow:
-  id: "lib-import-migration"
-  status: "READY"
+  id: "remediation-resumed"
+  status: "PAUSED"
   epic: "EPIC-CONSOLIDATION"
+  note: "⏸️ PAUSED until EPIC-UXUI-04 complete - no point refactoring broken architecture"
   stories_ready:
-    - "Migrate top 100 @/lib/ imports to canonical paths (Team A)"
-    - "Split MonacoMain.tsx into focused components (Team B)"
-    - "Address 50 TODO/FIXME markers (Team B)"
+    - "Resume @/lib/ import migration (222 remaining)"
+    - "Resume god file splitting (30 files)"
+    - "Resume TODO/FIXME cleanup (104 markers)"
 
 # ═════════════════════════════════════════════════════════════════════════
 # NEXT ACTIONS
@@ -208,25 +237,42 @@ next_workflow:
 
 next_actions:
   immediate:
-    - "Complete @/lib/ import migration (222 remaining)"
-    - "Split god files >300 lines (30 files)"
-    - "Address TODO/FIXME markers (104 count)"
+    - "🚨 EPIC-UXUI-04: Implement True Plugin Layout Architecture (P0)"
+    - "Create sprint plan for 10 stories (42-59 hours)"
+    - "Delegate UXUI-04-01 to Team B (Global Sidebar Auto-Collapse)"
+    - "Delegate UXUI-04-02 to Team A (Three Activity Bar System)"
+    
+  paused_work:
+    note: "⏸️ PAUSED until EPIC-UXUI-04 complete - no point refactoring broken architecture"
+    items:
+      - "⏸️ @/lib/ import migration (222 remaining)"
+      - "⏸️ God file splitting (30 files)"
+      - "⏸️ TODO/FIXME markers (104 count)"
     
   health_targets:
+    - metric: "architecture alignment"
+      current: "MISALIGNED"
+      target: "CORRECT"
+      priority: "P0"
+      note: "EPIC-UXUI-03 did not match user requirements"
+      
     - metric: "lib/ imports"
       current: 654
       target: 0
       priority: "P0"
+      status: "⏸️ PAUSED"
       
     - metric: "god files"
       current: 30
       target: 10
       priority: "P1"
+      status: "⏸️ PAUSED"
       
     - metric: "health score"
       current: 29.5
       target: 85.0
       priority: "P0"
+      note: "Will improve after architecture correction"
 
 # ═══════════════════════════════════════════════════════════════════════
 # END OF FILE

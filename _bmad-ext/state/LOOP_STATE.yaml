@@ -4,30 +4,30 @@
 # ══════════════════════════════════════════════════════════════
 
 schema_version: "3.0.0"
-last_updated: "2026-01-27T10:00:00+07:00"
+last_updated: "2026-01-30T15:00:00+07:00"
 updated_by: "bmad-sprint-manager"
-session_id: "uxui-01-sprint-2026-01-27"
+session_id: "uxui-04-story-01-archive-phase"
 
 current_session:
-  date: "2026-01-27"
-  active_epic: "EPIC-UXUI-01"
-  epic_status: "IN_PROGRESS"
+  date: "2026-01-30"
+  active_epic: "EPIC-UXUI-04"
+  epic_status: "INITIATED"
   stories_complete: 0
-  stories_total: 8
-  phase: "EXECUTION"
-  notes: "EPIC-UXUI-01 Design System Foundation - Starting UXUI-01-01 Color Tokens"
+  stories_total: 10
+  phase: "ARCHITECTURE_CORRECTION"
+  notes: "EPIC-UXUI-04 True Plugin Layout Architecture - Corrects EPIC-UXUI-03 misalignment"
 
 current:
   agent: "bmad-sprint-manager"
-  session_type: "SPRINT_EXECUTION"
-  epic_id: "EPIC-UXUI-01"
-  story_id: "UXUI-01-01"
-  story_status: "NOT_STARTED"
-  workflow: "design-system-foundation"
+  session_type: "ARCHITECTURE_CORRECTION"
+  epic_id: "EPIC-UXUI-04"
+  story_id: "UXUI-04-01"
+  story_status: "COMPLETE"
+  workflow: "architecture-correction"
   step: 1
-  active_team: "Team_B"
-  mode: "EXECUTION"
-  notes: "EPIC-UXUI-01 Design System Foundation initiated - Team B executing"
+  active_team: "Team_A_Only"
+  mode: "COORDINATION"
+  notes: "Story 1 (Archive Phase) COMPLETE by Team A. 7 files archived, 12 source files removed, build passes. Awaiting user approval to proceed to Story 2."
 
 errors:
   count: 1
@@ -270,91 +270,142 @@ consolidated_epics:
       handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
 
   # ─────────────────────────────────────────────────────────────────
-  # EPIC 4: Design System Foundation (Team B - IN_PROGRESS)
+  # EPIC-UXUI-04: True Plugin Layout Architecture (CORRECTIVE - P0)
+  # SINGLE TEAM - SEQUENTIAL EXECUTION - ARCHIVE-FIRST
   # ─────────────────────────────────────────────────────────────────
-  - epic_id: "EPIC-UXUI-01"
-    name: "Design System Foundation"
-    type: "feature"
+  - epic_id: "EPIC-UXUI-04"
+    name: "True Plugin Layout Architecture"
+    type: "corrective"
     status: "IN_PROGRESS"
-    priority: "P1"
-    progress: "0%"
-    started: "2026-01-27"
-    estimated_effort: "18-25 hours"
-    target_completion: "2026-01-29"
-    assigned_team: "Team_B"
-
+    priority: "P0"
+    progress: "10%"
+    started: "2026-01-30"
+    estimated_effort: "42-59 hours"
+    target_completion: "2026-02-13"
+    assigned_team: "Single Team (Sequential)"
+    
+    execution_model: |
+      SINGLE TEAM - NO PARALLEL WORK
+      Archive-first: Clean old code BEFORE creating new
+      Sequential: Complete story N before starting story N+1
+      Governance: Daily checkpoints, full audit trail
+    
+    rationale: |
+      EPIC-UXUI-03 created infrastructure that does NOT match user requirements.
+      Current: Single ActivityBar + FloatingDocker
+      Required: 3 Activity Bars (left, main-top, right) + Docker
+      This epic CORRECTS the architecture to match the specified UX vision.
+      
+      USER REQUIREMENT: "do not make any new piece unless the old ones are archived and cleaned"
+    
+    blocks: "Phase 1A completion"
+    
     stories:
-      - id: "UXUI-01-01"
-        title: "Implement Color Design Tokens"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "2-3h"
+      - id: "UXUI-04-01"
+        title: "ARCHIVE Phase: Inventory & Cleanup"
+        status: "COMPLETE"
+        team: "Single Team"
+        effort: "4-6h"
+        started_at: "2026-01-30T15:00:00+07:00"
+        completed_at: "2026-01-30T16:30:00+07:00"
         depends_on: []
-        story_file: "UXUI-01-01-color-tokens-2026-01-27.md"
-
-      - id: "UXUI-01-02"
-        title: "Implement Typography Tokens"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "1-2h"
-        depends_on: ["UXUI-01-01"]
-
-      - id: "UXUI-01-03"
-        title: "Implement Spacing & Border Tokens"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "1-2h"
-        depends_on: ["UXUI-01-01"]
-
-      - id: "UXUI-01-04"
-        title: "Implement Animation Tokens"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "2-3h"
-        depends_on: ["UXUI-01-01"]
-
-      - id: "UXUI-01-05"
-        title: "Style Button Components"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "2-3h"
-        depends_on: ["UXUI-01-01", "UXUI-01-02", "UXUI-01-03"]
-
-      - id: "UXUI-01-06"
-        title: "Style Input Components"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "2-3h"
-        depends_on: ["UXUI-01-01", "UXUI-01-02", "UXUI-01-03"]
-
-      - id: "UXUI-01-07"
-        title: "Style Dialog/Modal Components"
-        status: "NOT_STARTED"
-        team: "B"
-        effort: "2-3h"
-        depends_on: ["UXUI-01-01", "UXUI-01-02", "UXUI-01-03"]
-
-      - id: "UXUI-01-08"
-        title: "Style Remaining UI Primitives"
-        status: "NOT_STARTED"
-        team: "B"
+        gate: "MUST complete before ANY new code"
+        tracking: "Daily updates required"
+        handoff: "_bmad-output/handoffs/2026-01-30/UXUI-04-01-DEV-REPORT.md"
+        
+      - id: "UXUI-04-02"
+        title: "Global Sidebar Auto-Collapse"
+        status: "PENDING"
+        team: "Single Team"
         effort: "3-4h"
-        depends_on: ["UXUI-01-05", "UXUI-01-06", "UXUI-01-07"]
+        depends_on: ["UXUI-04-01"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-03"
+        title: "Three Activity Bar System"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "6-8h"
+        depends_on: ["UXUI-04-02"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-04"
+        title: "Plugin Docker Component"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "4-6h"
+        depends_on: ["UXUI-04-03"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-05"
+        title: "Plugin Panel System"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "6-8h"
+        depends_on: ["UXUI-04-04"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-06"
+        title: "Drag-Drop System"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "4-6h"
+        depends_on: ["UXUI-04-05"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-07"
+        title: "Responsive Layout Implementation"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "6-8h"
+        depends_on: ["UXUI-04-06"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-08"
+        title: "Plugin Coordination Integration"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "4-6h"
+        depends_on: ["UXUI-04-07"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-09"
+        title: "Persistence & State Management"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "3-4h"
+        depends_on: ["UXUI-04-08"]
+        tracking: "Daily updates required"
+        
+      - id: "UXUI-04-10"
+        title: "FINAL VERIFICATION & Integration"
+        status: "PENDING"
+        team: "Single Team"
+        effort: "4-6h"
+        depends_on: ["UXUI-04-09"]
+        gate: "Final review and approval"
 
     artifacts:
-      epic: "_bmad-output/planning-artifacts/epics.md (EPIC-UXUI-01 section)"
-      ux_spec: "_bmad-output/planning-artifacts/ux-specification/"
-      handoff: "_bmad-output/handoffs/EPIC-UXUI-01-sprint-handoff-2026-01-27.md"
-
-    safe_zones:
-      - "src/styles.css"
-      - "src/styles/*.css"
-      - "src/presentation/components/ui/"
-
-    do_not_touch:
-      - "src/infrastructure/*"
-      - "src/routes/*"
-      - "Team A owned files"
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-UXUI-04-true-plugin-layout-architecture-2026-01-30.md"
+      spec: "_bmad-output/planning-artifacts/specs/UX-ARCHITECTURE-CORRECTION-SPEC-2026-01-30.md"
+      
+    tracking_artifacts:
+      archive_manifest: "_bmad-output/tracking/EPIC-UXUI-04-ARCHIVE-MANIFEST.md"
+      daily_log: "_bmad-output/tracking/EPIC-UXUI-04-DAILY-LOG.md"
+      component_registry: "_bmad-output/tracking/EPIC-UXUI-04-COMPONENT-REGISTRY.md"
+      final_report: "_bmad-output/tracking/EPIC-UXUI-04-FINAL-REPORT.md"
+      
+    grid_specification: "[0.5:0.5:2:4:2.5:0.5]"
+    
+    key_requirements:
+      - "3 Activity Bars (left, main-top, right)"
+      - "Plugin Docker as drag source"
+      - "Single plugin visible per bar"
+      - "Max 3 plugins per bar"
+      - "Drag from docker to bars"
+      - "Responsive layouts (desktop, tablet, mobile)"
+      - "Archive old code BEFORE creating new"
+      - "Full tracking and audit trail"
 
   # ─────────────────────────────────────────────────────────────────
   # EPIC 3: Global UI & 8-Bit Compliance (Foundation - 75% Complete)
