@@ -1,16 +1,18 @@
 /**
- * @fileoverview Note AI Service - Real AI Implementation
+ * @fileoverview Note AI Service - PHASE 1A STUB
  * @module lib/notes/note-ai-service
- * @story NR-01 - Wire AI Service to Agent System
- * @fixed 2025-12-31 - Connected to real agent system (replaces mock)
- * @fixed 2026-01-12 - EPIC-41-01: Use GeminiAdapter instead of raw fetch for Gemini API
- * @refactor 2026-01-12 - EPIC-41-02: Use unified ProviderService for all providers
+ * @phase 1A
+ * @stub true
+ * 
+ * PHASE 1A: AI features are disabled during foundation phase.
+ * Original implementation archived to: _phase2-archive/lib/notes/note-ai-service.ts
+ * 
+ * This stub provides no-op implementations that return errors gracefully,
+ * allowing the Notes workspace to function without AI capabilities.
+ * 
+ * When Phase 2 begins, restore the original implementation.
  */
 
-import { useAgentSelectionStore } from '@/infrastructure/persistence/stores/agents/agent-selection-store';
-import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
-import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import { providerService } from '@/application/services/ProviderService';
 import type { Block } from '@blocknote/core';
 
 /**
@@ -33,6 +35,7 @@ export const NOTE_AI_ERRORS = {
     AGENT_NOT_FOUND: 'AGENT_NOT_FOUND',
     NO_API_KEY: 'NO_API_KEY',
     API_ERROR: 'API_ERROR',
+    PHASE_1A_DISABLED: 'PHASE_1A_DISABLED',
 } as const;
 
 /**
@@ -49,329 +52,36 @@ export class NoteAIError extends Error {
 }
 
 /**
- * Generate content for a note based on a prompt
- * Uses the active agent's configuration and provider
+ * PHASE 1A STUB: Generate content for a note based on a prompt
  * 
- * @param prompt User's instruction
- * @param options Configuration options
- * @returns Generated text content
- * @throws {NoteAIError} If no agent configured, no API key, or API fails
+ * AI features are disabled during Phase 1A foundation development.
+ * Returns an error indicating AI is not available.
  */
 export async function generateNoteContent(
-    prompt: string,
-    options?: NoteAIOptions
+    _prompt: string,
+    _options?: NoteAIOptions
 ): Promise<string> {
-    // 0. Ensure credential vault is initialized
-    try {
-        await credentialVault.initialize();
-    } catch (err) {
-        console.warn('[NoteAIService] Vault init warning:', err);
-    }
-
-    // 1. Get active agent specifically for NOTES workspace
-    const { getAgentForWorkspace } = useAgentSelectionStore.getState();
-    let activeAgent = getAgentForWorkspace('notes');
-
-    // 1.1 Fallback: If no notes-specific agent, try global active agent
-    if (!activeAgent) {
-        const { activeAgentId } = useAgentSelectionStore.getState();
-        if (activeAgentId) {
-            activeAgent = useAppStore.getState().getAgent(activeAgentId) || null;
-        }
-    }
-
-    // Allow override, otherwise use the notes workspace agent
-    const agent = options?.agentId
-        ? useAppStore.getState().getAgent(options.agentId)
-        : activeAgent;
-
-    if (!agent) {
-        // Try to get any available agent as last resort
-        const allAgents = useAppStore.getState().agents;
-        if (allAgents.length > 0) {
-            console.warn('[NoteAIService] No notes agent, using first available agent');
-            const fallbackAgent = allAgents[0];
-            return generateWithAgent(fallbackAgent, prompt, options);
-        }
-        throw new NoteAIError(
-            'NO_AGENT',
-            'No AI agent configured. Please create an agent in Settings > Agents.'
-        );
-    }
-
-    return generateWithAgent(agent, prompt, options);
+    console.log('[NoteAIService] Phase 1A: AI content generation disabled');
+    throw new NoteAIError(
+        'PHASE_1A_DISABLED',
+        'AI features are disabled during Phase 1A foundation development. They will be restored in Phase 2.'
+    );
 }
 
 /**
- * Internal function to generate content with a specific agent
- */
-async function generateWithAgent(
-    agent: any,
-    prompt: string,
-    options?: NoteAIOptions
-): Promise<string> {
-    // 2. Get API key from credential vault
-    let apiKey = await credentialVault.getCredentials(agent.providerId);
-
-    // 2.1 Fallback: Check if API key is still in old location (hasApiKey flag with no vault entry)
-    if (!apiKey && agent.hasApiKey) {
-        console.warn('[NoteAIService] API key flagged but not in vault. Migration may be needed.');
-        // Try to get from legacy location if available
-        const providers = useAppStore.getState().providers;
-        const provider = providers?.find((p: any) => p.id === agent.providerId);
-        if (provider && 'apiKey' in provider && provider.apiKey) {
-            // Cast apiKey to string for legacy migration path
-            const legacyKey = String(provider.apiKey);
-            apiKey = legacyKey;
-            console.log('[NoteAIService] Using legacy API key from provider store');
-            // Auto-migrate to vault
-            if (apiKey) {
-                try {
-                    await credentialVault.storeCredentials(agent.providerId, apiKey);
-                    console.log('[NoteAIService] Auto-migrated API key to vault');
-                } catch (e) {
-                    console.warn('[NoteAIService] Failed to auto-migrate:', e);
-                }
-            }
-        }
-    }
-
-    if (!apiKey) {
-        throw new NoteAIError(
-            'NO_API_KEY',
-            `No API key configured for provider "${agent.providerId}". Please add your API key in Settings > Providers.`
-        );
-    }
-
-    // 3. Build context from blocks if provided
-    let fullPrompt = prompt;
-    if (options?.contextBlocks?.length) {
-        const contextText = options.contextBlocks
-            .map(block => extractBlockText(block))
-            .filter(Boolean)
-            .join('\n');
-
-        if (contextText) {
-            fullPrompt = `Context from current note:\n\`\`\`\n${contextText}\n\`\`\`\n\n${prompt}`;
-        }
-    }
-
-    // 4. Use system prompt (override or agent's default)
-    const systemPrompt = options?.systemPromptOverride || agent.systemPrompt ||
-        'You are a helpful AI assistant for note-taking. Generate clear, concise content. Respond in the same language as the user input.';
-
-    // 5. Call the provider API
-    console.log(`[NoteAIService] Calling ${agent.providerId}/${agent.modelId || agent.model}`);
-
-    const response = await callProviderAPI({
-        providerId: agent.providerId,
-        modelId: agent.modelId || agent.model,
-        apiKey,
-        systemPrompt,
-        userPrompt: fullPrompt,
-        temperature: agent.temperature ?? 0.7,
-        maxTokens: agent.maxTokens ?? 2048,
-    });
-
-    return response;
-}
-
-/**
- * Extract text content from a BlockNote block
- */
-function extractBlockText(block: Block): string {
-    if (!block.content) return '';
-
-    if (Array.isArray(block.content)) {
-        return block.content
-            .map(item => {
-                if (typeof item === 'object' && item !== null && 'text' in item) {
-                    return (item as { text: string }).text;
-                }
-                return '';
-            })
-            .join('');
-    }
-
-    return '';
-}
-
-/**
- * Call the appropriate provider API using unified ProviderService
- * @story EPIC-41-02 - Unified provider service layer
- */
-async function callProviderAPI(params: {
-    providerId: string;
-    modelId: string;
-    apiKey: string;
-    systemPrompt: string;
-    userPrompt: string;
-    temperature: number;
-    maxTokens: number;
-}): Promise<string> {
-    const { providerId, modelId, systemPrompt, userPrompt, temperature, maxTokens } = params;
-
-    try {
-        // Use unified ProviderService for all providers
-        // This handles provider ID normalization (google → gemini) and adapter routing
-        const response = await providerService.generateContent(
-            providerId,
-            [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-            ],
-            {
-                model: modelId,
-                temperature,
-                maxTokens,
-            }
-        );
-
-        return response;
-    } catch (error) {
-        console.error('[NoteAIService] Provider error:', error);
-        throw new NoteAIError(
-            'API_ERROR',
-            `Failed to call AI API: ${error instanceof Error ? error.message : 'Unknown error'}`
-        );
-    }
-}
-
-/**
- * Stream content generation for a note
- * Returns an async generator that yields text chunks
+ * PHASE 1A STUB: Stream content generation for a note
  * 
- * @story EPIC-42-10 - Streaming output to blocks
- * 
- * @param prompt User's instruction
- * @param options Configuration options
- * @yields Text chunks as they arrive
- * 
- * @example
- * ```typescript
- * let fullText = '';
- * for await (const chunk of generateNoteContentStream('Write a poem')) {
- *   if (chunk.error) {
- *     console.error(chunk.error);
- *     break;
- *   }
- *   fullText += chunk.text;
- *   updateUI(fullText); // Update in real-time
- *   if (chunk.done) break;
- * }
- * ```
+ * AI streaming features are disabled during Phase 1A foundation development.
+ * Yields an error indicating AI is not available.
  */
 export async function* generateNoteContentStream(
-    prompt: string,
-    options?: NoteAIOptions
+    _prompt: string,
+    _options?: NoteAIOptions
 ): AsyncGenerator<{ text: string; done: boolean; error?: string }> {
-    // 0. Ensure credential vault is initialized
-    try {
-        await credentialVault.initialize();
-    } catch (err) {
-        console.warn('[NoteAIService] Vault init warning:', err);
-    }
-
-    // 1. Get active agent specifically for NOTES workspace
-    const { getAgentForWorkspace } = useAgentSelectionStore.getState();
-    let activeAgent = getAgentForWorkspace('notes');
-
-    // 1.1 Fallback: If no notes-specific agent, try global active agent
-    if (!activeAgent) {
-        const { activeAgentId } = useAgentSelectionStore.getState();
-        if (activeAgentId) {
-            activeAgent = useAppStore.getState().getAgent(activeAgentId) || null;
-        }
-    }
-
-    // Allow override, otherwise use the notes workspace agent
-    const agent = options?.agentId
-        ? useAppStore.getState().getAgent(options.agentId)
-        : activeAgent;
-
-    if (!agent) {
-        // Try to get any available agent as last resort
-        const allAgents = useAppStore.getState().agents;
-        if (allAgents.length > 0) {
-            console.warn('[NoteAIService] No notes agent, using first available agent');
-            yield* streamWithAgent(allAgents[0], prompt, options);
-            return;
-        }
-        yield { text: '', done: true, error: 'No AI agent configured' };
-        return;
-    }
-
-    yield* streamWithAgent(agent, prompt, options);
+    console.log('[NoteAIService] Phase 1A: AI streaming disabled');
+    yield {
+        text: '',
+        done: true,
+        error: 'AI features are disabled during Phase 1A foundation development. They will be restored in Phase 2.'
+    };
 }
-
-/**
- * Internal function to stream content with a specific agent
- * @story EPIC-42-10 - Streaming output to blocks
- */
-async function* streamWithAgent(
-    agent: any,
-    prompt: string,
-    options?: NoteAIOptions
-): AsyncGenerator<{ text: string; done: boolean; error?: string }> {
-    // 2. Get API key from credential vault
-    let apiKey = await credentialVault.getCredentials(agent.providerId);
-
-    // 2.1 Fallback for legacy API key location
-    if (!apiKey && agent.hasApiKey) {
-        const providers = useAppStore.getState().providers;
-        const provider = providers?.find((p: any) => p.id === agent.providerId);
-        if (provider && 'apiKey' in provider && provider.apiKey) {
-            apiKey = String(provider.apiKey);
-        }
-    }
-
-    if (!apiKey) {
-        yield { text: '', done: true, error: `No API key configured for provider "${agent.providerId}"` };
-        return;
-    }
-
-    // 3. Build context from blocks if provided
-    let fullPrompt = prompt;
-    if (options?.contextBlocks?.length) {
-        const contextText = options.contextBlocks
-            .map(block => extractBlockText(block))
-            .filter(Boolean)
-            .join('\n');
-
-        if (contextText) {
-            fullPrompt = `Context from current note:\n\`\`\`\n${contextText}\n\`\`\`\n\n${prompt}`;
-        }
-    }
-
-    // 4. Use system prompt (override or agent's default)
-    const systemPrompt = options?.systemPromptOverride || agent.systemPrompt ||
-        'You are a helpful AI assistant for note-taking. Generate clear, concise content. Respond in the same language as the user input.';
-
-    // 5. Stream from the provider
-    console.log(`[NoteAIService] Streaming from ${agent.providerId}/${agent.modelId || agent.model}`);
-
-    try {
-        for await (const chunk of providerService.generateContentStream(
-            agent.providerId,
-            [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: fullPrompt }
-            ],
-            {
-                model: agent.modelId || agent.model,
-                temperature: agent.temperature ?? 0.7,
-                maxTokens: agent.maxTokens ?? 2048,
-            }
-        )) {
-            yield chunk;
-        }
-    } catch (error) {
-        console.error('[NoteAIService] Streaming error:', error);
-        yield { 
-            text: '', 
-            done: true, 
-            error: error instanceof Error ? error.message : 'Unknown streaming error' 
-        };
-    }
-}
-

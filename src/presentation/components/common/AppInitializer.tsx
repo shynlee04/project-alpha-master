@@ -1,25 +1,28 @@
 /**
- * AppInitializer - Global App Initialization
+ * AppInitializer - Global App Initialization (Phase 1A Compatible)
  *
  * Initializes critical services on app boot:
- * - CredentialVault (API key encryption)
- * - ProviderStore (models cache - single source of truth)
- * - Workspace bindings migration (P0 fix - enable all workspaces)
- * - Dexie stores hydration
- * - Service Worker (offline support)
+ * - Phase 1A: Core plugins (FileTree, Monaco, Notes, Terminal, Preview)
+ * - Phase 1A: Project hydration from Dexie
+ * - Phase 1A: Service Worker (offline support)
+ * - Phase 2: CredentialVault, ProviderStore, AI features (DISABLED in Phase 1A)
+ *
+ * Phase 2 features are conditionally loaded to prevent module resolution errors
+ * during Phase 1A development. When Phase 2 begins, remove the PHASE_1A_MODE
+ * flag to re-enable AI features.
  *
  * CC-2025-12-29: Fix credential vault not being initialized on page load
  * CC-2025-12-29: Auto-fetch models for default provider on boot
  * CC-2026-01-06: Add workspace bindings migration (Phase 1A)
  * CC-2026-01-06: Add service worker registration (S-026)
+ * CC-2026-01-29: Phase 1A compatibility - disable Phase 2 imports
  *
  * @epic Sprint 30 - Agent Configuration Corrections
- * @governance EPIC-CP-1.4
+ * @governance EPIC-CP-1.4, PHASE-1A-FOUNDATION
+ * @phase 1A
  */
 
 import { useEffect, type ReactNode } from 'react';
-import { credentialVault } from '@/lib/agent/providers/credential-vault';
-import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
 import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
 import { migrateWorkspaceBindings } from '@/infrastructure/persistence/stores/project/migrate-bindings';
 import { registerServiceWorker } from '@/lib/offline/service-worker-registration';
@@ -36,11 +39,20 @@ interface AppInitializerProps {
 }
 
 /**
+ * PHASE 1A MODE FLAG
+ * Set to true to disable Phase 2 features (AI, credentials, providers)
+ * Set to false when Phase 2 development begins
+ */
+const PHASE_1A_MODE = true;
+
+/**
  * AppInitializer wraps the app and ensures critical services are initialized
  * before any components that depend on them mount.
+ *
+ * Phase 1A: Focuses on core plugin stability and layout fixes
+ * Phase 2: Will re-enable AI features, credential vault, and provider management
  */
 export function AppInitializer({ children }: AppInitializerProps) {
-    const fetchModels = useAppStore(s => s.fetchModels);
     const hydrateProjects = useProjectStore(s => s.hydrateProjects);
 
     useEffect(() => {
@@ -48,17 +60,25 @@ export function AppInitializer({ children }: AppInitializerProps) {
         const initServices = async () => {
             try {
                 console.log('[AppInitializer] Starting initialization...');
+                console.log(`[AppInitializer] Phase 1A Mode: ${PHASE_1A_MODE ? 'ENABLED' : 'DISABLED'}`);
 
-                // 1. Initialize credential vault
-                await credentialVault.initialize();
-                console.log('[AppInitializer] Credential vault ready');
+                // PHASE 1A: Skip credential vault and AI provider initialization
+                // These features are archived to _phase2-archive/ during Phase 1A
+                if (!PHASE_1A_MODE) {
+                    // Phase 2: Initialize credential vault
+                    // const { credentialVault } = await import('@/lib/agent/providers/credential-vault');
+                    // await credentialVault.initialize();
+                    // console.log('[AppInitializer] Credential vault ready');
+                } else {
+                    console.log('[AppInitializer] Phase 1A: Skipping credential vault initialization');
+                }
 
-                // 2. Hydrate projects from Dexie (CRITICAL: Must happen before workspace migration)
+                // 1. Hydrate projects from Dexie (CRITICAL: Must happen before workspace migration)
                 // This loads all persisted projects into the Zustand store cache
                 await hydrateProjects();
                 console.log('[AppInitializer] Projects hydrated from Dexie');
 
-                // 3. Run workspace bindings migration (one-time, idempotent)
+                // 2. Run workspace bindings migration (one-time, idempotent)
                 // Fixes P0 blocker where projects had notes: false by default
                 const migrationResult = await migrateWorkspaceBindings();
                 if (migrationResult.executed) {
@@ -68,14 +88,13 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     });
                 }
 
-                // 4. Register service worker for offline support
+                // 3. Register service worker for offline support
                 const swRegistration = await registerServiceWorker({
                     onRegistered: () => {
                         console.log('[AppInitializer] Service worker registered');
                     },
                     onUpdated: () => {
                         console.log('[AppInitializer] Service worker update available');
-                        // Could show notification to user here
                     },
                     onUpdateFound: () => {
                         console.log('[AppInitializer] Service worker update found');
@@ -89,56 +108,47 @@ export function AppInitializer({ children }: AppInitializerProps) {
                     console.log('[AppInitializer] Offline mode enabled');
                 }
 
-                 // 6. Register feature plugins (ARCH-02-04, ARCH-02-05, ARCH-02-06, ARCH-02-07, ARCH-02-08)
-                 console.log('[AppInitializer] Registering feature plugins...');
-                 registerPlugin(fileTreePlugin);
-                 console.log('[AppInitializer] FileTree plugin registered');
-                 registerPlugin(monacoPlugin);
-                 console.log('[AppInitializer] Monaco plugin registered');
-                 registerPlugin(notesPlugin);
-                 console.log('[AppInitializer] Notes plugin registered');
-                 registerPlugin(terminalPlugin);
-                 console.log('[AppInitializer] Terminal plugin registered');
-                 registerPlugin(chatPlugin);
-                 console.log('[AppInitializer] Chat plugin registered');
-                 registerPlugin(previewPlugin);
-                 console.log('[AppInitializer] Preview plugin registered');
+                // 4. Register feature plugins (Phase 1A Core)
+                console.log('[AppInitializer] Registering feature plugins...');
+                registerPlugin(fileTreePlugin);
+                console.log('[AppInitializer] FileTree plugin registered');
+                registerPlugin(monacoPlugin);
+                console.log('[AppInitializer] Monaco plugin registered');
+                registerPlugin(notesPlugin);
+                console.log('[AppInitializer] Notes plugin registered');
+                registerPlugin(terminalPlugin);
+                console.log('[AppInitializer] Terminal plugin registered');
+                registerPlugin(chatPlugin);
+                console.log('[AppInitializer] Chat plugin registered');
+                registerPlugin(previewPlugin);
+                console.log('[AppInitializer] Preview plugin registered');
 
-                // 5. Auto-fetch models for ALL providers with credentials
-                // This ensures "single source of truth" is populated regardless of active selection
-                const { providers } = useAppStore.getState();
+                // PHASE 1A: Skip AI provider model fetching
+                // This requires credential vault and provider stores (Phase 2)
+                if (!PHASE_1A_MODE) {
+                    // Phase 2: Auto-fetch models for ALL providers with credentials
+                    // const { useAppStore } = await import('@/infrastructure/persistence/stores/use-app-store');
+                    // const { credentialVault } = await import('@/lib/agent/providers/credential-vault');
+                    // const { providers } = useAppStore.getState();
+                    // await Promise.all(providers.map(async (provider) => {
+                    //     const apiKey = await credentialVault.getCredentials(provider.id);
+                    //     if (apiKey) {
+                    //         await useAppStore.getState().fetchModels(provider.id);
+                    //     }
+                    // }));
+                } else {
+                    console.log('[AppInitializer] Phase 1A: Skipping AI provider model fetching');
+                }
 
-                console.log('[AppInitializer] Checking credentials for providers:', providers.map(p => p.id));
-
-                // Execute in parallel
-                await Promise.all(providers.map(async (provider) => {
-                    try {
-                        const apiKey = await credentialVault.getCredentials(provider.id);
-                        if (apiKey) {
-                            // Provider has API key - fetch live models
-                            console.log(`[AppInitializer] Pre-fetching models for ${provider.id}...`);
-                            await fetchModels(provider.id);
-                            console.log(`[AppInitializer] Models loaded for ${provider.id}`);
-                        } else {
-                            // Provider has no API key - load default models as fallback
-                            // This ensures users see models immediately (better UX)
-                            console.log(`[AppInitializer] Loading default models for ${provider.id}...`);
-                            await fetchModels(provider.id);
-                            console.log(`[AppInitializer] Default models loaded for ${provider.id}`);
-                        }
-                    } catch (err) {
-                        console.warn(`[AppInitializer] Failed to load ${provider.id}:`, err);
-                        // Continue with other providers even if one fails
-                    }
-                }));
+                console.log('[AppInitializer] ✅ Initialization complete');
 
             } catch (error) {
-                console.error('[AppInitializer] Initialization failed:', error);
+                console.error('[AppInitializer] ❌ Initialization failed:', error);
             }
         };
 
         initServices();
-    }, [fetchModels, hydrateProjects]);
+    }, [hydrateProjects]);
 
     return <>{children}</>;
 }

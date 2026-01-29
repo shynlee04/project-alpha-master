@@ -28,10 +28,16 @@ import { type WorkflowPreset, getPresetConfig } from './workflow-presets';
  *
  * @remarks
  * - Reads project ID from project store's storage
- * - Returns undefined if no active project
+ * - Returns undefined if no active project or not in browser
  * - Used to prefix plugin-layout storage key
+ * - SSR-safe: checks for localStorage availability
  */
 function getCurrentProjectId(): string | undefined {
+  // SSR-safe: check if we're in a browser environment
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return undefined;
+  }
+
   try {
     const projectStoreKey = 'project-storage';
     const projectData = localStorage.getItem(projectStoreKey);
@@ -56,6 +62,11 @@ function getCurrentProjectId(): string | undefined {
  */
 const projectSpecificStorage = {
   getItem: (name: string): StorageValue<PluginLayoutState> | null => {
+    // SSR-safe: check if we're in a browser environment
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return null;
+    }
+
     const projectId = getCurrentProjectId();
     const key = projectId ? `plugin-layout-${projectId}` : name;
     const item = localStorage.getItem(key);
@@ -67,6 +78,11 @@ const projectSpecificStorage = {
     }
   },
   setItem: (name: string, value: StorageValue<PluginLayoutState>): void => {
+    // SSR-safe: check if we're in a browser environment
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return;
+    }
+
     const projectId = getCurrentProjectId();
     const key = projectId ? `plugin-layout-${projectId}` : name;
     localStorage.setItem(key, JSON.stringify(value));

@@ -221,45 +221,47 @@ export const useAppStore = create<AppState>()(
           activeProviderId: state.activeProviderId,
         });
 
+        // PHASE 1A: API key migration disabled - Phase 2 feature
         // Phase 3: Migrate API keys to credential vault (ADR-001)
         // This runs after hydration to ensure state is available
-        try {
-          const { migrateApiKeysToVault, isMigrationNeeded } = await import(
-            '@/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault'
-          );
-
-          if (isMigrationNeeded(state.providers)) {
-            console.log('[AppStore] API key migration needed, starting...');
-            const result = await migrateApiKeysToVault(
-              state.providers,
-              state.activeProviderId,
-              (id, config) => {
-                // Update provider state
-                state.providers = state.providers.map(p =>
-                  p.id === id ? { ...p, ...config } : p
-                );
-              }
-            );
-
-            if (result.success) {
-              console.log('[AppStore] ✅ API key migration complete:', {
-                migratedCount: result.migratedCount,
-                duration: result.backupResult.timestamp,
-              });
-            } else {
-              console.error('[AppStore] ❌ API key migration failed:', result.error);
-              // Migration failed but rollback was attempted, so app should still work
-              if (result.rollbackAttempted) {
-                console.log('[AppStore] Rollback completed, app safe to use');
-              }
-            }
-          } else {
-            console.log('[AppStore] No API key migration needed');
-          }
-        } catch (error) {
-          console.error('[AppStore] Migration failed with exception:', error);
-          // App should still be functional even if migration fails
-        }
+        // try {
+        //   const { migrateApiKeysToVault, isMigrationNeeded } = await import(
+        //     '@/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault'
+        //   );
+        //
+        //   if (isMigrationNeeded(state.providers)) {
+        //     console.log('[AppStore] API key migration needed, starting...');
+        //     const result = await migrateApiKeysToVault(
+        //       state.providers,
+        //       state.activeProviderId,
+        //       (id, config) => {
+        //         // Update provider state
+        //         state.providers = state.providers.map(p =>
+        //           p.id === id ? { ...p, ...config } : p
+        //         );
+        //       }
+        //     );
+        //
+        //     if (result.success) {
+        //       console.log('[AppStore] ✅ API key migration complete:', {
+        //         migratedCount: result.migratedCount,
+        //         duration: result.backupResult.timestamp,
+        //       });
+        //     } else {
+        //       console.error('[AppStore] ❌ API key migration failed:', result.error);
+        //       // Migration failed but rollback was attempted, so app should still work
+        //       if (result.rollbackAttempted) {
+        //         console.log('[AppStore] Rollback completed, app safe to use');
+        //       }
+        //     }
+        //   } else {
+        //     console.log('[AppStore] No API key migration needed');
+        //   }
+        // } catch (error) {
+        //   console.error('[AppStore] Migration failed with exception:', error);
+        //   // App should still be functional even if migration fails
+        // }
+        console.log('[AppStore] Phase 1A: Skipping API key migration (Phase 2 feature)');
       },
     }
   )

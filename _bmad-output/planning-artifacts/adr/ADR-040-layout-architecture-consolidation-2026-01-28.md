@@ -1,7 +1,21 @@
 # ADR-040: Layout Architecture Consolidation
 
 ## Status
-**PROPOSED** | 2026-01-28 16:27:37 +07
+**APPROVED** | 2026-01-28 16:27:37 +07 | **IMPLEMENTED** 2026-01-29 05:30:43 +0700
+
+### Implementation Summary (2026-01-29)
+
+All 10 stories from EPIC-LAYOUT-CONSOLIDATION verified complete:
+- LC-01: Legacy layout components archived (only JSDoc comments remain)
+- LC-02: Layout stores consolidated (layout-store.ts is now a facade to PluginLayoutStore)
+- LC-03: Z-index governance implemented (design-tokens.css:595-619)
+- LC-04: Overflow governance implemented (styles.css:33-50)
+- LC-05: SystemRail removed (no references in code)
+- LC-06: MainSidebar renders in single location via ProjectAwareLayout
+- LC-07: PresetSelector route-conditional (returns null outside project routes)
+- LC-08: workspace-layout.css cleaned (272 lines with grid collapse utilities)
+- LC-09: Routes migrated to WorkspaceLayout (via ProjectAwareLayout)
+- LC-10: Governance documentation updated (AGENTS.md section, this ADR)
 
 ## Context
 

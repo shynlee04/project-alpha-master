@@ -54,9 +54,11 @@ This document serves as the **single source of truth** for all Phase 1A governan
 
 | File | Lines | Progress | Active Imports | Blocking Items | Target Epic |
 |------|-------|----------|----------------|----------------|-------------|
-| `layout-store.ts` | 109 | 90% | 32 | None - ready for migration | Epic 4 |
+| `layout-store.ts` | 109 | ✅ **COMPLETE** | 4 (via facade) | None - facade working correctly | EPIC-LAYOUT-CONSOLIDATION ✅ |
 | `store-facades.ts` | 73 | Pending | Unknown | Waiting Team A | Epic 4 |
 | `filesystem/index.ts` | 67 | 60% | Unknown | Deprecated re-exports | Epic 1 |
+
+**Note (2026-01-29)**: `layout-store.ts` is now a proper facade delegating to `PluginLayoutStore` and `NavigationStore`. Facade pattern is intentional for backward compatibility. 4 imports remain but work correctly via facade.
 
 ### Legacy Directories (Active Migration)
 
@@ -206,6 +208,7 @@ This document serves as the **single source of truth** for all Phase 1A governan
 
 | Date | Version | Change | Author | Approval |
 |------|---------|--------|--------|----------|
+| 2026-01-29 | 1.1.0 | EPIC-LAYOUT-CONSOLIDATION verified complete (10/10 stories) | architect-ext | Constitutional |
 | 2026-01-29 | 1.0.0 | Initial creation | ext-master | Constitutional |
 
 ---

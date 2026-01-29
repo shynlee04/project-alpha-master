@@ -24,9 +24,15 @@
  */
 
 import type { AppState } from './types';
-import { useMigrationState } from './providers/use-migration-state';
-import type { MigrationState } from './providers/use-migration-state';
-import { INITIAL_PROVIDERS } from './providers/provider-crud-slice';
+// PHASE 1A: Migration state tracking disabled - Phase 2 feature
+// import { useMigrationState } from './providers/use-migration-state';
+// import type { MigrationState } from './providers/use-migration-state';
+// PHASE 1A: Provider CRUD slice disabled - Phase 2 feature
+// import { INITIAL_PROVIDERS } from './providers/provider-crud-slice';
+
+// PHASE 1A: INITIAL_PROVIDERS disabled - Phase 2 feature
+// Provider system is archived to _phase2-archive/ during Phase 1A
+// const INITIAL_PROVIDERS: ProviderConfig[] = [];
 
 /**
  * Current schema version
@@ -89,25 +95,26 @@ const MIGRATIONS: Migration[] = [
     estimatedDuration: 10,
   },
 
+  // PHASE 1A: Version 2 migration disabled - requires Phase 2 provider system
   // Version 2: Add missing built-in providers (Groq, Mistral, Chutes)
-  {
-    version: 2,
-    description: 'Add Groq, Mistral AI, and Chutes.ai providers',
-    migrate: (state) => {
-      const existingIds = new Set(state.providers.map((p: { id: string }) => p.id));
-
-      // Add any missing built-in providers
-      const missingProviders = INITIAL_PROVIDERS.filter((p: { id: string }) => !existingIds.has(p.id));
-
-      if (missingProviders.length > 0) {
-        console.log('[SchemaMigration] v2: Adding missing providers:', missingProviders.map((p: { id: string }) => p.id));
-        state.providers = [...state.providers, ...missingProviders];
-      } else {
-        console.log('[SchemaMigration] v2: All built-in providers already present');
-      }
-    },
-    estimatedDuration: 50,
-  },
+  // {
+  //   version: 2,
+  //   description: 'Add Groq, Mistral AI, and Chutes.ai providers',
+  //   migrate: (state) => {
+  //     const existingIds = new Set(state.providers.map((p: { id: string }) => p.id));
+  //
+  //     // Add any missing built-in providers
+  //     const missingProviders = INITIAL_PROVIDERS.filter((p: { id: string }) => !existingIds.has(p.id));
+  //
+  //     if (missingProviders.length > 0) {
+  //       console.log('[SchemaMigration] v2: Adding missing providers:', missingProviders.map((p: { id: string }) => p.id));
+  //       state.providers = [...state.providers, ...missingProviders];
+  //     } else {
+  //       console.log('[SchemaMigration] v2: All built-in providers already present');
+  //     }
+  //   },
+  //   estimatedDuration: 50,
+  // },
 
   // Future migrations will be added here:
   // {
@@ -216,15 +223,16 @@ export async function runMigrations(state: AppState): Promise<MigrationResult> {
     console.log(`  - v${m.version}: ${m.description}`);
   });
 
+  // PHASE 1A: Migration state tracking disabled - Phase 2 feature
   // Track migration state for UI feedback (optional, may not exist in tests)
-  const migrationState = useMigrationState?.getState?.() as MigrationState & {
-    startMigration?: (type: string, estimatedDuration: number) => void;
-    updateMigrationProgress?: (type: string, current: number, total: number) => void;
-    completeMigration?: (type: string, success: boolean, error?: string) => void;
-  };
-  if (migrationState?.startMigration) {
-    migrationState.startMigration('schema', estimateMigrationDuration(fromVersion));
-  }
+  // const migrationState = useMigrationState?.getState?.() as MigrationState & {
+  //   startMigration?: (type: string, estimatedDuration: number) => void;
+  //   updateMigrationProgress?: (type: string, current: number, total: number) => void;
+  //   completeMigration?: (type: string, success: boolean, error?: string) => void;
+  // };
+  // if (migrationState?.startMigration) {
+  //   migrationState.startMigration('schema', estimateMigrationDuration(fromVersion));
+  // }
 
   let migrationsRun = 0;
 
@@ -241,14 +249,15 @@ export async function runMigrations(state: AppState): Promise<MigrationResult> {
       const migrationDuration = performance.now() - migrationStart;
       console.log(`[SchemaMigration] ✅ v${migration.version} complete (${migrationDuration.toFixed(2)}ms)`);
 
+      // PHASE 1A: Migration progress tracking disabled
       // Update progress (optional, may not exist in tests)
-      if (migrationState?.updateMigrationProgress) {
-        migrationState.updateMigrationProgress(
-          'schema',
-          migrationsRun + 1,
-          pendingMigrations.length
-        );
-      }
+      // if (migrationState?.updateMigrationProgress) {
+      //   migrationState.updateMigrationProgress(
+      //     'schema',
+      //     migrationsRun + 1,
+      //     pendingMigrations.length
+      //   );
+      // }
 
       migrationsRun++;
     }
@@ -259,9 +268,10 @@ export async function runMigrations(state: AppState): Promise<MigrationResult> {
     const totalDuration = performance.now() - startTime;
     console.log(`[SchemaMigration] ✅ All migrations complete: v${fromVersion} → v${toVersion} (${totalDuration.toFixed(2)}ms)`);
 
-    if (migrationState?.completeMigration) {
-      migrationState.completeMigration('schema', true);
-    }
+    // PHASE 1A: Migration completion tracking disabled
+    // if (migrationState?.completeMigration) {
+    //   migrationState.completeMigration('schema', true);
+    // }
 
     return {
       success: true,
@@ -277,9 +287,10 @@ export async function runMigrations(state: AppState): Promise<MigrationResult> {
     console.error('[SchemaMigration] ❌ Migration failed:', errorMessage);
     console.error(`[SchemaMigration] Failed at migration ${migrationsRun + 1}/${pendingMigrations.length}`);
 
-    if (migrationState?.completeMigration) {
-      migrationState.completeMigration('schema', false, errorMessage);
-    }
+    // PHASE 1A: Migration completion tracking disabled
+    // if (migrationState?.completeMigration) {
+    //   migrationState.completeMigration('schema', false, errorMessage);
+    // }
 
     return {
       success: false,

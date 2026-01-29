@@ -59,6 +59,81 @@ Status: ARCHIVED
 Original: src/routes/agents.tsx
 Archived: _phase2-archive/routes/agents.tsx
 
+### 10. src/routes/api/provider-test.ts
+Phase: 2
+Status: ARCHIVED
+Original: src/routes/api/provider-test.ts
+Archived: _phase2-archive/routes/api/provider-test.ts
+Stub: src/routes/api/provider-test.ts (returns 503 Service Unavailable)
+
+### 11. src/presentation/components/ide/AgentChatPanel.tsx
+Phase: 2
+Status: ARCHIVED
+Original: src/presentation/components/ide/AgentChatPanel.tsx
+Archived: _phase2-archive/presentation/components/ide/AgentChatPanel.tsx
+Stub: src/presentation/components/ide/AgentChatPanel.tsx (returns null)
+
+### 12. src/presentation/components/ide/AgentChatPanel/*.tsx
+Phase: 2
+Status: ARCHIVED
+Files:
+- AgentChatToolFacades.tsx
+- AgentChatAPIKeyManager.tsx
+- AgentChatApprovals.tsx
+- useAgentChatApprovals.ts
+Original: src/presentation/components/ide/AgentChatPanel/
+Archived: _phase2-archive/presentation/components/ide/AgentChatPanel/
+Stubs: Created with Phase 2 disabled messages
+
+### 13. src/presentation/components/ide/EnhancedChatInterface.tsx
+Phase: 2
+Status: ARCHIVED
+Original: src/presentation/components/ide/EnhancedChatInterface.tsx
+Archived: _phase2-archive/presentation/components/ide/EnhancedChatInterface.tsx
+Stub: src/presentation/components/ide/EnhancedChatInterface.tsx (returns null)
+
+### 14. src/presentation/components/ide/AgentsPanel.tsx
+Phase: 2
+Status: ARCHIVED
+Original: src/presentation/components/ide/AgentsPanel.tsx
+Archived: _phase2-archive/presentation/components/ide/AgentsPanel.tsx
+Stub: src/presentation/components/ide/AgentsPanel.tsx (returns null)
+
+### 15. src/presentation/components/ide/hooks/useAgentChat*.ts
+Phase: 2
+Status: ARCHIVED
+Files:
+- useAgentChatApproval.ts
+- useAgentChatMessages.ts
+Original: src/presentation/components/ide/hooks/
+Archived: _phase2-archive/presentation/components/ide/hooks/
+Stubs: Created with Phase 2 disabled messages
+
+### 16. src/infrastructure/tools/centralized-tool-registry.ts
+Phase: 2
+Status: ARCHIVED
+Original: src/infrastructure/tools/centralized-tool-registry.ts
+Archived: _phase2-archive/infrastructure/tools/centralized-tool-registry.ts
+Stub: src/infrastructure/tools/centralized-tool-registry.ts (returns empty registry)
+
+### 17. src/infrastructure/tools/tool-catalog.ts
+Phase: 2
+Status: ARCHIVED
+Original: src/infrastructure/tools/tool-catalog.ts
+Archived: _phase2-archive/infrastructure/tools/tool-catalog.ts
+Stub: src/infrastructure/tools/tool-catalog.ts (returns empty catalog)
+
+## STUB FILES CREATED
+
+The following stub files were created to maintain import compatibility:
+
+1. `src/lib/agent/providers/types.ts` - Provider configuration types and constants
+2. `src/lib/agent/hooks/use-multi-agent-chat.ts` - Multi-agent chat hook
+3. `src/lib/agent/facades/file-lock.ts` - File lock manager
+4. `src/lib/agent/utils/token-estimator.ts` - Token estimation utilities
+5. `src/lib/workflow/builder/types.ts` - Workflow builder types
+6. `src/domain/tools/tool-permissions.ts` - Tool permission types
+
 ## RESTORATION COMMAND
 
 ```bash

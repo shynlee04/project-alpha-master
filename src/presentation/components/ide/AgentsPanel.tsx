@@ -1,202 +1,31 @@
-import { useState, useCallback } from 'react'
-import { SidebarHeader } from './IconSidebar'
-import { useTranslation } from 'react-i18next'
-import { Bot, Plus, RefreshCw, Loader2, Check, Settings } from 'lucide-react'
-import { Button } from '@/presentation/components/ui/button'
-import { StatusDot } from '@/presentation/components/ui'
-import { cn } from '@/lib/utils'
-import { useAgents } from '@/hooks/useAgents'
-import { useAgentSelection } from '@/infrastructure/persistence/stores/agents/agent-selection-store'
-import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog'
-import type { AgentData } from '@/infrastructure/persistence/stores/agents/types'
-
 /**
- * AgentsPanel - Agent management sidebar panel
+ * PHASE 2 ARCHIVED
+ * Original: _phase2-archive/presentation/components/ide/AgentsPanel.tsx
  * 
- * @epic Epic-28 Story 28-15, 28-16
- * @integration Uses useAgents hook with mock data
- * @roadmap Replace mock with TanStack Query in Epic 25
- * 
- * Shows when 'agents' is active in the activity bar.
- * Displays available agents and their status.
+ * This component is disabled during Phase 1A. Agents panel functionality
+ * will be restored in Phase 2 when agent features are re-enabled.
  */
 
-export function AgentsPanel({
-    onSelectAgent
-}: {
-    onSelectAgent?: (agent: AgentData) => void
-}) {
-    const { t } = useTranslation()
-    const { agents, isLoading, refreshAgents } = useAgents()
-    const { activeAgentId, setActiveAgent } = useAgentSelection()
+import type { ReactNode } from 'react';
 
-    // Dialog state for agent configuration
-    const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false)
-    const [editingAgent, setEditingAgent] = useState<AgentData | undefined>(undefined)
+console.log('[Phase 2] AgentsPanel disabled during Phase 1A');
 
-    const handleAddAgent = useCallback(() => {
-        setEditingAgent(undefined)
-        setIsConfigDialogOpen(true)
-    }, [])
-
-    const handleEditAgent = useCallback((agent: AgentData, e: React.MouseEvent) => {
-        e.stopPropagation()
-        setEditingAgent(agent)
-        setIsConfigDialogOpen(true)
-    }, [])
-
-    // Simplified handlers - Dialog manages persistence
-    const handleSuccess = useCallback(() => {
-        setIsConfigDialogOpen(false)
-        setEditingAgent(undefined)
-    }, [])
-
-    return (
-        <div className="flex flex-col h-full">
-            <SidebarHeader
-                title={t('sidebar.agents', 'Agents')}
-                actions={
-                    <>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleAddAgent}
-                            title={t('actions.addAgent', 'Add Agent')}
-                        >
-                            <Plus className="w-4 h-4" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={refreshAgents}
-                            disabled={isLoading}
-                            title={t('actions.refresh', 'Refresh')}
-                        >
-                            {isLoading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <RefreshCw className="w-4 h-4" />
-                            )}
-                        </Button>
-                    </>
-                }
-            />
-            <div className="flex-1 overflow-auto scrollbar-thin">
-                {isLoading && agents.length === 0 ? (
-                    <div className="flex items-center justify-center h-full">
-                        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                    </div>
-                ) : agents.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center p-4">
-                        <Bot className="w-12 h-12 text-muted-foreground/50 mb-4" />
-                        <p className="text-sm text-muted-foreground">
-                            {t('sidebar.noAgents', 'No agents configured')}
-                        </p>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            className="mt-4"
-                            onClick={handleAddAgent}
-                        >
-                            <Plus className="w-4 h-4" />
-                            {t('actions.addAgent', 'Add Agent')}
-                        </Button>
-                    </div>
-                ) : (
-                    <div className="p-1 space-y-0.5">
-                        {agents.map((agent) => (
-                            <AgentItem
-                                key={agent.id}
-                                agent={agent}
-                                isSelected={activeAgentId === agent.id}
-                                onClick={() => {
-                                    setActiveAgent(agent.id, 'ide')
-                                    onSelectAgent?.(agent)
-                                }}
-                                onEdit={(e) => handleEditAgent(agent, e)}
-                            />
-                        ))}
-                    </div>
-                )}
-            </div>
-
-            {/* Agent Configuration Dialog */}
-            <AgentConfigDialog
-                open={isConfigDialogOpen}
-                onOpenChange={setIsConfigDialogOpen}
-                onSuccess={handleSuccess}
-                agentId={editingAgent?.id || null}
-            />
-        </div>
-    )
+interface AgentData {
+    id: string;
+    name: string;
+    description: string;
+    modelId: string;
+    status: 'active' | 'inactive' | 'error';
 }
 
-function AgentItem({
-    agent,
-    isSelected,
-    onClick,
-    onEdit
-}: {
-    agent: AgentData
-    isSelected?: boolean
-    onClick?: () => void
-    onEdit?: (e: React.MouseEvent) => void
-}) {
-    return (
-        <div
-            role="button"
-            tabIndex={0}
-            onClick={onClick}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onClick?.();
-                }
-            }}
-            className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 text-left rounded-none cursor-pointer",
-                "hover:bg-secondary transition-colors group",
-                isSelected && "bg-primary/10 border-l-2 border-primary"
-            )}
-        >
-            <div className="relative">
-                <Bot className={cn(
-                    "w-5 h-5",
-                    isSelected ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
-                )} />
-                <StatusDot
-                    status={agent.status}
-                    size="sm"
-                    className="absolute -bottom-0.5 -right-0.5"
-                />
-            </div>
-            <div className="flex-1 min-w-0">
-                <p className={cn(
-                    "text-sm font-medium truncate",
-                    isSelected ? "text-primary" : "text-foreground"
-                )}>
-                    {agent.name}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                    {agent.description} • {agent.modelId}
-                </p>
-            </div>
-            {isSelected && (
-                <Check className="w-4 h-4 text-primary" />
-            )}
-
-            <Button
-                variant="ghost"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100 transition-opacity ml-1"
-                onClick={onEdit}
-                title="Edit Agent"
-            >
-                <Settings className="w-3 h-3" />
-            </Button>
-        </div>
-    )
+interface AgentsPanelProps {
+    onSelectAgent?: (agent: AgentData) => void;
 }
 
-export type { AgentData }
+export function AgentsPanel(_props: AgentsPanelProps): ReactNode {
+    console.log('[Phase 2] AgentsPanel feature disabled during Phase 1A');
+    return null;
+}
 
+export type { AgentData };
+export default AgentsPanel;
