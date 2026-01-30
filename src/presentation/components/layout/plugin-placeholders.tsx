@@ -83,7 +83,11 @@ const descriptionStyles: React.CSSProperties = {
  */
 export const FileTreeComponent: React.FC = () => {
   const FileTreeMain = fileTreePlugin.MainComponent;
-  return <FileTreeMain width={0} height={0} />;
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <FileTreeMain />
+    </div>
+  );
 };
 
 /**
@@ -94,7 +98,11 @@ export const FileTreeComponent: React.FC = () => {
  */
 export const MonacoComponent: React.FC = () => {
   const MonacoMain = monacoPlugin.MainComponent;
-  return <MonacoMain width={0} height={0} />;
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <MonacoMain />
+    </div>
+  );
 };
 
 /**
@@ -105,7 +113,11 @@ export const MonacoComponent: React.FC = () => {
  */
 export const NotesComponent: React.FC = () => {
   const NotesMain = notesPlugin.MainComponent;
-  return <NotesMain width={0} height={0} />;
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <NotesMain />
+    </div>
+  );
 };
 
 /**
@@ -116,7 +128,11 @@ export const NotesComponent: React.FC = () => {
  */
 export const TerminalComponent: React.FC = () => {
   const TerminalMain = terminalPlugin.MainComponent;
-  return <TerminalMain width={0} height={0} />;
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <TerminalMain />
+    </div>
+  );
 };
 
 /**
@@ -127,7 +143,11 @@ export const TerminalComponent: React.FC = () => {
  */
 export const PreviewComponent: React.FC = () => {
   const PreviewMain = previewPlugin.MainComponent;
-  return <PreviewMain width={0} height={0} />;
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <PreviewMain />
+    </div>
+  );
 };
 
 /**
@@ -138,7 +158,11 @@ export const PreviewComponent: React.FC = () => {
  */
 export const ChatComponent: React.FC = () => {
   const ChatMain = chatPlugin.MainComponent;
-  return <ChatMain width={0} height={0} />;
+  return (
+    <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
+      <ChatMain />
+    </div>
+  );
 };
 
 /**

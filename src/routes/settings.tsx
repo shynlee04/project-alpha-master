@@ -22,7 +22,7 @@ import { ErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
 import { SettingsIcon, PlusIcon } from '@/presentation/components/ui/icons';
 import { Download, Upload } from 'lucide-react';
 import { Button } from '@/presentation/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { useDeviceType } from '@/hooks/useMediaQuery';
 import { ProviderSettings } from '@/presentation/components/agent/ProviderSettings';
 import { VaultStatusCard } from '@/presentation/components/agent/VaultStatusCard';

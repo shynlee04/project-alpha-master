@@ -11,6 +11,7 @@ tools:
   glob: true
   grep: true
   read: true
+  skill: true
 
 permission:
   edit: allow

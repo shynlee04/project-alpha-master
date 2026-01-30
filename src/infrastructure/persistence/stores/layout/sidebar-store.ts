@@ -9,6 +9,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { z } from 'zod';
 import type {
   SidebarState,
   SidebarStore,
@@ -20,30 +21,74 @@ import {
   DEFAULT_SIDEBAR_STATE,
 } from '@/presentation/components/layout/types';
 
+// ============================================================================
+// Zod Schema for Runtime Validation
+// ============================================================================
+
+/**
+ * Zod schema for persisted sidebar state validation
+ * Ensures data integrity when loading from localStorage
+ */
+const persistedSidebarStateSchema = z.object({
+  isExpanded: z.boolean(),
+  activeWorkspace: z.string().min(1).max(100),
+  pinnedItems: z.array(z.string().min(1).max(100)).max(50),
+  version: z.number().int().positive(),
+});
+
+/**
+ * Validate persisted state against schema
+ * @param data Unknown data from localStorage
+ * @returns Validated PersistedSidebarState or null if invalid
+ */
+function validatePersistedState(data: unknown): PersistedSidebarState | null {
+  const result = persistedSidebarStateSchema.safeParse(data);
+  if (!result.success) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[sidebar-store] Persisted state validation failed:', result.error.format());
+    }
+    return null;
+  }
+  return result.data;
+}
+
 /**
  * Load persisted state from localStorage
- * Handles version migration and validation
+ * Handles version migration and runtime validation
  */
 function loadPersistedState(): Partial<SidebarState> | null {
   try {
     const stored = localStorage.getItem(SIDEBAR_STORAGE_KEY);
     if (!stored) return null;
 
-    const parsed: PersistedSidebarState = JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+
+    // Validate against Zod schema for runtime type safety
+    const validated = validatePersistedState(parsed);
+    if (!validated) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[sidebar-store] Invalid persisted state, using defaults');
+      }
+      return null;
+    }
 
     // Version check for migrations
-    if (parsed.version !== SIDEBAR_STATE_VERSION) {
-      console.log('[sidebar-store] State version mismatch, using defaults');
+    if (validated.version !== SIDEBAR_STATE_VERSION) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[sidebar-store] State version mismatch, using defaults');
+      }
       return null;
     }
 
     return {
-      isExpanded: parsed.isExpanded,
-      activeWorkspace: parsed.activeWorkspace,
-      pinnedItems: parsed.pinnedItems,
+      isExpanded: validated.isExpanded,
+      activeWorkspace: validated.activeWorkspace,
+      pinnedItems: validated.pinnedItems,
     };
   } catch (error) {
-    console.warn('[sidebar-store] Failed to load persisted state:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn('[sidebar-store] Failed to load persisted state:', error);
+    }
     return null;
   }
 }
@@ -112,15 +157,30 @@ export const useSidebarStore = create<SidebarStore>()(
       migrate: (persistedState: unknown, version: number): SidebarState => {
         // Migration logic for future state versions
         if (version !== SIDEBAR_STATE_VERSION) {
-          console.log('[sidebar-store] Migrating state from version', version);
-          return DEFAULT_SIDEBAR_STATE;
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('[sidebar-store] Migrating state from version', version);
+          }
+          return DEFAULT_SIDEBAR_STATE as SidebarState;
         }
-        return persistedState as SidebarState;
+        // Validate before casting - return default if invalid
+        const validated = validatePersistedState(persistedState);
+        if (!validated) {
+          return DEFAULT_SIDEBAR_STATE as SidebarState;
+        }
+        // Return validated state merged with defaults (actions will be added by Zustand)
+        return {
+          ...DEFAULT_SIDEBAR_STATE,
+          isExpanded: validated.isExpanded,
+          activeWorkspace: validated.activeWorkspace,
+          pinnedItems: validated.pinnedItems,
+        } as SidebarState;
       },
       onRehydrateStorage: () => (state, error) => {
         if (error) {
-          console.error('[sidebar-store] Rehydration error:', error);
-        } else if (state) {
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('[sidebar-store] Rehydration error:', error);
+          }
+        } else if (state && process.env.NODE_ENV !== 'production') {
           console.log('[sidebar-store] State rehydrated successfully');
         }
       },

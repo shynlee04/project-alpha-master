@@ -1,0 +1,115 @@
+# Governance Cycles State - Agent Output
+# Location: _bmad-output/governance/cycles.yaml
+# Purpose: Track validation cycles for IDEAL architecture sections
+
+version: "1.0.0"
+last_updated: "2026-01-30T17:28:00+07:00"
+updated_by: "architecture-enforcer-plugin"
+
+master_plan:
+  total_cycles: 7
+  current_cycle: null
+  status: NOT_STARTED
+
+cycles:
+  C1:
+    topic: "State Management (4-layer)"
+    section: "IDEAL-architecture-section-1"
+    blocking: true
+    priority: P0
+    status: NOT_STARTED
+    validation_criteria:
+      - "Migrate 1 store to Dexie with useLiveQuery"
+      - "Verify reactivity works without useEffect"
+      - "Confirm persist middleware NOT used for domain data"
+    outputs: []
+    
+  C2:
+    topic: "Plugin Coordination"
+    section: "IDEAL-architecture-section-2"
+    blocking: true
+    priority: P0
+    status: NOT_STARTED
+    validation_criteria:
+      - "PluginRegistry singleton implemented"
+      - "Enable/disable flow works"
+      - "Dependency resolution for soft/hard deps"
+    outputs: []
+    
+  C3:
+    topic: "Storage Gateway (FSA/OPFS)"
+    section: "IDEAL-architecture-section-3"
+    blocking: true
+    priority: P0
+    status: NOT_STARTED
+    validation_criteria:
+      - "Test FSA adapter with real folder"
+      - "Verify handle persistence across sessions"
+      - "Test Safari eviction recovery"
+    outputs: []
+    
+  C4:
+    topic: "Agent Tools (TanStack AI SDK)"
+    section: "IDEAL-architecture-section-4"
+    blocking: true
+    priority: P1
+    status: NOT_STARTED
+    validation_criteria:
+      - "Implement 1 client tool with browser execution"
+      - "needsApproval workflow works"
+      - "Permission matrix filtering verified"
+    outputs: []
+    
+  C5:
+    topic: "Event Bus"
+    section: "IDEAL-architecture-section-2"
+    blocking: false
+    priority: P2
+    status: NOT_STARTED
+    validation_criteria:
+      - "Typed event bus implemented"
+      - "Cross-plugin communication verified"
+    outputs: []
+    
+  C6:
+    topic: "Write Lock"
+    section: "IDEAL-architecture-section-2"
+    blocking: false
+    priority: P2
+    status: NOT_STARTED
+    validation_criteria:
+      - "Concurrent file access blocked when lock held"
+    outputs: []
+    
+  C7:
+    topic: "Deferred Queue"
+    section: "IDEAL-architecture-section-2"
+    blocking: false
+    priority: P2
+    status: NOT_STARTED
+    validation_criteria:
+      - "Plugin disable -> enable flow with queued actions"
+    outputs: []
+
+escalation:
+  levels:
+    story_level:
+      description: "Quick fixes within story scope"
+      auto_resolve: true
+      workflow: null
+    epic_level:
+      description: "Requires epic re-planning"
+      auto_resolve: false
+      workflow: "/bmad-bmm-workflows-correct-course"
+    adr_level:
+      description: "Architecture decision required"
+      auto_resolve: false
+      workflow: "/bmad-bmm-workflows-correct-course"
+  
+  pending: []
+  resolved: []
+
+current_gate:
+  name: null
+  status: null
+  violations: []

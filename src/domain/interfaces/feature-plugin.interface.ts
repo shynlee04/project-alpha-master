@@ -62,11 +62,11 @@ export interface PluginMainProps {
   /** Unique identifier for this panel instance (optional) */
   panelId?: string;
 
-  /** Panel width in pixels (responsive) */
-  width: number;
+  /** Panel width in pixels (optional - parent container handles sizing) */
+  width?: number;
 
-  /** Panel height in pixels (responsive) */
-  height: number;
+  /** Panel height in pixels (optional - parent container handles sizing) */
+  height?: number;
 }
 
 /**

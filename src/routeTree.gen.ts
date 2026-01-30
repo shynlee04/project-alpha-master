@@ -18,6 +18,8 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ProjectIdRouteImport } from './routes/$projectId'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
+import { Route as NotesProjectIdRouteImport } from './routes/notes.$projectId'
+import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
 import { Route as ApiProvidersRouteImport } from './routes/api/providers'
 import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -70,6 +72,16 @@ const IndexRoute = IndexRouteImport.update({
 const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   id: '/webcontainer/$',
   path: '/webcontainer/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
+  id: '/notes/$projectId',
+  path: '/notes/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
+  id: '/ide/$projectId',
+  path: '/ide/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProvidersRoute = ApiProvidersRouteImport.update({
@@ -128,6 +140,8 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
+  '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
@@ -147,6 +161,8 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
+  '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
@@ -167,6 +183,8 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/api/provider-test': typeof ApiProviderTestRoute
   '/api/providers': typeof ApiProvidersRouteWithChildren
+  '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
@@ -188,6 +206,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
+    | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
@@ -207,6 +227,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
+    | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
@@ -226,6 +248,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/provider-test'
     | '/api/providers'
+    | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
@@ -245,6 +269,8 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiProviderTestRoute: typeof ApiProviderTestRoute
   ApiProvidersRoute: typeof ApiProvidersRouteWithChildren
+  IdeProjectIdRoute: typeof IdeProjectIdRoute
+  NotesProjectIdRoute: typeof NotesProjectIdRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
 }
 
@@ -311,6 +337,20 @@ declare module '@tanstack/react-router' {
       path: '/webcontainer/$'
       fullPath: '/webcontainer/$'
       preLoaderRoute: typeof WebcontainerSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes/$projectId': {
+      id: '/notes/$projectId'
+      path: '/notes/$projectId'
+      fullPath: '/notes/$projectId'
+      preLoaderRoute: typeof NotesProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ide/$projectId': {
+      id: '/ide/$projectId'
+      path: '/ide/$projectId'
+      fullPath: '/ide/$projectId'
+      preLoaderRoute: typeof IdeProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/providers': {
@@ -423,6 +463,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiProviderTestRoute: ApiProviderTestRoute,
   ApiProvidersRoute: ApiProvidersRouteWithChildren,
+  IdeProjectIdRoute: IdeProjectIdRoute,
+  NotesProjectIdRoute: NotesProjectIdRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
 }
 export const routeTree = rootRouteImport

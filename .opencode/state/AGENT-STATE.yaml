@@ -1,86 +1,15 @@
-# ═══════════════════════════════════════════════════════════════
-# AGENT-STATE.yaml - State Injection Template
-# This file is written by /compact and read by /start
-# ═══════════════════════════════════════════════════════════════
-
-state_injection:
-  meta:
-    captured_at: "2026-01-30T00:42:00+07:00"
-    session_id: "template"
-    version: "4.0"
-    note: "This is a template. Real state will be written by /compact command."
-    
-  # ─────────────────────────────────────────────────────────────
-  # ANCHOR: ORIGINAL INTENT (TURN 1-2) - VERBATIM
-  # ─────────────────────────────────────────────────────────────
-  original_intent:
-    turn_1_verbatim: |
-      [USER'S FIRST MESSAGE GOES HERE]
-    turn_2_understanding: |
-      [INITIAL UNDERSTANDING/CLARIFICATION]
-    primary_goal: "[ONE LINE SUMMARY]"
-    success_criteria: "[WHAT DEFINES DONE]"
-    
-  # ─────────────────────────────────────────────────────────────
-  # RECENT: LAST 4 TURNS - CURRENT STATE
-  # ─────────────────────────────────────────────────────────────
-  recent_context:
-    turn_minus_4: "[ACTOR]: [BRIEF SUMMARY]"
-    turn_minus_3: "[ACTOR]: [BRIEF SUMMARY]"
-    turn_minus_2: "[ACTOR]: [BRIEF SUMMARY]"
-    turn_minus_1: "[ACTOR]: [DETAILED - MOST RECENT]"
-    pending_action: "[WHAT WAS JUST REQUESTED]"
-    
-  # ─────────────────────────────────────────────────────────────
-  # ROLE & HIERARCHY
-  # ─────────────────────────────────────────────────────────────
-  role:
-    current: "ext-master"
-    type: "coordinator"
-    constraints: "DELEGATE only, never execute tools directly"
-    
-  delegation:
-    chain: "ext-master → ext-sprint-manager → ext-dev"
-    pending_handoffs: []
-    
-  # ─────────────────────────────────────────────────────────────
-  # PROJECT STATE
-  # ─────────────────────────────────────────────────────────────
-  project:
-    phase: "REMEDIATION_ACTIVE"
-    active_epic: "EPIC-CONSOLIDATION"
-    active_story: null
-    work_type: "project"
-    
-  # ─────────────────────────────────────────────────────────────
-  # ARTIFACTS GENERATED THIS SESSION
-  # ─────────────────────────────────────────────────────────────
-  artifacts:
-    created: []
-    modified: []
-    key_deliverable: null
-    
-  # ─────────────────────────────────────────────────────────────
-  # DECISIONS MADE (FINAL, NOT SUPERSEDED)
-  # ─────────────────────────────────────────────────────────────
-  decisions: []
-      
-  # ─────────────────────────────────────────────────────────────
-  # FILTERED OUT (POISONED - DO NOT RESURRECT)
-  # ─────────────────────────────────────────────────────────────
-  filtered_out: []
-    
-  # ─────────────────────────────────────────────────────────────
-  # NEXT ACTION
-  # ─────────────────────────────────────────────────────────────
-  next_action:
-    description: "[WHAT SHOULD HAPPEN NEXT]"
-    priority: "P0"
-    blocker: null
-    
-  # ─────────────────────────────────────────────────────────────
-  # ACTIVE SKILLS
-  # ─────────────────────────────────────────────────────────────
-  skills_loaded:
-    - "context-first"
-    - "verification-before-completion"
+agent: analyst-ext
+session_id: ses_3f4d66097ffe8RJNc6vFDl9uoO
+task: adversarial-review
+story: UXUI-04-02
+status: complete
+findings:
+  critical: 1
+  high: 3
+  medium: 7
+  low: 5
+total_findings: 16
+approval: CHANGES_REQUESTED
+artifacts_created:
+  - _bmad-output/reviews/UXUI-04-02-adversarial-review-2026-01-30.md
+last_updated: "2026-01-30T00:00:00+07:00"

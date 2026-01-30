@@ -7,11 +7,17 @@
  * EPIC-UXUI-04: Global Sidebar Auto-Collapse
  */
 
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useSidebarStore } from '@/infrastructure/persistence/stores/layout/sidebar-store';
 import { shouldAutoCollapse } from '@/infrastructure/persistence/stores/layout/sidebar-store';
 import type { ViewportState } from '@/presentation/components/layout/types';
 import { SIDEBAR_BREAKPOINTS } from '@/presentation/components/layout/types';
+
+/**
+ * Debounce delay for toggle operations (ms)
+ * Prevents race conditions from rapid clicks
+ */
+const TOGGLE_DEBOUNCE_MS = 200;
 
 /**
  * Hook return type
@@ -67,6 +73,10 @@ export function useSidebarState(): UseSidebarStateReturn {
   const [viewport, setViewport] = useState<ViewportState>(getViewportState());
   const [isAutoCollapsed, setIsAutoCollapsed] = useState(false);
 
+  // Refs for debouncing
+  const toggleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastToggleTimeRef = useRef<number>(0);
+
   // Update viewport state on resize
   useEffect(() => {
     const handleResize = () => {
@@ -94,9 +104,38 @@ export function useSidebarState(): UseSidebarStateReturn {
     };
   }, [isExpanded, setExpanded]);
 
-  // Toggle handler
+  // Cleanup debounce timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (toggleTimeoutRef.current) {
+        clearTimeout(toggleTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Toggle handler with debouncing to prevent race conditions
   const toggle = useCallback(() => {
-    toggleSidebar();
+    const now = Date.now();
+    const timeSinceLastToggle = now - lastToggleTimeRef.current;
+
+    // Clear any pending toggle
+    if (toggleTimeoutRef.current) {
+      clearTimeout(toggleTimeoutRef.current);
+      toggleTimeoutRef.current = null;
+    }
+
+    // If within debounce window, schedule the toggle
+    if (timeSinceLastToggle < TOGGLE_DEBOUNCE_MS) {
+      toggleTimeoutRef.current = setTimeout(() => {
+        toggleSidebar();
+        lastToggleTimeRef.current = Date.now();
+        toggleTimeoutRef.current = null;
+      }, TOGGLE_DEBOUNCE_MS - timeSinceLastToggle);
+    } else {
+      // Execute immediately if outside debounce window
+      toggleSidebar();
+      lastToggleTimeRef.current = now;
+    }
   }, [toggleSidebar]);
 
   // Expand handler
