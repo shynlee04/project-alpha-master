@@ -19,7 +19,6 @@ import {
   loadLayoutState,
   saveLayoutState,
   validateLayoutState,
-  getLayoutStorageKey,
   clearLayoutState,
   DEFAULT_LAYOUT_STATE,
   LAYOUT_STATE_VERSION,

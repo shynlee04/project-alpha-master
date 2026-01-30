@@ -1,26 +1,41 @@
 /**
- * @fileoverview Plugin Placeholder Components - Mock components for plugin panels
+ * @fileoverview Plugin Component Registry - Real plugin components for plugin panels
  * @module presentation/components/layout/plugin-placeholders
  *
  * EPIC-UXUI-04: Plugin Panel System
- * Placeholder components for testing plugin panels before actual plugins are implemented.
- * Each placeholder represents a plugin that will be implemented in future stories.
+ * FIXED: Now uses REAL plugin components instead of placeholders.
+ * Each plugin is imported from its actual implementation in src/plugins/
  *
  * @story UXUI-04-05
  * @created 2026-01-30
+ * @updated 2026-01-30
  */
 
 import React from 'react';
-import {
-  FolderOpen,
-  FileText,
-  Code,
-  Terminal,
-  MessageSquare,
-  Bot,
-  Eye,
-} from 'lucide-react';
+import { Bot } from 'lucide-react';
 import type { PluginId } from '@/domain/types/plugin-types';
+
+// ============================================================================
+// REAL Plugin Imports
+// ============================================================================
+
+// FileTree Plugin - Real implementation
+import { fileTreePlugin } from '@/plugins/filetree';
+
+// Monaco Editor Plugin - Real implementation
+import { monacoPlugin } from '@/plugins/monaco';
+
+// Notes Plugin - Real implementation
+import { notesPlugin } from '@/plugins/notes';
+
+// Terminal Plugin - Real implementation
+import { terminalPlugin } from '@/plugins/terminal';
+
+// Preview Plugin - Real implementation
+import { previewPlugin } from '@/plugins/preview';
+
+// Chat Plugin - Stub (Phase 2)
+import { chatPlugin } from '@/plugins/chat';
 
 // ============================================================================
 // Placeholder Styles
@@ -57,141 +72,88 @@ const descriptionStyles: React.CSSProperties = {
 };
 
 // ============================================================================
-// File Tree Placeholder
+// REAL Plugin Components
 // ============================================================================
 
 /**
- * FileTreePlaceholder Component
+ * FileTree Component - REAL implementation
  *
- * Placeholder for the file tree plugin.
- * Will be replaced with actual file tree implementation.
+ * Uses the actual FileTreePlugin from src/plugins/filetree/
+ * Fully functional file browser with expand/collapse, file selection, etc.
  */
-export const FileTreePlaceholder: React.FC = () => (
-  <div className="plugin-placeholder filetree-placeholder" style={placeholderStyles}>
-    <FolderOpen style={iconStyles} />
-    <h3 style={titleStyles}>File Explorer</h3>
-    <p style={descriptionStyles}>
-      Browse and manage your project files. Navigate folders, open files, and organize your workspace.
-    </p>
-  </div>
-);
-
-// ============================================================================
-// Monaco Editor Placeholder
-// ============================================================================
+export const FileTreeComponent: React.FC = () => {
+  const FileTreeMain = fileTreePlugin.MainComponent;
+  return <FileTreeMain width={0} height={0} />;
+};
 
 /**
- * MonacoPlaceholder Component
+ * Monaco Component - REAL implementation
  *
- * Placeholder for the Monaco code editor plugin.
- * Will be replaced with actual Monaco editor implementation.
+ * Uses the actual MonacoPlugin from src/plugins/monaco/
+ * Full Monaco code editor with syntax highlighting and IntelliSense.
  */
-export const MonacoPlaceholder: React.FC = () => (
-  <div className="plugin-placeholder monaco-placeholder" style={placeholderStyles}>
-    <Code style={iconStyles} />
-    <h3 style={titleStyles}>Code Editor</h3>
-    <p style={descriptionStyles}>
-      Edit code with syntax highlighting, IntelliSense, and advanced editing features.
-    </p>
-  </div>
-);
-
-// ============================================================================
-// Notes Placeholder
-// ============================================================================
+export const MonacoComponent: React.FC = () => {
+  const MonacoMain = monacoPlugin.MainComponent;
+  return <MonacoMain width={0} height={0} />;
+};
 
 /**
- * NotesPlaceholder Component
+ * Notes Component - REAL implementation
  *
- * Placeholder for the notes plugin.
- * Will be replaced with actual BlockNote editor implementation.
+ * Uses the actual NotesPlugin from src/plugins/notes/
+ * BlockNote editor with 16 custom block types and AI features.
  */
-export const NotesPlaceholder: React.FC = () => (
-  <div className="plugin-placeholder notes-placeholder" style={placeholderStyles}>
-    <FileText style={iconStyles} />
-    <h3 style={titleStyles}>Notes</h3>
-    <p style={descriptionStyles}>
-      Create and edit rich text notes with markdown support. Organize your thoughts and documentation.
-    </p>
-  </div>
-);
-
-// ============================================================================
-// Terminal Placeholder
-// ============================================================================
+export const NotesComponent: React.FC = () => {
+  const NotesMain = notesPlugin.MainComponent;
+  return <NotesMain width={0} height={0} />;
+};
 
 /**
- * TerminalPlaceholder Component
+ * Terminal Component - REAL implementation
  *
- * Placeholder for the terminal plugin.
- * Will be replaced with actual terminal implementation.
+ * Uses the actual TerminalPlugin from src/plugins/terminal/
+ * WebContainer-based terminal for running commands.
  */
-export const TerminalPlaceholder: React.FC = () => (
-  <div className="plugin-placeholder terminal-placeholder" style={placeholderStyles}>
-    <Terminal style={iconStyles} />
-    <h3 style={titleStyles}>Terminal</h3>
-    <p style={descriptionStyles}>
-      Command line interface for running commands, scripts, and managing your development environment.
-    </p>
-  </div>
-);
-
-// ============================================================================
-// Chat Placeholder
-// ============================================================================
+export const TerminalComponent: React.FC = () => {
+  const TerminalMain = terminalPlugin.MainComponent;
+  return <TerminalMain width={0} height={0} />;
+};
 
 /**
- * ChatPlaceholder Component
+ * Preview Component - REAL implementation
  *
- * Placeholder for the chat plugin.
- * Will be replaced with actual AI chat implementation.
+ * Uses the actual PreviewPlugin from src/plugins/preview/
+ * Dev server preview for running applications.
  */
-export const ChatPlaceholder: React.FC = () => (
-  <div className="plugin-placeholder chat-placeholder" style={placeholderStyles}>
-    <MessageSquare style={iconStyles} />
-    <h3 style={titleStyles}>AI Chat</h3>
-    <p style={descriptionStyles}>
-      Chat with AI assistants to get help with coding, debugging, and learning new concepts.
-    </p>
-  </div>
-);
-
-// ============================================================================
-// Agents Placeholder
-// ============================================================================
+export const PreviewComponent: React.FC = () => {
+  const PreviewMain = previewPlugin.MainComponent;
+  return <PreviewMain width={0} height={0} />;
+};
 
 /**
- * AgentsPlaceholder Component
+ * Chat Component - STUB (Phase 2)
  *
- * Placeholder for the agents plugin.
- * Will be replaced with actual AI agent management implementation.
+ * Uses the stub ChatPlugin from src/plugins/chat/
+ * Full implementation scheduled for Phase 2.
  */
-export const AgentsPlaceholder: React.FC = () => (
+export const ChatComponent: React.FC = () => {
+  const ChatMain = chatPlugin.MainComponent;
+  return <ChatMain width={0} height={0} />;
+};
+
+/**
+ * Agents Component - PLACEHOLDER (Not yet implemented)
+ *
+ * AI Agents management - scheduled for future implementation.
+ */
+export const AgentsComponent: React.FC = () => (
   <div className="plugin-placeholder agents-placeholder" style={placeholderStyles}>
     <Bot style={iconStyles} />
     <h3 style={titleStyles}>AI Agents</h3>
     <p style={descriptionStyles}>
       Manage and configure AI agents for automated tasks, code generation, and workflow automation.
-    </p>
-  </div>
-);
-
-// ============================================================================
-// Preview Placeholder
-// ============================================================================
-
-/**
- * PreviewPlaceholder Component
- *
- * Placeholder for the preview plugin.
- * Will be replaced with actual preview implementation.
- */
-export const PreviewPlaceholder: React.FC = () => (
-  <div className="plugin-placeholder preview-placeholder" style={placeholderStyles}>
-    <Eye style={iconStyles} />
-    <h3 style={titleStyles}>Preview</h3>
-    <p style={descriptionStyles}>
-      Preview your content, markdown rendering, HTML output, and other visual representations.
+      <br /><br />
+      <em>Coming in a future update</em>
     </p>
   </div>
 );
@@ -202,16 +164,17 @@ export const PreviewPlaceholder: React.FC = () => (
 
 /**
  * Plugin component registry
- * Maps plugin IDs to their placeholder components
+ * Maps plugin IDs to their REAL components
+ * FIXED: Now uses actual plugin implementations instead of placeholders
  */
 export const PLUGIN_COMPONENTS: Record<PluginId, React.ComponentType> = {
-  filetree: FileTreePlaceholder,
-  monaco: MonacoPlaceholder,
-  notes: NotesPlaceholder,
-  terminal: TerminalPlaceholder,
-  chat: ChatPlaceholder,
-  agents: AgentsPlaceholder,
-  preview: PreviewPlaceholder,
+  filetree: FileTreeComponent,
+  monaco: MonacoComponent,
+  notes: NotesComponent,
+  terminal: TerminalComponent,
+  chat: ChatComponent,
+  agents: AgentsComponent,
+  preview: PreviewComponent,
 };
 
 /**
