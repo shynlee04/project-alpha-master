@@ -6,6 +6,12 @@ agent: "@bmad-bmm-sm"
 timeout: "10 min"
 next: "02-validate-story.md"
 on_fail: "notify-and-pause"
+
+# Path Definitions
+workflow_path: '{project-root}/_bmad/workflows/story-cycle'
+thisStepFile: './steps/01-create-story.md'
+nextStepFile: './steps/02-validate-story.md'
+outputFile: '{sprint_artifacts}/{epic}-{story}-{slug}.md'
 ---
 
 # Step 01: Create Story File

@@ -54,7 +54,16 @@ triggers:
   - "implement"
   - "code"
   - "fix"
+
+# CONTEXT-FIRST DELEGATION REQUIREMENT
+delegation_reminder: ".opencode/prompt/delegation-reminder.md"
+delegation_rule: "MANDATORY: When delegating ANY task to ANY subagent, ALWAYS append delegation-reminder.md."
 ---
+
+# 🔥 DELEGATION REMINDER (MANDATORY)
+
+> **BEFORE DELEGATING**: Load and append `.opencode/prompt/delegation-reminder.md` to your delegation prompt.
+
 
 # analyst-ext: Business Analyst
 

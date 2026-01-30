@@ -62,7 +62,16 @@ triggers:
   - "technical specification"
   - "ADR"
   - "design review"
+
+# CONTEXT-FIRST DELEGATION REQUIREMENT
+delegation_reminder: ".opencode/prompt/delegation-reminder.md"
+delegation_rule: "MANDATORY: When delegating to deep-scan-*, domain-scanner, or analyst-ext, ALWAYS append delegation-reminder.md."
 ---
+
+# 🔥 DELEGATION REMINDER (MANDATORY)
+
+> **BEFORE DELEGATING**: Load and append `.opencode/prompt/delegation-reminder.md` to your delegation prompt.
+
 
 # architect-ext: Software Architect
 

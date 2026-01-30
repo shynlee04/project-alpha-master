@@ -42,6 +42,7 @@ _bmad-ext/.archive/epic-uxui-04/
 | 5 | `PluginActivityDockerWiring.tsx` | 366 | Old wiring pattern | 2026-01-30 | ✅ |
 | 6 | `PluginDocker.tsx` | ~400 | Old docker pattern | 2026-01-30 | ✅ |
 | 7 | `usePluginPlacement.ts` | ~800 | Old hook pattern | 2026-01-30 | ✅ |
+| 8 | `usePluginPlacement.test.ts` | ~350 | Test for archived hook | 2026-01-30 | ✅ |
 
 ### To Be Refactored (Keep but Modify)
 

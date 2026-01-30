@@ -1,0 +1,258 @@
+/**
+ * @fileoverview PluginPanelContainer Styles - 8-bit Design System
+ * @module presentation/components/layout/PluginPanelContainer.css
+ *
+ * EPIC-UXUI-04: Plugin Panel System
+ * 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ *
+ * @story UXUI-04-05
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   Plugin Panel Container
+   ============================================================================ */
+
+.plugin-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
+  /* 8-bit: No border-radius, sharp corners */
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left panel - border only on right */
+.plugin-panel--left {
+  border-left: none;
+  border-top: none;
+  border-bottom: none;
+}
+
+/* Main panel - no side borders */
+.plugin-panel--main {
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+}
+
+/* Right panel - border only on left */
+.plugin-panel--right {
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+}
+
+/* ============================================================================
+   Panel Content Container
+   ============================================================================ */
+
+.plugin-panel__content {
+  flex: 1;
+  position: relative;
+  overflow: auto;
+  min-height: 0;
+}
+
+/* ============================================================================
+   Plugin Instance (Individual Plugin Container)
+   ============================================================================ */
+
+.plugin-panel__instance {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease-out, visibility 200ms ease-out;
+  overflow: auto;
+  padding: 16px;
+}
+
+/* Active plugin instance */
+.plugin-panel__instance--active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.plugin-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  padding: 24px;
+  text-align: center;
+  gap: 12px;
+  color: hsl(var(--muted-foreground));
+}
+
+.plugin-panel-empty__icon {
+  font-size: 48px;
+  line-height: 1;
+  opacity: 0.6;
+}
+
+.plugin-panel-empty__message {
+  font-size: 1rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+}
+
+.plugin-panel-empty__hint {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+/* ============================================================================
+   Placeholder Styles (for mock plugins)
+   ============================================================================ */
+
+.plugin-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  gap: 16px;
+  color: hsl(var(--muted-foreground));
+}
+
+.plugin-placeholder h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.plugin-placeholder p {
+  font-size: 0.875rem;
+  max-width: 280px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ============================================================================
+   Panel States
+   ============================================================================ */
+
+/* When panel has an active plugin */
+.plugin-panel--has-active .plugin-panel-empty {
+  display: none;
+}
+
+/* When panel has no plugins at all */
+.plugin-panel--empty .plugin-panel__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+   Scrollbar Styling (8-bit aesthetic)
+   ============================================================================ */
+
+.plugin-panel__content::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.plugin-panel__content::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+.plugin-panel__content::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 0; /* 8-bit: sharp corners */
+}
+
+.plugin-panel__content::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes plugin-panel-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.plugin-panel__instance--active {
+  animation: plugin-panel-fade-in 200ms ease-out;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .plugin-panel__instance {
+    transition: none;
+  }
+
+  .plugin-panel__instance--active {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .plugin-panel {
+    border-width: 1px;
+  }
+
+  .plugin-panel__instance {
+    padding: 12px;
+  }
+
+  .plugin-panel-empty {
+    padding: 16px;
+  }
+
+  .plugin-panel-empty__icon {
+    font-size: 36px;
+  }
+}
+
+/* ============================================================================
+   Focus States (Accessibility)
+   ============================================================================ */
+
+.plugin-panel:focus-within {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: -2px;
+}
+
+/* ============================================================================
+   High Contrast Mode Support
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .plugin-panel {
+    border-width: 3px;
+  }
+
+  .plugin-panel-empty__message {
+    font-weight: 700;
+  }
+}

@@ -68,7 +68,16 @@ triggers:
   - "bug fix"
   - "TDD"
   - "red-green-refactor"
+
+# CONTEXT-FIRST DELEGATION REQUIREMENT
+delegation_reminder: ".opencode/prompt/delegation-reminder.md"
+delegation_rule: "MANDATORY: When delegating ANY task to ANY subagent (tea-ext, deep-scan-*), ALWAYS append the contents of delegation-reminder.md to your delegation prompt."
 ---
+
+# 🔥 DELEGATION REMINDER (MANDATORY FOR ALL DELEGATIONS)
+
+> **BEFORE DELEGATING**: Load and append `.opencode/prompt/delegation-reminder.md` to your delegation prompt.
+
 
 # dev-ext: Senior Software Engineer
 

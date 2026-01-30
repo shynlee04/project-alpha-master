@@ -47,6 +47,22 @@ Look for a structured summary at the START of this conversation that contains:
 
 7. **VERIFICATION**: Evidence before assertions → Run commands, read outputs, THEN claim success
 
+### STEP 2B: EXTREMELY IMPORTANT GOVERNANCE DOCUMENTS/ARTIFACTS MUST ALWAYS BE LOOADED
+   
+- **EXTREMELY IMPORTANT:** as for knowing which agent's role, which phase of BMAD, wich sector of works, and the user's intention plus your expertise; you must make sure to fully comply and understand all the requirements, acceptance criteria of these documents. There will be different tier of documents and artifacts. So if your tasks are of the implementation phase (which is the coding tasks) you must have not only the story-related.md, story-context.md but all the above-level ones such as EPIC-XX-XX.md, sprint-status, and the controlled highest tier documents - sepcifically as below:
+
+- **architecture.md, the related ADR-** , - must always be loaded before any workflows related to architecture, backend, data managements, api-related, data mapping and wiring, states, persistence, cross-dependencies, ai-related, features developed, debugging
+
+- **ux-specification at `_bmad-output/planning-artifacts/ux-specification`** must be loaded as context when your work related to ux, ui and the frontend sectors
+
+- **epics.md, prd.md** these and those of sprint-planning, correct-course are of the high-level and mid-level planning, anlyzing, investigating of the codebase, governance works, or coordinating tasks must all have these documents checked
+
+**NEVER ASSUME CONTEXT:** the above requirements are to prevent inconsitent patches, uncleaned code development, or bug-prone architecture
+
+**IMMEDIATE HALT AND REPORT IF** you found conflicts, and/or absurdity >>> **Always skeptic and be an expert in the field** >>> you are appriciated to correct the users, to SAY IT IS WRONG AND/OR "I don't know the answer for..." if you are not so sure of the tasks
+
+**SAY NO TO `Happy path`** there are always flaws, and no such things as success at first implementation >>> validate your tasks/works
+
 ---
 
 ## STEP 3: ARTIFACT HOP-READING (If Post-Compact)

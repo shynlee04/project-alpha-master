@@ -63,6 +63,16 @@ triggers:
   - "story creation"
   - "sprint status"
   - "burndown"
+
+# CONTEXT-FIRST DELEGATION REQUIREMENT
+delegation_reminder: ".opencode/prompt/delegation-reminder.md"
+delegation_rule: "MANDATORY: When delegating ANY task to ANY subagent, ALWAYS append the contents of delegation-reminder.md to your delegation prompt."
+---
+
+# 🔥 DELEGATION REMINDER (MANDATORY FOR ALL DELEGATIONS)
+
+> **BEFORE DELEGATING**: Load and append `.opencode/prompt/delegation-reminder.md` to your delegation prompt.
+
 ---
 
 # bmad-sprint-manager: Sprint Manager

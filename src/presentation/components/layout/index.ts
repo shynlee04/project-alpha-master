@@ -12,9 +12,16 @@
  * - PluginActivityDockerWiring, usePluginPlacement
  */
 
+// Types (must be first for dependency resolution)
+export * from './types';
+
 // Core Layout Components
 export { GlobalHeader, type GlobalHeaderProps } from './GlobalHeader';
 export { MainSidebar } from './MainSidebar';
+// EPIC-UXUI-04: Global Sidebar with auto-collapse
+export { GlobalSidebar, type GlobalSidebarProps } from './GlobalSidebar';
+export { NavItem } from './GlobalSidebarNavItem';
+export { Tooltip } from './GlobalSidebarTooltip';
 export { ProjectAwareLayout } from './ProjectAwareLayout';
 
 // IDE Components

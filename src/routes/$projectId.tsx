@@ -36,8 +36,8 @@ import { PluginCoordinationProvider } from '@/infrastructure/context/plugin-coor
 // REMOVED: PluginLayout - ActivityBar + Docker now handles plugin rendering
 // import { PluginLayout } from '@/presentation/layouts/PluginLayout';
 import { WorkspaceLayout } from '@/presentation/layouts/WorkspaceLayout';
-// UXUI-03-01: GlobalSidebar integration - MainSidebar as global sidebar per UX spec
-import { MainSidebar } from '@/presentation/components/layout/MainSidebar';
+// UXUI-04-02: GlobalSidebar with auto-collapse
+import { GlobalSidebar } from '@/presentation/components/layout/GlobalSidebar';
 // CC-UX-01: StatusBar integration
 import { StatusBar } from '@/presentation/components/layout/StatusBar';
 import { usePluginLayoutStore } from '@/presentation/layouts/PluginLayoutStore';
@@ -183,8 +183,8 @@ function UnifiedProjectRoute() {
     <PluginCoordinationProvider>
       <ProjectContextProvider projectId={projectId} initialHandle={fsaHandle}>
         <WorkspaceLayout
-          // GlobalSidebar - Will be replaced with new GlobalSidebar in Story 2
-          globalSidebar={<MainSidebar />}
+          // GlobalSidebar - EPIC-UXUI-04 Story 2: Auto-collapse sidebar
+          globalSidebar={<GlobalSidebar />}
           
           // Left ActivityBar - PLACEHOLDER (Story 3)
           activityBarLeft={

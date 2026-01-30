@@ -1,0 +1,334 @@
+/**
+ * @fileoverview DropZone Styles - 8-bit drop target styling
+ * @module presentation/components/layout/DropZone.css
+ *
+ * EPIC-UXUI-04: Drag-Drop System (Story 6)
+ * Provides 8-bit pixel-art styling for drop zones with visual feedback
+ * for drag-over, valid drop, and invalid drop states.
+ *
+ * Design Tokens:
+ * - Dashed borders for drop zones
+ * - Color-coded states (blue=default, green=valid, red=invalid)
+ * - Sharp corners (border-radius: 0)
+ * - Pixel shadows for depth
+ *
+ * @story UXUI-04-06
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   Base Drop Zone
+   ============================================================================ */
+
+.drop-zone {
+  /* Positioning */
+  position: relative;
+
+  /* Full size of parent */
+  width: 100%;
+  height: 100%;
+
+  /* Default border - subtle dashed */
+  border: 2px dashed transparent;
+  border-radius: 0;
+
+  /* Transition for state changes */
+  transition:
+    border-color 150ms steps(3, end),
+    background-color 150ms steps(3, end),
+    box-shadow 150ms steps(3, end);
+}
+
+/* ============================================================================
+   Active State (when dragging)
+   ============================================================================ */
+
+.drop-zone--active {
+  /* Show dashed border when dragging */
+  border-color: var(--color-primary, #00d4ff);
+  background-color: rgba(0, 212, 255, 0.05);
+}
+
+/* ============================================================================
+   Valid Drop State
+   ============================================================================ */
+
+.drop-zone--valid {
+  border-color: var(--color-success, #00ff88);
+  background-color: rgba(0, 255, 136, 0.1);
+  box-shadow:
+    inset 0 0 0 2px var(--color-success, #00ff88),
+    0 0 0 2px var(--color-success-dark, #00cc6a);
+}
+
+/* ============================================================================
+   Invalid Drop State
+   ============================================================================ */
+
+.drop-zone--invalid {
+  border-color: var(--color-error, #ff4444);
+  background-color: rgba(255, 68, 68, 0.1);
+  box-shadow:
+    inset 0 0 0 2px var(--color-error, #ff4444),
+    0 0 0 2px var(--color-error-dark, #cc3333);
+  animation: drop-zone-shake 400ms steps(4, end);
+}
+
+@keyframes drop-zone-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+}
+
+/* ============================================================================
+   Drop Indicator Overlay
+   ============================================================================ */
+
+.drop-zone__indicator {
+  /* Position over entire zone */
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+
+  /* Pointer events - let clicks pass through to content */
+  pointer-events: none;
+
+  /* Default state - subtle */
+  opacity: 0;
+  transition: opacity 150ms steps(3, end);
+}
+
+.drop-zone__indicator--active {
+  opacity: 1;
+}
+
+.drop-zone__indicator--valid {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(0, 255, 136, 0.1) 8px,
+    rgba(0, 255, 136, 0.1) 16px
+  );
+}
+
+.drop-zone__indicator--invalid {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 8px,
+    rgba(255, 68, 68, 0.1) 8px,
+    rgba(255, 68, 68, 0.1) 16px
+  );
+}
+
+/* ============================================================================
+   Corner Markers (8-bit style)
+   ============================================================================ */
+
+.drop-zone__corner {
+  /* Position */
+  position: absolute;
+  width: 12px;
+  height: 12px;
+
+  /* 8-bit styling */
+  border: 2px solid currentColor;
+  background: var(--color-surface, #1a1a2e);
+
+  /* Sharp corners */
+  border-radius: 0;
+}
+
+/* Top-left corner */
+.drop-zone__corner--tl {
+  top: -2px;
+  left: -2px;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Top-right corner */
+.drop-zone__corner--tr {
+  top: -2px;
+  right: -2px;
+  border-left: none;
+  border-bottom: none;
+}
+
+/* Bottom-left corner */
+.drop-zone__corner--bl {
+  bottom: -2px;
+  left: -2px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Bottom-right corner */
+.drop-zone__corner--br {
+  bottom: -2px;
+  right: -2px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Corner colors based on state */
+.drop-zone--valid .drop-zone__corner {
+  color: var(--color-success, #00ff88);
+}
+
+.drop-zone--invalid .drop-zone__corner {
+  color: var(--color-error, #ff4444);
+}
+
+.drop-zone--active:not(.drop-zone--valid):not(.drop-zone--invalid) .drop-zone__corner {
+  color: var(--color-primary, #00d4ff);
+}
+
+/* ============================================================================
+   Validation Message
+   ============================================================================ */
+
+.drop-zone__message {
+  /* Position at bottom center */
+  position: absolute;
+  bottom: var(--space-2, 8px);
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Styling */
+  padding: var(--space-1, 4px) var(--space-2, 8px);
+  background: var(--color-surface, #1a1a2e);
+  border: 2px solid currentColor;
+  border-radius: 0;
+
+  /* Typography */
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: 600;
+  color: currentColor;
+  white-space: nowrap;
+
+  /* 8-bit text rendering */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+
+  /* Pixel shadow */
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.5);
+}
+
+.drop-zone--valid .drop-zone__message {
+  color: var(--color-success, #00ff88);
+}
+
+.drop-zone--invalid .drop-zone__message {
+  color: var(--color-error, #ff4444);
+}
+
+/* ============================================================================
+   Content Wrapper
+   ============================================================================ */
+
+.drop-zone__content {
+  /* Full size */
+  width: 100%;
+  height: 100%;
+
+  /* Ensure content is above indicator */
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================================
+   Always Show Indicator Mode
+   ============================================================================ */
+
+.drop-zone--always-show {
+  border-color: var(--color-border, #333);
+}
+
+.drop-zone--always-show .drop-zone__indicator {
+  opacity: 0.3;
+}
+
+/* ============================================================================
+   Activity Bar Specific Styling
+   ============================================================================ */
+
+/* Vertical activity bars (left/right) */
+[data-target="left"],
+[data-target="right"] {
+  /* Full height for vertical bars */
+  min-height: 100%;
+}
+
+/* Horizontal activity bar (main-top) */
+[data-target="main-top"] {
+  /* Full width for horizontal bar */
+  min-width: 100%;
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .drop-zone {
+    transition: none;
+  }
+
+  .drop-zone--invalid {
+    animation: none;
+  }
+
+  .drop-zone__indicator {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .drop-zone--active {
+    border-width: 3px;
+  }
+
+  .drop-zone--valid {
+    border-width: 3px;
+    box-shadow:
+      inset 0 0 0 3px var(--color-success, #00ff88),
+      0 0 0 3px var(--color-success-dark, #00cc6a);
+  }
+
+  .drop-zone--invalid {
+    border-width: 3px;
+    box-shadow:
+      inset 0 0 0 3px var(--color-error, #ff4444),
+      0 0 0 3px var(--color-error-dark, #cc3333);
+  }
+
+  .drop-zone__corner {
+    width: 16px;
+    height: 16px;
+    border-width: 3px;
+  }
+}
+
+/* ============================================================================
+   Screen Reader Only (for live region)
+   ============================================================================ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

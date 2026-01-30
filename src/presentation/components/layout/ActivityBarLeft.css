@@ -1,0 +1,162 @@
+/**
+ * @fileoverview ActivityBarLeft Styles - 8-bit Design System
+ * @module presentation/components/layout/ActivityBarLeft.css
+ *
+ * EPIC-UXUI-04: Three Activity Bar System
+ * 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ *
+ * @story UXUI-04-03
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   ActivityBarLeft Container
+   ============================================================================ */
+
+.activity-bar-left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: hsl(var(--sidebar));
+  border-right: 2px solid hsl(var(--sidebar-border));
+  /* 8-bit: No border-radius, sharp corners */
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Content Container
+   ============================================================================ */
+
+.activity-bar-left__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 4px;
+}
+
+/* ============================================================================
+   Plugin Item Button
+   ============================================================================ */
+
+.activity-bar-left__item {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0 auto;
+
+  /* 8-bit Appearance */
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 0; /* Sharp corners */
+  cursor: pointer;
+
+  /* Transitions */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Position for indicator */
+  position: relative;
+}
+
+/* Hover State */
+.activity-bar-left__item:hover {
+  background: hsl(var(--sidebar-accent));
+  border-color: hsl(var(--sidebar-border));
+}
+
+/* Focus State */
+.activity-bar-left__item:focus-visible {
+  outline: 2px solid hsl(var(--sidebar-ring));
+  outline-offset: -2px;
+}
+
+/* Active State */
+.activity-bar-left__item--active {
+  background: hsl(var(--sidebar-accent));
+  border-color: hsl(var(--primary));
+}
+
+/* Active Indicator - Left Border */
+.activity-bar-left__indicator {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Plugin Icon
+   ============================================================================ */
+
+.activity-bar-left__icon {
+  color: hsl(var(--sidebar-foreground) / 0.7);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Icon Hover */
+.activity-bar-left__item:hover .activity-bar-left__icon {
+  color: hsl(var(--sidebar-foreground));
+}
+
+/* Icon Active */
+.activity-bar-left__item--active .activity-bar-left__icon {
+  color: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Spacer
+   ============================================================================ */
+
+.activity-bar-left__spacer {
+  flex: 1;
+}
+
+/* ============================================================================
+   Animation - Fade In
+   ============================================================================ */
+
+@keyframes activity-bar-left-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.activity-bar-left__item {
+  animation: activity-bar-left-fade-in 200ms ease-out forwards;
+  opacity: 0;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .activity-bar-left__item {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================================================
+   Touch Device Optimizations
+   ============================================================================ */
+
+@media (pointer: coarse) {
+  .activity-bar-left__item {
+    width: 44px;
+    height: 44px;
+  }
+
+  .activity-bar-left__icon {
+    width: 24px;
+    height: 24px;
+  }
+}

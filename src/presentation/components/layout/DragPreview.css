@@ -1,0 +1,212 @@
+/**
+ * @fileoverview DragPreview Styles - 8-bit ghost preview styling
+ * @module presentation/components/layout/DragPreview.css
+ *
+ * EPIC-UXUI-04: Drag-Drop System (Story 6)
+ * Provides 8-bit pixel-art styling for the drag preview ghost element.
+ *
+ * Design Tokens:
+ * - Sharp corners (border-radius: 0)
+ * - Pixel shadows (box-shadow with no blur)
+ * - Semi-transparent overlay
+ * - High contrast for visibility
+ *
+ * @story UXUI-04-06
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   Drag Preview Container
+   ============================================================================ */
+
+.drag-preview {
+  /* Positioning - fixed to follow cursor */
+  position: fixed;
+  z-index: 9999;
+
+  /* Size */
+  min-width: 140px;
+  max-width: 200px;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+
+  /* 8-bit styling - sharp corners */
+  border-radius: 0;
+
+  /* Visual - semi-transparent with solid border */
+  background: var(--color-surface, #1a1a2e);
+  border: 2px solid var(--color-primary, #00d4ff);
+  opacity: 0.85;
+
+  /* Animation */
+  transition:
+    opacity 150ms steps(3, end),
+    transform 100ms steps(2, end);
+
+  /* Prevent interaction */
+  pointer-events: none;
+  user-select: none;
+
+  /* 8-bit pixel shadow */
+  box-shadow:
+    4px 4px 0 0 var(--color-primary-dark, #0088cc),
+    4px 4px 0 2px var(--color-border, #333);
+}
+
+/* Animation when appearing */
+.drag-preview[data-dragging="true"] {
+  animation: drag-preview-appear 150ms steps(3, end) forwards;
+}
+
+@keyframes drag-preview-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+}
+
+/* ============================================================================
+   Touch-specific styling
+   ============================================================================ */
+
+.drag-preview--touch {
+  /* Larger for touch devices */
+  min-width: 160px;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+
+  /* More prominent shadow for touch */
+  box-shadow:
+    6px 6px 0 0 var(--color-primary-dark, #0088cc),
+    6px 6px 0 2px var(--color-border, #333);
+}
+
+/* ============================================================================
+   Content Layout
+   ============================================================================ */
+
+.drag-preview__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.drag-preview__icon {
+  /* 8-bit crisp rendering */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  /* Color */
+  color: var(--color-primary, #00d4ff);
+
+  /* Prevent shrink */
+  flex-shrink: 0;
+}
+
+.drag-preview__name {
+  /* Typography */
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--font-size-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text, #e0e0e0);
+
+  /* Prevent overflow */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  /* 8-bit text rendering */
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+}
+
+/* ============================================================================
+   Shadow Element (for additional depth)
+   ============================================================================ */
+
+.drag-preview__shadow {
+  /* Position behind content */
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  /* 8-bit shadow effect */
+  background: var(--color-primary-dark, #0088cc);
+  transform: translate(4px, 4px);
+
+  /* Sharp corners */
+  border-radius: 0;
+}
+
+.drag-preview--touch .drag-preview__shadow {
+  transform: translate(6px, 6px);
+}
+
+/* ============================================================================
+   State Variants
+   ============================================================================ */
+
+/* When drop is valid */
+.drag-preview.can-drop {
+  border-color: var(--color-success, #00ff88);
+  box-shadow:
+    4px 4px 0 0 var(--color-success-dark, #00cc6a),
+    4px 4px 0 2px var(--color-border, #333);
+}
+
+.drag-preview.can-drop .drag-preview__icon {
+  color: var(--color-success, #00ff88);
+}
+
+/* When drop is invalid */
+.drag-preview.cannot-drop {
+  border-color: var(--color-error, #ff4444);
+  box-shadow:
+    4px 4px 0 0 var(--color-error-dark, #cc3333),
+    4px 4px 0 2px var(--color-border, #333);
+  animation: drag-preview-shake 400ms steps(4, end);
+}
+
+.drag-preview.cannot-drop .drag-preview__icon {
+  color: var(--color-error, #ff4444);
+}
+
+@keyframes drag-preview-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .drag-preview {
+    transition: none;
+    animation: none;
+  }
+
+  .drag-preview.cannot-drop {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .drag-preview {
+    border-width: 3px;
+    opacity: 1;
+  }
+
+  .drag-preview__name {
+    font-weight: 700;
+  }
+}

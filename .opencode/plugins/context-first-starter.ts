@@ -1,23 +1,22 @@
 /**
- * BEAST-MODE CONTEXT STARTER PLUGIN v1.0
+ * BEAST-MODE CONTEXT STARTER PLUGIN v2.0
  * 
  * Automatically injects context-first reminders before EVERY message goes to the API.
- * Uses experimental.chat.system.transform to enrich the system prompt with:
- * 1. Role reminders (from .opencode/agents/)
- * 2. Context anchoring (turns 1-2 + last 4)
- * 3. Skill awareness (check .opencode/skills/)
- * 4. Governance reminders (AGENTS.md, workflow-status, sprint-status)
- * 5. Work type detection (meta-framework vs project)
  * 
- * This replaces /start command - it's AUTOMATIC on every turn.
+ * RESEARCHED FROM: packages/opencode/src/session/prompt.ts (lines 1310-1350, 3475-3510)
+ * 
+ * HOOKS USED:
+ * - experimental.chat.messages.transform: input={}, output={messages[]}
+ * - experimental.chat.system.transform: input={sessionID, model}, output={system: string[]}
+ * 
+ * CRITICAL: output.system is an ARRAY of strings, not a single string!
  * 
  * @location .opencode/plugins/context-first-starter.ts
- * @version 1.0.0
+ * @version 2.0.0
  * @date 2026-01-30
- * @hooks experimental.chat.messages.transform, experimental.chat.system.transform
  */
 
-import type { PluginInput } from '@opencode-ai/plugin'
+import type { Plugin } from '@opencode-ai/plugin'
 
 // ============================================================================
 // SESSION CONTEXT STORAGE
@@ -66,57 +65,35 @@ function debugLog(message: string): void {
 }
 
 // ============================================================================
-// MESSAGE PART TYPES
+// MESSAGE TYPES (from OpenCode source)
 // ============================================================================
 
 interface MessagePart {
     type?: string
     text?: string
-    sessionID?: string
+    id?: string
+    messageID?: string
     synthetic?: boolean
 }
 
-interface MessageWithInfo {
+interface MessageInfo {
+    id?: string
     role?: string
-    parts?: MessagePart[]
-    info?: {
-        sessionID?: string
-    }
-}
-
-interface MessagesTransformOutput {
-    messages: MessageWithInfo[]
-}
-
-interface SystemTransformInput {
     sessionID?: string
 }
 
-interface SystemTransformOutput {
-    system?: string | string[]
+interface MessageWithParts {
+    info?: MessageInfo
+    parts?: MessagePart[]
+    // Legacy format support
+    role?: string
 }
 
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
-function extractSessionID(messages: MessageWithInfo[]): string | undefined {
-    for (const message of messages) {
-        if (message.info?.sessionID) {
-            return message.info.sessionID
-        }
-        if (message.parts) {
-            for (const part of message.parts) {
-                if (part.sessionID) {
-                    return part.sessionID
-                }
-            }
-        }
-    }
-    return undefined
-}
-
-function extractMessageText(message: MessageWithInfo): string {
+function extractMessageText(message: MessageWithParts): string {
     if (!message.parts) return ''
 
     const texts: string[] = []
@@ -131,19 +108,18 @@ function extractMessageText(message: MessageWithInfo): string {
     return texts.join(' ')
 }
 
-function extractFilePaths(messages: MessageWithInfo[]): string[] {
+function extractFilePaths(messages: MessageWithParts[]): string[] {
     const paths = new Set<string>()
 
     for (const message of messages) {
         const text = extractMessageText(message)
 
-        // Match file paths mentioned in messages
         const pathPatterns = [
-            /file:\/\/\/([^\s)>\]]+)/g,  // file:// URIs
-            /`([^`]+\.(ts|tsx|js|jsx|md|yaml|json))`/g,  // backtick paths with extension
-            /\.opencode\/[^\s)>\]]+/g,  // .opencode paths
-            /_bmad-output\/[^\s)>\]]+/g,  // _bmad-output paths
-            /src\/[^\s)>\]]+/g  // src paths
+            /file:\/\/\/([^\s)>\]]+)/g,
+            /`([^`]+\.(ts|tsx|js|jsx|md|yaml|json))`/g,
+            /\.opencode\/[^\s)>\]]+/g,
+            /_bmad-output\/[^\s)>\]]+/g,
+            /src\/[^\s)>\]]+/g
         ]
 
         for (const pattern of pathPatterns) {
@@ -170,7 +146,7 @@ function detectWorkType(filePaths: string[]): 'meta-framework' | 'project' | 'un
     return 'unknown'
 }
 
-function detectPostCompact(messages: MessageWithInfo[]): boolean {
+function detectPostCompact(messages: MessageWithParts[]): boolean {
     const text = messages.map(m => extractMessageText(m)).join(' ')
     return text.includes('compact_chain:') ||
         text.includes('state_injection:') ||
@@ -182,7 +158,7 @@ function detectPostCompact(messages: MessageWithInfo[]): boolean {
 // ============================================================================
 
 function generateContextFirstReminder(ctx: SessionContext): string {
-    const reminder = `
+    return `
 ## 🔥 BEAST-MODE CONTEXT-FIRST REMINDER (Auto-Injected)
 
 ### 1. ROLE AWARENESS
@@ -197,69 +173,68 @@ ${ctx.firstUserMessage ? `
 ` : '- First user message not captured yet'}
 
 **Message Count:** ${ctx.messageCount}
-**Last Turns:** ${ctx.lastFourTurns.length}
 
-### 3. WORK TYPE DETECTION
-**Detected:** ${ctx.workType.toUpperCase()}
+### 3. WORK TYPE: ${ctx.workType.toUpperCase()}
 ${ctx.workType === 'meta-framework' ? `
-- Working on: .opencode/, .agent/, _bmad/
-- DO NOT modify project source code
-- Focus on framework, skills, workflows, agents
+→ Working on: .opencode/, .agent/, _bmad/
+→ DO NOT modify project source code
 ` : ctx.workType === 'project' ? `
-- Working on: src/, app/, packages/
-- Update workflow-status.yaml after completing work
-- Update sprint-status.yaml when in story development
-` : '- Could not determine work type from file paths'}
+→ Working on: src/, app/, packages/
+→ Update workflow-status.yaml after completing work
+` : '→ Could not determine work type'}
 
 ### 4. FILE PATHS IN CONTEXT
-${ctx.filePaths.length > 0 ? ctx.filePaths.slice(0, 10).map(p => `- ${p}`).join('\n') : '- No file paths detected in conversation'}
+${ctx.filePaths.length > 0 ? ctx.filePaths.slice(0, 5).map(p => `- ${p}`).join('\n') : '- No file paths detected'}
 
-### 5. POST-COMPACT DETECTION
-${ctx.isPostCompact ? `
-⚠️ **POST-COMPACT SESSION DETECTED**
-- Look for YAML summary at conversation start
-- Parse anchors.original_intent for primary goal
-- Parse artifact_registry for handoff documents
-- Read files ON DEMAND via hop-reading
-` : '- Normal session (not post-compact)'}
+### 5. POST-COMPACT: ${ctx.isPostCompact ? 'YES (read YAML summary at start)' : 'NO'}
 
-### 6. GOVERNANCE REMINDER
-- Check AGENTS.md for project constitution
-- Verify role permissions before acting
-- Evidence before assertions → Run commands, read outputs, THEN claim success
-- Load skills from \`.opencode/skills/\` for specialized work
-
-### 7. VERIFICATION REQUIREMENT
-Before claiming any task is complete:
-- Run \`pnpm typecheck:fast\` if TypeScript
-- Run \`pnpm test:fast\` if tests exist
-- Show evidence of successful execution
+### 6. GOVERNANCE
+- Check AGENTS.md for constitution
+- Evidence before assertions → Run commands, THEN claim success
+- Use skills from \`.opencode/skills/\` for specialized work
 
 ---
 `
-    return reminder
 }
 
 // ============================================================================
 // PLUGIN EXPORT
 // ============================================================================
 
-const contextFirstStarterPlugin = async (input: PluginInput) => {
+export const ContextFirstStarterPlugin: Plugin = async ({ client }) => {
     debugLog('Plugin initialized')
 
     return {
         /**
          * HOOK: experimental.chat.messages.transform
-         * Fires FIRST on each message, extracts context for injection
+         * 
+         * FROM SOURCE (line 3488):
+         *   await Plugin.trigger("experimental.chat.messages.transform", {}, { messages: sessionMessages })
+         * 
+         * Input: {} (empty object)
+         * Output: { messages: MessageWithParts[] }
          */
         'experimental.chat.messages.transform': async (
             _input: Record<string, never>,
-            output: MessagesTransformOutput
-        ): Promise<MessagesTransformOutput> => {
-            const sessionID = extractSessionID(output.messages)
+            output: { messages: MessageWithParts[] }
+        ) => {
+            if (!output.messages || output.messages.length === 0) {
+                debugLog('No messages in output')
+                return
+            }
+
+            // Extract sessionID from first message that has it
+            let sessionID: string | undefined
+            for (const message of output.messages) {
+                if (message.info?.sessionID) {
+                    sessionID = message.info.sessionID
+                    break
+                }
+            }
+
             if (!sessionID) {
-                debugLog('No sessionID found')
-                return output
+                debugLog('No sessionID found in messages')
+                return
             }
 
             // Get or create session context
@@ -275,12 +250,13 @@ const contextFirstStarterPlugin = async (input: PluginInput) => {
                 }
             }
 
-            // Extract first user message
+            // Find first user message
             if (!ctx.firstUserMessage) {
                 for (const msg of output.messages) {
-                    if (msg.role === 'user') {
+                    const role = msg.info?.role ?? msg.role
+                    if (role === 'user') {
                         const text = extractMessageText(msg)
-                        if (text) {
+                        if (text && text.length > 10) {
                             ctx.firstUserMessage = text
                             break
                         }
@@ -288,69 +264,137 @@ const contextFirstStarterPlugin = async (input: PluginInput) => {
                 }
             }
 
-            // Update message count
             ctx.messageCount = output.messages.length
-
-            // Update last 4 turns
-            ctx.lastFourTurns = output.messages
-                .slice(-8)  // Get last 8 to get 4 user + 4 assistant
-                .map(m => ({
-                    role: m.role || 'unknown',
-                    content: extractMessageText(m).slice(0, 100)
-                }))
-
-            // Extract file paths
             ctx.filePaths = extractFilePaths(output.messages)
-
-            // Detect work type
             ctx.workType = detectWorkType(ctx.filePaths)
-
-            // Detect post-compact
             ctx.isPostCompact = detectPostCompact(output.messages)
 
-            // Store context
             sessionContextMap.set(sessionID, ctx)
 
             debugLog(`Session ${sessionID}: ${ctx.messageCount} messages, workType=${ctx.workType}`)
-
-            return output
         },
 
         /**
          * HOOK: experimental.chat.system.transform
-         * Fires AFTER messages.transform, injects context-first reminder
+         * 
+         * FROM SOURCE (lines 1321-1327):
+         *   await Plugin.trigger(
+         *     "experimental.chat.system.transform",
+         *     { sessionID: input.sessionID, model: input.model },
+         *     { system },
+         *   )
+         * 
+         * Input: { sessionID: string, model: ModelInfo }
+         * Output: { system: string[] }  <-- ARRAY of strings!
+         * 
+         * CRITICAL: Push to system array, don't replace!
          */
         'experimental.chat.system.transform': async (
-            input: SystemTransformInput,
-            output: SystemTransformOutput | null
-        ): Promise<SystemTransformOutput> => {
+            input: { sessionID?: string; model?: unknown },
+            output: { system: string[] }
+        ) => {
             const sessionID = input?.sessionID
-            const ctx = sessionID ? sessionContextMap.get(sessionID) : undefined
+            if (!sessionID) {
+                debugLog('No sessionID in input')
+                return
+            }
 
+            const ctx = sessionContextMap.get(sessionID)
             if (!ctx) {
-                debugLog('No session context, skipping injection')
-                return output ?? {}
+                debugLog(`No context for session ${sessionID}`)
+                return
             }
 
             // Generate reminder
             const reminder = generateContextFirstReminder(ctx)
 
-            debugLog('Injecting context-first reminder into system prompt')
+            // CRITICAL: Push to the existing system array
+            if (!output.system) {
+                output.system = []
+            }
+            output.system.push(reminder)
 
-            // Inject into system prompt
-            if (!output) {
-                return { system: reminder }
-            } else if (Array.isArray(output.system)) {
-                output.system.push(reminder)
-            } else {
-                output.system = output.system
-                    ? `${output.system}\n\n${reminder}`
-                    : reminder
+            debugLog(`Injected context-first reminder for session ${sessionID}`)
+        },
+
+        /**
+         * HOOK: tool.execute.before
+         * 
+         * FROM SOURCE (lines 3267-3273):
+         *   await Plugin.trigger(
+         *     "tool.execute.before",
+         *     { tool: "task", sessionID, callID: part.id },
+         *     { args: taskArgs },
+         *   )
+         * 
+         * This fires BEFORE a tool executes, including the "task" tool
+         * which is used for agent-to-agent delegation!
+         * 
+         * Input: { tool: string, sessionID: string, callID: string }
+         * Output: { args: { prompt, description, subagent_type, command? } }
+         * 
+         * We CAN MODIFY args.prompt to inject context for the subagent!
+         */
+        'tool.execute.before': async (
+            input: { tool?: string; sessionID?: string; callID?: string },
+            output: { args?: Record<string, unknown> }
+        ) => {
+            // Only intercept the "task" tool (agent delegation)
+            if (input?.tool !== 'task') {
+                return
             }
 
-            return output
+            const sessionID = input.sessionID
+            if (!sessionID) {
+                debugLog('No sessionID for task tool')
+                return
+            }
+
+            const args = output.args
+            if (!args) {
+                debugLog('No args for task tool')
+                return
+            }
+
+            debugLog(`Intercepted task delegation to: ${args.subagent_type}`)
+
+            const ctx = sessionContextMap.get(sessionID)
+
+            // Build delegation context injection
+            const delegationReminder = `
+## 🔥 CONTEXT-FIRST: DELEGATION HANDOFF
+
+### From Parent Session
+- **Session ID**: ${sessionID}
+- **Delegating to**: ${args.subagent_type}
+${ctx ? `
+- **Parent Work Type**: ${ctx.workType}
+- **Parent Message Count**: ${ctx.messageCount}
+${ctx.firstUserMessage ? `- **Original Intent**: ${ctx.firstUserMessage.slice(0, 150)}...` : ''}
+` : ''}
+
+### ⚠️ SUBAGENT REQUIREMENTS
+1. **Load your role** from \`.opencode/agents/\` FIRST
+2. **Read AGENTS.md** for project governance
+3. **Evidence before assertions** - run commands, show output
+4. **Stay in scope** - do ONLY what was delegated
+5. **Report back** with completion status and any handoff notes
+
+### Task Assigned
+${args.description || 'No description provided'}
+
+---
+`
+
+            // Inject context at the start of the prompt
+            if (typeof args.prompt === 'string') {
+                args.prompt = `${delegationReminder}\n${args.prompt}`
+                debugLog(`Injected context into delegation prompt for ${args.subagent_type}`)
+            } else {
+                debugLog('args.prompt is not a string, cannot inject')
+            }
         }
     }
 }
 
-export default contextFirstStarterPlugin
+export default ContextFirstStarterPlugin
