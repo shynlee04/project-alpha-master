@@ -14,10 +14,11 @@
  * @created 2026-01-30
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useActivityBarMainTop } from '@/presentation/hooks/useActivityBar';
+import { usePluginCoordination } from '@/presentation/hooks/usePluginCoordination';
 import type { ActivityBarMainTopProps } from './activity-bar-types';
 import { ACTIVITY_BAR_HEIGHT, ACTIVITY_BAR_ICON_SIZE } from './activity-bar-types';
 import './ActivityBarMainTop.css';
@@ -70,6 +71,20 @@ export const ActivityBarMainTop: React.FC<ActivityBarMainTopProps> = ({
 }) => {
   const { t } = useTranslation();
   const { plugins, activePluginId, togglePlugin } = useActivityBarMainTop();
+
+  // EPIC-UXUI-04-08: Plugin Coordination Integration
+  const { registerPlugin, unregisterPlugin } = usePluginCoordination();
+
+  // Notify coordination layer when active plugin changes
+  useEffect(() => {
+    if (activePluginId) {
+      registerPlugin(activePluginId);
+
+      return () => {
+        unregisterPlugin(activePluginId);
+      };
+    }
+  }, [activePluginId, registerPlugin, unregisterPlugin]);
 
   /**
    * Handle plugin icon click

@@ -9,6 +9,11 @@
 // Layout hooks
 export { useSidebarState } from './useSidebarState';
 export { useGlobalSidebar } from './useGlobalSidebar';
+export { useLayoutState } from './useLayoutState';
+
+// Responsive layout hooks (UXUI-04-07)
+export { useBreakpoint } from './useBreakpoint';
+export { useResponsiveLayout } from './useResponsiveLayout';
 
 // Re-export other hooks as needed
 export { useBreakpointEnhanced } from './useBreakpointEnhanced';

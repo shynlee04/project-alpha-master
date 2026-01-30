@@ -3,15 +3,17 @@
  * @module presentation/components/layout/PluginPanelContainer
  *
  * EPIC-UXUI-04: Plugin Panel System
+ * EPIC-UXUI-04-08: Plugin Coordination Integration
  * - Manages plugin rendering and state preservation
  * - Handles transitions between plugins
  * - Provides empty state when no plugin is active
+ * - Integrates with PluginCoordinationContext for write locks
  *
- * @story UXUI-04-05
+ * @story UXUI-04-05, UXUI-04-08
  * @created 2026-01-30
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import type { PluginId } from '@/domain/types/plugin-types';
@@ -21,6 +23,8 @@ import type {
 } from './plugin-panel-types';
 import { PANEL_WIDTHS, DEFAULT_EMPTY_STATES } from './plugin-panel-types';
 import { usePluginPanel } from '@/presentation/hooks/usePluginPanel';
+import { usePluginCoordination } from '@/presentation/hooks/usePluginCoordination';
+import { WriteLockIndicator } from './WriteLockIndicator';
 import { PLUGIN_COMPONENTS } from './plugin-placeholders';
 import './PluginPanelContainer.css';
 
@@ -118,6 +122,25 @@ export const PluginPanelContainer: React.FC<PluginPanelContainerProps> = ({
   const { t } = useTranslation();
   const { activePluginId, plugins, hasPlugins, isActive } = usePluginPanel(position);
 
+  // EPIC-UXUI-04-08: Plugin Coordination Integration
+  const {
+    activeDocument,
+    writeLockHolder,
+    registerPlugin,
+    unregisterPlugin,
+  } = usePluginCoordination();
+
+  // Register active plugin with coordination layer
+  useEffect(() => {
+    if (activePluginId) {
+      registerPlugin(activePluginId);
+
+      return () => {
+        unregisterPlugin(activePluginId);
+      };
+    }
+  }, [activePluginId, registerPlugin, unregisterPlugin]);
+
   // Get panel width for CSS grid
   const panelWidth = PANEL_WIDTHS[position];
 
@@ -130,6 +153,10 @@ export const PluginPanelContainer: React.FC<PluginPanelContainerProps> = ({
     className
   );
 
+  // Check if active document is locked by current plugin
+  const isOwnLock = activePluginId && writeLockHolder === activePluginId;
+  const isLockedByOther = activePluginId && writeLockHolder && writeLockHolder !== activePluginId;
+
   return (
     <div
       className={panelClassName}
@@ -137,6 +164,18 @@ export const PluginPanelContainer: React.FC<PluginPanelContainerProps> = ({
       role="region"
       aria-label={t(`layout.pluginPanel.${position}.label`, `${position} panel`)}
     >
+      {/* EPIC-UXUI-04-08: Write Lock Indicator */}
+      {activeDocument && (isOwnLock || isLockedByOther) && (
+        <div className="plugin-panel__lock-indicator">
+          <WriteLockIndicator
+            fileId={activeDocument.path}
+            lockedBy={writeLockHolder}
+            isOwnLock={!!isOwnLock}
+            size="small"
+          />
+        </div>
+      )}
+
       {/* Plugin instances - all rendered but only active one is visible */}
       <div className="plugin-panel__content">
         {hasPlugins ? (

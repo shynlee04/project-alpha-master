@@ -1,0 +1,370 @@
+/**
+ * @fileoverview WriteLockIndicator Styles - 8-bit pixel styling
+ * @module presentation/components/layout/WriteLockIndicator
+ *
+ * EPIC-UXUI-04-08: Plugin Coordination Integration
+ * 8-bit design compliance: sharp corners, pixel shadows, solid colors
+ */
+
+/* ============================================================================
+   Write Lock Indicator
+   ============================================================================ */
+
+.write-lock-indicator {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  /* 8-bit Design: Sharp corners */
+  border-radius: 0;
+
+  /* Animation */
+  transition: all 0.15s steps(3, end);
+}
+
+/* Size Variants */
+.write-lock-indicator--small {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+}
+
+.write-lock-indicator--medium {
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+.write-lock-indicator--large {
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+}
+
+/* Status: Locked by another plugin */
+.write-lock-indicator--locked {
+  background-color: #dc2626; /* Red-600 */
+  border: 2px solid #991b1b; /* Red-800 */
+  color: #ffffff;
+
+  /* 8-bit: Pixel shadow */
+  box-shadow: 2px 2px 0 0 #7f1d1d; /* Red-900 */
+}
+
+/* Status: Locked by current plugin */
+.write-lock-indicator--own {
+  background-color: #16a34a; /* Green-600 */
+  border: 2px solid #166534; /* Green-800 */
+  color: #ffffff;
+
+  /* 8-bit: Pixel shadow */
+  box-shadow: 2px 2px 0 0 #14532d; /* Green-900 */
+}
+
+/* Hover States */
+.write-lock-indicator--clickable {
+  cursor: pointer;
+}
+
+.write-lock-indicator--clickable:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 currentColor;
+}
+
+.write-lock-indicator--clickable:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 currentColor;
+}
+
+/* Icon */
+.write-lock-indicator__icon {
+  flex-shrink: 0;
+}
+
+/* Alert Badge (shown when locked by another) */
+.write-lock-indicator__badge {
+  /* Position */
+  position: absolute;
+  top: -4px;
+  right: -4px;
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+
+  /* 8-bit Design */
+  background-color: #fbbf24; /* Amber-400 */
+  border: 1px solid #b45309; /* Amber-700 */
+  border-radius: 0;
+
+  /* Pixel shadow */
+  box-shadow: 1px 1px 0 0 #78350f; /* Amber-900 */
+}
+
+/* ============================================================================
+   Write Lock Badge
+   ============================================================================ */
+
+.write-lock-badge {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+
+  /* 8-bit Design */
+  background-color: #dc2626; /* Red-600 */
+  border: 2px solid #991b1b; /* Red-800 */
+  border-radius: 0;
+  color: #ffffff;
+
+  /* Pixel shadow */
+  box-shadow: 2px 2px 0 0 #7f1d1d; /* Red-900 */
+
+  /* Typography */
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.write-lock-badge__count {
+  min-width: 14px;
+  text-align: center;
+}
+
+/* ============================================================================
+   File Lock Status
+   ============================================================================ */
+
+.file-lock-status {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+
+  /* 8-bit Design */
+  border: 2px solid;
+  border-radius: 0;
+
+  /* Pixel shadow */
+  box-shadow: 3px 3px 0 0;
+}
+
+/* Available for editing */
+.file-lock-status--available {
+  background-color: #dcfce7; /* Green-100 */
+  border-color: #16a34a; /* Green-600 */
+  color: #166534; /* Green-800 */
+  box-shadow: 3px 3px 0 0 #14532d; /* Green-900 */
+}
+
+/* Locked by current plugin */
+.file-lock-status--own {
+  background-color: #dcfce7; /* Green-100 */
+  border-color: #16a34a; /* Green-600 */
+  color: #166534; /* Green-800 */
+  box-shadow: 3px 3px 0 0 #14532d; /* Green-900 */
+}
+
+/* Locked by another plugin */
+.file-lock-status--locked {
+  background-color: #fee2e2; /* Red-100 */
+  border-color: #dc2626; /* Red-600 */
+  color: #991b1b; /* Red-800 */
+  box-shadow: 3px 3px 0 0 #7f1d1d; /* Red-900 */
+}
+
+/* Icon */
+.file-lock-status__icon {
+  flex-shrink: 0;
+}
+
+/* Content Container */
+.file-lock-status__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Status Text */
+.file-lock-status__text {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* File Path */
+.file-lock-status__file {
+  font-size: 11px;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Action Button */
+.file-lock-status__action {
+  /* Layout */
+  padding: 4px 8px;
+  margin-left: 8px;
+
+  /* 8-bit Design */
+  background-color: transparent;
+  border: 2px solid currentColor;
+  border-radius: 0;
+  color: inherit;
+
+  /* Typography */
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  /* Interaction */
+  cursor: pointer;
+  transition: all 0.1s steps(2, end);
+}
+
+.file-lock-status__action:hover {
+  background-color: currentColor;
+  color: #ffffff;
+}
+
+.file-lock-status__action:active {
+  transform: translate(1px, 1px);
+}
+
+/* ============================================================================
+   Activity Bar Integration
+   ============================================================================ */
+
+/* Lock indicator in activity bar items */
+.activity-bar-left__item .write-lock-indicator,
+.activity-bar-right__item .write-lock-indicator,
+.activity-bar-main-top__item .write-lock-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
+/* Badge in activity bar */
+.activity-bar-left__item .write-lock-badge,
+.activity-bar-right__item .write-lock-badge,
+.activity-bar-main-top__item .write-lock-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+
+/* ============================================================================
+   Plugin Panel Integration
+   ============================================================================ */
+
+/* Lock indicator in plugin panel header */
+.plugin-panel__header .write-lock-indicator {
+  margin-left: 8px;
+}
+
+/* File lock status in plugin panel */
+.plugin-panel__content .file-lock-status {
+  margin: 8px;
+}
+
+/* ============================================================================
+   Responsive Adjustments
+   ============================================================================ */
+
+@media (max-width: 599px) {
+  /* Mobile: Smaller indicators */
+  .write-lock-indicator--medium {
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+  }
+
+  .write-lock-indicator--large {
+    width: 28px;
+    height: 28px;
+    padding: 5px;
+  }
+
+  /* Mobile: Compact file lock status */
+  .file-lock-status {
+    padding: 6px 8px;
+  }
+
+  .file-lock-status__text {
+    font-size: 12px;
+  }
+
+  .file-lock-status__file {
+    font-size: 10px;
+  }
+
+  .file-lock-status__action {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .write-lock-indicator,
+  .write-lock-badge,
+  .file-lock-status,
+  .file-lock-status__action {
+    transition: none;
+  }
+
+  .write-lock-indicator--clickable:hover,
+  .write-lock-indicator--clickable:active {
+    transform: none;
+  }
+
+  .file-lock-status__action:active {
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .write-lock-indicator--locked,
+  .write-lock-badge {
+    background-color: #dc2626;
+    border-color: #000000;
+    box-shadow: 2px 2px 0 0 #000000;
+  }
+
+  .write-lock-indicator--own {
+    background-color: #16a34a;
+    border-color: #000000;
+    box-shadow: 2px 2px 0 0 #000000;
+  }
+
+  .file-lock-status--available,
+  .file-lock-status--own {
+    background-color: #dcfce7;
+    border-color: #000000;
+    box-shadow: 3px 3px 0 0 #000000;
+  }
+
+  .file-lock-status--locked {
+    background-color: #fee2e2;
+    border-color: #000000;
+    box-shadow: 3px 3px 0 0 #000000;
+  }
+}
