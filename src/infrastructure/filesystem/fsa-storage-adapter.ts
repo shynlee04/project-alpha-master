@@ -24,6 +24,20 @@ import type {
 } from '@/domain/interfaces/storage-adapter.interface';
 import { FileSystemError, PermissionDeniedError } from './fs-errors';
 import * as fileOps from './file-ops';
+import {
+  getFSAHandle,
+  storeFSAHandle,
+  updateFSAHandleStatus,
+} from '@/infrastructure/persistence/dexie-db';
+
+// ============================================================================
+// Permission Status Type
+// ============================================================================
+
+/**
+ * Permission status for FSA handle restoration
+ */
+export type FSAPermissionStatus = 'granted' | 'prompt' | 'denied' | 'unknown' | 'restoring' | 'dismissed';
 
 // ============================================================================
 // Types
@@ -70,6 +84,7 @@ export class FSAStorageAdapter implements StorageAdapter {
   readonly name = 'fsa';
 
   private directoryHandle: FileSystemDirectoryHandle | null = null;
+  private projectId: string | null = null;
   private watchInterval: ReturnType<typeof setInterval> | null = null;
   private fileHashes: Map<string, FileHashEntry> = new Map();
   private watchCallbacks: Set<FileChangeCallback> = new Set();
@@ -79,9 +94,12 @@ export class FSAStorageAdapter implements StorageAdapter {
   };
   private debounceTimers: Map<string, ReturnType<typeof setTimeout>> = new Map();
 
-  constructor(options?: { handle?: FileSystemDirectoryHandle | null }) {
+  constructor(options?: { handle?: FileSystemDirectoryHandle | null; projectId?: string }) {
     if (options?.handle) {
       this.directoryHandle = options.handle;
+    }
+    if (options?.projectId) {
+      this.projectId = options.projectId;
     }
   }
 
@@ -139,6 +157,163 @@ export class FSAStorageAdapter implements StorageAdapter {
    */
   getDirectoryHandle(): FileSystemDirectoryHandle | null {
     return this.directoryHandle;
+  }
+
+  // ============================================================================
+  // Handle Restoration (Page Reload Support)
+  // ============================================================================
+
+  /**
+   * Query permission status without prompting user
+   * 
+   * Uses queryPermission API to check if permission is already granted.
+   * Returns 'granted' if permission is active, 'prompt' if user needs to re-authorize.
+   * 
+   * @returns Permission status
+   */
+  async queryPermission(): Promise<FSAPermissionStatus> {
+    if (!this.directoryHandle) {
+      return 'unknown';
+    }
+
+    try {
+      // Use the queryPermission method to check without prompting
+      // Type assertion needed as TS DOM lib doesn't fully type these methods
+      const handle = this.directoryHandle as FileSystemDirectoryHandle & {
+        queryPermission?: (options: { mode: string }) => Promise<string>;
+      };
+      if (!handle.queryPermission) {
+        // API not supported in this browser
+        return 'unknown';
+      }
+      const status = await handle.queryPermission({ mode: 'readwrite' });
+      return status as FSAPermissionStatus;
+    } catch (error) {
+      console.warn('[FSAStorageAdapter] Failed to query permission:', error);
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Request permission with user prompt if needed
+   * 
+   * If permission was 'prompt', this will show the browser permission dialog.
+   * Returns 'granted' if user allows, 'denied' if user denies.
+   * 
+   * @returns Permission status after request
+   */
+  async requestPermission(): Promise<FSAPermissionStatus> {
+    if (!this.directoryHandle) {
+      return 'unknown';
+    }
+
+    try {
+      // Type assertion needed as TS DOM lib doesn't fully type these methods
+      const handle = this.directoryHandle as FileSystemDirectoryHandle & {
+        requestPermission?: (options: { mode: string }) => Promise<string>;
+      };
+      if (!handle.requestPermission) {
+        // API not supported - try to use the handle directly (may prompt)
+        return 'granted';
+      }
+      const status = await handle.requestPermission({ mode: 'readwrite' });
+      return status as FSAPermissionStatus;
+    } catch (error: unknown) {
+      const err = error as { name?: string };
+      if (err.name === 'AbortError') {
+        return 'dismissed';
+      }
+      console.warn('[FSAStorageAdapter] Failed to request permission:', error);
+      return 'denied';
+    }
+  }
+
+  /**
+   * Restore FSA handle from IndexedDB and verify permission
+   * 
+   * This method attempts to restore a previously stored handle.
+   * It first queries permission (no user prompt), and if needed,
+   * requests permission (with user prompt).
+   * 
+   * @param projectId - Project ID to restore handle for
+   * @returns Object with success status, permission status, and optional handle
+   */
+  async restoreHandle(projectId: string): Promise<{
+    success: boolean;
+    status: FSAPermissionStatus;
+    handle: FileSystemDirectoryHandle | null;
+  }> {
+    try {
+      // Get stored handle from IndexedDB
+      const storedHandle = await getFSAHandle(projectId);
+      if (!storedHandle || !storedHandle.handleData) {
+        return { success: false, status: 'unknown', handle: null };
+      }
+
+      // Set the handle (handleData is the serialized FileSystemDirectoryHandle)
+      this.directoryHandle = storedHandle.handleData as FileSystemDirectoryHandle;
+      this.projectId = projectId;
+
+      // Update status to restoring
+      await updateFSAHandleStatus(projectId, 'restoring');
+
+      // Query permission without prompting
+      const permissionStatus = await this.queryPermission();
+
+      if (permissionStatus === 'granted') {
+        // Permission already granted - good to go
+        await updateFSAHandleStatus(projectId, 'granted');
+        return { success: true, status: 'granted', handle: this.directoryHandle };
+      }
+
+      if (permissionStatus === 'prompt') {
+        // Need to prompt user for permission
+        const requestedStatus = await this.requestPermission();
+        await updateFSAHandleStatus(projectId, requestedStatus);
+        
+        if (requestedStatus === 'granted') {
+          return { success: true, status: 'granted', handle: this.directoryHandle };
+        }
+        
+        // Permission denied or dismissed
+        this.directoryHandle = null;
+        return { success: false, status: requestedStatus, handle: null };
+      }
+
+      // Permission denied or unknown
+      await updateFSAHandleStatus(projectId, permissionStatus);
+      this.directoryHandle = null;
+      return { success: false, status: permissionStatus, handle: null };
+
+    } catch (error) {
+      console.error('[FSAStorageAdapter] Failed to restore handle:', error);
+      this.directoryHandle = null;
+      return { success: false, status: 'unknown', handle: null };
+    }
+  }
+
+  /**
+   * Store the current handle for later restoration
+   * 
+   * @param projectId - Project ID to associate with this handle
+   * @param workspaceId - Workspace ID (default: 'ide')
+   */
+  async persistHandle(projectId: string, workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'): Promise<void> {
+    if (!this.directoryHandle) {
+      throw new FileSystemError('No handle to persist', 'NO_DIRECTORY_ACCESS');
+    }
+
+    await storeFSAHandle({
+      projectId,
+      workspaceId,
+      handleData: this.directoryHandle,
+      directoryPath: this.directoryHandle.name,
+      grantedAt: Date.now(),
+      permissionStatus: 'granted',
+      lastAccessedAt: Date.now(),
+    });
+
+    this.projectId = projectId;
   }
 
   /**
