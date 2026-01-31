@@ -5,32 +5,32 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** Users can interact with AI that reads, writes, and understands their project files — all client-side with zero data sent to our servers.
-**Current focus:** Phase -1 (Preparation)
+**Current focus:** Phase 1 (Platform Operators)
 
 ## Current Position
 
-Phase: -1 of 5 (Preparation)
-Plan: 0 of 1 in current phase
-Status: Ready to plan
-Last activity: 2026-02-01 — GSD initialization complete
+Phase: 1 of 5 (Platform Operators)
+Plan: 1 of 4 in current phase
+Status: In progress
+Last activity: 2026-01-31 — Completed 01-01-PLAN.md
 
-Progress: ░░░░░░░░░░ 0%
+Progress: █░░░░░░░░░ 10%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
-- Average duration: —
-- Total execution time: 0 hours
+- Total plans completed: 1
+- Average duration: 5 min
+- Total execution time: 5 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01-platform-operators | 1 | 5 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: —
+- Last 5 plans: 5 min
 - Trend: —
 
 *Updated after each plan completion*
@@ -45,6 +45,9 @@ Recent decisions affecting current work:
 - [Init]: Project-centric model — no workspace terminology, only projectId
 - [Init]: Platform Operators (FileTree, Chat) are infrastructure, not plugins
 - [Init]: Parts-based ThreadMessage content for multi-modal AI responses
+- [01-01]: IPlatformOperator uses isOperator: true discriminator for type-safe distinction
+- [01-01]: FileService emits domain events on all writes for reactive architecture
+- [01-01]: DomainEventMap enables compile-time event payload type checking
 
 ### Pending Todos
 
@@ -57,8 +60,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-01
-Stopped at: GSD initialization complete — PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md created
+Last session: 2026-01-31
+Stopped at: Completed 01-01-PLAN.md — Operator architecture foundation
 Resume file: None
 
 ---
