@@ -1,50 +1,52 @@
 /**
- * PHASE 2 STUB: Chat Plugin
+ * Chat Plugin - AI Chat Assistant
  * 
- * Original code archived to: _phase2-archive/plugins/chat/
- * This stub prevents runtime errors during Phase 1A development.
+ * Wires ChatPanel component to the plugin system.
+ * Chat is now fully functional in Phase 1.
  * 
- * @phase 2
- * @stub true
+ * @module plugins/chat
  * @created 2026-01-29
+ * @updated 2026-02-01 - Wired real ChatPanel (gap closure 01-06)
  */
 
-import React from 'react';
 import { MessageSquare } from 'lucide-react';
+import { useShallow } from 'zustand/react/shallow';
 import type { FeaturePlugin, PluginMainProps } from '@/domain/interfaces/feature-plugin.interface';
+import { ChatPanel } from './components/ChatPanel';
+import { useProjectStore } from '@/infrastructure/persistence/stores/project';
 
 /**
- * Stub Chat Main Component - renders placeholder during Phase 1A
+ * ChatPluginMain - Adapts PluginMainProps to ChatPanel requirements
+ * 
+ * ChatPanel requires projectId, which we get from ProjectStore.
  */
-function ChatStubComponent({ width: _width, height: _height }: PluginMainProps) {
+function ChatPluginMain({ width, height }: PluginMainProps) {
+  const activeProjectId = useProjectStore(
+    useShallow((state) => state.activeProjectId)
+  );
+
   return (
-    <div 
-      className="flex flex-col items-center justify-center h-full bg-background text-muted-foreground font-mono text-sm p-4"
-    >
-      <div className="text-center">
-        <div className="text-lg mb-2">💬</div>
-        <div>Chat Plugin</div>
-        <div className="text-xs mt-1 opacity-60">(Phase 2 - Staged)</div>
-      </div>
+    <div style={{ width, height }} className="h-full overflow-hidden">
+      <ChatPanel projectId={activeProjectId} className="h-full" />
     </div>
   );
 }
 
 /**
- * Stub Chat Plugin Definition
+ * Chat Plugin Definition
  */
 export const chatPlugin: FeaturePlugin = {
   id: 'chat',
   name: 'Chat',
   icon: <MessageSquare size={16} />,
-  description: 'AI Chat Assistant (Phase 2 - Staged)',
+  description: 'AI Chat Assistant',
   requirements: {
     storageType: 'any',
     deviceType: 'any',
     minWidth: 300,
     maxInstances: 1,
   },
-  MainComponent: ChatStubComponent,
+  MainComponent: ChatPluginMain,
 };
 
 export default chatPlugin;
