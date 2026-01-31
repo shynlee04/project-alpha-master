@@ -72,8 +72,8 @@
 4. No duplicate type definitions across codebase
 
 **Plans:** 2 plans
-- [ ] 02-01-PLAN.md — Project and File Zod schemas
-- [ ] 02-02-PLAN.md — Thread/Chat and Note Zod schemas
+- [ ] 02-01-PLAN.md — Correct Project/File schemas (remove workspaceBindings/workspaceId)
+- [ ] 02-02-PLAN.md — Create Thread/Note schemas (project-centric, no workspaceId)
 
 ---
 
