@@ -3,20 +3,24 @@
  * @module presentation/components/layout/ResponsiveLayout
  *
  * EPIC-UXUI-04: Responsive Layout Implementation
- * - Desktop layout: [0.5:0.5:2:4:2.5:0.5] grid
- * - Tablet landscape: [0.5:0.5:3:4:2:0.5] grid
+ * FIX-2026-02-01: Removed GlobalSidebar to eliminate layout nesting conflict.
+ * ProjectAwareLayout handles global navigation (GlobalHeader/MainSidebar).
+ * This component focuses ONLY on plugin panels.
+ *
+ * - Desktop layout: [0.5:2:4:2.5:0.5] 5-column grid
+ * - Tablet landscape: [0.5:3:4:2:0.5] 5-column grid
  * - Tablet portrait: Single panel + bottom nav
  * - Mobile: Single panel + bottom nav
  *
  * @story UXUI-04-07
  * @created 2026-01-30
+ * @updated 2026-02-01
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { cn } from '@/infrastructure/utils/cn';
 import { useTranslation } from 'react-i18next';
 import { useResponsiveLayout } from '@/presentation/hooks/useResponsiveLayout';
-import { GlobalSidebar } from './GlobalSidebar';
 import { ActivityBarLeft } from './ActivityBarLeft';
 import { ActivityBarRight } from './ActivityBarRight';
 import {
@@ -25,7 +29,6 @@ import {
   PluginPanelRight,
 } from './PluginPanelContainer';
 import { BottomNavigation } from './BottomNavigation';
-import { PluginDocker } from './PluginDocker';
 import type { ResponsiveLayoutProps } from './responsive-types';
 import './ResponsiveLayout.css';
 
@@ -34,19 +37,17 @@ import './ResponsiveLayout.css';
 // ============================================================================
 
 /**
- * DesktopLayout - Full 6-column grid layout
+ * DesktopLayout - 5-column grid layout (NO GlobalSidebar - handled by ProjectAwareLayout)
  *
- * Grid: [0.5:0.5:2:4:2.5:0.5]
- * [GlobalSidebar:ActivityBarLeft:PanelLeft:MainPanel:PanelRight:ActivityBarRight]
+ * Grid: [0.5:2:4:2.5:0.5]
+ * [ActivityBarLeft:PanelLeft:MainPanel:PanelRight:ActivityBarRight]
+ * 
+ * NOTE: GlobalSidebar is removed because ProjectAwareLayout provides GlobalHeader
+ * for global navigation. This layout focuses ONLY on plugin panels.
  */
 const DesktopLayout: React.FC = () => {
   return (
     <div className="responsive-layout__desktop">
-      {/* Global Sidebar (0.5) */}
-      <aside className="responsive-layout__global-sidebar">
-        <GlobalSidebar />
-      </aside>
-
       {/* Activity Bar Left (0.5) */}
       <nav className="responsive-layout__activity-bar-left" aria-label="Left panel plugins">
         <ActivityBarLeft />
@@ -80,19 +81,14 @@ const DesktopLayout: React.FC = () => {
 // ============================================================================
 
 /**
- * TabletLandscapeLayout - Adjusted grid for tablet landscape
+ * TabletLandscapeLayout - 5-column grid for tablet landscape (NO GlobalSidebar)
  *
- * Grid: [0.5:0.5:3:4:2:0.5]
- * [GlobalSidebar:ActivityBarLeft:PanelLeft:MainPanel:PanelRight:ActivityBarRight]
+ * Grid: [0.5:3:4:2:0.5]
+ * [ActivityBarLeft:PanelLeft:MainPanel:PanelRight:ActivityBarRight]
  */
 const TabletLandscapeLayout: React.FC = () => {
   return (
     <div className="responsive-layout__tablet-landscape">
-      {/* Global Sidebar (0.5) */}
-      <aside className="responsive-layout__global-sidebar">
-        <GlobalSidebar />
-      </aside>
-
       {/* Activity Bar Left (0.5) */}
       <nav className="responsive-layout__activity-bar-left" aria-label="Left panel plugins">
         <ActivityBarLeft />
@@ -205,14 +201,6 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
     layoutConfig,
   } = useResponsiveLayout();
 
-  // PluginDocker visibility state
-  const [isDockerVisible, setIsDockerVisible] = useState(false);
-
-  // Toggle PluginDocker visibility
-  const toggleDocker = () => {
-    setIsDockerVisible((prev) => !prev);
-  };
-
   /**
    * Notify parent of breakpoint changes
    */
@@ -279,30 +267,16 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
         {renderLayout()}
       </div>
 
-      {/* PluginDocker - Collapsible plugin panel */}
-      {breakpoint === 'desktop' && (
-        <div className="responsive-layout__docker-container">
-          <PluginDocker
-            className={cn(
-              'responsive-layout__docker',
-              isDockerVisible && 'responsive-layout__docker--visible'
-            )}
-          />
-          {/* Docker Toggle Button */}
-          <button
-            type="button"
-            className="responsive-layout__docker-toggle"
-            onClick={toggleDocker}
-            aria-label={isDockerVisible ? 'Hide plugin docker' : 'Show plugin docker'}
-            aria-pressed={isDockerVisible}
-            title={isDockerVisible ? 'Hide Plugins' : 'Show Plugins'}
-          >
-            <span className="responsive-layout__docker-toggle-icon">
-              {isDockerVisible ? '◀' : '▶'}
-            </span>
-          </button>
-        </div>
-      )}
+      {/* 
+       * DISABLED: PluginDocker causes floating overlay issues.
+       * TODO: Integrate as part of panel system, not fixed positioned.
+       * 
+       * {breakpoint === 'desktop' && (
+       *   <div className="responsive-layout__docker-container">
+       *     <PluginDocker ... />
+       *   </div>
+       * )}
+       */}
 
       {/* Additional children (if any) */}
       {children}
