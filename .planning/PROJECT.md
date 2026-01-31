@@ -81,6 +81,8 @@ Architecture remediation targets:
 
 | Document | Location | Purpose |
 |----------|----------|---------|
+| **State Contracts** | `.planning/architecture/STATE-CONTRACTS.md` | 4-layer state architecture rules |
+| **Entity Layers** | `.planning/architecture/ENTITY-LAYERS.md` | Entity-to-layer mapping |
 | Codebase Architecture | `.planning/codebase/ARCHITECTURE.md` | Current layered architecture |
 | Codebase Concerns | `.planning/codebase/CONCERNS.md` | Health metrics and issues |
 | Fundamental Truths | `new-fundamental-truths.md` | Architectural principles (needs enforcement) |
