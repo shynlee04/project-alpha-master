@@ -59,3 +59,41 @@ export {
   type FileSyncState,
   type StorageFileMetadata,
 } from './file.schema';
+
+// ============================================================================
+// Thread Schemas
+// ============================================================================
+
+export {
+  // Schemas
+  ThreadSchema,
+  ThreadMessageSchema,
+  ThreadToolCallSchema,
+  ThreadHierarchyNodeSchema,
+  ThreadCreateParamsSchema,
+  ThreadUpdateParamsSchema,
+  // Types
+  type Thread,
+  type ThreadMessage,
+  type ThreadToolCall,
+  type ThreadHierarchyNode,
+  type ThreadCreateParams,
+  type ThreadUpdateParams,
+} from './thread.schema';
+
+// ============================================================================
+// Note Schemas
+// ============================================================================
+
+export {
+  // Schemas
+  NoteSchema,
+  NoteCreateParamsSchema,
+  NoteUpdateParamsSchema,
+  NoteTreeNodeSchema,
+  // Types
+  type Note,
+  type NoteCreateParams,
+  type NoteUpdateParams,
+  type NoteTreeNode,
+} from './note.schema';
