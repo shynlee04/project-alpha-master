@@ -1,7 +1,7 @@
 # Project State: Project Alpha Architecture Remediation
 
 **Initialized:** 2026-01-31
-**Current Phase:** 01 - State Architecture Contracts ✓ COMPLETE
+**Current Phase:** 02 - Schema Definitions (In Progress)
 **Health Score:** 29.5%
 
 ---
@@ -11,7 +11,7 @@
 See: `.planning/PROJECT.md` (updated 2026-01-31)
 
 **Core value:** Clear state boundaries — every piece of data has ONE canonical home and ONE flow path.
-**Current focus:** Phase 01 complete - Ready for Phase 02
+**Current focus:** Phase 02 - Correcting domain schemas to project-centric model
 
 ---
 
@@ -20,7 +20,7 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | Phase | Status | Plans | Completed |
 |-------|--------|-------|-----------|
 | 01 | ✓ Complete | 2/2 | 01-01, 01-02 |
-| 02 | ○ Pending | 0/0 | — |
+| 02 | ◆ In Progress | 2/1 | 02-01 |
 | 03 | ○ Pending | 0/0 | — |
 | 04 | ○ Pending | 0/0 | — |
 | 05 | ○ Pending | 0/0 | — |
@@ -50,6 +50,8 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | Single writer per data type | 2026-01-31 | Prevents race conditions and conflicting updates | 01-02 |
 | Event-driven propagation | 2026-01-31 | More efficient than polling, immediate updates | 01-02 |
 | Timestamp-based conflict resolution for files | 2026-01-31 | Preserves newest content, enables merge dialog | 01-02 |
+| Remove workspaceBindings from Project | 2026-01-31 | Platform determines plugins, not workspace bindings | 02-01 |
+| Remove workspaceId from Files | 2026-01-31 | Files belong to project only, projectId is sufficient | 02-01 |
 
 ---
 
@@ -79,8 +81,9 @@ None currently.
 | 2026-01-31 | Init | Project initialization | PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md created |
 | 2026-01-31 | 01-01 | Execute Plan 01-01 | STATE-CONTRACTS.md, ENTITY-LAYERS.md created |
 | 2026-01-31 | 01-02 | Execute Plan 01-02 | DATA-FLOW-CONTRACTS.md, SYNC-PATTERNS.md, README.md created |
+| 2026-01-31 | 02-01 | Execute Plan 02-01 | Project/File schemas corrected (removed workspace-centric fields) |
 
 ---
 
 *State initialized: 2026-01-31*
-*Last updated: 2026-01-31T03:10:12Z*
+*Last updated: 2026-01-31T04:05:34Z*
