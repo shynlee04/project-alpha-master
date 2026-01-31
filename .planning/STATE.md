@@ -1,7 +1,7 @@
 # Project State: Project Alpha Architecture Remediation
 
 **Initialized:** 2026-01-31
-**Current Phase:** 02 - Schema Definitions (In Progress)
+**Current Phase:** 02 - Schema Definitions ✓ COMPLETE
 **Health Score:** 29.5%
 
 ---
@@ -11,7 +11,7 @@
 See: `.planning/PROJECT.md` (updated 2026-01-31)
 
 **Core value:** Clear state boundaries — every piece of data has ONE canonical home and ONE flow path.
-**Current focus:** Phase 02 - Correcting domain schemas to project-centric model
+**Current focus:** Phase 02 complete - Ready for Phase 03 (Store Definitions)
 
 ---
 
@@ -20,7 +20,7 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | Phase | Status | Plans | Completed |
 |-------|--------|-------|-----------|
 | 01 | ✓ Complete | 2/2 | 01-01, 01-02 |
-| 02 | ◆ In Progress | 2/1 | 02-01 |
+| 02 | ✓ Complete | 2/2 | 02-01, 02-02 |
 | 03 | ○ Pending | 0/0 | — |
 | 04 | ○ Pending | 0/0 | — |
 | 05 | ○ Pending | 0/0 | — |
@@ -32,8 +32,8 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | 11 | ○ Pending | 0/0 | — |
 | 12 | ○ Pending | 0/0 | — |
 
-**Overall:** 1/12 phases complete (8%)
-**Progress:** █░░░░░░░░░ 8%
+**Overall:** 2/12 phases complete (17%)
+**Progress:** ██░░░░░░░░ 17%
 
 ---
 
@@ -52,6 +52,9 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | Timestamp-based conflict resolution for files | 2026-01-31 | Preserves newest content, enables merge dialog | 01-02 |
 | Remove workspaceBindings from Project | 2026-01-31 | Platform determines plugins, not workspace bindings | 02-01 |
 | Remove workspaceId from Files | 2026-01-31 | Files belong to project only, projectId is sufficient | 02-01 |
+| Thread uses projectId only | 2026-01-31 | Project-centric model - no workspaceId field | 02-02 |
+| Note uses projectId only | 2026-01-31 | Project-centric model - no workspaceId field | 02-02 |
+| ThreadMessage embedded in Thread | 2026-01-31 | Simplifies queries, maintains data locality | 02-02 |
 
 ---
 
@@ -82,8 +85,9 @@ None currently.
 | 2026-01-31 | 01-01 | Execute Plan 01-01 | STATE-CONTRACTS.md, ENTITY-LAYERS.md created |
 | 2026-01-31 | 01-02 | Execute Plan 01-02 | DATA-FLOW-CONTRACTS.md, SYNC-PATTERNS.md, README.md created |
 | 2026-01-31 | 02-01 | Execute Plan 02-01 | Project/File schemas corrected (removed workspace-centric fields) |
+| 2026-01-31 | 02-02 | Execute Plan 02-02 | Thread/Note schemas created with project-centric model |
 
 ---
 
 *State initialized: 2026-01-31*
-*Last updated: 2026-01-31T04:05:34Z*
+*Last updated: 2026-01-31T04:12:27Z*
