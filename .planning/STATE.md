@@ -10,40 +10,40 @@ See: .planning/PROJECT.md (updated 2026-02-01)
 ## Current Position
 
 Phase: 1 of 5 (Platform Operators)
-Plan: 3 of 5 completed in current phase
+Plan: 4 of 5 completed in current phase
 Status: In progress
-Last activity: 2026-02-01 — Completed 01-02-PLAN.md (FileTree Operator CRUD)
+Last activity: 2026-01-31 — Completed 01-04-PLAN.md (Chat-Cascade Operator)
 
-Progress: ██████░░░░ 60%
+Progress: ████████░░ 80%
 
 ### Completed Plans (Phase 01)
 | Plan | Name | Summary |
 |------|------|---------|
 | 01-01 | Platform Interfaces | ✅ 01-01-SUMMARY.md |
 | 01-02 | FileTree Operator CRUD | ✅ 01-02-SUMMARY.md |
+| 01-04 | Chat-Cascade Operator | ✅ 01-04-SUMMARY.md |
 | 01-05 | Layout System Fixes | ✅ 01-05-SUMMARY.md |
 
 ### Remaining Plans (Phase 01)
 | Plan | Name | Status |
 |------|------|--------|
-| 01-03 | Chat-Cascade Operator | Pending |
-| 01-04 | Chat UI | Pending |
+| 01-03 | Notes Plugin | Pending |
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 12 min
-- Total execution time: 35 min
+- Total execution time: 47 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-platform-operators | 3 | 35 min | 12 min |
+| 01-platform-operators | 4 | 47 min | 12 min |
 
 **Recent Trend:**
-- Last 3 plans: 01-01 (15 min), 01-05 (10 min), 01-02 (10 min)
+- Last 4 plans: 01-01 (15 min), 01-05 (10 min), 01-02 (10 min), 01-04 (12 min)
 - Trend: → (stable)
 
 *Updated after each plan completion*
@@ -64,6 +64,9 @@ Recent decisions affecting current work:
 - [01-02]: FileTreeOperator subscribes to file:created/deleted/renamed and project:switched events
 - [01-02]: useFileTreeOperations uses VALIDATION_ERROR code for no-project cases
 - [01-02]: Context menu uses 8-bit design (sharp corners, pixel shadows, no rounded corners)
+- [01-04]: ThreadService uses Dexie helpers for IndexedDB persistence
+- [01-04]: ChatOperator tracks active thread per session, loads most recent on project switch
+- [01-04]: ChatPanel uses 8-bit design (rounded-none, pixel shadows)
 - [01-05]: GlobalSidebar removed from route — causes triple-nesting conflict with ResponsiveLayout
 - [01-05]: Panel visibility managed via Set in PluginLayoutStore for efficient lookups
 - [01-05]: Activity bar toggle directly integrates with PluginLayoutStore.setPanelVisible
@@ -79,10 +82,10 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-01
-Stopped at: Completed 01-02-PLAN.md — FileTree Operator CRUD (PLAT-02, PLAT-05)
+Last session: 2026-01-31
+Stopped at: Completed 01-04-PLAN.md — Chat-Cascade Operator (ThreadService, ChatOperator, ChatPanel)
 Resume file: None
-Next: 01-03-PLAN.md (Chat-Cascade Operator) or 01-04-PLAN.md (Chat UI)
+Next: 01-03-PLAN.md (Notes Plugin) - final plan in Phase 01
 
 ---
 
