@@ -113,6 +113,24 @@ src/
 ❌ PascalCase filenames (use kebab-case)
 ```
 
+### 🚨 NO-WORKSPACE MANDATE (ABSOLUTE)
+**See:** `.planning/architecture/NO-WORKSPACE-MANDATE.md`
+
+The following terms are **BANNED** from the codebase:
+```
+❌ WorkspaceBindings  → Use PluginType[] or ProjectPlugins
+❌ workspaceBindings  → Use plugins or enabledPlugins
+❌ WorkspaceId        → Use PluginType
+❌ workspaceId        → Use projectId (files belong to projects)
+❌ workspace-* files  → Rename to plugin-*, platform-*, or domain name
+```
+
+**Architecture:** Project-centric + Plugin-based
+- Files belong to PROJECTS (projectId only)
+- Plugins offer FEATURES (editor, notes, chat)
+- Platform determines available plugins
+- NO artificial workspace silos
+
 ---
 
 ## 🎨 CODE STANDARDS

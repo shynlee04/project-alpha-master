@@ -12,8 +12,8 @@
  * @created 2026-01-30
  */
 
-import React, { useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useEffect, useState } from 'react';
+import { cn } from '@/infrastructure/utils/cn';
 import { useTranslation } from 'react-i18next';
 import { useResponsiveLayout } from '@/presentation/hooks/useResponsiveLayout';
 import { GlobalSidebar } from './GlobalSidebar';
@@ -25,6 +25,7 @@ import {
   PluginPanelRight,
 } from './PluginPanelContainer';
 import { BottomNavigation } from './BottomNavigation';
+import { PluginDocker } from './PluginDocker';
 import type { ResponsiveLayoutProps } from './responsive-types';
 import './ResponsiveLayout.css';
 
@@ -153,7 +154,7 @@ const SinglePanelLayout: React.FC<SinglePanelLayoutProps> = ({
           activePluginId={visiblePlugins[0] || null}
           onPluginSelect={() => {
             // Plugin switching handled by BottomNavigation internally
-            console.log('[SinglePanelLayout] Plugin selected');
+            // No-op: BottomNavigation manages its own plugin state
           }}
           isVisible={showBottomNav}
         />
@@ -203,6 +204,14 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
     isTransitioning,
     layoutConfig,
   } = useResponsiveLayout();
+
+  // PluginDocker visibility state
+  const [isDockerVisible, setIsDockerVisible] = useState(false);
+
+  // Toggle PluginDocker visibility
+  const toggleDocker = () => {
+    setIsDockerVisible((prev) => !prev);
+  };
 
   /**
    * Notify parent of breakpoint changes
@@ -269,6 +278,31 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
       <div className="responsive-layout__container">
         {renderLayout()}
       </div>
+
+      {/* PluginDocker - Collapsible plugin panel */}
+      {breakpoint === 'desktop' && (
+        <div className="responsive-layout__docker-container">
+          <PluginDocker
+            className={cn(
+              'responsive-layout__docker',
+              isDockerVisible && 'responsive-layout__docker--visible'
+            )}
+          />
+          {/* Docker Toggle Button */}
+          <button
+            type="button"
+            className="responsive-layout__docker-toggle"
+            onClick={toggleDocker}
+            aria-label={isDockerVisible ? 'Hide plugin docker' : 'Show plugin docker'}
+            aria-pressed={isDockerVisible}
+            title={isDockerVisible ? 'Hide Plugins' : 'Show Plugins'}
+          >
+            <span className="responsive-layout__docker-toggle-icon">
+              {isDockerVisible ? '◀' : '▶'}
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* Additional children (if any) */}
       {children}

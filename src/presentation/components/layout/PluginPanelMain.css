@@ -13,6 +13,23 @@
    PluginPanelMain Specific Styles
    ============================================================================ */
 
+.plugin-panel-main-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.plugin-panel-main-wrapper .activity-bar-main-top {
+  flex-shrink: 0;
+}
+
+.plugin-panel-main-wrapper .plugin-panel-main {
+  flex: 1;
+  min-height: 0;
+}
+
 .plugin-panel-main {
   /* Main panel takes the most space (flex: 4) */
   min-width: 400px;

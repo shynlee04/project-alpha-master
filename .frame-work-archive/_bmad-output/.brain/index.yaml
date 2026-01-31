@@ -1,0 +1,18 @@
+# Brain Artifact Index
+# Auto-updated by plugins
+
+last_updated: 2026-01-31T08:00:00+07:00
+
+# Quick reference counts
+counts:
+  sessions: 0
+  decisions: 0
+  violations: 0
+  impacts: 0
+
+# Recent artifacts (last 10)
+recent: []
+
+# Cross-references
+# Maps artifact IDs to related artifacts
+references: {}

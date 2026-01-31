@@ -24,6 +24,8 @@ import type {
 import { PANEL_WIDTHS, DEFAULT_EMPTY_STATES } from './plugin-panel-types';
 import { usePluginPanel } from '@/presentation/hooks/usePluginPanel';
 import { usePluginCoordination } from '@/presentation/hooks/usePluginCoordination';
+import { useProjectContextSafe } from '@/infrastructure/context/project-context';
+import type { ProjectContext } from '@/infrastructure/context/project-context';
 import { WriteLockIndicator } from './WriteLockIndicator';
 import { PLUGIN_COMPONENTS } from './plugin-placeholders';
 import './PluginPanelContainer.css';
@@ -73,9 +75,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({ position }) => {
 interface PluginInstanceProps {
   pluginId: PluginId;
   isActive: boolean;
+  projectContext: ProjectContext;
 }
 
-const PluginInstance: React.FC<PluginInstanceProps> = ({ pluginId, isActive }) => {
+const PluginInstance: React.FC<PluginInstanceProps> = ({ pluginId, isActive, projectContext }) => {
   const Component = useMemo(() => {
     return PLUGIN_COMPONENTS[pluginId] || (() => null);
   }, [pluginId]);
@@ -87,7 +90,7 @@ const PluginInstance: React.FC<PluginInstanceProps> = ({ pluginId, isActive }) =
       role="tabpanel"
       aria-expanded={isActive}
     >
-      <Component />
+      <Component projectContext={projectContext} />
     </div>
   );
 };
@@ -121,6 +124,23 @@ export const PluginPanelContainer: React.FC<PluginPanelContainerProps> = ({
 }) => {
   const { t } = useTranslation();
   const { activePluginId, plugins, hasPlugins, isActive } = usePluginPanel(position);
+  const projectContext = useProjectContextSafe();
+
+  // Handle case when project context is not available (race condition fix)
+  if (!projectContext) {
+    return (
+      <div
+        className={cn('plugin-panel', `plugin-panel--${position}`, 'plugin-panel--loading', className)}
+        style={{ flex: PANEL_WIDTHS[position] }}
+        role="region"
+        aria-label={t(`layout.pluginPanel.${position}.label`, `${position} panel`)}
+      >
+        <div className="plugin-panel__loading-state">
+          <span className="plugin-panel__loading-text">{t('common.loading', 'Loading...')}</span>
+        </div>
+      </div>
+    );
+  }
 
   // EPIC-UXUI-04-08: Plugin Coordination Integration
   const {
@@ -184,6 +204,7 @@ export const PluginPanelContainer: React.FC<PluginPanelContainerProps> = ({
               key={pluginId}
               pluginId={pluginId}
               isActive={activePluginId === pluginId}
+              projectContext={projectContext}
             />
           ))
         ) : (

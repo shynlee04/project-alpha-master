@@ -12,8 +12,9 @@
  */
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/infrastructure/utils/cn';
 import { PluginPanelContainer } from './PluginPanelContainer';
+import { ActivityBarMainTop } from './ActivityBarMainTop';
 import type { PluginPanelProps } from './plugin-panel-types';
 import './PluginPanelMain.css';
 
@@ -33,10 +34,13 @@ import './PluginPanelMain.css';
  */
 export const PluginPanelMain: React.FC<PluginPanelProps> = ({ className }) => {
   return (
-    <PluginPanelContainer
-      position="main"
-      className={cn('plugin-panel-main', className)}
-    />
+    <div className="plugin-panel-main-wrapper">
+      <ActivityBarMainTop />
+      <PluginPanelContainer
+        position="main"
+        className={cn('plugin-panel-main', className)}
+      />
+    </div>
   );
 };
 

@@ -251,6 +251,71 @@
 }
 
 /* ============================================================================
+   Plugin Docker Container
+   ============================================================================ */
+
+.responsive-layout__docker-container {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.responsive-layout__docker-container > * {
+  pointer-events: auto;
+}
+
+.responsive-layout__docker {
+  height: 100%;
+  background: hsl(var(--background));
+  border-left: 2px solid hsl(var(--border));
+  box-shadow: -4px 0 0 0 hsl(var(--border));
+  transition: transform 200ms ease-out;
+}
+
+.responsive-layout__docker-toggle {
+  width: 24px;
+  height: 48px;
+  background: hsl(var(--background));
+  border: 2px solid hsl(var(--border));
+  border-right: none;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: hsl(var(--foreground));
+  transition: background-color 150ms ease;
+  margin-right: -2px;
+}
+
+.responsive-layout__docker-toggle:hover {
+  background: hsl(var(--accent));
+}
+
+.responsive-layout__docker-toggle:focus {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+.responsive-layout__docker-toggle-icon {
+  font-family: monospace;
+  line-height: 1;
+}
+
+/* Hide docker on non-desktop layouts */
+@media (max-width: 1023px) {
+  .responsive-layout__docker-container {
+    display: none;
+  }
+}
+
+/* ============================================================================
    Print Styles
    ============================================================================ */
 
@@ -263,7 +328,8 @@
   .responsive-layout__global-sidebar,
   .responsive-layout__activity-bar-left,
   .responsive-layout__activity-bar-right,
-  .bottom-nav {
+  .bottom-nav,
+  .responsive-layout__docker-container {
     display: none !important;
   }
 

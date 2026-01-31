@@ -116,6 +116,28 @@
                     "tech-writer",
                     "bi-directional-sync"
                 ]
+            },
+            "agent_init": {
+                "description": "Auto-load on session start based on current agent",
+                "triggers": {
+                    "supreme-coordinator|ext-master": [
+                        "init-supreme-coordinator",
+                        "upstream-validator"
+                    ],
+                    "bmad-sprint-manager": [
+                        "init-sprint-manager",
+                        "story-cycle"
+                    ],
+                    "dev-ext|bmad-bmm-dev": [
+                        "context-first",
+                        "tdd-red",
+                        "brownfield-guard"
+                    ],
+                    "tea-ext|bmad-bmm-tea": [
+                        "verification-before-completion",
+                        "systematic-debugging"
+                    ]
+                }
             }
         }
     },
@@ -194,7 +216,7 @@
         }
     },
     "existing_skills_index": {
-        "description": "All 35 skills found in .agent/skills/",
+        "description": "All skills found in .opencode/skills/",
         "skills": [
             "architecture-remediation",
             "asgl",
@@ -205,6 +227,7 @@
             "bmad-core-integration",
             "bmm-workflows",
             "brainstorming",
+            "context-first",
             "dispatching-parallel-agents",
             "executing-plans",
             "finishing-a-development-branch",
@@ -218,6 +241,8 @@
             "global-error-handling",
             "global-tech-stack",
             "global-validation",
+            "init-sprint-manager",
+            "init-supreme-coordinator",
             "receiving-code-review",
             "requesting-code-review",
             "story-cycle",
@@ -226,6 +251,7 @@
             "test-driven-development",
             "testing-test-writing",
             "ui-layout-contract",
+            "upstream-validator",
             "using-git-worktrees",
             "using-superpowers",
             "verification-before-completion",

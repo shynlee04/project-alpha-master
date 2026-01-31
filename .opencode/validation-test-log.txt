@@ -1,0 +1,2052 @@
+=== VALIDATION TEST LOG ===
+Started: 2026-01-31T01:21:07.671Z
+Directory: /Users/apple/Documents/coding-projects/project-alpha-master
+Worktree: /Users/apple/Documents/coding-projects/project-alpha-master
+
+[2026-01-31T01:21:26.680Z] HOOK FIRED: event:session.diff
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "diff": []
+}
+
+[2026-01-31T01:21:26.685Z] HOOK FIRED: event:session.updated
+  Data: {
+  "info": {
+    "id": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "slug": "hidden-wolf",
+    "version": "1.1.40",
+    "projectID": "a203a944f8b330a4754e0a47e00e8e117646638b",
+    "directory": "/Users/apple/Documents/coding-projects/project-alpha-master",
+    "title": "IDEAL architecture and prd.md drift analysis",
+    "time": {
+      "created": 1769821697310,
+      "updated": 1769822486683
+    },
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "revert": {
+   
+
+[2026-01-31T01:22:03.209Z] HOOK FIRED: event:message.removed
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "messageID": "msg_c1197f523001yGa2vEXFUFZQtD"
+}
+
+[2026-01-31T01:22:03.211Z] HOOK FIRED: event:message.removed
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "messageID": "msg_c1197f552001Z1P4jomwgRX319"
+}
+
+[2026-01-31T01:22:03.212Z] HOOK FIRED: event:message.removed
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "messageID": "msg_c119843ff001In57uXnoCEx76U"
+}
+
+[2026-01-31T01:22:03.214Z] HOOK FIRED: event:message.removed
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "messageID": "msg_c119876620019OAbf8c0UOBu6X"
+}
+
+[2026-01-31T01:22:03.215Z] HOOK FIRED: event:message.removed
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "messageID": "msg_c1198a0570016ST5Uw8fv5CaNJ"
+}
+
+[2026-01-31T01:22:03.217Z] HOOK FIRED: event:session.updated
+  Data: {
+  "info": {
+    "id": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "slug": "hidden-wolf",
+    "version": "1.1.40",
+    "projectID": "a203a944f8b330a4754e0a47e00e8e117646638b",
+    "directory": "/Users/apple/Documents/coding-projects/project-alpha-master",
+    "title": "IDEAL architecture and prd.md drift analysis",
+    "time": {
+      "created": 1769821697310,
+      "updated": 1769822523216
+    },
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    }
+  }
+}
+
+[2026-01-31T01:22:03.249Z] HOOK FIRED: event:message.updated
+  Data: {
+  "info": {
+    "id": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "role": "user",
+    "time": {
+      "created": 1769822523220
+    },
+    "agent": "supreme-coordinator",
+    "model": {
+      "providerID": "google",
+      "modelID": "claude-opus-4-5-thinking"
+    },
+    "variant": "max"
+  }
+}
+
+[2026-01-31T01:22:03.258Z] HOOK FIRED: event:message.part.updated
+  Data: {
+  "part": {
+    "id": "prt_c11a48f1b001lio2VAmi0IlYWT",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "messageID": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "type": "text",
+    "text": "---\n\n# 🎉 SUPREME COORDINATOR - MISSION COMPLETE\n\n## ✅ ARCHITECTURE VALIDATED AT 100/100\n\n---\n\n## 📊 ITERATION JOURNEY\n\n| Iteration | Score | Key Achievements |\n|-----------|-------|------------------|\n| **1** | 62/100 | Initial 5 sections generated |\n| **2** | 75/100 | Merged to 1 doc, fixed 
+
+[2026-01-31T01:22:03.260Z] HOOK FIRED: event:message.part.updated
+  Data: {
+  "part": {
+    "id": "prt_c11a48f570012CvZkNzMrYcsee",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "messageID": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "type": "text",
+    "text": "Called the Read tool with the following input: {\"filePath\":\"/Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/planning-artifacts/prd.md\"}",
+    "synthetic": true
+  }
+}
+
+[2026-01-31T01:22:03.264Z] HOOK FIRED: event:message.part.updated
+  Data: {
+  "part": {
+    "id": "prt_c11a48f6b001V3KHBrqxYM9Hq5",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "messageID": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "type": "text",
+    "text": "<file>\n00001| ---\n00002| version: 2.2.0\n00003| generated: 2026-01-26T00:00:00+07:00\n00004| updated: 2026-01-28T17:00:00+07:00\n00005| agent: architect-ext\n00006| phase: planning\n00007| status: ACTIVE\n00008| research_validated: 2026-01-28\n00009| stepsCompleted: [phase-1-research, phase-2-analysis, p
+
+[2026-01-31T01:22:03.268Z] HOOK FIRED: event:message.part.updated
+  Data: {
+  "part": {
+    "id": "prt_c1197f523003YRkPzieCI4OPSr",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "messageID": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "type": "file",
+    "mime": "text/plain",
+    "filename": "_bmad-output/planning-artifacts/prd.md",
+    "url": "file:///Users/apple/Documents/coding-projects/project-alpha-master/_bmad-output/planning-artifacts/prd.md",
+    "source": {
+      "text": {
+        "value": "@_bmad-output/planning-artifacts/prd.md",
+        "start": 77,
+   
+
+[2026-01-31T01:22:03.270Z] HOOK FIRED: event:session.updated
+  Data: {
+  "info": {
+    "id": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "slug": "hidden-wolf",
+    "version": "1.1.40",
+    "projectID": "a203a944f8b330a4754e0a47e00e8e117646638b",
+    "directory": "/Users/apple/Documents/coding-projects/project-alpha-master",
+    "title": "IDEAL architecture and prd.md drift analysis",
+    "time": {
+      "created": 1769821697310,
+      "updated": 1769822523269
+    },
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    }
+  }
+}
+
+[2026-01-31T01:22:03.277Z] HOOK FIRED: event:session.status
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "status": {
+    "type": "busy"
+  }
+}
+
+[2026-01-31T01:22:03.295Z] HOOK FIRED: event:message.updated
+  Data: {
+  "info": {
+    "id": "msg_c11a48f98001cOPuo73OyQNBuQ",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "role": "assistant",
+    "time": {
+      "created": 1769822523288
+    },
+    "parentID": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "modelID": "claude-opus-4-5-thinking",
+    "providerID": "google",
+    "mode": "supreme-coordinator",
+    "agent": "supreme-coordinator",
+    "path": {
+      "cwd": "/Users/apple/Documents/coding-projects/project-alpha-master",
+      "root": "/Users/apple/Docu
+
+[2026-01-31T01:22:04.273Z] HOOK FIRED: experimental.chat.messages.transform
+  Data: {
+  "messagesCount": 1,
+  "input": {}
+}
+
+[2026-01-31T01:22:04.292Z] HOOK FIRED: experimental.chat.system.transform
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "model": {
+    "id": "claude-opus-4-5-thinking",
+    "api": {
+      "id": "claude-opus-4-5-thinking",
+      "npm": "@ai-sdk/google"
+    },
+    "status": "active",
+    "name": "Claude Opus 4.5 Thinking (Antigravity)",
+    "providerID": "google",
+    "capabilities": {
+      "temperature": false,
+      "reasoning": false,
+      "attachment": false,
+      "toolcall": true,
+      "input": {
+        "text": true,
+        "audio": false,
+        "ima
+
+[2026-01-31T01:22:04.311Z] HOOK FIRED: event:session.status
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "status": {
+    "type": "busy"
+  }
+}
+
+[2026-01-31T01:22:04.334Z] HOOK FIRED: event:tui.toast.show
+  Data: {
+  "message": "Using shynlee04@gmail.com (1/2)",
+  "variant": "info",
+  "duration": 5000
+}
+
+[2026-01-31T01:22:04.348Z] HOOK FIRED: event:message.updated
+  Data: {
+  "info": {
+    "id": "msg_c11a48f1a001bEmCKUz5xEOMKs",
+    "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "role": "user",
+    "time": {
+      "created": 1769822523220
+    },
+    "summary": {
+      "diffs": []
+    },
+    "agent": "supreme-coordinator",
+    "model": {
+      "providerID": "google",
+      "modelID": "claude-opus-4-5-thinking"
+    },
+    "variant": "max"
+  }
+}
+
+[2026-01-31T01:22:04.351Z] HOOK FIRED: event:session.updated
+  Data: {
+  "info": {
+    "id": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+    "slug": "hidden-wolf",
+    "version": "1.1.40",
+    "projectID": "a203a944f8b330a4754e0a47e00e8e117646638b",
+    "directory": "/Users/apple/Documents/coding-projects/project-alpha-master",
+    "title": "IDEAL architecture and prd.md drift analysis",
+    "time": {
+      "created": 1769821697310,
+      "updated": 1769822524350
+    },
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    }
+  }
+}
+
+[2026-01-31T01:22:04.352Z] HOOK FIRED: event:session.diff
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "diff": []
+}
+
+[2026-01-31T01:22:04.353Z] HOOK FIRED: experimental.chat.system.transform
+  Data: {
+  "sessionID": "ses_3ee680ae2ffeOUon1vDZBylCr4",
+  "model": {
+    "id": "gemini-3-flash-preview",
+    "api": {
+      "id": "gemini-3-flash-preview",
+      "npm": "@ai-sdk/google"
+    },
+    "status": "active",
+    "name": "Gemini 3 Flash Preview (Gemini CLI)",
+    "providerID": "google",
+    "capabilities": {
+      "temperature": true,
+      "reasoning": true,
+      "attachment": true,
+      "toolcall": true,
+      "input": {
+        "text": true,
+        "audio": false,
+        "image": true,
+
+[2026-01-31T01:22:06.395Z] HOOK FIRED: event:server.instance.disposed
+  Data: {
+  "directory": "/Users/apple/Documents/coding-projects/project-alpha-master"
+}
+
+[2026-01-31T01:22:06.877Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T01:22:07.077Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:15.480Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T01:22:15.752Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:15.970Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ",
+  "event": "add"
+}
+
+[2026-01-31T01:22:15.971Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ/a",
+  "event": "add"
+}
+
+[2026-01-31T01:22:15.971Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ/b",
+  "event": "add"
+}
+
+[2026-01-31T01:22:16.922Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:16.927Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ/a",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:16.927Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ/a/1",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:16.927Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ/b",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:16.928Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.k6YIMJ/b/1",
+  "event": "unlink"
+}
+
+[2026-01-31T01:22:19.639Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T01:22:21.388Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T01:31:23.496Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T01:31:23.607Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T01:37:46.076Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T01:37:46.269Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:43.779Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T01:39:44.037Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:44.273Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT",
+  "event": "add"
+}
+
+[2026-01-31T01:39:44.274Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT/a",
+  "event": "add"
+}
+
+[2026-01-31T01:39:44.274Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT/b",
+  "event": "add"
+}
+
+[2026-01-31T01:39:45.273Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:45.278Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT/a",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:45.279Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT/a/1",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:45.279Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT/b",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:45.280Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.cmtWBT/b/1",
+  "event": "unlink"
+}
+
+[2026-01-31T01:39:47.178Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T01:39:49.424Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T02:19:10.104Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:19:10.547Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:05.382Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:20:05.590Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:29.041Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:20:29.224Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:29.326Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO",
+  "event": "add"
+}
+
+[2026-01-31T02:20:29.326Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/a",
+  "event": "add"
+}
+
+[2026-01-31T02:20:29.326Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/b",
+  "event": "add"
+}
+
+[2026-01-31T02:20:30.295Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:30.295Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/a",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:30.296Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/a/1",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:30.296Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/b",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:30.296Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/b/1",
+  "event": "unlink"
+}
+
+[2026-01-31T02:20:32.652Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T02:20:36.598Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO",
+  "event": "add"
+}
+
+[2026-01-31T02:26:14.942Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO",
+  "event": "change"
+}
+
+[2026-01-31T02:26:22.060Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/a",
+  "event": "add"
+}
+
+[2026-01-31T02:26:22.793Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/b",
+  "event": "add"
+}
+
+[2026-01-31T02:31:36.400Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:31:36.590Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:31:36.590Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:31:36.590Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:31:36.590Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:48:53.767Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:48:53.853Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:48:54.098Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:48:54.098Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:48:54.099Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:50:39.983Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:50:40.205Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:50:40.206Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:50:40.206Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:52:55.014Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:52:55.077Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:52:55.211Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:52:55.211Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:52:55.216Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:57:16.179Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T02:57:16.368Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:57:16.368Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:57:16.368Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T02:57:16.369Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:00:37.699Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:00:37.790Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:00:37.996Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:00:37.997Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:00:37.997Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:04:27.432Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:04:27.837Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:49.022Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:05:49.128Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:49.416Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:49.419Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:58.949Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:05:59.096Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:59.428Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:59.429Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:05:59.429Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:06:51.932Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:06:52.109Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:06:52.402Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:06:52.403Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:06:52.404Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:13.531Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:07:13.605Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:13.958Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:13.959Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:13.960Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:31.703Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:07:31.889Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:32.167Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:07:32.398Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:32.399Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:07:32.400Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:08:24.121Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:08:24.273Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:08:24.514Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:08:24.807Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:09:24.830Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:09:24.958Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:09:25.158Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:09:25.314Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:09:25.317Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:10:22.594Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:10:22.714Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:10:22.997Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:10:22.998Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:17:37.506Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:17:37.576Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:17:37.891Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:17:37.891Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:17:37.891Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:20:34.532Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:20:34.650Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:20:34.903Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:20:34.904Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:20:34.904Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:20:40.529Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:20:40.917Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:45:01.086Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:45:01.206Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:45:01.780Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:45:01.781Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:45:01.789Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:47:56.933Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:47:57.088Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:47:57.503Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:47:57.506Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:47:57.507Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:48:16.596Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:48:16.657Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:54:32.092Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T03:54:32.245Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:54:32.720Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:54:32.748Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T03:54:32.822Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:03:25.166Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:03:25.281Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:03:25.503Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:03:25.690Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:03:25.699Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:03:25.702Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:04:24.183Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:04:24.303Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:04:24.614Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:04:24.615Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:04:24.616Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:05:24.930Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:05:25.074Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:05:25.434Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:05:25.435Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:05:25.436Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:07:01.595Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:07:01.673Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:07:01.994Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:07:01.995Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:07:01.996Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:09:20.441Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:09:20.783Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:10:12.247Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:10:12.340Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:10:12.529Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:10:12.530Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:10:12.530Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:11:03.416Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:11:03.499Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:11:03.706Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:11:03.707Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:11:03.707Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:08.242Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:12:08.318Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:08.600Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:08.600Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:08.601Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:38.058Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:12:38.366Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:38.806Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1",
+  "event": "add"
+}
+
+[2026-01-31T04:12:38.808Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1/a",
+  "event": "add"
+}
+
+[2026-01-31T04:12:38.808Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1/b",
+  "event": "add"
+}
+
+[2026-01-31T04:12:38.809Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:38.809Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/a",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:38.809Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.pXhyRO/b",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:39.731Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1/a",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:39.733Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1/a/1",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:39.733Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1/b",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:39.742Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1/b/1",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:39.800Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.Kko9a1",
+  "event": "unlink"
+}
+
+[2026-01-31T04:12:42.796Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T04:12:44.965Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T04:14:33.162Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:14:33.357Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:14:33.748Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:14:33.749Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:15:13.215Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:15:13.582Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:20:23.490Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T04:20:23.916Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:20:23.918Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T04:20:23.918Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T05:28:31.481Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T10:30:06.617Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:30:06.844Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:30:13.462Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:30:13.725Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:30:25.708Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:30:25.865Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:30:25.873Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:30:25.875Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:30:25.876Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:44:33.366Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:44:33.570Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:46:20.894Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:46:20.982Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:46:21.165Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:46:21.166Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:46:21.166Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:47:14.416Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:47:14.483Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:47:14.673Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:47:14.673Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:47:14.674Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:48:12.590Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T10:48:12.742Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:48:13.058Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:48:13.058Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T10:48:13.080Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:02:17.695Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T11:02:17.900Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:02:41.874Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:02:42.004Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:02:42.004Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:02:42.004Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:04:36.302Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:04:36.446Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:04:36.447Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T11:04:36.448Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:23:37.009Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:23:55.837Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T13:23:56.023Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:23:56.023Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:23:56.023Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:23:56.023Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:32:13.309Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T13:32:13.400Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:32:27.057Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T13:32:27.240Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:32:27.241Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:32:27.241Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:32:27.241Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:42:19.573Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T13:42:19.736Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/AUTO_MERGE.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:42:19.737Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/HEAD.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:42:19.737Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T13:42:19.737Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/packed-refs.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:28.815Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T14:27:28.919Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:29.065Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs",
+  "event": "add"
+}
+
+[2026-01-31T14:27:29.065Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs/a",
+  "event": "add"
+}
+
+[2026-01-31T14:27:29.066Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs/b",
+  "event": "add"
+}
+
+[2026-01-31T14:27:30.027Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:30.027Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs/a",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:30.027Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs/a/1",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:30.028Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs/b",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:30.028Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.H5sRBs/b/1",
+  "event": "unlink"
+}
+
+[2026-01-31T14:27:32.710Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T14:27:34.260Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T14:28:12.841Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T14:28:13.008Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "unlink"
+}
+
+[2026-01-31T14:28:13.115Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU",
+  "event": "add"
+}
+
+[2026-01-31T14:28:13.116Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU/a",
+  "event": "add"
+}
+
+[2026-01-31T14:28:13.116Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU/b",
+  "event": "add"
+}
+
+[2026-01-31T14:28:14.077Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU",
+  "event": "unlink"
+}
+
+[2026-01-31T14:28:14.078Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU/a",
+  "event": "unlink"
+}
+
+[2026-01-31T14:28:14.078Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU/a/1",
+  "event": "unlink"
+}
+
+[2026-01-31T14:28:14.078Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU/b",
+  "event": "unlink"
+}
+
+[2026-01-31T14:28:14.078Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/.gitstatus.q1qQzU/b/1",
+  "event": "unlink"
+}
+
+[2026-01-31T14:28:19.114Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git",
+  "event": "change"
+}
+
+[2026-01-31T14:36:07.782Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "add"
+}
+
+[2026-01-31T14:36:07.953Z] HOOK FIRED: event:file.watcher.updated
+  Data: {
+  "file": "/Users/apple/Documents/coding-projects/project-alpha-master/.git/index.lock",
+  "event": "change"
+}
+

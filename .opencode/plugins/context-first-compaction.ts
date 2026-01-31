@@ -1,5 +1,5 @@
 /**
- * CONTEXT-FIRST COMPACTION PLUGIN v1.0
+ * CONTEXT-FIRST COMPACTION PLUGIN v1.1
  * 
  * Replaces OpenCode's default compaction prompt with an advanced version that:
  * 1. Filters poisoned/drifted context
@@ -8,21 +8,138 @@
  * 4. Preserves workflow cycles and agent role hierarchy
  * 5. Anchors turning points and user intentions
  * 6. Reminds of constitutions and BMAD status
+ * 7. NEW: Injects hierarchical session context (parent/child delegations)
  * 
  * @see https://opencode.ai/docs/plugins/#compaction-hooks
+ * @version 1.1.0 - Added HierarchicalCompactionEnhancer
  */
 
 import type { Plugin } from "@opencode-ai/plugin"
+import * as fs from "fs"
+import * as path from "path"
+
+// ============================================================================
+// HIERARCHICAL COMPACTION ENHANCER (v1.1)
+// Injects delegation chain and workflow phase context before main compaction
+// ============================================================================
+
+interface WorkflowStatus {
+  current_phase?: string;
+  active_epics?: string[];
+  current_workflow?: string;
+}
+
+interface SprintStatus {
+  active_stories?: Array<{ id: string; status: string; }>;
+  sprint_goal?: string;
+}
+
+const HierarchicalCompactionEnhancer = {
+  /**
+   * Read YAML-like status file (simple parser)
+   */
+  readStatusFile(filename: string): Record<string, unknown> | null {
+    const candidates = [
+      path.join(process.cwd(), filename),
+      path.join(process.cwd(), "_bmad-output/sprint-artifacts", path.basename(filename)),
+    ];
+
+    for (const filePath of candidates) {
+      if (fs.existsSync(filePath)) {
+        try {
+          const content = fs.readFileSync(filePath, "utf8");
+          // Simple YAML parsing for key fields
+          const lines = content.split("\n");
+          const result: Record<string, unknown> = {};
+          for (const line of lines) {
+            const match = line.match(/^(\w+):\s*(.+)$/);
+            if (match) {
+              result[match[1]] = match[2].trim();
+            }
+          }
+          return result;
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
+  },
+
+  /**
+   * Generate hierarchical context injection
+   */
+  generateHierarchicalContext(): string {
+    const workflowStatus = this.readStatusFile("bmm-workflow-status.yaml") as WorkflowStatus | null;
+    const sprintStatus = this.readStatusFile("sprint-status.yaml") as SprintStatus | null;
+
+    let context = `
+## HIERARCHICAL SESSION CONTEXT (Auto-Injected v1.1)
+
+### Verified Workflow Phase
+`;
+
+    if (workflowStatus?.current_phase) {
+      context += `- Phase: ${workflowStatus.current_phase}\n`;
+    }
+    if (workflowStatus?.current_workflow) {
+      context += `- Workflow: ${workflowStatus.current_workflow}\n`;
+    }
+    if (workflowStatus?.active_epics) {
+      context += `- Active Epics: ${workflowStatus.active_epics}\n`;
+    }
+
+    if (!workflowStatus) {
+      context += `- ⚠️ workflow-status.yaml not found - phase unknown\n`;
+    }
+
+    context += `
+### Sprint Context
+`;
+    if (sprintStatus?.sprint_goal) {
+      context += `- Sprint Goal: ${sprintStatus.sprint_goal}\n`;
+    }
+    if (sprintStatus?.active_stories) {
+      context += `- Active Stories: ${JSON.stringify(sprintStatus.active_stories)}\n`;
+    }
+
+    if (!sprintStatus) {
+      context += `- ⚠️ sprint-status.yaml not found - sprint state unknown\n`;
+    }
+
+    context += `
+### Brain Artifact Links (Long-Term Context On-Demand)
+- Decisions: _bmad-output/.brain/decisions/
+- Violations: _bmad-output/.brain/violations/
+- Sessions: _bmad-output/.brain/sessions/
+- Use \`long-term-context\` tool to query historical context
+
+### Tier-1 SSOT Documents
+- Architecture: _bmad-output/planning-artifacts/architecture.md
+- PRD: _bmad-output/planning-artifacts/prd.md
+- Epics: _bmad-output/planning-artifacts/epics/
+
+---
+`;
+    return context;
+  }
+};
 
 export const ContextFirstCompactionPlugin: Plugin = async (ctx) => {
-    return {
-        "experimental.session.compacting": async (input, output) => {
-            // Replace the entire compaction prompt with our advanced version
-            output.prompt = `
-# CONTEXT-FIRST SESSION COMPACTION v1.0
+  return {
+    "experimental.session.compacting": async (input, output) => {
+      // INJECT hierarchical context BEFORE main compaction prompt (v1.1)
+      const hierarchicalContext = HierarchicalCompactionEnhancer.generateHierarchicalContext();
+
+      // Replace the entire compaction prompt with our advanced version
+      output.prompt = `
+# CONTEXT-FIRST SESSION COMPACTION v1.1
 # BMAD Beast Mode - Multi-Agent Orchestration Aware
+# Enhanced with Hierarchical Session Context
 
 You are generating a **continuation prompt** that preserves essential context for agent work in a multi-agent BMAD framework. This summary will be the ONLY context available to the next agent turn.
+
+${hierarchicalContext}
 
 ---
 
@@ -295,8 +412,8 @@ Generate the summary using ALL sections above. The YAML structure is critical fo
 
 Generate the structured summary now. Focus on NAVIGATIONAL COMPLETENESS over CONTENT COMPLETENESS.
 `
-        },
-    }
+    },
+  }
 }
 
 // Export as default for OpenCode plugin loader

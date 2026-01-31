@@ -14,6 +14,7 @@
 import React from 'react';
 import { Bot } from 'lucide-react';
 import type { PluginId } from '@/domain/types/plugin-types';
+import type { ProjectContext } from '@/infrastructure/context/project-context';
 
 // ============================================================================
 // REAL Plugin Imports
@@ -81,11 +82,11 @@ const descriptionStyles: React.CSSProperties = {
  * Uses the actual FileTreePlugin from src/plugins/filetree/
  * Fully functional file browser with expand/collapse, file selection, etc.
  */
-export const FileTreeComponent: React.FC = () => {
+export const FileTreeComponent: React.FC<{ projectContext: ProjectContext }> = ({ projectContext }) => {
   const FileTreeMain = fileTreePlugin.MainComponent;
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <FileTreeMain />
+      <FileTreeMain projectContext={projectContext} />
     </div>
   );
 };
@@ -96,11 +97,11 @@ export const FileTreeComponent: React.FC = () => {
  * Uses the actual MonacoPlugin from src/plugins/monaco/
  * Full Monaco code editor with syntax highlighting and IntelliSense.
  */
-export const MonacoComponent: React.FC = () => {
+export const MonacoComponent: React.FC<{ projectContext: ProjectContext }> = ({ projectContext }) => {
   const MonacoMain = monacoPlugin.MainComponent;
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <MonacoMain />
+      <MonacoMain projectContext={projectContext} />
     </div>
   );
 };
@@ -111,11 +112,11 @@ export const MonacoComponent: React.FC = () => {
  * Uses the actual NotesPlugin from src/plugins/notes/
  * BlockNote editor with 16 custom block types and AI features.
  */
-export const NotesComponent: React.FC = () => {
+export const NotesComponent: React.FC<{ projectContext: ProjectContext }> = ({ projectContext }) => {
   const NotesMain = notesPlugin.MainComponent;
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <NotesMain />
+      <NotesMain projectContext={projectContext} />
     </div>
   );
 };
@@ -126,11 +127,11 @@ export const NotesComponent: React.FC = () => {
  * Uses the actual TerminalPlugin from src/plugins/terminal/
  * WebContainer-based terminal for running commands.
  */
-export const TerminalComponent: React.FC = () => {
+export const TerminalComponent: React.FC<{ projectContext: ProjectContext }> = ({ projectContext }) => {
   const TerminalMain = terminalPlugin.MainComponent;
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <TerminalMain />
+      <TerminalMain projectContext={projectContext} />
     </div>
   );
 };
@@ -141,11 +142,11 @@ export const TerminalComponent: React.FC = () => {
  * Uses the actual PreviewPlugin from src/plugins/preview/
  * Dev server preview for running applications.
  */
-export const PreviewComponent: React.FC = () => {
+export const PreviewComponent: React.FC<{ projectContext: ProjectContext }> = ({ projectContext }) => {
   const PreviewMain = previewPlugin.MainComponent;
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <PreviewMain />
+      <PreviewMain projectContext={projectContext} />
     </div>
   );
 };
@@ -156,11 +157,11 @@ export const PreviewComponent: React.FC = () => {
  * Uses the stub ChatPlugin from src/plugins/chat/
  * Full implementation scheduled for Phase 2.
  */
-export const ChatComponent: React.FC = () => {
+export const ChatComponent: React.FC<{ projectContext: ProjectContext }> = ({ projectContext }) => {
   const ChatMain = chatPlugin.MainComponent;
   return (
     <div style={{ width: '100%', height: '100%', overflow: 'auto' }}>
-      <ChatMain />
+      <ChatMain projectContext={projectContext} />
     </div>
   );
 };
@@ -170,7 +171,7 @@ export const ChatComponent: React.FC = () => {
  *
  * AI Agents management - scheduled for future implementation.
  */
-export const AgentsComponent: React.FC = () => (
+export const AgentsComponent: React.FC<{ projectContext?: ProjectContext }> = ({ projectContext: _projectContext }) => (
   <div className="plugin-placeholder agents-placeholder" style={placeholderStyles}>
     <Bot style={iconStyles} />
     <h3 style={titleStyles}>AI Agents</h3>
@@ -191,13 +192,13 @@ export const AgentsComponent: React.FC = () => (
  * Maps plugin IDs to their REAL components
  * FIXED: Now uses actual plugin implementations instead of placeholders
  */
-export const PLUGIN_COMPONENTS: Record<PluginId, React.ComponentType> = {
+export const PLUGIN_COMPONENTS: Record<PluginId, React.ComponentType<{ projectContext: ProjectContext }>> = {
   filetree: FileTreeComponent,
   monaco: MonacoComponent,
   notes: NotesComponent,
   terminal: TerminalComponent,
   chat: ChatComponent,
-  agents: AgentsComponent,
+  agents: AgentsComponent as React.ComponentType<{ projectContext: ProjectContext }>,
   preview: PreviewComponent,
 };
 
@@ -207,7 +208,7 @@ export const PLUGIN_COMPONENTS: Record<PluginId, React.ComponentType> = {
  * @param pluginId - The plugin ID
  * @returns React component or null if not found
  */
-export function getPluginComponent(pluginId: PluginId): React.ComponentType | null {
+export function getPluginComponent(pluginId: PluginId): React.ComponentType<{ projectContext: ProjectContext }> | null {
   return PLUGIN_COMPONENTS[pluginId] || null;
 }
 
@@ -215,13 +216,14 @@ export function getPluginComponent(pluginId: PluginId): React.ComponentType | nu
  * Render a plugin by ID
  *
  * @param pluginId - The plugin ID to render
+ * @param projectContext - The project context to pass to the plugin
  * @returns React element or null
  */
-export function renderPlugin(pluginId: PluginId | null): React.ReactElement | null {
+export function renderPlugin(pluginId: PluginId | null, projectContext: ProjectContext): React.ReactElement | null {
   if (!pluginId) return null;
 
   const Component = getPluginComponent(pluginId);
   if (!Component) return null;
 
-  return <Component key={pluginId} />;
+  return <Component key={pluginId} projectContext={projectContext} />;
 }

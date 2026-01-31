@@ -171,27 +171,6 @@ Layer 3: Cache API (Static Assets Only)
 ├── Static images
 ```
 
-#### CRITICAL: Safari iOS 7-Day Eviction Policy
-
-Safari evicts ALL IndexedDB/OPFS data after 7 days of no use.
-
-**Mitigations (MANDATORY for Safari)**:
-1. **Require PWA installation** on mobile Safari
-2. PWA-installed apps are NOT subject to eviction
-3. Show "Add to Home Screen" banner with clear explanation
-4. Implement re-sync on first launch after potential eviction
-5. Storage quota monitoring with user warnings
-
-**Browser Support Matrix**:
-
-| Browser | OPFS Support | SQLite WASM | Notes |
-|---------|--------------|-------------|-------|
-| Chrome 102+ | ✅ | ✅ | Recommended |
-| Firefox 111+ | ✅ | ✅ | Full support |
-| Safari 15.2+ | ✅ | ✅ | Requires PWA for persistence |
-| Older browsers | ❌ | ❌ | Dexie.js fallback |
-
-**REFERENCE**: architecture-validation-2026-01-28.md (Section 3)
 
 ### 2.3 IDE Access Policy
 

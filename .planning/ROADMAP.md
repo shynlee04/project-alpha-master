@@ -71,11 +71,19 @@
 3. Legacy type aliases point to canonical schemas
 4. No duplicate type definitions across codebase
 
-**Plans:** 4 plans
+**Plans:** 8 plans (EXPANDED for absolute workspace elimination)
 - [x] 02-01-PLAN.md — Correct Project/File schemas (remove workspaceBindings/workspaceId)
 - [x] 02-02-PLAN.md — Create Thread/Note schemas (project-centric, no workspaceId)
-- [ ] 02-03-PLAN.md — Wire schemas to infrastructure (eliminate dual source of truth)
+- [ ] 02-03-PLAN.md — SUPERSEDED by 02-03-PLAN-REVISED.md
+- [ ] 02-03-PLAN-REVISED.md — Absolute workspace elimination (sub-plan A: core schemas)
+- [ ] 02-03-B-PLAN.md — Domain layer workspace elimination (TBD)
+- [ ] 02-03-C-PLAN.md — Infrastructure workspace elimination (TBD)
+- [ ] 02-03-D-PLAN.md — Presentation/lib workspace elimination (TBD)
+- [ ] 02-03-E-PLAN.md — Governance and verification (TBD)
 - [ ] 02-04-PLAN.md — Consolidate FileMetadata types (remove 6 duplicate definitions)
+
+**⚠️ CRITICAL:** See `.planning/architecture/NO-WORKSPACE-MANDATE.md` for banned terms.
+**Scope Expansion:** 124 files, 1000+ references require elimination.
 
 ---
 

@@ -29,6 +29,7 @@ interface SessionContext {
     filePaths: string[]
     workType: 'meta-framework' | 'project' | 'unknown'
     isPostCompact: boolean
+    detectedAgent: string | null  // Store detected agent for cross-hook use
 }
 
 const sessionContextMap = new Map<string, SessionContext>()
@@ -51,7 +52,73 @@ const CONFIG = {
         'packages/',
         'lib/'
     ],
-    DEBUG: process.env.OPENCODE_CONTEXT_DEBUG === 'true'
+    DEBUG: process.env.OPENCODE_CONTEXT_DEBUG === 'true',
+    // Agent to Init SKILL mapping
+    AGENT_INIT_SKILLS: {
+        'supreme-coordinator': 'init-supreme-coordinator',
+        'ext-master': 'init-supreme-coordinator',
+        'bmad-sprint-manager': 'init-sprint-manager',
+        'sprint-manager': 'init-sprint-manager',
+        'dev-ext': null, // No special init, uses context-first
+        'bmad-bmm-dev': null,
+    } as Record<string, string | null>
+}
+
+// ============================================================================
+// AGENT DETECTION & SKILL LOADING
+// ============================================================================
+
+import * as fs from 'fs'
+import * as path from 'path'
+
+function findProjectRoot(): string {
+    let current = process.cwd()
+    while (current !== '/') {
+        if (fs.existsSync(path.join(current, 'package.json')) ||
+            fs.existsSync(path.join(current, '.opencode'))) {
+            return current
+        }
+        current = path.dirname(current)
+    }
+    return process.cwd()
+}
+
+function loadSkillContent(skillName: string): string | null {
+    const projectRoot = findProjectRoot()
+    const skillPath = path.join(projectRoot, '.opencode', 'skills', skillName, 'SKILL.md')
+
+    if (fs.existsSync(skillPath)) {
+        try {
+            const content = fs.readFileSync(skillPath, 'utf8')
+            // Remove YAML frontmatter for cleaner injection
+            const withoutFrontmatter = content.replace(/^---[\s\S]*?---\n/, '')
+            return withoutFrontmatter
+        } catch {
+            return null
+        }
+    }
+    return null
+}
+
+function detectAgentFromMessages(messages: MessageWithParts[]): string | null {
+    // Look for agent indicators in conversation
+    for (const msg of messages) {
+        const text = extractMessageText(msg)
+        if (!text) continue
+
+        // Check for @agent mentions
+        const agentMatch = text.match(/@(supreme-coordinator|ext-master|bmad-sprint-manager|sprint-manager|dev-ext|bmad-bmm-dev)/)
+        if (agentMatch) {
+            return agentMatch[1]
+        }
+
+        // Check for agent assignment patterns
+        const assignMatch = text.match(/agent[:\s]+"?([a-z-]+)"?/i)
+        if (assignMatch && CONFIG.AGENT_INIT_SKILLS[assignMatch[1]]) {
+            return assignMatch[1]
+        }
+    }
+    return null
 }
 
 // ============================================================================
@@ -246,7 +313,8 @@ export const ContextFirstStarterPlugin: Plugin = async ({ client }) => {
                     lastFourTurns: [],
                     filePaths: [],
                     workType: 'unknown',
-                    isPostCompact: false
+                    isPostCompact: false,
+                    detectedAgent: null
                 }
             }
 
@@ -269,9 +337,16 @@ export const ContextFirstStarterPlugin: Plugin = async ({ client }) => {
             ctx.workType = detectWorkType(ctx.filePaths)
             ctx.isPostCompact = detectPostCompact(output.messages)
 
+            // DETECT AGENT FROM MESSAGES (v2.2)
+            const agent = detectAgentFromMessages(output.messages)
+            if (agent) {
+                ctx.detectedAgent = agent
+                debugLog(`Detected agent from messages: ${agent}`)
+            }
+
             sessionContextMap.set(sessionID, ctx)
 
-            debugLog(`Session ${sessionID}: ${ctx.messageCount} messages, workType=${ctx.workType}`)
+            debugLog(`Session ${sessionID}: ${ctx.messageCount} messages, workType=${ctx.workType}, agent=${ctx.detectedAgent || 'none'}`)
         },
 
         /**
@@ -305,7 +380,7 @@ export const ContextFirstStarterPlugin: Plugin = async ({ client }) => {
                 return
             }
 
-            // Generate reminder
+            // Generate general context-first reminder
             const reminder = generateContextFirstReminder(ctx)
 
             // CRITICAL: Push to the existing system array
@@ -315,6 +390,33 @@ export const ContextFirstStarterPlugin: Plugin = async ({ client }) => {
             output.system.push(reminder)
 
             debugLog(`Injected context-first reminder for session ${sessionID}`)
+
+            // ================================================================
+            // AGENT-SPECIFIC SKILL INJECTION (v2.2) - Use stored agent
+            // ================================================================
+
+            // Use agent detected from messages.transform (stored in ctx)
+            const detectedAgent = ctx.detectedAgent
+
+            // Load and inject agent-specific SKILL if detected
+            if (detectedAgent) {
+                const skillName = CONFIG.AGENT_INIT_SKILLS[detectedAgent]
+                if (skillName) {
+                    const skillContent = loadSkillContent(skillName)
+                    if (skillContent) {
+                        output.system.push(`
+## 🎯 AGENT INIT SKILL: ${skillName} (Auto-Loaded for @${detectedAgent})
+
+${skillContent}
+`)
+                        debugLog(`Injected agent skill ${skillName} for ${detectedAgent}`)
+                    } else {
+                        debugLog(`SKILL file not found: ${skillName}`)
+                    }
+                }
+            } else {
+                debugLog('No agent detected - skipping SKILL injection')
+            }
         },
 
         /**
@@ -392,6 +494,54 @@ ${args.description || 'No description provided'}
                 debugLog(`Injected context into delegation prompt for ${args.subagent_type}`)
             } else {
                 debugLog('args.prompt is not a string, cannot inject')
+            }
+        },
+
+        /**
+         * HOOK: tool.execute.after
+         * 
+         * Fires AFTER a tool completes. Use to capture results for brain archiving.
+         */
+        'tool.execute.after': async (
+            input: { tool: string; sessionID: string; callID: string },
+            output: { title: string; output: string; metadata: Record<string, unknown> }
+        ) => {
+            // Archive task completion results
+            if (input.tool === 'task') {
+                const projectRoot = findProjectRoot()
+                const brainDir = path.join(projectRoot, '_bmad-output', '.brain', 'sessions')
+
+                // Ensure brain directory exists
+                if (!fs.existsSync(brainDir)) {
+                    fs.mkdirSync(brainDir, { recursive: true })
+                }
+
+                // Create session archive entry
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+                const archivePath = path.join(brainDir, `session-${timestamp}.yaml`)
+
+                const ctx = input.sessionID ? sessionContextMap.get(input.sessionID) : null
+
+                const archiveContent = `# Session Archive
+timestamp: "${new Date().toISOString()}"
+session_id: "${input.sessionID}"
+tool: "${input.tool}"
+call_id: "${input.callID}"
+detected_agent: "${ctx?.detectedAgent || 'none'}"
+work_type: "${ctx?.workType || 'unknown'}"
+message_count: ${ctx?.messageCount || 0}
+task_title: "${output.title || 'N/A'}"
+original_intent: |
+  ${ctx?.firstUserMessage?.slice(0, 200) || 'N/A'}
+task_output: |
+  ${output.output?.slice(0, 500) || 'N/A'}
+`
+                try {
+                    fs.writeFileSync(archivePath, archiveContent)
+                    debugLog(`Archived session to: ${archivePath}`)
+                } catch (err) {
+                    debugLog(`Failed to archive session: ${err}`)
+                }
             }
         }
     }
