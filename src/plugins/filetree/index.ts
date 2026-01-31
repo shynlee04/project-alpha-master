@@ -2,15 +2,19 @@
  * @fileoverview FileTree Plugin Public API
  * @module plugins/filetree
  *
- * **ARCH-02-04**: FileTree Plugin Exports
+ * **PLAT-02, PLAT-05**: FileTree Platform Operator Exports
  *
- * Public API for FileTree plugin.
- * Exports plugin definition for registration in plugin-registry.
+ * Public API for FileTree plugin including:
+ * - Plugin definition for registration
+ * - FileTreeOperator for lifecycle management
+ * - useFileTreeOperations hook for CRUD
+ * - ProjectSelector component for project switching
  *
- * @epic EPIC-ARCH-02
- * @story ARCH-02-04
+ * @epic EPIC-CC-01 - Project Space Foundation
+ * @story PLAT-02, PLAT-05
  * @team Team A
  * @created 2026-01-21
+ * @updated 2026-02-01
  */
 
 // ============================================================================
@@ -33,14 +37,58 @@
 export { fileTreePlugin } from './FileTreePlugin';
 
 // ============================================================================
+// Platform Operator
+// ============================================================================
+
+/**
+ * FileTreeOperator - Platform Operator for file tree lifecycle
+ *
+ * @remarks
+ * Implements IPlatformOperator interface.
+ * Manages event subscriptions and tree synchronization.
+ *
+ * Initialize on app startup:
+ * ```typescript
+ * await fileTreeOperator.init();
+ * ```
+ */
+export { fileTreeOperator, FileTreeOperator } from './FileTreeOperator';
+
+// ============================================================================
+// Hooks
+// ============================================================================
+
+/**
+ * useFileTreeOperations - CRUD hook for files and projects
+ *
+ * @remarks
+ * All file operations via FileService (domain events).
+ * All project operations via ProjectStore.
+ * switchProject fires project:switched event.
+ */
+export { useFileTreeOperations } from './hooks/useFileTreeOperations';
+export type { FileTreeOperations, ProjectResult } from './hooks/useFileTreeOperations';
+
+/**
+ * useFileTreePlugin - Legacy hook for ProjectContext access
+ */
+export { useFileTreePlugin } from './useFileTreePlugin';
+
+// ============================================================================
+// Components
+// ============================================================================
+
+/**
+ * ProjectSelector - Dropdown for project switching (PLAT-05)
+ */
+export { ProjectSelector } from './components/ProjectSelector';
+
+// ============================================================================
 // Types
 // ============================================================================
 
 /**
  * FileTree plugin types
- *
- * @remarks
- * Types for FileTree plugin integration.
  */
 export type {
   TreeNode,
@@ -55,16 +103,3 @@ export type {
  * FileTree plugin props
  */
 export type { FileTreePluginProps } from './types';
-
-// ============================================================================
-// Hooks
-// ============================================================================
-
-/**
- * FileTree plugin hook
- *
- * @remarks
- * Hook for accessing ProjectContext in FileTree plugin.
- * Provides direct access to gateway and file operations.
- */
-export { useFileTreePlugin } from './useFileTreePlugin';
