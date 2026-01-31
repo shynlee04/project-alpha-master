@@ -71,9 +71,11 @@
 3. Legacy type aliases point to canonical schemas
 4. No duplicate type definitions across codebase
 
-**Plans:** 2 plans
-- [ ] 02-01-PLAN.md — Correct Project/File schemas (remove workspaceBindings/workspaceId)
-- [ ] 02-02-PLAN.md — Create Thread/Note schemas (project-centric, no workspaceId)
+**Plans:** 4 plans
+- [x] 02-01-PLAN.md — Correct Project/File schemas (remove workspaceBindings/workspaceId)
+- [x] 02-02-PLAN.md — Create Thread/Note schemas (project-centric, no workspaceId)
+- [ ] 02-03-PLAN.md — Wire schemas to infrastructure (eliminate dual source of truth)
+- [ ] 02-04-PLAN.md — Consolidate FileMetadata types (remove 6 duplicate definitions)
 
 ---
 
