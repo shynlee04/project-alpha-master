@@ -114,7 +114,7 @@ src/
 ```
 
 ### 🚨 NO-WORKSPACE MANDATE (ABSOLUTE)
-**See:** `.planning/architecture/NO-WORKSPACE-MANDATE.md`
+**See:** `.planning/SOURCE-OF-TRUTH.md` (Part 6: What is BANNED)
 
 The following terms are **BANNED** from the codebase:
 ```
@@ -303,7 +303,7 @@ verification:
 
 | Document | Location | Purpose |
 |----------|----------|---------|
-| **Architecture** | `_bmad-output/planning-artifacts/architecture.md` | Technical spec |
+| **Architecture** | `.planning/SOURCE-OF-TRUTH.md` | **THE** canonical architecture (replaces all previous) |
 | **UX Spec** | `_bmad-output/planning-artifacts/ux-specification/` | Design system |
 | **Epics** | `_bmad-output/planning-artifacts/epics.md` | Story backlog |
 | **ADR-039** | `_bmad-output/planning-artifacts/adr/` | Authority decisions |
