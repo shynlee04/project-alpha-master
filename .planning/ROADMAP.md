@@ -63,14 +63,15 @@ Plans:
   4. User can switch between projects without page refresh
   5. User can create a chat thread and send a message
   6. Layout panels don't overlap or disappear
-**Plans**: 5 plans
+**Plans**: 6 plans
 
 Plans:
-- [ ] 01-01: Operator architecture, FileService, DomainEventBus (Wave 1)
-- [ ] 01-02: FileTree operator with full project/file CRUD and ProjectSelector (Wave 2)
-- [ ] 01-03: FSA sync (desktop) and IndexedDB fallback (mobile) (Wave 3)
-- [ ] 01-04: Chat-Cascade operator with ThreadService (Wave 2)
-- [ ] 01-05: Layout system fixes (panel resize, activity bar toggle) (Wave 1)
+- [x] 01-01: Operator architecture, FileService, DomainEventBus (Wave 1)
+- [x] 01-02: FileTree operator with full project/file CRUD and ProjectSelector (Wave 2)
+- [x] 01-03: FSA sync (desktop) and IndexedDB fallback (mobile) (Wave 3)
+- [x] 01-04: Chat-Cascade operator with ThreadService (Wave 2)
+- [x] 01-05: Layout system fixes (panel resize, activity bar toggle) (Wave 1)
+- [ ] 01-06: Gap closure — wire ChatPanel, Create Project, PanelResizer (Wave 1) [GAP CLOSURE]
 
 ### Phase 2: AI Integration
 **Goal**: Implement tool execution pipeline with approval workflow and multi-provider support
