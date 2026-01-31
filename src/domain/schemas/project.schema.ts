@@ -10,6 +10,7 @@
  */
 
 import { z } from 'zod';
+import { ProjectPluginsSchema } from './plugin.schema';
 
 // ============================================================================
 // Nested Schemas
@@ -53,9 +54,11 @@ export const DeviceTypeSchema = z.enum(['desktop', 'mobile', 'tablet']);
  * Business rules:
  * - Project must have unique id (UUID v4 format)
  * - Storage type must be either 'indexeddb' (browser-only) or 'fsa' (local drive)
- * - Workspace bindings define which workspaces can access this project
+ * - Platform determines available plugins based on device type
  * - Soft delete support: deleted projects are recoverable for 30 days
  * - Temp projects are auto-created for standalone Notes access
+ *
+ * @mandate NO-WORKSPACE - See .planning/architecture/NO-WORKSPACE-MANDATE.md
  */
 export const ProjectSchema = z.object({
   // Core identity
@@ -111,6 +114,10 @@ export const ProjectSchema = z.object({
   // Platform detection support
   /** Device type for platform-specific behavior */
   deviceType: DeviceTypeSchema.optional(),
+
+  // Plugin configuration (replaces workspaceBindings)
+  /** Enabled plugins for this project - platform determines defaults if not specified */
+  plugins: ProjectPluginsSchema.optional(),
 });
 
 // ============================================================================
