@@ -14,7 +14,7 @@
  *
  * @story UXUI-04-07
  * @created 2026-01-30
- * @updated 2026-02-01
+ * @updated 2026-02-01 - Added PanelResizer integration (gap closure 01-06)
  */
 
 import React, { useEffect } from 'react';
@@ -29,6 +29,7 @@ import {
   PluginPanelRight,
 } from './PluginPanelContainer';
 import { BottomNavigation } from './BottomNavigation';
+import { PanelResizer } from './PanelResizer';
 import type { ResponsiveLayoutProps } from './responsive-types';
 import './ResponsiveLayout.css';
 
@@ -58,10 +59,16 @@ const DesktopLayout: React.FC = () => {
         <PluginPanelLeft />
       </section>
 
+      {/* Resizer: Left ↔ Main */}
+      <PanelResizer leftPanel="left" rightPanel="main" />
+
       {/* Main Panel (4) */}
       <main className="responsive-layout__panel-main" role="main" aria-label="Main content area">
         <PluginPanelMain />
       </main>
+
+      {/* Resizer: Main ↔ Right */}
+      <PanelResizer leftPanel="main" rightPanel="right" />
 
       {/* Plugin Panel Right (2.5) */}
       <section className="responsive-layout__panel-right" role="region" aria-label="Right plugin panel">
@@ -99,10 +106,16 @@ const TabletLandscapeLayout: React.FC = () => {
         <PluginPanelLeft />
       </section>
 
+      {/* Resizer: Left ↔ Main */}
+      <PanelResizer leftPanel="left" rightPanel="main" />
+
       {/* Main Panel (4) */}
       <main className="responsive-layout__panel-main" role="main" aria-label="Main content area">
         <PluginPanelMain />
       </main>
+
+      {/* Resizer: Main ↔ Right */}
+      <PanelResizer leftPanel="main" rightPanel="right" />
 
       {/* Plugin Panel Right (2) */}
       <section className="responsive-layout__panel-right" role="region" aria-label="Right plugin panel">
