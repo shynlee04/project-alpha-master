@@ -114,53 +114,53 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| STATE-01 | TBD | Pending |
-| STATE-02 | TBD | Pending |
-| STATE-03 | TBD | Pending |
-| STATE-04 | TBD | Pending |
-| STATE-05 | TBD | Pending |
-| STATE-06 | TBD | Pending |
-| STATE-07 | TBD | Pending |
-| IMPORT-01 | TBD | Pending |
-| IMPORT-02 | TBD | Pending |
-| IMPORT-03 | TBD | Pending |
-| IMPORT-04 | TBD | Pending |
-| IMPORT-05 | TBD | Pending |
-| SPLIT-01 | TBD | Pending |
-| SPLIT-02 | TBD | Pending |
-| SPLIT-03 | TBD | Pending |
-| SPLIT-04 | TBD | Pending |
-| SPLIT-05 | TBD | Pending |
-| PLUGIN-01 | TBD | Pending |
-| PLUGIN-02 | TBD | Pending |
-| PLUGIN-03 | TBD | Pending |
-| PLUGIN-04 | TBD | Pending |
-| PLUGIN-05 | TBD | Pending |
-| PLUGIN-06 | TBD | Pending |
-| SCHEMA-01 | TBD | Pending |
-| SCHEMA-02 | TBD | Pending |
-| SCHEMA-03 | TBD | Pending |
-| SCHEMA-04 | TBD | Pending |
-| SCHEMA-05 | TBD | Pending |
-| SCHEMA-06 | TBD | Pending |
-| SCHEMA-07 | TBD | Pending |
-| SCHEMA-08 | TBD | Pending |
-| TEST-01 | TBD | Pending |
-| TEST-02 | TBD | Pending |
-| TEST-03 | TBD | Pending |
-| TEST-04 | TBD | Pending |
-| TEST-05 | TBD | Pending |
-| AGENT-01 | TBD | Pending |
-| AGENT-02 | TBD | Pending |
-| AGENT-03 | TBD | Pending |
-| AGENT-04 | TBD | Pending |
-| AGENT-05 | TBD | Pending |
+| STATE-01 | Phase 01 | Pending |
+| STATE-02 | Phase 04 | Pending |
+| STATE-03 | Phase 04 | Pending |
+| STATE-04 | Phase 04 | Pending |
+| STATE-05 | Phase 01 | Pending |
+| STATE-06 | Phase 09 | Pending |
+| STATE-07 | Phase 09 | Pending |
+| IMPORT-01 | Phase 05 | Pending |
+| IMPORT-02 | Phase 05 | Pending |
+| IMPORT-03 | Phase 05 | Pending |
+| IMPORT-04 | Phase 05 | Pending |
+| IMPORT-05 | Phase 05 | Pending |
+| SPLIT-01 | Phase 06 | Pending |
+| SPLIT-02 | Phase 07 | Pending |
+| SPLIT-03 | Phase 06, 07 | Pending |
+| SPLIT-04 | Phase 09 | Pending |
+| SPLIT-05 | Phase 09 | Pending |
+| PLUGIN-01 | Phase 08 | Pending |
+| PLUGIN-02 | Phase 08 | Pending |
+| PLUGIN-03 | Phase 08 | Pending |
+| PLUGIN-04 | Phase 08 | Pending |
+| PLUGIN-05 | Phase 08 | Pending |
+| PLUGIN-06 | Phase 08 | Pending |
+| SCHEMA-01 | Phase 02 | Pending |
+| SCHEMA-02 | Phase 02 | Pending |
+| SCHEMA-03 | Phase 02 | Pending |
+| SCHEMA-04 | Phase 02 | Pending |
+| SCHEMA-05 | Phase 01 | Pending |
+| SCHEMA-06 | Phase 01 | Pending |
+| SCHEMA-07 | Phase 11 | Pending |
+| SCHEMA-08 | Phase 11 | Pending |
+| TEST-01 | Phase 03 | Pending |
+| TEST-02 | Phase 10 | Pending |
+| TEST-03 | Phase 10 | Pending |
+| TEST-04 | Phase 10 | Pending |
+| TEST-05 | Phase 10 | Pending |
+| AGENT-01 | Phase 12 | Pending |
+| AGENT-02 | Phase 12 | Pending |
+| AGENT-03 | Phase 12 | Pending |
+| AGENT-04 | Phase 12 | Pending |
+| AGENT-05 | Phase 12 | Pending |
 
 **Coverage:**
 - v1 requirements: 40 total
-- Mapped to phases: 0
-- Unmapped: 40 ⚠️
+- Mapped to phases: 40 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-31*
-*Last updated: 2026-01-31 after initial definition*
+*Last updated: 2026-01-31 after roadmap creation*
