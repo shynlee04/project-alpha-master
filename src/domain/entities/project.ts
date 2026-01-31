@@ -1,128 +1,86 @@
 /**
- * Project Entity - Domain Layer
+ * @fileoverview Project Entity - Backward Compatibility Re-exports
+ * @module domain/entities/project
  *
- * Core business entity representing a project in Via-Gent.
- * Aligned with Clean Architecture principles - pure domain logic with no infrastructure dependencies.
+ * @deprecated Import from '@/domain/schemas' instead.
+ * This file exists only for migration - will be removed.
  *
- * @layer Domain
- * @module core/entities
+ * @mandate NO-WORKSPACE - WorkspaceBindings is ELIMINATED.
+ * See .planning/architecture/NO-WORKSPACE-MANDATE.md
  */
 
+// ============================================================================
+// Re-exports from Canonical Schemas
+// ============================================================================
+
 /**
- * Workspace binding configuration for project association.
- * Defines which workspaces (IDE, Knowledge, Notes, Study) can access this project.
+ * All Project-related types should be imported from @/domain/schemas.
+ * These re-exports exist only for backward compatibility during migration.
+ */
+export {
+  // Schemas (for runtime validation)
+  ProjectSchema,
+  LayoutConfigSchema,
+  StorageTypeSchema,
+  DeviceTypeSchema,
+  ProjectCreateParamsSchema,
+  ProjectUpdateParamsSchema,
+  // Types (for compile-time safety)
+  type Project,
+  type ProjectCreateParams,
+  type ProjectUpdateParams,
+  type LayoutConfig,
+  type StorageType,
+  type DeviceType,
+} from '@/domain/schemas/project.schema';
+
+// ============================================================================
+// Plugin Types (Replacement for Workspace Concepts)
+// ============================================================================
+
+/**
+ * Plugin types replace the old workspace concept.
+ * Use these instead of WorkspaceBindings.
+ */
+export {
+  // Schemas
+  PluginTypeSchema,
+  PluginCapabilitySchema,
+  ProjectPluginsSchema,
+  // Types
+  type PluginType,
+  type PluginCapability,
+  type ProjectPlugins,
+  // Migration helpers
+  isValidPluginType,
+  mapWorkspaceToPlugin,
+} from '@/domain/schemas/plugin.schema';
+
+// ============================================================================
+// DEPRECATED - Temporary Aliases for Migration
+// ============================================================================
+
+/**
+ * @deprecated WorkspaceBindings is ELIMINATED.
+ * Use PluginType[] or ProjectPlugins instead.
+ *
+ * This type alias exists ONLY for TypeScript compilation during migration.
+ * All usages must be removed - grep for WorkspaceBindings and fix.
+ *
+ * Migration path:
+ * - For boolean flags: Just remove the field
+ * - For type checking: Use ProjectPlugins or PluginType[]
+ * - For agent capabilities: Use PluginCapability[]
+ *
+ * @see .planning/architecture/NO-WORKSPACE-MANDATE.md
  */
 export interface WorkspaceBindings {
+  /** @deprecated Use PluginType[] with 'editor' instead */
   ide?: boolean;
+  /** @deprecated Use PluginType[] with 'notes' instead */
   notes?: boolean;
+  /** @deprecated Use PluginType[] with 'knowledge' instead */
   knowledge?: boolean;
+  /** @deprecated Use PluginType[] with 'study' instead */
   study?: boolean;
 }
-
-/**
- * Layout configuration stored per project.
- * Optional - used for restoring IDE state.
- */
-export interface LayoutConfig {
-  panelSizes?: number[];
-  openFiles?: string[];
-  activeFile?: string | null;
-}
-
-/**
- * Project - Domain Entity
- *
- * Core project metadata representing a local folder project.
- * This is a pure domain entity with NO infrastructure dependencies.
- *
- * Business rules:
- * - Project must have unique id (UUID v4 or generated)
- * - Storage type must be either 'indexeddb' (browser-only) or 'fsa' (local drive with FSA)
- * - Workspace bindings define which workspaces (IDE, Knowledge, Notes, Study) can access this project
- * - Soft delete support: deleted projects are recoverable for 30 days
- * - Temp projects are auto-created for standalone Notes access (NS-2026-01-07)
- *
- * Infrastructure concerns NOT included:
- * - fsaHandle (FileSystemDirectoryHandle) → Browser API, belongs in infrastructure layer
- * - lastKnownPermissionState (FsaPermissionState) → Infrastructure state, belongs in persistence layer
- */
-export interface Project {
-  // Core identity
-  /** UUID v4 or generated ID */
-  id: string;
-  /** Display name (typically folder name) */
-  name: string;
-  /** Display path for UI (not actual path due to FSA security) */
-  folderPath: string;
-
-  // Storage configuration
-  /** Storage backend type: 'fsa' for local drive (requires FSA), 'indexeddb' for browser-only */
-  storageType: 'indexeddb' | 'fsa';
-
-  // Timestamps
-  /** Last time project was opened */
-  lastOpened: Date;
-  /** When project was created */
-  createdAt: Date;
-
-  // Configuration
-  /** Auto-sync flag (default: true) */
-  autoSync: boolean;
-  /** Optional layout state for IDE restoration */
-  layoutState?: LayoutConfig;
-  /** Custom exclusion patterns for sync (glob syntax) */
-  exclusionPatterns?: string[];
-
-  // Workspace configuration
-  /** Workspace binding configuration (IDE, Knowledge, Notes, Study) - ARC-D03: Renamed from bindings */
-  workspaceBindings: WorkspaceBindings;
-
-  // Feature flags
-  /** File snapshot feature flag */
-  fileSnapshotEnabled?: boolean;
-
-  // Metadata
-  /** Project description (optional) */
-  description?: string;
-  /** Project tags (optional) */
-  tags: string[];
-
-  // Soft delete support
-  /** Soft delete flag (true = marked as deleted, recoverable for 30 days) */
-  deleted?: boolean;
-  /** Timestamp when project was soft deleted */
-  deletedAt?: Date;
-
-  // Temp project support (NS-2026-01-07)
-  /** Temp project flag (auto-created for standalone Notes access) */
-  isTemp?: boolean;
-  /** Auto-created flag (system-generated vs user-created) */
-  autoCreated?: boolean;
-  /** 45-04: Browser mode flag (special project showing all notes across projects) */
-  isBrowserMode?: boolean;
-
-  // Platform detection support (TS-DEBT-01)
-  /** Device type for platform-specific behavior (desktop/mobile/tablet) */
-  deviceType?: 'desktop' | 'mobile' | 'tablet';
-}
-
-/**
- * Project creation parameters (without auto-generated fields)
- *
- * Excludes fields that are auto-generated during creation:
- * - id (generated by system)
- * - createdAt (set to current time)
- * - lastOpened (set to current time)
- */
-export type ProjectCreateParams = Omit<
-  Project,
-  'id' | 'createdAt' | 'lastOpened'
->;
-
-/**
- * Project update parameters (all fields optional except id)
- *
- * Allows partial updates to project metadata.
- * All fields are optional except id (required to identify which project to update).
- */
-export type ProjectUpdateParams = Partial<Omit<Project, 'id'>> & { id: string };
