@@ -71,7 +71,9 @@
 3. Legacy type aliases point to canonical schemas
 4. No duplicate type definitions across codebase
 
-**Plans:** TBD
+**Plans:** 2 plans
+- [ ] 02-01-PLAN.md — Project and File Zod schemas
+- [ ] 02-02-PLAN.md — Thread/Chat and Note Zod schemas
 
 ---
 
