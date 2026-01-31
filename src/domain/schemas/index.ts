@@ -97,3 +97,27 @@ export {
   type NoteUpdateParams,
   type NoteTreeNode,
 } from './note.schema';
+
+// ============================================================================
+// Plugin Schemas (Replaces Workspace concept)
+// ============================================================================
+
+/**
+ * Plugin types replace the old workspace-centric model.
+ * Use these instead of WorkspaceBindings/WorkspaceId.
+ *
+ * @mandate NO-WORKSPACE - See .planning/architecture/NO-WORKSPACE-MANDATE.md
+ */
+export {
+  // Schemas
+  PluginTypeSchema,
+  PluginCapabilitySchema,
+  ProjectPluginsSchema,
+  // Types
+  type PluginType,
+  type PluginCapability,
+  type ProjectPlugins,
+  // Migration helpers
+  isValidPluginType,
+  mapWorkspaceToPlugin,
+} from './plugin.schema';
