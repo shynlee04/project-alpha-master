@@ -228,16 +228,17 @@ function UnifiedProjectRoute() {
   }
 
   // ============================================================================
-  // EPIC-UXUI-04: FULLY WIRED LAYOUT
+  // EPIC-UXUI-04: FULLY WIRED LAYOUT (FIX-2026-02-01)
   // ============================================================================
-  // ResponsiveLayout includes:
-  // - GlobalSidebar (auto-collapse)
+  // ResponsiveLayout includes (5-column grid - NO GlobalSidebar):
   // - ActivityBarLeft (vertical, 48px)
   // - PluginPanelLeft (2 grid units)
-  // - PluginPanelMain (4 grid units, with ActivityBarMainTop)
+  // - PluginPanelMain (4 grid units)
   // - PluginPanelRight (2.5 grid units)
   // - ActivityBarRight (vertical, 48px)
   // - BottomNavigation (mobile/tablet)
+  //
+  // GlobalSidebar removed - ProjectAwareLayout provides GlobalHeader
   // ============================================================================
 
   return (
