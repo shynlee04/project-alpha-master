@@ -20,7 +20,7 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | Phase | Status | Plans | Completed |
 |-------|--------|-------|-----------|
 | 01 | ✓ Complete | 2/2 | 01-01, 01-02 |
-| 02 | ⚠️ Gap Closure | 4/4 | 02-01, 02-02, 02-03 (pending), 02-04 (pending) |
+| 02 | ⚠️ Gap Closure | 4+/8 | 02-01, 02-02, 02-03-A ✓, 02-03-B-E (pending), 02-04 (pending) |
 | 03 | ○ Pending | 0/0 | — |
 | 04 | ○ Pending | 0/0 | — |
 | 05 | ○ Pending | 0/0 | — |
@@ -55,6 +55,8 @@ See: `.planning/PROJECT.md` (updated 2026-01-31)
 | Thread uses projectId only | 2026-01-31 | Project-centric model - no workspaceId field | 02-02 |
 | Note uses projectId only | 2026-01-31 | Project-centric model - no workspaceId field | 02-02 |
 | ThreadMessage embedded in Thread | 2026-01-31 | Simplifies queries, maintains data locality | 02-02 |
+| Plugin types replace workspace concepts | 2026-01-31 | Project-centric + plugin-based model is cleaner | 02-03-A |
+| Keep deprecated WorkspaceBindings alias temporarily | 2026-01-31 | 361 references exist - need compilation during migration | 02-03-A |
 
 ---
 
@@ -91,8 +93,9 @@ Items to address that emerged during work:
 | 2026-01-31 | 02-02 | Execute Plan 02-02 | Thread/Note schemas created with project-centric model |
 | 2026-01-31 | 02-verify | Verification gaps identified | VERIFICATION.md shows 5/8 truths verified, 3 gaps found |
 | 2026-01-31 | 02-plan | Create gap closure plans | 02-03-PLAN.md, 02-04-PLAN.md created to address gaps |
+| 2026-01-31 | 02-03-A | Execute Sub-Plan 03-A | plugin.schema.ts created, ProjectSchema updated, entities re-export layer |
 
 ---
 
 *State initialized: 2026-01-31*
-*Last updated: 2026-01-31T04:12:27Z*
+*Last updated: 2026-01-31T11:03:16Z*
