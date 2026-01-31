@@ -13,7 +13,7 @@ Transform Project Alpha from a contaminated codebase (1,734 violations across wo
 
 - [ ] **Phase -1: Preparation** — Establish safety nets before destructive refactoring
 - [ ] **Phase 0: Foundation Cleanup** — Eliminate 1,734 violations and consolidate types
-- [ ] **Phase 1: Platform Operators** — FileTree + Chat-Cascade + Layout recovery
+- [x] **Phase 1: Platform Operators** — FileTree + Chat-Cascade + Layout recovery
 - [ ] **Phase 2: AI Integration** — Tool execution pipeline + multi-provider gateway
 - [ ] **Phase 3: Feature Modules** — Monaco editor + Notes with AI features
 - [ ] **Phase 4: RAG System** — Orama integration + file/thread indexing
@@ -71,7 +71,7 @@ Plans:
 - [x] 01-03: FSA sync (desktop) and IndexedDB fallback (mobile) (Wave 3)
 - [x] 01-04: Chat-Cascade operator with ThreadService (Wave 2)
 - [x] 01-05: Layout system fixes (panel resize, activity bar toggle) (Wave 1)
-- [ ] 01-06: Gap closure — wire ChatPanel, Create Project, PanelResizer (Wave 1) [GAP CLOSURE]
+- [x] 01-06: Gap closure — wire ChatPanel, Create Project, PanelResizer (Wave 1) [GAP CLOSURE]
 
 ### Phase 2: AI Integration
 **Goal**: Implement tool execution pipeline with approval workflow and multi-provider support
@@ -156,7 +156,7 @@ Phases execute in numeric order: -1 → 0 → 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | -1. Preparation | 0/1 | Not started | - |
 | 0. Foundation Cleanup | 0/4 | Not started | - |
-| 1. Platform Operators | 0/5 | Not started | - |
+| 1. Platform Operators | 6/6 | ✓ Complete | 2026-02-01 |
 | 2. AI Integration | 0/4 | Not started | - |
 | 3. Feature Modules | 0/4 | Not started | - |
 | 4. RAG System | 0/3 | Not started | - |
