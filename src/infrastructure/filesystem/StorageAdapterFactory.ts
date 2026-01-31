@@ -4,8 +4,8 @@
  *
  * Factory that creates the appropriate storage adapter based on platform:
  * - Desktop with FSA → FSAStorageAdapter (File System Access API)
- * - Mobile/Tablet → IDBAdapter (IndexedDB)
- * - WebContainer → IDBAdapter (IndexedDB, preview only)
+ * - Mobile/Tablet → IDBStorageAdapter (IndexedDB)
+ * - WebContainer → IDBStorageAdapter (IndexedDB, preview only)
  *
  * @epic EPIC-CC-01 - Project Space Foundation
  * @story PS-02-A - Platform Detection & Storage Routing
@@ -13,6 +13,7 @@
  * FIX-2026-01-19: REFACTOR-01 - Use direct imports instead of require() lazy loading
  * FIX-2026-01-19: FSA-006 - Get handle from ProjectContext instead of requiring at creation time
  * FIX-2026-01-19: FSA-007 - Added handle to ProjectContext interface
+ * FIX-2026-02-01: PS-02 - Switch from IDBAdapter to IDBStorageAdapter for proper interface compliance
  */
 
 import type {
@@ -28,7 +29,7 @@ import { detectPlatform, getOptimalStorageType } from './platform-detection';
 
 // Import adapters directly to avoid circular dependencies
 import { FSAStorageAdapter } from './fsa-storage-adapter';
-import { IDBAdapter } from '@/infrastructure/sync/adapters/idb-adapter-core';
+import { IDBStorageAdapter } from './idb-storage-adapter';
 
 // Type aliases for adapter constructors
 type FSAAdapterClass = new (options: StorageOptions) => StorageAdapter;
@@ -39,7 +40,7 @@ function getFSAStorageAdapterClass(): FSAAdapterClass {
 }
 
 function getIDBAdapterClass(): IDBAdapterClass {
-  return IDBAdapter as IDBAdapterClass;
+  return IDBStorageAdapter as unknown as IDBAdapterClass;
 }
 
 // ============================================================================
