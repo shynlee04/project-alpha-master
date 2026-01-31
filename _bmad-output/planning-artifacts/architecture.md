@@ -206,15 +206,17 @@ interface Project {
   lastOpened: Date;
   createdAt: Date;
   autoSync: boolean;           // Default: true
-  workspaceBindings: WorkspaceBindings;
   tags: string[];
   deleted?: boolean;           // Soft delete
   deletedAt?: Date;
+  // NOTE: NO workspaceBindings - platform determines available plugins
+  // See new-fundamental-truths.md §1.3 and §1.4
 }
 ```
 
 **Business Rules**:
 - Project must have unique id
+- Platform determines available plugins (NOT workspace bindings)
 - Storage type determines available features (FSA = full IDE, IndexedDB = notes only)
 - Soft delete: recoverable for 30 days
 - Nested projects are BLOCKED

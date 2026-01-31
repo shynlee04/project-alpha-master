@@ -35,7 +35,6 @@ validated_against: "new-fundamental-truths.md v2.2.0"
 | `autoSync` | `boolean` | Yes | Auto-sync flag (default: true) |
 | `layoutState` | `LayoutConfig` | No | Optional IDE layout restoration |
 | `exclusionPatterns` | `string[]` | No | Custom exclusion patterns for sync |
-| `workspaceBindings` | `WorkspaceBindings` | Yes | Workspace access configuration |
 | `fileSnapshotEnabled` | `boolean` | No | File snapshot feature flag |
 | `description` | `string` | No | Project description |
 | `tags` | `string[]` | Yes | Project tags |
@@ -78,7 +77,6 @@ validated_against: "new-fundamental-truths.md v2.2.0"
 | `topK` | `number` | No | Top-k sampling |
 | `temperature` | `number` | No | Temperature (default: 0.7) |
 | `maxTokens` | `number` | No | Max tokens (default: 4096) |
-| `workspaceBindings` | `WorkspaceBinding[]` | Yes | Workspace configurations |
 | `tools` | `AgentToolBinding[]` | Yes | Tool configurations |
 | `status` | `AgentStatus` | No | Current status |
 | `tasksCompleted` | `number` | No | Task count |
@@ -265,11 +263,11 @@ validated_against: "new-fundamental-truths.md v2.2.0"
 **Status**: **DEPRECATED** per new-fundamental-truths.md
 
 **Migration Path**:
-- `WorkspaceConfig` → Merge into `Project.workspaceBindings`
+- `WorkspaceConfig` → DELETE (platform determines plugins, not workspace bindings)
 - `WorkspaceState` → Merge into `Project.layoutState`
-- `WorkspaceType` → Keep as enum, used in `workspaceBindings`
+- `WorkspaceType` → DELETE from entities (keep only as PluginId enum if needed)
 
-**Owner**: Legacy (to be migrated)
+**Owner**: Legacy (to be deleted - see new-fundamental-truths.md §1.3)
 
 ---
 
