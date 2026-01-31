@@ -139,8 +139,11 @@ interface PluginLayoutState {
   /** Current layout mode */
   layoutMode: LayoutMode;
 
-  /** Panel sizes: plugin ID -> size percentage (0-100) */
-  panelSizes: Record<string, number>;
+  /** Panel sizes: position (left/main/right) -> size percentage (0-100) */
+  panelSizes: Record<'left' | 'main' | 'right', number>;
+
+  /** Panel visibility: position -> visible */
+  panelVisibility: Record<'left' | 'main' | 'right', boolean>;
 
   /** Track if user has customized layout (prevents overwriting defaults) */
   hasUserCustomized: boolean;
@@ -180,8 +183,17 @@ interface PluginLayoutState {
   /** Change layout mode */
   setLayoutMode: (mode: LayoutMode) => void;
 
-  /** Update panel size */
-  setPanelSize: (pluginId: PluginId, size: number) => void;
+  /** Update panel size by position */
+  setPanelSize: (position: 'left' | 'main' | 'right', size: number) => void;
+
+  /** Set all panel sizes at once (must sum to 100%) */
+  setPanelSizes: (sizes: Record<'left' | 'main' | 'right', number>) => void;
+
+  /** Toggle panel visibility by position */
+  togglePanelVisibility: (position: 'left' | 'main' | 'right') => void;
+
+  /** Set panel visibility by position */
+  setPanelVisibility: (position: 'left' | 'main' | 'right', visible: boolean) => void;
 
   /** Clear all active plugins */
   clearActivePlugins: () => void;
@@ -253,7 +265,10 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
 
       activePlugins: [],
       layoutMode: '2-column',
-      panelSizes: {},
+      // Default panel sizes - sum to ~100% (23.5 + 47 + 29.5 = 100)
+      // Based on grid ratios: left:2, main:4, right:2.5 => 23.5%, 47%, 29.5%
+      panelSizes: { left: 23.5, main: 47, right: 29.5 },
+      panelVisibility: { left: true, main: true, right: true },
       hasUserCustomized: false,
       breakpoint: 'desktop',
       currentPlugin: null,
@@ -306,17 +321,12 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
        * @param pluginId - Plugin ID to remove
        * @remarks
        * - Filters out plugin from activePlugins array
-       * - Also removes panel size for this plugin
        * - Sets hasUserCustomized flag when user removes plugin
        */
       removePlugin: (pluginId) =>
         set((state) => {
-          const newPanelSizes = { ...state.panelSizes };
-          delete newPanelSizes[pluginId];
-
           return {
             activePlugins: state.activePlugins.filter((id) => id !== pluginId),
-            panelSizes: newPanelSizes,
             hasUserCustomized: true,
           };
         }),
@@ -367,19 +377,95 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
         })),
 
       /**
-       * Update panel size
+       * Update panel size by position
        *
-       * @param pluginId - Plugin ID
-       * @param size - Size percentage (0-100)
+       * @param position - Panel position (left, main, right)
+       * @param size - Size percentage (10-80)
        * @remarks
        * - Called when user resizes panel with drag handle
-       * - Merges into panelSizes object (preserves other sizes)
+       * - Clamps size to 10%-80% range
+       * - Auto-adjusts other panels to sum to 100%
        */
-      setPanelSize: (pluginId, size) =>
+      setPanelSize: (position, size) =>
+        set((state) => {
+          // Clamp size to 10%-80% range
+          const clampedSize = Math.min(80, Math.max(10, size));
+          const oldSize = state.panelSizes[position];
+          const delta = clampedSize - oldSize;
+
+          // Calculate new sizes - distribute delta to other panels proportionally
+          const otherPositions = (['left', 'main', 'right'] as const).filter(p => p !== position);
+          const otherTotal = otherPositions.reduce((sum, p) => sum + state.panelSizes[p], 0);
+          
+          const newSizes = { ...state.panelSizes };
+          newSizes[position] = clampedSize;
+          
+          // Distribute the delta proportionally to other panels
+          otherPositions.forEach(p => {
+            const ratio = state.panelSizes[p] / otherTotal;
+            newSizes[p] = Math.max(10, Math.min(80, state.panelSizes[p] - (delta * ratio)));
+          });
+
+          // Normalize to ensure sum is 100%
+          const total = newSizes.left + newSizes.main + newSizes.right;
+          if (Math.abs(total - 100) > 0.01) {
+            const scale = 100 / total;
+            newSizes.left *= scale;
+            newSizes.main *= scale;
+            newSizes.right *= scale;
+          }
+
+          return {
+            panelSizes: newSizes,
+            hasUserCustomized: true,
+          };
+        }),
+
+      /**
+       * Set all panel sizes at once
+       *
+       * @param sizes - Object with sizes for left, main, right
+       * @remarks
+       * - Normalizes to ensure sum is 100%
+       */
+      setPanelSizes: (sizes) =>
+        set(() => {
+          const total = sizes.left + sizes.main + sizes.right;
+          const scale = total > 0 ? 100 / total : 1;
+          return {
+            panelSizes: {
+              left: sizes.left * scale,
+              main: sizes.main * scale,
+              right: sizes.right * scale,
+            },
+            hasUserCustomized: true,
+          };
+        }),
+
+      /**
+       * Toggle panel visibility
+       *
+       * @param position - Panel position to toggle
+       */
+      togglePanelVisibility: (position) =>
         set((state) => ({
-          panelSizes: {
-            ...state.panelSizes,
-            [pluginId]: size,
+          panelVisibility: {
+            ...state.panelVisibility,
+            [position]: !state.panelVisibility[position],
+          },
+        })),
+
+      /**
+       * Set panel visibility
+       *
+       * @param position - Panel position
+       * @param visible - Whether panel should be visible
+       */
+      setPanelVisibility: (position, visible) =>
+        set((state) => ({
+          panelVisibility: {
+            ...state.panelVisibility,
+            [position]: visible,
           },
         })),
 
@@ -388,12 +474,13 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
        *
        * @remarks
        * - Useful when switching projects
-       * - Clears both activePlugins and panelSizes
+       * - Clears activePlugins and resets panels to default
        */
       clearActivePlugins: () =>
         set({
           activePlugins: [],
-          panelSizes: {},
+          panelSizes: { left: 23.5, main: 47, right: 29.5 },
+          panelVisibility: { left: true, main: true, right: true },
         }),
 
       /**
@@ -538,7 +625,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
          * @param preset - WorkflowPreset to apply
          * @remarks
          * - Updates activePlugins to match preset panels
-         * - Clears panelSizes (no longer used with fixed ratios)
+         * - Resets panel sizes to defaults
          * - Sets hasUserCustomized flag
          */
       setPreset: (preset) =>
@@ -548,7 +635,7 @@ export const usePluginLayoutStore = create<PluginLayoutState>()(
             currentPreset: preset,
             activePlugins: config.panels,
             hasUserCustomized: true,
-            panelSizes: {}, // Clear panel sizes - using fixed ratios now
+            panelSizes: { left: 23.5, main: 47, right: 29.5 }, // Reset to defaults
           };
         }),
 
@@ -663,6 +750,11 @@ export const selectActivePlugins = (state: PluginLayoutState) =>
 export const selectLayoutMode = (state: PluginLayoutState) => state.layoutMode;
 
 export const selectPanelSizes = (state: PluginLayoutState) => state.panelSizes;
+
+export const selectPanelVisibility = (state: PluginLayoutState) => state.panelVisibility;
+
+export const selectIsPanelVisible = (state: PluginLayoutState, position: 'left' | 'main' | 'right'): boolean =>
+  state.panelVisibility[position];
 
 /**
  * Check if a plugin is active
