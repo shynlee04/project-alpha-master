@@ -47,7 +47,9 @@
 3. Data flow diagrams show read/write responsibilities
 4. No ambiguity about Zustand vs Dexie vs FSA ownership
 
-**Plans:** TBD (created by /gsd-plan-phase 1)
+**Plans:** 2 plans
+- [ ] 01-01-PLAN.md — State contracts and entity layer mapping
+- [ ] 01-02-PLAN.md — Data flow contracts and sync patterns
 
 ---
 
