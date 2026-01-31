@@ -69,5 +69,8 @@ export { NavigationBreadcrumbs } from './NavigationBreadcrumbs';
 // Min Viewport Warning
 export { MinViewportWarning } from './MinViewportWarning';
 
+// Panel Resizer (PLAT-09)
+export { PanelResizer, type PanelResizerProps } from './PanelResizer';
+
 // Plugin Activity Docker Wiring (UXUI-03-03) - ARCHIVED 2026-01-30
 // export { usePluginActivityDockerWiring } from './PluginActivityDockerWiring';
