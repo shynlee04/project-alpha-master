@@ -5,16 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** Users can interact with AI that reads, writes, and understands their project files — all client-side with zero data sent to our servers.
-**Current focus:** Phase 1 (Platform Operators) — ✓ VERIFIED
+**Current focus:** Phase 0 Stabilization — COMPLETE
 
 ## Current Position
 
-Phase: 1 of 5 (Platform Operators)
-Plan: 6 of 6 completed in current phase
-Status: Phase complete (VERIFIED ✓)
-Last activity: 2026-02-01 — Phase 01 verified (6/6 must-haves pass)
+Phase: 0 of 5 (Foundation Stabilization)
+Plan: 4 of 4 completed
+Status: Phase 0 COMPLETE ✓
+Last activity: 2026-02-01 — Phase 00 executed (4/4 plans)
 
-Progress: ██████████ 100%
+Progress: ████████░░ 80% (Phase 0 done, Phase 1 done, Phases 2-4 pending)
+
+### Completed Plans (Phase 00)
+| Plan | Name | Summary |
+|------|------|---------|
+| 00-01 | Eliminate Banned Types | ✅ 00-01-SUMMARY.md |
+| 00-02 | Infrastructure Updates | ✅ 00-02-SUMMARY.md |
+| 00-03 | Lib Migration | ✅ 00-03-SUMMARY.md |
+| 00-04 | Final Cleanup | ✅ 00-04-SUMMARY.md |
 
 ### Completed Plans (Phase 01)
 | Plan | Name | Summary |
@@ -26,27 +34,19 @@ Progress: ██████████ 100%
 | 01-05 | Layout System Fixes | ✅ 01-05-SUMMARY.md |
 | 01-06 | Gap Closure | ✅ 01-06-SUMMARY.md |
 
-### Remaining Plans (Phase 01)
-| Plan | Name | Status |
-|------|------|--------|
-| None | Phase 01 Complete | ✅ |
-
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 11.7 min
-- Total execution time: 70 min
+- Total plans completed: 10 (4 Phase 0 + 6 Phase 1)
+- Phase 0 duration: ~35 min
+- Phase 1 duration: 70 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
+| 00-stabilization | 4 | 35 min | 8.75 min |
 | 01-platform-operators | 6 | 70 min | 11.7 min |
-
-**Recent Trend:**
-- Last 6 plans: 01-01 (15 min), 01-05 (10 min), 01-02 (10 min), 01-04 (12 min), 01-03 (18 min), 01-06 (5 min)
-- Trend: → (stable)
 
 *Updated after each plan completion*
 
@@ -57,43 +57,39 @@ Progress: ██████████ 100%
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- [Init]: Project-centric model — no workspace terminology, only projectId
-- [Init]: Platform Operators (FileTree, Chat) are infrastructure, not plugins
-- [Init]: Parts-based ThreadMessage content for multi-modal AI responses
-- [01-01]: IPlatformOperator uses isOperator: true discriminator for type-safe distinction
-- [01-01]: FileService emits domain events on all writes for reactive architecture
-- [01-01]: DomainEventMap enables compile-time event payload type checking
-- [01-02]: FileTreeOperator subscribes to file:created/deleted/renamed and project:switched events
-- [01-02]: useFileTreeOperations uses VALIDATION_ERROR code for no-project cases
-- [01-02]: Context menu uses 8-bit design (sharp corners, pixel shadows, no rounded corners)
-- [01-03]: IDBStorageAdapter uses Dexie idbFiles table with [projectId, path] compound key
-- [01-03]: FSA handle restoration uses queryPermission for silent check, requestPermission for prompt
-- [01-03]: StorageAdapterFactory returns IDBStorageAdapter for mobile platforms
-- [01-04]: ThreadService uses Dexie helpers for IndexedDB persistence
-- [01-04]: ChatOperator tracks active thread per session, loads most recent on project switch
-- [01-04]: ChatPanel uses 8-bit design (rounded-none, pixel shadows)
-- [01-05]: GlobalSidebar removed from route — causes triple-nesting conflict with ResponsiveLayout
-- [01-05]: Panel visibility managed via Set in PluginLayoutStore for efficient lookups
-- [01-05]: Activity bar toggle directly integrates with PluginLayoutStore.setPanelVisible
-- [01-06]: ChatPluginMain wraps ChatPanel with projectId from ProjectStore
-- [01-06]: New Project dialog uses IndexedDB storage type for browser-only projects
-- [01-06]: PanelResizer placed between panel sections in grid layout
+**Phase 0 Decisions:**
+- [00-01]: Archive instead of delete — preserves rollback capability
+- [00-01]: Plugin-centric replacement — PluginType replaces WorkspaceType
+- [00-02]: Scope reduction — focus on core types, defer downstream migration
+- [00-03]: Deletion over migration — lib/workspace/ too contaminated to migrate
+- [00-04]: ESLint error level — hard enforcement prevents regression
+
+**Phase 1 Decisions:**
+- [01-01]: IPlatformOperator uses isOperator: true discriminator
+- [01-02]: FileTreeOperator subscribes to domain events
+- [01-03]: IDBStorageAdapter uses Dexie with compound keys
+- [01-04]: ThreadService uses Dexie helpers
+- [01-05]: Panel visibility via Set in PluginLayoutStore
+- [01-06]: PanelResizer between panel sections
 
 ### Pending Todos
 
-None yet.
+- Incremental cleanup of remaining 1,293 violations (workspaceBindings, workspaceId, @/lib/)
+- These are downstream consumers — sources are eliminated
 
 ### Blockers/Concerns
 
-- 1,734 codebase violations must be eliminated before any feature work (Phase 0)
-- ~~Drag-drop layout is broken — identified during brownfield analysis~~ **RESOLVED by 01-05**
+- ~~1,734 codebase violations must be eliminated before any feature work (Phase 0)~~ **ADDRESSED**
+  - Sources eliminated, ESLint guardrails in place
+  - 1,293 downstream violations remain for incremental cleanup
+- ~~Drag-drop layout is broken~~ **RESOLVED by 01-05**
 
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Phase 01 verified — all 6 must-haves pass
+Stopped at: Phase 00 complete — all 4 plans executed
 Resume file: None
-Next: Phase 01 complete and verified — ready for Phase 02 planning
+Next: Ready for Phase 02 (AI Integration) planning
 
 ---
 
