@@ -48,6 +48,27 @@ export default tseslint.config(
 
             // General rules
             'no-console': ['warn', { allow: ['warn', 'error', 'info', 'debug'] }],
+
+            // NO-WORKSPACE MANDATE: Prevent regression of banned patterns
+            // See SOURCE-OF-TRUTH.md Part 6: What is BANNED
+            'no-restricted-syntax': ['error',
+                {
+                    selector: 'Identifier[name=/^[Ww]orkspace[Bb]indings$/]',
+                    message: 'WorkspaceBindings is BANNED. Use ProjectPlugins or PluginType[]. See SOURCE-OF-TRUTH.md',
+                },
+                {
+                    selector: 'Identifier[name=/^workspaceId$/]',
+                    message: 'workspaceId is BANNED. Use projectId (files belong to projects). See SOURCE-OF-TRUTH.md',
+                },
+            ],
+            'no-restricted-imports': ['error', {
+                patterns: [
+                    {
+                        group: ['@/lib/workspace/*'],
+                        message: '@/lib/workspace/ is BANNED. Use @/infrastructure/* or @/domain/*',
+                    },
+                ],
+            }],
         },
     }
 )
