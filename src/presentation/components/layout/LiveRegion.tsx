@@ -17,6 +17,7 @@
  */
 
 import { useTranslation } from 'react-i18next';
+import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
 
 // ============================================================================
 // Types & Interfaces
@@ -129,8 +130,7 @@ export function LiveRegion({
  * ```
  */
 export function LiveRegionWithHook({ className = '' }: { className?: string }) {
-  // Import hook dynamically to avoid circular dependencies
-  const { useWorkspaceSync } = require('@/infrastructure/persistence/stores/workspace');
+  // Use static import (added at top of file)
   const { syncStatus } = useWorkspaceSync();
 
   return <LiveRegion syncStatus={syncStatus} className={className} />;

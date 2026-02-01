@@ -32,6 +32,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useCapabilityDetection } from '@/hooks/useCapabilityDetection';
 import { TruncatedText } from '@/presentation/components/ui/truncated-text';
 import { WorkspaceSwitcher } from '@/presentation/components/common';
+import { useProjectContext } from '@/infrastructure/context/project-context';
 
 /**
  * Props for the IDEHeaderBar component.
@@ -336,12 +337,12 @@ function OpenFolderButton({
  */
 function WorkspaceSwitcherWrapper(): React.JSX.Element | null {
     try {
-        // Dynamically import to avoid SSR issues with useContext
-        const { useProjectContext } = require('@/lib/workspace/ProjectContext');
+        // Use static import (added at top of file)
         const context = useProjectContext();
 
-        // Only show if project has multiple workspaces enabled
-        if (context.enabledWorkspaces.length > 1) {
+        // Only show if project has multiple plugins enabled
+        const enabledPlugins = context.project?.plugins?.enabled ?? [];
+        if (enabledPlugins.length > 1) {
             return <WorkspaceSwitcher />;
         }
 

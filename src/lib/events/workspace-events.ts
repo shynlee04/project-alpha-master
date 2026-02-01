@@ -19,7 +19,8 @@ export type {
 } from '@/domain/types/domain-events';
 
 // Re-export domain event bus as workspace event bus alias
-export { domainEventBus as workspaceEventBus } from '@/infrastructure/events/domain-event-bus';
+import { domainEventBus } from '@/infrastructure/events/domain-event-bus';
+export { domainEventBus as workspaceEventBus };
 export { DomainEventBus as WorkspaceEventBus } from '@/infrastructure/events/domain-event-bus';
 
 /**
@@ -32,8 +33,6 @@ export { DomainEventBus as WorkspaceEventEmitter } from '@/infrastructure/events
  * Factory function for backward compatibility
  */
 export function createWorkspaceEventBus() {
-  // Import dynamically to avoid circular imports
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { domainEventBus } = require('@/infrastructure/events/domain-event-bus');
+  // Use static import (ESM compatible)
   return domainEventBus;
 }
