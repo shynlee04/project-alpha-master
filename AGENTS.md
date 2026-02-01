@@ -1,5 +1,5 @@
 # AGENTS.md - Project Alpha Constitution
-**Version:** 3.0.0 | **Updated:** 2026-01-29T16:00:00+07:00 | **Status:** ACTIVE CONSTITUTION
+**Version:** 3.1.0 | **Updated:** 2026-02-01T12:00:00+07:00 | **Status:** ACTIVE CONSTITUTION
 
 ---
 
@@ -130,6 +130,64 @@ The following terms are **BANNED** from the codebase:
 - Plugins offer FEATURES (editor, notes, chat)
 - Platform determines available plugins
 - NO artificial workspace silos
+
+---
+
+## 🔒 SCHEMA GOVERNANCE (NON-NEGOTIABLE)
+
+### Before Extending Any Schema
+**STOP and follow this protocol:**
+
+1. **Check extensibility** — Is this change additive (extends) or breaking (modifies existing)?
+2. **Review SOURCE-OF-TRUTH.md** — Does it align with Part 3 (Entity Model) and Part 4 (Relationships)?
+3. **Additive changes** → Proceed with documentation in ADR
+4. **Breaking changes** → **STOP and inquire user first** — no exceptions
+
+### Protected Schema Domains
+These require **explicit user approval** before ANY modification:
+
+| File | Domain | Why Protected |
+|------|--------|---------------|
+| `@/domain/schemas/project.schema.ts` | Project entity, ProjectSettings | Root entity — everything depends on it |
+| `@/domain/schemas/thread.schema.ts` | Thread, ThreadMessage, MessagePart | AI conversation foundation |
+| `@/domain/schemas/tool.schema.ts` | ToolDefinition, ToolCall, ToolResult | Agentic execution contracts |
+| `@/infrastructure/persistence/dexie-schema.ts` | Database tables | Migration complexity |
+
+### Extensibility Patterns (MANDATORY)
+When adding new capabilities, use these patterns:
+
+```typescript
+// ✅ CORRECT: Union types for extensibility
+type MessagePart = 
+  | { type: 'text'; content: string }
+  | { type: 'code'; language: string; content: string }
+  | { type: 'new_type'; /* new fields */ };  // Additive
+
+// ❌ WRONG: Modifying existing union members
+type MessagePart = 
+  | { type: 'text'; content: string; newField: string }  // Breaking!
+```
+
+### Roadmap Changes
+- **NO phase additions** without user approval
+- **NO phase reordering** without user approval  
+- **NO scope expansion** during execution — deferred ideas go to backlog
+- When uncertain: ASK, don't assume
+
+### Schema Extension Request Template
+When you need to extend a protected schema, create this request:
+
+```markdown
+## Schema Extension Request
+
+**Target:** [file path]
+**Change Type:** Additive | Breaking
+**Proposed Change:** [description]
+**Extensibility Impact:** [how this affects future additions]
+**Alternatives Considered:** [other approaches]
+
+Awaiting user approval before proceeding.
+```
 
 ---
 
