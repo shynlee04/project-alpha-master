@@ -59,6 +59,18 @@ The previous approach (Phase 0-5) failed because:
 3. Provider store with `hasApiKey` reactivity
 4. Keys persist across browser refresh
 
+### Plans: 4 plans in 3 waves
+
+**Wave 1 (parallel):**
+- [ ] A-01-PLAN.md — Restore credential vault infrastructure
+- [ ] A-02-PLAN.md — Restore provider vault slice
+
+**Wave 2 (depends on Wave 1):**
+- [ ] A-03-PLAN.md — Restore ProviderSettings UI
+
+**Wave 3 (verification):**
+- [ ] A-04-PLAN.md — Integration verification (checkpoint)
+
 ### Success Criteria
 - [ ] User can input Gemini API key in settings
 - [ ] User can input OpenRouter API key in settings
@@ -245,7 +257,7 @@ None — Notes uses BlockNote blocks, not ThreadMessage.
 
 | Phase | Status | Plans | Verified |
 |-------|--------|-------|----------|
-| A: BYOK | 🔴 Not started | 0/? | ❌ |
+| A: BYOK | 🟡 Planned | 0/4 | ❌ |
 | B: AI Gateway | 🔴 Not started | 0/? | ❌ |
 | C: Notes AI | 🔴 Not started | 0/? | ❌ |
 | D: Agentic | ⏸️ Deferred | — | — |
