@@ -106,3 +106,57 @@ Ok though I know that getting all over complicated can be harsh but are there an
 oh then another thing is (this is my unknown zone) → the tools as for giving agntic features and CRUD for AI agents they are another set of schema too? are they have any sort of relationships here.
 
 ```
+# Thoughts to move between phases and plans
+
+- Many of the  schema interfaces are extendable and be sure similar mistakes of short-sighted should never be committed
+    - knowing this project is not a one time shot so  there are groups of the following are almost always allow me to extend upon a much systematic management of schema, types interfaces, their extensions of properties (not creating inconsistency, overlapping or conflict by creating new with similar stuff). And they are
+        - The ecosystem of plugins: there are “lenses” and “platform” but there are those that is like the “note” plugin that will be later refactored
+        - those of agents and their relation like the thread of conversation that that of tools schema and what render on chat thread → that whole lot are also schema because they involve RAG, database and relationship → meaning therefore, do not put us into the situation that either blocks or creating more patches and confusing architecture
+---
+# THE VERY BIG ISSUE HERE THAT HAS NEVER BEEN ACHIEVED IS THAT >> SOLVING PROBLEMS STRATEGICALLY AND TACTICALLY
+
+## FROM USERS’ JOURNEYS’ PERSPECTIVES
+
+### 1. Understand the user journey (high-level viewpoint):
+
+1. users → either `create new project`  → `setting for LLMs provider, the BYOK config`or `visit their created project`  as for enter to project space or seeing the list of what projects have they create; or `configure the agents in agents' configuration`  { this number 1 stage is intertwined with the above and nest this possible issues of `the device types that they are using` - there are matrix of alternatives here) >>> Now you should see the routing and the device-type issues from high-level
+2. as for when they start to be in the space the one that “with-2-always-loaded-plugins” → they can start  dragging the other “plugins” to use → the 2nd layer of issues are here of what `plugins` are and what they do 
+
+### 2. Understand the above journeys in low-level
+
+1. of course there are tons and tremendously core of issues can happen here but I tell you just one for understanding the issue → when configure LLM provider for Openrouter AI provider key may not be persistent and models are not loaded; that single issue will totally block the rest
+2. the same goes with this if somehow they manage to land to this succesffuly >>> issues like “why using `monaco editor plugin` with `note plugin` - the 2 do not synchronize or  the “filetree does not synchronize the new content that I edit on the monaco editor”. These are only a few of which 100 more times issues that can be found not only across plugins but within a plugin itself, and as for how they are
+3. As earlier mentioning and this is for you to turn you rationale back and have a more adaptive viewpoints as a strategist
+
+## BRING ISSUES SOLVING INTO BOTH INTO HIGH-LEVEL ASPECTS OF ARCHITECT; MID-LEVEL ASPECTS OF PHASE PLANNER; AND LOW-LEVEL ASPECTS OF DEV
+
+### Architect will try the best to achieve cleaned and sound architecture >> but this never happens without understanding the nature of the nature of this codebase that is contaminated with polluted context and that migration can not be achieved successfully without knowing what architecture can not be the one-time work
+
+Architecture must understand the from the high-level that data models, schema and type interfaces; API and Data flow, life cycles etc are the absolute ultimate goals. But they must be strategically handled to adapt and governance will gradually introduce as for foreseeing these mid-level and low-level events will eventually happen
+
+### 1. Mid-level planner will plan phases of plans showing your insights → but without constraints of what are the limits and what should be bounced back so that architect can fill up the gaps at high-level the following will happen:
+
+- As for you see phase 1 completion → the types error and grep techniques will show there are still some uncleaned terminologies
+- But letting the mid-level being validated and make gaps plans for phase are most times unwise → because simply data models, relationships, type interfaces , data flow are often seen as domain singularity, the higher-up of how these should behave are not treated gracefully
+- And as things will get worse when passing down to low-level dev
+
+### 2. types errors alert will be patched mindlessly and blindly by dev as trying to accomplish the tasks >>> and AI agents trying to grep, glob and think they are solving the issues but they don’t
+
+- And absolutely this is not how it should be as long as you as architect must know that your limited of really handle all of the above intricate logics, uncleaned and broken architecture in one shot → look at the below natures you would understand why
+
+## Workspace binding and project handling then definition of Plugins as “platforms” and as “lenses” are not handling well enough let alone   When introducing `AI` into the mess >> as the following reasons:
+
+- That’s sound that platforms and lenses plugins → but there are things like “note plugins”; like the webcontainer and terminal ; and the when these work together
+- when introducing AI into → then even if I leave aside the `LLMs config of BYOK` and `agents config` out of the sights (which you would had had handled them instead way before) still there  are:
+    - there are multiple AI-related issues nested into plugins issues that the high-level architecture must gradually resolve with schema, data types and models while regulating the data management as for:
+        - ai-related not just in agents or in `tools;`
+        - they are endpoints of those features in note plugins that the features are individual AI commands that both offer input and output multimodality  → and that you have not having plan to refactor the note >> then what render and what CRUD permissions to the content it generated to the file in the project; the render etc
+        - and then agents vs tools and the chat-cascade vs thread managements >> tools are not just coding tools (coding tools alone do not even suffice let alone when there must be permissions as for agentic features, and there are other types of tools and for other use-case purposes too)
+        - and that what render into chat cascade can create new files to project
+        - and further down the pipe is RAG
+        - etc
+    - Why I am trying to really voice here is that the HOLD UP Alert to all your below-level form planner, executor to validator to ready and bounce back so that the new phase spawn, or new plans of upper phases are created for updates - in which orders -and gaps detection strategy rather than just ok here are the completion of plan + dev rationale for its decision of there are still violation and being made patches gap plan rather than bounced up higher
+
+---
+
+Meaning the KILL-PLAN; the SOURCE-OF-TRUTH will be updated very frequently or else they become trap points rather than what they should

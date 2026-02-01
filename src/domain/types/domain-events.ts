@@ -26,6 +26,9 @@
  * - project:* - Project lifecycle
  * - thread:* - Chat thread events
  * - tool:* - Agent tool execution
+ * - sync:* - Sync status events
+ * - workspace:* - Workspace change events
+ * - provider:* - AI provider events
  */
 export type DomainEventType =
   // File events
@@ -34,6 +37,8 @@ export type DomainEventType =
   | 'file:deleted'
   | 'file:synced'
   | 'file:renamed'
+  | 'file:changed' // Legacy event for backward compatibility
+  | 'file:modified' // Legacy alias for file:updated
   // Project events
   | 'project:created'
   | 'project:deleted'
@@ -49,7 +54,26 @@ export type DomainEventType =
   | 'tool:executed'
   | 'tool:approved'
   | 'tool:rejected'
-  | 'tool:pending';
+  | 'tool:pending'
+  // Sync events
+  | 'sync:status'
+  | 'sync:progress'
+  | 'sync:completed'
+  | 'sync:error'
+  | 'sync:warning' // For non-critical sync issues
+  | 'sync:started' // Legacy alias for sync:status with syncing
+  // Workspace events
+  | 'workspace:changed'
+  | 'workspace:activated'
+  | 'workspace:deactivated'
+  // Provider events
+  | 'provider:config:changed'
+  | 'provider:models:updated'
+  // Container events (WebContainer lifecycle)
+  | 'container:mounted'
+  | 'container:error'
+  | 'container:ready'
+  | 'container:destroyed';
 
 // ============================================================================
 // Domain Event Base
@@ -91,6 +115,10 @@ export interface FileEventPayload {
   content?: string;
   /** Previous path (for renamed events) */
   previousPath?: string;
+  /** Source of file change (fsa, wc) */
+  source?: string;
+  /** Direction of sync */
+  direction?: string;
 }
 
 /**
@@ -131,6 +159,173 @@ export interface ToolEventPayload {
   arguments?: Record<string, unknown>;
   /** Tool result (for executed) */
   result?: unknown;
+}
+
+// ============================================================================
+// Sync Event Payloads
+// ============================================================================
+
+/**
+ * Payload for sync status events
+ */
+export interface SyncStatusPayload {
+  /** Project or workspace ID */
+  projectId?: string;
+  workspaceId?: string;
+  /** Project path for display */
+  projectPath?: string;
+  /** Sync status */
+  status: 'syncing' | 'synced' | 'error' | 'idle' | 'pending';
+  /** Error message if status is 'error' */
+  error?: string;
+  /** Progress percentage (0-100) */
+  progress?: number;
+}
+
+/**
+ * Payload for sync progress events
+ */
+export interface SyncProgressPayload {
+  projectId?: string;
+  workspaceId?: string;
+  /** Files processed */
+  processed: number;
+  /** Total files */
+  total: number;
+  /** Current file being processed */
+  currentFile?: string;
+}
+
+/**
+ * Payload for sync completed events
+ */
+export interface SyncCompletedPayload {
+  projectId?: string;
+  workspaceId?: string;
+  /** Number of files synced */
+  filesCount: number;
+  /** Duration in ms */
+  duration: number;
+  /** Sync result */
+  success: boolean;
+}
+
+/**
+ * Payload for sync error events
+ */
+export interface SyncErrorPayload {
+  projectId?: string;
+  workspaceId?: string;
+  /** Error message */
+  error: string;
+  /** Error code */
+  code?: string;
+}
+
+// ============================================================================
+// Workspace Event Payloads
+// ============================================================================
+
+/**
+ * Payload for workspace changed events
+ */
+export interface WorkspaceChangedPayload {
+  /** Previous workspace */
+  from: string;
+  /** New workspace */
+  to: string;
+  /** ISO timestamp */
+  timestamp: string;
+}
+
+/**
+ * Payload for workspace activated/deactivated events
+ */
+export interface WorkspaceActivatedPayload {
+  /** Workspace ID/type */
+  workspaceId: string;
+  /** Project ID if applicable */
+  projectId?: string;
+}
+
+// ============================================================================
+// Provider Event Payloads
+// ============================================================================
+
+/**
+ * Payload for provider config change events
+ */
+export interface ProviderConfigPayload {
+  /** Provider ID */
+  providerId: string;
+  /** Changed fields */
+  changes: Record<string, unknown>;
+}
+
+/**
+ * Payload for provider models updated events
+ */
+export interface ProviderModelsPayload {
+  /** Provider ID */
+  providerId: string;
+  /** Updated model list */
+  models: string[];
+}
+
+/**
+ * Payload for file changed events (legacy)
+ */
+export interface FileChangedPayload {
+  workspaceId?: string;
+  projectId?: string;
+  projectPath?: string;
+  path: string;
+  type: 'created' | 'modified' | 'deleted';
+}
+
+// ============================================================================
+// Container Event Payloads
+// ============================================================================
+
+/**
+ * Payload for sync warning events
+ */
+export interface SyncWarningPayload {
+  message: string;
+  path?: string;
+  projectId?: string;
+  file?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Payload for container mounted events
+ */
+export interface ContainerMountedPayload {
+  fileCount: number;
+  mountPoint?: string;
+}
+
+/**
+ * Payload for container error events
+ */
+export interface ContainerErrorPayload {
+  error: Error | string;
+  operation?: string;
+}
+
+/**
+ * Payload for container ready events
+ */
+export interface ContainerReadyPayload {
+  containerId?: string;
+}
+
+/**
+ * Payload for container destroyed events
+ */
+export interface ContainerDestroyedPayload {
+  reason?: string;
 }
 
 // ============================================================================
@@ -207,6 +402,8 @@ export interface DomainEventMap {
   'file:deleted': FileEventPayload;
   'file:synced': FileEventPayload;
   'file:renamed': FileEventPayload;
+  'file:changed': FileChangedPayload;
+  'file:modified': FileEventPayload;
   'project:created': ProjectEventPayload;
   'project:deleted': ProjectEventPayload;
   'project:switched': ProjectEventPayload;
@@ -220,4 +417,23 @@ export interface DomainEventMap {
   'tool:approved': ToolEventPayload;
   'tool:rejected': ToolEventPayload;
   'tool:pending': ToolEventPayload;
+  // Sync events
+  'sync:status': SyncStatusPayload;
+  'sync:progress': SyncProgressPayload;
+  'sync:completed': SyncCompletedPayload;
+  'sync:error': SyncErrorPayload;
+  'sync:warning': SyncWarningPayload;
+  'sync:started': SyncStatusPayload;
+  // Workspace events
+  'workspace:changed': WorkspaceChangedPayload;
+  'workspace:activated': WorkspaceActivatedPayload;
+  'workspace:deactivated': WorkspaceActivatedPayload;
+  // Provider events
+  'provider:config:changed': ProviderConfigPayload;
+  'provider:models:updated': ProviderModelsPayload;
+  // Container events
+  'container:mounted': ContainerMountedPayload;
+  'container:error': ContainerErrorPayload;
+  'container:ready': ContainerReadyPayload;
+  'container:destroyed': ContainerDestroyedPayload;
 }

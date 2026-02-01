@@ -9,7 +9,7 @@
 
 import { eventBus, DomainEventType } from '../events/event-bus';
 import type { DomainEvent } from '../events/event-bus';
-import { WorkspaceType } from '../../domain/value-objects/workspace-type';
+import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
 
 /**
  * Store references (lazy loaded to avoid circular dependencies)
@@ -278,7 +278,7 @@ export class StateOrchestrator {
     const workspaceStore = this.getWorkspaceStore();
 
     const currentAgentId = agentSelectionStore?.activeAgentId ?? null;
-    const currentWorkspace = workspaceStore?.currentWorkspace ?? 'ide';
+    const currentWorkspace = workspaceStore?.currentWorkspace ?? 'editor';
 
     // If updated agent is currently selected, emit re-selected event
     if (currentAgentId === event.payload.agentId && agentsStore?.getAgent) {
@@ -312,7 +312,7 @@ export class StateOrchestrator {
     if (currentAgentId === event.payload.agentId) {
       const remainingAgents = agentsStore?.agents ?? [];
       const workspaceStore = this.getWorkspaceStore();
-      const currentWorkspace = workspaceStore?.currentWorkspace ?? 'ide';
+      const currentWorkspace = workspaceStore?.currentWorkspace ?? 'editor';
 
       const availableAgents = remainingAgents.filter((agent: any) =>
         this.isAgentAvailableInWorkspace(agent, currentWorkspace)

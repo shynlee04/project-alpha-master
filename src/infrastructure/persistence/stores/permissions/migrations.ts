@@ -27,9 +27,12 @@ export const migrateToolPermissions = (persistedState: any, version: number): To
         for (const [toolId, level] of Object.entries(legacyState.trustLevels)) {
             // Replicate existing global level to all workspaces
             workspaceScopedLevels[toolId] = {
-                ide: level,
-                knowledge: level,
+                editor: level,
                 notes: level,
+                chat: level,
+                terminal: level,
+                preview: level,
+                knowledge: level,
                 study: level,
             };
         }

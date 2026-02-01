@@ -40,3 +40,28 @@ export async function createProjectFromFolder(
   // Return a generated project ID for backward compatibility
   return `proj-${Date.now()}`;
 }
+
+/**
+ * @deprecated Use window.showDirectoryPicker() directly
+ */
+export async function pickFolder(): Promise<FileSystemDirectoryHandle | null> {
+  try {
+    return await window.showDirectoryPicker();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * @deprecated Check for FileSystemAccessAPI directly
+ */
+export function isFSASupported(): boolean {
+  return 'showDirectoryPicker' in window;
+}
+
+/**
+ * @deprecated Use platform detection
+ */
+export function isDesktopPlatform(): boolean {
+  return typeof window !== 'undefined' && !('ontouchstart' in window);
+}

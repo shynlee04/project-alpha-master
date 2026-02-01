@@ -86,12 +86,12 @@ export class DomainEventBus {
    *
    * @param type - Event type
    * @param payload - Event payload
-   * @param source - Source operator/service name
+   * @param source - Source operator/service name (default: 'unknown')
    */
   emit<K extends DomainEventType>(
     type: K,
     payload: DomainEventMap[K],
-    source: string
+    source: string = 'unknown'
   ): void {
     const event: DomainEvent<DomainEventMap[K]> = {
       type,

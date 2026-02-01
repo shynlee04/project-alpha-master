@@ -106,9 +106,12 @@ export function getToolCategory(toolId: string): ToolCategory {
  * Create default category approvals for all workspaces
  */
 export const createDefaultCategoryApprovals = (): Record<WorkspaceType, CategoryApprovalState> => ({
-    ide: { ...DEFAULT_CATEGORY_APPROVALS },
-    knowledge: { ...DEFAULT_CATEGORY_APPROVALS },
+    editor: { ...DEFAULT_CATEGORY_APPROVALS },
     notes: { ...DEFAULT_CATEGORY_APPROVALS },
+    chat: { ...DEFAULT_CATEGORY_APPROVALS },
+    terminal: { ...DEFAULT_CATEGORY_APPROVALS },
+    preview: { ...DEFAULT_CATEGORY_APPROVALS },
+    knowledge: { ...DEFAULT_CATEGORY_APPROVALS },
     study: { ...DEFAULT_CATEGORY_APPROVALS },
 });
 
@@ -117,45 +120,66 @@ export const createDefaultCategoryApprovals = (): Record<WorkspaceType, Category
  */
 export const createDefaultTrustLevels = (): Record<string, Record<WorkspaceType, ToolTrustLevel>> => ({
     read_file: {
-        ide: 'auto',
-        knowledge: 'auto',
+        editor: 'auto',
         notes: 'auto',
+        chat: 'auto',
+        terminal: 'auto',
+        preview: 'auto',
+        knowledge: 'auto',
         study: 'auto',
     },
     list_files: {
-        ide: 'auto',
-        knowledge: 'auto',
+        editor: 'auto',
         notes: 'auto',
+        chat: 'auto',
+        terminal: 'auto',
+        preview: 'auto',
+        knowledge: 'auto',
         study: 'auto',
     },
     read_directory: {
-        ide: 'auto',
-        knowledge: 'auto',
+        editor: 'auto',
         notes: 'auto',
+        chat: 'auto',
+        terminal: 'auto',
+        preview: 'auto',
+        knowledge: 'auto',
         study: 'auto',
     },
     write_file: {
-        ide: 'prompt',
-        knowledge: 'block',
+        editor: 'prompt',
         notes: 'prompt',
+        chat: 'prompt',
+        terminal: 'prompt',
+        preview: 'block',
+        knowledge: 'block',
         study: 'block',
     },
     create_directory: {
-        ide: 'prompt',
-        knowledge: 'block',
+        editor: 'prompt',
         notes: 'prompt',
+        chat: 'prompt',
+        terminal: 'prompt',
+        preview: 'block',
+        knowledge: 'block',
         study: 'block',
     },
     delete_file: {
-        ide: 'block',
-        knowledge: 'block',
+        editor: 'block',
         notes: 'block',
+        chat: 'block',
+        terminal: 'prompt',
+        preview: 'block',
+        knowledge: 'block',
         study: 'block',
     },
     execute_command: {
-        ide: 'prompt',
-        knowledge: 'block',
+        editor: 'prompt',
         notes: 'block',
+        chat: 'prompt',
+        terminal: 'auto',
+        preview: 'block',
+        knowledge: 'block',
         study: 'block',
     },
 });
@@ -163,4 +187,4 @@ export const createDefaultTrustLevels = (): Record<string, Record<WorkspaceType,
 /**
  * All workspace types for iteration
  */
-export const ALL_WORKSPACES: WorkspaceType[] = ['ide', 'knowledge', 'notes', 'study'];
+export const ALL_WORKSPACES: WorkspaceType[] = ['editor', 'notes', 'chat', 'terminal', 'preview', 'knowledge', 'study'];

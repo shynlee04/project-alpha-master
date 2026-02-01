@@ -29,13 +29,37 @@ export interface WorkspaceMetadata {
  * Workspace definitions
  */
 export const WORKSPACES: Record<WorkspaceType, WorkspaceMetadata> = {
-  ide: {
-    type: 'ide',
-    label: 'IDE',
+  editor: {
+    type: 'editor',
+    label: 'Editor',
     icon: '💻',
     description: 'Integrated Development Environment',
     uiVariant: 'full',
     color: '#3b82f6',
+  },
+  chat: {
+    type: 'chat',
+    label: 'Chat',
+    icon: '💬',
+    description: 'AI Chat and assistance',
+    uiVariant: 'compact',
+    color: '#06b6d4',
+  },
+  terminal: {
+    type: 'terminal',
+    label: 'Terminal',
+    icon: '⌨️',
+    description: 'Command line terminal',
+    uiVariant: 'compact',
+    color: '#22c55e',
+  },
+  preview: {
+    type: 'preview',
+    label: 'Preview',
+    icon: '👁️',
+    description: 'Live preview of application',
+    uiVariant: 'compact',
+    color: '#f472b6',
   },
   knowledge: {
     type: 'knowledge',

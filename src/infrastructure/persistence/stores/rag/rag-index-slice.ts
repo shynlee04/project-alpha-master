@@ -16,7 +16,7 @@ import type { RAGIndexState, IndexStatus, IndexOperation, WorkspaceType } from '
  */
 export const createRAGIndexSlice: StateCreator<RAGIndexState> = (set, _get) => ({
   // Initial state
-  currentWorkspaceType: 'ide',
+  currentWorkspaceType: 'editor',
   currentProjectId: null,
   indexStatus: 'idle' as IndexStatus,
   indexingOperation: 'idle' as IndexOperation,

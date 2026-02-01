@@ -68,7 +68,10 @@ export const useWorkspaceProviderStore = create<WorkspaceProviderState>()(
     (set, get) => ({
       // Initial state - all workspaces use global defaults
       workspaceProviders: {
-        ide: { ...DEFAULT_WORKSPACE_PREFERENCE },
+        editor: { ...DEFAULT_WORKSPACE_PREFERENCE },
+        chat: { ...DEFAULT_WORKSPACE_PREFERENCE },
+        terminal: { ...DEFAULT_WORKSPACE_PREFERENCE },
+        preview: { ...DEFAULT_WORKSPACE_PREFERENCE },
         knowledge: { ...DEFAULT_WORKSPACE_PREFERENCE },
         study: { ...DEFAULT_WORKSPACE_PREFERENCE },
         notes: { ...DEFAULT_WORKSPACE_PREFERENCE },
@@ -127,7 +130,10 @@ export const useWorkspaceProviderStore = create<WorkspaceProviderState>()(
       resetAllWorkspaceProviders: () => {
         set({
           workspaceProviders: {
-            ide: { ...DEFAULT_WORKSPACE_PREFERENCE },
+            editor: { ...DEFAULT_WORKSPACE_PREFERENCE },
+            chat: { ...DEFAULT_WORKSPACE_PREFERENCE },
+            terminal: { ...DEFAULT_WORKSPACE_PREFERENCE },
+            preview: { ...DEFAULT_WORKSPACE_PREFERENCE },
             knowledge: { ...DEFAULT_WORKSPACE_PREFERENCE },
             study: { ...DEFAULT_WORKSPACE_PREFERENCE },
             notes: { ...DEFAULT_WORKSPACE_PREFERENCE },

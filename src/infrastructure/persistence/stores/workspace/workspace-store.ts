@@ -82,7 +82,7 @@ export const useWorkspaceStore = create<WorkspaceState>()(
   persist(
     (set, get) => ({
       // Initial state
-      currentWorkspace: 'ide',
+      currentWorkspace: 'editor',
       currentProjectId: null,
       availableAgents: [],
       availableTools: new Map(),
@@ -147,7 +147,10 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       // Get workspace display label
       getWorkspaceLabel: (workspace: WorkspaceType) => {
         const labels: Record<WorkspaceType, string> = {
-          ide: 'IDE',
+          editor: 'Editor',
+          chat: 'Chat',
+          terminal: 'Terminal',
+          preview: 'Preview',
           knowledge: 'Knowledge',
           study: 'Study',
           notes: 'Notes',
@@ -158,7 +161,10 @@ export const useWorkspaceStore = create<WorkspaceState>()(
       // Get workspace icon
       getWorkspaceIcon: (workspace: WorkspaceType) => {
         const icons: Record<WorkspaceType, string> = {
-          ide: '💻',
+          editor: '💻',
+          chat: '💬',
+          terminal: '⌨️',
+          preview: '👁️',
           knowledge: '📚',
           study: '📖',
           notes: '📝',

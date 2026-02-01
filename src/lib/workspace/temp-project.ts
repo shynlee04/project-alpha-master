@@ -3,6 +3,13 @@
  * @deprecated This module is deprecated. Use ProjectService instead.
  */
 
+/** @deprecated */
+export interface TempProjectMetadata {
+  id: string;
+  isTemp: boolean;
+  createdAt: Date;
+}
+
 /** @deprecated Use ProjectService for temporary projects */
 export const tempProject = {
   create: async (): Promise<{ id: string }> => ({
