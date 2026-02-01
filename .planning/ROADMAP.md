@@ -44,13 +44,13 @@ Plans:
   3. `grep "from.*@/lib"` returns 0 matches
   4. All types import from `@/domain/schemas/` only
   5. `pnpm lint` passes with regression-prevention rules active
-**Plans**: TBD
+**Plans**: 4 plans in 3 waves
 
 Plans:
-- [ ] 00-01: Delete workspace type definitions and entities directory
-- [ ] 00-02: Consolidate schemas to @/domain/schemas/
-- [ ] 00-03: Migrate @/lib/ imports to canonical paths
-- [ ] 00-04: Add ESLint rules and verify clean build
+- [ ] 00-01: Type definitions — backup, archive workspace.ts, update Project entity (Wave 1)
+- [ ] 00-02: Infrastructure — Dexie migrations, module-settings-slice, stores (Wave 2)
+- [ ] 00-03: @/lib/ migration — delete workspace/, migrate events/hooks/utils (Wave 2)
+- [ ] 00-04: Final cleanup — UI components, tests, ESLint rules, verification (Wave 3)
 
 ### Phase 1: Platform Operators
 **Goal**: Implement FileTree and Chat-Cascade as always-running infrastructure operators
