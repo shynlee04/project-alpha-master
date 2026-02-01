@@ -149,6 +149,22 @@ export interface FileContentCacheRecord {
 export type { PluginType, ProjectPlugins } from '@/domain/entities/project';
 
 // ============================================================================
+// BACKWARD COMPATIBILITY EXPORTS (DEPRECATED)
+// ============================================================================
+
+/**
+ * @deprecated Use ProjectPlugins from @/domain/entities/project
+ * Kept for backward compatibility with existing code
+ */
+export type { WorkspaceBindings } from '@/domain/value-objects/workspace-binding';
+
+/**
+ * @deprecated Use projectId instead - this type is banned per SOURCE-OF-TRUTH.md
+ * Kept for backward compatibility with existing code
+ */
+export type WorkspaceId = 'ide' | 'notes' | 'knowledge' | 'study';
+
+// ============================================================================
 // Table Type Exports
 // ============================================================================
 

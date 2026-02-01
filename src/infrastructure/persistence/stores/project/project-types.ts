@@ -217,3 +217,25 @@ export type { PluginType, ProjectPlugins } from '@/domain/entities/project';
  * FsaPermissionState is defined in permission-lifecycle.ts
  */
 export type { FsaPermissionState } from '@/infrastructure/filesystem';
+
+// ============================================================================
+// BACKWARD COMPATIBILITY EXPORTS (DEPRECATED)
+// ============================================================================
+
+/**
+ * @deprecated Use PluginType from @/domain/entities/project
+ * Kept for backward compatibility with existing code
+ */
+export type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+
+/**
+ * @deprecated Use ProjectPlugins from @/domain/entities/project
+ * Kept for backward compatibility with existing code
+ */
+export type { WorkspaceBindings, WorkspaceBinding } from '@/domain/value-objects/workspace-binding';
+
+/**
+ * @deprecated Use ProjectPluginMethods instead
+ * Alias for backward compatibility
+ */
+export type ProjectBindingMethods = ProjectPluginMethods;
