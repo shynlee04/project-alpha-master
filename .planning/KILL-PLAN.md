@@ -1,7 +1,8 @@
 # KILL PLAN: Workspace Elimination
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Created:** 2026-01-31
+**Updated:** 2026-02-01
 **Status:** READY FOR EXECUTION
 **Dependency:** SOURCE-OF-TRUTH.md (read that FIRST)
 
@@ -20,7 +21,8 @@ This document contains ONLY factual data about what must be eliminated. It does 
 | `workspaceBindings` / `WorkspaceBindings` | **368** | ELIMINATE |
 | `workspaceId` / `WorkspaceId` | **642** | ELIMINATE |
 | `workspace*` named files | **50** | RENAME or DELETE |
-| **TOTAL** | **1,060** | |
+| `@/lib/*` imports | **674** | MIGRATE |
+| **TOTAL** | **1,734** | |
 
 ---
 
@@ -37,7 +39,41 @@ This document contains ONLY factual data about what must be eliminated. It does 
 
 ---
 
+## @/lib/ Import Migration
+
+These imports use the BANNED @/lib/ path and must be migrated to canonical paths.
+
+### Migration Map
+
+| @/lib/* Path | Action | New Path |
+|--------------|--------|----------|
+| `@/lib/workspace/*` | DELETE | Most code deleted with workspace elimination |
+| `@/lib/events/*` | MIGRATE | `@/infrastructure/events/*` |
+| `@/lib/utils/*` | MIGRATE | `@/domain/utils/*` or inline |
+| `@/lib/types/*` | MIGRATE | `@/domain/schemas/*` |
+| `@/lib/hooks/*` | MIGRATE | `@/presentation/hooks/*` |
+| `@/lib/storage/*` | MIGRATE | `@/infrastructure/persistence/*` |
+
+### Verification Command
+
+```bash
+# Count @/lib/ imports
+grep -rn "from.*@/lib" src/ --include="*.ts" --include="*.tsx" | wc -l
+# Target: 0
+```
+
+---
+
 ## Execution Order
+
+### Phase 0.5: @/lib/ Import Elimination
+
+After workspace elimination, before UI components:
+
+1. Run migration script to update import paths
+2. Move files from @/lib/ to canonical locations
+3. Delete empty @/lib/ directory
+4. Verify with grep count
 
 ### Phase 1: Type Definitions (Break the poison at source)
 
@@ -97,6 +133,7 @@ After each phase, run:
 # Count remaining violations
 grep -rn "workspaceBindings\|WorkspaceBindings" src/ --include="*.ts" --include="*.tsx" | wc -l
 grep -rn "workspaceId\|WorkspaceId" src/ --include="*.ts" --include="*.tsx" | wc -l
+grep -rn "from.*@/lib" src/ --include="*.ts" --include="*.tsx" | wc -l
 
 # TypeScript check
 pnpm typecheck:fast
@@ -112,6 +149,7 @@ pnpm test:fast
 - [ ] `workspaceBindings` count: 0
 - [ ] `workspaceId` count: 0
 - [ ] `workspace*` files: 0
+- [ ] `@/lib/*` imports: 0
 - [ ] `pnpm typecheck:fast` passes
 - [ ] `pnpm test:fast` passes
 
@@ -131,7 +169,15 @@ pnpm test:fast
       selector: 'Identifier[name=/workspaceId/]', 
       message: 'workspaceId is BANNED. Use projectId. See SOURCE-OF-TRUTH.md' 
     },
-  ]
+  ],
+  'no-restricted-imports': ['error', {
+    patterns: [
+      { 
+        group: ['@/lib/*'], 
+        message: '@/lib/ is BANNED. Use @/domain/*, @/infrastructure/*, or @/presentation/*' 
+      },
+    ]
+  }],
 }
 ```
 

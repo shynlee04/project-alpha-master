@@ -1,7 +1,8 @@
 # SOURCE OF TRUTH: Project Alpha Architecture
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Created:** 2026-01-31
+**Updated:** 2026-02-01
 **Status:** CANONICAL - This is the ONLY authoritative architecture document
 **Authority:** All other `.planning/` documents are archived. Read ONLY this document.
 
@@ -262,11 +263,21 @@ interface Thread {
 interface ThreadMessage {
   id: string;
   role: 'user' | 'assistant' | 'system' | 'tool';
-  content: string;
-  toolCalls?: ToolCall[];                  // EMBEDDED in message
-  toolResults?: ToolResult[];              // EMBEDDED in message
+  parts: MessagePart[];                      // Parts-based content (NOT string)
   createdAt: Date;
 }
+
+// Message content is structured into typed parts
+type MessagePart =
+  | { type: 'text'; content: string }
+  | { type: 'code'; language: string; content: string; filename?: string }
+  | { type: 'artifact'; id: string; title: string; content: string; language?: string }
+  | { type: 'thinking'; content: string; isCollapsed?: boolean }
+  | { type: 'diagram'; diagramType: 'mermaid' | 'svg'; content: string }
+  | { type: 'tool_call'; toolCall: ToolCall }
+  | { type: 'tool_result'; toolResult: ToolResult }
+  | { type: 'error'; message: string; code?: string }
+  | { type: 'image'; url: string; alt?: string };
 
 interface ThreadMetadata {
   tokenCount: number;
@@ -605,9 +616,220 @@ Modules (Monaco, Notes, Terminal) do NOT write directly to storage. They request
 
 ---
 
-## Part 8: Fail-Safe Mechanisms
+## Part 8: Event Bus Architecture
 
-### 8.1 Five-Layer Fail-Safe
+### 8.1 Domain Event System
+
+Cross-operator and cross-module communication uses a unified domain event bus.
+
+```typescript
+// @/infrastructure/events/domain-event-bus.ts
+
+type DomainEventType =
+  | 'file:created' | 'file:updated' | 'file:deleted' | 'file:synced'
+  | 'project:created' | 'project:deleted' | 'project:switched'
+  | 'thread:created' | 'thread:updated' | 'thread:deleted'
+  | 'note:created' | 'note:updated' | 'note:deleted'
+  | 'tool:executed' | 'tool:approved' | 'tool:rejected'
+  | 'rag:indexed' | 'rag:search_completed';
+
+interface DomainEvent<T = unknown> {
+  type: DomainEventType;
+  payload: T;
+  timestamp: Date;
+  source: 'file-tree' | 'chat-cascade' | 'monaco' | 'notes' | 'terminal' | 'rag';
+  projectId: string;
+}
+
+// Singleton event bus
+class DomainEventBus {
+  private listeners = new Map<DomainEventType, Set<(event: DomainEvent) => void>>();
+  
+  emit<T>(event: DomainEvent<T>): void;
+  on(type: DomainEventType, handler: (event: DomainEvent) => void): () => void;
+  off(type: DomainEventType, handler: (event: DomainEvent) => void): void;
+}
+
+export const domainEventBus = new DomainEventBus();
+```
+
+### 8.2 Event Flow Examples
+
+| Action | Event Emitted | Subscribers |
+|--------|---------------|-------------|
+| User creates file via FileTree | `file:created` | RAG (re-index), Monaco (refresh tree) |
+| AI tool writes file | `file:created` + `tool:executed` | FileTree (refresh), RAG (index) |
+| User switches project | `project:switched` | All modules (reload state) |
+| Thread message added | `thread:updated` | RAG (if thread indexing enabled) |
+
+### 8.3 Event Bus Rules
+
+- **Operators emit, modules subscribe** - FileTree and Chat-Cascade are primary emitters
+- **No direct coupling** - Modules don't import each other, they subscribe to events
+- **Async by default** - Event handlers run asynchronously
+- **Error isolation** - One handler failure doesn't break others
+
+---
+
+## Part 9: State Synchronization
+
+### 9.1 Zustand ↔ Dexie Sync Pattern
+
+```typescript
+// Pattern: Dexie as source of truth, Zustand for reactive UI
+
+// 1. HYDRATION: On app load, hydrate Zustand from Dexie
+async function hydrateStore() {
+  const projects = await db.projects.toArray();
+  const activeProjectId = localStorage.getItem('activeProjectId');
+  
+  useProjectStore.setState({
+    projects,
+    activeProjectId,
+    isHydrated: true,
+  });
+}
+
+// 2. WRITE: Always write to Dexie first, then update Zustand
+async function createProject(data: ProjectInput) {
+  // Write to Dexie (source of truth)
+  const project = await db.projects.add(data);
+  
+  // Update Zustand (reactive UI)
+  useProjectStore.getState().addProject(project);
+  
+  // Emit event
+  domainEventBus.emit({ type: 'project:created', payload: project });
+  
+  return project;
+}
+
+// 3. LIVE QUERIES: Use Dexie liveQuery for collections
+function useProjects() {
+  return useLiveQuery(() => db.projects.toArray());
+}
+```
+
+### 9.2 What Goes Where
+
+| Data Type | Zustand | Dexie | Why |
+|-----------|---------|-------|-----|
+| UI state (panels, modals) | ✅ | ❌ | Ephemeral, no persistence needed |
+| Active selections (projectId, fileId) | ✅ | ❌ | Session state, localStorage backup |
+| Entity data (projects, files, threads) | ❌ | ✅ | Needs migrations, relationships |
+| User settings | ❌ | ✅ | Persist across sessions |
+
+### 9.3 Conflict Resolution
+
+If Zustand and Dexie disagree (stale UI):
+1. **Dexie wins** - It's the source of truth
+2. **Re-hydrate Zustand** - Force refresh from Dexie
+3. **Log discrepancy** - For debugging
+
+---
+
+## Part 10: Service Contracts
+
+### 10.1 FileService
+
+```typescript
+// @/domain/services/file.service.ts
+
+interface FileService {
+  // CRUD Operations
+  create(projectId: string, path: string, content?: string): Promise<Result<FileMetadata, FileError>>;
+  read(fileId: string): Promise<Result<FileMetadata, FileError>>;
+  readByPath(projectId: string, path: string): Promise<Result<FileMetadata, FileError>>;
+  update(fileId: string, updates: Partial<FileMetadata>): Promise<Result<FileMetadata, FileError>>;
+  delete(fileId: string): Promise<Result<void, FileError>>;
+  
+  // Content Operations (L4 storage)
+  readContent(fileId: string): Promise<Result<string, FileError>>;
+  writeContent(fileId: string, content: string): Promise<Result<void, FileError>>;
+  
+  // Sync Operations
+  sync(projectId: string): Promise<Result<SyncResult, FileError>>;
+  getSyncStatus(fileId: string): Promise<SyncStatus>;
+  
+  // Query Operations
+  listByProject(projectId: string): Promise<FileMetadata[]>;
+  listByDirectory(projectId: string, dirPath: string): Promise<FileMetadata[]>;
+}
+
+// Error Types
+type FileError =
+  | { code: 'NOT_FOUND'; message: string }
+  | { code: 'ALREADY_EXISTS'; message: string; existingId: string }
+  | { code: 'PERMISSION_DENIED'; message: string }
+  | { code: 'STORAGE_QUOTA'; message: string; available: number }
+  | { code: 'SYNC_CONFLICT'; message: string; local: FileMetadata; remote: FileMetadata }
+  | { code: 'INVALID_PATH'; message: string };
+
+// Events Emitted
+// - file:created (after create)
+// - file:updated (after update, writeContent)
+// - file:deleted (after delete)
+// - file:synced (after sync)
+```
+
+### 10.2 ThreadService
+
+```typescript
+// @/domain/services/thread.service.ts
+
+interface ThreadService {
+  // CRUD Operations
+  create(projectId: string, title: string, model: string, provider: string): Promise<Result<Thread, ThreadError>>;
+  get(threadId: string): Promise<Result<Thread, ThreadError>>;
+  update(threadId: string, updates: Partial<Thread>): Promise<Result<Thread, ThreadError>>;
+  delete(threadId: string): Promise<Result<void, ThreadError>>;
+  
+  // Message Operations
+  addMessage(threadId: string, message: Omit<ThreadMessage, 'id' | 'createdAt'>): Promise<Result<ThreadMessage, ThreadError>>;
+  updateMessage(threadId: string, messageId: string, updates: Partial<ThreadMessage>): Promise<Result<ThreadMessage, ThreadError>>;
+  
+  // Query Operations
+  listByProject(projectId: string): Promise<Thread[]>;
+  getMessages(threadId: string, limit?: number, before?: string): Promise<ThreadMessage[]>;
+  
+  // Compaction
+  compact(threadId: string): Promise<Result<Thread, ThreadError>>;
+}
+
+// Error Types
+type ThreadError =
+  | { code: 'NOT_FOUND'; message: string }
+  | { code: 'PROJECT_NOT_FOUND'; message: string }
+  | { code: 'INVALID_MODEL'; message: string }
+  | { code: 'COMPACTION_FAILED'; message: string };
+
+// Events Emitted
+// - thread:created, thread:updated, thread:deleted
+```
+
+### 10.3 Result Type Pattern
+
+All services use Result type (not exceptions):
+
+```typescript
+type Result<T, E> = 
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+// Usage
+const result = await FileService.create(projectId, path);
+if (result.ok) {
+  console.log('Created:', result.value);
+} else {
+  console.error('Failed:', result.error.code, result.error.message);
+}
+```
+
+---
+
+## Part 11: Fail-Safe Mechanisms
+
+### 11.1 Five-Layer Fail-Safe
 
 | Layer | When | What | Catches |
 |-------|------|------|---------|
@@ -617,7 +839,7 @@ Modules (Monaco, Notes, Terminal) do NOT write directly to storage. They request
 | **Runtime** | App execution | Zod validation at boundaries | Invalid external data |
 | **Observability** | Dev mode | Integrity dashboard | Orphaned entities, broken refs |
 
-### 8.2 ESLint Rules Required
+### 11.2 ESLint Rules Required
 
 ```javascript
 {
@@ -636,7 +858,7 @@ Modules (Monaco, Notes, Terminal) do NOT write directly to storage. They request
 
 ---
 
-## Part 9: Expert Validation Sources
+## Part 12: Expert Validation Sources
 
 This architecture is validated against production patterns from:
 
@@ -650,7 +872,7 @@ This architecture is validated against production patterns from:
 
 ---
 
-## Part 10: What This Document Replaces
+## Part 13: What This Document Replaces
 
 All documents in `.planning-archived-2026-01-31/` are superseded by this document:
 
@@ -671,6 +893,7 @@ All documents in `.planning-archived-2026-01-31/` are superseded by this documen
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2026-01-31 | Initial creation from user requirements + expert validation |
+| 1.1.0 | 2026-02-01 | ThreadMessage parts-based, added Event Bus, State Sync, Service Contracts |
 
 ---
 

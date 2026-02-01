@@ -29,3 +29,4 @@ _bmad-output/repomix-packs/
 _bmad/modules/integration-testing/config/api-keys-prod.yaml
 _bmad/modules/integration-testing/config/api-keys-*.yaml
 .env*.local
+.archive/
