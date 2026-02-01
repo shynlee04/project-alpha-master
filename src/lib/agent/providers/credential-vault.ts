@@ -1,18 +1,21 @@
 /**
- * PHASE 2 STUB: Credential Vault
- *
- * Original code archived to: _phase2-archive/lib/agent/providers/credential-vault.ts
- * This stub prevents runtime errors during Phase 1A development.
- *
- * @phase 2
- * @stub true
- * @created 2026-01-29
- * @updated 2026-01-29
+ * Re-export from canonical location
+ * @deprecated Import from '@/infrastructure/ai' instead
+ * 
+ * This file exists for backward compatibility with existing imports.
+ * All credential vault functionality has been moved to:
+ * - src/infrastructure/ai/credential-vault.ts (main API)
+ * - src/infrastructure/ai/credential-encryption.ts (crypto operations)
+ * - src/infrastructure/ai/credential-storage.ts (IndexedDB operations)
  */
 
-/**
- * Credential interface for stored credentials
- */
+// Re-export the canonical implementation
+export { CredentialVault, credentialVault, type VaultStatus } from '@/infrastructure/ai/credential-vault.js';
+import { credentialVault as vault } from '@/infrastructure/ai/credential-vault.js';
+
+// Legacy Credential interface for backward compatibility
+// This interface was part of the stub but is not used in the actual vault
+// Keep it here to avoid breaking any code that might reference it
 export interface Credential {
   key: string;
   value: string;
@@ -21,39 +24,4 @@ export interface Credential {
   updatedAt?: number;
 }
 
-/**
- * Stub CredentialVault class for compatibility with code expecting the class
- */
-export class CredentialVault {
-  isInitialized = () => true;
-
-  initialize = async () => {
-    console.log('[CredentialVault STUB] Phase 2 feature - skipped initialization');
-    return true;
-  };
-
-  getCredential = async (_key: string): Promise<Credential | null> => null;
-  getCredentials = async (_providerId: string): Promise<Credential[] | null> => null;
-
-  setCredential = async (_key: string, _value: string) => {
-    console.log('[CredentialVault STUB] Phase 2 feature - credential not stored');
-  };
-
-  deleteCredential = async (_key: string) => {
-    console.log('[CredentialVault STUB] Phase 2 feature - credential not deleted');
-  };
-
-  hasCredential = async (_key: string) => false;
-  listCredentials = async (): Promise<Credential[]> => [];
-
-  clear = async () => {
-    console.log('[CredentialVault STUB] Phase 2 feature - vault not cleared');
-  };
-}
-
-/**
- * Singleton instance for direct import
- */
-export const credentialVault = new CredentialVault();
-
-export default credentialVault;
+export default vault;
