@@ -44,13 +44,16 @@ Plans:
   3. `grep "from.*@/lib"` returns 0 matches
   4. All types import from `@/domain/schemas/` only
   5. `pnpm lint` passes with regression-prevention rules active
-**Plans**: 4 plans in 3 waves
+**Plans**: 7 plans in 3 waves (4 original + 3 gap closure)
 
 Plans:
-- [ ] 00-01: Type definitions — backup, archive workspace.ts, update Project entity (Wave 1)
-- [ ] 00-02: Infrastructure — Dexie migrations, module-settings-slice, stores (Wave 2)
-- [ ] 00-03: @/lib/ migration — delete workspace/, migrate events/hooks/utils (Wave 2)
-- [ ] 00-04: Final cleanup — UI components, tests, ESLint rules, verification (Wave 3)
+- [x] 00-01: Type definitions — backup, archive workspace.ts, update Project entity (Wave 1)
+- [x] 00-02: Infrastructure — Dexie migrations, module-settings-slice, stores (Wave 2)
+- [x] 00-03: @/lib/ migration — delete workspace/, migrate events/hooks/utils (Wave 2)
+- [x] 00-04: Final cleanup — UI components, tests, ESLint rules, verification (Wave 3)
+- [ ] 00-05: Gap closure — Create bridge files for deleted workspace types (Wave 1) [GAP CLOSURE]
+- [ ] 00-06: Gap closure — Fix project store type exports and workspaceBindings access (Wave 2) [GAP CLOSURE]
+- [ ] 00-07: Gap closure — Eliminate all remaining TS errors to reach 0 (Wave 3) [GAP CLOSURE]
 
 ### Phase 1: Platform Operators
 **Goal**: Implement FileTree and Chat-Cascade as always-running infrastructure operators
@@ -155,7 +158,7 @@ Phases execute in numeric order: -1 → 0 → 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | -1. Preparation | 0/1 | Not started | - |
-| 0. Foundation Cleanup | 0/4 | Not started | - |
+| 0. Foundation Cleanup | 4/7 | Gap closure in progress | - |
 | 1. Platform Operators | 6/6 | ✓ Complete | 2026-02-01 |
 | 2. AI Integration | 0/4 | Not started | - |
 | 3. Feature Modules | 0/4 | Not started | - |
