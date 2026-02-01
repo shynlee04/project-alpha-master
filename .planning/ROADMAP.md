@@ -1,171 +1,282 @@
-# Roadmap: Project Alpha
+# Roadmap: Project Alpha — Feature-Group Remediation
 
-## Overview
-
-Transform Project Alpha from a contaminated codebase (1,734 violations across workspace terminology and import paths) into a production-ready AI-powered development IDE. The journey starts with safety preparation and foundation cleanup, then builds Platform Operators (FileTree, Chat-Cascade), integrates AI tool execution, adds Feature Modules (Monaco, Notes), implements RAG, and finishes with Terminal/Preview and polish.
-
-## Phases
-
-**Phase Numbering:**
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-- Phases -1 and 0: Preparation and cleanup before feature work
-
-- [ ] **Phase -1: Preparation** — Establish safety nets before destructive refactoring
-- [ ] **Phase 0: Foundation Cleanup** — Eliminate 1,734 violations and consolidate types
-- [x] **Phase 1: Platform Operators** — FileTree + Chat-Cascade + Layout recovery
-- [ ] **Phase 2: AI Integration** — Tool execution pipeline + multi-provider gateway
-- [ ] **Phase 3: Feature Modules** — Monaco editor + Notes with AI features
-- [ ] **Phase 4: RAG System** — Orama integration + file/thread indexing
-- [ ] **Phase 5: Terminal, Preview & Polish** — WebContainer + error handling + UX
-
-## Phase Details
-
-### Phase -1: Preparation
-**Goal**: Establish safety nets before destructive refactoring
-**Depends on**: Nothing (first phase)
-**Requirements**: PREP-01, PREP-02
-**Success Criteria** (what must be TRUE):
-  1. Backup branch exists on remote and can be checked out
-  2. Database can be exported to JSON and restored
-  3. Migration rollback procedure is documented and tested
-**Plans**: TBD
-
-Plans:
-- [ ] P-1-01: Create backup strategy and test restore
-
-### Phase 0: Foundation Cleanup
-**Goal**: Eliminate all workspace/lib violations and consolidate to single type system
-**Depends on**: Phase -1
-**Requirements**: CLEAN-01, CLEAN-02, CLEAN-03, CLEAN-04, CLEAN-05
-**Success Criteria** (what must be TRUE):
-  1. `grep workspaceBindings` returns 0 matches
-  2. `grep workspaceId` returns 0 matches
-  3. `grep "from.*@/lib"` returns 0 matches
-  4. All types import from `@/domain/schemas/` only
-  5. `pnpm lint` passes with regression-prevention rules active
-**Plans**: 7 plans in 3 waves (4 original + 3 gap closure)
-
-Plans:
-- [x] 00-01: Type definitions — backup, archive workspace.ts, update Project entity (Wave 1)
-- [x] 00-02: Infrastructure — Dexie migrations, module-settings-slice, stores (Wave 2)
-- [x] 00-03: @/lib/ migration — delete workspace/, migrate events/hooks/utils (Wave 2)
-- [x] 00-04: Final cleanup — UI components, tests, ESLint rules, verification (Wave 3)
-- [ ] 00-05: Gap closure — Create bridge files for deleted workspace types (Wave 1) [GAP CLOSURE]
-- [ ] 00-06: Gap closure — Fix project store type exports and workspaceBindings access (Wave 2) [GAP CLOSURE]
-- [ ] 00-07: Gap closure — Eliminate all remaining TS errors to reach 0 (Wave 3) [GAP CLOSURE]
-
-### Phase 1: Platform Operators
-**Goal**: Implement FileTree and Chat-Cascade as always-running infrastructure operators
-**Depends on**: Phase 0
-**Requirements**: PLAT-01, PLAT-02, PLAT-03, PLAT-04, PLAT-05, PLAT-06, PLAT-07, PLAT-08, PLAT-09, PLAT-10
-**Success Criteria** (what must be TRUE):
-  1. User can create a new project and see it in FileTree
-  2. User can create/edit/delete files within a project
-  3. Files sync to file system on desktop (FSA available)
-  4. User can switch between projects without page refresh
-  5. User can create a chat thread and send a message
-  6. Layout panels don't overlap or disappear
-**Plans**: 6 plans
-
-Plans:
-- [x] 01-01: Operator architecture, FileService, DomainEventBus (Wave 1)
-- [x] 01-02: FileTree operator with full project/file CRUD and ProjectSelector (Wave 2)
-- [x] 01-03: FSA sync (desktop) and IndexedDB fallback (mobile) (Wave 3)
-- [x] 01-04: Chat-Cascade operator with ThreadService (Wave 2)
-- [x] 01-05: Layout system fixes (panel resize, activity bar toggle) (Wave 1)
-- [x] 01-06: Gap closure — wire ChatPanel, Create Project, PanelResizer (Wave 1) [GAP CLOSURE]
-
-### Phase 2: AI Integration
-**Goal**: Implement tool execution pipeline with approval workflow and multi-provider support
-**Depends on**: Phase 1
-**Requirements**: AI-01, AI-02, AI-03, AI-04, AI-05, AI-06, AI-07
-**Success Criteria** (what must be TRUE):
-  1. Tool registry contains 6+ core tools (read_file, write_file, etc.)
-  2. write_file tool prompts for approval before execution
-  3. Tool results include side effects (files created/modified)
-  4. AI chat works with Gemini provider
-  5. AI chat works with OpenRouter provider
-  6. Streaming responses render progressively
-**Plans**: TBD
-
-Plans:
-- [ ] 02-01: Implement TOOL_REGISTRY with core tools
-- [ ] 02-02: Implement tool execution pipeline with approval workflow
-- [ ] 02-03: Implement AI Gateway with Gemini/OpenRouter adapters
-- [ ] 02-04: Implement BYOK vault and streaming responses
-
-### Phase 3: Feature Modules
-**Goal**: Implement optional feature modules that plug into platform operators
-**Depends on**: Phase 2
-**Requirements**: MOD-01, MOD-02, MOD-03, MOD-04, MOD-05, MOD-06
-**Success Criteria** (what must be TRUE):
-  1. Module system detects platform capabilities and loads appropriate modules
-  2. Monaco opens files from FileTree and saves via FileService
-  3. Notes module creates/edits rich text notes
-  4. Notes AI completion suggests text continuations
-  5. Notes AI summarization condenses selected text
-**Plans**: TBD
-
-Plans:
-- [ ] 03-01: Implement module registry and platform detection
-- [ ] 03-02: Implement Monaco module (desktop only)
-- [ ] 03-03: Implement Notes module with BlockNote
-- [ ] 03-04: Add Notes AI features (completion, summarization)
-
-### Phase 4: RAG System
-**Goal**: Implement Orama-based RAG with file and thread indexing
-**Depends on**: Phase 3
-**Requirements**: RAG-01, RAG-02, RAG-03, RAG-04, RAG-05
-**Success Criteria** (what must be TRUE):
-  1. Per-project Orama index is created and persists
-  2. User can index a file and search its content via RAG
-  3. User can index a thread and retrieve past conversations
-  4. search_rag tool returns relevant results in chat
-  5. AI responses include RAG context when enabled on thread
-**Plans**: TBD
-
-Plans:
-- [ ] 04-01: Implement Orama integration and per-project indexes
-- [ ] 04-02: Implement file and thread indexing pipeline
-- [ ] 04-03: Integrate search_rag tool with Chat-Cascade
-
-### Phase 5: Terminal, Preview & Polish
-**Goal**: Add WebContainer modules and harden the application
-**Depends on**: Phase 4
-**Requirements**: TERM-01, TERM-02, TERM-03, TERM-04, TERM-05, TERM-06
-**Success Criteria** (what must be TRUE):
-  1. Terminal module runs commands via WebContainer (desktop)
-  2. Preview module shows dev server output
-  3. Module crashes don't take down the entire app
-  4. Test coverage >80% on new code
-  5. All async operations have loading states
-  6. Keyboard navigation works throughout
-**Plans**: TBD
-
-Plans:
-- [ ] 05-01: Implement Terminal module with WebContainer
-- [ ] 05-02: Implement Preview module
-- [ ] 05-03: Add error boundaries and graceful degradation
-- [ ] 05-04: Increase test coverage and add E2E tests
-- [ ] 05-05: UX polish (loading states, keyboard nav, accessibility)
-
-## Progress
-
-**Execution Order:**
-Phases execute in numeric order: -1 → 0 → 1 → 2 → 3 → 4 → 5
-
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| -1. Preparation | 0/1 | Not started | - |
-| 0. Foundation Cleanup | 4/7 | Gap closure in progress | - |
-| 1. Platform Operators | 6/6 | ✓ Complete | 2026-02-01 |
-| 2. AI Integration | 0/4 | Not started | - |
-| 3. Feature Modules | 0/4 | Not started | - |
-| 4. RAG System | 0/3 | Not started | - |
-| 5. Terminal, Preview & Polish | 0/5 | Not started | - |
+**Created:** 2026-02-01
+**Approach:** Feature-group isolation — fix by feature, not by violation count
+**Previous:** Archived to ROADMAP-2026-02-01-ARCHIVE.md
 
 ---
+
+## ⚠️ CRITICAL CONTEXT FOR ALL AGENTS
+
+**This roadmap replaces the previous phase-based approach.**
+
+The previous approach (Phase 0-5) failed because:
+1. "Fixing violations" without understanding feature dependencies
+2. Phases marked complete while 3,900+ violations remained
+3. No isolation strategy — fixes in one area broke another
+4. No bounce-back governance — gaps at dev level weren't escalated
+
+**New approach:** Fix by **feature group** with clear isolation boundaries.
+
+---
+
+## Executive Summary
+
+| Priority | Phase | Feature Group | Goal | Status |
+|----------|-------|---------------|------|--------|
+| 1 | **A** | BYOK Foundation | Users can save API keys | 🔴 Not started |
+| 2 | **B** | AI Gateway | Single entry point for all AI calls | 🔴 Not started |
+| 3 | **C** | Notes AI | AI features work in Notes editor | 🔴 Not started |
+| 4 | **D** | Agentic Features | Tool execution with approval | ⏸️ DEFERRED |
+| 5 | **E** | RAG System | Search project knowledge | ⏸️ DEFERRED |
+
+**Do NOT touch (working ~70%):** Project CRUD, FileTree, FSA Sync
+
+---
+
+## Phase A: BYOK Foundation
+
+**Goal:** Users can input and persist API keys for Gemini and OpenRouter.
+
+**Why first:** No AI features work without API keys. The vault is 100% stubbed.
+
+### Current State
+- `credential-vault.ts` → STUB (returns null)
+- `ProviderSettings.tsx` → STUB (shows "Phase 2 - Staged")
+- Provider store slices → STUB (no-ops)
+- All AI calls fail with "no API key"
+
+### Restore from Archive
+| Archive File | Target Location |
+|--------------|-----------------|
+| `_phase2-archive/lib/agent/providers/credential-vault.ts` | `src/infrastructure/ai/credential-vault.ts` |
+| `_phase2-archive/lib/agent/providers/credential-encryption.ts` | `src/infrastructure/ai/credential-encryption.ts` |
+| `_phase2-archive/lib/agent/providers/credential-storage.ts` | `src/infrastructure/ai/credential-storage.ts` |
+
+### Deliverables
+1. `CredentialVault` class with AES-256-GCM encryption
+2. `ProviderSettings` component for API key input
+3. Provider store with `hasApiKey` reactivity
+4. Keys persist across browser refresh
+
+### Success Criteria
+- [ ] User can input Gemini API key in settings
+- [ ] User can input OpenRouter API key in settings
+- [ ] Keys persist after browser refresh
+- [ ] `credentialVault.getCredentials('gemini')` returns the key
+
+### Isolation Boundary
+- **Touches:** `src/infrastructure/ai/`, `src/presentation/components/settings/`
+- **Does NOT touch:** FileTree, Project stores, Notes UI
+
+### Schema Changes
+None — `ProviderConfig.hasApiKey` and `CredentialStorage` types already exist.
+
+---
+
+## Phase B: AI Gateway
+
+**Goal:** Single entry point for all AI calls using TanStack AI SDK.
+
+**Why second:** Currently 15+ files make direct AI calls with different patterns. Unify before adding features.
+
+### Current State
+- `src/routes/api/chat.ts` → Uses TanStack AI SDK ✅
+- `src/lib/notes/ai-image-service.ts` → Direct fetch() ❌
+- `src/lib/notes/ai-vision-service.ts` → Direct fetch() ❌
+- `src/lib/canvas/linkage-ai-enhancer.ts` → Direct @google/genai + HARDCODED KEY ❌
+- 10+ other files with fragmented patterns
+
+### Create
+| New File | Purpose |
+|----------|---------|
+| `src/infrastructure/ai/ai-gateway.ts` | Single entry point for all AI calls |
+| `src/infrastructure/ai/adapters/gemini-adapter.ts` | Gemini via @tanstack/ai-gemini |
+| `src/infrastructure/ai/adapters/openrouter-adapter.ts` | OpenRouter via @tanstack/ai-openai |
+
+### Deliverables
+1. `AIGateway` service with `generate()`, `stream()`, `generateImage()` methods
+2. Adapters for Gemini and OpenRouter
+3. All AI calls routed through gateway
+4. Remove hardcoded API key from `linkage-ai-enhancer.ts`
+
+### Success Criteria
+- [ ] `AIGateway.generate({ provider: 'gemini', prompt: '...' })` works
+- [ ] `AIGateway.stream({ provider: 'openrouter', prompt: '...' })` works
+- [ ] No direct fetch() to AI endpoints outside gateway
+- [ ] No hardcoded API keys in codebase
+
+### Isolation Boundary
+- **Touches:** `src/infrastructure/ai/`, migrate callers in `src/lib/notes/`
+- **Does NOT touch:** FileTree, Thread schema, Chat UI
+
+### Schema Changes
+None for Phase B.
+
+---
+
+## Phase C: Notes AI
+
+**Goal:** AI features work in Notes editor (summarize, continue, translate, etc.)
+
+**Why third:** User's explicit priority. Notes is isolated from Chat/Thread.
+
+### Current State
+- `note-ai-service.ts` → STUB (throws PHASE_1A_DISABLED)
+- 20+ BlockNote blocks exist ✅
+- AI UI components exist (dialogs, menus) ✅
+- `useStreamingAI()` hook exists but calls stubbed service
+
+### Un-stub and Wire
+| File | Action |
+|------|--------|
+| `src/lib/notes/note-ai-service.ts` | Replace stub with AIGateway calls |
+| `src/lib/notes/hooks/use-streaming-ai.ts` | Wire to working service |
+| `src/presentation/components/notes/AITransformMenu.tsx` | Enable |
+| `src/presentation/components/notes/InBlockAIPopup.tsx` | Enable |
+
+### Deliverables
+1. `generateNoteContent()` calls AIGateway
+2. `generateNoteContentStream()` streams via AIGateway
+3. Slash commands work: `/summarize`, `/continue`, `/translate`
+4. AI Transform menu works on selected text
+
+### Success Criteria
+- [ ] User can type `/summarize` in note and get AI summary
+- [ ] User can select text and click "Continue writing"
+- [ ] User can translate note content EN↔VI
+- [ ] Streaming responses render progressively
+
+### Isolation Boundary
+- **Touches:** `src/lib/notes/`, `src/presentation/components/notes/`
+- **Does NOT touch:** Chat threads, ThreadMessage schema, FileTree
+
+### Schema Changes
+None — Notes uses BlockNote blocks, not ThreadMessage.
+
+---
+
+## Phase D: Agentic Features (DEFERRED)
+
+**Goal:** Tool execution pipeline with approval workflow.
+
+**Status:** ⏸️ DEFERRED until Phases A-C complete
+
+**Why deferred:**
+1. Requires ThreadMessage schema update (parts-based content)
+2. Requires TOOL_REGISTRY implementation
+3. Complex approval workflow
+4. Not needed for Notes AI
+
+### When to Start
+- After Phase C is verified working
+- User explicitly requests agentic features
+
+### Schema Changes Required
+- See `.planning/schemas/THREAD-V2-DESIGN.md`
+- Add `parts: MessagePart[]` to ThreadMessage (additive)
+- Add enhanced ToolCall with approval fields
+- Add ToolResult with sideEffects
+- Create TOOL_REGISTRY
+
+---
+
+## Phase E: RAG System (DEFERRED)
+
+**Goal:** Orama-based search across project files and threads.
+
+**Status:** ⏸️ DEFERRED until Phase D complete
+
+**Why deferred:**
+1. Depends on working AI for embeddings
+2. Depends on ThreadMessage parts for proper indexing
+3. Lower priority than Notes AI
+
+### When to Start
+- After Phase D is verified working
+- User explicitly requests RAG features
+
+---
+
+## Governance Rules
+
+### Isolation Enforcement
+
+**Before touching ANY file, check:**
+1. Is this file in the current phase's boundary?
+2. Does modifying it affect a working feature?
+3. If unsure → ASK, don't assume
+
+**Working features (DO NOT BREAK):**
+- Project CRUD (~70% working)
+- FileTree (~70% working)
+- FSA Sync (~60% working)
+- Hub Dashboard (working)
+- Notes UI (working, just no AI)
+
+### Bounce-Back Protocol
+
+**If during execution you discover:**
+1. A schema needs updating → STOP, document in `.planning/schemas/`, escalate
+2. A type definition is wrong → STOP, don't patch, escalate
+3. Fixing X breaks Y → STOP, don't continue, escalate
+
+**Escalation format:**
+```markdown
+## ESCALATION: [Issue Title]
+
+**Phase:** [Current phase]
+**Discovered:** [What you found]
+**Impact:** [What would break]
+**Recommendation:** [What architect should decide]
+```
+
+### Verification Before "Done"
+
+**NO phase is complete until:**
+1. TypeScript errors: 0 new errors introduced
+2. Success criteria: ALL checked
+3. Working features: Still working (manual verify)
+4. Governance: `pnpm governance` passes
+
+---
+
+## Progress Tracking
+
+| Phase | Status | Plans | Verified |
+|-------|--------|-------|----------|
+| A: BYOK | 🔴 Not started | 0/? | ❌ |
+| B: AI Gateway | 🔴 Not started | 0/? | ❌ |
+| C: Notes AI | 🔴 Not started | 0/? | ❌ |
+| D: Agentic | ⏸️ Deferred | — | — |
+| E: RAG | ⏸️ Deferred | — | — |
+
+---
+
+## Quick Reference
+
+### What's Stubbed (Must Restore)
+- `credential-vault.ts` → Restore for Phase A
+- `note-ai-service.ts` → Un-stub for Phase C
+- `tool-permissions.ts` → Un-stub for Phase D
+
+### What's Fragmented (Must Unify)
+- 15+ AI endpoint patterns → Unify in Phase B
+
+### What's Ready
+- Provider types (`@/domain/types/llm/`)
+- Credential types
+- TanStack AI SDK packages installed
+- BlockNote editor and 20+ blocks
+
+### What NOT to Touch Yet
+- ThreadMessage schema (Phase D)
+- Agent entity `workspaceBindings` (never, just aliased)
+- Dexie DB schema (legitimate workspaceId)
+- 3,900 violations (incremental, not blocking)
+
+---
+
 *Roadmap created: 2026-02-01*
-*Based on: SOURCE-OF-TRUTH.md, research/SUMMARY.md, KILL-PLAN.md*
-*Detailed tasks preserved in: ROADMAP-2026-01-31.md (reference)*
+*Replaces: Phase 0-5 approach*
+*Authority: SOURCE-OF-TRUTH.md*
