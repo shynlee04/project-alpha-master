@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** Users can interact with AI that reads, writes, and understands their project files — all client-side with zero data sent to our servers.
-**Current focus:** Phase 0 Stabilization — COMPLETE
+**Current focus:** Phase 0 Gap Closure — In Progress
 
 ## Current Position
 
 Phase: 0 of 5 (Foundation Stabilization)
-Plan: 4 of 4 completed
-Status: Phase 0 COMPLETE ✓
-Last activity: 2026-02-01 — Phase 00 executed (4/4 plans)
+Plan: 5 of 7 completed (gap closure in progress)
+Status: In Progress
+Last activity: 2026-02-01 — Completed 00-05-PLAN.md (bridge files)
 
-Progress: ████████░░ 80% (Phase 0 done, Phase 1 done, Phases 2-4 pending)
+Progress: ███████░░░ 70% (Phase 0: 5/7, Phase 1: 6/6, Phases 2-4 pending)
 
 ### Completed Plans (Phase 00)
 | Plan | Name | Summary |
@@ -23,6 +23,7 @@ Progress: ████████░░ 80% (Phase 0 done, Phase 1 done, Phases
 | 00-02 | Infrastructure Updates | ✅ 00-02-SUMMARY.md |
 | 00-03 | Lib Migration | ✅ 00-03-SUMMARY.md |
 | 00-04 | Final Cleanup | ✅ 00-04-SUMMARY.md |
+| 00-05 | Bridge Files | ✅ 00-05-SUMMARY.md |
 
 ### Completed Plans (Phase 01)
 | Plan | Name | Summary |
@@ -37,15 +38,15 @@ Progress: ████████░░ 80% (Phase 0 done, Phase 1 done, Phases
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 10 (4 Phase 0 + 6 Phase 1)
-- Phase 0 duration: ~35 min
+- Total plans completed: 11 (5 Phase 0 + 6 Phase 1)
+- Phase 0 duration: ~38 min
 - Phase 1 duration: 70 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 00-stabilization | 4 | 35 min | 8.75 min |
+| 00-stabilization | 5 | 38 min | 7.6 min |
 | 01-platform-operators | 6 | 70 min | 11.7 min |
 
 *Updated after each plan completion*
@@ -63,6 +64,7 @@ Recent decisions affecting current work:
 - [00-02]: Scope reduction — focus on core types, defer downstream migration
 - [00-03]: Deletion over migration — lib/workspace/ too contaminated to migrate
 - [00-04]: ESLint error level — hard enforcement prevents regression
+- [00-05]: Bridge pattern over migration — re-export from canonical schemas
 
 **Phase 1 Decisions:**
 - [01-01]: IPlatformOperator uses isOperator: true discriminator
@@ -87,9 +89,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Phase 00 complete — all 4 plans executed
+Stopped at: Completed 00-05-PLAN.md (bridge files)
 Resume file: None
-Next: Ready for Phase 02 (AI Integration) planning
+Next: Ready for 00-06-PLAN.md (project store type exports)
 
 ---
 
