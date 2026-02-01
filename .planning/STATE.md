@@ -23,21 +23,30 @@ Previous approach failed because:
 ## Current Position
 
 Phase: A of 5 (BYOK Foundation)
-Plan: 3 of 4 (Wave 2: A-03 complete)
-Status: Wave 2 complete, ready for A-04
-Last activity: 2026-02-01 — Completed A-03-PLAN.md (ProviderSettings UI)
+Plan: 4B of 5 (Wave 3.5: A-04B model loading fix)
+Status: A-04 pending verification, A-04B created to fix model loading gap
+Last activity: 2026-02-02 — Governance enhancement and gap tracking
 
-Progress: ███░░░░░░░ 30% (Wave 1: A-01 + A-02, Wave 2: A-03 complete)
+Progress: ███▓░░░░░░ 35% (Wave 1: A-01 + A-02, Wave 2: A-03, Wave 3: A-04 pending, Wave 3.5: A-04B planned)
 
 ### Phase Summary
 
 | Phase | Name | Status | Depends On |
 |-------|------|--------|------------|
-| **A** | BYOK Foundation | 🔴 Ready | None |
+| **A** | BYOK Foundation | 🟡 Blocked by GAP-A04-001 | None |
 | **B** | AI Gateway | 🔴 Blocked | Phase A |
 | **C** | Notes AI | 🔴 Blocked | Phase B |
 | **D** | Agentic | ⏸️ Deferred | Phase C |
 | **E** | RAG | ⏸️ Deferred | Phase D |
+
+### Blocking Gaps (Must Resolve)
+
+| Gap ID | Issue | Severity | Plan |
+|--------|-------|----------|------|
+| GAP-A04-001 | fetchModels is STUB | HIGH | A-04B-PLAN.md |
+| GAP-A04-002 | No key:stored event | HIGH | A-04B-PLAN.md |
+
+See: `.planning/governance/GAPS-TRACKER.yaml` for full gap tracking.
 
 ### Working Features (DO NOT BREAK)
 
@@ -79,11 +88,20 @@ Progress: ███░░░░░░░ 30% (Wave 1: A-01 + A-02, Wave 2: A-03 
 | NoteAIService | `note-ai-service.ts` | Phase C |
 | ToolPermissions | `tool-permissions.ts` | Phase D |
 | ProviderSettings | `ProviderSettings.tsx` | ✅ Phase A (A-03 complete) |
+| **fetchModels** | `provider-models-slice.ts` | 🔴 Phase A (A-04B) |
 
 ### What's Fragmented
 
 - 15+ AI endpoint patterns (unify in Phase B)
 - Hardcoded API key in `linkage-ai-enhancer.ts` (remove in Phase B)
+
+### Governance Documents (New 2026-02-02)
+
+| Document | Purpose |
+|----------|---------|
+| `.planning/governance/GAPS-TRACKER.yaml` | Track undocumented decisions, escalations |
+| `.planning/governance/GOVERNANCE-RUNTIME-LOADER.md` | Agent context loading requirements |
+| `.planning/schemas/MODEL-STRATEGY.md` | High-level design for model loading, fallback |
 
 ### Violations Status (Baseline from Phase 0 Closure)
 
@@ -111,6 +129,9 @@ Resume: Execute A-04 (if exists) or Phase B
 | `.planning/ROADMAP.md` | **PRIMARY** — Feature-group remediation roadmap |
 | `.planning/PROJECT.md` | Project context and requirements |
 | `.planning/SOURCE-OF-TRUTH.md` | Canonical architecture |
+| `.planning/schemas/MODEL-STRATEGY.md` | **NEW** — Model loading, fallback, capabilities |
+| `.planning/governance/GAPS-TRACKER.yaml` | **NEW** — Gap and escalation tracking |
+| `.planning/governance/GOVERNANCE-RUNTIME-LOADER.md` | **NEW** — Agent context loading |
 | `.planning/phases/00-stabilization/00-07-SUMMARY.md` | Phase 0 closure summary with baseline |
 | `.planning/schemas/THREAD-V2-DESIGN.md` | Schema design for Phase D |
 | `.planning/schemas/SCHEMA-OVERVIEW.md` | Schema inventory |
@@ -118,4 +139,4 @@ Resume: Execute A-04 (if exists) or Phase B
 
 ---
 
-*Updated: 2026-02-01T15:41:53Z after A-03 completion (Wave 2 complete)*
+*Updated: 2026-02-02T12:00:00Z after governance enhancement and gap tracking*

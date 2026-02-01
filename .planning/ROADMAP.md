@@ -58,24 +58,34 @@ The previous approach (Phase 0-5) failed because:
 2. `ProviderSettings` component for API key input
 3. Provider store with `hasApiKey` reactivity
 4. Keys persist across browser refresh
+5. **Model loading with hardcoded fallback** (added 2026-02-02)
 
-### Plans: 4 plans in 3 waves
+### Plans: 5 plans in 4 waves
 
 **Wave 1 (parallel):**
-- [ ] A-01-PLAN.md — Restore credential vault infrastructure
-- [ ] A-02-PLAN.md — Restore provider vault slice
+- [x] A-01-PLAN.md — Restore credential vault infrastructure ✅
+- [x] A-02-PLAN.md — Restore provider vault slice ✅
 
 **Wave 2 (depends on Wave 1):**
-- [ ] A-03-PLAN.md — Restore ProviderSettings UI
+- [x] A-03-PLAN.md — Restore ProviderSettings UI ✅
 
 **Wave 3 (verification):**
 - [ ] A-04-PLAN.md — Integration verification (checkpoint)
+
+**Wave 3.5 (gap fix - added 2026-02-02):**
+- [ ] A-04B-PLAN.md — Model loading restoration (addresses GAP-A04-001, GAP-A04-002)
+
+### High-Level Design Reference
+- **MODEL-STRATEGY.md** — Model loading, fallback, capabilities design
+- Must be loaded before planning Phase B or C
 
 ### Success Criteria
 - [ ] User can input Gemini API key in settings
 - [ ] User can input OpenRouter API key in settings
 - [ ] Keys persist after browser refresh
 - [ ] `credentialVault.getCredentials('gemini')` returns the key
+- [ ] **NEW: Models load after key is saved**
+- [ ] **NEW: Model dropdown shows available models**
 
 ### Isolation Boundary
 - **Touches:** `src/infrastructure/ai/`, `src/presentation/components/settings/`

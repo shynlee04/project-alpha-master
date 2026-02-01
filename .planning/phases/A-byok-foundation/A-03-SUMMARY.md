@@ -96,6 +96,26 @@ None - plan executed exactly as written.
 
 None - all files restored cleanly from archive with no import path changes needed.
 
+## Escalations (Retroactive - Added 2026-02-02)
+
+Per bounce-back protocol in ROADMAP.md Lines 229-244, the following gaps should have been escalated:
+
+| Gap ID | Issue | Severity | Should Have Been | Was Actually |
+|--------|-------|----------|------------------|--------------|
+| GAP-A03-001 | `hardcoded-models.ts` created at `@/lib` path (forbidden per AGENTS.md) | MEDIUM | STOP + Escalate to architect | Deferred to "future work" |
+| GAP-A03-002 | ProviderConfigDialog imports from `@/lib` re-export instead of canonical `@/infrastructure` | MEDIUM | Use canonical path | Used re-export for "backward compatibility" |
+
+**Retroactive Escalation Status:**
+- Both gaps documented in `.planning/governance/GAPS-TRACKER.yaml`
+- Resolution: Phase B should migrate callers to canonical paths
+- Architect awareness: Documented for Phase B planning context
+
+**Lesson Learned:** Dev agents should escalate immediately when:
+1. Creating files at forbidden paths
+2. Adding new imports from `@/lib/` instead of canonical paths
+
+See: `.planning/governance/GOVERNANCE-RUNTIME-LOADER.md` for updated escalation protocol.
+
 ## User Setup Required
 
 None - no external service configuration required.

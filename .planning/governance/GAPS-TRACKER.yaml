@@ -1,0 +1,213 @@
+# Governance Gaps Tracker
+# Created: 2026-02-02
+# Purpose: Track undocumented decisions, unescalated gaps, and governance violations
+# Authority: This file is checked at agent runtime for context injection
+
+version: "1.0.0"
+last_updated: "2026-02-02T12:00:00Z"
+updated_by: "gsd-project-researcher"
+
+# ============================================================================
+# GOVERNANCE RULES
+# ============================================================================
+# 
+# 1. Any gap discovered during execution MUST be added here
+# 2. Gaps with severity HIGH must be escalated to architect before proceeding
+# 3. This file is loaded by agents at runtime for context awareness
+# 4. Unescalated gaps block phase completion verification
+#
+# ============================================================================
+
+# Retroactive gaps from Phase A execution
+gaps:
+  - id: GAP-A01-001
+    phase: A-01
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: medium
+    description: "Created files at @/lib path instead of canonical @/infrastructure path"
+    evidence:
+      - file: "src/lib/agent/providers/credential-vault.ts"
+        issue: "Re-export created for backward compatibility, not canonical location"
+    impact: "Perpetuates @/lib import violations (586 in baseline)"
+    should_have_been: "STOP + Escalate to architect per ROADMAP.md Line 232"
+    was_actually: "Noted as 'future cleanup' in A-01-SUMMARY.md Line 38"
+    escalated: false
+    escalated_to: null
+    resolution_status: pending
+    resolution_plan: "Phase B should migrate callers to canonical paths"
+
+  - id: GAP-A02-001
+    phase: A-02
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: low
+    description: "Dependency on file that didn't exist yet during execution"
+    evidence:
+      - file: "import from @/infrastructure/ai/credential-vault.js"
+        issue: "Import path referenced before A-01 completed"
+    impact: "Execution order dependency not validated"
+    should_have_been: "Verify dependency chain before execution"
+    was_actually: "Noted as 'expected because A-01 creates it'"
+    escalated: false
+    escalated_to: null
+    resolution_status: resolved
+    resolution_plan: "A-01 completed first, dependency now exists"
+
+  - id: GAP-A03-001
+    phase: A-03
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: medium
+    description: "hardcoded-models.ts kept at forbidden @/lib path"
+    evidence:
+      - file: "src/lib/agent/providers/hardcoded-models.ts"
+        issue: "@/lib is forbidden per AGENTS.md"
+    impact: "Adds to @/lib import violations instead of reducing them"
+    should_have_been: "STOP + Escalate to architect"
+    was_actually: "Deferred to 'future work' in A-03-SUMMARY.md Line 38"
+    escalated: false
+    escalated_to: null
+    resolution_status: pending
+    resolution_plan: "Move to @/infrastructure/ai/hardcoded-models.ts in Phase B"
+
+  - id: GAP-A03-002
+    phase: A-03
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: medium
+    description: "ProviderConfigDialog uses @/lib re-export instead of canonical import"
+    evidence:
+      - file: "src/presentation/components/settings/ProviderConfigDialog.tsx"
+        issue: "Imports from @/lib/agent/providers/credential-vault"
+    impact: "New code introduces @/lib import instead of using canonical path"
+    should_have_been: "Use @/infrastructure/ai/credential-vault"
+    was_actually: "Used re-export for 'backward compatibility'"
+    escalated: false
+    escalated_to: null
+    resolution_status: pending
+    resolution_plan: "Update import in Phase B cleanup"
+
+  - id: GAP-A04-001
+    phase: A-04
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-project-researcher"
+    severity: high
+    description: "fetchModels is STUB - even with saved key, no models load"
+    evidence:
+      - file: "src/infrastructure/persistence/stores/providers/provider-models-slice.ts"
+        issue: "fetchModels logs and does nothing (lines 26-31)"
+      - code: "console.log('[ProviderModelsSlice STUB] Phase 2 feature - fetchModels', providerId);"
+    impact: "BLOCKER - Users save API key but model dropdown is empty"
+    should_have_been: "Identified in Phase A planning, restored with vault"
+    was_actually: "Not addressed in A-01 through A-04 plans"
+    escalated: true
+    escalated_to: architect
+    resolution_status: in_progress
+    resolution_plan: "A-04B-PLAN.md to restore model loading"
+
+  - id: GAP-A04-002
+    phase: A-04
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-project-researcher"
+    severity: high
+    description: "No 'provider:key:stored' event when API key is saved"
+    evidence:
+      - file: "src/infrastructure/ai/credential-vault.ts"
+        issue: "storeCredentials() does not emit event"
+    impact: "Model loading cannot be triggered reactively on key save"
+    should_have_been: "Event emission part of vault implementation"
+    was_actually: "Not designed, not implemented"
+    escalated: true
+    escalated_to: architect
+    resolution_status: in_progress
+    resolution_plan: "Add event emission in A-04B-PLAN.md"
+
+# Strategic gaps identified in research synthesis
+strategic_gaps:
+  - id: SGAP-001
+    category: model_strategy
+    discovered_at: "2026-02-02"
+    severity: high
+    description: "No documented strategy for model loading, fallback, or capabilities"
+    impact: "Phase B and C cannot be planned without high-level design"
+    resolution_status: resolved
+    resolution_doc: ".planning/schemas/MODEL-STRATEGY.md"
+
+  - id: SGAP-002
+    category: research_sync
+    discovered_at: "2026-02-02"
+    severity: medium
+    description: "Research documents use Phase 0-5 structure, ROADMAP uses A-E"
+    impact: "Research references phases that no longer exist"
+    resolution_status: pending
+    resolution_plan: "Update research SUMMARY to align with A-E phases"
+
+  - id: SGAP-003
+    category: platform_operators
+    discovered_at: "2026-02-02"
+    severity: medium
+    description: "Platform Operators (FileTree, Chat-Cascade) missing from A-E phases"
+    impact: "Research says 'must fix', ROADMAP says 'working ~70%' - contradiction"
+    resolution_status: acknowledged
+    resolution_plan: "Defer to post-C phase or document why not needed"
+
+# Runtime context injection rules
+context_injection:
+  on_phase_planning:
+    must_load:
+      - ".planning/SOURCE-OF-TRUTH.md"
+      - ".planning/ROADMAP.md"
+      - ".planning/governance/GAPS-TRACKER.yaml"
+    if_ai_related:
+      - ".planning/schemas/MODEL-STRATEGY.md"
+      - ".planning/phases/B-ai-gateway/B-CONTEXT.md"
+    if_schema_change:
+      - ".planning/schemas/SCHEMA-OVERVIEW.md"
+      - ".planning/schemas/THREAD-V2-DESIGN.md"
+
+  on_execution:
+    must_check:
+      - "gaps with escalated: false AND severity: high"
+      - "gaps with resolution_status: pending in current phase"
+    must_escalate_if:
+      - "schema change required"
+      - "fixing X breaks Y"
+      - "type definition is wrong"
+
+# Escalation tracking
+escalations:
+  - id: ESC-001
+    created_at: "2026-02-02T12:00:00Z"
+    from_gap: GAP-A04-001
+    escalated_by: "gsd-project-researcher"
+    escalated_to: "architect"
+    title: "Model Loading Completely Broken"
+    severity: high
+    status: in_progress
+    response: "Created A-04B-PLAN.md to address"
+    resolution_eta: "2026-02-02"
+
+# Phase completion gates
+completion_gates:
+  phase_A:
+    required:
+      - "All HIGH severity gaps escalated"
+      - "All escalations have response"
+      - "pnpm typecheck:fast passes"
+      - "pnpm governance passes"
+      - "Manual verification approved"
+    blocking_gaps:
+      - GAP-A04-001  # fetchModels stub
+      - GAP-A04-002  # No key:stored event
+    status: blocked
+
+# Statistics
+stats:
+  total_gaps: 6
+  high_severity: 2
+  medium_severity: 3
+  low_severity: 1
+  escalated: 2
+  pending_resolution: 5
+  resolved: 1
