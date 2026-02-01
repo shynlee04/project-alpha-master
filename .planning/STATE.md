@@ -25,7 +25,7 @@ Previous approach failed because:
 Phase: A of 5 (BYOK Foundation)
 Plan: 0 of TBD
 Status: Ready to start
-Last activity: 2026-02-01 — Roadmap restructured
+Last activity: 2026-02-01 — Phase 0 closed, Phase A ready to start
 
 Progress: ░░░░░░░░░░ 0% (Phases A-C active, D-E deferred)
 
@@ -53,6 +53,13 @@ Progress: ░░░░░░░░░░ 0% (Phases A-C active, D-E deferred)
 
 ### Decisions
 
+**2026-02-01 (Phase 0 Closure):**
+- Phase 0 closed after Plan 06
+- Plans 07+ superseded by feature-group approach
+- Final baseline captured: 233 TS errors, 1,295 violation refs
+- Handoff to Phase A complete
+- See: `.planning/phases/00-stabilization/00-07-SUMMARY.md`
+
 **2026-02-01 (Roadmap Restructure):**
 - Feature-group isolation over violation-count fixing
 - BYOK first (nothing works without API keys)
@@ -78,21 +85,22 @@ Progress: ░░░░░░░░░░ 0% (Phases A-C active, D-E deferred)
 - 15+ AI endpoint patterns (unify in Phase B)
 - Hardcoded API key in `linkage-ai-enhancer.ts` (remove in Phase B)
 
-### Violations Status
+### Violations Status (Baseline from Phase 0 Closure)
 
 | Type | Count | Action |
 |------|-------|--------|
-| workspaceBindings | ~857 | Incremental, not blocking |
-| workspaceId | ~1,265 | Mostly DB schema (legitimate) |
-| @/lib/ imports | ~1,790 | Incremental, not blocking |
+| TypeScript errors | 233 | Baseline for Phase A |
+| workspaceBindings | 156 | Incremental, not blocking |
+| workspaceId | 553 | Mostly DB schema (legitimate) |
+| @/lib/ imports | 586 | Incremental, not blocking |
 
-These are tracked but NOT the primary focus. Feature work takes priority.
+**Total violations:** 1,295 references to migrate incrementally
 
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Roadmap restructured, ready for Phase A planning
-Resume: `/gsd-plan-phase A` or `/gsd-discuss-phase A`
+Stopped at: Phase 0 closed, Phase A ready to start
+Resume: Start Phase A planning with `/gsd-plan-phase A`
 
 ---
 
@@ -103,10 +111,11 @@ Resume: `/gsd-plan-phase A` or `/gsd-discuss-phase A`
 | `.planning/ROADMAP.md` | **PRIMARY** — Feature-group remediation roadmap |
 | `.planning/PROJECT.md` | Project context and requirements |
 | `.planning/SOURCE-OF-TRUTH.md` | Canonical architecture |
+| `.planning/phases/00-stabilization/00-07-SUMMARY.md` | Phase 0 closure summary with baseline |
 | `.planning/schemas/THREAD-V2-DESIGN.md` | Schema design for Phase D |
 | `.planning/schemas/SCHEMA-OVERVIEW.md` | Schema inventory |
 | `.planning/ROADMAP-2026-02-01-ARCHIVE.md` | Previous phase 0-5 roadmap (reference) |
 
 ---
 
-*Updated: 2026-02-01 after roadmap restructure*
+*Updated: 2026-02-01 after Phase 0 closure and handoff to Phase A*
