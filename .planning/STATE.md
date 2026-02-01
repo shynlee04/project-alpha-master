@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-02-01)
 ## Current Position
 
 Phase: 0 of 5 (Foundation Stabilization)
-Plan: 5 of 7 completed (gap closure in progress)
+Plan: 6 of 7 completed (gap closure in progress)
 Status: In Progress
-Last activity: 2026-02-01 — Completed 00-05-PLAN.md (bridge files)
+Last activity: 2026-02-01 — Completed 00-06-PLAN.md (project store type exports)
 
-Progress: ███████░░░ 70% (Phase 0: 5/7, Phase 1: 6/6, Phases 2-4 pending)
+Progress: ████████░░ 80% (Phase 0: 6/7, Phase 1: 6/6, Phases 2-4 pending)
 
 ### Completed Plans (Phase 00)
 | Plan | Name | Summary |
@@ -24,6 +24,7 @@ Progress: ███████░░░ 70% (Phase 0: 5/7, Phase 1: 6/6, Phases
 | 00-03 | Lib Migration | ✅ 00-03-SUMMARY.md |
 | 00-04 | Final Cleanup | ✅ 00-04-SUMMARY.md |
 | 00-05 | Bridge Files | ✅ 00-05-SUMMARY.md |
+| 00-06 | Project Store Type Exports | ✅ 00-06-SUMMARY.md |
 
 ### Completed Plans (Phase 01)
 | Plan | Name | Summary |
@@ -65,6 +66,7 @@ Recent decisions affecting current work:
 - [00-03]: Deletion over migration — lib/workspace/ too contaminated to migrate
 - [00-04]: ESLint error level — hard enforcement prevents regression
 - [00-05]: Bridge pattern over migration — re-export from canonical schemas
+- [00-06]: plugins.enabled replaces workspaceBindings — unified plugin configuration
 
 **Phase 1 Decisions:**
 - [01-01]: IPlatformOperator uses isOperator: true discriminator
@@ -89,9 +91,9 @@ Recent decisions affecting current work:
 ## Session Continuity
 
 Last session: 2026-02-01
-Stopped at: Completed 00-05-PLAN.md (bridge files)
+Stopped at: Completed 00-06-PLAN.md (project store type exports)
 Resume file: None
-Next: Ready for 00-06-PLAN.md (project store type exports)
+Next: Ready for 00-07-PLAN.md (if exists)
 
 ---
 
