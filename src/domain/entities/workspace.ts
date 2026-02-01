@@ -77,3 +77,8 @@ export function createWorkspaceStub(
 // ============================================================================
 
 export type { Project, PluginType };
+
+/**
+ * @deprecated Use PluginType from @/domain/schemas/plugin.schema
+ */
+export type WorkspaceType = PluginType;

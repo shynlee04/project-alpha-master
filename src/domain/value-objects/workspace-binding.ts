@@ -57,10 +57,20 @@ export const workspaceBindingsSchema = ProjectPluginsSchema;
 // Re-exports for convenience during migration
 // ============================================================================
 
-export {
+export type {
   PluginCapability,
   ProjectPlugins,
   PluginType,
+};
+
+export {
   PluginCapabilitySchema,
   ProjectPluginsSchema,
 };
+
+/**
+ * @deprecated Use PluginCapability instead
+ * This exists only for backward compatibility - WorkspaceBindingProps was never
+ * a separate type from WorkspaceBinding.
+ */
+export type WorkspaceBindingProps = PluginCapability;

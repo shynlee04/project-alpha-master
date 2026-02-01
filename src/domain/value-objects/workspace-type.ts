@@ -53,4 +53,5 @@ export const WORKSPACE_TYPES = [
 // Re-exports for convenience during migration
 // ============================================================================
 
-export { PluginType, PluginTypeSchema };
+export type { PluginType };
+export { PluginTypeSchema };

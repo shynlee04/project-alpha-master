@@ -344,9 +344,12 @@ class ProjectRegistryClass {
    */
   getStats(): ProjectRegistryStats {
     const byWorkspace: Record<WorkspaceType, number> = {
-      ide: 0,
-      knowledge: 0,
+      editor: 0,
       notes: 0,
+      chat: 0,
+      terminal: 0,
+      preview: 0,
+      knowledge: 0,
       study: 0,
     };
 
@@ -392,9 +395,12 @@ class ProjectRegistryClass {
     };
 
     const byWorkspace: Record<WorkspaceType, number> = {
-      ide: 0,
-      knowledge: 0,
+      editor: 0,
       notes: 0,
+      chat: 0,
+      terminal: 0,
+      preview: 0,
+      knowledge: 0,
       study: 0,
     };
 

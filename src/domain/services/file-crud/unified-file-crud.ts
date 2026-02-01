@@ -140,28 +140,26 @@ export class UnifiedFileCrudService implements IFileCrudService {
   ): void {
     if (!this.eventBus || !success) return;
 
-    // Map source to event source type
-    const eventSource = source === 'agent' ? 'agent' as const : 'editor' as const;
-
     switch (type) {
       case 'create':
-        this.eventBus.emit('file:created', { path, source: eventSource });
+        this.eventBus.emit('file:created', { projectId: '', path }, 'UnifiedFileCrud');
         break;
       case 'read':
         if (source === 'agent') {
-          this.eventBus.emit('file:read', { path, source: 'agent' });
+          // Note: 'file:read' is not in DomainEventMap, using 'file:synced' as closest match
+          this.eventBus.emit('file:synced', { projectId: '', path }, 'UnifiedFileCrud');
         }
         break;
       case 'update':
-        this.eventBus.emit('file:modified', { path, source: eventSource });
+        this.eventBus.emit('file:updated', { projectId: '', path }, 'UnifiedFileCrud');
         break;
       case 'delete':
-        this.eventBus.emit('file:deleted', { path, source: eventSource });
+        this.eventBus.emit('file:deleted', { projectId: '', path }, 'UnifiedFileCrud');
         break;
       case 'move':
       case 'copy':
         // For move/copy, emit created event for destination
-        this.eventBus.emit('file:created', { path, source: eventSource });
+        this.eventBus.emit('file:created', { projectId: '', path }, 'UnifiedFileCrud');
         break;
     }
   }

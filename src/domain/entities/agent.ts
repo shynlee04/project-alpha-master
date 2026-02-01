@@ -7,9 +7,20 @@
  * Implements business rules for agent availability and tool execution.
  */
 
-import { WorkspaceBinding, WorkspaceBindingProps } from '../value-objects/workspace-binding';
+import type { WorkspaceBinding, WorkspaceBindingProps } from '../value-objects/workspace-binding';
 import { AgentToolBinding, AgentToolBindingProps } from '../value-objects/tool-permission';
-import { WorkspaceType } from '../value-objects/workspace-type';
+import type { PluginType } from '@/domain/schemas/plugin.schema';
+
+// Re-export for backward compatibility
+export type { WorkspacePermissions } from '../value-objects/tool-permission';
+
+/**
+ * @deprecated Use PluginType from @/domain/schemas/plugin.schema
+ */
+export type WorkspaceType = PluginType;
+
+// Re-export from workspace-binding for backward compatibility
+export type { WorkspaceBinding, WorkspaceBindingProps };
 
 /**
  * Agent status type
@@ -139,10 +150,9 @@ export class Agent {
   readonly updatedAt: number;
 
   constructor(props: AgentProps) {
-    // Convert plain objects to class instances
-    const workspaceBindings = props.workspaceBindings.map((wb) =>
-      wb instanceof WorkspaceBinding ? wb : new WorkspaceBinding(wb)
-    );
+    // WorkspaceBinding is a plain object (type alias), no conversion needed
+    // Just ensure we have an array
+    const workspaceBindings = [...props.workspaceBindings] as WorkspaceBinding[];
     const tools = props.tools.map((tool) =>
       tool instanceof AgentToolBinding ? tool : new AgentToolBinding(tool)
     );
@@ -215,11 +225,11 @@ export class Agent {
   /**
    * Check if agent is available in workspace
    *
-   * @param workspaceType - Target workspace type
+   * @param workspaceType - Target workspace type (PluginType)
    * @returns True if agent is available in workspace
    */
   isAvailableIn(workspaceType: WorkspaceType): boolean {
-    const binding = this.workspaceBindings.find(b => b.workspaceType === workspaceType);
+    const binding = this.workspaceBindings.find(b => b.pluginType === workspaceType);
     return binding?.isAvailable ?? false;
   }
 
@@ -228,10 +238,11 @@ export class Agent {
    *
    * @param workspaceType - Target workspace type
    * @returns UI variant ('full' | 'compact' | 'minimal')
+   * @deprecated uiVariant is no longer part of WorkspaceBinding - always returns 'full'
    */
-  getUIVariant(workspaceType: WorkspaceType): 'full' | 'compact' | 'minimal' {
-    const binding = this.workspaceBindings.find(b => b.workspaceType === workspaceType);
-    return binding?.uiVariant ?? 'minimal';
+  getUIVariant(_workspaceType: WorkspaceType): 'full' | 'compact' | 'minimal' {
+    // uiVariant was removed from the schema, defaulting to 'full'
+    return 'full';
   }
 
   /**
@@ -241,7 +252,7 @@ export class Agent {
    * @returns True if agent is marked as default for workspace
    */
   isDefaultFor(workspaceType: WorkspaceType): boolean {
-    const binding = this.workspaceBindings.find(b => b.workspaceType === workspaceType);
+    const binding = this.workspaceBindings.find(b => b.pluginType === workspaceType);
     return binding?.isDefault ?? false;
   }
 

@@ -6,17 +6,17 @@
  * Immutable value object representing agent tool configuration with workspace permissions.
  */
 
-import { WorkspaceType } from './workspace-type';
+import type { PluginType } from '@/domain/schemas/plugin.schema';
 
 /**
- * Workspace permissions mapping
+ * @deprecated Use PluginType from @/domain/schemas/plugin.schema
  */
-export interface WorkspacePermissions {
-  ide: boolean;
-  knowledge: boolean;
-  study: boolean;
-  notes: boolean;
-}
+export type WorkspaceType = PluginType;
+
+/**
+ * Workspace permissions mapping - uses PluginType as keys for indexing compatibility
+ */
+export type WorkspacePermissions = Partial<Record<PluginType, boolean>>;
 
 /**
  * Agent tool binding properties
@@ -41,7 +41,7 @@ export interface AgentToolBindingProps {
  *   toolName: 'Read File',
  *   isEnabled: true,
  *   workspacePermissions: {
- *     ide: true,
+ *     editor: true,
  *     knowledge: true,
  *     study: false,
  *     notes: false
@@ -75,7 +75,7 @@ export class AgentToolBinding {
    * @param workspaceType - Target workspace type
    * @returns True if tool has permission in workspace
    */
-  isPermittedIn(workspaceType: WorkspaceType): boolean {
+  isPermittedIn(workspaceType: PluginType): boolean {
     return this.workspacePermissions[workspaceType] ?? false;
   }
 
@@ -100,7 +100,7 @@ export class AgentToolBinding {
    * @returns New AgentToolBinding instance
    */
   withWorkspacePermission(
-    workspaceType: WorkspaceType,
+    workspaceType: PluginType,
     permitted: boolean
   ): AgentToolBinding {
     return new AgentToolBinding({
@@ -171,10 +171,13 @@ export class AgentToolBinding {
    */
   static defaultPermissions(): WorkspacePermissions {
     return {
-      ide: true,
+      editor: true,
+      notes: true,
+      chat: true,
+      terminal: true,
+      preview: true,
       knowledge: true,
-      study: true,
-      notes: true
+      study: true
     };
   }
 
@@ -185,10 +188,13 @@ export class AgentToolBinding {
    */
   static disabledPermissions(): WorkspacePermissions {
     return {
-      ide: false,
+      editor: false,
+      notes: false,
+      chat: false,
+      terminal: false,
+      preview: false,
       knowledge: false,
-      study: false,
-      notes: false
+      study: false
     };
   }
 }

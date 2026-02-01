@@ -10,7 +10,12 @@
  */
 
 import type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-binding';
-import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+import type { PluginType } from '@/domain/schemas/plugin.schema';
+
+/**
+ * @deprecated Use PluginType from @/domain/schemas/plugin.schema
+ */
+type WorkspaceType = PluginType;
 
 // Type for agents that have workspaceBindings
 export type AgentWithWorkspaceBindings = {
@@ -32,7 +37,7 @@ export function isAgentAvailableIn(
   workspaceType: WorkspaceType
 ): boolean {
   const binding = agent.workspaceBindings.find(
-    (b) => b.workspaceType === workspaceType
+    (b) => b.pluginType === workspaceType
   );
   return binding?.isAvailable ?? false;
 }
@@ -52,7 +57,7 @@ export function isAgentDefaultFor(
   workspaceType: WorkspaceType
 ): boolean {
   const binding = agent.workspaceBindings.find(
-    (b) => b.workspaceType === workspaceType
+    (b) => b.pluginType === workspaceType
   );
   return binding?.isDefault ?? false;
 }
