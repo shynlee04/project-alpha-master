@@ -82,7 +82,7 @@ export function toRecord(project: Project, workspaceId: 'ide' | 'knowledge' | 's
     storageType: project.storageType, // BUG-012 FIX: Persist storage type for routing/filtering
     lastOpened: project.lastOpened,
     createdAt: project.createdAt,
-    workspaceBindings: project.workspaceBindings, // ARC-D03: Renamed from bindings
+    plugins: project.plugins, // 00-06: Use canonical plugins field
     fileSnapshotEnabled: project.fileSnapshotEnabled,
   };
 }
@@ -101,10 +101,40 @@ export function fromRecord(record: any): Project {
     lastOpened: new Date(record.lastOpened),
     createdAt: new Date(record.createdAt),
     autoSync: true,  // Default value
-    workspaceBindings: record.workspaceBindings || record.bindings || {}, // ARC-D03: fallback for legacy
+    plugins: record.plugins || migrateBindingsToPlugins(record.workspaceBindings || record.bindings), // 00-06: Migrate legacy bindings
     fileSnapshotEnabled: record.fileSnapshotEnabled,
     tags: [],  // Default empty array
   };
+}
+
+/**
+ * Helper to migrate legacy workspaceBindings to plugins format
+ * @deprecated Only for backward compatibility with old records
+ */
+function migrateBindingsToPlugins(bindings: any): { enabled: string[]; default?: string } | undefined {
+  if (!bindings) return undefined;
+  
+  // If already in new format (has enabled array), return as-is
+  if (Array.isArray(bindings.enabled)) {
+    return bindings;
+  }
+  
+  // Convert legacy { ide: true, notes: true, ... } to { enabled: ['editor', 'notes', ...] }
+  const enabled: string[] = [];
+  const legacyToPlugin: Record<string, string> = {
+    ide: 'editor',
+    notes: 'notes',
+    knowledge: 'knowledge',
+    study: 'study',
+  };
+  
+  for (const [key, value] of Object.entries(bindings)) {
+    if (value === true) {
+      enabled.push(legacyToPlugin[key] || key);
+    }
+  }
+  
+  return enabled.length > 0 ? { enabled, default: 'editor' } : undefined;
 }
 
 export const createProjectCrudSlice: StateCreator<
@@ -124,8 +154,9 @@ export const createProjectCrudSlice: StateCreator<
   // FUNDAMENTAL TRUTH: Project ID does NOT include workspace prefix
   // Workspace is determined by routing, not by project ID
   createProject: async (input: CreateProjectInput) => {
-    const workspaceType: WorkspaceType = input.workspaceType ?? 'ide';  // Default to 'ide' for backward compatibility
-    const projectId = generateProjectId(workspaceType);  // BUG-003: Pass workspaceType for correct prefix
+    // 00-06: workspaceType is deprecated, use plugins instead
+    const workspaceType: WorkspaceType = 'ide';  // Default to 'ide' for ID generation
+    const projectId = generateProjectId(workspaceType);
     const now = new Date();
     const storageType = input.storageType ?? 'fsa';  // Default to 'fsa' for backward compatibility
 
@@ -173,11 +204,9 @@ export const createProjectCrudSlice: StateCreator<
       lastOpened: now,
       createdAt: now,
       autoSync: input.autoSync ?? true,
-      workspaceBindings: input.workspaceBindings ?? input.bindings ?? { // ARC-D03
-        ide: true,
-        knowledge: true,
-        notes: true,
-        study: true,
+      plugins: input.plugins ?? { // 00-06: Use canonical plugins field
+        enabled: ['editor', 'notes', 'knowledge', 'study'],
+        default: 'editor',
       },
       description: input.description,
       tags: input.tags ?? [],

@@ -4,17 +4,25 @@
  * @governance EPIC-CP-1.4
  *
  * Utility functions for project queries and updates.
+ * 
+ * 00-06: Migrated from workspaceBindings to plugins field
  */
 
 import { StateCreator } from 'zustand';
 import { db } from '@/infrastructure/persistence/dexie-db';
 import { fromRecord, toRecord } from './project-crud-slice'; // PERSIST-S002: Import both converters
 import type {
-  WorkspaceType,
-  WorkspaceBindings,
   ProjectState,
   ProjectUtilsMethods,
 } from './project-types';
+import type { PluginType } from '@/domain/entities/project';
+
+/**
+ * Helper to check if a project has a plugin enabled
+ */
+function hasPluginEnabled(project: { plugins?: { enabled?: PluginType[] } }, pluginType: PluginType): boolean {
+  return project.plugins?.enabled?.includes(pluginType) ?? false;
+}
 
 export const createProjectUtilsSlice: StateCreator<
   ProjectState,
@@ -105,48 +113,49 @@ export const createProjectUtilsSlice: StateCreator<
     );
   },
 
-  // Get projects by workspace binding
-  getProjectsByWorkspace: (workspaceType: WorkspaceType) => {
+  // Get projects by plugin (replaces getProjectsByWorkspace)
+  getProjectsByPlugin: (pluginType: PluginType) => {
     const projects = Object.values(get().projects);
 
-    return projects.filter((project) => {
-      const binding = project.workspaceBindings[workspaceType as keyof WorkspaceBindings];
-      return binding === true;
-    });
+    return projects.filter((project) => hasPluginEnabled(project, pluginType));
   },
 
-  // Get default project for workspace
-  getDefaultProjectForWorkspace: (workspaceType: WorkspaceType) => {
+  // Get default project for plugin (replaces getDefaultProjectForWorkspace)
+  getDefaultProjectForPlugin: (pluginType: PluginType) => {
     const projects = Object.values(get().projects);
 
-    // Find most recently opened project with this workspace enabled
-    const projectsWithWorkspace = projects
-      .filter((project) => project.workspaceBindings[workspaceType as keyof WorkspaceBindings] === true)
+    // Find most recently opened project with this plugin enabled
+    const projectsWithPlugin = projects
+      .filter((project) => hasPluginEnabled(project, pluginType))
       .sort((a, b) => {
         const timeA = a.lastOpened ? new Date(a.lastOpened).getTime() : 0;
         const timeB = b.lastOpened ? new Date(b.lastOpened).getTime() : 0;
         return timeB - timeA;
       });
 
-    return projectsWithWorkspace[0] || null;
+    return projectsWithPlugin[0] || null;
   },
 
   // Get project statistics
   getProjectStats: () => {
     const projects = Object.values(get().projects);
 
-    // Count projects by workspace bindings
-    const projectsByWorkspace: Record<string, number> = {
-      ide: 0,
-      knowledge: 0,
+    // Count projects by plugin
+    const projectsByPlugin: Record<PluginType, number> = {
+      editor: 0,
       notes: 0,
+      chat: 0,
+      terminal: 0,
+      preview: 0,
+      knowledge: 0,
       study: 0,
     };
 
     projects.forEach((project) => {
-      (Object.keys(project.workspaceBindings) as WorkspaceType[]).forEach((workspace) => {
-        if (project.workspaceBindings[workspace as keyof WorkspaceBindings] === true) {
-          projectsByWorkspace[workspace]++;
+      const enabled = project.plugins?.enabled ?? [];
+      enabled.forEach((plugin: PluginType) => {
+        if (projectsByPlugin[plugin] !== undefined) {
+          projectsByPlugin[plugin]++;
         }
       });
     });
@@ -178,7 +187,7 @@ export const createProjectUtilsSlice: StateCreator<
       totalProjects: projects.length,
       activeProjects: projects.filter((p) => !p.deleted).length,
       deletedProjects: projects.filter((p) => p.deleted).length,
-      projectsByWorkspace: projectsByWorkspace as Record<WorkspaceType, number>,
+      projectsByPlugin,
       recentlyCreated,
       recentlyOpened,
     };
