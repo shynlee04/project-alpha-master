@@ -384,40 +384,31 @@ export class StateOrchestrator {
   }
 
   /**
-   * Get workspace store (lazy load)
+   * Get workspace store (must be registered via registerStore)
    */
   private getWorkspaceStore() {
     if (!this.stores.workspaceStore) {
-      try {
-        const { useWorkspaceStore } = require('@/infrastructure/persistence/stores/workspace-store');
-        this.stores.workspaceStore = useWorkspaceStore.getState();
-      } catch (e) {
-        console.warn('[StateOrchestrator] Failed to load workspace store:', e);
-      }
+      console.warn('[StateOrchestrator] Workspace store not registered. Call registerStore() first.');
     }
     return this.stores.workspaceStore;
   }
 
   /**
-   * Get agents store (lazy load)
+   * Get agents store (must be registered via registerStore)
    */
   private getAgentsStore() {
     if (!this.stores.agentsStore) {
-      // Lazy load to avoid circular dependency
-      const { useAgentsStore } = require('@/stores/agents-store');
-      this.stores.agentsStore = useAgentsStore.getState();
+      console.warn('[StateOrchestrator] Agents store not registered. Call registerStore() first.');
     }
     return this.stores.agentsStore;
   }
 
   /**
-   * Get agent selection store (lazy load)
+   * Get agent selection store (must be registered via registerStore)
    */
   private getAgentSelectionStore() {
     if (!this.stores.agentSelectionStore) {
-      // Lazy load to avoid circular dependency
-      const { useAgentSelectionStore } = require('@/stores/agent-selection-store');
-      this.stores.agentSelectionStore = useAgentSelectionStore.getState();
+      console.warn('[StateOrchestrator] Agent selection store not registered. Call registerStore() first.');
     }
     return this.stores.agentSelectionStore;
   }

@@ -31,14 +31,14 @@ import { crossWorkspaceEventBus } from './cross-workspace-event-bus';
  * }
  * ```
  */
-export function initializeEventSystem(): void {
+export async function initializeEventSystem(): Promise<void> {
   console.log('[EventSystem] Initializing complete event system...');
 
   // Step 1: Initialize state orchestrator
   stateOrchestrator.initialize();
 
-  // Step 2: Register store references with orchestrator
-  registerStoreReferences(stateOrchestrator);
+  // Step 2: Register store references with orchestrator (async for ESM)
+  await registerStoreReferences(stateOrchestrator);
 
   console.log('[EventSystem] Complete event system initialized');
 }
@@ -46,29 +46,30 @@ export function initializeEventSystem(): void {
 /**
  * Register store references with state orchestrator
  *
- * Lazy load stores to avoid circular dependencies
+ * Uses dynamic import() for ESM compatibility.
+ * Stores are loaded asynchronously to avoid circular dependencies.
  */
-function registerStoreReferences(orchestrator: StateOrchestrator): void {
+async function registerStoreReferences(orchestrator: StateOrchestrator): Promise<void> {
   // Workspace store
   try {
-    const { useWorkspaceStore } = require('@/infrastructure/persistence/stores/workspace/workspace-store');
-    orchestrator.registerStore('workspaceStore', useWorkspaceStore);
+    const workspaceModule = await import('@/infrastructure/persistence/stores/workspace/workspace-store');
+    orchestrator.registerStore('workspaceStore', workspaceModule.useWorkspaceStore);
   } catch (error) {
     console.warn('[EventSystem] Workspace store not available:', error);
   }
 
-  // Agents store
+  // Agents store (re-exported from agents/index.ts)
   try {
-    const { useAgentsStore } = require('@/stores/agents-store');
-    orchestrator.registerStore('agentsStore', useAgentsStore);
+    const agentsModule = await import('@/infrastructure/persistence/stores/agents');
+    orchestrator.registerStore('agentsStore', agentsModule.useAgentsStore);
   } catch (error) {
     console.warn('[EventSystem] Agents store not available:', error);
   }
 
   // Agent selection store
   try {
-    const { useAgentSelectionStore } = require('@/infrastructure/persistence/stores/agents/agent-selection-store');
-    orchestrator.registerStore('agentSelectionStore', useAgentSelectionStore);
+    const selectionModule = await import('@/infrastructure/persistence/stores/agents/agent-selection-store');
+    orchestrator.registerStore('agentSelectionStore', selectionModule.useAgentSelectionStore);
   } catch (error) {
     console.warn('[EventSystem] Agent selection store not available:', error);
   }
