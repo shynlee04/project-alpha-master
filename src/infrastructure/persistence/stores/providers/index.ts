@@ -1,13 +1,19 @@
 /**
- * PHASE 2 STUB: Provider Store Barrel
- * Original code archived to: _phase2-archive/infrastructure/persistence/stores/providers/
+ * Provider Store Barrel
  * 
- * @phase 2
- * @stub true
- * @created 2026-01-29
+ * Exports provider-related slices for Zustand store composition.
+ * Stub slices maintained for backward compatibility while vault slice
+ * provides real credential vault operations.
+ * 
+ * @module infrastructure/persistence/stores/providers
+ * @phase A-byok-foundation
+ * @updated 2026-02-01
  */
 
 import type { StateCreator } from 'zustand';
+
+// Vault slice with real credential vault operations
+export { createProviderVaultSlice } from './credentials/vault-slice.js';
 
 // Re-export types from canonical location
 export type {
