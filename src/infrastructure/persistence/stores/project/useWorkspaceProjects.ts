@@ -15,15 +15,17 @@ import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useProjectStore } from './useProjectStore';
 import { useResponsive } from '@/hooks/useResponsive';
-import type { Project, WorkspaceBindings } from './project-types';
+import type { Project } from './project-types';
+import type { PluginType } from '@/domain/entities/project';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 export interface UseWorkspaceProjectsOptions {
   /**
-   * The workspace type to filter by (e.g., 'notes', 'study')
+   * The plugin type to filter by (e.g., 'notes', 'editor')
+   * 00-06: Changed from WorkspaceBindings key to PluginType
    */
-  workspaceType: keyof WorkspaceBindings;
+  workspaceType: PluginType;
 
   /**
    * Optional storage type filter
@@ -83,12 +85,11 @@ export function useWorkspaceProjects({
   // Filter projects based on criteria
   const filteredProjects = useMemo(() => {
     return allProjects.filter((project) => {
-      // 1. Check workspace binding
-      // Binding can be boolean true or string 'true' (legacy) - ARC-D03: workspaceBindings
-      const binding = project.workspaceBindings?.[workspaceType] || (project as any).bindings?.[workspaceType];
-      const isBound = binding === true || String(binding) === 'true';
+      // 1. Check plugin enabled status (replaces workspaceBindings check)
+      // 00-06: Changed from workspaceBindings to plugins.enabled
+      const hasPlugin = project.plugins?.enabled?.includes(workspaceType) ?? false;
 
-      if (!isBound) return false;
+      if (!hasPlugin) return false;
 
       // 2. Check storage type if specified
       if (storageType && project.storageType !== storageType) {

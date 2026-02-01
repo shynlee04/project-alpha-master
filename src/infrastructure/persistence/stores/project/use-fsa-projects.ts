@@ -25,8 +25,9 @@ export function useFSAProjects(): Project[] {
   const fsaProjects = useMemo(() => {
     if (!platform.canAccessFSA) return [];
     
+    // 00-06: Changed from workspaceBindings?.notes to plugins?.enabled?.includes('notes')
     return (allProjects?.filter(
-      (p) => p.storageType === 'fsa' && p.workspaceBindings?.notes === true
+      (p) => p.storageType === 'fsa' && p.plugins?.enabled?.includes('notes')
     ) ?? []) as Project[];
   }, [allProjects, platform.canAccessFSA]);
   

@@ -4,17 +4,19 @@
  * @governance EPIC-CP-1
  *
  * January 2026 Zustand Pattern:
- * - Single store composed from 5 focused slices
+ * - Single store composed from 4 focused slices
  * - Each slice is <120 lines (single responsibility principle)
  * - Dexie IndexedDB persistence
  * - Cross-slice communication via get()
  *
  * Slices:
  * - project-crud-slice.ts: Project lifecycle operations
- * - project-bindings-slice.ts: Workspace bindings
  * - project-permissions-slice.ts: FSA permission state management
  * - project-layout-slice.ts: IDE layout state (panel sizes, open files)
  * - project-utils-slice.ts: Utility functions
+ *
+ * Note: project-bindings-slice.ts was removed in 00-06.
+ * Plugin configuration is now accessed via project.plugins field directly.
  */
 
 import { create } from 'zustand';
@@ -22,21 +24,20 @@ import { useShallow } from 'zustand/react/shallow';
 import type {
   ProjectState,
   ProjectMethods,
-  ProjectBindingMethods,
   ProjectPermissionsMethods,
   ProjectLayoutMethods,
   ProjectUtilsMethods,
 } from './project-types';
 import { createProjectCrudSlice } from './project-crud-slice';
-import { createProjectBindingsSlice } from './project-bindings-slice';
+// 00-06: project-bindings-slice was removed - use plugins field on Project instead
 import { createProjectPermissionsSlice } from './project-permissions-slice';
 import { createProjectLayoutSlice } from './project-layout-slice';
 import { createProjectUtilsSlice } from './project-utils-slice';
 
 // Combined state interface
+// 00-06: ProjectBindingMethods/ProjectPluginMethods removed - plugins are accessed via project.plugins directly
 type CombinedProjectState = ProjectState &
   ProjectMethods &
-  ProjectBindingMethods &
   ProjectPermissionsMethods &
   ProjectLayoutMethods &
   ProjectUtilsMethods;
@@ -60,7 +61,7 @@ export const useProjectStore = create<CombinedProjectState>()(
 
     // Compose all slices
     ...createProjectCrudSlice(set, get, api),
-    ...createProjectBindingsSlice(set, get, api),
+    // 00-06: project-bindings-slice removed - plugins are now part of Project entity
     ...createProjectPermissionsSlice(set, get, api),
     ...createProjectLayoutSlice(set, get, api),
     ...createProjectUtilsSlice(set, get, api),

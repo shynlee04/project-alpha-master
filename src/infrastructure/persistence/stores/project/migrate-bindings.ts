@@ -20,7 +20,7 @@
  * - Add verification function for debugging
  */
 
-import type { WorkspaceBindings } from '@/infrastructure/persistence/dexie-db-core-types';
+import type { ProjectPlugins } from '@/domain/entities/project';
 import { getProjectStoreState } from './useProjectStore';
 import { db } from '@/infrastructure/persistence/dexie-db';
 
@@ -34,13 +34,12 @@ import { db } from '@/infrastructure/persistence/dexie-db';
 const MIGRATION_KEY = 'workspace-bindings-migration-v1';
 
 /**
- * Default bindings with all workspaces enabled
+ * Default plugins with all workspace plugins enabled
+ * 00-06: Changed from WorkspaceBindings to ProjectPlugins format
  */
-const DEFAULT_BINDINGS_ALL_ENABLED: WorkspaceBindings = {
-  ide: true,
-  notes: true,
-  knowledge: true,
-  study: true,
+const DEFAULT_PLUGINS_ALL_ENABLED: ProjectPlugins = {
+  enabled: ['editor', 'notes', 'knowledge', 'study'],
+  default: 'editor',
 };
 
 // ============================================================================
@@ -115,25 +114,25 @@ export function markMigrationComplete(timestamp: number): void {
 }
 
 /**
- * Check if a project's bindings need migration.
+ * Check if a project's plugins need migration.
  *
- * A project needs migration if any workspace binding is false/undefined.
+ * A project needs migration if plugins.enabled is empty or undefined.
  *
  * PHASE0-1 FIX (2026-01-20):
  * - Empty object {} now triggers migration
+ * 
+ * 00-06: Changed from workspaceBindings to plugins format
  *
- * @param bindings - Project's current workspace bindings
- * @returns true if at least one workspace is disabled
+ * @param plugins - Project's current plugins configuration
+ * @returns true if project needs plugin migration
  */
-export function needsMigration(bindings: WorkspaceBindings | undefined): boolean {
-  if (!bindings) return true; // No bindings = needs migration
-
-  // PHASE0-1 FIX: Check for empty object
-  const keys = Object.keys(bindings) as (keyof WorkspaceBindings)[];
-  if (keys.length === 0) return true; // Empty object = needs migration
-
-  // Check if any workspace is disabled
-  return keys.some((key) => bindings[key] !== true);
+export function needsMigration(plugins: ProjectPlugins | undefined): boolean {
+  if (!plugins) return true; // No plugins = needs migration
+  
+  // Check if enabled array exists and has plugins
+  if (!plugins.enabled || plugins.enabled.length === 0) return true;
+  
+  return false;
 }
 
 /**
@@ -175,18 +174,18 @@ export async function migrateWorkspaceBindings(): Promise<MigrationResult> {
   const failedProjectIds: string[] = [];
 
   // Step 3: Filter projects needing migration
-  // ARC-D03: Check both workspaceBindings (new) and bindings (legacy)
+  // 00-06: Check plugins field - use type assertion for legacy record access
   const projectsNeedingMigration = allProjects.filter((project) =>
-    needsMigration(project.workspaceBindings || (project as any).bindings)
+    needsMigration(project.plugins || (project as any).workspaceBindings || (project as any).bindings)
   );
 
   console.log(`[Migration] Found ${projectsNeedingMigration.length} projects needing migration out of ${allProjects.length} total`);
 
-  // Step 4: Update each project's workspaceBindings directly in Dexie (PHASE0-1 FIX)
+  // Step 4: Update each project's plugins directly in Dexie (PHASE0-1 FIX)
   for (const project of projectsNeedingMigration) {
     try {
       await db.projects.update(project.id, {
-        workspaceBindings: DEFAULT_BINDINGS_ALL_ENABLED,
+        plugins: DEFAULT_PLUGINS_ALL_ENABLED,  // 00-06: Changed to plugins
         lastOpened: new Date(), // Update to trigger reactivity in useLiveQuery
       });
       migratedProjectIds.push(project.id);
@@ -226,20 +225,20 @@ export async function migrateWorkspaceBindings(): Promise<MigrationResult> {
  * Migrate FSA projects specifically for Notes workspace.
  *
  * TASK8-WSBINDINGS FIX (2026-01-20):
- * - Ensures FSA projects have workspaceBindings.notes === true
+ * - Ensures FSA projects have 'notes' in plugins.enabled
  * - Fixes issue where Notes redirects to IDE-only projects
- * - Notes filtering: Only shows projects where workspaceBindings.notes === true
+ * - Notes filtering: Only shows projects where plugins.enabled includes 'notes'
  *
  * Process:
  * 1. Get all FSA projects from Dexie
- * 2. Check if notes binding is missing or false
- * 3. Update bindings to enable notes workspace
+ * 2. Check if notes plugin is missing from enabled list
+ * 3. Update plugins to include notes
  * 4. Update lastOpened to trigger useLiveQuery refresh
- *
- * @returns Number of migrated FSA projects
+ * 
+ * 00-06: Updated to use plugins format instead of workspaceBindings
  */
 export async function migrateFSAProjectsToNotes(): Promise<number> {
-  console.log('[Migration] Starting FSA Notes binding migration...');
+  console.log('[Migration] Starting FSA Notes plugin migration...');
 
   const fsaProjects = await db.projects
     .where('storageType')
@@ -249,16 +248,20 @@ export async function migrateFSAProjectsToNotes(): Promise<number> {
   let migratedCount = 0;
 
   for (const project of fsaProjects) {
-    // Set Notes binding if not set or set to false
-    const currentBindings = project.workspaceBindings || (project as any).bindings;
-    const needsNotesBinding = !currentBindings || currentBindings.notes === false;
+    // Get current plugins, handling legacy bindings format via type assertion
+    const currentPlugins = project.plugins || (project as any).workspaceBindings || (project as any).bindings;
+    const hasNotesEnabled = currentPlugins?.enabled?.includes('notes') ?? false;
 
-    if (needsNotesBinding) {
+    if (!hasNotesEnabled) {
+      // Build new plugins with notes enabled
+      const existingEnabled = currentPlugins?.enabled ?? ['editor'];
+      const newPlugins: ProjectPlugins = {
+        enabled: [...existingEnabled, 'notes'] as any,
+        default: currentPlugins?.default ?? 'editor',
+      };
+      
       await db.projects.update(project.id, {
-        workspaceBindings: {
-          ...currentBindings,
-          notes: true,  // ✅ Enable Notes
-        },
+        plugins: newPlugins,  // 00-06: Use plugins instead of workspaceBindings
         lastOpened: new Date(), // Trigger useLiveQuery refresh
       });
 
@@ -267,7 +270,7 @@ export async function migrateFSAProjectsToNotes(): Promise<number> {
     }
   }
 
-  console.log(`[Migration] FSA Notes binding complete: ${migratedCount} projects migrated`);
+  console.log(`[Migration] FSA Notes plugin migration complete: ${migratedCount} projects migrated`);
   return migratedCount;
 }
 
@@ -290,10 +293,10 @@ export function checkMigrationEligibility(): MigrationEligibility {
   }
 
   const state = getProjectStoreState();
-  const allProjects = Object.values(state.projects || {});
-  // ARC-D03: Check both workspaceBindings (new) and bindings (legacy)
+  const allProjects = Object.values(state.projects || {}) as any[];
+  // 00-06: Check plugins field with fallback to legacy bindings via type assertion
   const projectsNeedingMigration = allProjects
-    .filter((project) => needsMigration(project.workspaceBindings || (project as any).bindings))
+    .filter((project) => needsMigration(project.plugins || (project as any).workspaceBindings || (project as any).bindings))
     .map((project) => project.id);
 
   return {
@@ -329,11 +332,22 @@ export async function verifyMigration(): Promise<VerificationResult> {
   const allProjects = await db.projects.toArray();
 
   const migrated = allProjects.filter(p => {
-    const bindings = p.workspaceBindings || (p as any).bindings;
-    if (!bindings || Object.keys(bindings).length === 0) return false;
-
-    const keys = Object.keys(bindings) as (keyof WorkspaceBindings)[];
-    return keys.every(key => bindings[key] === true);
+    // 00-06: Check plugins field with fallback to legacy bindings via type assertion
+    const plugins = p.plugins || (p as any).workspaceBindings || (p as any).bindings;
+    if (!plugins) return false;
+    
+    // Check if project has enabled plugins
+    if (plugins.enabled && Array.isArray(plugins.enabled)) {
+      return plugins.enabled.length > 0;
+    }
+    
+    // Legacy format check - object with boolean values
+    if (typeof plugins === 'object' && Object.keys(plugins).length > 0) {
+      const keys = Object.keys(plugins);
+      return keys.every(key => plugins[key] === true);
+    }
+    
+    return false;
   });
 
   return {
@@ -360,7 +374,7 @@ export function getMigrationMetadata() {
   return {
     version: 1,
     key: MIGRATION_KEY,
-    defaultBindings: DEFAULT_BINDINGS_ALL_ENABLED,
-    description: 'Enable all workspaces for existing projects (writes directly to Dexie)',
+    defaultPlugins: DEFAULT_PLUGINS_ALL_ENABLED,  // 00-06: Changed from defaultBindings
+    description: 'Enable all plugins for existing projects (writes directly to Dexie)',
   };
 }

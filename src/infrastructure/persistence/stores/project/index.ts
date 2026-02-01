@@ -74,7 +74,7 @@ export async function saveProject(project: Project): Promise<boolean> {
         storageType: project.storageType,
         storageMetadata: project.storageMetadata,
         autoSync: project.autoSync,
-        workspaceBindings: project.workspaceBindings,
+        plugins: project.plugins,  // 00-06: Changed from workspaceBindings to plugins
         description: project.description,
         tags: project.tags,
       });
@@ -86,7 +86,7 @@ export async function saveProject(project: Project): Promise<boolean> {
         storageType: project.storageType,
         storageMetadata: project.storageMetadata,
         autoSync: project.autoSync,
-        workspaceBindings: project.workspaceBindings,
+        plugins: project.plugins,  // 00-06: Changed from workspaceBindings to plugins
         description: project.description,
         tags: project.tags,
       });
@@ -197,16 +197,17 @@ export async function updateProjectLastOpened(id: string): Promise<boolean> {
 }
 
 /**
- * Facade: Update workspace bindings
+ * Facade: Update project plugins (replaces updateProjectBindings)
  *
- * @deprecated Use useProjectStore.getState().updateProjectBindings() instead
+ * @deprecated Use useProjectStore.getState().updateProject() instead
  */
 export async function updateProjectBindings(
   id: string,
-  bindings: import('@/domain/entities/project').WorkspaceBindings
+  plugins: import('@/domain/entities/project').ProjectPlugins
 ): Promise<boolean> {
   try {
-    await useProjectStore.getState().updateProjectBindings(id, bindings);
+    // 00-06: Changed from updateProjectBindings to updateProject with plugins
+    useProjectStore.getState().updateProject(id, { plugins });
     return true;
   } catch {
     return false;
@@ -224,7 +225,7 @@ export async function updateProjectMetadata(
     name: string;
     autoSync: boolean;
     exclusionPatterns: string[];
-    workspaceBindings: import('@/domain/entities/project').WorkspaceBindings;
+    plugins: import('@/domain/entities/project').ProjectPlugins;  // 00-06: Changed from workspaceBindings
   }>
 ): Promise<boolean> {
   try {
@@ -232,7 +233,7 @@ export async function updateProjectMetadata(
       name: metadata.name,
       autoSync: metadata.autoSync,
       exclusionPatterns: metadata.exclusionPatterns,
-      bindings: metadata.workspaceBindings,
+      plugins: metadata.plugins,  // 00-06: Changed from bindings
     });
     return true;
   } catch {
