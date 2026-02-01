@@ -23,11 +23,11 @@ Previous approach failed because:
 ## Current Position
 
 Phase: A of 5 (BYOK Foundation)
-Plan: 2 of 4 (Wave 1: A-01 + A-02 completing in parallel)
-Status: In progress
-Last activity: 2026-02-01 — Completed A-02-PLAN.md (vault-slice restoration)
+Plan: 2 of 4 (Wave 1 complete: A-01 + A-02)
+Status: Wave 1 complete, ready for Wave 2 (A-03)
+Last activity: 2026-02-01 — Completed A-01-PLAN.md (credential vault infrastructure)
 
-Progress: ██░░░░░░░░ 20% (A-01 + A-02 in Wave 1)
+Progress: ██░░░░░░░░ 20% (Wave 1: A-01 + A-02 complete)
 
 ### Phase Summary
 
@@ -75,7 +75,7 @@ Progress: ██░░░░░░░░ 20% (A-01 + A-02 in Wave 1)
 
 | Component | File | Restore In |
 |-----------|------|------------|
-| CredentialVault | `credential-vault.ts` | Phase A |
+| CredentialVault | `credential-vault.ts` | ✅ Phase A (A-01 complete) |
 | NoteAIService | `note-ai-service.ts` | Phase C |
 | ToolPermissions | `tool-permissions.ts` | Phase D |
 | ProviderSettings | `ProviderSettings.tsx` | Phase A |
@@ -98,9 +98,9 @@ Progress: ██░░░░░░░░ 20% (A-01 + A-02 in Wave 1)
 
 ## Session Continuity
 
-Last session: 2026-02-01T15:28:53Z
-Stopped at: Completed A-02-PLAN.md
-Resume: Wave 1 complete when A-01 finishes, then Wave 2 (A-03)
+Last session: 2026-02-01T15:33:03Z
+Stopped at: Completed A-01-PLAN.md (Wave 1 complete with A-02)
+Resume: Execute Wave 2 (A-03) - ProviderSettings UI
 
 ---
 
@@ -118,4 +118,4 @@ Resume: Wave 1 complete when A-01 finishes, then Wave 2 (A-03)
 
 ---
 
-*Updated: 2026-02-01T15:28:53Z after A-02 completion*
+*Updated: 2026-02-01T15:33:03Z after A-01 completion (Wave 1 complete)*
