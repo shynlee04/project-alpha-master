@@ -4,11 +4,11 @@
  * @governance EPIC-CP-1
  *
  * Type definitions for project metadata store.
- * Based on ProjectMetadata from lib/workspace/project-store.ts.
+ * 
+ * @mandate NO-WORKSPACE - See SOURCE-OF-TRUTH.md Part 6
  */
 
-import type { WorkspaceBindings, Project as DomainProject, LayoutConfig } from '@/domain/entities/project';
-import type { WorkspaceType } from '@/domain/entities/workspace';
+import type { PluginType, ProjectPlugins, Project as DomainProject, LayoutConfig } from '@/domain/entities/project';
 import type { FsaPermissionState } from '@/infrastructure/filesystem';
 import type { StorageHandleMetadata } from '@/infrastructure/filesystem/handle-types';
 
@@ -47,23 +47,19 @@ export interface Project extends DomainProject {
 
 /**
  * Input for creating a new project
- * FS-03: Added workspaceType for project ID namespacing
  * PS-04: Replaced fsaHandle with storageMetadata
- * ARC-D03: workspaceBindings replaces bindings
+ * 
+ * @mandate NO-WORKSPACE - Uses plugins field, not workspaceBindings
  */
 export interface CreateProjectInput {
   name: string;
   folderPath: string;
   storageType?: 'indexeddb' | 'fsa';  // Defaults to 'fsa' for backward compatibility
   storageMetadata?: StorageHandleMetadata | null;  // PS-04: Serializable metadata instead of handle
-  workspaceType?: WorkspaceType;  // FS-03: Workspace context for namespaced project IDs
   autoSync?: boolean;
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
-  // ARC-D03: New canonical field
-  workspaceBindings?: WorkspaceBindings;
-  // Deprecated: Use workspaceBindings instead
-  bindings?: WorkspaceBindings;
+  plugins?: ProjectPlugins;  // Plugin configuration
   fileSnapshotEnabled?: boolean;
   description?: string;
   tags?: string[];
@@ -72,8 +68,9 @@ export interface CreateProjectInput {
 /**
  * Input for updating an existing project (all fields optional)
  * PS-04: Replaced fsaHandle with storageMetadata
- * ARC-D03: workspaceBindings replaces bindings
  * FSA-010: lastKnownPermissionState removed - permission state is in FSAHandleRecord
+ * 
+ * @mandate NO-WORKSPACE - Uses plugins field, not workspaceBindings
  */
 export interface UpdateProjectInput {
   name?: string;
@@ -84,10 +81,7 @@ export interface UpdateProjectInput {
   autoSync?: boolean;
   layoutState?: LayoutConfig;
   exclusionPatterns?: string[];
-  // ARC-D03: New canonical field
-  workspaceBindings?: WorkspaceBindings;
-  // Deprecated: Use workspaceBindings instead
-  bindings?: WorkspaceBindings;
+  plugins?: ProjectPlugins;  // Plugin configuration
   fileSnapshotEnabled?: boolean;
   description?: string;
   tags?: string[];
@@ -117,7 +111,6 @@ export interface ProjectState {
 
 /**
  * Project CRUD methods
- * FS-03: Updated createProject to include workspaceType parameter
  * PS-04: Changed restoreProjectHandle to return HandleRestoreResult
  */
 export interface ProjectMethods {
@@ -132,26 +125,32 @@ export interface ProjectMethods {
 }
 
 /**
- * Project binding methods
+ * Project plugin methods (replaces ProjectBindingMethods)
+ * 
+ * @mandate NO-WORKSPACE - Uses PluginType, not WorkspaceBindings
  */
-export interface ProjectBindingMethods {
-  updateProjectBindings: (projectId: string, bindings: WorkspaceBindings) => Promise<void>;
-  getProjectBindings: (projectId: string) => WorkspaceBindings | null;
-  validateBindings: (bindings: WorkspaceBindings) => ValidationResult;
-  getEnabledWorkspaces: (projectId: string) => (keyof WorkspaceBindings)[];
-  getDefaultWorkspace: (projectId: string) => keyof WorkspaceBindings;
+export interface ProjectPluginMethods {
+  updateProjectPlugins: (projectId: string, plugins: ProjectPlugins) => Promise<void>;
+  getProjectPlugins: (projectId: string) => ProjectPlugins | null;
+  togglePlugin: (projectId: string, pluginType: PluginType) => Promise<void>;
+  setDefaultPlugin: (projectId: string, pluginType: PluginType) => Promise<void>;
+  getEnabledPlugins: (projectId: string) => PluginType[];
+  getDefaultPlugin: (projectId: string) => PluginType;
+  validatePlugins: (plugins: ProjectPlugins) => ValidationResult;
 }
 
 /**
  * Project utility methods
+ * 
+ * @mandate NO-WORKSPACE - Uses PluginType, not WorkspaceType
  */
 export interface ProjectUtilsMethods {
   updateLastOpened: (projectId: string) => Promise<void>;
   hydrateProjects: () => Promise<void>;
   getRecentProjects: (limit?: number) => Project[];
   searchProjects: (query: string) => Project[];
-  getProjectsByWorkspace: (workspaceType: WorkspaceType) => Project[];
-  getDefaultProjectForWorkspace: (workspaceType: WorkspaceType) => Project | null;
+  getProjectsByPlugin: (pluginType: PluginType) => Project[];
+  getDefaultProjectForPlugin: (pluginType: PluginType) => Project | null;
   getProjectStats: () => ProjectStats;
 }
 
@@ -182,7 +181,7 @@ export interface ProjectLayoutMethods {
 // ============================================================================
 
 /**
- * Validation result for workspace bindings
+ * Validation result for plugin configuration
  */
 export interface ValidationResult {
   isValid: boolean;
@@ -192,12 +191,14 @@ export interface ValidationResult {
 
 /**
  * Project statistics
+ * 
+ * @mandate NO-WORKSPACE - Uses PluginType, not WorkspaceType
  */
 export interface ProjectStats {
   totalProjects: number;
   activeProjects: number;
   deletedProjects: number;
-  projectsByWorkspace: Record<WorkspaceType, number>;
+  projectsByPlugin: Record<PluginType, number>;
   recentlyCreated: Project[];
   recentlyOpened: Project[];
 }
@@ -207,16 +208,9 @@ export interface ProjectStats {
 // ============================================================================
 
 /**
- * Re-export WorkspaceBindings for convenience
- * WorkspaceBindings is defined in core/entities/Project.ts
+ * Re-export PluginType and ProjectPlugins for convenience
  */
-export type { WorkspaceBindings } from '@/domain/entities/project';
-
-/**
- * Re-export WorkspaceType for convenience
- * WorkspaceType is defined in core/entities/Workspace.ts
- */
-export type { WorkspaceType } from '@/domain/entities/workspace';
+export type { PluginType, ProjectPlugins } from '@/domain/entities/project';
 
 /**
  * Re-export FsaPermissionState for convenience

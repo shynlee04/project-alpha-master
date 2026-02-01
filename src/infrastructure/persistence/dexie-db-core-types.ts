@@ -6,22 +6,27 @@
  * Core record types for IndexedDB persistence.
  * Extracted from dexie-db.ts for better code organization.
  *
+ * @mandate NO-WORKSPACE - See SOURCE-OF-TRUTH.md Part 6
  * Story 27-1: State Architecture Stabilization
  * Story 27-1c: Persistence Migration (idb → Dexie)
  */
 
 import type { Table } from 'dexie';
-import type { WorkspaceBindings } from '@/domain/entities/project';
+import type { PluginType, ProjectPlugins } from '@/domain/entities/project';
 
 // ============================================================================
 // Shared Types
 // ============================================================================
 
 /**
- * Workspace identifier type
- * Used across the application for workspace-specific operations
+ * Plugin type for database tables.
+ * Files and state are isolated by projectId only (not by plugin).
+ * Plugins are features, not data containers.
+ * 
+ * @deprecated Use PluginType from @/domain/entities/project instead.
+ * This alias exists only for migration compatibility.
  */
-export type WorkspaceId = 'ide' | 'knowledge' | 'study' | 'notes';
+export type DbPluginType = PluginType;
 
 // ============================================================================
 // Core Record Types
@@ -30,14 +35,10 @@ export type WorkspaceId = 'ide' | 'knowledge' | 'study' | 'notes';
 /**
  * Project metadata stored in IndexedDB
  *
- * NOTE: ARC-D03: workspaceBindings is the new canonical field name.
- * bindings is kept for backward compatibility with existing IndexedDB data.
- * Runtime code handles both fields for backwards compatibility.
- *
- * PERSIST-S002: Added workspaceId for cross-workspace isolation
- *
- * TEMP-PROJECT-ELIMINATION: Temp fields (isTemp, autoCreated, isBrowserMode)
- * are deprecated and will be removed in Phase 4. New projects should not use these.
+ * @mandate NO-WORKSPACE - Projects use plugins field, not workspaceBindings.
+ * 
+ * MIGRATION: Old records may have workspaceBindings field - these are
+ * migrated to plugins on read. New records use plugins only.
  */
 export interface ProjectRecord {
     // Core identity
@@ -46,23 +47,20 @@ export interface ProjectRecord {
     path: string;
     folderPath?: string;
 
-    // Workspace configuration
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
-    storageType?: 'indexeddb' | 'fsa'; // Storage backend type for project
+    // Storage configuration
+    storageType?: 'indexeddb' | 'fsa';
 
-    // ARC-D03: New canonical field (preferred)
-    workspaceBindings?: WorkspaceBindings;
-    // Legacy field (kept for backward compatibility - migrated to workspaceBindings)
-    bindings?: WorkspaceBindings | Record<string, string>;
+    // Plugin configuration (replaces workspaceBindings)
+    plugins?: ProjectPlugins;
 
     // Timestamps
     lastOpened: Date;
     createdAt: Date;
 
     // Configuration
-    autoSync?: boolean;  // Auto-sync flag (default: true)
-    exclusionPatterns?: string[];  // Custom exclusion patterns for sync
-    layoutState?: {  // Optional layout state for IDE restoration
+    autoSync?: boolean;
+    exclusionPatterns?: string[];
+    layoutState?: {
       panelSizes?: number[];
       openFiles?: string[];
       activeFile?: string | null;
@@ -79,29 +77,26 @@ export interface ProjectRecord {
     deleted?: boolean;
     deletedAt?: Date;
 
-    // DEPRECATED: Temp project support (NS-2026-01-07)
-    // Will be removed in Phase 4 of temp project elimination
+    // DEPRECATED: Temp project support
     isTemp?: boolean;
     autoCreated?: boolean;
     isBrowserMode?: boolean;
 
-    // PHASE0-2: Notes import hash tracking for idempotent imports
+    // Notes import tracking
     notesImportHash?: string;
     notesImportHashTimestamp?: Date;
 }
 
 /**
  * IDE state per project (panel layouts, open files, etc.)
- * PERSIST-S002: Added workspaceId for cross-workspace isolation
- * FIX-2026-01-20: Added focusedPath for FileTree persistence
+ * State is per-project, not per-plugin.
  */
 export interface IDEStateRecord {
   projectId: string;
-  workspaceId: "ide" | "knowledge" | "study" | "notes";
   openFiles: string[];
   activeFile: string | null;
   expandedPaths: string[];
-  focusedPath?: string;  // FIX-2026-01-20: FileTree focused path persistence
+  focusedPath?: string;
   panelLayouts: Record<string, number[]>;
   terminalTab: "output" | "terminal" | "problems";
   chatVisible: boolean;
@@ -111,12 +106,11 @@ export interface IDEStateRecord {
 
 /**
  * Conversation record for AI chat history
- * PERSIST-S002: Added workspaceId for cross-workspace isolation
+ * Conversations are per-project.
  */
 export interface ConversationRecord {
     id: string;
     projectId: string;
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
     messages: unknown[];
     toolResults?: unknown[];
     createdAt: Date;
@@ -125,38 +119,34 @@ export interface ConversationRecord {
 
 /**
  * File snapshot metadata (lightweight, for fast file tree loads)
- * Story WB-2: File Snapshot Store
- * PERSIST-S002: Added workspaceId for cross-workspace isolation
+ * Files belong to projects, not plugins.
  */
 export interface FileSnapshotRecord {
-    id?: number; // Auto-increment primary key
+    id?: number;
     projectId: string;
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
-    path: string; // File path relative to project root
-    hash: string; // SHA-256 hash for change detection
-    size: number; // File size in bytes
-    version: number; // Snapshot format version
-    lastCachedAt: number; // Timestamp when cached
-    expiresAt: number; // Timestamp when cache expires
-    hasContent: boolean; // Whether content exists in fileContentCache table
+    path: string;
+    hash: string;
+    size: number;
+    version: number;
+    lastCachedAt: number;
+    expiresAt: number;
+    hasContent: boolean;
 }
 
 /**
  * File content cache (lazy-loaded, only when file is opened)
- * Story WB-2: File Snapshot Store
- * PERSIST-S002: Added workspaceId for cross-workspace isolation
+ * Files belong to projects, not plugins.
  */
 export interface FileContentCacheRecord {
     projectId: string;
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
-    path: string; // File path relative to project root
-    content: string; // Full file content (potentially large)
+    path: string;
+    content: string;
 }
 
 /**
- * Re-export WorkspaceBindings from domain entity
+ * Re-export plugin types from domain
  */
-export type { WorkspaceBindings } from '@/domain/entities/project';
+export type { PluginType, ProjectPlugins } from '@/domain/entities/project';
 
 // ============================================================================
 // Table Type Exports
