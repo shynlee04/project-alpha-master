@@ -16,6 +16,7 @@ import type { LinkageProposal } from '@/lib/canvas/linkage-types';
 import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { Button } from '@/presentation/components/ui/button';
 import { Sparkles, Loader2 } from 'lucide-react';
+import { credentialVault } from '@/infrastructure/ai/credential-vault';
 
 /**
  * Props for CanvasRAGLinkagePanel
@@ -107,17 +108,24 @@ export function CanvasRAGLinkagePanel({
 
       if (analysis.proposals.length > 0) {
         try {
-          const enhancer = createLinkageAIEnhancer({
-            apiKey: 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ',
-            maxProposals: 5,
-          });
+          // SECURITY FIX B-3: Get API key from vault, not hardcoded
+          const apiKey = await credentialVault.getCredentials('gemini');
+          if (!apiKey) {
+            console.warn('[CanvasRAGLinkagePanel] No Gemini API key configured, using heuristic proposals');
+            enhancedProposals = analysis.proposals;
+          } else {
+            const enhancer = createLinkageAIEnhancer({
+              apiKey,
+              maxProposals: 5,
+            });
 
-          enhancedProposals = await enhancer.enhanceProposals(
-            analysis.proposals,
-            new Map() // Node analyses (optional, not used for now)
-          );
+            enhancedProposals = await enhancer.enhanceProposals(
+              analysis.proposals,
+              new Map() // Node analyses (optional, not used for now)
+            );
 
-          console.log(`[CanvasRAGLinkagePanel] AI-enhanced ${enhancedProposals.length} proposals`);
+            console.log(`[CanvasRAGLinkagePanel] AI-enhanced ${enhancedProposals.length} proposals`);
+          }
         } catch (error) {
           console.warn('[CanvasRAGLinkagePanel] AI enhancement failed, using heuristic proposals:', error);
           // Fall back to heuristic proposals

@@ -317,10 +317,15 @@ export function createLinkageAIEnhancer(
 let defaultEnhancer: LinkageAIEnhancer | null = null;
 
 export function getLinkageAIEnhancer(apiKey?: string): LinkageAIEnhancer {
-  const key = apiKey || 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ'; // Provided key
+  // SECURITY FIX B-3: No hardcoded API keys - require from vault
+  if (!apiKey) {
+    throw new Error(
+      'API key required. Configure Gemini API key in Settings > Providers.'
+    );
+  }
 
   if (!defaultEnhancer) {
-    defaultEnhancer = new LinkageAIEnhancer({ apiKey: key });
+    defaultEnhancer = new LinkageAIEnhancer({ apiKey });
   }
 
   return defaultEnhancer;

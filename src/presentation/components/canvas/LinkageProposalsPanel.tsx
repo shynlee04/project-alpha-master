@@ -19,6 +19,7 @@ import { useIDEStore } from '@/infrastructure/persistence/stores/ide';
 import { createRAGLinkageAnalyzer } from '@/lib/canvas/rag-linkage-analyzer';
 import { createLinkageAIEnhancer } from '@/lib/canvas/linkage-ai-enhancer';
 import { Sparkles, Loader2 } from 'lucide-react';
+import { credentialVault } from '@/infrastructure/ai/credential-vault';
 
 interface LinkageProposalsPanelProps {
   className?: string;
@@ -195,9 +196,17 @@ export function LinkageProposalsPanel({ className = '' }: LinkageProposalsPanelP
       const analysis = await analyzer.analyze(nodes);
 
       if (analysis.proposals.length > 0) {
+        // SECURITY FIX B-3: Get API key from vault, not hardcoded
+        const apiKey = await credentialVault.getCredentials('gemini');
+        if (!apiKey) {
+          console.warn('[LinkageProposalsPanel] No Gemini API key configured');
+          setProposals(analysis.proposals);
+          return;
+        }
+
         // Enhance with Gemini AI
         const enhancer = createLinkageAIEnhancer({
-          apiKey: 'AIzaSyBDdeIqJ01SCftRWM64oN3dncoGFHSvOgQ',
+          apiKey,
           maxProposals: 10,
           modelId: 'gemini-1.5-flash',
         });
