@@ -16,7 +16,9 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as DebugRouteImport } from './routes/debug'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ProjectIdRouteImport } from './routes/$projectId'
+import { Route as ProjectIdRouteRouteImport } from './routes/$projectId/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectIdIndexRouteImport } from './routes/$projectId/index'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
 import { Route as NotesProjectIdRouteImport } from './routes/notes.$projectId'
 import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
@@ -64,10 +66,20 @@ const ProjectIdRoute = ProjectIdRouteImport.update({
   path: '/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProjectIdRouteRoute = ProjectIdRouteRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectIdIndexRoute = ProjectIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProjectIdRoute,
 } as any)
 const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   id: '/webcontainer/$',
@@ -143,13 +155,14 @@ export interface FileRoutesByFullPath {
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
+  '/$projectId/': typeof ProjectIdIndexRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$projectId': typeof ProjectIdRouteWithChildren
+  '/$projectId': typeof ProjectIdIndexRoute
   '/about': typeof AboutRoute
   '/debug': typeof DebugRoute
   '/projects': typeof ProjectsRoute
@@ -186,6 +199,7 @@ export interface FileRoutesById {
   '/ide/$projectId': typeof IdeProjectIdRoute
   '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
+  '/$projectId/': typeof ProjectIdIndexRoute
   '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
   '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
   '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
@@ -209,6 +223,7 @@ export interface FileRouteTypes {
     | '/ide/$projectId'
     | '/notes/$projectId'
     | '/webcontainer/$'
+    | '/$projectId/'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
@@ -251,6 +266,7 @@ export interface FileRouteTypes {
     | '/ide/$projectId'
     | '/notes/$projectId'
     | '/webcontainer/$'
+    | '/$projectId/'
     | '/api/providers/$id'
     | '/api/providers/$id/execute'
     | '/api/providers/$id/test'
@@ -258,6 +274,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProjectIdRouteRoute: typeof ProjectIdRouteRoute
   ProjectIdRoute: typeof ProjectIdRouteWithChildren
   AboutRoute: typeof AboutRoute
   DebugRoute: typeof DebugRoute
@@ -325,12 +342,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$projectId': {
+      id: '/$projectId'
+      path: '/$projectId'
+      fullPath: '/$projectId'
+      preLoaderRoute: typeof ProjectIdRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/$projectId/': {
+      id: '/$projectId/'
+      path: '/'
+      fullPath: '/$projectId/'
+      preLoaderRoute: typeof ProjectIdIndexRouteImport
+      parentRoute: typeof ProjectIdRoute
     }
     '/webcontainer/$': {
       id: '/webcontainer/$'
@@ -414,10 +445,12 @@ declare module '@tanstack/react-router' {
 
 interface ProjectIdRouteChildren {
   ProjectIdTestRoute: typeof ProjectIdTestRoute
+  ProjectIdIndexRoute: typeof ProjectIdIndexRoute
 }
 
 const ProjectIdRouteChildren: ProjectIdRouteChildren = {
   ProjectIdTestRoute: ProjectIdTestRoute,
+  ProjectIdIndexRoute: ProjectIdIndexRoute,
 }
 
 const ProjectIdRouteWithChildren = ProjectIdRoute._addFileChildren(
@@ -452,6 +485,7 @@ const ApiProvidersRouteWithChildren = ApiProvidersRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProjectIdRouteRoute: ProjectIdRouteRoute,
   ProjectIdRoute: ProjectIdRouteWithChildren,
   AboutRoute: AboutRoute,
   DebugRoute: DebugRoute,

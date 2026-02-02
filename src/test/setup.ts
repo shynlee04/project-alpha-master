@@ -90,13 +90,53 @@ vi.mock('react-i18next', () => ({
 
 // Mock @tanstack/react-router for all tests
 vi.mock('@tanstack/react-router', () => ({
+  // Hooks
   useNavigate: vi.fn(() => vi.fn()),
-  useLocation: vi.fn(() => ({ pathname: '/' })),
+  useLocation: vi.fn(() => ({ pathname: '/', search: '', hash: '' })),
   useSearch: vi.fn(() => ({})),
   useParams: vi.fn(() => ({})),
-  RouterProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
-  createRouter: vi.fn(),
-  Router: vi.fn(({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children)),
+  useMatch: vi.fn(() => null),
+  useMatches: vi.fn(() => []),
+  useRouterState: vi.fn(() => ({ location: { pathname: '/' } })),
+
+  // Router components
+  RouterProvider: ({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children),
+  createRouter: vi.fn(() => ({
+    subscribe: vi.fn(),
+    load: vi.fn(),
+    state: { location: { pathname: '/' } },
+  })),
+  Router: vi.fn(({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children)),
+
+  // Route factory functions (used in route definitions)
+  createRootRoute: vi.fn(() => ({
+    id: '__root__',
+    options: {},
+  })),
+  createFileRoute: vi.fn((path: string) => vi.fn(() => ({
+    id: path,
+    options: {},
+  }))),
+  createRoute: vi.fn(() => ({
+    id: 'route',
+    options: {},
+  })),
+
+  // SSR/Head components (used in __root.tsx)
+  HeadContent: () => null,
+  Scripts: () => null,
+  ScrollRestoration: () => null,
+
+  // Layout components
+  Outlet: () => React.createElement('div', { 'data-testid': 'outlet' }),
+  Link: ({ children, to, ...props }: { children: React.ReactNode; to: string; [key: string]: unknown }) =>
+    React.createElement('a', { href: to, ...props }, children),
+
+  // Additional utilities
+  redirect: vi.fn(),
+  notFound: vi.fn(),
 }));
 
 // Mock useCapabilityDetection hook
@@ -220,3 +260,30 @@ vi.stubGlobal('Crypto', mockCrypto);
 // DO NOT mock the entire dexie module as it breaks database functionality
 
 // vi.mock('dexie', () => mockDexieModule);
+
+// ============================================
+// Mock routeTree.gen.ts to prevent import chain issues
+// ============================================
+// The auto-generated routeTree imports ALL routes including test routes like
+// $projectId.test.tsx, which causes alias resolution issues during tests.
+// This mock provides a minimal stub that satisfies the router requirements.
+vi.mock('@/routeTree.gen', () => ({
+  routeTree: {
+    children: [],
+  },
+  Route: {
+    id: 'root',
+    children: [],
+  },
+}));
+
+// Also mock the relative import path used by some modules
+vi.mock('../routeTree.gen', () => ({
+  routeTree: {
+    children: [],
+  },
+  Route: {
+    id: 'root',
+    children: [],
+  },
+}));

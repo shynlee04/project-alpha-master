@@ -1,0 +1,37 @@
+# Session Archive
+timestamp: "2026-02-02T12:55:19.131Z"
+session_id: "ses_3e1c7f213ffeJTizLQU7a9Bykr"
+tool: "task"
+call_id: "uYsaoCRTodgCBXb6"
+detected_agent: "none"
+work_type: "project"
+message_count: 17
+task_title: "Inventory plugin internal schemas"
+original_intent: |
+  <objective>
+Debug issues using scientific method with subagent isolation.
+
+**Orchestrator role:** Gather symptoms, spawn gsd-debugger agent, handle checkpoints, spawn continuations.
+
+**Why subagent:**
+task_output: |
+  I now have a comprehensive picture. Let me compile the complete inventory report:
+
+---
+
+## Plugin Internal Schema Inventory Report
+
+Based on thorough analysis of the three plugin directories and their dependencies:
+
+```yaml
+filetree_plugin:
+  # Location: src/plugins/filetree/
+  # File count: 7 files
+  # Total lines: ~2,000+ lines
+  
+  hooks:
+    - useFileTreePlugin (legacy - wraps ProjectContext)
+    - useFileTreeOperations (CRUD operations for files/projects)
+  
+  stores:
+    - useFileTreeStore

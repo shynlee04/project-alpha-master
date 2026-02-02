@@ -1,0 +1,31 @@
+# Session Archive
+timestamp: "2026-02-02T12:08:09.305Z"
+session_id: "ses_3e1c7f213ffeJTizLQU7a9Bykr"
+tool: "task"
+call_id: "vCabqFVLDboYOkGF"
+detected_agent: "none"
+work_type: "unknown"
+message_count: 6
+task_title: "Debug hydration-i18n-mismatch"
+original_intent: |
+  <objective>
+Debug issues using scientific method with subagent isolation.
+
+**Orchestrator role:** Gather symptoms, spawn gsd-debugger agent, handle checkpoints, spawn continuations.
+
+**Why subagent:**
+task_output: |
+  ---
+
+## DEBUG COMPLETE
+
+**Debug Session:** `.planning/debug/resolved/hydration-i18n-mismatch.md`
+
+### Root Cause
+
+**i18next-browser-languagedetector reads localStorage during synchronous init()**, causing server/client locale mismatch:
+
+1. `config.ts` uses `LanguageDetector` that checks `localStorage` during init
+2. Server/SSR: `localStorage` unavailable → fallbackLng `'en'` used
+3. Client hydration: `localStorage` available with `'vi'` → `'vi'` used  
+4. React hydration sees server=`'en'`, clie
