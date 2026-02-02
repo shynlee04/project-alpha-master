@@ -10,24 +10,27 @@
  * - Module loader integration
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 
 describe('R-3-03: Notes Module', () => {
+  // Pre-load module once with extended timeout (store rehydration is slow)
+  let notesModule: typeof import('../notes');
+  
+  beforeAll(async () => {
+    notesModule = await import('../notes');
+  }, 60000);
   
   describe('Module Definition', () => {
-    it('should export default module definition', async () => {
-      const module = await import('../notes');
-      expect(module.default).toBeDefined();
+    it('should export default module definition', () => {
+      expect(notesModule.default).toBeDefined();
     });
     
-    it('should have id "notes"', async () => {
-      const module = await import('../notes');
-      expect(module.default.id).toBe('notes');
+    it('should have id "notes"', () => {
+      expect(notesModule.default.id).toBe('notes');
     });
     
-    it('should implement IFeatureModule interface', async () => {
-      const module = await import('../notes');
-      const m = module.default;
+    it('should implement IFeatureModule interface', () => {
+      const m = notesModule.default;
       expect(m.id).toBeDefined();
       expect(m.name).toBeDefined();
       expect(m.icon).toBeDefined();
@@ -37,29 +40,24 @@ describe('R-3-03: Notes Module', () => {
       expect(typeof m.supportsOffline).toBe('boolean');
     });
     
-    it('should support offline', async () => {
-      const module = await import('../notes');
-      expect(module.default.supportsOffline).toBe(true);
+    it('should support offline', () => {
+      expect(notesModule.default.supportsOffline).toBe(true);
     });
     
-    it('should require project', async () => {
-      const module = await import('../notes');
-      expect(module.default.requiresProject).toBe(true);
+    it('should require project', () => {
+      expect(notesModule.default.requiresProject).toBe(true);
     });
     
-    it('should have onProjectChange hook for note switching', async () => {
-      const module = await import('../notes');
-      expect(typeof module.default.onProjectChange).toBe('function');
+    it('should have onProjectChange hook for note switching', () => {
+      expect(typeof notesModule.default.onProjectChange).toBe('function');
     });
     
-    it('should have onMount hook', async () => {
-      const module = await import('../notes');
-      expect(typeof module.default.onMount).toBe('function');
+    it('should have onMount hook', () => {
+      expect(typeof notesModule.default.onMount).toBe('function');
     });
     
-    it('should have onUnmount hook', async () => {
-      const module = await import('../notes');
-      expect(typeof module.default.onUnmount).toBe('function');
+    it('should have onUnmount hook', () => {
+      expect(typeof notesModule.default.onUnmount).toBe('function');
     });
   });
   

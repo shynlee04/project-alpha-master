@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-02-01)
 
 **Core value:** Users can interact with AI that reads, writes, and understands their project files — all client-side with zero data sent to our servers.
-**Current focus:** Strategic Rebuild R-0 — Foundation
+**Current focus:** Strategic Rebuild R-4 — Cutover
 
 ## ⚠️ STRATEGIC REBUILD DECISION
 
@@ -23,22 +23,44 @@ Previous A-E approach failed because:
 
 ## Current Position
 
-Phase: Strategic Rebuild R-0 (pending approval)
-Status: Pivot from A-E to Strangler Fig rebuild
-Last activity: 2026-02-02 — Strategic Rebuild decision
+Phase: Strategic Rebuild R-4 COMPLETE
+Status: Ready for R-5 (Resume Roadmap)
+Last activity: 2026-02-03 — R-4 cutover validation with 171 tests passing
+Commit: 3f233d64
 
-Progress: ░░░░░░░░░░ 0% Strategic Rebuild (awaiting approval)
+Progress: █████████░ 80% Strategic Rebuild (R-4 complete)
 
 ### Strategic Rebuild Phases
 
-| Phase | Name | Status | Depends On |
-|-------|------|--------|------------|
-| **R-0** | Foundation | 🟡 Pending approval | None |
-| **R-1** | Platform Layer | 🔴 Not started | R-0 |
-| **R-2** | Port Infrastructure | 🔴 Not started | R-1 |
-| **R-3** | Port Modules | 🔴 Not started | R-2 |
-| **R-4** | Cutover | 🔴 Not started | R-3 |
-| **R-5** | Resume Roadmap | 🔴 Not started | R-4 |
+| Phase | Name | Status | Tests | Commit |
+|-------|------|--------|-------|--------|
+| **R-0** | Foundation | ✅ COMPLETE | 28 | ffa590da |
+| **R-1** | Platform Layer | ✅ COMPLETE | 32 | 09f845a4 |
+| **R-2** | Port Infrastructure | ✅ COMPLETE | 12 | 0916d5af |
+| **R-3** | Port Modules | ✅ COMPLETE | 81 | a48dca83 |
+| **R-4** | Cutover | ✅ COMPLETE | 18 | 3f233d64 |
+| **R-5** | Resume Roadmap | 🔴 NOT STARTED | - | - |
+
+### R-3 Completion Summary
+
+**Commit:** a48dca83
+**Tests:** 153 total (81 module + 72 platform)
+**Pass Rate:** 100%
+
+**Modules Created:**
+- `src/modules/types.ts` - IFeatureModule interface
+- `src/modules/loader.ts` - ModuleLoader with lazy loading
+- `src/modules/ModulePanel.tsx` - Suspense-wrapped renderer
+- `src/modules/monaco/` - Code editor wrapper
+- `src/modules/notes/` - BlockNote wrapper (19 blocks)
+- `src/modules/terminal/` - xterm.js wrapper
+- `src/modules/preview/` - Dev server iframe wrapper
+
+**Key Achievements:**
+- Strangler Fig pattern - clean interfaces wrapping existing code
+- NO-WORKSPACE compliant - zero workspaceId in new code
+- Activity-bar wiring - modules toggle via mainTop.activePluginId
+- Test infrastructure fixed - TanStack Router mock complete
 
 ### Previous A-E Phases (Preserved)
 
@@ -60,6 +82,21 @@ Progress: ░░░░░░░░░░ 0% Strategic Rebuild (awaiting approval
 ## Accumulated Context
 
 ### Decisions
+
+**2026-02-03 (R-4 Cutover Validation):**
+- Phase R-4 Foundation Cutover COMPLETE with 171 tests passing
+- R-4 cutover readiness test suite created (18 tests)
+- NO-WORKSPACE mandate verified in production code (0 violations)
+- New architecture (platform + modules) validated and ready
+- Legacy cleanup deferred (669 @/lib imports still in old code)
+- See: `.planning/strategic-rebuild/phases/R-4-SUMMARY-2026-02-03.md`
+
+**2026-02-03 (R-3 Completion):**
+- Phase R-3 (Port Modules) COMPLETE with 100% test pass rate
+- All 4 module wrappers created: monaco, notes, terminal, preview
+- 153 total tests passing (81 module + 72 platform)
+- NO-WORKSPACE mandate respected - zero workspaceId in new code
+- Ready for R-4 Cutover phase
 
 **2026-02-02 (Strategic Rebuild Decision):**
 - Pivoted from gradual A-E remediation to Strangler Fig rebuild
@@ -120,9 +157,9 @@ Progress: ░░░░░░░░░░ 0% Strategic Rebuild (awaiting approval
 
 ## Session Continuity
 
-Last session: 2026-02-02T12:00:00Z
-Stopped at: Strategic Rebuild decision made, awaiting approval
-Resume: Begin Phase R-0 (Foundation) after approval
+Last session: 2026-02-03T15:00:00Z
+Stopped at: R-4 (Cutover Validation) completed with 171 tests passing
+Resume: Begin Phase R-5 (Resume Roadmap) — proceed with AI features on clean architecture
 
 ---
 
@@ -169,4 +206,4 @@ Resume: Begin Phase R-0 (Foundation) after approval
 
 ---
 
-*Updated: 2026-02-02T12:00:00Z after Strategic Rebuild decision*
+*Updated: 2026-02-03T15:00:00Z after R-4 completion*
