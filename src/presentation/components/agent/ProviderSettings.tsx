@@ -9,12 +9,8 @@ import { ProviderDeletionWarningDialog } from './ProviderDeletionWarningDialog';
 import { ProviderStatusBadge, type ProviderStatus } from './ProviderStatusBadge';
 import type { ProviderConfig } from '@/infrastructure/persistence/stores/providers/types';
 import type { ModelInfo } from '@/domain/types/llm/model-types';
-import {
-    getHardcodedModels,
-    hasHardcodedModels,
-    type HardcodedModel,
-    CUSTOM_MODEL_VALUE,
-} from '@/lib/agent/providers/hardcoded-models';
+// CUSTOM_MODEL_VALUE for custom model input option
+const CUSTOM_MODEL_VALUE = '__custom__';
 import {
     Dialog,
     DialogContent,
@@ -33,8 +29,7 @@ import {
 import type { AgentData } from '@/infrastructure/persistence/stores/agents/types';
 
 export function ProviderSettings() {
-    const { t, i18n } = useTranslation();
-    const isVietnamese = i18n.language === 'vi';
+    const { t } = useTranslation();
 
     // Use individual selectors to prevent infinite re-render loops
     const providers = useAppStore(s => s.providers)
@@ -68,23 +63,7 @@ export function ProviderSettings() {
         return getAvailableModels(providerId);
     }, [getAvailableModels]);
 
-    // Get hardcoded models with bilingual names for Groq, Mistral, Chutes
-    const getHardcodedModelList = useMemo(() => (providerId: string): HardcodedModel[] | null => {
-        if (!hasHardcodedModels(providerId)) return null;
-        return getHardcodedModels(providerId) || null;
-    }, []);
-
-    // Convert hardcoded model to display format (bilingual)
-    const formatHardcodedModel = (model: HardcodedModel): ModelInfo => ({
-        id: model.id,
-        name: isVietnamese ? model.nameVi : model.nameEn,
-        contextLength: model.contextLength,
-        isFree: model.isFree,
-        supportsStreaming: model.capabilities?.streaming,
-        supportsImages: model.capabilities?.images,
-        supportsTools: model.capabilities?.tools,
-        providerId: ''
-    });
+    // A-04C: Removed hardcoded model logic - always use API-loaded models from store
 
     const handleAdd = () => {
         setEditingProvider(undefined);
@@ -188,11 +167,8 @@ export function ProviderSettings() {
 
             <div className="border border-border rounded-none divide-y divide-border bg-background">
                 {providers.map(provider => {
-                    const hardcodedModels = getHardcodedModelList(provider.id);
-                    const useHardcoded = hardcodedModels !== null;
-                    const models = useHardcoded
-                        ? hardcodedModels.map(formatHardcodedModel)
-                        : getProviderModels(provider.id);
+                    // A-04C FIX: Always use API-loaded models from store (no hardcoded bypass)
+                    const models = getProviderModels(provider.id);
                     const isLoading = isLoadingModels[provider.id];
                     const selectedModel = selectedModels[provider.id] || models[0]?.id || '';
                     const isCustomModel = selectedModel === CUSTOM_MODEL_VALUE;
@@ -283,18 +259,17 @@ export function ProviderSettings() {
                                                 )}
                                             </SelectContent>
                                         </Select>
-                                        {!useHardcoded && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="h-8 w-8 rounded-none shadow-[2px_2px_0_0]"
-                                                aria-label="Refresh models"
-                                                onClick={() => handleRefreshModels(provider.id)}
-                                                disabled={isLoading}
-                                            >
-                                                <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
-                                            </Button>
-                                        )}
+                                        {/* A-04C: Always show refresh button (no more hardcoded check) */}
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 w-8 rounded-none shadow-[2px_2px_0_0]"
+                                            aria-label="Refresh models"
+                                            onClick={() => handleRefreshModels(provider.id)}
+                                            disabled={isLoading}
+                                        >
+                                            <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
+                                        </Button>
                                     </div>
 
                                     {/* Custom model input field */}

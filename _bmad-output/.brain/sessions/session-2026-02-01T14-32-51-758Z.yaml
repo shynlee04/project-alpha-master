@@ -1,0 +1,33 @@
+# Session Archive
+timestamp: "2026-02-01T14:32:51.758Z"
+session_id: "ses_3e67445aaffe9ARFt2fXpLLbXu"
+tool: "task"
+call_id: "LyQVKDRKDjvfhWjE"
+detected_agent: "none"
+work_type: "unknown"
+message_count: 7
+task_title: "Violation entanglement analysis"
+original_intent: |
+  <objective>
+
+Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
+
+This is the most leveraged moment in any project. Deep questioning here means b
+task_output: |
+  Now I have comprehensive data. Let me compile the final violation entanglement map:
+
+---
+
+# Violation Entanglement Map
+
+**Analyzed:** 2026-02-01
+**Total References:** 1,369 (156 workspaceBindings + 553 workspaceId + 660 @/lib/)
+**Total Files Affected:** ~538 files (46 + 63 + 429)
+
+---
+
+## Violations by Feature Group
+
+| Feature Group | Directory | workspaceBindings | workspaceId | @/lib/ | Total | Status |
+|---------------|-----------|-------------------|-------------|--------|-------|--------|
+|

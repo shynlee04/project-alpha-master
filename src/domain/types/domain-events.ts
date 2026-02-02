@@ -62,6 +62,8 @@ export type DomainEventType =
   | 'sync:error'
   | 'sync:warning' // For non-critical sync issues
   | 'sync:started' // Legacy alias for sync:status with syncing
+  | 'sync:start' // Alternative event name
+  | 'sync:rollback' // For transaction rollback events
   // Workspace events
   | 'workspace:changed'
   | 'workspace:activated'
@@ -174,12 +176,16 @@ export interface SyncStatusPayload {
   workspaceId?: string;
   /** Project path for display */
   projectPath?: string;
-  /** Sync status */
-  status: 'syncing' | 'synced' | 'error' | 'idle' | 'pending';
+  /** Sync status (optional for started events) */
+  status?: 'syncing' | 'synced' | 'error' | 'idle' | 'pending';
   /** Error message if status is 'error' */
   error?: string;
   /** Progress percentage (0-100) */
   progress?: number;
+  /** File count (for started events) */
+  fileCount?: number;
+  /** Sync direction */
+  direction?: 'to-wc' | 'from-wc' | 'bidirectional';
 }
 
 /**
@@ -188,12 +194,16 @@ export interface SyncStatusPayload {
 export interface SyncProgressPayload {
   projectId?: string;
   workspaceId?: string;
-  /** Files processed */
-  processed: number;
+  /** Files processed (alias: current) */
+  processed?: number;
   /** Total files */
   total: number;
   /** Current file being processed */
   currentFile?: string;
+  /** Current file index (alternative to processed) */
+  current?: number;
+  /** Operation ID for tracking */
+  operationId?: string;
 }
 
 /**
@@ -208,6 +218,8 @@ export interface SyncCompletedPayload {
   duration: number;
   /** Sync result */
   success: boolean;
+  /** Completion timestamp (ms or Date) */
+  timestamp?: number | Date;
 }
 
 /**
@@ -216,10 +228,14 @@ export interface SyncCompletedPayload {
 export interface SyncErrorPayload {
   projectId?: string;
   workspaceId?: string;
-  /** Error message */
-  error: string;
+  /** Error message or Error object */
+  error: Error | string;
   /** Error code */
   code?: string;
+  /** File that caused the error */
+  file?: string;
+  /** Operation ID for tracking */
+  operationId?: string;
 }
 
 // ============================================================================
@@ -280,6 +296,8 @@ export interface FileChangedPayload {
   projectId?: string;
   projectPath?: string;
   path: string;
+  /** File path (alias for path) */
+  filePath?: string;
   type: 'created' | 'modified' | 'deleted';
 }
 
@@ -424,6 +442,8 @@ export interface DomainEventMap {
   'sync:error': SyncErrorPayload;
   'sync:warning': SyncWarningPayload;
   'sync:started': SyncStatusPayload;
+  'sync:start': SyncStatusPayload;
+  'sync:rollback': SyncErrorPayload;
   // Workspace events
   'workspace:changed': WorkspaceChangedPayload;
   'workspace:activated': WorkspaceActivatedPayload;

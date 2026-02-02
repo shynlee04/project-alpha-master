@@ -1,8 +1,10 @@
 # Governance Runtime Loader
 
 **Created:** 2026-02-02
+**Updated:** 2026-02-02
 **Purpose:** Define what context agents MUST load at runtime for governance compliance
 **Authority:** AGENTS.md enforcement
+**Version:** 1.1.0 (Added pre-execution gates per ESC-001)
 
 ---
 
@@ -115,6 +117,90 @@ on_plan_execution:
     - "Schema change without architect approval"
     - "Breaking change to protected file"
 ```
+
+---
+
+## Pre-Execution Gates (Added 2026-02-02 per ESC-001)
+
+### Purpose
+
+Pre-execution gates BLOCK plan execution if certain conditions aren't met. This prevents:
+1. Executing plans when TypeScript errors are too high
+2. Executing plans when HIGH gaps are unescalated
+3. Executing plans that touch contaminated files without migration strategy
+
+### Gate Specification
+
+```yaml
+# Pre-execution gate - MUST pass before any task executes
+pre_execution_gate:
+  
+  # Gate 1: TypeScript Error Baseline
+  typescript_baseline:
+    command: "pnpm typecheck:fast 2>&1 | grep -c 'error TS' || echo 0"
+    threshold: 100
+    comparison: "less_than"
+    on_fail: "BLOCK - TypeScript errors exceed baseline. Fix errors or update baseline."
+    rationale: "Baseline as of 2026-02-02 is ~85 errors. Don't add new errors."
+  
+  # Gate 2: No Unescalated HIGH Gaps
+  gaps_escalated:
+    check: "grep -A2 'severity: high' .planning/governance/GAPS-TRACKER.yaml | grep 'escalated: false' | wc -l"
+    threshold: 0
+    comparison: "equals"
+    on_fail: "BLOCK - HIGH severity gaps must be escalated before execution. Review GAPS-TRACKER.yaml."
+  
+  # Gate 3: Isolation Boundary Respected
+  isolation_boundary:
+    description: "Files modified must be within plan's declared boundary"
+    check_type: "manual_verification"
+    on_fail: "BLOCK - Plan touches files outside isolation boundary. Update boundary or split plan."
+  
+  # Gate 4: No Contaminated Imports (for new files)
+  contamination_check:
+    description: "New files must not import from contaminated modules"
+    patterns_forbidden:
+      - "workspaceBindings"
+      - "workspaceId" 
+      - "workspaceType"
+    paths_forbidden:
+      - "@/lib/*"
+    on_fail: "BLOCK - New files must use clean imports per SOURCE-OF-TRUTH.md Part 6.4"
+```
+
+### When Gates Are Checked
+
+| Phase | Gate Check Point | Blocker Behavior |
+|-------|------------------|------------------|
+| Plan Creation | Planner validates gates are specified | Plan rejected if no gates |
+| Plan Execution | Before first task | Execution blocked if gates fail |
+| Task Completion | After each task | Next task blocked if gates regress |
+| Plan Completion | Before marking done | Completion rejected if gates fail |
+
+### Gate Override Protocol
+
+Gates can ONLY be overridden with explicit architect approval:
+
+```yaml
+# In PLAN.md frontmatter
+gate_overrides:
+  - gate: "typescript_baseline"
+    override_reason: "Known baseline increase from legacy migration"
+    approved_by: "architect"
+    approved_at: "2026-02-02T12:00:00Z"
+    new_threshold: 120
+```
+
+### Current Baseline (2026-02-02, updated after validation)
+
+| Metric | Baseline | Source |
+|--------|----------|--------|
+| TypeScript errors | **233** | `pnpm typecheck:fast` (drifted from 85) |
+| workspaceBindings refs | 156 | `grep -r "workspaceBindings" src/` |
+| workspaceId refs | 556 | `grep -r "workspaceId" src/` |
+| HIGH unescalated gaps | 0 | GAPS-TRACKER.yaml |
+
+**Note:** Baseline drift tracked in SGAP-005. Threshold updated to 250 for Phase A.
 
 ---
 

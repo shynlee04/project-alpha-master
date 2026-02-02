@@ -1,8 +1,8 @@
 # SOURCE OF TRUTH: Project Alpha Architecture
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Created:** 2026-01-31
-**Updated:** 2026-02-01
+**Updated:** 2026-02-02
 **Status:** CANONICAL - This is the ONLY authoritative architecture document
 **Authority:** All other `.planning/` documents are archived. Read ONLY this document.
 
@@ -565,6 +565,105 @@ These must be eliminated in the refactor:
 - **NO** `@/lib/` imports (use `@/domain/` or `@/infrastructure/`)
 - **NO** files >300 lines in stores, >400 lines in components
 
+### 6.4 Migration Strategy (Added 2026-02-02)
+
+**Problem:** The codebase has systemic contamination:
+- 156 `workspaceBindings` references (BANNED)
+- 556 `workspaceId` references (BANNED)
+- 85+ TypeScript errors from type mismatches
+- `workspaceType` vs `pluginType` conflicts throughout
+
+**Strategy:** Isolation-First Migration
+
+```
+Phase A (Current): ISOLATE
+├── Create new features in clean modules
+├── @/infrastructure/ai/ for BYOK (no contaminated imports)
+├── Don't touch contaminated files
+└── Accept baseline TS errors, don't add new ones
+
+Phase B: CONTAIN
+├── Migrate AI Gateway to clean patterns
+├── Create adapters for contaminated→clean interfaces
+├── Gradual migration of files touched by AI features
+└── Track migration progress in GAPS-TRACKER.yaml
+
+Phase C+: MIGRATE
+├── As features are touched, migrate to clean types
+├── Replace workspaceBindings → enabledModules (ProjectSettings)
+├── Replace workspaceId → projectId
+├── Never patch - always migrate
+└── Track: violations_before → violations_after per phase
+```
+
+**Migration Rules:**
+
+1. **New code MUST use clean types**
+   - Use `PluginType`, not `workspaceType`
+   - Use `projectId`, not `workspaceId`
+   - Use `enabledModules`, not `workspaceBindings`
+
+2. **Touching contaminated code triggers migration**
+   - If you need to modify a file with banned terms → migrate that file
+   - Don't add type casts to suppress errors
+   - Escalate if migration scope exceeds plan
+
+3. **Isolation boundaries are STRICT**
+   - Phase A: Only `@/infrastructure/ai/`, `@/presentation/components/settings/`
+   - Clean modules cannot import from contaminated modules
+   - Create adapters at boundaries if needed
+
+4. **Baseline errors are tracked, not ignored**
+   - Current baseline: ~85 TypeScript errors
+   - Each phase must not increase baseline
+   - Track: `pnpm typecheck:fast | grep error | wc -l`
+
+**Adapter Pattern for Contaminated↔Clean:**
+
+```typescript
+// @/infrastructure/adapters/legacy-agent-adapter.ts
+
+import type { PluginType } from '@/domain/types/plugin';
+
+// Convert legacy workspaceType to clean PluginType
+export function toPluginType(workspaceType: string): PluginType {
+  const mapping: Record<string, PluginType> = {
+    'ide': 'editor',      // 'ide' → 'editor'
+    'knowledge': 'knowledge',
+    'notes': 'notes',
+    'study': 'study',
+    'chat': 'chat',
+    'terminal': 'terminal',
+    'preview': 'preview',
+  };
+  return mapping[workspaceType] ?? 'editor';
+}
+
+// Convert legacy workspaceBindings to clean enabledModules
+export function toEnabledModules(
+  bindings: Array<{ workspaceType: string; isAvailable: boolean }>
+): PluginType[] {
+  return bindings
+    .filter(b => b.isAvailable)
+    .map(b => toPluginType(b.workspaceType));
+}
+```
+
+### 6.5 PluginType Clarification (Added 2026-02-02)
+
+**Current PluginType union:**
+```typescript
+type PluginType = "chat" | "editor" | "knowledge" | "notes" | "preview" | "study" | "terminal";
+```
+
+**Note:** `'ide'` is NOT in this union. Legacy code uses `'ide'` but it maps to `'editor'`.
+
+**Where 'ide' appears (must migrate):**
+- `AgentService.ts` (lines 90, 189)
+- Legacy workspace bindings
+
+**Migration:** Replace `'ide'` with `'editor'` throughout.
+
 ---
 
 ## Part 7: Service Architecture
@@ -894,6 +993,7 @@ All documents in `.planning-archived-2026-01-31/` are superseded by this documen
 |---------|------|---------|
 | 1.0.0 | 2026-01-31 | Initial creation from user requirements + expert validation |
 | 1.1.0 | 2026-02-01 | ThreadMessage parts-based, added Event Bus, State Sync, Service Contracts |
+| 1.2.0 | 2026-02-02 | Added Part 6.4 Migration Strategy, Part 6.5 PluginType Clarification (ESC-001 resolution) |
 
 ---
 

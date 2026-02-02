@@ -77,18 +77,21 @@ export function FolderPickerDialog({
     setIsPicking(true);
 
     try {
-      const result = await pickFolder();
+      // pickFolder returns FileSystemDirectoryHandle | null
+      const handle = await pickFolder();
 
-      if (result.success && result.handle && result.folderName) {
+      if (handle) {
+        const folderName = handle.name;
+        
         // Check for folder overlap before creating project
-        const overlapResult = await checkFolderOverlap(result.handle.name);
+        const overlapResult = await checkFolderOverlap(folderName);
 
         if (overlapResult.shouldBlock) {
           // Same path - block with error dialog
           setOverlapCheck({
             result: overlapResult as any,
-            folderPath: result.handle.name,
-            handle: result.handle,
+            folderPath: folderName,
+            handle: handle,
           });
           setIsPicking(false);
           return;
@@ -98,39 +101,22 @@ export function FolderPickerDialog({
           // Parent/child overlap - show warning
           setOverlapCheck({
             result: overlapResult as any,
-            folderPath: result.handle.name,
-            handle: result.handle,
+            folderPath: folderName,
+            handle: handle,
           });
           setIsPicking(false);
           return;
         }
 
         // No overlap - create project directly
-        await finishProjectCreation(result.handle, result.folderName);
+        await finishProjectCreation(handle, folderName);
       } else {
-        // Handle failure reasons
-        if (result.reason === 'aborted') {
-          // User cancelled - offer temp project fallback
-          toast.info('No folder selected', {
-            description: 'Using temp project for this session',
-          });
-          onOpenChange(false);
-          onFallbackToTemp?.();
-        } else if (result.reason === 'not_supported') {
-          // FSA not supported - should use temp project
-          toast.error('Folder picking not available', {
-            description: 'Please use a desktop browser (Chrome, Edge, Opera)',
-          });
-          onOpenChange(false);
-          onFallbackToTemp?.();
-        } else {
-          // Other error
-          toast.error('Failed to open folder', {
-            description: result.error?.message || 'Unknown error',
-          });
-          onOpenChange(false);
-          onCancel?.();
-        }
+        // User cancelled - offer temp project fallback
+        toast.info('No folder selected', {
+          description: 'Using temp project for this session',
+        });
+        onOpenChange(false);
+        onFallbackToTemp?.();
       }
     } catch (error) {
       console.error('[FolderPickerDialog] Error:', error);

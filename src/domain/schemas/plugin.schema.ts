@@ -48,14 +48,21 @@ export const PluginTypeSchema = z.enum([
  * Replaces WorkspaceBinding.
  *
  * This defines what a plugin can do and whether it's the default.
+ * 
+ * Note: Both pluginType and workspaceType are accepted for backward compatibility.
+ * The workspaceType field is deprecated and will be removed in future versions.
  */
 export const PluginCapabilitySchema = z.object({
   /** Which plugin this capability applies to */
   pluginType: PluginTypeSchema,
+  /** @deprecated Use pluginType instead - legacy workspace type for backward compatibility */
+  workspaceType: PluginTypeSchema.optional(),
   /** Whether this plugin is available (platform may restrict) */
   isAvailable: z.boolean(),
   /** Whether this is the default plugin for the context */
   isDefault: z.boolean().optional(),
+  /** @deprecated UI variant - no longer needed */
+  uiVariant: z.string().optional(),
 });
 
 // ============================================================================

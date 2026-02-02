@@ -20,42 +20,44 @@ export type { WorkspaceBindingProps } from '@/domain/value-objects/workspace-bin
 
 /**
  * Default tools available for agents
+ * Note: 'ide' → 'editor' in new plugin schema
  */
 export const DEFAULT_TOOLS: AgentToolBindingProps[] = [
     {
         toolId: 'file-read',
         toolName: 'Read Files',
         isEnabled: true,
-        workspacePermissions: { ide: true, knowledge: true, study: true, notes: true }
+        workspacePermissions: { editor: true, knowledge: true, study: true, notes: true }
     },
     {
         toolId: 'file-write',
         toolName: 'Write Files',
         isEnabled: true,
-        workspacePermissions: { ide: true, knowledge: false, study: true, notes: true }
+        workspacePermissions: { editor: true, knowledge: false, study: true, notes: true }
     },
     {
         toolId: 'terminal',
         toolName: 'Terminal Commands',
         isEnabled: true,
-        workspacePermissions: { ide: true, knowledge: false, study: false, notes: false }
+        workspacePermissions: { editor: true, knowledge: false, study: false, notes: false }
     },
     {
         toolId: 'web-search',
         toolName: 'Web Search',
         isEnabled: true,
-        workspacePermissions: { ide: true, knowledge: true, study: true, notes: true }
+        workspacePermissions: { editor: true, knowledge: true, study: true, notes: true }
     }
 ]
 
 /**
  * Default workspace bindings (available everywhere)
+ * Uses both pluginType (new) and workspaceType (deprecated) for compatibility
  */
 export const DEFAULT_WORKSPACE_BINDINGS: WorkspaceBindingProps[] = [
-    { workspaceType: 'ide', isAvailable: true, uiVariant: 'full', isDefault: true },
-    { workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
-    { workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
-    { workspaceType: 'notes', isAvailable: true, uiVariant: 'compact', isDefault: false }
+    { pluginType: 'editor', workspaceType: 'editor', isAvailable: true, uiVariant: 'full', isDefault: true },
+    { pluginType: 'knowledge', workspaceType: 'knowledge', isAvailable: true, uiVariant: 'compact', isDefault: false },
+    { pluginType: 'study', workspaceType: 'study', isAvailable: true, uiVariant: 'compact', isDefault: false },
+    { pluginType: 'notes', workspaceType: 'notes', isAvailable: true, uiVariant: 'compact', isDefault: false }
 ]
 
 /**
