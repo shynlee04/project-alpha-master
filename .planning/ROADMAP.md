@@ -1,6 +1,7 @@
 # Roadmap: Project Alpha — Feature-Group Remediation
 
 **Created:** 2026-02-01
+**Updated:** 2026-02-02 (Phase A complete)
 **Approach:** Feature-group isolation — fix by feature, not by violation count
 **Previous:** Archived to ROADMAP-2026-02-01-ARCHIVE.md
 
@@ -24,8 +25,8 @@ The previous approach (Phase 0-5) failed because:
 
 | Priority | Phase | Feature Group | Goal | Status |
 |----------|-------|---------------|------|--------|
-| 1 | **A** | BYOK Foundation | Users can save API keys | 🔴 Not started |
-| 2 | **B** | AI Gateway | Single entry point for all AI calls | 🔴 Not started |
+| 1 | **A** | BYOK Foundation | Users can save API keys | ✅ COMPLETE |
+| 2 | **B** | AI Gateway | Single entry point for all AI calls | 🟡 Ready to start |
 | 3 | **C** | Notes AI | AI features work in Notes editor | 🔴 Not started |
 | 4 | **D** | Agentic Features | Tool execution with approval | ⏸️ DEFERRED |
 | 5 | **E** | RAG System | Search project knowledge | ⏸️ DEFERRED |
@@ -70,26 +71,40 @@ The previous approach (Phase 0-5) failed because:
 - [x] A-03-PLAN.md — Restore ProviderSettings UI ✅
 
 **Wave 3 (verification):**
-- [ ] A-04-PLAN.md — Integration verification (checkpoint)
+- [x] A-04-PLAN.md — Integration verification (checkpoint) ✅
 
-**Wave 3.5 (gap fix - added 2026-02-02):**
-- [ ] A-04B-PLAN.md — Model loading restoration (addresses GAP-A04-001, GAP-A04-002)
+**Wave 3.5 (gap fix - revised 2026-02-02 per ESC-001):**
+- [x] A-04B-PLAN.md — Model loading with API-first approach ✅
+  - **Completed:** 2026-02-02
+  - **Verified by:** User manual testing
+  - **Resolution:** API-first with graceful degradation
+  - See: .planning/phases/A-byok-foundation/A-04B-SUMMARY-2026-02-02.md
 
 ### High-Level Design Reference
 - **MODEL-STRATEGY.md** — Model loading, fallback, capabilities design
 - Must be loaded before planning Phase B or C
 
 ### Success Criteria
-- [ ] User can input Gemini API key in settings
-- [ ] User can input OpenRouter API key in settings
-- [ ] Keys persist after browser refresh
-- [ ] `credentialVault.getCredentials('gemini')` returns the key
-- [ ] **NEW: Models load after key is saved**
-- [ ] **NEW: Model dropdown shows available models**
+- [x] User can input Gemini API key in settings
+- [x] User can input OpenRouter API key in settings
+- [x] Keys persist after browser refresh
+- [x] `credentialVault.getCredentials('gemini')` returns the key
+- [x] **NEW: Models load after key is saved**
+- [x] **NEW: Model dropdown shows available models**
 
 ### Isolation Boundary
 - **Touches:** `src/infrastructure/ai/`, `src/presentation/components/settings/`
 - **Does NOT touch:** FileTree, Project stores, Notes UI
+- **Does NOT touch (contaminated):** AgentService.ts, use-app-store.ts (until migration)
+
+### Migration Strategy (per ESC-001)
+See SOURCE-OF-TRUTH.md Part 6.4 for full details.
+
+**Phase A approach:** Isolate new code in clean modules
+- New files in `@/infrastructure/ai/` only
+- No imports from contaminated modules
+- Baseline TS errors: ~85 (don't add new ones)
+- Use adapters if touching contaminated code
 
 ### Schema Changes
 None — `ProviderConfig.hasApiKey` and `CredentialStorage` types already exist.
@@ -134,6 +149,23 @@ None — `ProviderConfig.hasApiKey` and `CredentialStorage` types already exist.
 
 ### Schema Changes
 None for Phase B.
+
+### Plans: 5 plans in 4 waves (B-0: Gateway Foundation)
+
+**Wave 1 (independent):**
+- [ ] B-01-PLAN.md — Gateway core (types + class skeleton)
+
+**Wave 2 (parallel, depends on Wave 1):**
+- [ ] B-02-PLAN.md — OpenRouter adapter
+- [ ] B-03-PLAN.md — Gemini adapter + embeddings
+
+**Wave 3 (depends on Wave 2):**
+- [ ] B-04-PLAN.md — Gateway methods implementation
+
+**Wave 4 (verification):**
+- [ ] B-05-PLAN.md — Integration verification (checkpoint)
+
+**Note:** This is B-0 (Gateway Foundation) only. B-1 through B-4 will be planned after B-0 is verified.
 
 ---
 
@@ -267,9 +299,13 @@ None — Notes uses BlockNote blocks, not ThreadMessage.
 
 | Phase | Status | Plans | Verified |
 |-------|--------|-------|----------|
-| A: BYOK | 🟡 Planned | 0/4 | ❌ |
-| B: AI Gateway | 🔴 Not started | 0/? | ❌ |
-| C: Notes AI | 🔴 Not started | 0/? | ❌ |
+| A: BYOK | ✅ COMPLETE | 5/5 | ✅ User verified |
+| B-0: Gateway Foundation | 🟡 PLANNED | 5/5 | ❌ |
+| B-1: Chat Migration | 🔴 Not planned | — | ❌ |
+| B-2: Notes AI Migration | 🔴 Not planned | — | ❌ |
+| B-3: Security Remediation | 🔴 Not planned | — | ❌ |
+| B-4: Cleanup & RAG Prep | 🔴 Not planned | — | ❌ |
+| C: Notes AI | 🔴 Blocked by B | — | ❌ |
 | D: Agentic | ⏸️ Deferred | — | — |
 | E: RAG | ⏸️ Deferred | — | — |
 
