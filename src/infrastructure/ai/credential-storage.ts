@@ -46,17 +46,21 @@ export class CredentialStorage {
     /**
      * Store encrypted credentials for a provider
      *
+     * R-2 CHANGE: workspaceId is now OPTIONAL with default 'ide'.
+     * Credentials are typically project-agnostic (global API keys).
+     * The workspaceId parameter is kept for backward compatibility.
+     *
      * @param providerId - Unique provider identifier
      * @param encrypted - Base64-encoded encrypted data
      * @param iv - Base64-encoded initialization vector
-     * @param workspaceId - Current workspace (default 'ide')
+     * @param workspaceId - Optional workspace context (default 'ide' for backward compat)
      * @returns Storage operation result
      */
     async storeCredentials(
         providerId: string,
         encrypted: string,
         iv: string,
-        workspaceId: 'ide' | 'knowledge' | 'study' | 'notes' = 'ide'
+        workspaceId?: 'ide' | 'knowledge' | 'study' | 'notes'
     ): Promise<StorageResult> {
         if (!this.isAvailable()) {
             console.warn('[CredentialStorage] Not available during SSR');
@@ -70,7 +74,7 @@ export class CredentialStorage {
 
         const credential: CredentialRecord = {
             providerId,
-            workspaceId, // PERSIST-S002: Workspace isolation
+            workspaceId, // R-2: Now optional, omitted for global credentials
             encrypted,
             iv,
             createdAt: new Date(),

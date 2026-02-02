@@ -72,10 +72,14 @@ export interface ToolExecutionRecord {
  *
  * @epic Epic 25 - AI Foundation Sprint
  * @story 25-0 - ProviderAdapterFactory
+ *
+ * R-2 CHANGE: workspaceId is now OPTIONAL
+ * Credentials are project-agnostic (global keys) by default.
+ * Use 'global' context for app-wide API keys.
  */
 export interface CredentialRecord {
     providerId: string;         // Primary key (e.g., 'openrouter', 'openai')
-    workspaceId: 'ide' | 'knowledge' | 'study' | 'notes'; // PERSIST-S002: Workspace isolation
+    workspaceId?: 'ide' | 'knowledge' | 'study' | 'notes'; // R-2: Optional, defaults to 'global'
     encrypted: string;          // Base64-encoded encrypted API key
     iv: string;                 // Base64-encoded initialization vector
     createdAt: Date;
