@@ -5,7 +5,7 @@
 
 import { FileSystemError } from './fs-errors';
 import { validatePath } from './path-utils';
-import { getFileHandleFromPath } from './handle-utils';
+import { getFileHandleFromPath, getDirectoryHandleFromPath } from './handle-utils';
 import type { FileReadResult, FileReadBinaryResult } from './fs-types';
 
 /**
@@ -146,7 +146,6 @@ export async function deleteFile(
         let parentDir = root;
         if (parts.length > 0) {
             // Walk to parent
-            const { getDirectoryHandleFromPath } = await import('./handle-utils');
             parentDir = await getDirectoryHandleFromPath(root, parts.join('/'));
         }
 
