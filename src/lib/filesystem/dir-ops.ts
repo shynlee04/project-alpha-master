@@ -5,7 +5,7 @@
 
 import { FileSystemError } from './fs-errors';
 import { validatePath } from './path-utils';
-import { getDirectoryHandleFromPath } from './handle-utils';
+import { getDirectoryHandleFromPath, getFileHandleFromPath } from './handle-utils';
 import type { DirectoryEntry } from './fs-types';
 import { readFile, writeFile, deleteFile } from './file-ops'; // For rename
 
@@ -94,8 +94,7 @@ export async function deleteDirectory(
 
         let parentDir = root;
         if (parts.length > 0) {
-            const { getDirectoryHandleFromPath: getDir } = await import('./handle-utils');
-            parentDir = await getDir(root, parts.join('/'));
+            parentDir = await getDirectoryHandleFromPath(root, parts.join('/'));
         }
 
         await parentDir.removeEntry(dirName, { recursive: true });
@@ -132,13 +131,11 @@ export async function rename(
 
         // Check if it's a file or directory
         try {
-            const { getFileHandleFromPath } = await import('./handle-utils');
             const fileHandle = await getFileHandleFromPath(root, oldPath);
             const file = await fileHandle.getFile();
             content = await file.text();
         } catch (fileError) {
             try {
-                const { getDirectoryHandleFromPath } = await import('./handle-utils');
                 await getDirectoryHandleFromPath(root, oldPath);
                 isDirectory = true;
             } catch (dirError) {
