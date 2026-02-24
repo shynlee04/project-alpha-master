@@ -1,0 +1,200 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# BMAD WORKFLOW STATUS
+# Single Source of Truth for Sprint & Story Execution
+# ═══════════════════════════════════════════════════════════════════════════
+
+workflow:
+  id: epic-cc-arc-week3-2026-01-18
+  name: "EPIC-CC-ARC: Correct-Course Architectural Remediation - Week 3"
+  version: "2.0.0"
+  framework: "BMAD Extension Layer v2.0"
+
+  # Current Phase
+  current_phase: "phase_d_entity_standardization"
+  phase_started_at: "2026-01-18T11:30:00+07:00"
+
+  # Sprint Context
+  sprint_id: epic-cc-arc-week3-2026-01-18
+  sprint_name: "EPIC-CC-ARC Week 3: Phase D - Entity Standardization"
+  sprint_status: "in_progress"
+  sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+epics:
+  EPIC-CC-ARC:
+    id: "EPIC-CC-ARC"
+    name: "Correct-Course Architectural Remediation"
+    priority: "P0-CRITICAL"
+    status: "in_progress"
+    total_stories: 28
+    completed_stories: 19
+    description: "Fix architectural debt, enforce storage contract, standardize entity naming"
+    adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+
+    # Phase A: Identity & Routing (Team A - COMPLETE)
+    phase_a:
+      name: "Identity & Routing"
+      status: "complete"
+      stories_completed: 6
+      stories:
+        - "ARC-A01: getPlatformContract() service - DONE"
+        - "ARC-A02: Route guards implementation - DONE"
+        - "ARC-A03: useWorkspaceAccess hook fix - DONE"
+        - "ARC-A04: Mobile → Notes redirect - DONE"
+        - "ARC-A05: Hub card click data contract - DONE"
+        - "ARC-A06: Post-creation redirect logic - DONE"
+
+    # Phase B: Storage Contract (Team B - COMPLETE)
+    phase_b:
+      name: "Storage Contract"
+      status: "complete"
+      stories_completed: 12
+      stories:
+        - "ARC-B01: StorageGateway abstraction layer - DONE"
+        - "ARC-B02: FSAGateway adapter - DONE"
+        - "ARC-B03: IDBGateway adapter - DONE"
+        - "ARC-B04: browser-mode.ts persistence fix - DONE"
+        - "ARC-B05: FileSystemObserver with polling fallback - DONE"
+        - "ARC-B06: FileTreeScanner snapshot caching - DONE"
+        - "ARC-B07: Folder overlap detection - DONE"
+        - "ARC-B10: .viagent/ metadata folder - DONE"
+        - "ARC-B11: MarkdownSyncService - DONE"
+        - "ARC-B12: MarkdownSyncConflictDialog - DONE"
+        - "ARC-B08: File tree exclusion patterns - TODO (Week 3)"
+        - "ARC-B09: Scan depth limits - TODO (Week 3)"
+
+    # Phase C: State & Persistence (Team A - IN PROGRESS)
+    phase_c:
+      name: "State & Persistence"
+      status: "in_progress"
+      stories_completed: 3
+      stories_total: 10
+      stories:
+        - "ARC-C01: Consolidate Project Store - DONE"
+        - "ARC-C02: Facade re-exports - DONE"
+        - "ARC-C03: Fix saveProject STUB - DONE"
+        - "ARC-C04: Persist-first pattern - TODO"
+        - "ARC-C05: Archive duplicate stores - TODO"
+        - "ARC-C06: Audit STUB implementations - TODO"
+        - "ARC-C07: Dependency graph analysis - TODO"
+        - "ARC-C08: Fix race conditions - TODO"
+        - "ARC-C09: Permission model - TODO"
+        - "ARC-C10: Optimistic locking - TODO"
+
+    # Phase D: Entity Standardization (Team B - COMPLETE!)
+    phase_d:
+      name: "Entity Standardization"
+      status: "complete"
+      stories_completed: 4
+      stories_total: 4
+      current_story: "COMPLETE"
+      stories:
+        - "ARC-B08: File tree exclusion patterns - DONE (3h, P1)"
+        - "ARC-B09: Scan depth limits - DONE (2h, P1)"
+        - "ARC-D01: ProjectId template literal type - DONE (3h, P1)"
+        - "ARC-D02: workspaceId || projectId fallback bugs - DONE (4h, P1)"
+
+    # Phase E: File Tree Cleanup (Both Teams - PENDING)
+    phase_e:
+      name: "File Tree Cleanup"
+      status: "pending"
+      stories_completed: 1
+      stories_total: 4
+      stories:
+        - "ARC-E01: Delete dead .bak files - TODO"
+        - "ARC-E02: Archive project-store/ - DONE"
+        - "ARC-E03: Archive lib/filesystem/ duplicates - TODO"
+        - "ARC-E04: Update imports to canonical paths - TODO"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORY CYCLE STATE
+# ═══════════════════════════════════════════════════════════════════════════
+
+story_cycle:
+  current_story: "ARC-D03"
+  current_epic: "EPIC-CC-ARC"
+  current_phase: "phase_e_file_tree_cleanup"
+  current_step: "story_start"
+  step_status: "ready"
+
+  team:
+    orchestrator: "EXCALIBUR (ext-master-enhanced v2.0.0)"
+    team_id: "Team B"
+    team_name: "Storage Contract Squad"
+    current_focus: "Phase D: Entity Standardization"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAM ASSIGNMENTS
+# ═══════════════════════════════════════════════════════════════════════════
+
+teams:
+  - id: "Team A"
+    name: "Identity & Routing Squad"
+    focus: "Phase C (State & Persistence)"
+    current_phase: "C"
+    current_story: "ARC-C04"
+    status: "active"
+
+  - id: "Team B"
+    name: "Storage Contract Squad"
+    focus: "Phase D (Entity Standardization)"
+    current_phase: "D"
+    current_story: "ARC-B08"
+    status: "active"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AGENT COORDINATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+agents:
+  coordinator: "EXCALIBUR (ext-master-enhanced)"
+  current_agent: "dev-ext"
+  target_agent: "dev-ext"
+
+  routing:
+    current_story: "ARC-D01"
+    story_type: "feature_development"
+    rule_id: "DEV-001"
+    workflow: "story-cycle"
+    agent: "dev-ext"
+    priority: "high"
+    timeout_minutes: 60
+
+# ═══════════════════════════════════════════════════════════════════════════
+# MCP SERVERS STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+mcp_servers:
+  context7:
+    status: "available"
+    purpose: "Official documentation queries"
+  deepwiki:
+    status: "available"
+    purpose: "GitHub semantic search"
+  tavily:
+    status: "available"
+    purpose: "Web research"
+  exa:
+    status: "available"
+    purpose: "Web search"
+  repomix:
+    status: "available"
+    purpose: "Local codebase analysis"
+  github:
+    status: "available"
+    purpose: "GitHub operations"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TIMESTAMPS
+# ═══════════════════════════════════════════════════════════════════════════
+
+timestamps:
+  created_at: "2026-01-18T11:30:00+07:00"
+  last_updated: "2026-01-18T11:30:00+07:00"
+  phase_d_started: "2026-01-18T11:30:00+07:00"
+  arc_b08_started: "2026-01-18T11:30:00+07:00"

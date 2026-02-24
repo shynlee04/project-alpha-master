@@ -1,0 +1,23 @@
+{
+  "citation": {
+    "sidebar": {
+      "title": "Sources & Citations",
+      "ariaLabel": "Citation sidebar panel",
+      "close": "Close citations",
+      "searchPlaceholder": "Search citations...",
+      "searchAriaLabel": "Search through citations",
+      "filterBySource": "Filter by source",
+      "selectAll": "Select all",
+      "clearAll": "Clear all",
+      "empty": "No citations in this response",
+      "noResults": "No citations match your search",
+      "footer": "Click a citation to view source",
+      "citationListAriaLabel": "List of citations",
+      "citationCardAriaLabel": "Citation {{id}} from {{title}}"
+    },
+    "badge": {
+      "ariaLabel": "{{count}} citations",
+      "srCitations": "citations"
+    }
+  }
+}

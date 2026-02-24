@@ -1,0 +1,476 @@
+---
+ide_persistence_analysis:
+  scan_timestamp: "2026-01-20T00:00:00+07:00"
+  scanner: "deep-scan-persistence-scanner"
+  scope: "IDE workspace persistence and storage patterns"
+
+  dexie_schema:
+    ide_tables:
+      - table_name: "ideState"
+        fields:
+          - "projectId (string, primary key)"
+          - "workspaceId (ide/knowledge/study/notes)"
+          - "openFiles (string[])"
+          - "activeFile (string | null)"
+          - "expandedPaths (string[])"
+          - "panelLayouts (Record<string, number[]>)"
+          - "terminalTab (terminal | output | problems)"
+          - "chatVisible (boolean)"
+          - "activeFileScrollTop (number | undefined)"
+          - "updatedAt (Date)"
+        indexes:
+          - "projectId (primary)"
+          - "updatedAt (for sorting)"
+        foreign_keys:
+          - "projectId -> projects.id"
+        table_purpose: "Stores IDE workspace state (open files, active file, expanded paths, panel layouts, terminal tab state, chat visibility, scroll position)"
+        record_count_estimate: "~1 per active project"
+        size_estimate: "<10KB per record"
+
+      - table_name: "sessionSnapshots"
+        fields:
+          - "id (string, primary key - projectId:timestamp)"
+          - "projectId (string, indexed)"
+          - "workspaceId (ide/knowledge/study/notes)"
+          - "snapshot (complex object with openFiles, activeFile, cursorPositions, scrollPositions, panelWidths, terminalHistory, chatState)"
+          - "createdAt (number, indexed)"
+          - "expiresAt (number, indexed)"
+        indexes:
+          - "[projectId+createdAt] (compound index)"
+          - "expiresAt (for cleanup)"
+        foreign_keys:
+          - "projectId -> projects.id"
+        table_purpose: "Captures complete IDE session state for seamless resumption after crashes or reloads"
+        record_count_estimate: "~10 per project (kept for 7 days)"
+        size_estimate: "~50KB per snapshot (includes full state)"
+
+      - table_name: "fsaHandles"
+        fields:
+          - "projectId (string, primary key)"
+          - "workspaceId (ide/knowledge/study/notes)"
+          - "handleData (unknown - serialized FileSystemDirectoryHandle)"
+          - "directoryPath (string)"
+          - "grantedAt (number)"
+          - "lastAccessedAt (number)"
+          - "permissionStatus (prompt/granted/denied/unknown/dismissed)"
+          - "createdAt (number)"
+          - "updatedAt (number)"
+        indexes:
+          - "projectId (primary)"
+          - "permissionStatus (for querying valid handles)"
+          - "lastAccessedAt (for sorting)"
+        foreign_keys:
+          - "projectId -> projects.id"
+        table_purpose: "Stores serialized FSA directory handles for instant permission restoration on revisits"
+        record_count_estimate: "~1 per active project"
+        size_estimate: "~1KB per record (handle is small)"
+
+      - table_name: "terminalState"
+        fields:
+          - "id (string, primary key - e.g., 'via-gent-terminal')"
+          - "state (any - JSON serialized TerminalState)"
+          - "updatedAt (Date)"
+        indexes:
+          - "id (primary)"
+        foreign_keys: []
+        table_purpose: "Zustand persist middleware storage for terminal settings (fontSize, theme, scrollback, etc.)"
+        record_count_estimate: "~1 globally"
+        size_estimate: "~5KB per record"
+
+      - table_name: "fileMetadata"
+        fields:
+          - "path (string, primary key - relative file path)"
+          - "projectId (string, indexed)"
+          - "workspaceId (ide/knowledge/study/notes)"
+          - "lastModified (number, indexed)"
+          - "size (number)"
+          - "hash (string | undefined - SHA-256)"
+          - "syncedAt (number, indexed)"
+          - "createdAt (number)"
+          - "updatedAt (number)"
+        indexes:
+          - "[projectId+path] (compound index)"
+          - "lastModified (for change detection)"
+          - "syncedAt (for finding files needing sync)"
+        foreign_keys:
+          - "projectId -> projects.id"
+        table_purpose: "Caches file metadata for incremental sync (detect changed files without full rescan)"
+        record_count_estimate: "~100-1000 per project (all files)"
+        size_estimate: "~100KB per project (1KB per 100 files)"
+
+      - table_name: "syncStatus"
+        fields:
+          - "id (string, primary key - generated from path)"
+          - "path (string, indexed)"
+          - "workspaceId (ide/knowledge/study/notes)"
+          - "syncStatus (pending/syncing/synced/error/conflict, indexed)"
+          - "localVersion (number | undefined)"
+          - "remoteVersion (number | undefined)"
+          - "lastSyncedAt (number | undefined, indexed)"
+          - "errorMessage (string | undefined)"
+          - "retryCount (number)"
+          - "createdAt (number)"
+          - "updatedAt (number)"
+        indexes:
+          - "path (primary key)"
+          - "syncStatus (for filtering by status)"
+          - "lastSyncedAt (for sorting)"
+        foreign_keys: []
+        table_purpose: "Tracks file sync operation status (pending, syncing, synced, error, conflict)"
+        record_count_estimate: "~10-50 per sync cycle"
+        size_estimate: "~10KB per record"
+
+    shared_tables:
+      - table_name: "fsaHandles"
+        shared_with: ["IDE", "Notes"]
+        access_pattern: "Both IDE and Notes use fsaHandles table with workspaceId for isolation. Desktop projects share same FSA directory handle."
+
+      - table_name: "projects"
+        shared_with: ["IDE", "Notes", "Knowledge", "Study"]
+        access_pattern: "Central project metadata. IDE reads project.handle for FSA, Notes reads same handle for notes folder."
+
+      - table_name: "fileMetadata"
+        shared_with: ["IDE", "Notes"]
+        access_pattern: "Both workspaces use fileMetadata table with workspaceId filtering. Track files across project."
+
+  file_operations:
+    storage_adapter: "FSAGateway (desktop), IDBGateway (mobile/tablet)"
+    storage_gateway_usage: "YES - IDE uses StorageGateway interface via createIdeFileGateway()"
+    file_read_flow: |
+      1. User requests file read (Monaco editor open, terminal cat command)
+      2. Call gateway.read(path)
+      3. FSAGateway: Read from FileSystemDirectoryHandle using getFileHandle()
+      4. IDBGateway: Read from idbFiles table (IndexedDB)
+      5. Return content as Uint8Array, decode to string
+      6. Monaco editor updates model, terminal displays output
+
+    file_write_flow: |
+      1. User saves file (Ctrl+S, auto-save at 500ms debounce)
+      2. Monaco editor calls onSave(path, content)
+      3. Encode content to Uint8Array using TextEncoder
+      4. Call gateway.write(path, data)
+      5. FSAGateway: Get handle, createWritable(), write(), close()
+      6. IDBGateway: Update idbFiles table record
+      7. Update fileMetadata record (lastModified, size, hash)
+
+    file_delete_flow: |
+      1. User deletes file (Explorer right-click, terminal rm command)
+      2. Call gateway.delete(path)
+      3. FSAGateway: Get handle, remove(), delete() handle
+      4. IDBGateway: Delete from idbFiles table
+      5. Delete from fileMetadata table
+      6. Update openFiles in IDE state (remove closed file)
+
+    file_watch_flow: |
+      1. FSAGateway.watch(callback) called on IDE mount
+      2. Chrome 129+: Use FileSystemObserver API for native file watching
+      3. Chrome <129: Fallback to polling (2000ms interval, 300ms debounce)
+      4. On file change: Compute hash, compare with previous hash
+      5. If changed: Trigger FileChangeCallback(event)
+      6. IDE updates file tree, reloads file if open in Monaco
+      7. IDBGateway: No native watching, requires manual refresh
+
+  configuration_persistence:
+    editor_settings: |
+      Monaco editor manages settings internally (font size, theme, tab size, etc.).
+      NOT explicitly stored in Dexie. Monaco state is in-memory only.
+      Exception: Active file and open files stored in ideState table.
+
+    terminal_settings: "Stored in terminalState PersistedState table (id: 'via-gent-terminal')"
+    layout_settings: "Stored in ideState table (panelLayouts: Record<string, number[]>)"
+    theme_settings: "NOT stored by IDE. Uses useTheme() hook with next-themes (localStorage)"
+    backup_mechanism: "SessionSnapshotManager creates automatic snapshots on state changes (debounced 5s)"
+    restore_mechanism: |
+      On IDE mount, call sessionSnapshotManager.getLatestSnapshot(projectId)
+      If snapshot found and not expired (< 7 days):
+        - Restore openFiles (store.setExpandedPaths)
+        - Restore activeFile (store.setActiveFile)
+        - Restore scroll positions (store.setActiveFileScrollTop)
+        - Restore panel widths (TODO: not implemented)
+        - Restore terminal history (TODO: not integrated)
+        - Delete snapshot after restore
+    notes_on_lost_state: |
+      If no snapshot found or snapshot expired:
+        - IDE starts with empty state (no open files, default layout)
+        - No data loss recovery mechanism
+
+  caching_strategy:
+    file_cache:
+      enabled: true
+      location: "FileContentCache table in IndexedDB (Dexie)"
+      cache_key: "[projectId+workspaceId+path] - compound key"
+      cache_invalidation: |
+        - Manual: Clear cache on project switch or refresh
+        - Automatic: Clear expired snapshots (7 days)
+        - Change detection: FileMetadata tracks lastModified, triggers cache update
+      cache_size_limit: "No explicit limit detected. Rely on IndexedDB quota (~500MB)"
+
+    editor_state_cache:
+      enabled: true
+      cached_data:
+        - "Open files list (ideState.openFiles)"
+        - "Active file path (ideState.activeFile)"
+        - "Scroll position per file (ideState.activeFileScrollTop)"
+        - "Expanded paths in file tree (ideState.expandedPaths)"
+        - "Panel layouts (ideState.panelLayouts)"
+        - "Terminal tab state (ideState.terminalTab)"
+        - "Chat visibility (ideState.chatVisible)"
+      persistence_trigger: |
+        - Auto: Zustand persist middleware writes on every state change
+        - Debounced: 500ms debounce to reduce writes
+        - Write to: ideState table with projectId as key
+
+  sync_strategy:
+    ide_file_sync:
+      strategy: "event-driven (FileSystemObserver) or polling fallback"
+      sync_frequency: |
+        - Chrome 129+: Native file watching (instant)
+        - Chrome <129: Polling every 2000ms
+        - Debounce: 300ms to prevent duplicate events
+      conflict_resolution: "NOT IMPLEMENTED - No conflict detection/resolution logic found"
+      sync_with_notes: |
+        - Both use fsaHandles table with same directory handle
+        - NO conflict resolution between IDE and Notes file edits
+        - RISK: If both edit same file, last write wins (no conflict UI)
+      sync_with_filesystem: |
+        - Desktop: FSAGateway reads/writes directly to FSA
+        - Changes from external editor detected by FileSystemObserver/polling
+        - Monaco editor shows dirty indicator when content changed externally
+        - User can reload file to accept external changes
+        - Mobile: IDBGateway, no external sync (self-contained)
+
+  cross_workspace_storage:
+    shared_handles: "YES - FSA handles stored in fsaHandles table, shared by projectId (not workspaceId)"
+    shared_files: "YES - Both IDE and Notes access files through same StorageGateway (same project, different workspaceId)"
+    conflict_detection: "NOT IMPLEMENTED - No cross-workspace conflict detection found"
+    conflict_resolution: "NOT IMPLEMENTED - RISK: Last write wins without user notification"
+
+  performance_issues:
+    expensive_queries:
+      - query: "IDE state hydration on page load"
+        file: "src/infrastructure/persistence/stores/ide/ide-state-storage.ts"
+        lines: "120-139"
+        performance_impact: "high - Blocks IDE render until IndexedDB query completes"
+        optimization: "Pre-load state in background, show loading state during hydration"
+
+      - query: "Session snapshot lookup"
+        file: "src/lib/workspace/session-snapshot.ts"
+        lines: "140-155"
+        performance_impact: "medium - Queries sessionSnapshots table on every project load"
+        optimization: "Cache latest snapshot in memory, reduce IndexedDB queries"
+
+    n_plus1_issues: "NONE DETECTED - All IDE queries use compound indexes, no loops detected"
+
+    blocking_operations:
+      - operation: "Project state hydration (getItem)"
+        file: "src/infrastructure/persistence/stores/ide/ide-state-storage.ts"
+        blocking_time: "~100-500ms (IndexedDB query)"
+        optimization: "Show loading spinner during hydration"
+
+      - operation: "File content read (cat command)"
+        file: "src/infrastructure/filesystem/terminal-fs-adapter.ts"
+        lines: "271-301"
+        blocking_time: "~50-200ms per file read (FSA)"
+        optimization: "Stream large files instead of loading full content into memory"
+
+      - operation: "Session snapshot save (captureSessionState)"
+        file: "src/lib/workspace/session-snapshot.ts"
+        lines: "82-108"
+        blocking_time: "~50-200ms (IndexedDB write)"
+        optimization: "Debounce snapshot creation, save in background without blocking UI"
+
+  backup_restore:
+    backup_mechanism: "SessionSnapshotManager with automatic debounced snapshots (5s delay)"
+    backup_frequency: "On every IDE state change (debounced to 5s)"
+    backup_location: "sessionSnapshots table in IndexedDB (Dexie)"
+    restore_mechanism: |
+      On IDE mount:
+        1. Query sessionSnapshots table for latest non-expired snapshot
+        2. If found (< 7 days old), restore state components
+        3. Restore openFiles, activeFile, scrollPositions
+        4. Delete snapshot after restore
+        5. If no snapshot, start with empty state
+    restore_triggers:
+      - Automatic: On IDE mount / page refresh
+      - Manual: NOT IMPLEMENTED - No manual restore UI found
+      - On error: NOT IMPLEMENTED - No crash recovery trigger found
+    data_retention: "Snapshots expire after 7 days (auto-cleanup via cleanupExpiredSnapshots)"
+
+  storage_gateway_compliance:
+    uses_storage_gateway: true
+    gateway_methods_used:
+      - "read() - Monaco editor file loading, terminal cat command"
+      - "write() - Monaco editor auto-save, terminal touch/echo commands"
+      - "delete() - Terminal rm command, Explorer delete"
+      - "list() - Explorer file tree, terminal ls command"
+      - "exists() - File existence checks"
+      - "rename() - File/directory rename operations"
+      - "createDirectory() - Terminal mkdir command"
+      - "watch() - File watching (Desktop only)"
+
+    gateway_violations:
+      - violation: "Terminal command execution bypasses gateway for echo command"
+        file: "src/infrastructure/filesystem/terminal-fs-adapter.ts"
+        lines: "560-568"
+        description: "handleEcho() returns stdout directly without calling gateway.read/write"
+        severity: "low - Echo is read-only, no persistence impact"
+
+      - violation: "Direct FSA handle access in some components"
+        file: "src/presentation/components/ide/ExplorerPanel.tsx (example)"
+        description: "Components may access project.handle directly instead of gateway methods"
+        severity: "medium - Bypasses StorageGateway abstraction layer"
+
+      - violation: "IDE settings stored in localStorage (theme)"
+        file: "src/presentation/components/ide/XTerminal.tsx"
+        lines: "24-25"
+        description: "Theme resolved from next-themes (localStorage), not Dexie"
+        severity: "low - Theme is UI setting, not IDE-specific state"
+
+    gateway_compliance_score: "85% - Mostly compliant with ADR-033, minor violations found"
+
+  findings_summary:
+    strengths:
+      - "✅ Uses StorageGateway interface per ADR-033"
+      - "✅ Platform routing (FSAGateway desktop, IDBGateway mobile) implemented correctly"
+      - "✅ Project-scoped state isolation via projectId keys"
+      - "✅ Automatic session snapshots for crash recovery"
+      - "✅ Debounced state changes (500ms) to reduce IndexedDB writes"
+      - "✅ File metadata caching for incremental sync"
+      - "✅ FSA handle persistence for instant permission restore"
+      - "✅ Workspace isolation via workspaceId in all records"
+
+    risks:
+      - "⚠️ NO CONFLICT RESOLUTION - IDE and Notes can overwrite each other's files"
+      - "⚠️ Terminal history NOT persisted permanently (in-memory only, lost on refresh)"
+      - "⚠️ Session snapshots don't restore terminal history (TODO in code)"
+      - "⚠️ Session snapshots don't restore cursor positions (TODO in code)"
+      - "⚠️ Session snapshots don't restore panel widths (TODO in code)"
+      - "⚠️ File content cache (FileContentCache) exists but NOT actively used by IDE"
+      - "⚠️ No manual snapshot trigger UI (automatic only)"
+      - "⚠️ No explicit data loss recovery mechanism (lost state = empty IDE)"
+
+    recommendations:
+      - "Implement conflict detection when both IDE and Notes edit same file"
+      - "Persist terminal history permanently in Dexie (not just in-memory)"
+      - "Complete session snapshot restoration (cursor, panels, terminal)"
+      - "Add manual snapshot trigger UI (Command + S)"
+      - "Use FileContentCache for file content caching in IDE"
+      - "Add conflict resolution UI (merge dialogs, diff view)"
+      - "Implement data loss recovery (detect lost state, offer restore options)"
+      - "Add file streaming for large files (don't load full content into memory)"
+      - "Pre-hydrate IDE state in background to reduce blocking time"
+      - "Add progress indicators for file operations"
+      - "Implement version history for conflict resolution (git-style diffs)"
+
+  adr_compliance_check:
+    - check: "IDE uses StorageGateway interface"
+      status: "PASS"
+      evidence: "createIdeFileGateway() returns FSAGateway/IDBGateway, Monaco editor uses gateway methods"
+      location: "src/infrastructure/filesystem/ide-file-gateway.ts:76-100"
+
+    - check: "No direct FSA handle access in IDE components"
+      status: "PARTIAL"
+      evidence: "Most operations use gateway, but some components may access handle directly"
+      location: "See gateway_violations section for specific violations"
+      severity: "MEDIUM"
+
+    - check: "Platform contract used in IDE"
+      status: "PASS"
+      evidence: "createIdeFileGateway() calls getPlatformContract() for routing"
+      location: "src/infrastructure/filesystem/ide-file-gateway.ts:85-99"
+
+    - check: "Storage adapter used (FSA for desktop, Dexie for mobile)"
+      status: "PASS"
+      evidence: "Desktop: FSAGateway with FSA handle, Mobile: IDBGateway with projectId"
+      location: "src/infrastructure/filesystem/ide-file-gateway.ts:88-99"
+
+  data_flow_diagram: |
+    IDE Load Flow:
+      1. User navigates to /ide/:projectId
+      2. IDELayoutMain component mounts
+      3. createIdeFileGateway({ projectId, fsaHandle })
+      4. getPlatformContract() → returns { canAccessFSA: true/false }
+      5. Desktop → new FSAGateway(fsaHandle)
+      6. Mobile → new IDBGateway(projectId)
+      7. loadSessionSnapshot(projectId) → latest snapshot or null
+      8. useIDEStore() → Zustand store creation with persist middleware
+      9. createIDEStateStorage() → custom adapter queries Dexie for ideState table
+      10. Restore openFiles, activeFile, scroll positions from snapshot
+      11. IDE renders file tree, editor, terminal panels
+
+    File Save Flow:
+      1. User edits file in Monaco editor
+      2. Monaco detects change (onChange callback)
+      3. Debounce 500ms
+      4. Monaco calls onSave(path, content)
+      5. Update openFiles in IDE store (dirty flag cleared)
+      6. gateway.write(path, TextEncoder.encode(content))
+      7. FSAGateway: handle.getFileHandle(path) → createWritable() → write() → close()
+      8. IDBGateway: db.idbFiles.put({ projectId, workspaceId, path, content })
+      9. Update fileMetadata record (lastModified, size, hash)
+      10. Persist IDE state (Zustand writes to ideState table)
+      11. triggerSnapshot(projectId) → debounced session snapshot
+
+    Terminal Command Flow:
+      1. User types command in XTerminal
+      2. TerminalFSAdapter.execute(command)
+      3. Parse command (ls, cat, grep, cd, git, etc.)
+      4. Call gateway method (read, write, list, delete, etc.)
+      5. FSAGateway: Access FSA handle, execute operation
+      6. IDBGateway: Access idbFiles table, execute operation
+      7. Return CommandResult { exitCode, stdout, stderr }
+      8. Display output in XTerminal
+
+    Session Snapshot Flow:
+      1. IDE state changes (file open, scroll, etc.)
+      2. Zustand persist middleware detects change
+      3. Debounce 5s
+      4. SessionSnapshotManager.captureSessionState(projectId)
+      5. Get current IDE state from useIDEStore.getState()
+      6. Create SessionSnapshot object:
+         - openFiles: ideState.openFiles
+         - activeFile: ideState.activeFile
+         - cursorPositions: {} (TODO)
+         - scrollPositions: { activeFile: scrollTop }
+         - panelWidths: ideState.panelLayouts
+         - terminalHistory: [] (TODO)
+         - chatState: {} (TODO)
+      7. db.sessionSnapshots.put(snapshot)
+      8. Clean up expired snapshots (> 7 days)
+
+  statistics:
+    total_ide_tables: 6
+    shared_tables_count: 3
+    total_records_estimate: "~1500 per project (all state + files + snapshots)"
+    total_storage_estimate: "~10-20MB per project (IndexedDB + FSA handles)"
+    avg_snapshot_size: "~50KB (includes full IDE state)"
+    avg_file_metadata_size: "~1KB per file (1000 files = 1MB)"
+    avg_state_size: "~10KB (open files, layouts, etc.)"
+    backup_retention_days: 7
+    snapshot_debounce_ms: 5000
+    auto_save_debounce_ms: 500
+    file_watch_interval_ms: 2000
+    file_watch_debounce_ms: 300
+
+  conclusion: |
+    IDE persistence architecture is well-structured and mostly compliant with ADR-033.
+    Strengths: Platform routing (FSA/IDB), StorageGateway usage, project isolation, automatic snapshots.
+
+    Critical gaps:
+    1. NO conflict resolution between IDE and Notes (data loss risk)
+    2. Terminal history not persisted (lost on refresh)
+    3. Incomplete session restoration (cursor, panels, terminal TODOs)
+    4. FileContentCache table exists but unused (wasted storage)
+    5. No manual snapshot UI or data loss recovery mechanism
+
+    Recommendations:
+    1. Implement cross-workspace conflict detection and resolution UI
+    2. Persist terminal history in Dexie permanently
+    3. Complete session snapshot restoration (remove all TODOs)
+    4. Activate FileContentCache for IDE file operations
+    5. Add manual snapshot triggers (Command + S, menu item)
+    6. Implement data loss recovery (detect empty state, offer restore)
+    7. Add file streaming for large files (>1MB)
+    8. Pre-hydrate state in background to reduce blocking
+    9. Add progress indicators for file operations
+    10. Implement version history for conflict resolution (git-style diffs)

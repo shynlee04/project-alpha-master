@@ -1,0 +1,350 @@
+/**
+ * @fileoverview Embed Block Styles
+ * @module presentation/components/notes/blocks/EmbedBlock
+ * @story MM-12
+ *
+ * 8-bit design system: sharp corners, no glassmorphism, orange theme.
+ */
+
+/* ============================================================================
+   EMBED BLOCK - MAIN
+   ============================================================================ */
+
+.embed-block {
+  position: relative;
+  margin: 1rem 0;
+  border: 2px solid var(--border);
+  background: var(--card);
+}
+
+.embed-block[data-align="center"] {
+  text-align: center;
+}
+
+.embed-block[data-align="right"] {
+  text-align: right;
+}
+
+.embed-block--error {
+  border-color: var(--destructive);
+  background: var(--destructive/5);
+}
+
+/* ============================================================================
+   EMBED BLOCK - WRAPPER
+   ============================================================================ */
+
+.embed-block__wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.embed-block__wrapper:hover .embed-block__edit-btn,
+.embed-block__wrapper:hover .embed-block__remove-btn {
+  opacity: 1;
+}
+
+/* ============================================================================
+   EMBED BLOCK - IFRAME CONTAINER
+   ============================================================================ */
+
+.embed-block__iframe-container {
+  position: relative;
+  width: 100%;
+  /* Default aspect ratio 16:9 */
+  padding-bottom: 56.25%;
+  background: var(--background);
+  border-bottom: 2px solid var(--border);
+}
+
+.embed-block__iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Loading state */
+.embed-block__loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--background);
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+/* ============================================================================
+   EMBED BLOCK - LINK STYLE (for GitHub, CodePen, etc.)
+   ============================================================================ */
+
+.embed-block__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--foreground);
+  transition: background-color 0.15s ease;
+}
+
+.embed-block__link:hover {
+  background: var(--accent);
+}
+
+.embed-block__link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--secondary);
+  border: 2px solid var(--border);
+}
+
+.embed-block__link-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.embed-block__link-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.embed-block__link-provider {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.embed-block__link-external {
+  color: var(--muted-foreground);
+}
+
+/* ============================================================================
+   EMBED BLOCK - ERROR STATE
+   ============================================================================ */
+
+.embed-block__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.embed-block__error-icon {
+  margin-bottom: 0.5rem;
+}
+
+.embed-block__error-text {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.embed-block__error-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.embed-block__error-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.embed-block__error-link:hover {
+  text-decoration: underline;
+}
+
+.embed-block__error-retry {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.embed-block__error-retry:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
+
+/* ============================================================================
+   EMBED BLOCK - CAPTION
+   ============================================================================ */
+
+.embed-block__caption {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  border-top: 1px solid var(--border);
+}
+
+/* ============================================================================
+   EMBED BLOCK - ACTION BUTTONS (Edit/Remove)
+   ============================================================================ */
+
+.embed-block__edit-btn,
+.embed-block__remove-btn {
+  position: absolute;
+  top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  background: var(--card);
+  border: 2px solid var(--border);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+  z-index: 10;
+}
+
+.embed-block__edit-btn {
+  right: 3.5rem;
+}
+
+.embed-block__remove-btn {
+  right: 0.5rem;
+}
+
+.embed-block__edit-btn:hover,
+.embed-block__remove-btn:hover {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.embed-block__remove-btn:hover {
+  background: var(--destructive);
+  border-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+/* ============================================================================
+   EMBED BLOCK - EDIT MODE
+   ============================================================================ */
+
+.embed-block-edit {
+  padding: 0.75rem;
+  background: var(--card);
+  border: 2px dashed var(--border);
+}
+
+.embed-block-edit__content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.embed-block-edit__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.embed-block-edit__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background: var(--background);
+  border: 2px solid var(--border);
+  color: var(--foreground);
+  outline: none;
+}
+
+.embed-block-edit__input:focus {
+  border-color: var(--primary);
+}
+
+.embed-block-edit__input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.embed-block-edit__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--primary);
+  border: 2px solid var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.embed-block-edit__button:hover {
+  background: var(--primary/90);
+}
+
+.embed-block-edit__button--danger {
+  background: var(--destructive);
+  border-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.embed-block-edit__button--danger:hover {
+  background: var(--destructive/90);
+}
+
+.embed-block-edit__hint {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+/* ============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  .embed-block__iframe-container {
+    /* More vertical on mobile for better visibility */
+    padding-bottom: 75%;
+  }
+
+  .embed-block-edit__content {
+    flex-wrap: wrap;
+  }
+
+  .embed-block-edit__input {
+    width: 100%;
+    order: -1;
+  }
+
+  .embed-block__error-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

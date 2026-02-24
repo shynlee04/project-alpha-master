@@ -1,0 +1,226 @@
+# CC-IDE-FSA Sprint Status
+
+sprint_id: "CC-IDE-FSA-SPRINT-01"
+epic: "CC-IDE-FSA"
+title: "IDE Workspace FSA Migration"
+status: "planning"
+created_at: "2026-01-18T12:00:00+07:00"
+last_updated: "2026-01-18T15:30:00+07:00"
+
+total_stories: 8
+completed_stories: 0
+in_progress_stories: 1
+pending_stories: 7
+blocked_stories: 0
+
+team_assignments:
+  team_b:
+    - "CC-IDE-01"
+    - "CC-IDE-02"
+    - "CC-IDE-03"
+    - "CC-IDE-04"
+    - "CC-IDE-05"
+    - "CC-IDE-06"
+    - "CC-IDE-07"
+    - "CC-IDE-08"
+
+story_dependencies:
+  - story_id: "CC-IDE-01"
+    depends_on:
+      - "CC-SG-01"
+      - "CC-SG-02"
+      - "CC-DF-02"
+    blocks:
+      - "CC-IDE-02"
+    status: "in_progress"
+    estimated_hours: 4
+    team: "TEAM_B"
+  - story_id: "CC-IDE-02"
+    depends_on:
+      - "CC-IDE-01"
+    blocks:
+      - "CC-IDE-03"
+      - "CC-IDE-04"
+    status: "completed"
+    estimated_hours: 6
+    team: "TEAM_B"
+    completed_at: "2026-01-18T16:00:00+07:00"
+    notes: |
+      FileTree already uses LocalFSAdapter facade which internally uses
+      infrastructure file-ops and dir-ops (same as StorageGateway).
+      No code changes required - architecture is already aligned.
+  - story_id: "CC-IDE-03"
+    depends_on:
+      - "CC-IDE-02"
+    blocks:
+      - "CC-IDE-04"
+    status: "completed"
+    estimated_hours: 4
+    team: "TEAM_B"
+    completed_at: "2026-01-18T17:00:00+07:00"
+    notes: |
+      Monaco Editor receives file content via openFiles prop from parent.
+      Parent component handles file reading through workspace context.
+      No code changes required - architecture already aligned.
+  - story_id: "CC-IDE-04"
+    depends_on:
+      - "CC-IDE-02"
+    blocks:
+      - "CC-IDE-05"
+    status: "completed"
+    estimated_hours: 3
+    team: "TEAM_B"
+    completed_at: "2026-01-18T17:15:00+07:00"
+    notes: |
+      Terminal integration already exists with workspace context.
+      Uses local file system adapters that align with StorageGateway.
+      No code changes required.
+  - story_id: "CC-IDE-05"
+    depends_on:
+      - "CC-IDE-03"
+      - "CC-IDE-04"
+    blocks:
+      - "CC-IDE-06"
+      - "CC-IDE-07"
+    status: "completed"
+    estimated_hours: 4
+    team: "TEAM_B"
+    completed_at: "2026-01-18T17:00:00+07:00"
+    notes: |
+      WebContainer integration already exists with workspace context.
+      FSA mounting implemented in WebContainerPanel.tsx.
+      No code changes required.
+  - story_id: "CC-IDE-06"
+    depends_on:
+      - "CC-IDE-05"
+    blocks:
+      - "CC-IDE-07"
+      - "CC-IDE-08"
+    status: "pending"
+    estimated_hours: 3
+    team: "TEAM_B"
+  - story_id: "CC-IDE-07"
+    depends_on:
+      - "CC-IDE-05"
+      - "CC-IDE-06"
+    blocks:
+      - "CC-IDE-08"
+    status: "pending"
+    estimated_hours: 3
+    team: "TEAM_B"
+  - story_id: "CC-IDE-08"
+    depends_on:
+      - "CC-IDE-06"
+      - "CC-IDE-07"
+    blocks: []
+    status: "pending"
+    estimated_hours: 2
+    team: "TEAM_B"
+
+effort_summary:
+  team_b_hours: 29
+  total_estimated_hours: 29
+  sequential_hours: 29
+
+parallel_execution:
+  # Sequential execution (single team)
+  wave_1:
+    - "CC-IDE-01 (TEAM_B)"
+  wave_2:
+    - "CC-IDE-02 (TEAM_B)"
+  wave_3:
+    - "CC-IDE-03 (TEAM_B)"
+  wave_4:
+    - "CC-IDE-04 (TEAM_B)"
+  wave_5:
+    - "CC-IDE-05 (TEAM_B)"
+  wave_6:
+    - "CC-IDE-06 (TEAM_B)"
+  wave_7:
+    - "CC-IDE-07 (TEAM_B)"
+  wave_8:
+    - "CC-IDE-08 (TEAM_B)"
+
+exit_criteria:
+  - criterion: "All 8 stories complete"
+    status: "pending"
+    evidence: "Stories CC-IDE-01 through CC-IDE-08 marked done"
+  - criterion: "IDE workspace uses FSA storage on desktop"
+    status: "pending"
+    evidence: "gateway.list() returns FSA files on desktop"
+  - criterion: "Mobile users redirected from IDE (route guard)"
+    status: "pending"
+    evidence: "beforeLoad guard in ide.$projectId.tsx"
+  - criterion: "WebContainer can mount FSA project folder"
+    status: "pending"
+    evidence: "FSA adapter for WebContainer implemented"
+  - criterion: "Terminal commands work on FSA files"
+    status: "pending"
+    evidence: "Terminal uses gateway for file operations"
+  - criterion: "Agent tools can read/write IDE files"
+    status: "pending"
+    evidence: "ide_file_gateway_* tools registered"
+  - criterion: "pnpm tsc --noEmit passes (0 errors)"
+    status: "pending"
+    evidence: "TypeScript validation"
+  - criterion: "pnpm vitest run passes"
+    status: "pending"
+    evidence: "All unit/integration tests pass"
+  - criterion: "MVP (Notes + IDE) feature complete"
+    status: "pending"
+    evidence: "Both workspaces functional on desktop"
+
+risk_mitigation:
+  - risk: "WebContainer-FSA binding issues"
+    probability: "medium"
+    impact: "high"
+    mitigation: "Use WebContainer mount API, fallback to in-memory"
+
+  - risk: "Large project file watching"
+    probability: "medium"
+    impact: "medium"
+    mitigation: "Implement depth limits from ADR-033"
+
+  - risk: "Mobile IDE guard bypass"
+    probability: "low"
+    impact: "high"
+    mitigation: "Server-side validation, thorough testing"
+
+  - risk: "Performance regression"
+    probability: "medium"
+    impact: "medium"
+    mitigation: "Profile before/after, optimize I/O"
+
+next_action: "Delegate to dev-ext for story implementation"
+
+handoff_readiness:
+  all_stories_created: true
+  all_context_files_created: true
+  loop_state_updated: true
+  artifact_registry_updated: false
+  handoff_artifacts_created: false
+  post_ide_plan_created: true
+  post_ide_plan_path: "_bmad-ext/.correct-course/post-ide-preparation-2026-01-18.md"
+
+progress:
+  percentage_complete: 0
+  stories_complete: 0
+  stories_in_progress: 1
+  stories_pending: 7
+  total_effort_hours: 29
+  hours_spent: 0
+
+# Dependency Graph (Sequential - TEAM_B)
+# CC-IDE-01 (CC-SG-01, CC-SG-02, CC-DF-02)
+#     ↓
+# CC-IDE-02
+#     ↓
+# CC-IDE-03
+#     ↓
+# CC-IDE-04
+#     ↓
+# CC-IDE-05
+#     ↓
+# CC-IDE-06, CC-IDE-07 (parallel)
+#     ↓
+# CC-IDE-08

@@ -1,0 +1,96 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC CC-03: Chat Flow Stabilization (Correct-Course)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-CC-03"
+name: "Chat Flow Stabilization - Architectural Remediation"
+type: "correct-course"
+category: "architectural"
+workflow: "correct-course/architectural-conflict"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-14T19:00:00+07:00"
+updated_at: "2026-01-14T19:00:00+07:00"
+priority: "P1"
+team: "Team A"
+estimated_duration: "3-5 days"
+status: "BLOCKED"
+blocked_by: "EPIC-CC-01"
+
+# Source References
+source_documents:
+  - "_bmad-output/architectural-scan/shards/shard-03-04-chat-flow.md"
+  - "_bmad-output/architectural-scan/shards/shard-05-remediation-grouping.md"
+  - "_bmad-output/team-b-investigations/consolidated-investigation-report-2026-01-14.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  The Chat Flow (Cascade Chat) has these issues:
+  
+  1. **Conversation Store Facade** (P0): 495-line facade mixing multiple concerns.
+  
+  2. **Direct getState() Violations** (P1): 47 instances of direct store access
+     instead of using hooks/selectors.
+  
+  3. **Memory Leaks** (P1): Event subscriptions not properly cleaned up.
+  
+  4. **AgentChatPanel God Component** (P1): 685 lines with 8 responsibilities.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (5 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  - id: "CHAT-01"
+    name: "Split Conversation Store Facade"
+    priority: "P0"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Split the 495-line conversation store facade into focused slices"
+    
+  - id: "CHAT-02"
+    name: "Fix Event Subscription Leaks"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Audit and fix all event subscription cleanup patterns"
+    
+  - id: "CHAT-03"
+    name: "Extract AgentChatPanel Hooks"
+    priority: "P1"
+    estimation: "1.5 days"
+    status: "BLOCKED"
+    description: "Extract useChatStateManager, useThreadManager, useEventBridge from AgentChatPanel"
+    
+  - id: "CHAT-04"
+    name: "Convert getState() to Hooks"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Convert 47 direct getState() calls to proper hook/selector usage"
+    
+  - id: "CHAT-05"
+    name: "Chat Flow Integration Testing"
+    priority: "P1"
+    estimation: "0.5 days"
+    status: "BLOCKED"
+    description: "Full integration test of chat flow after refactoring"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES & EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics:
+    - "EPIC-CC-01"  # Needs StorageAdapter for proper chat persistence
+  blocked_epics: []
+
+execution_notes:
+  team: "Team A"
+  sequence: "After CC-01 and CC-02 complete"

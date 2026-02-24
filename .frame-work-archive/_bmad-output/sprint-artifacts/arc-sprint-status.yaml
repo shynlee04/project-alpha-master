@@ -1,0 +1,35 @@
+# ARC Sprint Status
+# Updated: 2026-01-17T13:10+07:00
+
+epics:
+  ARC-01:
+    id: EPIC-01
+    title: Workspace State Isolation & User Experience Unblocking
+    status: in_progress
+    stories:
+      - id: EP01-WS-01
+        title: Workspace-Scoped Store Factory with Composite Keys
+        status: pending
+      - id: EP01-ST-02
+        title: Desktop File Handle Permission Persistence
+        status: pending
+      - id: EP01-AG-01
+        title: Real WebContainer Integration for Agentic Coding
+        status: pending
+      - id: EP01-UX-01
+        title: Hub Entry Point Simplification - Direct Project Landing
+        status: pending
+      - id: EP01-RT-01
+        title: Route Loading Pattern Standardization
+        status: pending
+      - id: EP01-FIX-01
+        title: Complete BUG-009 Fix - Remove IDE Store Dependencies from Non-IDE Routes
+        status: pending
+
+last_updated: 2026-01-17T13:10+07:00
+
+# Notes
+- EPIC-01 created to address 5 critical blockers
+- 18-23 hours estimated effort
+- All 6 stories are pending
+- Focus: Unblocking workspace switching, fixing desktop permissions, enabling real agentic coding, simplifying hub entry

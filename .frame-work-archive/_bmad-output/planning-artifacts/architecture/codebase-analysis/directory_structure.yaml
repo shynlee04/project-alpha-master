@@ -1,0 +1,45 @@
+directory_structure:
+  src/:
+    core/entities: 4 files
+    domain/services: 7 files
+    infrastructure/persistence: 234 files
+    infrastructure/events: 3 files
+    infrastructure/sync: 9 files
+    lib/agent: 107 files
+    lib/editor: 5 files
+    lib/filesystem: 63 files
+    lib/webcontainer: 10 files
+    lib/workspace: 34 files
+    presentation/components: 474 files
+    routes: 25 files
+  key_files_over_200_lines:
+    - src/infrastructure/persistence/dexie-db.ts (1,169 lines)
+    - src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts (557 lines)
+    - src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts (554 lines)
+    - src/infrastructure/persistence/stores/providers/migration-backup.ts (549 lines)
+    - src/infrastructure/persistence/workflow-persistence.ts (547 lines)
+    - src/infrastructure/persistence/dexie-db-migrations.ts (828 lines)
+    - src/infrastructure/persistence/stores/use-app-store.ts (367 lines)
+    - src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts (367 lines)
+    - src/infrastructure/persistence/state-orchestrator.ts (427 lines)
+    - src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx (768 lines)
+    - src/presentation/components/ui/resizable.tsx (745 lines)
+    - src/presentation/components/notes/NotesPage.tsx (712 lines)
+    - src/presentation/components/knowledge/KnowledgePage.tsx (712 lines)
+    - src/presentation/components/knowledge/IndexingProgressPanel.tsx (593 lines)
+    - src/presentation/components/ide/EnhancedChatInterface.tsx (592 lines)
+    - src/presentation/components/ide/AgentChatPanel.tsx (527 lines)
+    - src/presentation/components/chat/ChatConversation.tsx (522 lines)
+    - src/lib/agent/facades/file-tools-impl.ts (1,161 lines - from facade directory)
+    - src/lib/agent/providers/credential-vault.ts (18,167 lines)
+    - src/lib/agent/providers/agent-validation-service.ts (14,335 lines)
+  architecture_summary:
+    layer_count: 5
+    layers:
+      - Core (Entities): 4 files
+      - Domain (Services): 7 files
+      - Infrastructure (Persistence, Events, Sync): ~250 files
+      - Lib (Agent, Editor, Filesystem, WebContainer, Workspace): ~220 files
+      - Presentation (Components): 474 files
+    total_src_files: "~1,000+ TypeScript files"
+    largest_subsystem: infrastructure/persistence (234 files)

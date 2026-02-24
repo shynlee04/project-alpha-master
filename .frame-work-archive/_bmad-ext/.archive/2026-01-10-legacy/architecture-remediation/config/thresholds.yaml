@@ -1,0 +1,326 @@
+# Architecture Remediation Module - Thresholds
+
+**Version**: 1.0.0
+**Created**: 2026-01-03
+**Purpose**: Define quality thresholds for all refactoring activities
+
+## Store Thresholds
+
+### Size Limits
+```yaml
+store:
+  max_lines: 120              # Maximum lines per store slice
+  max_functions: 10           # Maximum functions per slice
+  max_dependencies: 5         # Maximum external dependencies
+  max_nesting_depth: 2        # Maximum nesting depth in functions
+```
+
+### Quality Standards
+```yaml
+store_quality:
+  min_test_coverage: 80       # Minimum test coverage percentage
+  max_circular_deps: 0        # Maximum circular dependencies allowed
+  require_typescript_strict: true  # Require strict TypeScript (no any)
+  require_jsdoc: true         # Require JSDoc for public methods
+```
+
+---
+
+## Component Thresholds
+
+### Size Limits
+```yaml
+component:
+  max_lines: 300              # Maximum lines per component
+  max_functions: 15           # Maximum functions per component
+  max_hooks: 10               # Maximum React hooks per component
+  max_props: 5                # Maximum props per component
+  max_nesting_depth: 3        # Maximum nesting depth in JSX
+```
+
+### Quality Standards
+```yaml
+component_quality:
+  min_test_coverage: 80       # Minimum test coverage percentage
+  require_translation: true   # Require all strings use i18n t()
+  require_accessibility: true # Require ARIA labels for interactive elements
+  require_responsive: true    # Require responsive design (mobile detection)
+```
+
+---
+
+## Custom Hook Thresholds
+
+### Size Limits
+```yaml
+hook:
+  max_lines: 120              # Maximum lines per custom hook
+  max_functions: 10           # Maximum functions per hook
+  max_dependencies: 5         # Maximum external dependencies
+  max_hook_calls: 8           # Maximum React hook calls per custom hook
+```
+
+### Quality Standards
+```yaml
+hook_quality:
+  min_test_coverage: 85       # Minimum test coverage percentage (higher than components)
+  require_typescript_strict: true  # Require strict TypeScript
+  require_jsdoc: true         # Require JSDoc with usage examples
+```
+
+---
+
+## Test Coverage Thresholds
+
+### Overall Targets
+```yaml
+test_coverage:
+  overall_min: 80             # Minimum overall coverage
+  overall_target: 85          # Target overall coverage
+
+  # By Priority
+  p0_critical_min: 90         # Critical infrastructure (IndexedDB, stores)
+  p1_high_min: 75            # User-facing features (RAG, agent chat)
+  p2_medium_min: 70          # Business logic (knowledge graph, flashcards)
+
+  # By Test Type
+  unit_tests_min: 85          # Unit tests (business logic, utilities)
+  integration_tests_min: 75   # Integration tests (cross-boundary)
+  e2e_tests_min: 60          # E2E tests (critical user journeys)
+```
+
+### Quality Standards
+```yaml
+test_quality:
+  require_aaa_pattern: true   # Require Arrange-Act-Assert pattern
+  require_descriptive_names: true  # Require descriptive test names
+  max_test_duration_ms: 5000  # Maximum duration per test
+  require_mocks: true         # Require mocking external dependencies
+  allow_flaky_tests: false    # Zero tolerance for flaky tests
+```
+
+---
+
+## TypeScript Thresholds
+
+### Error Limits
+```yaml
+typescript:
+  max_errors: 10              # Maximum allowed TypeScript errors
+  target_errors: 0            # Target: zero errors
+
+  # By Severity
+  p0_errors_max: 0           # Critical: compilation blockers
+  p1_errors_max: 5           # High: type safety violations
+  p2_errors_max: 5           # Medium: unused code
+
+  # By Error Type
+  max_missing_imports: 0      # Missing imports (auto-fixable)
+  max_type_mismatches: 5      # Type mismatches (require review)
+  max_any_types: 0           # 'any' types (strict typing required)
+  max_unused_vars: 5         # Unused variables (code quality)
+```
+
+### Quality Standards
+```yaml
+typescript_quality:
+  strict_mode: true           # Require strict mode
+  no_implicit_any: true       # Disallow implicit any
+  strict_null_checks: true    # Enable strict null checks
+  strict_function_types: true # Enable strict function types
+  no_unused_locals: true      # Disallow unused locals
+  no_unused_parameters: true  # Disallow unused parameters
+```
+
+---
+
+## File Structure Thresholds
+
+### Directory Organization
+```yaml
+file_structure:
+  max_nesting_depth: 5        # Maximum directory nesting depth
+  require_barrel_exports: true  # Require index.ts barrel exports
+  require_test_co_location: true  # Require tests in __tests__ adjacent to source
+
+  # File Naming
+  use_kebab_case_files: true  # Use kebab-case for file names
+  use_pascal_case_components: true  # Use PascalCase for components
+  use_camel_case_utility: true  # Use camelCase for utilities
+```
+
+---
+
+## Performance Thresholds
+
+### Build Performance
+```yaml
+build_performance:
+  max_build_time_sec: 60      # Maximum production build time
+  max_dev_start_time_sec: 10  # Maximum dev server start time
+  max_hmr_time_ms: 500        # Maximum hot module reload time
+
+  # Bundle Size
+  max_chunk_size_kb: 500      # Maximum individual chunk size
+  max_total_bundle_mb: 5      # Maximum total bundle size
+```
+
+### Runtime Performance
+```yaml
+runtime_performance:
+  max_initial_load_ms: 3000   # Maximum initial page load time
+  max_interaction_ms: 100     # Maximum time to user interaction
+  max_frame_time_ms: 16       # Maximum frame time (60 FPS target)
+```
+
+---
+
+## Documentation Thresholds
+
+### Code Documentation
+```yaml
+code_documentation:
+  require_jsdoc_public: true  # Require JSDoc for public APIs
+  require_jsdoc_complex: true # Require JSDoc for complex logic (>5 lines)
+  require_usage_examples: true  # Require usage examples in JSDoc
+
+  # Comment Quality
+  min_comment_ratio: 0.1      # Minimum 10% comment-to-code ratio
+  require_inline_comments: true  # Require comments for non-obvious logic
+```
+
+### Project Documentation
+```yaml
+project_documentation:
+  require_readme: true        # Require README for all modules
+  require_changelog: true     # Require CHANGELOG for public APIs
+  require_contributing: true  # Require CONTRIBUTING guide
+  require_license: true       # Require LICENSE file
+```
+
+---
+
+## Security Thresholds
+
+### Code Security
+```yaml
+security:
+  no_hardcoded_secrets: true  # Disallow hardcoded secrets/API keys
+  no_eval_usage: true         # Disallow eval() usage
+  no_innerhtml: true         # Disallow innerHTML (XSS risk)
+  require_https: true        # Require HTTPS for external requests
+
+  # Dependency Security
+  max_vulnerabilities_high: 0  # Zero high-severity vulnerabilities
+  max_vulnerabilities_medium: 5  # Maximum medium-severity vulnerabilities
+  require_audit: true          # Require npm audit before deploy
+```
+
+---
+
+## Accessibility Thresholds
+
+### UI Accessibility
+```yaml
+accessibility:
+  require_aria_labels: true   # Require ARIA labels for interactive elements
+  require_keyboard_nav: true  # Require keyboard navigation support
+  require_focus_management: true  # Require proper focus management
+  min_color_contrast: 4.5     # Minimum color contrast ratio (WCAG AA)
+
+  # Screen Reader Support
+  require_alt_text: true      # Require alt text for images
+  require_role_attributes: true  # Require role attributes where needed
+```
+
+---
+
+## Compliance Checking
+
+### Automated Checks
+```yaml
+compliance:
+  pre_commit_hooks: true      # Require pre-commit hooks
+  pre_push_tests: true        # Require tests pass before push
+  ci_checks_required: true    # Require CI checks pass before merge
+
+  # Failure Actions
+  fail_on_threshold_violation: true  # Fail build if thresholds violated
+  warn_on_approaching_limit: true    # Warn when approaching 90% of limit
+```
+
+---
+
+## Threshold Enforcement
+
+### Enforcement Actions
+```yaml
+enforcement:
+  # Pre-Commit
+  block_commit_threshold_violations: true  # Block commits violating thresholds
+  warn_on_approaching_threshold: true      # Warn when approaching 90%
+
+  # CI/CD
+  block_merge_threshold_violations: true   # Block merges violating thresholds
+  require_coverage_badge: true             # Require coverage badge in PR
+
+  # Manual Review
+  require_approval_for_exemptions: true    # Require approval for threshold exemptions
+  document_exemption_rationale: true       # Require rationale for exemptions
+```
+
+---
+
+## Threshold Monitoring
+
+### Metrics Tracking
+```yaml
+monitoring:
+  track_metrics_over_time: true  # Track threshold compliance over time
+  generate_weekly_reports: true  # Generate weekly compliance reports
+  alert_on_regression: true      # Alert on threshold regression
+
+  # Dashboard
+  display_public_dashboard: true # Display public compliance dashboard
+  update_frequency_hours: 24     # Update dashboard every 24 hours
+```
+
+---
+
+## Usage
+
+### Checking Thresholds
+
+```bash
+# Check all thresholds
+pnpm check-thresholds
+
+# Check specific category
+pnpm check-thresholds --category stores
+pnpm check-thresholds --category components
+pnpm check-thresholds --category typescript
+pnpm check-thresholds --category tests
+
+# Generate compliance report
+pnpm check-thresholds --report
+```
+
+### Updating Thresholds
+
+1. Edit this file (`config/thresholds.yaml`)
+2. Update threshold values
+3. Run `pnpm check-thresholds --validate` to ensure changes are valid
+4. Commit changes with rationale
+
+### Requesting Exemptions
+
+1. Document rationale in PR description
+2. Get approval from @bmad-bmm-architect
+3. Add exemption to `config/exemptions.yaml`
+4. Set review date for exemption renewal
+
+---
+
+**Maintainer**: @bmad-bmm-architect
+**Last Updated**: 2026-01-03
+**Status**: ACTIVE - ENFORCED

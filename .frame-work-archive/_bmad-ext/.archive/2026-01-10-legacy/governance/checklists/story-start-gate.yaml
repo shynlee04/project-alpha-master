@@ -1,0 +1,36 @@
+id: "STORY-START-GATE"
+version: "1.0.0"
+triggers:
+  - workflow: "dev-story"
+  - workflow: "create-story"
+
+checks:
+  - id: "SSG-001"
+    name: "Story file exists"
+    severity: "HIGH"
+    validation: "file_exists(_bmad-output/sprint-artifacts/stories/{story_id}.md)"
+    action_on_fail: "Create story file first via create-story workflow"
+    
+  - id: "SSG-002"
+    name: "Context file exists"
+    severity: "MEDIUM"
+    validation: "file_exists(_bmad-output/sprint-artifacts/stories/{story_id}-context.xml)"
+    action_on_fail: "Generate context file before development"
+    
+  - id: "SSG-003"
+    name: "Sprint linkage"
+    severity: "HIGH"
+    validation: "grep -q {story_id} sprint-status.yaml"
+    action_on_fail: "Add story to sprint-status.yaml first"
+    
+  - id: "SSG-004"
+    name: "Epic ordering respected"
+    severity: "CRITICAL"
+    validation: "epic_status({story_epic}) in [IN_PROGRESS, READY]"
+    action_on_fail: "Story's epic is BLOCKED - complete blocking epic first"
+    
+  - id: "SSG-005"
+    name: "Story not already DONE"
+    severity: "CRITICAL"
+    validation: "story_status({story_id}) != DONE"
+    action_on_fail: "Story already completed - create new story if more work needed"

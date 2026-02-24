@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hybrid IDE + Notes + Preview - Stack 4</title>
+  <style>
+    :root {
+      /* 8-bit Design Tokens */
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f0f23;
+      --structural: #2d2d44;
+      --border-light: #3d3d5c;
+      
+      --text-primary: #e8e8f0;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6c6c88;
+      
+      --accent-primary: #7c3aed;
+      --accent-secondary: #a78bfa;
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      --accent-error: #ef4444;
+      
+      --code-bg: #0d1117;
+      --code-string: #a5d6ff;
+      --code-keyword: #c792ea;
+      --code-comment: #6a737d;
+      --code-function: #d2a8ff;
+      --code-variable: #ffa657;
+      --code-number: #79c0ff;
+      --code-type: #ffa657;
+      --code-bracket: #e8e8f0;
+      --code-operator: #e8e8f0;
+      --code-property: #79c0ff;
+      
+      --notes-bg: #ffffff;
+      --notes-text: #1f2937;
+      --notes-heading: #111827;
+      --notes-code: #f3f4f6;
+      --notes-border: #e5e7eb;
+      --notes-link: #2563eb;
+      
+      --preview-bg: #ffffff;
+      --preview-text: #374151;
+      --preview-heading: #111827;
+      --preview-code-bg: #f3f4f6;
+      
+      --header-height: 48px;
+      --footer-height: 24px;
+      --activity-bar-width: 48px;
+      --ide-tree-width: 180px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    .app-container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      height: var(--header-height);
+      background: var(--bg-secondary);
+      border-bottom: 2px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .mode-badges {
+      display: flex;
+      gap: 8px;
+    }
+
+    .mode-badge {
+      padding: 4px 12px;
+      border-radius: 0;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .mode-badge.ide {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .mode-badge.notes {
+      background: var(--accent-success);
+      color: white;
+    }
+
+    .mode-badge.preview {
+      background: var(--accent-warning);
+      color: var(--bg-primary);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 0;
+      background: var(--accent-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Activity Bar */
+    .activity-bar {
+      width: var(--activity-bar-width);
+      background: var(--bg-tertiary);
+      border-right: 2px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .activity-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .activity-icon:hover {
+      background: var(--structural);
+      color: var(--text-primary);
+    }
+
+    .activity-icon.active {
+      color: var(--accent-secondary);
+      border-left: 2px solid var(--accent-secondary);
+    }
+
+    .activity-spacer {
+      flex: 1;
+    }
+
+    /* Hybrid Content - Four Columns */
+    .hybrid-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* IDE Tree */
+    .ide-tree {
+      width: var(--ide-tree-width);
+      background: var(--bg-secondary);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid var(--structural);
+    }
+
+    .tree-header {
+      padding: 12px 12px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--structural);
+    }
+
+    .tree-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 8px 0;
+    }
+
+    .tree-item {
+      padding: 6px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      transition: background 0.1s;
+    }
+
+    .tree-item:hover {
+      background: var(--structural);
+      color: var(--text-primary);
+    }
+
+    .tree-item.selected {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .tree-item.folder {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tree-indent {
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    /* IDE Section */
+    .ide-section {
+      flex: 1;
+      display: flex;
+      min-width: 300px;
+      border-right: 2px solid var(--structural);
+    }
+
+    .ide-editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: var(--code-bg);
+    }
+
+    .tab-bar {
+      height: 36px;
+      background: var(--bg-secondary);
+      display: flex;
+      border-bottom: 1px solid var(--structural);
+    }
+
+    .tab {
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--structural);
+      color: var(--text-muted);
+      transition: all 0.1s;
+    }
+
+    .tab:hover {
+      background: var(--structural);
+    }
+
+    .tab.active {
+      background: var(--code-bg);
+      color: var(--text-primary);
+      border-top: 2px solid var(--accent-primary);
+    }
+
+    .tab-icon {
+      font-size: 14px;
+    }
+
+    .tab-close {
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    .tab:hover .tab-close {
+      opacity: 1;
+    }
+
+    .tab-close:hover {
+      background: var(--accent-error);
+    }
+
+    .code-area {
+      flex: 1;
+      overflow: auto;
+      min-height: 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .code-line {
+      display: flex;
+      min-height: 21px;
+    }
+
+    .line-number {
+      width: 50px;
+      padding: 0 12px;
+      text-align: right;
+      color: var(--text-muted);
+      background: var(--bg-tertiary);
+      border-right: 1px solid var(--structural);
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .line-content {
+      padding: 0 16px;
+      white-space: pre;
+    }
+
+    .code-keyword { color: var(--code-keyword); }
+    .code-string { color: var(--code-string); }
+    .code-comment { color: var(--code-comment); font-style: italic; }
+    .code-function { color: var(--code-function); }
+    .code-variable { color: var(--code-variable); }
+    .code-number { color: var(--code-number); }
+    .code-type { color: var(--code-type); }
+    .code-bracket { color: var(--code-bracket); }
+    .code-operator { color: var(--code-operator); }
+    .code-property { color: var(--code-property); }
+    .code-param { color: var(--code-variable); }
+
+    /* Notes Section */
+    .notes-section {
+      width: 32%;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      background: var(--notes-bg);
+      border-right: 2px solid var(--structural);
+    }
+
+    .notes-toolbar {
+      height: 36px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--notes-border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .notes-toolbar-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid var(--notes-border);
+      border-radius: 0;
+      background: white;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .notes-toolbar-btn:hover {
+      background: var(--notes-code);
+    }
+
+    .notes-toolbar-btn.active {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    .notes-toolbar-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--notes-border);
+    }
+
+    .notes-title-input {
+      flex: 1;
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      outline: none;
+      color: var(--notes-heading);
+      background: transparent;
+    }
+
+    .notes-editor {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 16px 24px;
+      background: var(--notes-bg);
+      color: var(--notes-text);
+    }
+
+    .notes-content {
+      min-height: 100%;
+      outline: none;
+    }
+
+    .notes-content h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--notes-heading);
+      border-bottom: 2px solid var(--accent-primary);
+      padding-bottom: 8px;
+    }
+
+    .notes-content h2 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+      color: var(--notes-heading);
+    }
+
+    .notes-content h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 16px 0 8px;
+      color: var(--notes-heading);
+    }
+
+    .notes-content p {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .notes-content ul {
+      margin: 12px 0;
+      padding-left: 24px;
+    }
+
+    .notes-content li {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .notes-content code {
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      background: var(--notes-code);
+      padding: 2px 6px;
+      border-radius: 0;
+    }
+
+    .notes-content pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 0;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    .notes-content pre code {
+      background: transparent;
+      padding: 0;
+      color: var(--code-string);
+    }
+
+    .notes-content blockquote {
+      border-left: 4px solid var(--accent-primary);
+      padding-left: 16px;
+      margin: 16px 0;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .notes-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    .notes-content th,
+    .notes-content td {
+      border: 1px solid var(--notes-border);
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    .notes-content th {
+      background: var(--notes-code);
+      font-weight: 600;
+    }
+
+    /* Preview Section */
+    .preview-section {
+      width: 26%;
+      min-width: 240px;
+      display: flex;
+      flex-direction: column;
+      background: var(--preview-bg);
+      border-left: 2px solid var(--structural);
+    }
+
+    .preview-toolbar {
+      height: 36px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--notes-border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .preview-tab {
+      padding: 4px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      border-radius: 0;
+      color: var(--text-muted);
+      transition: all 0.1s;
+    }
+
+    .preview-tab:hover {
+      background: var(--notes-code);
+    }
+
+    .preview-tab.active {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .preview-toolbar-spacer {
+      flex: 1;
+    }
+
+    .preview-refresh {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid var(--notes-border);
+      border-radius: 0;
+      background: white;
+      cursor: pointer;
+    }
+
+    .preview-refresh:hover {
+      background: var(--notes-code);
+    }
+
+    .preview-content {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding: 24px;
+      background: var(--preview-bg);
+      color: var(--preview-text);
+    }
+
+    .preview-article {
+      max-width: none;
+    }
+
+    .preview-article h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--preview-heading);
+      border-bottom: 2px solid var(--accent-primary);
+      padding-bottom: 8px;
+    }
+
+    .preview-article h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: var(--preview-heading);
+    }
+
+    .preview-article h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 20px 0 8px;
+      color: var(--preview-heading);
+    }
+
+    .preview-article p {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .preview-article ul,
+    .preview-article ol {
+      margin: 12px 0;
+      padding-left: 24px;
+    }
+
+    .preview-article li {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .preview-article code {
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      background: var(--preview-code-bg);
+      padding: 2px 6px;
+      border-radius: 0;
+      color: #dc2626;
+    }
+
+    .preview-article pre {
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 0;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+
+    .preview-article pre code {
+      background: transparent;
+      padding: 0;
+      color: var(--code-string);
+    }
+
+    .preview-article blockquote {
+      border-left: 4px solid var(--accent-primary);
+      padding-left: 16px;
+      margin: 16px 0;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .preview-article table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+
+    .preview-article th,
+    .preview-article td {
+      border: 1px solid var(--notes-border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    .preview-article th {
+      background: var(--preview-code-bg);
+      font-weight: 600;
+    }
+
+    .preview-article .callout {
+      padding: 12px 16px;
+      border-radius: 0;
+      margin: 16px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .preview-article .callout.info {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+    }
+
+    .preview-article .callout-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .preview-article .callout-content {
+      flex: 1;
+    }
+
+    .preview-article .callout-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .preview-article .callout-text {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      height: var(--footer-height);
+      background: var(--bg-tertiary);
+      border-top: 2px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+
+    .footer-left, .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 0;
+    }
+
+    .status-dot.success { background: var(--accent-success); }
+    .status-dot.info { background: var(--accent-secondary); }
+    .status-dot.warning { background: var(--accent-warning); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">Hybrid Workspace</span>
+        <div class="mode-badges">
+          <span class="mode-badge ide">IDE</span>
+          <span class="mode-badge notes">Notes</span>
+          <span class="mode-badge preview">Preview</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <span style="color: var(--text-muted); font-size: 12px;">docs/architecture.md</span>
+        <div class="user-avatar">JD</div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Activity Bar -->
+      <nav class="activity-bar">
+        <div class="activity-icon active" title="Explorer">📁</div>
+        <div class="activity-icon" title="Search">🔍</div>
+        <div class="activity-icon" title="Git">⎇</div>
+        <div class="activity-icon" title="Extensions">🧩</div>
+        <div class="activity-spacer"></div>
+        <div class="activity-icon" title="Settings">⚙</div>
+      </nav>
+
+      <!-- Hybrid Content -->
+      <div class="hybrid-content">
+        <!-- IDE Tree -->
+        <aside class="ide-tree">
+          <div class="tree-header">Explorer - project-alpha</div>
+          <div class="tree-content">
+            <div class="tree-item folder"><span>📁</span> src</div>
+            <div class="tree-item">
+              <span class="tree-indent"></span>
+              <span>📁</span> components
+            </div>
+            <div class="tree-item">
+              <span class="tree-indent"></span>
+              <span>📁</span> infrastructure
+            </div>
+            <div class="tree-item">
+              <span class="tree-indent"></span>
+              <span>📁</span> routes
+            </div>
+            <div class="tree-item folder"><span>📁</span> docs</div>
+            <div class="tree-item selected">
+              <span class="tree-indent"></span>
+              <span>📄</span> architecture.md
+            </div>
+            <div class="tree-item">
+              <span class="tree-indent"></span>
+              <span>📄</span> api-reference.md
+            </div>
+            <div class="tree-item">
+              <span class="tree-indent"></span>
+              <span>📄</span> getting-started.md
+            </div>
+            <div class="tree-item">
+              <span class="tree-indent"></span>
+              <span>📄</span> contributing.md
+            </div>
+            <div class="tree-item"><span>📄</span> README.md</div>
+            <div class="tree-item"><span>📄</span> package.json</div>
+          </div>
+        </aside>
+
+        <!-- IDE Editor Section -->
+        <section class="ide-section">
+          <div class="ide-editor">
+            <div class="tab-bar">
+              <div class="tab active">
+                <span class="tab-icon">📄</span>
+                <span>architecture.md</span>
+                <span class="tab-close">✕</span>
+              </div>
+              <div class="tab">
+                <span class="tab-icon">📄</span>
+                <span>api-reference.md</span>
+                <span class="tab-close">✕</span>
+              </div>
+            </div>
+            <div class="code-area">
+              <div class="code-line">
+                <span class="line-number">1</span>
+                <span class="line-content"><span class="code-comment"># Architecture Overview</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">2</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">3</span>
+                <span class="line-content">This document describes the high-level architecture of the project-alpha</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">4</span>
+                <span class="line-content">application. It follows Clean Architecture principles with a clear separation</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">5</span>
+                <span class="line-content">of concerns between layers.</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">6</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">7</span>
+                <span class="line-content"><span class="code-comment">## Core Principles</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">8</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">9</span>
+                <span class="line-content">| Principle | Description |</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">10</span>
+                <span class="line-content">|-----------|-------------|</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">11</span>
+                <span class="line-content">| <span class="code-string">Separation of Concerns</span> | Each layer has a distinct responsibility |</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">12</span>
+                <span class="line-content">| <span class="code-string">Dependency Inversion</span> | High-level modules don<span class="code-string">'t depend on low-level modules |</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">13</span>
+                <span class="line-content">| <span class="code-string">Single Responsibility</span> | Each class has one reason to change |</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">14</span>
+                <span class="line-content">| <span class="code-string">Explicit Dependencies</span> | Dependencies are declared and injected |</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">15</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">16</span>
+                <span class="code-comment">## Layer Structure</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">17</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">18</span>
+                <span class="line-content">```</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">19</span>
+                <span class="line-content"><span class="code-keyword">┌─────────────────────────────┐</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">20</span>
+                <span class="line-content"><span class="code-keyword">│</span>     <span class="code-function">Presentation Layer</span>     <span class="code-keyword">│</span> <span class="code-comment">// React Components, Hooks</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">21</span>
+                <span class="line-content"><span class="code-keyword">├─────────────────────────────┤</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">22</span>
+                <span class="line-content"><span class="code-keyword">│</span>       <span class="code-function">Domain Layer</span>          <span class="code-keyword">│</span> <span class="code-comment">// Entities, Services, Interfaces</span></span>
+              </div>
+              <divdiv>
+                <span class="line-number">23</span>
+                <span class="line-content"><span class="code-keyword">├─────────────────────────────┤</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">24</span>
+                <span class="line-content"><span class="code-keyword">│</span>   <span class="code-function">Infrastructure Layer</span>    <span class="code-keyword">│</span> <span class="code-comment">// Database, API, External Services</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">25</span>
+                <span class="line-content"><span class="code-keyword">└─────────────────────────────┘</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">26</span>
+                <span class="line-content">```</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">27</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">28</span>
+                <span class="code-comment">### 1. Presentation Layer</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">29</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">30</span>
+                <span class="line-content">The presentation layer is responsible for:</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">31</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">32</span>
+                <span class="line-content">- Rendering UI components with React</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">33</span>
+                <span class="line-content">- Managing local component state</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">34</span>
+                <span class="line-content">- Handling user interactions</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">35</span>
+                <span class="line-content">- Connecting to domain services</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">36</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">37</span>
+                <span class="line-content">              </div>
+              <div class="code-line">
+              </div>
+              <div class="code-line">
+                <span class="line-number">39</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">40</span>
+                <span class="line-content">Contains business logic that is independent of frameworks:</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">41</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">42</span>
+                <span class="line-content">- **Entities**: Core business objects (Project, User, Note)</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">43</span>
+                <span class="line-content">- **Services**: Business logic and use cases</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">44</span>
+                <span class="line-content">- **Interfaces**: Abstractions for infrastructure</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">45</span>
+                <span class="line-content">- **Types**: TypeScript types and interfaces</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">46</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">47</span>
+                <span class="code-comment">### 3. Infrastructure Layer</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">48</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">49</span>
+                <span class="line-content">Handles external concerns and integrations:</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">50</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">51</span>
+                <span class="line-content">- **Persistence**: Dexie.js database operations</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">52</span>
+                <span class="line-content">- **File System**: FSA API for desktop, IndexedDB for mobile</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">53</span>
+                <span class="line-content">- **Sync**: Cross-device synchronization logic</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">54</span>
+                <span class="line-content">- **Events**: Event bus for loose coupling</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">55</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">56</span>
+                <span class="code-comment">## Directory Structure</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">57</span>
+                <span class="line-content"></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">58</span>
+                <span class="line-content">```</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">59</span>
+                <span class="line-content">src/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">60</span>
+                <span class="line-content">├── routes/                    <span class="code-comment"># TanStack Router routes</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">61</span>
+                <span class="line-content">├── presentation/              <span class="code-comment"># React UI components</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">62</span>
+                <span class="line-content">│   ├── components/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">63</span>
+                <span class="line-content">│   └── hooks/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">64</span>
+                <span class="line-content">├── domain/                    <span class="code-comment"># Business logic</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">65</span>
+                <span class="line-content">│   ├── entities/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">66</span>
+                <span class="line-content">│   ├── services/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">67</span>
+                <span class="line-content">│   └── interfaces/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">68</span>
+                <span class="line-content">└── infrastructure/            <span class="code-comment"># External integrations</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">69</span>
+                <span class="line-content">    ├── persistence/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">70</span>
+                <span class="line-content">    ├── filesystem/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">71</span>
+                <span class="line-content">    └── sync/</span></span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">72</span>
+                <span class="line-content">```</span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section class="notes-section">
+          <div class="notes-toolbar">
+            <button class="notes-toolbar-btn">B</button>
+            <button class="notes-toolbar-btn"><i>I</i></button>
+            <button class="notes-toolbar-btn"><u>U</u></button>
+            <div class="notes-toolbar-divider"></div>
+            <button class="notes-toolbar-btn">H1</button>
+            <button class="notes-toolbar-btn">H2</button>
+            <button class="notes-toolbar-btn">H3</button>
+            <div class="notes-toolbar-divider"></div>
+            <button class="notes-toolbar-btn">≡</button>
+            <button class="notes-toolbar-btn">•</button>
+            <button class="notes-toolbar-btn">1.</button>
+            <div class="notes-toolbar-divider"></div>
+            <button class="notes-toolbar-btn">🔗</button>
+            <button class="notes-toolbar-btn"><>code</></button>
+          </div>
+          <input type="text" class="notes-title-input" value="Architecture Documentation Notes" placeholder="Note title...">
+          <div class="notes-editor">
+            <div class="notes-content" contenteditable="true">
+              <h1>Architecture Documentation Notes</h1>
+              
+              <p>Working notes while reviewing and updating the architecture documentation. These are personal annotations and TODOs.</p>
+              
+              <h2>Layer Structure Clarifications</h2>
+              <p>Need to update the architecture.md to clarify the actual directory structure. The current structure in docs is slightly outdated.</p>
+              
+              <h2>Key Updates Needed</h2>
+              
+              <h3>1. Add Platform Contract Section</h3>
+              <p>The architecture should document the <code>PlatformContract</code> interface that detects device type and storage capabilities:</p>
+              <pre><code>interface PlatformContract {
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  storageType: 'fsa' | 'indexeddb';
+  canAccessFSA: boolean;
+  canWatchFiles: boolean;
+}</code></pre>
+              
+              <h3>2. Storage Strategy Documentation</h3>
+              <p>Document the auto-detection logic for storage selection:</p>
+              <ul>
+                <li>Desktop → File System Access API (FSA)</li>
+                <li>Mobile/Tablet → IndexedDB via Dexie</li>
+                <li>User cannot override (simplifies UX)</li>
+              </ul>
+              
+              <h3>3. Sync Strategy Overview</h3>
+              <p>Add section on bidirectional sync with BlockNote:</p>
+              <blockquote>
+                Notes sync bidirectionally with external Markdown files. Conflicts trigger a merge dialog for user resolution.
+              </blockquote>
+              
+              <h2>File Structure Update</h2>
+              <p>The actual src structure has changed. Need to update the docs to match:</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Old Path</th>
+                    <th>New Path</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>src/lib/state/</code></td>
+                    <td><code>infrastructure/persistence/stores/</code></td>
+                    <td>✅ Updated</td>
+                  </tr>
+                  <tr>
+                    <td><code>src/lib/filesystem/</code></td>
+                    <td><code>infrastructure/filesystem/</code></td>
+                    <td>✅ Updated</td>
+                  </tr>
+                  <tr>
+                    <td><code>src/lib/workspace/</code></td>
+                    <td><code>infrastructure/persistence/</code></td>
+                    <td>🔄 Partial</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <h2>TODO List</h2>
+              <ul>
+                <li>Update architecture.md with new directory structure</li>
+                <li>Add PlatformContract interface documentation</li>
+                <li>Document storage auto-detection logic</li>
+                <li>Add sync conflict resolution strategy</li>
+                <li>Include FSA handle persistence pattern</li>
+              </ul>
+              
+              <h2>Questions for Team</h2>
+              <ul>
+                <li>Should we document the .viagent metadata folder?</li>
+                <li>Add section on RAG index storage?</li>
+                <li>Document workspace isolation strategy?</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Preview Section -->
+        <section class="preview-section">
+          <div class="preview-toolbar">
+            <span class="preview-tab active">Rendered</span>
+            <span class="preview-tab">HTML</span>
+            <div class="preview-toolbar-spacer"></div>
+            <button class="preview-refresh">↻</button>
+          </div>
+          <div class="preview-content">
+            <article class="preview-article">
+              <h1>Architecture Documentation Notes</h1>
+              
+              <p>Working notes while reviewing and updating the architecture documentation. These are personal annotations and TODOs.</p>
+              
+              <h2>Layer Structure Clarifications</h2>
+              <p>Need to update the architecture.md to clarify the actual directory structure. The current structure in docs is slightly outdated.</p>
+              
+              <h2>Key Updates Needed</h2>
+              
+              <h3>1. Add Platform Contract Section</h3>
+              <p>The architecture should document the <code>PlatformContract</code> interface that detects device type and storage capabilities:</p>
+              <pre><code>interface PlatformContract {
+  deviceType: 'desktop' | 'mobile' | 'tablet';
+  storageType: 'fsa' | 'indexeddb';
+  canAccessFSA: boolean;
+  canWatchFiles: boolean;
+}</code></pre>
+              
+              <h3>2. Storage Strategy Documentation</h3>
+              <p>Document the auto-detection logic for storage selection:</p>
+              <ul>
+                <li>Desktop → File System Access API (FSA)</li>
+                <li>Mobile/Tablet → IndexedDB via Dexie</li>
+                <li>User cannot override (simplifies UX)</li>
+              </ul>
+              
+              <h3>3. Sync Strategy Overview</h3>
+              <div class="callout info">
+                <span class="callout-icon">💡</span>
+                <div class="callout-content">
+                  <div class="callout-title">Info</div>
+                  <div class="callout-text">Notes sync bidirectionally with external Markdown files. Conflicts trigger a merge dialog for user resolution.</div>
+                </div>
+              </div>
+              
+              <h2>File Structure Update</h2>
+              <p>The actual src structure has changed. Need to update the docs to match:</p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Old Path</th>
+                    <th>New Path</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>src/lib/state/</code></td>
+                    <td><code>infrastructure/persistence/stores/</code></td>
+                    <td>✅ Updated</td>
+                  </tr>
+                  <tr>
+                    <td><code>src/lib/filesystem/</code></td>
+                    <td><code>infrastructure/filesystem/</code></td>
+                    <td>✅ Updated</td>
+                  </tr>
+                  <tr>
+                    <td><code>src/lib/workspace/</code></td>
+                    <td><code>infrastructure/persistence/</code></td>
+                    <td>🔄 Partial</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <h2>TODO List</h2>
+              <ul>
+                <li>Update architecture.md with new directory structure</li>
+                <li>Add PlatformContract interface documentation</li>
+                <li>Document storage auto-detection logic</li>
+                <li>Add sync conflict resolution strategy</li>
+                <li>Include FSA handle persistence pattern</li>
+              </ul>
+              
+              <h2>Questions for Team</h2>
+              <ul>
+                <li>Should we document the .viagent metadata folder?</li>
+                <li>Add section on RAG index storage?</li>
+                <li>Document workspace isolation strategy?</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <div class="footer-item">
+          <span class="status-dot success"></span>
+          <span>IDE Ready</span>
+        </div>
+        <div class="footer-item">
+          <span class="status-dot success"></span>
+          <span>Notes Synced</span>
+        </div>
+        <div class="footer-item">
+          <span class="status-dot warning"></span>
+          <span>Preview Mode</span>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="footer-item">
+          <span>Ln 72, Col 1</span>
+        </div>
+        <div class="footer-item">
+          <span>UTF-8</span>
+        </div>
+        <div class="footer-item">
+          <span>Markdown</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

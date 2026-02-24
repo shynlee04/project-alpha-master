@@ -1,0 +1,134 @@
+# ============================================================================
+# BMAD LOOP STATE - GRANDPARENT LEVEL (Strategic Governance)
+# ============================================================================
+# Purpose: Macro-level state tracking - roadmap, quarterly goals, platform health
+# Authority: Overrides parent and child levels on strategic conflicts
+# Updates: Quarterly or on major pivot events
+# Version: 1.0.0
+# ============================================================================
+
+version: "1.0.0"
+level: "grandparent"
+last_updated: "2026-01-07T03:00:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STRATEGIC OVERSIGHT
+# ═══════════════════════════════════════════════════════════════════════════
+
+strategic:
+  current_quarter: "Q1-2026"
+  roadmap_version: "v2.0"
+  north_star: "Platform-agnostic agentic framework with <8 agent profiles"
+
+  # Platform targets
+  target_platforms:
+    - name: "claude-code"
+      priority: "P0"
+      status: "ACTIVE"
+      integration_level: "native-hooks"
+
+    - name: "opencode"
+      priority: "P1"
+      status: "PLANNED"
+      integration_level: "skill-api"
+
+    - name: "cursor"
+      priority: "P2"
+      status: "FUTURE"
+      integration_level: "dotfile-compat"
+
+  # Health targets
+  health_targets:
+    agent_profiles_max: 8
+    module_count_max: 4
+    ts_errors_max: 10
+    test_coverage_min: 80
+
+# ═══════════════════════════════════════════════════════════════════════════
+# QUARTERLY GOALS
+# ═══════════════════════════════════════════════════════════════════════════
+
+quarterly_goals:
+  - id: "QG-001"
+    title: "Framework Consolidation Complete"
+    status: "IN_PROGRESS"
+    target_date: "2026-01-31"
+    success_criteria:
+      - "Agent profiles reduced to ≤8"
+      - "Modules consolidated to ≤4"
+      - "Hooks output valid JSON for Claude Code"
+      - "Documentation updated"
+
+  - id: "QG-002"
+    title: "Platform-Agnostic Integration"
+    status: "NOT_STARTED"
+    target_date: "2026-02-28"
+    success_criteria:
+      - "Claude Code native integration verified"
+      - "OpenCode skill API working"
+      - "Cross-platform state sync operational"
+
+  - id: "QG-003"
+    title: "Self-Governance Validation"
+    status: "NOT_STARTED"
+    target_date: "2026-03-31"
+    success_criteria:
+      - "Ralph Loop operates autonomously without human intervention"
+      - "Course corrections trigger automatically"
+      - "Health metrics maintained ≥90%"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HIERARCHY REFERENCES
+# ═══════════════════════════════════════════════════════════════════════════
+
+hierarchy:
+  grandparent: "LOOP_STATE-grandparent.yaml"  # This file
+  parent: "../LOOP_STATE-parent.yaml"
+  child: "../LOOP_STATE-child.yaml"
+
+  override_policy: |
+    Grandparent overrides parent on:
+    - Strategic direction changes
+    - Platform priority shifts
+    - Quarterly goal additions/removals
+
+    Parent overrides child on:
+    - Sprint phase transitions
+    - Epic reordering
+    - Course correction triggers
+
+    Child auto-executes within parent/grandparent constraints
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ROLLUP METRICS (aggregated from parent)
+# ═══════════════════════════════════════════════════════════════════════════
+
+rollup_metrics:
+  current_health_score: 46.4  # From parent aggregation
+  agent_profiles_count: 30     # Target: ≤8
+  module_count: 9              # Target: ≤4
+  active_sprints: 1
+  stories_completed_this_quarter: 12
+  stories_verified: 0          # CRITICAL GAP
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance:
+  authoritative_doc: "AGENTS.md"
+  update_frequency: "Quarterly or on major pivot"
+  last_updated: "2026-01-07"
+
+  change_control:
+    - "Strategic changes require manual approval"
+    - "Parent can request grandparent update"
+    - "Child cannot modify grandparent directly"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONTINUATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+continuation:
+  next_review: "2026-02-01"  # Next quarterly review
+  escalation_path: "grandparent → manual review"

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent Notes - Research Mode (3 Interfaces: Preview)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --primary: #fafafa;
+      --action: #f97316;
+      --border: #3f3f46;
+      --border-light: #52525b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+    }
+
+    body {
+      font-family: 'Geist Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .notes-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .sidebar {
+      width: 280px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 0;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s;
+      box-shadow: 0 0 0 0 #000;
+    }
+
+    .btn-primary {
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+    }
+
+    .btn-primary:hover {
+      background: var(--action-hover);
+      box-shadow: 2px 2px 0 0 #000;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .note-item {
+      padding: 12px;
+      margin-bottom: 4px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .note-item:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-light);
+    }
+
+    .note-item.active {
+      background: var(--surface-hover);
+      border-color: var(--action);
+      border-left: 3px solid var(--action);
+    }
+
+    .note-item-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+
+    .note-item-preview {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+    }
+
+    .header {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .breadcrumb-separator {
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .workspace-split {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      min-width: 400px;
+    }
+
+    .preview-panel {
+      width: 450px;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      min-width: 350px;
+    }
+
+    .preview-header {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-title {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+      font-size: 12px;
+      transition: all 0.1s;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+
+    .icon-btn.active {
+      background: var(--surface-hover);
+      border-color: var(--action);
+    }
+
+    .editor-toolbar {
+      padding: 12px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-title {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'Geist Sans', sans-serif;
+      color: var(--text-primary);
+      padding: 8px 0;
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .editor-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      font-family: 'Geist Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      outline: none;
+    }
+
+    .preview-content {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      font-family: 'Geist Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      background: var(--canvas);
+    }
+
+    .preview-content h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+
+    .preview-content h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 20px 0 12px 0;
+      color: var(--text-primary);
+    }
+
+    .preview-content p {
+      margin-bottom: 14px;
+    }
+
+    .preview-content ul {
+      margin-left: 24px;
+      margin-bottom: 14px;
+    }
+
+    .preview-content li {
+      margin-bottom: 6px;
+    }
+
+    .preview-content code {
+      background: var(--surface);
+      padding: 2px 6px;
+      border-radius: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+
+    .preview-content pre {
+      background: var(--surface);
+      padding: 12px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin-bottom: 14px;
+    }
+
+    .preview-content blockquote {
+      border-left: 3px solid var(--action);
+      padding-left: 16px;
+      margin: 14px 0;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--canvas);
+    }
+
+    .status-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-right {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+
+    .status-item:hover {
+      opacity: 0.8;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 240px;
+      }
+      .preview-panel {
+        width: 400px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar, .preview-panel {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="notes-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <span>📝</span>
+          <span>Notes</span>
+        </div>
+        <button class="btn btn-primary">+ New</button>
+      </div>
+      <div class="note-list">
+        <div class="note-item active">
+          <div class="note-item-title">Progressive Disclosure</div>
+          <div class="note-item-preview">
+            Progressive disclosure is a design pattern where only essential information is shown initially...
+          </div>
+        </div>
+        <div class="note-item">
+          <div class="note-item-title">8-bit Design System</div>
+          <div class="note-item-preview">
+            The 8-bit aesthetic requires zero rounded corners, hard shadows, and pixel-perfect alignment...
+          </div>
+        </div>
+        <div class="note-item">
+          <div class="note-item-title">Research Notes</div>
+          <div class="note-item-preview">
+            Collected insights from user testing, competitor analysis, and design research...
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <nav class="breadcrumb">
+          <div class="breadcrumb-item">
+            <span>Notes</span>
+            <span class="breadcrumb-separator">/</span>
+          </div>
+          <div class="breadcrumb-item active">
+            <span>progressive-disclosure.md</span>
+          </div>
+        </nav>
+        <div class="header-actions">
+          <button class="btn btn-secondary active">
+            <span>👁</span>
+            <span>Preview</span>
+          </button>
+          <button class="btn btn-primary">
+            <span>💾</span>
+            <span>Save</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="workspace-split">
+        <div class="editor-panel">
+          <div class="editor-toolbar">
+            <input type="text" class="editor-title" value="Progressive Disclosure" placeholder="Note title...">
+            <div class="editor-actions">
+              <button class="icon-btn">B</button>
+              <button class="icon-btn">I</button>
+              <button class="icon-btn">{"</>"}</button>
+              <button class="icon-btn">≡</button>
+            </div>
+          </div>
+
+          <div class="editor-content" contenteditable="true" spellcheck="false">
+            <h1>Progressive Disclosure</h1>
+
+            <p>Progressive disclosure is a design pattern where only essential information is shown initially, with additional information revealed through user interaction.</p>
+
+            <h2>Why It Matters</h2>
+
+            <p>By reducing cognitive load, progressive disclosure helps users:</p>
+
+            <ul>
+              <li>Focus on primary tasks</li>
+              <li>Learn features at their own pace</li>
+              <li>Stay productive with minimal distractions</li>
+            </ul>
+
+            <blockquote>
+              "The best interface is no interface at all." - Golden Krishna
+            </blockquote>
+
+            <h2>Via-Gent Implementation</h2>
+
+            <p>Our three-tier approach:</p>
+
+            <ol style="margin-left: 24px; margin-bottom: 14px;">
+              <li>Always visible: Core functionality</li>
+              <li>On demand: Secondary features via panels</li>
+              <li>Discoverable: Advanced tools via commands</li>
+            </ol>
+
+            <h2>Code Example</h2>
+
+            <pre><code>// Progressive disclosure pattern
+const [showAdvanced, setShowAdvanced] = useState(false);
+
+return (
+  &lt;div&gt;
+    &lt;Button onClick={() =&gt; setShowAdvanced(!showAdvanced)}&gt;
+      Toggle Options
+    &lt;/Button&gt;
+    {showAdvanced && &lt;AdvancedPanel /&gt;}
+  &lt;/div&gt;
+);</code></pre>
+
+            <p>The key is to reveal complexity only when users explicitly request it.</p>
+          </div>
+        </div>
+
+        <div class="preview-panel">
+          <div class="preview-header">
+            <div class="preview-title">
+              <span>👁</span>
+              <span>Live Preview</span>
+            </div>
+            <div class="preview-actions">
+              <button class="icon-btn" title="Open in New Tab">🔗</button>
+              <button class="icon-btn" title="Refresh">↻</button>
+            </div>
+          </div>
+          <div class="preview-content">
+            <h1>Progressive Disclosure</h1>
+
+            <p>Progressive disclosure is a design pattern where only essential information is shown initially, with additional information revealed through user interaction.</p>
+
+            <h2>Why It Matters</h2>
+
+            <p>By reducing cognitive load, progressive disclosure helps users:</p>
+
+            <ul>
+              <li>Focus on primary tasks</li>
+              <li>Learn features at their own pace</li>
+              <li>Stay productive with minimal distractions</li>
+            </ul>
+
+            <blockquote>
+              "The best interface is no interface at all." - Golden Krishna
+            </blockquote>
+
+            <h2>Via-Gent Implementation</h2>
+
+            <p>Our three-tier approach:</p>
+
+            <ol style="margin-left: 24px; margin-bottom: 14px;">
+              <li>Always visible: Core functionality</li>
+              <li>On demand: Secondary features via panels</li>
+              <li>Discoverable: Advanced tools via commands</li>
+            </ol>
+
+            <h2>Code Example</h2>
+
+            <pre><code>// Progressive disclosure pattern
+const [showAdvanced, setShowAdvanced] = useState(false);
+
+return (
+  &lt;div&gt;
+    &lt;Button onClick={() =&gt; setShowAdvanced(!showAdvanced)}&gt;
+      Toggle Options
+    &lt;/Button&gt;
+    {showAdvanced && &lt;AdvancedPanel /&gt;}
+  &lt;/div&gt;
+);</code></pre>
+
+            <p>The key is to reveal complexity only when users explicitly request it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-left">
+          <div class="status-item">
+            <span>⟳</span>
+            <span>Live sync</span>
+          </div>
+          <div class="status-item">
+            <span>📊</span>
+            <span>312 words</span>
+          </div>
+        </div>
+        <div class="status-right">
+          <div class="status-item">
+            <span>📄</span>
+            <span>Markdown</span>
+          </div>
+          <div class="status-item">
+            <span>⏱</span>
+            <span>Just now</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.note-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.icon-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.classList.toggle('active');
+      });
+    });
+
+    const editorContent = document.querySelector('.editor-content');
+    const previewContent = document.querySelector('.preview-content');
+
+    editorContent.addEventListener('input', function() {
+      previewContent.innerHTML = this.innerHTML;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,664 @@
+# Code File Inventory: src/ Directory
+# Generated: 2026-01-28T11:30
+# Purpose: Comprehensive inventory of all code files in canonical structure
+
+code_inventory:
+  timestamp: "2026-01-28T11:30"
+  generated_by: "domain-scanner"
+  
+  summary:
+    total_files: "~650+"
+    total_lines_estimated: "~100,000+"
+    canonical_compliance: "78%"
+    deprecated_files: "~100 (src/lib)"
+    god_files_count: 5
+    
+  # =============================================================================
+  # CANONICAL DIRECTORIES (per AGENTS.md architecture)
+  # =============================================================================
+  
+  by_directory:
+    # -------------------------------------------------------------------------
+    # src/routes/ - TanStack Router ONLY
+    # -------------------------------------------------------------------------
+    src_routes:
+      file_count: 22
+      status: "✅ CANONICAL"
+      key_files:
+        - "$projectId.tsx"           # Main project route (399 lines)
+        - "__root.tsx"               # Root layout
+        - "index.tsx"                # Hub/Home route
+        - "projects.tsx"             # Projects list
+        - "settings.tsx"             # Settings page
+        - "agents.tsx"               # Agents management
+        - "debug.tsx"                # Debug tools
+        - "about.tsx"                # About page
+      subdirs:
+        - "api/" (6 files)           # API routes
+        - "notes/" (1 test file)     # Notes route tests
+      notes: "Well organized. API routes properly separated."
+      
+    # -------------------------------------------------------------------------
+    # src/presentation/ - React UI ONLY
+    # -------------------------------------------------------------------------
+    src_presentation:
+      file_count: "~280"
+      status: "✅ CANONICAL"
+      
+      subdirs:
+        components:
+          total: "~250"
+          ui:
+            file_count: "~75"
+            status: "✅ Design system primitives"
+            key_files:
+              - "button.tsx"
+              - "dialog.tsx"
+              - "input.tsx"
+              - "card.tsx"
+              - "badge.tsx"
+              - "tabs.tsx"
+              - "select.tsx"
+              - "dropdown-menu.tsx"
+            sub_subdirs:
+              - "icons/" (~15 files)
+              - "activity-indicators/" (~7 files)
+              - "event-indicators/" (~15 files)
+              - "Toast/" (~3 files)
+              
+          common:
+            file_count: "~12"
+            status: "✅ Shared components"
+            key_files:
+              - "AppInitializer.tsx"
+              - "WorkspaceSwitcher.tsx"
+              - "DatabaseRecoveryDialog.tsx"
+              - "ErrorBoundary.tsx"
+              - "UnsavedChangesDialog.tsx"
+              
+          hub:
+            file_count: "~30"
+            status: "✅ Hub/Dashboard components"
+            key_files:
+              - "HubHomePage.tsx"        # 442 lines
+              - "ProjectCard.tsx"
+              - "WorkspaceBindingDialog.tsx"
+              - "RecentProjectsSection.tsx"
+              - "ChartsGrid.tsx"
+              
+          notes:
+            file_count: "~15"
+            status: "✅ Notes workspace components"
+            key_files:
+              - "NotesPage.tsx"          # 1103 lines (⚠️ LARGE but under limit)
+              - "NoteSidebar.tsx"
+              - "NoteTreeItem.tsx"
+              - "AIInsertionDialog.tsx"
+              - "VoiceRecordButton.tsx"
+              
+          ide:
+            file_count: "~60"
+            status: "✅ IDE workspace components"
+            key_files:
+              - "MonacoEditor/MonacoEditor.tsx"  # 773 lines (⚠️ LARGE)
+              - "FileTree/FileTree.tsx"  # 298 lines
+              - "AgentChatPanel.tsx"
+              - "XTerminal.tsx"
+              - "CommandPalette.tsx"
+            sub_subdirs:
+              - "MonacoEditor/" (~12 files)
+              - "FileTree/" (~15 files)
+              - "AgentChatPanel/" (~10 files)
+              - "statusbar/" (~8 files)
+              - "PreviewPanel/" (~3 files)
+              - "hooks/" (~8 files)
+              
+          chat:
+            file_count: "~45"
+            status: "✅ Chat components"
+            key_files:
+              - "UnifiedChatPanel.tsx"
+              - "ChatBubble.tsx"
+              - "CodeBlock.tsx"
+              - "DiffPreview.tsx"
+              - "ApprovalOverlay.tsx"
+              - "WorkflowBuilder.tsx"
+            sub_subdirs:
+              - "workflow/" (~6 files)
+              
+          sidebar:
+            file_count: "~8"
+            status: "✅ Sidebar components"
+            key_files:
+              - "PluginSidebar.tsx"
+              - "ProjectSidebar.tsx"
+              - "ChatThreadList.tsx"
+              
+          editor:
+            file_count: "~6"
+            status: "✅ Editor components"
+            key_files:
+              - "EditorTabBar.tsx"
+              - "SymbolsPanel.tsx"
+              - "DefinitionTooltip.tsx"
+              
+          other_subdirs:
+            - "analytics/" (~4 files)
+            - "keyboard/" (~3 files)
+            - "git/" (~6 files)
+            - "notifications/" (~5 files)
+            - "error/" (~4 files)
+            - "templates/" (~3 files)
+            - "scheduler/" (~5 files)
+            - "snippets/" (~3 files)
+            - "offline/" (~2 files)
+            - "onboarding/" (~2 files)
+            - "header/" (~2 files)
+            - "dev/" (~2 files)
+            - "panels/" (~2 files)
+            
+        layouts:
+          file_count: 14
+          status: "✅ Layout components"
+          key_files:
+            - "PluginLayout.tsx"         # 269 lines
+            - "WorkspaceLayout.tsx"
+            - "PluginPanel.tsx"
+            - "LayoutRenderers.tsx"
+            - "PluginLayoutStore.ts"
+            - "MobilePluginNav.tsx"
+            - "AddPluginDialog.tsx"
+            - "layout-presets.ts"
+            - "workflow-presets.ts"
+            
+        hooks:
+          file_count: 10
+          status: "✅ Presentation hooks"
+          key_files:
+            - "usePluginPlacement.ts"
+            - "useBreakpointEnhanced.ts"
+            - "useStorageMode.ts"
+            - "useChatExport.ts"
+            - "useThreadManager.ts"
+            - "useArtifactPreview.ts"
+            - "useMarkdownSyncConflict.ts"
+            
+    # -------------------------------------------------------------------------
+    # src/domain/ - Business Logic ONLY
+    # -------------------------------------------------------------------------
+    src_domain:
+      file_count: 68
+      status: "✅ CANONICAL"
+      
+      subdirs:
+        entities:
+          file_count: 13
+          key_files:
+            - "project.ts"
+            - "agent.ts"
+            - "chat.ts"
+            - "workspace.ts"
+            - "knowledge.ts"
+            - "study.ts"
+            - "rag.ts"
+            - "code-chunk.ts"
+            
+        services:
+          file_count: 18
+          key_files:
+            - "ProjectRegistry.ts"
+            - "project-creation-service.ts"
+            - "note-gateway.ts"
+            - "AgentProviderValidator.ts"
+            - "agent-orchestration-service.ts"
+            - "universal-adapter-factory.ts"
+            - "universal-provider-registry.ts"
+            - "workspace-transition-service.ts"
+          sub_subdirs:
+            - "file-crud/" (~6 files)
+            
+        interfaces:
+          file_count: 6
+          key_files:
+            - "storage-gateway.interface.ts"
+            - "storage-adapter.interface.ts"
+            - "file-operations-adapter.interface.ts"
+            - "feature-plugin.interface.ts"
+            - "plugin-capability.interface.ts"
+            
+        types:
+          file_count: 12
+          key_files:
+            - "plugin-types.ts"
+            - "plugin-coordination.types.ts"
+            - "project-ids.ts"
+            - "viagent-metadata.ts"
+          sub_subdirs:
+            - "llm/" (~5 files)
+            
+        tools:
+          file_count: 16
+          sub_subdirs:
+            - "note/" (~8 files)
+            - "provider/" (~5 files)
+            
+        value-objects:
+          file_count: 3
+          key_files:
+            - "workspace-type.ts"
+            - "workspace-binding.ts"
+            - "tool-permission.ts"
+            
+        use-cases:
+          file_count: 1
+          key_files:
+            - "switch-workspace-use-case.ts"
+            
+        adapters:
+          file_count: 1
+          key_files:
+            - "index.ts"
+            
+    # -------------------------------------------------------------------------
+    # src/infrastructure/ - External Interfaces ONLY
+    # -------------------------------------------------------------------------
+    src_infrastructure:
+      file_count: "~250"
+      status: "✅ CANONICAL"
+      
+      subdirs:
+        persistence:
+          total: "~150"
+          
+          dexie:
+            file_count: 20
+            key_files:
+              - "dexie-db.ts"            # 1214 lines ⚠️ GOD FILE
+              - "dexie-db-migrations.ts" # 1747 lines 🔴 GOD FILE
+              - "dexie-db-class.ts"
+              - "dexie-db-helpers.ts"
+            type_files:
+              - "dexie-db-core-types.ts"
+              - "dexie-db-ai-types.ts"
+              - "dexie-db-session-types.ts"
+              - "dexie-db-knowledge-types.ts"
+              - "dexie-db-study-types.ts"
+              - "dexie-db-plugin-types.ts"
+              - "dexie-db-workflow-types.ts"
+              - "dexie-db-snippet-types.ts"
+              - "dexie-db-block-types.ts"
+              - "dexie-db-idb-file-types.ts"
+            sub_subdirs:
+              - "dexie-db-helpers/" (~17 files)
+              - "services/" (~2 files)
+              
+          stores:
+            file_count: "~120"
+            status: "✅ Zustand stores - Well organized into slices"
+            key_stores:
+              - "conversation/" (~25 files, sliced pattern)
+              - "chat/" (~15 files, sliced pattern)
+              - "ide/" (~12 files, sliced pattern)
+              - "agents/" (~12 files, sliced pattern)
+              - "project/" (~12 files, sliced pattern)
+              - "canvas/" (~8 files)
+              - "flashcard/" (~7 files)
+              - "git/" (~5 files)
+              - "editor-tabs/" (~4 files)
+              - "filesystem/" (~7 files)
+              - "notifications/" (~4 files)
+              - "permissions/" (~6 files)
+              - "rag/" (~3 files)
+              - "study/" (~4 files)
+              - "notes/" (~3 files)
+              - "knowledge/" (~2 files)
+              - "events/" (~2 files)
+            standalone_stores:
+              - "layout-store.ts"
+              - "layout-presets-store.ts"
+              - "navigation-store.ts"
+              - "hub-store.ts"
+              - "file-tree-store.ts"
+              - "file-watcher-store.ts"
+              - "notification-store.ts"
+              - "git-store.ts"
+              - "flashcard-store.ts"
+              - "canvas-store.ts"
+              - "plugins-store.ts"
+              - "analytics-store.ts"
+              - "terminal-store.ts"
+              - "statusbar-store.ts"
+              - "sidebar-store.ts"
+              - "code-chunk-store.ts"
+              - "hydration-manager.ts"
+              
+        filesystem:
+          file_count: 28
+          key_files:
+            - "fsa-storage-adapter.ts"   # 673 lines ⚠️ LARGE
+            - "fsa-gateway.ts"           # 817 lines 🔴 GOD FILE
+            - "StorageAdapterFactory.ts"
+            - "platform-detection.ts"
+            - "platform-contract.ts"
+            - "storage-gateway-factory.ts"
+            - "ide-file-gateway.ts"
+            - "markdown-sync-service.ts"
+            - "path-utils.ts"
+            - "path-guard.ts"
+            - "fs-types.ts"
+            - "fs-errors.ts"
+            - "handle-persistence.ts"
+            - "file-tree-scanner.ts"
+            
+        sync:
+          file_count: "~65"
+          sub_subdirs:
+            - "adapters/" (~15 files)
+            - "core/" (~15 files)
+            - "strategies/" (~10 files)
+            - "workspace-services/" (~15 files)
+            - "workspace-bindings/" (~6 files)
+            - "bridges/" (~2 files)
+            - "types/" (~2 files)
+            
+        events:
+          file_count: 5
+          key_files:
+            - "event-bus.ts"
+            - "cross-workspace-event-bus.ts"
+            - "file-event-bus.ts"
+            - "types.ts"
+            
+        plugins:
+          file_count: 4
+          key_files:
+            - "plugin-registry.ts"
+            - "platform-defaults.ts"
+            
+        tools:
+          file_count: 5
+          key_files:
+            - "tool-catalog.ts"
+            - "centralized-tool-registry.ts"
+            
+        services:
+          file_count: 1
+          key_files:
+            - "chat-service.ts"
+            
+        context:
+          file_count: 2
+          key_files:
+            - "plugin-coordination-context.tsx"
+            - "project-context.tsx"
+            
+        hooks:
+          file_count: 1
+          key_files:
+            - "useDebouncedSave.ts"
+            
+        ui:
+          file_count: 1
+          key_files:
+            - "AgentWorkspaceSync.tsx"
+
+  # =============================================================================
+  # DEPRECATED LOCATIONS (Should be migrated)
+  # =============================================================================
+  
+  deprecated_locations:
+    src_lib:
+      exists: true
+      file_count: "~100"
+      status: "⚠️ DEPRECATED - Should migrate to canonical locations"
+      subdirs:
+        - "workspace/" (~10 files) → infrastructure/persistence/stores/
+        - "filesync/" (~12 files) → infrastructure/sync/
+        - "events/" (~8 files) → infrastructure/events/
+        - "webcontainer/" (~10 files) → infrastructure/webcontainer/
+        - "persistence/" (~3 files) → infrastructure/persistence/
+        - "sync/" (~5 files) → infrastructure/sync/
+        - "editor/" (~5 files) → domain/services/ or presentation/
+        - "terminal/" (~3 files) → infrastructure/terminal/
+        - "keyboard/" (~3 files) → infrastructure/keyboard/
+        - "git/" (~3 files) → infrastructure/git/
+        - "analytics/" (~3 files) → infrastructure/analytics/
+        - "monitoring/" (~3 files) → infrastructure/monitoring/
+        - "offline/" (~4 files) → infrastructure/offline/
+        - "templates/" (~4 files) → domain/templates/
+        - "pdf/" (~5 files) → infrastructure/pdf/
+        - "navigation/" (~5 files) → domain/services/
+        - "scheduler/" (~4 files) → domain/services/
+        - "diff/" (~3 files) → domain/services/
+        - "validation/" (~2 files) → domain/services/
+        - "metadata/" (~2 files) → domain/services/
+        - "media/" (~3 files) → infrastructure/media/
+        - "notifications/" (~3 files) → infrastructure/notifications/
+        - "diagnostics/" (~3 files) → infrastructure/diagnostics/
+      migration_priority: "P2"
+      notes: "Large legacy codebase. Gradual migration recommended."
+      
+    src_hooks:
+      exists: true
+      file_count: 36
+      status: "⚠️ DEPRECATED - Should move to presentation/hooks/"
+      key_files:
+        - "useAgents.ts"
+        - "usePlugins.ts"
+        - "useTerminal.ts"
+        - "useGit.ts"
+        - "useKeyboardShortcuts.ts"
+        - "useMediaQuery.ts"
+        - "useResponsive.ts"
+        - "useOfflineStatus.ts"
+      migration_priority: "P3"
+      notes: "Move to src/presentation/hooks/ or appropriate domain hooks"
+      
+    src_components:
+      exists: true
+      file_count: 4
+      status: "⚠️ DEPRECATED - Should move to presentation/components/"
+      location: "src/components/rag/"
+      files:
+        - "CitationSidebar.tsx"
+        - "CitationCountBadge.tsx"
+        - "index.ts"
+      migration_priority: "P3"
+      
+    src_core:
+      exists: true
+      file_count: 7
+      status: "⚠️ DEPRECATED - Duplicate of domain/entities"
+      location: "src/core/entities/"
+      files:
+        - "Agent.ts"
+        - "Project.ts"
+        - "Provider.ts"
+        - "Conversation.ts"
+        - "Workspace.ts"
+      migration_priority: "P2"
+      notes: "Consolidate with domain/entities/ - may have duplication"
+      
+    src_application:
+      exists: true
+      file_count: 3
+      status: "⚠️ DEPRECATED - Should move to domain/services/"
+      location: "src/application/services/"
+      files:
+        - "ProviderService.ts"
+        - "AgentService.ts"
+      migration_priority: "P2"
+      
+    src_i18n:
+      exists: true
+      file_count: 3
+      status: "⚠️ NON-CANONICAL but acceptable"
+      files:
+        - "config.ts"
+        - "LocaleProvider.tsx"
+      notes: "i18n is typically a top-level concern - acceptable location"
+      migration_priority: "P4"
+      
+    src_shared:
+      exists: true
+      file_count: 1
+      status: "⚠️ DEPRECATED"
+      files:
+        - "types/index.ts"
+      migration_priority: "P4"
+      
+    src_styles:
+      exists: true
+      file_count: 1
+      status: "✅ ACCEPTABLE - CSS/styling location"
+      files:
+        - "design-tokens.ts"
+      migration_priority: "N/A"
+      
+    src_utils:
+      exists: true
+      file_count: 2
+      status: "⚠️ DEPRECATED - Move to domain/services/"
+      files:
+        - "export-utils.ts"
+      migration_priority: "P4"
+      
+    src_data:
+      exists: true
+      file_count: 1
+      status: "✅ ACCEPTABLE - Demo/mock data"
+      files:
+        - "demo.punk-songs.ts"
+      migration_priority: "N/A"
+      
+    src_e2e:
+      exists: true
+      file_count: 6
+      status: "✅ ACCEPTABLE - E2E tests location"
+      files:
+        - "ide-fsa-crud.spec.ts"
+        - "ide-mobile-guard.spec.ts"
+        - "ide-terminal-fsa.spec.ts"
+        - "ide-webcontainer.spec.ts"
+      migration_priority: "N/A"
+      
+    src_scripts:
+      exists: true
+      file_count: 1
+      status: "✅ ACCEPTABLE - Utility scripts"
+      files:
+        - "rollback-fsa-migration.ts"
+      migration_priority: "N/A"
+
+  # =============================================================================
+  # GOD FILES (>500 lines)
+  # =============================================================================
+  
+  god_files:
+    - path: "src/infrastructure/persistence/dexie-db-migrations.ts"
+      lines: 1747
+      severity: "🔴 CRITICAL"
+      reason: "Migration file - naturally large but could be split by version ranges"
+      recommendation: "Split into version-range files (v1-10, v11-20, v21-28)"
+      
+    - path: "src/infrastructure/persistence/dexie-db.ts"
+      lines: 1214
+      severity: "🔴 CRITICAL"
+      reason: "Main database helpers - too many responsibilities"
+      recommendation: "Extract helper groups into separate modules"
+      
+    - path: "src/presentation/components/notes/NotesPage.tsx"
+      lines: 1103
+      severity: "⚠️ HIGH"
+      reason: "Complex page component with many concerns"
+      recommendation: "Extract hooks, sub-components, and utilities"
+      
+    - path: "src/infrastructure/filesystem/fsa-gateway.ts"
+      lines: 817
+      severity: "⚠️ HIGH"
+      reason: "FSA storage gateway - complex file operations"
+      recommendation: "Split into operation-specific modules"
+      
+    - path: "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      lines: 773
+      severity: "⚠️ HIGH"
+      reason: "Complex Monaco editor wrapper"
+      recommendation: "Extract hooks and utilities"
+      
+    - path: "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+      lines: 673
+      severity: "⚠️ MODERATE"
+      reason: "FSA storage adapter - many methods"
+      recommendation: "Consider splitting by operation type"
+
+  # =============================================================================
+  # ARCHITECTURE DRIFT ANALYSIS
+  # =============================================================================
+  
+  drift_from_architecture:
+    - type: "deprecated_directory"
+      location: "src/lib/"
+      description: "~100 files in deprecated location - major migration needed"
+      priority: "P2"
+      
+    - type: "deprecated_directory"
+      location: "src/hooks/"
+      description: "36 hooks should be in presentation/hooks/"
+      priority: "P3"
+      
+    - type: "duplicate_entities"
+      location: "src/core/entities/"
+      description: "Duplicates domain/entities/ - needs consolidation"
+      priority: "P2"
+      
+    - type: "misplaced_services"
+      location: "src/application/services/"
+      description: "Should be in domain/services/"
+      priority: "P2"
+      
+    - type: "god_files"
+      locations:
+        - "dexie-db-migrations.ts (1747 lines)"
+        - "dexie-db.ts (1214 lines)"
+        - "NotesPage.tsx (1103 lines)"
+        - "fsa-gateway.ts (817 lines)"
+        - "MonacoEditor.tsx (773 lines)"
+      description: "5 files exceed 500 line limit"
+      priority: "P2"
+      
+    - type: "missing_directories"
+      location: "src/infrastructure/"
+      description: "Missing dedicated dirs for webcontainer, terminal, git"
+      priority: "P3"
+
+  # =============================================================================
+  # HEALTH METRICS
+  # =============================================================================
+  
+  health_score: "78%"
+  
+  health_breakdown:
+    canonical_structure: "85%"   # Most code in right places
+    god_file_compliance: "92%"   # Only 5 god files out of ~650
+    deprecated_cleanup: "55%"    # ~100+ files still in src/lib/
+    store_slicing: "95%"         # Stores well-organized into slices
+    domain_isolation: "90%"      # Good domain boundaries
+    
+  recommendations:
+    immediate:
+      - "Split dexie-db-migrations.ts into version-range files"
+      - "Extract NotesPage.tsx into smaller components"
+      
+    short_term:
+      - "Migrate src/hooks/ → presentation/hooks/"
+      - "Consolidate src/core/entities/ → domain/entities/"
+      - "Migrate src/application/services/ → domain/services/"
+      
+    medium_term:
+      - "Gradual migration of src/lib/ to canonical locations"
+      - "Split MonacoEditor.tsx into hooks + sub-components"
+      - "Refactor fsa-gateway.ts into operation-specific modules"
+      
+    low_priority:
+      - "Migrate src/components/rag/ → presentation/components/knowledge/"
+      - "Clean up src/shared/, src/utils/"

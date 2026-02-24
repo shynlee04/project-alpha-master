@@ -1,0 +1,57 @@
+{
+  "name": "eslint-plugin-8bit-design",
+  "version": "1.0.0",
+  "description": "ESLint plugin for enforcing 8-bit design system (no transparency, no rounded corners, no blur effects)",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    },
+    "./rules/no-transparency": {
+      "types": "./lib/rules/no-transparency.d.ts",
+      "import": "./lib/rules/no-transparency.js",
+      "require": "./lib/rules/no-transparency.js"
+    },
+    "./rules/no-large-radius": {
+      "types": "./lib/rules/no-large-radius.d.ts",
+      "import": "./lib/rules/no-large-radius.js",
+      "require": "./lib/rules/no-large-radius.js"
+    },
+    "./rules/no-blur": {
+      "types": "./lib/rules/no-blur.d.ts",
+      "import": "./lib/rules/no-blur.js",
+      "require": "./lib/rules/no-blur.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "8bit",
+    "design",
+    "tailwind"
+  ],
+  "author": "Via-gent Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/eslint": "^8.56.0",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/types": "^7.18.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=8.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

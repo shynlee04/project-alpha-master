@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "projectId": "ide:proj_1768787923364_wocg1ruel",
+  "projectName": "project-alpha-master",
+  "storageType": "fsa",
+  "workspaceBindings": {
+    "ide": true,
+    "knowledge": false,
+    "notes": true,
+    "study": false
+  },
+  "createdAt": "2026-01-19T01:58:43.410Z",
+  "updatedAt": "2026-01-19T01:58:43.411Z",
+  "tags": []
+}

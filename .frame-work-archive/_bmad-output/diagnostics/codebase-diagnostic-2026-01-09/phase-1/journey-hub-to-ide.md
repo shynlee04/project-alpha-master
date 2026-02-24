@@ -1,0 +1,197 @@
+# Hub → IDE Journey
+
+**Analysis Date:** 2026-01-09
+
+---
+
+## Executive Summary
+
+The IDE workspace uses a **Phase 1 simplified pattern** with temp project auto-creation. It **bypasses the problematic `useWorkspaceAccess` hook** similar to Notes workspace.
+
+---
+
+## Route Transition Flow
+
+### Step 1: Sidebar Click
+- **File:** `MainSidebar.tsx`
+- **Handler:** `navigate({ to: '/ide' })`
+
+### Step 2: IDE Route Component
+- **File:** `src/routes/ide.tsx` (215 lines)
+- **Pattern:** Simplified access with temp project creation
+
+---
+
+## IDEWorkspace Component Flow
+
+### Landing Page (/ide)
+```
+IDEWorkspace()
+├── isOnChildRoute check (window.location.pathname !== '/ide')
+│   ├── true → Render IDELayout with Suspense
+│   └── false → Show project selector
+│       ├── "Quick IDE" button → handleCreateTemp()
+│       ├── "Select Project Folder" → FolderPickerDialog
+│       └── "Browse Projects" → handleBrowseProjects()
+```
+
+### Child Route (/ide/$projectId)
+```
+MainLayout
+└── Suspense (IDESkeleton fallback)
+    └── IDELayout
+        ├── WebContainer manager
+        ├── Monaco Editor
+        ├── File Tree
+        ├── Terminal
+        └── Chat Panel
+```
+
+---
+
+## Temp Project Creation Flow
+
+### handleCreateTemp() Function
+```typescript
+async function handleCreateTemp(navigate) {
+  const tempProject = await getOrCreateTempProject();
+  navigate({ to: '/ide/$projectId', params: { projectId: tempProject.id } });
+}
+```
+
+### getOrCreateTempProject() Source
+- **File:** `lib/workspace/temp-project.ts`
+- **Pattern:** Check IndexedDB → Create if missing → Return project
+
+---
+
+## Component Tree (IDELayout)
+
+```
+IDELayoutMain
+├── IDELayoutHeader
+├── MainSidebar (workspace switcher)
+├── SplitPanelLayout
+│   ├── FileTreePanel
+│   │   └── FileTree
+│   ├── EditorPanel
+│   │   └── MonacoEditor (lazy)
+│   ├── TerminalPanel
+│   │   └── XTerminal
+│   └── ChatPanel
+│       └── EnhancedChatInterface
+└── StatusBar
+```
+
+---
+
+## Heavy Dependencies
+
+### Monaco Editor
+- **File:** `MonacoEditor.tsx` (769 lines - GOD COMPONENT)
+- **Loading:** Lazy loaded via Suspense
+- **Impact:** ~2MB bundle size
+- **Risk:** May block UI on first load
+
+### WebContainer
+- **File:** `webcontainer-manager.ts`
+- **Boot Time:** ~3-5 seconds
+- **Risk:** Blocks IDE functionality until ready
+
+---
+
+## Database Operations
+
+### Project Creation
+| Operation | Trigger | Table |
+|-----------|---------|-------|
+| db.projects.put() | Temp project creation | projects |
+| db.projects.get() | Temp project retrieval | projects |
+| db.projects.update() | Update lastOpened | projects |
+
+### File Operations (Post-Load)
+| Operation | Trigger | Table |
+|-----------|---------|-------|
+| fileSnapshots.put() | File save | fileMetadata |
+| fileSnapshots.get() | File read | fileMetadata |
+
+---
+
+## Critical Issues Found
+
+### 1. ⚠️ God Component: MonacoEditor (769 lines)
+**Risk:** Violates single responsibility principle
+**Impact:** Hard to maintain, test, optimize
+**Recommendation:** Split into smaller components
+
+### 2. ⚠️ WebContainer Boot Blocking
+**Risk:** User sees blank IDE for 3-5 seconds
+**Current Fix:** IDESkeleton (loading spinner)
+**Recommendation:** Progressive loading, show file tree first
+
+### 3. ⚠️ Phase 1 Detachment
+**Evidence:** ide.tsx lines 68-83
+```
+⚠️ PHASE 1 DETACHMENT
+Feature: Workspace Access via useWorkspaceAccess
+Reason: Causes infinite loops / returns 'no_projects'
+Re-attach in: Phase 2
+```
+
+### 4. ⚠️ Folder Picker Fallback
+```typescript
+onFallbackToTemp={async () => {
+  const tempProject = await getOrCreateTempProject();
+  navigate({ to: '/ide/$projectId', params: { projectId: tempProject.id } });
+}}
+```
+
+**Risk:** Complex fallback logic may confuse users
+
+---
+
+## Phase 1 Integration Points
+
+### P1-03: Temp Project Auto-Flow
+- **Status:** INTEGRATED
+- **Feature:** Mobile users auto-create temp project on click
+- **Function:** `getOrCreateTempProject()`
+
+### P1-04: Folder Picker Flow
+- **Status:** INTEGRATED
+- **Feature:** Desktop users can select project folder via FSA API
+- **Component:** `FolderPickerDialog`
+
+---
+
+## Comparison: IDE vs Notes Pattern
+
+| Aspect | IDE | Notes |
+|--------|-----|-------|
+| Workspace Access | Simplified temp project | StableNotesWorkspace |
+| Project Binding | Dynamic (from temp) | Hardcoded 'default-notes' |
+| Editor | Monaco (heavy, lazy) | BlockNote (medium, lazy) |
+| File System | Full WebContainer | Notes storage only |
+| Loop Risk | Low (simplified) | Low (direct store) |
+
+---
+
+## Recommendations
+
+### Immediate
+1. **Split MonacoEditor** into smaller components
+2. **Optimize WebContainer boot** with progressive loading
+
+### Short-term
+1. **Re-implement useWorkspaceAccess** properly
+2. **Unify project creation** between IDE and Notes
+
+### Long-term
+1. **Full IDE optimization** (bundle splitting, caching)
+2. **WebContainer pre-boot** strategy
+
+---
+
+*Generated by Codebase Diagnostic Workflow v1.0.0*
+*Phase 1: User Journeys*
+*Date: 2026-01-09*

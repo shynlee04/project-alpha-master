@@ -1,0 +1,263 @@
+# LOOP_STATE - BMAD Extension Global State
+# Version: 3.3.0
+# last_updated: "2026-01-30T18:00:00+07:00"
+# Status: EPIC-UXUI-04 ACTIVE - STORY 2 COMPLETE, STORY 3 STARTING
+#
+# IMPORTANT: This file is the single source of truth for BMAD Extension Layer.
+# All agents must read this file at session start and update it at key points.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SESSION INFORMATION
+# ═══════════════════════════════════════════════════════════════════════════════
+session:
+  id: "excalibur-epic-cc-arc-2026-01-18"
+  start_time: "2026-01-18T11:30:00+07:00"
+  last_activity: "2026-01-18T11:30:00+07:00"
+  platform: "claude-code"
+  agent: "EXCALIBUR (ext-master-enhanced v2.0.0)"
+  orchestrator_team: "Team B"
+  iteration: 130
+  max_iterations: 0
+  status: "EPIC-UXUI-04-STRICT-VALIDATION-PHASE"
+  team: "Validation Team - Stories 1-8 Pending Validation, Stories 9-10 Not Started"
+  ralph_loop_version: "5.0.0"
+  ralph_loop_config: ".claude/ralph-loop.local.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HUMAN INTENT ANCHOR (Anti-Hallucination)
+# ═══════════════════════════════════════════════════════════════════════════════
+anchor:
+  original_request: "Execute EPIC-CC-ARC Architectural Remediation - Week 2"
+  intent_verified: true
+  last_verified_at: "2026-01-18T00:30:00+07:00"
+  human_intent_summary: |
+    EPIC-CC-ARC SPRINT EXECUTION (WEEK 2):
+
+    WEEK 1 COMPLETE - All 11 stories verified:
+    - Team A: ARC-A01, A02, A03, A04, A05, A06 (Identity & Routing)
+    - Team B: ARC-B01, B02, B03, B04, B07, B10 (Storage Contract)
+
+    WEEK 2 PRIORITY (UNBLOCKED):
+    - ARC-B11: Notes ↔ Markdown bidirectional sync (P0, 8h)
+    - ARC-B05: FileSystemObserver with polling fallback (P0, 6h)
+
+    KEY DECISIONS (from ADR-033):
+    - Desktop → FSA automatically (no user choice)
+    - Mobile/Tablet → IndexedDB automatically
+    - Notes on FSA Desktop → Real .md files in /project/notes/
+    - IDE → Desktop only (mobile blocked)
+    - File IDs → Path-based (relative from project root)
+
+    SPRINT FILE: _bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml
+    ADR: _bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md
+  human_intent_timestamp: "2026-01-18T11:00:00+07:00"
+  conversation_id: "conv-2026-01-18-epic-cc-arc-week3"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CURRENT WORK CONTEXT
+# ═══════════════════════════════════════════════════════════════════════════════
+current_work:
+  epic_id: "EPIC-UXUI-04"
+  epic_title: "True Plugin Layout Architecture"
+  story_id: "VALIDATION-PHASE"
+  story_title: "Strict Validation Workflow for All Stories"
+  task_type: "validation"
+  step: "validation-setup-complete"
+  governance_status: "validation-phase-active"
+  team: "Validation Team (dev-ext + tea-ext + bmad-governance)"
+  phase: "Stories 1-8 Pending Validation, Stories 9-10 Not Started"
+  next_story: "UXUI-04-01: Validate Archive Phase"
+  
+  # EPIC-UXUI-04 OVERVIEW:
+  # Total Stories: 10 across 2 weeks
+  # Estimated Duration: 2 weeks (single team, sequential)
+  # Status: IN PROGRESS - Story 2 COMPLETE (20%), Story 3 STARTING
+  #
+  # COMPLETED:
+  # - UXUI-04-01: Archive Phase (Inventory & Cleanup) - COMPLETE
+  # - UXUI-04-02: Global Sidebar Auto-Collapse - COMPLETE
+  #
+  # IN PROGRESS:
+  # - UXUI-04-03: Three Activity Bar System - STARTING
+  #
+  # PENDING:
+  # - UXUI-04-04: Plugin Docker Component
+  # - UXUI-04-05: Plugin Panel System
+  # - UXUI-04-06: Drag-Drop System
+  # - UXUI-04-07: Responsive Layout Implementation
+  # - UXUI-04-08: Plugin Coordination Integration
+  # - UXUI-04-09: Persistence & State Management
+  # - UXUI-04-10: FINAL VERIFICATION
+
+  sprint_file: "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+  adr_file: "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+
+  # EPIC-ARCH-REMED OVERVIEW:
+  # Total Phases: 5 across 4-6 weeks
+  # Estimated Duration: 4-6 weeks (8-12 sprints of 3-5 days each)
+  # Status: PLANNING COMPLETE - Awaiting User Approval to proceed
+  #
+  # EPIC-UX-01 STATUS: 15/23 stories COMPLETE (65%) - PAUSED for architectural remediation
+  # UX-15 (Streaming Animations) - COMPLETE as of 2026-01-16
+
+  # EPIC-UX-01 OVERVIEW:
+  # Total Stories: 23 across 5 phases
+  # Estimated Duration: 4-6 weeks
+  # Status: IN PROGRESS - Phase 1 (Foundation) COMPLETE, Phase 2 (Block Editor) IN PROGRESS - 15/23 stories done (65%)
+  #
+  # Phase 1: Foundation (P0 - Critical) - ALL COMPLETE
+  # - UX-01: Unified Z-Index Scale (2h, no dependencies) - COMPLETE
+  # - UX-02: OverlayRoot for All Modals (4h, no dependencies) - COMPLETE
+  # - UX-03: Multi-Block Selection (1d, depends on UX-01) - COMPLETE
+  # - UX-04: Block Drag-and-Drop (1d, depends on UX-03) - COMPLETE
+  # - UX-05: Panel Flex Control (4h, depends on UX-01) - COMPLETE
+  # - UX-06: Mobile Chat Accessibility (4h, depends on UX-01) - COMPLETE
+  #
+  # Phase 1 (Foundation) COMPLETE! All 6 stories done.
+  #
+  # Phase 2: Block Editor (P0-P1) - IN PROGRESS
+  # - UX-07: In-Block AI Generation UI (1d, no dependencies) - COMPLETE
+  # - UX-08: Context Scope Selection (4h, no dependencies) - COMPLETE
+  # - UX-09: Toggle and Callout Blocks (1d, no dependencies) - COMPLETE
+  # - UX-10: Block References (2d, no dependencies) - COMPLETE
+  # - UX-11: Column Layouts (1d, no dependencies) - COMPLETE
+  # - UX-12: Synced Blocks (1d, no dependencies) - COMPLETE
+  # - UX-13: Database Backed Blocks (1d, no dependencies) - COMPLETE
+  # - UX-14: Block Templates (1d, no dependencies) - COMPLETE
+  # - UX-15: Streaming Animations (4h, no dependencies) - COMPLETE
+  #
+  # Ralph Loop v4.0 will execute each story through:
+  # 1. Story-Cycle Workflow (BMAD Implementation Module v2.0)
+  # 2. Quality Gates (Deep Analysis, Journey Reality, Evidence, Architectural, Code Reality, Visual)
+  # 3. Agent Coordination (Context Analyst, UX Analyst, Developer, Code Reviewer, etc.)
+  # 4. Governance Updates (LOOP_STATE, sprint-status, artifacts)
+
+  # EPIC-CC-02 COMPLETED STORIES (Team A - BYOK Cleanup):
+  # AS OF 2026-01-13:
+  # COMPLETED:
+  # - PS-01: Split useWorkspaceFileSystem - DONE (571→119 lines + 3 slices)
+  # - BYOK-01: Split ProviderCredentialsSlice - DONE (crud-slice.ts + vault-slice.ts)
+  # - PS-02: StorageAdapter Interface - COMPLETE (7/7 changes documented, interface exists)
+  #
+  # PS-02 CHANGES SUMMARY:
+  # - StorageAdapter domain interface EXISTS at src/domain/interfaces/storage-adapter.interface.ts
+  # - AdapterFactory uses StorageAdapter - no changes needed
+  # - UnifiedStorageAdapter extends LocalFSAdapter (backward compatible)
+  # - Full clean refactor blocked by 48+ dependent files using LocalFSAdapter-specific methods
+  # - DECISION: Maintain backward compatibility (extends) vs clean interface (implements)
+  # - Routing mapping documented for notes workspace entry points
+  # - Impact analysis created for potential clean refactor
+  #
+  # BYOK-04: READY TO START
+  # - Add projectId to tool execution logs for audit trail
+  # - No dependencies, can start immediately
+  #
+  # BLOCKED STORIES:
+  # - PS-03: Consolidate Databases - needs PS-02 complete (NOW READY)
+  # - PS-04: Fix Import Violation - needs PS-02 complete (NOW READY)
+  # - PS-05: Content Hashing - needs PS-04
+  # - BYOK-02: Zod Validation - NOW READY (BYOK-01 COMPLETE)
+  # - BYOK-03: Archive Migration - READY (BYOK-01 COMPLETE)
+
+  stories_completed_this_session:
+    - "ARC-A03: Fix useWorkspaceAccess hook - 2026-01-16 (already done)"
+    - "ARC-B04: Fix browser-mode.ts persistence - 2026-01-16 (already done)"
+    - "ARC-A01: Create getPlatformContract() service - 2026-01-17 (Team B cross-team)"
+    - "ARC-B01: Create StorageGateway abstraction layer - 2026-01-17 (Team B)"
+    - "ARC-B02: Implement FSAGateway adapter with handle persistence - 2026-01-17 (Team B)"
+    - "ARC-B03: Implement IDBGateway adapter - 2026-01-17 (Team B)"
+    - "ARC-B07: Folder overlap detection and warning UI - 2026-01-17 (Team B)"
+    - "ARC-B10: .viagent/ metadata folder structure - 2026-01-17 (Team B)"
+    - "ARC-B11: Notes ↔ Markdown bidirectional sync - 2026-01-18 (Team B - Week 2)"
+    - "ARC-B05: FileSystemObserver with polling fallback - 2026-01-18 (Team B - Week 2)"
+    - "ARC-B06: File tree scanning service with snapshot caching - 2026-01-18 (Team B - Week 2)"
+    - "ARC-B08: File tree exclusion patterns configuration - 2026-01-18 (Team B - Week 3)"
+    - "ARC-B09: Scan depth limits and warnings - 2026-01-18 (Team B - Week 3)"
+    - "ARC-D01: ProjectId template literal type - 2026-01-18 (Team B - Week 3)"
+    - "ARC-D02: workspaceId || projectId fallback bugs - 2026-01-18 (Team B - Week 3)"
+
+  pending_stories:
+    # Team B (Week 3 - Phase D)
+    - "ARC-D03: Rename bindings → workspaceBindings - READY (2h, P2)"
+    # Team A (Week 3 - Phase C continuation)
+    - "ARC-C04: Persist-first pattern - READY (4h, P1)"
+    - "ARC-C06: Audit STUB implementations - READY (4h, P0)"
+
+  # TECHNICAL DEBT TRACKING (Iteration 13 Review)
+  technical_debt:
+    - item: "BYOK-04 Integration Incomplete"
+      severity: "P2"
+      description: "ToolExecutionLogger interface supports projectId, but callers (hooks, components) haven't been updated to pass it"
+      impact: "Audit trail doesn't capture project context end-to-end"
+      effort: "2-3 hours"
+      status: "DEFERRED"
+      rationale: "Pure Team A work with no Team B dependencies, but Phase 2 requires Team B foundation first"
+      recommended_action: "Complete as fast-follow when Team A resumes EPIC-CC-03"
+  artifacts_created:
+    # EPIC-CC-ARC Sprint Artifacts
+    - "_bmad-output/sprint-artifacts/epic-cc-arc-sprint-2026-01-17.yaml"
+    - "_bmad-output/planning-artifacts/adr/ADR-033-correct-course-architectural-remediation-2026-01-16.md"
+    - "_bmad-output/planning-artifacts/correct-course-gap-analysis-2026-01-16.md"
+    - "_bmad-output/planning-artifacts/correct-course-architectural-remediation-2026-01-16.md"
+  last_governance_update: "2026-01-17T08:00:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GOVERNANCE STATE (Sprint Execution Active)
+# ═══════════════════════════════════════════════════════════════════════════════
+governance:
+  last_check: "2026-01-30T22:00:00+07:00"
+  status: "epic-uxui-04-validation-phase"
+  health_score: 35.0
+  stale_detected: false
+  violations: []
+  typescript_errors: 0
+  notes: "EPIC-UXUI-04 STRICT VALIDATION PHASE. Stories 1-8 claimed complete but require 100% validation. Stories 9-10 not started. Validation workflow established with 3 teams: dev-ext (implementation), tea-ext (testing), bmad-governance (quality). NO completion claims without validation evidence."
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUPERSEDED ARTIFACTS (POISONED)
+# ═══════════════════════════════════════════════════════════════════════════════
+superseded_artifacts:
+  - artifact: "EPIC-45 completion status"
+    reason: "Code changes made but NOT tested - underlying architecture broken"
+    action: "Superseded by EPIC-CC-01, EPIC-CC-03"
+    
+  - artifact: "EPIC-46 planning"
+    reason: "Planned features depend on broken architecture"
+    action: "Deferred until Correct-Course Phase 2 complete"
+    
+  - artifact: "EPIC-47 planning"
+    reason: "Planned features depend on broken architecture"
+    action: "Deferred until Correct-Course Phase 2 complete"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ERROR TRACKING
+# ═══════════════════════════════════════════════════════════════════════════════
+errors:
+  count: 0
+  last_error: null
+  last_error_at: null
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SYSTEM STATE
+# ═══════════════════════════════════════════════════════════════════════════════
+system:
+  version: "3.0.0"
+  schema_version: "3.0.0"
+  freshness_threshold_hours: 4
+  last_backup: "2026-01-13T00:00:00+07:00"
+  extension_layer_active: true
+  ralph_loop_active: true
+  active_team: "Team B (Orchestrator)"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# MCP SERVER STATUS
+# ═══════════════════════════════════════════════════════════════════════════════
+mcp_servers:
+  available:
+    - "context7"
+    - "deepwiki"
+    - "tavily"
+    - "exa"
+    - "repomix"
+    - "github"
+  status: "all_available"

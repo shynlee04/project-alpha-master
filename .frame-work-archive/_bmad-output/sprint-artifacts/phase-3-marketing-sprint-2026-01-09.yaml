@@ -1,0 +1,640 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS: Phase 3 - Marketing Workspace "Mì Ăn Liền"
+# Generated: 2026-01-09T08:35:00+07:00
+# Team: B (Parallel to Phase 2 Team A)
+# Workflow: sprint-planning (BMAD V6)
+# ═══════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: phase-3-marketing-2026-01-09
+  name: "Phase 3: Marketing Workspace - Mì Ăn Liền Edition"
+  tagline: '"Nhanh như chớp, đẹp như mơ" (Fast as lightning, beautiful as a dream)'
+  start_date: "2026-01-09T09:00:00+07:00"
+  target_end_date: "2026-01-15T23:59:00+07:00"
+  status: READY_FOR_EXECUTION
+  phase: PHASE_3_MARKETING
+  team: "Team B"
+  parallel_to: "phase-2-agentic-2026-01-09 (Team A)"
+  created_by: "BMAD Deep Research + Brainstorming"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🍜 THE "INSTANT NOODLES" PHILOSOPHY
+# ═══════════════════════════════════════════════════════════════════════════
+
+philosophy:
+  name: "Mì Ăn Liền (Instant Noodles)"
+  principles:
+    - name: "3-Second Hook"
+      description: "Every feature must WOW in 3 seconds or less"
+    - name: "Zero Learning Curve"
+      description: "Grandma can use it. No tutorials needed."
+    - name: "Premium Packaging"
+      description: "Output looks like $10K agency work"
+    - name: "Vietnamese DNA"
+      description: "Built for FB/Zalo/TikTok VN ecosystem first"
+      
+  target_market:
+    primary: "Vietnamese SME Marketers (1-10 employee shops)"
+    secondary: "Content Creators (TikTokers, Reviewers)"
+    tertiary: "E-commerce Sellers (Shopee, Lazada)"
+    
+  wow_moments:
+    - "One prompt → Full TikTok video with Vietnamese voiceover"
+    - "Upload product photo → 10 lifestyle scenes in 30 seconds"
+    - "Paste competitor URL → AI writes better copy"
+    - "Type brand name → Full social media kit generated"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🎯 SPRINT GOAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+goal: |
+  Build the Marketing Workspace that makes Vietnamese SMEs say "ĐỈU!"
+  
+  DEMO SCENARIO (The "Mì Tôm" Demo):
+  1. User uploads 1 product photo (a bánh mì)
+  2. AI generates: 10 lifestyle backgrounds, 1 TikTok script, 
+     1 Facebook post, 1 Zalo story, Vietnamese voiceover audio
+  3. User clicks "Publish Kit" → Downloads everything as ZIP
+  4. Total time: Under 60 seconds
+  
+  THIS IS THE WOW MOMENT WE ARE BUILDING.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🚀 WOW FEATURES (The "Gói Gia Vị" / Flavor Packets)
+# ═══════════════════════════════════════════════════════════════════════════
+
+wow_features:
+  feature_1:
+    id: "ONE_CLICK_CAMPAIGN"
+    name: "Chiến Dịch Một Chạm (One-Click Campaign)"
+    tagline: "1 photo → Full marketing kit"
+    wow_factor: 10
+    demo_time: "60 seconds"
+    outputs:
+      - "10 product lifestyle photos (AI backgrounds)"
+      - "1 TikTok video script (15-30s format)"
+      - "1 Facebook post (with emojis, hashtags)"
+      - "1 Zalo story caption"
+      - "1 Vietnamese voiceover audio file"
+      - "ZIP download of all assets"
+    tech_stack:
+      image: "Gemini 2.5 Pro Vision + Flux/Replicate"
+      text: "Gemini 2.5 Flash"
+      voice: "Google Cloud TTS Vietnamese"
+      
+  feature_2:
+    id: "PRODUCT_STAGE"
+    name: "Sân Khấu Sản Phẩm (Product Stage)"
+    tagline: "Your product, anywhere in the world"
+    wow_factor: 9
+    demo_time: "10 seconds"
+    description: |
+      Upload a product photo → AI removes background → 
+      Choose from 50+ Vietnamese-relevant scenes:
+      - Quán cà phê Sài Gòn
+      - Bàn ăn gia đình
+      - Bãi biển Đà Nẵng
+      - Văn phòng startup
+      - Tet holiday setup
+    tech_stack:
+      segmentation: "SAM 2 (Segment Anything) or Replicate"
+      inpainting: "Flux Schnell for speed"
+      
+  feature_3:
+    id: "COPY_THIEF"
+    name: "Ăn Cắp Ý Tưởng (Idea Thief)"
+    tagline: "Paste competitor URL, get better copy"
+    wow_factor: 9
+    demo_time: "15 seconds"
+    description: |
+      Paste any Facebook/TikTok/Shopee URL →
+      AI analyzes: tone, hooks, CTAs, hashtags →
+      Generates 3 variations that are BETTER
+    ethics: "We steal ideas, not content. All output is original."
+    tech_stack:
+      scraping: "Playwright headless"
+      analysis: "Gemini 2.5 Pro"
+      generation: "Gemini 2.5 Flash"
+      
+  feature_4:
+    id: "VOICE_CLONE"
+    name: "Giọng Đọc AI (AI Voice)"
+    tagline: "Vietnamese voiceover in seconds"
+    wow_factor: 8
+    demo_time: "5 seconds"
+    description: |
+      Type or paste script → Choose voice (Bắc/Nam/Huế accents) →
+      Download MP3 for TikTok/Reels
+    voices:
+      - "Giọng Bắc - Nữ (Northern Female)"
+      - "Giọng Nam - Nam (Southern Male)"
+      - "Giọng trẻ GenZ (GenZ Young)"
+    tech_stack:
+      tts: "Google Cloud TTS Vietnamese"
+      fallback: "OpenAI TTS (multilingual)"
+      
+  feature_5:
+    id: "HASHTAG_WIZARD"
+    name: "Phù Thủy Hashtag"
+    tagline: "Viral hashtags, auto-generated"
+    wow_factor: 7
+    demo_time: "3 seconds"
+    description: |
+      Analyzes your content → Returns:
+      - 5 trending hashtags (pulled from TikTok VN)
+      - 5 niche hashtags (for discovery)
+      - 3 branded hashtags (suggestions)
+    tech_stack:
+      trends: "Tavily/Exa real-time search"
+      generation: "Gemini 2.5 Flash"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 📋 EPIC BREAKDOWN
+# ═══════════════════════════════════════════════════════════════════════════
+
+epics:
+  EPIC-MKT-1:
+    id: "EPIC-MKT-1"
+    name: "Workspace Foundation & Vibrant Theme"
+    priority: "P0"
+    status: "NOT_STARTED"
+    total_stories: 5
+    total_effort_hours: 14
+    description: |
+      Create the Marketing workspace shell with VIBRANT theme
+      that screams "creativity" - neon gradients, playful animations,
+      distinct from the calm IDE/Notes workspaces.
+    
+    theme_concept:
+      primary_color: "#FF6B6B (Coral Red)"
+      secondary_color: "#4ECDC4 (Teal)"
+      accent: "#FFE66D (Sunny Yellow)"
+      background: "Dark with gradient overlays"
+      vibe: "TikTok meets Canva meets Vietnamese street market"
+    
+    stories:
+      MKT-01:
+        id: "MKT-01"
+        name: "Create /marketing route and workspace shell"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "/marketing route accessible"
+          - "WorkspaceLayout with sidebar navigation"
+          - "3 sections: Studio, Campaigns, Assets"
+          - "Integrated with workspace-store"
+          
+      MKT-02:
+        id: "MKT-02"
+        name: "Implement Vibrant Theme System"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 4
+        acceptance_criteria:
+          - "Coral/Teal/Yellow color palette"
+          - "Gradient backgrounds and overlays"
+          - "Playful micro-animations (bounce, pulse)"
+          - "Dark mode with neon accents"
+          - "Theme isolated to /marketing route"
+          
+      MKT-03:
+        id: "MKT-03"
+        name: "Build Campaign Dashboard"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "Grid view of campaigns"
+          - "Campaign cards with thumbnail preview"
+          - "Quick stats (assets, date created)"
+          - "Create New Campaign CTA"
+          
+      MKT-04:
+        id: "MKT-04"
+        name: "Create Asset Gallery"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Grid/List toggle view"
+          - "Filter by type (image, video, text)"
+          - "Drag-drop to campaigns"
+          - "Preview on hover"
+          
+      MKT-05:
+        id: "MKT-05"
+        name: "Configure Marketing Agent Persona"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "System prompt: Vietnamese marketing expert"
+          - "Tone: Energetic, trendy, sales-focused"
+          - "Tools enabled: generate_image, analyze_content"
+          - "Workspace binding: marketing → marketing-agent"
+
+  EPIC-MKT-2:
+    id: "EPIC-MKT-2"
+    name: "Product Stage (AI Background Replacement)"
+    priority: "P0"
+    status: "NOT_STARTED"
+    total_stories: 5
+    total_effort_hours: 16
+    description: |
+      The WOW feature: Upload product → Get 10 lifestyle photos
+      
+    stories:
+      MKT-06:
+        id: "MKT-06"
+        name: "Build Product Upload Component"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Drag-drop upload zone"
+          - "Preview with zoom"
+          - "Support JPEG, PNG, WebP"
+          - "Max 10MB limit"
+          
+      MKT-07:
+        id: "MKT-07"
+        name: "Integrate Background Removal API"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 4
+        acceptance_criteria:
+          - "Service layer for Remove.bg or Replicate SAM"
+          - "Returns PNG with alpha channel"
+          - "Fallback to local processing if API fails"
+          - "Caching to avoid duplicate API calls"
+          
+      MKT-08:
+        id: "MKT-08"
+        name: "Create Scene Selector (50+ Vietnamese scenes)"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "Category tabs: Home, Office, Outdoor, Festival"
+          - "50 scene prompts pre-configured"
+          - "Custom scene text input option"
+          - "Preview thumbnails for each scene"
+          
+      MKT-09:
+        id: "MKT-09"
+        name: "Integrate Image Composition API"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 5
+        acceptance_criteria:
+          - "Flux/Replicate inpainting integration"
+          - "Product placed naturally in scene"
+          - "Lighting/shadow consistency"
+          - "Generation time < 20 seconds"
+          
+      MKT-10:
+        id: "MKT-10"
+        name: "Build Batch Generation (10 scenes at once)"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Select multiple scenes"
+          - "Parallel API calls"
+          - "Progress indicator"
+          - "Download all as ZIP"
+
+  EPIC-MKT-3:
+    id: "EPIC-MKT-3"
+    name: "Content Kitchen (AI Text Generation)"
+    priority: "P0"
+    status: "NOT_STARTED"
+    total_stories: 6
+    total_effort_hours: 18
+    description: |
+      Multi-platform content generation from single input
+      
+    stories:
+      MKT-11:
+        id: "MKT-11"
+        name: "Build Content Input Panel"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Product name input"
+          - "Key features textarea"
+          - "Target audience selector"
+          - "Tone selector (Formal, Casual, GenZ, Luxury)"
+          
+      MKT-12:
+        id: "MKT-12"
+        name: "Implement Facebook Post Generator"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "Hook-first structure"
+          - "Emoji integration"
+          - "CTA at end"
+          - "Hashtag suggestions"
+          - "Character count display"
+          
+      MKT-13:
+        id: "MKT-13"
+        name: "Implement TikTok Script Generator"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 4
+        acceptance_criteria:
+          - "15s/30s/60s format options"
+          - "Hook in first 3 seconds"
+          - "Trend-aware writing"
+          - "Voiceover vs. On-screen text toggle"
+          - "Music suggestion"
+          
+      MKT-14:
+        id: "MKT-14"
+        name: "Implement Zalo Story Generator"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Short-form caption"
+          - "Sticker suggestions"
+          - "Poll/Question integration"
+          
+      MKT-15:
+        id: "MKT-15"
+        name: "Build Competitor Analysis Tool (Idea Thief)"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 5
+        acceptance_criteria:
+          - "URL input (FB, TikTok, Shopee)"
+          - "Content extraction via Playwright"
+          - "AI analysis of hooks, CTAs, tone"
+          - "Generate 3 improved variations"
+          - "Disclaimer: Original content only"
+          
+      MKT-16:
+        id: "MKT-16"
+        name: "Add Hashtag Wizard"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Trending hashtags from Tavily search"
+          - "Niche hashtags for discovery"
+          - "Copy all button"
+
+  EPIC-MKT-4:
+    id: "EPIC-MKT-4"
+    name: "Voice & Video (Audio/Reel Generation)"
+    priority: "P1"
+    status: "NOT_STARTED"
+    total_stories: 4
+    total_effort_hours: 12
+    description: |
+      Vietnamese voiceover and simple video assembly
+      
+    stories:
+      MKT-17:
+        id: "MKT-17"
+        name: "Integrate Vietnamese TTS API"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "Google Cloud TTS Vietnamese integration"
+          - "3 voice options (Nam/Bắc/GenZ)"
+          - "Speed control (0.75x - 1.5x)"
+          - "Download as MP3"
+          
+      MKT-18:
+        id: "MKT-18"
+        name: "Build Voiceover Studio UI"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Script input textarea"
+          - "Voice preview button"
+          - "Waveform visualization"
+          - "Download button"
+          
+      MKT-19:
+        id: "MKT-19"
+        name: "Create Instant Reel Assembler"
+        priority: "P2"
+        status: "NOT_STARTED"
+        effort_hours: 5
+        acceptance_criteria:
+          - "Select 3-5 images from gallery"
+          - "Add text overlays (editable)"
+          - "Choose transition style"
+          - "Add voiceover audio"
+          - "Export as MP4 (client-side ffmpeg.wasm)"
+          
+      MKT-20:
+        id: "MKT-20"
+        name: "Add Music Suggestion Engine"
+        priority: "P2"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "Suggest trending TikTok sounds"
+          - "Display sound name + artist"
+          - "Link to TikTok for licensing"
+
+  EPIC-MKT-5:
+    id: "EPIC-MKT-5"
+    name: "One-Click Campaign (The Ultimate WOW)"
+    priority: "P0"
+    status: "NOT_STARTED"
+    total_stories: 3
+    total_effort_hours: 8
+    description: |
+      The demo killer: 1 photo → Full marketing kit in 60 seconds
+      
+    stories:
+      MKT-21:
+        id: "MKT-21"
+        name: "Build Campaign Wizard Flow"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "Step 1: Upload product photo"
+          - "Step 2: Enter product name + features"
+          - "Step 3: Select output platforms"
+          - "Step 4: Generate (show progress)"
+          - "Step 5: Review + Download"
+          
+      MKT-22:
+        id: "MKT-22"
+        name: "Implement Parallel Generation Pipeline"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 3
+        acceptance_criteria:
+          - "Trigger all generators in parallel"
+          - "Background removal + 3 scenes"
+          - "FB post + TikTok script + Zalo caption"
+          - "Voiceover audio"
+          - "Progress bar for each"
+          
+      MKT-23:
+        id: "MKT-23"
+        name: "Create Marketing Kit Export"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        acceptance_criteria:
+          - "ZIP bundle with all assets"
+          - "Folder structure: /images, /text, /audio"
+          - "README.txt with usage guide"
+          - "One-click download"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 📊 METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+metrics:
+  total_epics: 5
+  total_stories: 23
+  stories_not_started: 23
+  stories_in_progress: 0
+  stories_done: 0
+  stories_blocked: 0
+  
+  total_effort_hours: 68
+  effort_completed: 0
+  effort_remaining: 68
+  
+  completion_percentage: 0
+  
+  last_updated: "2026-01-09T08:35:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🎯 EXECUTION TRACKS (Parallel within Team B)
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution_tracks:
+  track_1_foundation:
+    name: "Foundation (Days 1-2)"
+    stories: ["MKT-01", "MKT-02", "MKT-03", "MKT-04", "MKT-05"]
+    effort_hours: 14
+    blockers: []
+    
+  track_2_product_stage:
+    name: "Product Stage (Days 2-4)"
+    stories: ["MKT-06", "MKT-07", "MKT-08", "MKT-09", "MKT-10"]
+    effort_hours: 16
+    blockers: ["MKT-01"]
+    
+  track_3_content_kitchen:
+    name: "Content Kitchen (Days 3-5)"
+    stories: ["MKT-11", "MKT-12", "MKT-13", "MKT-14", "MKT-15", "MKT-16"]
+    effort_hours: 18
+    blockers: ["MKT-01", "MKT-05"]
+    
+  track_4_voice_video:
+    name: "Voice & Video (Days 4-6)"
+    stories: ["MKT-17", "MKT-18", "MKT-19", "MKT-20"]
+    effort_hours: 12
+    blockers: ["MKT-13"]
+    
+  track_5_one_click:
+    name: "One-Click Campaign (Days 5-6)"
+    stories: ["MKT-21", "MKT-22", "MKT-23"]
+    effort_hours: 8
+    blockers: ["MKT-09", "MKT-12", "MKT-17"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🏁 GATE CRITERIA (Demo Ready)
+# ═══════════════════════════════════════════════════════════════════════════
+
+gate_criteria:
+  demo_1_product_stage:
+    description: "Upload photo → 10 lifestyle images"
+    time_target: "30 seconds"
+    status: PENDING
+    
+  demo_2_content_kitchen:
+    description: "Product name → FB + TikTok + Zalo content"
+    time_target: "15 seconds"
+    status: PENDING
+    
+  demo_3_voice:
+    description: "Script → Vietnamese voiceover audio"
+    time_target: "10 seconds"
+    status: PENDING
+    
+  demo_4_one_click:
+    description: "1 photo → Full marketing kit ZIP"
+    time_target: "60 seconds"
+    status: PENDING
+    
+  demo_5_competitor:
+    description: "Competitor URL → 3 better versions"
+    time_target: "20 seconds"
+    status: PENDING
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🔗 API DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+api_dependencies:
+  required:
+    - name: "Gemini 2.5 Flash"
+      purpose: "Text generation (fast)"
+      byok: true
+      
+    - name: "Gemini 2.5 Pro Vision"
+      purpose: "Image analysis"
+      byok: true
+      
+  optional_for_premium:
+    - name: "Replicate/Flux"
+      purpose: "Image generation"
+      byok: true
+      fallback: "OpenAI DALL-E 3"
+      
+    - name: "Google Cloud TTS"
+      purpose: "Vietnamese voiceover"
+      byok: true
+      fallback: "Browser SpeechSynthesis"
+      
+    - name: "Remove.bg or SAM"
+      purpose: "Background removal"
+      byok: true
+      fallback: "In-browser ML model"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 📝 HANDOFF TO TEAM B
+# ═══════════════════════════════════════════════════════════════════════════
+
+handoff:
+  from_agent: "@bmad-core-bmad-master"
+  to_team: "Team B"
+  timestamp: "2026-01-09T08:35:00+07:00"
+  
+  key_documents:
+    - "_bmad-output/research/marketing-workspace-concept-2026-01-09.md"
+    - "_bmad-output/planning-artifacts/marketing-epics-2026-01-09.md"
+    - "THIS FILE (phase-3-marketing-sprint-2026-01-09.yaml)"
+    
+  first_story: "MKT-01 (Workspace Shell)"
+  demo_deadline: "2026-01-15"
+  
+  success_definition: |
+    The "Mì Tôm Demo" works:
+    1. Upload 1 bánh mì photo
+    2. Get 10 lifestyle images + all social content + voiceover
+    3. Download as ZIP
+    4. Total time: Under 60 seconds
+    5. Everyone in the room says "ĐỊU!"

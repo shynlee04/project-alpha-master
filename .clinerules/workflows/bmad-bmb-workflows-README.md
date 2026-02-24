@@ -3,7 +3,7 @@
 ## Available Workflows in bmb
 
 **Meal Prep & Nutrition Plan**
-- Path: `_bmad/bmb/workflows/create-agent/data/reference/workflows/meal-prep-nutrition/workflow.md`
+- Path: `_bmad/bmb/workflows/create-workflow/data/examples/meal-prep-nutrition/workflow.md`
 - Creates personalized meal plans through collaborative nutrition planning between an expert facilitator and individual seeking to improve their nutrition habits.
 
 **create-agent**
@@ -29,6 +29,18 @@
 **workflow-compliance-check**
 - Path: `_bmad/bmb/workflows/workflow-compliance-check/workflow.md`
 - Systematic validation of workflows against BMAD standards with adversarial analysis and detailed reporting
+
+**agent**
+- Path: `_bmad/bmb/workflows/agent/workflow.md`
+- Tri-modal workflow for creating, editing, and validating BMAD Core compliant agents
+
+**module**
+- Path: `_bmad/bmb/workflows/module/workflow.md`
+- Quad-modal workflow for creating BMAD modules (Brief + Create + Edit + Validate)
+
+**workflow**
+- Path: `_bmad/bmb/workflows/workflow/workflow.md`
+- Create structured standalone workflows using markdown-based step architecture (tri-modal: create, validate, edit)
 
 
 ## Execution

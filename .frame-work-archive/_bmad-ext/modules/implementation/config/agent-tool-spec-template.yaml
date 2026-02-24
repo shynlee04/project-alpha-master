@@ -1,0 +1,245 @@
+# Agent Tool Specification Template
+# Story-Cycle Workflow - Step 3a: Agent Tool Specification
+# File: agent-tool-spec-template.yaml
+# Purpose: Template for defining LLM tool specifications
+
+version: "1.0.0"
+last_updated: "2026-01-11"
+
+# Tool specification template
+tool_template:
+  # LLM Tool Definition (JSON Schema format)
+  json_schema:
+    name: "{tool_name}"
+    description: "{clear one-sentence description for LLM}"
+    parameters:
+      type: "object"
+      properties:
+        "{param_name}":
+          type: "{string|number|boolean|array|object}"
+          description: "{what this parameter means}"
+          enum: "{optional: list of valid values}"
+      required: ["{list of required params}"]
+
+  # Agent Behavior Specification
+  agent_behavior:
+    # When should the LLM use this tool?
+    trigger:
+      condition: "When user asks/hints: {specific condition}"
+      examples:
+        - "{example user input 1}"
+        - "{example user input 2}"
+
+    # When should the LLM NOT use this tool?
+    not_trigger:
+      conditions:
+        - "{condition where tool should NOT be used}"
+        - "{another condition}"
+
+    # Risk assessment
+    risk_assessment:
+      level: "{none|low|medium|high|critical}"
+      concerns:
+        - "{potential risk 1}"
+        - "{potential risk 2}"
+      mitigation: "{how to address risks}"
+
+  # Permission Level
+  permission:
+    level: "{auto_grant|user_confirm|admin_only|blocked}"
+
+    # Level definitions
+    level_definitions:
+      auto_grant: "Tool can execute without user confirmation (safe operations)"
+      user_confirm: "User must approve before execution (destructive operations)"
+      admin_only: "Only admin users can use (sensitive operations)"
+      blocked: "Tool is disabled (security/danger concerns)"
+
+    justification: "{why this permission level is appropriate}"
+
+  # UI State During Execution
+  ui_context:
+    # What user sees while AI is processing
+    while_thinking:
+      indicator: "{spinner|skeleton|progress|message}"
+      message: "{feedback shown during processing}"
+      estimated_duration: "{time estimate}"
+
+    # How result is displayed
+    on_success:
+      display_type: "{inline|modal|toast|notification|page_update}"
+      location: "{where result appears}"
+      animation: "{optional: transition animation}"
+
+    # Error handling
+    on_error:
+      display_type: "{inline|modal|toast|notification}"
+      message: "{error message template}"
+      recovery_actions:
+        - "{action 1}"
+        - "{action 2}"
+
+    # Timeout handling
+    on_timeout:
+      duration: "{timeout duration}"
+      action: "{retry|cancel|fallback}"
+      message: "{timeout message}"
+
+# Anti-patterns to detect
+anti_patterns:
+  orphan_tool:
+    name: "Orphan Tool"
+    description: "Tool defined but no clear trigger condition"
+    severity: "critical"
+    detection:
+      - "Trigger condition is vague or missing"
+      - "LLM can't distinguish when to use this tool"
+      - "Overlap with other tools causes confusion"
+    questions:
+      - "Can LLM determine when to use this tool vs others?"
+      - "Is trigger condition specific enough?"
+
+  permission_gap:
+    name: "Permission Gap"
+    description: "Dangerous action without proper user confirmation"
+    severity: "critical"
+    detection:
+      - "Destructive action with auto_grant"
+      - "Data modification without user_confirm"
+      - "No audit trail for sensitive operations"
+    questions:
+      - "Does this tool modify data?"
+      - "Is user confirmation required for risky actions?"
+
+  silent_thinking:
+    name: "Silent Thinking"
+    description: "No feedback while AI processes; user doesn't know what's happening"
+    severity: "medium"
+    detection:
+      - "No while_thinking specification"
+      - "No progress indication"
+      - "User can't tell if tool is working"
+    questions:
+      - "What does user see during processing?"
+      - "Is there a progress indicator?"
+
+  vague_trigger:
+    name: "Vague Trigger"
+    description: "Unclear when to invoke tool; LLM may use inappropriately"
+    severity: "high"
+    detection:
+      - "Trigger condition too broad"
+      - "Multiple interpretations possible"
+      - "No clear boundaries"
+    questions:
+      - "Is the trigger specific and unambiguous?"
+      - "Are there clear NOT-trigger conditions?"
+
+  timeout_void:
+    name: "Timeout Void"
+    description: "No timeout or error handling defined"
+    severity: "medium"
+    detection:
+      - "No on_timeout specification"
+      - "No error handling"
+      - "No fallback behavior"
+    questions:
+      - "What happens if tool takes too long?"
+      - "What happens if tool fails?"
+
+  permission_overload:
+    name: "Permission Overload"
+    description: "Too many confirmations for low-risk actions"
+    severity: "low"
+    detection:
+      - "user_confirm for trivial operations"
+      - "Multiple confirmations for single action"
+      - "Excessive friction"
+    questions:
+      - "Is this permission level appropriate?"
+      - "Are we asking for confirmation unnecessarily?"
+
+# Permission level guidelines
+permission_guidelines:
+  auto_grant:
+    use_for:
+      - "Read operations"
+      - "Calculations/transformations"
+      - "Display changes only"
+    examples:
+      - "Get current time"
+      - "Format text"
+      - "Calculate sum"
+
+  user_confirm:
+    use_for:
+      - "Data modifications"
+      - "API calls with side effects"
+      - "Resource-intensive operations"
+    examples:
+      - "Delete item"
+      - "Send message"
+      - "Generate content (costs money)"
+
+  admin_only:
+    use_for:
+      - "System configuration"
+      - "User management"
+      - "Security-sensitive operations"
+    examples:
+      - "Modify system settings"
+      - "Add/remove users"
+      - "View audit logs"
+
+  blocked:
+    use_for:
+      - "Dangerous operations"
+      - "Security violations"
+      - "Unapproved features"
+    examples:
+      - "Execute arbitrary code"
+      - "Bypass authentication"
+      - "Access restricted data"
+
+# Output file templates
+output_files:
+  tool_definition_json:
+    format: "JSON"
+    template: |
+      {
+        "tools": [
+          {
+            "name": "{tool_name}",
+            "description": "{description}",
+            "parameters": {parameters},
+            "permission": "{permission_level}",
+            "uiContext": {
+              "whileThinking": "{while_thinking}",
+              "onResult": "{on_success}",
+              "onError": "{on_error}"
+            }
+          }
+        ]
+      }
+
+  prompt_context_md:
+    format: "Markdown"
+    sections:
+      - "Tool Name"
+      - "When to Use"
+      - "When NOT to Use"
+      - "Parameters"
+      - "Permission Level"
+      - "UI Context"
+
+# Gate configuration
+gate:
+  name: "Agent Brain Gate"
+  pass_threshold: 4
+  blocking_on_failure: true
+  auto_fail_patterns:
+    - "orphan_tool"
+    - "permission_gap"
+  warning_patterns:
+    - "silent_thinking"
+    - "vague_trigger"

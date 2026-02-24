@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Via-Gent | Study - Dashboard (Phone)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        :root {
+            --header-height: 44px;
+            --bottom-nav-height: 56px;
+        }
+
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--study-bg);
+        }
+
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .panel.active {
+            display: flex;
+        }
+
+        .panel.hidden {
+            display: none;
+        }
+
+        .dashboard-panel {
+            background: var(--study-bg);
+        }
+
+        .dashboard-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 16px;
+        }
+
+        .welcome-section {
+            margin-bottom: 20px;
+        }
+
+        .welcome-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .welcome-subtitle {
+            font-size: var(--text-sm);
+            color: var(--secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: var(--font-bold);
+            color: var(--action);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--secondary);
+        }
+
+        .progress-section {
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .progress-item {
+            margin-bottom: 12px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .progress-name {
+            font-size: var(--text-sm);
+            color: var(--primary);
+        }
+
+        .progress-percent {
+            font-size: var(--text-sm);
+            color: var(--action);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--canvas);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--action);
+            transition: width 0.3s ease;
+        }
+
+        .topics-section {
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            padding: 16px;
+        }
+
+        .topics-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--canvas);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .topic-item:hover {
+            border-color: var(--action);
+        }
+
+        .topic-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--surface-hover);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .topic-info {
+            flex: 1;
+        }
+
+        .topic-name {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .topic-progress {
+            font-size: var(--text-xs);
+            color: var(--secondary);
+        }
+
+        .topic-action {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            cursor: pointer;
+            color: var(--action);
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: var(--bottom-nav-height);
+            width: 280px;
+            background: var(--surface);
+            border-right: 2px solid var(--structural);
+            transform: translateX(-100%);
+            transition: transform 0.2s ease;
+            z-index: 100;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-drawer.open {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .drawer-content {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        .drawer-section {
+            padding: 8px 0;
+        }
+
+        .drawer-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px 10px 24px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+
+        .drawer-item:hover {
+            background: var(--surface-hover);
+        }
+
+        .drawer-item.selected {
+            background: var(--surface-active);
+            color: var(--action);
+        }
+
+        .drawer-item-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .drawer-item-name {
+            flex: 1;
+            font-size: var(--text-sm);
+            color: var(--primary);
+        }
+
+        .drawer-item-count {
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .bottom-nav {
+            height: var(--bottom-nav-height);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            padding-bottom: env(safe-area-inset-bottom);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: var(--font-medium);
+        }
+
+        .dashboard-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .dashboard-content::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .dashboard-content::-webkit-scrollbar-thumb {
+            background: var(--structural);
+            border-radius: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleDrawer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <span class="header-title">Study</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="panel dashboard-panel active">
+                <div class="dashboard-content">
+                    <div class="welcome-section">
+                        <h1 class="welcome-title">Welcome back!</h1>
+                        <p class="welcome-subtitle">Continue your learning journey</p>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">Cards Learned</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Total Cards</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">7</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+
+                    <div class="progress-section">
+                        <h2 class="section-title">Weekly Progress</h2>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-name">React Hooks</span>
+                                <span class="progress-percent">75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-name">TypeScript</span>
+                                <span class="progress-percent">60%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="progress-name">API Design</span>
+                                <span class="progress-percent">40%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="topics-section">
+                        <div class="topics-header">
+                            <h2 class="section-title">Continue Learning</h2>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-icon">⚛️</div>
+                            <div class="topic-info">
+                                <div class="topic-name">React Hooks</div>
+                                <div class="topic-progress">15/20 cards</div>
+                            </div>
+                            <button class="topic-action">→</button>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-icon">📘</div>
+                            <div class="topic-info">
+                                <div class="topic-name">TypeScript Types</div>
+                                <div class="topic-progress">8/20 cards</div>
+                            </div>
+                            <button class="topic-action">→</button>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-icon">🔌</div>
+                            <div class="topic-info">
+                                <div class="topic-name">REST APIs</div>
+                                <div class="topic-progress">5/20 cards</div>
+                            </div>
+                            <button class="topic-action">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar-drawer" id="sidebar">
+            <div class="drawer-header">
+                <span class="drawer-title">Topics</span>
+                <button class="close-btn" onclick="toggleDrawer()">×</button>
+            </div>
+            <div class="drawer-content">
+                <div class="drawer-section">
+                    <div class="drawer-section-header">
+                        <span>My Topics</span>
+                    </div>
+                    <div class="drawer-item selected">
+                        <span class="drawer-item-icon">📊</span>
+                        <span class="drawer-item-name">Dashboard</span>
+                    </div>
+                    <div class="drawer-item">
+                        <span class="drawer-item-icon">⚛️</span>
+                        <span class="drawer-item-name">React Hooks</span>
+                        <span class="drawer-item-count">20</span>
+                    </div>
+                    <div class="drawer-item">
+                        <span class="drawer-item-icon">📘</span>
+                        <span class="drawer-item-name">TypeScript</span>
+                        <span class="drawer-item-count">35</span>
+                    </div>
+                    <div class="drawer-item">
+                        <span class="drawer-item-icon">🔌</span>
+                        <span class="drawer-item-name">API Design</span>
+                        <span class="drawer-item-count">28</span>
+                    </div>
+                    <div class="drawer-item">
+                        <span class="drawer-item-icon">🗄️</span>
+                        <span class="drawer-item-name">Databases</span>
+                        <span class="drawer-item-count">22</span>
+                    </div>
+                    <div class="drawer-item">
+                        <span class="drawer-item-icon">🔒</span>
+                        <span class="drawer-item-name">Security</span>
+                        <span class="drawer-item-count">18</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="9"></rect>
+                        <rect x="14" y="3" width="7" height="5"></rect>
+                        <rect x="14" y="12" width="7" height="9"></rect>
+                        <rect x="3" y="16" width="7" height="5"></rect>
+                    </svg>
+                </span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <line x1="6" y1="12" x2="18" y2="12"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Cards</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Quiz</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </span>
+                <span class="nav-label">Stats</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('visible');
+        }
+
+        function switchPanel(panelName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Switch to panel:', panelName);
+        }
+    </script>
+</body>
+</html>

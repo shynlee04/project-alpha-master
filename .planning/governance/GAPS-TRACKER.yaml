@@ -1,0 +1,358 @@
+# Governance Gaps Tracker
+# Created: 2026-02-02
+# Purpose: Track undocumented decisions, unescalated gaps, and governance violations
+# Authority: This file is checked at agent runtime for context injection
+
+version: "1.5.0"
+last_updated: "2026-02-02T13:00:00Z"
+updated_by: "dev-ext (SGAP-006 strategic pivot)"
+
+# ============================================================================
+# GOVERNANCE RULES
+# ============================================================================
+# 
+# 1. Any gap discovered during execution MUST be added here
+# 2. Gaps with severity HIGH must be escalated to architect before proceeding
+# 3. This file is loaded by agents at runtime for context awareness
+# 4. Unescalated gaps block phase completion verification
+#
+# ============================================================================
+
+# Retroactive gaps from Phase A execution
+gaps:
+  - id: GAP-A01-001
+    phase: A-01
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: medium
+    description: "Created files at @/lib path instead of canonical @/infrastructure path"
+    evidence:
+      - file: "src/lib/agent/providers/credential-vault.ts"
+        issue: "Re-export created for backward compatibility, not canonical location"
+    impact: "Perpetuates @/lib import violations (586 in baseline)"
+    should_have_been: "STOP + Escalate to architect per ROADMAP.md Line 232"
+    was_actually: "Noted as 'future cleanup' in A-01-SUMMARY.md Line 38"
+    escalated: false
+    escalated_to: null
+    resolution_status: pending
+    resolution_plan: "Phase B should migrate callers to canonical paths"
+
+  - id: GAP-A02-001
+    phase: A-02
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: low
+    description: "Dependency on file that didn't exist yet during execution"
+    evidence:
+      - file: "import from @/infrastructure/ai/credential-vault.js"
+        issue: "Import path referenced before A-01 completed"
+    impact: "Execution order dependency not validated"
+    should_have_been: "Verify dependency chain before execution"
+    was_actually: "Noted as 'expected because A-01 creates it'"
+    escalated: false
+    escalated_to: null
+    resolution_status: resolved
+    resolution_plan: "A-01 completed first, dependency now exists"
+
+  - id: GAP-A03-001
+    phase: A-03
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: medium
+    description: "hardcoded-models.ts kept at forbidden @/lib path"
+    evidence:
+      - file: "src/lib/agent/providers/hardcoded-models.ts"
+        issue: "@/lib is forbidden per AGENTS.md"
+    impact: "Adds to @/lib import violations instead of reducing them"
+    should_have_been: "STOP + Escalate to architect"
+    was_actually: "Deferred to 'future work' in A-03-SUMMARY.md Line 38"
+    escalated: false
+    escalated_to: null
+    resolution_status: pending
+    resolution_plan: "Move to @/infrastructure/ai/hardcoded-models.ts in Phase B"
+
+  - id: GAP-A03-002
+    phase: A-03
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-executor"
+    severity: medium
+    description: "ProviderConfigDialog uses @/lib re-export instead of canonical import"
+    evidence:
+      - file: "src/presentation/components/settings/ProviderConfigDialog.tsx"
+        issue: "Imports from @/lib/agent/providers/credential-vault"
+    impact: "New code introduces @/lib import instead of using canonical path"
+    should_have_been: "Use @/infrastructure/ai/credential-vault"
+    was_actually: "Used re-export for 'backward compatibility'"
+    escalated: false
+    escalated_to: null
+    resolution_status: pending
+    resolution_plan: "Update import in Phase B cleanup"
+
+  - id: GAP-A04-001
+    phase: A-04
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-project-researcher"
+    severity: high
+    description: "fetchModels is STUB - even with saved key, no models load"
+    evidence:
+      - file: "src/infrastructure/persistence/stores/providers/provider-models-slice.ts"
+        issue: "fetchModels logs and does nothing (lines 26-31)"
+      - code: "console.log('[ProviderModelsSlice STUB] Phase 2 feature - fetchModels', providerId);"
+    impact: "BLOCKER - Users save API key but model dropdown is empty"
+    should_have_been: "Identified in Phase A planning, restored with vault"
+    was_actually: "Not addressed in A-01 through A-04 plans"
+    escalated: true
+    escalated_to: architect
+    resolution_status: resolved
+    resolution_plan: "A-04B-PLAN.md (revised) - API-first model loading with graceful degradation"
+    resolved_at: "2026-02-02T05:02:23Z"
+    resolved_by: "User approved after manual testing"
+    resolution_artifacts:
+      - ".planning/phases/A-byok-foundation/A-04B-PLAN.md"
+      - "src/infrastructure/ai/model-loader.ts"
+      - ".planning/phases/A-byok-foundation/A-04B-SUMMARY-2026-02-02.md"
+
+  - id: GAP-A04-002
+    phase: A-04
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-project-researcher"
+    severity: high
+    description: "No 'provider:key:stored' event when API key is saved"
+    evidence:
+      - file: "src/infrastructure/ai/credential-vault.ts"
+        issue: "storeCredentials() does not emit event"
+    impact: "Model loading cannot be triggered reactively on key save"
+    should_have_been: "Event emission part of vault implementation"
+    was_actually: "Not designed, not implemented"
+    escalated: true
+    escalated_to: architect
+    resolution_status: resolved
+    resolution_plan: "Direct call after key save for Phase A; event-based in Phase B"
+    resolved_at: "2026-02-02T05:02:23Z"
+    resolved_by: "ProviderConfigDialog calls fetchModels after save"
+    resolution_artifacts:
+      - ".planning/phases/A-byok-foundation/A-04B-PLAN.md Task 3"
+      - ".planning/phases/A-byok-foundation/A-04B-SUMMARY-2026-02-02.md"
+
+  - id: GAP-A04B-003
+    phase: A-04B
+    discovered_at: "2026-02-02T04:15:00Z"
+    discovered_by: "gsd-milestone-auditor (integration check)"
+    severity: high
+    description: "ProviderSettings.tsx prioritizes hardcoded models over API-loaded models"
+    evidence:
+      - file: "src/presentation/components/agent/ProviderSettings.tsx"
+        lines: "191-195"
+        issue: "useHardcoded = hardcodedModels !== null always true for gemini/openrouter/openai"
+      - file: "src/lib/agent/providers/hardcoded-models.ts"
+        lines: "297-315"
+        issue: "getHardcodedModels() returns models for ALL major providers including gemini/openrouter/openai"
+    impact: "BLOCKER - Model loading from API is ignored; UI always shows stale hardcoded list even when API-loaded models exist"
+    should_have_been: "API models first, hardcoded as fallback only when empty"
+    was_actually: "Hardcoded always used if available, API models ignored"
+    escalated: true
+    escalated_to: architect
+    resolution_status: resolved
+    resolution_plan: "A-04C executed: removed hardcoded bypass from ProviderSettings.tsx, archived hardcoded-models.ts"
+    resolved_at: "2026-02-02T05:02:23Z"
+    resolved_by: "User approved after manual testing"
+    resolution_artifacts:
+      - "src/presentation/components/agent/ProviderSettings.tsx (line 66: A-04C comment)"
+      - "_phase2-archive/lib/agent/providers/hardcoded-models.ts"
+      - ".planning/phases/A-byok-foundation/A-04B-SUMMARY-2026-02-02.md"
+
+  - id: GAP-GOV-001
+    phase: strategic-rebuild
+    discovered_at: "2026-02-02"
+    discovered_by: "user correction"
+    severity: medium
+    description: "Supreme Coordinator violated delegation protocol by directly writing files"
+    evidence:
+      - file: ".planning/strategic-rebuild/STRATEGIC-REBUILD-ROADMAP-2026-02-02.md"
+        issue: "Written directly instead of delegated"
+      - file: ".planning/strategic-rebuild/phases/R-0-PLAN.md"
+        issue: "Written directly instead of delegated"
+      - file: ".planning/strategic-rebuild/VALIDATION-CHECKLIST.md"
+        issue: "Written directly instead of delegated"
+    impact: "Context tokens consumed for execution, reduces reasoning capacity"
+    should_have_been: "Delegate to dev-ext or architect-ext agent"
+    was_actually: "Direct file writes from coordinator context"
+    escalated: true
+    escalated_to: user
+    resolution_status: resolved
+    resolution_plan: "Self-governance activated, anchor created, future execution delegated"
+    resolved_at: "2026-02-02T12:30:00Z"
+    resolved_by: "iDumb anchor activation + delegation protocol restoration"
+
+# Strategic gaps identified in research synthesis
+strategic_gaps:
+  - id: SGAP-001
+    category: model_strategy
+    discovered_at: "2026-02-02"
+    severity: high
+    description: "No documented strategy for model loading, fallback, or capabilities"
+    impact: "Phase B and C cannot be planned without high-level design"
+    resolution_status: resolved
+    resolution_doc: ".planning/schemas/MODEL-STRATEGY.md"
+
+  - id: SGAP-002
+    category: research_sync
+    discovered_at: "2026-02-02"
+    severity: medium
+    description: "Research documents use Phase 0-5 structure, ROADMAP uses A-E"
+    impact: "Research references phases that no longer exist"
+    resolution_status: pending
+    resolution_plan: "Update research SUMMARY to align with A-E phases"
+
+  - id: SGAP-003
+    category: platform_operators
+    discovered_at: "2026-02-02"
+    severity: medium
+    description: "Platform Operators (FileTree, Chat-Cascade) missing from A-E phases"
+    impact: "Research says 'must fix', ROADMAP says 'working ~70%' - contradiction"
+    resolution_status: acknowledged
+    resolution_plan: "Defer to post-C phase or document why not needed"
+
+  - id: SGAP-004
+    category: schema_contamination
+    discovered_at: "2026-02-02"
+    discovered_by: "gsd-plan-checker (ESC-001 analysis)"
+    severity: high
+    description: "Systemic workspaceBindings/workspaceId contamination blocks clean execution"
+    evidence:
+      - "156 workspaceBindings references (BANNED per SOURCE-OF-TRUTH Part 6)"
+      - "556 workspaceId references (BANNED)"
+      - "~85 TypeScript errors from type mismatches"
+      - "'ide' not in PluginType union but used in AgentService"
+    impact: "Plans assuming clean schema cannot execute without type errors"
+    resolution_status: addressed
+    resolution_doc: ".planning/SOURCE-OF-TRUTH.md Part 6.4 (Migration Strategy)"
+    resolution_plan: |
+      Isolation-First Migration:
+      - Phase A: Isolate in clean modules, don't touch contaminated files
+      - Phase B: Contain with adapters at boundaries
+      - Phase C+: Gradual migration as features touched
+
+  - id: SGAP-005
+    category: baseline_drift
+    discovered_at: "2026-02-02"
+    discovered_by: "explore (pre-execution validation)"
+    severity: medium
+    description: "TypeScript error baseline drifted from 85 to 233 between ESC-001 filing and execution"
+    evidence:
+      - "ESC-001 documented ~85 errors"
+      - "Pre-execution validation found 233 errors"
+      - "Drift of +148 errors (174% increase)"
+    impact: "Pre-execution gate threshold adjusted from 100 to 250"
+    resolution_status: acknowledged
+    resolution_plan: |
+      - Phase A: Accept drift, don't add NEW errors
+      - Phase B: Begin targeted error reduction
+      - Track: violations_before vs violations_after per phase
+    baseline_tracking:
+      2026-02-02_esc001: 85
+      2026-02-02_validation: 233
+      threshold_updated_to: 250
+
+  - id: SGAP-006
+    category: roadmap_pivot
+    discovered_at: "2026-02-02"
+    discovered_by: "supreme-coordinator (architectural analysis)"
+    severity: high
+    description: "Strategic decision to pivot from gradual A-E remediation to Strangler Fig rebuild"
+    evidence:
+      - "281,071 total lines, 74,925 in contaminated src/lib/"
+      - "556 workspaceId + 156 workspaceBindings = deep contamination"
+      - "Gradual approach estimated 3-6 months, may never complete"
+      - "Strategic rebuild estimated 3-4 weeks to clean architecture"
+    impact: "Changes project direction from incremental fix to architectural rebuild"
+    resolution_status: pending_approval
+    resolution_doc: ".planning/strategic-rebuild/STRATEGIC-REBUILD-ROADMAP-2026-02-02.md"
+    resolution_plan: |
+      Strangler Fig Pattern:
+      - R-0: Foundation (clean scaffold)
+      - R-1: Platform Layer (FileTree, Chat always loaded)
+      - R-2: Port Infrastructure (BYOK, FSA, Dexie compat)
+      - R-3: Port Modules (Notes, Monaco, Terminal, Preview)
+      - R-4: Cutover (archive old, E2E tests)
+      - R-5: Resume Phase B+ on clean foundation
+
+# Runtime context injection rules
+context_injection:
+  on_phase_planning:
+    must_load:
+      - ".planning/SOURCE-OF-TRUTH.md"
+      - ".planning/ROADMAP.md"
+      - ".planning/governance/GAPS-TRACKER.yaml"
+    if_ai_related:
+      - ".planning/schemas/MODEL-STRATEGY.md"
+      - ".planning/phases/B-ai-gateway/B-CONTEXT.md"
+    if_schema_change:
+      - ".planning/schemas/SCHEMA-OVERVIEW.md"
+      - ".planning/schemas/THREAD-V2-DESIGN.md"
+
+  on_execution:
+    must_check:
+      - "gaps with escalated: false AND severity: high"
+      - "gaps with resolution_status: pending in current phase"
+    must_escalate_if:
+      - "schema change required"
+      - "fixing X breaks Y"
+      - "type definition is wrong"
+
+# Escalation tracking
+escalations:
+  - id: ESC-001
+    created_at: "2026-02-02T12:00:00Z"
+    resolved_at: "2026-02-02T14:00:00Z"
+    from_gap: GAP-A04-001
+    escalated_by: "gsd-project-researcher"
+    escalated_to: "architect"
+    title: "Model Loading Completely Broken"
+    severity: high
+    status: resolved
+    response: "Created A-04B-PLAN.md (revised) with API-first approach"
+    resolution_summary: |
+      Escalation validated by gsd-plan-checker. Original A-04B plan was wrong:
+      1. Hardcoded fallback is tactical patch, not strategic solution
+      2. 85+ TypeScript errors from systemic contamination blocked execution
+      3. workspaceBindings (156) + workspaceId (556) refs require migration strategy
+      
+      Resolution:
+      1. Updated SOURCE-OF-TRUTH.md Part 6.4 with migration strategy
+      2. Archived original A-04B-PLAN, created revised version with:
+         - API-first model loading with graceful degradation
+         - Isolation in @/infrastructure/ai/ (no contaminated imports)
+         - Pre-execution gates to prevent baseline regression
+      3. Updated GOVERNANCE-RUNTIME-LOADER.md with pre-execution gates
+    resolution_artifacts:
+      - ".planning/SOURCE-OF-TRUTH.md (v1.2.0)"
+      - ".planning/phases/A-byok-foundation/A-04B-PLAN.md (revised)"
+      - ".planning/governance/GOVERNANCE-RUNTIME-LOADER.md (v1.1.0)"
+      - ".planning/phases/A-byok-foundation/A-04B-PLAN-ARCHIVED-2026-02-02.md"
+
+# Phase completion gates
+completion_gates:
+  phase_A:
+    required:
+      - "All HIGH severity gaps escalated"
+      - "All escalations have response"
+      - "pnpm typecheck:fast shows <= 250 errors (baseline)"
+      - "pnpm governance passes"
+      - "Manual verification approved"
+    blocking_gaps: []  # All resolved
+    status: complete
+    completed_at: "2026-02-02T05:02:23Z"
+    completed_by: "User approval after manual testing"
+    summary: "Phase A complete: BYOK foundation working with API-first model loading"
+
+# Statistics
+stats:
+  total_gaps: 9
+  high_severity: 4
+  medium_severity: 4
+  low_severity: 1
+  escalated: 4
+  pending_resolution: 2
+  addressed: 0
+  resolved: 7

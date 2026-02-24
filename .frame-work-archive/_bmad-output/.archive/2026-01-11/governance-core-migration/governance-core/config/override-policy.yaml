@@ -1,0 +1,202 @@
+# Human Override Policy
+# Defines how humans can override governance decisions
+
+override:
+  enabled: true
+  philosophy: |
+    Governance exists to guide, not to block unnecessarily.
+    Experts may override with justification, which is logged as technical debt.
+
+  pattern: "I am aware but..."
+
+# Detection patterns
+detection_patterns:
+  explicit:
+    - "I am aware but"
+    - "I acknowledge but"
+    - "I understand but"
+    - "proceed anyway"
+    - "override requested"
+    - "force proceed"
+
+  implicit_acceptance:
+    - "yes I know"
+    - "understood"
+    - "go ahead"
+    - "do it anyway"
+
+# Override by severity
+by_severity:
+  allow_always:
+    - "quick_patch"
+    - "low_risk"
+    description: "Always allow override for low-risk changes"
+
+  allow_with_warning:
+    - "independent_feature"
+    - "medium_risk"
+    description: "Allow override but log warning"
+
+  requires_justification:
+    - "architectural_conflict"
+    - "high_risk"
+    description: "Require clear justification"
+
+  block_unless_critical:
+    - "security_risk"
+    - "data_loss_risk"
+    description: "Block unless business critical"
+
+# Justification requirements
+justification:
+  minimum_length: 20  # characters
+  must_include_reason: true
+  acceptable_reasons:
+    - "prototyping"
+    - "time_critical"
+    - "customer_blocked"
+    - "documented_debt"
+    - "experiment"
+
+  unacceptable_reasons:
+    - "just do it"
+    - "I said so"
+    - "trust me"
+    - ""  # Empty reason
+
+# Debt logging
+debt_logging:
+  enabled: true
+  log_to: "_bmad-output/governance/technical-debt.yaml"
+  include:
+    - "timestamp"
+    - "user"
+    - "original_recommendation"
+    - "override_reason"
+    - "estimated_remediation"
+    - "risk_multiplier_applied"
+
+  debt_item:
+    template: |
+      id: "{uuid}"
+      timestamp: "{iso_timestamp}"
+      user: "{user}"
+      original_recommendation: "{recommendation}"
+      override_reason: "{reason}"
+      estimated_remediation: "{hours} hours"
+      risk_multiplier: {multiplier}x
+      status: "open"
+      resolved_at: null
+
+# Risk multipliers
+risk_multipliers:
+  override_without_justification: 2.0
+  override_with_justification: 1.5
+  override_during_active_sprint: 1.2
+  override_for_prototype: 1.0
+  override_for_customer_block: 1.3
+  override_for_security: 3.0  # Higher for security overrides
+
+# Response templates
+response_templates:
+  override_accepted:
+    message: |
+      ⚠️ PROCEED WITH CAUTION
+
+      Your override has been accepted and logged as technical debt.
+
+      Original Recommendation: {recommendation}
+      Your Reason: {reason}
+      Estimated Remediation: {hours} hours
+      Risk Multiplier: {multiplier}x
+
+      Debt Ticket Created: {ticket_id}
+
+  override_rejected:
+    message: |
+      🚫 OVERRIDE REJECTED
+
+      Your override cannot be accepted for this type of change.
+
+      Reason: {rejection_reason}
+      Required Action: {required_action}
+
+      Security or data loss risks cannot be overridden without additional authorization.
+
+  override_blocked:
+    message: |
+      🔒 BLOCKED - CANNOT OVERRIDE
+
+      This change presents {risk_type} risk that cannot be overridden.
+
+      Required: {required_action}
+      Contact: {contact}
+
+# Debt categories
+debt_categories:
+  quick_fix_debt:
+    description: "Quick fix that needs proper implementation"
+    default_hours: 4
+    priority: "P2"
+
+  architectural_debt:
+    description: "Architectural shortcut that needs remediation"
+    default_hours: 16
+    priority: "P1"
+
+  security_debt:
+    description: "Security workaround that needs proper fix"
+    default_hours: 8
+    priority: "P0"
+
+  prototype_debt:
+    description: "Prototype code that needs productionization"
+    default_hours: 12
+    priority: "P2"
+
+# Debt priority escalation
+escalation:
+  p0_debt:
+    threshold_hours: 8  # Must address within 8 hours
+    notify: ["tech_lead", "security"]
+
+  p1_debt:
+    threshold_hours: 40  # Must address within 1 week
+    notify: ["tech_lead"]
+
+  p2_debt:
+    threshold_hours: 160  # Must address within 4 weeks
+    notify: ["team"]
+
+# Override history tracking
+history:
+  enabled: true
+  retention_days: 365
+  analyze_patterns: true
+
+  pattern_detection:
+    frequent_overrides:
+      threshold: 5  # 5 overrides in 30 days triggers review
+      action: "schedule_governance_review"
+
+    security_overrides:
+      threshold: 1  # Any security override triggers immediate review
+      action: "escalate_to_security_lead"
+
+    ignored_recommendations:
+      threshold: 10  # 10 ignored recommendations triggers review
+      action: "review_governance_rules"
+
+# Governance review trigger
+governance_review:
+  trigger_conditions:
+    - "override_rate > 20%"
+    - "avg_remediation_time > 2x estimated"
+    - "p0_debt_count > 3"
+    - "security_override_count > 0"
+
+  review_actions:
+    - "Analyze override patterns"
+    - "Update rules if needed"
+    - "Retrain team if needed"
+    - "Adjust thresholds if appropriate"

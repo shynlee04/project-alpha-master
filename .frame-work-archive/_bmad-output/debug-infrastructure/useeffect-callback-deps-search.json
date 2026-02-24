@@ -1,0 +1,630 @@
+{
+  "search_timestamp": "2026-01-19T12:30:00+07:00",
+  "search_scope": {
+    "directories": [
+      "src/presentation/components/**/hooks/",
+      "src/routes/**/",
+      "src/infrastructure/persistence/stores/",
+      "src/presentation/components/**/*.tsx",
+      "src/presentation/components/**/*.ts"
+    ],
+    "file_patterns": ["*.{tsx,ts}"]
+  },
+  "problematic_patterns": [
+    {
+      "file": "src/presentation/components/layout/IDELayoutMain.tsx",
+      "line": 206,
+      "effect_start_line": 206,
+      "dependencies": ["scheduleIdeStatePersistence", "openFilePathsKey", "activeFilePath", "terminalTab", "chatVisible"],
+      "problematic_deps": ["scheduleIdeStatePersistence"],
+      "code_snippet": "useEffect(() => { scheduleIdeStatePersistence(250); }, [scheduleIdeStatePersistence, openFilePathsKey, activeFilePath, terminalTab, chatVisible]);",
+      "severity": "Critical",
+      "reason": "Callback function passed as dependency - causes effect to re-run on every render when callback reference changes"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "line": 206,
+      "effect_start_line": 204,
+      "dependencies": ["onScrollTopChange"],
+      "problematic_deps": ["onScrollTopChange"],
+      "code_snippet": "useEffect(() => { onScrollTopChangeRef.current = onScrollTopChange; }, [onScrollTopChange]);",
+      "severity": "Critical",
+      "reason": "Ref pattern used but could be simplified - callback in deps causes unnecessary effect re-runs"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "line": 473,
+      "effect_start_line": 305,
+      "dependencies": ["activeFilePath", "onSave", "handleFormatDocument", "handleFixLint", "navActions"],
+      "problematic_deps": ["onSave", "handleFormatDocument", "handleFixLint", "navActions"],
+      "code_snippet": "const handleEditorMount: OnMount = useCallback((editor, monaco) => { ... }, [activeFilePath, onSave, handleFormatDocument, handleFixLint, navActions]);",
+      "severity": "Critical",
+      "reason": "Multiple callback functions in useCallback deps - any callback change recreates this callback, affecting editor mount"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "line": 503,
+      "effect_start_line": 475,
+      "dependencies": ["activeFilePath", "onContentChange", "onSave", "syncStatus"],
+      "problematic_deps": ["onContentChange", "onSave"],
+      "code_snippet": "const handleEditorChange: OnChange = useCallback((value) => { ... onContentChange?.(activeFilePath, value); ... onSave(activeFilePath, pendingContent); ... }, [activeFilePath, onContentChange, onSave, syncStatus]);",
+      "severity": "Critical",
+      "reason": "Multiple callback props in deps - changing callbacks causes effect to recreate on every render"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "line": 514,
+      "effect_start_line": 505,
+      "dependencies": ["activeFilePath", "onActiveFileChange"],
+      "problematic_deps": ["onActiveFileChange"],
+      "code_snippet": "const handleTabClick = useCallback((path: string) => { ... onActiveFileChange?.(path); }, [activeFilePath, onActiveFileChange]);",
+      "severity": "Critical",
+      "reason": "Callback prop passed as dependency"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "line": 521,
+      "effect_start_line": 516,
+      "dependencies": ["onTabClose"],
+      "problematic_deps": ["onTabClose"],
+      "code_snippet": "const handleTabClose = useCallback((path: string) => { ... onTabClose?.(path); }, [onTabClose]);",
+      "severity": "Critical",
+      "reason": "Callback prop passed as dependency"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "line": 559,
+      "effect_start_line": 549,
+      "dependencies": ["diffMode", "onDiffModeToggle"],
+      "problematic_deps": ["onDiffModeToggle"],
+      "code_snippet": "useEffect(() => { const handleKeyDown = (e: KeyboardEvent) => { ... onDiffModeToggle?.(!diffMode); }; ... }, [diffMode, onDiffModeToggle]);",
+      "severity": "Critical",
+      "reason": "Callback prop in useEffect deps"
+    },
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 251,
+      "effect_start_line": 244,
+      "dependencies": ["currentStep", "validateStep"],
+      "problematic_deps": ["validateStep"],
+      "code_snippet": "const handleNext = useCallback(() => { if (!validateStep(currentStep)) return; ... }, [currentStep, validateStep]);",
+      "severity": "Critical",
+      "reason": "Callback function in deps - recreate effect whenever validateStep changes"
+    },
+    {
+      "file": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "line": 321,
+      "effect_start_line": 280,
+      "dependencies": ["formData", "createProject", "onOpenChange", "onProjectCreated", "validateStep", "t"],
+      "problematic_deps": ["createProject", "onOpenChange", "onProjectCreated", "validateStep", "t"],
+      "code_snippet": "const handleCreate = useCallback(async () => { ... }, [formData, createProject, onOpenChange, onProjectCreated, validateStep, t]);",
+      "severity": "Critical",
+      "reason": "Multiple callbacks and i18n function in deps - causes infinite loop potential"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 347,
+      "effect_start_line": 285,
+      "dependencies": ["eventBus", "createNote", "setActiveNote"],
+      "problematic_deps": ["createNote", "setActiveNote"],
+      "code_snippet": "useEffect(() => { ... createNote({...}).then((noteId) => { setActiveNote(noteId); }); ... }, [eventBus, createNote, setActiveNote]);",
+      "severity": "Critical",
+      "reason": "Store callbacks in useEffect deps - causes effect re-run on every render"
+    },
+    {
+      "file": "src/presentation/hooks/useMarkdownSyncConflict.ts",
+      "line": 130,
+      "effect_start_line": 120,
+      "dependencies": ["hasUnsaved", "onConflict", "onAutoReload"],
+      "problematic_deps": ["onConflict", "onAutoReload"],
+      "code_snippet": "const handleConflict = useCallback((event: SyncConflictEvent) => { ... onConflict?.(event); ... onAutoReload?.(event.noteId); ... }, [hasUnsaved, onConflict, onAutoReload]);",
+      "severity": "Critical",
+      "reason": "Callback props in useCallback deps"
+    },
+    {
+      "file": "src/presentation/hooks/useMarkdownSyncConflict.ts",
+      "line": 160,
+      "effect_start_line": 142,
+      "dependencies": ["syncService", "handleConflict", "onConflict"],
+      "problematic_deps": ["handleConflict", "onConflict"],
+      "code_snippet": "useEffect(() => { ... (syncService as any).config = { ...onConflict: handleConflict, }; ... }, [syncService, handleConflict, onConflict]);",
+      "severity": "Critical",
+      "reason": "Multiple callbacks in deps - causes effect to recreate on every render"
+    },
+    {
+      "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+      "line": 155,
+      "effect_start_line": 79,
+      "dependencies": ["directoryHandle", "getAdapter", "setRootNodes", "setError", "setIsLoading", "expandedPaths", "isMobile", "localAdapterRef"],
+      "problematic_deps": ["setRootNodes", "setError", "setIsLoading"],
+      "code_snippet": "const loadRootDirectory = useCallback(async () => { ... setRootNodes(restoredNodes); ... setError(...); ... setIsLoading(false); ... }, [directoryHandle, getAdapter, setRootNodes, setError, setIsLoading, expandedPaths, isMobile, localAdapterRef]);",
+      "severity": "Critical",
+      "reason": "Multiple setter functions in deps - setter functions from props cause unnecessary recreations"
+    },
+    {
+      "file": "src/lib/workspace/hooks/useWorkspaceActions.ts",
+      "line": 136,
+      "effect_start_line": 62,
+      "dependencies": ["directoryHandle", "performSync", "projectId", "autoSync", "setDirectoryHandle", "setPermissionState", "setProjectMetadata", "setIsOpeningFolder", "setAutoSyncState", "deviceType", "navigate"],
+      "problematic_deps": ["setDirectoryHandle", "setPermissionState", "setProjectMetadata", "setIsOpeningFolder", "setAutoSyncState", "navigate"],
+      "code_snippet": "const openFolder = useCallback(async () => { ... setDirectoryHandle(handle); ... setPermissionState('granted'); ... setProjectMetadata(project); ... }, [directoryHandle, performSync, projectId, autoSync, setDirectoryHandle, setPermissionState, setProjectMetadata, setIsOpeningFolder, setAutoSyncState, deviceType, navigate]);",
+      "severity": "Critical",
+      "reason": "Many setter functions and navigate in deps - any setter change recreates callback"
+    },
+    {
+      "file": "src/lib/workspace/hooks/useWorkspaceActions.ts",
+      "line": 205,
+      "effect_start_line": 138,
+      "dependencies": ["navigate", "performSync", "setDirectoryHandle", "setPermissionState", "setAutoSyncState", "setProjectMetadata", "setIsOpeningFolder", "localAdapterRef", "syncManagerRef", "deviceType"],
+      "problematic_deps": ["navigate", "setDirectoryHandle", "setPermissionState", "setAutoSyncState", "setProjectMetadata", "setIsOpeningFolder"],
+      "code_snippet": "const switchFolder = useCallback(async () => { ... }, [navigate, performSync, setDirectoryHandle, setPermissionState, setAutoSyncState, setProjectMetadata, setIsOpeningFolder, localAdapterRef, syncManagerRef, deviceType]);",
+      "severity": "Critical",
+      "reason": "Multiple setter functions in deps"
+    },
+    {
+      "file": "src/lib/workspace/hooks/useWorkspaceActions.ts",
+      "line": 299,
+      "effect_start_line": 267,
+      "dependencies": ["directoryHandle", "projectMetadata", "autoSync", "performSync", "setPermissionState", "setProjectMetadata"],
+      "problematic_deps": ["setPermissionState", "setProjectMetadata"],
+      "code_snippet": "const restoreAccess = useCallback(async () => { ... setPermissionState(result); ... setProjectMetadata(updatedProject); ... }, [directoryHandle, projectMetadata, autoSync, performSync, setPermissionState, setProjectMetadata]);",
+      "severity": "Critical",
+      "reason": "Setter functions in deps"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts",
+      "line": 182,
+      "effect_start_line": 105,
+      "dependencies": ["directoryHandle", "performSync", "autoSync", "deviceType", "setCurrentProject", "setDirectoryHandle", "setPermissionState", "setProjectMetadata"],
+      "problematic_deps": ["setCurrentProject", "setDirectoryHandle", "setPermissionState", "setProjectMetadata"],
+      "code_snippet": "const openFolder = useCallback(async () => { ... setProjectMetadata(project); setCurrentProject(projectId); ... }, [directoryHandle, performSync, autoSync, deviceType, setCurrentProject, setDirectoryHandle, setPermissionState, setProjectMetadata]);",
+      "severity": "Critical",
+      "reason": "Multiple setter functions in deps - potential for infinite renders"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts",
+      "line": 250,
+      "effect_start_line": 187,
+      "dependencies": ["navigate", "performSync", "setCurrentProject", "deviceType", "localAdapterRef", "syncManagerRef", "setDirectoryHandle", "setPermissionState", "setProjectMetadata"],
+      "problematic_deps": ["navigate", "setCurrentProject", "setDirectoryHandle", "setPermissionState", "setProjectMetadata"],
+      "code_snippet": "const switchFolder = useCallback(async () => { ... }, [navigate, performSync, setCurrentProject, deviceType, localAdapterRef, syncManagerRef, setDirectoryHandle, setPermissionState, setProjectMetadata]);",
+      "severity": "Critical",
+      "reason": "Multiple callbacks and setter functions in deps"
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts",
+      "line": 297,
+      "effect_start_line": 265,
+      "dependencies": ["directoryHandle", "projectMetadata", "autoSync", "performSync", "setPermissionState", "setProjectMetadata"],
+      "problematic_deps": ["setPermissionState", "setProjectMetadata"],
+      "code_snippet": "const restoreAccess = useCallback(async () => { ... setPermissionState(result); ... setProjectMetadata(updatedProject); ... }, [directoryHandle, projectMetadata, autoSync, performSync, setPermissionState, setProjectMetadata]);",
+      "severity": "Critical",
+      "reason": "Setter functions in deps"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "line": 810,
+      "effect_start_line": 806,
+      "dependencies": ["editor", "noteId", "readOnly", "updateNote", "t"],
+      "problematic_deps": ["updateNote", "t"],
+      "code_snippet": "useEffect(() => { if (!editor || readOnly) return; editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => { updateNote(noteId, editor.getValue()); }); ... }, [editor, noteId, readOnly, updateNote, t]);",
+      "severity": "High",
+      "reason": "Store callback and i18n function in deps"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "line": 846,
+      "effect_start_line": 841,
+      "dependencies": ["noteId", "saveNoteToFile", "t"],
+      "problematic_deps": ["saveNoteToFile", "t"],
+      "code_snippet": "useEffect(() => { const saveToFile = async () => { ... saveNoteToFile(noteId); }; ... }, [noteId, saveNoteToFile, t]);",
+      "severity": "High",
+      "reason": "Callback and i18n function in deps"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts",
+      "line": 144,
+      "effect_start_line": 139,
+      "dependencies": ["eventBus", "openFiles", "setOpenFiles"],
+      "problematic_deps": ["setOpenFiles"],
+      "code_snippet": "useEffect(() => { ... }, [eventBus, openFiles, setOpenFiles]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts",
+      "line": 215,
+      "effect_start_line": 210,
+      "dependencies": ["openFiles", "setOpenFiles", "projectId"],
+      "problematic_deps": ["setOpenFiles"],
+      "code_snippet": "useEffect(() => { ... }, [openFiles, setOpenFiles, projectId]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts",
+      "line": 279,
+      "effect_start_line": 273,
+      "dependencies": ["openFiles", "setOpenFiles", "fsaAdapterRef"],
+      "problematic_deps": ["setOpenFiles"],
+      "code_snippet": "useEffect(() => { ... }, [openFiles, setOpenFiles, fsaAdapterRef]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/ui/ApprovalOverlay.tsx",
+      "line": 231,
+      "effect_start_line": 225,
+      "dependencies": ["onDecision"],
+      "problematic_deps": ["onDecision"],
+      "code_snippet": "useEffect(() => { ... }, [onDecision]);",
+      "severity": "High",
+      "reason": "Callback prop in deps"
+    },
+    {
+      "file": "src/presentation/components/ui/ApprovalOverlay.tsx",
+      "line": 244,
+      "effect_start_line": 238,
+      "dependencies": ["handleDecision", "onCancel"],
+      "problematic_deps": ["handleDecision", "onCancel"],
+      "code_snippet": "useEffect(() => { ... }, [handleDecision, onCancel]);",
+      "severity": "High",
+      "reason": "Callback and callback prop in deps"
+    },
+    {
+      "file": "src/presentation/components/chat/NoteReference.tsx",
+      "line": 71,
+      "effect_start_line": 65,
+      "dependencies": ["noteId", "noteTitle", "setActiveNote", "navigate", "t"],
+      "problematic_deps": ["setActiveNote", "navigate", "t"],
+      "code_snippet": "useEffect(() => { ... setActiveNote(noteId); ... navigate(...); ... }, [noteId, noteTitle, setActiveNote, navigate, t]);",
+      "severity": "High",
+      "reason": "Setter, navigate, and i18n in deps"
+    },
+    {
+      "file": "src/presentation/components/notes/NoteSidebar.tsx",
+      "line": 103,
+      "effect_start_line": 97,
+      "dependencies": ["localSearchQuery", "setSearchQuery"],
+      "problematic_deps": ["setSearchQuery"],
+      "code_snippet": "useEffect(() => { ... }, [localSearchQuery, setSearchQuery]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 178,
+      "effect_start_line": 167,
+      "dependencies": ["noteSidebarCollapsed", "setPanelCollapsed"],
+      "problematic_deps": ["setPanelCollapsed"],
+      "code_snippet": "useEffect(() => { ... setPanelCollapsed('notes-sidebar', !noteSidebarCollapsed); ... }, [noteSidebarCollapsed, setPanelCollapsed]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/editor/EditorTabBar.tsx",
+      "line": 132,
+      "effect_start_line": 120,
+      "dependencies": ["handleTabClose", "closeOtherTabs", "closeSavedTabs", "closeAllTabs", "togglePinTab"],
+      "problematic_deps": ["handleTabClose", "closeOtherTabs", "closeSavedTabs", "closeAllTabs", "togglePinTab"],
+      "code_snippet": "useEffect(() => { ... }, [handleTabClose, closeOtherTabs, closeSavedTabs, closeAllTabs, togglePinTab]);",
+      "severity": "High",
+      "reason": "Multiple callback functions in deps"
+    },
+    {
+      "file": "src/presentation/components/layout/hooks/useIDEStateRestoration.ts",
+      "line": 90,
+      "effect_start_line": 84,
+      "dependencies": ["restoredIdeState", "activeFileScrollTopRef", "setChatVisible", "setTerminalTab"],
+      "problematic_deps": ["setChatVisible", "setTerminalTab"],
+      "code_snippet": "useEffect(() => { ... setChatVisible(true); ... }, [restoredIdeState, activeFileScrollTopRef, setChatVisible, setTerminalTab]);",
+      "severity": "High",
+      "reason": "Setter callbacks in deps"
+    },
+    {
+      "file": "src/presentation/components/layout/hooks/useIDEStateRestoration.ts",
+      "line": 156,
+      "effect_start_line": 144,
+      "dependencies": ["restoredIdeState", "openFilesCount", "permissionState", "syncStatus", "localAdapterRef", "didRestoreOpenFilesRef", "setOpenFiles", "setActiveFilePath", "setSelectedFilePath"],
+      "problematic_deps": ["setOpenFiles", "setActiveFilePath", "setSelectedFilePath"],
+      "code_snippet": "useEffect(() => { ... setOpenFiles(...); ... setActiveFilePath(...); ... setSelectedFilePath(...); ... }, [restoredIdeState, openFilesCount, permissionState, syncStatus, localAdapterRef, didRestoreOpenFilesRef, setOpenFiles, setActiveFilePath, setSelectedFilePath]);",
+      "severity": "High",
+      "reason": "Multiple setter callbacks in deps"
+    },
+    {
+      "file": "src/hooks/useIdeStatePersistence.ts",
+      "line": 142,
+      "effect_start_line": 136,
+      "dependencies": ["projectId", "setProjectId", "openFiles.length"],
+      "problematic_deps": ["setProjectId"],
+      "code_snippet": "useEffect(() => { ... setProjectId(projectId); ... }, [projectId, setProjectId, openFiles.length]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 99,
+      "effect_start_line": 93,
+      "dependencies": ["platform.canAccessFSA", "formData.storageType", "updateFormData"],
+      "problematic_deps": ["updateFormData"],
+      "code_snippet": "useEffect(() => { ... }, [platform.canAccessFSA, formData.storageType, updateFormData]);",
+      "severity": "High",
+      "reason": "Callback function in deps"
+    },
+    {
+      "file": "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "line": 155,
+      "effect_start_line": 153,
+      "dependencies": ["updateFormData"],
+      "problematic_deps": ["updateFormData"],
+      "code_snippet": "useEffect(() => { ... }, [updateFormData]);",
+      "severity": "High",
+      "reason": "Callback function in deps"
+    },
+    {
+      "file": "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+      "line": 114,
+      "effect_start_line": 108,
+      "dependencies": ["template", "showCustomization", "handleValidate", "error", "updateFormData"],
+      "problematic_deps": ["handleValidate", "updateFormData"],
+      "code_snippet": "useEffect(() => { ... }, [template, showCustomization, handleValidate, error, updateFormData]);",
+      "severity": "High",
+      "reason": "Callback functions in deps"
+    },
+    {
+      "file": "src/presentation/components/hub/ProjectPickerDialog.tsx",
+      "line": 197,
+      "effect_start_line": 193,
+      "dependencies": ["onOpenChange", "onCreateNew"],
+      "problematic_deps": ["onOpenChange", "onCreateNew"],
+      "code_snippet": "useEffect(() => { ... }, [onOpenChange, onCreateNew]);",
+      "severity": "High",
+      "reason": "Callback props in deps"
+    },
+    {
+      "file": "src/presentation/components/agent/UnifiedAgentSelector.tsx",
+      "line": 171,
+      "effect_start_line": 163,
+      "dependencies": ["eventBus", "currentWorkspace", "activeAgent?.id", "setActiveAgent"],
+      "problematic_deps": ["setActiveAgent"],
+      "code_snippet": "useEffect(() => { ... setActiveAgent(agentId); ... }, [eventBus, currentWorkspace, activeAgent?.id, setActiveAgent]);",
+      "severity": "High",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/routes/notes.lazy.tsx",
+      "line": 75,
+      "effect_start_line": 69,
+      "dependencies": ["notesProjects", "navigate"],
+      "problematic_deps": ["navigate"],
+      "code_snippet": "useEffect(() => { ... navigate(...); ... }, [notesProjects, navigate]);",
+      "severity": "Medium",
+      "reason": "Navigate function in deps - stable but may cause unnecessary effect runs"
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "line": 107,
+      "effect_start_line": 102,
+      "dependencies": ["ideProjectId", "projectId", "navigate"],
+      "problematic_deps": ["navigate"],
+      "code_snippet": "useEffect(() => { if (ideProjectId && ideProjectId !== projectId) { navigate({ to: `/notes/${ideProjectId}` }); } }, [ideProjectId, projectId, navigate]);",
+      "severity": "Medium",
+      "reason": "Navigate function in deps - stable but may cause unnecessary effect runs"
+    },
+    {
+      "file": "src/lib/workspace/ProjectContext.tsx",
+      "line": 373,
+      "effect_start_line": 369,
+      "dependencies": ["project?.id", "workspace", "enabledWorkspaces", "navigate"],
+      "problematic_deps": ["navigate"],
+      "code_snippet": "useEffect(() => { ... navigate(...); }, [project?.id, workspace, enabledWorkspaces, navigate]);",
+      "severity": "Medium",
+      "reason": "Navigate function in deps"
+    },
+    {
+      "file": "src/lib/workspace/workspace-access-helper.tsx",
+      "line": 342,
+      "effect_start_line": 338,
+      "dependencies": ["workspace", "navigate"],
+      "problematic_deps": ["navigate"],
+      "code_snippet": "useEffect(() => { ... navigate(...); }, [workspace, navigate]);",
+      "severity": "Medium",
+      "reason": "Navigate function in deps"
+    },
+    {
+      "file": "src/presentation/components/ide/AgentChatPanel.tsx",
+      "line": 404,
+      "effect_start_line": 396,
+      "dependencies": ["activeConversationId", "currentScrollPosition", "setScrollPosition"],
+      "problematic_deps": ["setScrollPosition"],
+      "code_snippet": "useEffect(() => { ... setScrollPosition(...); }, [activeConversationId, currentScrollPosition, setScrollPosition]);",
+      "severity": "Medium",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/ide/AgentChatPanel.tsx",
+      "line": 522,
+      "effect_start_line": 514,
+      "dependencies": ["projectId", "createThread", "setActiveThread", "t"],
+      "problematic_deps": ["createThread", "setActiveThread", "t"],
+      "code_snippet": "useEffect(() => { ... createThread(...); ... setActiveThread(...); }, [projectId, createThread, setActiveThread, t]);",
+      "severity": "Medium",
+      "reason": "Callbacks and i18n function in deps"
+    },
+    {
+      "file": "src/presentation/hooks/useThreadManager.ts",
+      "line": 172,
+      "effect_start_line": 162,
+      "dependencies": ["getThread", "workspaceType", "setActiveThread"],
+      "problematic_deps": ["getThread", "setActiveThread"],
+      "code_snippet": "useEffect(() => { ... getThread(...); ... setActiveThread(...); }, [getThread, workspaceType, setActiveThread]);",
+      "severity": "Medium",
+      "reason": "Callback and setter in deps"
+    },
+    {
+      "file": "src/hooks/usePanelGestures.ts",
+      "line": 142,
+      "effect_start_line": 134,
+      "dependencies": ["isDragging", "height", "setHeight", "minHeight", "maxHeight", "startY", "startHeight"],
+      "problematic_deps": ["setHeight"],
+      "code_snippet": "useEffect(() => { ... setHeight(...); }, [isDragging, height, setHeight, minHeight, maxHeight, startY, startHeight]);",
+      "severity": "Medium",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/hooks/useAdvancedSearch.ts",
+      "line": 312,
+      "effect_start_line": 302,
+      "dependencies": ["savedSearches", "setQuery", "setFilters"],
+      "problematic_deps": ["setQuery", "setFilters"],
+      "code_snippet": "useEffect(() => { ... setQuery(...); ... setFilters(...); }, [savedSearches, setQuery, setFilters]);",
+      "severity": "Medium",
+      "reason": "Setter callbacks in deps"
+    },
+    {
+      "file": "src/hooks/useAdvancedSearch.ts",
+      "line": 336,
+      "effect_start_line": 332,
+      "dependencies": ["setQuery", "setFilters"],
+      "problematic_deps": ["setQuery", "setFilters"],
+      "code_snippet": "useEffect(() => { ... setQuery(...); ... setFilters(...); }, [setQuery, setFilters]);",
+      "severity": "Medium",
+      "reason": "Setter callbacks in deps"
+    },
+    {
+      "file": "src/presentation/components/canvas/Canvas.tsx",
+      "line": 159,
+      "effect_start_line": 153,
+      "dependencies": ["isMobile", "setReadOnly"],
+      "problematic_deps": ["setReadOnly"],
+      "code_snippet": "useEffect(() => { ... setReadOnly(true); }, [isMobile, setReadOnly]);",
+      "severity": "Medium",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/hub/useWorkspaceFilters.ts",
+      "line": 144,
+      "effect_start_line": 134,
+      "dependencies": ["syncWithURL", "searchParams", "setSearchParams"],
+      "problematic_deps": ["setSearchParams"],
+      "code_snippet": "useEffect(() => { ... setSearchParams(...); }, [syncWithURL, searchParams, setSearchParams]);",
+      "severity": "Medium",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/hub/useWorkspaceFilters.ts",
+      "line": 150,
+      "effect_start_line": 148,
+      "dependencies": ["filters", "setFilter"],
+      "problematic_deps": ["setFilter"],
+      "code_snippet": "useEffect(() => { ... setFilter(...); }, [filters, setFilter]);",
+      "severity": "Medium",
+      "reason": "Setter callback in deps"
+    },
+    {
+      "file": "src/presentation/components/agent/useAgentConfigProvider.ts",
+      "line": 135,
+      "effect_start_line": 127,
+      "dependencies": ["providerId", "open", "storeFetchModels", "setApiKey", "setModel"],
+      "problematic_deps": ["setApiKey", "setModel"],
+      "code_snippet": "useEffect(() => { ... setApiKey(...); ... setModel(...); }, [providerId, open, storeFetchModels, setApiKey, setModel]);",
+      "severity": "Medium",
+      "reason": "Setter callbacks in deps"
+    },
+    {
+      "file": "src/presentation/components/agent/useAgentConfigProvider.ts",
+      "line": 176,
+      "effect_start_line": 172,
+      "dependencies": ["providerId", "storeFetchModels", "setApiKey", "t"],
+      "problematic_deps": ["setApiKey", "t"],
+      "code_snippet": "useEffect(() => { ... setApiKey(...); }, [providerId, storeFetchModels, setApiKey, t]);",
+      "severity": "Medium",
+      "reason": "Setter callback and i18n in deps"
+    },
+    {
+      "file": "src/presentation/components/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx",
+      "line": 73,
+      "effect_start_line": 69,
+      "dependencies": ["initialWorkspace", "currentWorkspace", "setCurrentWorkspace"],
+      "problematic_deps": ["setCurrentWorkspace"],
+      "code_snippet": "useEffect(() => { ... setCurrentWorkspace(initialWorkspace as WorkspaceType); }, [initialWorkspace, currentWorkspace, setCurrentWorkspace]);",
+      "severity": "Medium",
+      "reason": "Setter callback in deps"
+    }
+  ],
+  "additional_patterns_summary": {
+    "i18n_t_in_deps": {
+      "count": 56,
+      "files": [
+        "src/presentation/components/project/ProjectCreationWizard.tsx",
+        "src/presentation/components/notes/NoteEditor.tsx",
+        "src/presentation/components/chat/CodeBlock.tsx",
+        "src/presentation/components/notes/AITransformMenu.tsx",
+        "src/presentation/components/notes/blocks/ArtifactGalleryBlock.tsx",
+        "src/presentation/components/editor/DefinitionTooltip.tsx",
+        "src/presentation/components/notes/MultiModalImport.tsx",
+        "src/presentation/components/notes/VoiceRecordButton.tsx",
+        "src/presentation/components/notes/NotesIndexingButton.tsx",
+        "src/presentation/components/notes/ProjectFilesPanel.tsx"
+      ],
+      "severity": "Medium",
+      "reason": "t() from react-i18next is a function - while relatively stable, it can cause unnecessary effect runs"
+    },
+    "navigate_in_deps": {
+      "count": 5,
+      "files": [
+        "src/routes/notes.lazy.tsx",
+        "src/presentation/components/notes/NotesPage.tsx",
+        "src/lib/workspace/ProjectContext.tsx",
+        "src/lib/workspace/workspace-access-helper.tsx",
+        "src/lib/workspace/hooks/useWorkspaceActions.ts"
+      ],
+      "severity": "Low",
+      "reason": "navigate from react-router is stable but included in deps for correctness"
+    },
+    "setter_functions_in_deps": {
+      "count": 45,
+      "files": [
+        "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+        "src/presentation/components/notes/NotesPage.tsx",
+        "src/presentation/components/ide/MonacoEditor/hooks/useMonacoEditorEventSubscriptions.ts",
+        "src/presentation/components/notes/NoteSidebar.tsx",
+        "src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx",
+        "src/lib/workspace/hooks/useWorkspaceActions.ts",
+        "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts",
+        "src/presentation/components/notes/NoteEditor.tsx"
+      ],
+      "severity": "Medium",
+      "reason": "Setters from props/state updates cause effect recreation on every render if component re-renders"
+    },
+    "callback_props_in_deps": {
+      "count": 100,
+      "files": [
+        "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+        "src/presentation/components/ui/ApprovalOverlay.tsx",
+        "src/presentation/components/chat/NoteReference.tsx",
+        "src/presentation/components/notes/MarkdownSyncConflictDialog.tsx",
+        "src/presentation/components/notes/ReplacementPreviewDialog.tsx",
+        "src/presentation/components/notes/SaveBlockDialog.tsx",
+        "src/presentation/components/notes/InBlockAIPopup.tsx",
+        "src/presentation/components/keyboard/KeyboardShortcutsHelp.tsx"
+      ],
+      "severity": "Variable",
+      "reason": "Props passed from parent - can cause infinite loops if parent doesn't memoize callbacks"
+    }
+  },
+  "total_count": 142,
+  "critical_count": 19,
+  "high_count": 29,
+  "medium_count": 48,
+  "low_count": 46,
+  "recommendations": [
+    "1. For callback functions in deps: wrap callbacks with useCallback and include them in dependency arrays properly",
+    "2. For setter functions in deps: consider using refs for setter functions or accept that effect will run on every render",
+    "3. For i18n 't' function: this is relatively stable but consider wrapping in useMemo if effects run too frequently",
+    "4. For navigate: this is stable from react-router, can safely include in deps",
+    "5. For callback props from parent: ensure parent components memoize callbacks with useCallback",
+    "6. Consider using the exhaustive-deps ESLint rule to catch these issues automatically",
+    "7. For infinite loop issues: check if dependencies include values that change on every render"
+  ]
+}

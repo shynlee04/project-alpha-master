@@ -1,0 +1,26 @@
+{
+  "voice": {
+    "record": "Chạm để nói",
+    "recording": "Đang nghe...",
+    "processing": "Đang xử lý...",
+    "error": "Nhập giọng nói không khả dụng",
+    "permissionDen ied": "Quyền micro bị từ chối",
+    "notSupported": "Nhập giọng nói không được hỗ trợ trên trình duyệt này",
+    "cancel": "Hủy",
+    "send": "Gửi",
+    "tapToRecord": "Chạm để ghi âm",
+    "tapToStop": "Chạm để dừng",
+    "recordingReady": "Đã sẵn sàng ghi âm",
+    "voiceInput": "Nhập Giọng Nói",
+    "duration": "{{seconds}}giây",
+    "tooShort": "Ghi âm quá ngắn",
+    "autoSent": "Tự động gửi sau {{seconds}}giây im lặng"
+  },
+  "chat": {
+    "voiceMode": "Chế Độ Giọng Nói",
+    "voiceRecording": "Ghi Âm Giọng Nói",
+    "voiceUnavailable": "Nhập giọng nói không khả dụng. Vui lòng kiểm tra quyền micro.",
+    "processingVoice": "Đang xử lý đầu vào giọng nói...",
+    "voiceTranscript": "Bản chép giọng nói"
+  }
+}

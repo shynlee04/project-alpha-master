@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent Knowledge Workspace - Complete Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#09090b',
+                        surface: '#18181b',
+                        depth: '#000000',
+                        primary: '#fafafa',
+                        muted: '#a1a1aa',
+                        action: '#f97316',
+                        structural: '#3f3f46',
+                        success: '#22c55e',
+                        error: '#ef4444',
+                        warning: '#eab308',
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Geist"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        pixel: '4px 4px 0px 0px #000',
+                        'pixel-sm': '2px 2px 0px 0px #000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #09090b; color: #fafafa; }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #18181b; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #3f3f46; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #f97316; }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col overflow-hidden font-mono text-sm antialiased selection:bg-action selection:text-black">
+
+    <!-- TOP HEADER BAR -->
+    <header class="h-12 border-b-2 border-structural flex items-center px-4 justify-between bg-surface shrink-0 z-20">
+        <div class="flex items-center gap-4">
+            <div class="w-8 h-8 bg-action text-black flex items-center justify-center font-bold shadow-pixel">VG</div>
+            <nav class="flex items-center gap-1 h-full">
+                <button class="px-4 py-2 h-full text-muted hover:text-primary hover:bg-structural/30 transition-colors flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    IDE
+                </button>
+                <button class="px-4 py-2 h-full text-muted hover:text-primary hover:bg-structural/30 transition-colors flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    Notes
+                </button>
+                <button class="px-4 py-2 h-full border-b-2 border-action text-action font-bold bg-action/10 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    Knowledge
+                </button>
+                <button class="px-4 py-2 h-full text-muted hover:text-primary hover:bg-structural/30 transition-colors flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                    Study
+                </button>
+            </nav>
+        </div>
+
+        <!-- Search & Actions -->
+        <div class="flex items-center gap-2">
+            <div class="relative">
+                <input type="text" placeholder="Search sources..." class="w-64 bg-depth border border-structural px-3 py-1.5 text-sm text-primary placeholder-structural focus:outline-none focus:border-action">
+                <svg class="absolute right-3 top-1/2 -translate-y-1/2" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+            <button class="px-3 py-1.5 bg-action text-black border-2 border-black font-bold shadow-[2px_2px_0px_0px_#000] hover:translate-y-px hover:shadow-none transition-all flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Import Source
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- LEFT SIDEBAR: COLLECTIONS & SOURCES -->
+        <aside class="w-72 border-r-2 border-structural bg-surface flex flex-col shrink-0">
+            <!-- Tabs -->
+            <div class="h-10 border-b border-structural flex">
+                <button class="flex-1 h-full border-b-2 border-action text-action font-bold text-xs bg-action/10">COLLECTIONS</button>
+                <button class="flex-1 h-full text-muted hover:text-primary text-xs border-b-2 border-transparent hover:bg-structural/30">SOURCES</button>
+            </div>
+
+            <!-- Collections List -->
+            <div class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
+                <!-- Collection Card 1 -->
+                <div class="bg-depth border border-structural p-3 hover:border-action transition-colors cursor-pointer">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-primary">React Fundamentals</span>
+                        <span class="text-xs text-muted">12 sources</span>
+                    </div>
+                    <p class="text-xs text-muted mb-2">Core concepts and best practices for React development</p>
+                    <div class="flex gap-1 flex-wrap">
+                        <span class="px-1.5 py-0.5 bg-success/20 text-success text-xs border border-success/30">RAG Ready</span>
+                    </div>
+                </div>
+
+                <!-- Collection Card 2 -->
+                <div class="bg-depth border border-structural p-3 hover:border-action transition-colors cursor-pointer">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-primary">TypeScript Deep Dive</span>
+                        <span class="text-xs text-muted">8 sources</span>
+                    </div>
+                    <p class="text-xs text-muted mb-2">Advanced TypeScript patterns and type inference</p>
+                    <div class="flex gap-1 flex-wrap">
+                        <span class="px-1.5 py-0.5 bg-warning/20 text-warning text-xs border border-warning/30">Indexing 45%</span>
+                    </div>
+                </div>
+
+                <!-- Collection Card 3 -->
+                <div class="bg-depth border border-structural p-3 hover:border-action transition-colors cursor-pointer opacity-50">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-bold text-primary">System Design</span>
+                        <span class="text-xs text-muted">3 sources</span>
+                    </div>
+                    <p class="text-xs text-muted mb-2">Scalable architecture patterns</p>
+                    <div class="flex gap-1 flex-wrap">
+                        <span class="px-1.5 py-0.5 bg-structural/50 text-muted text-xs border border-structural">Empty</span>
+                    </div>
+                </div>
+
+                <!-- Create Collection -->
+                <button class="w-full py-3 border-2 border-dashed border-structural text-muted hover:text-action hover:border-action transition-colors text-xs">
+                    + Create Collection
+                </button>
+            </div>
+        </aside>
+
+        <!-- CENTER: SOURCE CARDS GRID -->
+        <main class="flex-1 overflow-y-auto p-6 bg-canvas scrollbar-thin">
+            <div class="max-w-6xl mx-auto">
+                <!-- Collection Header -->
+                <div class="mb-6">
+                    <h1 class="text-2xl font-bold text-primary mb-2">React Fundamentals</h1>
+                    <p class="text-muted">12 sources • Last updated 2h ago</p>
+                </div>
+
+                <!-- Source Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Source Card 1: PDF -->
+                    <div class="bg-surface border-2 border-structural p-4 hover:border-action transition-colors cursor-pointer group">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-10 h-12 bg-error/20 flex items-center justify-center border border-error/30">
+                                <span class="text-error font-bold text-xs">PDF</span>
+                            </div>
+                            <button class="text-muted hover:text-action opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </button>
+                        </div>
+                        <h3 class="font-bold text-primary mb-1">React Documentation 19</h3>
+                        <p class="text-xs text-muted mb-3">Official React documentation covering hooks, components, and patterns.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-muted">156 pages • 2.3MB</span>
+                            <span class="px-1.5 py-0.5 bg-success/20 text-success text-xs border border-success/30">Indexed</span>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 2: URL -->
+                    <div class="bg-surface border-2 border-structural p-4 hover:border-action transition-colors cursor-pointer group">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-10 h-12 bg-action/20 flex items-center justify-center border border-action/30">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-action"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            </div>
+                            <button class="text-muted hover:text-action opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </button>
+                        </div>
+                        <h3 class="font-bold text-primary mb-1">TanStack Router Guide</h3>
+                        <p class="text-xs text-muted mb-3">File-based routing for TypeScript applications.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-muted">tanstack.com/router</span>
+                            <span class="px-1.5 py-0.5 bg-success/20 text-success text-xs border border-success/30">Indexed</span>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 3: GitHub -->
+                    <div class="bg-surface border-2 border-structural p-4 hover:border-action transition-colors cursor-pointer group">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-10 h-12 bg-structural/50 flex items-center justify-center border border-structural">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            </div>
+                            <button class="text-muted hover:text-action opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </button>
+                        </div>
+                        <h3 class="font-bold text-primary mb-1">Zustand Store Examples</h3>
+                        <p class="text-xs text-muted mb-3">State management patterns with Zustand v5.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-muted">GitHub • 45 files</span>
+                            <span class="px-1.5 py-0.5 bg-warning/20 text-warning text-xs border border-warning/30">Processing</span>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 4: Markdown (Local) -->
+                    <div class="bg-surface border-2 border-structural p-4 hover:border-action transition-colors cursor-pointer group">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="w-10 h-12 bg-action/20 flex items-center justify-center border border-action/30">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            </div>
+                            <button class="text-muted hover:text-action opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </button>
+                        </div>
+                        <h3 class="font-bold text-primary mb-1">Architecture Patterns.md</h3>
+                        <p class="text-xs text-muted mb-3">Local markdown file synced from Notes workspace.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-muted">Local • 1.2KB</span>
+                            <span class="px-1.5 py-0.5 bg-success/20 text-success text-xs border border-success/30">Indexed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAG Configuration -->
+                <div class="mt-8 bg-surface border-2 border-structural p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-primary">RAG Configuration</h2>
+                        <span class="px-2 py-0.5 bg-success/20 text-success text-xs border border-success/30">Active</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <span class="text-muted text-xs">Chunk Size</span>
+                            <div class="font-mono text-primary">512 tokens</div>
+                        </div>
+                        <div>
+                            <span class="text-muted text-xs">Overlap</span>
+                            <div class="font-mono text-primary">128 tokens</div>
+                        </div>
+                        <div>
+                            <span class="text-muted text-xs">Index Size</span>
+                            <div class="font-mono text-primary">2.4MB vectors</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR: AI ASSISTANT -->
+        <aside class="w-80 border-l-2 border-structural bg-surface flex flex-col shrink-0">
+            <!-- Header -->
+            <div class="h-10 border-b border-structural flex items-center justify-between px-3 bg-surface">
+                <span class="font-bold text-action">KNOWLEDGE AI</span>
+                <button class="text-muted hover:text-action">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 overflow-y-auto p-3 space-y-4 scrollbar-thin">
+                <!-- System -->
+                <div class="flex gap-2">
+                    <div class="w-6 h-6 bg-structural shrink-0 flex items-center justify-center text-xs font-bold text-action">AI</div>
+                    <div class="bg-depth border border-structural p-3 text-xs flex-1">
+                        <p class="text-muted mb-2">Knowledge Base Ready</p>
+                        <p class="text-primary">I've indexed 12 sources in "React Fundamentals". Ask me anything about React patterns, hooks, or best practices.</p>
+                    </div>
+                </div>
+
+                <!-- User -->
+                <div class="flex gap-2 flex-row-reverse">
+                    <div class="w-6 h-6 bg-action shrink-0 flex items-center justify-center text-xs font-bold text-black">ME</div>
+                    <div class="bg-structural/20 border border-structural p-3 text-xs flex-1 max-w-[90%]">
+                        How do I implement useReducer with TypeScript?
+                    </div>
+                </div>
+
+                <!-- AI Response with Sources -->
+                <div class="flex gap-2">
+                    <div class="w-6 h-6 bg-structural shrink-0 flex items-center justify-center text-xs font-bold text-action">AI</div>
+                    <div class="bg-depth border border-structural p-3 text-xs flex-1">
+                        <p class="text-primary mb-2">Here's how to implement <span class="text-action">useReducer</span> with TypeScript:</p>
+                        <pre class="bg-black p-2 text-xs font-mono overflow-x-auto"><code class="text-green-400">type Action =
+  | { type: 'increment' }
+  | { type: 'decrement' }
+  | { type: 'set'; payload: number };
+
+function reducer(state: number, action: Action): number {
+  switch (action.type) {
+    case 'increment': return state + 1;
+    case 'decrement': return state - 1;
+    case 'set': return action.payload;
+  }
+}</code></pre>
+                        <p class="text-muted mt-2 mb-2">Sources:</p>
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2 text-xs text-muted">
+                                <span class="w-2 h-2 bg-success rounded-none"></span>
+                                React Documentation 19 (Page 89)
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-muted">
+                                <span class="w-2 h-2 bg-success rounded-none"></span>
+                                TypeScript Deep Dive (Section 4.2)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Flashcards -->
+                <div class="border-2 border-structural p-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-action"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        <span class="font-bold text-xs text-primary">Generate Study Materials</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="flex-1 py-1.5 bg-action text-black border-2 border-black font-bold text-xs shadow-[2px_2px_0px_0px_#000] hover:translate-y-px hover:shadow-none transition-all">
+                            Flashcards (12)
+                        </button>
+                        <button class="flex-1 py-1.5 border-2 border-structural text-muted hover:text-primary hover:border-action text-xs transition-colors">
+                            Quiz (5)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="p-3 border-t-2 border-structural bg-depth">
+                <textarea placeholder="Ask about your sources..." class="w-full bg-surface border-2 border-structural p-3 text-sm text-primary placeholder-structural resize-none focus:outline-none focus:border-action h-20"></textarea>
+                <button class="w-full mt-2 py-2 bg-action text-black border-2 border-black font-bold shadow-[2px_2px_0px_0px_#000] hover:translate-y-px hover:shadow-none transition-all flex items-center justify-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Ask AI
+                </button>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- BOTTOM: STATUS BAR -->
+    <footer class="h-8 bg-surface border-t-2 border-structural flex items-center justify-between px-4 shrink-0 select-none text-xs">
+        <div class="flex items-center gap-4 text-muted">
+            <span>proj_alpha-dev</span>
+            <span>|</span>
+            <span class="flex items-center gap-1">
+                <div class="w-2 h-2 bg-success rounded-none animate-pulse"></div>
+                RAG Index Ready
+            </span>
+        </div>
+        <div class="flex items-center gap-4 text-muted">
+            <span>12 Sources • 2.4MB Vectors</span>
+            <span class="hover:text-action cursor-pointer">Settings</span>
+        </div>
+    </footer>
+
+</body>
+</html>

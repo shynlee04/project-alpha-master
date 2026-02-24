@@ -1,0 +1,23 @@
+// TypeScript Project References Configuration
+// Enables faster incremental builds by splitting the codebase into logical units
+// See: https://www.typescriptlang.org/docs/handbook/project-references.html
+
+{
+  "files": [],
+  "references": [
+    // Domain layer - independent, no dependencies
+    { "path": "./src/domain" },
+    
+    // Infrastructure layer - depends on domain
+    { "path": "./src/infrastructure" },
+    
+    // Presentation layer - depends on domain and infrastructure
+    { "path": "./src/presentation" },
+    
+    // Routes - depends on all layers
+    { "path": "./src/routes" },
+    
+    // Core entities - shared across all layers
+    { "path": "./src/core" }
+  ]
+}

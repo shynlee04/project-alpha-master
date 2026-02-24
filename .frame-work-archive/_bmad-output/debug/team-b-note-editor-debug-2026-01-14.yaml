@@ -1,0 +1,220 @@
+# Team B Debugging Scratchpad: BlockNote Node Position Error
+
+**Session ID**: `team-b-debug-2026-01-14`  
+**Started At**: `2026-01-14T15:00:00+07:00`  
+**Status**: `INVESTIGATION_IN_PROGRESS`  
+**Last Updated**: `2026-01-14T15:00:00+07:00`
+
+---
+
+## Problem Statement
+
+### From prompt-for-team-b.md
+
+```
+Error: "Cannot find node position" at ReactNodeViewRenderer.className
+
+User Requirements:
+1. Desktop users with file system access → markdown as BlockNote, single default_note
+2. Mobile users (browser-DB only) → same experience, no confusion
+3. No clear boundaries between file system and browser database notes
+4. State persistence on reload, coming back shows same content
+```
+
+### Stack Trace Analysis
+
+```
+ReactNodeViewRenderer.className
+  → ReactNodeView
+  → ErrorBoundary
+  → NoteEditor.tsx:283:30
+  → ResizablePanel
+  → ResizablePanelGroup
+  → MainLayout
+  → NotesPage2
+  → ProjectProvider
+  → NotesWorkspaceDefault
+  → ErrorBoundary
+  → UnifiedWorkspaceProvider
+  → AppInitializer
+  → ToastProvider
+  → LocaleProvider
+  → ThemeProvider
+  → body → html
+```
+
+---
+
+## Hypothesis Set
+
+### H1: Data Flow Contamination
+| ID | Hypothesis | Priority | Evidence Required |
+|----|------------|----------|-------------------|
+| H1-A1 | File system data mixing with browser-DB data | P0 | Compare data structures from FS vs Dexie |
+| H1-A2 | noteId not synchronized with route params | P1 | Check route params → noteId mapping |
+| H1-A3 | Dexie schema mismatch on deserialization | P2 | Validate serialized block structure |
+| H1-A4 | Cross-workspace state leakage | P2 | Check workspace isolation in stores |
+
+### H2: BlockNote Initialization Issues
+| ID | Hypothesis | Priority | Evidence Required |
+|----|------------|----------|-------------------|
+| H2-B1 | Editor mounting before data ready | P0 | Check initialization sequence |
+| H2-B2 | sanitizeBlocks() incomplete edge cases | P1 | Review sanitizeBlocks() logic |
+| H2-B3 | Custom AI block prop validation missing | P0 | Check AI block prop handling |
+| H2-B4 | ProseMirror node ID conflicts | P2 | Verify block IDs are unique |
+
+### H3: Desktop/Mobile Boundary Issues
+| ID | Hypothesis | Priority | Evidence Required |
+|----|------------|----------|-------------------|
+| H3-C1 | No default_note pattern for browser-only | P0 | Check browser-mode.ts detection |
+| H3-C2 | File system detection race condition | P1 | Check detection timing |
+| H3-C3 | Store initialization order issue | P2 | Map store initialization chain |
+| H3-C4 | Route parameter fallback missing | P1 | Check route param defaults |
+
+---
+
+## Trials & Experiments
+
+### Trial 1: Data Source Analysis
+- **Goal**: Identify if blocks come from file system or browser-DB
+- **Method**: Add logging to NoteEditor.tsx to trace data origin
+- **Files to inspect**: 
+  - `src/presentation/components/notes/NoteEditor.tsx`
+  - `src/lib/notes/note-store.ts`
+  - `src/infrastructure/persistence/stores/notes/`
+
+### Trial 2: sanitizeBlocks() Coverage
+- **Goal**: Find edge cases not handled by current sanitization
+- **Method**: Review sanitizeBlocks() vs BlockNote schema requirements
+- **Files to inspect**: NoteEditor.tsx lines 171-287
+
+### Trial 3: Desktop/Mobile Detection Flow
+- **Goal**: Understand how browser-mode is detected and applied
+- **Method**: Trace browser-mode.ts usage and fallback logic
+- **Files to inspect**:
+  - `src/lib/workspace/browser-mode.ts`
+  - `src/routes/notes.lazy.tsx`
+
+---
+
+## Findings
+
+### Finding 1: sanitizeBlocks() Exists
+**Status**: CONFIRMED  
+**File**: NoteEditor.tsx lines 171-287  
+**Note**: Already implements some validation, may need enhancement
+
+### Finding 2: Custom AI Blocks Present
+**Status**: CONFIRMED  
+**Blocks**: aiImage, aiVision, storyboard, videoAnalysis, ttsBlock, artifactBlock, videoGeneration, slidesExport, chartDiagram, transformPipeline, artifactGallery, multiStepGeneration
+**Risk**: These complex blocks may have prop validation gaps
+
+### Finding 3: Route-Sync Pattern Implemented
+**Status**: CONFIRMED  
+**File**: NotesPage.tsx (45-03 completed)  
+**Note**: Route-sync may help but data origin still unclear
+
+### Finding 4: Browser-Mode Detection Exists
+**Status**: CONFIRMED  
+**File**: `src/lib/workspace/browser-mode.ts` (45-04 completed)  
+**Note**: Need to verify default_note pattern for browser-only users
+
+---
+
+## Solutions (Draft)
+
+### Solution 1: Enhanced Block Validation
+```typescript
+// Enhanced sanitizeBlocks with AI block support
+function sanitizeBlocks(blocks: any[]): any[] {
+  return blocks.map(block => ({
+    ...sanitizeSingleBlock(block),
+    // AI block specific validation
+    ...(block.type.startsWith('ai') ? sanitizeAIBlock(block) : {})
+  }));
+}
+```
+
+### Solution 2: Unified Note Data Service
+```typescript
+// Single source of truth for note data
+class NoteDataService {
+  getNoteData(noteId: string, workspaceType: 'browser' | 'filesystem') {
+    return workspaceType === 'browser' 
+      ? this.getFromDexie(noteId)
+      : this.getFromFileSystem(noteId);
+  }
+}
+```
+
+### Solution 3: Default Note Pattern
+```typescript
+// For browser-only users, ensure default_note exists
+async function ensureDefaultNote(workspaceId: string) {
+  const existing = await dexie.notes.get(workspaceId);
+  if (!existing) {
+    await dexie.notes.add({
+      id: workspaceId,
+      name: 'default_note',
+      blocks: [],
+      createdAt: Date.now()
+    });
+  }
+}
+```
+
+---
+
+## Investigation Tasks
+
+### Completed
+- [x] Read prompt-for-team-b.md problem statement
+- [x] Analyze stack trace
+- [x] Review NoteEditor.tsx (first 50 lines, types)
+- [x] Identify existing sanitization functions
+
+### In Progress
+- [ ] LAYER 2: Scan for prior artifacts
+- [ ] LAYER 3: Sub-agent investigations
+
+### Pending
+- [ ] Synthesize findings
+- [ ] Identify root cause with 95% confidence
+- [ ] Create implementation plan
+- [ ] Execute fix
+
+---
+
+## Sub-Agents Delegated
+
+### Agent 1: BlockNote ProseMirror Expert
+- **Type**: analyst-ext
+- **Task**: Research BlockNote error patterns, custom block validation
+- **Status**: PENDING
+
+### Agent 2: Data Flow Domain Scanner  
+- **Type**: domain-scanner
+- **Task**: Map note data flow, identify contamination points
+- **Status**: PENDING
+
+### Agent 3: State Boundary Architect
+- **Type**: architect-ext
+- **Task**: Analyze state boundaries, desktop/mobile detection
+- **Status**: PENDING
+
+---
+
+## Metrics
+
+| Metric | Value |
+|--------|-------|
+| Hypotheses Generated | 11 |
+| Trials Planned | 3 |
+| Files to Inspect | 8+ |
+| Sub-Agents Delegated | 3 |
+| Confidence Target | 95% |
+| Investigation Progress | 25% |
+
+---
+
+*Generated by EXCALIBUR - BMAD Extension Master Orchestrator*

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Desktop IDE - Tree + Editor + Preview Stack (3 panels) - Production-ready prototype">
+  <meta name="author" content="Project Alpha">
+  <title>IDE - Tree + Editor + Preview | Project Alpha</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --canvas: #0f0f11;
+      --surface: #18181b;
+      --depth: #000000;
+      --primary: #fafafa;
+      --muted: #a1a1aa;
+      --action: #f97316;
+      --structural: #27272a;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --action-hover: #ea580c;
+      --surface-hover: #27272a;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-prose: 'Inter', system-ui, sans-serif;
+      --header-height: 48px;
+      --status-height: 24px;
+      --tree-width: 240px;
+      --preview-width: 35%;
+      --panel-min-width: 200px;
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+      --radius: 0;
+      --radius-sm: 2px;
+      --shadow-sm: 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+      --shadow-md: 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+      --shadow-action: 4px 4px 0px 0px #ea580c;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--canvas);
+      color: var(--primary);
+      font-family: var(--font-prose);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    *:focus-visible {
+      outline: 2px solid var(--action);
+      outline-offset: 2px;
+    }
+
+    *:focus:not(:focus-visible) {
+      outline: none;
+    }
+
+    .ide-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: var(--canvas);
+    }
+
+    .header-bar {
+      height: var(--header-height);
+      background: var(--surface);
+      border-bottom:1px solid var(--structural);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      user-select: none;
+    }
+
+    .project-name {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .project-badge {
+      background: var(--action);
+      color: var(--depth);
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.5px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
+      font-family: var(--font-prose);
+      font-size: 12px;
+      font-weight: 500;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--action);
+      color: var(--depth);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--action-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+
+    .btn-ghost:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .btn-icon {
+      padding: 4px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: color var(--transition-fast);
+    }
+
+    .btn-icon:hover {
+      color: var(--primary);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .activity-bar {
+      width: 48px;
+      background: var(--surface);
+      border-right: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0;
+      gap: 4px;
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .activity-icon:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .activity-icon.active {
+      color: var(--depth);
+      background: var(--action);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .activity-icon.active::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 20px;
+      background: var(--action);
+    }
+
+    .tree-panel {
+      width: var(--tree-width);
+      background: var(--surface);
+      border-right: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      transition: width var(--transition-normal);
+    }
+
+    .tree-header {
+      height: 36px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--structural);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+
+    .tree-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      transition: all var(--transition-fast);
+      gap: 8px;
+    }
+
+    .tree-item:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .tree-item.active {
+      color: var(--primary);
+      background: var(--action);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tree-item.file {
+      padding-left: 32px;
+    }
+
+    .tree-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .resize-handle {
+      width: 4px;
+      background: transparent;
+      cursor: col-resize;
+      position: absolute;
+      right: -2px;
+      top: 0;
+      bottom: 0;
+      transition: background var(--transition-fast);
+      z-index: 10;
+    }
+
+    .resize-handle:hover,
+    .resize-handle.active {
+      background: var(--action);
+    }
+
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+      overflow: hidden;
+      min-width: var(--panel-min-width);
+    }
+
+    .editor-tabs {
+      height: 36px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--structural);
+      display: flex;
+      overflow-x: auto;
+    }
+
+    .editor-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      border-right: 1px solid var(--structural);
+      border-top: 2px solid transparent;
+      transition: all var(--transition-fast);
+      background: var(--surface);
+    }
+
+    .editor-tab:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .editor-tab.active {
+      color: var(--primary);
+      background: var(--canvas);
+      border-top: 2px solid var(--action);
+    }
+
+    .editor-tab-close {
+      opacity: 0;
+      padding: 2px;
+      border-radius: var(--radius);
+      transition: all var(--transition-fast);
+    }
+
+    .editor-tab:hover .editor-tab-close {
+      opacity: 1;
+    }
+
+    .editor-tab-close:hover {
+      background: var(--action);
+      color: var(--depth);
+    }
+
+    .editor-container {
+      flex: 1;
+      position: relative;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    .editor-gutter {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 56px;
+      background: #0d0d0f;
+      border-right: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 4px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      text-align: right;
+      overflow: hidden;
+    }
+
+    .editor-line-number {
+      height: 21px;
+      line-height: 21px;
+    }
+
+    .editor-content {
+      position: absolute;
+      left: 56px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      padding: 8px 16px;
+      overflow: auto;
+      color: var(--primary);
+      white-space: pre;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 21px;
+    }
+
+    .token-keyword { color: #c586c0; }
+    .token-string { color: #ce9178; }
+    .token-function { color: #dcdcaa; }
+    .token-class { color: #4ec9b0; }
+    .token-tag { color: #569cd6; }
+    .token-attr { color: #9cdcfe; }
+    .token-operator { color: #d4d4d4; }
+
+    .editor-line {
+      min-height: 21px;
+    }
+
+    .editor-line.highlighted {
+      background: rgba(249, 115, 22, 0.1);
+    }
+
+    .editor-minimap {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+      background: var(--surface);
+      border-left: 1px solid var(--structural);
+      overflow: hidden;
+      padding: 4px;
+    }
+
+    .minimap-line {
+      height: 2px;
+      background: var(--muted);
+      margin-bottom: 1px;
+      opacity: 0.3;
+      border-radius: var(--radius-sm);
+    }
+
+    /* PREVIEW PANEL */
+    .preview-panel {
+      width: var(--preview-width);
+      background: var(--surface);
+      border-left: 1px solid var(--structural);
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+    }
+
+    .preview-header {
+      height: 36px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--structural);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+    }
+
+    .preview-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .preview-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--success);
+    }
+
+    .preview-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-sm);
+      background: var(--success);
+      box-shadow: 0 0 4px var(--success);
+    }
+
+    .preview-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .preview-tabs {
+      height: 32px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--structural);
+      display: flex;
+      padding: 0 8px;
+      gap: 2px;
+    }
+
+    .preview-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      transition: all var(--transition-fast);
+    }
+
+    .preview-tab:hover {
+      color: var(--primary);
+      background: var(--surface-hover);
+    }
+
+    .preview-tab.active {
+      color: var(--primary);
+      background: var(--canvas);
+      border-bottom: 2px solid var(--action);
+    }
+
+    .preview-iframe-container {
+      flex: 1;
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-iframe-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-family: var(--font-prose);
+    }
+
+    .preview-url {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      color: var(--muted);
+      padding: 4px 12px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-refresh-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--surface);
+      border: 1px solid var(--structural);
+      padding: 6px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .preview-refresh-btn:hover {
+      background: var(--action);
+      border-color: var(--action);
+      color: var(--depth);
+    }
+
+    .status-bar {
+      height: var(--status-height);
+      background: var(--action);
+      color: var(--depth);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-top: 1px solid var(--action-hover);
+    }
+
+    .status-left,
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .status-dot.success { background: var(--success); }
+    .status-dot.warning { background: var(--warning); }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--structural);
+      border-radius: var(--radius);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--depth);
+      color: var(--primary);
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 8px;
+      font-family: var(--font-prose);
+    }
+
+    [data-tooltip]:hover::after {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0ms !important;
+        animation-duration: 0ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ide-container">
+    <header class="header-bar" role="banner">
+      <div class="project-name">
+        <span>Project Alpha</span>
+        <span class="project-badge">v2.0</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="btn btn-primary" data-tooltip="Sync changes (Ctrl+S)">
+          <span>Sync Now</span>
+        </button>
+        <button class="btn btn-ghost" data-tooltip="Open settings">
+          <span>Settings</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content" role="main">
+      <nav class="activity-bar" aria-label="Workspace navigation">
+        <button class="activity-icon active" data-tooltip="IDE Workspace (Ctrl+1)" aria-label="IDE Workspace" aria-current="page">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+        </button>
+        <button class="activity-icon" data-tooltip="Knowledge Workspace (Ctrl+2)" aria-label="Knowledge Workspace">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"></path>
+          </svg>
+        </button>
+        <button class="activity-icon" data-tooltip="Notes Workspace (Ctrl+3)" aria-label="Notes Workspace">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+        </button>
+      </nav>
+
+      <aside class="tree-panel" role="complementary" aria-label="File explorer">
+        <div class="resize-handle" role="separator" aria-label="Resize tree panel"></div>
+        <div class="tree-header">
+          <span>Explorer</span>
+        </div>
+        <div class="tree-container" role="tree">
+          <div class="tree-item file active" role="treeitem" aria-current="true">
+            <span class="tree-icon">📜</span>
+            <span>Button.tsx</span>
+          </div>
+          <div class="tree-item file" role="treeitem">
+            <span class="tree-icon">📐</span>
+            <span>types.ts</span>
+          </div>
+          <div class="tree-item file" role="treeitem">
+            <span class="tree-icon">📄</span>
+            <span>App.tsx</span>
+          </div>
+        </div>
+      </aside>
+
+      <section class="editor-panel" role="main" aria-label="Code editor">
+        <div class="editor-tabs" role="tablist">
+          <div class="editor-tab active" role="tab" aria-selected="true" tabindex="0">
+            <span>Button.tsx</span>
+            <button class="editor-tab-close" aria-label="Close tab">×</button>
+          </div>
+        </div>
+        <div class="editor-container">
+          <div class="editor-gutter" aria-label="Line numbers">
+            <div class="editor-line-number">1</div>
+            <div class="editor-line-number">2</div>
+            <div class="editor-line-number">3</div>
+            <div class="editor-line-number">4</div>
+            <div class="editor-line-number">5</div>
+            <div class="editor-line-number">6</div>
+            <div class="editor-line-number">7</div>
+            <div class="editor-line-number">8</div>
+          </div>
+          <div class="editor-content">
+            <div class="editor-line"><span class="token-keyword">import</span> <span class="token-function">React</span> <span class="token-keyword">from</span> <span class="token-string">'react'</span>;</div>
+            <div class="editor-line"></div>
+            <div class="editor-line highlighted"><span class="token-keyword">export const</span> <span class="token-function">Button</span> = () => {</div>
+            <div class="editor-line">&nbsp;&nbsp;<span class="token-keyword">return</span> (</div>
+            <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="token-tag">button</span> <span class="token-attr">className</span>=<span class="token-string">"btn-primary"</span>&gt;</div>
+            <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Click Me</div>
+            <div class="editor-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="token-tag">button</span>&gt;</div>
+            <div class="editor-line">&nbsp;&nbsp;);</div>
+            <div class="editor-line">};</div>
+          </div>
+          <div class="editor-minimap" aria-label="Code minimap">
+            <div class="minimap-line"></div>
+            <div class="minimap-line" style="width: 50%"></div>
+            <div class="minimap-line"></div>
+            <div class="minimap-line" style="width: 70%"></div>
+            <div class="minimap-line"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="preview-panel" role="complementary" aria-label="Live preview">
+        <div class="resize-handle" role="separator" aria-label="Resize preview panel"></div>
+        <div class="preview-header">
+          <span>Preview</span>
+          <div class="preview-actions">
+            <span class="preview-badge">localhost:3000</span>
+            <button class="btn-icon" data-tooltip="Open in browser" aria-label="Open in browser">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="preview-content">
+          <div class="preview-tabs" role="tablist">
+            <div class="preview-tab active" role="tab" aria-selected="true">
+              <span>Browser</span>
+            </div>
+            <div class="preview-tab" role="tab" aria-selected="false">
+              <span>Console</span>
+            </div>
+            <div class="preview-tab" role="tab" aria-selected="false">
+              <span>Network</span>
+            </div>
+          </div>
+          <div class="preview-iframe-container">
+            <div class="preview-iframe-placeholder">
+              <div style="font-size: 48px; margin-bottom: 16px;">🚀</div>
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">App Running</div>
+              <div style="font-size: 12px; opacity: 0.8;">Your app is ready at localhost:3000</div>
+            </div>
+            <div class="preview-url">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <span>http://localhost:3000</span>
+            </div>
+            <button class="preview-refresh-btn" data-tooltip="Refresh preview" aria-label="Refresh preview">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="status-bar" role="contentinfo">
+      <div class="status-left">
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>WebContainer</span>
+        </div>
+        <div class="status-item">
+          <span class="status-dot success"></span>
+          <span>Preview: Ready</span>
+        </div>
+      </div>
+      <div class="status-right">
+        <span>Ln 5, Col 18</span>
+        <span>TypeScript React</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Tree panel resize
+    const treePanel = document.querySelector('.tree-panel');
+    const treeHandle = treePanel.querySelector('.resize-handle');
+    let isTreeResizing = false;
+    let treeStartX = 0;
+    let treeStartWidth = 0;
+
+    treeHandle.addEventListener('mousedown', (e) => {
+      isTreeResizing = true;
+      treeStartX = e.clientX;
+      treeStartWidth = treePanel.offsetWidth;
+      treeHandle.classList.add('active');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    });
+
+    // Preview panel resize
+    const previewPanel = document.querySelector('.preview-panel');
+    const previewHandle = previewPanel.querySelector('.resize-handle');
+    let isPreviewResizing = false;
+    let previewStartX = 0;
+    let previewStartWidth = 0;
+
+    previewHandle.addEventListener('mousedown', (e) => {
+      isPreviewResizing = true;
+      previewStartX = e.clientX;
+      previewStartWidth = previewPanel.offsetWidth;
+      previewHandle.classList.add('active');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isTreeResizing) {
+        const diff = e.clientX - treeStartX;
+        const newWidth = Math.max(48, Math.min(400, treeStartWidth + diff));
+        treePanel.style.width = `${newWidth}px`;
+      }
+      if (isPreviewResizing) {
+        const diff = e.clientX - previewStartX;
+        const newWidth = Math.max(300, Math.min(800, previewStartWidth - diff));
+        previewPanel.style.width = `${newWidth}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isTreeResizing) {
+        isTreeResizing = false;
+        treeHandle.classList.remove('active');
+      }
+      if (isPreviewResizing) {
+        isPreviewResizing = false;
+        previewHandle.classList.remove('active');
+      }
+      if (isTreeResizing || isPreviewResizing) {
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    });
+
+    // Tab switching
+    const editorTabs = document.querySelectorAll('.editor-tab');
+    editorTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        editorTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+      });
+    });
+
+    const previewTabs = document.querySelectorAll('.preview-tab');
+    previewTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        previewTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+      });
+    });
+
+    // Tree item selection
+    const treeItems = document.querySelectorAll('.tree-item');
+    treeItems.forEach(item => {
+      item.addEventListener('click', () => {
+        treeItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

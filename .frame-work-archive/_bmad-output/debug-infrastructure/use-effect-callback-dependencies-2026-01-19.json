@@ -1,0 +1,103 @@
+{
+  "scan_timestamp": "2026-01-19T14:30:00.000Z",
+  "total_issues_found": 14,
+  "files": [
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/hooks/useQuizTimer.ts",
+      "line": 116,
+      "issue": "Object reference 'timer' in dependency array causes infinite re-run",
+      "context": "  useEffect(() => {\n    if (isExpired && timer.isRunning) {\n      timer.pause();\n    }\n  }, [isExpired, timer.isRunning, timer]);  // timer changes every render!"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/hooks/useCollaborationPresence.ts",
+      "line": 207,
+      "issue": "Excessive dependencies including 'userName' and 'userAvatar' that change frequently",
+      "context": "  useEffect(() => {\n    // WebSocket initialization with many unstable dependencies\n    client.connect();\n    return () => {\n      client.disconnect();\n    };\n  }, [enabled, wsUrl, projectId, userId, userName, userAvatar]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/AgentChatPanel.tsx",
+      "line": 456,
+      "issue": "useCallback 'approveToolCall' in effect deps causes effect to re-run on every message",
+      "context": "  useEffect(() => {\n    for (const approval of pendingApprovals) {\n      if (shouldAutoApprove(approval.toolName)) {\n        approveToolCall(approval.approvalId, approval.toolCallId);\n      }\n    }\n  }, [pendingApprovals, shouldAutoApprove, approveToolCall]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/EnhancedChatInterface.tsx",
+      "line": 163,
+      "issue": "Inline callback 'notePicker.openPicker' used in effect dependency array",
+      "context": "  useEffect(() => {\n    if (trimmedInput === '/note' || trimmedInput === '/note ') {\n      notePicker.openPicker((noteId: string, noteTitle: string) => {\n        const reference = `📌 [${noteTitle}]#${noteId} `;\n        setInput(reference);\n      });\n    }\n  }, [input, notePicker]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/ide/EnhancedChatInterface.tsx",
+      "line": 295,
+      "issue": "Inline callback 'onSendMessage' in dependency array",
+      "context": "  const handleSubmit = useCallback(async (e: React.FormEvent) => {\n    // ... send message logic\n    onSendMessage(input.trim(), images.length > 0 ? images : undefined);\n    setInput('');\n    setAttachments([]);\n  }, [input, attachments, onSendMessage]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/hooks/use-cross-workspace-events.ts",
+      "line": 203,
+      "issue": "Function callback 'setState' passed to useCrossWorkspaceEvent effect",
+      "context": "  useEffect(() => {\n    const handler = (event: { payload: T }) => {\n      setState(event.payload);\n    };\n    const unsubscribe = eventBus.on(eventType, handler);\n    return unsubscribe;\n  }, [eventType]);  // setState captured on mount, but handler recreated on every render"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/hooks/useEditorTabs.ts",
+      "line": 102,
+      "issue": "useCallback 'saveTabs' not stable, causing effect to re-run on every tabs change",
+      "context": "  useEffect(() => {\n    const handleBeforeUnload = () => {\n      saveTabs();\n    };\n    window.addEventListener('beforeunload', handleBeforeUnload);\n    return () => {\n      window.removeEventListener('beforeunload', handleBeforeUnload);\n    };\n  }, [tabs, activeTab, saveTabs]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/hooks/useEditorTabs.ts",
+      "line": 300,
+      "issue": "Multiple inline callbacks in effect dependency array",
+      "context": "  useEffect(() => {\n    const handleKeyDown = (e: KeyboardEvent) => {\n      if (!cmdOrCtrl) return;\n      if (e.key === 'w') {\n        closeTab(activePath);  // inline callback reference\n      }\n      // ... more key handlers\n    };\n    window.addEventListener('keydown', handleKeyDown);\n    return () => window.removeEventListener('keydown', handleKeyDown);\n  }, [tabs, switchTab, closeTab]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/notes/NotesPage.tsx",
+      "line": 384,
+      "issue": "Inline callback 'handleSynthesisExport' references unstable 'createNote' and 'setActiveNote'",
+      "context": "  useEffect(() => {\n    const handleSynthesisExport = (event: any) => {\n      createNote({...}).then((noteId) => {\n        setActiveNote(noteId);\n      });\n    };\n    const unsubscribe = eventBus.on(\n      DomainEventType.KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED,\n      handleSynthesisExport as any\n    );\n    return unsubscribe;\n  }, [eventBus, createNote, setActiveNote]);"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/notes/NotesPage.tsx",
+      "line": 417,
+      "issue": "useStoreEvent callback references 'loadNotes' without proper memoization",
+      "context": "  useStoreEvent<FileSavedPayload>(\n    STORE_EVENTS.FILE_SAVED,\n    (payload) => {\n      if (payload.workspaceType === 'ide') {\n        if (projectId) {\n          loadNotes(projectId);\n        }\n      }\n    },\n    [projectId, loadNotes]\n  );"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/lib/agent/hooks/use-agent-chat-with-tools.ts",
+      "line": 217,
+      "issue": "State setter 'setAgentStatus' in effect dependency array",
+      "context": "  useEffect(() => {\n    if (eventBus && agentStatus !== agentStatusRef.current) {\n      eventBus.emit('agent:activity:changed', { status: agentStatus });\n    }\n  }, [eventBus, agentStatus]);  // setAgentStatus setter not needed, state changes trigger re-render"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/notes/NoteEditor.tsx",
+      "line": 713,
+      "issue": "Direct store method 'updateNote' in effect dependency array",
+      "context": "  useEffect(() => {\n    if (note?.blocks) {\n      setNoteContent(extractTextFromBlocks(note.blocks as BlockNoteBlock[]));\n    }\n  }, [note?.blocks]);  // updateNote not in deps here but similar pattern elsewhere"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/presentation/components/notes/NoteEditor.tsx",
+      "line": 783,
+      "issue": "useCallback 'handleChange' references inline callback 'debouncedSave'",
+      "context": "  const handleChange = useCallback(() => {\n    if (readOnly) return;\n    const blocks = editor.document;\n    debouncedSave(blocks);\n    setNoteContent(extractTextFromBlocks(blocks));\n  }, [editor, debouncedSave, readOnly]);  // debouncedSave changes when callback changes"
+    },
+    {
+      "file": "/Users/apple/Documents/coding-projects/project-alpha-master/src/hooks/usePanelGestures.ts",
+      "line": 142,
+      "issue": "Refs 'startY' and 'startHeight' in effect dependency array (refs should not be in deps)",
+      "context": "  useEffect(() => {\n    // ... event handlers using startY and startHeight refs\n    const onMouseMove = (e: MouseEvent) => {\n      const delta = startY.current - e.clientY;  // using ref.current\n      setHeight(newHeight);\n    };\n    // ...\n  }, [isDragging, height, setHeight, minHeight, maxHeight, startY, startHeight]);  // refs shouldn't be in deps"
+    }
+  ],
+  "severity_summary": {
+    "critical": 3,
+    "high": 6,
+    "medium": 5
+  },
+  "patterns_identified": [
+    "Object references in dependency arrays (timer, config, eventBus)",
+    "Inline callbacks passed to useCallback",
+    "Direct store method references without useCallback",
+    "State setter functions (setState) in dependency arrays",
+    "Ref values (ref.current) incorrectly included in dependency arrays",
+    "useCallback functions with dependencies on parent callbacks"
+  ]
+}

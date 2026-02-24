@@ -1,0 +1,486 @@
+{
+  "search_timestamp": "2026-01-19T17:30:00+07:00",
+  "flow_summary": "Complete project creation flow from Homepage to final project creation involves 2 main paths: (1) Full Wizard Flow via ProjectsPage, and (2) Quick Create Flow via HubHomePage handleNewProject",
+  "flow_stages": [
+    {
+      "stage": "1. Homepage → Project Selection",
+      "routes": [
+        "/ (index.tsx) → HubHomePage",
+        "/projects (projects.tsx) → ProjectsPage"
+      ],
+      "hooks": [
+        "useLiveQuery (dexie-react-hooks) - reactive DB query",
+        "useTranslation (react-i18next) - i18n",
+        "useNavigate (@tanstack/react-router) - navigation",
+        "useState - dialog open/close state",
+        "useRouterState - search params access"
+      ],
+      "state_changes": [
+        "projects from Dexie (useLiveQuery)",
+        "wizardOpen: false → true (on Create Project click)",
+        "filteredProjects (computed from projects + filters)"
+      ],
+      "side_effects": [
+        "Dexie IndexedDB query for projects list",
+        "Route param parsing for ?action=create-project"
+      ],
+      "event_emissions": [
+        "onOpenProject callback triggers workspace navigation",
+        "ProjectCard onOpen event"
+      ],
+      "store_interactions": [
+        "useProjectStore.getState().getProject() - lookup by ID"
+      ]
+    },
+    {
+      "stage": "2. Wizard Opened → Step Navigation",
+      "routes": [
+        "ProjectCreationWizard (overlay dialog)"
+      ],
+      "hooks": [
+        "useState - currentStep, formData, stepErrors, isCreating",
+        "useEffect - wizard reset on open, keyboard navigation",
+        "useCallback - validateStep, handleBack, handleNext, handleSkip, updateFormData, handleCreate",
+        "useTranslation - i18n strings",
+        "useProjectStore - createProject method"
+      ],
+      "state_changes": [
+        "currentStep: 1 → 2 → 3 → 4 → 5 (on Next/Skip)",
+        "formData: INITIAL_FORM_DATA → populated step data",
+        "stepErrors: {} → {stepId: errorMessage}",
+        "isCreating: false → true → false"
+      ],
+      "side_effects": [
+        "Keyboard event listener (Arrow Left/Right)",
+        "Console logging [ProjectCreationWizard]"
+      ],
+      "event_emissions": [
+        "onOpenChange(false) - close wizard after creation",
+        "onProjectCreated(projectId) - callback to parent"
+      ],
+      "store_interactions": [
+        "useProjectStore.createProject() - async project creation"
+      ]
+    },
+    {
+      "stage": "3. Step 1: Project Details (Required)",
+      "routes": [
+        "ProjectDetailsStep component"
+      ],
+      "hooks": [
+        "useState - isPickingFolder",
+        "useEffect - auto-detect storageType from platform",
+        "useCallback - handlePickFolder",
+        "useMemo - availableStorageTypes filtering",
+        "getPlatformContract() - platform detection"
+      ],
+      "state_changes": [
+        "formData.storageType: undefined → 'fsa' (desktop) or 'indexeddb' (mobile)",
+        "formData.fsaHandle: undefined → FileSystemDirectoryHandle (after pick)",
+        "formData.projectName: '' → user input",
+        "formData.projectType: 'app' → user selection",
+        "formData.projectIcon: '📁' → user selection"
+      ],
+      "side_effects": [
+        "window.showDirectoryPicker() - FSA folder selection",
+        "toast.success/failure - folder selection feedback",
+        "Platform detection via getPlatformContract()"
+      ],
+      "event_emissions": [
+        "updateFormData('storageType', value) - parent state update",
+        "updateFormData('fsaHandle', handle) - parent state update"
+      ],
+      "store_interactions": [
+        "getPlatformContract() - platform-contract.ts"
+      ]
+    },
+    {
+      "stage": "4. Step 2: Workspace Setup (Optional)",
+      "routes": [
+        "WorkspaceSetupStep component"
+      ],
+      "hooks": [
+        "useTranslation - i18n",
+        "updateFormData callback"
+      ],
+      "state_changes": [
+        "formData.workspaceEnabled: false → true (toggle)",
+        "formData.workspaceName: '' → user input",
+        "formData.workspaceType: 'webcontainer' → selection",
+        "formData.workspaceTemplate: 'blank' → selection",
+        "formData.workspaceBindings: {ide: false, knowledge: true, notes: true, study: true}"
+      ],
+      "side_effects": [
+        "IDE binding disabled if storageType !== 'fsa'"
+      ],
+      "event_emissions": [
+        "updateFormData('workspaceBindings', {...})"
+      ],
+      "store_interactions": []
+    },
+    {
+      "stage": "5. Step 3: Agent Selection (Optional)",
+      "routes": [
+        "AgentSelectionStep component"
+      ],
+      "hooks": [
+        "useTranslation - i18n"
+      ],
+      "state_changes": [
+        "formData.agentEnabled: false → true",
+        "formData.selectedAgent: 'claude' → selection",
+        "formData.agentPermissions: {read: true, write: false, execute: false}"
+      ],
+      "side_effects": [],
+      "event_emissions": [
+        "updateFormData('agentPermissions', {...})"
+      ],
+      "store_interactions": []
+    },
+    {
+      "stage": "6. Step 4: File Setup (Optional)",
+      "routes": [
+        "FileSetupStep component"
+      ],
+      "hooks": [
+        "useTranslation - i18n"
+      ],
+      "state_changes": [
+        "formData.fileSetupEnabled: false → true",
+        "formData.createReadme: true → toggle",
+        "formData.createGitignore: true → toggle"
+      ],
+      "side_effects": [],
+      "event_emissions": [],
+      "store_interactions": []
+    },
+    {
+      "stage": "7. Step 5: Review & Confirm",
+      "routes": [
+        "ReviewStep component"
+      ],
+      "hooks": [
+        "useTranslation - i18n"
+      ],
+      "state_changes": [
+        "validationChecks computed array",
+        "No state changes - read-only summary"
+      ],
+      "side_effects": [],
+      "event_emissions": [],
+      "store_interactions": []
+    },
+    {
+      "stage": "8. Project Creation → Store → DB",
+      "routes": [
+        "ProjectCreationWizard.handleCreate() → useProjectStore.createProject()"
+      ],
+      "hooks": [
+        "useProjectStore (Zustand) - createProject method"
+      ],
+      "state_changes": [
+        "Zustand store: projects[projectId] = newProject",
+        "Zustand store: activeProjectId = projectId",
+        "Dexie DB: db.projects.put(projectRecord)"
+      ],
+      "side_effects": [
+        "Console logging [ProjectStore] Creating project",
+        "Dexie IndexedDB write (blocking, awaited)",
+        "serializeHandle() - FSA metadata serialization",
+        "handlePersistenceService.persistHandle() - Chrome 129+ structuredClone"
+      ],
+      "event_emissions": [
+        "onProjectCreated(projectId) - success callback"
+      ],
+      "store_interactions": [
+        "useProjectStore.createProject() - project-crud-slice.ts",
+        "handlePersistenceService.persistHandle() - handle-persistence.ts",
+        "db.projects.put() - Dexie persistence"
+      ]
+    },
+    {
+      "stage": "9. Navigation to Workspace",
+      "routes": [
+        "/ide/$projectId (ide.$projectId.tsx)",
+        "/notes/$projectId (notes.$projectId.tsx)"
+      ],
+      "hooks": [
+        "useNavigate - programmatic navigation",
+        "useProjectStore.getState().getProject() - fetch created project",
+        "getPlatformContract() - platform detection for redirect"
+      ],
+      "state_changes": [
+        "Route changes to /ide/$projectId or /notes/$projectId",
+        "Project becomes active in store"
+      ],
+      "side_effects": [
+        "Toast notification: 'Project created successfully'",
+        "Navigation to workspace route",
+        "Platform-aware redirect (ADR-033): FSA → IDE, IndexedDB → Notes"
+      ],
+      "event_emissions": [],
+      "store_interactions": [
+        "useProjectStore.setActiveProject(projectId)",
+        "useProjectStore.getProject(projectId)"
+      ]
+    },
+    {
+      "stage": "10. Quick Create Flow (Alternative)",
+      "routes": [
+        "HubHomePage.handleNewProject() → FSA picker → navigate"
+      ],
+      "hooks": [
+        "window.showDirectoryPicker() - direct folder selection",
+        "useProjectStore.getState().createProject()",
+        "handlePersistenceService.persistHandle()"
+      ],
+      "state_changes": [
+        "Project created via handleNewProject (no wizard)",
+        "Immediate navigation to /ide/$projectId"
+      ],
+      "side_effects": [
+        "Dexie DB write (awaited)",
+        "FSA handle persistence (structuredClone for Chrome 129+)",
+        "Console logging [HubHomePage]"
+      ],
+      "event_emissions": [
+        "navigate() - immediate redirect"
+      ],
+      "store_interactions": [
+        "useProjectStore.createProject()",
+        "handlePersistenceService.persistHandle()"
+      ]
+    }
+  ],
+  "all_hooks_involved": [
+    {
+      "name": "useState",
+      "files": [
+        "src/presentation/components/project/ProjectCreationWizard.tsx",
+        "src/presentation/components/project/ProjectsPage.tsx",
+        "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+        "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 15,
+      "has_issues": false
+    },
+    {
+      "name": "useEffect",
+      "files": [
+        "src/presentation/components/project/ProjectCreationWizard.tsx",
+        "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+        "src/presentation/components/project/steps/TemplateSelectionStep.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 8,
+      "has_issues": false
+    },
+    {
+      "name": "useCallback",
+      "files": [
+        "src/presentation/components/project/ProjectCreationWizard.tsx",
+        "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+        "src/presentation/components/project/steps/TemplateSelectionStep.tsx"
+      ],
+      "usage_count": 12,
+      "has_issues": false
+    },
+    {
+      "name": "useMemo",
+      "files": [
+        "src/presentation/components/project/ProjectsPage.tsx",
+        "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 5,
+      "has_issues": false
+    },
+    {
+      "name": "useTranslation",
+      "files": [
+        "src/presentation/components/project/**/*.tsx",
+        "src/presentation/components/hub/**/*.tsx"
+      ],
+      "usage_count": 18,
+      "has_issues": false
+    },
+    {
+      "name": "useNavigate",
+      "files": [
+        "src/presentation/components/project/ProjectsPage.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 4,
+      "has_issues": false
+    },
+    {
+      "name": "useLiveQuery",
+      "files": [
+        "src/presentation/components/project/ProjectsPage.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 3,
+      "has_issues": false
+    },
+    {
+      "name": "useRouterState",
+      "files": [
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 1,
+      "has_issues": false
+    },
+    {
+      "name": "useProjectStore",
+      "files": [
+        "src/presentation/components/project/ProjectCreationWizard.tsx",
+        "src/presentation/components/project/ProjectsPage.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ],
+      "usage_count": 8,
+      "has_issues": false,
+      "notes": "Centralized Zustand store for project CRUD operations"
+    }
+  ],
+  "all_stores_involved": [
+    {
+      "name": "useProjectStore (Zustand)",
+      "file": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "usage_count": 5,
+      "has_issues": false,
+      "slices": [
+        "project-crud-slice.ts",
+        "project-bindings-slice.ts",
+        "project-permissions-slice.ts",
+        "project-layout-slice.ts",
+        "project-utils-slice.ts"
+      ],
+      "key_methods": [
+        "createProject(input: CreateProjectInput): Promise<string>",
+        "updateProject(projectId, updates)",
+        "deleteProject(projectId)",
+        "setActiveProject(projectId)",
+        "getProject(projectId)",
+        "getAllProjects()",
+        "restoreProjectHandle(projectId)"
+      ]
+    },
+    {
+      "name": "Dexie IndexedDB (ViaGentDatabase)",
+      "file": "src/infrastructure/persistence/dexie-db.ts",
+      "usage_count": 3,
+      "has_issues": false,
+      "tables": [
+        "projects - project metadata",
+        "fsaHandles - FSA directory handles (Chrome 129+)",
+        "syncStatus - file sync status"
+      ],
+      "key_methods": [
+        "db.projects.put(projectRecord)",
+        "db.projects.get(projectId)",
+        "db.projects.toArray()",
+        "db.fsaHandles.put(handleRecord)"
+      ]
+    },
+    {
+      "name": "handlePersistenceService",
+      "file": "src/infrastructure/filesystem/handle-persistence.ts",
+      "usage_count": 2,
+      "has_issues": false,
+      "key_methods": [
+        "persistHandle(projectId, handle, workspaceId)",
+        "restoreHandle(projectId): Promise<HandleRestoreResult>",
+        "deleteHandle(projectId)"
+      ]
+    }
+  ],
+  "critical_path_analysis": {
+    "entry_point": "HubHomePage (index.tsx → HubHomePage) or ProjectsPage (projects.tsx → ProjectsPage)",
+    "exit_point": "Workspace route navigation (/ide/$projectId or /notes/$projectId)",
+    "infinite_loop_risk": [
+      {
+        "location": "useLiveQuery in ProjectsPage/HubHomePage",
+        "risk": "LOW",
+        "reason": "useLiveQuery uses Dexie observables - only re-renders when DB actually changes"
+      },
+      {
+        "location": "useShallow pattern in useProjectStore hooks",
+        "risk": "LOW",
+        "reason": "useShallow prevents reference equality issues with Object.values()"
+      }
+    ],
+    "performance_bottlenecks": [
+      {
+        "location": "Dexie IndexedDB write in createProject",
+        "impact": "BLOCKING - awaited in project-crud-slice.ts:154",
+        "mitigation": "BUG-005 FIX: DB write is awaited to prevent race condition"
+      },
+      {
+        "location": "window.showDirectoryPicker() FSA folder picker",
+        "impact": "BLOCKING - user interaction required",
+        "mitigation": "Chrome 129+ structuredClone enables async handle persistence"
+      },
+      {
+        "location": "handlePersistenceService.persistHandle()",
+        "impact": "BLOCKING - stores handle in Dexie",
+        "mitigation": "Can be deferred after navigation if needed"
+      }
+    ],
+    "key_decision_points": [
+      {
+        "point": "Platform detection (ADR-033)",
+        "decision": "Desktop FSA → IDE, Mobile/IndexedDB → Notes",
+        "file": "src/infrastructure/filesystem/platform-contract.ts"
+      },
+      {
+        "point": "Wizard vs Quick Create",
+        "decision": "Full wizard via 'Create Project', Quick via 'New Project' on Hub",
+        "file": "src/presentation/components/hub/HubHomePage.tsx"
+      },
+      {
+        "point": "Step validation",
+        "decision": "Each step validates before proceeding (validateStep callback)",
+        "file": "src/presentation/components/project/ProjectCreationWizard.tsx"
+      }
+    ],
+    "data_flow": [
+      "1. User input in wizard steps → formData state",
+      "2. handleCreate() → serialize handle → CreateProjectInput",
+      "3. createProject() → Zustand store update → Dexie DB put",
+      "4. persistHandle() → structuredClone → Dexie fsaHandles",
+      "5. onProjectCreated() → navigate() → workspace route"
+    ]
+  },
+  "file_inventory": {
+    "routes": [
+      "src/routes/index.tsx",
+      "src/routes/projects.tsx",
+      "src/routes/ide.$projectId.tsx",
+      "src/routes/notes.$projectId.tsx"
+    ],
+    "components": [
+      "src/presentation/components/hub/HubHomePage.tsx",
+      "src/presentation/components/project/ProjectsPage.tsx",
+      "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "src/presentation/components/project/steps/ProjectDetailsStep.tsx",
+      "src/presentation/components/project/steps/WorkspaceSetupStep.tsx",
+      "src/presentation/components/project/steps/AgentSelectionStep.tsx",
+      "src/presentation/components/project/steps/FileSetupStep.tsx",
+      "src/presentation/components/project/steps/ReviewStep.tsx"
+    ],
+    "stores": [
+      "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "src/infrastructure/persistence/stores/project/project-crud-slice.ts",
+      "src/infrastructure/persistence/stores/project/project-types.ts"
+    ],
+    "infrastructure": [
+      "src/infrastructure/persistence/dexie-db.ts",
+      "src/infrastructure/filesystem/platform-contract.ts",
+      "src/infrastructure/filesystem/handle-persistence.ts"
+    ],
+    "types": [
+      "src/presentation/components/project/wizard-types.ts"
+    ]
+  }
+}

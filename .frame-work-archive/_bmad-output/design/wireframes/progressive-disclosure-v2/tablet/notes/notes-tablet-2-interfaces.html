@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent Notes - Tablet (2 Interfaces)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --action: #f97316;
+      --border: #3f3f46;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+    }
+    body {
+      font-family: 'Geist Sans', sans-serif;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .notes-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      flex-direction: column;
+    }
+    .header {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+    .header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .btn {
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .workspace-split {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .note-list-panel {
+      width: 200px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .list-header {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .note-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .note-item {
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .note-item.active {
+      background: var(--surface-hover);
+      border-color: var(--action);
+      border-left: 3px solid var(--action);
+    }
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .editor-toolbar {
+      padding: 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+    }
+    .editor-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+    }
+    .editor-content {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      outline: none;
+    }
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 11px;
+      color: var(--canvas);
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--surface); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+  </style>
+</head>
+<body>
+  <div class="notes-container">
+    <header class="header">
+      <div class="header-title">📝 Via-Gent Notes</div>
+      <button class="btn">+ New</button>
+    </header>
+
+    <main class="main-content">
+      <div class="workspace-split">
+        <div class="note-list-panel">
+          <div class="list-header">NOTES</div>
+          <div class="note-list">
+            <div class="note-item active">Progressive Disclosure</div>
+            <div class="note-item">8-bit Design</div>
+            <div class="note-item">Research</div>
+            <div class="note-item">Blog Posts</div>
+          </div>
+        </div>
+
+        <div class="editor-panel">
+          <div class="editor-toolbar">
+            <input type="text" class="editor-title" value="Progressive Disclosure">
+          </div>
+          <div class="editor-content" contenteditable="true" spellcheck="false">
+            <h1>Progressive Disclosure</h1>
+            <p>Progressive disclosure is a design pattern where only essential information is shown initially, with additional features revealed through user interaction.</p>
+            <p>On tablet devices, we use a side-by-side layout for efficient note-taking while maintaining readability.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="status-bar">
+      <span>💾 Auto-saved</span>
+      <span>📄 Markdown</span>
+      <span>⏱ Just now</span>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.note-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

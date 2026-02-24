@@ -1,0 +1,55 @@
+name: Dependency Audit
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily
+  push:
+    paths:
+      - 'package*.json'
+      - 'requirements.txt'
+      - 'Gemfile*'
+      - 'go.mod'
+  workflow_dispatch:
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run NPM Audit
+      if: hashFiles('package.json')
+      run: |
+        npm audit --json > npm-audit.json || true
+        # Continue even if audit fails to allow reporting
+        
+    - name: Check Licenses
+      run: |
+        npx license-checker --json > licenses.json || true
+    
+    - name: Create Issue for Critical Vulnerabilities
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          try {
+            const fs = require('fs');
+            if (fs.existsSync('./npm-audit.json')) {
+              const audit = JSON.parse(fs.readFileSync('./npm-audit.json', 'utf8'));
+              // npm audit json structure varies, handle standard
+              const critical = audit.metadata?.vulnerabilities?.critical || 0;
+              
+              if (critical > 0) {
+                github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `🚨 ${critical} critical vulnerabilities found`,
+                  body: 'Dependency audit found critical vulnerabilities. See workflow run for details.',
+                  labels: ['security', 'dependencies', 'critical']
+                });
+              }
+            }
+          } catch (e) {
+            console.log('Error processing audit report:', e);
+          }

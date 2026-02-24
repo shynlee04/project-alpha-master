@@ -1,0 +1,534 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS - ACTIVE SPRINTS (2026-01-25)
+# ═══════════════════════════════════════════════════════════════════════════
+# 
+# This file tracks ONLY active work. Historical sprints are archived.
+# Updated: 2026-01-26T00:30:00+07:00
+# Updated By: bmad-master
+#
+# ═══════════════════════════════════════════════════════════════════════════
+
+schema_version: "3.2.0"
+last_updated: "2026-01-26T00:30:00+07:00"
+updated_by: "bmad-master"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CURRENT BLOCKERS (P0) - PRIORITY ORDER
+# ═══════════════════════════════════════════════════════════════════════════
+
+p0_blockers:
+  # First: Complete CC-04 E2E validation to close EPIC-ARCH-04-CC
+  - epic_id: "EPIC-ARCH-04-CC"
+    parent_epic: "EPIC-ARCH-04"
+    title: "Correct-Course Remediation - FSA Handle Lifecycle"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "95%"
+    effort_hours: 4-6
+    blocking: "ALL_PHASES"
+    
+    note: |
+      CC-01/02/03 COMPLETE. CC-04 E2E validation unblocked.
+      ARCH-04-01/02/03 were marked complete but validation revealed they were
+      NOT actually integrated. This correct-course epic provides exact code
+      changes with line-by-line specifications.
+    
+    remaining:
+      - id: "CC-04"
+        title: "End-to-End Validation with Evidence"
+        status: "READY"
+        depends_on: ["CC-01", "CC-02", "CC-03"]
+    
+    completed:
+      - id: "CC-01"
+        title: "Add initialHandle Prop and FSA Restore Logic"
+        status: "COMPLETE"
+      - id: "CC-02"
+        title: "Wire PermissionOverlay with Persist and Reinit"
+        status: "COMPLETE"
+      - id: "CC-03"
+        title: "Wire Route to Pass initialHandle"
+        status: "COMPLETE"
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-CC-correct-course-remediation-2026-01-25.md"
+      handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+
+  # Second: EPIC-CC-AR02AR03 remediates ARCH-02 and ARCH-03
+  - epic_id: "EPIC-CC-AR02AR03"
+    title: "Correct-Course: Plugin System Complete Rework for Phase 1A"
+    status: "READY_FOR_EXECUTION"
+    priority: "P0"
+    progress: "0%"
+    remediates:
+      - "EPIC-ARCH-02 (70% true completion)"
+      - "EPIC-ARCH-03 (45% true completion)"
+    blocks: "Phase 1A"
+    effort_hours: "16-24"
+    target_completion: "2026-01-28"
+    
+    stories:
+      - id: "CC-AR-01"
+        title: "Add All Missing i18n Translation Keys"
+        status: "READY"
+        team: "A"
+        effort: "2h"
+        
+      - id: "CC-AR-02"
+        title: "Wire platform-defaults.ts to Route"
+        status: "READY"
+        team: "A"
+        effort: "2-3h"
+        depends_on: ["CC-AR-01"]
+        
+      - id: "CC-AR-03"
+        title: "Fix Store Hydration Race Condition"
+        status: "READY"
+        team: "B"
+        effort: "2-3h"
+        
+      - id: "CC-AR-04"
+        title: "Replace Drag-Drop with Toggle-Based Layout"
+        status: "READY"
+        team: "A"
+        effort: "4-6h"
+        depends_on: ["CC-AR-01", "CC-AR-02"]
+        
+      - id: "CC-AR-05"
+        title: "Replace Monaco POC with Real Monaco Editor"
+        status: "READY"
+        team: "B"
+        effort: "4-6h"
+        depends_on: ["CC-AR-03"]
+        
+      - id: "CC-AR-06"
+        title: "Implement Preview Plugin (WebContainer)"
+        status: "READY"
+        team: "B"
+        effort: "4-6h"
+        depends_on: ["CC-AR-03"]
+        
+      - id: "CC-AR-07"
+        title: "Archive Legacy/Duplicate Files"
+        status: "READY"
+        team: "A"
+        effort: "1h"
+        depends_on: ["CC-AR-04"]
+        
+      - id: "CC-AR-08"
+        title: "Split PluginLayout.tsx"
+        status: "READY"
+        team: "B"
+        effort: "2-3h"
+        depends_on: ["CC-AR-04", "CC-AR-05"]
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# AUDIT FINDINGS (2026-01-26)
+# ═══════════════════════════════════════════════════════════════════════════
+
+audit_findings:
+  date: "2026-01-26"
+  conducted_by: "bmad-master (5 parallel sub-agents)"
+  
+  epic_true_completion:
+    EPIC-ARCH-01: 
+      claimed: "100%"
+      actual: "60%"
+      gap: "window.location.href and project creation consolidation"
+      
+    EPIC-ARCH-02:
+      claimed: "100%"
+      actual: "70%"
+      gap: "Monaco is POC stub (textarea), not real Monaco Editor"
+      
+    EPIC-ARCH-03:
+      claimed: "85%"
+      actual: "45%"
+      gap: "40+ i18n keys missing, platform-defaults not wired, drag-drop broken"
+      
+  critical_issues:
+    - "UI shows raw translation keys (plugin.activePlugins)"
+    - "Monaco uses textarea placeholder instead of @monaco-editor/react"
+    - "PluginLayout.tsx = 1034 lines (threshold: 500)"
+    - "Store hydration race condition in PluginLayoutStore"
+    - "Drag-drop causes broken layouts"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 1A STATUS
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_1a:
+  status: "BLOCKED"
+  blocked_by: "EPIC-CC-AR02AR03"
+  requirements:
+    - requirement: "Terminal + WebContainer API"
+      status: "PARTIAL"
+      blocker: "Runtime untested"
+      
+    - requirement: "Monaco Editor with syntax highlight"
+      status: "NOT_MET"
+      blocker: "POC stub using textarea"
+      
+    - requirement: "FileTree with incremental sync"
+      status: "PARTIAL"
+      blocker: "Runtime untested"
+      
+    - requirement: "Preview with pnpm dev"
+      status: "NOT_MET"
+      blocker: "Preview plugin not implemented"
+      
+  readiness: "40%"
+  unblock_after: "EPIC-CC-AR02AR03 stories CC-AR-01 through CC-AR-06"
+
+legacy_blockers:
+  - epic_id: "EPIC-ARCH-04"
+    story_id: "ARCH-04-01"
+    title: "Integrate FSA Handle Lifecycle into ProjectContextProvider"
+    status: "SUPERSEDED_BY_CC"
+    superseded_by: "EPIC-ARCH-04-CC"
+    note: "Original story superseded by correct-course epic CC-01 through CC-04"
+    
+  - epic_id: "EPIC-ARCH-02"
+    title: "Plugin System & Platform Routing"
+    status: "PARTIALLY_COMPLETE"
+    claimed_progress: "100%"
+    actual_progress: "70%"
+    remediated_by: "EPIC-CC-AR02AR03"
+    
+  - epic_id: "EPIC-ARCH-03"
+    title: "Layout System & UX"
+    status: "PARTIALLY_COMPLETE"
+    claimed_progress: "85%"
+    actual_progress: "45%"
+    remediated_by: "EPIC-CC-AR02AR03"
+
+completed_prerequisites:
+  - id: "HOOKS-FIX-01"
+    title: "Migrate imports from OLD to NEW context"
+    status: "COMPLETE"
+  - id: "HOOKS-FIX-02"
+    title: "Fix hooks violation (line 250)"
+    status: "COMPLETE"
+  - id: "EPIC-TS-DEBT"
+    title: "TypeScript errors (115 → 0)"
+    status: "COMPLETE"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ACTIVE EPIC: EPIC-ARCH-04 (Complete Migration)
+# ═══════════════════════════════════════════════════════════════════════════
+
+active_epics:
+  - epic_id: "EPIC-ARCH-04"
+    name: "Complete Architecture Migration & FSA Integration"
+    status: "IN_PROGRESS"
+    priority: "P0"
+    progress: "0%"
+    started_at: "2026-01-25T21:00:00+07:00"
+    blocking: true
+    
+    artifacts:
+      epic: "_bmad-output/planning-artifacts/epics/EPIC-ARCH-04-complete-migration-2026-01-25.md"
+      handoff: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-SPRINT-HANDOFF-2026-01-25.md"
+    
+    stories:
+      - id: "ARCH-04-01"
+        title: "Integrate FSA Handle Lifecycle into ProjectContextProvider"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "3-4h"
+        dependencies: []
+        blocking: ["ARCH-04-02", "ARCH-04-03", "ARCH-04-05"]
+        
+      - id: "ARCH-04-02"
+        title: "Pass FSA Handle from Wizard to Route"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "1-2h"
+        dependencies: ["ARCH-04-01"]
+        
+      - id: "ARCH-04-03"
+        title: "Integrate PermissionOverlay for NEW Architecture"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "1-2h"
+        dependencies: ["ARCH-04-01"]
+        
+      - id: "ARCH-04-05"
+        title: "End-to-End Flow Validation"
+        status: "READY_FOR_DEV"
+        priority: "P0"
+        effort: "1-2h"
+        dependencies: ["ARCH-04-01", "ARCH-04-02", "ARCH-04-03"]
+        
+      - id: "ARCH-04-04"
+        title: "Archive Legacy Files and Update Imports"
+        status: "READY_FOR_DEV"
+        priority: "P1"
+        effort: "2-3h"
+        dependencies: ["ARCH-04-05"]
+        
+      - id: "ARCH-04-06"
+        title: "Clean Up Deprecated Options in Wizard"
+        status: "READY_FOR_DEV"
+        priority: "P2"
+        effort: "1h"
+        dependencies: ["ARCH-04-05"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COMPLETED EPICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+  - epic_id: "EPIC-TS-DEBT"
+    name: "TypeScript Technical Debt Remediation"
+    status: "COMPLETE"
+    completed_at: "2026-01-25T10:00:00+07:00"
+    
+    metrics:
+      errors_before: 115
+      errors_after: 0
+      files_modified: 19
+      
+    stories:
+      - id: "TS-DEBT-01"
+        status: "DONE"
+      - id: "TS-DEBT-02"
+        status: "DONE"
+      - id: "TS-DEBT-03"
+        status: "DONE"
+      - id: "TS-DEBT-04"
+        status: "DONE"
+      - id: "TS-DEBT-05"
+        status: "DONE"
+
+  - epic_id: "EPIC-ARCH-03"
+    name: "Layout System & UX"
+    status: "REQUIRES_REMEDIATION"
+    claimed_progress: "85%"
+    actual_progress: "45%"
+    remediated_by: "EPIC-CC-AR02AR03"
+    
+    audit_notes: |
+      Multi-agent audit revealed significant gaps:
+      - 40+ i18n translation keys missing
+      - Drag-drop layout causes broken UI
+      - PluginLayout.tsx = 1034 lines (threshold: 500)
+      - Store hydration race condition
+    
+    stories:
+      - id: "ARCH-03-00"
+        status: "DONE"
+      - id: "ARCH-03-01"
+        status: "DONE"
+      - id: "ARCH-03-02"
+        status: "DONE"
+      - id: "ARCH-03-03"
+        status: "PARTIAL"
+        gap: "Missing i18n keys"
+      - id: "ARCH-03-04"
+        status: "PARTIAL"
+        gap: "Drag-drop broken"
+      - id: "ARCH-03-05"
+        status: "BLOCKED"
+      - id: "ARCH-03-06"
+        status: "PARTIAL"
+        gap: "Store hydration race"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PENDING EPICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+pending_epics:
+  - epic_id: "EPIC-CTX-CLEAN"
+    name: "Context & Governance Document Remediation"
+    status: "DEFERRED"
+    deferred_until: "EPIC-ARCH-04 complete"
+    priority: "P1"
+    effort_hours: "4-6"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY ORDER (2026-01-26 Updated)
+# ═══════════════════════════════════════════════════════════════════════════
+
+priority_order:
+  # First: Complete EPIC-ARCH-04-CC E2E validation
+  1:
+    story: "CC-04"
+    epic: "EPIC-ARCH-04-CC"
+    reason: "P0 - E2E validation to close FSA handle lifecycle"
+    effort: "1-2 hours"
+    status: "READY"
+    
+  # Then: EPIC-CC-AR02AR03 stories for Phase 1A
+  2:
+    story: "CC-AR-01"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P0 - Add missing i18n keys (UI shows raw keys)"
+    effort: "2 hours"
+    team: "A"
+    
+  3:
+    story: "CC-AR-03"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P0 - Fix store hydration race (layout not persisting)"
+    effort: "2-3 hours"
+    team: "B"
+    
+  4:
+    story: "CC-AR-02"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P0 - Wire platform-defaults to route"
+    effort: "2-3 hours"
+    team: "A"
+    depends_on: ["CC-AR-01"]
+    
+  5:
+    story: "CC-AR-04"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P0 - Replace broken drag-drop with toggle-based layout"
+    effort: "4-6 hours"
+    team: "A"
+    depends_on: ["CC-AR-01", "CC-AR-02"]
+    
+  6:
+    story: "CC-AR-05"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P0 - Replace Monaco POC stub with real Monaco Editor"
+    effort: "4-6 hours"
+    team: "B"
+    depends_on: ["CC-AR-03"]
+    
+  7:
+    story: "CC-AR-06"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P0 - Implement Preview plugin (WebContainer)"
+    effort: "4-6 hours"
+    team: "B"
+    depends_on: ["CC-AR-03"]
+    
+  8:
+    story: "CC-AR-07"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P1 - Archive legacy/duplicate files"
+    effort: "1 hour"
+    team: "A"
+    depends_on: ["CC-AR-04"]
+    
+  9:
+    story: "CC-AR-08"
+    epic: "EPIC-CC-AR02AR03"
+    reason: "P1 - Split PluginLayout.tsx (1034 lines → <500)"
+    effort: "2-3 hours"
+    team: "B"
+    depends_on: ["CC-AR-04", "CC-AR-05"]
+    
+  10:
+    epic: "EPIC-CTX-CLEAN"
+    reason: "P1 - Context document cleanup (after Phase 1A)"
+    deferred_until: "EPIC-CC-AR02AR03 complete"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TEAMS (2026-01-26 Updated)
+# ═══════════════════════════════════════════════════════════════════════════
+
+teams:
+  # ─────────────────────────────────────────────────────────────────────────
+  # TEAM A: FSA Handle + i18n + Layout (P0 - Critical Path)
+  # ─────────────────────────────────────────────────────────────────────────
+  team_a:
+    status: "IN_PROGRESS"
+    current_epic: "EPIC-ARCH-04-CC"
+    pending_epic: "EPIC-CC-AR02AR03"
+    
+    current_work:
+      epic: "EPIC-ARCH-04-CC"
+      stories: ["CC-04"]
+      status: "READY"
+      note: "CC-01/02/03 COMPLETE. CC-04 E2E validation remaining."
+      
+    next_work:
+      epic: "EPIC-CC-AR02AR03"
+      stories: ["CC-AR-01", "CC-AR-02", "CC-AR-04", "CC-AR-07"]
+      status: "QUEUED"
+      note: "After CC-04 complete"
+    
+    last_completed: "CC-01, CC-02, CC-03"
+    assignment_artifact: "_bmad-output/handoffs/2026-01-25/EPIC-ARCH-04-CC-SPRINT-HANDOFF-2026-01-25.md"
+    files_owned:
+      - "src/infrastructure/context/project-context.tsx"
+      - "src/routes/$projectId.tsx"
+      - "src/presentation/components/layout/PermissionOverlay.tsx"
+      - "src/lib/i18n/locales/*.json"
+    
+  # ─────────────────────────────────────────────────────────────────────────
+  # TEAM B: Store + Monaco + Preview (P0 - Parallel to Team A)
+  # ─────────────────────────────────────────────────────────────────────────
+  team_b:
+    status: "REASSIGNED"
+    previous_epic: "EPIC-CONSOLIDATION"
+    current_epic: "EPIC-CC-AR02AR03"
+    
+    previous_work:
+      epic: "EPIC-CONSOLIDATION"
+      stories_completed: ["CONS-01", "CONS-02"]
+      stories_deferred: ["CONS-03"]
+      completed_at: "2026-01-26T00:05:00+07:00"
+      evidence_artifact: "_bmad-output/handoffs/2026-01-25/TEAM-B-CONS-EVIDENCE-2026-01-25.md"
+    
+    current_work:
+      epic: "EPIC-CC-AR02AR03"
+      stories: ["CC-AR-03", "CC-AR-05", "CC-AR-06", "CC-AR-08"]
+      status: "READY"
+      note: "Store hydration + Monaco + Preview plugins"
+      
+    assignment_artifact: "_bmad-output/planning-artifacts/epics/EPIC-CC-AR02AR03-plugin-system-phase1a-2026-01-26.md"
+    files_owned:
+      - "src/infrastructure/persistence/stores/plugin-layout-store.ts"
+      - "src/plugins/monaco/MonacoPlugin.tsx"
+      - "src/plugins/preview/PreviewPlugin.tsx"
+      - "src/presentation/components/layout/PluginLayout.tsx"
+    
+  # ─────────────────────────────────────────────────────────────────────────
+  # ORCHESTRATION
+  # ─────────────────────────────────────────────────────────────────────────
+  sprint_manager:
+    status: "COORDINATING"
+    last_action: "Created EPIC-CC-AR02AR03 and updated sprint status"
+    coordinating:
+      - team_a: "CC-04 then CC-AR-01/02/04/07"
+      - team_b: "CC-AR-03/05/06/08"
+    
+  architect_ext:
+    status: "COMPLETE"
+    completed: "Multi-agent audit + EPIC-CC-AR02AR03 creation"
+    audit_date: "2026-01-26"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GOVERNANCE HEALTH (2026-01-26 Updated)
+# ═══════════════════════════════════════════════════════════════════════════
+
+governance_health:
+  typescript_errors: 0
+  yaml_parse_errors: 0
+  stale_artifacts: 0
+  app_status: "FUNCTIONAL_BUT_INCOMPLETE"
+  overall_score: "45%"
+  
+  notes: |
+    TypeScript: PASS (0 errors as of 2026-01-25)
+    YAML: Clean
+    App: Functional for basic flows but Phase 1A incomplete
+    
+    Multi-agent audit revealed:
+    - EPIC-ARCH-02: 70% true (Monaco POC stub)
+    - EPIC-ARCH-03: 45% true (i18n gaps, drag-drop broken)
+    - Plugin system requires complete rework
+    
+    Will reach 80%+ when EPIC-CC-AR02AR03 complete.
+    Target: Phase 1A readiness by 2026-01-28.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# END OF FILE
+# ═══════════════════════════════════════════════════════════════════════════

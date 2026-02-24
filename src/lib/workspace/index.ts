@@ -1,75 +1,84 @@
 /**
- * Workspace module exports.
+ * @fileoverview lib/workspace barrel exports
+ * @module lib/workspace
  *
- * This module provides workspace management functionality including:
- * Story 3-7: Project Metadata Persistence (IndexedDB storage)
- * Story 3-8: Workspace Context (centralized state)
+ * @deprecated These exports are obsolete and being migrated.
+ * Use canonical imports from domain/ and infrastructure/ layers.
  */
 
-// Story 3-7: Project Store
+// File sync status store
 export {
-    saveProject,
-    getProject,
-    listProjects,
-    listProjectsWithPermission,
-    deleteProject,
-    updateProjectLastOpened,
-    checkProjectPermission,
-    generateProjectId,
-    clearAllProjects,
-    getProjectCount,
-    _resetDBForTesting,
-    type ProjectMetadata,
-    type ProjectWithPermission,
-    type LayoutConfig,
-} from './project-store';
-
-// Story 5-3: Conversation Store
-export {
-    getConversation,
-    saveConversation,
-    appendConversationMessage,
-    appendToolResult,
-    clearConversation,
-    listRecentConversations,
-    type ConversationMessage,
-    type ConversationMessageRole,
-    type ConversationState,
-    type ToolResultRecord,
-} from './conversation-store';
-
-// Story 5-4: IDE State Store
-export {
-    getIdeState,
-    saveIdeState,
-    updateIdeState,
-    clearIdeState,
-    listRecentIdeStates,
-    type IdeState,
-    type IdeStatePatch,
-    type TerminalTab,
-} from './ide-state-store';
-
-// Story 3-8: Workspace Context
-export {
-    WorkspaceProvider,
-    useWorkspace,
-    type WorkspaceState,
-    type WorkspaceActions,
-    type WorkspaceContextValue,
-    type WorkspaceProviderProps,
-    type SyncStatus,
-} from './WorkspaceContext';
-
-export {
-    fileSyncStatusStore,
-    fileSyncCountsStore,
-    setFileSyncPending,
-    setFileSyncSynced,
-    setFileSyncError,
-    clearFileSyncStatus,
-    clearAllFileSyncStatuses,
-    type FileSyncState,
-    type FileSyncStatus,
-    type FileSyncStatusMap,
+  useFileSyncStatusStore,
+  fileSyncStatusStore,
+  fileSyncCountsStore,
+  setFileSyncPending,
+  setFileSyncSynced,
+  setFileSyncError,
+  clearFileSyncStatus,
+  clearAllFileSyncStatuses,
 } from './file-sync-status-store';
+
+export type {
+  FileSyncState,
+  FileSyncStatus,
+  FileSyncCounts,
+  SyncProgress,
+  FileSyncStatusStore,
+} from './file-sync-status-store';
+
+// Workspace detector
+export {
+  detectWorkspace,
+  getCurrentWorkspace,
+  isValidWorkspace,
+  isInWorkspace,
+  getWorkspacePath,
+} from './workspace-detector';
+
+export type { WorkspaceType } from './workspace-detector';
+
+// FSA persistence
+export {
+  fsaPersistenceManager,
+  FSAPersistenceManager,
+  createFSAPersistenceManager,
+  createProjectFromFolder,
+  pickFolder,
+  isFSASupported,
+  isDesktopPlatform,
+} from './fsa-persistence';
+
+export type { CreateFromFolderOptions } from './fsa-persistence';
+
+// Browser mode
+export { browserMode, isBrowserMode, getOrCreateBrowserModeProject } from './browser-mode';
+
+// Temp project
+export { tempProject, createTempProject, getOrCreateTempProject } from './temp-project';
+
+export type { TempProjectMetadata } from './temp-project';
+
+// Re-export common types used by consumers
+export type { PluginType } from '@/domain/schemas/plugin.schema';
+
+// ============================================================================
+// Additional types needed by consumers
+// ============================================================================
+
+/** @deprecated Use appropriate sync type from infrastructure */
+export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'error';
+
+/** @deprecated */
+export interface TerminalTab {
+  id: string;
+  title: string;
+  cwd?: string;
+}
+
+/** @deprecated */
+export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => children;
+
+// Import React for the component
+import * as React from 'react';

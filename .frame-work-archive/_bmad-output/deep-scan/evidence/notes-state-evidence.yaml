@@ -1,0 +1,432 @@
+# ══════════════════════════════════════════════════════
+# Notes State Analysis - Deep Scan Evidence
+# ═══════════════════════════════════════════════════════
+# Generated: 2026-01-20T00:00:00+07:00
+# Agent: deep-scan-state-scanner
+# Scope: Complete Notes state management analysis
+# ═══════════════════════════════════════════════════════
+
+notes_state_analysis:
+  stores_inventory:
+    total_notes_stores: 10
+    total_slices: 7
+    total_lines: 2181
+
+    store_details:
+      # Primary Note Store (Slice Pattern)
+      - name: "note-store-refactored"
+        path: "src/lib/notes/note-store-refactored.ts"
+        lines: 208
+        slices: 7
+        selectors: 5
+        actions: 17
+        zustand_v5_compliant: true
+        issues: []
+        slice_files:
+          - "slices/note-crud-slice.ts (481 lines)"
+          - "slices/note-metadata-slice.ts (166 lines)"
+          - "slices/note-query-slice.ts (60 lines)"
+          - "slices/note-sync-slice.ts (195 lines)"
+          - "slices/note-indexing-slice.ts (158 lines)"
+          - "slices/note-events-slice.ts (112 lines)"
+          - "slices/note-ui-slice.ts (50 lines)"
+
+      # Navigation State
+      - name: "note-navigation-store"
+        path: "src/lib/notes/note-navigation-store.ts"
+        lines: 205
+        slices: 0
+        selectors: 4
+        actions: 12
+        zustand_v5_compliant: true
+        issues: ["useShallow missing in hooks"]
+
+      # AI Loading State
+      - name: "ai-loading-store"
+        path: "src/lib/notes/ai-loading-store.ts"
+        lines: 160
+        slices: 0
+        selectors: 2
+        actions: 8
+        zustand_v5_compliant: true
+        issues: []
+
+      # Saved Blocks Store (GOD STORE - >300 lines)
+      - name: "saved-blocks-store"
+        path: "src/lib/notes/saved-blocks-store.ts"
+        lines: 515
+        slices: 0
+        selectors: 7
+        actions: 15
+        zustand_v5_compliant: false
+        issues: ["GOD STORE: 515 lines exceeds 300 line threshold",
+                  "Missing useShallow for multiple selectors",
+                  "Should split into: CRUD, UI, Filtering slices"]
+
+      # AI Prompt Store
+      - name: "ai-prompt-store"
+        path: "src/lib/notes/ai-prompt-store.ts"
+        lines: 101
+        slices: 0
+        selectors: 0
+        actions: 4
+        zustand_v5_compliant: true
+        issues: []
+
+      # AI Insertion Store
+      - name: "ai-insertion-store"
+        path: "src/lib/notes/ai-insertion-store.ts"
+        lines: 129
+        slices: 0
+        selectors: 0
+        actions: 5
+        zustand_v5_compliant: true
+        issues: []
+
+      # Prompt History Store (GOD STORE - >300 lines)
+      - name: "prompt-history-store"
+        path: "src/lib/notes/prompt-history-store.ts"
+        lines: 370
+        slices: 0
+        selectors: 6
+        actions: 5
+        zustand_v5_compliant: false
+        issues: ["GOD STORE: 370 lines exceeds 300 line threshold",
+                  "Missing useShallow for multiple selectors",
+                  "Should split into: History, Analytics, Management slices"]
+
+      # Prompt Suggestion Store
+      - name: "prompt-suggestion-store"
+        path: "src/lib/notes/prompt-suggestion-store.ts"
+        lines: 127
+        slices: 0
+        selectors: 3
+        actions: 6
+        zustand_v5_compliant: true
+        issues: []
+
+      # Slash Command Store (GOD STORE - >300 lines)
+      - name: "slash-command-store"
+        path: "src/lib/notes/slash-command-store.ts"
+        lines: 542
+        slices: 0
+        selectors: 7
+        actions: 14
+        zustand_v5_compliant: false
+        issues: ["GOD STORE: 542 lines exceeds 300 line threshold",
+                  "Missing useShallow for multiple selectors",
+                  "Should split into: Commands, UI, Filtering, Defaults slices"]
+
+      # Note Context Tracker
+      - name: "note-context-tracker"
+        path: "src/infrastructure/persistence/stores/notes/note-context-tracker.ts"
+        lines: 311
+        slices: 0
+        selectors: 0
+        actions: 5 (helper functions)
+        zustand_v5_compliant: true
+        issues: []
+
+  store_architecture:
+    god_stores:
+      - path: "src/lib/notes/saved-blocks-store.ts"
+        lines: 515
+        reason: "Monolithic store combining CRUD operations, UI state (filters, search), and selectors in single file"
+        suggested_split:
+          - "saved-blocks-crud-slice (loadSavedBlocks, saveBlock, updateBlock, deleteBlock, toggleFavorite, recordUsage)"
+          - "saved-blocks-ui-slice (setSelectedCategory, setSelectedTags, toggleTag, setSelectedBlockType, setSearchQuery)"
+          - "saved-blocks-filters-slice (getFilteredBlocks, getRecentBlocks, getFavoriteBlocks, getTemplates)"
+
+      - path: "src/lib/notes/prompt-history-store.ts"
+        lines: 370
+        reason: "Monolithic store combining history storage, analytics computation, and query methods in single file"
+        suggested_split:
+          - "prompt-history-crud-slice (recordPrompt, updatePromptStatus, updatePromptOutput, toggleFavorite, clearHistory, deleteEntry)"
+          - "prompt-history-analytics-slice (getAnalytics, getCommandStats)"
+          - "prompt-history-query-slice (getRecentHistory, getFavorites, getHistoryByCategory, getHistoryByCommand)"
+
+      - path: "src/lib/notes/slash-command-store.ts"
+        lines: 542
+        reason: "Monolithic store combining command CRUD, UI state (filters, favorites), defaults management, and helpers in single file"
+        suggested_split:
+          - "slash-command-crud-slice (addCommand, updateCommand, deleteCommand, toggleCommand, recordUsage, toggleFavorite)"
+          - "slash-command-ui-slice (selectCategory, toggleTag, clearTagFilters, setShowFavoritesOnly)"
+          - "slash-command-query-slice (getCommandsByCategory, getAllTags, getRecentCommands, getFavoriteCommands)"
+          - "slash-command-defaults-slice (importCommands, exportCommands, resetToDefaults)"
+
+    zustand_v5_compliance:
+      compliant_stores:
+        - "note-store-refactored (uses individual selectors, slice pattern)"
+        - "note-navigation-store (uses persist with partialize)"
+        - "ai-loading-store (minimal, focused store)"
+        - "ai-prompt-store (minimal, focused store)"
+        - "ai-insertion-store (minimal, focused store)"
+        - "prompt-suggestion-store (minimal, focused store)"
+        - "note-context-tracker (helper functions, no store pattern)"
+
+      non_compliant_stores:
+        - path: "src/lib/notes/saved-blocks-store.ts"
+          issues:
+            - "Missing useShallow for multiple selectors in hooks"
+            - "Computed selectors (getFilteredBlocks, getRecentBlocks, etc.) called inline instead of using useShallow"
+            - "Should export selectors as hooks with useShallow optimization"
+
+        - path: "src/lib/notes/prompt-history-store.ts"
+          issues:
+            - "Missing useShallow for multiple selectors in hooks"
+            - "Complex analytics computation in getAnalytics() could be memoized"
+            - "History filtering operations should use useShallow"
+
+        - path: "src/lib/notes/slash-command-store.ts"
+          issues:
+            - "Missing useShallow for multiple selectors in hooks"
+            - "Array manipulation operations should use useShallow"
+            - "Filtering operations should use useShallow to prevent re-renders"
+
+        - path: "src/lib/notes/note-navigation-store.ts"
+          issues:
+            - "Hooks (useNodeExpanded, useSearchQuery, useFavoritesFilter) use single selectors instead of useShallow for multiple selectors"
+            - "useNoteScrollPosition correctly uses useShallow (good example)"
+
+    slice_composition:
+      using_slices: true
+      slice_boundaries: "Primary note store uses 7 focused slices: UI, Query, Events, Indexing, Sync, Metadata, CRUD"
+      slice_coupling: "low - slices communicate via get() to avoid circular dependencies, order matters (UI first, CRUD last)"
+
+  state_flow_diagrams:
+    route_load_flow: |
+      1. User navigates to /notes/$projectId
+      2. NotesPage component mounts
+      3. useEffect reads projectId from route params
+      4. Calls useNoteStore.getState().loadNotes(projectId)
+      5. loadNotes() fetches notes from Dexie or FSA (based on platform)
+      6. Notes stored in Map (O(1) lookup) and Array (for rendering)
+      7. If activeNoteId exists in persisted state, note loads in editor
+
+    note_select_flow: |
+      1. User clicks note in NoteTree
+      2. onClick handler calls setActiveNote(noteId)
+      3. setActiveNote() updates activeNoteId in store
+      4. NoteEditor receives new noteId via props
+      5. useMemo recomputes initialContent from note.blocks
+      6. BlockNoteEditor loads note content
+      7. Active note highlighted in sidebar
+
+    note_update_flow: |
+      1. User edits note in BlockNoteEditor
+      2. editor.onChange fires with updated blocks
+      3. handleChange debounces updates (100ms)
+      4. Calls updateNote({ id: noteId, blocks: newBlocks })
+      5. updateNote() updates notes Map and notesArray
+      6. Sets dirtyNoteIds.add(noteId)
+      7. Calls triggerAutoSave(noteId, note) (cross-slice call)
+      8. triggerAutoSave() debounces for 500ms
+      9. After debounce, saveNoteToFile() executes
+      10. saveNoteToFile() writes to Dexie or FSA
+
+    blocknote_sync_flow: |
+      1. BlockNoteEditor maintains in-memory state (blocks, selection, document)
+      2. onChange callback fires on every user change
+      3. onChange extracts current blocks: editor.document.toBlocks()
+      4. Calls updateNote({ id: noteId, blocks: newBlocks })
+      5. updateNote() updates Zustand store
+      6. Trigger auto-save and indexing in background
+      7. No direct BlockNote <-> Zustand persistence (BlockNote is transient)
+
+    file_sync_flow: |
+      1. updateNote() calls triggerAutoSave(noteId, note)
+      2. triggerAutoSave() clears existing debounce timer
+      3. Sets new 500ms debounce timer
+      4. After 500ms of no changes:
+         a. Gets fileSaveHandler from fileSaveHandlers map (by projectId)
+         b. Calls noteFolderBridge.saveNoteToFile(note, gateway)
+         c. Gateway converts blocks to markdown via convertBlocksToMarkdown()
+         d. Gateway writes to FSA or Dexie (based on platform)
+         e. Emits event to sync status panel
+         f. Clears dirtyNoteIds set for this note
+         g. Updates saveStatus to 'saved'
+
+  persistence_patterns:
+    dexie_tables:
+      - "notes (primary note storage)"
+      - "savedBlocks (saved block templates)"
+      - "promptHistory (AI prompt execution history)"
+
+    persisted_state:
+      via_zustand_persist:
+        - "note-store: activeNoteId, currentProjectId (via partialize)"
+        - "note-navigation-store: expandedNodes, showFavoritesOnly, noteScrollPositions"
+        - "ai-prompt-store: contextMode (user preference)"
+        - "prompt-history-store: full history array (500 max entries)"
+        - "slash-command-store: custom commands array"
+        - "saved-blocks-store: UI filters (not actual blocks, those come from Dexie)"
+
+      via_dexie:
+        - "notes table: NoteRecord objects (id, title, blocks, metadata)"
+        - "savedBlocks table: SavedBlockRecord objects (templates)"
+        - "promptHistory table: PromptHistoryEntry objects (analytics)"
+
+      via_fsa:
+        - "/notes/{noteId}.md files: Markdown files for desktop projects"
+        - ".viagent/notes-index.json: Cached file tree for fast load"
+
+      in_memory_only:
+        - "BlockNote editor state (blocks, selection, cursor position)"
+        - "saveStatus: 'idle' | 'saving' | 'saved' | 'error'"
+        - "dirtyNoteIds: Set of note IDs with unsaved changes"
+        - "indexingNoteIds: Set of note IDs currently being indexed"
+        - "loading: boolean (for loading states)"
+        - "error: string | null (for error states)"
+
+    persistence_triggers:
+      - "Auto-save: Debounced 500ms after content change"
+      - "Manual save: Ctrl+S / Cmd+S triggers saveNoteToFile()"
+      - "Note switch: setActiveNote() triggers save of previous note"
+      - "Route change: loadNotes() on project change"
+      - "Navigation: setNoteScrollPosition() on scroll"
+
+  cross_store_dependencies:
+    notes_to_project:
+      - "loadNotes(projectId) loads notes for current project"
+      - "currentProjectId stored in note-store"
+      - "Project switching clears note state"
+
+    notes_to_storage:
+      - "Platform detection via getPlatformContract() determines storage type"
+      - "Desktop: FSAGateway for file I/O"
+      - "Mobile: IndexedDB via Dexie"
+      - "NoteGateway abstraction for storage operations"
+
+    notes_to_navigation:
+      - "note-navigation-store tracks expanded nodes (independent of note data)"
+      - "Sync: Note deletion calls clearNoteScrollPosition()"
+      - "Separate concerns (navigation vs. data)"
+
+    notes_to_ai_features:
+      - "ai-loading-store tracks per-block loading state"
+      - "ai-insertion-store manages pending AI content"
+      - "ai-prompt-store manages context mode preference"
+      - "slash-command-store stores custom AI commands"
+      - "prompt-history-store tracks AI execution analytics"
+      - "All stores persist independently to localStorage/Dexie"
+
+    circular_dependencies:
+      - "NONE: Note stores use get() for cross-slice communication (no import cycles)"
+      - "note-crud-slice imports: note-navigation-store, project-store, storage gateway, note-gateway"
+      - "These are infrastructure dependencies (not state dependencies)"
+
+  performance_issues:
+    unnecessary_renders:
+      - "saved-blocks-store: Missing useShallow causes re-renders on any state change"
+      - "prompt-history-store: getAnalytics() recomputed on every render (should memoize)"
+      - "slash-command-store: Filtering operations trigger re-renders on any state change"
+      - "note-navigation-store: Hooks use single selectors, could use useShallow for multiple selectors"
+
+    n_plus1_selectors:
+      - "NotesPage: Multiple useNoteStore() calls (notesArray, activeNoteId, etc.)"
+      - "Should combine into single useShallow() call"
+      - "NoteEditor: Separate selectors for updateNote, notes, saveStatus, isNoteDirty, saveNoteToFile"
+      - "Should use useShallow to batch selectors"
+
+    expensive_computations:
+      - "prompt-history-store: getAnalytics() computes multiple aggregations on every call"
+      - "saved-blocks-store: getFilteredBlocks() runs multiple filters sequentially"
+      - "note-store-refactored: notesArray derived from Map.values()"
+      - "RECOMMENDATION: Combine filters or use useMemo"
+
+    missing_optimizations:
+      - "No React.memo on NoteTree components"
+      - "No useShallow in saved-blocks-store hooks"
+      - "No useShallow in prompt-history-store hooks"
+      - "No useShallow in slash-command-store hooks"
+      - "Analytics computations not memoized"
+      - "Filtering operations not memoized"
+
+  action_side_effects:
+    cross_store_actions:
+      - "updateNote() → triggerAutoSave() → fileSaveHandler (cross-slice)"
+      - "updateNote() → triggerIndexing() → RAG indexing (cross-slice)"
+      - "updateNote() → emitNoteUpdated() → event bus (cross-store)"
+      - "deleteNote() → removeFromIndex() → search index update (cross-slice)"
+      - "moveNote() → emitNoteMoved() → event bus (cross-store)"
+
+    side_effect_locations:
+      - "note-crud-slice: Lines 54-100 (loadNotes, FSA/Dexie selection)"
+      - "note-crud-slice: Lines 101-200 (updateNote, cross-slice calls)"
+      - "note-crud-slice: Lines 201-300 (deleteNote, cleanup)"
+      - "note-sync-slice: Lines 95-195 (triggerAutoSave, debouncing)"
+      - "note-indexing-slice: Lines 95-158 (triggerIndexing, background)"
+
+    async_action_patterns:
+      - "CRUD operations are async (loadNotes, createNote, updateNote, deleteNote)"
+      - "All async operations: Update local state first → persist to storage (optimistic UI)"
+      - "Auto-save: Debounced async operation (500ms delay)"
+      - "Indexing: Fire-and-forget async operation (background)"
+      - "File save: Async operation via StorageGateway"
+
+  blocknote_state_management:
+    blocknote_internal_state: |
+      - Blocks array (full document structure)
+      - Selection state (cursor position, selected text)
+      - Document state (undo/redo history)
+      - Editor configuration (theme, shortcuts)
+      - All in-memory (not persisted)
+
+    blocknote_external_state: |
+      - Synced to Zustand store via updateNote({ blocks: currentBlocks })
+      - Persisted to storage via auto-save debouncing
+      - Active note ID tracked in store
+      - Dirty state tracked in store (dirtyNoteIds)
+
+    state_sync_strategy: |
+      1. BlockNote onChange fires on user changes
+      2. Extract current blocks: editor.document.toBlocks()
+      3. Sanitize blocks (remove malformed data)
+      4. Call updateNote({ id: noteId, blocks: sanitizedBlocks })
+      5. updateNote() updates Zustand store
+      6. Set dirty flag for note
+      7. Trigger debounced auto-save (500ms)
+      8. After debounce, save to storage
+      9. BlockNote state is always source of truth (read from editor, write to store)
+      10. No bi-directional sync (store never updates BlockNote directly)
+
+    performance_impact:
+      - "Small notes (< 100 blocks): Fast, no performance issues"
+      - "Medium notes (100-500 blocks): Acceptable performance"
+      - "Large notes (> 500 blocks): Potential slow-down on render"
+      - "Auto-save debouncing prevents excessive writes"
+      - "Sanitization adds overhead but prevents ProseMirror errors"
+      - "RECOMMENDATION: Consider virtualization for very large notes"
+
+  recommendations:
+    immediate_actions:
+      - "Split saved-blocks-store into 3 slices (CRUD, UI, Filtering)"
+      - "Split prompt-history-store into 3 slices (CRUD, Analytics, Query)"
+      - "Split slash-command-store into 4 slices (CRUD, UI, Filtering, Defaults)"
+      - "Add useShallow to all multi-selector hooks"
+      - "Memoize expensive analytics computations in prompt-history-store"
+
+    medium_term:
+      - "Memoize getFilteredBlocks() in saved-blocks-store"
+      - "Optimize filter chaining in saved-blocks-store"
+      - "Add React.memo to NoteTree components"
+      - "Implement virtualization for large notes (> 500 blocks)"
+
+    long_term:
+      - "Consider moving analytics to separate store"
+      - "Evaluate if notesArray can be replaced with computed selector"
+      - "Add performance monitoring for large note operations"
+      - "Consider incremental indexing for RAG (not full reindex on every change)"
+
+  evidence_summary:
+    total_stores: 10
+    god_stores_found: 3
+    zustand_v5_compliant: 7/10
+    total_slices: 7 (main note store only)
+    stores_requiring_refactoring: 3
+    performance_issues: 9
+    state_flow_completeness: 5/5 flows documented
+
+# ═══════════════════════════════════════════════════════
+# END OF NOTES STATE ANALYSIS
+# ═══════════════════════════════════════════════════════

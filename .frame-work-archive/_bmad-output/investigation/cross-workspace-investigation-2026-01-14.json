@@ -1,0 +1,686 @@
+{
+  "sub_agent_id": "cross-workspace-investigation",
+  "session_id": "team-b-architectural-remediation-2026-01-14",
+  "timestamp": "2026-01-14T18:30:00.000Z",
+  
+  "executive_summary": {
+    "total_files_investigated": 47,
+    "event_types_found": [
+      "workspace:transition:started",
+      "workspace:transition:completed", 
+      "workspace:transition:failed",
+      "workspace:changed",
+      "agent:selected",
+      "agent:config:updated",
+      "conversation:message:added",
+      "provider:key:set",
+      "sync:started",
+      "sync:completed",
+      "file:created",
+      "file:updated",
+      "file:deleted",
+      "rag:embedding:progress",
+      "knowledge:synthesis:export:request",
+      "notes:rag:index:request"
+    ],
+    "shared_contexts_found": [
+      "ProjectContext - projectId and project state",
+      "useWorkspaceContext - workspaceType and routing",
+      "crossWorkspaceEventBus - global event bus",
+      "eventBus - DomainEventType event system",
+      "credentialVault - API keys shared across workspaces"
+    ],
+    "key_findings": [
+      "F1: Event bus duplication confirmed - two separate event systems (eventBus vs crossWorkspaceEventBus)",
+      "F2: Context fragmentation - multiple context providers (ProjectContext, useWorkspaceContext, unified-workspace-context)",
+      "F3: BYOK Vault properly implemented with cross-workspace API key access",
+      "F4: Cross-workspace file references implemented via CrossWorkspaceReferenceManager",
+      "F5: Workspace routing uses TanStack Router with lazy loading per workspace",
+      "F6: RAG pipeline indexes content across workspaces but indexing is manual/trigger-based",
+      "F7: Search implementation (SearchIndexer) is workspace-scoped, not unified",
+      "F8: Chat context sharing exists via crossWorkspaceEventBus for message sent/state update events"
+    ],
+    "critical_issues": [
+      "P0-001: Duplicate event buses causing event fragmentation",
+      "P0-002: Multiple workspace contexts causing inconsistent state",
+      "P1-001: Console.log statements in cross-workspace-event-bus.ts:220 leak in production",
+      "P1-002: No unified search across all workspaces",
+      "P1-003: Event subscription cleanup incomplete in some components",
+      "P2-001: Cross-workspace references lack automatic sync on target file deletion"
+    ]
+  },
+  
+  "feature_mapping": {
+    "event_bus": {
+      "emitters": [
+        {
+          "file": "src/infrastructure/events/event-bus.ts",
+          "lines": "1-765",
+          "type": "DomainEventType enum + EventBus class",
+          "event_count": 35,
+          "singleton": true,
+          "usage": "Domain events (RAG, sync, workspace, agent, provider)"
+        },
+        {
+          "file": "src/lib/events/cross-workspace-event-bus.ts",
+          "lines": "1-589",
+          "type": "CrossWorkspaceEventBus extends EventEmitter3",
+          "event_count": 9,
+          "singleton": true,
+          "usage": "File change, agent config, sync status, workspace change, provider config, chat events"
+        },
+        {
+          "file": "src/infrastructure/events/cross-workspace-event-bus.ts",
+          "lines": "1-34",
+          "type": "Re-export facade (DEPRECATED)",
+          "event_count": 0,
+          "singleton": false,
+          "usage": "Redirects to lib/events/cross-workspace-event-bus.ts"
+        }
+      ],
+      "handlers": [
+        {
+          "file": "src/lib/events/use-cross-workspace-events.ts",
+          "lines": "1-224",
+          "hooks": [
+            "useCrossWorkspaceAgentConfigEvents()",
+            "useAllCrossWorkspaceEvents()",
+            "useWorkspaceChangedEvents()",
+            "useFileChangeEvents()",
+            "useSyncStatusEvents()",
+            "useProjectStateChangeEvents()"
+          ]
+        },
+        {
+          "file": "src/presentation/components/ide/SyncStatusPanel.tsx",
+          "lines": "228-236",
+          "events_subscribed": ["sync:status", "file:change"]
+        },
+        {
+          "file": "src/infrastructure/persistence/stores/agents/slices/agent-events-slice.ts",
+          "lines": "58-143",
+          "events_emitted": ["agent:config:change"]
+        }
+      ],
+      "event_types": [
+        {
+          "category": "Workspace",
+          "types": ["workspace:transition:started", "workspace:transition:completed", "workspace:changed"],
+          "payload_schema": "{from: WorkspaceId, to: WorkspaceId, timestamp: string}"
+        },
+        {
+          "category": "File Operations",
+          "types": ["file:created", "file:updated", "file:deleted", "file:synced"],
+          "payload_schema": "{workspaceId: WorkspaceId, filePath: string, changeType: string, timestamp: Date}"
+        },
+        {
+          "category": "Agent",
+          "types": ["agent:selected", "agent:config:updated", "agent:created", "agent:deleted"],
+          "payload_schema": "{workspaceId: WorkspaceId, agentId: string, changeType: string, timestamp: Date}"
+        },
+        {
+          "category": "RAG/Knowledge",
+          "types": ["rag:embedding:progress", "notes:rag:index:request", "knowledge:synthesis:export:request"],
+          "payload_schema": "{status: RAGActivityStatus, documentId?: string, progress?: number}"
+        }
+      ],
+      "architecture_violations": [
+        {
+          "violation": "EVENT_BUS_DUPLICATION",
+          "severity": "P0",
+          "description": "Two separate event systems (eventBus and crossWorkspaceEventBus) with overlapping functionality",
+          "evidence": "eventBus.ts defines DomainEventType with 35 events; cross-workspace-event-bus.ts defines 9 separate events with string-based naming",
+          "recommendation": "Consolidate into single EventBus with namespace prefixes for cross-workspace events"
+        },
+        {
+          "violation": "CONSOLE_LOG_IN_PROD",
+          "severity": "P1",
+          "description": "Debug logging in cross-workspace-event-bus.ts line 220",
+          "evidence": "console.log('[CrossWorkspaceEventBus] File change:', fullEvent);",
+          "recommendation": "Remove or guard with NODE_ENV check"
+        }
+      ],
+      "user_journey": "User switches workspace → WorkspaceChangeEvent emitted → All subscribed components re-hydrate state → User continues in new workspace"
+    },
+    "context_sharing": {
+      "providers": [
+        {
+          "file": "src/lib/workspace/ProjectContext.tsx",
+          "type": "React Context",
+          "exported_hooks": ["useProjectContext", "useProjectContextSafe"],
+          "provides": "project: {id, name, folderPath, storageType}, workspace: string",
+          "usage_count": 15
+        },
+        {
+          "file": "src/hooks/useWorkspaceContext.ts",
+          "type": "Custom Hook",
+          "provides": "currentWorkspace, enabledWorkspaces, switchWorkspace function",
+          "usage_count": 12
+        },
+        {
+          "file": "src/lib/workspace/useUnifiedProjectState.ts",
+          "type": "Custom Hook (NEW)",
+          "provides": "Unified access to project state across workspace stores",
+          "usage_count": 3
+        }
+      ],
+      "sync_mechanisms": [
+        {
+          "mechanism": "crossWorkspaceEventBus",
+          "events_used": ["workspace:changed", "project:state:change"],
+          "data_synced": "projectId, workspaceType, active project"
+        },
+        {
+          "mechanism": "useAgentsStore.getState()",
+          "events_used": ["agent:config:change"],
+          "data_synced": "agents list, agent configurations"
+        }
+      ],
+      "memory_management": {
+        "cleanup_patterns": ["useEffect cleanup returns unsubscribe function"],
+        "potential_leaks": [
+          "Event subscriptions not always cleaned up in deeply nested components",
+          "useAllCrossWorkspaceEvents has commented-out handlers that still have subscriptions"
+        ]
+      },
+      "documentation": {
+        "memory_leak_risk": "P2",
+        "evidence": "use-cross-workspace-events.ts lines 85-112 show handlers array with commented-out handlers that are still subscribed/unsubscribed"
+      }
+    },
+    "workspace_routing": {
+      "router": "TanStack Router (@tanstack/react-router)",
+      "routes": [
+        {
+          "path": "/notes",
+          "file": "src/routes/notes.lazy.tsx",
+          "lazy": true,
+          "uses_browser_mode_project": true
+        },
+        {
+          "path": "/notes/:projectId",
+          "file": "src/routes/notes.$projectId.lazy.tsx",
+          "lazy": true,
+          "project_aware": true
+        },
+        {
+          "path": "/knowledge/:projectId",
+          "file": "src/routes/knowledge.$projectId.lazy.tsx",
+          "lazy": true,
+          "project_aware": true
+        },
+        {
+          "path": "/study/:projectId",
+          "file": "src/routes/study.$projectId.lazy.tsx",
+          "lazy": true,
+          "project_aware": true
+        }
+      ],
+      "transition_handling": {
+        "file": "src/lib/workspace/workspace-transition-manager.ts",
+        "events_emitted": ["workspace:transition:complete"],
+        "state_preserved": ["scrollPosition", "openFiles (planned)", "chatHistory (planned)"]
+      },
+      "state_preservation": {
+        "scroll_position": "Not implemented - tests marked skip",
+        "open_files": "Not implemented - tests marked skip",
+        "chat_history": "Implemented via unified-chat-store",
+        "theme": "Consistent via document-level data-theme attribute"
+      }
+    },
+    "unified_search": {
+      "implementation": "SearchIndexer class (src/lib/search/search-indexer.ts)",
+      "scope": "IDE workspace files only",
+      "features": [
+        "Inverted index for full-text search",
+        "Trigram index for fuzzy search",
+        "Filtering by fileTypes, dateRange, tags, author, sizeRange, projectId",
+        "Relevance scoring with filename/path match boosts"
+      ],
+      "cross_workspace_status": {
+        "implemented": false,
+        "evidence": "SearchIndexer does not include workspaceType in SearchDocument, no multi-workspace search capability",
+        "tests": "All cross-workspace search tests marked with test.skip(true)"
+      },
+      "rag_search": {
+        "implementation": "RAG pipeline (src/lib/rag/)",
+        "scope": "Knowledge workspace",
+        "indexes": ["Notes content", "IDE files (manual trigger)", "PDF/URL sources"],
+        "events": ["notes:rag:index:request", "rag:embedding:progress"]
+      },
+      "improvements_needed": [
+        "Unified search index across all workspaces",
+        "Workspace filter in search results",
+        "Cross-workspace search result navigation with context preservation"
+      ]
+    }
+  },
+  
+  "workspace_interconnections": {
+    "ide_notes": {
+      "connection_type": "File Sync + Event Bus",
+      "features": [
+        "File created in IDE appears in Notes via sync service",
+        "FILE_CREATED/UPDATED/DELETED events broadcast across workspaces",
+        "Notes can import IDE files as references"
+      ],
+      "issues": [
+        {
+          "issue": "No automatic file sync without mounted project",
+          "severity": "P1",
+          "evidence": "e2e tests marked skip with 'Requires mounted project'"
+        }
+      ]
+    },
+    "ide_knowledge": {
+      "connection_type": "RAG Indexing + Event Bus",
+      "features": [
+        "IDE files can be indexed in Knowledge workspace",
+        "IDE_CODE_ANALYSIS_REQUESTED event triggers code analysis",
+        "Debug sessions captured and exported to Knowledge"
+      ],
+      "issues": [
+        {
+          "issue": "Manual indexing trigger required",
+          "severity": "P2",
+          "evidence": "KnowledgePage.tsx requires manual startIndexing() call"
+        }
+      ]
+    },
+    "notes_knowledge": {
+      "connection_type": "RAG Indexing",
+      "features": [
+        "NOTES_RAG_INDEX_REQUESTED event triggers note indexing",
+        "Notes content indexed for semantic search",
+        "Knowledge synthesis can be exported to Notes"
+      ],
+      "issues": [
+        {
+          "issue": "Batch vs incremental indexing not clearly differentiated",
+          "severity": "P3",
+          "evidence": "NotesRAGIndexData has mode field but implementation unclear"
+        }
+      ]
+    },
+    "knowledge_study": {
+      "connection_type": "Quiz/Flashcard Generation",
+      "features": [
+        "Knowledge sources used to generate quizzes",
+        "Flashcards created from knowledge nodes",
+        "Quiz results link back to knowledge sources (planned)"
+      ],
+      "issues": [
+        {
+          "issue": "Source linking not implemented",
+          "severity": "P1",
+          "evidence": "e2e test XWS-Study-002 marked skip with 'Requires source linking feature'"
+        }
+      ]
+    },
+    "all_agent_llm": {
+      "connection_type": "Agent Context + Tools",
+      "features": [
+        "useAgentChatWithTools provides workspace-aware tools",
+        "File tools, terminal tools, note tools available per workspace",
+        "Cross-workspace context sharing via conversation store"
+      ],
+      "issues": [
+        {
+          "issue": "Tool context may not always include correct workspaceType",
+          "severity": "P1",
+          "evidence": "FIX-2026-01-05: Use useProjectContextSafe to prevent crash outside ProjectProvider"
+        }
+      ]
+    },
+    "all_byok_vault": {
+      "connection_type": "Credential Vault Singleton",
+      "features": [
+        "credentialVault singleton accessible from all workspaces",
+        "API keys encrypted with AES-256-GCM",
+        "SSR guard prevents initialization issues",
+        "Provider config changes broadcast via crossWorkspaceEventBus"
+      ],
+      "issues": []
+    }
+  },
+  
+  "user_journeys": [
+    {
+      "name": "Research → Note → Code Workflow",
+      "workspaces_involved": ["knowledge", "notes", "ide"],
+      "steps": [
+        "User researches in Knowledge workspace, creates/imports sources",
+        "User exports knowledge synthesis to Notes via KNOWLEDGE_SYNTHESIS_EXPORT_REQUESTED event",
+        "User writes notes referencing research",
+        "User switches to IDE workspace",
+        "User implements code based on research notes"
+      ],
+      "events_fired": [
+        "knowledge:synthesis:export:request",
+        "workspace:transition:completed"
+      ],
+      "contexts_shared": [
+        "ProjectContext (projectId)",
+        "useProjectContext (active project)"
+      ],
+      "potential_issues": [
+        "Content context may be lost during workspace switch if notes not saved",
+        "No automatic sync of knowledge references to code comments"
+      ]
+    },
+    {
+      "name": "Study Knowledge Material",
+      "workspaces_involved": ["knowledge", "study"],
+      "steps": [
+        "User in Knowledge finds/creates sources",
+        "User generates flashcards or quiz from sources",
+        "User switches to Study workspace",
+        "User studies using generated materials",
+        "User marks known/unknown cards",
+        "Results inform future study focus"
+      ],
+      "events_fired": [
+        "QUIZ_GENERATION_REQUESTED (not implemented)",
+        "workspace:transition:completed"
+      ],
+      "contexts_shared": [
+        "Knowledge source references",
+        "Study session history"
+      ],
+      "potential_issues": [
+        "Source linking from quiz results not implemented",
+        "Study progress not synced back to Knowledge"
+      ]
+    },
+    {
+      "name": "Debug with AI Context",
+      "workspaces_involved": ["ide", "notes", "knowledge"],
+      "steps": [
+        "User in IDE encounters error",
+        "User captures debug session via IDE_DEBUG_SESSION_CAPTURED event",
+        "User opens AI chat (in any workspace)",
+        "AI reads project context and debug session data",
+        "AI provides solution",
+        "User applies fix in IDE"
+      ],
+      "events_fired": [
+        "ide:debug:session:captured",
+        "conversation:message:added"
+      ],
+      "contexts_shared": [
+        "DebugSessionData payload",
+        "Project file tree",
+        "Recent chat history"
+      ],
+      "potential_issues": [
+        "Debug session data only accessible in current session",
+        "No persistent debug journal across sessions"
+      ]
+    },
+    {
+      "name": "Unified Search Flow",
+      "workspaces_involved": ["ide", "notes", "knowledge"],
+      "steps": [
+        "User opens AdvancedSearchDialog (Cmd+Shift+F)",
+        "User enters search query",
+        "Results displayed grouped by workspace (NOT IMPLEMENTED)",
+        "User selects result",
+        "Navigation to appropriate workspace",
+        "Context NOT preserved (scroll position lost)"
+      ],
+      "events_fired": [],
+      "contexts_shared": [],
+      "potential_issues": [
+        "Search only works in IDE workspace",
+        "No unified results across workspaces",
+        "Navigation loses context (scroll position, selection)"
+      ]
+    },
+    {
+      "name": "Project Documentation",
+      "workspaces_involved": ["ide", "notes", "knowledge"],
+      "steps": [
+        "User writes code in IDE",
+        "User copies code to Notes via copy action",
+        "User adds documentation context in Notes",
+        "User references Knowledge sources in Notes",
+        "User exports combined doc for project"
+      ],
+      "events_fired": [
+        "file:created (if file created in Notes)",
+        "notes:rag:index:request"
+      ],
+      "contexts_shared": [
+        "Project context",
+        "Cross-workspace file references"
+      ],
+      "potential_issues": [
+        "Cross-workspace references may become broken if target deleted",
+        "No automatic update of embedded code when source changes"
+      ]
+    }
+  ],
+  
+  "missing_issues_discovered": [
+    {
+      "issue": "EVENT_SUBSCRIPTION_LEAKS",
+      "category": "Memory Management",
+      "severity": "P1",
+      "description": "useAllCrossWorkspaceEvents has commented-out handlers that still get subscribed/unsubscribed, indicating incomplete cleanup logic",
+      "file": "src/lib/events/use-cross-workspace-events.ts",
+      "lines": "85-112",
+      "recommendation": "Remove commented handlers or implement proper conditional subscription pattern"
+    },
+    {
+      "issue": "NO_AUTOMATIC_REINDEX_ON_FILE_CHANGE",
+      "category": "RAG Pipeline",
+      "severity": "P2",
+      "description": "FILE_CHANGE events are emitted but RAG indexing doesn't automatically trigger for Knowledge workspace",
+      "file": "src/infrastructure/events/event-bus.ts",
+      "lines": "351-401",
+      "recommendation": "Implement listener that triggers incremental indexing on file changes in IDE workspace"
+    },
+    {
+      "issue": "SEARCH_RESULTS_LACK_CONTEXT_PRESERVATION",
+      "category": "User Experience",
+      "severity": "P2",
+      "description": "When navigating to search result in different workspace, no context preservation (scroll position, previous search)",
+      "file": "src/presentation/components/search/AdvancedSearchDialog.tsx",
+      "lines": "54-55",
+      "recommendation": "Add search context state that persists across workspace navigation"
+    },
+    {
+      "issue": "CROSS_WORKSPACE_REFERENCE_BROKEN_LINK_DETECTION",
+      "category": "Data Integrity",
+      "severity": "P2",
+      "description": "CrossWorkspaceReferenceManager can detect broken references but doesn't auto-cleanup or notify user proactively",
+      "file": "src/infrastructure/sync/workspace-services/cross-workspace-file-references/cross-workspace-reference-manager.ts",
+      "lines": "175-187",
+      "recommendation": "Implement proactive broken reference detection on workspace activation"
+    },
+    {
+      "issue": "CHAT_CONTEXT_NOT_SHARED_IN_REALTIME",
+      "category": "Chat Integration",
+      "severity": "P2",
+      "description": "Chat messages are shared via events but real-time sync not guaranteed - messages may appear with delay",
+      "file": "src/lib/events/cross-workspace-event-bus.ts",
+      "lines": "463-514",
+      "recommendation": "Add acknowledgment mechanism for chat state sync events"
+    }
+  ],
+  
+  "refactoring_recommendations": [
+    {
+      "issue": "Event Bus Duplication",
+      "priority": "P0",
+      "recommendation": "Consolidate eventBus and crossWorkspaceEventBus into single EventBus with namespace-prefixed event types (e.g., 'ws:*' for workspace events)",
+      "estimated_effort": "8-12 hours",
+      "files_needed": [
+        "src/infrastructure/events/event-bus.ts",
+        "src/lib/events/cross-workspace-event-bus.ts",
+        "src/infrastructure/events/cross-workspace-event-bus.ts"
+      ],
+      "migration_steps": [
+        "Create unified DomainEventType enum with namespace prefixes",
+        "Migrate crossWorkspaceEventBus.emit* methods to eventBus with prefixed types",
+        "Update all subscribers to use new event types",
+        "Remove deprecated cross-workspace-event-bus.ts facade",
+        "Add integration tests for consolidated event system"
+      ]
+    },
+    {
+      "issue": "Multiple Workspace Contexts",
+      "priority": "P0",
+      "recommendation": "Consolidate ProjectContext, useWorkspaceContext, and useUnifiedProjectState into single UnifiedWorkspaceContext with clear separation of concerns",
+      "estimated_effort": "6-8 hours",
+      "files_needed": [
+        "src/lib/workspace/ProjectContext.tsx",
+        "src/hooks/useWorkspaceContext.ts",
+        "src/lib/workspace/useUnifiedProjectState.ts"
+      ],
+      "migration_steps": [
+        "Create unified context interface with optional strongly-typed slices",
+        "Migrate ProjectContext consumers to new hook",
+        "Deprecate useWorkspaceContext in favor of unified hook",
+        "Update Route components to use new context provider"
+      ]
+    },
+    {
+      "issue": "Console.log in Production Event Path",
+      "priority": "P1",
+      "recommendation": "Remove or guard console.log statements in cross-workspace-event-bus.ts with development check",
+      "estimated_effort": "1 hour",
+      "files_needed": [
+        "src/lib/events/cross-workspace-event-bus.ts"
+      ],
+      "migration_steps": [
+        "Add ENV check for debug logging",
+        "Remove verbose console.log at line 220",
+        "Consider using structured logging with levels"
+      ]
+    },
+    {
+      "issue": "No Unified Search Across Workspaces",
+      "priority": "P1",
+      "recommendation": "Extend SearchIndexer to support workspace-type filtering and implement unified search dialog that queries all workspace indices",
+      "estimated_effort": "12-16 hours",
+      "files_needed": [
+        "src/lib/search/search-indexer.ts",
+        "src/presentation/components/search/AdvancedSearchDialog.tsx",
+        "src/lib/rag/orama-index.ts"
+      ],
+      "migration_steps": [
+        "Add workspaceType field to SearchDocument interface",
+        "Create unified search aggregator that queries IDE search + RAG index",
+        "Update AdvancedSearchDialog to show workspace-filtered results",
+        "Implement navigation handler that preserves search context"
+      ]
+    },
+    {
+      "issue": "Event Subscription Cleanup Gaps",
+      "priority": "P1",
+      "recommendation": "Implement useEventCleanup hook or verify all event subscriptions are properly cleaned up in useEffect returns",
+      "estimated_effort": "4-6 hours",
+      "files_needed": [
+        "src/lib/events/use-cross-workspace-events.ts",
+        "src/presentation/components/ide/SyncStatusPanel.tsx"
+      ],
+      "migration_steps": [
+        "Audit all useEffect returns for proper unsubscribe calls",
+        "Remove commented-out handler subscriptions",
+        "Add integration test for rapid workspace switching to verify no leaks"
+      ]
+    },
+    {
+      "issue": "Cross-Workspace Reference Auto-Sync",
+      "priority": "P2",
+      "recommendation": "Implement automatic revalidation of cross-workspace references when target workspace changes",
+      "estimated_effort": "6-8 hours",
+      "files_needed": [
+        "src/infrastructure/sync/workspace-services/cross-workspace-file-references/cross-workspace-reference-manager.ts"
+      ],
+      "migration_steps": [
+        "Add listener for workspace:changed that validates outgoing references",
+        "Implement broken reference notification UI",
+        "Add option to update or remove broken references"
+      ]
+    }
+  ],
+  
+  "files_needed_for_refactoring": [
+    {
+      "category": "Event System Consolidation",
+      "files": [
+        "src/infrastructure/events/event-bus.ts",
+        "src/lib/events/cross-workspace-event-bus.ts",
+        "src/infrastructure/events/cross-workspace-event-bus.ts",
+        "src/lib/events/use-cross-workspace-events.ts",
+        "src/presentation/components/ide/SyncStatusPanel.tsx",
+        "src/presentation/components/notes/NotesPage.tsx",
+        "src/presentation/components/knowledge/KnowledgePage.tsx"
+      ]
+    },
+    {
+      "category": "Context Consolidation",
+      "files": [
+        "src/lib/workspace/ProjectContext.tsx",
+        "src/hooks/useWorkspaceContext.ts",
+        "src/lib/workspace/useUnifiedProjectState.ts",
+        "src/routes/notes.$projectId.lazy.tsx",
+        "src/routes/knowledge.$projectId.lazy.tsx",
+        "src/routes/study.$projectId.lazy.tsx"
+      ]
+    },
+    {
+      "category": "Search Enhancement",
+      "files": [
+        "src/lib/search/search-indexer.ts",
+        "src/presentation/components/search/AdvancedSearchDialog.tsx",
+        "src/lib/rag/orama-index.ts",
+        "src/lib/rag/hybrid-retriever.ts"
+      ]
+    },
+    {
+      "category": "Cross-Workspace References",
+      "files": [
+        "src/infrastructure/sync/workspace-services/cross-workspace-file-references/cross-workspace-reference-manager.ts",
+        "src/lib/workspace/workspace-transition-manager.ts"
+      ]
+    }
+  ],
+  
+  "test_coverage_recommendations": [
+    {
+      "area": "Event Bus Consolidation",
+      "tests_needed": [
+        "Verify all events still fire after consolidation",
+        "Test namespace-prefixed event routing",
+        "Test event unsubscription cleanup under stress"
+      ]
+    },
+    {
+      "area": "Context Consolidation",
+      "tests_needed": [
+        "Verify ProjectContext consumers work with unified hook",
+        "Test context values are consistent across workspaces",
+        "Test context update propagation"
+      ]
+    },
+    {
+      "area": "Cross-Workspace File References",
+      "tests_needed": [
+        "Test automatic reference validation on workspace switch",
+        "Test broken reference detection and notification",
+        "Test reference resolution when target workspace mounted"
+      ]
+    },
+    {
+      "area": "User Journey Flows",
+      "tests_needed": [
+        "Enable and expand cross-workspace-integration.journey.spec.ts tests",
+        "Add tests for unified search across workspaces",
+        "Add tests for study-to-knowledge source linking"
+      ]
+    }
+  ]
+}

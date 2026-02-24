@@ -1,0 +1,91 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC CC-06: Type Safety & Cleanup (Correct-Course)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-CC-06"
+name: "Type Safety & Cleanup - Architectural Remediation"
+type: "correct-course"
+category: "architectural"
+workflow: "correct-course/architectural-conflict"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-14T19:00:00+07:00"
+updated_at: "2026-01-14T19:00:00+07:00"
+priority: "P2"
+team: "Team B"
+estimated_duration: "4-5 days"
+status: "BLOCKED"
+blocked_by: "EPIC-CC-01, EPIC-CC-04"
+
+# Source References
+source_documents:
+  - "_bmad-output/architectural-scan/shards/shard-05-remediation-grouping.md"
+  - "_bmad-output/team-b-investigations/consolidated-investigation-report-2026-01-14.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  Type safety and cleanup issues:
+  
+  1. **`as any` Casts** (P0): 100+ instances throughout codebase, especially:
+     - AISlashCommand.tsx (50+ casts)
+     - Provider adapters
+     - Event handlers
+  
+  2. **Record<string, unknown>** (P1): Used instead of proper types.
+  
+  3. **Missing Zod Validation** (P1): Domain inputs not validated.
+  
+  4. **Dead Code** (P2): Deprecated files, commented blocks, unused imports.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (4 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  - id: "TYPE-01"
+    name: "Remove as any from AISlashCommand"
+    priority: "P0"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Replace 50+ as any casts with proper typing (part of NOTES-02)"
+    
+  - id: "TYPE-02"
+    name: "Add Zod Validation to Domain Inputs"
+    priority: "P1"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Create Zod schemas for all domain input types"
+    
+  - id: "TYPE-03"
+    name: "Replace Record Types"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Replace Record<string, unknown> with proper typed interfaces"
+    
+  - id: "TYPE-04"
+    name: "Remove Dead Code and Cleanup"
+    priority: "P2"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Remove deprecated files, commented blocks, unused imports"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES & EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics:
+    - "EPIC-CC-01"  # Foundation must be stable first
+    - "EPIC-CC-04"  # Notes refactoring provides proper types
+  blocked_epics: []
+
+execution_notes:
+  team: "Team B"
+  sequence: "Last epic, after all refactoring complete"

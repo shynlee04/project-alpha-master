@@ -1,0 +1,223 @@
+# Governance-Core Domain Definitions
+# 13 domains for targeted scanning and analysis
+# Updated: 2026-01-10 - Added agent_ai_rag_multimodality and file_structure_governance domains (P0)
+
+domains:
+  artifact:
+    name: "Artifact Validation"
+    priority: "P0"
+    description: "Compare governance artifacts with actual code"
+    path: "CLAUDE.md, AGENTS.md, architecture docs"
+    scanners: ["artifact-scanner"]
+    thresholds:
+      staleness_hours: 24
+      mismatch_tolerance: 0
+
+  document:
+    name: "Document Validation"
+    priority: "P0"
+    description: "Validate governance documents themselves"
+    path: "_bmad/**/*.yaml, _bmad-ext/**/*.yaml"
+    scanners: ["document-scanner"]
+    thresholds:
+      max_age_hours: 48
+      required_sections: 5
+
+  state_persistence:
+    name: "State & Persistence"
+    priority: "P0"
+    description: "Store and state validation"
+    path: "src/infrastructure/persistence"
+    scanners: ["state-persistence-scanner"]
+    thresholds:
+      max_store_lines: 120
+      max_cross_imports: 0
+
+  agent_ai_rag_multimodality:
+    name: "Agent/AI/RAG/Multimodality"
+    priority: "P0"
+    description: "Govern most heavy-weight ecosystem - agents, CRUD tools, RAG context, conversation threads, multimodal I/O"
+    path: "src/domain/agents, src/infrastructure/ai, src/presentation/ai"
+    scanners: ["agent-ai-rag-scanner"]
+    thresholds:
+      max_crud_tools_per_agent: 10
+      max_context_overlap: 0.15
+      max_thread_age_hours: 720
+      multimodal_context_isolation: true
+
+  file_structure_governance:
+    name: "File Structure Governance"
+    priority: "P0"
+    description: "File change logging, naming convention enforcement, post-workflow change registration"
+    path: "src/"
+    scanners: ["file-structure-scanner"]
+    thresholds:
+      naming_convention_adherence: 1.0
+      registration_required: true
+      change_log_grace_period_minutes: 5
+
+  domain:
+    name: "Cross-Domain"
+    priority: "P1"
+    description: "Cross-domain impact analysis"
+    path: "src/infrastructure, src/domain, src/presentation"
+    scanners: ["domain-scanner"]
+    thresholds:
+      max_violations: 0
+
+  workspace:
+    name: "Workspace"
+    priority: "P1"
+    description: "Workspace-specific validation"
+    path: "src/infrastructure/sync, src/domain/workspaces"
+    scanners: ["workspace-scanner"]
+    thresholds:
+      workspaces: ["ide", "notes", "knowledge", "study"]
+
+  feature:
+    name: "Feature Boundaries"
+    priority: "P1"
+    description: "Feature boundary detection"
+    path: "src/"
+    scanners: ["feature-scanner"]
+    thresholds:
+      max_cross_feature_deps: 3
+
+  relational:
+    name: "Relational Dependencies"
+    priority: "P1"
+    description: "Mutual dependency mapping"
+    path: "src/"
+    scanners: ["relational-scanner"]
+    thresholds:
+      max_circular_deps: 0
+
+  journey:
+    name: "User Journey"
+    priority: "P2"
+    description: "User journey tracing"
+    path: "src/routes, src/presentation/components"
+    scanners: ["journey-scanner"]
+    thresholds:
+      max_journey_friction: 3
+
+  ux_ui:
+    name: "UX/UI"
+    priority: "P2"
+    description: "Component and UX validation"
+    path: "src/presentation"
+    scanners: ["ux-ui-scanner"]
+    thresholds:
+      max_component_lines: 300
+      design_system_adherence: 0.9
+
+  api_contract:
+    name: "API Contracts"
+    priority: "P1"
+    description: "API and model contract validation"
+    path: "src/infrastructure/api, src/domain/types"
+    scanners: ["api-contract-scanner"]
+    thresholds:
+      contract_violations: 0
+
+  schema_structure:
+    name: "Schema & Structure"
+    priority: "P1"
+    description: "Data schema and file structure"
+    path: "src/infrastructure/persistence/dexie-db.ts"
+    scanners: ["schema-structure-scanner"]
+    thresholds:
+      schema_drift: 0
+
+# Domain relationships for cross-domain scanning
+relationships:
+  state_persistence:
+    depends_on: ["domain", "schema_structure"]
+    affects: ["ux_ui", "journey"]
+
+  domain:
+    depends_on: ["relational"]
+    affects: ["feature", "workspace"]
+
+  workspace:
+    depends_on: ["state_persistence", "schema_structure"]
+    affects: ["feature"]
+
+  api_contract:
+    depends_on: ["domain"]
+    affects: ["feature", "journey"]
+
+  agent_ai_rag_multimodality:
+    depends_on: ["state_persistence", "workspace"]
+    affects: ["domain", "ux_ui", "feature"]
+
+  file_structure_governance:
+    depends_on: ["domain"]
+    affects: ["artifact", "document"]
+
+# Scan patterns per domain
+scan_patterns:
+  artifact:
+    - "**/CLAUDE.md"
+    - "**/AGENTS.md"
+    - "**/architecture*.md"
+    - "**/docs/planning-artifacts/*.md"
+
+  document:
+    - "_bmad/**/*.yaml"
+    - "_bmad-ext/**/*.yaml"
+    - "_bmad-output/**/*.yaml"
+
+  state_persistence:
+    - "src/infrastructure/persistence/**/*.ts"
+    - "src/infrastructure/persistence/stores/**/*.ts"
+
+  agent_ai_rag_multimodality:
+    - "src/domain/agents/**/*.ts"
+    - "src/infrastructure/ai/**/*.ts"
+    - "src/presentation/ai/**/*.tsx"
+    - "src/domain/tools/**/*.ts"
+    - "**/agent*.ts"
+    - "**/rag*.ts"
+    - "**/multimodal*.ts"
+
+  file_structure_governance:
+    - "src/**/*.ts"
+    - "src/**/*.tsx"
+    - "**/*.test.ts"
+    - "**/*.spec.ts"
+
+  domain:
+    - "src/infrastructure/**/*.ts"
+    - "src/domain/**/*.ts"
+    - "src/presentation/**/*.ts"
+
+  workspace:
+    - "src/infrastructure/sync/**/*.ts"
+    - "src/domain/workspaces/**/*.ts"
+    - "src/infrastructure/persistence/adapters/**/*.ts"
+
+  feature:
+    - "src/features/**/*"
+    - "src/routes/**/*"
+
+  relational:
+    - "src/**/*.ts"
+    - "src/**/*.tsx"
+
+  journey:
+    - "src/routes/**/*.tsx"
+    - "src/presentation/components/**/*.tsx"
+
+  ux_ui:
+    - "src/presentation/components/**/*.tsx"
+    - "src/routes/**/*.tsx"
+
+  api_contract:
+    - "src/infrastructure/api/**/*.ts"
+    - "src/domain/types/**/*.ts"
+    - "src/domain/entities/**/*.ts"
+
+  schema_structure:
+    - "src/infrastructure/persistence/dexie*.ts"
+    - "src/infrastructure/persistence/database*.ts"

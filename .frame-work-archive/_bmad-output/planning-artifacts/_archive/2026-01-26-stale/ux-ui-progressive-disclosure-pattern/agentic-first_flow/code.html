@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agentic-First Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #444; 
+            border-radius: 0px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666; 
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#f97316","background-light": "#f0f0f0",
+                        "background-dark": "#0a0a0a",
+                        "surface-dark": "#121212",
+                        "border-dark": "#333333",
+                        "highlight-dark": "#262626",
+                    },
+                    fontFamily: {
+                        mono: ["'JetBrains Mono'", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px",},
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-300 font-mono h-screen flex overflow-hidden text-sm selection:bg-primary selection:text-white">
+<nav class="w-14 flex-shrink-0 flex flex-col items-center py-4 border-r border-gray-300 dark:border-border-dark bg-gray-100 dark:bg-black z-20">
+<div class="mb-6">
+<div class="w-8 h-8 bg-blue-600 flex items-center justify-center text-white font-bold text-xs">A</div>
+</div>
+<div class="flex-1 flex flex-col gap-4 w-full items-center">
+<button class="p-2 text-gray-500 hover:text-primary hover:bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">home</span>
+</button>
+<button class="p-2 text-gray-500 hover:text-primary hover:bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">folder_open</span>
+</button>
+<button class="p-2 text-gray-500 hover:text-primary hover:bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">psychology</span>
+</button>
+<button class="p-2 text-primary border-l-2 border-primary bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">chat</span> 
+</button>
+<button class="p-2 text-gray-500 hover:text-primary hover:bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">library_books</span>
+</button>
+<button class="p-2 text-gray-500 hover:text-primary hover:bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">smart_toy</span>
+</button>
+<div class="flex-grow"></div>
+<button class="p-2 text-gray-500 hover:text-primary hover:bg-highlight-dark w-full flex justify-center transition-colors">
+<span class="material-icons text-xl">settings</span>
+</button>
+</div>
+<div class="mt-auto pt-4 border-t border-gray-300 dark:border-border-dark w-full flex flex-col items-center gap-4">
+<button class="p-2 text-gray-500 hover:text-white transition-colors">
+<span class="material-icons text-lg">light_mode</span>
+</button>
+<div class="text-[10px] text-gray-600 font-bold rotate-90 whitespace-nowrap mb-2">EN-US</div>
+<button class="p-2 text-gray-500 hover:text-white transition-colors">
+<span class="material-icons text-lg">chevron_right</span>
+</button>
+</div>
+</nav>
+<main class="flex-1 flex flex-col h-full relative overflow-hidden bg-white dark:bg-surface-dark">
+<header class="h-14 border-b border-gray-300 dark:border-border-dark flex items-center justify-between px-4 bg-gray-50 dark:bg-black">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-border-dark bg-white dark:bg-highlight-dark text-xs font-bold cursor-pointer hover:border-primary transition-colors">
+<span class="material-icons text-sm">smart_toy</span>
+<span>Via-Gent Coder</span>
+<span class="material-icons text-sm">expand_more</span>
+</div>
+<div class="h-6 w-px bg-gray-300 dark:bg-border-dark mx-2"></div>
+<div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+<span class="bg-green-900/30 text-green-500 px-1.5 py-0.5 border border-green-800 text-[10px] uppercase">Ready</span>
+<span>Using: <span class="text-gray-300">Claude 3.5 Sonnet</span></span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex border border-gray-300 dark:border-border-dark bg-black">
+<button class="px-4 py-1.5 bg-highlight-dark text-primary text-xs font-bold border-r border-border-dark flex items-center gap-2">
+<span class="material-icons text-sm">chat_bubble</span> CHAT
+                    </button>
+<button class="px-4 py-1.5 text-gray-400 hover:text-white text-xs font-bold flex items-center gap-2 hover:bg-highlight-dark transition-colors">
+<span class="material-icons text-sm">forum</span> THREADS
+                    </button>
+</div>
+<div class="h-6 w-px bg-gray-300 dark:bg-border-dark mx-2"></div>
+<button class="p-1.5 hover:bg-highlight-dark text-gray-400 hover:text-white transition-colors border border-transparent hover:border-gray-600">
+<span class="material-icons text-sm">search</span>
+</button>
+<button class="p-1.5 hover:bg-highlight-dark text-gray-400 hover:text-white transition-colors border border-transparent hover:border-gray-600">
+<span class="material-icons text-sm">history</span>
+</button>
+<button class="px-3 py-1.5 bg-primary text-black font-bold text-xs hover:bg-orange-600 transition-colors flex items-center gap-1">
+<span class="material-icons text-sm">add</span> New
+                </button>
+</div>
+</header>
+<div class="flex-1 flex flex-col relative bg-gray-50 dark:bg-[#0f0f0f]">
+<div class="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6">
+<div class="border border-gray-300 dark:border-border-dark bg-white dark:bg-black p-0 mb-8 max-w-4xl mx-auto w-full">
+<div class="flex items-center justify-between px-4 py-3 border-b border-gray-300 dark:border-border-dark cursor-pointer hover:bg-highlight-dark group transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-4 h-4 border border-gray-500 bg-transparent group-hover:bg-primary transition-colors"></div>
+<span class="text-sm font-bold text-gray-300">Auto-Approve Settings</span>
+</div>
+<span class="material-icons text-gray-500">expand_more</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-[10px] text-gray-500 uppercase tracking-wider max-w-4xl mx-auto w-full pb-2 border-b border-dashed border-gray-700">
+<span>Conversation started</span>
+<div class="flex gap-4">
+<span class="hover:text-primary cursor-pointer flex items-center gap-1"><span class="material-icons text-[12px]">description</span> MD</span>
+<span class="hover:text-primary cursor-pointer flex items-center gap-1"><span class="material-icons text-[12px]">data_object</span> JSON</span>
+<span class="hover:text-primary cursor-pointer flex items-center gap-1"><span class="material-icons text-[12px]">content_copy</span> COPY</span>
+</div>
+</div>
+<div class="flex gap-4 max-w-4xl mx-auto w-full group">
+<div class="flex-shrink-0 w-8 h-8 bg-primary/20 border border-primary text-primary flex items-center justify-center font-bold text-xs">
+<span class="material-icons text-sm">smart_toy</span>
+</div>
+<div class="flex-1 space-y-2">
+<div class="flex items-baseline justify-between">
+<span class="text-xs font-bold text-primary">Via-Gent Coder</span>
+<span class="text-[10px] text-gray-600">10:28 PM</span>
+</div>
+<div class="bg-white dark:bg-highlight-dark border border-gray-300 dark:border-border-dark p-4 text-sm leading-relaxed text-gray-300 shadow-sm relative">
+<div class="absolute -left-[6px] top-4 w-3 h-3 bg-highlight-dark border-l border-b border-border-dark transform rotate-45"></div>
+<p>Hello! I'm your AI assistant focused on code generation and workflow optimization. How can I help you today?</p>
+</div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="text-[10px] border border-border-dark px-2 py-1 hover:bg-highlight-dark text-gray-400">Reply</button>
+<button class="text-[10px] border border-border-dark px-2 py-1 hover:bg-highlight-dark text-gray-400">Regenerate</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-4xl mx-auto w-full flex-row-reverse group">
+<div class="flex-shrink-0 w-8 h-8 bg-gray-700 border border-gray-500 text-white flex items-center justify-center font-bold text-xs">
+                        U
+                    </div>
+<div class="flex-1 space-y-2 flex flex-col items-end">
+<div class="flex items-baseline justify-between w-full flex-row-reverse">
+<span class="text-xs font-bold text-gray-400">User</span>
+<span class="text-[10px] text-gray-600">10:29 PM</span>
+</div>
+<div class="bg-primary/10 border border-primary/50 p-4 text-sm leading-relaxed text-gray-200 shadow-sm relative max-w-[90%]">
+<div class="absolute -right-[6px] top-4 w-3 h-3 bg-[#18120d] border-r border-t border-primary/50 transform rotate-45"></div>
+<p>I need to setup a new React project with Tailwind CSS configured for a dark mode dashboard. Can you generate the initial config?</p>
+</div>
+</div>
+</div>
+<div class="flex gap-4 max-w-4xl mx-auto w-full">
+<div class="flex-shrink-0 w-8 h-8 bg-primary/20 border border-primary text-primary flex items-center justify-center font-bold text-xs">
+<span class="material-icons text-sm">smart_toy</span>
+</div>
+<div class="flex-1 space-y-2">
+<div class="flex items-baseline justify-between">
+<span class="text-xs font-bold text-primary">Via-Gent Coder</span>
+<span class="text-[10px] text-gray-600">Thinking...</span>
+</div>
+<div class="bg-white dark:bg-highlight-dark border border-gray-300 dark:border-border-dark p-4 text-sm leading-relaxed text-gray-300 shadow-sm relative">
+<div class="absolute -left-[6px] top-4 w-3 h-3 bg-highlight-dark border-l border-b border-border-dark transform rotate-45"></div>
+<p class="mb-2">Sure. I'll create a Vite project structure and add the Tailwind configuration.</p>
+<div class="bg-black border border-border-dark p-2 font-mono text-xs text-green-400 mb-2">
+<div class="flex justify-between border-b border-border-dark pb-1 mb-2 text-gray-500">
+<span>terminal</span>
+<span>bash</span>
+</div>
+                                &gt; npm create vite@latest my-dashboard -- --template react<br/>
+                                &gt; cd my-dashboard<br/>
+                                &gt; npm install -D tailwindcss postcss autoprefixer<br/>
+                                &gt; npx tailwindcss init -p
+                                <span class="animate-pulse">_</span>
+</div>
+<p>Here is your <code class="bg-black border border-gray-700 px-1 text-xs text-primary">tailwind.config.js</code>:</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-gray-300 dark:border-border-dark bg-white dark:bg-surface-dark z-10">
+<div class="max-w-4xl mx-auto w-full relative">
+<div class="flex items-center gap-2 mb-2">
+<div class="px-2 py-1 bg-highlight-dark border border-border-dark text-[10px] text-gray-400 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                             Context: Global
+                        </div>
+<div class="px-2 py-1 bg-highlight-dark border border-border-dark text-[10px] text-gray-400 flex items-center gap-1 cursor-pointer hover:border-gray-500">
+<span class="material-icons text-[12px]">add</span> Add File
+                        </div>
+</div>
+<div class="border border-gray-400 dark:border-gray-600 focus-within:border-primary bg-gray-50 dark:bg-black transition-colors">
+<textarea class="w-full bg-transparent text-sm p-3 focus:outline-none min-h-[60px] resize-none text-gray-200 placeholder-gray-600" placeholder="Ask anything or type / for commands..."></textarea>
+<div class="flex items-center justify-between px-2 py-2 border-t border-gray-800">
+<div class="flex items-center gap-1">
+<button class="p-1.5 hover:bg-highlight-dark text-gray-500 hover:text-white transition-colors"><span class="material-icons text-sm">attach_file</span></button>
+<button class="p-1.5 hover:bg-highlight-dark text-gray-500 hover:text-white transition-colors"><span class="material-icons text-sm">image</span></button>
+<button class="p-1.5 hover:bg-highlight-dark text-gray-500 hover:text-white transition-colors"><span class="material-icons text-sm">mic</span></button>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-2 text-[10px] text-gray-600 mr-2">
+<span class="border border-gray-700 px-1 rounded-sm">⏎</span> to send
+                                </div>
+<button class="p-1.5 bg-primary text-black hover:bg-orange-600 transition-colors">
+<span class="material-icons text-sm font-bold">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-6 right-6 z-20">
+<div class="bg-black border border-border-dark shadow-xl p-3 flex items-center gap-4 min-w-[300px]">
+<span class="text-xs font-bold text-gray-300">Sync Status</span>
+<div class="ml-auto flex items-center gap-2">
+<span class="flex items-center gap-1 text-[10px] text-green-500 border border-green-900 bg-green-900/10 px-2 py-0.5">
+<span class="material-icons text-[12px]">check_circle</span> All files synced
+                        </span>
+<button class="text-gray-500 hover:text-white"><span class="material-icons text-sm">close</span></button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-12 hover:w-[400px] group transition-all duration-300 border-l border-gray-300 dark:border-border-dark bg-gray-50 dark:bg-[#050505] flex flex-col z-10 relative shadow-2xl overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center pt-4 border-r border-gray-800 bg-surface-dark group-hover:bg-highlight-dark transition-colors cursor-pointer z-20">
+<span class="material-icons text-gray-500 mb-6">edit_note</span>
+<div class="writing-mode-vertical rotate-180 text-xs font-bold tracking-widest text-gray-400 whitespace-nowrap uppercase">
+                Project Notes
+            </div>
+</div>
+<div class="flex-1 flex flex-col pl-12 min-w-[400px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+<div class="h-14 border-b border-border-dark flex items-center justify-between px-4 bg-surface-dark">
+<div class="flex items-center gap-2 text-gray-400">
+<span class="material-icons text-sm">folder</span>
+<span class="text-xs">/ project / notes</span>
+</div>
+<div class="flex gap-2">
+<button class="text-gray-500 hover:text-primary"><span class="material-icons text-sm">save</span></button>
+<button class="text-gray-500 hover:text-primary"><span class="material-icons text-sm">more_vert</span></button>
+</div>
+</div>
+<div class="flex-1 p-6 overflow-y-auto bg-[#0a0a0a]">
+<h1 class="text-xl font-bold text-white mb-6 border-l-4 border-primary pl-4">Architecture Design v2</h1>
+<div class="space-y-4 text-gray-300 text-sm leading-relaxed">
+<p>The agentic flow focuses on reducing context switching. By keeping the chat primary, we allow the LLM to drive the development process.</p>
+<div class="my-4 p-3 bg-highlight-dark border border-dashed border-gray-700">
+<span class="text-xs font-bold text-gray-500 uppercase mb-2 block">Key Objectives</span>
+<ul class="list-disc list-inside space-y-1 text-gray-400">
+<li>Minimize UI clutter</li>
+<li>Maximize prompt context</li>
+<li>Separate creation from ideation</li>
+</ul>
+</div>
+<p>Current blockers involve regulating the token limit on the client side without losing history.</p>
+<h2 class="text-lg font-bold text-white mt-6 mb-2">Next Steps</h2>
+<ul class="list-none space-y-2">
+<li class="flex items-center gap-2">
+<input class="bg-transparent border-gray-600 text-primary focus:ring-0 rounded-none w-4 h-4" type="checkbox"/>
+<span>Implement streaming parser</span>
+</li>
+<li class="flex items-center gap-2">
+<input checked="" class="bg-transparent border-gray-600 text-primary focus:ring-0 rounded-none w-4 h-4" type="checkbox"/>
+<span class="line-through text-gray-500">Design 8-bit UI assets</span>
+</li>
+<li class="flex items-center gap-2">
+<input class="bg-transparent border-gray-600 text-primary focus:ring-0 rounded-none w-4 h-4" type="checkbox"/>
+<span>Connect local DB</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="p-2 border-t border-border-dark bg-surface-dark text-[10px] text-gray-500 flex justify-between">
+<span>Last edited 2m ago</span>
+<span>Markdown Mode</span>
+</div>
+</div>
+</aside>
+<style>
+        .writing-mode-vertical {
+            writing-mode: vertical-rl;
+        }
+    </style>
+
+</body></html>

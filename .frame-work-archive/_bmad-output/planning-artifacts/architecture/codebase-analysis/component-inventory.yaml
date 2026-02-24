@@ -1,0 +1,79 @@
+component_inventory:
+  ide:
+    count: 48
+    key_components:
+      - MonacoEditor.tsx (768 lines)
+      - EnhancedChatInterface.tsx (592 lines)
+      - AgentChatPanel.tsx (527 lines)
+      - SyncStatusPanel.tsx (429 lines)
+    god_components:
+      - MonacoEditor.tsx (768 lines - OVER LIMIT)
+      - EnhancedChatInterface.tsx (592 lines - OVER LIMIT)
+      - AgentChatPanel.tsx (527 lines - OVER LIMIT)
+  knowledge:
+    count: 33
+    key_components:
+      - KnowledgePage.tsx (712 lines)
+      - IndexingProgressPanel.tsx (593 lines)
+    god_components:
+      - KnowledgePage.tsx (712 lines - OVER LIMIT)
+      - IndexingProgressPanel.tsx (593 lines - OVER LIMIT)
+  notes:
+    count: 19
+    key_components:
+      - NotesPage.tsx (712 lines)
+    god_components:
+      - NotesPage.tsx (712 lines - OVER LIMIT)
+  study:
+    count: 11
+    key_components: []
+    god_components: []
+  agent:
+    count: 58
+    key_components:
+      - AgentConfigDialog.tsx (432 lines)
+      - ProviderConfigDialog.tsx (432 lines)
+      - WorkspacePermissionEditor.tsx (479 lines)
+      - PreferenceSettings.tsx (433 lines)
+      - AgentWorkspaceSwitchingFeedback.tsx (458 lines)
+    god_components:
+      - WorkspacePermissionEditor.tsx (479 lines - OVER LIMIT)
+  chat:
+    count: 44
+    key_components:
+      - ChatConversation.tsx (522 lines)
+      - WorkflowBuilder.tsx (476 lines)
+      - FileAttachmentInput.tsx (492 lines)
+      - CodeBlock.tsx (465 lines)
+      - ChatHistory.tsx (432 lines)
+    god_components:
+      - ChatConversation.tsx (522 lines - OVER LIMIT)
+      - WorkflowBuilder.tsx (476 lines - OVER LIMIT)
+      - FileAttachmentInput.tsx (492 lines - OVER LIMIT)
+  ui:
+    count: 86
+    key_components:
+      - resizable.tsx (745 lines)
+      - SkeletonScreen.tsx (508 lines)
+      - ApprovalOverlay.tsx (443 lines)
+    god_components:
+      - resizable.tsx (745 lines - OVER LIMIT)
+  layout:
+    count: 21
+    key_components: []
+    god_components: []
+  other_components:
+    - project/ProjectCreationWizard.tsx (513 lines - god)
+    - templates/TemplateCustomization.tsx (484 lines - god)
+    - templates/TemplateGallery.tsx (474 lines - god)
+    - git/GitMergeConflictResolver.tsx (473 lines - god)
+    - analytics/AnalyticsDashboard.tsx (457 lines - god)
+    - notifications/NotificationCenter.tsx (454 lines - god)
+    - snippets/SnippetEditor.tsx (449 lines - god)
+    - hub/HubHomePage.tsx (439 lines - god)
+    - settings/SettingsImportDialog.tsx (424 lines - god)
+  total_component_count: 474
+  god_component_count: 19
+  god_component_percentage: 4.0%
+  largest_god_component: MonacoEditor.tsx (768 lines)
+  compliance_issue: 19 components exceed 300-line limit

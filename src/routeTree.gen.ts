@@ -10,20 +10,65 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestFsAdapterRouteImport } from './routes/test-fs-adapter'
+import { Route as TestErrorBoundaryRouteImport } from './routes/test-error-boundary'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as DebugRouteImport } from './routes/debug'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ProjectIdRouteImport } from './routes/$projectId'
+import { Route as ProjectIdRouteRouteImport } from './routes/$projectId/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as WorkspaceProjectIdRouteImport } from './routes/workspace/$projectId'
+import { Route as ProjectIdIndexRouteImport } from './routes/$projectId/index'
 import { Route as WebcontainerSplatRouteImport } from './routes/webcontainer.$'
-import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
-import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
-import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
-import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
-import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
-import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
-import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as NotesProjectIdRouteImport } from './routes/notes.$projectId'
+import { Route as IdeProjectIdRouteImport } from './routes/ide.$projectId'
+import { Route as ApiProvidersRouteImport } from './routes/api/providers'
+import { Route as ApiProviderTestRouteImport } from './routes/api/provider-test'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ProjectIdTestRouteImport } from './routes/$projectId.test'
+import { Route as __debug_ProviderPlaygroundRouteImport } from './routes/$__debug__.provider-playground'
+import { Route as ApiProvidersIdRouteImport } from './routes/api/providers.$id'
+import { Route as ApiProvidersIdTestRouteImport } from './routes/api/providers.$id.test'
+import { Route as ApiProvidersIdExecuteRouteImport } from './routes/api/providers.$id.execute'
 
 const TestFsAdapterRoute = TestFsAdapterRouteImport.update({
   id: '/test-fs-adapter',
   path: '/test-fs-adapter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestErrorBoundaryRoute = TestErrorBoundaryRouteImport.update({
+  id: '/test-error-boundary',
+  path: '/test-error-boundary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DebugRoute = DebugRouteImport.update({
+  id: '/debug',
+  path: '/debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
+const ProjectIdRoute = ProjectIdRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectIdRouteRoute = ProjectIdRouteRouteImport.update({
+  id: '/$projectId',
+  path: '/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,146 +76,219 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const WorkspaceProjectIdRoute = WorkspaceProjectIdRouteImport.update({
-  id: '/workspace/$projectId',
-  path: '/workspace/$projectId',
-  getParentRoute: () => rootRouteImport,
+const ProjectIdIndexRoute = ProjectIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProjectIdRoute,
 } as any)
 const WebcontainerSplatRoute = WebcontainerSplatRouteImport.update({
   id: '/webcontainer/$',
   path: '/webcontainer/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
-  id: '/demo/start/server-funcs',
-  path: '/demo/start/server-funcs',
+const NotesProjectIdRoute = NotesProjectIdRouteImport.update({
+  id: '/notes/$projectId',
+  path: '/notes/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
-  id: '/demo/start/api-request',
-  path: '/demo/start/api-request',
+const IdeProjectIdRoute = IdeProjectIdRouteImport.update({
+  id: '/ide/$projectId',
+  path: '/ide/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
-  id: '/demo/api/names',
-  path: '/demo/api/names',
+const ApiProvidersRoute = ApiProvidersRouteImport.update({
+  id: '/api/providers',
+  path: '/api/providers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
-  id: '/demo/start/ssr/',
-  path: '/demo/start/ssr/',
+const ApiProviderTestRoute = ApiProviderTestRouteImport.update({
+  id: '/api/provider-test',
+  path: '/api/provider-test',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
-  id: '/demo/start/ssr/spa-mode',
-  path: '/demo/start/ssr/spa-mode',
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({
-  id: '/demo/start/ssr/full-ssr',
-  path: '/demo/start/ssr/full-ssr',
-  getParentRoute: () => rootRouteImport,
+const ProjectIdTestRoute = ProjectIdTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => ProjectIdRoute,
 } as any)
-const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
-  id: '/demo/start/ssr/data-only',
-  path: '/demo/start/ssr/data-only',
-  getParentRoute: () => rootRouteImport,
+const __debug_ProviderPlaygroundRoute =
+  __debug_ProviderPlaygroundRouteImport.update({
+    id: '/$__debug__/provider-playground',
+    path: '/$__debug_/provider-playground',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiProvidersIdRoute = ApiProvidersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiProvidersRoute,
+} as any)
+const ApiProvidersIdTestRoute = ApiProvidersIdTestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => ApiProvidersIdRoute,
+} as any)
+const ApiProvidersIdExecuteRoute = ApiProvidersIdExecuteRouteImport.update({
+  id: '/execute',
+  path: '/execute',
+  getParentRoute: () => ApiProvidersIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$projectId': typeof ProjectIdRouteWithChildren
+  '/about': typeof AboutRoute
+  '/debug': typeof DebugRoute
+  '/projects': typeof ProjectsRoute
+  '/settings': typeof SettingsRoute
+  '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
+  '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/$projectId/test': typeof ProjectIdTestRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/provider-test': typeof ApiProviderTestRoute
+  '/api/providers': typeof ApiProvidersRouteWithChildren
+  '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
-  '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/$projectId/': typeof ProjectIdIndexRoute
+  '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
+  '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
+  '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$projectId': typeof ProjectIdIndexRoute
+  '/about': typeof AboutRoute
+  '/debug': typeof DebugRoute
+  '/projects': typeof ProjectsRoute
+  '/settings': typeof SettingsRoute
+  '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
+  '/$__debug_/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/$projectId/test': typeof ProjectIdTestRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/provider-test': typeof ApiProviderTestRoute
+  '/api/providers': typeof ApiProvidersRouteWithChildren
+  '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
-  '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
+  '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
+  '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$projectId': typeof ProjectIdRouteWithChildren
+  '/about': typeof AboutRoute
+  '/debug': typeof DebugRoute
+  '/projects': typeof ProjectsRoute
+  '/settings': typeof SettingsRoute
+  '/test-error-boundary': typeof TestErrorBoundaryRoute
   '/test-fs-adapter': typeof TestFsAdapterRoute
+  '/$__debug__/provider-playground': typeof __debug_ProviderPlaygroundRoute
+  '/$projectId/test': typeof ProjectIdTestRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/provider-test': typeof ApiProviderTestRoute
+  '/api/providers': typeof ApiProvidersRouteWithChildren
+  '/ide/$projectId': typeof IdeProjectIdRoute
+  '/notes/$projectId': typeof NotesProjectIdRoute
   '/webcontainer/$': typeof WebcontainerSplatRoute
-  '/workspace/$projectId': typeof WorkspaceProjectIdRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/$projectId/': typeof ProjectIdIndexRoute
+  '/api/providers/$id': typeof ApiProvidersIdRouteWithChildren
+  '/api/providers/$id/execute': typeof ApiProvidersIdExecuteRoute
+  '/api/providers/$id/test': typeof ApiProvidersIdTestRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$projectId'
+    | '/about'
+    | '/debug'
+    | '/projects'
+    | '/settings'
+    | '/test-error-boundary'
     | '/test-fs-adapter'
+    | '/$__debug_/provider-playground'
+    | '/$projectId/test'
+    | '/api/chat'
+    | '/api/provider-test'
+    | '/api/providers'
+    | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
-    | '/workspace/$projectId'
-    | '/demo/api/names'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr'
+    | '/$projectId/'
+    | '/api/providers/$id'
+    | '/api/providers/$id/execute'
+    | '/api/providers/$id/test'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$projectId'
+    | '/about'
+    | '/debug'
+    | '/projects'
+    | '/settings'
+    | '/test-error-boundary'
     | '/test-fs-adapter'
+    | '/$__debug_/provider-playground'
+    | '/$projectId/test'
+    | '/api/chat'
+    | '/api/provider-test'
+    | '/api/providers'
+    | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
-    | '/workspace/$projectId'
-    | '/demo/api/names'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr'
+    | '/api/providers/$id'
+    | '/api/providers/$id/execute'
+    | '/api/providers/$id/test'
   id:
     | '__root__'
     | '/'
+    | '/$projectId'
+    | '/about'
+    | '/debug'
+    | '/projects'
+    | '/settings'
+    | '/test-error-boundary'
     | '/test-fs-adapter'
+    | '/$__debug__/provider-playground'
+    | '/$projectId/test'
+    | '/api/chat'
+    | '/api/provider-test'
+    | '/api/providers'
+    | '/ide/$projectId'
+    | '/notes/$projectId'
     | '/webcontainer/$'
-    | '/workspace/$projectId'
-    | '/demo/api/names'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr/'
+    | '/$projectId/'
+    | '/api/providers/$id'
+    | '/api/providers/$id/execute'
+    | '/api/providers/$id/test'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProjectIdRouteRoute: typeof ProjectIdRouteRoute
+  ProjectIdRoute: typeof ProjectIdRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  DebugRoute: typeof DebugRoute
+  ProjectsRoute: typeof ProjectsRoute
+  SettingsRoute: typeof SettingsRoute
+  TestErrorBoundaryRoute: typeof TestErrorBoundaryRoute
   TestFsAdapterRoute: typeof TestFsAdapterRoute
+  __debug_ProviderPlaygroundRoute: typeof __debug_ProviderPlaygroundRoute
+  ApiChatRoute: typeof ApiChatRoute
+  ApiProviderTestRoute: typeof ApiProviderTestRoute
+  ApiProvidersRoute: typeof ApiProvidersRouteWithChildren
+  IdeProjectIdRoute: typeof IdeProjectIdRoute
+  NotesProjectIdRoute: typeof NotesProjectIdRoute
   WebcontainerSplatRoute: typeof WebcontainerSplatRoute
-  WorkspaceProjectIdRoute: typeof WorkspaceProjectIdRoute
-  DemoApiNamesRoute: typeof DemoApiNamesRoute
-  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
-  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
-  DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
-  DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
-  DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
-  DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -182,6 +300,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestFsAdapterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/test-error-boundary': {
+      id: '/test-error-boundary'
+      path: '/test-error-boundary'
+      fullPath: '/test-error-boundary'
+      preLoaderRoute: typeof TestErrorBoundaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/debug': {
+      id: '/debug'
+      path: '/debug'
+      fullPath: '/debug'
+      preLoaderRoute: typeof DebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$projectId': {
+      id: '/$projectId'
+      path: '/$projectId'
+      fullPath: '/$projectId'
+      preLoaderRoute: typeof ProjectIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$projectId': {
+      id: '/$projectId'
+      path: '/$projectId'
+      fullPath: '/$projectId'
+      preLoaderRoute: typeof ProjectIdRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -189,12 +356,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/workspace/$projectId': {
-      id: '/workspace/$projectId'
-      path: '/workspace/$projectId'
-      fullPath: '/workspace/$projectId'
-      preLoaderRoute: typeof WorkspaceProjectIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/$projectId/': {
+      id: '/$projectId/'
+      path: '/'
+      fullPath: '/$projectId/'
+      preLoaderRoute: typeof ProjectIdIndexRouteImport
+      parentRoute: typeof ProjectIdRoute
     }
     '/webcontainer/$': {
       id: '/webcontainer/$'
@@ -203,70 +370,136 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WebcontainerSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/server-funcs': {
-      id: '/demo/start/server-funcs'
-      path: '/demo/start/server-funcs'
-      fullPath: '/demo/start/server-funcs'
-      preLoaderRoute: typeof DemoStartServerFuncsRouteImport
+    '/notes/$projectId': {
+      id: '/notes/$projectId'
+      path: '/notes/$projectId'
+      fullPath: '/notes/$projectId'
+      preLoaderRoute: typeof NotesProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/api-request': {
-      id: '/demo/start/api-request'
-      path: '/demo/start/api-request'
-      fullPath: '/demo/start/api-request'
-      preLoaderRoute: typeof DemoStartApiRequestRouteImport
+    '/ide/$projectId': {
+      id: '/ide/$projectId'
+      path: '/ide/$projectId'
+      fullPath: '/ide/$projectId'
+      preLoaderRoute: typeof IdeProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/api/names': {
-      id: '/demo/api/names'
-      path: '/demo/api/names'
-      fullPath: '/demo/api/names'
-      preLoaderRoute: typeof DemoApiNamesRouteImport
+    '/api/providers': {
+      id: '/api/providers'
+      path: '/api/providers'
+      fullPath: '/api/providers'
+      preLoaderRoute: typeof ApiProvidersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/': {
-      id: '/demo/start/ssr/'
-      path: '/demo/start/ssr'
-      fullPath: '/demo/start/ssr'
-      preLoaderRoute: typeof DemoStartSsrIndexRouteImport
+    '/api/provider-test': {
+      id: '/api/provider-test'
+      path: '/api/provider-test'
+      fullPath: '/api/provider-test'
+      preLoaderRoute: typeof ApiProviderTestRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/spa-mode': {
-      id: '/demo/start/ssr/spa-mode'
-      path: '/demo/start/ssr/spa-mode'
-      fullPath: '/demo/start/ssr/spa-mode'
-      preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/full-ssr': {
-      id: '/demo/start/ssr/full-ssr'
-      path: '/demo/start/ssr/full-ssr'
-      fullPath: '/demo/start/ssr/full-ssr'
-      preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport
+    '/$projectId/test': {
+      id: '/$projectId/test'
+      path: '/test'
+      fullPath: '/$projectId/test'
+      preLoaderRoute: typeof ProjectIdTestRouteImport
+      parentRoute: typeof ProjectIdRoute
+    }
+    '/$__debug__/provider-playground': {
+      id: '/$__debug__/provider-playground'
+      path: '/$__debug_/provider-playground'
+      fullPath: '/$__debug_/provider-playground'
+      preLoaderRoute: typeof __debug_ProviderPlaygroundRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/data-only': {
-      id: '/demo/start/ssr/data-only'
-      path: '/demo/start/ssr/data-only'
-      fullPath: '/demo/start/ssr/data-only'
-      preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
-      parentRoute: typeof rootRouteImport
+    '/api/providers/$id': {
+      id: '/api/providers/$id'
+      path: '/$id'
+      fullPath: '/api/providers/$id'
+      preLoaderRoute: typeof ApiProvidersIdRouteImport
+      parentRoute: typeof ApiProvidersRoute
+    }
+    '/api/providers/$id/test': {
+      id: '/api/providers/$id/test'
+      path: '/test'
+      fullPath: '/api/providers/$id/test'
+      preLoaderRoute: typeof ApiProvidersIdTestRouteImport
+      parentRoute: typeof ApiProvidersIdRoute
+    }
+    '/api/providers/$id/execute': {
+      id: '/api/providers/$id/execute'
+      path: '/execute'
+      fullPath: '/api/providers/$id/execute'
+      preLoaderRoute: typeof ApiProvidersIdExecuteRouteImport
+      parentRoute: typeof ApiProvidersIdRoute
     }
   }
 }
 
+interface ProjectIdRouteChildren {
+  ProjectIdTestRoute: typeof ProjectIdTestRoute
+  ProjectIdIndexRoute: typeof ProjectIdIndexRoute
+}
+
+const ProjectIdRouteChildren: ProjectIdRouteChildren = {
+  ProjectIdTestRoute: ProjectIdTestRoute,
+  ProjectIdIndexRoute: ProjectIdIndexRoute,
+}
+
+const ProjectIdRouteWithChildren = ProjectIdRoute._addFileChildren(
+  ProjectIdRouteChildren,
+)
+
+interface ApiProvidersIdRouteChildren {
+  ApiProvidersIdExecuteRoute: typeof ApiProvidersIdExecuteRoute
+  ApiProvidersIdTestRoute: typeof ApiProvidersIdTestRoute
+}
+
+const ApiProvidersIdRouteChildren: ApiProvidersIdRouteChildren = {
+  ApiProvidersIdExecuteRoute: ApiProvidersIdExecuteRoute,
+  ApiProvidersIdTestRoute: ApiProvidersIdTestRoute,
+}
+
+const ApiProvidersIdRouteWithChildren = ApiProvidersIdRoute._addFileChildren(
+  ApiProvidersIdRouteChildren,
+)
+
+interface ApiProvidersRouteChildren {
+  ApiProvidersIdRoute: typeof ApiProvidersIdRouteWithChildren
+}
+
+const ApiProvidersRouteChildren: ApiProvidersRouteChildren = {
+  ApiProvidersIdRoute: ApiProvidersIdRouteWithChildren,
+}
+
+const ApiProvidersRouteWithChildren = ApiProvidersRoute._addFileChildren(
+  ApiProvidersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProjectIdRouteRoute: ProjectIdRouteRoute,
+  ProjectIdRoute: ProjectIdRouteWithChildren,
+  AboutRoute: AboutRoute,
+  DebugRoute: DebugRoute,
+  ProjectsRoute: ProjectsRoute,
+  SettingsRoute: SettingsRoute,
+  TestErrorBoundaryRoute: TestErrorBoundaryRoute,
   TestFsAdapterRoute: TestFsAdapterRoute,
+  __debug_ProviderPlaygroundRoute: __debug_ProviderPlaygroundRoute,
+  ApiChatRoute: ApiChatRoute,
+  ApiProviderTestRoute: ApiProviderTestRoute,
+  ApiProvidersRoute: ApiProvidersRouteWithChildren,
+  IdeProjectIdRoute: IdeProjectIdRoute,
+  NotesProjectIdRoute: NotesProjectIdRoute,
   WebcontainerSplatRoute: WebcontainerSplatRoute,
-  WorkspaceProjectIdRoute: WorkspaceProjectIdRoute,
-  DemoApiNamesRoute: DemoApiNamesRoute,
-  DemoStartApiRequestRoute: DemoStartApiRequestRoute,
-  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
-  DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
-  DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
-  DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
-  DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

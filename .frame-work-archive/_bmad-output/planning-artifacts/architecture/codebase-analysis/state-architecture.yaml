@@ -1,0 +1,92 @@
+state_architecture:
+  persistence_stores:
+    - file: src/infrastructure/persistence/stores/use-app-store.ts
+      lines: 367
+      pattern: combined
+      is_god: true
+      persist: true
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts
+      lines: 557
+      pattern: slice
+      is_god: true
+      persist: true
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts
+      lines: 367
+      pattern: slice
+      is_god: true
+      persist: false
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/session-snapshot-manager.ts
+      lines: 321
+      pattern: monolithic
+      is_god: true
+      persist: true
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/plugins-store.ts
+      lines: 316
+      pattern: monolithic
+      is_god: true
+      persist: true
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/schema-migrations.ts
+      lines: 314
+      pattern: monolithic
+      is_god: true
+      persist: false
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/terminal-store.ts
+      lines: 307
+      pattern: slice
+      is_god: true
+      persist: true
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/conversation/useConversationStore.ts
+      lines: 304
+      pattern: slice
+      is_god: true
+      persist: true
+      dexie_tables: []
+    - file: src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts
+      lines: 396
+      pattern: slice
+      is_god: true
+      persist: true
+      dexie_tables: []
+  god_stores:
+    - src/infrastructure/persistence/stores/use-app-store.ts (367 lines)
+    - src/infrastructure/persistence/stores/workspace/useWorkspaceFileSystem.ts (557 lines)
+    - src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts (367 lines)
+    - src/infrastructure/persistence/stores/session-snapshot-manager.ts (321 lines)
+    - src/infrastructure/persistence/stores/plugins-store.ts (316 lines)
+    - src/infrastructure/persistence/stores/schema-migrations.ts (314 lines)
+    - src/infrastructure/persistence/stores/terminal-store.ts (307 lines)
+    - src/infrastructure/persistence/stores/conversation/useConversationStore.ts (304 lines)
+    - src/infrastructure/persistence/stores/providers/provider-credentials-slice.ts (396 lines)
+  legacy_stores:
+    - location: src/stores/ (exists but migration in progress)
+    - status: being consolidated to infrastructure/persistence
+  dexie_database:
+    - file: src/infrastructure/persistence/dexie-db.ts
+      lines: 1169
+      tables:
+        - conversations
+        - messages
+        - projects
+        - fileMetadata
+        - toolExecutionLogs
+        - fsaHandles
+        - plugins
+        - sessionSnapshots
+        - workspaceState
+    - migration_file: src/infrastructure/persistence/dexie-db-migrations.ts
+      lines: 828
+  slice_pattern_compliance: partial
+  observations:
+    - use-app-store.ts (367 lines) is a "god store" that combines multiple slices
+    - workspace store files exceed 300-line limit
+    - Zustand persist middleware is used with Dexie storage adapter
+    - Migration in progress from legacy src/stores/ to infrastructure/persistence
+    - 9 files exceed 300-line threshold for god stores
+    - dexie-db.ts (1,169 lines) is a critical file requiring decomposition

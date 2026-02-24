@@ -1,0 +1,35 @@
+id: "SPRINT-ROTATION-GATE"
+version: "1.0.0"
+triggers:
+  - schedule: "daily"
+  - workflow: "sprint-planning"
+
+checks:
+  - id: "SRG-001"
+    name: "Max sprint files (4)"
+    severity: "HIGH"
+    validation: "count_files(_bmad-output/sprint-artifacts/*-sprint-*.yaml) <= 4"
+    action_on_fail: "Too many sprint files - archive completed sprints"
+    
+  - id: "SRG-002"
+    name: "Sprint freshness (24h)"
+    severity: "MEDIUM"
+    validation: "youngest_file(_bmad-output/sprint-artifacts/*-sprint-*.yaml).age < 24h"
+    action_on_fail: "No recent sprint updates - verify sprint is active"
+    
+  - id: "SRG-003"
+    name: "No stale complete sprints"
+    severity: "HIGH"
+    validation: "no_file_older_than(_bmad-output/sprint-artifacts/*.yaml, 7d, status=COMPLETE)"
+    action_on_fail: "Completed sprint older than 7 days - archive it"
+    
+  - id: "SRG-004"
+    name: "Master sprint file exists"
+    severity: "CRITICAL"
+    validation: "file_exists(_bmad-output/sprint-artifacts/sprint-status.yaml)"
+    action_on_fail: "Main sprint-status.yaml missing - critical error"
+
+limits:
+  max_active_sprints: 4
+  sprint_ttl_days: 7
+  rotation_frequency: "daily"

@@ -1,0 +1,684 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* VIA-GENT Design System Imports */
+@import "./styles/design-tokens.css";
+@import "./styles/light-theme-tokens.css";
+@import "./styles/animations.css";
+
+/* Custom variants for dark/light mode - Tailwind CSS 4 approach */
+@custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
+@custom-variant light (&:is(.light *, [data-theme="light"] *));
+
+/* =============================================================================
+   VIA-GENT Typography System
+   - Body: Inter (clean sans-serif)
+   - Pixel: VT323 (lightweight 8-bit)
+   - Pixel Heavy: Press Start 2P (chunky 8-bit)
+   - Code: JetBrains Mono (developer-focused)
+   ============================================================================= */
+
+body {
+  @apply m-0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas,
+    'Courier New', monospace;
+}
+
+/* Pixel Font Utility Classes */
+.font-pixel {
+  font-family: 'VT323', monospace;
+  letter-spacing: 0.05em;
+}
+
+.font-pixel-heavy {
+  font-family: 'VT323', monospace;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Pixel text sizes - optimized for VT323 readability */
+.text-pixel-xs {
+  font-family: 'VT323', monospace;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-pixel-sm {
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-pixel-base {
+  font-family: 'VT323', monospace;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-pixel-lg {
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-pixel-xl {
+  font-family: 'VT323', monospace;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-pixel-2xl {
+  font-family: 'VT323', monospace;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+/* =============================================================================
+   VIA-GENT Custom Scrollbar Styling
+   - Premium thin scrollbar for 8-bit aesthetic
+   - Works in Webkit (Chrome, Edge, Safari) and Firefox
+   ============================================================================= */
+
+/* Base scrollbar styling - applies to all scrollable elements */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 0;
+  border: 1px solid hsl(var(--border));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--accent));
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--primary));
+}
+
+::-webkit-scrollbar-corner {
+  background: hsl(var(--background));
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) hsl(var(--background));
+}
+
+/* Thin scrollbar variant for smaller panels */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Primary colored scrollbar for active panels */
+.scrollbar-primary::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / 50%);
+}
+
+.scrollbar-primary::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 80%);
+}
+
+.demo-start-server-funcs-bg {
+  background-image: radial-gradient(50% 50% at 20% 60%,
+      #23272a 0%,
+      #18181b 50%,
+      #000000 100%);
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* UX-15: Typing indicator bounce animation for streaming AI */
+@keyframes typing-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 15s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Color mappings - wrap HSL values with hsl() for Tailwind utilities */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  /* VIA-GENT Brand Extensions */
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --color-editor-bg: hsl(var(--editor-bg));
+
+  /* Primary color scale (50-950) */
+  --color-primary-50: hsl(var(--primary-50));
+  --color-primary-100: hsl(var(--primary-100));
+  --color-primary-200: hsl(var(--primary-200));
+  --color-primary-300: hsl(var(--primary-300));
+  --color-primary-400: hsl(var(--primary-400));
+  --color-primary-500: hsl(var(--primary-500));
+  --color-primary-600: hsl(var(--primary-600));
+  --color-primary-700: hsl(var(--primary-700));
+  --color-primary-800: hsl(var(--primary-800));
+  --color-primary-900: hsl(var(--primary-900));
+  --color-primary-950: hsl(var(--primary-950));
+
+  /* Success color scale (50-950) */
+  --color-success-50: hsl(var(--success-50));
+  --color-success-100: hsl(var(--success-100));
+  --color-success-200: hsl(var(--success-200));
+  --color-success-300: hsl(var(--success-300));
+  --color-success-400: hsl(var(--success-400));
+  --color-success-500: hsl(var(--success-500));
+  --color-success-600: hsl(var(--success-600));
+  --color-success-700: hsl(var(--success-700));
+  --color-success-800: hsl(var(--success-800));
+  --color-success-900: hsl(var(--success-900));
+  --color-success-950: hsl(var(--success-950));
+
+  /* Warning color scale (50-950) */
+  --color-warning-50: hsl(var(--warning-50));
+  --color-warning-100: hsl(var(--warning-100));
+  --color-warning-200: hsl(var(--warning-200));
+  --color-warning-300: hsl(var(--warning-300));
+  --color-warning-400: hsl(var(--warning-400));
+  --color-warning-500: hsl(var(--warning-500));
+  --color-warning-600: hsl(var(--warning-600));
+  --color-warning-700: hsl(var(--warning-700));
+  --color-warning-800: hsl(var(--warning-800));
+  --color-warning-900: hsl(var(--warning-900));
+  --color-warning-950: hsl(var(--warning-950));
+
+  /* Destructive color scale (50-950) */
+  --color-destructive-50: hsl(var(--destructive-50));
+  --color-destructive-100: hsl(var(--destructive-100));
+  --color-destructive-200: hsl(var(--destructive-200));
+  --color-destructive-300: hsl(var(--destructive-300));
+  --color-destructive-400: hsl(var(--destructive-400));
+  --color-destructive-500: hsl(var(--destructive-500));
+  --color-destructive-600: hsl(var(--destructive-600));
+  --color-destructive-700: hsl(var(--destructive-700));
+  --color-destructive-800: hsl(var(--destructive-800));
+  --color-destructive-900: hsl(var(--destructive-900));
+  --color-destructive-950: hsl(var(--destructive-950));
+
+  /* Info color scale (50-950) */
+  --color-info-50: hsl(var(--info-50));
+  --color-info-100: hsl(var(--info-100));
+  --color-info-200: hsl(var(--info-200));
+  --color-info-300: hsl(var(--info-300));
+  --color-info-400: hsl(var(--info-400));
+  --color-info-500: hsl(var(--info-500));
+  --color-info-600: hsl(var(--info-600));
+  --color-info-700: hsl(var(--info-700));
+  --color-info-800: hsl(var(--info-800));
+  --color-info-900: hsl(var(--info-900));
+  --color-info-950: hsl(var(--info-950));
+
+  /* Neutral color scale (50-950) */
+  --color-neutral-50: hsl(var(--neutral-50));
+  --color-neutral-100: hsl(var(--neutral-100));
+  --color-neutral-200: hsl(var(--neutral-200));
+  --color-neutral-300: hsl(var(--neutral-300));
+  --color-neutral-400: hsl(var(--neutral-400));
+  --color-neutral-500: hsl(var(--neutral-500));
+  --color-neutral-600: hsl(var(--neutral-600));
+  --color-neutral-700: hsl(var(--neutral-700));
+  --color-neutral-800: hsl(var(--neutral-800));
+  --color-neutral-900: hsl(var(--neutral-900));
+  --color-neutral-950: hsl(var(--neutral-950));
+
+  /* Pixel Shadow Utilities */
+  --shadow-pixel: var(--shadow-pixel);
+  --shadow-pixel-primary: var(--shadow-pixel-primary);
+  --shadow-pixel-sm: var(--shadow-pixel-sm);
+
+  /* ===== Mobile Responsive Tokens (Epic-MRT) ===== */
+  /* Touch target minimum size (WCAG 2.5.5) */
+  --touch-target-min: 44px;
+
+  /* Safe area insets for notched devices (iPhone X+) */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+
+  /* Mobile tab bar height */
+  --mobile-tab-bar-height: 56px;
+
+  /* Panel transition duration */
+  --panel-transition-duration: 200ms;
+
+  /* Z-Index Scale Tokens (UX-01) */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-sidebar: 30;
+  --z-panel: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+  --z-popover: 70;
+  --z-overlay: 80;
+  --z-alert: 90;
+  --z-debug: 100;
+}
+
+/* ===== Mobile Panel Transitions (Epic-MRT) ===== */
+@keyframes panel-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes panel-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+
+.panel-enter {
+  animation: panel-slide-in var(--panel-transition-duration) ease-out;
+}
+
+.panel-exit {
+  animation: panel-slide-out var(--panel-transition-duration) ease-in;
+}
+
+/* Touch-friendly utility */
+.touch-target {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+}
+
+/* Prevent text selection during touch interactions */
+.touch-action-manipulation {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* =============================================================================
+   VIA-GENT Z-Index Scale (UX-01: Unified Z-Index Scale)
+   Used to prevent layering conflicts across the application
+   ============================================================================= */
+
+/*
+ * Z-Index Scale - Use CSS Custom Properties (Tokens):
+ *
+ * CSS Token    | Value | Usage
+ * -------------|-------|----------------------------------------
+ * --z-base     | 0     | Default stacking (no z-index)
+ * --z-dropdown | 10    | Dropdowns, hover states
+ * --z-sticky   | 20    | Sticky headers, navigation
+ * --z-sidebar  | 30    | Fixed sidebars, panels
+ * --z-panel    | 40    | Fixed panels, status overlays (SyncStatusPanel)
+ * --z-modal    | 50    | Modals, dialogs, important overlays
+ * --z-toast    | 60    | Toast notifications
+ * --z-popover  | 70    | Priority popovers, dropdown menus
+ * --z-overlay  | 80    | Full-screen overlays, command palettes
+ * --z-alert    | 90    | Critical alerts
+ * --z-debug    | 100   | Highest level (debug overlays, devtools)
+ *
+ * USAGE IN REACT:
+ * 1. Inline style: style={{ zIndex: 'var(--z-modal)' }}
+ * 2. Tailwind with arbitrary value: className="[&]:z-[var(--z-modal)]"
+ * 3. Tailwind conventional values map: z-10 → dropdown, z-20 → sticky, z-40 → panel, z-50 → modal
+ *
+ * NEVER use arbitrary values like z-[9999], zIndex: 1000, etc.
+ */
+
+/* =============================================================================
+   VIA-GENT Text Overflow Utilities (MM-11 Documentation)
+   Ensures consistent text truncation with tooltips
+   ============================================================================= */
+
+/*
+ * Text truncation pattern for Via-Gent:
+ * 1. Add overflow utilities to container
+ * 2. Add title attribute or tooltip component for hover
+ *
+ * Usage:
+ * <span className="truncate" title="Long text here">Long text here</span>
+ *
+ * For custom widths:
+ * <span className="max-w-[200px] truncate" title="...">...</span>
+ */
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Multi-line truncation (requires -webkit-line-clamp) */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+:root {
+  /* VIA-GENT Brand Design System
+   * Primary: Orange (#f97316) - MistralAI inspired
+   * Dark theme default with 8-bit aesthetic */
+
+  --radius: 0rem;
+  /* Squared corners - 8-bit aesthetic */
+
+  /* ===== Core Brand Colors ===== */
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange accent */
+  --primary-foreground: 0 0% 100%;
+  /* White */
+
+  /* ===== Surface Colors (Dark Default) ===== */
+  --background: 240 6% 4%;
+  /* #0f0f11 - Deep black */
+  --foreground: 0 0% 95%;
+  /* Near white text */
+
+  --card: 240 4% 10%;
+  /* #18181b - Card/panel background */
+  --card-foreground: 0 0% 95%;
+
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+
+  --secondary: 240 4% 16%;
+  /* #27272a - Secondary surfaces */
+  --secondary-foreground: 0 0% 90%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+
+  --destructive: 0 84% 60%;
+  /* Red for errors */
+
+  --border: 240 4% 16%;
+  /* #27272a - Borders */
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  /* Orange focus ring */
+
+  /* ===== Chart Colors ===== */
+  --chart-1: 24.6 95% 53.1%;
+  /* Primary orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+
+  /* ===== Sidebar Specific ===== */
+  --sidebar: 240 6% 6%;
+  /* Slightly darker sidebar */
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
+
+  /* ===== Semantic Colors ===== */
+  --success: 142 71% 45%;
+  /* #22c55e - Green */
+  --warning: 38 92% 50%;
+  /* #f59e0b - Amber */
+  --info: 217 91% 60%;
+  /* #3b82f6 - Blue */
+
+  /* ===== 8-Bit Aesthetic ===== */
+  /* Crisper, harder shadows for retro feel */
+  --shadow-pixel: 4px 4px 0px 0px rgba(0, 0, 0, 0.4);
+  --shadow-pixel-lg: 6px 6px 0px 0px rgba(0, 0, 0, 0.4);
+  --shadow-pixel-primary: 4px 4px 0px 0px #f97316;
+  /* Primary Orange */
+  --shadow-pixel-sm: 2px 2px 0px 0px rgba(0, 0, 0, 0.4);
+
+  /* Glassmorphism REMOVED - Solid Retro Style */
+  --glass-bg: hsl(var(--card));
+  --glass-border: hsl(var(--border));
+  --glass-highlight: transparent;
+
+  /* ===== Editor Specific ===== */
+  --editor-bg: 240 6% 3.5%;
+  /* #09090b - Deep code background */
+}
+
+/* Global Transition Utility */
+.retro-transition {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Retro Hover Effect Utility */
+.retro-hover:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-pixel);
+}
+
+.retro-hover-primary:hover {
+  border-color: hsl(var(--primary));
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-pixel-primary);
+}
+
+.dark {
+  /* VIA-GENT Dark Theme (Primary - Matches :root since dark is default)
+   * Kept for explicit .dark class compatibility with next-themes */
+  --background: 240 6% 4%;
+  /* #0f0f11 */
+  --foreground: 0 0% 95%;
+  --card: 240 4% 10%;
+  /* #18181b */
+  --card-foreground: 0 0% 95%;
+  --popover: 240 4% 10%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 24.6 95% 53.1%;
+  /* #f97316 - Orange */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 4% 16%;
+  --secondary-foreground: 0 0% 90%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 95%;
+  --destructive: 0 84% 60%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 24.6 95% 53.1%;
+  --chart-1: 24.6 95% 53.1%;
+  /* Orange */
+  --chart-2: 217 91% 60%;
+  /* Blue */
+  --chart-3: 142 71% 45%;
+  /* Green */
+  --chart-4: 280 65% 60%;
+  /* Purple */
+  --chart-5: 38 92% 50%;
+  /* Amber */
+  --sidebar: 240 6% 6%;
+  --sidebar-foreground: 0 0% 95%;
+  --sidebar-primary: 24.6 95% 53.1%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 4% 14%;
+  --sidebar-accent-foreground: 0 0% 95%;
+  --sidebar-border: 240 4% 16%;
+  --sidebar-ring: 24.6 95% 53.1%;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

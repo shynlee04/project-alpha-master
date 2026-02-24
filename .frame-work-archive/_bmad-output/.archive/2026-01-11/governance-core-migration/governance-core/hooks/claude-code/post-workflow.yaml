@@ -1,0 +1,293 @@
+# Post-Workflow Hook
+# governance-core module
+# Triggered after workflow completion
+
+---
+name: "post-workflow"
+module: "governance-core"
+version: "1.0.0"
+trigger: "workflow_complete"
+platform: "claude-code"
+created: "2026-01-10"
+
+description: |
+  Post-workflow cleanup and registration. Detects files changed during workflow
+  execution, registers new artifacts, validates naming conventions, and updates
+  governance state.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HOOK EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution:
+  mode: "async"  # Don't block on post-workflow processing
+  timeout_seconds: 15
+
+# ═══════════════════════════════════════════════════════════════════════════
+# TRIGGER CONDITIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+trigger_conditions:
+  - event: "workflow_complete"
+    description: "Workflow completed successfully"
+  - event: "workflow_failed"
+    description: "Workflow failed with error"
+  - event: "workflow_cancelled"
+    description: "Workflow was cancelled by user"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# FILE CHANGE DETECTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+file_change_detection:
+  enabled: true
+  methods:
+    - git_diff  # Compare git working directory
+    - fs_watch  # File system watcher (if available)
+
+  scan_paths:
+    - "{project-root}/src"
+    - "{project-root}/_bmad-ext"
+    - "{project-root}/tests"
+
+  exclude_patterns:
+    - "*.test.ts"
+    - "*.spec.ts"
+    - "node_modules/"
+    - ".next/"
+    - "dist/"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STEPS
+# ═══════════════════════════════════════════════════════════════════════════
+
+steps:
+  - step_id: "detect-changes"
+    name: "Detect File Changes"
+    action: "scan"
+    method: "git_diff"
+    output_var: "changed_files"
+    on_failure: "log_warning"
+
+  - step_id: "categorize-changes"
+    name: "Categorize Changes"
+    action: "classify"
+    input: "{{changed_files}}"
+    categories:
+      - name: "new_files"
+        filter: "status == 'added'"
+      - name: "modified_files"
+        filter: "status == 'modified'"
+      - name: "deleted_files"
+        filter: "status == 'deleted'"
+      - name: "renamed_files"
+        filter: "status == 'renamed'"
+    output_var: "categorized_changes"
+
+  - step_id: "validate-naming"
+    name: "Validate Naming Conventions"
+    action: "validate"
+    input: "{{categorized_changes.new_files}}"
+    rules:
+      - name: "kebab-case-filenames"
+        pattern: "^[a-z][a-z0-9-]*\\.ts$"
+        scope: "typescript_files"
+      - name: "component-suffix"
+        pattern: "\\.component\\.ts$"
+        scope: "presentation/components"
+      - name: "service-suffix"
+        pattern: "-service\\.ts$"
+        scope: "domain/services"
+      - name: "store-suffix"
+        pattern: "-store\\.ts$"
+        scope: "infrastructure/persistence/stores"
+    output_var: "validation_results"
+    on_failure: "log_violations"
+
+  - step_id: "register-artifacts"
+    name: "Register New Artifacts"
+    action: "register"
+    input: "{{categorized_changes.new_files}}"
+    registry: "{project-root}/_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+    template:
+      artifact:
+        path: "{{file_path}}"
+        type: "{{artifact_type}}"
+        created_at: "{{now}}"
+        created_by: "workflow:{{workflow_name}}"
+        stage: "{{current_stage}}"
+    output_var: "registration_results"
+    on_failure: "log_warning"
+
+  - step_id: "validate-governance-rules"
+    name: "Validate Governance Rules"
+    action: "validate"
+    input: "{{categorized_changes}}"
+    rules:
+      - name: "domain-crossing-check"
+        check: "no_files_in_multiple_domains"
+        description: "Single change should not affect multiple domains"
+      - name: "state-boundary-check"
+        check: "store_modifications_justified"
+        description: "Store changes require architectural review"
+      - name: "test-coverage-check"
+        check: "new_code_has_tests"
+        description: "New implementations require test coverage"
+    output_var: "governance_validation"
+
+  - step_id: "update-session-state"
+    name: "Update Session State"
+    action: "update"
+    path: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+    updates:
+      session:
+        last_workflow: "{{workflow_name}}"
+        last_completion: "{{now}}"
+        files_changed: "{{changed_files.length}}"
+        artifacts_registered: "{{registration_results.count}}"
+
+  - step_id: "generate-summary"
+    name: "Generate Post-Workflow Summary"
+    action: "transform"
+    template: |
+      ┌─────────────────────────────────────────────────────────────┐
+      │                    POST-WORKFLOW SUMMARY                     │
+      ├─────────────────────────────────────────────────────────────┤
+      │ Workflow: {{workflow_name}}                                  │
+      │ Status: {{workflow_status}}                                  │
+      │                                                              │
+      │ Changes:                                                     │
+      │   New:      {{categorized_changes.new_files.length}}         │
+      │   Modified: {{categorized_changes.modified_files.length}}    │
+      │   Deleted:  {{categorized_changes.deleted_files.length}}     │
+      │                                                              │
+      │ Artifacts Registered: {{registration_results.count}}         │
+      │ Naming Violations: {{validation_results.violations.length}}  │
+      │                                                              │
+      │ {% if validation_results.violations.length > 0 %}
+      │ ⚠️ NAMING VIOLATIONS:                                        │
+      │ {% for violation in validation_results.violations %}
+      │   - {{violation.file}}: {{violation.message}}                │
+      │ {% endfor %}
+      │ {% endif %}
+      └─────────────────────────────────────────────────────────────┘
+    output_var: "summary"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ARTIFACT TYPE CLASSIFICATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+artifact_classification:
+  types:
+    domain_service:
+      pattern: "domain/services/*.ts"
+      metadata:
+        layer: "domain"
+        category: "service"
+
+    presentation_component:
+      pattern: "presentation/components/*.tsx"
+      metadata:
+        layer: "presentation"
+        category: "component"
+
+    infrastructure_store:
+      pattern: "infrastructure/persistence/stores/*.ts"
+      metadata:
+        layer: "infrastructure"
+        category: "state"
+
+    infrastructure_adapter:
+      pattern: "infrastructure/persistence/adapters/*.ts"
+      metadata:
+        layer: "infrastructure"
+        category: "adapter"
+
+    route:
+      pattern: "routes/*.tsx"
+      metadata:
+        layer: "presentation"
+        category: "route"
+
+    test:
+      pattern: "*.test.ts"
+      metadata:
+        layer: "testing"
+        category: "test"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NAMING CONVENTION RULES
+# ═══════════════════════════════════════════════════════════════════════════
+
+naming_conventions:
+  typescript:
+    format: "kebab-case"
+    pattern: "^[a-z][a-z0-9-]*\\.ts$"
+    examples:
+      valid: ["file-lock-service.ts", "note-store.ts", "sync-manager.ts"]
+      invalid: ["FileLockService.ts", "noteStore.ts", "sync_manager.ts"]
+
+  components:
+    suffix: ".component.tsx"
+    pattern: "^[a-z][a-z0-9-]*\\.component\\.tsx$"
+    examples:
+      valid: ["note-list.component.tsx", "note-editor.component.tsx"]
+      invalid: ["NoteList.tsx", "note-list.tsx"]
+
+  services:
+    suffix: "-service.ts"
+    pattern: "^[a-z][a-z0-9-]*-service\\.ts$"
+    examples:
+      valid: ["file-lock-service.ts", "sync-service.ts"]
+      invalid: ["FileLockService.ts", "file-lock.ts"]
+
+  stores:
+    suffix: "-store.ts"
+    pattern: "^[a-z][a-z0-9-]*-store\\.ts$"
+    examples:
+      valid: ["note-store.ts", "project-store.ts"]
+      invalid: ["noteStore.ts", "use-note-store.ts"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OUTPUT
+# ═══════════════════════════════════════════════════════════════════════════
+
+output:
+  format: "markdown"
+  display: true
+  destination: "user"
+  compact:
+    max_lines: 20
+    collapse_violations: true
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+integrates_with:
+  - state_file: "ARTIFACT_REGISTRY.yaml"
+    purpose: "artifact_registration"
+  - state_file: "LOOP_STATE.yaml"
+    purpose: "session_update"
+  - state_file: "technical-debt.yaml"
+    purpose: "violation_logging"
+  - hook: "session-start"
+    trigger: "next_session_initialization"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ERROR HANDLING
+# ═══════════════════════════════════════════════════════════════════════════
+
+error_handling:
+  on_detection_failure:
+    action: "log_warning"
+    message: "Could not detect file changes, skipping registration"
+
+  on_registration_failure:
+    action: "log_error"
+    message: "Failed to register artifacts in ARTIFACT_REGISTRY"
+
+  on_validation_failure:
+    action: "log_violations"
+    message: "Naming convention violations detected"
+    severity: "warning"

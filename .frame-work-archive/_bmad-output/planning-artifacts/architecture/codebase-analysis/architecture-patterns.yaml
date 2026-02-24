@@ -1,0 +1,193 @@
+architecture_patterns:
+  clean_architecture:
+    core_layer:
+      status: exists
+      path: src/core/
+      contents: entities
+      files: 4
+      entities:
+        - Agent.ts
+        - Conversation.ts
+        - Provider.ts
+        - Tool.ts
+    domain_layer:
+      status: exists
+      path: src/domain/
+      services_count: 7
+      services:
+        - agent-orchestration-service.ts
+        - agent-workspace-utils.ts
+        - AgentProviderValidator.ts
+        - workspace-transition-service.ts
+        - (3 additional services)
+      use_cases: exists
+      value_objects: exists
+    infrastructure_layer:
+      status: exists
+      path: src/infrastructure/
+      subdirectories:
+        - persistence (234 files)
+        - events (3 files)
+        - sync (9 files)
+        - ui (3 files)
+      key_components:
+        - Dexie database (IndexedDB)
+        - Event bus
+        - Workspace file system
+    presentation_layer:
+      status: exists
+      path: src/presentation/
+      components: 474 files
+      pattern: React components with hooks
+    compliance_percentage: "~75%"
+    observations:
+      - Core layer is minimal (only 4 entities)
+      - Domain layer has 7 services but could be more comprehensive
+      - Infrastructure layer is the largest (250+ files)
+      - Presentation layer dominates file count
+      - Some cross-layer dependencies exist
+  zustand_patterns:
+    slice_pattern:
+      status: partial
+      evidence: useIDEStore.ts combines 6 slices with persist
+      files_with_slices:
+        - useIDEStore.ts (6 slices)
+        - provider-credentials-slice.ts
+        - terminal-store.ts
+        - useConversationStore.ts
+    v5_selectors:
+      status: partial
+      evidence: Using StateCreator pattern instead of createSelector from 'zustand/react/shallow'
+      observation: Uses standard zustand/middleware, not full v5 pattern
+      reasons_for_partial_adoption:
+        - "Reason 1: Legacy StateCreator Pattern Migration In Progress - Project uses StateCreator type and spread-based slice composition from pre-v5 patterns. Full v5 migration requires refactoring to use createStore + useStore pattern with separate slice modules (createSlice), which would impact 50+ store-related files."
+        - "Reason 2: Complex God Store Composition - use-app-store.ts (367 lines) and useIDEStore.ts combine 6+ slices each using spread operator. Full v5 pattern would require decomposing these into standalone stores with separate subscriptions, breaking existing component patterns and requiring extensive refactoring."
+        - "Reason 3: Breaking Change Risk - Full v5 migration requires: (a) changing useShallow import to 'zustand/react/shallow', (b) replacing destructuring with individual selectors, (c) migrating 474 component files. Project prioritizes feature development over refactoring, deferring v5 migration until post-MVP."
+      current_patterns:
+        - Individual selectors (state => state.agents)
+        - Persist middleware with Dexie adapter
+        - Cross-slice communication via get()
+      missing_patterns:
+        - useShallow from 'zustand/react/shallow'
+        - createSelector memoized selectors
+        - selectFrom pattern for derived state
+        - Devtools middleware with custom options
+    persist_middleware:
+      status: implemented
+      pattern: Dexie storage adapter
+      files:
+        - useIDEStore.ts
+        - useWorkspaceFileSystem.ts
+        - useConversationStore.ts
+        - provider-credentials-slice.ts
+  tanstack_patterns:
+    router:
+      type: file-based
+      implementation: createFileRoute from '@tanstack/react-router'
+      generated: routeTree.gen.ts (auto-generated)
+    ai:
+      status: implemented
+      usage: Agent tools use .client() pattern
+      files:
+        - execute-command-tool.ts
+        - read-file-tool.ts
+        - write-file-tool.ts
+        - list-files-tool.ts
+        - synthesize-tool.ts
+        - process-pdf-tool.ts
+        - process-url-tool.ts
+  workspace_awareness:
+    workspace_store:
+      status: exists
+      path: src/infrastructure/persistence/stores/workspace/
+      key_files:
+        - useWorkspaceFileSystem.ts
+        - workspace-store.ts
+        - unified-workspace-context.ts
+    workspace_bindings:
+      status: exists
+      evidence: Agent.ts entity has workspaceBindings field
+      domain_service: agent-workspace-utils.ts
+    event_bus:
+      status: exists
+      path: src/infrastructure/events/event-bus.ts
+      usage:
+        - cross-workspace communication
+        - RAG progress events
+        - Code analysis events
+        - File sync events
+      hook: use-cross-workspace-events.ts
+  filesystem_architecture:
+    local_fs_adapter:
+      status: exists
+      path: src/lib/filesystem/local-fs-adapter.ts
+    sync_executor:
+      status: exists
+      path: src/lib/filesystem/sync-executor.ts
+    permission_lifecycle:
+      status: exists
+      path: src/lib/filesystem/permission-lifecycle.ts
+    fsa_handle_manager:
+      status: exists
+      path: src/lib/filesystem/fsa-handle-manager.ts
+  webcontainer_architecture:
+    manager: src/lib/webcontainer/manager.ts
+    usage: Browser-based Node.js runtime
+    integration: Terminal tools, file operations
+  facade_pattern:
+    status: implemented
+    location: src/lib/agent/facades/
+    facades:
+      - file-tools (abstraction over filesystem)
+      - terminal-tools (abstraction over webcontainer)
+      - knowledge-tools (abstraction over RAG)
+      - file-lock (concurrency control)
+      - command-sanitizer (security)
+  key_findings:
+    - Clean Architecture partially implemented (75% compliance)
+    - Zustand slice pattern in progress (partial implementation)
+    - TanStack Router file-based routing fully implemented
+    - TanStack AI agent tools fully integrated
+    - Workspace awareness fully implemented
+    - Facade pattern used for agent tool abstraction
+    - Event bus for cross-workspace communication
+    - Dexie/IndexedDB for persistence
+    - 19 god components exceed 300-line limit (DEBT)
+    - 9 god stores exceed 300-line limit (DEBT)
+    - dexie-db.ts (1,169 lines) needs decomposition (DEBT)
+  cornerstones_for_remediation:
+    # These patterns MUST be followed for all future code and remediation
+    single_source_of_truth:
+      - "All state lives in src/infrastructure/persistence/"
+      - "src/lib/state/ is DEPRECATED - use re-exports only for backward compatibility"
+      - "No duplicate stores across multiple locations"
+    zustand_v5_best_practices:
+      - "Use StateCreator pattern with slice composition"
+      - "Persist middleware on combined store ONLY, not individual slices"
+      - "Individual selectors (state => state.value) for re-render optimization"
+      - "useShallow from 'zustand/react/shallow' for multiple value selection"
+      - "Cross-slice communication via get(), NOT direct imports"
+    clean_architecture_layers:
+      - "Core: Pure entities, no dependencies"
+      - "Domain: Business logic, use-cases, services"
+      - "Infrastructure: Persistence, events, external services"
+      - "Presentation: React components, hooks, UI only"
+      - "NO cross-layer dependencies (presentation cannot import core directly)"
+    component_limits:
+      - "Max 300 lines per component"
+      - "Max 120 lines per slice/store"
+      - "Max 3 functions per module"
+      - "Facades for backward compatibility"
+    governance_patterns:
+      - "All architecture decisions documented as ADRs"
+      - "No god artifacts (>5000 lines) - decompose or archive"
+      - "TTL-based context filtering for artifacts"
+      - "BMAD autonomous execution with governance enforcement"
+  target_architecture_state:
+    clean_architecture_compliance: 100
+    zustand_v5_patterns: fully_implemented
+    god_components: 0
+    god_stores: 0
+    slice_pattern: 100_percent
+    component_compliance: 100_percent
+    documentation: complete

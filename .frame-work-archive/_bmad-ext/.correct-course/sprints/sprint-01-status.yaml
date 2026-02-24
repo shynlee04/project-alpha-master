@@ -1,0 +1,84 @@
+# Sprint 1 Status - INVALIDATED (was: Correct-Course Critical Fixes)
+#
+# IMPORTANT: This sprint has been INVALIDATED due to invalid research.
+# See NEW sprint: CC-SPRINT-02 (Storage Gateway Foundation)
+
+sprint_id: CC-SPRINT-01
+start_date: 2026-01-18
+status: INVALIDATED
+invalidated_date: 2026-01-18
+invalidation_reason: "Created from invalid research (Paper 2 was hallucinated and rejected by governance)"
+
+# Original Sprint Summary (NO LONGER VALID)
+total_stories: 5
+p0_stories: 2
+p1_stories: 2
+p2_stories: 1
+total_effort_hours: 8
+
+# Original Stories Status (DO NOT EXECUTE)
+stories:
+  - story_id: CC-01
+    title: Remove Hardcoded API Keys
+    priority: P0
+    status: blocked
+    blocked_reason: "Invalidated - sprint invalidated"
+
+  - story_id: CC-02
+    title: Fix XSS Vulnerabilities
+    priority: P0
+    status: blocked
+    blocked_reason: "Invalidated - sprint invalidated"
+
+  - story_id: CC-03
+    title: Fix Chrome 129+ Version Check
+    priority: P1
+    status: blocked
+    blocked_reason: "Invalidated - sprint invalidated"
+
+  - story_id: CC-04
+    title: Add Event Listener Error Isolation
+    priority: P1
+    status: blocked
+    blocked_reason: "Invalidated - sprint invalidated"
+
+  - story_id: CC-05
+    title: Consolidate PlatformContract Interface
+    priority: P2
+    status: blocked
+    blocked_reason: "Invalidated - sprint invalidated"
+
+# Archive Reference
+archived_artifacts:
+  - artifact: Sprint Planning Document
+    original_path: _bmad-ext/.correct-course/sprints/sprint-01-critical-fixes-2026-01-18.md
+    archived_path: _bmad-ext/.archive/sprint-01-critical-fixes-2026-01-18.md
+    archived_date: 2026-01-18
+
+  - artifact: Tree Register
+    original_path: _bmad-ext/.correct-course/sprints/sprint-01-tree-register.xml
+    archived_path: _bmad-ext/.archive/sprint-01-tree-register.xml
+    archived_date: 2026-01-18
+
+  - artifact: Story Templates
+    paths:
+      - _bmad-ext/.correct-course/stories/CC-01.md
+      - _bmad-ext/.correct-course/stories/CC-02.md
+      - _bmad-ext/.correct-course/stories/CC-03.md
+      - _bmad-ext/.correct-course/stories/CC-04.md
+      - _bmad-ext/.correct-course/stories/CC-05.md
+    archived_path: _bmad-ext/.archive/stories-CC-01-to-CC-05-2026-01-18/
+    archived_date: 2026-01-18
+
+  - artifact: Story Contexts
+    paths:
+      - _bmad-ext/.correct-course/stories/CC-01.xml
+      - _bmad-ext/.correct-course/stories/CC-02.xml
+      - _bmad-ext/.correct-course/stories/CC-03.xml
+      - _bmad-ext/.correct-course/stories/CC-04.xml
+      - _bmad-ext/.correct-course/stories/CC-05.xml
+    archived_path: _bmad-ext/.archive/stories-CC-01-to-CC-05-2026-01-18/
+    archived_date: 2026-01-18
+
+last_updated: 2026-01-18
+superseded_by: CC-SPRINT-02

@@ -1,12 +1,31 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-
-
-import Header from '../components/Header'
 import { LocaleProvider } from '../i18n/LocaleProvider'
+import { AppErrorBoundary } from '@/presentation/components/common/AppErrorBoundary'
+import { AppInitializer } from '@/presentation/components/common/AppInitializer'
+import { DatabaseRecoveryDialog } from '@/presentation/components/common/DatabaseRecoveryDialog'
+import { initSentry } from '../lib/monitoring/sentry'
+import { initGlobalErrorHandlers } from '@/lib/errorHandling/globalErrorHandlers'
+import { ThemeProvider } from '@/presentation/components/ui/ThemeProvider'
+import { TooltipProvider } from '@/presentation/components/ui/tooltip-react19-compatible'
+import { ToastProvider, ToastContainer } from '@/presentation/components/ui/Toast'
+import { OverlayRoot } from '@/presentation/components/ui/OverlayRoot'
+import { MigrationStatus } from '@/presentation/components/agent/MigrationStatus'
+import { UnifiedWorkspaceProvider } from '@/infrastructure/persistence/stores/workspace'
+import { NotificationPermissionRequester } from '@/presentation/components/notifications/NotificationPermissionRequester'
+import { CommandPalette } from '@/presentation/components/command-palette/CommandPalette'
+import { useCommandPalette } from '@/hooks/useCommandPalette'
+import { SkipLinks } from '@/presentation/components/ui/SkipLinks'
+
+// UX-GLOBAL-UI: Project-aware layout (hides MainSidebar on project routes)
+import { ProjectAwareLayout } from '@/presentation/components/layout/ProjectAwareLayout'
 
 import appCss from '../styles.css?url'
+
+// Initialize monitoring and error handlers before React renders (client-only)
+if (typeof window !== 'undefined') {
+  initSentry()
+  initGlobalErrorHandlers()
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,42 +46,82 @@ export const Route = createRootRoute({
       },
     ],
     links: [
+      // VIA-GENT Main Stylesheet (includes design-tokens and animations)
       {
         rel: 'stylesheet',
         href: appCss,
       },
+      // Google Fonts preconnect for performance
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      // VIA-GENT Typography: VT323 (pixel), Press Start 2P (heavy pixel), Inter (body), JetBrains Mono (code)
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&family=VT323&display=swap',
+      },
+    ],
+    scripts: [
     ],
   }),
+  component: () => {
+    const commandPalette = useCommandPalette();
 
-  shellComponent: RootDocument,
+    return (
+      <html lang="en" suppressHydrationWarning>
+        <head>
+          <HeadContent />
+        </head>
+        {/* BUG-FIX-2026-01-11: Add suppressHydrationWarning to body to prevent locale mismatch warnings
+            Server renders in English (fallbackLng), client may render in saved locale (vi/en) */}
+        <body suppressHydrationWarning>
+          {/* Skip Links - First focusable element for accessibility */}
+          <SkipLinks />
+          <ThemeProvider>
+            <LocaleProvider>
+              <TooltipProvider>
+                <ToastProvider>
+                  {/* UX-02: OverlayRoot for unified portal rendering */}
+                  <OverlayRoot>
+                    <AppInitializer>
+                      <UnifiedWorkspaceProvider initialWorkspace={"hub" as any}>
+                        <AppErrorBoundary>
+                          {/* UX-GLOBAL-UI: New Global Layout Structure */}
+                          <ProjectAwareLayout />
+
+                          {/* Offline Indicator - TEMPORARILY DISABLED - investigating infinite loop */}
+                          {/* <OfflineIndicator /> */}
+                          {/* Notification Permission Requester */}
+                          <NotificationPermissionRequester />
+                        </AppErrorBoundary>
+                      </UnifiedWorkspaceProvider>
+                    </AppInitializer>
+                    {/* Toast Container - renders toast notifications */}
+                    <ToastContainer />
+                  </OverlayRoot>
+                </ToastProvider>
+              </TooltipProvider>
+            </LocaleProvider>
+          </ThemeProvider>
+          {/* Migration Status Overlay */}
+          <MigrationStatus />
+          {/* Database Recovery Dialog - CRITICAL-FIX-2026-01-07 */}
+          <DatabaseRecoveryDialog />
+          {/* Command Palette */}
+          <CommandPalette
+            open={commandPalette.isOpen}
+            onOpenChange={commandPalette.setIsOpen}
+          />
+          <Scripts />
+        </body>
+      </html>
+    );
+  },
+  notFoundComponent: () => <div>404 - Page Not Found</div>,
 })
-
-function RootDocument({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <LocaleProvider>
-          <Header />
-          {children}
-          {process.env.NODE_ENV === 'development' && (
-            <TanStackDevtools
-              config={{
-                position: 'bottom-right',
-              }}
-              plugins={[
-                {
-                  name: 'Tanstack Router',
-                  render: <TanStackRouterDevtoolsPanel />,
-                },
-              ]}
-            />
-          )}
-        </LocaleProvider>
-        <Scripts />
-      </body>
-    </html>
-  )
-}

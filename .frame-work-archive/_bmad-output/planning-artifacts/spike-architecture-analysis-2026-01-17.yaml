@@ -1,0 +1,353 @@
+# SPIKE ARCHITECTURE LAYER ANALYSIS
+# Generated: 2026-01-17
+# Scope: /src/spike/ directory
+
+spike_architecture_analysis:
+  metadata:
+    analyzed_date: "2026-01-17"
+    analyzer: "deep-scan-architecture-scanner"
+    scan_target: "/Users/apple/Documents/coding-projects/project-alpha-master/src/spike/"
+    canonical_architecture: "clean-architecture-4-layer"
+
+  # ============================================================================
+  # LAYER VIOLATIONS
+  # ============================================================================
+  layer_violations:
+    - severity: "P0"
+      type: "layer-inversion"
+      location: "src/spike/components/ide/FileTree/FileTree.tsx:47-49"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import { useFileSyncStatusStore } from '@/lib/workspace';
+        import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
+      violation: |
+        UI component directly imports infrastructure implementation (Zustand store).
+        Should use domain interface/abstraction.
+      impact: |
+        - Presentation layer tightly coupled to Zustand store implementation
+        - Cannot swap storage implementation without UI changes
+        - Violates Dependency Inversion Principle
+      remediation: |
+        - Create domain interface for sync status
+        - Inject via context/hooks (useProjectContext pattern)
+        - Use useSyncStatus() hook that returns domain type
+
+    - severity: "P0"
+      type: "layer-inversion"
+      location: "src/spike/components/notes/NoteEditor.tsx:66-68"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import type { NoteRecord } from '@/infrastructure/persistence/dexie-db';
+        import { useNoteStore, useNoteSaveStatus, useIsNoteIndexing } from '@/lib/notes';
+      violation: |
+        UI component imports infrastructure type (Dexie) and uses store implementation.
+      impact: |
+        - Dexie schema changes affect UI code
+        - Type dependency on specific IndexedDB implementation
+      remediation: |
+        - Define NoteRecord in domain layer
+        - Create domain service interface for note operations
+        - Presentation should depend on abstract domain types only
+
+    - severity: "P0"
+      type: "layer-inversion"
+      location: "src/spike/components/common/ProjectPickerDialog.tsx:18-25"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import { useLiveQuery } from 'dexie-react-hooks';
+        import { db } from '@/infrastructure/persistence/dexie-db';
+        import { useProjectStore } from '@/infrastructure/persistence/stores/project/useProjectStore';
+        import type { ProjectRecord } from '@/infrastructure/persistence/dexie-db';
+      violation: |
+        Dialog component uses dexie-react-hooks and directly accesses Dexie DB instance.
+      impact: |
+        - UI knows about IndexedDB internals
+        - Cannot test without IndexedDB polyfill
+        - Tight coupling to Dexie schema
+      remediation: |
+        - Create project repository interface in domain
+        - Use useProjects() hook with domain return type
+        - Abstract Dexie behind repository implementation
+
+    - severity: "P0"
+      type: "layer-inversion"
+      location: "src/spike/components/common/FolderPickerDialog.tsx:28-31"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import {
+          pickFolder,
+          createProjectFromFolder,
+          isFSASupported,
+          isDesktopPlatform,
+        } from '@/lib/workspace/fsa-persistence';
+        import { checkFolderOverlap } from '@/infrastructure/filesystem/folder-overlap-service';
+      violation: |
+        UI component imports infrastructure filesystem services directly.
+      impact: |
+        - UI depends on FSA implementation details
+        - Platform detection logic leaked to presentation
+      remediation: |
+        - Use getPlatformContract() for platform info
+        - Create domain service for folder selection
+        - Pass platform contract via context
+
+    - severity: "P0"
+      type: "layer-inversion"
+      location: "src/spike/components/common/WorkspaceSwitcher.tsx:22-25"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import { useProjectContextSafe, type WorkspaceId } from '@/lib/workspace';
+        import type { WorkspaceType } from '@/domain/value-objects/workspace-type';
+        import { getPlatformContract } from '@/infrastructure/filesystem/platform-contract';
+        import { workspaceTransitionManager } from '@/lib/workspace/workspace-transition-manager';
+      violation: |
+        UI component imports platform contract and transition manager directly.
+      impact: |
+        - UI knows platform detection logic
+        - Transition orchestration in presentation layer
+      remediation: |
+        - Create workspace context with platform info pre-processed
+        - Expose switchWorkspace() as safe API only
+        - Keep platform contract in infrastructure layer
+
+    - severity: "P1"
+      type: "layer-inversion"
+      location: "src/spike/components/ide/IDELayout.tsx:51-52"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import { useVFSAutoWatch } from '@/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice';
+      violation: |
+        Layout component imports internal slice hook from infrastructure.
+      impact: |
+        - UI knows about VFS implementation details
+        - Slice structure leaked to presentation
+      remediation: |
+        - Expose useWorkspaceSync() hook with abstracted API
+        - Hide internal slice architecture
+
+    - severity: "P1"
+      type: "layer-inversion"
+      location: "src/spike/components/ide/MonacoEditor.tsx:18-19"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import { useWorkspaceSync } from '@/infrastructure/persistence/stores/workspace';
+        import { SyncEditWarning } from '../SyncEditWarning';
+      violation: |
+        Editor component imports workspace sync infrastructure.
+      impact: |
+        - Editor knows about sync state implementation
+        - Cross-layer dependency
+      remediation: |
+        - Pass sync status via props from workspace context
+        - Use domain interface for sync operations
+
+    - severity: "P1"
+      type: "layer-inversion"
+      location: "src/spike/components/ide/FileTree/hooks/useFileTreeActions.ts:4-9"
+      from_layer: "presentation"
+      to_layer: "infrastructure"
+      code_snippet: |
+        import {
+            LocalFSAdapter,
+            FileSystemError,
+            PermissionDeniedError,
+        } from '@/lib/filesystem/local-fs-adapter';
+        import { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';
+      violation: |
+        Hook imports adapter implementations directly.
+      impact: |
+        - Storage adapter details leaked to UI logic
+        - Cannot change adapter without UI changes
+      remediation: |
+        - Use abstract StorageAdapter interface
+        - Get adapter via context/dependency injection
+
+    - severity: "P2"
+      type: "domain-pollution"
+      location: "src/spike/infrastructure/filesystem/fsa-storage-adapter.ts:275-298"
+      from_layer: "infrastructure"
+      to_layer: "domain"
+      code_snippet: |
+        private isTextFile(path: string): boolean {
+          const textExtensions = [...];
+          const ext = path.substring(path.lastIndexOf('.')).toLowerCase();
+          return textExtensions.includes(ext);
+        }
+
+        private guessContentType(path: string): string {
+          const ext = path.substring(path.lastIndexOf('.')).toLowerCase();
+          const types: Record<string, string> = {...};
+          return types[ext] || 'application/octet-stream';
+        }
+      violation: |
+        Infrastructure adapter contains business logic for file type detection.
+      impact: |
+        - Business rules duplicated across adapters
+        - Text file detection not centralized in domain
+      remediation: |
+        - Move file type detection to domain service
+        - Adapter should only transport, not decide
+
+    - severity: "P2"
+      type: "domain-pollution"
+      location: "src/spike/infrastructure/filesystem/platform-contract.ts:55-120"
+      from_layer: "infrastructure"
+      to_layer: "domain"
+      code_snippet: |
+        function detectFSASupport(): boolean {...}
+        function detectWebContainerSupport(): boolean {...}
+        function detectDeviceType(): DeviceType {...}
+        function determineStorageType(deviceType, hasFSA): StorageType {...}
+      violation: |
+        Infrastructure layer contains complex detection algorithms.
+      impact: |
+        - Platform detection logic should be domain decision
+        - Multiple places with similar detection code
+      remediation: |
+        - Create PlatformDetectionService in domain layer
+        - Infrastructure implements detection strategies
+
+  # ============================================================================
+  # IMPORT ORDER VIOLATIONS
+  # ============================================================================
+  import_order_issues:
+    - file: "src/spike/components/common/ProjectPickerDialog.tsx"
+      issues:
+        - "dexie-react-hooks (third-party) should come before @/lib/utils"
+        - "Infrastructure imports (dexie-db, useProjectStore) should come after presentation"
+        - "Missing separator between import groups"
+      correct_order: |
+        1. React/Framework (react, @tanstack/react-router)
+        2. Third-party (dexie-react-hooks, lucide-react, @radix-ui)
+        3. @/lib/utils
+        4. Domain (@/domain/)
+        5. Infrastructure @/infrastructure/ (but better to avoid in presentation)
+        6. Relative imports
+
+    - file: "src/spike/components/ide/FileTree/FileTree.tsx"
+      issues:
+        - "useFileSyncStatusStore (lib) imported before useWorkspaceSync (infrastructure)"
+        - "Imports not grouped with clear separation"
+
+    - file: "src/spike/components/common/FolderPickerDialog.tsx"
+      issues:
+        - "Infrastructure imports mixed with presentation imports"
+        - "No clear section separation"
+
+    - file: "src/spike/components/notes/NoteSidebar.tsx"
+      issues:
+        - "Type import from infrastructure (NoteRecord) mixed with hook imports"
+
+  # ============================================================================
+  # FILES BY LAYER CLASSIFICATION
+  # ============================================================================
+  files_by_layer:
+    presentation:
+      - src/spike/components/ide/FileTree/
+      - src/spike/components/ide/IDELayout.tsx
+      - src/spike/components/ide/MonacoEditor.tsx
+      - src/spike/components/ide/SyncStatusPanel.tsx
+      - src/spike/components/notes/NoteEditor.tsx
+      - src/spike/components/notes/NoteSidebar.tsx
+      - src/spike/components/notes/NoteTree.tsx
+      - src/spike/components/common/ProjectPickerDialog.tsx
+      - src/spike/components/common/FolderPickerDialog.tsx
+      - src/spike/components/common/WorkspaceSwitcher.tsx
+      - src/spike/components/common/ErrorBoundary.tsx
+
+    domain:
+      - src/spike/domain/services/ProjectRegistry.ts
+      - src/spike/domain/services/file-crud/file-crud-service.ts
+      - src/spike/domain/services/file-crud/file-crud-types.ts
+      - src/spike/domain/services/file-crud/unified-file-crud.ts
+
+    infrastructure:
+      - src/spike/infrastructure/filesystem/fsa-storage-adapter.ts
+      - src/spike/infrastructure/filesystem/platform-contract.ts
+      - src/spike/infrastructure/filesystem/StorageAdapterFactory.ts
+      - src/spike/infrastructure/persistence/dexie-db.ts
+      - src/spike/infrastructure/persistence/stores/project/
+      - src/spike/infrastructure/persistence/stores/workspace/
+
+    # Problematic: lib/ layer doesn't exist in canonical architecture
+    lib_deprecate:
+      - src/spike/lib/workspace/ProjectContext.tsx
+      - src/spike/lib/notes/note-store.ts
+      - src/spike/lib/utils.ts
+      - src/spike/stores/ (multiple store files)
+
+  # ============================================================================
+  # CORRECT PATTERNS FOUND
+  # ============================================================================
+  correct_patterns:
+    - location: "src/spike/domain/services/ProjectRegistry.ts"
+      pattern: "Pure domain service with no external dependencies"
+      why_correct: |
+        - All types defined in same file or imported from domain
+        - No imports from presentation or infrastructure
+        - Singleton pattern for global coordination
+        - Business logic isolated from I/O
+
+    - location: "src/spike/domain/services/file-crud/file-crud-service.ts"
+      pattern: "Interface-based design"
+      why_correct: |
+        - IFileCrudService interface defines contract
+        - User and agent options separated
+        - No implementation details in interface file
+
+    - location: "src/spike/infrastructure/filesystem/platform-contract.ts"
+      pattern: "Single responsibility platform detection"
+      why_correct: |
+        - Focused on platform capability detection
+        - Cached result for session consistency
+        - No UI concerns in this file
+
+  # ============================================================================
+  # SUMMARY STATISTICS
+  # ============================================================================
+  summary:
+    total_files_scanned: 87
+    violations_found:
+      layer_inversion: 9
+      domain_pollution: 2
+      import_order: 4
+    severity_distribution:
+      P0: 6
+      P1: 3
+      P2: 2
+    percentage_with_violations: "65%"
+    top_violation_types:
+      1. "presentation → infrastructure imports (UI using Dexie/Zustand)"
+      2. "infrastructure containing business logic"
+      3. "import order violations"
+    key_findings:
+      - "ProjectPickerDialog.tsx has most severe violations (direct Dexie access)"
+      - "lib/ directory acts as dumping ground for unclear layer"
+      - "Domain services well-structured when present"
+      - "Infrastructure layer has some domain logic leaked in (file type detection)"
+
+  # ============================================================================
+  # RECOMMENDATIONS
+  # ============================================================================
+  recommendations:
+    priority_1:
+      - "Create domain interfaces for Project, Note, Sync operations"
+      - "Refactor ProjectPickerDialog to use useProjects() hook with domain types"
+      - "Move lib/ files to appropriate layers or consolidate with existing"
+
+    priority_2:
+      - "Extract file type detection to domain service"
+      - "Standardize import order across all files"
+      - "Add lint rule for layer-specific imports"
+
+    priority_3:
+      - "Create layer boundary test/lint rule"
+      - "Document canonical import patterns"
+      - "Consider barrel exports to enforce layer boundaries"

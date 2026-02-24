@@ -1,0 +1,477 @@
+{
+  "plan_metadata": {
+    "cycle": 4,
+    "name": "Refactor Surgeon - God Component Splitting",
+    "created_at": "2026-01-18T10:00:00.000Z",
+    "based_on": "cycle1-map-hypotheses/architecture-violations.json",
+    "total_targets": 6,
+    "total_lines_current": 5912,
+    "total_lines_target": 1800,
+    "reduction_percentage": 69.6
+  },
+  "refactor_targets": [
+    {
+      "file": "src/presentation/components/notes/AISlashCommand.tsx",
+      "current_lines": 1674,
+      "target_lines": 300,
+      "priority": "P0",
+      "responsibilities": [
+        "AI slash command rendering",
+        "Command filtering",
+        "Block insertion",
+        "AI popup management",
+        "Command execution"
+      ],
+      "proposed_splits": [
+        {
+          "new_file": "src/presentation/components/notes/ai/ai-context-utils.ts",
+          "responsibility": "Context extraction utilities (getTextAboveCursor, getTextBelowCursor, getAllNoteText, getContextByMode)",
+          "estimated_lines": 80,
+          "exports": ["getAllNoteText", "getTextAboveCursor", "getTextBelowCursor", "getBlocksAboveCursor", "getBlocksBelowCursor", "getContextByMode", "ContextMode", "extractBlockText"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/ai/ai-command-executors.ts",
+          "responsibility": "AI command execution with loading states and error handling",
+          "estimated_lines": 120,
+          "exports": ["executeAICommand", "ExecuteAICommandOptions"]
+        },
+        {
+          "new_file": "src/presentation/hooks/notes/useAISlashCommands.ts",
+          "responsibility": "Slash command state management and hook interface",
+          "estimated_lines": 60,
+          "exports": ["useAISlashCommands"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/ai/slash-commands/ai-slash-commands.ts",
+          "responsibility": "All AI slash command item definitions (insertAIItem, summarizeNoteItem, etc.)",
+          "estimated_lines": 200,
+          "exports": ["insertAIItem", "summarizeNoteItem", "generateOutlineItem", "explainConceptItem", "generateQuestionsItem", "translateNoteItem", "continueWritingItem", "generateFlashcardsItem", "insertAIImageItem", "insertAIVisionItem", "insertStoryboardItem", "insertVideoItem", "insertTTSItem", "insertArtifactItem", "insertVideoGenItem", "insertSlidesItem", "insertChartDiagramItem", "insertTransformPipelineItem", "insertArtifactGalleryItem", "insertMultiStepItem"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/ai/slash-commands/block-commands.ts",
+          "responsibility": "Block manipulation commands (toggle, callout, reference, column, synced)",
+          "estimated_lines": 100,
+          "exports": ["insertToggleListItem", "insertCalloutBlock", "insertBlockReference", "insertColumnBlock", "insertSyncedBlock"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/ai/slash-commands/custom-commands.ts",
+          "responsibility": "Custom slash command creation and management",
+          "estimated_lines": 80,
+          "exports": ["createCustomCommandItem", "createRecentCommandItem", "CUSTOM_ICON_MAP"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/ai/saved-blocks-menu.ts",
+          "responsibility": "Saved blocks and templates menu items",
+          "estimated_lines": 60,
+          "exports": ["getSavedBlocksMenuItems", "getTemplatesMenuItems", "insertSavedBlock", "openSaveBlockDialog"]
+        }
+      ],
+      "pr_sequence": [
+        {"step": 1, "action": "Extract ai-context-utils.ts", "files_created": ["src/presentation/components/notes/ai/ai-context-utils.ts"], "files_modified": []},
+        {"step": 2, "action": "Extract ai-command-executors.ts", "files_created": ["src/presentation/components/notes/ai/ai-command-executors.ts"], "files_modified": []},
+        {"step": 3, "action": "Extract useAISlashCommands hook", "files_created": ["src/presentation/hooks/notes/useAISlashCommands.ts"], "files_modified": []},
+        {"step": 4, "action": "Extract slash command definitions", "files_created": ["src/presentation/components/notes/ai/slash-commands/ai-slash-commands.ts", "src/presentation/components/notes/ai/slash-commands/block-commands.ts", "src/presentation/components/notes/ai/slash-commands/custom-commands.ts"], "files_modified": []},
+        {"step": 5, "action": "Extract saved blocks menu", "files_created": ["src/presentation/components/notes/ai/saved-blocks-menu.ts"], "files_modified": []},
+        {"step": 6, "action": "Create barrel exports", "files_created": ["src/presentation/components/notes/ai/index.ts"], "files_modified": []},
+        {"step": 7, "action": "Update original file imports", "files_modified": ["src/presentation/components/notes/AISlashCommand.tsx"], "files_deleted": []},
+        {"step": 8, "action": "Delete original implementation", "files_deleted": ["src/presentation/components/notes/AISlashCommand.tsx"]}
+      ],
+      "characterization_tests_needed": [
+        "test_ai_command_execution",
+        "test_context_extraction",
+        "test_slash_command_parsing",
+        "test_command_execution",
+        "test_block_insertion"
+      ],
+      "dependencies_to_invert": [
+        {"current": "@/lib/notes/ai-prompt-store", "suggested": "Inject via hook parameter"},
+        {"current": "@/lib/notes/note-ai-service", "suggested": "Inject via hook parameter"},
+        {"current": "@/lib/notes/ai-loading-store", "suggested": "Inject via hook parameter"},
+        {"current": "@/lib/notes/ai-insertion-store", "suggested": "Inject via hook parameter"},
+        {"current": "@/lib/notes/prompt-history-store", "suggested": "Inject via hook parameter"},
+        {"current": "@/lib/notes/saved-blocks-store", "suggested": "Inject via hook parameter"}
+      ]
+    },
+    {
+      "file": "src/presentation/components/notes/NoteEditor.tsx",
+      "current_lines": 1088,
+      "target_lines": 250,
+      "priority": "P0",
+      "responsibilities": [
+        "Note editing",
+        "Block management",
+        "Editor state",
+        "Keyboard shortcuts"
+      ],
+      "proposed_splits": [
+        {
+          "new_file": "src/presentation/utils/notes/block-sanitizer.ts",
+          "responsibility": "Block sanitization utilities (sanitizeBlocks, sanitizeContentItem, extractTextFromBlocks)",
+          "estimated_lines": 100,
+          "exports": ["sanitizeBlocks", "sanitizeContentItem", "extractTextFromBlocks", "BlockNoteBlock"]
+        },
+        {
+          "new_file": "src/presentation/hooks/notes/useDebouncedCallback.ts",
+          "responsibility": "Debounce hook for auto-save",
+          "estimated_lines": 30,
+          "exports": ["useDebouncedCallback"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/SelectionInfo.tsx",
+          "responsibility": "Selection info display component",
+          "estimated_lines": 20,
+          "exports": ["SelectionInfo"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/editor/NoteEditorHooks.ts",
+          "responsibility": "Editor-related hooks (scroll position, content change, AI actions)",
+          "estimated_lines": 100,
+          "exports": ["useNoteEditor", "useScrollPosition", "useAIActionHandler"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/editor/NoteEditorHeader.tsx",
+          "responsibility": "Editor header with save status and toolbar",
+          "estimated_lines": 80,
+          "exports": ["NoteEditorHeader"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/editor/NoteEditorContent.tsx",
+          "responsibility": "Editor content area with BlockNoteView",
+          "estimated_lines": 60,
+          "exports": ["NoteEditorContent"]
+        }
+      ],
+      "pr_sequence": [
+        {"step": 1, "action": "Extract block-sanitizer.ts", "files_created": ["src/presentation/utils/notes/block-sanitizer.ts"], "files_modified": []},
+        {"step": 2, "action": "Extract useDebouncedCallback hook", "files_created": ["src/presentation/hooks/notes/useDebouncedCallback.ts"], "files_modified": []},
+        {"step": 3, "action": "Extract SelectionInfo component", "files_created": ["src/presentation/components/notes/SelectionInfo.tsx"], "files_modified": []},
+        {"step": 4, "action": "Extract editor hooks", "files_created": ["src/presentation/components/notes/editor/NoteEditorHooks.ts"], "files_modified": []},
+        {"step": 5, "action": "Extract header component", "files_created": ["src/presentation/components/notes/editor/NoteEditorHeader.tsx"], "files_modified": []},
+        {"step": 6, "action": "Extract content component", "files_created": ["src/presentation/components/notes/editor/NoteEditorContent.tsx"], "files_modified": []},
+        {"step": 7, "action": "Create barrel exports", "files_created": ["src/presentation/components/notes/editor/index.ts"], "files_modified": []},
+        {"step": 8, "action": "Update original file imports", "files_modified": ["src/presentation/components/notes/NoteEditor.tsx"], "files_deleted": []},
+        {"step": 9, "action": "Delete original implementation", "files_deleted": ["src/presentation/components/notes/NoteEditor.tsx"]}
+      ],
+      "characterization_tests_needed": [
+        "test_block_sanitization",
+        "test_editor_initialization",
+        "test_content_change_handling",
+        "test_save_functionality",
+        "test_ai_popup_handling"
+      ],
+      "dependencies_to_invert": [
+        {"current": "@/lib/notes", "suggested": "Inject via hook parameters"},
+        {"current": "@/lib/notes/note-navigation-store", "suggested": "Inject via hook parameters"}
+      ]
+    },
+    {
+      "file": "src/presentation/components/notes/NotesPage.tsx",
+      "current_lines": 876,
+      "target_lines": 200,
+      "priority": "P1",
+      "responsibilities": [
+        "Notes page layout",
+        "Note tree",
+        "Editor integration",
+        "Mobile/desktop layout",
+        "Import/export dialogs"
+      ],
+      "proposed_splits": [
+        {
+          "new_file": "src/presentation/hooks/notes/useNotesPage.ts",
+          "responsibility": "Main page state and logic (project sync, notes loading, auto-import)",
+          "estimated_lines": 120,
+          "exports": ["useNotesPage"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/NotesPageDesktop.tsx",
+          "responsibility": "Desktop 3-column resizable layout",
+          "estimated_lines": 80,
+          "exports": ["NotesPageDesktop"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/NotesPageMobile.tsx",
+          "responsibility": "Mobile responsive layout with tabs",
+          "estimated_lines": 60,
+          "exports": ["NotesPageMobile"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/NotesPageDialogs.tsx",
+          "responsibility": "Import/export dialogs and file picker",
+          "estimated_lines": 50,
+          "exports": ["NotesPageDialogs"]
+        },
+        {
+          "new_file": "src/presentation/components/notes/NotesPageEventHandlers.tsx",
+          "responsibility": "Event listeners (keyboard shortcuts, cross-workspace events)",
+          "estimated_lines": 40,
+          "exports": ["NotesPageEventHandlers"]
+        }
+      ],
+      "pr_sequence": [
+        {"step": 1, "action": "Extract useNotesPage hook", "files_created": ["src/presentation/hooks/notes/useNotesPage.ts"], "files_modified": []},
+        {"step": 2, "action": "Extract desktop layout", "files_created": ["src/presentation/components/notes/NotesPageDesktop.tsx"], "files_modified": []},
+        {"step": 3, "action": "Extract mobile layout", "files_created": ["src/presentation/components/notes/NotesPageMobile.tsx"], "files_modified": []},
+        {"step": 4, "action": "Extract dialogs", "files_created": ["src/presentation/components/notes/NotesPageDialogs.tsx"], "files_modified": []},
+        {"step": 5, "action": "Extract event handlers", "files_created": ["src/presentation/components/notes/NotesPageEventHandlers.tsx"], "files_modified": []},
+        {"step": 6, "action": "Update original file imports", "files_modified": ["src/presentation/components/notes/NotesPage.tsx"], "files_deleted": []},
+        {"step": 7, "action": "Delete original implementation", "files_deleted": ["src/presentation/components/notes/NotesPage.tsx"]}
+      ],
+      "characterization_tests_needed": [
+        "test_notes_loading",
+        "test_project_sync",
+        "test_auto_import",
+        "test_mobile_layout",
+        "test_desktop_layout"
+      ],
+      "dependencies_to_invert": [
+        {"current": "@/lib/notes/note-store", "suggested": "Inject via hook parameters"},
+        {"current": "@/lib/filesync/hooks", "suggested": "Inject via hook parameters"},
+        {"current": "@/infrastructure/persistence/stores/ide", "suggested": "Inject via hook parameters"}
+      ]
+    },
+    {
+      "file": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "current_lines": 772,
+      "target_lines": 200,
+      "priority": "P1",
+      "responsibilities": [
+        "Monaco editor integration",
+        "Editor events",
+        "File content handling",
+        "Tab management",
+        "Auto-save",
+        "Code formatting",
+        "Code navigation"
+      ],
+      "proposed_splits": [
+        {
+          "new_file": "src/presentation/hooks/ide/useMonacoEditor.ts",
+          "responsibility": "Editor initialization, mount handlers, change handlers",
+          "estimated_lines": 150,
+          "exports": ["useMonacoEditor"]
+        },
+        {
+          "new_file": "src/presentation/components/ide/MonacoEditor/EditorTabBar.tsx",
+          "responsibility": "Tab bar component (already exists, extract cleanly)",
+          "estimated_lines": 60,
+          "exports": ["EditorTabBar"]
+        },
+        {
+          "new_file": "src/presentation/hooks/ide/useAutoSave.ts",
+          "responsibility": "Auto-save with debounce logic",
+          "estimated_lines": 40,
+          "exports": ["useAutoSave"]
+        },
+        {
+          "new_file": "src/presentation/hooks/ide/useCodeFormatting.ts",
+          "responsibility": "Code formatting and linting",
+          "estimated_lines": 50,
+          "exports": ["useCodeFormatting"]
+        },
+        {
+          "new_file": "src/presentation/hooks/ide/useCodeNavigation.ts",
+          "responsibility": "Code navigation (definitions, references, symbols)",
+          "estimated_lines": 60,
+          "exports": ["useCodeNavigation"]
+        },
+        {
+          "new_file": "src/presentation/components/ide/MonacoEditor/EditorToolbar.tsx",
+          "responsibility": "Toolbar with diff mode, format buttons",
+          "estimated_lines": 40,
+          "exports": ["EditorToolbar"]
+        }
+      ],
+      "pr_sequence": [
+        {"step": 1, "action": "Extract useMonacoEditor hook", "files_created": ["src/presentation/hooks/ide/useMonacoEditor.ts"], "files_modified": []},
+        {"step": 2, "action": "Extract useAutoSave hook", "files_created": ["src/presentation/hooks/ide/useAutoSave.ts"], "files_modified": []},
+        {"step": 3, "action": "Extract useCodeFormatting hook", "files_created": ["src/presentation/hooks/ide/useCodeFormatting.ts"], "files_modified": []},
+        {"step": 4, "action": "Extract useCodeNavigation hook", "files_created": ["src/presentation/hooks/ide/useCodeNavigation.ts"], "files_modified": []},
+        {"step": 5, "action": "Extract EditorToolbar component", "files_created": ["src/presentation/components/ide/MonacoEditor/EditorToolbar.tsx"], "files_modified": []},
+        {"step": 6, "action": "Update original file imports", "files_modified": ["src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"], "files_deleted": []},
+        {"step": 7, "action": "Delete original implementation", "files_deleted": ["src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"]}
+      ],
+      "characterization_tests_needed": [
+        "test_editor_mount",
+        "test_content_change",
+        "test_auto_save",
+        "test_tab_management",
+        "test_code_formatting",
+        "test_code_navigation"
+      ],
+      "dependencies_to_invert": [
+        {"current": "@/infrastructure/persistence/stores/workspace", "suggested": "Inject via hook parameters"},
+        {"current": "@/hooks/useCodeFormatter", "suggested": "Inject via hook parameters"},
+        {"current": "@/hooks/useCodeNavigation", "suggested": "Extract to separate file"}
+      ]
+    },
+    {
+      "file": "src/presentation/components/ui/resizable.tsx",
+      "current_lines": 763,
+      "target_lines": 200,
+      "priority": "P1",
+      "responsibilities": [
+        "Resizable panel",
+        "Drag handling",
+        "Size constraints",
+        "Collapse/expand",
+        "Touch support"
+      ],
+      "proposed_splits": [
+        {
+          "new_file": "src/presentation/components/ui/resizable/ResizableContext.tsx",
+          "responsibility": "Resizable context and panel configuration",
+          "estimated_lines": 80,
+          "exports": ["ResizableContext", "ResizableContextType", "PanelConfig"]
+        },
+        {
+          "new_file": "src/presentation/components/ui/resizable/ResizablePanelGroup.tsx",
+          "responsibility": "Panel group with layout management and collapse/expand",
+          "estimated_lines": 150,
+          "exports": ["ResizablePanelGroup"]
+        },
+        {
+          "new_file": "src/presentation/components/ui/resizable/ResizablePanel.tsx",
+          "responsibility": "Individual panel component",
+          "estimated_lines": 50,
+          "exports": ["ResizablePanel"]
+        },
+        {
+          "new_file": "src/presentation/components/ui/resizable/ResizableHandle.tsx",
+          "responsibility": "Drag handle with mouse and touch support",
+          "estimated_lines": 100,
+          "exports": ["ResizableHandle"]
+        },
+        {
+          "new_file": "src/presentation/utils/resizable-utils.ts",
+          "responsibility": "Helper functions (flattenChildren, isResizablePanel, isResizableHandle)",
+          "estimated_lines": 40,
+          "exports": ["flattenChildren", "isResizablePanel", "isResizableHandle"]
+        }
+      ],
+      "pr_sequence": [
+        {"step": 1, "action": "Extract ResizableContext", "files_created": ["src/presentation/components/ui/resizable/ResizableContext.tsx"], "files_modified": []},
+        {"step": 2, "action": "Extract ResizablePanelGroup", "files_created": ["src/presentation/components/ui/resizable/ResizablePanelGroup.tsx"], "files_modified": []},
+        {"step": 3, "action": "Extract ResizablePanel", "files_created": ["src/presentation/components/ui/resizable/ResizablePanel.tsx"], "files_modified": []},
+        {"step": 4, "action": "Extract ResizableHandle", "files_created": ["src/presentation/components/ui/resizable/ResizableHandle.tsx"], "files_modified": []},
+        {"step": 5, "action": "Extract utilities", "files_created": ["src/presentation/utils/resizable-utils.ts"], "files_modified": []},
+        {"step": 6, "action": "Create barrel exports", "files_created": ["src/presentation/components/ui/resizable/index.ts"], "files_modified": []},
+        {"step": 7, "action": "Update original file imports", "files_modified": ["src/presentation/components/ui/resizable.tsx"], "files_deleted": []},
+        {"step": 8, "action": "Delete original implementation", "files_deleted": ["src/presentation/components/ui/resizable.tsx"]}
+      ],
+      "characterization_tests_needed": [
+        "test_panel_resize",
+        "test_collapse_expand",
+        "test_touch_support",
+        "test_layout_persistence",
+        "test_min_max_constraints"
+      ],
+      "dependencies_to_invert": [
+        {"current": "lucide-react", "suggested": "Keep as is (UI dependency)"}
+      ]
+    },
+    {
+      "file": "src/presentation/components/knowledge/KnowledgePage.tsx",
+      "current_lines": 749,
+      "target_lines": 200,
+      "priority": "P1",
+      "responsibilities": [
+        "Knowledge page layout",
+        "Source management",
+        "Collection handling",
+        "RAG service integration",
+        "Synthesis workflow",
+        "Cross-workspace events"
+      ],
+      "proposed_splits": [
+        {
+          "new_file": "src/presentation/hooks/knowledge/useKnowledgePage.ts",
+          "responsibility": "Main page state and logic (RAG initialization, project sync)",
+          "estimated_lines": 120,
+          "exports": ["useKnowledgePage"]
+        },
+        {
+          "new_file": "src/presentation/components/knowledge/KnowledgePageDesktop.tsx",
+          "responsibility": "Desktop 3-column resizable layout",
+          "estimated_lines": 80,
+          "exports": ["KnowledgePageDesktop"]
+        },
+        {
+          "new_file": "src/presentation/components/knowledge/KnowledgePageMobile.tsx",
+          "responsibility": "Mobile responsive layout",
+          "estimated_lines": 60,
+          "exports": ["KnowledgePageMobile"]
+        },
+        {
+          "new_file": "src/presentation/components/knowledge/KnowledgePageEventListeners.tsx",
+          "responsibility": "Event listeners (RAG progress, IDE events, Notes events)",
+          "estimated_lines": 80,
+          "exports": ["KnowledgePageEventListeners"]
+        },
+        {
+          "new_file": "src/presentation/components/knowledge/KnowledgePageHeader.tsx",
+          "responsibility": "Header with project selector and action buttons",
+          "estimated_lines": 50,
+          "exports": ["KnowledgePageHeader"]
+        },
+        {
+          "new_file": "src/presentation/hooks/knowledge/useRAGServices.ts",
+          "responsibility": "RAG services initialization and management",
+          "estimated_lines": 60,
+          "exports": ["useRAGServices"]
+        }
+      ],
+      "pr_sequence": [
+        {"step": 1, "action": "Extract useKnowledgePage hook", "files_created": ["src/presentation/hooks/knowledge/useKnowledgePage.ts"], "files_modified": []},
+        {"step": 2, "action": "Extract useRAGServices hook", "files_created": ["src/presentation/hooks/knowledge/useRAGServices.ts"], "files_modified": []},
+        {"step": 3, "action": "Extract desktop layout", "files_created": ["src/presentation/components/knowledge/KnowledgePageDesktop.tsx"], "files_modified": []},
+        {"step": 4, "action": "Extract mobile layout", "files_created": ["src/presentation/components/knowledge/KnowledgePageMobile.tsx"], "files_modified": []},
+        {"step": 5, "action": "Extract event listeners", "files_created": ["src/presentation/components/knowledge/KnowledgePageEventListeners.tsx"], "files_modified": []},
+        {"step": 6, "action": "Extract header component", "files_created": ["src/presentation/components/knowledge/KnowledgePageHeader.tsx"], "files_modified": []},
+        {"step": 7, "action": "Update original file imports", "files_modified": ["src/presentation/components/knowledge/KnowledgePage.tsx"], "files_deleted": []},
+        {"step": 8, "action": "Delete original implementation", "files_deleted": ["src/presentation/components/knowledge/KnowledgePage.tsx"]}
+      ],
+      "characterization_tests_needed": [
+        "test_rag_initialization",
+        "test_source_import",
+        "test_synthesis_workflow",
+        "test_cross_workspace_events",
+        "test_mobile_layout",
+        "test_desktop_layout"
+      ],
+      "dependencies_to_invert": [
+        {"current": "@/infrastructure/persistence/stores/rag/rag-store", "suggested": "Inject via hook parameters"},
+        {"current": "@/lib/knowledge/source-rag-bridge", "suggested": "Inject via hook parameters"},
+        {"current": "@/lib/rag/embedding-service", "suggested": "Inject via hook parameters"}
+      ]
+    }
+  ],
+  "summary": {
+    "total_files_to_create": 42,
+    "total_files_to_modify": 6,
+    "total_files_to_delete": 6,
+    "estimated_effort_hours": 16,
+    "risk_assessment": {
+      "AISlashCommand": "HIGH - Many AI command dependencies",
+      "NoteEditor": "HIGH - Core editor functionality",
+      "NotesPage": "MEDIUM - Layout and state management",
+      "MonacoEditor": "HIGH - Complex editor integration",
+      "resizable": "MEDIUM - UI foundation component",
+      "KnowledgePage": "MEDIUM - Multiple service integrations"
+    },
+    "recommended_order": [
+      {"priority": 1, "component": "resizable", "reason": "Foundation UI component used by NotesPage and KnowledgePage"},
+      {"priority": 2, "component": "AISlashCommand", "reason": "P0 priority, many AI dependencies to extract first"},
+      {"priority": 3, "component": "NoteEditor", "reason": "P0 priority, core editor functionality"},
+      {"priority": 4, "component": "MonacoEditor", "reason": "Complex editor integration"},
+      {"priority": 5, "component": "NotesPage", "reason": "Uses resizable and NoteEditor"},
+      {"priority": 6, "component": "KnowledgePage", "reason": "Uses resizable, can be done last"}
+    ],
+    "common_patterns_extracted": [
+      {"pattern": "useDebouncedCallback", "occurrences": 3, "suggested_location": "src/presentation/hooks/useDebouncedCallback.ts"},
+      {"pattern": "useScrollPosition", "occurrences": 2, "suggested_location": "src/presentation/hooks/useScrollPosition.ts"},
+      {"pattern": "useProjectSync", "occurrences": 3, "suggested_location": "src/presentation/hooks/useProjectSync.ts"},
+      {"pattern": "useMobileLayout", "occurrences": 2, "suggested_location": "src/presentation/hooks/useMobileLayout.ts"}
+    ]
+  }
+}

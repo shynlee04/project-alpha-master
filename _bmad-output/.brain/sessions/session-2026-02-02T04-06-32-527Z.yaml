@@ -1,0 +1,37 @@
+# Session Archive
+timestamp: "2026-02-02T04:06:32.527Z"
+session_id: "ses_3e37d5abbffe0che35bxmagbZ2"
+tool: "task"
+call_id: "tvVFqpUwOIO7j0r9"
+detected_agent: "none"
+work_type: "project"
+message_count: 8
+task_title: "Cross-phase integration check"
+original_intent: |
+  <objective>
+Verify milestone achieved its definition of done. Check requirements coverage, cross-phase integration, and end-to-end flows.
+
+**This command IS the orchestrator.** Reads existing VERIFICA
+task_output: |
+  Now I have all the data. Let me generate the comprehensive integration check report:
+
+---
+
+# Integration Check Report
+
+## Milestone A: BYOK Foundation
+
+### Executive Summary
+
+| Category | Status | Count |
+|----------|--------|-------|
+| **Connected** | ✅ | 4 exports |
+| **Orphaned** | ⚠️ | 1 export |
+| **Missing Connection** | ❌ | 1 critical |
+| **E2E Flows** | ⚠️ | 1 complete, 1 stub |
+
+### Phase A Provides/Consumes Map
+
+```
+Phase A-01 (Credential Vault):
+  provides: credentialVault, Credential

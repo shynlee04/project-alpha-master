@@ -59,11 +59,11 @@
 - Summarize sprint-status.yaml, surface risks, and route to the right implementation workflow.
 
 **create-tech-spec**
-- Path: `_bmad/bmm/workflows/bmad-quick-flow/create-tech-spec/workflow.yaml`
+- Path: `_bmad/bmm/workflows/bmad-quick-flow/create-tech-spec/workflow.md`
 - Conversational spec engineering - ask questions, investigate code, produce implementation-ready tech-spec.
 
 **quick-dev**
-- Path: `_bmad/bmm/workflows/bmad-quick-flow/quick-dev/workflow.yaml`
+- Path: `_bmad/bmm/workflows/bmad-quick-flow/quick-dev/workflow.md`
 - Flexible development - execute tech-specs OR direct instructions with optional planning.
 
 **document-project**
@@ -129,6 +129,14 @@
 **workflow-status**
 - Path: `_bmad/bmm/workflows/workflow-status/workflow.yaml`
 - Lightweight status checker - answers ""what should I do now?"" for any agent. Reads YAML status file for workflow tracking. Use workflow-init for new projects.
+
+**prd**
+- Path: `_bmad/bmm/workflows/2-plan-workflows/prd/workflow.md`
+- PRD tri-modal workflow - Create, Validate, or Edit comprehensive PRDs
+
+**quick-spec**
+- Path: `_bmad/bmm/workflows/bmad-quick-flow/quick-spec/workflow.md`
+- Conversational spec engineering - ask questions, investigate code, produce implementation-ready tech-spec.
 
 
 ## Execution

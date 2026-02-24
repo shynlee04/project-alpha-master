@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Via-Gent | Notes - Preview + Chat (Phone)</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        :root {
+            --header-height: 44px;
+            --bottom-nav-height: 56px;
+        }
+
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--notes-bg);
+        }
+
+        .header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .header-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .preview-panel {
+            flex: 1;
+            min-height: 0;
+        }
+
+        .preview-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 16px;
+        }
+
+        .preview-doc {
+            max-width: 100%;
+        }
+
+        .preview-title {
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: #111;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .preview-body {
+            font-family: var(--font-prose);
+            font-size: var(--text-sm);
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .preview-body h2 {
+            font-size: var(--text-base);
+            color: #111;
+            margin: 16px 0 8px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .preview-body p {
+            margin-bottom: 12px;
+        }
+
+        .preview-body ul {
+            margin-bottom: 12px;
+            padding-left: 20px;
+        }
+
+        .preview-body li {
+            margin-bottom: 6px;
+        }
+
+        .preview-body blockquote {
+            border-left: 4px solid var(--action);
+            padding-left: 12px;
+            margin: 12px 0;
+            color: #666;
+            font-style: italic;
+            font-size: var(--text-sm);
+        }
+
+        .preview-body code {
+            background: #f4f4f4;
+            padding: 2px 4px;
+            border: 1px solid #e5e5e5;
+            border-radius: 0;
+            font-family: var(--font-code);
+            font-size: var(--text-xs);
+        }
+
+        .preview-body pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 0;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        .preview-body pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            height: 200px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--surface);
+            border-bottom: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+
+        .chat-avatar {
+            width: 24px;
+            height: 24px;
+            background: var(--agent-avatar);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+
+        .chat-content {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            background: var(--canvas);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            font-size: var(--text-sm);
+            color: var(--primary);
+        }
+
+        .chat-message.user .chat-bubble {
+            background: var(--action);
+            border-color: var(--action);
+            color: white;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--canvas);
+            border: 2px solid var(--structural);
+            border-radius: 0;
+            font-size: var(--text-sm);
+            color: var(--primary);
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: var(--action);
+        }
+
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--action);
+            border: 2px solid var(--action);
+            border-radius: 0;
+            cursor: pointer;
+            color: white;
+        }
+
+        .bottom-nav {
+            height: var(--bottom-nav-height);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: var(--surface);
+            border-top: 2px solid var(--structural);
+            padding-bottom: env(safe-area-inset-bottom);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 4px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--secondary);
+            transition: color 0.15s ease;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+        }
+
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: var(--font-medium);
+        }
+
+        .preview-content::-webkit-scrollbar,
+        .chat-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .preview-content::-webkit-scrollbar-track,
+        .chat-content::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .preview-content::-webkit-scrollbar-thumb,
+        .chat-content::-webkit-scrollbar-thumb {
+            background: var(--structural);
+            border-radius: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <span class="header-title">Notes + AI</span>
+            </div>
+            <div class="header-right">
+                <button class="header-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="panel preview-panel">
+                <div class="preview-content">
+                    <div class="preview-doc">
+                        <h1 class="preview-title">Getting Started with Via-Gent</h1>
+                        <div class="preview-body">
+                            <p>Via-Gent is a powerful development environment.</p>
+                            <h2>Features</h2>
+                            <ul>
+                                <li>Code Editor with syntax highlighting</li>
+                                <li>File Management</li>
+                                <li>Preview</li>
+                                <li>Terminal</li>
+                            </ul>
+                            <blockquote>
+                                Pro tip: Use keyboard shortcuts
+                            </blockquote>
+                            <pre><code>const greeting = "Hello!";</code></pre>
+                            <p>Happy coding! 🚀</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel chat-panel">
+                <div class="chat-header">
+                    <div class="chat-title">
+                        <span class="chat-avatar">AI</span>
+                        <span>AI Assistant</span>
+                    </div>
+                </div>
+                <div class="chat-content">
+                    <div class="chat-message">
+                        <div class="chat-bubble">I can help you improve this note. Would you like me to expand on any section?</div>
+                    </div>
+                    <div class="chat-message user">
+                        <div class="chat-bubble">Yes, please expand the Features section with more details.</div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="chat-bubble">Certainly! Here are more details about each feature...</div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" placeholder="Ask AI...">
+                    <button class="chat-send">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="switchPanel('notes')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Notes</span>
+            </button>
+            <button class="nav-item" onclick="switchPanel('editor')">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                    </svg>
+                </span>
+                <span class="nav-label">Editor</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Preview</span>
+            </button>
+            <button class="nav-item">
+                <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </span>
+                <span class="nav-label">Chat</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        function switchPanel(panelName) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            console.log('Switch to panel:', panelName);
+        }
+    </script>
+</body>
+</html>

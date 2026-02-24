@@ -1,0 +1,237 @@
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mobile Progressive Sheet Stack</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#FF5500", // High contrast orange
+                        "bg-main": "#000000", // Solid black
+                        "bg-card": "#111111", // Opaque dark gray
+                        "bg-surface": "#1A1A1A", // Slightly lighter for inputs/inner elements
+                        "border-hard": "#333333", // High contrast border
+                        "text-main": "#FFFFFF",
+                        "text-sub": "#AAAAAA",
+                    },
+                    fontFamily: {
+                        display: ["JetBrains Mono", "monospace"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0px", // Enforce sharp corners
+                        'sm': '2px',
+                    },
+                    boxShadow: {
+                        'hard': '4px 4px 0px 0px rgba(20,20,20,1)', // 8-bit style shadow
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-feature-settings: "ss01", "ss02";
+            -webkit-font-smoothing: none;}
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }.border-8bit {
+            border: 2px solid #333;
+        }
+        .border-8bit-top {
+            border-top: 2px solid #333;
+        }
+    </style>
+</head>
+<body class="bg-bg-main text-text-main h-screen overflow-hidden flex flex-col font-display antialiased selection:bg-primary selection:text-black">
+<header class="flex-none h-14 border-b-2 border-border-hard flex items-center justify-between px-4 bg-bg-main z-20">
+<div class="flex items-center space-x-3">
+<span class="text-xl">👋</span>
+<span class="text-sm font-bold text-gray-500">/</span>
+<h1 class="text-sm font-bold uppercase tracking-tight">Project Alpha</h1>
+</div>
+<div class="flex items-center space-x-2">
+<button class="w-[44px] h-[44px] flex items-center justify-center text-text-sub hover:text-primary transition-colors">
+<span class="material-icons-round">wb_sunny</span>
+</button>
+<button class="w-[44px] h-[44px] flex items-center justify-center text-text-sub hover:text-primary transition-colors">
+<span class="material-icons-round">more_vert</span>
+</button>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto relative bg-bg-main p-4 pb-32">
+<div class="flex items-center space-x-2 text-xs text-text-sub mb-8 font-mono border-b border-border-hard pb-2">
+<span class="hover:text-white cursor-pointer hover:underline">root</span>
+<span>/</span>
+<span class="hover:text-white cursor-pointer hover:underline">research</span>
+<span>/</span>
+<span class="text-primary font-bold bg-primary/10 px-1">notes.md</span>
+</div>
+<div class="prose prose-invert max-w-none font-mono text-sm leading-relaxed">
+<h1 class="text-2xl font-bold mb-6 text-white tracking-tight">Welcome to Notes</h1>
+<p class="text-gray-300 mb-6">
+                This is a demonstration of the mobile fluid stack. The main editor takes center stage, ensuring the primary task is always accessible. Background is strictly solid black (#000000).
+            </p>
+<div class="my-6 p-4 border-2 border-primary bg-bg-surface text-xs text-white shadow-none">
+<strong class="text-primary block mb-1 uppercase tracking-wider">System Note:</strong> 
+                Context window optimized for mobile viewing. High contrast mode active.
+            </div>
+<h2 class="text-lg font-bold mt-8 mb-4 text-primary uppercase border-l-4 border-primary pl-3">Key Features</h2>
+<ul class="list-square pl-4 space-y-3 marker:text-primary text-gray-300">
+<li>Progressive disclosure of complexity</li>
+<li>Bottom-up sheet navigation</li>
+<li>Touch-optimized targets (44px+)</li>
+<li>Monospace aesthetics for technical clarity</li>
+</ul>
+<h2 class="text-lg font-bold mt-10 mb-4 uppercase text-white">Addressing the real blockers</h2>
+<p class="text-gray-300">
+                When designing for advanced AI workstations on smaller screens, we face the challenge of information density. Instead of shrinking desktop panels, we stack them.
+            </p>
+<p class="text-gray-400 mt-4 font-bold">
+                // TODO: Implement gesture swipe for sidebar reveal.
+            </p>
+<p class="text-gray-300 mt-4">
+                The content here is intentionally long to demonstrate scrolling behavior underneath the floating sheet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+<p class="text-gray-300 mt-4">
+               Solid opaque layers prevent content bleed.
+            </p>
+</div>
+</main>
+<div class="absolute bottom-[48px] left-0 right-0 z-30 transition-transform duration-300 transform translate-y-0 shadow-[0_-4px_0_0_rgba(20,20,20,1)] border-t-2 border-border-hard bg-bg-card flex flex-col max-h-[85vh]" id="ai-sheet">
+<div class="bg-bg-card p-2 cursor-pointer flex flex-col items-center justify-center select-none border-b-2 border-border-hard min-h-[44px]" onclick="toggleSheet()">
+<div class="w-16 h-1 bg-border-hard mb-2"></div>
+<div class="w-full flex items-center justify-between px-3 pb-1">
+<div class="flex items-center space-x-2 text-primary text-xs font-bold uppercase tracking-wider">
+<span class="material-icons-round text-sm">smart_toy</span>
+<span>AI Assistant</span>
+</div>
+<div class="flex items-center space-x-3">
+<span class="text-[10px] bg-green-900 text-green-400 px-1.5 py-0.5 border border-green-700 font-mono">READY</span>
+<button class="w-[32px] h-[32px] flex items-center justify-center hover:bg-white/5">
+<span class="material-icons-round text-gray-500 text-sm">open_in_full</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-bg-card flex-1 flex flex-col h-[400px]">
+<div class="flex-1 overflow-y-auto p-4 space-y-6 bg-bg-card scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 bg-bg-surface border border-border-hard flex items-center justify-center flex-none">
+<span class="material-icons-round text-sm text-gray-400">terminal</span>
+</div>
+<div class="flex-1">
+<div class="text-[10px] text-text-sub mb-1 flex items-center justify-between font-mono">
+<span class="uppercase tracking-wide">System</span>
+<span>10:28 PM</span>
+</div>
+<div class="bg-black border border-border-hard p-3 text-xs text-gray-300 leading-relaxed font-mono">
+                            Session initialized. Context loaded from <span class="text-primary font-bold">notes.md</span>.
+                        </div>
+</div>
+</div>
+<div class="flex items-start space-x-3">
+<div class="w-8 h-8 bg-primary/10 border border-primary flex items-center justify-center flex-none">
+<span class="material-icons-round text-sm text-primary">auto_awesome</span>
+</div>
+<div class="flex-1">
+<div class="text-[10px] text-text-sub mb-1 flex items-center justify-between font-mono">
+<span class="uppercase tracking-wide text-primary">Via-Gent Coder</span>
+<div class="flex space-x-2">
+<button class="w-[24px] h-[24px] flex items-center justify-center hover:text-white">
+<span class="material-icons-round text-[12px]">content_copy</span>
+</button>
+</div>
+</div>
+<div class="bg-black border border-border-hard p-3 text-xs text-gray-300 leading-relaxed font-mono mb-2">
+                            Hello! I'm your AI assistant. I see you're working on the mobile fluid stack documentation. Would you like me to draft a section on "Touch Targets"?
+                        </div>
+<div class="flex gap-2">
+<button class="min-h-[36px] px-3 text-[10px] uppercase font-bold border border-border-hard bg-bg-surface hover:bg-white hover:text-black hover:border-white transition-colors">
+                                Draft section
+                            </button>
+<button class="min-h-[36px] px-3 text-[10px] uppercase font-bold border border-border-hard bg-bg-surface hover:bg-white hover:text-black hover:border-white transition-colors">
+                                Fix typos
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="p-3 bg-bg-card border-t-2 border-border-hard">
+<div class="relative flex items-center">
+<input class="w-full bg-black border border-border-hard pl-3 pr-10 py-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-0 font-mono" placeholder="CMD + K to instruct AI..." type="text"/>
+<button class="absolute right-0 top-0 bottom-0 w-[44px] flex items-center justify-center text-primary hover:text-white transition-colors">
+<span class="material-icons-round text-sm">send</span>
+</button>
+</div>
+<div class="flex items-center justify-between mt-2 px-1">
+<div class="flex items-center space-x-2 text-[10px] text-gray-500 font-mono uppercase">
+<span class="flex items-center"><span class="w-2 h-2 bg-green-500 mr-2 border border-green-900"></span>Sync Active</span>
+</div>
+<div class="flex items-center space-x-1">
+<button class="w-[40px] h-[40px] flex items-center justify-center hover:bg-bg-surface">
+<span class="material-icons-round text-gray-400 text-sm">attachment</span>
+</button>
+<button class="w-[40px] h-[40px] flex items-center justify-center hover:bg-bg-surface">
+<span class="material-icons-round text-gray-400 text-sm">mic</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="flex-none h-[48px] bg-bg-main border-t-2 border-border-hard flex items-center justify-around px-2 z-40 relative">
+<button class="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-gray-500 hover:text-white group">
+<span class="material-icons-round text-lg group-hover:-translate-y-0.5 transition-transform">folder_open</span>
+<span class="text-[8px] font-mono uppercase tracking-wide">Files</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-primary group relative">
+<div class="absolute top-0 w-8 h-[2px] bg-primary shadow-[0_0_4px_rgba(255,85,0,0.8)]"></div>
+<span class="material-icons-round text-lg">edit_note</span>
+<span class="text-[8px] font-mono uppercase tracking-wide">Notes</span>
+</button>
+<div class="relative -top-6">
+<button class="w-12 h-12 bg-primary text-black flex items-center justify-center border-2 border-white hover:bg-white hover:border-primary transition-colors shadow-hard">
+<span class="material-icons-round text-2xl font-bold">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-gray-500 hover:text-white group">
+<span class="material-icons-round text-lg group-hover:-translate-y-0.5 transition-transform">search</span>
+<span class="text-[8px] font-mono uppercase tracking-wide">Find</span>
+</button>
+<button class="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-gray-500 hover:text-white group" onclick="toggleSheet()">
+<span class="material-icons-round text-lg group-hover:-translate-y-0.5 transition-transform">chat_bubble_outline</span>
+<span class="text-[8px] font-mono uppercase tracking-wide">Chat</span>
+</button>
+</nav>
+<script>
+        let isExpanded = false;
+        const sheet = document.getElementById('ai-sheet');
+        // Initial state: Sheet visible but lowered (peek state)
+        // Adjusting calculation for 48px nav + 44px peek
+        sheet.style.transform = 'translateY(calc(100% - 320px))'; 
+        function toggleSheet() {
+            if (isExpanded) {
+                // Return to peek state
+                sheet.classList.remove('h-[85vh]');
+                // "Peek" height: Show enough to see "AI Assistant" header + some content
+                sheet.style.transform = 'translateY(calc(100% - 320px))';
+            } else {
+                // Expand to nearly full height
+                sheet.style.transform = 'translateY(0)';
+                sheet.classList.add('h-[85vh]');
+            }
+            isExpanded = !isExpanded;
+        }
+    </script>
+
+</body></html>

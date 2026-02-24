@@ -1,0 +1,42 @@
+# Deep Scan Priorities Configuration
+# Rules for mapping Technical Findings to Business Risk Priority
+
+priorities:
+  P0:
+    name: "Critical"
+    description: "Immediate action required. Blocks release/merge."
+    triggers:
+      - type: "Security Violation"
+        subtypes: ["Hardcoded Secret", "XSS Vector"]
+      - type: "Circular Dependency"
+        domain: "state"
+      - type: "Permission Bypass"
+        domain: "agent"
+      - type: "Data Loss Risk"
+        domain: "persistence"
+
+  P1:
+    name: "High"
+    description: "Fix in next sprint. High impact on maintainability/stability."
+    triggers:
+      - type: "God Store"
+      - type: "Layer Violation"
+      - type: "Memory Leak"
+      - type: "Viral Any"
+
+  P2:
+    name: "Medium"
+    description: "Schedule when possible. Moderate debt."
+    triggers:
+      - type: "God Component"
+      - type: "Hardcoded String" # i18n
+      - type: "Legacy Pattern"
+      - type: "Accessibility Violation"
+
+  P3:
+    name: "Low"
+    description: "Nice to have. Housekeeping."
+    triggers:
+      - type: "Style Violation"
+      - type: "Comment Missing"
+      - type: "Minor Duplication"

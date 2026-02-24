@@ -1,0 +1,26 @@
+{
+  "voice": {
+    "record": "Tap to speak",
+    "recording": "Listening...",
+    "processing": "Processing...",
+    "error": "Voice input unavailable",
+    "permissionDenied": "Microphone permission denied",
+    "notSupported": "Voice input not supported in this browser",
+    "cancel": "Cancel",
+    "send": "Send",
+    "tapToRecord": "Tap to record",
+    "tapToStop": "Tap to stop",
+    "recordingReady": "Recording ready",
+    "voiceInput": "Voice Input",
+    "duration": "{{seconds}}s",
+    "tooShort": "Recording too short",
+    "autoSent": "Auto-sent after {{seconds}}s of silence"
+  },
+  "chat": {
+    "voiceMode": "Voice Mode",
+    "voiceRecording": "Voice Recording",
+    "voiceUnavailable": "Voice input unavailable. Please check microphone permissions.",
+    "processingVoice": "Processing voice input...",
+    "voiceTranscript": "Voice transcript"
+  }
+}

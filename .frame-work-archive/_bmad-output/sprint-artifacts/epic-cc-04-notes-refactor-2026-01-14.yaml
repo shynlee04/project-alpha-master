@@ -1,0 +1,101 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC CC-04: Notes Workspace Refactoring (Correct-Course)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_id: "EPIC-CC-04"
+name: "Notes Workspace Refactoring - Architectural Remediation"
+type: "correct-course"
+category: "architectural"
+workflow: "correct-course/architectural-conflict"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METADATA
+# ═══════════════════════════════════════════════════════════════════════════
+
+created_at: "2026-01-14T19:00:00+07:00"
+updated_at: "2026-01-14T19:00:00+07:00"
+priority: "P1"
+team: "Team B"
+estimated_duration: "6-8 days"
+status: "BLOCKED"
+blocked_by: "EPIC-CC-01"
+
+# Source References
+source_documents:
+  - "_bmad-output/architectural-scan/shards/shard-03-06-workspace-notes.md"
+  - "_bmad-output/team-b-investigations/consolidated-investigation-report-2026-01-14.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROBLEM STATEMENT
+# ═══════════════════════════════════════════════════════════════════════════
+
+problem_statement: |
+  The Notes workspace has critical god components:
+  
+  1. **AISlashCommand.tsx** (P0): 1147 lines with:
+     - 18 commands hardcoded (no registry pattern)
+     - 50+ `as any` casts
+     - Context extraction mixed with UI
+  
+  2. **NoteEditor.tsx** (P0): 947 lines with:
+     - 12+ responsibilities
+     - Duplicated sanitization logic
+  
+  3. **NotesPage.tsx** (P1): 877 lines with:
+     - Layout orchestration
+     - 6+ dialog components inline
+  
+  4. **slash-command-store.ts** (P1): 472 lines, violates slice pattern
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES (5 Stories)
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  - id: "NOTES-01"
+    name: "Create AISlashCommand Registry Pattern"
+    priority: "P0"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Extract 18 commands to individual files with registry pattern"
+    
+  - id: "NOTES-02"
+    name: "Remove as any Casts from AISlashCommand"
+    priority: "P0"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Replace 50+ as any casts with proper typing"
+    
+  - id: "NOTES-03"
+    name: "Extract NoteEditor Hooks"
+    priority: "P0"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Extract useContentSanitizer, useAutoSave, useKeyboardShortcuts from NoteEditor"
+    
+  - id: "NOTES-04"
+    name: "Split slash-command-store"
+    priority: "P1"
+    estimation: "1 day"
+    status: "BLOCKED"
+    description: "Split 472-line store into 3 focused slices"
+    
+  - id: "NOTES-05"
+    name: "Unify AI Services"
+    priority: "P1"
+    estimation: "2 days"
+    status: "BLOCKED"
+    description: "Consolidate 6 duplicate AI services into handler interface pattern"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DEPENDENCIES & EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  blocking_epics:
+    - "EPIC-CC-01"  # Needs StorageAdapter for note persistence
+  blocked_epics: []
+
+execution_notes:
+  team: "Team B"
+  sequence: "After CC-01 complete"

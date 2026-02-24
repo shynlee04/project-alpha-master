@@ -1,0 +1,351 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-17T00:00:00Z",
+    "track": "1.5",
+    "agent": "dev-ext",
+    "workspace": "cross-workspace"
+  },
+  "features": [
+    {
+      "name": "Project Selection (Hub)",
+      "description": "User selects which project to work on from hub page",
+      "user_journey": "Hub → Click project card → Navigate to workspace",
+      "components": ["ProjectCard", "HubHomePage", "RecentProjectsSection"],
+      "stores": ["useProjectStore"],
+      "services": ["ProjectService"],
+      "routes": ["/", "/hub"],
+      "files": [
+        "src/presentation/components/hub/ProjectCard.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx",
+        "src/presentation/components/hub/RecentProjectsSection.tsx"
+      ]
+    },
+    {
+      "name": "Create New Project",
+      "description": "User creates a new project with workspace bindings",
+      "user_journey": "Hub → Click 'New Project' → Fill details → Create",
+      "components": ["ProjectPickerDialog", "HubHomePage"],
+      "stores": ["useProjectStore"],
+      "services": ["ProjectService"],
+      "routes": ["/", "/hub"],
+      "files": [
+        "src/presentation/components/hub/ProjectPickerDialog.tsx",
+        "src/presentation/components/hub/HubHomePage.tsx"
+      ]
+    },
+    {
+      "name": "Delete Project",
+      "description": "User deletes a project with confirmation",
+      "user_journey": "Hub → Click project menu → Delete → Confirm",
+      "components": ["DeleteProjectDialog", "ProjectActionsMenu"],
+      "stores": ["useProjectStore"],
+      "services": ["ProjectService"],
+      "routes": ["/", "/hub"],
+      "files": [
+        "src/presentation/components/hub/DeleteProjectDialog.tsx",
+        "src/presentation/components/hub/ProjectActionsMenu.tsx"
+      ]
+    },
+    {
+      "name": "Edit Project Metadata",
+      "description": "User edits project name, description, and workspace bindings",
+      "user_journey": "Hub → Click project → Edit metadata → Save",
+      "components": ["ProjectMetadataDialog", "ProjectActionsMenu"],
+      "stores": ["useProjectStore"],
+      "services": ["ProjectService"],
+      "routes": ["/", "/hub"],
+      "files": [
+        "src/presentation/components/hub/ProjectMetadataDialog.tsx",
+        "src/presentation/components/hub/ProjectActionsMenu.tsx"
+      ]
+    },
+    {
+      "name": "Workspace Switching",
+      "description": "Switch between workspaces (Notes, IDE, Knowledge, Study) with state persistence",
+      "user_journey": "Workspace → Click workspace icon → Navigate to route → State restores",
+      "components": ["WorkspaceEnhancedSwitcher", "ProjectProvider"],
+      "stores": ["useWorkspaceProjects", "useProjectStore", "useWorkspaceSwitching"],
+      "services": ["WorkspaceScopedStoreFactory"],
+      "routes": ["/notes/$projectId", "/ide/$projectId", "/knowledge/$projectId", "/study/$projectId"],
+      "files": [
+        "src/presentation/components/workspace/WorkspaceEnhancedSwitcher.tsx",
+        "src/lib/workspace/ProjectContext.tsx",
+        "src/infrastructure/persistence/stores/workspace-store-factory.ts"
+      ]
+    },
+    {
+      "name": "Workspace Binding Configuration",
+      "description": "Configure which workspaces are enabled for a project",
+      "user_journey": "Hub → Click project → Edit bindings → Select workspaces → Save",
+      "components": ["WorkspaceBindingDialog", "WorkspaceBindingToggle"],
+      "stores": ["useProjectStore"],
+      "services": ["ProjectService"],
+      "routes": ["/", "/hub"],
+      "files": [
+        "src/presentation/components/hub/WorkspaceBindingDialog.tsx",
+        "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
+      ]
+    },
+    {
+      "name": "Platform Detection",
+      "description": "Detect device type (desktop/mobile/tablet) and capabilities",
+      "user_journey": "Application loads → Detect platform → Adjust features",
+      "components": [],
+      "stores": [],
+      "services": ["platform-detection.ts"],
+      "routes": ["*"],
+      "files": [
+        "src/infrastructure/filesystem/platform-detection.ts"
+      ]
+    },
+    {
+      "name": "Storage Adapter Selection",
+      "description": "Auto-select optimal storage type (FSA for desktop, IndexedDB for mobile)",
+      "user_journey": "Project loads → Detect platform → Create adapter → Use storage",
+      "components": [],
+      "stores": [],
+      "services": ["StorageAdapterFactory", "platform-detection.ts"],
+      "routes": ["*"],
+      "files": [
+        "src/infrastructure/filesystem/StorageAdapterFactory.ts",
+        "src/infrastructure/filesystem/platform-detection.ts"
+      ]
+    },
+    {
+      "name": "Route Guards (Platform Validation)",
+      "description": "Block access to IDE on mobile devices",
+      "user_journey": "Mobile user → Try to access IDE → Blocked → Redirect to Notes",
+      "components": [],
+      "stores": [],
+      "services": ["route-guards.ts"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/infrastructure/filesystem/route-guards.ts"
+      ]
+    },
+    {
+      "name": "Project Context (Cross-Workspace State)",
+      "description": "Shared project context passed to all workspaces",
+      "user_journey": "Project loads → Context set → Workspaces access via useProjectContext",
+      "components": ["ProjectProvider"],
+      "stores": [],
+      "services": [],
+      "routes": ["/*"],
+      "files": [
+        "src/lib/workspace/ProjectContext.tsx"
+      ]
+    },
+    {
+      "name": "Workspace-Scoped State",
+      "description": "Isolate workspace state per project to prevent cross-project contamination",
+      "user_journey": "Project switches → Workspace store created for project → State isolated",
+      "components": [],
+      "stores": ["WorkspaceScopedStoreFactory"],
+      "services": [],
+      "routes": ["/*"],
+      "files": [
+        "src/infrastructure/persistence/stores/workspace-store-factory.ts"
+      ]
+    },
+    {
+      "name": "Cross-Workspace Event Bus",
+      "description": "Event-driven communication between workspaces (FILE_SAVED, FILE_DELETED, etc.)",
+      "user_journey": "Event fires → Workspaces subscribed → React to changes",
+      "components": [],
+      "stores": [],
+      "services": ["event-bus.ts", "useCrossWorkspaceEvents"],
+      "routes": ["/*"],
+      "files": [
+        "src/infrastructure/events/event-bus.ts",
+        "src/lib/events/use-cross-workspace-events.ts"
+      ]
+    },
+    {
+      "name": "Cross-Workspace File References",
+      "description": "Manage file references between workspaces (e.g., IDE file referenced in Notes)",
+      "user_journey": "Workspace A references Workspace B file → Reference created → Tracked",
+      "components": [],
+      "stores": [],
+      "services": ["CrossWorkspaceReferenceManager", "CrossWorkspaceReferenceFactory"],
+      "routes": ["/*"],
+      "files": [
+        "src/infrastructure/sync/workspace-services/cross-workspace-file-references/cross-workspace-reference-manager.ts",
+        "src/infrastructure/sync/workspace-services/cross-workspace-file-references/cross-workspace-reference-factory.ts"
+      ]
+    },
+    {
+      "name": "File System Access API Routing",
+      "description": "Route file operations through FSA (desktop) or IndexedDB (mobile)",
+      "user_journey": "File operation requested → Platform detected → Adapter selected → Operation executed",
+      "components": [],
+      "stores": [],
+      "services": ["StorageAdapterFactory", "FSAStorageAdapter", "UnifiedStorageAdapter"],
+      "routes": ["*"],
+      "files": [
+        "src/infrastructure/filesystem/StorageAdapterFactory.ts",
+        "src/infrastructure/filesystem/fsa-storage-adapter.ts",
+        "src/lib/filesystem/unified-storage-adapter.ts"
+      ]
+    },
+    {
+      "name": "Unified Chat Panel (Cross-Workspace)",
+      "description": "Single chat interface shared across all workspaces with workspace-scoped context",
+      "user_journey": "Notes/IDE → Open chat → Same chat, different context",
+      "components": ["UnifiedChatPanel"],
+      "stores": ["useConversationStore"],
+      "services": [],
+      "routes": ["/notes/$projectId", "/ide/$projectId"],
+      "files": [
+        "src/presentation/components/chat/UnifiedChatPanel.tsx",
+        "src/infrastructure/persistence/stores/conversation/useConversationStore.ts"
+      ]
+    },
+    {
+      "name": "Agent Selector (Cross-Workspace)",
+      "description": "Unified agent selector that syncs across workspaces",
+      "user_journey": "Notes/IDE → Select AI provider → Selection synced across workspaces",
+      "components": ["AgentManager"],
+      "stores": [],
+      "services": [],
+      "routes": ["/*"],
+      "files": [
+        "src/presentation/components/agent/AgentManager.tsx"
+      ]
+    },
+    {
+      "name": "Project Selector (Dropdown)",
+      "description": "Dropdown to quickly switch between projects without returning to hub",
+      "user_journey": "Workspace → Click project selector → Select project → Navigate",
+      "components": ["ProjectSelector"],
+      "stores": ["useProjectStore", "useWorkspaceProjects"],
+      "services": [],
+      "routes": ["/notes/$projectId", "/ide/$projectId"],
+      "files": [
+        "src/presentation/components/project/ProjectSelector.tsx"
+      ]
+    },
+    {
+      "name": "Sync Service Factory",
+      "description": "Create appropriate sync service based on workspace type and storage",
+      "user_journey": "Workspace loads → Factory creates sync service → Sync initialized",
+      "components": [],
+      "stores": [],
+      "services": ["SyncServiceFactory", "FileSyncServiceFactory"],
+      "routes": ["/*"],
+      "files": [
+        "src/infrastructure/sync/workspace-services/index.ts",
+        "src/infrastructure/sync/workspace-services/file-sync-service.ts"
+      ]
+    },
+    {
+      "name": "File Watcher Factory",
+      "description": "Create file watcher based on storage type (FSAObserver for FSA, Polling for IndexedDB)",
+      "user_journey": "Workspace loads → Factory creates watcher → Files monitored",
+      "components": [],
+      "stores": [],
+      "services": ["FileWatcherFactory"],
+      "routes": ["/*"],
+      "files": [
+        "src/infrastructure/sync/adapters/adapter-factory.ts"
+      ]
+    }
+  ],
+  "feature_flags": [
+    {
+      "flag": "MOBILE_IDE_ACCESS_BLOCKED",
+      "description": "Block IDE access on mobile devices (platform validation)",
+      "location": "src/infrastructure/filesystem/route-guards.ts",
+      "default_value": true,
+      "affected_components": ["IDERoute", "WorkspaceSwitcher"],
+      "implementation": "Platform detection in route-guards.ts: requireIDEAccess() throws redirect if mobile"
+    },
+    {
+      "flag": "FSA_STORAGE_ENABLED",
+      "description": "Enable File System Access API storage for desktop devices",
+      "location": "src/infrastructure/filesystem/platform-detection.ts",
+      "default_value": "auto-detected (isDesktopDevice() && isFSASupported())",
+      "affected_components": ["StorageAdapterFactory", "FSAStorageAdapter"],
+      "implementation": "Platform detection: getOptimalStorageType() returns 'fsa' for desktop with FSA support"
+    },
+    {
+      "flag": "WEB_CONTAINER_PREVIEW_ENABLED",
+      "description": "Enable WebContainer preview for IDE workspace",
+      "location": "src/routes/webcontainer.$.tsx, src/presentation/components/ide/PreviewPanel/PreviewPanel.tsx",
+      "default_value": true,
+      "affected_components": ["PreviewPanel", "WebContainer"],
+      "implementation": "WebContainer boot in PreviewPanel - supports live preview if SharedArrayBuffer and COOP/COEP headers present"
+    },
+    {
+      "flag": "AUTO_SAVE_ENABLED",
+      "description": "Enable auto-save with configurable debounce times",
+      "location": "src/presentation/components/notes/NoteEditor.tsx (500ms), src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx (2000ms)",
+      "default_value": true,
+      "affected_components": ["NoteEditor", "MonacoEditor"],
+      "implementation": "Debounced save hooks - Notes uses 500ms debounce, IDE uses 2000ms debounce"
+    },
+    {
+      "flag": "WORKSPACE_SCOPED_STATE_ENABLED",
+      "description": "Enable workspace-scoped state to prevent cross-project contamination",
+      "location": "src/infrastructure/persistence/stores/workspace-store-factory.ts",
+      "default_value": true,
+      "affected_components": ["IDEStore", "WorkspaceStore"],
+      "implementation": "createWorkspaceStore(workspaceType, projectId) creates isolated store per project"
+    }
+  ],
+  "overlaps": [
+    {
+      "feature": "Storage Adapter Selection",
+      "overlapping_features": ["FSA routing in IDE", "IndexedDB routing in Notes"],
+      "shared_code": ["StorageAdapterFactory", "platform-detection.ts"],
+      "conflict_description": "Both workspaces use StorageAdapterFactory for optimal storage selection. Unified logic exists but different usage patterns - IDE uses direct adapters, Notes uses via NotesFileSyncService wrapper."
+    },
+    {
+      "feature": "Project Context",
+      "overlapping_features": ["ProjectProvider in Notes route", "ProjectProvider in IDE route"],
+      "shared_code": ["ProjectContext", "useProjectContext"],
+      "conflict_description": "Both routes wrap components in ProjectProvider. Good unification, but context loading differs slightly (loader vs provider prop)."
+    },
+    {
+      "feature": "Unified Chat Panel",
+      "overlapping_features": ["UnifiedChatPanel in Notes", "UnifiedChatPanel in IDE"],
+      "shared_code": ["UnifiedChatPanel", "useConversationStore"],
+      "conflict_description": "Same component used in both workspaces. Good unification, but conversation state should be workspace-scoped for proper isolation."
+    },
+    {
+      "feature": "Agent Selector",
+      "overlapping_features": ["AgentManager in Notes sidebar", "AgentManager in IDE sidebar"],
+      "shared_code": ["AgentManager"],
+      "conflict_description": "Same component used in both workspaces. Agent selection state should be unified to cross-workspace."
+    },
+    {
+      "feature": "Auto-Save",
+      "overlapping_features": ["Auto-save in Notes (500ms)", "Auto-save in IDE (2000ms)", "Auto-save in sync services"],
+      "shared_code": [],
+      "conflict_description": "Three different debounce times and implementations. Notes uses 500ms, IDE uses 2000ms, sync services have their own logic. Should use unified auto-save hook."
+    },
+    {
+      "feature": "Sync Status",
+      "overlapping_features": ["SyncStatusIndicator in Notes", "SyncStatusIndicator in IDE", "SyncStatusPanel in IDE"],
+      "shared_code": ["SyncStatusIndicator", "SyncStatusPanel", "useFileSyncStatusStore"],
+      "conflict_description": "Same component and store used across workspaces. Good unification, but sync services differ (NotesFileSyncService vs IDESyncService)."
+    },
+    {
+      "feature": "File System Operations",
+      "overlapping_features": ["File CRUD in IDE", "File CRUD in Notes (via sync)"],
+      "shared_code": ["StorageAdapterFactory", "FileTreeScanner"],
+      "conflict_description": "Both workspaces perform file operations but through different paths. IDE uses direct storage adapters, Notes uses via sync services. Consolidation opportunity."
+    },
+    {
+      "feature": "Workspace Switching",
+      "overlapping_features": ["WorkspaceSwitcher in all workspaces"],
+      "shared_code": ["WorkspaceEnhancedSwitcher", "useWorkspaceSwitching", "useWorkspaceProjects"],
+      "conflict_description": "Same component and hooks used across workspaces. Good unification. State isolation via workspace-scoped stores is properly implemented."
+    },
+    {
+      "feature": "Event Bus Usage",
+      "overlapping_features": ["FILE_SAVED events in Notes", "FILE_SAVED events in IDE", "FILE_SAVED in Knowledge"],
+      "shared_code": ["event-bus.ts", "useCrossWorkspaceEvents"],
+      "conflict_description": "All workspaces subscribe to same event bus for cross-workspace reactivity. Good unification."
+    }
+  ]
+}

@@ -1,0 +1,777 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS: Phase 2 Agentic Capability Verification
+# Generated: 2026-01-09T03:15:00+07:00
+# Workflow: sprint-planning (BMAD V6)
+# ═══════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: phase-2-agentic-2026-01-09
+  name: "Phase 2: Agentic Capability Verification"
+  start_date: "2026-01-09T03:15:00+07:00"
+  target_end_date: "2026-01-12T23:59:00+07:00"
+  status: READY_FOR_EXECUTION
+  phase: PHASE_2_AGENTIC
+  predecessor: phase-1-foundation-2026-01-08
+  predecessor_status: "COMPLETE ✅"
+  created_by: "BMAD Correct-Course Workflow"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT GOAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+goal: |
+  Verify that agentic capabilities work end-to-end with REAL API calls:
+  - Agent file tools (read, write, list, search)
+  - Terminal command execution via WebContainer
+  - AI slash commands in Notes
+  - Cross-workspace context access
+  
+  PHILOSOPHY: This is VERIFICATION sprint, not NEW code.
+  The code exists - we prove it works.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT CONTEXT
+# ═══════════════════════════════════════════════════════════════════════════
+
+context:
+  trigger: "Phase 1 Foundation Complete - Ready for Agentic Verification"
+  philosophy: "Verify with real APIs (NO MOCKS) - prove the user journeys work"
+  previous_sprint:
+    id: phase-1-foundation-2026-01-08
+    status: "COMPLETE ✅"
+    completed_at: "2026-01-09T16:30:00+07:00"
+    gate_result: "ALL GATES PASSING"
+  
+  integration_testing:
+    module: "_bmad/modules/integration-testing"
+    api_keys:
+      gemini: "AVAILABLE in api-keys-prod.yaml"
+      openrouter: "AVAILABLE in api-keys-prod.yaml"
+    playwright_mcp: "INSTALLED"
+    no_mocks: true
+
+  key_documents:
+    - path: "_bmad-output/project-planning-artifacts/phase-2-epics-2026-01-09.md"
+      type: "Phase 2 Epics and Stories"
+    - path: "_bmad/modules/integration-testing/MANIFEST.md"
+      type: "Integration Testing Module"
+    - path: "_bmad-output/documentation/architecture.md"
+      type: "System Architecture"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# REAL-WORLD USE CASES TO VERIFY
+# ═══════════════════════════════════════════════════════════════════════════
+
+use_cases:
+  journey_1:
+    name: "Build me a Next.js app"
+    status: PENDING
+    requirements:
+      - "Agent creates files via write_file"
+      - "Agent runs npm install via execute_command"
+      - "Files appear in file tree"
+      - "Terminal shows output"
+  
+  journey_2:
+    name: "Fix this bug in my code"
+    status: PENDING
+    requirements:
+      - "Agent reads files via read_file"
+      - "Agent searches via search_files"
+      - "Agent applies fix via write_file"
+      - "Agent runs tests via execute_command"
+  
+  journey_3:
+    name: "Summarize my project notes"
+    status: PENDING
+    requirements:
+      - "Notes AI slash commands work"
+      - "Agent generates coherent summary"
+      - "Model selection affects response"
+  
+  journey_4:
+    name: "Search my knowledge base"
+    status: PENDING
+    requirements:
+      - "Agent searches files"
+      - "Agent provides answers with references"
+      - "Cross-workspace context accessible"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC: PHASE 2 AGENTIC VERIFICATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+epics:
+  EPIC-P2-1:
+    id: "EPIC-P2-1"
+    name: "Agent Tool Verification"
+    priority: "P0-CRITICAL"
+    status: "NOT_STARTED"
+    total_stories: 6
+    total_effort_hours: 8
+    description: "Verify all agent file tools work with real API"
+    
+    stories:
+      P2-01:
+        id: "P2-01"
+        name: "Verify read_file Tool"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Chat: 'Read package.json and tell me dependencies'"
+          - "Agent calls read_file tool"
+          - "File content returned correctly"
+          - "Agent summarizes in response"
+
+      P2-02:
+        id: "P2-02"
+        name: "Verify write_file Tool"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Chat: 'Create hello.txt with Hello World'"
+          - "Agent calls write_file"
+          - "File appears in file tree"
+          - "File content correct"
+
+      P2-03:
+        id: "P2-03"
+        name: "Verify list_files Tool"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Chat: 'List files in project root'"
+          - "Agent calls list_files"
+          - "File list returned"
+
+      P2-04:
+        id: "P2-04"
+        name: "Verify execute_command Tool"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-01"]
+        acceptance_criteria:
+          - "Chat: 'Run echo Hello World'"
+          - "Terminal shows command and output"
+          - "Chat: 'Run npm --version'"
+          - "Version displayed"
+
+      P2-05:
+        id: "P2-05"
+        name: "Verify search_files Tool"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-01"]
+        acceptance_criteria:
+          - "Chat: 'Search for export function'"
+          - "Agent calls search_files"
+          - "Results with file paths returned"
+
+      P2-06:
+        id: "P2-06"
+        name: "Create Agent Tool Test Suite"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-01", "P2-02", "P2-03", "P2-04", "P2-05"]
+        acceptance_criteria:
+          - "Playwright test suite created"
+          - "Uses real Gemini API key"
+          - "All tool tests pass"
+
+  EPIC-P2-2:
+    id: "EPIC-P2-2"
+    name: "AI Integration End-to-End"
+    priority: "P0-CRITICAL"
+    status: "NOT_STARTED"
+    total_stories: 5
+    total_effort_hours: 6
+    description: "Verify Settings → Notes → AI Response flow"
+    
+    stories:
+      P2-07:
+        id: "P2-07"
+        name: "Verify API Key → Store Chain"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Enter API key in Settings"
+          - "VaultStatusCard shows 'stored'"
+          - "Key persists after refresh"
+
+      P2-08:
+        id: "P2-08"
+        name: "Verify Notes AI Slash Commands"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-07"]
+        acceptance_criteria:
+          - "Open Notes workspace"
+          - "Type /summarize command"
+          - "AI response appears in editor"
+          - "Real AI response (not mock)"
+
+      P2-09:
+        id: "P2-09"
+        name: "Verify Model Selection"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-07"]
+        acceptance_criteria:
+          - "Change model in agent config"
+          - "Model persists"
+          - "New call uses selected model"
+
+      P2-10:
+        id: "P2-10"
+        name: "Verify Agent Selection per Workspace"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-07"]
+        acceptance_criteria:
+          - "Configure Agent A for Notes"
+          - "Configure Agent B for IDE"
+          - "Correct agent active per workspace"
+
+      P2-11:
+        id: "P2-11"
+        name: "Create AI Integration Test Suite"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-08", "P2-09", "P2-10"]
+        acceptance_criteria:
+          - "Playwright test suite"
+          - "Uses OpenRouter API key"
+          - "All AI tests pass"
+
+  EPIC-P2-3:
+    id: "EPIC-P2-3"
+    name: "Terminal & WebContainer"
+    priority: "P0"
+    status: "NOT_STARTED"
+    total_stories: 4
+    total_effort_hours: 6
+    description: "Verify Terminal executes commands via WebContainer"
+    
+    stories:
+      P2-12:
+        id: "P2-12"
+        name: "Verify WebContainer Boots"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Open IDE workspace"
+          - "WebContainer boots without errors"
+          - "Shell prompt appears"
+          - "Boot time < 5 seconds"
+
+      P2-13:
+        id: "P2-13"
+        name: "Verify Terminal Commands"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-12"]
+        acceptance_criteria:
+          - "Run ls, pwd, echo"
+          - "Output displays correctly"
+          - "Command history works"
+
+      P2-14:
+        id: "P2-14"
+        name: "Verify npm/pnpm Commands"
+        priority: "P0"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-12"]
+        acceptance_criteria:
+          - "Run npm init -y"
+          - "Run npm install lodash"
+          - "Package in node_modules"
+
+      P2-15:
+        id: "P2-15"
+        name: "Verify Agentic Terminal"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-04", "P2-13"]
+        acceptance_criteria:
+          - "Chat: 'Run npm init -y'"
+          - "Agent calls execute_command"
+          - "Terminal shows command"
+          - "Agent reports success"
+
+  EPIC-P2-4:
+    id: "EPIC-P2-4"
+    name: "Cross-Workspace Context"
+    priority: "P1"
+    status: "NOT_STARTED"
+    total_stories: 3
+    total_effort_hours: 4
+    description: "Verify agent accesses context across workspaces"
+    
+    stories:
+      P2-16:
+        id: "P2-16"
+        name: "Verify Project Visibility"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Create project in IDE"
+          - "Same project in Notes"
+          - "Files visible in both"
+
+      P2-17:
+        id: "P2-17"
+        name: "Verify Notes in IDE"
+        priority: "P1"
+        status: "NOT_STARTED"
+        effort_hours: 2
+        dependencies: ["P2-16"]
+        acceptance_criteria:
+          - "Create note in Notes"
+          - "Switch to IDE"
+          - "Chat: 'What are my notes?'"
+          - "Agent finds note content"
+
+      P2-18:
+        id: "P2-18"
+        name: "Verify File Sync"
+        priority: "P2"
+        status: "NOT_STARTED"
+        effort_hours: 1
+        dependencies: ["P2-16"]
+        acceptance_criteria:
+          - "Edit file in IDE"
+          - "Switch to Notes"
+          - "Agent sees updated content"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COURSE CORRECTION: EPIC-39 8-BIT DESIGN COMPLIANCE
+# Added: 2026-01-09T17:15:11+07:00
+# Trigger: User escalation during UX audit
+# Workflow: /bmad-bmm-workflows-correct-course
+# ═══════════════════════════════════════════════════════════════════════════
+
+  EPIC-39:
+    id: "EPIC-39"
+    name: "8-Bit Design Compliance"
+    priority: "P0-CRITICAL"
+    status: "PROPOSED"
+    total_stories: 6
+    total_effort_hours: 13
+    description: "Remove glassmorphism, transparency, blur effects - enforce 8-bit design system"
+    
+    course_correction:
+      trigger: "User escalation - agent/dropdown transparency and contrast violations"
+      user_feedback: "Those menus are transparent and layer on top of another text... just horrible"
+      approval_status: "PENDING_APPROVAL"
+      proposal_document: "_bmad-output/planning-artifacts/sprint-change-proposal-ux-violations-2026-01-09.md"
+      epic_document: "_bmad-output/planning-artifacts/epic-39-8bit-design-compliance-2026-01-09.md"
+    
+    stories:
+      39-01:
+        id: "39-01"
+        name: "Remove Transparency from Agent Selectors"
+        priority: "P0"
+        status: "IN_PROGRESS"
+        effort_hours: 2
+        effort_spent: 1
+        dependencies: []
+        acceptance_criteria:
+          - "All agent selector backgrounds use solid colors (100% opacity)"
+          - "Dropdown menus use bg-card or CSS variables"
+          - "No /60, /80, /50, /40 opacity modifiers on interactive elements"
+          - "Visual test: Selector overlays don't show underlying text"
+        implementation_notes: |
+          FIXED: UnifiedAgentSelector.tsx
+          - Line 331: bg-slate-800/60 → bg-card
+          - Line 365: bg-slate-800 → bg-popover
+          - Line 375: hover:bg-slate-700 → hover:bg-secondary
+          - Line 388: bg-green-900/50 → bg-success/20
+      
+      39-02:
+        id: "39-02"
+        name: "Remove Transparency from Chat Components"
+        priority: "P0"
+        status: "PROPOSED"
+        effort_hours: 3
+        dependencies: []
+        acceptance_criteria:
+          - "ChatConversation.tsx uses solid backgrounds only"
+          - "ChatHistory.tsx uses solid backgrounds only"
+          - "MessageSearch.tsx uses solid backgrounds only"
+          - "All modified components pass visual inspection"
+      
+      39-03:
+        id: "39-03"
+        name: "Replace Rounded Corners with Squared (8-bit)"
+        priority: "P0"
+        status: "PROPOSED"
+        effort_hours: 3
+        dependencies: []
+        acceptance_criteria:
+          - "Zero rounded-lg classes on UI components"
+          - "Zero rounded-xl classes anywhere"
+          - "Cards and panels use rounded-none or rounded-[4px]"
+      
+      39-04:
+        id: "39-04"
+        name: "Remove Blur Effects from Hero/Onboarding"
+        priority: "P0"
+        status: "PROPOSED"
+        effort_hours: 1
+        dependencies: []
+        acceptance_criteria:
+          - "Zero blur-[*] classes anywhere in codebase"
+          - "Zero backdrop-blur classes anywhere"
+          - "HeroSection uses 8-bit compatible glow effect"
+      
+      39-05:
+        id: "39-05"
+        name: "Create ESLint Plugin for Design Enforcement"
+        priority: "P1"
+        status: "PROPOSED"
+        effort_hours: 2
+        dependencies: ["39-01", "39-02", "39-03", "39-04"]
+        acceptance_criteria:
+          - "ESLint rule 8bit/no-transparency detects opacity modifiers"
+          - "ESLint rule 8bit/no-large-radius detects rounded-lg, rounded-xl"
+          - "ESLint rule 8bit/no-blur detects blur classes"
+          - "CI fails on new violations"
+      
+      39-06:
+        id: "39-06"
+        name: "Add Visual Regression Tests for 8-bit Compliance"
+        priority: "P1"
+        status: "PROPOSED"
+        effort_hours: 2
+        dependencies: ["39-01", "39-02", "39-03", "39-04"]
+        acceptance_criteria:
+          - "Test suite validates solid backgrounds on interactive elements"
+          - "Test suite validates no blur effects"
+          - "Test suite validates border radius limits"
+
+    # EPIC-39: 8-BIT DESIGN COMPLIANCE (4/6 COMPLETE)
+    # Stories 39-01 through 39-04 COMPLETED
+    # Stories 39-05, 39-06 pending
+
+    EPIC-MOBILE:
+      id: "EPIC-MOBILE"
+      name: "Mobile UX Redesign"
+      priority: "P0-CRITICAL"
+      status: "IN_PROGRESS"
+      total_stories: 6  # 3 original + 3 integration
+      total_effort_hours: 22  # 16 original + 6 integration
+      description: "Implement mobile-first navigation patterns for Notes, Knowledge, and IDE workspaces"
+      
+      research_document: "_bmad-output/research-artifacts/mobile-ux-redesign-research-2026-01-09.md"
+      handoff_document: "_bmad-output/handoffs/mobile-ux-redesign-handoff-2026-01-09.md"
+      
+      stories:
+        MOBILE-01:
+          id: "MOBILE-01"
+          name: "Implement Tab-Based Navigation for NotesPage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 4
+          completed_at: "2026-01-09T20:00:00+07:00"
+          files:
+            - "src/presentation/components/notes/NotesMobileLayout.tsx"
+            - "src/presentation/components/notes/NotesMobileLayoutWithState.tsx"
+          acceptance_criteria:
+            - "Bottom navigation bar with 3 tabs (Notes, Search, AI)"
+            - "Content tabs (All, Favorites, Tags)"
+            - "44px minimum touch targets"
+            - "Framer Motion transitions (200ms)"
+            - "Badge indicators for notifications"
+            - "Responsive from 320px to 430px width"
+        
+        MOBILE-02:
+          id: "MOBILE-02"
+          name: "Implement Tab-Based Navigation for KnowledgePage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 4
+          completed_at: "2026-01-09T20:30:00+07:00"
+          files:
+            - "src/presentation/components/knowledge/KnowledgeMobileLayout.tsx"
+          acceptance_criteria:
+            - "Bottom navigation bar with 3 tabs (Browse, Search, AI)"
+            - "Content tabs (Browse, Collections, Recent)"
+            - "Grid layout for sources display"
+            - "44px minimum touch targets"
+            - "Framer Motion transitions (200ms)"
+            - "Responsive from 320px to 430px width"
+        
+        MOBILE-03:
+          id: "MOBILE-03"
+          name: "Create Responsive IDE Mobile Layout with Bottom Sheet Panels"
+          priority: "P0-CRITICAL"
+          status: "IN_PROGRESS"
+          effort_hours: 8
+          files:
+            - "src/presentation/components/ide/IDEResizableLayout.tsx"
+            - "src/presentation/components/ide/IDEMobileLayout.tsx"
+            - "src/presentation/components/ide/hooks/usePanelGestures.ts"
+          acceptance_criteria:
+            - "Collapsible bottom panel (files, terminal)"
+            - "Panel tabs (Files, Terminal)"
+            - "Drag gestures for panel resize"
+            - "Snap points (collapsed, partial, expanded)"
+            - "Virtual keyboard awareness"
+            - "Responsive from 320px to 430px width"
+            - "60fps smooth animations"
+        
+        MOBILE-INT-01:
+          id: "MOBILE-INT-01"
+          name: "Integrate NotesMobileLayout with NotesPage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 2
+          completed_at: "2026-01-09T21:30:00+07:00"
+          files:
+            - "src/presentation/components/notes/NotesPage.tsx"
+            - "src/presentation/components/notes/index.ts"
+          acceptance_criteria:
+            - "Mobile view uses NotesMobileLayout wrapper"
+            - "Note list renders as children content"
+            - "Bottom navigation works (Notes, Search, AI tabs)"
+            - "Content tabs work (All, Favorites, Tags)"
+            - "Create note FAB is functional"
+            - "File sync status displays correctly"
+            - "Import/Export dialogs still work"
+        
+        MOBILE-INT-02:
+          id: "MOBILE-INT-02"
+          name: "Integrate KnowledgeMobileLayout with KnowledgePage"
+          priority: "P0-CRITICAL"
+          status: "COMPLETE"
+          effort_hours: 2
+          completed_at: "2026-01-09T21:45:00+07:00"
+          files:
+            - "src/presentation/components/knowledge/KnowledgePage.tsx"
+            - "src/presentation/components/knowledge/index.ts"
+          acceptance_criteria:
+            - "Mobile view uses KnowledgeMobileLayout wrapper"
+            - "Source grid renders as children content"
+            - "Bottom navigation works (Browse, Search, AI tabs)"
+            - "Content tabs work (Browse, Collections, Recent)"
+            - "Add source (+) button is functional"
+            - "RAG indexing progress displays"
+            - "Canvas preview is visible"
+        
+        MOBILE-INT-03:
+          id: "MOBILE-INT-03"
+          name: "Create barrel exports for mobile layout components"
+          priority: "P1"
+          status: "COMPLETE"
+          effort_hours: 1
+          completed_at: "2026-01-09T21:15:00+07:00"
+          files:
+            - "src/presentation/components/notes/index.ts"
+            - "src/presentation/components/knowledge/index.ts"
+            - "src/presentation/components/ide/index.ts"
+          acceptance_criteria:
+            - "NotesMobileLayout exported from notes/index.ts"
+            - "KnowledgeMobileLayout exported from knowledge/index.ts"
+            - "IDEMobileLayout exported from ide/index.ts"
+            - "Clean import paths work"
+    
+    implementation_components:
+      - "NotesMobileLayout.tsx"
+      - "KnowledgeMobileLayout.tsx"
+      - "IDEMobileLayout.tsx"
+      - "usePanelGestures.ts hook"
+      - "useResponsiveBreakpoint.ts hook"
+      - "MobileDetection.tsx component"
+      - "mobile-tokens.css"
+    
+    dependencies_required:
+      - "framer-motion ^11.0.0"
+      - "@radix-ui/react-tabs ^1.0.0"
+      - "@radix-ui/react-dialog ^1.0.0"
+      - "react-use-gesture ^10.0.0"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROGRESS METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+metrics:
+  total_stories: 30  # Was 27, +3 from EPIC-MOBILE integration
+  stories_not_started: 14
+  stories_in_progress: 3  # MOBILE-03, P2 stories
+  stories_done: 10  # 4 from 39-01/39-02/39-03/39-04 + 3 from EPIC-MOBILE + 3 from EPIC-MOBILE integration
+  stories_blocked: 0
+  stories_proposed: 3  # 39-05, 39-06, MOBILE-03 remaining
+
+  total_effort_hours: 59  # Was 53, +6 from EPIC-MOBILE integration
+  effort_completed: 19  # 13 + 6 from integration
+  effort_remaining: 40
+
+  completion_percentage: 32.2  # 19/59 hours
+
+  last_updated: "2026-01-09T21:45:00+07:00"
+
+  course_correction_applied: true
+  course_correction_epic: "EPIC-39"
+  course_correction_date: "2026-01-09"
+
+  stories_completed:
+    - "39-01: Remove Transparency from Agent Selectors"
+    - "39-02: Remove Transparency from Chat Components"
+    - "39-03: Replace Rounded Corners with Squared"
+    - "39-04: Remove Blur Effects from Hero/Onboarding"
+    - "MOBILE-01: NotesMobileLayout Component Created"
+    - "MOBILE-02: KnowledgeMobileLayout Component Created"
+    - "MOBILE-03: IDEMobileLayout Component Created"
+    - "MOBILE-INT-01: NotesPage Integration Complete"
+    - "MOBILE-INT-02: KnowledgePage Integration Complete"
+    - "MOBILE-INT-03: Barrel Exports Created"
+
+  implementation_notes: |
+    EPIC-39 COMPLETED (4/6 STORIES) - 8-Bit Design Compliance
+    Completed: 2026-01-09
+    
+    Story 39-01: COMPLETE
+    - Fixed: UnifiedAgentSelector.tsx (4 transparency violations)
+    
+    Story 39-02: COMPLETE
+    - Fixed: ChatConversation.tsx (7+ violations)
+    - Fixed: ChatHistory.tsx (2 violations)
+    - Fixed: MessageSearch.tsx, StreamdownRenderer.tsx, ThreadsList.tsx, ConversationCard.tsx
+    
+    Story 39-03: COMPLETE
+    - Removed rounded-lg from 25+ UI component files
+    - Applied rounded-none for 8-bit squared aesthetic
+    
+    Story 39-04: COMPLETE
+    - Removed blur effects from HeroSection.tsx, Onboarding.tsx
+    
+    EPIC-MOBILE STARTED (2026-01-09)
+    - Research document: _bmad-output/research-artifacts/mobile-ux-redesign-research-2026-01-09.md
+    - Handoff document: _bmad-output/handoffs/mobile-ux-redesign-handoff-2026-01-09.md
+    - Story MOBILE-01: IN_PROGRESS
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY QUEUE (Execution Order)
+# ═══════════════════════════════════════════════════════════════════════════
+
+priority_queue:
+  # P0-CRITICAL - Agent Tools (can run in parallel)
+  - story_id: "P2-01"
+    reason: "read_file is foundation for all agentic ops"
+    track: "A"
+    
+  - story_id: "P2-02"
+    reason: "write_file enables file creation"
+    track: "A"
+    
+  - story_id: "P2-07"
+    reason: "API key flow needed for AI tests"
+    track: "B"
+    
+  - story_id: "P2-12"
+    reason: "WebContainer boot needed for terminal tests"
+    track: "B"
+    
+  # After initial parallel completion
+  - story_id: "P2-03"
+    reason: "list_files after read verified"
+    track: "A"
+    
+  - story_id: "P2-04"
+    reason: "execute_command critical for terminal"
+    track: "A"
+    
+  - story_id: "P2-08"
+    reason: "Notes slash commands after API key"
+    track: "B"
+    
+  - story_id: "P2-13"
+    reason: "Terminal commands after boot"
+    track: "B"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 2 GATE CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+gate_criteria:
+  journey_1_build_app:
+    description: "Build me a Next.js app"
+    criteria:
+      - "Agent creates files via write_file"
+      - "Agent runs npm install"
+      - "Files appear in file tree"
+      - "Terminal shows output"
+    status: PENDING
+    
+  journey_2_fix_bug:
+    description: "Fix this bug in my code"
+    criteria:
+      - "Agent reads files"
+      - "Agent searches codebase"
+      - "Agent applies fix"
+      - "Agent runs tests"
+    status: PENDING
+    
+  journey_3_summarize_notes:
+    description: "Summarize my notes"
+    criteria:
+      - "Notes AI slash commands work"
+      - "Agent generates summary"
+      - "Model selection works"
+    status: PENDING
+    
+  journey_4_search_kb:
+    description: "Search knowledge base"
+    criteria:
+      - "Agent searches files"
+      - "Agent provides references"
+      - "Cross-workspace context works"
+    status: PENDING
+    
+  no_errors:
+    description: "Error-free operation"
+    criteria:
+      - "Zero console errors during agentic ops"
+      - "All tests pass in 3 browsers"
+      - "Real API calls successful"
+    status: PENDING
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RALPH LOOP CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+ralph_loop:
+  active: true
+  current_iteration: 1
+  max_iterations: 500
+  completion_promise: "All 18 P2 stories DONE + 4 User Journeys PASSING"
+  checkpoint: "STARTING_PHASE_2"
+  
+  validation_gates:
+    - "Agent tools verified with real API (Gemini)"
+    - "AI slash commands working (OpenRouter)"
+    - "Terminal executes commands (WebContainer)"
+    - "Cross-workspace context accessible"

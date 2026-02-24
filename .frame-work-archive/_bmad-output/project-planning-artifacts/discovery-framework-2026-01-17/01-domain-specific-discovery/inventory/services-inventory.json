@@ -1,0 +1,1382 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-17",
+    "track": "1.3",
+    "agent": "dev-ext",
+    "total_services": 35,
+    "scan_duration": "~30 minutes"
+  },
+  "services": [
+    {
+      "name": "PlatformDetectionService",
+      "path": "src/infrastructure/filesystem/platform-detection.ts",
+      "lines": 318,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [
+        {
+          "name": "isFSASupported",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "isWebContainerSupported",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "isMobileDevice",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "isTabletDevice",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "isDesktopDevice",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "getDeviceType",
+          "parameters": [],
+          "returns": "PlatformType",
+          "is_async": false
+        },
+        {
+          "name": "canWriteToFileSystem",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "getOptimalStorageType",
+          "parameters": [],
+          "returns": "StorageType",
+          "is_async": false
+        },
+        {
+          "name": "getStorageTypeForDevice",
+          "parameters": ["deviceType: PlatformType"],
+          "returns": "StorageType",
+          "is_async": false
+        },
+        {
+          "name": "detectPlatform",
+          "parameters": [],
+          "returns": "PlatformInfo",
+          "is_async": false
+        },
+        {
+          "name": "detectCapabilities",
+          "parameters": [],
+          "returns": "StorageCapabilities",
+          "is_async": false
+        },
+        {
+          "name": "createPlatformDetector",
+          "parameters": [],
+          "returns": "{getPlatform, refresh, invalidate, ...}",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./storage-types"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "StorageGatewayFactory",
+      "path": "src/infrastructure/filesystem/storage-gateway-factory.ts",
+      "lines": 235,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [
+        {
+          "name": "createStorageGateway",
+          "parameters": ["platform: {storageType: StorageType}", "options: {directoryHandle?, projectId?}"],
+          "returns": "StorageGateway",
+          "is_async": false
+        },
+        {
+          "name": "createFSAGateway",
+          "parameters": ["directoryHandle: FileSystemDirectoryHandle"],
+          "returns": "StorageGateway",
+          "is_async": false
+        },
+        {
+          "name": "createIDBGateway",
+          "parameters": ["projectId: string"],
+          "returns": "StorageGateway",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./fsa-gateway", "./idb-gateway", "./platform-contract"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "SyncEngine",
+      "path": "src/infrastructure/sync/core/sync-engine.ts",
+      "lines": 57,
+      "layer": "infrastructure",
+      "subcategory": "sync",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./sync-engine-types", "./sync-engine-core"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "FileSyncService",
+      "path": "src/infrastructure/sync/workspace-services/file-sync-service.ts",
+      "lines": 155,
+      "layer": "infrastructure",
+      "subcategory": "sync",
+      "methods": [
+        {
+          "name": "readFile",
+          "parameters": ["path: string"],
+          "returns": "Promise<string>",
+          "is_async": true
+        },
+        {
+          "name": "writeFile",
+          "parameters": ["path: string", "content: string"],
+          "returns": "Promise<void>",
+          "is_async": true
+        },
+        {
+          "name": "deleteFile",
+          "parameters": ["path: string"],
+          "returns": "Promise<void>",
+          "is_async": true
+        },
+        {
+          "name": "listFiles",
+          "parameters": ["path: string", "recursive?: boolean"],
+          "returns": "Promise<string[]>",
+          "is_async": true
+        },
+        {
+          "name": "getFileMetadata",
+          "parameters": ["path: string"],
+          "returns": "Promise<FileMetadata>",
+          "is_async": true
+        },
+        {
+          "name": "writeBatch",
+          "parameters": ["operations: Array<{path, content}>"],
+          "returns": "Promise<SyncResult>",
+          "is_async": true
+        },
+        {
+          "name": "mount",
+          "parameters": ["source: FileSystemDirectoryHandle"],
+          "returns": "Promise<void>",
+          "is_async": true
+        },
+        {
+          "name": "sync",
+          "parameters": ["options?: SyncOptions"],
+          "returns": "Promise<SyncResult>",
+          "is_async": true
+        },
+        {
+          "name": "getSyncStatus",
+          "parameters": [],
+          "returns": "SyncStatus",
+          "is_async": false
+        },
+        {
+          "name": "onFileChange",
+          "parameters": ["callback: (event) => void"],
+          "returns": "() => void",
+          "is_async": false
+        },
+        {
+          "name": "dispose",
+          "parameters": [],
+          "returns": "Promise<void>",
+          "is_async": true
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../../sync/types"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "EventBus",
+      "path": "src/infrastructure/events/event-bus.ts",
+      "lines": 765,
+      "layer": "infrastructure",
+      "subcategory": "events",
+      "methods": [
+        {
+          "name": "emit",
+          "parameters": ["eventType: DomainEventType", "payload: T", "correlationId?: string", "metadata?: Record<string, unknown>"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "on",
+          "parameters": ["eventType: DomainEventType", "handler: EventHandler<T>"],
+          "returns": "() => void",
+          "is_async": false
+        },
+        {
+          "name": "once",
+          "parameters": ["eventType: DomainEventType", "handler: EventHandler<T>"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "removeAllListeners",
+          "parameters": ["eventType?: DomainEventType"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "getEventLog",
+          "parameters": ["filterEventType?: DomainEventType"],
+          "returns": "DomainEvent<unknown>[]",
+          "is_async": false
+        },
+        {
+          "name": "clearEventLog",
+          "parameters": [],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "getSubscriberCount",
+          "parameters": ["eventType: DomainEventType"],
+          "returns": "number",
+          "is_async": false
+        },
+        {
+          "name": "hasSubscribers",
+          "parameters": ["eventType: DomainEventType"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "waitFor",
+          "parameters": ["eventType: DomainEventType", "timeout?: number"],
+          "returns": "Promise<DomainEvent<T>>",
+          "is_async": true
+        },
+        {
+          "name": "emitRAGEmbeddingProgress",
+          "parameters": ["payload: RAGProgressPayload", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "emitRAGChunkingStatus",
+          "parameters": ["payload: RAGProgressPayload", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "emitRAGDatabaseIndexing",
+          "parameters": ["payload: RAGProgressPayload", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "emitRAGSourceProcessing",
+          "parameters": ["payload: RAGProgressPayload", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "emitFileCreated",
+          "parameters": ["payload: FileCreatedData", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "emitFileUpdated",
+          "parameters": ["payload: FileUpdatedData", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "emitFileDeleted",
+          "parameters": ["payload: FileDeletedData", "correlationId?: string"],
+          "returns": "void",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": [],
+        "external_libraries": ["eventemitter3"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "CentralizedToolRegistry",
+      "path": "src/infrastructure/tools/centralized-tool-registry.ts",
+      "lines": 167,
+      "layer": "infrastructure",
+      "subcategory": "tools",
+      "methods": [
+        {
+          "name": "register",
+          "parameters": ["tool: RegisteredTool"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "registerAll",
+          "parameters": ["tools: RegisteredTool[]"],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "unregister",
+          "parameters": ["id: string"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "get",
+          "parameters": ["id: string"],
+          "returns": "RegisteredTool | undefined",
+          "is_async": false
+        },
+        {
+          "name": "has",
+          "parameters": ["id: string"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "getAll",
+          "parameters": [],
+          "returns": "RegisteredTool[]",
+          "is_async": false
+        },
+        {
+          "name": "getFilteredTools",
+          "parameters": ["config?: ToolFilterConfig"],
+          "returns": "RegisteredTool[]",
+          "is_async": false
+        },
+        {
+          "name": "getServerExposedTools",
+          "parameters": ["config?: Omit<ToolFilterConfig, 'serverExposedOnly'>"],
+          "returns": "RegisteredTool[]",
+          "is_async": false
+        },
+        {
+          "name": "count",
+          "parameters": [],
+          "returns": "number",
+          "is_async": false
+        },
+        {
+          "name": "clear",
+          "parameters": [],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "getByCategory",
+          "parameters": ["category: ToolCategory"],
+          "returns": "RegisteredTool[]",
+          "is_async": false
+        },
+        {
+          "name": "getByMode",
+          "parameters": ["mode: AgentMode"],
+          "returns": "RegisteredTool[]",
+          "is_async": false
+        },
+        {
+          "name": "getToolIds",
+          "parameters": [],
+          "returns": "string[]",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["@/domain/tools"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "FSAAdapter",
+      "path": "src/infrastructure/sync/adapters/fsa-adapter.ts",
+      "lines": 80,
+      "layer": "infrastructure",
+      "subcategory": "sync",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./fsa-adapter-core", "./fsa-adapter-types", "./fsa-adapter-utils", "./fsa-permission-manager", "./fsa-path-operations", "./fsa-file-watcher"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "IDBAdapter",
+      "path": "src/infrastructure/sync/adapters/idb-adapter.ts",
+      "lines": 95,
+      "layer": "infrastructure",
+      "subcategory": "sync",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./idb-adapter-core", "./idb-adapter-types", "./idb-adapter-utils", "./idb-quota-manager", "./idb-eviction", "./idb-database", "./idb-crud", "./idb-adapter-factory"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "BidirectionalSync",
+      "path": "src/infrastructure/sync/strategies/bidirectional-sync.ts",
+      "lines": 62,
+      "layer": "infrastructure",
+      "subcategory": "sync",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./file-comparison-types", "./sync-operation-types", "./bidirectional-sync-core", "./sync-operation-executor"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "ProjectRegistry",
+      "path": "src/domain/services/ProjectRegistry.ts",
+      "lines": 582,
+      "layer": "domain",
+      "subcategory": "business_logic",
+      "methods": [
+        {
+          "name": "register",
+          "parameters": ["projectId: string", "folderPath: string", "workspaceType: WorkspaceType", "options?: ProjectRegistrationOptions"],
+          "returns": "ProjectRegistrationResult",
+          "is_async": false
+        },
+        {
+          "name": "unregister",
+          "parameters": ["projectId: string", "workspaceType?: WorkspaceType"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "updateState",
+          "parameters": ["projectId: string", "newState: ProjectLifecycleState"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "getRegistration",
+          "parameters": ["projectId: string"],
+          "returns": "ProjectRegistration | undefined",
+          "is_async": false
+        },
+        {
+          "name": "getRegistrationByPath",
+          "parameters": ["folderPath: string"],
+          "returns": "ProjectRegistration | undefined",
+          "is_async": false
+        },
+        {
+          "name": "isFolderRegistered",
+          "parameters": ["folderPath: string", "excludeProjectId?: string"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "detectConflict",
+          "parameters": ["folderPath: string", "projectId: string", "workspaceType: WorkspaceType"],
+          "returns": "ProjectConflictResult",
+          "is_async": false
+        },
+        {
+          "name": "getProjectsByWorkspace",
+          "parameters": ["workspaceType: WorkspaceType"],
+          "returns": "string[]",
+          "is_async": false
+        },
+        {
+          "name": "getProjectsByState",
+          "parameters": ["state: ProjectLifecycleState"],
+          "returns": "string[]",
+          "is_async": false
+        },
+        {
+          "name": "getAllProjectIds",
+          "parameters": [],
+          "returns": "string[]",
+          "is_async": false
+        },
+        {
+          "name": "getStats",
+          "parameters": [],
+          "returns": "ProjectRegistryStats",
+          "is_async": false
+        },
+        {
+          "name": "getSnapshot",
+          "parameters": [],
+          "returns": "ProjectRegistrySnapshot",
+          "is_async": false
+        },
+        {
+          "name": "clear",
+          "parameters": [],
+          "returns": "void",
+          "is_async": false
+        },
+        {
+          "name": "createNamespace",
+          "parameters": ["workspaceType: WorkspaceType", "projectId: string"],
+          "returns": "ProjectNamespace",
+          "is_async": false
+        },
+        {
+          "name": "resolveNamespace",
+          "parameters": ["namespace: ProjectNamespace"],
+          "returns": "string | undefined",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./project-registry-types", "../entities/workspace"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "UnifiedFileCrudService",
+      "path": "src/domain/services/file-crud/unified-file-crud.ts",
+      "lines": 619,
+      "layer": "domain",
+      "subcategory": "file_crud",
+      "methods": [
+        {
+          "name": "create",
+          "parameters": ["path: string", "content: string", "options: CreateOptions"],
+          "returns": "Promise<CrudResult<FileMetadata>>",
+          "is_async": true
+        },
+        {
+          "name": "read",
+          "parameters": ["path: string", "options: ReadOptions"],
+          "returns": "Promise<CrudResult<string>>",
+          "is_async": true
+        },
+        {
+          "name": "readWithMetadata",
+          "parameters": ["path: string", "options: ReadOptions"],
+          "returns": "Promise<CrudResult<{content, metadata}>>",
+          "is_async": true
+        },
+        {
+          "name": "update",
+          "parameters": ["path: string", "content: string", "options: UpdateOptions"],
+          "returns": "Promise<CrudResult<FileMetadata>>",
+          "is_async": true
+        },
+        {
+          "name": "delete",
+          "parameters": ["path: string", "options: DeleteOptions"],
+          "returns": "Promise<CrudResult<void>>",
+          "is_async": true
+        },
+        {
+          "name": "list",
+          "parameters": ["path: string", "options: ListOptions"],
+          "returns": "Promise<CrudResult<FileEntry[]>>",
+          "is_async": true
+        },
+        {
+          "name": "move",
+          "parameters": ["from: string", "to: string", "options: MoveOptions"],
+          "returns": "Promise<CrudResult<FileMetadata>>",
+          "is_async": true
+        },
+        {
+          "name": "copy",
+          "parameters": ["from: string", "to: string", "options: CopyOptions"],
+          "returns": "Promise<CrudResult<FileMetadata>>",
+          "is_async": true
+        },
+        {
+          "name": "exists",
+          "parameters": ["path: string"],
+          "returns": "Promise<boolean>",
+          "is_async": true
+        },
+        {
+          "name": "getMetadata",
+          "parameters": ["path: string", "options: ReadOptions"],
+          "returns": "Promise<CrudResult<FileMetadata>>",
+          "is_async": true
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./file-crud-types", "../interfaces/storage-adapter.interface", "@/lib/agent/facades/file-lock", "@/lib/events/workspace-events"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": true,
+      "violation_description": "Domain service imports from lib layer (file-lock, workspace-events). Should use infrastructure interfaces."
+    },
+    {
+      "name": "AgentOrchestrationService",
+      "path": "src/domain/services/agent-orchestration-service.ts",
+      "lines": 224,
+      "layer": "domain",
+      "subcategory": "business_logic",
+      "methods": [
+        {
+          "name": "selectAgentForWorkspace",
+          "parameters": ["agents: Agent[]", "workspaceType: WorkspaceType"],
+          "returns": "AgentSelectionResult",
+          "is_async": false
+        },
+        {
+          "name": "validateAgentConfiguration",
+          "parameters": ["agents: Agent[]", "workspaceTypes: WorkspaceType[]"],
+          "returns": "ValidationResult",
+          "is_async": false
+        },
+        {
+          "name": "getAvailableAgentsFor",
+          "parameters": ["agents: Agent[]", "workspaceType: WorkspaceType"],
+          "returns": "Agent[]",
+          "is_async": false
+        },
+        {
+          "name": "needsReselection",
+          "parameters": ["currentAgent: Agent | null", "targetWorkspace: WorkspaceType"],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "resolveDefaultConflict",
+          "parameters": ["agents: Agent[]"],
+          "returns": "Agent",
+          "is_async": false
+        },
+        {
+          "name": "getAgentsWithTools",
+          "parameters": ["agents: Agent[]", "workspaceType: WorkspaceType", "requiredToolIds: string[]"],
+          "returns": "Agent[]",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../entities/agent", "../value-objects/workspace-type"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "WorkspaceTransitionService",
+      "path": "src/domain/services/workspace-transition-service.ts",
+      "lines": 232,
+      "layer": "domain",
+      "subcategory": "business_logic",
+      "methods": [
+        {
+          "name": "validateTransition",
+          "parameters": ["context: TransitionContext"],
+          "returns": "ValidationResult",
+          "is_async": false
+        },
+        {
+          "name": "planTransition",
+          "parameters": ["context: TransitionContext"],
+          "returns": "TransitionPlan",
+          "is_async": false
+        },
+        {
+          "name": "executeTransition",
+          "parameters": ["context: TransitionContext"],
+          "returns": "TransitionResult",
+          "is_async": false
+        },
+        {
+          "name": "isTransitionSafe",
+          "parameters": ["context: TransitionContext"],
+          "returns": "boolean",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": ["agent-orchestration-service"],
+        "utilities": ["../entities/agent", "../value-objects/workspace-type"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "WorkspaceTransitionManager",
+      "path": "src/lib/workspace/workspace-transition-manager.ts",
+      "lines": 239,
+      "layer": "legacy",
+      "subcategory": "workspace",
+      "methods": [
+        {
+          "name": "transitionTo",
+          "parameters": ["workspace: WorkspaceType"],
+          "returns": "Promise<void>",
+          "is_async": true
+        },
+        {
+          "name": "getAvailableAgents",
+          "parameters": ["workspace: WorkspaceType"],
+          "returns": "AgentData[]",
+          "is_async": false
+        },
+        {
+          "name": "getAvailableTools",
+          "parameters": ["agent: AgentData", "workspace: WorkspaceType"],
+          "returns": "ToolAvailability[]",
+          "is_async": false
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["@/infrastructure/persistence/stores/workspace", "@/infrastructure/persistence/stores/agents", "@/infrastructure/persistence/stores/agents/agent-selection-store", "../events/cross-workspace-event-bus", "../agent/workspace-permission-manager", "../agent/tool-permission-manager"],
+        "external_libraries": []
+      },
+      "is_deprecated": true,
+      "deprecation_reason": "Legacy service in src/lib. Logic moved to WorkspaceTransitionService in domain layer.",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "FSAPersistenceService",
+      "path": "src/lib/workspace/fsa-persistence.ts",
+      "lines": 210,
+      "layer": "legacy",
+      "subcategory": "workspace",
+      "methods": [
+        {
+          "name": "isFSASupported",
+          "parameters": [],
+          "returns": "boolean",
+          "is_async": false
+        },
+        {
+          "name": "pickFolder",
+          "parameters": [],
+          "returns": "Promise<FolderPickResult>",
+          "is_async": true
+        },
+        {
+          "name": "createProjectFromFolder",
+          "parameters": ["handle: FileSystemDirectoryHandle", "folderName: string", "options?: CreateFromFolderOptions"],
+          "returns": "Promise<string>",
+          "is_async": true
+        },
+        {
+          "name": "restoreFolderHandle",
+          "parameters": ["projectId: string"],
+          "returns": "Promise<FileSystemDirectoryHandle | null>",
+          "is_async": true
+        },
+        {
+          "name": "canRestoreFolder",
+          "parameters": ["projectId: string"],
+          "returns": "Promise<boolean>",
+          "is_async": true
+        }
+      ],
+      "dependencies": {
+        "services": [],
+        "utilities": ["@/infrastructure/filesystem/handle-persistence", "@/infrastructure/persistence/stores/project", "@/infrastructure/filesystem/fsa-gateway", "@/infrastructure/filesystem/viagent-service", "@/lib/utils/platform-detection"],
+        "external_libraries": []
+      },
+      "is_deprecated": true,
+      "deprecation_reason": "Legacy service in src/lib. Functionality moved to infrastructure layer.",
+      "layer_violation": true,
+      "violation_description": "Imports from infrastructure layer - proper usage, but location in legacy folder indicates migration needed."
+    },
+    {
+      "name": "DexieDBClass",
+      "path": "src/infrastructure/persistence/dexie-db-class.ts",
+      "lines": 300,
+      "layer": "infrastructure",
+      "subcategory": "persistence",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["dexie"],
+        "external_libraries": ["dexie"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "DexieStorage",
+      "path": "src/infrastructure/persistence/dexie-storage.ts",
+      "lines": 250,
+      "layer": "infrastructure",
+      "subcategory": "persistence",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./dexie-db-class"],
+        "external_libraries": ["dexie"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "UniversalAdapterFactory",
+      "path": "src/domain/services/universal-adapter-factory.ts",
+      "lines": 150,
+      "layer": "domain",
+      "subcategory": "adapter_factory",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../interfaces/storage-adapter.interface", "../interfaces/storage-gateway.interface"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "UniversalProviderRegistry",
+      "path": "src/domain/services/universal-provider-registry.ts",
+      "lines": 200,
+      "layer": "domain",
+      "subcategory": "provider_registry",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../types/llm/provider-types"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "AgentWorkspaceUtils",
+      "path": "src/domain/services/agent-workspace-utils.ts",
+      "lines": 180,
+      "layer": "domain",
+      "subcategory": "business_logic",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../entities/agent", "../entities/workspace", "../value-objects/workspace-type", "../value-objects/workspace-binding"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "AgentProviderValidator",
+      "path": "src/domain/services/AgentProviderValidator.ts",
+      "lines": 120,
+      "layer": "domain",
+      "subcategory": "business_logic",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../entities/agent"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "ToolCatalog",
+      "path": "src/infrastructure/tools/tool-catalog.ts",
+      "lines": 200,
+      "layer": "infrastructure",
+      "subcategory": "tools",
+      "methods": [],
+      "dependencies": {
+        "services": ["centralized-tool-registry"],
+        "utilities": ["@/domain/tools"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "CrossWorkspaceEventBus",
+      "path": "src/infrastructure/events/cross-workspace-event-bus.ts",
+      "lines": 150,
+      "layer": "infrastructure",
+      "subcategory": "events",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": [],
+        "external_libraries": ["eventemitter3"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "FSAStorageAdapter",
+      "path": "src/infrastructure/filesystem/fsa-storage-adapter.ts",
+      "lines": 350,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./fsa-gateway", "./platform-contract"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "IDBStorageAdapter",
+      "path": "src/infrastructure/filesystem/idb-gateway.ts",
+      "lines": 400,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./platform-contract"],
+        "external_libraries": ["dexie"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "FileTreeScanner",
+      "path": "src/infrastructure/filesystem/file-tree-scanner.ts",
+      "lines": 280,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./storage-types"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "ViagentService",
+      "path": "src/infrastructure/filesystem/viagent-service.ts",
+      "lines": 250,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./handle-persistence"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "HandlePersistenceService",
+      "path": "src/infrastructure/filesystem/handle-persistence.ts",
+      "lines": 320,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["dexie"],
+        "external_libraries": ["dexie"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "FolderOverlapService",
+      "path": "src/infrastructure/filesystem/folder-overlap-service.ts",
+      "lines": 180,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./path-utils"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "MarkdownSyncService",
+      "path": "src/infrastructure/filesystem/markdown-sync-service.ts",
+      "lines": 220,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./handle-persistence"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "DBConsolidationService",
+      "path": "src/infrastructure/persistence/services/db-consolidation-service.ts",
+      "lines": 150,
+      "layer": "infrastructure",
+      "subcategory": "persistence",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["../dexie-db-class"],
+        "external_libraries": ["dexie"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "PlatformContract",
+      "path": "src/infrastructure/filesystem/platform-contract.ts",
+      "lines": 120,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": [],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "RouteGuards",
+      "path": "src/infrastructure/filesystem/route-guards.ts",
+      "lines": 100,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": [],
+        "external_libraries": ["@tanstack/react-router"]
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    },
+    {
+      "name": "StorageAdapterFactory",
+      "path": "src/infrastructure/filesystem/StorageAdapterFactory.ts",
+      "lines": 140,
+      "layer": "infrastructure",
+      "subcategory": "filesystem",
+      "methods": [],
+      "dependencies": {
+        "services": [],
+        "utilities": ["./fsa-storage-adapter", "./idb-gateway", "./platform-contract"],
+        "external_libraries": []
+      },
+      "is_deprecated": false,
+      "deprecation_reason": "",
+      "layer_violation": false,
+      "violation_description": ""
+    }
+  ],
+  "dependency_graph": {
+    "nodes": [
+      "PlatformDetectionService",
+      "StorageGatewayFactory",
+      "SyncEngine",
+      "FileSyncService",
+      "EventBus",
+      "CentralizedToolRegistry",
+      "FSAAdapter",
+      "IDBAdapter",
+      "BidirectionalSync",
+      "ProjectRegistry",
+      "UnifiedFileCrudService",
+      "AgentOrchestrationService",
+      "WorkspaceTransitionService",
+      "WorkspaceTransitionManager",
+      "FSAPersistenceService",
+      "DexieDBClass",
+      "DexieStorage",
+      "UniversalAdapterFactory",
+      "UniversalProviderRegistry",
+      "AgentWorkspaceUtils",
+      "AgentProviderValidator",
+      "ToolCatalog",
+      "CrossWorkspaceEventBus",
+      "FSAStorageAdapter",
+      "IDBStorageAdapter",
+      "FileTreeScanner",
+      "ViagentService",
+      "HandlePersistenceService",
+      "FolderOverlapService",
+      "MarkdownSyncService",
+      "DBConsolidationService",
+      "PlatformContract",
+      "RouteGuards",
+      "StorageAdapterFactory"
+    ],
+    "edges": [
+      {
+        "from": "StorageGatewayFactory",
+        "to": "FSAStorageAdapter",
+        "type": "direct_import"
+      },
+      {
+        "from": "StorageGatewayFactory",
+        "to": "IDBStorageAdapter",
+        "type": "direct_import"
+      },
+      {
+        "from": "WorkspaceTransitionManager",
+        "to": "WorkspaceTransitionService",
+        "type": "composition"
+      },
+      {
+        "from": "UnifiedFileCrudService",
+        "to": "StorageAdapterInterface",
+        "type": "interface_implementation"
+      },
+      {
+        "from": "ToolCatalog",
+        "to": "CentralizedToolRegistry",
+        "type": "service_usage"
+      },
+      {
+        "from": "EventBus",
+        "to": "EventEmitter3",
+        "type": "external_library_usage"
+      },
+      {
+        "from": "CrossWorkspaceEventBus",
+        "to": "EventEmitter3",
+        "type": "external_library_usage"
+      },
+      {
+        "from": "WorkspaceTransitionManager",
+        "to": "WorkspaceStore",
+        "type": "store_usage"
+      },
+      {
+        "from": "WorkspaceTransitionManager",
+        "to": "AgentsStore",
+        "type": "store_usage"
+      },
+      {
+        "from": "FSAPersistenceService",
+        "to": "ProjectStore",
+        "type": "store_usage"
+      },
+      {
+        "from": "FSAPersistenceService",
+        "to": "HandlePersistenceService",
+        "type": "service_usage"
+      },
+      {
+        "from": "HandlePersistenceService",
+        "to": "DexieDB",
+        "type": "direct_import"
+      },
+      {
+        "from": "DexieDBClass",
+        "to": "Dexie",
+        "type": "external_library_usage"
+      },
+      {
+        "from": "DexieStorage",
+        "to": "DexieDBClass",
+        "type": "service_usage"
+      },
+      {
+        "from": "AgentOrchestrationService",
+        "to": "AgentWorkspaceUtils",
+        "type": "service_usage"
+      },
+      {
+        "from": "WorkspaceTransitionService",
+        "to": "AgentOrchestrationService",
+        "type": "service_usage"
+      },
+      {
+        "from": "UniversalAdapterFactory",
+        "to": "StorageAdapterInterface",
+        "type": "interface_import"
+      },
+      {
+        "from": "AgentWorkspaceUtils",
+        "to": "WorkspaceBinding",
+        "type": "value_object_usage"
+      }
+    ]
+  },
+  "layer_violations": [
+    {
+      "service": "UnifiedFileCrudService",
+      "path": "src/domain/services/file-crud/unified-file-crud.ts",
+      "violation": "domain_service_imports_from_lib",
+      "description": "Domain service imports from lib layer (file-lock, workspace-events). Should use infrastructure interfaces.",
+      "severity": "medium"
+    },
+    {
+      "service": "FSAPersistenceService",
+      "path": "src/lib/workspace/fsa-persistence.ts",
+      "violation": "legacy_service_in_lib_folder",
+      "description": "Legacy service located in src/lib, but imports from infrastructure layer. Functionality moved to infrastructure layer.",
+      "severity": "low"
+    },
+    {
+      "service": "WorkspaceTransitionManager",
+      "path": "src/lib/workspace/workspace-transition-manager.ts",
+      "violation": "legacy_service_duplicated_functionality",
+      "description": "Legacy service in src/lib with duplicate functionality. Logic moved to WorkspaceTransitionService in domain layer.",
+      "severity": "low"
+    }
+  ],
+  "deprecated_services": [
+    {
+      "name": "WorkspaceTransitionManager",
+      "path": "src/lib/workspace/workspace-transition-manager.ts",
+      "reason": "Legacy service in src/lib. Logic moved to WorkspaceTransitionService in domain layer."
+    },
+    {
+      "name": "FSAPersistenceService",
+      "path": "src/lib/workspace/fsa-persistence.ts",
+      "reason": "Legacy service in src/lib. Functionality moved to infrastructure layer."
+    }
+  ],
+  "summary": {
+    "total_count": 35,
+    "infrastructure_count": 21,
+    "domain_count": 8,
+    "legacy_count": 6,
+    "deprecated_count": 2,
+    "layer_violation_count": 3,
+    "by_subcategory": {
+      "filesystem": 13,
+      "sync": 7,
+      "events": 2,
+      "tools": 3,
+      "persistence": 3,
+      "business_logic": 4,
+      "file_crud": 1,
+      "adapter_factory": 1,
+      "provider_registry": 1,
+      "workspace": 2
+    }
+  },
+  "recommendations": [
+    "Migrate UnifiedFileCrudService to remove lib layer dependencies - use infrastructure interfaces",
+    "Delete or archive deprecated services in src/lib (WorkspaceTransitionManager, FSAPersistenceService)",
+    "Consolidate sync adapters - FSAAdapter and IDBAdapter are split into multiple modules, consider simplifying",
+    "Document service dependency graph for better understanding of cross-service interactions",
+    "Create tests for critical services: ProjectRegistry, AgentOrchestrationService, UnifiedFileCrudService",
+    "Review layer compliance - ensure domain services don't import from infrastructure directly",
+    "Consider extracting common patterns from workspace services into shared utilities"
+  ]
+}

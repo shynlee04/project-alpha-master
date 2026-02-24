@@ -1,0 +1,83 @@
+import EventEmitter from 'eventemitter3'
+
+export interface WorkspaceEvents {
+  // File System Events
+  // Lock timestamps (lockAcquired, lockReleased) added in Story 12-1B for agent concurrency tracking
+  'file:created': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
+  'file:modified': [
+    { path: string; source: 'local' | 'editor' | 'agent'; content?: string; lockAcquired?: number; lockReleased?: number },
+  ]
+  'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent'; lockAcquired?: number; lockReleased?: number }]
+  'file:read': [{ path: string; source: 'agent' }] // Agent reading file
+  'directory:created': [{ path: string }]
+  'directory:deleted': [{ path: string }]
+
+  // Sync Events
+  'sync:started': [
+    { fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional'; operationId?: string },
+  ]
+  'sync:start': [{ fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional'; operationId?: string }]
+  'sync:progress': [{ current: number; total: number; currentFile: string; operationId?: string }]
+  'sync:completed': [{ success: boolean; timestamp: Date; filesProcessed: number }]
+  'sync:error': [{ error: Error; file?: string; operationId?: string }]
+  'sync:warning': [{ message: string; file?: string }]
+  'sync:paused': [{ reason: 'user' | 'error' | 'permission' }]
+  'sync:resumed': []
+  'sync:rollback': [{ transactionId: string; initiator: 'user' | 'system'; reason?: string; operationId?: string }]
+  'sync:rollback:success': [{ transactionId: string; filesReverted: number }]
+  'sync:rollback:failed': [{ transactionId: string; error: string }]
+
+  // WebContainer Events
+  'container:booted': [{ bootTime: number }]
+  'container:mounted': [{ fileCount: number }]
+  'container:error': [{ error: Error }]
+  'bootFailed': [{ error: Error }]
+
+  // Terminal/Process Events
+  'process:started': [{ pid: string; command: string; args: string[] }]
+  'process:output': [{ pid: string; data: string; type: 'stdout' | 'stderr' }]
+  'process:exited': [{ pid: string; exitCode: number }]
+  'terminal:input': [{ data: string }]
+  'terminal:warning': [{ message: string; command?: string }]
+  'terminal:timeout': [{ command: string; duration: number }]
+  'shell:warning': [{ message: string; command?: string }]
+  'shell:timeout': [{ command: string; duration: number }]
+  'agent:command:executed': [{ command: string; workingDir?: string; output?: string; exitCode?: number }] // Agent executed command
+  'security:command:blocked': [{ command: string; reason: string; pattern: string }] // Command blocked by security rules
+
+  // Permission Events
+  'permission:requested': [{ handle: FileSystemDirectoryHandle }]
+  'permission:granted': [{ handle: FileSystemDirectoryHandle; projectId: string }]
+  'permission:denied': [{ handle: FileSystemDirectoryHandle; reason: string }]
+  'permission:expired': [{ projectId: string }]
+
+  // Project Events
+  'project:opened': [{ projectId: string; name: string }]
+  'project:closed': [{ projectId: string }]
+  'project:switched': [{ fromId: string | null; toId: string }]
+
+  // Agent Activity Events
+  'agent:tool:started': [{ toolName: string; toolCallId: string; args: Record<string, unknown> }]
+  'agent:tool:completed': [{ toolName: string; toolCallId: string; success: boolean; result?: unknown }]
+  'agent:tool:failed': [{ toolName: string; toolCallId: string; error: string }]
+  'agent:activity:changed': [{ status: 'idle' | 'thinking' | 'executing' | 'error' }]
+
+  // Retry Queue Events (RC-006)
+  'retry:queued': [{ item: { id: string; toolId: string; toolName: string; attempt: number; maxAttempts: number } }]
+  'retry:attempt': [{ item: { id: string; toolId: string; toolName: string }; attempt: number }]
+  'retry:success': [{ item: { id: string; toolId: string; toolName: string }; result: unknown }]
+  'retry:exhausted': [{ item: { id: string; toolId: string; toolName: string }; finalError: string }]
+  'retry:failed': [{ item: { id: string; toolId: string; toolName: string }; error: string }]
+
+  // Source Import Events (Epic 6 - Story 6.1)
+  'import.started': [{ sourceId: string; type: 'pdf' | 'url' | 'text'; title: string }]
+  'import.progress': [{ sourceId: string; page?: number; total?: number; message: string }]
+  'import.completed': [{ sourceId: string; record: { id: string; type: string; title: string; createdAt: number } }]
+  'import.error': [{ sourceId: string; error: Error }]
+}
+
+export type WorkspaceEventEmitter = EventEmitter<WorkspaceEvents>
+
+export function createWorkspaceEventBus(): WorkspaceEventEmitter {
+  return new EventEmitter<WorkspaceEvents>()
+}

@@ -1,0 +1,255 @@
+/**
+ * @fileoverview NoteEditor 8-bit theme overrides
+ * @module components/notes/NoteEditor.css
+ * @governance EPIC-26-1
+ *
+ * Applies 8-bit styling to BlockNote editor:
+ * - Dark theme colors from CSS variables
+ * - Squared corners (rounded-none)
+ * - Touch-friendly targets for mobile
+ */
+
+/* ============================================================================
+   Container Styles
+   ============================================================================ */
+
+.note-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--color-surface, #0a0a0a);
+  color: var(--color-text-primary, #e5e5e5);
+}
+
+.note-editor--empty {
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================================
+   Status Bar
+   ============================================================================ */
+
+.note-editor__status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--color-border, #262626);
+  background-color: var(--color-surface-elevated, #171717);
+  min-height: 44px;
+  /* Touch-friendly */
+}
+
+.note-editor__emoji {
+  font-size: 1.25rem;
+}
+
+.note-editor__title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text-primary, #e5e5e5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.note-editor__status-spacer {
+  flex: 1;
+}
+
+.note-editor__status {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 0;
+  /* 8-bit: squared corners */
+}
+
+.note-editor__status--saving {
+  color: var(--color-warning, #facc15);
+}
+
+.note-editor__status--saved {
+  color: var(--color-success, #22c55e);
+}
+
+.note-editor__status--error {
+  color: var(--color-error, #ef4444);
+}
+
+.note-editor__status--dirty {
+  color: var(--color-warning, #f59e0b);
+  font-weight: 500;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ============================================================================
+   Editor Content
+   ============================================================================ */
+
+.note-editor__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* ============================================================================
+   Empty State
+   ============================================================================ */
+
+.note-editor__empty-content {
+  text-align: center;
+  padding: 32px;
+}
+
+.note-editor__empty-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-text-primary, #e5e5e5);
+}
+
+.note-editor__empty-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #a3a3a3);
+  margin-bottom: 16px;
+}
+
+.note-editor__create-btn {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #e5e5e5);
+  background-color: var(--color-primary, #3b82f6);
+  border: none;
+  border-radius: 0;
+  /* 8-bit: squared corners */
+  cursor: pointer;
+  transition: background-color 200ms ease-out;
+  min-height: 44px;
+  /* Touch-friendly */
+}
+
+.note-editor__create-btn:hover {
+  background-color: var(--color-primary-hover, #2563eb);
+}
+
+.note-editor__create-btn:focus-visible {
+  outline: 2px solid var(--color-focus-ring, #60a5fa);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   BlockNote Theme Overrides
+   ============================================================================ */
+
+/* Container */
+.note-editor .bn-container {
+  --bn-colors-editor-background: var(--color-surface, #0a0a0a);
+  --bn-colors-editor-text: var(--color-text-primary, #e5e5e5);
+  --bn-colors-menu-background: var(--color-surface-elevated, #171717);
+  --bn-colors-menu-text: var(--color-text-primary, #e5e5e5);
+  --bn-colors-tooltip-background: var(--color-surface-elevated, #171717);
+  --bn-colors-tooltip-text: var(--color-text-primary, #e5e5e5);
+  --bn-colors-hovered-background: var(--color-surface-hover, #262626);
+  --bn-colors-selected-background: var(--color-primary, #3b82f6);
+  --bn-colors-disabled-background: var(--color-surface, #0a0a0a);
+  --bn-colors-disabled-text: var(--color-text-tertiary, #737373);
+  --bn-colors-border: var(--color-border, #262626);
+  --bn-font-family: var(--font-family-primary, 'Inter', system-ui, sans-serif);
+}
+
+/* 8-bit styling: squared corners */
+.note-editor .bn-block-content,
+.note-editor .bn-inline-content,
+.note-editor .bn-suggestion-menu,
+.note-editor .bn-tooltip,
+.note-editor .bn-formatting-toolbar,
+.note-editor .bn-side-menu,
+.note-editor .bn-drag-handle {
+  border-radius: 0 !important;
+}
+
+/* Code blocks */
+.note-editor [data-content-type="codeBlock"] {
+  background-color: var(--color-surface-elevated, #171717);
+  border: 1px solid var(--color-border, #262626);
+  border-radius: 0;
+  /* 8-bit */
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Blockquotes */
+.note-editor [data-content-type="quote"] {
+  border-left: 3px solid var(--color-primary, #3b82f6);
+  padding-left: 16px;
+  color: var(--color-text-secondary, #a3a3a3);
+}
+
+/* Headings */
+.note-editor [data-content-type="heading"] {
+  color: var(--color-text-primary, #e5e5e5);
+}
+
+/* Links */
+.note-editor a {
+  color: var(--color-primary, #3b82f6);
+  text-decoration: underline;
+}
+
+.note-editor a:hover {
+  color: var(--color-primary-hover, #60a5fa);
+}
+
+/* ============================================================================
+   Mobile Responsiveness
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .note-editor__status-bar {
+    padding: 8px 12px;
+  }
+
+  .note-editor__content {
+    padding: 12px;
+  }
+
+  /* Ensure touch targets are at least 44px */
+  .note-editor .bn-side-menu-button,
+  .note-editor .bn-drag-handle,
+  .note-editor .bn-formatting-toolbar button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Bottom-docked formatting toolbar on mobile */
+  .note-editor .bn-formatting-toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--color-surface-elevated, #171717);
+    border-top: 1px solid var(--color-border, #262626);
+    padding: 8px;
+    z-index: 20;
+  }
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .note-editor__create-btn {
+    transition: none;
+  }
+}

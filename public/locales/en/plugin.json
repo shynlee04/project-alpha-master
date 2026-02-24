@@ -1,0 +1,39 @@
+{
+  "noPluginsTitle": "No plugins loaded",
+  "noPluginsDescription": "Toggle plugins using the header buttons.",
+  "notFound": "Plugin not found",
+  "fallback": {
+    "no-desktop": "This plugin is only available on desktop devices. Please use a desktop computer to access this feature.",
+    "no-fsa": "This plugin requires File System Access API which is not supported on this device or browser.",
+    "requires-plugin": "This plugin requires another plugin to be enabled first.",
+    "unsupported": "This plugin is not available on your current device.",
+    "desktopOnly": "Desktop",
+    "tablet": "Tablet",
+    "mobile": "Mobile",
+    "openOnDesktop": "Open on desktop to use this feature"
+  },
+  "terminal": {
+    "name": "Terminal",
+    "unavailable": "Terminal unavailable"
+  },
+  "preview": {
+    "name": "Preview",
+    "unavailable": "Preview unavailable"
+  },
+  "monaco": {
+    "name": "Code Editor",
+    "unavailable": "Code Editor unavailable"
+  },
+  "notes": {
+    "name": "Notes",
+    "unavailable": "Notes unavailable"
+  },
+  "filetree": {
+    "name": "File Tree",
+    "unavailable": "File Tree unavailable"
+  },
+  "chat": {
+    "name": "AI Chat",
+    "unavailable": "AI Chat unavailable"
+  }
+}

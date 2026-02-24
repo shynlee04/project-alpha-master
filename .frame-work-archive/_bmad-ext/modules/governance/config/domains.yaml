@@ -1,0 +1,218 @@
+---
+name: "domains"
+type: "governance-config"
+purpose: "Define domain boundaries for context-first scanning"
+version: "1.0.0"
+---
+
+# Domain Definitions
+
+**Purpose**: Define domain boundaries and responsibilities for context-first scanning.
+
+## Domain Structure
+
+```yaml
+domains:
+  presentation:
+    path: "src/presentation/"
+    responsibility: "UI components, hooks, user interaction"
+
+    subdomains:
+      - name: "components"
+        path: "src/presentation/components/"
+        types: ["React components", "UI elements"]
+
+      - name: "hooks"
+        path: "src/presentation/hooks/"
+        types: ["Custom hooks", "State management"]
+
+      - name: "routes"
+        path: "src/routes/"
+        types: ["Route definitions", "Lazy loaders"]
+
+    scan_patterns:
+      - "**/*.tsx"
+      - "**/*.jsx"
+      - "**/hooks/*.ts"
+
+  domain:
+    path: "src/domain/"
+    responsibility: "Business logic, types, services"
+
+    subdomains:
+      - name: "types"
+        path: "src/domain/types/"
+        types: ["TypeScript types", "Interfaces"]
+
+      - name: "services"
+        path: "src/domain/services/"
+        types: ["Business services", "Domain logic"]
+
+      - name: "mappers"
+        path: "src/domain/mappers/"
+        types: ["Data transformation", "DTOs"]
+
+    scan_patterns:
+      - "**/*.ts"
+      - "!**/*.test.ts"
+      - "!**/*.spec.ts"
+
+  infrastructure:
+    path: "src/infrastructure/"
+    responsibility: "Persistence, sync, events"
+
+    subdomains:
+      - name: "persistence"
+        path: "src/infrastructure/persistence/"
+        types: ["Stores", "Dexie", "Adapters"]
+
+      - name: "sync"
+        path: "src/infrastructure/sync/"
+        types: ["Sync services", "Conflict resolution"]
+
+      - name: "events"
+        path: "src/infrastructure/events/"
+        types: ["Event bus", "Handlers"]
+
+    scan_patterns:
+      - "**/*.ts"
+      - "**/*.yaml"
+```
+
+## Cross-Domain Relationships
+
+```yaml
+relationships:
+  presentation_to_domain:
+    type: "depends_on"
+    direction: "presentation → domain"
+    rules:
+      - "No domain logic in presentation"
+      - "Use domain types via imports"
+      - "Call domain services from hooks"
+
+  domain_to_infrastructure:
+    type: "depends_on"
+    direction: "domain → infrastructure"
+    rules:
+      - "No infrastructure in domain"
+      - "Use abstractions (interfaces)"
+      - "Inject dependencies"
+
+  infrastructure_to_domain:
+    type: "implements"
+    direction: "infrastructure → domain"
+    rules:
+      - "Implements domain interfaces"
+      - "Provides concrete implementations"
+```
+
+## Scan Depth Levels
+
+```yaml
+scan_depth:
+  shallow:
+    description: "Top-level files only"
+    max_depth: 1
+    use_for: "Quick context, overview"
+
+  medium:
+    description: "Include first level of subdirectories"
+    max_depth: 2
+    use_for: "Standard context gathering"
+
+  deep:
+    description: "Full recursive scan"
+    max_depth: -1
+    use_for: "Comprehensive analysis"
+
+  domain_specific:
+    description: "Scan specific domains only"
+    domains: [list]
+    use_for: "Targeted analysis"
+```
+
+## Context Slices
+
+```yaml
+context_slices:
+  by_feature:
+    - "All files related to a specific feature"
+    - "Crosses domain boundaries"
+    - "Includes types, components, services"
+
+  by_domain:
+    - "All files within a domain"
+    - "Respects domain boundaries"
+    - "Includes subdomains"
+
+  by_story:
+    - "Files touched by a story"
+    - "Includes changes and dependencies"
+    - "Supports story context"
+```
+
+## Boundary Violations
+
+```yaml
+violations:
+  presentation_contains_business_logic:
+    severity: "medium"
+    detection: "Complex logic in components"
+
+  domain_infrastructure_leak:
+    severity: "high"
+    detection: "Direct Dexie in domain"
+
+  circular_dependency:
+    severity: "critical"
+    detection: "Domain A imports B, B imports A"
+
+  god_object:
+    severity: "high"
+    detection: "Single file used across all domains"
+```
+
+## Scan Configuration
+
+```yaml
+default_scan_config:
+  domains: ["presentation", "domain", "infrastructure"]
+  depth: "medium"
+  include_tests: false
+  include_types: true
+  include_components: true
+  include_services: true
+
+quick_context_config:
+  domains: ["presentation", "domain"]
+  depth: "shallow"
+  include_tests: false
+  include_types: true
+  include_components: true
+  include_services: false
+
+full_analysis_config:
+  domains: ["presentation", "domain", "infrastructure"]
+  depth: "deep"
+  include_tests: true
+  include_types: true
+  include_components: true
+  include_services: true
+```
+
+## Integration
+
+**Used By**: domain-scanner, context-first workflow
+
+**Output**: Domain analysis with boundary violations
+
+**Location**: `_bmad-ext/modules/governance/config/domains.yaml`
+
+---
+
+`★ Insight ─────────────────────────────────────`
+1. Clear domain boundaries enable focused scanning
+2. Cross-domain relationships affect scan scope
+3. Boundary violations indicate architectural issues
+`─────────────────────────────────────────────────`

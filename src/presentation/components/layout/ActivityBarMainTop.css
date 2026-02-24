@@ -1,0 +1,196 @@
+/**
+ * @fileoverview ActivityBarMainTop Styles - 8-bit Design System
+ * @module presentation/components/layout/ActivityBarMainTop.css
+ *
+ * EPIC-UXUI-04: Three Activity Bar System
+ * 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ * Horizontal layout with bottom indicator (differs from vertical bars)
+ *
+ * @story UXUI-04-03
+ * @created 2026-01-30
+ */
+
+/* ============================================================================
+   ActivityBarMainTop Container
+   ============================================================================ */
+
+.activity-bar-main-top {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: hsl(var(--sidebar));
+  border-bottom: 2px solid hsl(var(--sidebar-border));
+  /* 8-bit: No border-radius, sharp corners */
+  border-radius: 0;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Content Container
+   ============================================================================ */
+
+.activity-bar-main-top__content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  height: 100%;
+}
+
+/* ============================================================================
+   Plugin Item Button
+   ============================================================================ */
+
+.activity-bar-main-top__item {
+  /* Layout */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+
+  /* 8-bit Appearance */
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 0; /* Sharp corners */
+  cursor: pointer;
+
+  /* Transitions */
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Position for indicator */
+  position: relative;
+}
+
+/* Hover State */
+.activity-bar-main-top__item:hover {
+  background: hsl(var(--sidebar-accent));
+  border-color: hsl(var(--sidebar-border));
+}
+
+/* Focus State */
+.activity-bar-main-top__item:focus-visible {
+  outline: 2px solid hsl(var(--sidebar-ring));
+  outline-offset: -2px;
+}
+
+/* Active State */
+.activity-bar-main-top__item--active {
+  background: hsl(var(--sidebar-accent));
+  border-color: hsl(var(--primary));
+}
+
+/* Active Indicator - Bottom Border (differs from vertical bars) */
+.activity-bar-main-top__indicator {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 0;
+  height: 2px;
+  background: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Plugin Icon
+   ============================================================================ */
+
+.activity-bar-main-top__icon {
+  color: hsl(var(--sidebar-foreground) / 0.7);
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+/* Icon Hover */
+.activity-bar-main-top__item:hover .activity-bar-main-top__icon {
+  color: hsl(var(--sidebar-foreground));
+}
+
+/* Icon Active */
+.activity-bar-main-top__item--active .activity-bar-main-top__icon {
+  color: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Plugin Label
+   ============================================================================ */
+
+.activity-bar-main-top__label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: hsl(var(--sidebar-foreground) / 0.7);
+  white-space: nowrap;
+  transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Label Hover */
+.activity-bar-main-top__item:hover .activity-bar-main-top__label {
+  color: hsl(var(--sidebar-foreground));
+}
+
+/* Label Active */
+.activity-bar-main-top__item--active .activity-bar-main-top__label {
+  color: hsl(var(--primary));
+}
+
+/* ============================================================================
+   Animation - Fade In
+   ============================================================================ */
+
+@keyframes activity-bar-main-top-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.activity-bar-main-top__item {
+  animation: activity-bar-main-top-fade-in 200ms ease-out forwards;
+  opacity: 0;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .activity-bar-main-top__item {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ============================================================================
+   Touch Device Optimizations
+   ============================================================================ */
+
+@media (pointer: coarse) {
+  .activity-bar-main-top__item {
+    height: 44px;
+    padding: 0 16px;
+  }
+
+  .activity-bar-main-top__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .activity-bar-main-top__label {
+    font-size: 14px;
+  }
+}
+
+/* ============================================================================
+   Responsive - Hide labels on small screens
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .activity-bar-main-top__label {
+    display: none;
+  }
+
+  .activity-bar-main-top__item {
+    padding: 0 8px;
+  }
+}

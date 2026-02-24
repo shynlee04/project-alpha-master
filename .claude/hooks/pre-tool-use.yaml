@@ -1,0 +1,136 @@
+---
+name: bmad-tool-guard
+description: Validate tool usage against BMAD rules
+when: PreToolUse
+priority: 3
+once: false
+matcher: "Edit|Write|Bash"
+---
+
+# BMAD Tool Guard Hook
+
+> Fires when: Claude is about to use Edit, Write, or Bash tools
+> Purpose: Validate against BMAD rules, prevent accidental damage
+
+---
+
+## Validation Rules
+
+### 1. Protected Paths Check
+
+```yaml
+protected_paths:
+  critical:
+    - CLAUDE.md
+    - AGENTS.md
+    - _bmad/core/config.yaml
+
+  state:
+    - .claude/LOOP_STATE-*.yaml
+    - .claude/AGENT-STATE.yaml
+    - _bmad/modules/asgl/LOOP_STATE-*.yaml
+
+  governance:
+    - _bmad-output/governance-artifacts/*/*.md
+    - agent-os/governance/**/*.md
+```
+
+**Action for critical paths:**
+- Block automatic edit
+- Require explicit user confirmation
+- Explain: "This file is protected to maintain framework integrity"
+
+**Action for state paths:**
+- Check if loop is active
+- If active → warn about concurrent modification
+- If inactive → allow with confirmation
+
+### 2. Coding Standards Pre-load
+
+If Edit tool targets code files:
+
+```yaml
+file_type_preload:
+  .ts|.tsx:
+    - .claude/skills/frontend-components/SKILL.md
+    - .claude/skills/global-coding-style/SKILL.md
+  .sql:
+    - .claude/skills/backend-queries/SKILL.md
+  .spec.ts|.test.ts:
+    - .claude/skills/testing-test-writing/SKILL.md
+```
+
+### 3. Test Coverage Check
+
+If implementing feature (detected from user intent):
+
+```yaml
+test_requirement_check:
+  if: editing .ts but not .spec.ts
+  question: "Should tests be written first? (TDD recommended)"
+  preload: .claude/skills/testing-test-writing/SKILL.md
+```
+
+### 4. Component Size Check
+
+If Edit targets React component:
+
+```yaml
+component_size_check:
+  if: file is .tsx and has > 100 lines
+  warning: "Component may exceed 120-line limit. Consider splitting."
+  preload: .claude/agents/component-splitter.md
+```
+
+---
+
+## Output Format
+
+```markdown
+---
+_tool_validation:
+  tool: {Edit|Write|Bash}
+  target: {file_path}
+  protected: {true|false}
+  standards_applied: [{skills}]
+  warnings: [{warnings if any}}
+---
+```
+
+---
+
+## Special Cases
+
+### Case: CLAUDE.md Edit
+
+```
+⚠️ PROTECTED PATH: CLAUDE.md
+
+This file is the project constitution. Edits should:
+1. Go through governance update process
+2. Be approved by team
+3. Update AGENTS.md if agents affected
+
+Continue anyway? (yes/no)
+```
+
+### Case: AGENTS.md Edit
+
+```
+⚠️ PROTECTED PATH: AGENTS.md
+
+This file tracks agent state. Manual edits may:
+- Break agent coordination
+- Cause stale agent references
+- Create orphaned agents
+
+Recommended: Run /governance-update instead
+
+Continue anyway? (yes/no)
+```
+
+---
+
+**Version:** 1.0.0
+**Updated:** 2026-01-10
+**Hook Type:** PreToolUse

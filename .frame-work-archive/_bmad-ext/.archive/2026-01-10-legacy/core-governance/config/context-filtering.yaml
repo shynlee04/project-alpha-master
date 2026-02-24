@@ -1,0 +1,353 @@
+# ============================================================================
+# CONTEXT FILTERING CONFIGURATION
+# ============================================================================
+# BMAD Core Governance Module
+#
+# Purpose: Prevent context poisoning through rigorous artifact filtering
+#          Enforce TTL limits across all 4 tiers
+#          Enable stale artifact detection and recovery
+#
+# Governance: Tier 2 (Controlled & Iterative)
+# Last Updated: 2026-01-06T00:00:00+07:00
+# ============================================================================
+
+version: "1.0.0"
+last_updated: "2026-01-06T00:00:00+07:00"
+
+# ============================================================================
+# ARTIFACT TIER DEFINITIONS
+# ============================================================================
+
+artifact_tiers:
+  tier_1_constitution:
+    name: "The Unchangeable (Constitution)"
+    ttl: "permanent"
+    loading: "always"
+    validation: "read-only check - BLOCK if modification attempted"
+    examples:
+      - "agent-os/standards/global/*.md"
+      - "_bmad/modules/governance/CONSTITUTION.md"
+    protection_level: "CRITICAL"
+    can_agent_modify: false
+
+  tier_2_controlled:
+    name: "The Controlled & Iterative (Living Truth)"
+    ttl: "permanent"
+    loading: "on-demand"
+    validation: "full consumption before edit, BLOCK if partial read"
+    examples:
+      - "AGENTS.md"
+      - "PRD.md"
+      - "architecture.md"
+      - "ux-design.md"
+      - "epics.md"
+    protection_level: "HIGH"
+    can_agent_modify: true  # With full consumption requirement
+
+  tier_3_archival:
+    name: "The Archival (Medium-Live)"
+    ttl: "90 days"
+    loading: "if timestamp < 90 days ago"
+    validation: "archive if stale, MARK STALE if approaching TTL"
+    examples:
+      - "sprint-status.yaml"
+      - "research-artifacts/*.md"
+      - "epic-planning/*.md"
+      - "course-correction-changes/*.md"
+    protection_level: "MEDIUM"
+    can_agent_modify: true
+
+  tier_4_ephemeral:
+    name: "The Ephemeral (Short-Live)"
+    ttl: "24 hours"
+    loading: "if timestamp < 24 hours ago AND status=validated"
+    validation: "IGNORE if stale, TRIGGER context recovery workflow"
+    examples:
+      - "stories-context/*.md"
+      - "validation-reports/*.md"
+      - "handoff-artifacts/*.md"
+      - "investigation-reports/*.md"
+    protection_level: "LOW"
+    can_agent_modify: true
+
+# ============================================================================
+# TOLERANCE THRESHOLDS
+# ============================================================================
+
+tolerances:
+  tier_1:
+    age_warning: "never"  # Permanent documents
+    age_critical: "never"
+    modification_attempts: 0  # BLOCK all modifications
+
+  tier_2:
+    age_warning: "never"  # Permanent documents
+    age_critical: "never"
+    partial_read_penalty: "BLOCK execution"  # Must read fully
+
+  tier_3:
+    age_warning: "80 days"  # 10 days before TTL
+    age_critical: "90 days"  # At TTL
+    action_on_critical: "Archive artifact"
+
+  tier_4:
+    age_warning: "20 hours"  # 4 hours before TTL
+    age_critical: "24 hours"  # At TTL
+    action_on_critical: "Mark as STALE, trigger recovery"
+
+# ============================================================================
+# PRE-EXECUTION VALIDATION
+# ============================================================================
+
+pre_execution_checks:
+  1_artifact_freshness:
+    name: "Artifact Freshness Validation"
+    process:
+      - "Check all artifact timestamps in context"
+      - "Compare against current time"
+      - "MARK STALE if age > TTL"
+      - "BLOCK execution if any stale artifacts detected"
+
+  2_registry_validation:
+    name: "Artifact Registry Check"
+    process:
+      - "Verify artifact exists in artifact_registry.yaml"
+      - "CONFIRM status=validated"
+      - "BLOCK if orphan (not in registry) or unregistered"
+
+  3_dependency_validation:
+    name: "Dependency Chain Verification"
+    process:
+      - "Check parent artifact references"
+      - "VALIDATE parent exists and is fresh"
+      - "BLOCK if dependency chain broken"
+
+  4_size_validation:
+    name: "Artifact Size Limits"
+    process:
+      - "Count artifact lines"
+      - "WARN if >1000 lines (token optimization needed)"
+      - "SPLIT if >5000 lines (god artifact)"
+      - "ROUTE to component-splitter if splitting needed"
+
+  5_tier_1_protection:
+    name: "Constitution Read-Only Check"
+    process:
+      - "Detect if Tier 1 artifact modification attempted"
+      - "BLOCK immediately if modification detected"
+      - "NOTIFY human of governance violation"
+      - "LOG violation event for audit"
+
+# ============================================================================
+# STALE ARTIFACT PROTOCOL
+# ============================================================================
+
+stale_artifact_protocol:
+  detection:
+    triggers:
+      - "Artifact age > TTL for its tier"
+      - "Artifact status != validated"
+      - "Artifact not in registry"
+      - "Dependency chain broken"
+
+    actions:
+      1_stop_workflow:
+        action: "STOP current workflow immediately"
+        reason: "Stale or invalid artifact detected"
+
+      2_mark_stale:
+        action: "MARK artifact as STALE in AGENT-STATE.yaml"
+        update: "artifact_registry.stale_artifacts"
+
+      3_trigger_investigation:
+        action: "TRIGGER deep-investigation workflow"
+        duration: "15 minutes"
+        output: "investigation-report.md"
+
+      4_retrieve_context:
+        action: "RETRIEVE historical context from archives"
+        source: "_bmad-output/archives/"
+        validation: "Verify archive integrity"
+
+      5_re_validate:
+        action: "RE-VALIDATE artifact before consuming"
+        checks: "Run full pre-execution validation on recovered artifact"
+
+      6_resume:
+        action: "RESUME workflow with recovered context"
+        validation: "Confirm successful context restoration"
+
+  prevention:
+    auto_archive:
+      schedule: "0 2 * * *"  # Daily at 2 AM
+      actions:
+        - "Scan all artifacts for approaching TTL"
+        - "Archive artifacts at 90% of TTL"
+        - "Update artifact registry with archive location"
+
+    orphan_detection:
+      schedule: "0 3 * * 0"  # Weekly at 3 AM Sunday
+      actions:
+        - "Scan registry for missing artifacts"
+        - "Scan filesystem for unregistered artifacts"
+        - "CREATE registry entries or ARCHIVE orphans"
+
+# ============================================================================
+# CONTEXT RECOVERY WORKFLOW
+# ============================================================================
+
+context_recovery:
+  trigger: "Stale artifact detected during validation"
+
+  workflow:
+    1_pause:
+      action: "PAUSE current workflow"
+      state: "RECOVERY_MODE"
+      duration: "variable"
+
+    2_investigate:
+      action: "Run deep-investigation on stale artifact"
+      agent: "bmad-core-master"
+      duration: "15 minutes"
+      output: "investigation-report.md"
+
+    3_retrieve:
+      action: "Retrieve historical context"
+      sources:
+        - "_bmad-output/archives/"
+        - "git history"
+        - "artifact registry backups"
+      validation: "Verify data integrity"
+
+    4_reconstruct:
+      action: "Reconstruct artifact context"
+      process:
+        - "Merge recovered data"
+        - "Validate consistency"
+        - "Update timestamps"
+
+    5_resume:
+      action: "Resume workflow with recovered context"
+      validation: "Confirm no context loss"
+
+  success_criteria:
+    - "Artifact freshness restored (age < TTL)"
+    - "Registry entry validated"
+    - "Dependency chain intact"
+    - "No context loss detected"
+
+  failure_handling:
+    - "NOTIFY human of recovery failure"
+    - "REQUEST manual intervention"
+    - "BLOCK workflow until resolved"
+
+# ============================================================================
+# CONTEXT POISONING PREVENTION
+# ============================================================================
+
+poisoning_prevention:
+  metrics:
+    tracked:
+      - "stale_artifacts_blocked: count"
+      - "orphan_artifacts_detected: count"
+      - "context_recovery_triggered: count"
+      - "registry_validation_failures: count"
+
+    targets:
+      stale_artifacts_blocked: "100% detection rate"
+      context_poisoning_incidents: "0 (zero tolerance)"
+
+  daily_audits:
+    schedule: "0 4 * * *"  # Daily at 4 AM
+    output: "_bmad-output/audit-reports/context-poisoning-{date}.md"
+    checks:
+      - "Validate all active artifacts are fresh"
+      - "Confirm registry consistency"
+      - "Check for orphan artifacts"
+      - "Verify no Tier 1 modifications"
+      - "Measure context quality metrics"
+
+  alerts:
+    critical:
+      trigger: "Any context poisoning incident detected"
+      action: "IMMEDIATE notification to human"
+      priority: "CRITICAL"
+
+    warning:
+      trigger: "Stale artifact rate >5% of total artifacts"
+      action: "Log warning, schedule cleanup"
+      priority: "MEDIUM"
+
+# ============================================================================
+# ARTIFACT SIZE OPTIMIZATION
+# ============================================================================
+
+size_optimization:
+  thresholds:
+    small: "<500 lines"  # Ideal size
+    medium: "500-1000 lines"  # Acceptable
+    large: "1000-5000 lines"  # Warning - optimize
+    god: ">5000 lines"  # Critical - must split
+
+  actions:
+    on_small:
+      action: "No action needed"
+      efficiency: "optimal"
+
+    on_medium:
+      action: "No action needed"
+      efficiency: "good"
+      monitoring: "Track growth"
+
+    on_large:
+      action: "WARN about token inefficiency"
+      recommendation: "Consider splitting for better performance"
+      threshold: "1000 lines"
+
+    on_god:
+      action: "SPLIT immediately"
+      agent: "component-splitter"
+      reasoning: "God artifact causes context pollution"
+      threshold: "5000 lines"
+
+  token_efficiency:
+    target: "70%+ token optimization"
+    measurement: "ratio of active context to total loaded context"
+    calculation: "(relevant_lines / total_loaded_lines) * 100"
+
+# ============================================================================
+# CONFIGURATION FOR EACH MODULE
+# ============================================================================
+
+module_specific:
+  core_governance:
+    tier_1_artifacts:
+      - "_bmad/modules/governance/CONSTITUTION.md"
+    protection: "CRITICAL - BLOCK modifications"
+
+  architecture_refactoring:
+    tier_3_artifacts:
+      - "validation-reports/*.md"
+      - "investigation-reports/*.md"
+    ttl: "90 days"
+
+  sprint_execution:
+    tier_4_artifacts:
+      - "stories-context/*.md"
+      - "handoff-artifacts/*.md"
+    ttl: "24 hours"
+
+  integration_testing:
+    tier_3_artifacts:
+      - "test-reports/*.md"
+      - "validation-results/*.md"
+    ttl: "90 days"
+
+# ============================================================================
+# VERSION CONTROL
+# ============================================================================
+
+version:
+  config_version: "1.0.0"
+  schema_version: "1.0.0"
+  last_migration: "2026-01-06T00:00:00+07:00"

@@ -1,0 +1,201 @@
+/**
+ * @fileoverview Synced Block Styles
+ * @module presentation/components/notes/blocks/SyncedBlock.css
+ * @story UX-12
+ *
+ * Synced block visual indicators and unsync dialog styles.
+ */
+
+/* ============================================================================
+   Synced Block Container
+   ========================================================================== */
+
+.synced-block {
+    position: relative;
+    width: 100%;
+    margin: 4px 0;
+    border-left: 3px solid var(--color-accent, #3b82f6);
+    background: var(--color-surface, #0a0a0a);
+    transition: background-color 0.2s ease;
+}
+
+.synced-block:hover {
+    background: var(--color-surface-alt, #111);
+}
+
+.synced-block--align-left {
+    text-align: left;
+}
+
+.synced-block--align-center {
+    text-align: center;
+}
+
+.synced-block--align-right {
+    text-align: right;
+}
+
+/* ============================================================================
+   Sync Indicator Header
+   ========================================================================== */
+
+.synced-block__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.synced-block:hover .synced-block__header {
+    opacity: 1;
+}
+
+.synced-block__indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 6px;
+    background: var(--color-accent-bg, rgba(59, 130, 246, 0.1));
+    border: 1px solid var(--color-accent, #3b82f6);
+    border-radius: 0;
+}
+
+.synced-block__icon {
+    color: var(--color-accent, #3b82f6);
+}
+
+.synced-block__label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent, #3b82f6);
+}
+
+/* ============================================================================
+   Unsync Button
+   ========================================================================== */
+
+.synced-block__unsync-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid var(--color-border, #333);
+    background: var(--color-surface, #0a0a0a);
+    color: var(--color-fg, #ccc);
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.synced-block__unsync-btn:hover {
+    background: var(--color-surface-alt, #1a1a1a);
+    border-color: var(--color-border-hover, #444);
+    color: var(--color-destructive, #ef4444);
+}
+
+/* ============================================================================
+   Content Area
+   ========================================================================== */
+
+.synced-block__content {
+    padding: 0 8px;
+    min-height: 24px;
+}
+
+/* ============================================================================
+   Unsync Confirmation Dialog
+   ========================================================================== */
+
+.synced-block__unsync-dialog {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: var(--z-modal, 50);
+    padding: 8px;
+    background: var(--color-surface, #0a0a0a);
+    border: 1px solid var(--color-border, #333);
+    box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.5);
+}
+
+.synced-block__unsync-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.synced-block__unsync-text {
+    margin: 0;
+    font-size: 12px;
+    color: var(--color-fg, #ccc);
+}
+
+.synced-block__unsync-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.synced-block__unsync-cancel,
+.synced-block__unsync-confirm {
+    padding: 6px 12px;
+    border: 1px solid var(--color-border, #333);
+    background: var(--color-surface, #0a0a0a);
+    color: var(--color-fg, #ccc);
+    border-radius: 0;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.synced-block__unsync-cancel:hover {
+    background: var(--color-surface-alt, #1a1a1a);
+}
+
+.synced-block__unsync-confirm {
+    background: var(--color-destructive, #dc2626);
+    color: white;
+}
+
+.synced-block__unsync-confirm:hover {
+    background: var(--color-destructive-hover, #ef4444);
+}
+
+/* ============================================================================
+   Focus States
+   ========================================================================== */
+
+.synced-block__unsync-btn:focus-visible {
+    outline: 2px solid var(--color-accent, #3b82f6);
+    outline-offset: 2px;
+}
+
+.synced-block__unsync-cancel:focus-visible,
+.synced-block__unsync-confirm:focus-visible {
+    outline: 2px solid var(--color-accent, #3b82f6);
+    outline-offset: 2px;
+}
+
+/* ============================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+    .synced-block__header,
+    .synced-block__unsync-btn,
+    .synced-block__unsync-dialog {
+        display: none !important;
+    }
+
+    .synced-block {
+        border-left-color: #ccc !important;
+    }
+}

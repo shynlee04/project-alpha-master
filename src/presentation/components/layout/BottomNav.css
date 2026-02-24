@@ -1,0 +1,178 @@
+/**
+ * @fileoverview Mobile Bottom Navigation Styles
+ * @module components/layout/BottomNav
+ * @created 2026-01-28
+ * @epic EPIC-UXUI-03
+ * @story UXUI-03-12
+ *
+ * 8-bit design compliant bottom navigation styling:
+ * - Fixed at 56px height (h-14)
+ * - Sharp corners (no border-radius)
+ * - Pixel shadows (no blur)
+ * - Touch-optimized (48px+ targets)
+ * - Safe area inset for notched devices
+ */
+
+/* Bottom navigation container */
+.bottom-nav {
+  /* Fixed positioning */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-panel, 40);
+  
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  
+  /* Dimensions: 56px height per UX spec */
+  height: 56px;
+  
+  /* Safe area for notched devices */
+  padding-bottom: env(safe-area-inset-bottom);
+  
+  /* 8-bit design: Solid background, sharp corners */
+  background-color: hsl(var(--card));
+  border-top: 2px solid hsl(var(--border));
+  
+  /* 8-bit shadow: Pixel offset, no blur */
+  box-shadow: 0 -2px 0 0 rgba(0, 0, 0, 0.5);
+  
+  /* Hide on tablet/desktop (lg = 768px) */
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+/* Navigation button (tab) */
+.bottom-nav__item {
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  
+  /* Size: Full height, flexible width */
+  flex: 1;
+  height: 100%;
+  
+  /* Touch target: Minimum 60px width */
+  min-width: 60px;
+  
+  /* Reset button styles */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  
+  /* Touch optimization */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  
+  /* Text styling */
+  color: hsl(var(--muted-foreground));
+  
+  /* Transition for state changes */
+  transition: color 150ms ease;
+}
+
+.bottom-nav__item:hover,
+.bottom-nav__item:active {
+  color: hsl(var(--foreground));
+}
+
+.bottom-nav__item:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px hsl(var(--ring));
+}
+
+/* Active state */
+.bottom-nav__item--active {
+  color: hsl(var(--primary));
+}
+
+/* Icon container with relative positioning for badge */
+.bottom-nav__icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+/* Active indicator dot */
+.bottom-nav__active-indicator {
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* 8-bit: Small square dot */
+  width: 4px;
+  height: 4px;
+  background-color: hsl(var(--primary));
+  
+  /* 8-bit: Sharp corners (no border-radius) */
+  border-radius: 0;
+}
+
+/* Icon */
+.bottom-nav__icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* Label */
+.bottom-nav__label {
+  font-size: 10px;
+  font-weight: 500;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, monospace);
+  line-height: 1;
+}
+
+.bottom-nav__item--active .bottom-nav__label {
+  font-weight: 700;
+}
+
+/* Badge for notifications */
+.bottom-nav__badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  
+  /* Size */
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  
+  /* Text */
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  line-height: 16px;
+  text-align: center;
+  
+  /* 8-bit: Solid background, sharp corners */
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  border-radius: 0;
+}
+
+/* Hub mode (no project selected) */
+.bottom-nav--hub {
+  justify-content: center;
+}
+
+.bottom-nav--hub .bottom-nav__item {
+  flex: 0 0 auto;
+  min-width: 80px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav__item {
+    transition: none;
+  }
+}

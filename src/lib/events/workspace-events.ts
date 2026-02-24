@@ -1,50 +1,38 @@
-import EventEmitter from 'eventemitter3'
+/**
+ * @fileoverview Bridge file for workspace-events backward compatibility
+ * @module lib/events/workspace-events
+ *
+ * @deprecated Use DomainEventBus from @/infrastructure/events/domain-event-bus
+ * This file exists only for backward compatibility during migration.
+ *
+ * Migration path:
+ * - workspaceEventBus → domainEventBus
+ * - WorkspaceEvent types → DomainEvent types
+ * - WorkspaceEventEmitter → DomainEventBus
+ */
 
-export interface WorkspaceEvents {
-  // File System Events
-  'file:created': [{ path: string; source: 'local' | 'editor' | 'agent' }]
-  'file:modified': [
-    { path: string; source: 'local' | 'editor' | 'agent'; content?: string },
-  ]
-  'file:deleted': [{ path: string; source: 'local' | 'editor' | 'agent' }]
-  'directory:created': [{ path: string }]
-  'directory:deleted': [{ path: string }]
+// Re-export domain event types for backward compatibility
+export type {
+  DomainEvent,
+  DomainEventType,
+  DomainEventMap,
+} from '@/domain/types/domain-events';
 
-  // Sync Events
-  'sync:started': [
-    { fileCount: number; direction: 'to-wc' | 'to-local' | 'bidirectional' },
-  ]
-  'sync:progress': [{ current: number; total: number; currentFile: string }]
-  'sync:completed': [{ success: boolean; timestamp: Date; filesProcessed: number }]
-  'sync:error': [{ error: Error; file?: string }]
-  'sync:paused': [{ reason: 'user' | 'error' | 'permission' }]
-  'sync:resumed': []
+// Re-export domain event bus as workspace event bus alias
+import { domainEventBus } from '@/infrastructure/events/domain-event-bus';
+export { domainEventBus as workspaceEventBus };
+export { DomainEventBus as WorkspaceEventBus } from '@/infrastructure/events/domain-event-bus';
 
-  // WebContainer Events
-  'container:booted': [{ bootTime: number }]
-  'container:mounted': [{ fileCount: number }]
-  'container:error': [{ error: Error }]
+/**
+ * @deprecated Use DomainEventBus from @/infrastructure/events/domain-event-bus
+ */
+export { DomainEventBus as WorkspaceEventEmitter } from '@/infrastructure/events/domain-event-bus';
 
-  // Terminal/Process Events
-  'process:started': [{ pid: string; command: string; args: string[] }]
-  'process:output': [{ pid: string; data: string; type: 'stdout' | 'stderr' }]
-  'process:exited': [{ pid: string; exitCode: number }]
-  'terminal:input': [{ data: string }]
-
-  // Permission Events
-  'permission:requested': [{ handle: FileSystemDirectoryHandle }]
-  'permission:granted': [{ handle: FileSystemDirectoryHandle; projectId: string }]
-  'permission:denied': [{ handle: FileSystemDirectoryHandle; reason: string }]
-  'permission:expired': [{ projectId: string }]
-
-  // Project Events
-  'project:opened': [{ projectId: string; name: string }]
-  'project:closed': [{ projectId: string }]
-  'project:switched': [{ fromId: string | null; toId: string }]
-}
-
-export type WorkspaceEventEmitter = EventEmitter<WorkspaceEvents>
-
-export function createWorkspaceEventBus(): WorkspaceEventEmitter {
-  return new EventEmitter<WorkspaceEvents>()
+/**
+ * @deprecated Use domainEventBus from @/infrastructure/events/domain-event-bus
+ * Factory function for backward compatibility
+ */
+export function createWorkspaceEventBus() {
+  // Use static import (ESM compatible)
+  return domainEventBus;
 }

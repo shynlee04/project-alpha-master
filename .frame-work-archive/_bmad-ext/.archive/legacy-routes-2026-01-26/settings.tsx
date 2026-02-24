@@ -1,0 +1,532 @@
+/**
+ * Settings Route - Workspace Settings
+ *
+ * Routes to the Settings and Preferences page.
+ * Wraps AgentConfigDialog with proper state management.
+ *
+ * @epic Epic-MRT Mobile Responsive Transformation
+ * @story MRT-9 Dashboard Responsive
+ * 
+ * @file settings.tsx
+ * @created 2025-12-27T01:10:00Z
+ */
+
+import { useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
+import { MainLayout } from '@/presentation/components/layout/MainLayout';
+import { AgentConfigDialog } from '@/presentation/components/agent/AgentConfigDialog';
+import { ErrorBoundary } from '@/presentation/components/common/ErrorBoundary';
+import { SettingsIcon, PlusIcon } from '@/presentation/components/ui/icons';
+import { Download, Upload } from 'lucide-react';
+import { Button } from '@/presentation/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useDeviceType } from '@/hooks/useMediaQuery';
+import { ProviderSettings } from '@/presentation/components/agent/ProviderSettings';
+import { VaultStatusCard } from '@/presentation/components/agent/VaultStatusCard';
+import { ThemeToggle } from '@/presentation/components/ui/ThemeToggle';
+import { SettingsExportDialog } from '@/presentation/components/settings/SettingsExportDialog';
+import { SettingsImportDialog } from '@/presentation/components/settings/SettingsImportDialog';
+import { SnippetManager } from '@/presentation/components/snippets/SnippetManager';
+import { SlashCommandManager } from '@/presentation/components/notes/SlashCommandManager';
+import { Sparkles } from 'lucide-react';
+import { AnalyticsDashboard } from '@/presentation/components/analytics';
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 1 DETACHMENT: Plugin system deferred to Phase 2
+// Reason: usePluginMarketplace hook causes infinite re-render loop
+// Original: import { PluginMarketplace } from '@/presentation/components/plugins';
+// Restore in Phase 2 after hook architecture is fixed
+// ═══════════════════════════════════════════════════════════════════════════
+import { useAllProjects } from '@/infrastructure/persistence/stores/project';
+import { useLayoutStore } from '@/infrastructure/persistence/stores/layout-store';
+import { useAppStore } from '@/infrastructure/persistence/stores/use-app-store';
+import { Code2, BarChart3 } from 'lucide-react';
+// Puzzle import removed - Phase 1 detachment (Plugins section deferred)
+
+export const Route = createFileRoute('/settings')({
+    component: SettingsPage,
+});
+
+function SettingsPage() {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+    const [isSnippetManagerOpen, setIsSnippetManagerOpen] = useState(false);
+    const [showSlashCommandManager, setShowSlashCommandManager] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(false);
+    // PHASE 1 DETACHMENT: Plugin state deferred
+    // const [showPluginMarketplace, setShowPluginMarketplace] = useState(false);
+    // const [selectedPluginId, setSelectedPluginId] = useState<string | null>(null); // TODO: For future implementation
+    // const _selectedPluginId = selectedPluginId; // TODO: For future implementation
+    // const _setSelectedPluginId = setSelectedPluginId; // TODO: For future implementation
+
+    // MRT-9: Mobile responsive detection
+    const { isMobile } = useDeviceType();
+
+    // Get data for export/import
+    const projects = useAllProjects();
+    const activeProjectId = useLayoutStore(s => s.activeNavItem); // Using layout state as placeholder
+    const sidebarCollapsed = useLayoutStore(s => s.sidebarCollapsed);
+
+    // Get providers from app store
+    const providers = useAppStore(s => s.providers || []);
+
+    const handleAgentSuccess = (agentId: string) => {
+        // BF-01 FIX: Callback receives agentId instead of full agent
+        console.log('[SettingsPage] Agent created/updated successfully, ID:', agentId);
+        setIsDialogOpen(false);
+    };
+
+    return (
+        <MainLayout>
+            <div className={cn(
+                'max-w-4xl mx-auto',
+                isMobile ? 'p-4' : 'p-6'
+            )}>
+                <div className="flex items-center gap-3 mb-6">
+                    <SettingsIcon className="text-primary" />
+                    <h1 className={cn(
+                        'font-bold font-mono text-foreground',
+                        isMobile ? 'text-xl' : 'text-3xl'
+                    )}>
+                        Settings
+                    </h1>
+                </div>
+
+                {/* Theme Preference Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Theme Preferences
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className={cn(
+                                    'font-semibold text-foreground mb-1',
+                                    isMobile && 'text-base'
+                                )}>
+                                    Theme
+                                </h3>
+                                <p className={cn(
+                                    'text-muted-foreground text-sm',
+                                    isMobile && 'text-xs'
+                                )}>
+                                    Choose between light, dark, or system theme
+                                </p>
+                            </div>
+                            <ThemeToggle />
+                        </div>
+                    </div>
+                </section>
+
+                {/* Agent Configuration Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        AI Agent Configuration
+                    </h2>
+
+                    <div className="mb-8">
+                        <ProviderSettings />
+                    </div>
+
+                    {/* P1-09: Vault Status Card - Shows vault initialization and migration status */}
+                    <div className="mb-8">
+                        <VaultStatusCard />
+                    </div>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Configure your AI agents, API keys, and model preferences.
+                        </p>
+                        <Button
+                            onClick={() => setIsDialogOpen(true)}
+                            className={cn(
+                                'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                // MRT-9: 44px touch target on mobile
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <PlusIcon />
+                            <span>Configure Agent</span>
+                        </Button>
+                    </div>
+                </section>
+
+                {/* Data Management Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Data Management
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Export your settings for backup or transfer to another device.
+                            Import settings from a file to restore your configuration.
+                        </p>
+
+                        <div className={cn(
+                            'flex gap-3',
+                            isMobile ? 'flex-col' : 'flex-row'
+                        )}>
+                            <Button
+                                onClick={() => setIsExportDialogOpen(true)}
+                                variant="outline"
+                                className={cn(
+                                    'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                    isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                                )}
+                            >
+                                <Download />
+                                <span>Export Settings</span>
+                            </Button>
+
+                            <Button
+                                onClick={() => setIsImportDialogOpen(true)}
+                                variant="outline"
+                                className={cn(
+                                    'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                    isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                                )}
+                            >
+                                <Upload />
+                                <span>Import Settings</span>
+                            </Button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Code Snippets Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Code Snippets
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Manage your code snippets for quick insertion. Create, edit, and organize
+                            reusable code fragments with folder organization and tag-based filtering.
+                        </p>
+
+                        <Button
+                            onClick={() => setIsSnippetManagerOpen(true)}
+                            variant="primary"
+                            className={cn(
+                                'gap-2 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <Code2 />
+                            <span>Manage Snippets</span>
+                        </Button>
+
+                        <p className={cn(
+                            'text-xs text-muted-foreground mt-3',
+                            isMobile && 'text-[11px]'
+                        )}>
+                            Tip: Use <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Cmd+Shift+S</kbd> in the editor to open the snippet browser
+                        </p>
+                    </div>
+                </section>
+
+                {/* AI Commands Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        AI Commands (Notes)
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Create custom AI slash commands for the Notes workspace.
+                            Add your own prompts with bilingual support (EN/VI).
+                        </p>
+
+                        <Button
+                            onClick={() => setShowSlashCommandManager(true)}
+                            variant="primary"
+                            className={cn(
+                                'gap-2 rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <Sparkles />
+                            <span>Manage AI Commands</span>
+                        </Button>
+
+                        <p className={cn(
+                            'text-xs text-muted-foreground mt-3',
+                            isMobile && 'text-[11px]'
+                        )}>
+                            Tip: Type <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">/</kbd> in Notes to see your commands
+                        </p>
+                    </div>
+                </section>
+
+                {/* Analytics Section */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Analytics & Metrics
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            View usage metrics, performance statistics, and activity data. All data is stored locally and never transmitted.
+                        </p>
+
+                        <Button
+                            onClick={() => setShowAnalytics(true)}
+                            variant="outline"
+                            className={cn(
+                                'gap-2 rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                                isMobile && 'min-h-[44px] w-full justify-center touch-manipulation'
+                            )}
+                        >
+                            <BarChart3 />
+                            <span>View Analytics</span>
+                        </Button>
+
+                        <p className={cn(
+                            'text-xs text-muted-foreground mt-3',
+                            isMobile && 'text-[11px]'
+                        )}>
+                            Privacy-first: All analytics data is stored locally in your browser.
+                        </p>
+                    </div>
+                </section>
+
+                {/* ═══════════════════════════════════════════════════════════════
+                    PHASE 1 DETACHMENT: Plugins Section deferred to Phase 2
+                    Reason: usePluginMarketplace hook causes infinite re-render loop
+                    Restore in Phase 2 after hook architecture is fixed
+                    ═════════════════════════════════════════════════════════════ */}
+                {/* <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Plugins
+                    </h2>
+
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground mb-4',
+                            isMobile && 'text-sm'
+                        )}>
+                            Extend functionality with community plugins.
+                        </p>
+
+                        <div className="flex gap-3">
+                            <Button onClick={() => {}} variant="outline">
+                                <Puzzle className="mr-2" />
+                                <span>Coming in Phase 2</span>
+                            </Button>
+                        </div>
+                    </div>
+                </section> */}
+
+                {/* Placeholder for other settings */}
+                <section className="mb-8">
+                    <h2 className={cn(
+                        'font-semibold font-mono mb-4 text-foreground',
+                        isMobile ? 'text-lg' : 'text-xl'
+                    )}>
+                        Workspace Preferences
+                    </h2>
+                    <div className={cn(
+                        'border-2 border-border rounded-none shadow-[2px_2px_0px_rgba(0,0,0,0.5)]',
+                        isMobile ? 'p-4' : 'p-6'
+                    )}>
+                        <p className={cn(
+                            'text-muted-foreground',
+                            isMobile && 'text-sm'
+                        )}>
+                            Additional workspace settings coming soon.
+                        </p>
+                    </div>
+                </section>
+
+                {/* P0 FIX: Agent Config Dialog wrapped with ErrorBoundary */}
+                <ErrorBoundary
+                    fallback={
+                        <div className="p-6 text-center">
+                            <h2 className="text-lg font-bold mb-2">Agent Configuration Failed</h2>
+                            <p className="text-muted-foreground mb-4">
+                                The agent configuration dialog encountered an unexpected error.
+                            </p>
+                            <Button onClick={() => setIsDialogOpen(false)}>
+                                Close Dialog
+                            </Button>
+                        </div>
+                    }
+                    onError={(error) => {
+                        console.error('[SettingsPage] AgentConfigDialog error:', error);
+                    }}
+                >
+                    <AgentConfigDialog
+                        open={isDialogOpen}
+                        onOpenChange={setIsDialogOpen}
+                        onSuccess={handleAgentSuccess}
+                        agentId={null} // BF-01 FIX: Create mode (no agent selected)
+                    />
+                </ErrorBoundary>
+
+                {/* Export Dialog */}
+                <SettingsExportDialog
+                    open={isExportDialogOpen}
+                    onOpenChange={setIsExportDialogOpen}
+                    projects={projects}
+                    providers={providers}
+                    activeProjectId={null}
+                    preferences={{
+                        sidebarCollapsed,
+                        activeNavItem: activeProjectId,
+                    }}
+                />
+
+                {/* Import Dialog */}
+                <SettingsImportDialog
+                    open={isImportDialogOpen}
+                    onOpenChange={setIsImportDialogOpen}
+                    onImport={(data) => {
+                        console.log('[SettingsPage] Import data:', data);
+                        // TODO: Apply import to stores
+                    }}
+                    currentProjects={new Map(projects.map(p => [p.id, p]))}
+                    currentProviders={new Map(providers.map(p => [p.id, p]))}
+                />
+
+                {/* Snippet Manager Dialog */}
+                <SnippetManager
+                    open={isSnippetManagerOpen}
+                    onOpenChange={setIsSnippetManagerOpen}
+                    onSnippetSelect={(snippet) => {
+                        console.log('[SettingsPage] Snippet selected:', snippet);
+                        // Snippets inserted via editor, not settings
+                    }}
+                />
+
+                {/* Analytics Dashboard Dialog */}
+                {showAnalytics && (
+                    <div className="fixed inset-0 z-50 bg-background overflow-auto">
+                        <div className="min-h-full">
+                            <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
+                                <div className="max-w-6xl mx-auto flex items-center justify-between">
+                                    <h2 className="text-xl font-bold font-mono text-foreground">
+                                        Analytics Dashboard
+                                    </h2>
+                                    <Button
+                                        onClick={() => setShowAnalytics(false)}
+                                        variant="outline"
+                                        className="rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+                                    >
+                                        Close
+                                    </Button>
+                                </div>
+                            </div>
+                            <AnalyticsDashboard />
+                        </div>
+                    </div>
+                )}
+
+                {/* ═══════════════════════════════════════════════════════════════
+                    PHASE 1 DETACHMENT: Plugin Marketplace Dialog deferred to Phase 2
+                    ═════════════════════════════════════════════════════════════ */}
+                {/* {showPluginMarketplace && (
+                    <div className="fixed inset-0 z-50 bg-background overflow-auto">
+                        <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
+                            <div className="max-w-7xl mx-auto flex items-center justify-between">
+                                <h2 className="text-xl font-bold font-mono text-foreground">
+                                    Plugin Marketplace
+                                </h2>
+                                <Button
+                                    onClick={() => setShowPluginMarketplace(false)}
+                                    variant="outline"
+                                >
+                                    Close
+                                </Button>
+                            </div>
+                        </div>
+                        <PluginMarketplace />
+                    </div>
+                )} */}
+
+                {/* Slash Command Manager Dialog */}
+                {showSlashCommandManager && (
+                    <div className="fixed inset-0 z-50 bg-background overflow-auto">
+                        <div className="sticky top-0 z-10 bg-background border-b-2 border-border p-4">
+                            <div className="max-w-4xl mx-auto flex items-center justify-between">
+                                <h2 className="text-xl font-bold font-mono text-foreground flex items-center gap-2">
+                                    <Sparkles className="w-5 h-5 text-primary" />
+                                    AI Commands Manager
+                                </h2>
+                                <Button
+                                    onClick={() => setShowSlashCommandManager(false)}
+                                    variant="outline"
+                                    className="rounded-none border-2 border-primary shadow-[2px_2px_0px_rgba(0,0,0,0.5)]"
+                                >
+                                    Close
+                                </Button>
+                            </div>
+                        </div>
+                        <div className="max-w-4xl mx-auto p-4">
+                            <SlashCommandManager />
+                        </div>
+                    </div>
+                )}
+            </div>
+        </MainLayout>
+    );
+}

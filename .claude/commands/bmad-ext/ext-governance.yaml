@@ -1,0 +1,56 @@
+---
+name: "bmad-ext-governance"
+shorthand: "/ext-governance"
+description: "BMAD-ext governance module v2.0 - context-first, expert-analysis, research-trigger, correct-course workflows"
+category: "governance"
+version: "2.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "skill"
+  source: ".claude/skills/bmad-ext-bridge/modules/governance/SKILL.md"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+
+# Metadata
+metadata:
+  module: "governance"
+  phase: "0"
+  ttl_hours: 4
+  workflows:
+    - "context-first"
+    - "expert-analysis"
+    - "research-trigger"
+    - "correct-course"
+  ttl_system:
+    tier_1:
+      name: "Constitution"
+      ttl: "Permanent"
+      action: "Never archive"
+    tier_2:
+      name: "Controlled"
+      ttl: "Permanent"
+      action: "Update iteratively"
+    tier_3:
+      name: "Archival"
+      ttl: "90 days"
+      action: "Archive if stale"
+    tier_4:
+      name: "Ephemeral"
+      ttl: "24 hours"
+      action: "Auto-purge"
+
+# Usage examples
+examples:
+  - "/ext-governance"
+  - "/context-first"
+  - "/expert-analysis"
+  - "/research-trigger"
+  - "/correct-course"
+
+# Related commands
+see_also:
+  - "bmad-ext-master"
+  - "bmad-ext-arc-v2"
+

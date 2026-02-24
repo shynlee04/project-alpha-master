@@ -1,0 +1,95 @@
+# BMAD Extension Layer Commands Index
+# Location: .claude/commands/bmad-ext/index.yaml
+# Purpose: Central command registry for enhanced BMAD agents
+
+---
+name: "bmad-ext-commands"
+description: "BMAD Extension Layer Commands - Enhanced agents with full governance integration"
+commands:
+
+  # Master Orchestrator
+  - id: "orchestrator"
+    path: "_bmad-ext/orchestrator/master-orchestrator.md"
+    shorthand: "/bmad-ext"
+    description: "Master orchestrator - central entry point for autonomous BMAD development"
+    category: "core"
+    priority: 1
+
+  # Enhanced Module Builder
+  - id: "module-builder"
+    path: "_bmad-ext/agents/module-builder-ext.md"
+    shorthand: "/module-builder-ext"
+    description: "Enhanced Module Builder with LOOP_STATE integration and artifact registry"
+    category: "builder"
+    priority: 2
+
+  # Enhanced Workflow Builder
+  - id: "workflow-builder"
+    path: "_bmad-ext/agents/workflow-builder-ext.md"
+    shorthand: "/workflow-builder-ext"
+    description: "Enhanced Workflow Builder with governance and handoff protocol"
+    category: "builder"
+    priority: 2
+
+  # Governance Module
+  - id: "governance"
+    path: "_bmad-ext/modules/governance/MODULE.md"
+    shorthand: "/governance-ext"
+    description: "Unified governance module - self-governance, artifact lifecycle, context filtering"
+    category: "governance"
+    priority: 3
+
+  # Sprint Planning Wrapper
+  - id: "sprint-planning"
+    path: "_bmad-ext/modules/sprint-planning-wrapper/MODULE.md"
+    shorthand: "/sprint-planning-ext"
+    description: "Enhanced sprint planning with cohesion checks and reality validation"
+    category: "planning"
+    priority: 3
+
+  # Implementation Module
+  - id: "implementation"
+    path: "_bmad-ext/modules/implementation/MODULE.md"
+    shorthand: "/implementation-ext"
+    description: "Story cycle and correct-course workflows with user journey validation"
+    category: "implementation"
+    priority: 3
+
+# Hierarchical grouping for / menu display
+groups:
+  core:
+    - orchestrator
+
+  builder:
+    - module-builder
+    - workflow-builder
+
+  governance:
+    - governance
+
+  planning:
+    - sprint-planning
+
+  implementation:
+    - implementation
+
+# Integration with extension layer
+integration:
+  loop_state: "_bmad-ext/state/LOOP_STATE.yaml"
+  artifact_registry: "_bmad-ext/state/ARTIFACT_REGISTRY.yaml"
+  manifest: "_bmad-ext/MANIFEST.yaml"
+  routing_rules: "_bmad-ext/orchestrator/routing-rules.yaml"
+
+# Usage Examples
+examples:
+  - "Load master orchestrator: /bmad-ext"
+  - "Create module with governance: /module-builder-ext"
+  - "Build workflow with handoffs: /workflow-builder-ext"
+  - "Run governance check: /governance-ext"
+  - "Plan sprint with validation: /sprint-planning-ext"
+  - "Implement story with validation: /implementation-ext"
+
+---
+# Version: 1.0.0
+# Created: 2026-01-11
+# Updated: 2026-01-11

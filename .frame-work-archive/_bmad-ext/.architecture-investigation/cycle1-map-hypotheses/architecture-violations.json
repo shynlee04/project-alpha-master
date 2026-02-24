@@ -1,0 +1,520 @@
+{
+  "scan_timestamp": "2026-01-18T00:00:00.000Z",
+  "scan_scope": "src/",
+  "scan_exclusions": ["node_modules", ".git", "dist", "build", ".next", ".nuxt", ".cache", "coverage"],
+  "summary": {
+    "boundary_violations_count": 12,
+    "god_components_count": 24,
+    "layer_overlaps_count": 8,
+    "migration_artifacts_count": 9
+  },
+  "boundary_violations": [
+    {
+      "file": "src/domain/services/file-crud/unified-file-crud.ts",
+      "violation": "imports from lib layer",
+      "details": "Domain layer imports @/lib/agent/facades/file-lock and @/lib/events/workspace-events - infrastructure concerns leaking into domain",
+      "severity": "HIGH",
+      "lines": [32, 33, 34]
+    },
+    {
+      "file": "src/domain/services/AgentProviderValidator.ts",
+      "violation": "imports from lib layer",
+      "details": "Domain layer imports @/lib/agent/providers/types - infrastructure concern",
+      "severity": "MEDIUM",
+      "lines": [36, 37]
+    },
+    {
+      "file": "src/lib/workspace/fsa-persistence.ts",
+      "violation": "imports from infrastructure layer",
+      "details": "Lib layer imports from @/infrastructure/filesystem and @/infrastructure/persistence - bidirectional dependency",
+      "severity": "HIGH",
+      "lines": [26, 27, 28, 29, 30, 31, 32]
+    },
+    {
+      "file": "src/lib/filesystem/unified-storage-adapter.ts",
+      "violation": "imports from infrastructure layer",
+      "details": "Lib layer imports from @/infrastructure/sync/adapters - infrastructure concern",
+      "severity": "HIGH",
+      "lines": [19, 20]
+    },
+    {
+      "file": "src/lib/workspace/workspace-transition-manager.ts",
+      "violation": "imports from infrastructure layer",
+      "details": "Lib layer imports from @/infrastructure/persistence/stores - infrastructure concern",
+      "severity": "HIGH",
+      "lines": [4, 5, 6, 7, 8, 9]
+    },
+    {
+      "file": "src/lib/workspace/useUnifiedProjectState.ts",
+      "violation": "imports from infrastructure layer",
+      "details": "Lib layer imports from @/infrastructure/persistence/stores - infrastructure concern",
+      "severity": "HIGH",
+      "lines": [17, 18, 19, 20]
+    },
+    {
+      "file": "src/lib/media/image-attachments.ts",
+      "violation": "imports from presentation layer",
+      "details": "Lib layer imports from @/presentation/components/chat - presentation concern leaking into lib",
+      "severity": "MEDIUM",
+      "line": 11
+    },
+    {
+      "file": "src/lib/command-palette/index.ts",
+      "violation": "imports from presentation layer",
+      "details": "Lib layer re-exports from @/presentation/components/command-palette - presentation concern in lib",
+      "severity": "LOW",
+      "line": 7
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts",
+      "violation": "imports from lib layer",
+      "details": "Infrastructure layer imports from @/lib/filesystem and @/lib/utils - lib concerns in infrastructure",
+      "severity": "MEDIUM",
+      "lines": [22, 33, 36]
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/workspace/slices/use-storage-adapter-slice.ts",
+      "violation": "imports from lib layer",
+      "details": "Infrastructure layer imports from @/lib/filesystem and @/lib/events - lib concerns in infrastructure",
+      "severity": "MEDIUM",
+      "lines": [29, 36, 37, 42]
+    },
+    {
+      "file": "src/infrastructure/sync/index.ts",
+      "violation": "imports from lib layer",
+      "details": "Infrastructure layer re-exports from @/lib/filesystem/sync-manager - lib concerns in infrastructure",
+      "severity": "HIGH",
+      "lines": [190, 191, 192, 193, 194, 200]
+    },
+    {
+      "file": "src/infrastructure/persistence/stores/knowledge/slices/knowledge-synthesis-slice.ts",
+      "violation": "imports from lib layer",
+      "details": "Infrastructure layer imports from @/lib/knowledge/synthesis-service - lib concerns in infrastructure",
+      "severity": "MEDIUM",
+      "line": 15
+    }
+  ],
+  "god_components": [
+    {
+      "path": "src/presentation/components/notes/AISlashCommand.tsx",
+      "lines": 1674,
+      "responsibilities": [
+        "AI slash command rendering",
+        "Command filtering",
+        "Block insertion",
+        "AI popup management",
+        "Command execution"
+      ],
+      "priority": "P0"
+    },
+    {
+      "path": "src/presentation/components/notes/NoteEditor.tsx",
+      "lines": 1088,
+      "responsibilities": [
+        "Note editing",
+        "Block management",
+        "Editor state",
+        "Keyboard shortcuts"
+      ],
+      "priority": "P0"
+    },
+    {
+      "path": "src/presentation/components/notes/NotesPage.tsx",
+      "lines": 876,
+      "responsibilities": [
+        "Notes page layout",
+        "Note tree",
+        "Editor integration"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+      "lines": 772,
+      "responsibilities": [
+        "Monaco editor integration",
+        "Editor events",
+        "File content handling"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/ui/resizable.tsx",
+      "lines": 763,
+      "responsibilities": [
+        "Resizable panel",
+        "Drag handling",
+        "Size constraints"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/knowledge/KnowledgePage.tsx",
+      "lines": 749,
+      "responsibilities": [
+        "Knowledge page layout",
+        "Source management",
+        "Collection handling"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/MultiStepGenerationBlock.tsx",
+      "lines": 700,
+      "responsibilities": [
+        "Multi-step AI generation",
+        "Step management",
+        "Progress tracking"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/ArtifactGalleryBlock.tsx",
+      "lines": 684,
+      "responsibilities": [
+        "Artifact gallery display",
+        "Image handling",
+        "Gallery navigation"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/ide/AgentChatPanel.tsx",
+      "lines": 684,
+      "responsibilities": [
+        "Agent chat interface",
+        "Message rendering",
+        "Tool execution display"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/notes/SlashCommandManager.tsx",
+      "lines": 657,
+      "responsibilities": [
+        "Slash command management",
+        "Command registration",
+        "Command execution"
+      ],
+      "priority": "P1"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/VideoGenerationBlock.tsx",
+      "lines": 617,
+      "responsibilities": [
+        "Video generation",
+        "Progress display",
+        "Video playback"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/ide/EnhancedChatInterface.tsx",
+      "lines": 602,
+      "responsibilities": [
+        "Enhanced chat UI",
+        "Message handling",
+        "Input management"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/knowledge/IndexingProgressPanel.tsx",
+      "lines": 593,
+      "responsibilities": [
+        "Indexing progress display",
+        "Phase management",
+        "Progress tracking"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/InBlockAIPopup.tsx",
+      "lines": 577,
+      "responsibilities": [
+        "In-block AI popup",
+        "AI command handling",
+        "Popup positioning"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/ChartDiagramBlock.tsx",
+      "lines": 568,
+      "responsibilities": [
+        "Chart rendering",
+        "Diagram display",
+        "Data visualization"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/TransformPipelineBlock.tsx",
+      "lines": 558,
+      "responsibilities": [
+        "Transform pipeline",
+        "Pipeline execution",
+        "Step management"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/StoryboardBlock.tsx",
+      "lines": 552,
+      "responsibilities": [
+        "Storyboard display",
+        "Frame management",
+        "Storyboard editing"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/VideoBlock.tsx",
+      "lines": 545,
+      "responsibilities": [
+        "Video block display",
+        "Video controls",
+        "Video loading"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/ReferenceBlock.tsx",
+      "lines": 536,
+      "responsibilities": [
+        "Reference block",
+        "Link handling",
+        "Reference display"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/project/ProjectCreationWizard.tsx",
+      "lines": 535,
+      "responsibilities": [
+        "Project creation wizard",
+        "Step management",
+        "Form validation"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/notes/blocks/AIVisionBlock.tsx",
+      "lines": 511,
+      "responsibilities": [
+        "AI vision block",
+        "Image analysis",
+        "Vision results"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/ui/SkeletonScreen.tsx",
+      "lines": 508,
+      "responsibilities": [
+        "Skeleton loading",
+        "Animation handling",
+        "Size management"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/chat/FileAttachmentInput.tsx",
+      "lines": 492,
+      "responsibilities": [
+        "File attachment input",
+        "File selection",
+        "Upload handling"
+      ],
+      "priority": "P2"
+    },
+    {
+      "path": "src/presentation/components/hub/HubHomePage.tsx",
+      "lines": 485,
+      "responsibilities": [
+        "Hub home page",
+        "Dashboard display",
+        "Navigation"
+      ],
+      "priority": "P2"
+    }
+  ],
+  "layer_overlaps": [
+    {
+      "functionality": "File sync",
+      "locations": [
+        "src/lib/filesystem/sync-manager/",
+        "src/infrastructure/sync/"
+      ],
+      "description": "Duplicate sync implementations - lib/filesystem/sync-manager and infrastructure/sync both contain sync logic",
+      "severity": "HIGH"
+    },
+    {
+      "functionality": "Workspace transition",
+      "locations": [
+        "src/domain/services/workspace-transition-service.ts",
+        "src/lib/workspace/workspace-transition-manager.ts"
+      ],
+      "description": "Duplicate workspace transition logic - domain service and lib manager both handle transitions",
+      "severity": "HIGH"
+    },
+    {
+      "functionality": "File CRUD",
+      "locations": [
+        "src/domain/services/file-crud/unified-file-crud.ts",
+        "src/lib/filesystem/file-ops.ts",
+        "src/infrastructure/persistence/stores/workspace/slices/use-file-ops-slice.ts"
+      ],
+      "description": "Three layers implement file CRUD operations - domain service, lib utilities, and infrastructure store",
+      "severity": "HIGH"
+    },
+    {
+      "functionality": "Event emission",
+      "locations": [
+        "src/lib/events/cross-workspace-event-bus.ts",
+        "src/infrastructure/events/cross-workspace-event-bus.ts",
+        "src/infrastructure/events/event-bus.ts"
+      ],
+      "description": "Multiple event bus implementations - lib and infrastructure both have event systems",
+      "severity": "MEDIUM"
+    },
+    {
+      "functionality": "Storage adapter",
+      "locations": [
+        "src/lib/filesystem/unified-storage-adapter.ts",
+        "src/infrastructure/sync/adapters/"
+      ],
+      "description": "Storage adapter implementations in both lib and infrastructure layers",
+      "severity": "MEDIUM"
+    },
+    {
+      "functionality": "Permission management",
+      "locations": [
+        "src/lib/agent/workspace-permission-manager.ts",
+        "src/lib/agent/tool-permission-manager.ts",
+        "src/infrastructure/persistence/stores/permissions/"
+      ],
+      "description": "Permission management spread across lib and infrastructure layers",
+      "severity": "MEDIUM"
+    },
+    {
+      "functionality": "Project state",
+      "locations": [
+        "src/lib/workspace/",
+        "src/infrastructure/persistence/stores/project/",
+        "src/infrastructure/persistence/stores/workspace/"
+      ],
+      "description": "Project and workspace state management duplicated across lib and infrastructure",
+      "severity": "MEDIUM"
+    },
+    {
+      "functionality": "File snapshot",
+      "locations": [
+        "src/lib/filesystem/file-snapshot-store/",
+        "src/infrastructure/persistence/stores/filesystem/"
+      ],
+      "description": "File snapshot functionality in both lib and infrastructure layers",
+      "severity": "MEDIUM"
+    }
+  ],
+  "migration_artifacts": [
+    {
+      "path": "src/presentation/components/chat/WorkflowBuilder.refactored.tsx",
+      "original_path": "src/presentation/components/chat/WorkflowBuilder.tsx",
+      "status": "in_progress",
+      "notes": "Refactored version exists alongside original"
+    },
+    {
+      "path": "src/infrastructure/persistence/stores/study/study-store-refactored.ts",
+      "original_path": "src/infrastructure/persistence/stores/study/study-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored store slice"
+    },
+    {
+      "path": "src/lib/workspace/file-sync-status-store/file-sync-status-store-refactored.ts",
+      "original_path": "src/lib/workspace/file-sync-status-store/file-sync-status-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored file sync status store"
+    },
+    {
+      "path": "src/lib/filesystem/file-snapshot-store/file-snapshot-store-refactored.ts",
+      "original_path": "src/lib/filesystem/file-snapshot-store/file-snapshot-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored snapshot store"
+    },
+    {
+      "path": "src/lib/workflow/builder/workflow-builder-store-refactored.ts",
+      "original_path": "src/lib/workflow/builder/workflow-builder-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored workflow builder store"
+    },
+    {
+      "path": "src/lib/snippets/snippet-store/snippet-store-refactored.ts",
+      "original_path": "src/lib/snippets/snippet-store/snippet-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored snippet store"
+    },
+    {
+      "path": "src/lib/notes/note-store-refactored.ts",
+      "original_path": "src/lib/notes/note-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored note store"
+    },
+    {
+      "path": "src/routeTree.gen.ts.backup",
+      "original_path": "src/routeTree.gen.ts",
+      "status": "backup",
+      "notes": "Backup of generated route tree"
+    },
+    {
+      "path": "src/i18n/vi.json.tmp",
+      "original_path": "src/i18n/vi.json",
+      "status": "tmp",
+      "notes": "Temporary file during translation updates"
+    }
+  ],
+  "manager_patterns": {
+    "count": 24,
+    "files": [
+      "src/lib/filesystem/sync-manager/sync-manager.ts",
+      "src/lib/plugins/plugin-manager.ts",
+      "src/lib/agent/workspace-permission-manager.ts",
+      "src/lib/workspace/workspace-transition-manager.ts",
+      "src/lib/offline/cache-manager.ts",
+      "src/lib/editor/tab-manager.ts",
+      "src/lib/notifications/notification-manager.ts",
+      "src/lib/webcontainer/process-manager.ts",
+      "src/lib/webcontainer/manager.ts",
+      "src/lib/agent/tool-permission-manager.ts",
+      "src/lib/pdf/pdf-vision-manager.ts",
+      "src/lib/chat/context-window-manager.ts",
+      "src/lib/collaboration/presence-manager.ts",
+      "src/infrastructure/sync/workspace-services/cross-workspace-file-references/cross-workspace-reference-manager.ts",
+      "src/infrastructure/sync/adapters/idb-quota-manager.ts",
+      "src/infrastructure/sync/adapters/fsa-permission-manager.ts",
+      "src/infrastructure/persistence/state-orchestrator.ts",
+      "src/infrastructure/persistence/session-snapshot-manager.ts"
+    ],
+    "concern": "Many 'manager' files indicate potential god components or unclear separation of concerns"
+  },
+  "orchestrator_patterns": {
+    "count": 2,
+    "files": [
+      "src/lib/agent/prompt-orchestrator.ts",
+      "src/infrastructure/persistence/state-orchestrator.ts"
+    ],
+    "concern": "Orchestrator patterns may indicate unclear responsibility boundaries"
+  },
+  "unified_patterns": {
+    "count": 6,
+    "files": [
+      "src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx",
+      "src/infrastructure/persistence/stores/chat/unified-chat-store.ts",
+      "src/infrastructure/persistence/stores/workspace/unified-workspace-context.ts",
+      "src/domain/services/file-crud/unified-file-crud.ts",
+      "src/lib/filesystem/unified-storage-adapter.ts",
+      "src/lib/workspace/useUnifiedProjectState.ts"
+    ],
+    "concern": "'Unified' patterns may indicate consolidation of previously separate concerns"
+  }
+}

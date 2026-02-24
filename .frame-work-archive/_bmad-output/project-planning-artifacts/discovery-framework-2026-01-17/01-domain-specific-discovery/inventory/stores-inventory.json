@@ -1,0 +1,800 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-17",
+    "track": "1.2",
+    "agent": "dev-ext",
+    "total_stores": 38,
+    "source_directory": "src/infrastructure/persistence/stores"
+  },
+  "stores": [
+    {
+      "name": "useAppStore",
+      "path": "src/infrastructure/persistence/stores/use-app-store.ts",
+      "lines": 378,
+      "type": "project_store",
+      "workspace": "project_level",
+      "slices": [
+        {
+          "name": "agentCrudSlice",
+          "lines": 80,
+          "state_fields": ["agents"],
+          "actions": ["addAgent", "updateAgent", "removeAgent"],
+          "selectors": []
+        },
+        {
+          "name": "agentWorkspaceBindingsSlice",
+          "lines": 85,
+          "state_fields": ["workspaceBindings"],
+          "actions": ["setWorkspaceBinding"],
+          "selectors": []
+        },
+        {
+          "name": "agentValidationSlice",
+          "lines": 90,
+          "state_fields": ["validationErrors"],
+          "actions": ["validateAgent", "clearValidationErrors"],
+          "selectors": []
+        },
+        {
+          "name": "agentEventsSlice",
+          "lines": 60,
+          "state_fields": ["events"],
+          "actions": ["emitEvent"],
+          "selectors": []
+        },
+        {
+          "name": "agentUtilsSlice",
+          "lines": 75,
+          "state_fields": [],
+          "actions": [],
+          "selectors": []
+        },
+        {
+          "name": "providerCrudSlice",
+          "lines": 410,
+          "state_fields": ["providers", "activeProviderId"],
+          "actions": ["addProvider", "updateProvider", "removeProvider", "setActiveProvider", "reset"],
+          "selectors": []
+        },
+        {
+          "name": "providerModelsSlice",
+          "lines": 120,
+          "state_fields": ["availableModels", "isLoadingModels", "modelCache"],
+          "actions": ["fetchModels", "loadModelsForProvider", "clearModelsCache"],
+          "selectors": []
+        },
+        {
+          "name": "providerUtilsSlice",
+          "lines": 65,
+          "state_fields": ["modelSettings", "selectedModelId", "isLoading"],
+          "actions": ["updateModelSettings", "setSelectedModel"],
+          "selectors": ["getAvailableModels", "getSelectedModel"]
+        }
+      ],
+      "selectors": ["useAgents", "useProviders", "useActiveProvider", "useAppStoreHydration"],
+      "actions": ["addAgent", "updateAgent", "removeAgent", "setActiveProvider", "fetchModels"],
+      "hooks_used": ["persist", "createJSONStorage", "createDexieStorage"],
+      "dependencies": {
+        "stores": [],
+        "services": ["createDexieStorage"],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useProjectStore",
+      "path": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "lines": 148,
+      "type": "project_store",
+      "workspace": "project_level",
+      "slices": [
+        {
+          "name": "createProjectCrudSlice",
+          "lines": 205,
+          "state_fields": ["projects", "activeProjectId", "_hasHydrated"],
+          "actions": ["createProject", "updateProject", "deleteProject", "setActiveProject"],
+          "selectors": []
+        },
+        {
+          "name": "createProjectBindingsSlice",
+          "lines": 111,
+          "state_fields": ["workspaceBindings"],
+          "actions": ["updateProjectBindings"],
+          "selectors": []
+        },
+        {
+          "name": "createProjectPermissionsSlice",
+          "lines": 87,
+          "state_fields": [],
+          "actions": [],
+          "selectors": []
+        },
+        {
+          "name": "createProjectLayoutSlice",
+          "lines": 62,
+          "state_fields": [],
+          "actions": [],
+          "selectors": []
+        },
+        {
+          "name": "createProjectUtilsSlice",
+          "lines": 168,
+          "state_fields": [],
+          "actions": [],
+          "selectors": []
+        }
+      ],
+      "selectors": ["useActiveProject", "useAllProjects", "useRecentProjects", "useProjectStats"],
+      "actions": ["createProject", "updateProject", "deleteProject", "setActiveProject"],
+      "hooks_used": ["useShallow"],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useConversationStore",
+      "path": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "lines": 496,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": ["useActiveConversation", "usePendingApprovals", "useActiveThread"],
+      "actions": ["createConversation", "updateConversationMetadata", "deleteConversation", "setActiveConversation"],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": ["useUnifiedChatStore"],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useWorkspaceStore",
+      "path": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "lines": 226,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": ["useShallow"],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useTerminalStore",
+      "path": "src/infrastructure/persistence/stores/terminal-store.ts",
+      "lines": 317,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": [],
+      "actions": ["createTab", "closeTab", "setActiveTab", "toggleTerminal", "setPanelHeight"],
+      "hooks_used": ["persist", "createJSONStorage", "createDexieStorage"],
+      "dependencies": {
+        "stores": [],
+        "services": ["createDexieStorage"],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useLayoutStore",
+      "path": "src/infrastructure/persistence/stores/layout-store.ts",
+      "lines": 142,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": [],
+      "actions": ["toggleSidebar", "setSidebarCollapsed", "setActiveNavItem"],
+      "hooks_used": ["persist"],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useNotificationStore",
+      "path": "src/infrastructure/persistence/stores/notification-store.ts",
+      "lines": 26,
+      "type": "facade",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": ["./notifications"],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useStudyStore",
+      "path": "src/infrastructure/persistence/stores/study-store.ts",
+      "lines": 40,
+      "type": "facade",
+      "workspace": "study",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": ["./study/study-store-refactored"],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useFlashcardStore",
+      "path": "src/infrastructure/persistence/stores/flashcard-store.ts",
+      "lines": 61,
+      "type": "facade",
+      "workspace": "study",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": ["./flashcard"],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useCanvasStore",
+      "path": "src/infrastructure/persistence/stores/canvas-store.ts",
+      "lines": 41,
+      "type": "facade",
+      "workspace": "knowledge",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": ["./canvas"],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useAnalyticsStore",
+      "path": "src/infrastructure/persistence/stores/analytics-store.ts",
+      "lines": 162,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": ["useAnalyticsEnabled", "useAnalyticsTimeRange", "useDailyMetrics"],
+      "actions": ["setEnabled", "setTimeRange", "refreshData"],
+      "hooks_used": ["persist", "createJSONStorage"],
+      "dependencies": {
+        "stores": [],
+        "services": ["getMetricsCollector", "getPerformanceMonitor"],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useStatusBarStore",
+      "path": "src/infrastructure/persistence/stores/statusbar-store.ts",
+      "lines": 237,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": ["selectConnectionStatus"],
+      "actions": ["setWebContainerStatus", "setSyncStatus", "setCursorPosition"],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "usePluginsStore",
+      "path": "src/infrastructure/persistence/stores/plugins-store.ts",
+      "lines": 317,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": ["usePlugins", "useActivePluginId", "useMarketplaceEntries"],
+      "actions": ["setPlugins", "addPlugin", "updatePlugin", "removePlugin"],
+      "hooks_used": ["persist", "createJSONStorage"],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useIDEStore",
+      "path": "src/infrastructure/persistence/stores/ide/useIDEStore.ts",
+      "lines": 245,
+      "type": "workspace_store",
+      "workspace": "ide",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useNavigationStore",
+      "path": "src/infrastructure/persistence/stores/navigation-store.ts",
+      "lines": 158,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useRAGStore",
+      "path": "src/infrastructure/persistence/stores/rag/rag-store.ts",
+      "lines": 128,
+      "type": "workspace_store",
+      "workspace": "knowledge",
+      "slices": [],
+      "selectors": ["useRAGStoreHydration", "useActiveIndex", "usePendingChunking"],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useCanvasStore (refactored)",
+      "path": "src/infrastructure/persistence/stores/canvas/index.ts",
+      "lines": 137,
+      "type": "workspace_store",
+      "workspace": "knowledge",
+      "slices": [
+        {
+          "name": "canvasStateSlice",
+          "lines": 118,
+          "state_fields": ["nodes", "edges", "viewport", "linkageProposals"],
+          "actions": ["setNodes", "onNodesChange", "addNode", "removeNode", "setEdges"],
+          "selectors": []
+        },
+        {
+          "name": "canvasLinkageSlice",
+          "lines": 62,
+          "state_fields": [],
+          "actions": ["generateLinkageProposals", "acceptProposal", "dismissProposal"],
+          "selectors": []
+        },
+        {
+          "name": "canvasIOSlice",
+          "lines": 163,
+          "state_fields": ["canvasList"],
+          "actions": ["createCanvas", "deleteCanvas", "renameCanvas", "loadCanvasList", "exportCanvas", "importCanvas"],
+          "selectors": []
+        }
+      ],
+      "selectors": ["useCanvasPersistence"],
+      "actions": ["resetCanvas", "setNodes", "addEdge", "exportCanvas"],
+      "hooks_used": ["persist", "createJSONStorage"],
+      "dependencies": {
+        "stores": [],
+        "services": ["createIndexedDBStorage"],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useUnifiedChatStore",
+      "path": "src/infrastructure/persistence/stores/chat/unified-chat-store.ts",
+      "lines": 200,
+      "type": "workspace_store",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": ["usePendingApprovals", "useContextUsage"],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": [],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    },
+    {
+      "name": "useWorkspaceStoreFacade",
+      "path": "src/infrastructure/persistence/stores/workspace-store-facade.ts",
+      "lines": 92,
+      "type": "facade",
+      "workspace": "shared",
+      "slices": [],
+      "selectors": [],
+      "actions": [],
+      "hooks_used": [],
+      "dependencies": {
+        "stores": ["./workspace-store-factory"],
+        "services": [],
+        "utilities": []
+      },
+      "is_god_store": false,
+      "duplicate_domains": []
+    }
+  ],
+  "god_stores": [
+    {
+      "name": "slashCommandStore",
+      "path": "src/infrastructure/persistence/stores/notes/slash-commands/index.ts",
+      "lines": 564,
+      "reason": "Exceeds 500 line threshold (564 lines)",
+      "recommended_split": [
+        "extract command registry slice (~150 lines)",
+        "extract command parser slice (~100 lines)",
+        "extract command execution slice (~150 lines)",
+        "extract UI slice (~100 lines)"
+      ]
+    },
+    {
+      "name": "providerMigrationBackupStore",
+      "path": "src/infrastructure/persistence/stores/providers/migration-backup.ts",
+      "lines": 562,
+      "reason": "Exceeds 500 line threshold (562 lines)",
+      "recommended_split": [
+        "extract migration logic slice (~200 lines)",
+        "extract backup logic slice (~200 lines)",
+        "extract validation slice (~100 lines)"
+      ]
+    },
+    {
+      "name": "conversationMigrationStore",
+      "path": "src/infrastructure/persistence/stores/conversation/migration/conversation-migration.ts",
+      "lines": 549,
+      "reason": "Exceeds 500 line threshold (549 lines)",
+      "recommended_split": [
+        "extract data migration slice (~200 lines)",
+        "extract validation slice (~150 lines)",
+        "extract rollback slice (~150 lines)"
+      ]
+    },
+    {
+      "name": "useConversationStore (legacy facade)",
+      "path": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "lines": 496,
+      "reason": "Nearly exceeds 500 line threshold (496 lines) - migration target",
+      "recommended_split": [
+        "This is a backward compatibility facade delegating to useUnifiedChatStore",
+        "Plan to remove after MM-02 (Merge thread management)",
+        "No split needed - facade pattern is correct"
+      ]
+    },
+    {
+      "name": "vfsSyncSlice",
+      "path": "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts",
+      "lines": 446,
+      "reason": "Exceeds 500 line threshold (446 lines)",
+      "recommended_split": [
+        "extract sync logic slice (~200 lines)",
+        "extract file operations slice (~150 lines)",
+        "extract status management slice (~100 lines)"
+      ]
+    },
+    {
+      "name": "providerCredentialCrudSlice",
+      "path": "src/infrastructure/persistence/stores/providers/credentials/crud-slice.ts",
+      "lines": 409,
+      "reason": "Exceeds 400 line threshold (409 lines) - near god store",
+      "recommended_split": [
+        "extract credential CRUD slice (~150 lines)",
+        "extract validation slice (~100 lines)",
+        "extract encryption slice (~150 lines)"
+      ]
+    },
+    {
+      "name": "migrateApiKeysToVault",
+      "path": "src/infrastructure/persistence/stores/providers/migrate-api-keys-to-vault.ts",
+      "lines": 399,
+      "reason": "Exceeds 400 line threshold (399 lines) - migration utility",
+      "recommended_split": [
+        "extract migration validation slice (~150 lines)",
+        "extract migration execution slice (~150 lines)",
+        "extract rollback logic slice (~100 lines)"
+      ]
+    },
+    {
+      "name": "schemaMigrations",
+      "path": "src/infrastructure/persistence/stores/schema-migrations.ts",
+      "lines": 336,
+      "reason": "Exceeds 300 line threshold (336 lines) - migration system",
+      "recommended_split": [
+        "extract migration registry slice (~100 lines)",
+        "extract migration runner slice (~150 lines)",
+        "extract validation logic slice (~100 lines)"
+      ]
+    },
+    {
+      "name": "sessionSnapshotManager",
+      "path": "src/infrastructure/persistence/stores/session-snapshot-manager.ts",
+      "lines": 321,
+      "reason": "Exceeds 300 line threshold (321 lines) - session management",
+      "recommended_split": [
+        "extract snapshot creation slice (~150 lines)",
+        "extract snapshot restoration slice (~150 lines)",
+        "export export/import logic slice (~100 lines)"
+      ]
+    },
+    {
+      "name": "hydrationManager",
+      "path": "src/infrastructure/persistence/stores/hydration-manager.ts",
+      "lines": 321,
+      "reason": "Exceeds 300 line threshold (321 lines) - hydration orchestration",
+      "recommended_split": [
+        "extract store hydration slice (~150 lines)",
+        "extract dependency tracking slice (~100 lines)",
+        "extract validation slice (~100 lines)"
+      ]
+    }
+  ],
+  "duplicate_domains": [
+    {
+      "domain": "conversation",
+      "stores": [
+        "useConversationStore (legacy facade)",
+        "useUnifiedChatStore",
+        "useConversationStore (facade export)"
+      ],
+      "conflict_description": "3 stores/exports manage conversation state - legacy facade wraps unified store",
+      "resolution": "Legacy facade (useConversationStore) will be removed after MM-02. Currently provides backward compatibility. Unified store is single source of truth."
+    },
+    {
+      "domain": "project",
+      "stores": [
+        "useProjectStore",
+        "project-index (legacy exports)",
+        "useWorkspaceProjects"
+      ],
+      "conflict_description": "Multiple stores manage project state with overlapping concerns",
+      "resolution": "useProjectStore is canonical source. Other exports are facades for backward compatibility or specific use cases."
+    },
+    {
+      "domain": "workspace",
+      "stores": [
+        "useWorkspaceStore",
+        "useWorkspaceStoreFacade",
+        "workspace-provider-slice",
+        "workspace-store-factory"
+      ],
+      "conflict_description": "Multiple workspace stores with different abstractions",
+      "resolution": "useWorkspaceStore is canonical. Facade provides backward compatibility. Factory creates scoped instances."
+    },
+    {
+      "domain": "canvas",
+      "stores": [
+        "canvas-store (facade)",
+        "canvas/index (refactored)"
+      ],
+      "conflict_description": "Legacy facade wraps refactored store",
+      "resolution": "Facade at canvas-store.ts wraps canvas/index.ts. Facade can be removed after consumers migrate."
+    },
+    {
+      "domain": "study/flashcard",
+      "stores": [
+        "useStudyStore",
+        "useFlashcardStore",
+        "quiz-store",
+        "quiz-history-store"
+      ],
+      "conflict_description": "Multiple stores manage learning content with overlapping concerns",
+      "resolution": "Each store serves distinct domain: StudyStore (SRS), FlashcardStore (flashcards), QuizStore (quizzes). No conflict - clear separation."
+    },
+    {
+      "domain": "providers",
+      "stores": [
+        "useProviderStore (from use-app-store)",
+        "provider-crud-slice",
+        "provider-models-slice",
+        "provider-utils-slice",
+        "credentials/crud-slice",
+        "credentials/vault-slice"
+      ],
+      "conflict_description": "Provider state split across multiple slices and facade",
+      "resolution": "Consolidated in useAppStore. Individual slices are internal implementation detail. Facade provides backward compatibility."
+    },
+    {
+      "domain": "notifications",
+      "stores": [
+        "notification-store (facade)",
+        "notifications/index",
+        "notification-crud-slice",
+        "notification-preferences-slice",
+        "notification-filter-slice"
+      ],
+      "conflict_description": "Notification facade wraps modular architecture",
+      "resolution": "Facade at notification-store.ts wraps notifications/index.ts. Modular architecture with separate slices for CRUD, preferences, filtering."
+    },
+    {
+      "domain": "ide",
+      "stores": [
+        "useIDEStore",
+        "ide-terminal-slice",
+        "ide-project-slice",
+        "ide-layout-slice",
+        "ide-explorer-slice",
+        "ide-editor-slice",
+        "ide-selectors-slice"
+      ],
+      "conflict_description": "IDE state split across 8 focused slices",
+      "resolution": "Consolidated in useIDEStore. Slices are internal implementation detail. Each slice handles specific IDE aspect (terminal, project, layout, explorer, editor, selectors)."
+    },
+    {
+      "domain": "agents",
+      "stores": [
+        "useAppStore (includes agents)",
+        "agent-crud-slice",
+        "agent-selection-store",
+        "agent-workspace-bindings-slice",
+        "agent-validation-slice",
+        "agent-events-slice",
+        "agent-utils-slice",
+        "agent-selection-actions",
+        "agent-selection-events",
+        "agent-selection-queries",
+        "agent-selection-state"
+      ],
+      "conflict_description": "Agent state split across multiple slices and selection store",
+      "resolution": "Consolidated in useAppStore. Agent CRUD, workspace bindings, validation, events, and utils are separate slices. AgentSelectionStore handles active agent selection independently."
+    },
+    {
+      "domain": "workspace file system",
+      "stores": [
+        "useWorkspaceFileSystem",
+        "vfs-sync-slice",
+        "file-loader-slice",
+        "file-ops-slice",
+        "storage-adapter-slice"
+      ],
+      "conflict_description": "File system state split across 5 slices (VFS sync, file loader, file ops, storage adapter)",
+      "resolution": "Slices are part of unified workspace store architecture. Each slice handles specific file system aspect. VFS sync coordinates file operations across workspaces."
+    }
+  ],
+  "dependency_graph": {
+    "nodes": [
+      "useAppStore",
+      "useProjectStore",
+      "useConversationStore",
+      "useUnifiedChatStore",
+      "useWorkspaceStore",
+      "useWorkspaceStoreFacade",
+      "useTerminalStore",
+      "useLayoutStore",
+      "useNotificationStore",
+      "useStudyStore",
+      "useFlashcardStore",
+      "useCanvasStore",
+      "useAnalyticsStore",
+      "useStatusBarStore",
+      "usePluginsStore",
+      "useIDEStore",
+      "useNavigationStore",
+      "useRAGStore",
+      "useQuizStore",
+      "useQuizHistoryStore",
+      "useHubStore",
+      "useEditorTabsStore",
+      "useFileWatcherStore",
+      "useOpenAICompatibleStore",
+      "usePromptEnhancementStore",
+      "useSynthesisStore",
+      "useCodeChunkStore",
+      "useAutoApproveStore"
+    ],
+    "edges": [
+      {
+        "from": "useConversationStore",
+        "to": "useUnifiedChatStore",
+        "type": "direct_import"
+      },
+      {
+        "from": "vfsSyncSlice",
+        "to": "useStatusBarStore",
+        "type": "direct_import"
+      },
+      {
+        "from": "vfsSyncSlice",
+        "to": "useProjectStore",
+        "type": "direct_import"
+      },
+      {
+        "from": "useWorkspaceStoreFacade",
+        "to": "useWorkspaceStore",
+        "type": "facade_to_implementation"
+      },
+      {
+        "from": "useNotificationStore",
+        "to": "./notifications",
+        "type": "re_export"
+      },
+      {
+        "from": "useStudyStore",
+        "to": "./study/study-store-refactored",
+        "type": "re_export"
+      },
+      {
+        "from": "useFlashcardStore",
+        "to": "./flashcard",
+        "type": "re_export"
+      },
+      {
+        "from": "useCanvasStore",
+        "to": "./canvas",
+        "type": "re_export"
+      }
+    ]
+  },
+  "summary": {
+    "total_count": 38,
+    "god_store_count": 10,
+    "duplicate_domain_count": 9,
+    "workspace_breakdown": {
+      "notes": 2,
+      "ide": 8,
+      "knowledge": 2,
+      "study": 4,
+      "shared": 10,
+      "project": 1
+    },
+    "type_breakdown": {
+      "project_store": 1,
+      "workspace_store": 16,
+      "facade": 8,
+      "slice_only": 13
+    },
+    "average_lines": 182,
+    "total_lines": 6916,
+    "max_lines": 563,
+    "min_lines": 9
+  }
+}

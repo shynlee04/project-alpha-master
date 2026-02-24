@@ -1,0 +1,101 @@
+---
+name: bmad-pre-request-governance
+description: Check governance before any AI request
+when: UserPromptSubmit
+priority: 100
+once: false
+---
+
+# BMAD Pre-Request Governance Hook
+
+> **Platform**: Claude Code
+> **Fires when**: User submits ANY prompt
+> **Purpose**: Check context and governance BEFORE sending to AI
+
+## Execution Steps
+
+### Step 1: Detect Intent
+```bash
+# Parse user message for intent keywords
+if message contains ["correct-course", "fix", "remediate", "god store"]:
+  INTENT="remediation"
+elif message contains ["sprint", "plan", "story", "epic"]:
+  INTENT="planning"
+elif message contains ["implement", "create", "develop"]:
+  INTENT="implementation"
+elif message contains ["agents.md", "constitution", "standard"]:
+  INTENT="governance"
+else:
+  INTENT="general"
+```
+
+### Step 2: Load Governance Documents
+```bash
+# Always load
+Read: bmm-workflow-status.yaml
+Read: AGENTS.md
+Read: _bmad-output/sprint-artifacts/sprint-status.yaml (if exists)
+Read: _bmad-ext/state/LOOP_STATE.yaml (if exists)
+```
+
+### Step 3: Extract Key Values
+```yaml
+from bmm-workflow-status.yaml:
+  current_workflow.story_id → workflow_story_id
+  current_workflow.epic_id → workflow_epic_id
+  current_workflow.status → workflow_status
+
+from AGENTS.md (Quick Reference):
+  Active Epic → agents_epic_id
+  Next Story → agents_story_id
+```
+
+### Step 4: Check Consistency
+```yaml
+conflicts: []
+
+# Story ID check
+if workflow_story_id != agents_story_id:
+  conflicts.append("Story ID: '{workflow_story_id}' vs '{agents_story_id}'")
+
+# Epic ID check
+if workflow_epic_id != agents_epic_id:
+  conflicts.append("Epic ID: '{workflow_epic_id}' vs '{agents_epic_id}'")
+```
+
+### Step 5: Take Action
+
+#### IF remediation intent AND conflicts exist:
+```yaml
+action: "BLOCK_AND_WARN"
+output: |
+  ╔═══════════════════════════════════════════════════════════════╗
+  ║  ⚠️ GOVERNANCE DOCUMENTS OUT OF SYNC                         ║
+  ╠═══════════════════════════════════════════════════════════════╣
+  ║                                                               ║
+  ║  Your request triggers remediation, but documents are         ║
+  ║  inconsistent:                                                ║
+  ║                                                               ║
+  ║  {conflicts}                                                 ║
+  ║                                                               ║
+  ║  Fix before proceeding:                                       ║
+  ║  1. Update bmm-workflow-status.yaml                           ║
+  ║  2. Update AGENTS.md Quick Reference                          ║
+  ║  3. Update sprint-status.yaml                                 ║
+  ║                                                               ║
+  ║  [BLOCKED - Not sent to AI]                                  ║
+  ╚═══════════════════════════════════════════════════════════════╝
+```
+
+#### IF other intent OR no conflicts:
+```yaml
+action: "CONTINUE"
+output: |
+  ℹ️ Governance check: {passed_with_warning OR passed_cleanly}
+  Continuing with your request...
+```
+
+---
+
+**Version**: 1.0.0
+**Created**: 2026-01-11

@@ -1,0 +1,100 @@
+/**
+ * @fileoverview Drag-Drop CSS for PluginPanel
+ * @module presentation/layouts/plugin-dnd.css
+ *
+ * **ARCH-03-04**: Drag-Drop Plugin Reordering
+ *
+ * Provides visual feedback for drag-drop plugin reordering.
+ * Follows 8-bit design system (sharp corners, pixel shadows).
+ *
+ * @epic EPIC-ARCH-03
+ * @story ARCH-03-04
+ * @team Team B
+ * @created 2026-01-23
+ */
+
+/* ===========================================================================
+   Drag Handle Styles
+   =========================================================================== */
+
+.plugin-drag-handle {
+  cursor: grab;
+  padding: 4px 8px;
+  color: #666;
+  transition: color 150ms;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.plugin-drag-handle:hover {
+  color: #000;
+}
+
+.plugin-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* ===========================================================================
+   Dragging State Styles
+   =========================================================================== */
+
+.plugin-panel.dragging {
+  opacity: 0.8;
+  box-shadow: 8px 8px 0 0 rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  pointer-events: none; /* Prevent drop zones from activating on dragged panel */
+}
+
+/* ===========================================================================
+   Drop Zone Styles
+   =========================================================================== */
+
+.plugin-drop-zone {
+  border: 2px dashed transparent;
+  transition: border-color 150ms, background-color 150ms;
+  position: relative;
+}
+
+.plugin-drop-zone.active {
+  border-color: #0066cc;
+  background: rgba(0, 102, 204, 0.1);
+}
+
+/* ===========================================================================
+   Drop Animation
+   =========================================================================== */
+
+.plugin-panel.drop-animation {
+  animation: drop-bounce 200ms ease-out;
+}
+
+@keyframes drop-bounce {
+  0% { transform: scale(0.98); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* ===========================================================================
+   Focus Styles (Keyboard Accessibility)
+   =========================================================================== */
+
+.plugin-panel:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* ===========================================================================
+   Screen Reader Only
+   =========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -80,7 +80,7 @@ When this command is used, execute the following task:
           <action>Display generated content</action>
           <ask> [a] Advanced Elicitation, [c] Continue, [p] Party-Mode, [y] YOLO the rest of this document only. WAIT for response. <if
               response="a">
-              <action>Start the advanced elicitation workflow {project-root}/_bmad/core/tasks/advanced-elicitation.xml</action>
+              <action>Start the advanced elicitation workflow {project-root}/_bmad/core/workflows/advanced-elicitation/workflow.xml</action>
             </if>
             <if
               response="c">

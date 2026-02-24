@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent Navigation Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        canvas: '#09090b',
+                        surface: '#18181b',
+                        depth: '#000000',
+                        primary: '#fafafa',
+                        muted: '#a1a1aa',
+                        action: '#f97316',
+                        structural: '#3f3f46',
+                    },
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    boxShadow: {
+                        pixel: '4px 4px 0px 0px #000',
+                        dialog: '8px 8px 0px 0px #000',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #09090b; color: #fafafa; }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center font-mono text-sm antialiased relative">
+
+    <!-- Blurred Background (Simulation of app behind modal) -->
+    <div class="absolute inset-0 opacity-20 pointer-events-none flex flex-col">
+        <header class="h-12 border-b border-structural"></header>
+        <div class="flex-1 flex">
+            <div class="w-64 border-r border-structural"></div>
+        </div>
+    </div>
+
+    <!-- COMMAND PALETTE MODAL -->
+    <div class="w-[600px] bg-surface border-2 border-structural shadow-dialog flex flex-col relative z-10">
+        
+        <!-- Search Input -->
+        <div class="p-3 border-b-2 border-structural flex items-center gap-3">
+            <span class="text-action font-bold">></span>
+            <input type="text" placeholder="Type a command or search..." class="flex-1 bg-transparent outline-none text-lg text-primary placeholder-structural" autofocus>
+            <div class="flex gap-2">
+                <span class="text-xs bg-depth border border-structural px-1 text-muted">ESC</span>
+            </div>
+        </div>
+
+        <!-- Results List -->
+        <div class="max-h-[400px] overflow-y-auto p-2 space-y-1">
+            
+            <!-- Section: Workspaces -->
+            <div class="px-2 py-1 text-xs text-muted font-bold mt-1 mb-1">WORKSPACES</div>
+            
+            <div class="group flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-action hover:text-black border border-transparent hover:border-black">
+                <div class="flex items-center gap-3">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <span>Switch to IDE</span>
+                </div>
+                <span class="text-xs text-muted group-hover:text-black">G I</span>
+            </div>
+
+            <div class="group flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-action hover:text-black border border-transparent hover:border-black">
+                <div class="flex items-center gap-3">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>Switch to Notes</span>
+                </div>
+                <span class="text-xs text-muted group-hover:text-black">G N</span>
+            </div>
+
+            <!-- Section: Agent Actions -->
+            <div class="px-2 py-1 text-xs text-muted font-bold mt-3 mb-1">AGENT ACTIONS</div>
+            
+            <div class="group flex items-center justify-between px-3 py-2 cursor-pointer bg-depth hover:bg-action hover:text-black border border-structural hover:border-black">
+                <div class="flex items-center gap-3">
+                    <span class="text-action group-hover:text-black font-bold">✨</span>
+                    <span>Create New Feature...</span>
+                </div>
+            </div>
+
+            <div class="group flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-action hover:text-black border border-transparent hover:border-black">
+                <div class="flex items-center gap-3">
+                    <span class="text-action group-hover:text-black">🐛</span>
+                    <span>Fix Current Error</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="p-2 border-t-2 border-structural bg-depth flex gap-4 text-xs text-muted justify-center">
+            <span><span class="text-primary">↑↓</span> to navigate</span>
+            <span><span class="text-primary">↵</span> to select</span>
+        </div>
+
+    </div>
+
+</body>
+</html>

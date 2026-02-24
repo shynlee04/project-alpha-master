@@ -1,0 +1,540 @@
+# Architecture Remediation Module - Priorities
+
+**Version**: 1.1.0
+**Created**: 2026-01-03
+**Updated**: 2026-01-04
+**Purpose**: Categorize all remediation tasks by priority (P0/P1/P2/P3)
+
+## Active Epics Summary
+
+| Epic | Priority | Status | Est. Hours |
+|------|----------|--------|------------|
+| EPIC-53 | P1-HIGH | IN_PROGRESS (1/8) | 14-18h |
+| CC-1 | P0 | BACKLOG | 127h |
+| CP-1 | P0 | BACKLOG | 100h |
+| AC-1 | P0 | BACKLOG | 42h |
+
+## Priority Definitions
+
+### P0: CRITICAL
+**Risk**: Data loss, platform failure, security vulnerability
+**Timeline**: Immediate (within 1-2 weeks)
+**Approval**: Auto-approved (no approval needed)
+
+### P1: HIGH
+**Risk**: Maintainability collapse, user-facing issues, architectural cleanup
+**Timeline**: Short-term (within 3-4 weeks)
+**Approval**: Requires @bmad-bmm-architect approval
+**Examples**: Epic 53 (State Management Consolidation)
+
+### P2: MEDIUM
+**Risk**: Technical debt accumulation, code quality
+**Timeline**: Medium-term (within 5-8 weeks)
+**Approval**: Requires @bmad-bmm-pm approval
+
+### P3: LOW
+**Risk**: Nice to have, code style consistency
+**Timeline**: Long-term (deferred to Phase 4)
+**Approval**: Requires @bmad-core-bmad-master approval
+
+---
+
+## Epic 53: State Management Consolidation (NEW - 2026-01-04)
+
+**Duration**: 14-18 hours
+**Priority**: P1 - HIGH
+**Reference**: ADR-024, SCP-2026-01-04-STATE-CONSOLIDATION
+
+### SMC-001: Consolidate Dexie Database Files (2 hours)
+**Priority**: P1 - HIGH
+**Status**: ✅ DONE (2026-01-04)
+**Risk**: Duplicate database instances can cause data corruption
+**Acceptance Criteria**:
+- Create facade in lib/state/dexie-db.ts
+- Add deprecation warning for development mode
+- Re-export db, getDb, ViaGentDatabase from infrastructure
+- Zero TypeScript errors on modified file
+
+### SMC-002: Move Dexie Helpers to Infrastructure (2-3 hours)
+**Priority**: P1 - HIGH
+**Status**: ⏳ BACKLOG
+**Risk**: Helpers scattered across two locations
+**Acceptance Criteria**:
+- Move dexie-db-helpers/ to infrastructure/persistence
+- Create re-export facade in old location
+- Zero breaking changes
+
+### SMC-003: Merge Knowledge Store Implementations (3-4 hours)
+**Priority**: P1 - HIGH
+**Status**: ⏳ BACKLOG
+**Risk**: Duplicate knowledge stores cause state inconsistency
+**Acceptance Criteria**:
+- Merge lib/state/knowledge with infrastructure/persistence/stores/knowledge
+- Preserve all unique functionality
+- Zero breaking changes
+
+### SMC-004 through SMC-008: (See SCP-2026-01-04)
+**Priority**: P1 - HIGH
+**Status**: ⏳ BACKLOG
+**Reference**: sprint-change-proposal-state-consolidation-2026-01-04.md
+
+---
+
+## Phase 0: Foundation Stabilization (Week 1-2)
+
+**Duration**: 42-48 hours
+**Priority**: P0 - CRITICAL
+
+### TS-001: Fix TypeScript Errors (6-8 hours)
+**Priority**: P0 - CRITICAL
+**Risk**: Compilation blockers prevent development
+**Acceptance Criteria**:
+- Reduce from 1,172 errors to <100 errors
+- Fix all P0 missing imports (TS2304, TS2305)
+- Fix all P0 type mismatches (TS2322, TS2345)
+- Zero new errors introduced
+
+**Story Points**: 13 points
+**Dependencies**: None
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Categorize all errors by type and severity (2 hours)
+2. Fix missing imports (50-100 errors) (2 hours)
+3. Fix type mismatches (50-100 errors) (2 hours)
+4. Validate with `pnpm tsc --noEmit` (1 hour)
+5. Regression test with `pnpm test` (1 hour)
+
+---
+
+### DB-001: Safe IndexedDB Operations (18-22 hours)
+**Priority**: P0 - CRITICAL
+**Risk**: Data loss when quota exceeded
+**Acceptance Criteria**:
+- Add quota management (detect quota exceeded, request upgrade)
+- Handle quota errors gracefully (user notification, recovery actions)
+- Test quota scenarios (simulate quota exceeded)
+- Documentation updated (CLAUDE.md)
+
+**Story Points**: 34 points
+**Dependencies**: None
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Audit IndexedDB usage patterns (3 hours)
+2. Implement quota detection utility (4 hours)
+3. Add quota error handling to all writes (6 hours)
+4. Implement graceful degradation (user notification, recovery) (4 hours)
+5. Write quota simulation tests (3 hours)
+6. Update documentation (2 hours)
+
+---
+
+### UI-001: Extract AgentConfigDialog Hooks (16-20 hours)
+**Priority**: P0 - CRITICAL
+**Risk**: Component size 1,089 lines (9x over 300-line limit)
+**Acceptance Criteria**:
+- Extract hooks (≤120 lines each)
+- Create sub-components (≤200 lines each)
+- Main component ≤300 lines
+- Zero breaking changes (API stable)
+- Test coverage ≥80%
+
+**Story Points**: 31 points
+**Dependencies**: None
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Analyze component complexity (2 hours)
+2. Extract useAgentFormState hook (4 hours)
+3. Extract useAgentConfig hook (3 hours)
+4. Create AgentBasicInfo sub-component (3 hours)
+5. Create AgentProviderConfig sub-component (3 hours)
+6. Create AgentAdvancedSettings sub-component (3 hours)
+7. Refactor main component (2 hours)
+8. Validate functionality preserved (2 hours)
+
+---
+
+## Phase 1: Store Refactoring (Week 3-4)
+
+**Duration**: 100-130 hours
+**Priority**: P0 - CRITICAL
+
+### Epic CC-1: Conversation Consolidation (15 stories, 127 hours)
+**Priority**: P0 - CRITICAL
+**Risk**: God stores (626 lines, 726 lines) cause maintainability collapse
+**Acceptance Criteria**:
+- Refactor 2 god stores into 6 modular slices
+- All slices ≤120 lines
+- Zero circular dependencies
+- Zero breaking changes
+- Test coverage ≥80%
+
+**Epic Points**: 254 points
+**Dependencies**: Phase 0 complete
+**Assignee**: @bmad-bmm-dev
+
+**Stories**:
+1. CC-1.1: Create conversation-metadata-slice (15 points, 4 hours)
+2. CC-1.2: Create thread-management-slice (15 points, 4 hours)
+3. CC-1.3: Create message-crud-slice (15 points, 4 hours)
+4. CC-1.4: Create conversation-utils-slice (15 points, 4 hours)
+5. CC-1.5: Create conversation-validation-slice (15 points, 4 hours)
+6. CC-1.6: Create conversation-events-slice (15 points, 4 hours)
+7. CC-1.7: Create unified conversation store (20 points, 8 hours)
+8. CC-1.8: Data migration (50 points, 15 hours)
+9. CC-1.9: Migrate Study workspace (13 points, 4 hours)
+10. CC-1.10: Migrate Notes workspace (21 points, 6 hours)
+11. CC-1.11: Migrate Knowledge workspace (31 points, 8 hours)
+12. CC-1.12: Migrate Chat components (21 points, 6 hours)
+13. CC-1.13: Migrate IDE workspace (38 points, 11 hours)
+14. CC-1.14: Validation & cleanup (21 points, 6 hours)
+15. CC-1.15: Documentation & retrospective (20 points, 6 hours)
+
+---
+
+### Epic CP-1: Project Consolidation (18 stories, 80-100 hours)
+**Priority**: P0 - CRITICAL
+**Risk**: God stores (450 lines, 509 lines) cause maintainability collapse
+**Acceptance Criteria**:
+- Refactor 2 god stores into 9 modular slices
+- All slices ≤120 lines
+- Zero circular dependencies
+- Zero breaking changes
+- Test coverage ≥80%
+
+**Epic Points**: 200 points
+**Dependencies**: Phase 0 complete
+**Assignee**: @bmad-bmm-dev
+
+**Stories**:
+1. CP-1.1: Create project-crud-slice (12 points, 3 hours)
+2. CP-1.2: Create project-workspace-bindings-slice (10 points, 3 hours)
+3. CP-1.3: Create project-permissions-slice (11 points, 3 hours)
+4. CP-1.4: Create project-layout-slice (8 points, 2 hours)
+5. CP-1.5: Create project-utils-slice (9 points, 2 hours)
+6. CP-1.6: Create unified project store (20 points, 6 hours)
+7. CP-1.7: Create snapshot-metadata-slice (10 points, 3 hours)
+8. CP-1.8: Create snapshot-cache-slice (11 points, 3 hours)
+9. CP-1.9: Create snapshot-bulk-ops-slice (9 points, 2 hours)
+10. CP-1.10: Create snapshot-quota-slice (8 points, 2 hours)
+11. CP-1.11: Create unified snapshot store (20 points, 6 hours)
+12. CP-1.12: Create Hub routing (8 points, 2 hours)
+13. CP-1.13: Migrate Hub components (13 points, 3 hours)
+14. CP-1.14: Migrate IDE components (21 points, 6 hours)
+15. CP-1.15: Migrate file sync services (28 points, 8 hours)
+16. CP-1.16: Validation & cleanup (21 points, 6 hours)
+17. CP-1.17: Documentation & retrospective (20 points, 6 hours)
+
+---
+
+### Epic AC-1: Agent Configuration Consolidation (8 stories, 42 hours)
+**Priority**: P0 - CRITICAL
+**Risk**: God store (430 lines) + circular dependencies
+**Acceptance Criteria**:
+- Refactor agents-store into 5 modular slices
+- All slices ≤120 lines
+- Eliminate circular dependencies (agents-store ↔ provider-store)
+- Zero breaking changes
+- Test coverage ≥80%
+
+**Epic Points**: 84 points
+**Dependencies**: Phase 0 complete
+**Assignee**: @bmad-bmm-dev
+
+**Stories**:
+1. AC-1.1: Create agent-crud-slice (12 points, 3 hours)
+2. AC-1.2: Create agent-workspace-bindings-slice (10 points, 2 hours)
+3. AC-1.3: Create agent-validation-slice (10 points, 2 hours)
+4. AC-1.4: Create agent-events-slice (10 points, 2 hours)
+5. AC-1.5: Create agent-utils-slice (10 points, 2 hours)
+6. AC-1.6: Create unified agent store (20 points, 6 hours)
+7. AC-1.7: Migrate consumers (21 points, 6 hours)
+8. AC-1.8: Documentation & retrospective (10 points, 3 hours)
+
+---
+
+## Phase 2: Infrastructure Hardening (Week 5-6)
+
+**Duration**: 80-100 hours
+**Priority**: P1 - HIGH
+
+### IH-001: IndexedDB Quota Management (20-25 hours)
+**Priority**: P1 - HIGH
+**Risk**: Silent data loss when quota exceeded
+**Acceptance Criteria**:
+- Implement proactive quota monitoring
+- Request quota upgrade before data loss
+- Graceful degradation when quota exceeded
+- User notification and recovery actions
+
+**Story Points**: 42 points
+**Dependencies**: DB-001 complete
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Implement quota monitoring service (8 hours)
+2. Add quota upgrade request flow (6 hours)
+3. Implement graceful degradation (5 hours)
+4. Create user notification UI (4 hours)
+5. Write integration tests (4 hours)
+6. Documentation (3 hours)
+
+---
+
+### IH-002: Error Boundary Coverage (15-20 hours)
+**Priority**: P1 - HIGH
+**Risk**: Unhandled errors cause app crashes
+**Acceptance Criteria**:
+- Add error boundaries to all critical paths
+- Implement error state UI
+- Add error logging (Sentry)
+- Test error scenarios
+
+**Story Points**: 35 points
+**Dependencies**: None
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Audit error boundary coverage (3 hours)
+2. Add error boundaries to workspace routes (6 hours)
+3. Add error boundaries to agent components (5 hours)
+4. Implement error state UI (3 hours)
+5. Configure error logging (3 hours)
+6. Write error scenario tests (4 hours)
+
+---
+
+### IH-003: Silent Failure Elimination (25-30 hours)
+**Priority**: P1 - HIGH
+**Risk**: 23 instances of console.error + return null
+**Acceptance Criteria**:
+- Replace all silent failures with explicit error handling
+- Add user-facing error messages
+- Implement recovery actions
+- Test error scenarios
+
+**Story Points**: 55 points
+**Dependencies**: IH-002 complete
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Audit silent failure instances (4 hours)
+2. Categorize by severity (P0/P1/P2) (3 hours)
+3. Fix P0 silent failures (8 hours)
+4. Fix P1 silent failures (8 hours)
+5. Fix P2 silent failures (6 hours)
+6. Test error handling (4 hours)
+7. Documentation (2 hours)
+
+---
+
+### IH-004: Infrastructure Resilience (20-25 hours)
+**Priority**: P1 - HIGH
+**Risk**: Network failures, service unavailability
+**Acceptance Criteria**:
+- Implement retry logic with exponential backoff
+- Add circuit breaker pattern
+- Implement graceful degradation
+- Test failure scenarios
+
+**Story Points**: 42 points
+**Dependencies**: None
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Audit external service dependencies (3 hours)
+2. Implement retry logic (6 hours)
+3. Add circuit breaker (5 hours)
+4. Implement graceful degradation (5 hours)
+5. Test failure scenarios (6 hours)
+6. Documentation (2 hours)
+
+---
+
+## Phase 3: Architecture Transformation (Week 7-8)
+
+**Duration**: 60-80 hours
+**Priority**: P1 - HIGH
+
+### AT-001: Four-Layer Architecture (20-25 hours)
+**Priority**: P1 - HIGH
+**Risk**: Tight coupling, unclear boundaries
+**Acceptance Criteria**:
+- Define four layers: Core (Domain) → Domain (Services) → Infrastructure (Persistence) → Presentation (UI)
+- Enforce unidirectional dependencies
+- Document layer boundaries
+- Migrate 3 modules to new architecture
+
+**Story Points**: 42 points
+**Dependencies**: Phase 1 complete
+**Assignee**: @bmad-bmm-architect
+
+**Tasks**:
+1. Define four-layer architecture (4 hours)
+2. Document layer boundaries (3 hours)
+3. Create dependency rules (3 hours)
+4. Migrate agent module to new architecture (6 hours)
+5. Migrate RAG module to new architecture (6 hours)
+6. Migrate knowledge module to new architecture (6 hours)
+7. Validation (4 hours)
+
+---
+
+### AT-002: Domain Service Extraction (15-20 hours)
+**Priority**: P1 - HIGH
+**Risk**: Business logic scattered across components
+**Acceptance Criteria**:
+- Extract domain services (pure functions)
+- Define service interfaces
+- Implement dependency injection
+- Test services independently
+
+**Story Points**: 35 points
+**Dependencies**: AT-001 complete
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Audit business logic locations (3 hours)
+2. Extract agent-workspace service (5 hours)
+3. Extract RAG-processing service (5 hours)
+4. Extract knowledge-graph service (5 hours)
+5. Write service tests (4 hours)
+6. Documentation (3 hours)
+
+---
+
+### AT-003: Event-Driven Orchestration (15-20 hours)
+**Priority**: P1 - HIGH
+**Risk**: Circular dependencies between stores
+**Acceptance Criteria**:
+- Implement event bus for cross-store communication
+- Eliminate circular dependencies
+- Document event flow
+- Test event propagation
+
+**Story Points**: 35 points
+**Dependencies**: AT-001 complete
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Design event architecture (4 hours)
+2. Implement event bus (5 hours)
+3. Migrate stores to use events (6 hours)
+4. Write event tests (4 hours)
+5. Documentation (2 hours)
+
+---
+
+### AT-004: API Boundary Consolidation (10-15 hours)
+**Priority**: P1 - HIGH
+**Risk**: Inconsistent API interfaces
+**Acceptance Criteria**:
+- Define API boundaries
+- Implement facade pattern
+- Document API contracts
+- Test API compliance
+
+**Story Points**: 25 points
+**Dependencies**: AT-001 complete
+**Assignee**: @bmad-bmm-dev
+
+**Tasks**:
+1. Audit API boundaries (3 hours)
+2. Define API contracts (3 hours)
+3. Implement facades (5 hours)
+4. Write API tests (3 hours)
+5. Documentation (2 hours)
+
+---
+
+## Phase 4: Quality Polish (Deferred)
+
+**Duration**: 40-60 hours
+**Priority**: P2 - MEDIUM
+
+### QP-001: Component Size Normalization (20-30 hours)
+**Priority**: P2 - MEDIUM
+**Risk**: 45 components >300 lines
+**Acceptance Criteria**:
+- Reduce all components to ≤300 lines
+- Extract hooks and sub-components
+- Maintain API compatibility
+- Test coverage ≥80%
+
+**Story Points**: 50 points
+**Dependencies**: Phase 3 complete
+**Assignee**: @bmad-bmm-dev
+
+---
+
+### QP-002: Test Coverage Improvement (20-30 hours)
+**Priority**: P2 - MEDIUM
+**Risk**: Current coverage 16.6%, target 80%
+**Acceptance Criteria**:
+- Achieve ≥80% overall coverage
+- Write unit tests for business logic
+- Write integration tests for cross-boundary operations
+- Write E2E tests for critical journeys
+
+**Story Points**: 50 points
+**Dependencies**: Phase 3 complete
+**Assignee**: @bmad-bmm-tea
+
+---
+
+## Priority Matrix
+
+### High Impact, Low Effort (DO FIRST)
+1. TS-001: Fix TypeScript Errors (6-8 hours)
+2. IH-002: Error Boundary Coverage (15-20 hours)
+3. AT-004: API Boundary Consolidation (10-15 hours)
+
+### High Impact, High Effort (DO SECOND)
+1. DB-001: Safe IndexedDB Operations (18-22 hours)
+2. UI-001: Extract AgentConfigDialog Hooks (16-20 hours)
+3. Epic CC-1: Conversation Consolidation (127 hours)
+4. Epic CP-1: Project Consolidation (100 hours)
+5. Epic AC-1: Agent Configuration Consolidation (42 hours)
+
+### Low Impact, Low Effort (DO WHEN HAVE TIME)
+1. QP-001: Component Size Normalization (20-30 hours)
+2. QP-002: Test Coverage Improvement (20-30 hours)
+
+### Low Impact, High Effort (DEFER)
+1. IH-004: Infrastructure Resilience (20-25 hours)
+2. AT-001: Four-Layer Architecture (20-25 hours)
+
+---
+
+## Usage
+
+### Prioritization Process
+
+1. **Assess Impact**: What happens if we don't do this? (data loss, user impact, technical debt)
+2. **Estimate Effort**: How long will this take? (hours, story points)
+3. **Assign Priority**: Use priority matrix (P0/P1/P2/P3)
+4. **Get Approval**: P1 requires @bmad-bmm-architect approval, P2 requires @bmad-bmm-pm approval
+5. **Schedule**: Add to sprint backlog
+
+### Re-Prioritization
+
+**Triggers**:
+- New critical issue discovered (e.g., security vulnerability)
+- Health score decreases (regression detected)
+- User escalations (critical bug reports)
+- Resource constraints (team availability)
+
+**Process**:
+1. Trigger `-correct-course` workflow
+2. Re-assess impact and effort
+3. Update priorities
+4. Get approval for changes
+5. Communicate to team
+
+---
+
+**Maintainer**: @bmad-bmm-pm
+**Last Updated**: 2026-01-03
+**Status**: ACTIVE - GOVERNS REMEDIATION SEQUENCE

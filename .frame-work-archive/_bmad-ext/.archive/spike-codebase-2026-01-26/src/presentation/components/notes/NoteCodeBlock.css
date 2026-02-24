@@ -1,0 +1,219 @@
+/**
+ * @fileoverview Note Code Block Styles
+ * @module presentation/components/notes/NoteCodeBlock.css
+ * @governance EPIC-40 NC-01
+ *
+ * 8-bit dark theme styling for NoteCodeBlock
+ * Matches CodeFileBlock styling for consistency
+ */
+
+/* Container */
+.ncb-container {
+  margin: 12px 0;
+  border: 1px solid var(--color-border, #262626);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--color-surface, #0a0a0a);
+}
+
+/* Header */
+.ncb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--color-surface-elevated, #171717);
+  border-bottom: 1px solid var(--color-border, #262626);
+  min-height: 32px;
+}
+
+.ncb-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ncb-icon {
+  color: var(--color-text-secondary, #a3a3a3);
+}
+
+.ncb-language {
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  color: var(--color-text-primary, #e5e5e5);
+  text-transform: uppercase;
+}
+
+.ncb-line-count {
+  font-size: 9px;
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  color: var(--color-text-secondary, #a3a3a3);
+  background: var(--color-surface, #0a0a0a);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.ncb-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ncb-action-btn {
+  padding: 4px 6px;
+  color: var(--color-text-secondary, #a3a3a3);
+  background: transparent;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ncb-action-btn:hover {
+  color: var(--color-text-primary, #e5e5e5);
+  background: var(--color-surface-hover, #262626);
+}
+
+.ncb-check {
+  color: #22c55e;
+}
+
+/* Content */
+.ncb-content {
+  display: flex;
+  overflow-x: auto;
+  background: var(--color-surface, #0a0a0a);
+  transition: max-height 200ms ease;
+}
+
+.ncb-content--collapsed {
+  max-height: 300px;
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
+.ncb-line-numbers {
+  flex-shrink: 0;
+  padding: 12px 0 12px 12px;
+  background: var(--color-surface-elevated, #171717);
+  border-right: 1px solid var(--color-border, #262626);
+  user-select: none;
+  text-align: right;
+  min-width: 40px;
+}
+
+.ncb-line-number {
+  font-family: var(--font-family-mono, 'JetBrains Mono', 'Fira Code', monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-tertiary, #737373);
+  padding-right: 8px;
+  min-height: 1.5em;
+}
+
+.ncb-code {
+  flex: 1;
+  padding: 12px;
+  overflow: auto;
+}
+
+.ncb-code code {
+  display: block;
+  font-family: var(--font-family-mono, 'JetBrains Mono', 'Fira Code', monospace);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-primary, #e5e5e5);
+  white-space: pre;
+}
+
+.ncb-line {
+  display: flex;
+  min-height: 1.5em;
+}
+
+/* Syntax highlighting tokens - matches CodeFileBlock */
+.ncb-token-string {
+  color: #86efac;
+}
+
+.ncb-token-comment {
+  color: #737373;
+  font-style: italic;
+}
+
+.ncb-token-number {
+  color: #fbbf24;
+}
+
+.ncb-token-keyword {
+  color: #c084fc;
+  font-weight: 500;
+}
+
+.ncb-token-type {
+  color: #fbbf24;
+}
+
+/* Expand hint */
+.ncb-expand-hint {
+  padding: 8px;
+  background: var(--color-surface-elevated, #171717);
+  border-top: 1px solid var(--color-border, #262626);
+  text-align: center;
+}
+
+.ncb-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin: 0 auto;
+  font-size: 11px;
+  font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
+  color: var(--color-text-secondary, #a3a3a3);
+  background: var(--color-surface, #0a0a0a);
+  border: 1px solid var(--color-border, #262626);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.ncb-expand-btn:hover {
+  color: var(--color-text-primary, #e5e5e5);
+  background: var(--color-surface-hover, #262626);
+  border-color: var(--color-text-secondary, #a3a3a3);
+}
+
+/* Performance hint for very large blocks */
+.ncb-container[data-rows="500"] .ncb-code {
+  /* Enable GPU acceleration for large renders */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .ncb-code {
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  .ncb-header {
+    padding: 6px 8px;
+  }
+
+  .ncb-line-number {
+    font-size: 11px;
+    padding-right: 6px;
+    min-width: 32px;
+  }
+
+  .ncb-language {
+    font-size: 10px;
+  }
+}

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Via-Gent | Knowledge - Tree Grid</title>
+    <link rel="stylesheet" href="../../../styles/global.css">
+    <style>
+        /* Tablet Knowledge Layout - Stack 2 */
+        .app-container {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--knowledge-bg);
+        }
+
+        /* Compact Header - 44px */
+        .knowledge-header {
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-3);
+            border-bottom: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .menu-toggle {
+            padding: var(--space-2);
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .header-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-bold);
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* Activity Bar - 48px */
+        .activity-bar {
+            width: 48px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--space-2) 0;
+            border-right: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+        }
+
+        .activity-item {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            border-radius: var(--radius-none);
+            cursor: pointer;
+            margin-bottom: var(--space-1);
+        }
+
+        .activity-item.active {
+            color: var(--action);
+            border-left: 2px solid var(--action);
+            margin-left: -2px;
+        }
+
+        .activity-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .activity-spacer {
+            flex: 1;
+        }
+
+        /* Sidebar - 180px */
+        .sidebar {
+            width: 180px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            background-color: var(--surface);
+            border-right: var(--border-width) solid var(--border-color);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-2) var(--space-3);
+            border-bottom: var(--border-width) solid var(--border-color);
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            color: var(--secondary);
+            text-transform: uppercase;
+        }
+
+        .tree-content {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding: var(--space-1);
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-1) var(--space-2);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            cursor: pointer;
+            border-radius: var(--radius-none);
+        }
+
+        .tree-item:hover {
+            background-color: var(--surface-hover);
+        }
+
+        .tree-item.selected {
+            color: var(--primary);
+            background-color: var(--surface-active);
+        }
+
+        .tree-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .tree-indent {
+            padding-left: var(--space-4);
+        }
+
+        /* Grid Content Area */
+        .grid-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .grid-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3);
+            border-bottom: var(--border-width) solid var(--border-color);
+            background-color: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .grid-tabs {
+            display: flex;
+            gap: var(--space-1);
+        }
+
+        .grid-tab {
+            padding: var(--space-1) var(--space-3);
+            font-size: var(--text-sm);
+            color: var(--secondary);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .grid-tab.active {
+            color: var(--action);
+            border-bottom-color: var(--action);
+        }
+
+        .grid-actions {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        /* Sources Grid */
+        .sources-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: var(--space-3);
+            padding: var(--space-4);
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .source-card {
+            display: flex;
+            flex-direction: column;
+            background-color: var(--surface);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+            box-shadow: var(--shadow-pixel);
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .source-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: var(--shadow-pixel-lg);
+            border-color: var(--action);
+        }
+
+        .source-preview {
+            height: 100px;
+            background-color: var(--canvas);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: var(--border-width) solid var(--border-color);
+        }
+
+        .source-preview svg {
+            width: 40px;
+            height: 40px;
+            color: var(--muted);
+        }
+
+        .source-info {
+            padding: var(--space-3);
+        }
+
+        .source-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .source-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--muted);
+        }
+
+        .source-type {
+            padding: 2px 6px;
+            background-color: var(--canvas);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: var(--radius-none);
+        }
+
+        /* Bottom Navigation - 56px */
+        .bottom-nav {
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            border-top: var(--border-width) solid var(--border-color);
+            flex-shrink: 0;
+            background-color: var(--surface);
+            padding: 0 var(--space-1);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-0-5);
+            padding: var(--space-1);
+            min-height: 44px;
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--action);
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+        }
+
+        @media (max-width: 1024px) and (min-width: 768px) {
+            .sidebar {
+                width: 160px;
+            }
+            .sources-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Via-Gent Tablet Wireframe
+    Workspace: Knowledge
+    Stack: 2 interfaces (Tree + Sources Grid)
+    Device: Tablet (768px-1024px)
+    Language: en
+    -->
+    <div class="app-container">
+        <!-- Compact Header - 44px -->
+        <header class="knowledge-header">
+            <div class="header-left">
+                <button class="menu-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                </button>
+                <span class="header-title">Knowledge Base</span>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-ghost btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
+                    Add Source
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Activity Bar - 48px -->
+            <aside class="activity-bar">
+                <button class="activity-item active" title="Collections">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </button>
+                <button class="activity-item" title="Sources">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <path d="M14 2v6h6"/>
+                    </svg>
+                </button>
+                <button class="activity-item" title="Chat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </button>
+                <div class="activity-spacer"></div>
+                <button class="activity-item" title="Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0"/>
+                    </svg>
+                </button>
+            </aside>
+
+            <!-- Sidebar - 180px -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <span>Collections</span>
+                </div>
+                <div class="tree-content">
+                    <div class="tree-item" style="color: var(--primary); font-weight: var(--font-semibold);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        All Sources
+                    </div>
+                    <div class="tree-indent">
+                        <div class="tree-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            Documentation
+                        </div>
+                        <div class="tree-item selected">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            Tutorials
+                        </div>
+                        <div class="tree-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            API Reference
+                        </div>
+                        <div class="tree-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            Blog Posts
+                        </div>
+                        <div class="tree-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            Videos
+                        </div>
+                    </div>
+                    <div class="tree-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        Archived
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Grid Content Area -->
+            <div class="grid-content">
+                <div class="grid-header">
+                    <div class="grid-tabs">
+                        <button class="grid-tab active">Tutorials</button>
+                        <button class="grid-tab">All Sources</button>
+                        <button class="grid-tab">Recent</button>
+                    </div>
+                    <div class="grid-actions">
+                        <span style="font-size: var(--text-sm); color: var(--muted);">12 sources</span>
+                    </div>
+                </div>
+
+                <div class="sources-grid">
+                    <!-- Source Card 1 -->
+                    <div class="source-card">
+                        <div class="source-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <path d="M14 2v6h6"/>
+                            </svg>
+                        </div>
+                        <div class="source-info">
+                            <div class="source-title">React Getting Started</div>
+                            <div class="source-meta">
+                                <span class="source-type">Docs</span>
+                                <span>5 min read</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 2 -->
+                    <div class="source-card">
+                        <div class="source-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <path d="M14 2v6h6"/>
+                            </svg>
+                        </div>
+                        <div class="source-info">
+                            <div class="source-title">TypeScript Handbook</div>
+                            <div class="source-meta">
+                                <span class="source-type">Docs</span>
+                                <span>15 min read</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 3 -->
+                    <div class="source-card">
+                        <div class="source-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div class="source-info">
+                            <div class="source-title">CSS Grid Tutorial</div>
+                            <div class="source-meta">
+                                <span class="source-type">Article</span>
+                                <span>8 min read</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 4 -->
+                    <div class="source-card">
+                        <div class="source-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="23 7 16 12 23 17 23 7"/>
+                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                        <div class="source-info">
+                            <div class="source-title">Vite Crash Course</div>
+                            <div class="source-meta">
+                                <span class="source-type">Video</span>
+                                <span>20 min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 5 -->
+                    <div class="source-card">
+                        <div class="source-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <path d="M14 2v6h6"/>
+                            </svg>
+                        </div>
+                        <div class="source-info">
+                            <div class="source-title">State Management Guide</div>
+                            <div class="source-meta">
+                                <span class="source-type">Docs</span>
+                                <span>10 min read</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source Card 6 -->
+                    <div class="source-card">
+                        <div class="source-preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div class="source-info">
+                            <div class="source-title">Zustand Patterns</div>
+                            <div class="source-meta">
+                                <span class="source-type">Article</span>
+                                <span>7 min read</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation - 56px -->
+        <nav class="bottom-nav">
+            <button class="nav-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span class="nav-label">Collections</span>
+            </button>
+            <button class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                </svg>
+                <span class="nav-label">Sources</span>
+            </button>
+            <button class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span class="nav-label">Chat</span>
+            </button>
+            <button class="nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+</body>
+</html>

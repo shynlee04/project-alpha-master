@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Cache
+.cache/
+.turbo/
+.vite/
+
+# BMAD
+_bmad/
+_bmad-output/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Config files
+*.config.js
+*.config.ts
+
+# Package manager
+.pnpm-store/

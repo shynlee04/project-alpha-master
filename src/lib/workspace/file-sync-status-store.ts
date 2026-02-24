@@ -1,90 +1,97 @@
-import { Derived, Store } from '@tanstack/store'
+/**
+ * @fileoverview DEPRECATED - File Sync Status Store stub
+ * @deprecated Use sync status from FileService instead
+ */
 
-export type FileSyncState = 'synced' | 'pending' | 'error'
+import { create } from 'zustand';
 
+/** @deprecated Use 'synced' | 'syncing' | 'error' | 'pending' */
+export type FileSyncState = 'synced' | 'syncing' | 'error' | 'pending';
+
+/** @deprecated */
 export interface FileSyncStatus {
-  state: FileSyncState
-  updatedAt: number
-  errorMessage?: string
-  errorStack?: string
+  path: string;
+  status: FileSyncState;
+  lastSynced?: Date;
 }
 
+/** @deprecated */
 export interface FileSyncCounts {
-  synced: number
-  pending: number
-  error: number
-  total: number
+  total: number;
+  synced: number;
+  syncing: number;
+  error: number;
+  pending: number;
 }
 
-export type FileSyncStatusMap = Map<string, FileSyncStatus>
+/** @deprecated */
+export interface SyncProgress {
+  current: number;
+  total: number;
+  percentage: number;
+}
 
-export const fileSyncStatusStore = new Store<FileSyncStatusMap>(new Map())
+/** @deprecated */
+export interface FileSyncStatusStore {
+  statuses: Map<string, FileSyncStatus>;
+  getStatus: (path: string) => FileSyncStatus | undefined;
+  setStatus: (path: string, status: FileSyncStatus) => void;
+  clearStatus: (path: string) => void;
+}
 
-export const fileSyncCountsStore = new Derived<FileSyncCounts>({
-  deps: [fileSyncStatusStore],
-  fn: ({ currDepVals }) => {
-    const map = currDepVals[0] as FileSyncStatusMap
-    let synced = 0
-    let pending = 0
-    let error = 0
-
-    for (const status of map.values()) {
-      if (status.state === 'synced') synced += 1
-      else if (status.state === 'pending') pending += 1
-      else error += 1
-    }
-
-    return { synced, pending, error, total: map.size }
+/** @deprecated Use FileService sync status */
+export const useFileSyncStatusStore = create<FileSyncStatusStore>((set, get) => ({
+  statuses: new Map(),
+  getStatus: (path: string) => get().statuses.get(path),
+  setStatus: (path: string, status: FileSyncStatus) => {
+    set((state) => {
+      const newStatuses = new Map(state.statuses);
+      newStatuses.set(path, status);
+      return { statuses: newStatuses };
+    });
   },
-})
+  clearStatus: (path: string) => {
+    set((state) => {
+      const newStatuses = new Map(state.statuses);
+      newStatuses.delete(path);
+      return { statuses: newStatuses };
+    });
+  },
+}));
 
-fileSyncCountsStore.mount()
+/** @deprecated */
+export const fileSyncStatusStore = useFileSyncStatusStore;
 
+/** @deprecated */
+export const fileSyncCountsStore = create(() => ({
+  total: 0,
+  synced: 0,
+  syncing: 0,
+  error: 0,
+  pending: 0,
+}));
+
+/** @deprecated Use FileService */
 export function setFileSyncPending(path: string): void {
-  if (!path) return
-  const now = Date.now()
-  fileSyncStatusStore.setState((prev) => {
-    const next = new Map(prev)
-    next.set(path, { state: 'pending', updatedAt: now })
-    return next
-  })
+  useFileSyncStatusStore.getState().setStatus(path, { path, status: 'pending' });
 }
 
+/** @deprecated Use FileService */
 export function setFileSyncSynced(path: string): void {
-  if (!path) return
-  const now = Date.now()
-  fileSyncStatusStore.setState((prev) => {
-    const next = new Map(prev)
-    next.set(path, { state: 'synced', updatedAt: now })
-    return next
-  })
+  useFileSyncStatusStore.getState().setStatus(path, { path, status: 'synced', lastSynced: new Date() });
 }
 
-export function setFileSyncError(path: string, error: Error): void {
-  if (!path) return
-  const now = Date.now()
-  fileSyncStatusStore.setState((prev) => {
-    const next = new Map(prev)
-    next.set(path, {
-      state: 'error',
-      updatedAt: now,
-      errorMessage: error.message,
-      errorStack: error.stack,
-    })
-    return next
-  })
+/** @deprecated Use FileService */
+export function setFileSyncError(path: string): void {
+  useFileSyncStatusStore.getState().setStatus(path, { path, status: 'error' });
 }
 
+/** @deprecated Use FileService */
 export function clearFileSyncStatus(path: string): void {
-  if (!path) return
-  fileSyncStatusStore.setState((prev) => {
-    if (!prev.has(path)) return prev
-    const next = new Map(prev)
-    next.delete(path)
-    return next
-  })
+  useFileSyncStatusStore.getState().clearStatus(path);
 }
 
+/** @deprecated Use FileService */
 export function clearAllFileSyncStatuses(): void {
-  fileSyncStatusStore.setState(() => new Map())
+  useFileSyncStatusStore.setState({ statuses: new Map() });
 }

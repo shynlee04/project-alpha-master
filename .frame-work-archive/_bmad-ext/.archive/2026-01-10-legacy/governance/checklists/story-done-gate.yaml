@@ -1,0 +1,36 @@
+id: "STORY-DONE-GATE"
+version: "1.0.0"
+triggers:
+  - workflow: "code-review"
+  - event: "story_completion_claim"
+
+checks:
+  - id: "SDG-001"
+    name: "Code changes exist"
+    severity: "HIGH"
+    validation: "git diff --name-only HEAD~5 | grep -q src/"
+    action_on_fail: "No code changes detected - story may not be complete"
+    
+  - id: "SDG-002"
+    name: "TypeScript passes"
+    severity: "CRITICAL"
+    validation: "pnpm tsc --noEmit"
+    action_on_fail: "TypeScript errors exist - fix before marking done"
+    
+  - id: "SDG-003"
+    name: "Code review completed"
+    severity: "HIGH"
+    validation: "file_contains({story_id}.md, code_review: PASSED)"
+    action_on_fail: "Run code-review workflow first"
+    
+  - id: "SDG-004"
+    name: "Tests pass"
+    severity: "HIGH"
+    validation: "pnpm vitest run --reporter=json | grep success:true"
+    action_on_fail: "Unit tests failing - fix before completion"
+    
+  - id: "SDG-005"
+    name: "Story file updated"
+    severity: "MEDIUM"
+    validation: "file_contains({story_id}.md, status: DONE)"
+    action_on_fail: "Update story status to DONE in story file"

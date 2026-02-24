@@ -1,0 +1,780 @@
+{
+  "executive_summary": {
+    "total_issues": 150,
+    "critical": 12,
+    "high": 38,
+    "medium": 65,
+    "low": 35,
+    "estimated_effort_weeks": 8,
+    "pr_count": 24,
+    "source_cycles": {
+      "cycle1_architecture": {
+        "bounded_contexts": 8,
+        "god_modules": 8,
+        "duplication_zones": 8,
+        "critical_findings": [
+          "Four separate sync implementations (lib/sync/, lib/filesync/, lib/filesystem/sync-manager/, infrastructure/sync/)",
+          "Duplicate entity definitions in core/entities/ and domain/entities/",
+          "lib/ directory contains massive duplication of infrastructure/ layer",
+          "Provider logic split across lib/agent/providers/, domain/services/, and application/services/"
+        ]
+      },
+      "cycle2_critical_paths": {
+        "workflows_analyzed": 3,
+        "total_steps": 43,
+        "failure_points": 18,
+        "key_workflows": ["sync_notes", "run_tool", "workspace_switch"]
+      },
+      "cycle3_invariants": {
+        "invariants": 17,
+        "race_conditions": 6,
+        "non_idempotent_writes": 4,
+        "missing_rollback_paths": 6,
+        "security_findings": {
+          "total": 47,
+          "critical": 6,
+          "high": 12,
+          "medium": 18,
+          "low": 11
+        },
+        "performance_findings": {
+          "total": 37,
+          "high": 4,
+          "medium": 23,
+          "low": 10
+        }
+      }
+    }
+  },
+  "phase_1_immediate": {
+    "duration_weeks": 1,
+    "prs": [
+      {
+        "pr_number": 1,
+        "title": "Remove hardcoded API keys",
+        "description": "Remove hardcoded Gemini API keys from source code",
+        "files_removed": [
+          "src/lib/init/seed-workspace-permissions.ts",
+          "src/lib/agent/providers/agent-validation-service.ts"
+        ],
+        "risk": "low",
+        "tests_added": 0,
+        "severity": "critical"
+      },
+      {
+        "pr_number": 2,
+        "title": "Replace eval() and new Function() calls",
+        "description": "Replace dynamic code execution with safer alternatives",
+        "files_modified": [
+          "src/lib/plugins/plugin-manager.ts",
+          "src/lib/scheduler/task-scheduler.ts",
+          "src/lib/knowledge/pdf-parser.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "critical"
+      },
+      {
+        "pr_number": 3,
+        "title": "Add error isolation to event bus",
+        "description": "Wrap event listener calls in try-catch to prevent one throwing listener from crashing the bus",
+        "files_modified": [
+          "src/lib/events/cross-workspace-event-bus.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 1,
+        "severity": "high"
+      },
+      {
+        "pr_number": 4,
+        "title": "Fix non-idempotent workspace switch",
+        "description": "Add early return in setCurrentWorkspace if value unchanged",
+        "files_modified": [
+          "src/infrastructure/persistence/stores/workspace/workspace-store.ts"
+        ],
+        "risk": "low",
+        "tests_added": 1,
+        "severity": "medium"
+      }
+    ],
+    "deletion_targets": [
+      {
+        "path": "src/lib/init/seed-workspace-permissions.ts",
+        "reason": "Contains hardcoded API key - critical security issue"
+      },
+      {
+        "path": "src/lib/agent/providers/agent-validation-service.ts",
+        "reason": "Contains hardcoded API key - critical security issue"
+      }
+    ]
+  },
+  "phase_2_consolidation": {
+    "duration_weeks": 2,
+    "prs": [
+      {
+        "pr_number": 5,
+        "title": "Consolidate sync implementations",
+        "description": "Move all sync logic to infrastructure/sync/, remove lib/sync/, lib/filesync/, lib/filesystem/sync-manager/",
+        "files_moved": [
+          {
+            "from": "lib/sync/",
+            "to": "infrastructure/sync/"
+          },
+          {
+            "from": "lib/filesync/",
+            "to": "infrastructure/sync/workspace-services/"
+          }
+        ],
+        "files_removed": [
+          "lib/sync/",
+          "lib/filesync/",
+          "lib/filesystem/sync-manager/"
+        ],
+        "risk": "high",
+        "tests_added": 5,
+        "severity": "critical",
+        "dependency_order": 1
+      },
+      {
+        "pr_number": 6,
+        "title": "Consolidate entity definitions",
+        "description": "Move core/entities/ to domain/entities/, remove duplicates",
+        "files_moved": [
+          {
+            "from": "core/entities/Project.ts",
+            "to": "domain/entities/project.ts"
+          },
+          {
+            "from": "core/entities/Workspace.ts",
+            "to": "domain/entities/workspace.ts"
+          },
+          {
+            "from": "core/entities/Agent.ts",
+            "to": "domain/entities/agent.ts"
+          }
+        ],
+        "files_removed": [
+          "core/entities/Project.ts",
+          "core/entities/Workspace.ts",
+          "core/entities/Agent.ts"
+        ],
+        "risk": "high",
+        "tests_added": 3,
+        "severity": "high",
+        "dependency_order": 2
+      },
+      {
+        "pr_number": 7,
+        "title": "Consolidate provider logic",
+        "description": "Move lib/agent/providers/ to domain/services/, remove duplicates",
+        "files_moved": [
+          {
+            "from": "lib/agent/providers/model-registry.ts",
+            "to": "domain/services/model-registry.ts"
+          },
+          {
+            "from": "lib/agent/providers/provider-adapter.ts",
+            "to": "domain/services/provider-adapter.ts"
+          }
+        ],
+        "files_removed": [
+          "lib/agent/providers/"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "high",
+        "dependency_order": 3
+      },
+      {
+        "pr_number": 8,
+        "title": "Migrate lib/notes/ to infrastructure/persistence/stores/notes/",
+        "description": "Consolidate note store implementations",
+        "files_moved": [
+          {
+            "from": "lib/notes/note-store.ts",
+            "to": "infrastructure/persistence/stores/notes/note-store.ts"
+          },
+          {
+            "from": "lib/notes/note-store-refactored.ts",
+            "to": "infrastructure/persistence/stores/notes/note-store-refactored.ts"
+          }
+        ],
+        "files_removed": [
+          "lib/notes/"
+        ],
+        "risk": "high",
+        "tests_added": 3,
+        "severity": "high",
+        "dependency_order": 4
+      },
+      {
+        "pr_number": 9,
+        "title": "Migrate lib/knowledge/ to infrastructure/persistence/stores/knowledge/",
+        "description": "Consolidate knowledge store implementations",
+        "files_moved": [
+          {
+            "from": "lib/knowledge/",
+            "to": "infrastructure/persistence/stores/knowledge/"
+          }
+        ],
+        "files_removed": [
+          "lib/knowledge/"
+        ],
+        "risk": "high",
+        "tests_added": 2,
+        "severity": "high",
+        "dependency_order": 5
+      },
+      {
+        "pr_number": 10,
+        "title": "Migrate lib/study/ to infrastructure/persistence/stores/study/",
+        "description": "Consolidate study store implementations",
+        "files_moved": [
+          {
+            "from": "lib/study/",
+            "to": "infrastructure/persistence/stores/study/"
+          }
+        ],
+        "files_removed": [
+          "lib/study/"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "medium",
+        "dependency_order": 6
+      },
+      {
+        "pr_number": 11,
+        "title": "Migrate lib/workspace/ to infrastructure/persistence/stores/workspace/",
+        "description": "Consolidate workspace store implementations",
+        "files_moved": [
+          {
+            "from": "lib/workspace/",
+            "to": "infrastructure/persistence/stores/workspace/"
+          }
+        ],
+        "files_removed": [
+          "lib/workspace/"
+        ],
+        "risk": "high",
+        "tests_added": 3,
+        "severity": "high",
+        "dependency_order": 7
+      }
+    ],
+    "deletion_targets": [
+      {
+        "path": "lib/sync/",
+        "reason": "Duplicated by infrastructure/sync/"
+      },
+      {
+        "path": "lib/filesync/",
+        "reason": "Duplicated by infrastructure/sync/workspace-services/"
+      },
+      {
+        "path": "lib/filesystem/sync-manager/",
+        "reason": "Duplicated by infrastructure/sync/"
+      },
+      {
+        "path": "core/entities/",
+        "reason": "Duplicated by domain/entities/"
+      },
+      {
+        "path": "lib/agent/providers/",
+        "reason": "Duplicated by domain/services/"
+      },
+      {
+        "path": "lib/notes/",
+        "reason": "Duplicated by infrastructure/persistence/stores/notes/"
+      },
+      {
+        "path": "lib/knowledge/",
+        "reason": "Duplicated by infrastructure/persistence/stores/knowledge/"
+      },
+      {
+        "path": "lib/study/",
+        "reason": "Duplicated by infrastructure/persistence/stores/study/"
+      },
+      {
+        "path": "lib/workspace/",
+        "reason": "Duplicated by infrastructure/persistence/stores/workspace/"
+      }
+    ]
+  },
+  "phase_3_refactoring": {
+    "duration_weeks": 3,
+    "prs": [
+      {
+        "pr_number": 12,
+        "title": "Split sync-manager god module",
+        "description": "Split sync-manager.ts into sync-planner.ts, sync-executor.ts, sync-rollback.ts",
+        "files_created": [
+          "infrastructure/sync/core/sync-planner.ts",
+          "infrastructure/sync/core/sync-executor.ts",
+          "infrastructure/sync/core/sync-rollback.ts"
+        ],
+        "files_removed": [
+          "lib/filesystem/sync-manager/sync-manager.ts"
+        ],
+        "risk": "high",
+        "tests_added": 4,
+        "severity": "high"
+      },
+      {
+        "pr_number": 13,
+        "title": "Split state-orchestrator god module",
+        "description": "Split state-orchestrator.ts into hydration-manager.ts, initialization-manager.ts",
+        "files_created": [
+          "infrastructure/persistence/hydration-manager.ts",
+          "infrastructure/persistence/initialization-manager.ts"
+        ],
+        "files_removed": [
+          "infrastructure/persistence/state-orchestrator.ts"
+        ],
+        "risk": "high",
+        "tests_added": 3,
+        "severity": "high"
+      },
+      {
+        "pr_number": 14,
+        "title": "Split workspace-store-facade god module",
+        "description": "Split workspace-store-facade.ts into dedicated facades per concern",
+        "files_created": [
+          "infrastructure/persistence/stores/workspace/workspace-facade.ts",
+          "infrastructure/persistence/stores/workspace/project-facade.ts"
+        ],
+        "files_removed": [
+          "infrastructure/persistence/stores/workspace-store-facade.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "medium"
+      },
+      {
+        "pr_number": 15,
+        "title": "Split centralized-tool-registry god module",
+        "description": "Split tool registry into tool-catalog.ts, tool-permissions.ts, tool-registration.ts",
+        "files_created": [
+          "infrastructure/tools/tool-catalog.ts",
+          "infrastructure/tools/tool-permissions.ts",
+          "infrastructure/tools/tool-registration.ts"
+        ],
+        "files_removed": [
+          "infrastructure/tools/centralized-tool-registry.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 3,
+        "severity": "medium"
+      },
+      {
+        "pr_number": 16,
+        "title": "Split useTerminalStore god store",
+        "description": "Split useTerminalStore into session-slice.ts, xterm-slice.ts, persistence-slice.ts",
+        "files_created": [
+          "infrastructure/persistence/stores/terminal/session-slice.ts",
+          "infrastructure/persistence/stores/terminal/xterm-slice.ts",
+          "infrastructure/persistence/stores/terminal/persistence-slice.ts"
+        ],
+        "files_removed": [
+          "infrastructure/persistence/stores/terminal-store.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "high"
+      },
+      {
+        "pr_number": 17,
+        "title": "Split dexie-db.ts helper file",
+        "description": "Split 1165-line helper file into domain-specific modules",
+        "files_created": [
+          "infrastructure/persistence/helpers/project-helpers.ts",
+          "infrastructure/persistence/helpers/sync-helpers.ts",
+          "infrastructure/persistence/helpers/file-metadata-helpers.ts",
+          "infrastructure/persistence/helpers/conversation-helpers.ts",
+          "infrastructure/persistence/helpers/knowledge-helpers.ts"
+        ],
+        "files_removed": [
+          "infrastructure/persistence/dexie-db.ts"
+        ],
+        "risk": "high",
+        "tests_added": 5,
+        "severity": "medium"
+      },
+      {
+        "pr_number": 18,
+        "title": "Implement two-phase dual-write pattern",
+        "description": "Implement atomic dual write with rollback for Local FS and WebContainer",
+        "files_created": [
+          "infrastructure/sync/core/two-phase-commit.ts",
+          "infrastructure/sync/core/dual-write-rollback.ts"
+        ],
+        "risk": "high",
+        "tests_added": 4,
+        "severity": "high"
+      },
+      {
+        "pr_number": 19,
+        "title": "Add workspace transition rollback",
+        "description": "Add transaction-like semantics to workspace transitions with rollback on failure",
+        "files_created": [
+          "domain/services/workspace-transition-rollback.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "high"
+      },
+      {
+        "pr_number": 20,
+        "title": "Enhance batch operation rollback",
+        "description": "Track pre-existing files and restore original content on rollback",
+        "files_created": [
+          "lib/agent/facades/batch-rollback-manager.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "high"
+      }
+    ],
+    "deletion_targets": [
+      {
+        "path": "lib/filesystem/sync-manager/sync-manager.ts",
+        "reason": "Replaced by split modules"
+      },
+      {
+        "path": "infrastructure/persistence/state-orchestrator.ts",
+        "reason": "Replaced by hydration-manager and initialization-manager"
+      },
+      {
+        "path": "infrastructure/persistence/stores/workspace-store-facade.ts",
+        "reason": "Replaced by dedicated facades"
+      },
+      {
+        "path": "infrastructure/tools/centralized-tool-registry.ts",
+        "reason": "Replaced by split modules"
+      },
+      {
+        "path": "infrastructure/persistence/stores/terminal-store.ts",
+        "reason": "Replaced by terminal slices"
+      },
+      {
+        "path": "infrastructure/persistence/dexie-db.ts",
+        "reason": "Replaced by domain-specific helper modules"
+      }
+    ]
+  },
+  "phase_4_security": {
+    "duration_weeks": 2,
+    "prs": [
+      {
+        "pr_number": 21,
+        "title": "Sanitize dangerouslySetInnerHTML usage",
+        "description": "Add DOMPurify sanitization to all dangerouslySetInnerHTML usages",
+        "files_modified": [
+          "src/presentation/components/command-palette/CommandPalette.tsx",
+          "src/presentation/components/agent/DeepThinkUI.tsx",
+          "src/presentation/components/notes/blocks/ChartDiagramBlock.tsx",
+          "src/presentation/components/rag/RAGSearchPanel.tsx",
+          "src/presentation/components/chat/StreamdownRenderer.tsx"
+        ],
+        "risk": "medium",
+        "tests_added": 3,
+        "severity": "high"
+      },
+      {
+        "pr_number": 22,
+        "title": "Fix API key URL exposure",
+        "description": "Replace URL query parameters with Authorization headers",
+        "files_modified": [
+          "src/lib/notes/ai-image-service.ts",
+          "src/lib/workflow/agents/content-routing-agent.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "high"
+      },
+      {
+        "pr_number": 23,
+        "title": "Add path validation to all file operations",
+        "description": "Ensure validatePath is called at all file operation entry points",
+        "files_modified": [
+          "src/lib/filesystem/sync-manager/sync-file-ops.ts",
+          "src/lib/filesystem/sync-transaction/sync-batch-writer.ts",
+          "src/lib/filesystem/sync-transaction/sync-rollback-executor.ts"
+        ],
+        "risk": "medium",
+        "tests_added": 2,
+        "severity": "medium"
+      },
+      {
+        "pr_number": 24,
+        "title": "Add workspace validation to permission checks",
+        "description": "Add explicit workspace validation to all permission checks",
+        "files_modified": [
+          "src/lib/agent/tool-permission/tool-permission-manager.ts"
+        ],
+        "risk": "low",
+        "tests_added": 2,
+        "severity": "high"
+      }
+    ],
+    "deletion_targets": []
+  },
+  "module_ownership": {
+    "notes": {
+      "canonical_location": "infrastructure/persistence/stores/notes/",
+      "ui_components": "presentation/components/notes/",
+      "domain_services": "domain/services/notes/",
+      "forbidden_imports": ["lib/notes/*"]
+    },
+    "knowledge": {
+      "canonical_location": "infrastructure/persistence/stores/knowledge/",
+      "ui_components": "presentation/components/knowledge/",
+      "domain_services": "domain/services/knowledge/",
+      "forbidden_imports": ["lib/knowledge/*"]
+    },
+    "study": {
+      "canonical_location": "infrastructure/persistence/stores/study/",
+      "ui_components": "presentation/components/study/",
+      "domain_services": "domain/services/study/",
+      "forbidden_imports": ["lib/study/*"]
+    },
+    "IDE": {
+      "canonical_location": "infrastructure/persistence/stores/ide/",
+      "ui_components": "presentation/components/ide/",
+      "domain_services": "domain/services/ide/",
+      "forbidden_imports": ["lib/ide/*"]
+    },
+    "workspace": {
+      "canonical_location": "infrastructure/persistence/stores/workspace/",
+      "ui_components": "presentation/components/workspace/",
+      "domain_services": "domain/services/workspace/",
+      "forbidden_imports": ["lib/workspace/*"]
+    },
+    "sync": {
+      "canonical_location": "infrastructure/sync/",
+      "forbidden_imports": ["lib/sync/*", "lib/filesync/*", "lib/filesystem/sync-manager/*"]
+    },
+    "providers": {
+      "canonical_location": "infrastructure/persistence/stores/providers/",
+      "domain_services": "domain/services/providers/",
+      "forbidden_imports": ["lib/agent/providers/*"]
+    },
+    "chat": {
+      "canonical_location": "infrastructure/persistence/stores/chat/",
+      "ui_components": "presentation/components/chat/",
+      "domain_services": "domain/services/chat/",
+      "forbidden_imports": ["lib/chat/*"]
+    }
+  },
+  "cross_context_contracts": [
+    {
+      "from": "notes",
+      "to": "workspace",
+      "contract": "Workspace must be loaded before notes can be accessed",
+      "interface": "useWorkspaceStore.getState().currentWorkspace !== null",
+      "invariant": "Note ID remains constant throughout update lifecycle"
+    },
+    {
+      "from": "notes",
+      "to": "sync",
+      "contract": "FSA sync is optional and non-blocking for core persistence",
+      "interface": "triggerAutoSave is fire-and-forget",
+      "invariant": "IndexedDB always has most recent data"
+    },
+    {
+      "from": "knowledge",
+      "to": "notes",
+      "contract": "Source imports can reference note entities",
+      "interface": "knowledge-store.ts imports note entities"
+    },
+    {
+      "from": "study",
+      "to": "knowledge",
+      "contract": "Quiz and flashcard generation uses knowledge sources",
+      "interface": "study-store.ts imports knowledge-store"
+    },
+    {
+      "from": "IDE",
+      "to": "workspace",
+      "contract": "IDE route depends on workspace being loaded",
+      "interface": "ide.$projectId.tsx route guard"
+    },
+    {
+      "from": "IDE",
+      "to": "chat",
+      "contract": "Agent chat panel integrates with IDE",
+      "interface": "AgentChatPanel.tsx imports chat store"
+    },
+    {
+      "from": "chat",
+      "to": "providers",
+      "contract": "Chat uses provider adapter for LLM calls",
+      "interface": "unified-chat-store.ts imports provider-crud-slice"
+    },
+    {
+      "from": "workspace",
+      "to": "sync",
+      "contract": "Workspace store triggers file sync operations",
+      "interface": "workspace-store.ts imports sync services"
+    },
+    {
+      "from": "hub",
+      "to": "workspace",
+      "contract": "Hub displays project and workspace data",
+      "interface": "hub-store.ts imports workspace-store"
+    }
+  ],
+  "characterization_tests": [
+    {
+      "name": "test_workspace_switch_concurrent",
+      "description": "Simultaneous workspace switches should be serialized",
+      "would_fail_today": true,
+      "expected_behavior": "Only one transition executes, others wait or return early",
+      "test_code": "await Promise.all([transitionTo('notes'), transitionTo('knowledge'), transitionTo('study')])"
+    },
+    {
+      "name": "test_workspace_switch_partial_failure",
+      "description": "If agent re-selection fails mid-transition, workspace should revert",
+      "would_fail_today": true,
+      "expected_behavior": "Workspace state restored to previous value, error propagated",
+      "test_code": "transitionTo('notes') with no agents available - should revert and throw"
+    },
+    {
+      "name": "test_event_listener_error_isolation",
+      "description": "One throwing event listener should not crash other listeners or the event bus",
+      "would_fail_today": true,
+      "expected_behavior": "Throwing listener error is caught, other listeners still execute",
+      "test_code": "Emit event with one good and one throwing listener - good listener should still fire"
+    },
+    {
+      "name": "test_dual_write_rollback",
+      "description": "If WebContainer write fails after Local FS write, Local FS should be rolled back",
+      "would_fail_today": true,
+      "expected_behavior": "Local FS file deleted or marked inconsistent after failed dual write",
+      "test_code": "writeFile when WebContainer is unavailable - Local FS should not have orphaned file"
+    },
+    {
+      "name": "test_batch_write_rollback_comprehensive",
+      "description": "writeMultiple rollback should restore pre-existing files, not just delete",
+      "would_fail_today": true,
+      "expected_behavior": "Files that existed before batch write are restored with original content",
+      "test_code": "writeMultiple to overwrite existing files, then fail mid-way - originals should be restored"
+    },
+    {
+      "name": "test_sync_idempotency",
+      "description": "Calling sync multiple times should not cause duplicate operations",
+      "would_fail_today": true,
+      "expected_behavior": "Subsequent sync calls should be queued or debounced, not throw",
+      "test_code": "await sync(); await sync(); await sync(); // Should not throw"
+    },
+    {
+      "name": "test_transition_timeout_cleanup",
+      "description": "Rapid workspace switches should not leave stale timeouts",
+      "would_fail_today": true,
+      "expected_behavior": "Each transition has its own timeout that is properly cleaned up",
+      "test_code": "Switch workspaces 10 times rapidly - isTransitioning should eventually be false"
+    },
+    {
+      "name": "test_note_idempotent_save",
+      "description": "Calling save on same note multiple times should not cause issues",
+      "would_fail_today": false,
+      "expected_behavior": "Each save completes, no duplicate work or errors",
+      "test_code": "await saveNoteToFile(id); await saveNoteToFile(id); // Both should succeed"
+    },
+    {
+      "name": "test_hardcoded_api_keys_removed",
+      "description": "No hardcoded API keys should exist in source code",
+      "would_fail_today": true,
+      "expected_behavior": "grep for API key patterns should return no matches in src/",
+      "test_code": "grep -r 'AIzaSy' src/ --include='*.ts' --include='*.tsx'"
+    },
+    {
+      "name": "test_eval_usage_eliminated",
+      "description": "No eval() or new Function() calls should exist in production code",
+      "would_fail_today": true,
+      "expected_behavior": "grep for eval patterns should return no matches",
+      "test_code": "grep -r 'eval\\|new Function' src/ --include='*.ts' --include='*.tsx'"
+    }
+  ],
+  "migration_artifacts": [
+    {
+      "path": "src/presentation/components/chat/WorkflowBuilder.refactored.tsx",
+      "original_path": "src/presentation/components/chat/WorkflowBuilder.tsx",
+      "status": "in_progress",
+      "notes": "Refactored version exists alongside original"
+    },
+    {
+      "path": "src/infrastructure/persistence/stores/study/study-store-refactored.ts",
+      "original_path": "src/infrastructure/persistence/stores/study/study-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored store slice"
+    },
+    {
+      "path": "src/lib/workspace/file-sync-status-store/file-sync-status-store-refactored.ts",
+      "original_path": "src/lib/workspace/file-sync-status-store/file-sync-status-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored file sync status store"
+    },
+    {
+      "path": "src/lib/filesystem/file-snapshot-store/file-snapshot-store-refactored.ts",
+      "original_path": "src/lib/filesystem/file-snapshot-store/file-snapshot-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored snapshot store"
+    },
+    {
+      "path": "src/lib/workflow/builder/workflow-builder-store-refactored.ts",
+      "original_path": "src/lib/workflow/builder/workflow-builder-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored workflow builder store"
+    },
+    {
+      "path": "src/lib/snippets/snippet-store/snippet-store-refactored.ts",
+      "original_path": "src/lib/snippets/snippet-store/snippet-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored snippet store"
+    },
+    {
+      "path": "src/lib/notes/note-store-refactored.ts",
+      "original_path": "src/lib/notes/note-store.ts",
+      "status": "in_progress",
+      "notes": "Refactored note store"
+    }
+  ],
+  "performance_recommendations": [
+    {
+      "priority": "high",
+      "recommendation": "Add React.memo to unmemoized large components (AgentChatPanel, EnhancedChatInterface, NoteEditor)"
+    },
+    {
+      "priority": "high",
+      "recommendation": "Fix state update loops in NotesPage and KnowledgePage cross-workspace sync"
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Implement dynamic imports for Monaco Editor and other heavy dependencies"
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Fix useCallback usage in hooks with event listeners (useCommandPalette, useResponsiveBreakpoint)"
+    },
+    {
+      "priority": "medium",
+      "recommendation": "Remove duplicate cleanup in ChatBubbleOverlay"
+    },
+    {
+      "priority": "low",
+      "recommendation": "Consider using React Compiler (experimental) for automatic memoization"
+    }
+  ],
+  "metadata": {
+    "generated_at": "2026-01-18T15:00:00+07:00",
+    "cycle": 4,
+    "phase": "Refactor Surgeon - Unified Refactor Plan",
+    "input_artifacts": [
+      "_bmad-ext/.architecture-investigation/cycle1-map-hypotheses/",
+      "_bmad-ext/.architecture-investigation/cycle2-critical-paths/",
+      "_bmad-ext/.architecture-investigation/cycle3-invariants/"
+    ],
+    "output_location": "_bmad-ext/.architecture-investigation/cycle4-refactor-plan/"
+  }
+}

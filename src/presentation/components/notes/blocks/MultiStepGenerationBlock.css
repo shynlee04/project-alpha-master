@@ -1,0 +1,558 @@
+/**
+ * @fileoverview Multi-Step Generation Block Styles
+ * @story 44-12: Multi-step generation with blur animation
+ * @design 8-bit design system compliance
+ */
+
+/* ============================================================================
+   Base Block Styles
+   ============================================================================ */
+
+.multistep-block {
+  background: var(--card, #1a1a2e);
+  border: 2px solid var(--border, #3f3f5c);
+  padding: 0;
+  margin: 8px 0;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+
+.multistep-block--running {
+  border-color: var(--primary, #6366f1);
+  box-shadow: 4px 4px 0 0 rgba(99, 102, 241, 0.3);
+}
+
+.multistep-block--completed {
+  border-color: var(--success, #10b981);
+  box-shadow: 4px 4px 0 0 rgba(16, 185, 129, 0.2);
+}
+
+.multistep-block--error {
+  border-color: var(--destructive, #ef4444);
+}
+
+/* ============================================================================
+   Header Styles
+   ============================================================================ */
+
+.multistep-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--muted, #0f0f1a);
+  border-bottom: 2px solid var(--border, #3f3f5c);
+}
+
+.multistep-block__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--foreground, #f8fafc);
+}
+
+.multistep-block__count {
+  font-size: 12px;
+  font-weight: 400;
+  padding: 2px 8px;
+  background: var(--primary, #6366f1);
+  color: white;
+  margin-left: 4px;
+}
+
+.multistep-block__header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* ============================================================================
+   Icon Button Styles
+   ============================================================================ */
+
+.multistep-block__icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--muted-foreground, #94a3b8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.multistep-block__icon-btn:hover {
+  background: var(--accent, #2a2a4a);
+  border-color: var(--border, #3f3f5c);
+  color: var(--foreground, #f8fafc);
+}
+
+.multistep-block__icon-btn--danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--destructive, #ef4444);
+  color: var(--destructive, #ef4444);
+}
+
+/* ============================================================================
+   Config Panel
+   ============================================================================ */
+
+.multistep-block__config {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--muted, #0f0f1a);
+  border-bottom: 2px solid var(--border, #3f3f5c);
+}
+
+.multistep-block__config-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted-foreground, #94a3b8);
+  cursor: pointer;
+}
+
+.multistep-block__config-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary, #6366f1);
+  cursor: pointer;
+}
+
+.multistep-block__config-input {
+  width: 80px;
+  padding: 4px 8px;
+  background: var(--card, #1a1a2e);
+  border: 1px solid var(--border, #3f3f5c);
+  color: var(--foreground, #f8fafc);
+  font-size: 12px;
+  font-family: inherit;
+}
+
+/* ============================================================================
+   Progress Bar
+   ============================================================================ */
+
+.multistep-block__progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--muted, #0f0f1a);
+  border-bottom: 2px solid var(--border, #3f3f5c);
+}
+
+.multistep-block__progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--card, #1a1a2e);
+  position: relative;
+  overflow: hidden;
+}
+
+.multistep-block__progress-fill {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  transition: width 0.3s ease;
+}
+
+.multistep-block__progress-fill--completed {
+  background: var(--success, #10b981);
+}
+
+.multistep-block__progress-fill--running {
+  background: var(--primary, #6366f1);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.multistep-block__progress-fill--error {
+  background: var(--destructive, #ef4444);
+}
+
+.multistep-block__progress-text {
+  font-size: 12px;
+  color: var(--muted-foreground, #94a3b8);
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   Steps List
+   ============================================================================ */
+
+.multistep-block__steps {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.multistep-block__empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--muted-foreground, #94a3b8);
+}
+
+.multistep-block__empty p {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.multistep-block__empty svg {
+  color: var(--primary, #6366f1);
+  opacity: 0.5;
+}
+
+/* ============================================================================
+   Step Card
+   ============================================================================ */
+
+.multistep-block__step-card {
+  background: var(--card, #1a1a2e);
+  border: 2px solid var(--border, #3f3f5c);
+  padding: 12px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.multistep-block__step-card--running {
+  border-color: var(--primary, #6366f1);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+}
+
+.multistep-block__step-card--completed {
+  border-color: var(--success, #10b981);
+}
+
+.multistep-block__step-card--error {
+  border-color: var(--destructive, #ef4444);
+}
+
+.multistep-block__step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.multistep-block__step-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.multistep-block__step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--muted, #0f0f1a);
+  border: 1px solid var(--border, #3f3f5c);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground, #94a3b8);
+}
+
+.multistep-block__step-type {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary, #6366f1);
+  padding: 2px 8px;
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.multistep-block__step-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* ============================================================================
+   Status Icons
+   ============================================================================ */
+
+.multistep-status {
+  width: 16px;
+  height: 16px;
+}
+
+.multistep-status--pending {
+  width: 8px;
+  height: 8px;
+  background: var(--muted-foreground, #94a3b8);
+  border-radius: 50%;
+}
+
+.multistep-status--running {
+  color: var(--primary, #6366f1);
+  animation: spin 1s linear infinite;
+}
+
+.multistep-status--completed {
+  color: var(--success, #10b981);
+}
+
+.multistep-status--error {
+  color: var(--destructive, #ef4444);
+}
+
+.multistep-status--skipped {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--muted-foreground, #94a3b8);
+}
+
+/* ============================================================================
+   Step Prompt
+   ============================================================================ */
+
+.multistep-block__step-prompt {
+  font-size: 13px;
+  color: var(--foreground, #f8fafc);
+  line-height: 1.5;
+  padding: 8px;
+  background: var(--muted, #0f0f1a);
+}
+
+.multistep-block__placeholder {
+  color: var(--muted-foreground, #94a3b8);
+  font-style: italic;
+}
+
+.multistep-block__step-prompt-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.multistep-block__type-select {
+  width: 120px;
+  padding: 6px 8px;
+  background: var(--muted, #0f0f1a);
+  border: 1px solid var(--border, #3f3f5c);
+  color: var(--foreground, #f8fafc);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.multistep-block__prompt-input {
+  width: 100%;
+  padding: 8px;
+  background: var(--muted, #0f0f1a);
+  border: 1px solid var(--border, #3f3f5c);
+  color: var(--foreground, #f8fafc);
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 48px;
+}
+
+.multistep-block__prompt-input:focus,
+.multistep-block__type-select:focus {
+  outline: none;
+  border-color: var(--primary, #6366f1);
+}
+
+/* ============================================================================
+   Step Output with Blur Animation
+   ============================================================================ */
+
+.multistep-block__step-output {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--background, #0f0f1a);
+  border: 1px solid var(--border, #3f3f5c);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--foreground, #f8fafc);
+  /* Blur animation is applied via inline style */
+  will-change: filter;
+}
+
+.multistep-block__step-output--code {
+  font-family: var(--font-family-mono);
+  font-size: 12px;
+}
+
+.multistep-block__code-output {
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.multistep-block__text-output {
+  white-space: pre-wrap;
+}
+
+/* ============================================================================
+   Step Error
+   ============================================================================ */
+
+.multistep-block__step-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--destructive, #ef4444);
+  color: var(--destructive, #ef4444);
+  font-size: 12px;
+}
+
+/* ============================================================================
+   Step Duration
+   ============================================================================ */
+
+.multistep-block__step-duration {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--muted, #0f0f1a);
+  color: var(--muted-foreground, #94a3b8);
+}
+
+/* ============================================================================
+   Actions Bar
+   ============================================================================ */
+
+.multistep-block__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--muted, #0f0f1a);
+  border-top: 2px solid var(--border, #3f3f5c);
+  flex-wrap: wrap;
+}
+
+/* ============================================================================
+   Buttons
+   ============================================================================ */
+
+.multistep-block__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.multistep-block__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.multistep-block__btn--primary {
+  background: var(--primary, #6366f1);
+  color: white;
+  border-color: var(--primary, #6366f1);
+}
+
+.multistep-block__btn--primary:hover:not(:disabled) {
+  background: #5558e3;
+  box-shadow: 4px 4px 0 0 rgba(99, 102, 241, 0.3);
+}
+
+.multistep-block__btn--secondary {
+  background: transparent;
+  color: var(--foreground, #f8fafc);
+  border-color: var(--border, #3f3f5c);
+}
+
+.multistep-block__btn--secondary:hover:not(:disabled) {
+  background: var(--accent, #2a2a4a);
+  border-color: var(--primary, #6366f1);
+}
+
+.multistep-block__btn--warning {
+  background: var(--warning, #f59e0b);
+  color: black;
+  border-color: var(--warning, #f59e0b);
+}
+
+.multistep-block__btn--warning:hover:not(:disabled) {
+  background: #d97706;
+  box-shadow: 4px 4px 0 0 rgba(245, 158, 11, 0.3);
+}
+
+.multistep-block__btn--ghost {
+  background: transparent;
+  color: var(--muted-foreground, #94a3b8);
+  border-color: transparent;
+}
+
+.multistep-block__btn--ghost:hover:not(:disabled) {
+  color: var(--foreground, #f8fafc);
+  background: var(--accent, #2a2a4a);
+}
+
+/* ============================================================================
+   Animations
+   ============================================================================ */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ============================================================================
+   Responsive
+   ============================================================================ */
+
+@media (max-width: 640px) {
+  .multistep-block__steps {
+    padding: 12px;
+  }
+  
+  .multistep-block__step-card {
+    padding: 10px;
+  }
+  
+  .multistep-block__actions {
+    flex-wrap: wrap;
+  }
+  
+  .multistep-block__btn {
+    flex: 1;
+    min-width: 100px;
+    justify-content: center;
+  }
+}

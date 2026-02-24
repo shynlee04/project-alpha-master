@@ -1,0 +1,56 @@
+# Quality Module MANIFEST
+# Purpose: Scanning, validation, code review
+
+version: "1.0.0"
+module_id: "quality"
+name: "Quality Module"
+created: "2026-01-06"
+status: "ACTIVE"
+migrated_from: ["deep-scan"]
+
+description: |
+  Comprehensive diagnostic framework for scanning, validation gates,
+  and evidence-backed remediation planning.
+
+purpose:
+  - "Codebase scanning"
+  - "Validation gates"
+  - "Code review workflows"
+  - "Evidence collection"
+  - "Remediation planning"
+
+scanners:
+  - id: "state-scanner"
+    path: "scanners/state-scanner.md"
+    focus: "Store duplication, god stores, circular deps"
+    
+  - id: "architecture-scanner"
+    path: "scanners/architecture-scanner.md"
+    focus: "Layer violations, god components"
+    
+  - id: "ux-scanner"
+    path: "scanners/ux-scanner.md"
+    focus: "Mobile gaps, i18n coverage"
+    
+  - id: "security-scanner"
+    path: "scanners/security-scanner.md"
+    focus: "API key exposure, XSS vectors"
+
+gates:
+  story_completion:
+    - typescript_errors: 0
+    - test_pass_rate: 100%
+    - no_new_god_stores: true
+    
+  epic_completion:
+    - all_stories_done: true
+    - coverage_target_met: true
+    - no_regression: true
+
+workflows:
+  - id: "full-scan"
+    path: "workflows/full-scan.md"
+  - id: "targeted-scan"
+    path: "workflows/targeted-scan.md"
+  - id: "code-review"
+    path: "workflows/code-review.md"

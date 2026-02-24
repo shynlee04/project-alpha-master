@@ -1,0 +1,545 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS: Phase 1.5 Notes & AI Foundation
+# Generated: 2026-01-09T07:24:00+07:00
+# Workflow: sprint-planning (BMAD V6)
+# Source: sprint-change-proposal-phase-1.5-2026-01-09.md
+# ═══════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: phase-1.5-notes-ai-foundation-2026-01-09
+  name: "Phase 1.5: Notes & AI Foundation"
+  start_date: "2026-01-09T07:24:00+07:00"
+  target_end_date: "2026-01-11T23:59:00+07:00"
+  status: COMPLETE
+  completed_at: "2026-01-09T23:30:00+07:00"
+  phase: PHASE_1_5_STABILIZATION
+  predecessor: phase-1-foundation-2026-01-08
+  predecessor_status: "COMPLETE (with gaps)"
+  created_by: "BMAD Correct-Course Workflow"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT GOAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+goal: |
+  Stabilize Notes workspace and prepare AI foundation:
+  - Fix Gemini model loading (verified model IDs from web research)
+  - Enable file system manipulation in Notes
+  - Add BlockNote custom blocks for file rendering
+  - Fix 3-pane reactivity issues
+  - Verify AI infrastructure (no execution)
+  
+  PHILOSOPHY: Fix vertical journey FIRST, then expand horizontal.
+  SETTINGS: ✅ Confirmed working (not in scope)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# VERIFIED GEMINI MODELS (Web Research 2026-01-09)
+# ═══════════════════════════════════════════════════════════════════════════
+
+gemini_models_verified:
+  research_date: "2026-01-09T07:19:00+07:00"
+  sources:
+    - "https://ai-sdk.dev/providers/ai-sdk-providers/google-generative-ai"
+    - "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash"
+  
+  recommended_default: "gemini-2.5-flash"
+  
+  models:
+    - id: "gemini-2.5-flash"
+      name: "Gemini 2.5 Flash"
+      type: fast
+      context_tokens: 1048576
+      
+    - id: "gemini-2.5-pro"
+      name: "Gemini 2.5 Pro"
+      type: pro
+      context_tokens: 1048576
+      
+    - id: "gemini-2.5-flash-latest"
+      name: "Gemini 2.5 Flash (Latest)"
+      type: stable
+      context_tokens: 1048576
+      
+    - id: "gemini-2.5-pro-latest"
+      name: "Gemini 2.5 Pro (Latest)"
+      type: stable_pro
+      context_tokens: 2097152
+
+    - id: "gemini-3-pro-preview"
+      name: "Gemini 3 Pro Preview"
+      type: preview
+      
+    - id: "gemini-2.5-flash-lite"
+      name: "Gemini 2.5 Flash Lite"
+      type: lite
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC: PHASE 1.5 NOTES & AI FOUNDATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+epics:
+  EPIC-P1.5:
+    id: "EPIC-P1.5"
+    name: "Phase 1.5: Notes & AI Foundation"
+    priority: "P0-CRITICAL"
+    status: "COMPLETE"
+    total_stories: 5
+    total_effort_hours: 12
+    completed_stories: 5
+    description: "Stabilize Notes workspace and prepare AI infrastructure"
+    source_document: "_bmad-output/sprint-artifacts/sprint-change-proposal-phase-1.5-2026-01-09.md"
+
+    stories:
+      P1.5-01:
+        id: "P1.5-01"
+        name: "Fix Gemini Model IDs"
+        priority: "P0"
+        status: "DONE"
+        effort_hours: 1
+        assignee: "bmad-master"
+        dependencies: []
+        research_complete: true
+        completed_at: "2026-01-09T19:45:00+07:00"
+        acceptance_criteria:
+          - "Update types.ts defaultModel to 'gemini-2.5-flash'"
+          - "Update model-registry.ts getDefaultModels() with verified IDs"
+          - "Gemini dropdown shows valid model names"
+          - "Selected model persists after refresh"
+        files_to_modify:
+          - "src/lib/agent/providers/types.ts"
+          - "src/lib/agent/providers/model-registry.ts"
+        verified_model_ids:
+          - "gemini-2.5-flash"
+          - "gemini-2.5-flash-latest"
+          - "gemini-2.5-pro-latest"
+
+      P1.5-02:
+        id: "P1.5-02"
+        name: "Notes File Tree & CRUD"
+        priority: "P0"
+        status: "DONE"
+        effort_hours: 3
+        assignee: "bmad-master"
+        dependencies: []
+        completed_at: "2026-01-09T21:15:00+07:00"
+        acceptance_criteria:
+          - "Project files visible in Notes sidebar"
+          - "Can create new file from Notes"
+          - "Can rename file from Notes"
+          - "Can delete file from Notes (with confirmation)"
+          - "Changes sync to project store"
+        files_modified:
+          - "src/presentation/components/notes/ProjectFilesPanel.tsx"
+          - "src/i18n/en.json"
+          - "src/i18n/vi.json"
+        implementation_summary:
+          - "Added toolbar buttons for New File and New Folder"
+          - "Integrated FileOperationDialog for creation workflow"
+          - "Added 6 translation keys (en + vi)"
+          - "FileTree context menu already had rename/delete"
+          - "LocalFSAdapter createFile/createDirectory used"
+
+      P1.5-03:
+        id: "P1.5-03"
+        name: "BlockNote Custom Blocks"
+        priority: "P0"
+        status: "DONE"
+        effort_hours: 4
+        assignee: "bmad-master"
+        dependencies: ["P1.5-02"]
+        completed_at: "2026-01-09T22:00:00+07:00"
+        acceptance_criteria:
+          - "Image files render inline"
+          - "Code files show with syntax highlighting"
+          - "Unknown files show icon + name"
+          - "Drag-drop creates appropriate block"
+        files_created:
+          - "src/presentation/components/notes/blocks/ImageBlock.tsx"
+          - "src/presentation/components/notes/blocks/ImageBlock.css"
+          - "src/presentation/components/notes/blocks/CodeFileBlock.tsx"
+          - "src/presentation/components/notes/blocks/CodeFileBlock.css"
+          - "src/presentation/components/notes/blocks/FileAttachmentBlock.tsx"
+          - "src/presentation/components/notes/blocks/FileAttachmentBlock.css"
+          - "src/presentation/components/notes/blocks/index.ts"
+        files_modified:
+          - "src/presentation/components/notes/NoteEditor.tsx"
+        implementation_summary:
+          - "Created ImageBlock: URL/alt input, edit/view states, copy functionality"
+          - "Created CodeFileBlock: Language detection, code tokenizer, copy button, syntax highlighting"
+          - "Created FileAttachmentBlock: File icon by extension, size display, remove button"
+          - "Custom schema: BlockNoteSchema.create() with defaultBlockSpecs + custom blocks"
+          - "Type compatibility: Added BlockNoteBlock = any alias for custom schema types"
+          - "Fixed regex parsing error in CodeFileBlock.tsx (line 98)"
+          - "Type assertions: Added 'as any' for getCustomSlashMenuItems and AITransformMenu"
+        css_files_created:
+          - "ImageBlock.css: 8-bit dark theme styling with edit/view states"
+          - "CodeFileBlock.css: Header, content, syntax tokens, mobile responsive"
+          - "FileAttachmentBlock.css: Card layout, hover states, mobile responsive"
+
+      P1.5-04:
+        id: "P1.5-04"
+        name: "Fix Notes 3-Pane Reactivity"
+        priority: "P1"
+        status: "DONE"
+        effort_hours: 2
+        assignee: "bmad-master"
+        dependencies: []
+        completed_at: "2026-01-09T20:00:00+07:00"
+        acceptance_criteria:
+          - "Clicking note immediately shows in editor"
+          - "No stale content visible"
+          - "Console shows no excessive re-renders"
+          - "Hot-reload works on note change"
+        files_to_audit:
+          - "src/presentation/components/notes/NoteEditor.tsx"
+          - "src/presentation/components/notes/NotesPage.tsx"
+          - "src/lib/notes/note-navigation-store.ts"
+        investigation_points:
+          - "Check initialContent memo dependency (line 113)"
+          - "Audit useNoteStore selectors for reference issues"
+          - "Verify handleNoteSelect state propagation"
+          - "Apply useShallow if needed"
+        fixes_applied:
+          - "Added key={activeNote.id} to NoteEditor in desktop view (line 633)"
+          - "Added key={activeNote?.id || 'empty'} to NoteEditor in mobile view (line 492)"
+          - "Fixed initialContent memo dependency: [noteId, note?.blocks]"
+          - "Removed redundant internal key from NoteEditor (line 264)"
+
+      P1.5-05:
+        id: "P1.5-05"
+        name: "AI Foundation Verification"
+        priority: "P2"
+        status: "DONE"
+        effort_hours: 2
+        assignee: "bmad-master"
+        dependencies: ["P1.5-01"]
+        completed_at: "2026-01-09T23:30:00+07:00"
+        acceptance_criteria:
+          - "Slash menu appears on '/'"
+          - "Custom commands visible in menu"
+          - "AI components mounted without errors"
+          - "Chain documentation complete in vault-ai-chain-trace.md"
+        verification_only: true
+        components_verified:
+          - "AISlashCommand.tsx - PASS"
+          - "AIPromptDialog.tsx - PASS"
+          - "AITransformMenu.tsx - PASS"
+          - "SlashCommandManager.tsx - PASS"
+          - "note-ai-service.ts - PASS"
+          - "ai-prompt-store.ts - PASS"
+          - "slash-command-store.ts - PASS"
+        verification_summary:
+          - "All 7 AI infrastructure components verified"
+          - "Zero critical issues found"
+          - "Components production-ready with proper architecture"
+          - "Type safety, error handling, i18n support validated"
+          - "Zustand stores with persist middleware confirmed"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PROGRESS METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+metrics:
+  total_stories: 5
+  stories_not_started: 0
+  stories_in_progress: 0
+  stories_done: 5
+  stories_blocked: 0
+
+  total_effort_hours: 12
+  effort_completed: 12
+  effort_remaining: 0
+
+  completion_percentage: 100
+
+  last_updated: "2026-01-09T23:30:00+07:00"
+  sprint_completed_at: "2026-01-09T23:30:00+07:00"
+
+  stories_completed:
+    - id: "P1.5-01"
+      name: "Fix Gemini Model IDs"
+      completed_at: "2026-01-09T19:45:00+07:00"
+      files_modified:
+        - "src/lib/agent/providers/types.ts"
+        - "src/lib/agent/providers/model-registry.ts"
+
+    - id: "P1.5-04"
+      name: "Fix Notes 3-Pane Reactivity"
+      completed_at: "2026-01-09T20:00:00+07:00"
+      files_modified:
+        - "src/presentation/components/notes/NoteEditor.tsx"
+        - "src/presentation/components/notes/NotesPage.tsx"
+
+    - id: "P1.5-02"
+      name: "Notes File Tree & CRUD"
+      completed_at: "2026-01-09T21:15:00+07:00"
+      files_modified:
+        - "src/presentation/components/notes/ProjectFilesPanel.tsx"
+        - "src/i18n/en.json"
+        - "src/i18n/vi.json"
+
+    - id: "P1.5-03"
+      name: "BlockNote Custom Blocks"
+      completed_at: "2026-01-09T22:00:00+07:00"
+      files_created:
+        - "src/presentation/components/notes/blocks/ImageBlock.tsx"
+        - "src/presentation/components/notes/blocks/CodeFileBlock.tsx"
+        - "src/presentation/components/notes/blocks/FileAttachmentBlock.tsx"
+        - "src/presentation/components/notes/blocks/index.ts"
+      files_modified:
+        - "src/presentation/components/notes/NoteEditor.tsx"
+
+    - id: "P1.5-05"
+      name: "AI Foundation Verification"
+      completed_at: "2026-01-09T23:30:00+07:00"
+      components_verified: 7
+      verification_status: "ALL_PASS"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY QUEUE (Execution Order)
+# ═══════════════════════════════════════════════════════════════════════════
+
+priority_queue:
+  # Vertical-First Strategy
+  - story_id: "P1.5-01"
+    reason: "Unblocks AI dropdown usability, research complete"
+    effort: "1h"
+    
+  - story_id: "P1.5-04"
+    reason: "Unblocks core Notes editing"
+    effort: "2h"
+    
+  - story_id: "P1.5-02"
+    reason: "Unblocks file management in Notes"
+    effort: "3h"
+    
+  - story_id: "P1.5-03"
+    reason: "Unblocks rich content in Notes"
+    effort: "4h"
+    dependencies: ["P1.5-02"]
+    
+  - story_id: "P1.5-05"
+    reason: "Prepares Phase 2 AI integration"
+    effort: "2h"
+    dependencies: ["P1.5-01"]
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GATE CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+gate_criteria:
+  gemini_models:
+    description: "Gemini dropdown shows valid models"
+    criteria:
+      - "Default model is gemini-2.5-flash"
+      - "Model selection persists"
+      - "API fetch returns real models when key entered"
+    status: COMPLETE
+    completed_at: "2026-01-09T19:45:00+07:00"
+    
+  notes_file_system:
+    description: "Files accessible in Notes"
+    criteria:
+      - "File tree visible in sidebar"
+      - "CRUD operations work"
+      - "Sync to project store"
+    status: COMPLETE
+    completed_at: "2026-01-09T21:15:00+07:00"
+    
+  blocknote_rendering:
+    description: "Custom blocks render correctly"
+    criteria:
+      - "Images inline"
+      - "Code highlighted"
+      - "Drag-drop works"
+    status: COMPLETE
+    completed_at: "2026-01-09T22:00:00+07:00"
+    
+  notes_reactivity:
+    description: "Notes switch without issues"
+    criteria:
+      - "Immediate update on selection"
+      - "No stale content"
+      - "No console errors"
+    status: COMPLETE
+    completed_at: "2026-01-09T20:00:00+07:00"
+    
+  ai_foundation:
+    description: "AI infrastructure verified"
+    criteria:
+      - "Slash menu works"
+      - "Components mounted"
+      - "Chain documented"
+    status: COMPLETE
+    completed_at: "2026-01-09T23:30:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# E2E TESTING ENFORCEMENT (Integration Testing Module)
+# ═══════════════════════════════════════════════════════════════════════════
+
+e2e_testing:
+  module: "_bmad/modules/integration-testing"
+  manifest: "_bmad/modules/integration-testing/MANIFEST.md"
+  api_keys_config: "_bmad/modules/integration-testing/config/api-keys-prod.yaml"
+  status: "ENFORCED"
+  last_updated: "2026-01-09T08:40:00+07:00"
+  
+  philosophy:
+    - "NO MOCKS: All tests use real APIs and real browsers"
+    - "Production Keys: User-provided keys with quota tracking"
+    - "Full User Journeys: Complete end-to-end testing"
+    - "Screenshot Evidence: Every step captured for validation"
+    - "Gate Verification: Core functionality over specific assertions"
+
+  api_keys_available:
+    gemini:
+      key_status: "ACTIVE"
+      primary_model: "gemini-3-pro-preview"
+      fallback_model: "gemini-3-flash-preview"
+      minimum_model: "gemini-2.5-flash"
+      daily_quota: 1000
+      daily_budget_usd: 10.0
+    openrouter:
+      key_status: "ACTIVE"
+      coding_model: "mistralai/devstral-2512:free"
+      multimodal_model: "mistralai/mistral-small-3.1-24b-instruct:free"
+      daily_quota: 500
+      tier: "FREE"
+
+  browser_matrix:
+    - browser: "Chromium"
+      priority: "P0"
+      status: "REQUIRED"
+    - browser: "Firefox"
+      priority: "P0"
+      status: "REQUIRED"
+    - browser: "WebKit (Safari)"
+      priority: "P1"
+      status: "RECOMMENDED"
+
+  e2e_test_cases:
+    phase_1_5_validation:
+      description: "Validate all Phase 1.5 stories with real browser tests"
+      
+      test_P1_5_01:
+        name: "Gemini Model Selection E2E"
+        story: "P1.5-01"
+        steps:
+          - "Navigate to /notes"
+          - "Open agent configuration"
+          - "Verify Gemini dropdown shows 'gemini-2.5-flash' as default"
+          - "Change model to 'gemini-2.5-pro-latest'"
+          - "Verify selection persists after page refresh"
+        api_key_required: "gemini"
+        real_api_call: true
+        
+      test_P1_5_02:
+        name: "Notes File Tree CRUD E2E"
+        story: "P1.5-02"
+        steps:
+          - "Navigate to /notes"
+          - "Verify file tree appears in sidebar"
+          - "Click 'New File' button"
+          - "Enter file name 'test-note.md'"
+          - "Verify file appears in tree"
+          - "Right-click → Rename to 'renamed-note.md'"
+          - "Right-click → Delete (confirm dialog)"
+          - "Verify file removed from tree"
+        api_key_required: null
+        real_api_call: false
+        
+      test_P1_5_03:
+        name: "BlockNote Custom Blocks E2E"
+        story: "P1.5-03"
+        steps:
+          - "Navigate to /notes"
+          - "Create new note"
+          - "Insert image block via slash command /image"
+          - "Verify image block renders with input fields"
+          - "Insert code block via slash command /code"
+          - "Verify syntax highlighting active"
+          - "Drag file from sidebar to editor"
+          - "Verify file attachment block created"
+        api_key_required: null
+        real_api_call: false
+        
+      test_P1_5_04:
+        name: "Notes 3-Pane Reactivity E2E"
+        story: "P1.5-04"
+        steps:
+          - "Navigate to /notes"
+          - "Click on Note A in sidebar"
+          - "Verify editor shows Note A content (< 500ms)"
+          - "Click on Note B in sidebar"
+          - "Verify editor shows Note B content without stale data"
+          - "Verify no console errors during transitions"
+        api_key_required: null
+        real_api_call: false
+        performance_threshold_ms: 500
+        
+      test_P1_5_05:
+        name: "AI Slash Commands E2E"
+        story: "P1.5-05"
+        steps:
+          - "Navigate to /notes"
+          - "Create new note with text 'Hello World'"
+          - "Select text → Type / to open slash menu"
+          - "Verify AI commands visible (summarize, expand, rewrite)"
+          - "Click 'Summarize' command"
+          - "Verify AI response appears (REAL API call)"
+          - "Verify response is not mock data"
+        api_key_required: "gemini"
+        real_api_call: true
+
+  gate_verification_pattern:
+    description: |
+      Use Gate Verification Pattern from integration-testing module:
+      Phase 1: Core Gates (must all pass)
+        - HTTP status < 400
+        - No "Maximum update depth exceeded" errors
+        - No WSOD (White Screen of Death)
+      Phase 2: Specific Assertions (can fail without blocking)
+        - UI element visibility
+        - Exact text matching
+    
+    core_gates:
+      - gate: "HTTP_OK"
+        assertion: "response.status() < 400"
+        blocking: true
+      - gate: "NO_REACT_ERRORS"
+        assertion: "text='Maximum update depth exceeded' NOT visible"
+        blocking: true
+      - gate: "NO_WSOD"
+        assertion: "body has visible content"
+        blocking: true
+
+  troubleshooting_reference:
+    file: "_bmad/modules/integration-testing/MANIFEST.md#3-e2e-testing-troubleshooting"
+    common_pitfalls:
+      - issue: "DevTools False Positive Detection"
+        solution: "Disable @tanstack/devtools-vite in vite.config.ts during E2E"
+      - issue: "Semantic Selector Mismatch"
+        solution: "Use text-based selectors, not h1/h2/h3"
+      - issue: "Firefox Timeout Issues"
+        solution: "Use generous timeouts for Firefox"
+
+  enforcement_rules:
+    - "All Phase 1.5 stories MUST have corresponding E2E test"
+    - "E2E tests MUST use real API keys from api-keys-prod.yaml"
+    - "NO MOCKS allowed for AI functionality tests"
+    - "Screenshot evidence required for UI-related tests"
+    - "Gate Verification Pattern must pass before specific assertions"
+    - "Tests must run in at least 2 browsers (Chromium + Firefox)"
+
+  test_execution_command: |
+    # From project root:
+    npx playwright test --project=chromium --project=firefox
+    
+    # With headed mode for debugging:
+    npx playwright test --headed --project=chromium
+
+  artifacts_location:
+    test_reports: "_bmad-output/test-reports/e2e-phase-1.5-{date}.md"
+    screenshots: "_bmad-output/screenshots/phase-1.5/"
+    api_usage: "_bmad-output/usage-reports/api-usage-{date}.md"

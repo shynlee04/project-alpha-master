@@ -1,0 +1,525 @@
+---
+name: "mcp-servers-config"
+description: "MCP Server Configuration for Integration Testing Module"
+version: "1.0.0"
+created_at: "2026-01-06T00:00:00+07:00"
+module: "integration-testing"
+purpose: "Configure all Model Context Protocol servers for browser automation, debugging, and visual testing"
+---
+
+# MCP Servers Configuration
+# This file configures all MCP servers used by the Integration Testing module
+# for browser automation, performance profiling, and visual regression testing
+
+mcp_servers:
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Server 1: Playwright MCP - Cross-Browser Automation
+  # ═══════════════════════════════════════════════════════════════════════════════
+  playwright_mcp:
+    name: "@playwright/mcp"
+    version: "latest"
+    enabled: true
+    priority: "P0"
+    purpose: "Cross-browser end-to-end testing automation"
+
+    capabilities:
+      browser_automation:
+        - "Launch Chrome, Firefox, Safari, Edge"
+        - "Navigate to URLs"
+        - "Click elements, fill forms, type text"
+        - "Capture screenshots at each step"
+        - "Execute JavaScript in browser context"
+        - "Intercept network requests"
+        - "Monitor console errors"
+        - "Inspect and modify local storage"
+
+      visual_regression:
+        - "Capture baseline screenshots"
+        - "Capture actual screenshots"
+        - "Compare screenshots for differences"
+        - "Generate visual diff reports"
+
+      cross_browser_testing:
+        - "Chrome Desktop (Linux) - P0 - Full journey"
+        - "Firefox Desktop (Linux) - P0 - Full journey"
+        - "Safari (macOS) - P1 - Smoke test"
+        - "Edge (Windows) - P1 - Smoke test"
+
+    configuration:
+      browsers:
+        chrome:
+          channel: "chrome"
+          platform: "Desktop/Linux"
+          headless: true
+          viewport:
+            width: 1920
+            height: 1080
+          screenshot:
+            full_page: true
+            type: "png"
+
+        firefox:
+          channel: "firefox"
+          platform: "Desktop/Linux"
+          headless: true
+          viewport:
+            width: 1920
+            height: 1080
+          screenshot:
+            full_page: true
+            type: "png"
+
+        safari:
+          channel: "webkit"
+          platform: "macOS"
+          headless: false  # Safari requires real browser
+          viewport:
+            width: 1920
+            height: 1080
+          screenshot:
+            full_page: false
+            type: "png"
+
+        edge:
+          channel: "msedge"
+          platform: "Windows"
+          headless: true
+          viewport:
+            width: 1920
+            height: 1080
+          screenshot:
+            full_page: false
+            type: "png"
+
+      test_execution:
+        timeout: 30000  # 30 seconds per action
+        navigation_timeout: 60000  # 60 seconds for page load
+        screenshot_on_failure: true
+        trace_on_failure: true
+        video_recording: false  # Enable for debugging
+
+      screenshot_output:
+        baseline_dir: "_bmad-output/screenshots/baseline/"
+        actual_dir: "_bmad-output/screenshots/actual/"
+        diffs_dir: "_bmad-output/screenshots/diffs/"
+        format: "png"
+        quality: 100
+
+    tools:
+      - name: "playwright_navigate"
+        description: "Navigate to URL in browser"
+        parameters:
+          url: "string (required)"
+          browser: "chromium | firefox | webkit (default: chromium)"
+          wait_until: "load | domcontentloaded | networkidle (default: load)"
+
+      - name: "playwright_click"
+        description: "Click element on page"
+        parameters:
+          selector: "string (required) - CSS selector or text"
+          browser: "chromium | firefox | webkit (default: chromium)"
+
+      - name: "playwright_fill"
+        description: "Fill form field"
+        parameters:
+          selector: "string (required) - CSS selector or label"
+          value: "string (required)"
+          browser: "chromium | firefox | webkit (default: chromium)"
+
+      - name: "playwright_screenshot"
+        description: "Capture screenshot of page or element"
+        parameters:
+          selector: "string (optional) - Element selector, default: full page"
+          browser: "chromium | firefox | webkit (default: chromium)"
+          path: "string (required) - Output file path"
+
+      - name: "playwright_evaluate"
+        description: "Execute JavaScript in browser context"
+        parameters:
+          script: "string (required) - JavaScript code"
+          browser: "chromium | firefox | webkit (default: chromium)"
+
+      - name: "playwright_console_messages"
+        description: "Get console errors and warnings"
+        parameters:
+          browser: "chromium | firefox | webkit (default: chromium)"
+
+      - name: "playwright_network_requests"
+        description: "Get network request log"
+        parameters:
+          browser: "chromium | firefox | webkit (default: chromium)"
+
+    health_checks:
+      - "Browser launches successfully"
+      - "Can navigate to localhost"
+      - "Screenshot capture works"
+      - "Console monitoring active"
+      - "Network interception active"
+
+    fallback:
+      on_browser_unavailable: "Skip to next browser in priority list"
+      on_screenshot_failure: "Retry once, then log error and continue"
+      on_timeout: "Capture error screenshot, log to report, continue to next test"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Server 2: ChromeDev MCP - Performance Profiling & Debugging
+  # ═══════════════════════════════════════════════════════════════════════════════
+  chromedev_mcp:
+    name: "@chromedev/mcp"
+    version: "latest"
+    enabled: true
+    priority: "P1"
+    purpose: "Chrome DevTools Protocol for performance profiling and debugging"
+
+    capabilities:
+      performance_profiling:
+        - "CPU profiling"
+        - "Memory profiling"
+        - "Network performance analysis"
+        - "Rendering performance metrics"
+        - "JavaScript execution tracing"
+
+      debugging:
+        - "Set breakpoints"
+        - "Inspect variables"
+        - "Step through code"
+        - "Call stack analysis"
+        - "Exception tracking"
+
+      metrics:
+        - "Load time metrics"
+        - "Frame rate (FPS) monitoring"
+        - "Memory leak detection"
+        - "Long task detection (>50ms)"
+        - "Layout shift tracking"
+
+    configuration:
+      browser:
+        channel: "chrome"
+        platform: "Desktop/Linux"
+        remote_debugging_port: 9222
+
+      profiling:
+        cpu_sampling_interval: 100  # microseconds
+        memory_sampling_interval: 1000  # milliseconds
+        network_recording: true
+
+      performance_targets:
+        load_time:
+          target: "<2 seconds"
+          measurement: "Time from navigation to complete page load"
+          critical_threshold: "3 seconds"
+
+        response_time:
+          target: "<500ms"
+          measurement: "Time from API request to response"
+          critical_threshold: "1000ms"
+
+        frame_rate:
+          target: ">60 FPS"
+          measurement: "Frames per second during animations"
+          critical_threshold: "30 FPS"
+
+        memory:
+          target: "No leaks in 10-minute session"
+          measurement: "Memory usage over time"
+          critical_threshold: "50MB growth in 5 minutes"
+
+    tools:
+      - name: "chromedev_performance_profile"
+        description: "Capture performance profile"
+        parameters:
+          duration: "number (required) - Profiling duration in milliseconds"
+          actions: "array (optional) - List of user actions to perform"
+
+      - name: "chromedev_memory_profile"
+        description: "Capture memory profile and detect leaks"
+        parameters:
+          duration: "number (required) - Profiling duration in milliseconds"
+
+      - name: "chromedev_network_har"
+        description: "Export network log as HAR file"
+        parameters:
+          output_path: "string (required) - HAR file output path"
+
+      - name: "chromedev_metrics"
+        description: "Get performance metrics (FCP, LCP, TTI, etc.)"
+        parameters:
+          url: "string (required) - URL to measure"
+
+      - name: "chromedev_trace"
+        description: "Capture Chrome trace for performance analysis"
+        parameters:
+          duration: "number (required) - Tracing duration in milliseconds"
+          categories: "array (optional) - Trace categories to capture"
+
+    health_checks:
+      - "Chrome DevTools Protocol accessible"
+      - "Remote debugging port open"
+      - "Performance profiling works"
+      - "Memory profiling works"
+      - "Network monitoring active"
+
+    fallback:
+      on_port_in_use: "Kill existing Chrome process, retry"
+      on_profiling_failure: "Log error, continue without profiling"
+      on_timeout: "Cancel profiling, save partial results"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Server 3: Zai-MCP-Server - Multimodal Visual Analysis
+  # ═══════════════════════════════════════════════════════════════════════════════
+  zai_mcp_server:
+    name: "@zai-mcp-server"
+    version: "latest"
+    enabled: true
+    priority: "P0"
+    purpose: "Multimodal AI analysis for visual regression testing"
+
+    capabilities:
+      visual_analysis:
+        - "Screenshot comparison using vision models"
+        - "Layout difference detection"
+        - "Color change detection"
+        - "Typography variation detection"
+        - "Iconography change detection"
+
+      regression_detection:
+        - "Unintended UI changes"
+        - "Visual regression severity assessment (LOW|MEDIUM|HIGH)"
+        - "Difference highlighting"
+        - "Side-by-side comparison"
+
+      specialized_tools:
+        - "UI to Code (generate frontend code from UI screenshots)"
+        - "Error Screenshot Diagnosis (analyze error messages)"
+        - "Data Visualization Analysis (extract insights from charts)"
+        - "Technical Diagram Understanding (architecture diagrams, flowcharts)"
+        - "Video Content Analysis (analyze video footage)"
+
+    configuration:
+      vision_model:
+        primary: "@anthropic-ai/claude-code"
+        fallback: "mcp__zai-mcp-server__analyze_image"
+
+      visual_comparison:
+        sensitivity: "medium"  # low | medium | high
+        threshold: "0.85"  # Similarity threshold (0-1)
+
+      analysis_types:
+        layout:
+          - "Element positioning"
+          - "Spacing and alignment"
+          - "Grid and flexbox layouts"
+          - "Z-index layering"
+
+        visual:
+          - "Color changes"
+          - "Typography (font, size, weight)"
+          - "Iconography"
+          - "Borders and shadows"
+
+        rendering:
+          - "Component rendering"
+          - "CSS effects"
+          - "Animations"
+          - "Transitions"
+
+    tools:
+      - name: "zai_analyze_image"
+        description: "General-purpose image analysis"
+        parameters:
+          image_source: "string (required) - Local file path or remote URL"
+          prompt: "string (required) - Detailed analysis instructions"
+
+      - name: "zai_ui_to_artifact"
+        description: "Convert UI screenshots to code/prompts/specs"
+        parameters:
+          image_source: "string (required) - Screenshot file path"
+          output_type: "string (required) - code | prompt | spec | description"
+          prompt: "string (required) - What to generate from this UI"
+
+      - name: "zai_diagnose_error_screenshot"
+        description: "Analyze error messages and stack traces"
+        parameters:
+          image_source: "string (required) - Error screenshot"
+          prompt: "string (required) - Error context"
+          context: "string (optional) - When error occurred"
+
+      - name: "zai_ui_diff_check"
+        description: "Compare two UI screenshots for differences"
+        parameters:
+          expected_image_source: "string (required) - Baseline screenshot"
+          actual_image_source: "string (required) - Current screenshot"
+          prompt: "string (required) - Comparison focus"
+
+      - name: "zai_understand_technical_diagram"
+        description: "Analyze architecture diagrams and flowcharts"
+        parameters:
+          image_source: "string (required) - Diagram image"
+          prompt: "string (required) - What to understand"
+          diagram_type: "string (optional) - architecture | flowchart | uml | er-diagram | sequence"
+
+      - name: "zai_analyze_video"
+        description: "Analyze video content for behavior validation"
+        parameters:
+          video_source: "string (required) - Video file path (MP4, MOV, M4V)"
+          prompt: "string (required) - What to analyze"
+
+      - name: "zai_analyze_data_visualization"
+        description: "Extract insights from charts and graphs"
+        parameters:
+          image_source: "string (required) - Data visualization screenshot"
+          prompt: "string (required) - What insights to extract"
+          analysis_focus: "string (optional) - trends | anomalies | comparisons | performance"
+
+    health_checks:
+      - "Vision model API accessible"
+      - "Image analysis works"
+      - "Screenshot comparison works"
+      - "Video analysis works"
+      - "Regression detection active"
+
+    fallback:
+      on_vision_model_unavailable: "Use pixel-by-pixel comparison (less accurate)"
+      on_analysis_timeout: "Log timeout, mark as UNABLE_TO_ANALYZE"
+      on_low_confidence: "Flag for manual review"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Integration Between MCP Servers
+  # ═══════════════════════════════════════════════════════════════════════════════
+  integration:
+    orchestration:
+      # Step 1: Playwright captures screenshots during user journey
+      capture_screenshots:
+        tool: "playwright_mcp.playwright_screenshot"
+        output: "_bmad-output/screenshots/actual/{feature}/{step}.png"
+
+      # Step 2: Zai-MCP-Server compares baseline vs actual
+      compare_screenshots:
+        tool: "zai_mcp_server.zai_ui_diff_check"
+        input:
+          expected: "_bmad-output/screenshots/baseline/{feature}/{step}.png"
+          actual: "_bmad-output/screenshots/actual/{feature}/{step}.png"
+        output: "_bmad-output/screenshots/diffs/{feature}/{step}-diff-analysis.md"
+
+      # Step 3: ChromeDev MCP profiles performance
+      profile_performance:
+        tool: "chromedev_mcp.chromedev_performance_profile"
+        output: "_bmad-output/performance/{feature}-profile.json"
+
+    workflow:
+      1_capture_baseline:
+        - "Deploy feature to staging"
+        - "Navigate to feature"
+        - "Capture baseline screenshots with Playwright"
+        - "Store in _bmad-output/screenshots/baseline/"
+
+      2_implement_changes:
+        - "Deploy new feature version"
+        - "Clear browser cache"
+
+      3_capture_actual:
+        - "Navigate to feature"
+        - "Capture actual screenshots with Playwright"
+        - "Store in _bmad-output/screenshots/actual/"
+
+      4_visual_comparison:
+        - "Use Zai-MCP-Server to compare baseline vs actual"
+        - "Detect layout, visual, and rendering differences"
+        - "Generate visual diff report"
+
+      5_performance_profiling:
+        - "Use ChromeDev MCP to profile performance"
+        - "Measure load time, response time, frame rate, memory"
+        - "Generate performance report"
+
+      6_regression_detection:
+        - "Aggregate visual and performance findings"
+        - "Flag unintended UI changes (severity: LOW|MEDIUM|HIGH)"
+        - "Report performance regressions (>20% degradation)"
+        - "Generate comprehensive test report"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Error Handling & Recovery
+  # ═══════════════════════════════════════════════════════════════════════════════
+  error_handling:
+    playwright_unavailable:
+      action: "CRITICAL - All browser testing blocked"
+      recovery: "Install Playwright MCP server: npm install @playwright/mcp"
+      notification: "Notify BMAD-Core-Master immediately"
+
+    chromedev_unavailable:
+      action: "WARNING - Performance profiling unavailable"
+      recovery: "Continue testing without profiling, install ChromeDev MCP later"
+      notification: "Log to test report"
+
+    zai_mcp_unavailable:
+      action: "CRITICAL - Visual regression testing blocked"
+      recovery: "Install Zai-MCP-Server: npm install @zai/mcp-server"
+      notification: "Notify BMAD-Core-Master immediately"
+
+    all_servers_unavailable:
+      action: "CRITICAL - Integration testing completely blocked"
+      recovery: "WAIT for human intervention to install MCP servers"
+      notification: "BLOCK all integration testing until resolved"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Security & Privacy
+  # ═══════════════════════════════════════════════════════════════════════════════
+  security:
+    api_keys:
+      - "NEVER log API keys in output"
+      - "NEVER include keys in handoff artifacts"
+      - "Load from api-keys-prod.yaml only"
+      - "Validate key format before use"
+      - "Track usage to prevent exhaustion"
+
+    screenshots:
+      - "Sanitize sensitive data before analysis"
+      - "Redact passwords, tokens, personal info"
+      - "Store screenshots in secure directory"
+      - "Delete screenshots after 90 days (TTL enforcement)"
+
+    browser_context:
+      - "Clear cookies, cache, local storage after each test"
+      - "Run tests in isolated browser contexts"
+      - "Never share browser sessions between tests"
+
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Success Criteria
+  # ═══════════════════════════════════════════════════════════════════════════════
+  success_criteria:
+    playwright_mcp:
+      - "✅ Can launch Chrome, Firefox, Safari, Edge"
+      - "✅ Can navigate to localhost and capture screenshots"
+      - "✅ Can execute user journey (click, fill, type)"
+      - "✅ Console error monitoring active"
+      - "✅ Network request interception active"
+
+    chromedev_mcp:
+      - "✅ Can access Chrome DevTools Protocol"
+      - "✅ Can capture performance profile"
+      - "✅ Can detect memory leaks"
+      - "✅ Can measure load time, response time, frame rate"
+      - "✅ Can export network HAR file"
+
+    zai_mcp_server:
+      - "✅ Can analyze screenshots with vision model"
+      - "✅ Can compare baseline vs actual screenshots"
+      - "✅ Can detect visual regressions (layout, visual, rendering)"
+      - "✅ Can generate visual diff report"
+      - "✅ Can diagnose error screenshots"
+
+    integration:
+      - "✅ Playwright screenshots → Zai analysis workflow works"
+      - "✅ ChromeDev profiling → Performance report workflow works"
+      - "✅ All three servers coordinate in single test session"
+      - "✅ Fallback mechanisms work when servers unavailable"
+      - "✅ Security protocols enforced (no keys logged, sanitized screenshots)"
+
+---
+
+**Status**: CONFIGURED - Ready for MCP server installation and testing
+**Next Action**: Install MCP servers and verify integration
+**Estimated Setup Time**: 30 minutes
+**Priority**: P0 (Required for Phase 3 completion)

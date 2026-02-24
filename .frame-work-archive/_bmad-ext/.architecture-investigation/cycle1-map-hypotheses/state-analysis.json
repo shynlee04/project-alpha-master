@@ -1,0 +1,491 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-18T12:00:00Z",
+    "analyzed_paths": [
+      "src/infrastructure/persistence/stores/",
+      "src/infrastructure/persistence/"
+    ],
+    "excluded_patterns": [
+      "node_modules",
+      ".git",
+      "dist",
+      "build",
+      ".next",
+      ".nuxt",
+      ".cache",
+      "coverage",
+      "**/__tests__/**",
+      "**/*.test.ts",
+      "**/*.test.tsx"
+    ]
+  },
+  "stores": [
+    {
+      "name": "useProjectStore",
+      "path": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+      "lines": 148,
+      "slices": [
+        "project-crud-slice.ts",
+        "project-bindings-slice.ts",
+        "project-permissions-slice.ts",
+        "project-layout-slice.ts",
+        "project-utils-slice.ts"
+      ],
+      "persistence": "Dexie (no persist middleware - transient cache)",
+      "slice_count": 5,
+      "avg_slice_lines": 120,
+      "status": "healthy"
+    },
+    {
+      "name": "useIDEStore",
+      "path": "src/infrastructure/persistence/stores/ide/useIDEStore.ts",
+      "lines": 246,
+      "slices": [
+        "ide-editor-slice.ts",
+        "ide-explorer-slice.ts",
+        "ide-layout-slice.ts",
+        "ide-terminal-slice.ts",
+        "ide-project-slice.ts",
+        "ide-selectors-slice.ts"
+      ],
+      "persistence": "Dexie (custom storage adapter)",
+      "slice_count": 6,
+      "avg_slice_lines": 85,
+      "status": "healthy"
+    },
+    {
+      "name": "useUnifiedChatStore",
+      "path": "src/infrastructure/persistence/stores/chat/unified-chat-store.ts",
+      "lines": 201,
+      "slices": [
+        "chat-metadata-slice.ts",
+        "thread-management-slice.ts",
+        "message-crud-slice.ts",
+        "tool-execution-slice.ts",
+        "context-window-slice.ts",
+        "chat-persistence-slice.ts"
+      ],
+      "persistence": "Dexie (createDexieStorage)",
+      "slice_count": 6,
+      "avg_slice_lines": 244,
+      "status": "healthy"
+    },
+    {
+      "name": "useConversationStore",
+      "path": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "lines": 496,
+      "slices": [],
+      "persistence": "Facade (delegates to useUnifiedChatStore)",
+      "slice_count": 0,
+      "avg_slice_lines": 0,
+      "status": "deprecated_facade",
+      "notes": "Backward compatibility facade for legacy consumers"
+    },
+    {
+      "name": "useAppStore",
+      "path": "src/infrastructure/persistence/stores/use-app-store.ts",
+      "lines": 378,
+      "slices": [
+        "agent-crud-slice.ts",
+        "agent-workspace-bindings-slice.ts",
+        "agent-validation-slice.ts",
+        "agent-events-slice.ts",
+        "agent-utils-slice.ts",
+        "provider-crud-slice.ts",
+        "provider-models-slice.ts",
+        "provider-utils-slice.ts"
+      ],
+      "persistence": "Dexie (providerConfigs table)",
+      "slice_count": 8,
+      "avg_slice_lines": 175,
+      "status": "healthy"
+    },
+    {
+      "name": "useWorkspaceStore",
+      "path": "src/infrastructure/persistence/stores/workspace/workspace-store.ts",
+      "lines": 227,
+      "slices": [],
+      "persistence": "Dexie (providerConfigs table)",
+      "slice_count": 0,
+      "avg_slice_lines": 0,
+      "status": "needs_slice_refactor",
+      "notes": "Single store without slice pattern - candidate for refactoring"
+    },
+    {
+      "name": "useNotificationStore",
+      "path": "src/infrastructure/persistence/stores/notifications/index.ts",
+      "lines": 143,
+      "slices": [
+        "notification-crud-slice.ts",
+        "notification-filter-slice.ts",
+        "notification-preferences-slice.ts"
+      ],
+      "persistence": "localStorage (persist middleware)",
+      "slice_count": 3,
+      "avg_slice_lines": 85,
+      "status": "needs_migration",
+      "notes": "Still uses localStorage - should migrate to Dexie"
+    },
+    {
+      "name": "useLayoutStore",
+      "path": "src/infrastructure/persistence/stores/layout-store.ts",
+      "lines": 142,
+      "slices": [],
+      "persistence": "localStorage (persist middleware)",
+      "slice_count": 0,
+      "avg_slice_lines": 0,
+      "status": "needs_migration",
+      "notes": "Still uses localStorage - should migrate to Dexie"
+    },
+    {
+      "name": "useQuizStore",
+      "path": "src/infrastructure/persistence/stores/study/quiz-store.ts",
+      "lines": 150,
+      "slices": [
+        "quiz-management-slice.ts",
+        "question-management-slice.ts",
+        "quiz-query-slice.ts",
+        "quiz-ui-slice.ts"
+      ],
+      "persistence": "localStorage (persist middleware)",
+      "slice_count": 4,
+      "avg_slice_lines": 75,
+      "status": "needs_migration",
+      "notes": "Still uses localStorage - should migrate to Dexie"
+    },
+    {
+      "name": "useStudyStore",
+      "path": "src/infrastructure/persistence/stores/study/study-store-refactored.ts",
+      "lines": 180,
+      "slices": [
+        "study-database-slice.ts",
+        "study-session-slice.ts",
+        "study-navigation-slice.ts",
+        "study-stats-slice.ts"
+      ],
+      "persistence": "Dexie (dedicated study tables)",
+      "slice_count": 4,
+      "avg_slice_lines": 120,
+      "status": "healthy"
+    },
+    {
+      "name": "useFlashcardStore",
+      "path": "src/infrastructure/persistence/stores/flashcard-store.ts",
+      "lines": 120,
+      "slices": [
+        "flashcard-crud-slice.ts",
+        "flashcard-filter-slice.ts",
+        "flashcard-set-crud-slice.ts"
+      ],
+      "persistence": "Dexie (flashcards table)",
+      "slice_count": 3,
+      "avg_slice_lines": 100,
+      "status": "healthy"
+    },
+    {
+      "name": "useRAGStore",
+      "path": "src/infrastructure/persistence/stores/rag/rag-store.ts",
+      "lines": 120,
+      "slices": [],
+      "persistence": "Dexie (ragState table)",
+      "slice_count": 0,
+      "avg_slice_lines": 0,
+      "status": "needs_slice_refactor",
+      "notes": "Single store without slice pattern"
+    },
+    {
+      "name": "useKnowledgeStore",
+      "path": "src/infrastructure/persistence/stores/knowledge/knowledge-store.ts",
+      "lines": 150,
+      "slices": [
+        "knowledge-source-crud-slice.ts",
+        "knowledge-collection-slice.ts",
+        "knowledge-metadata-slice.ts",
+        "knowledge-preview-slice.ts",
+        "knowledge-synthesis-slice.ts",
+        "knowledge-undo-slice.ts"
+      ],
+      "persistence": "Dexie (conversationState table)",
+      "slice_count": 6,
+      "avg_slice_lines": 80,
+      "status": "healthy"
+    },
+    {
+      "name": "useTerminalStore",
+      "path": "src/infrastructure/persistence/stores/terminal-store.ts",
+      "lines": 350,
+      "slices": [],
+      "persistence": "Dexie (terminalState table)",
+      "slice_count": 0,
+      "avg_slice_lines": 0,
+      "status": "god_store",
+      "notes": "Single file >300 lines - needs slice refactoring"
+    },
+    {
+      "name": "useCanvasStore",
+      "path": "src/infrastructure/persistence/stores/canvas/index.ts",
+      "lines": 100,
+      "slices": [
+        "canvas-multi-slice.ts",
+        "canvas-io-slice.ts",
+        "canvas-persistence-slice.ts"
+      ],
+      "persistence": "IndexedDB (custom adapter)",
+      "slice_count": 3,
+      "avg_slice_lines": 100,
+      "status": "healthy"
+    },
+    {
+      "name": "useAgentSelectionStore",
+      "path": "src/infrastructure/persistence/stores/agents/agent-selection-store.ts",
+      "lines": 80,
+      "slices": [
+        "agent-selection-state.ts",
+        "agent-selection-actions.ts",
+        "agent-selection-events.ts",
+        "agent-selection-queries.ts",
+        "agent-selection-utils.ts"
+      ],
+      "persistence": "Dexie (agentConfigs table)",
+      "slice_count": 5,
+      "avg_slice_lines": 60,
+      "status": "healthy"
+    }
+  ],
+  "god_stores": [
+    {
+      "name": "useConversationStore",
+      "path": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+      "lines": 496,
+      "issues": [
+        "Backward compatibility facade with complex mapping logic",
+        "Maps unified store state to legacy format",
+        "496 lines - exceeds 300 line threshold",
+        "Contains type mappers and facade implementation"
+      ],
+      "priority": "medium",
+      "remediation": "Remove facade after consumer migration complete"
+    },
+    {
+      "name": "useTerminalStore",
+      "path": "src/infrastructure/persistence/stores/terminal-store.ts",
+      "lines": 350,
+      "issues": [
+        "Single file >300 lines",
+        "No slice pattern applied",
+        "Contains terminal session management, xterm integration, and persistence"
+      ],
+      "priority": "high",
+      "remediation": "Split into slices: session-slice, xterm-slice, persistence-slice"
+    },
+    {
+      "name": "dexie-db.ts",
+      "path": "src/infrastructure/persistence/dexie-db.ts",
+      "lines": 1165,
+      "issues": [
+        "1165 lines - massive helper file",
+        "Contains 100+ helper functions",
+        "Mixes concerns: project helpers, sync helpers, file metadata helpers, conversation helpers, source/collection helpers"
+      ],
+      "priority": "high",
+      "remediation": "Split into domain-specific helper modules"
+    }
+  ],
+  "duplicate_stores": [
+    {
+      "entity": "Conversation",
+      "stores": [
+        {
+          "name": "useUnifiedChatStore",
+          "path": "src/infrastructure/persistence/stores/chat/unified-chat-store.ts",
+          "status": "canonical"
+        },
+        {
+          "name": "useConversationStore",
+          "path": "src/infrastructure/persistence/stores/conversation/useConversationStore.ts",
+          "status": "deprecated_facade"
+        }
+      ],
+      "risk": "medium",
+      "notes": "Facade pattern for backward compatibility - should be removed after migration"
+    },
+    {
+      "entity": "Study",
+      "stores": [
+        {
+          "name": "useStudyStore",
+          "path": "src/infrastructure/persistence/stores/study-store.ts",
+          "status": "legacy"
+        },
+        {
+          "name": "useStudyStoreRefactored",
+          "path": "src/infrastructure/persistence/stores/study/study-store-refactored.ts",
+          "status": "canonical"
+        }
+      ],
+      "risk": "low",
+      "notes": "Legacy store re-exports from refactored store - facade pattern"
+    },
+    {
+      "entity": "Project",
+      "stores": [
+        {
+          "name": "useProjectStore",
+          "path": "src/infrastructure/persistence/stores/project/useProjectStore.ts",
+          "status": "canonical"
+        }
+      ],
+      "risk": "none",
+      "notes": "Single canonical store"
+    }
+  ],
+  "persistence_implementations": [
+    {
+      "type": "IndexedDB (Dexie)",
+      "stores": [
+        "useProjectStore",
+        "useIDEStore",
+        "useUnifiedChatStore",
+        "useAppStore",
+        "useWorkspaceStore",
+        "useRAGStore",
+        "useKnowledgeStore",
+        "useStudyStore",
+        "useFlashcardStore",
+        "useAgentSelectionStore",
+        "useTerminalStore"
+      ],
+      "table_count": 42,
+      "status": "primary"
+    },
+    {
+      "type": "localStorage",
+      "stores": [
+        "useNotificationStore",
+        "useLayoutStore",
+        "useQuizStore",
+        "useAnalyticsStore",
+        "usePluginsStore",
+        "useFileWatcherStore",
+        "useChatSettingsStore",
+        "useNavigationStore"
+      ],
+      "count": 8,
+      "status": "legacy",
+      "migration_needed": true
+    },
+    {
+      "type": "FSA (File System Access API)",
+      "stores": [],
+      "notes": "FSA handles stored in Dexie fsaHandles table, not in Zustand stores"
+    }
+  ],
+  "slice_pattern_compliance": {
+    "compliant_stores": [
+      "useProjectStore",
+      "useIDEStore",
+      "useUnifiedChatStore",
+      "useAppStore",
+      "useNotificationStore",
+      "useStudyStore",
+      "useFlashcardStore",
+      "useKnowledgeStore",
+      "useAgentSelectionStore"
+    ],
+    "non_compliant_stores": [
+      {
+        "name": "useWorkspaceStore",
+        "reason": "Single store without slice pattern"
+      },
+      {
+        "name": "useRAGStore",
+        "reason": "Single store without slice pattern"
+      },
+      {
+        "name": "useTerminalStore",
+        "reason": "Single store without slice pattern"
+      }
+    ],
+    "compliance_rate": "75%"
+  },
+  "dexie_schema": {
+    "total_tables": 42,
+    "tables_by_domain": {
+      "core": ["projects", "ideState", "conversations"],
+      "ai_foundation": ["taskContexts", "toolExecutions", "credentials", "threads"],
+      "state_persistence": ["providerConfigs", "agentConfigs", "conversationState", "ragState", "workspaceState"],
+      "sync": ["syncStatus", "fileSyncStatus", "fileMetadata", "toolExecutionLogs", "fsaHandles", "sessionSnapshots"],
+      "file_snapshots": ["fileSnapshots", "fileContentCache"],
+      "knowledge": ["sources", "collections", "synthesisResults", "oramaIndexes", "embedding_models", "notes"],
+      "workflows": ["workflows"],
+      "code_snippets": ["codeSnippets"],
+      "saved_blocks": ["savedBlocks"],
+      "plugins": ["plugins", "pluginSettings", "pluginMarketplace", "pluginStorage"],
+      "study": ["flashcards", "flashcardSets", "studySessions", "studyCards", "quizzes", "quizQuestions"],
+      "file_storage": ["idbFiles"],
+      "terminal": ["terminalState"]
+    }
+  },
+  "invariant_risks": [
+    {
+      "risk": "Dual storage chaos",
+      "description": "Some stores use both localStorage and Dexie, causing state synchronization issues",
+      "affected_stores": ["useProjectStore (removed localStorage in FIX-2026-01-06)"],
+      "status": "mitigated",
+      "notes": "Project store had localStorage removed - other stores still need migration"
+    },
+    {
+      "risk": "Circular dependencies between slices",
+      "description": "Cross-slice communication via get() could create circular references",
+      "affected_stores": ["useProjectStore", "useAppStore"],
+      "status": "low",
+      "notes": "Pattern is intentional but needs careful management"
+    },
+    {
+      "risk": "Migration failures",
+      "description": "Schema migrations could leave state in inconsistent state",
+      "affected_stores": ["useAppStore"],
+      "status": "mitigated",
+      "notes": "Migration backup system exists with 3-layer backup (IndexedDB + localStorage + downloadable)"
+    },
+    {
+      "risk": "Facade complexity",
+      "description": "useConversationStore facade adds mapping overhead and potential bugs",
+      "affected_stores": ["useConversationStore"],
+      "status": "medium",
+      "notes": "Maps unified store state to legacy format - technical debt until removed"
+    }
+  ],
+  "recommendations": [
+    {
+      "priority": "high",
+      "action": "Migrate remaining localStorage stores to Dexie",
+      "affected": ["useNotificationStore", "useLayoutStore", "useQuizStore", "useAnalyticsStore", "usePluginsStore", "useFileWatcherStore", "useChatSettingsStore", "useNavigationStore"],
+      "effort": "medium"
+    },
+    {
+      "priority": "high",
+      "action": "Split useTerminalStore into slices",
+      "affected": ["useTerminalStore"],
+      "effort": "medium"
+    },
+    {
+      "priority": "medium",
+      "action": "Split dexie-db.ts helper file into domain modules",
+      "affected": ["dexie-db.ts"],
+      "effort": "high"
+    },
+    {
+      "priority": "medium",
+      "action": "Remove useConversationStore facade after consumer migration",
+      "affected": ["useConversationStore"],
+      "effort": "low"
+    },
+    {
+      "priority": "low",
+      "action": "Apply slice pattern to useWorkspaceStore and useRAGStore",
+      "affected": ["useWorkspaceStore", "useRAGStore"],
+      "effort": "medium"
+    }
+  ]
+}

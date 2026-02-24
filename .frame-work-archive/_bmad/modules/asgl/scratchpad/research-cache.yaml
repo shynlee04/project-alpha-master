@@ -1,0 +1,105 @@
+# Research Cache
+# Stores MCP research findings to avoid redundant queries
+# TTL: 72 hours per entry, max 100 entries
+
+version: "1.0.0"
+last_updated: "2026-01-05T15:20:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+config:
+  max_entries: 100
+  ttl_hours: 72
+  auto_prune: true
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CACHE ENTRIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+entries:
+  - id: "RESEARCH-001"
+    query: "Zustand persist middleware with Dexie"
+    timestamp: "2026-01-05T14:52:00+07:00"
+    expires: "2026-01-08T14:52:00+07:00"
+    
+    tools_used:
+      - tool: "context7"
+        action: "query-docs"
+        library: "/pmndrs/zustand"
+        
+      - tool: "deepwiki"
+        action: "ask_question"
+        repo: "dexie/Dexie.js"
+        
+    findings:
+      - pattern: "createJSONStorage adapter"
+        source: "Zustand docs"
+        confidence: "HIGH"
+        
+      - pattern: "Custom storage with async getter/setter"
+        source: "Dexie.js patterns"
+        confidence: "HIGH"
+        
+    applied_in:
+      - story: "CC-02"
+        file: "credential-vault.ts"
+        
+  - id: "RESEARCH-002"
+    query: "8-bit design system CSS variables"
+    timestamp: "2026-01-05T15:08:00+07:00"
+    expires: "2026-01-08T15:08:00+07:00"
+    
+    tools_used:
+      - tool: "view_file"
+        path: "_bmad-output/design-system-8bit-2025-12-25.md"
+        
+    findings:
+      - pattern: "Hard-edged shadows (no blur)"
+        source: "Design System v1.0"
+        confidence: "DEFINITIVE"
+        
+      - pattern: "CSS variables with --color-* prefix"
+        source: "Design System v1.0"
+        confidence: "DEFINITIVE"
+        
+      - pattern: "NO glassmorphism, backdrop-blur, or soft shadows"
+        source: "Design System v1.0"
+        confidence: "DEFINITIVE"
+        
+    applied_in: []
+    
+  - id: "RESEARCH-003"
+    query: "Mobile-first responsive patterns"
+    timestamp: "2026-01-05T15:09:00+07:00"
+    expires: "2026-01-08T15:09:00+07:00"
+    
+    tools_used:
+      - tool: "view_file"
+        path: "_bmad-output/ux-specification.md"
+        
+    findings:
+      - pattern: "Touch targets minimum 44x44px"
+        source: "UX Specification v2.0"
+        confidence: "DEFINITIVE"
+        
+      - pattern: "Sidebar collapses to 48px on mobile"
+        source: "UX Specification v2.0"
+        confidence: "DEFINITIVE"
+        
+      - pattern: "Breakpoints: 640px (sm), 768px (md), 1024px (lg)"
+        source: "UX Specification v2.0"
+        confidence: "DEFINITIVE"
+        
+    applied_in: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CACHE STATISTICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+stats:
+  total_entries: 3
+  hits: 0
+  misses: 0
+  last_pruned: null

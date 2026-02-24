@@ -1,0 +1,285 @@
+# Pre-Execution Hook (Generic)
+# governance-core module
+# Platform-agnostic hook for non-Claude-Code platforms
+
+---
+name: "pre-execution"
+module: "governance-core"
+version: "1.0.0"
+trigger: "before_execution"
+platform: "generic"
+created: "2026-01-10"
+
+description: |
+  Platform-agnostic pre-execution hook. For platforms other than Claude Code,
+  this hook provides the same governance enforcement in a generic format.
+
+  Compatible with:
+  - CLI tools
+  - IDE extensions (VS Code, JetBrains)
+  - Build systems
+  - CI/CD pipelines
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HOOK EXECUTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+execution:
+  mode: "blocking"
+  timeout_seconds: 30
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PLATFORM DETECTION
+# ═══════════════════════════════════════════════════════════════════════════
+
+platform_detection:
+  enabled: true
+  detection_key: "GOVERNANCE_PLATFORM"
+
+  platforms:
+    cli:
+      env_var: "GOVERNANCE_PLATFORM=cli"
+      input_method: "stdin"
+      output_method: "stdout"
+
+    vscode:
+      env_var: "VSCODE_CWD"
+      input_method: "extension_api"
+      output_method: "notification"
+
+    jetbrains:
+      env_var: "IDEA_INITIAL_DIRECTORY"
+      input_method: "plugin_api"
+      output_method: "balloon"
+
+    github_actions:
+      env_var: "GITHUB_ACTIONS=true"
+      input_method: "workflow_input"
+      output_method: "step_output"
+
+    generic:
+      fallback: true
+      input_method: "args"
+      output_method: "stdout"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INPUT FORMAT
+# ═══════════════════════════════════════════════════════════════════════════
+
+input:
+  formats:
+    # CLI arguments
+    cli:
+      parser: "argparse"
+      schema:
+        - name: "prompt"
+          type: "string"
+          required: true
+          position: 0
+        - name: "task-type"
+          type: "string"
+          shortcut: "-t"
+        - name: "skip-governance"
+          type: "boolean"
+          shortcut: "-s"
+
+    # JSON (for programmatic use)
+    json:
+      parser: "json"
+      schema:
+        prompt: "string"
+        task_type: "string (optional)"
+        context: "object (optional)"
+
+    # Environment variables (for CI/CD)
+    env:
+      prefix: "GOVERNANCE_"
+      schema:
+        prompt: "GOVERNANCE_PROMPT"
+        task_type: "GOVERNANCE_TASK_TYPE"
+        skip: "GOVERNANCE_SKIP"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STEPS
+# ═══════════════════════════════════════════════════════════════════════════
+
+steps:
+  - step_id: "detect-platform"
+    name: "Detect Platform"
+    action: "detect"
+    method: "platform_detection"
+    output_var: "platform"
+
+  - step_id: "parse-input"
+    name: "Parse Input"
+    action: "parse"
+    method: "{{platform.input_method}}"
+    schema: "input.{{platform.input_method}}.schema"
+    output_var: "parsed_input"
+
+  - step_id: "validate-session"
+    name: "Validate Session Context"
+    action: "validate"
+    path: "{project-root}/_bmad-ext/state/LOOP_STATE.yaml"
+    checks:
+      - name: "staleness"
+        condition: "(now - anchor.human_intent_timestamp) < 4 hours"
+        on_fail: "require_confirmation"
+    output_var: "session_status"
+
+  - step_id: "execute-governance-checks"
+    name: "Execute Governance Checks"
+    action: "execute_workflow"
+    workflow: "{project-root}/_bmad-ext/modules/governance-core/workflows/auto-gate.md"
+    input:
+      user_prompt: "{{parsed_input.prompt}}"
+      task_type: "{{parsed_input.task_type}}"
+      platform: "{{platform}}"
+    output_var: "governance_result"
+
+  - step_id: "handle-result"
+    name: "Handle Governance Result"
+    action: "route"
+    input: "{{governance_result}}"
+    routes:
+      - condition: "result.status == 'ALLOW'"
+        action: "return_success"
+      - condition: "result.status == 'WARN'"
+        action: "return_warning"
+      - condition: "result.status == 'BLOCK'"
+        action: "return_block"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OUTPUT FORMAT
+# ═══════════════════════════════════════════════════════════════════════════
+
+output:
+  formats:
+    # Human-readable (CLI, terminals)
+    text:
+      template: |
+        ┌─────────────────────────────────────────────────────────────┐
+        │                    GOVERNANCE REPORT                        │
+        ├─────────────────────────────────────────────────────────────┤
+        │ Status: {{status}}                                          │
+        │                                                              │
+        │ {{summary}}                                                  │
+        │                                                              │
+        {% if status == 'BLOCK' %}
+        │ To override: Set GOVERNANCE_OVERRIDE="reason" env var       │
+        {% endif %}
+        └─────────────────────────────────────────────────────────────┘
+
+    # Machine-readable (CI/CD, scripts)
+    json:
+      format: "json"
+      fields:
+        - status
+        - summary
+        - recommendation
+        - allowed
+
+    # Exit codes (for shell scripting)
+    exit_codes:
+      0: "ALLOW - Proceed"
+      1: "WARN - Proceed with caution"
+      2: "BLOCK - Do not proceed"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PLATFORM-SIFIC CONFIGURATIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+platform_configs:
+  vscode:
+    output: "notification"
+    color_scheme: "vscode"
+    override_method: "button_prompt"
+
+  jetbrains:
+    output: "balloon_notification"
+    color_scheme: "jetbrains"
+    override_method: "dialog"
+
+  github_actions:
+    output: "step_output"
+    format: "json"
+    annotations: "github"
+    override_method: "env_var"
+
+  cli:
+    output: "stdout"
+    color: "auto"
+    override_method: "confirmation_prompt"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OVERRIDE MECHANISM
+# ═══════════════════════════════════════════════════════════════════════════
+
+override:
+  enabled: true
+  methods:
+    env_var:
+      name: "GOVERNANCE_OVERRIDE"
+      format: "string (reason)"
+      example: 'GOVERNANCE_OVERRIDE="I understand the risks"'
+
+    confirmation:
+      prompt: "Override governance block? (yes/no): "
+      requires: "exact match: 'yes'"
+      case_sensitive: false
+
+    flag:
+      name: "--force"
+      requires_explicit: "true"
+      logs_debt: true
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+integrates_with:
+  - workflow: "auto-gate"
+    trigger: "before_execution"
+  - workflow: "correct-course"
+    trigger: "on_block"
+  - state_file: "LOOP_STATE.yaml"
+    purpose: "session_validation"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# INSTALLATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+installation:
+  cli:
+    script: "_bmad-ext/modules/governance-core/bin/governance-check"
+    shebang: "#!/usr/bin/env node"
+    dependencies:
+      - "yaml"
+      - "chalk"
+
+  vscode:
+    extension: "_bmad-ext/modules/governance-core/integrations/vscode/"
+    activation: "onCommand:governance.check"
+
+  github_actions:
+    workflow: ".github/workflows/governance-check.yml"
+    runs_on: "ubuntu-latest"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ERROR HANDLING
+# ═══════════════════════════════════════════════════════════════════════════
+
+error_handling:
+  on_parse_error:
+    action: "return_error"
+    exit_code: 3
+    message: "Failed to parse input"
+
+  on_workflow_timeout:
+    action: "return_error"
+    exit_code: 4
+    message: "Governance check timed out"
+
+  on_missing_state:
+    action: "initialize_state"
+    message: "Initializing governance state files"

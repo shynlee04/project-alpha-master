@@ -1,0 +1,28 @@
+# Session Archive
+timestamp: "2026-02-01T14:30:26.372Z"
+session_id: "ses_3e67445aaffe9ARFt2fXpLLbXu"
+tool: "task"
+call_id: "oQsdmbIacCiJ8FOr"
+detected_agent: "none"
+work_type: "unknown"
+message_count: 7
+task_title: "AI endpoints inventory"
+original_intent: |
+  <objective>
+
+Initialize a new project through unified flow: questioning → research (optional) → requirements → roadmap.
+
+This is the most leveraged moment in any project. Deep questioning here means b
+task_output: |
+  Now I have a complete picture. Let me compile the comprehensive AI Endpoints Inventory report:
+
+---
+
+## AI Endpoints Inventory
+
+### Current Implementations
+
+| Location | SDK Used | Provider | Purpose | Status |
+|----------|----------|----------|---------|--------|
+| `src/routes/api/chat.ts:26-28` | `@tanstack/ai`, `@tanstack/ai-openai`, `@tanstack/ai-gemini` | OpenRouter, Gemini | **Main chat API** - SSE streaming chat | **WORKING** ✅ |
+| `src/lib/canvas/linkage-ai-enhancer.ts:188` | `@google/ge

@@ -1,0 +1,661 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CORRECT-COURSE V2 SPRINT PLAN
+# Architecture Standardization & Critical Bug Fixes
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# ADR: ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md
+# Created: 2026-01-20T15:00:00+07:00
+# Status: APPROVED - IMMEDIATE EXECUTION
+# Governance: ZERO TOLERANCE - Evidence required for every claim
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: "CC-V2-2026-01-20"
+  name: "Correct-Course V2: Foundation Fixes"
+  start_date: "2026-01-20"
+  end_date: "2026-01-27"
+  status: "READY_FOR_EXECUTION"
+  adr: "_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TEAM ASSIGNMENTS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+teams:
+  team_a:
+    name: "Routing & Platform Squad"
+    focus: "Routes, Platform Detection, ID Migration"
+    platform: "Claude Code"
+    lead_agent: "EXCALIBUR"
+    
+  team_b:
+    name: "Storage & State Squad"
+    focus: "FSA Handles, Hydration, State Scoping"
+    platform: "OpenCode"
+    lead_agent: "BMAD-EXT"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 1: P0 CRITICAL BUGS (Day 1)
+# These 3 bugs block ALL user journeys
+# ═══════════════════════════════════════════════════════════════════════════════
+
+phase_1:
+  name: "P0 Critical Bug Fixes"
+  duration: "Day 1 (4-6 hours)"
+  blocking: true
+  
+  stories:
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM B: Bug Fix 1 - Chrome Version Check
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-B01:
+      title: "Fix Chrome version check for structuredClone"
+      team: "B"
+      priority: "P0-BLOCKER"
+      effort: "15 minutes"
+      status: "READY"
+      
+      problem: |
+        isStructuredCloneSupported() checks for exact "Chrome/129" string.
+        Chrome 130, 131, 132+ users fail the check even though they support it.
+        95% of users cannot persist FSA handles.
+      
+      file: "src/infrastructure/filesystem/handle-persistence.ts"
+      line: "53-58"
+      
+      current_code: |
+        export function isStructuredCloneSupported(): boolean {
+          return (
+            typeof window !== 'undefined' &&
+            'structuredClone' in window &&
+            navigator.userAgent.includes('Chrome/129')  // ❌ EXACT MATCH
+          );
+        }
+      
+      fix_code: |
+        export function isStructuredCloneSupported(): boolean {
+          if (typeof window === 'undefined') return false;
+          if (!('structuredClone' in window)) return false;
+          
+          const match = navigator.userAgent.match(/Chrome\/(\d+)/);
+          const chromeVersion = match ? parseInt(match[1], 10) : 0;
+          return chromeVersion >= 129;  // ✅ >= 129
+        }
+      
+      acceptance_criteria:
+        - "Chrome 129+ returns true"
+        - "Chrome 128 and below returns false"
+        - "Firefox/Safari returns false"
+        - "TypeScript: 0 errors"
+      
+      validation:
+        command: "pnpm tsc --noEmit"
+        manual_test: |
+          1. Open Chrome DevTools Console
+          2. Run: navigator.userAgent
+          3. Note Chrome version (e.g., 131)
+          4. Create FSA project
+          5. Check IndexedDB: fsaHandles table should have handleData != null
+          
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM B: Bug Fix 2 - Hydration Regex
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-B02:
+      title: "Fix hydration regex to extract projectId correctly"
+      team: "B"
+      priority: "P0-BLOCKER"
+      effort: "15 minutes"
+      status: "READY"
+      depends_on: []
+      
+      problem: |
+        getProjectIdFromURL() returns match[1] which is 'ide' or 'study'.
+        Should return match[2] which is the actual projectId.
+        All IDE state hydrates for wrong project.
+      
+      file: "src/infrastructure/persistence/stores/hydration-manager.ts"
+      line: "55-59"
+      
+      current_code: |
+        private getProjectIdFromURL(): string | null {
+          const pathname = window.location.pathname;
+          const match = pathname.match(/\/(ide|study)\/([a-f0-9-]+)/i);
+          return match ? match[1] : null;  // ❌ Returns 'ide'
+        }
+      
+      fix_code: |
+        private getProjectIdFromURL(): string | null {
+          const pathname = window.location.pathname;
+          // Updated regex to match proj_ prefix and any valid projectId
+          const match = pathname.match(/\/(ide|study|notes|knowledge)\/([^/]+)/i);
+          return match ? match[2] : null;  // ✅ Returns projectId
+        }
+      
+      acceptance_criteria:
+        - "URL /ide/proj_abc123 extracts 'proj_abc123'"
+        - "URL /notes/proj_browser-default extracts 'proj_browser-default'"
+        - "IDE state hydrates for correct projectId"
+        - "TypeScript: 0 errors"
+      
+      validation:
+        command: "pnpm tsc --noEmit"
+        manual_test: |
+          1. Navigate to /ide/$projectId
+          2. Open Chrome DevTools Console
+          3. Check log: "[HydrationManager] Hydrating ideStore from Dexie..."
+          4. Verify projectId in log matches URL projectId
+          
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM B: Bug Fix 3 - FSA Handle Storage
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-B03:
+      title: "Store actual FSA handle instead of mock object"
+      team: "B"
+      priority: "P0-BLOCKER"
+      effort: "2 hours"
+      status: "READY"
+      depends_on: ["CC-V2-B01"]
+      
+      problem: |
+        project-crud-slice stores { kind: 'directory', name: '...' } mock object.
+        Should store actual FileSystemDirectoryHandle via structuredClone.
+        Handle cannot be restored because mock data is not a real handle.
+      
+      files:
+        - file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+          lines: "150-170"
+          change: "Pass actual handle from creation flow"
+          
+        - file: "src/presentation/components/project/ProjectCreationWizard.tsx"
+          change: "Ensure fsaHandle is passed through to createProject"
+          
+        - file: "src/infrastructure/filesystem/handle-persistence.ts"
+          change: "Verify persistHandle stores actual handle with structuredClone"
+      
+      current_flow: |
+        1. User picks folder → gets FileSystemDirectoryHandle
+        2. Wizard calls createProject({ storageMetadata: { directoryName } })
+        3. createProject stores mock: { kind: 'directory', name }
+        4. On restore → mock data cannot be used as handle
+      
+      fix_flow: |
+        1. User picks folder → gets FileSystemDirectoryHandle
+        2. Wizard stores handle in Dexie: await persistHandle(projectId, handle, 'ide')
+        3. createProject stores project metadata (no handle data)
+        4. On restore → real handle retrieved from db.fsaHandles
+      
+      acceptance_criteria:
+        - "After project creation, db.fsaHandles has entry with actual handle"
+        - "On page refresh, handle restores silently (no picker prompt)"
+        - "Files load without user interaction"
+        - "TypeScript: 0 errors"
+      
+      validation:
+        command: "pnpm tsc --noEmit"
+        manual_test: |
+          1. Create new FSA project via folder picker
+          2. Check IndexedDB → fsaHandles table
+          3. Verify handleData is not { kind: 'directory', name: '...' }
+          4. Refresh page (Cmd+R)
+          5. EXPECTED: Files load without folder picker prompt
+          6. ACTUAL: [Fill in after test]
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 2: ARCHITECTURE CLEANUP (Day 2-3)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+phase_2:
+  name: "Architecture Cleanup"
+  duration: "Day 2-3 (8-12 hours)"
+  blocking: false
+  
+  stories:
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM A: Desktop Notes Platform Fix
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-A01:
+      title: "Desktop /notes should show project picker, not browser-mode"
+      team: "A"
+      priority: "P1"
+      effort: "4 hours"
+      status: "READY"
+      depends_on: ["CC-V2-B03"]
+      
+      problem: |
+        Desktop users navigating to /notes get browser-mode (IndexedDB).
+        Per ADR-033 D3, desktop should use FSA project with .md files.
+        Browser-mode should be MOBILE ONLY.
+      
+      file: "src/routes/notes.lazy.tsx"
+      
+      current_behavior: |
+        1. Desktop → /notes
+        2. getOrCreateBrowserModeProject() called
+        3. Creates 'notes:browser-mode' project (IndexedDB)
+        4. Notes stored in Dexie, not as .md files
+      
+      fix_behavior: |
+        1. Desktop → /notes
+        2. Check getPlatformContract().canAccessFSA
+        3. If true (desktop):
+           a. Check for existing FSA projects
+           b. If exists → show recent projects list
+           c. If none → show folder picker dialog
+        4. If false (mobile):
+           a. getOrCreateBrowserModeProject()
+           b. Redirect to /notes/proj_browser-default
+      
+      files_to_modify:
+        - "src/routes/notes.lazy.tsx"
+        - "src/lib/workspace/browser-mode.ts (rename ID)"
+      
+      acceptance_criteria:
+        - "Desktop /notes shows project picker or recent projects"
+        - "Mobile /notes auto-creates browser-default project"
+        - "Browser-mode ID changed to 'proj_browser-default'"
+        - "TypeScript: 0 errors"
+        
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM A: WorkspaceId Single Definition
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-A02:
+      title: "Consolidate WorkspaceId to single definition"
+      team: "A"
+      priority: "P2"
+      effort: "2 hours"
+      status: "READY"
+      depends_on: []
+      
+      problem: |
+        WorkspaceId defined in 5 different files:
+        - dexie-db-core-types.ts
+        - cross-workspace-event-bus.ts
+        - WorkspaceBindingDialog.types.ts
+        - WorkspaceBindingToggle.tsx
+        - useWorkspaceBindingState.ts
+      
+      fix: |
+        1. Keep definition in dexie-db-core-types.ts (canonical)
+        2. All other files import from there
+        3. Delete duplicate definitions
+      
+      files_to_modify:
+        - "src/lib/events/cross-workspace-event-bus.ts"
+        - "src/presentation/components/hub/WorkspaceBindingDialog.types.ts"
+        - "src/presentation/components/hub/WorkspaceBindingToggle.tsx"
+        - "src/presentation/components/hub/useWorkspaceBindingState.ts"
+      
+      acceptance_criteria:
+        - "WorkspaceId defined in ONE file only"
+        - "All other files import from canonical location"
+        - "TypeScript: 0 errors"
+        
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM A: Remove Temp Project from Desktop IDE
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-A03:
+      title: "Remove temp project option from desktop IDE"
+      team: "A"
+      priority: "P1"
+      effort: "30 minutes"
+      status: "READY"
+      depends_on: []
+      
+      problem: |
+        Desktop /ide shows "Quick IDE (Temp Project)" button.
+        Per ADR-033 D1, desktop should ONLY show folder picker.
+        Temp projects are for mobile fallback only.
+      
+      file: "src/routes/ide.tsx"
+      line: "144-153"
+      
+      current_code: |
+        {/* PLAT-001: Only show temp project on mobile/fallback */}
+        {!platform.canAccessFSA && (
+          <button onClick={() => handleCreateTemp(navigate)}>
+            Quick IDE (Temp Project)
+          </button>
+        )}
+      
+      verification: |
+        The current code already hides temp project when canAccessFSA=true.
+        Need to verify this is working correctly on desktop.
+      
+      acceptance_criteria:
+        - "Desktop /ide shows ONLY 'Select Project Folder' and 'Browse Projects'"
+        - "No 'Quick IDE' or 'Temp Project' visible on desktop"
+        - "TypeScript: 0 errors"
+        
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM B: Connect MarkdownSyncService to NotesPage
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-B04:
+      title: "Connect MarkdownSyncService to NotesPage for FSA projects"
+      team: "B"
+      priority: "P1"
+      effort: "4 hours"
+      status: "READY"
+      depends_on: ["CC-V2-A01"]
+      
+      problem: |
+        MarkdownSyncService exists (696 lines) but is NOT connected to NotesPage.
+        NotesPage uses NotesFileSyncService instead.
+        FSA project notes don't sync to .md files per ADR-033 D3.
+      
+      files:
+        - "src/presentation/components/notes/NotesPage.tsx"
+        - "src/infrastructure/filesystem/markdown-sync-service.ts"
+      
+      current_flow: |
+        1. User edits note in BlockNote
+        2. Note saved to Dexie db.notes
+        3. No .md file created
+      
+      fix_flow: |
+        1. User edits note in BlockNote
+        2. If project.storageType === 'fsa':
+           a. MarkdownSyncService.exportNote() called
+           b. .md file written to /project/notes/
+        3. Else: Save to Dexie as before
+        
+        4. On external .md change (FileSystemObserver):
+           a. MarkdownSyncService detects change
+           b. If local clean → auto-import
+           c. If local dirty → show conflict dialog
+      
+      acceptance_criteria:
+        - "FSA project notes save as .md files in project folder"
+        - "External .md edits sync back to BlockNote"
+        - "Conflict resolution dialog works"
+        - "IndexedDB projects unchanged (Dexie storage)"
+        - "TypeScript: 0 errors"
+        
+    # ─────────────────────────────────────────────────────────────────────────────
+    # TEAM B: Migrate browser-mode ID format
+    # ─────────────────────────────────────────────────────────────────────────────
+    CC-V2-B05:
+      title: "Migrate 'notes:browser-mode' to 'proj_browser-default'"
+      team: "B"
+      priority: "P2"
+      effort: "2 hours"
+      status: "READY"
+      depends_on: ["CC-V2-A01"]
+      
+      problem: |
+        Current ID 'notes:browser-mode' contains colon (:).
+        This can break URL parsing and doesn't match proj_* format.
+        All projectIds should start with 'proj_' for consistency.
+      
+      files:
+        - "src/lib/workspace/browser-mode.ts"
+        - Migration script for existing data
+      
+      migration_steps:
+        - "Update BROWSER_MODE_PROJECT_ID constant"
+        - "Add migration in dexie-db-migrations.ts"
+        - "Migrate existing notes from old ID to new ID"
+        - "Update any hardcoded references"
+      
+      acceptance_criteria:
+        - "Browser default project ID is 'proj_browser-default'"
+        - "Existing notes migrated to new projectId"
+        - "No 'notes:browser-mode' references in codebase"
+        - "TypeScript: 0 errors"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PHASE 3: INTEGRATION TESTING (Day 4)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+phase_3:
+  name: "Integration Testing"
+  duration: "Day 4 (4-6 hours)"
+  blocking: true
+  
+  test_scenarios:
+    # ─────────────────────────────────────────────────────────────────────────────
+    # Desktop IDE Journey
+    # ─────────────────────────────────────────────────────────────────────────────
+    TEST-01:
+      name: "Desktop IDE Full Journey"
+      team: "BOTH"
+      priority: "P0"
+      
+      steps:
+        - step: 1
+          action: "Clear all browser data (IndexedDB, localStorage)"
+          expected: "Clean slate"
+          
+        - step: 2
+          action: "Navigate to /ide on desktop Chrome"
+          expected: "Project selector shows (NO temp project button)"
+          
+        - step: 3
+          action: "Click 'Select Project Folder', pick a folder"
+          expected: "Folder picker opens, user selects folder"
+          
+        - step: 4
+          action: "Project creates, navigates to /ide/$projectId"
+          expected: "IDE loads with file tree"
+          
+        - step: 5
+          action: "Open a file in Monaco"
+          expected: "File content displays"
+          
+        - step: 6
+          action: "Refresh page (Cmd+R)"
+          expected: "NO folder picker prompt, files load automatically"
+          
+        - step: 7
+          action: "Check IndexedDB → fsaHandles"
+          expected: "handleData is actual handle (not mock object)"
+          
+      evidence_required:
+        - "Screenshot of IDE with file tree"
+        - "Screenshot of IndexedDB fsaHandles table"
+        - "Console log showing successful hydration"
+        
+    # ─────────────────────────────────────────────────────────────────────────────
+    # Desktop Notes Journey
+    # ─────────────────────────────────────────────────────────────────────────────
+    TEST-02:
+      name: "Desktop Notes FSA Journey"
+      team: "BOTH"
+      priority: "P0"
+      
+      steps:
+        - step: 1
+          action: "Navigate to /notes on desktop Chrome"
+          expected: "Project picker or recent projects shown (NOT browser-mode)"
+          
+        - step: 2
+          action: "Select existing FSA project or create new"
+          expected: "Notes workspace loads for FSA project"
+          
+        - step: 3
+          action: "Create a new note, add content"
+          expected: "Note saves"
+          
+        - step: 4
+          action: "Check project folder on disk"
+          expected: ".md file exists in /project/notes/"
+          
+        - step: 5
+          action: "Edit .md file externally (VS Code)"
+          expected: "Change syncs back to BlockNote (auto or conflict dialog)"
+          
+      evidence_required:
+        - "Screenshot of notes workspace"
+        - "Screenshot of .md file in project folder"
+        - "Screenshot of sync working"
+        
+    # ─────────────────────────────────────────────────────────────────────────────
+    # Mobile Notes Journey
+    # ─────────────────────────────────────────────────────────────────────────────
+    TEST-03:
+      name: "Mobile Notes Journey"
+      team: "BOTH"
+      priority: "P0"
+      
+      steps:
+        - step: 1
+          action: "Open Chrome DevTools, enable mobile emulation"
+          expected: "Mobile viewport"
+          
+        - step: 2
+          action: "Navigate to /ide"
+          expected: "Redirected to /hub with reason"
+          
+        - step: 3
+          action: "Navigate to /notes"
+          expected: "Auto-creates proj_browser-default, loads notes"
+          
+        - step: 4
+          action: "Create and edit notes"
+          expected: "Notes save to IndexedDB (not .md files)"
+          
+        - step: 5
+          action: "Check IDE is inaccessible"
+          expected: "All paths to IDE blocked"
+          
+      evidence_required:
+        - "Screenshot of mobile notes workspace"
+        - "Screenshot of IDE redirect"
+        - "Console log showing proj_browser-default created"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXECUTION TRACKING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+execution:
+  current_phase: "PHASE_2_COMPLETE"
+
+  team_a_status:
+    assigned: ["CC-V2-A01", "CC-V2-A02", "CC-V2-A03"]
+    in_progress: null
+    completed: ["CC-V2-A01", "CC-V2-A02", "CC-V2-A03"]
+    blocked: []
+    note: "Team B review found 2 revisions needed (see TEAM-B-REVIEW-TEAM-A-CC-V2-2026-01-21.md)"
+
+  team_b_status:
+    assigned: ["CC-V2-B04", "CC-V2-B05"]
+    in_progress: null
+    completed: ["CC-V2-B01", "CC-V2-B02", "CC-V2-B03", "CC-V2-B04", "CC-V2-B05"]
+    blocked: []
+
+  # Phase 1 Completion Log
+  phase_1_log:
+    completed_at: "2026-01-21T10:30:00+07:00"
+    completed_by: "EXCALIBUR (Claude Code)"
+    fixes_applied:
+      - id: "CC-V2-B01"
+        file: "src/infrastructure/filesystem/handle-persistence.ts"
+        change: "Fixed Chrome version check from exact 'Chrome/129' to >= 129"
+        lines_changed: "53-60"
+
+      - id: "CC-V2-B02"
+        file: "src/infrastructure/persistence/stores/hydration-manager.ts"
+        change: "Fixed regex to return match[2] (projectId) instead of match[1] (workspace)"
+        lines_changed: "52-63"
+
+      - id: "CC-V2-B03"
+        file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+        change: "Removed mock handle storage - actual handle persisted via fsa-persistence.ts"
+        lines_changed: "151-162"
+
+    typescript_status: "0 errors in modified files (pre-existing errors in other files)"
+
+  # Phase 2 Completion Log
+  phase_2_log:
+    completed_at: "2026-01-21T15:00:00+07:00"
+    completed_by: "EXCALIBUR (Claude Code)"
+    fixes_applied:
+      - id: "CC-V2-B04"
+        title: "Connect MarkdownSyncService to NotesPage"
+        files:
+          - "src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"
+          - "src/lib/filesync/hooks/use-markdown-sync-service.ts"
+        changes:
+          - "Added projectId to NotesFileSyncConfig interface"
+          - "NotesFileSyncService now registers NoteFolderBridge with fileSaveHandlers registry"
+          - "Handler unregistered in dispose method"
+          - "Created useMarkdownSyncService hook for ADR-033 compliant integration"
+        lines_changed: "60-112, 197-211, 270-277"
+        evidence: "triggerAutoSave() now finds registered handler for FSA projects"
+
+      - id: "CC-V2-B05"
+        title: "Migrate browser-mode ID to proj_browser-default"
+        files:
+          - "src/infrastructure/persistence/dexie-db-migrations.ts"
+          - "src/infrastructure/filesystem/storage-gateway-factory.ts"
+        changes:
+          - "Added migration v26: Rename 'notes:browser-mode' to 'proj_browser-default'"
+          - "Updated projects, notes, ideState, fsaHandles, conversations tables"
+          - "Updated comment in storage-gateway-factory.ts to reflect proj_ format"
+        lines_changed: "560-599 (migration v26), 23 (comment)"
+        evidence: "BROWSER_MODE_PROJECT_ID constant is 'proj_browser-default'"
+
+    typescript_status: "0 errors in CC-V2-B04 and CC-V2-B05 files"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# GOVERNANCE
+# ═══════════════════════════════════════════════════════════════════════════════
+
+governance:
+  mode: "ZERO_TOLERANCE"
+  
+  rules:
+    - "NO status change without gatekeeper validation"
+    - "Evidence required: console logs, screenshots, test output"
+    - "TypeScript must be 0 errors after each story"
+    - "Commits must use prefix: [CC-V2-A##] or [CC-V2-B##]"
+    
+  gatekeeper_checklist:
+    - "Code change matches fix specification"
+    - "TypeScript check passes"
+    - "Manual test performed with evidence"
+    - "No regressions in other areas"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SUCCESS CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+success_criteria:
+  - id: "SC-01"
+    description: "Desktop IDE: refresh loads files WITHOUT picker prompt"
+    status: "PENDING"
+    
+  - id: "SC-02"
+    description: "Desktop Notes: shows project picker, NOT browser-mode"
+    status: "PENDING"
+    
+  - id: "SC-03"
+    description: "FSA Notes: save as .md files in project folder"
+    status: "PENDING"
+    
+  - id: "SC-04"
+    description: "Hydration: correct projectId from URL (not 'ide')"
+    status: "PENDING"
+    
+  - id: "SC-05"
+    description: "Mobile: cannot access IDE, auto-creates proj_browser-default"
+    status: "PENDING"
+    
+  - id: "SC-06"
+    description: "All projectIds match proj_* format"
+    status: "PENDING"
+    
+  - id: "SC-07"
+    description: "TypeScript: 0 errors"
+    status: "PENDING"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DOCUMENT METADATA
+# ═══════════════════════════════════════════════════════════════════════════════
+
+metadata:
+  created_by: "BMAD Master Orchestrator"
+  created_at: "2026-01-20T15:00:00+07:00"
+  adr: "_bmad-output/planning-artifacts/adr/ADR-035-correct-course-v2-architecture-standardization-2026-01-20.md"
+  analysis: "_bmad-output/analysis/user-journey-architecture-reality-2026-01-20.md"
+  governance_mode: "ZERO_TOLERANCE"

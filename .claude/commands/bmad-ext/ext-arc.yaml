@@ -1,0 +1,118 @@
+---
+name: "bmad-ext-arc-v2"
+shorthand: "/ext-arc"
+description: "BMAD-ext Architecture Remediation v2 - diagnostic-first, 6-domain scanner, store-refactorer, component-splitter, workspace-architect"
+category: "remediation"
+version: "2.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "skill"
+  source: ".claude/skills/bmad-ext-bridge/modules/arc-v2/SKILL.md"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+
+# Metadata
+metadata:
+  module: "arc-v2"
+  phase: "0"
+  ttl_hours: 4
+  domains:
+    - "persistence"
+    - "sync"
+    - "state"
+    - "routing"
+    - "agents"
+    - "ux"
+  agents:
+    - "context-validator"
+    - "domain-scanner"
+    - "store-refactorer"
+    - "component-splitter"
+    - "workspace-architect"
+---
+
+# BMAD-EXT ARC-v2 Bridge
+
+**Purpose**: Gateway to Architecture Remediation v2 with diagnostic-first approach
+
+## 6-Domain Model
+
+```
++------------------+     +------------------+     +------------------+
+|   PERSISTENCE    |     |      SYNC        |     |      STATE       |
+| - Dexie/IndexedDB|     | - FSA (Desktop)  |     | - Zustand stores |
+| - Quota mgmt     |     | - IndexedDB (Mob)|     | - React state    |
++------------------+     +------------------+     +------------------+
+         |                       |                       |
+         +-----------------------+-----------------------+
+                                   |
+                      +---------------------------+
+                      |         ROUTING           |
+                      +---------------------------+
+                                   |
+         +-----------------------+-----------------------+
+         |                       |                       |
+  +------------------+   +------------------+   +------------------+
+  |     AGENTS       |   |       RAG        |   |        UX        |
+  +------------------+   +------------------+   +------------------+
+```
+
+## Key Principles
+
+1. **Diagnostic-First**: No remediation without fresh scan (<4 hours)
+2. **Domain Isolation**: Clear boundaries and interfaces
+3. **Platform-Aware**: FSA vs IndexedDB strategies
+4. **Journey-Centric**: Fix complete user journeys
+5. **Evidence-Based**: All decisions traced to scan findings
+
+## Agents
+
+### Context Validator
+```bash
+/arc-validate
+# Pre-execution prompt validation
+```
+
+### Domain Scanner
+```bash
+/arc-scan
+# 6-domain targeted scanning
+```
+
+### Store Refactorer
+```bash
+/arc-store
+# Zustand store splitting
+```
+
+### Component Splitter
+```bash
+/arc-split
+# React component splitting
+```
+
+### Workspace Architect
+```bash
+/arc-workspace
+# File system architecture
+```
+
+## Usage
+
+```bash
+/ext-arc              # Load ARC-v2 bridge
+/arc-validate         # Run context validator
+/arc-scan             # Run domain scanner
+/arc-store            # Invoke store refactorer
+/arc-split            # Invoke component splitter
+/arc-workspace        # Invoke workspace architect
+/diagnostic-first     # Run diagnostic-first workflow
+```
+
+## Output
+
+- Scan results in `_bmad-output/scans/{domain}-scan-{date}.yaml`
+- Remediation plans in `_bmad-output/remediations/`
+- Progress updates in `_bmad-ext/state/LOOP_STATE.yaml`

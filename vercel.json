@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/index.js"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": false
+  },
+  "buildCommand": "pnpm build:vercel",
+  "outputDirectory": "dist/client",
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
+}

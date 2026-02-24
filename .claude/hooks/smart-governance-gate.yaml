@@ -1,0 +1,91 @@
+---
+name: smart-governance-gate
+description: Context-aware governance that only runs when needed
+when: PreRequestGovernance
+priority: 1
+once: false
+version: 2.0.0
+updated: 2026-01-16
+governance_modes:
+  minimal:
+    triggers: [reading, artifact_creation, planning]
+    checks: [anchor_freshness]
+    skip: [typescript_check, test_check, story_context_full, artifact_validation]
+    message: Governance check passed - minimal mode for non-code tasks
+  standard:
+    triggers: [analysis, general]
+    checks: [anchor_freshness, typescript_if_code_exists, story_context_light]
+    skip: []
+    message: Governance check passed - standard mode
+  full:
+    triggers: [implementation, refactoring, bugfix]
+    checks: [anchor_freshness, typescript_check, test_check, story_context_full, artifact_validation]
+    skip: []
+    message: Governance check passed - full mode for code changes
+auto_detect:
+  description: Automatically determine governance mode based on user intent
+  intent_map:
+    - intent: reading
+      mode: minimal
+    - intent: artifact_creation
+      mode: minimal
+    - intent: planning
+      mode: minimal
+    - intent: analysis
+      mode: standard
+    - intent: implementation
+      mode: full
+    - intent: refactoring
+      mode: full
+    - intent: bugfix
+      mode: full
+    - intent: unknown
+      mode: standard
+quick_commands:
+  - command: /gov-min
+    description: Run minimal governance for planning, reading, docs
+    mode: minimal
+  - command: /gov-std
+    description: Run standard governance for analysis, review
+    mode: standard
+  - command: /gov-full
+    description: Run full governance for implementation
+    mode: full
+  - command: /gov-skip
+    description: Skip governance for this request with warning
+    requires: explicit_user_confirmation
+    warning: Skipping governance may lead to context issues
+examples:
+  - user_input: Create a new story file
+    auto_detect: artifact_creation
+    mode: minimal
+    checks_run: [anchor_freshness]
+  - user_input: Write documentation for API
+    auto_detect: artifact_creation
+    mode: minimal
+    checks_run: [anchor_freshness]
+  - user_input: Analyze the codebase
+    auto_detect: analysis
+    mode: standard
+    checks_run: [anchor_freshness, typescript_if_code_exists]
+  - user_input: Implement new feature
+    auto_detect: implementation
+    mode: full
+    checks_run: [anchor_freshness, typescript_check, test_check, story_context_full]
+  - user_input: Fix critical bug
+    auto_detect: bugfix
+    mode: full
+    checks_run: [anchor_freshness, typescript_check, test_check, story_context_full]
+skip_rules:
+  typescript_check:
+    when: mode is minimal or standard and no code files in scope
+    reason: No code to check
+  test_check:
+    when: mode is not full
+    reason: Tests only needed for code changes
+  story_context_full:
+    when: mode is minimal
+    reason: Full story context only needed for implementation
+  artifact_validation:
+    when: mode is minimal
+    reason: Artifact validation only needed for implementation

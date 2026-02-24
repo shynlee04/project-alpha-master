@@ -1,0 +1,1359 @@
+:3000/:1 Refused to apply style from 'http://localhost:3000/@tanstack-start/styles.css?routes=__root__%2C%2F' because its MIME type ('text/html') is not a supported stylesheet MIME type, and strict MIME checking is enabled.
+ [WorkspaceStore] Hydration starting...
+ [WorkspaceStore] Hydration complete
+ [WorkspaceProviderStore] Hydration starting...
+ [WorkspaceProviderStore] Hydration complete
+ [Sentry] DSN not configured. Error monitoring disabled.
+overrideMethod @ installHook.js:1
+ [Router] routeTree children: Array(17)
+ Dexie SchemaDiff: Schema was extended without increasing the number passed to db.version(). Dexie will add missing parts and increment native version number to workaround this.
+overrideMethod @ installHook.js:1
+ Unable to patch indexes of table fileMetadata because it has changes on the type of index or primary key.
+overrideMethod @ installHook.js:1
+ [Database Recovery] Database opened successfully
+ [UnifiedChatStore] Hydrated from IndexedDB Object
+ [RAGStore] Rehydrated from IndexedDB
+ [RAGStore] Loading index for project: proj_1767759293676_dksf3yowz
+ [AppStore] Rehydrated from IndexedDB
+ [AppStore] Current schema version: v2
+ [AppStore] Schema version is current, no migration needed
+ [AppStore] Hydration complete: Object
+ [AppStore] No API key migration needed
+ [AppInitializer] Starting initialization...
+ [CredentialVault] Initializing (client-side)...
+ [CredentialVault] Storage validation: Object
+ [CredentialVault] Found existing encrypted key, attempting decryption...
+ [GlobalErrorHandlers] Uncaught error: 
+overrideMethod @ installHook.js:1
+ [GlobalErrorHandlers] File: http://localhost:3000/node_modules/.vite/deps/chunk-GP2SP5WV.js?v=ff62ee3b Line: 3920 Column: 13
+overrideMethod @ installHook.js:1
+ [GlobalErrorHandlers] Consider showing error notification to user: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <SafeFragment>
+      <SafeFragment fallback={null}>
+        <SafeFragment getResetKey={function getResetKey} errorComponent={function ErrorComponent} ...>
+          <SafeFragment fallback={function fallback}>
+            <MatchInnerImpl matchId="//">
+              <Lazy>
+                <SplitComponent>
+                  <MainLayout>
+                    <div className="flex flex-...">
+                      <header>
+                      <MainSidebar className="z-30">
+                        <div>
+                        <aside className="fixed inse...">
+                          <div>
+                          <nav className="flex-1 py-...">
+                            <div onClick={function onClick} className="flex items...">
+                              <House>
+                              <TruncatedText text="Trang chủ">
+                                <span
+                                  className="truncate block max-w-full"
++                                 title="Trang chủ"
+-                                 title="Home"
+                                >
++                                 Trang chủ
+-                                 Home
+                            ...
+                        ...
+                      ...
+      ...
+
+overrideMethod @ installHook.js:1
+ [FileLoaderSlice] Project not found: ide:proj_1768366397639_i3cwatoze
+overrideMethod @ installHook.js:1
+ The width(-1) and height(-1) of chart should be greater than 0,
+       please check the style of container, or the props width(100%) and height(100%),
+       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the
+       height and width.
+overrideMethod @ installHook.js:1
+ The width(-1) and height(-1) of chart should be greater than 0,       please check the style of container, or the props width(100%) and height(100%),       or add a minWidth(0) or minHeight(undefined) or use aspect(undefined) to control the       height and width.
+overrideMethod @ installHook.js:1
+ [ProjectCard] Setting up event bus listeners for project: notes:browser-mode
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768384363344_5wl1xgjof
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768367111703_7n6c3ewmk
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768367098646_s79t41f7q
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768366397734_cvcwt7pzx
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Setting up event bus listeners for project: notes:browser-mode
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768384363344_5wl1xgjof
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768367111703_7n6c3ewmk
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768367098646_s79t41f7q
+ [ProjectCard] Event bus listeners registered
+ [ProjectCard] Setting up event bus listeners for project: ide:proj_1768366397734_cvcwt7pzx
+ [ProjectCard] Event bus listeners registered
+ [CredentialVault] Successfully initialized from existing vault
+ [AppInitializer] Credential vault ready
+ [ProjectStore] Hydrating projects from Dexie...
+ [ProjectStore] Hydrated 41 projects from Dexie
+ [AppInitializer] Projects hydrated from Dexie
+ [SW] Service worker registration failed: 
+overrideMethod @ installHook.js:1
+ [AppInitializer] Service worker registration failed: 
+overrideMethod @ installHook.js:1
+ [AppInitializer] Checking credentials for providers: Array(7)
+ [CredentialVault] getCredentials called for: openrouter
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: anthropic
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: openai
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: google
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: groq
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: mistral
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: chutes
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: found
+ [CredentialVault] Decryption successful, key length: 73
+ [AppInitializer] Pre-fetching models for openrouter...
+ [ProviderModelsSlice] fetchModels called for: openrouter
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true OpenRouter
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: openrouter
+ [CredentialVault] getCredentials called for: openrouter
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: not found
+ [AppInitializer] Loading default models for anthropic...
+ [ProviderModelsSlice] fetchModels called for: anthropic
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true Anthropic
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: anthropic
+ [CredentialVault] getCredentials called for: anthropic
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: not found
+ [AppInitializer] Loading default models for openai...
+ [ProviderModelsSlice] fetchModels called for: openai
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true OpenAI
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: openai
+ [CredentialVault] getCredentials called for: openai
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: found
+ [CredentialVault] Decryption successful, key length: 39
+ [AppInitializer] Pre-fetching models for google...
+ [ProviderModelsSlice] fetchModels called for: google
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true Google Gemini
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: google
+ [CredentialVault] getCredentials called for: google
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: not found
+ [AppInitializer] Loading default models for groq...
+ [ProviderModelsSlice] fetchModels called for: groq
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true Groq
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: groq
+ [CredentialVault] getCredentials called for: groq
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: not found
+ [AppInitializer] Loading default models for mistral...
+ [ProviderModelsSlice] fetchModels called for: mistral
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true Mistral AI
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: mistral
+ [CredentialVault] getCredentials called for: mistral
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: not found
+ [AppInitializer] Loading default models for chutes...
+ [ProviderModelsSlice] fetchModels called for: chutes
+ [ProviderModelsSlice] SSR check: typeof window = object
+ [ProviderModelsSlice] Provider found: true Chutes.ai
+ [ProviderModelsSlice] Initializing credential vault...
+ [CredentialVault] Already initialized, skipping
+ [ProviderModelsSlice] Vault ready: true
+ [ProviderModelsSlice] Getting credentials for: chutes
+ [CredentialVault] getCredentials called for: chutes
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: found
+ [CredentialVault] Decryption successful, key length: 73
+ [ProviderModelsSlice] API key retrieved: true (73 chars)
+ [ProviderModelsSlice] Fetching models from registry with API key...
+ [ModelRegistry] Fetching models for openrouter...
+ [CredentialVault] Credential lookup result: not found
+ [ProviderModelsSlice] API key retrieved: false (none)
+ [ProviderModelsSlice] No API key for provider: anthropic - loading defaults
+overrideMethod @ installHook.js:1
+ [ModelRegistry] No API key for anthropic, using defaults
+ [AppInitializer] Default models loaded for anthropic
+ [CredentialVault] Credential lookup result: not found
+ [ProviderModelsSlice] API key retrieved: false (none)
+ [ProviderModelsSlice] No API key for provider: openai - loading defaults
+overrideMethod @ installHook.js:1
+ [ModelRegistry] No API key for openai, using defaults
+ [AppInitializer] Default models loaded for openai
+ [CredentialVault] Credential lookup result: found
+ [CredentialVault] Decryption successful, key length: 39
+ [ProviderModelsSlice] API key retrieved: true (39 chars)
+ [ProviderModelsSlice] Fetching models from registry with API key...
+ [ModelRegistry] Fetching models for google...
+ [CredentialVault] Credential lookup result: not found
+ [ProviderModelsSlice] API key retrieved: false (none)
+ [ProviderModelsSlice] No API key for provider: groq - loading defaults
+overrideMethod @ installHook.js:1
+ [ModelRegistry] No API key for groq, using defaults
+ [AppInitializer] Default models loaded for groq
+ [CredentialVault] Credential lookup result: not found
+ [ProviderModelsSlice] API key retrieved: false (none)
+ [ProviderModelsSlice] No API key for provider: mistral - loading defaults
+overrideMethod @ installHook.js:1
+ [ModelRegistry] No API key for mistral, using defaults
+ [AppInitializer] Default models loaded for mistral
+ [CredentialVault] Credential lookup result: not found
+ [ProviderModelsSlice] API key retrieved: false (none)
+ [ProviderModelsSlice] No API key for provider: chutes - loading defaults
+overrideMethod @ installHook.js:1
+ [ModelRegistry] No API key for chutes, using defaults
+ [AppInitializer] Default models loaded for chutes
+ [ModelRegistry] Fetched 34 models from google
+ [ProviderModelsSlice] Models received: 34
+ [ProviderModelsSlice] ✅ Models fetched successfully: google 34 models
+ [AppInitializer] Models loaded for google
+ [ModelRegistry] Fetched 347 models from openrouter
+ [ProviderModelsSlice] Models received: 347
+ [ProviderModelsSlice] ✅ Models fetched successfully: openrouter 347 models
+ [AppInitializer] Models loaded for openrouter
+ [FileSyncStatusStore] Hydration starting...
+ [ToolPermissionStore] Hydration starting...
+ [WorkflowBuilderStore] DEPRECATED: This facade will be removed in v2.0.0. Import from workflow-builder-store-refactored.ts instead.
+overrideMethod @ installHook.js:1
+ [IDESlice] Hydration starting...
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [ProjectCard] Cleaning up event bus listeners
+ [IDESlice] Project ID set to: notes:browser-mode
+ [IDESlice] Project ID set to: notes:browser-mode
+ [IDESlice] merge: persisted state is null/invalid, using current
+overrideMethod @ installHook.js:1
+ [IDESlice] Hydration complete Object
+ [NoteStore] Rehydrated from storage
+ [FileSyncStatusStore] Hydration complete
+ [ToolPermissionStore] Hydration complete
+ [NoteStore-CRUD] Loaded 51 notes for project notes:browser-mode
+ [BrowserMode] Found existing browser mode project: notes:browser-mode
+ [ProjectProvider] Calculating enabled workspaces from: Object
+ [ProjectProvider] Calculating enabled workspaces from: Object
+ [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+ [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+ [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+ [NoteEditor] First block structure: Object
+ [NoteEditor] Returning initialContent: 3 blocks
+ [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+ [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+ [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+ [NoteEditor] First block structure: Object
+ [NoteEditor] Returning initialContent: 3 blocks
+ [AgentChatPanel] fileTools null - waiting for workspace Object
+ [AgentChatPanel] fileTools null - waiting for workspace Object
+ [AgentChatPanel] noteTools created - workspace: notes
+ [AgentChatPanel] noteTools created - workspace: notes
+ In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <NotesPage2>
+      <MainLayout>
+        <div className="flex flex-...">
+          <header>
+          <MainSidebar>
+          <main className="flex-1 fle...">
+            <div className="flex-1 ove...">
+              <ResizablePanelGroup direction="horizontal" className="h-full ite...">
+                <div ref={{current:null}} data-slot="resizable-..." className="flex w-ful...">
+                  <ResizablePanel>
+                  <ResizableHandle>
+                  <ResizablePanel>
+                  <ResizableHandle>
+                  <ResizablePanel id="notes-chat" defaultSize={30} minSize={22} maxSize={45} minPixelSize={280} ...>
+                    <div data-slot="resizable-..." data-collapsed={undefined} className="relative o..." style={{...}} ...>
+                      <UnifiedChatPanel2 mode="agent" projectId="notes:brow..." projectName="Browser Mode" ...>
+                        <AgentChatPanel projectId="notes:brow..." projectName="Browser Mode" workspaceType="notes">
+                          <div className="flex flex-...">
+                            <AgentChatHeader>
+                            <AgentChatStatus>
+                            <AutoApproveSettings className="mx-2 mt-2" compact={true}>
+                              <div className="border-2 b...">
+>                               <button
+>                                 type="button"
+>                                 onClick={function}
+>                                 className="w-full px-3 py-2 flex items-center justify-between text-left text-sm hove..."
+>                                 aria-expanded={false}
+>                                 aria-controls="auto-approve-content"
+>                               >
+                                  ...
+                                    <SwitchProvider scope={undefined} checked={true} disabled={undefined}>
+                                      <Primitive.button type="button" role="switch" aria-checked={true} ...>
+>                                       <button
+>                                         type="button"
+>                                         role="switch"
+>                                         aria-checked={true}
+>                                         aria-required={undefined}
+>                                         data-state="checked"
+>                                         data-disabled={undefined}
+>                                         disabled={undefined}
+>                                         value="on"
+>                                         className="peer inline-flex shrink-0 cursor-pointer items-center border-2 bo..."
+>                                         aria-label="Bật/Tắt tự động phê duyệt"
+>                                         onClick={function handleEvent}
+>                                         ref={function}
+>                                       >
+                                      ...
+                                  ...
+                            ...
+              ...
+
+overrideMethod @ installHook.js:1
+ <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+overrideMethod @ installHook.js:1
+ [UnifiedAgentSelector] Setting up event bus listeners for workspace: notes
+ [UnifiedAgentSelector] Event bus listeners registered
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Already initialized, skipping
+ [AgentManager] Setting up event bus listeners
+ [AgentManager] Event bus listeners registered
+ [EnhancedChatInterface] Messages received: Object
+ [AgentSelectionStore] Agent selected: Via-Gent Coder for workspace: notes
+ [UnifiedAgentSelector] AGENT_SELECTED event received: Object
+ [UnifiedAgentSelector] AGENT_CONFIG_CHANGED event received: Object
+ [UnifiedAgentSelector] Agent config changed, triggering update
+ [CredentialVault] Already initialized, skipping
+ [useAgentChat] Chat state: Object
+ [useConversationPersistence] No previous conversations found
+ [SyncStatusPanel] Subscribed to crossWorkspaceEventBus events
+ [NotesPage] Setting up Knowledge export event listener
+ [NotesPage] Knowledge export event listener registered
+ [NotesPage] Cleaning up Knowledge export event listener
+ [AgentManager] Cleaning up event bus listeners
+ [UnifiedAgentSelector] Cleaning up event bus listeners
+ [SyncStatusPanel] Unsubscribed from crossWorkspaceEventBus events
+ [UnifiedAgentSelector] Setting up event bus listeners for workspace: notes
+ [UnifiedAgentSelector] Event bus listeners registered
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Already initialized, skipping
+ [AgentManager] Setting up event bus listeners
+ [AgentManager] Event bus listeners registered
+ [EnhancedChatInterface] Messages received: Object
+ [AgentSelectionStore] Agent selected: Via-Gent Coder for workspace: notes
+ [UnifiedAgentSelector] AGENT_SELECTED event received: Object
+ [UnifiedAgentSelector] AGENT_CONFIG_CHANGED event received: Object
+ [UnifiedAgentSelector] Agent config changed, triggering update
+installHook.js:1 [CredentialVault] Already initialized, skipping
+installHook.js:1 [useAgentChat] Chat state: Object
+installHook.js:1 [useConversationPersistence] No previous conversations found
+installHook.js:1 [SyncStatusPanel] Subscribed to crossWorkspaceEventBus events
+installHook.js:1 [NotesPage] Setting up Knowledge export event listener
+installHook.js:1 [NotesPage] Knowledge export event listener registered
+AgentChatToolFacades.tsx:105 [AgentChatPanel] noteTools created - workspace: notes
+installHook.js:1 [AgentChatPanel] noteTools created - workspace: notes
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+credential-vault.ts:438 [CredentialVault] getCredentials called for: openrouter
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+credential-vault.ts:438 [CredentialVault] getCredentials called for: openrouter
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+installHook.js:1 Error: Cannot find node position
+    at kt2 (chunk-3DOT4L6X.js?v=ff62ee3b:sourcemap:32184:11)
+    at ReactNodeViewRenderer.className (chunk-NHJFFVY5.js?v=ff62ee3b:sourcemap:7831:27)
+    at Object.react_stack_bottom_frame (react-dom-client.development.js:25904:20)
+    at renderWithHooks (react-dom-client.development.js:7662:22)
+    at updateFunctionComponent (react-dom-client.development.js:10166:19)
+    at beginWork (react-dom-client.development.js:11778:18)
+    at runWithFiberInDEV (react-dom-client.development.js:871:30)
+    at performUnitOfWork (react-dom-client.development.js:17641:22)
+    at workLoopSync (react-dom-client.development.js:17469:41)
+    at renderRootSync (react-dom-client.development.js:17450:11)
+
+The above error occurred in the <AiImage> component.
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+
+overrideMethod @ installHook.js:1
+installHook.js:1 [ErrorBoundary] Caught error: Error: Cannot find node position
+    at kt2 (chunk-3DOT4L6X.js?v=ff62ee3b:sourcemap:32184:11)
+    at ReactNodeViewRenderer.className (chunk-NHJFFVY5.js?v=ff62ee3b:sourcemap:7831:27)
+    at Object.react_stack_bottom_frame (react-dom-client.development.js:25904:20)
+    at renderWithHooks (react-dom-client.development.js:7662:22)
+    at updateFunctionComponent (react-dom-client.development.js:10166:19)
+    at beginWork (react-dom-client.development.js:11778:18)
+    at runWithFiberInDEV (react-dom-client.development.js:871:30)
+    at performUnitOfWork (react-dom-client.development.js:17641:22)
+    at workLoopSync (react-dom-client.development.js:17469:41)
+    at renderRootSync (react-dom-client.development.js:17450:11)
+overrideMethod @ installHook.js:1
+installHook.js:1 [ErrorBoundary] Component stack: 
+    at ReactNodeViewRenderer.className (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7832:21)
+    at ReactNodeView (<anonymous>)
+    at Mi (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7597:21)
+    at Ei (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7707:13)
+    at div (<anonymous>)
+    at http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7694:17
+    at Ti (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7618:13)
+    at MantineThemeProvider (http://localhost:3000/node_modules/.vite/deps/@blocknote_mantine.js?v=ff62ee3b:2886:3)
+    at MantineProvider (http://localhost:3000/node_modules/.vite/deps/@blocknote_mantine.js?v=ff62ee3b:3348:3)
+    at Ft (http://localhost:3000/node_modules/.vite/deps/@blocknote_mantine.js?v=ff62ee3b:27550:22)
+    at ErrorBoundary (http://localhost:3000/src/presentation/components/error/ErrorBoundary.tsx:7:5)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at NoteEditor (http://localhost:3000/src/presentation/components/notes/NoteEditor.tsx:338:30)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at ResizablePanel (http://localhost:3000/src/presentation/components/ui/resizable.tsx:355:3)
+    at div (<anonymous>)
+    at ResizablePanelGroup (http://localhost:3000/src/presentation/components/ui/resizable.tsx:34:8)
+    at div (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (http://localhost:3000/src/presentation/components/layout/MainLayout.tsx:8:30)
+    at NotesPage2 (http://localhost:3000/src/presentation/components/notes/NotesPage.tsx:41:17)
+    at ProjectProvider (http://localhost:3000/src/lib/workspace/ProjectContext.tsx:50:35)
+    at NotesWorkspaceDefault (http://localhost:3000/src/routes/notes.lazy.tsx:25:33)
+    at ErrorBoundary (http://localhost:3000/src/presentation/components/error/ErrorBoundary.tsx:7:5)
+    at component (<anonymous>)
+    at MatchInnerImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:113:3)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at MatchImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:16:3)
+    at Suspense (<anonymous>)
+    at OutletImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:201:18)
+    at ErrorBoundary (http://localhost:3000/node_modules/.vite/deps/@sentry_react.js?v=ff62ee3b:29151:5)
+    at AppErrorBoundary (http://localhost:3000/src/presentation/components/common/AppErrorBoundary.tsx:153:36)
+    at UnifiedWorkspaceProvider (http://localhost:3000/src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx:11:3)
+    at AppInitializer (http://localhost:3000/src/presentation/components/common/AppInitializer.tsx:9:34)
+    at OverlayRoot (http://localhost:3000/src/presentation/components/ui/OverlayRoot.tsx:6:31)
+    at ToastProvider (http://localhost:3000/src/presentation/components/ui/Toast/ToastContext.tsx:14:33)
+    at TooltipProvider (http://localhost:3000/src/presentation/components/ui/tooltip-react19-compatible.tsx:92:35)
+    at LocaleProvider (http://localhost:3000/src/i18n/LocaleProvider.tsx:6:34)
+    at V (http://localhost:3000/node_modules/.vite/deps/next-themes.js?v=ff62ee3b:44:25)
+    at J (http://localhost:3000/node_modules/.vite/deps/next-themes.js?v=ff62ee3b:42:18)
+    at ThemeProvider (http://localhost:3000/src/presentation/components/ui/ThemeProvider.tsx:5:3)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at createRootRoute.component (http://localhost:3000/src/routes/__root.tsx:63:28)
+    at MatchInnerImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:113:3)
+    at CatchBoundaryImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:24:5)
+    at CatchBoundary (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:4:32)
+    at CatchNotFound (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/not-found.js?v=ff62ee3b:6:20)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at MatchImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:16:3)
+    at CatchBoundaryImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:24:5)
+    at CatchBoundary (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:4:32)
+    at MatchesInner (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Matches.js?v=ff62ee3b:25:18)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at Matches (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Matches.js?v=ff62ee3b:13:18)
+    at RouterContextProvider (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/RouterProvider.js?v=ff62ee3b:5:3)
+    at RouterProvider (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/RouterProvider.js?v=ff62ee3b:26:27)
+    at AwaitInner (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/awaited.js?v=ff62ee3b:26:16)
+    at Await (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/awaited.js?v=ff62ee3b:20:13)
+    at StartClient (<anonymous>)
+overrideMethod @ installHook.js:1
+installHook.js:1 [NoteEditor] BlockNote render error: Error: Cannot find node position
+    at kt2 (chunk-3DOT4L6X.js?v=ff62ee3b:sourcemap:32184:11)
+    at ReactNodeViewRenderer.className (chunk-NHJFFVY5.js?v=ff62ee3b:sourcemap:7831:27)
+    at Object.react_stack_bottom_frame (react-dom-client.development.js:25904:20)
+    at renderWithHooks (react-dom-client.development.js:7662:22)
+    at updateFunctionComponent (react-dom-client.development.js:10166:19)
+    at beginWork (react-dom-client.development.js:11778:18)
+    at runWithFiberInDEV (react-dom-client.development.js:871:30)
+    at performUnitOfWork (react-dom-client.development.js:17641:22)
+    at workLoopSync (react-dom-client.development.js:17469:41)
+    at renderRootSync (react-dom-client.development.js:17450:11)
+overrideMethod @ installHook.js:1
+installHook.js:1 [NoteEditor] ProseMirror error detected, forcing remount
+overrideMethod @ installHook.js:1
+credential-vault.ts:447 [CredentialVault] Credential lookup result: found
+credential-vault.ts:458 [CredentialVault] Decryption successful, key length: 73
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+credential-vault.ts:447 [CredentialVault] Credential lookup result: found
+credential-vault.ts:458 [CredentialVault] Decryption successful, key length: 73
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+notes.lazy.tsx:120 [NotesWorkspaceDefault] Found 51 existing note(s), skipping welcome note creation
+credential-vault.ts:438 [CredentialVault] getCredentials called for: openrouter
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+credential-vault.ts:447 [CredentialVault] Credential lookup result: found
+credential-vault.ts:458 [CredentialVault] Decryption successful, key length: 73
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+credential-vault.ts:438 [CredentialVault] getCredentials called for: gemini
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+credential-vault.ts:438 [CredentialVault] getCredentials called for: gemini
+credential-vault.ts:183 [CredentialVault] Already initialized, skipping
+browser-mode.ts:75 [BrowserMode] Found existing browser mode project: notes:browser-mode
+credential-vault.ts:447 [CredentialVault] Credential lookup result: found
+installHook.js:1 [CredentialVault] Decryption failed: OperationError
+    at CredentialEncryption.decryptApiKey (credential-encryption.ts:293:47)
+    at CredentialVault.getCredentials (credential-vault.ts:457:53)
+    at async VoiceRecordButton.tsx:53:21
+overrideMethod @ installHook.js:1
+installHook.js:1 [VoiceRecordButton] Failed to load API key: OperationError
+    at CredentialEncryption.decryptApiKey (credential-encryption.ts:293:47)
+    at CredentialVault.getCredentials (credential-vault.ts:457:53)
+    at async VoiceRecordButton.tsx:53:21
+overrideMethod @ installHook.js:1
+credential-vault.ts:447 [CredentialVault] Credential lookup result: found
+installHook.js:1 [CredentialVault] Decryption failed: OperationError
+    at CredentialEncryption.decryptApiKey (credential-encryption.ts:293:47)
+    at CredentialVault.getCredentials (credential-vault.ts:457:53)
+    at async VoiceRecordButton.tsx:53:21
+overrideMethod @ installHook.js:1
+installHook.js:1 [VoiceRecordButton] Failed to load API key: OperationError
+    at CredentialEncryption.decryptApiKey (credential-encryption.ts:293:47)
+    at CredentialVault.getCredentials (credential-vault.ts:457:53)
+    at async VoiceRecordButton.tsx:53:21
+overrideMethod @ installHook.js:1
+ProjectContext.tsx:230 [ProjectProvider] Calculating enabled workspaces from: Object
+installHook.js:1 [ProjectProvider] Calculating enabled workspaces from: Object
+browser-mode.ts:75 [BrowserMode] Found existing browser mode project: notes:browser-mode
+note-crud-slice.ts:108 [NoteStore-CRUD] Loaded 51 notes for browser mode project
+NoteEditor.tsx:467 [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+NoteEditor.tsx:475 [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+NoteEditor.tsx:482 [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+NoteEditor.tsx:487 [NoteEditor] First block structure: Object
+NoteEditor.tsx:678 [NoteEditor] Returning initialContent: 3 blocks
+installHook.js:1 [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+installHook.js:1 [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+installHook.js:1 [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+installHook.js:1 [NoteEditor] First block structure: Object
+installHook.js:1 [NoteEditor] Returning initialContent: 3 blocks
+AgentChatToolFacades.tsx:105 [AgentChatPanel] noteTools created - workspace: notes
+installHook.js:1 [AgentChatPanel] noteTools created - workspace: notes
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+browser-mode.ts:75 [BrowserMode] Found existing browser mode project: notes:browser-mode
+note-crud-slice.ts:108 [NoteStore-CRUD] Loaded 51 notes for browser mode project
+NoteEditor.tsx:467 [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+NoteEditor.tsx:475 [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+NoteEditor.tsx:482 [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+NoteEditor.tsx:487 [NoteEditor] First block structure: Object
+NoteEditor.tsx:678 [NoteEditor] Returning initialContent: 3 blocks
+installHook.js:1 [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+installHook.js:1 [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+installHook.js:1 [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+installHook.js:1 [NoteEditor] First block structure: Object
+installHook.js:1 [NoteEditor] Returning initialContent: 3 blocks
+AgentChatToolFacades.tsx:105 [AgentChatPanel] noteTools created - workspace: notes
+installHook.js:1 [AgentChatPanel] noteTools created - workspace: notes
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+EnhancedChatInterface.tsx:207 [EnhancedChatInterface] Messages received: Object
+AgentManager.tsx:152 [AgentManager] Cleaning up event bus listeners
+UnifiedAgentSelector.tsx:167 [UnifiedAgentSelector] Cleaning up event bus listeners
+SyncStatusPanel.tsx:237 [SyncStatusPanel] Unsubscribed from crossWorkspaceEventBus events
+SyncStatusPanel.tsx:231 [SyncStatusPanel] Subscribed to crossWorkspaceEventBus events
+installHook.js:1 [SyncStatusPanel] Unsubscribed from crossWorkspaceEventBus events
+installHook.js:1 [SyncStatusPanel] Subscribed to crossWorkspaceEventBus events
+NoteEditor.tsx:467 [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+NoteEditor.tsx:475 [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+NoteEditor.tsx:482 [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+NoteEditor.tsx:487 [NoteEditor] First block structure: Object
+NoteEditor.tsx:678 [NoteEditor] Returning initialContent: 3 blocks
+installHook.js:1 [NoteEditor] Computing initialContent for note: d5b46ea5-6a74-44cb-b901-ba4276328de3 has note: true
+installHook.js:1 [NoteEditor] Original blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square",
+      "textAlignment": "left"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "backgroundColor": "default",
+      "textColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+installHook.js:1 [NoteEditor] Sanitized blocks: [
+  {
+    "id": "0503241f-7acf-4fcc-91e3-a0d6d57f85e6",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  },
+  {
+    "id": "497ff08d-d8ac-4c05-a9dc-680fc498ab00",
+    "type": "aiImage",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left",
+      "prompt": "I want a random image to refresh myself",
+      "imageData": "",
+      "mimeType": "image/png",
+      "status": "error",
+      "errorMessage": "Provider google does not support image generation.",
+      "sizeId": "square"
+    },
+    "children": []
+  },
+  {
+    "id": "57ae0aa7-9d38-4fd6-8452-140f5808f49a",
+    "type": "paragraph",
+    "props": {
+      "textColor": "default",
+      "backgroundColor": "default",
+      "textAlignment": "left"
+    },
+    "content": [],
+    "children": []
+  }
+]
+installHook.js:1 [NoteEditor] First block structure: Object
+installHook.js:1 [NoteEditor] Returning initialContent: 3 blocks
+installHook.js:1 Error: Cannot find node position
+    at kt2 (chunk-3DOT4L6X.js?v=ff62ee3b:sourcemap:32184:11)
+    at ReactNodeViewRenderer.className (chunk-NHJFFVY5.js?v=ff62ee3b:sourcemap:7831:27)
+    at Object.react_stack_bottom_frame (react-dom-client.development.js:25904:20)
+    at renderWithHooks (react-dom-client.development.js:7662:22)
+    at updateFunctionComponent (react-dom-client.development.js:10166:19)
+    at beginWork (react-dom-client.development.js:11778:18)
+    at runWithFiberInDEV (react-dom-client.development.js:871:30)
+    at performUnitOfWork (react-dom-client.development.js:17641:22)
+    at workLoopSync (react-dom-client.development.js:17469:41)
+    at renderRootSync (react-dom-client.development.js:17450:11)
+
+The above error occurred in the <AiImage> component.
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+
+overrideMethod @ installHook.js:1
+installHook.js:1 [ErrorBoundary] Caught error: Error: Cannot find node position
+    at kt2 (chunk-3DOT4L6X.js?v=ff62ee3b:sourcemap:32184:11)
+    at ReactNodeViewRenderer.className (chunk-NHJFFVY5.js?v=ff62ee3b:sourcemap:7831:27)
+    at Object.react_stack_bottom_frame (react-dom-client.development.js:25904:20)
+    at renderWithHooks (react-dom-client.development.js:7662:22)
+    at updateFunctionComponent (react-dom-client.development.js:10166:19)
+    at beginWork (react-dom-client.development.js:11778:18)
+    at runWithFiberInDEV (react-dom-client.development.js:871:30)
+    at performUnitOfWork (react-dom-client.development.js:17641:22)
+    at workLoopSync (react-dom-client.development.js:17469:41)
+    at renderRootSync (react-dom-client.development.js:17450:11)
+overrideMethod @ installHook.js:1
+installHook.js:1 [ErrorBoundary] Component stack: 
+    at ReactNodeViewRenderer.className (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7832:21)
+    at ReactNodeView (<anonymous>)
+    at Mi (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7597:21)
+    at Ei (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7707:13)
+    at div (<anonymous>)
+    at http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7694:17
+    at Ti (http://localhost:3000/node_modules/.vite/deps/chunk-NHJFFVY5.js?v=ff62ee3b:7618:13)
+    at MantineThemeProvider (http://localhost:3000/node_modules/.vite/deps/@blocknote_mantine.js?v=ff62ee3b:2886:3)
+    at MantineProvider (http://localhost:3000/node_modules/.vite/deps/@blocknote_mantine.js?v=ff62ee3b:3348:3)
+    at Ft (http://localhost:3000/node_modules/.vite/deps/@blocknote_mantine.js?v=ff62ee3b:27550:22)
+    at ErrorBoundary (http://localhost:3000/src/presentation/components/error/ErrorBoundary.tsx:7:5)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at NoteEditor (http://localhost:3000/src/presentation/components/notes/NoteEditor.tsx:338:30)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at MotionDOMComponent (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=ff62ee3b:5427:40)
+    at PresenceChild (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=ff62ee3b:4346:24)
+    at AnimatePresence (http://localhost:3000/node_modules/.vite/deps/framer-motion.js?v=ff62ee3b:4425:26)
+    at div (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at NotesMobileLayout (http://localhost:3000/src/presentation/components/notes/NotesMobileLayout.tsx:46:3)
+    at div (<anonymous>)
+    at main (<anonymous>)
+    at div (<anonymous>)
+    at MainLayout (http://localhost:3000/src/presentation/components/layout/MainLayout.tsx:8:30)
+    at NotesPage2 (http://localhost:3000/src/presentation/components/notes/NotesPage.tsx:41:17)
+    at ProjectProvider (http://localhost:3000/src/lib/workspace/ProjectContext.tsx:50:35)
+    at NotesWorkspaceDefault (http://localhost:3000/src/routes/notes.lazy.tsx:25:33)
+    at ErrorBoundary (http://localhost:3000/src/presentation/components/error/ErrorBoundary.tsx:7:5)
+    at component (<anonymous>)
+    at MatchInnerImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:113:3)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at MatchImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:16:3)
+    at Suspense (<anonymous>)
+    at OutletImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:201:18)
+    at ErrorBoundary (http://localhost:3000/node_modules/.vite/deps/@sentry_react.js?v=ff62ee3b:29151:5)
+    at AppErrorBoundary (http://localhost:3000/src/presentation/components/common/AppErrorBoundary.tsx:153:36)
+    at UnifiedWorkspaceProvider (http://localhost:3000/src/infrastructure/persistence/stores/workspace/unified-workspace-provider.tsx:11:3)
+    at AppInitializer (http://localhost:3000/src/presentation/components/common/AppInitializer.tsx:9:34)
+    at OverlayRoot (http://localhost:3000/src/presentation/components/ui/OverlayRoot.tsx:6:31)
+    at ToastProvider (http://localhost:3000/src/presentation/components/ui/Toast/ToastContext.tsx:14:33)
+    at TooltipProvider (http://localhost:3000/src/presentation/components/ui/tooltip-react19-compatible.tsx:92:35)
+    at LocaleProvider (http://localhost:3000/src/i18n/LocaleProvider.tsx:6:34)
+    at V (http://localhost:3000/node_modules/.vite/deps/next-themes.js?v=ff62ee3b:44:25)
+    at J (http://localhost:3000/node_modules/.vite/deps/next-themes.js?v=ff62ee3b:42:18)
+    at ThemeProvider (http://localhost:3000/src/presentation/components/ui/ThemeProvider.tsx:5:3)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at createRootRoute.component (http://localhost:3000/src/routes/__root.tsx:63:28)
+    at MatchInnerImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:113:3)
+    at CatchBoundaryImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:24:5)
+    at CatchBoundary (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:4:32)
+    at CatchNotFound (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/not-found.js?v=ff62ee3b:6:20)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at MatchImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Match.js?v=ff62ee3b:16:3)
+    at CatchBoundaryImpl (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:24:5)
+    at CatchBoundary (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/CatchBoundary.js?v=ff62ee3b:4:32)
+    at MatchesInner (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Matches.js?v=ff62ee3b:25:18)
+    at SafeFragment (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/SafeFragment.js?v=ff62ee3b:3:58)
+    at Matches (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/Matches.js?v=ff62ee3b:13:18)
+    at RouterContextProvider (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/RouterProvider.js?v=ff62ee3b:5:3)
+    at RouterProvider (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/RouterProvider.js?v=ff62ee3b:26:27)
+    at AwaitInner (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/awaited.js?v=ff62ee3b:26:16)
+    at Await (http://localhost:3000/node_modules/.pnpm/@tanstack+react-router@1.147.0_react-dom@19.2.3_react@19.2.3__react@19.2.3/node_modules/@tanstack/react-router/dist/esm/awaited.js?v=ff62ee3b:20:13)
+    at StartClient (<anonymous>)
+overrideMethod @ installHook.js:1
+installHook.js:1 [NoteEditor] BlockNote render error: Error: Cannot find node position
+    at kt2 (chunk-3DOT4L6X.js?v=ff62ee3b:sourcemap:32184:11)
+    at ReactNodeViewRenderer.className (chunk-NHJFFVY5.js?v=ff62ee3b:sourcemap:7831:27)
+    at Object.react_stack_bottom_frame (react-dom-client.development.js:25904:20)
+    at renderWithHooks (react-dom-client.development.js:7662:22)
+    at updateFunctionComponent (react-dom-client.development.js:10166:19)
+    at beginWork (react-dom-client.development.js:11778:18)
+    at runWithFiberInDEV (react-dom-client.development.js:871:30)
+    at performUnitOfWork (react-dom-client.development.js:17641:22)
+    at workLoopSync (react-dom-client.development.js:17469:41)
+    at renderRootSync (react-dom-client.development.js:17450:11)
+overrideMethod @ installHook.js:1
+installHook.js:1 [NoteEditor] ProseMirror error detected, forcing remount
+overrideMethod @ installHook.js:1
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: gemini
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] getCredentials called for: gemini
+ [CredentialVault] Already initialized, skipping
+ [CredentialVault] Credential lookup result: found
+ [CredentialVault] Decryption failed: 
+overrideMethod @ installHook.js:1
+getCredentials @ credential-vault.ts:308
+await in getCredentials
+(anonymous) @ VoiceRecordButton.tsx:21
+ [VoiceRecordButton] Failed to load API key: 
+overrideMethod @ installHook.js:1
+(anonymous) @ VoiceRecordButton.tsx:24
+ [CredentialVault] Credential lookup result: found
+ [CredentialVault] Decryption failed: 
+overrideMethod @ installHook.js:1
+getCredentials @ credential-vault.ts:308
+await in getCredentials
+(anonymous) @ VoiceRecordButton.tsx:21
+ [VoiceRecordButton] Failed to load API key: 
+overrideMethod @ installHook.js:1
+(anonymous) @ VoiceRecordButton.tsx:24
+The deferred DOM Node could not be resolved to a valid node.

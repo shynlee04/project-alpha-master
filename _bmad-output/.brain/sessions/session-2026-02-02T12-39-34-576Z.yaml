@@ -1,0 +1,34 @@
+# Session Archive
+timestamp: "2026-02-02T12:39:34.576Z"
+session_id: "ses_3e1c7f213ffeJTizLQU7a9Bykr"
+tool: "task"
+call_id: "Q0qbOBAAojgGWLdC"
+detected_agent: "none"
+work_type: "project"
+message_count: 8
+task_title: "Trace initialization sequence gaps"
+original_intent: |
+  <objective>
+Debug issues using scientific method with subagent isolation.
+
+**Orchestrator role:** Gather symptoms, spawn gsd-debugger agent, handle checkpoints, spawn continuations.
+
+**Why subagent:**
+task_output: |
+  Now I have a complete picture. Let me produce the investigation report.
+
+---
+
+## Investigation Report: Plugin Initialization Sequence Gap Analysis
+
+### Executive Summary
+
+I have traced the initialization sequence and identified **multiple race conditions and architectural gaps** that cause empty panels when a user enters a project.
+
+---
+
+```yaml
+sequence_analysis:
+  step_1: "Component $projectId.tsx mounts"
+  step_2: "usePluginLayoutStore reads _hasHydrated (starts as false)"
+  step_3: "useLayou

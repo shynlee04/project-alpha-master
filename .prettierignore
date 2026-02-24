@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Cache
+.cache/
+.turbo/
+.vite/
+
+# Generated files
+*.min.js
+*.min.css
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+coverage/
+.nyc_output/
+
+# BMAD
+_bmad/
+_bmad-output/
+
+# Package manager
+.pnpm-store/

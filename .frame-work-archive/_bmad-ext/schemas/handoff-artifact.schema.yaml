@@ -1,0 +1,284 @@
+# _bmad-ext/schemas/handoff-artifact.schema.yaml
+# Required fields for all handoff artifacts
+# Version: 1.0.0
+# Updated: 2026-01-10
+
+---
+schema_version: "1.0.0"
+schema_type: "handoff-artifact"
+last_updated: "2026-01-10"
+description: "Schema for agent-to-agent handoff artifacts in BMAD system"
+---
+
+# Artifact Types
+
+| Type | Description | Flow |
+|------|-------------|------|
+| **handoff** | Main agent → Main agent (via orchestrator) | orchestrator → main → orchestrator |
+| **sub-handoff** | Main agent → Sub-agent | main → sub → main |
+| **failure** | Error escalation | any agent → orchestrator |
+| **completion** | Work completed notification | main → orchestrator |
+
+---
+
+# Required Frontmatter (All Types)
+
+```yaml
+---
+artifact_id: "{uuid}"           # Unique identifier
+artifact_type: "handoff"         # Type: handoff, sub-handoff, failure, completion
+parent_id: "{uuid or null}"     # Parent handoff ID (if continuation)
+story_id: "{story_id}"           # Associated story
+source_agent: "{agent_name}"     # Who created this
+target_agent: "{agent_name}"     # Who should consume this
+created_at: "{iso-8601}"         # Timestamp
+status: "PENDING"                # PENDING | IN_PROGRESS | COMPLETED | FAILED
+---
+```
+
+---
+
+# Type-Specific Fields
+
+## 1. Standard Handoff
+
+Used when main agents communicate via orchestrator.
+
+```yaml
+---
+artifact_id: "hnd_20260110_123456_abc123"
+artifact_type: "handoff"
+parent_id: null
+story_id: "FS-05"
+source_agent: "dev-ext"
+target_agent: "master-orchestrator"
+created_at: "2026-01-10T12:34:56Z"
+status: "PENDING"
+---
+
+## Context Summary
+
+Completed 3 tasks for FS-05: FileLockService implementation.
+Service now handles lock acquisition, release, and timeout.
+Files created: file-lock-service.ts, file-lock.test.ts
+Next: Integrate with FileSyncService.
+
+## Handoff Data
+
+### Story File
+`_bmad-output/stories/FS-05-context.xml`
+
+### Validation Results
+- TypeScript Errors: 0
+- Tests Passed: true
+- Test Count: 42
+- Test Failures: 0
+
+### Files Modified
+- `src/domain/services/file-lock-service.ts` (created)
+- `test/unit/services/file-lock.test.ts` (created)
+
+### Artifacts Produced
+- `hnd_20260110_110000_src123`
+
+## Acceptance Criteria
+
+- [x] All story tasks marked complete
+- [x] All tests passing (0 failures)
+- [x] No TypeScript errors
+- [x] Code follows CLAUDE.md standards
+
+## Validation Commands
+
+```bash
+# Verify TypeScript compilation
+pnpm tsc --noEmit
+
+# Run all tests
+pnpm vitest run
+
+# Check linting
+pnpm lint
+```
+
+## Escalation Path
+
+On failure → Report to master-orchestrator with:
+- Error details from validation
+- Files that need review
+- Suggested recovery action
+```
+
+---
+
+## 2. Sub-Handoff
+
+Used when main agent delegates to sub-agent.
+
+```yaml
+---
+artifact_id: "sub_20260110_123456_def456"
+artifact_type: "sub-handoff"
+parent_id: "hnd_20260110_120000_xyz789"
+parent_agent: "dev-ext"
+story_id: "FS-05"
+source_agent: "dev-ext"
+target_agent: "tea-ext"
+created_at: "2026-01-10T12:34:56Z"
+status: "PENDING"
+---
+
+## Sub-Agent Task
+
+Create comprehensive test suite for file-lock-service.ts
+
+## Context from Parent
+
+FileLockService implementation is complete. Service handles:
+- Lock acquisition with timeout
+- Lock release
+- Lock state checking
+- Concurrent lock attempts
+
+Files to test:
+- `src/domain/services/file-lock-service.ts`
+
+## Return Criteria
+
+- [ ] Test coverage > 80%
+- [ ] All edge cases covered (timeout, concurrent, deadlock)
+- [ ] Tests passing (0 failures)
+- [ ] Mock file system dependencies
+
+## Report Back To
+
+dev-ext with completion status and test results
+```
+
+---
+
+## 3. Failure Handoff
+
+Used when agent encounters unrecoverable error.
+
+```yaml
+---
+artifact_id: "fail_20260110_123456_ghi789"
+artifact_type: "failure"
+parent_id: "hnd_20260110_120000_xyz789"
+story_id: "FS-05"
+source_agent: "dev-ext"
+target_agent: "master-orchestrator"
+created_at: "2026-01-10T12:34:56Z"
+status: "FAILED"
+---
+
+## Error Summary
+
+**Error Type:** validation
+**Severity:** high
+**Recovery Attempts:** 3
+
+## Error Message
+
+```
+TypeScript error in file-lock-service.ts:42:21
+TS2345: Argument of type 'string | undefined' is not assignable
+to parameter of type 'string'.
+```
+
+## Context
+
+### Stack Trace
+```
+at file-lock-service.ts:42:21
+at FileLockService.acquireLock()
+at test/unit/services/file-lock.test.ts:15:18
+```
+
+### Files Involved
+- `src/domain/services/file-lock-service.ts`
+- `test/unit/services/file-lock.test.ts`
+
+## Recovery Recommendation
+
+retry_with_different_approach
+
+## Suggested Action
+
+TypeScript type error in FileLockService.acquireLock() method.
+The lockId parameter may be undefined. Consider:
+1. Add type guard: if (!lockId) throw new Error(...)
+2. Make lockId required in LockOptions interface
+3. Add default value for lockId parameter
+
+Recovery attempted 3 times with different approaches.
+Recommending human review or architect-ext consultation.
+```
+
+---
+
+# Valid Agent Names
+
+## Main Agents
+- master-orchestrator / asgl
+- governance-core
+- dev-ext
+- architect-ext
+- analyst-ext
+- product-management-ext
+- ux-designer-ext
+- tech-writer-ext
+- remediation-ext
+
+## Sub-Agents
+- tea-ext (testing, parent: dev-ext)
+- pm (product management, parent: product-management-ext)
+- sm (scrum master, parent: product-management-ext)
+- store-refactorer (store splitting, parent: remediation-ext)
+- component-splitter (component splitting, parent: remediation-ext)
+- typescript-fixer (TS fixes, parent: remediation-ext)
+
+---
+
+# Storage Conventions
+
+```yaml
+handoff_directory: "_bmad-output/handoffs/"
+sub_directory_pattern: "{date}/{story_id}/"
+filename_pattern: "{story_id}-{source_agent}-handoff.md"
+
+# Examples
+- "_bmad-output/handoffs/2026-01-10/FS-05/FS-05-dev-handoff.md"
+- "_bmad-output/handoffs/2026-01-10/FS-05/FS-05-tea-sub-handoff.md"
+- "_bmad-output/handoffs/2026-01-10/FS-05/FS-05-dev-failure.md"
+```
+
+---
+
+# UUID Format
+
+```regex
+^hnd_[0-9]{8}_[0-9]{6}_[a-z0-9]{6}$     # handoff
+^sub_[0-9]{8}_[0-9]{6}_[a-z0-9]{6}$     # sub-handoff
+^fail_[0-9]{8}_[0-9]{6}_[a-z0-9]{6}$    # failure
+```
+
+---
+
+# Integration Points
+
+| Integration | Purpose |
+|------------|---------|
+| `ARTIFACT_REGISTRY.yaml` | Register handoff artifacts |
+| `LOOP_STATE.yaml` | Track delegation status |
+| `correct-course` workflow | Governance enforcement before handoff |
+| All enhanced agents | Post-execution hook creates handoff |
+
+---
+
+# Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 1.0.0 | 2026-01-10 | Initial schema, added sub-handoff and failure types |

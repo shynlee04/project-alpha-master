@@ -1,0 +1,59 @@
+/**
+ * @fileoverview Callout Block Styles
+ * @story UX-09 - Toggle and Callout Blocks
+ * @created 2026-01-15
+ *
+ * 8-bit design compliant styles for callout blocks.
+ * Uses CSS variables for theme consistency.
+ */
+
+/* Callout Block Container */
+.bn-block-content .callout-block {
+    position: relative;
+}
+
+/* Callout Content Styling */
+.callout-block-content {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+}
+
+/* Callout Type Selector */
+.callout-type-selector {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border: 2px solid var(--border);
+    border-radius: 0;
+    background: var(--background);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.callout-type-selector:hover {
+    background: var(--accent);
+}
+
+.callout-type-selector:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Callout Icon */
+.callout-icon {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+    .callout-block-content {
+        color: var(--foreground);
+    }
+}
+
+/* Ensure proper z-index for callout blocks */
+.bn-block-content .callout-block {
+    z-index: var(--z-base);
+}

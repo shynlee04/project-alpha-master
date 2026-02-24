@@ -5,7 +5,7 @@ auto_execution_mode: 1
 
 # Storytelling Workflow Configuration
 name: "storytelling"
-description: "Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any purpose."
+description: "Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development, applying appropriate story frameworks to create emotionally resonant and engaging stories for any description."
 author: "BMad"
 
 # Critical variables load from config_source

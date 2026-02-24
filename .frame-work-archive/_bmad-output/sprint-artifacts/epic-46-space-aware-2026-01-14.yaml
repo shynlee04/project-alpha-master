@@ -1,0 +1,255 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-46: Space-Aware Agent Orchestration
+# ═══════════════════════════════════════════════════════════════════════════
+
+schema_version: "2.0.0"
+epic_id: "EPIC-46"
+epic_name: "Space-Aware Agent Orchestration"
+status: "READY"
+created_at: "2026-01-14T12:00:00+07:00"
+team: "Team A"
+priority: "P1"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC OVERVIEW
+# ═══════════════════════════════════════════════════════════════════════════
+
+description: |
+  Build space-aware agent orchestration on top of EPIC-45's IDE store foundation.
+  Ensure agents receive workspace context, use workspace-specific prompts, and display
+  tool execution metadata with workspace awareness.
+
+depends_on:
+  - "EPIC-45"  # Chat State & Project Foundation (COMPLETE)
+
+unblocks:
+  - "EPIC-47"  # Workspace-Aware Artifacts & Actions
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EXISTING FOUNDATION (EPIC-45 deliverables)
+# ═══════════════════════════════════════════════════════════════════════════
+
+existing_infrastructure:
+  workspace_execution_context:
+    file: "src/lib/agent/workspace-execution-context.ts"
+    features:
+      - "getWorkspaceExecutionContext() - Retrieves workspace/agent state from Zustand"
+      - "checkToolWorkspacePermission() - Permission checks for tool execution"
+      - "createWorkspaceDeniedResponse() - Standardized error responses"
+    status: "implemented"
+
+  workspace_tool_filter:
+    file: "src/lib/agent/workspace-tool-filter.ts"
+    features:
+      - "filterToolsForWorkspace() - Filters tools by workspace permissions"
+      - "createWorkspaceAwareToolExecutor() - Wraps tools with permission checks"
+      - "validateAgentWorkspaceConfiguration() - Validates agent setup"
+    status: "implemented"
+
+  system_prompt:
+    file: "src/lib/agent/system-prompt.ts"
+    features:
+      - "buildSystemPrompt() - Builds prompt with workspace context"
+      - "getModePrompt() - Gets mode-specific prompts"
+      - "MODE_CODING_PROMPT, MODE_KNOWLEDGE_PROMPT, MODE_ORCHESTRATOR_SUB_PROMPT"
+    status: "implemented"
+
+  ide_store:
+    file: "src/infrastructure/persistence/stores/ide/useIDEStore.ts"
+    features:
+      - "Single source of truth for project state across workspaces"
+      - "Route-sync pattern eliminates state drift"
+    status: "implemented"
+
+  browser_mode:
+    file: "src/lib/workspace/browser-mode.ts"
+    features:
+      - "BROWSER_MODE_PROJECT_ID constant for Notes without project"
+      - "isBrowserModeProject() utility function"
+    status: "implemented"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# STORIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+stories:
+  # ═════════════════════════════════════════════════════════════════════════
+  # Story 46-01: Unified Tool Context Propagation
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - id: "46-01"
+    name: "Unified Tool Context Propagation"
+    status: "pending"
+    priority: "P1-HIGH"
+    estimated_effort: "2 hours"
+
+    description: |
+      Ensure all tool executions receive workspaceType and projectId context.
+      The infrastructure exists (workspace-execution-context.ts), but we need
+      to verify ALL tools use it consistently.
+
+    acceptance_criteria:
+      - AC1: "All tool factories use getWorkspaceExecutionContext() before execution"
+      - AC2: "Tool execution logs include workspaceType and projectId"
+      - AC3: "Tools blocked by workspace permissions return standardized error"
+      - AC4: "Browser mode (notes:browser-mode) properly handled in tool context"
+
+    files_to_modify:
+      - "src/lib/agent/tools/read-file-tool.ts"
+      - "src/lib/agent/tools/write-file-tool.ts"
+      - "src/lib/agent/tools/execute-command-tool.ts"
+      - "src/lib/agent/tools/search-notes-tool.ts"
+      - "src/lib/agent/factory.ts"  # Tool orchestration
+
+    technical_notes: |
+      Gap analysis needed:
+      - Check if existing tools use getWorkspaceExecutionContext()
+      - Verify tool execution logger includes workspace metadata
+      - Ensure browser mode project path resolution
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # Story 46-02: Workspace-Specific System Prompts
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - id: "46-02"
+    name: "Workspace-Specific System Prompts"
+    status: "pending"
+    priority: "P1-HIGH"
+    estimated_effort: "2.5 hours"
+
+    description: |
+      Generate system prompts dynamically based on available tools per workspace.
+      Each workspace should get a customized prompt listing only the tools available
+      in that workspace.
+
+    acceptance_criteria:
+      - AC1: "System prompt includes available tools list for current workspace"
+      - AC2: "Prompt explains which tools are unavailable in current workspace"
+      - AC3: "Workspace-specific prompts generated for ide, notes, knowledge, study"
+      - AC4: "Browser mode uses same prompt logic with project-aware context"
+
+    files_to_create:
+      - "src/lib/agent/workspace-prompt-builder.ts"
+
+    files_to_modify:
+      - "src/lib/agent/system-prompt.ts"
+      - "src/lib/agent/factory.ts"
+
+    technical_notes: |
+      Design approach:
+      - Use filterToolsForWorkspace() to get available tools
+      - Inject tool list into system prompt
+      - Maintain separate prompts per workspace type
+      - Cache prompts to avoid regeneration on every message
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # Story 46-03: Tool Execution Metadata Display
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - id: "46-03"
+    name: "Tool Execution Metadata Display"
+    status: "pending"
+    priority: "P2-MEDIUM"
+    estimated_effort: "1.5 hours"
+
+    description: |
+      Display workspace, status, and duration metadata in ToolExecutionIndicator.
+      Users should see which workspace a tool executed in and how long it took.
+
+    acceptance_criteria:
+      - AC1: "ToolExecutionIndicator shows workspace badge (IDE, Notes, etc.)"
+      - AC2: "Execution duration displayed in milliseconds or seconds"
+      - AC3: "Status icon animation smooth (pending → executing → completed/failed)"
+      - AC4: "Collapsed state shows summary: '3 tools in IDE · 245ms'"
+
+    files_to_modify:
+      - "src/presentation/components/chat/ToolExecutionIndicator.tsx"
+      - "src/lib/agent/tools/tool-execution-logger.ts"
+
+    technical_notes: |
+      UI enhancement:
+      - Add workspaceType prop to ToolExecutionIndicator
+      - Add duration tracking to tool execution logger
+      - Create workspace badge component
+      - Update CollapsibleSection header with metadata
+
+  # ═════════════════════════════════════════════════════════════════════════
+  # Story 46-04: Space-Aware Render Modes
+  # ═════════════════════════════════════════════════════════════════════════
+
+  - id: "46-04"
+    name: "Space-Aware Render Modes for Chat Components"
+    status: "pending"
+    priority: "P2-MEDIUM"
+    estimated_effort: "2 hours"
+
+    description: |
+      CodeBlock and other chat components show workspace-specific actions.
+      IDE workspace gets "Execute" button, Notes gets "Save to Note", etc.
+
+    acceptance_criteria:
+      - AC1: "CodeBlock shows workspace-specific action buttons"
+      - AC2: "IDE workspace: Execute in Terminal button (code blocks only)"
+      - AC3: "Notes workspace: Save to Note button (available in Notes only)"
+      - AC4: "Knowledge/Study: Reference/Save buttons appropriate to workspace"
+
+    files_to_modify:
+      - "src/presentation/components/chat/CodeBlock.tsx"
+      - "src/presentation/components/notes/NoteEditor.tsx"  # For code execution
+
+    files_to_create:
+      - "src/presentation/components/chat/WorkspaceActionButtons.tsx"
+
+    technical_notes: |
+      Component extension:
+      - Add workspaceType prop to CodeBlock
+      - Create action button variants per workspace
+      - Integrate with useWorkspaceContext for current workspace
+      - Execute button uses terminal integration (IDE only)
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SUCCESS METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+success_metrics:
+  code_quality:
+    - "TypeScript errors: 0 (excluding pre-existing Router errors)"
+    - "All stories have 100% acceptance criteria pass"
+    - "No circular dependencies introduced"
+
+  user_experience:
+    - "Agents properly switch behavior based on workspace"
+    - "Users can see which workspace tools executed in"
+    - "Code blocks show appropriate actions per workspace"
+
+  technical_debt:
+    - "No additional technical debt from this epic"
+    - "Builds on EPIC-45 foundation without architectural changes"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# RETROSPECTIVE TEMPLATE (to be filled on completion)
+# ═══════════════════════════════════════════════════════════════════════════
+
+retrospective:
+  completed_at: null
+  stories_completed: 0
+  total_stories: 4
+  lessons_learned: []
+  technical_debt_created: []
+  next_epic_recommendations: []
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HANDOFF
+# ═══════════════════════════════════════════════════════════════════════════
+
+handoff:
+  status: "READY_TO_START"
+  next_agent: "dev-ext"
+  context_artifacts:
+    - "_bmad-output/sprint-artifacts/EPIC-45-retrospective-2026-01-14.md"
+    - "_bmad-output/sprint-artifacts/epic-46-space-aware-2026-01-14.yaml"
+  prerequisite_reading:
+    - "src/lib/agent/workspace-execution-context.ts"
+    - "src/lib/agent/workspace-tool-filter.ts"
+    - "src/lib/agent/system-prompt.ts"
+    - "src/infrastructure/persistence/stores/ide/useIDEStore.ts"

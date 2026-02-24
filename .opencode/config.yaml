@@ -1,0 +1,62 @@
+# OpenCode Native Configuration
+# Minimal, flat meta-framework
+
+version: "4.0.0"
+name: "project-alpha"
+
+# Hooks - Automatic governance enforcement
+hooks:
+  enabled: true
+  path: "./hooks/index.ts"
+  
+  # Pre-execution: Block violations before they happen
+  pre_execution:
+    - stale_artifact_guard      # Block reads of >2h files
+    - file_size_guard           # Enforce max lines
+    - clean_architecture_guard  # Block forbidden paths
+    - dry_reading_guard         # Require research before write
+  
+  # Post-execution: Log and audit
+  post_execution:
+    - artifact_registrar        # Register new artifacts
+    - state_synchronizer        # Sync AGENT-STATE.yaml
+    - decision_logger           # Log all decisions
+  
+  # Session lifecycle: Compact-resilient
+  session:
+    - state_injector            # Inject state on compact
+    - session_init              # Initialize new sessions
+
+# Skills - On-demand loading (0 baseline)
+skills:
+  directory: "./skills"
+  load_strategy: "on_demand"   # Load only when invoked
+  max_concurrent: 3            # Never load more than 3
+  cache_ttl: 3600              # 1 hour cache
+
+# Agents - Flat structure
+agents:
+  directory: "./agents"
+  default: "dev"
+  
+# Permissions - Granular tool control
+permissions:
+  config: "./permissions/agents.yaml"
+  enforcement: "strict"        # No bypass allowed
+
+# State - Compact-resilient
+state:
+  file: "./AGENT-STATE.yaml"
+  auto_sync: true
+  injection_on_compact: true
+
+# Governance - Automated
+governance:
+  stale_threshold_hours: 2
+  max_store_lines: 300
+  max_component_lines: 400
+  max_service_lines: 500
+  forbidden_paths:
+    - "src/lib/"
+    - "@/lib/"
+    - "@/stores/"

@@ -1,0 +1,314 @@
+---
+# Notes Architecture Deep Scan Evidence
+# Generated: 2026-01-20T00:00:00+07:00
+# Scanner: deep-scan-architecture-scanner
+# Scan Type: Layer Violations & Coupling Analysis
+---
+
+notes_architecture_analysis:
+  scan_metadata:
+    scan_date: "2026-01-20T00:00:00+07:00"
+    scanner: "deep-scan-architecture-scanner"
+    scan_scope: "All Notes components across all layers"
+    total_files_scanned: 65
+    god_components_found: 20
+    layer_violations_found: 17
+    architecture_health: "C - Multiple issues detected"
+
+  layer_violations:
+    total_violations: 17
+    severity_summary:
+      P0: 3
+      P1: 8
+      P2: 6
+
+    violations:
+      - file: "src/presentation/components/notes/NotesPage.tsx"
+        lines: "1-974"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P0"
+        details: "NotesPage (presentation layer) imports directly from infrastructure: useIDEStore, useWorkspaceProjects, NotesFileSyncService, useConversationStore, eventBus. This bypasses domain layer entirely."
+        suggested_fix: "Create domain services: ProjectDomainService, NoteSyncDomainService, ConversationDomainService. Presentation should only use domain services."
+
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        lines: "1-1089"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P0"
+        details: "NoteEditor (presentation layer) imports directly from infrastructure: useNoteStore from @/lib/notes. NoteEditor should only receive data via props or domain layer."
+        suggested_fix: "Create NoteEditorProps with note data passed from parent. Use hooks that access domain services, not infrastructure stores."
+
+      - file: "src/presentation/components/notes/NoteSidebar.tsx"
+        lines: "1-410"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P0"
+        details: "NoteSidebar imports: NoteRecord from @/infrastructure/persistence/dexie-db, useNoteNavigationStore from @/lib/notes. Should use domain interfaces instead of database entities."
+        suggested_fix: "Create Note domain entity in src/domain/entities/Note.ts. Presentation should use domain entities, not database entities."
+
+      - file: "src/presentation/components/notes/AITransformMenu.tsx"
+        lines: "1-398"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P1"
+        details: "Imports useAgentSelectionStore from @/infrastructure/persistence/stores/agents. Should use domain agent selection service."
+        suggested_fix: "Create AgentSelectionDomainService in domain layer."
+
+      - file: "src/presentation/components/notes/AIPromptDialog.tsx"
+        lines: "1-446"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P1"
+        details: "Imports useAgentSelectionStore from @/infrastructure/persistence/stores/agents. Violation same as AITransformMenu."
+        suggested_fix: "Same fix as AITransformMenu."
+
+      - file: "src/presentation/components/notes/MarkdownSyncConflictDialog.tsx"
+        lines: "1-398"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P1"
+        details: "Imports SyncDirection, SyncConflictEvent from @/infrastructure/filesystem/markdown-sync-service. Should use domain sync conflict types."
+        suggested_fix: "Create domain sync conflict types in src/domain/types/sync.ts."
+
+      - file: "src/presentation/components/notes/ProjectFilesPanel.tsx"
+        lines: "1-428"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P1"
+        details: "Imports useWorkspaceSync from @/infrastructure/persistence/stores/workspace. Should use domain workspace service."
+        suggested_fix: "Create WorkspaceDomainService in domain layer."
+
+      - file: "src/presentation/components/notes/NoteTree.tsx"
+        lines: "1-???"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P2"
+        details: "Imports NoteRecord from @/infrastructure/persistence/dexie-db. Should use domain Note entity."
+        suggested_fix: "Use domain Note entity from src/domain/entities/Note.ts."
+
+      - file: "src/presentation/components/notes/NoteContextMenu.tsx"
+        lines: "1-???"
+        violation_type: "presentation_importing_infrastructure_directly"
+        violation_severity: "P2"
+        details: "Imports NoteRecord from @/infrastructure/persistence/dexie-db. Same violation as NoteTree."
+        suggested_fix: "Use domain Note entity."
+
+      - file: "src/presentation/components/ide/AgentChatPanel.tsx"
+        lines: "1-???"
+        violation_type: "presentation_importing_domain_directly"
+        violation_severity: "P1"
+        details: "AgentChatPanel imports domain layer from presentation: useActiveNote from @/lib/notes, retrieveNoteContent from @/lib/context/NoteContentRetriever. This is cross-domain coupling."
+        suggested_fix: "Create shared chat domain that both Notes and IDE can use. Or pass note content as prop instead of importing Notes domain."
+
+      - file: "src/routes/notes.lazy.tsx"
+        lines: "1-173"
+        violation_type: "route_importing_infrastructure_directly"
+        violation_severity: "P0"
+        details: "Route component imports: db from @/infrastructure/persistence/dexie-db, getPlatformContract from @/infrastructure/filesystem/platform-detection, useLiveQuery from dexie-react-hooks. Routes should only use domain services."
+        suggested_fix: "Create ProjectListDomainService for fetching projects. Route should use domain service, not direct database access."
+
+  component_coupling:
+    high_coupling_components:
+      - file: "src/presentation/components/notes/NotesPage.tsx"
+        lines: 974
+        dependencies: 15
+        circular_dependencies: []
+        coupling_domains:
+          - "Project (via useWorkspaceProjects)"
+          - "Storage (via NotesFileSyncService)"
+          - "Conversation (via useConversationStore)"
+          - "IDE (via useIDEStore)"
+          - "Events (via eventBus)"
+          - "Routing (via @tanstack/react-router)"
+        suggested_decoupling: "Create NotesWorkspaceOrchestrator domain service that coordinates all dependencies. NotesPage should only orchestrate, not directly access 6 different domains."
+
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        lines: 1089
+        dependencies: 25
+        circular_dependencies: []
+        coupling_domains:
+          - "Note Store (via useNoteStore)"
+          - "Note Navigation (via useNoteNavigationStore)"
+          - "BlockNote (via @blocknote/*)"
+          - "AI Services (via AI prompts, transformations)"
+          - "Events (via note event emitter)"
+        suggested_decoupling: "Split NoteEditor into focused components: NoteEditorCore, NoteEditorToolbar, NoteEditorAISuggestions, NoteEditorStatus."
+
+    cross_domain_coupling:
+      notes_to_project: "NotesPage imports useWorkspaceProjects from infrastructure layer. Should use domain ProjectService instead. Complexity: medium"
+      notes_to_storage: "NotesPage imports NotesFileSyncService directly. NoteEditor imports useNoteStore from lib/notes. Complexity: high"
+      notes_to_ide: "NotesPage imports useIDEStore for panel state. AgentChatPanel (in IDE) imports useActiveNote from Notes domain. Cross-direction coupling violates layer boundaries. Complexity: high"
+      notes_to_routing: "notes.lazy.tsx imports @tanstack/react-router. NotesPage imports useNavigate for routing. Complexity: low (acceptable for routing)"
+      notes_to_conversation: "NotesPage imports useConversationStore. NoteEditor doesn't use chat directly. Complexity: medium"
+      coupling_complexity: "high"
+
+  god_components:
+    total_god_components: 20
+    critical_god_components:
+      - file: "src/presentation/components/notes/AISlashCommand.tsx"
+        lines: 1674
+        responsibilities:
+          - "AI command definitions (60+ commands)"
+          - "BlockNote editor integration"
+          - "Gemini API integration"
+          - "Note content transformation"
+          - "File operations (read/write)"
+          - "Event emission"
+          - "Error handling"
+          - "UI menu rendering"
+        suggested_split:
+          - "AISlashCommandUI.tsx (menu rendering only, ~200 lines)"
+          - "AICommandProcessor.ts (command logic, ~600 lines)"
+          - "AICommandDefinitions.ts (command list, ~400 lines)"
+          - "AICommandExecutors.ts (execution logic, ~400 lines)"
+        lines_if_split: "4 components, 400 lines max each"
+
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        lines: 1089
+        responsibilities:
+          - "BlockNote editor instance creation"
+          - "Content sanitization and validation"
+          - "Auto-save debouncing"
+          - "Scroll position management"
+          - "AI suggestions panel"
+          - "Multi-modal content insertion"
+          - "Voice recording integration"
+          - "Block rendering (20+ custom blocks)"
+          - "Status bar rendering"
+          - "Error boundary handling"
+        suggested_split:
+          - "NoteEditorCore.tsx (editor instance + BlockNote integration, ~300 lines)"
+          - "NoteEditorContentSanitizer.ts (validation logic, ~200 lines)"
+          - "NoteEditorAutoSave.ts (debounced save logic, ~150 lines)"
+          - "NoteEditorScrollManager.ts (scroll position logic, ~150 lines)"
+          - "NoteEditorAIFeatures.tsx (AI suggestions + voice, ~250 lines)"
+          - "NoteEditorStatusBar.tsx (status display, ~100 lines)"
+        lines_if_split: "6 components, 300 lines max each"
+
+      - file: "src/presentation/components/notes/NotesPage.tsx"
+        lines: 974
+        responsibilities:
+          - "Layout orchestration (3-column resizable)"
+          - "Project switching logic"
+          - "Note CRUD operations"
+          - "File sync initialization"
+          - "Auto-import on mount"
+          - "Mobile/desktop responsive layouts"
+          - "Knowledge event handling"
+          - "File saved event handling"
+          - "Cross-workspace event subscriptions"
+          - "Dialog state management (5+ dialogs)"
+        suggested_split:
+          - "NotesPageLayout.tsx (resizable layout only, ~200 lines)"
+          - "NotesProjectManager.ts (project switching logic, ~200 lines)"
+          - "NotesFileSyncManager.ts (sync initialization, ~200 lines)"
+          - "NotesEventOrchestrator.ts (cross-workspace events, ~250 lines)"
+          - "NotesDialogManager.tsx (dialog state, ~150 lines)"
+        lines_if_split: "5 components, 250 lines max each"
+
+  unclean_components:
+    long_comments:
+      - file: "src/presentation/components/notes/NoteEditor.tsx"
+        lines: "100-140"
+        comment_length: "200+"
+        comment_type: "history"
+        can_be_clean: true
+
+    multiple_change_markers:
+      - file: "src/routes/notes.lazy.tsx"
+        markers:
+          - "BUG-FIX-006"
+          - "BUG-FIX-009"
+          - "BUG-FIX-010"
+          - "BUG-015"
+        conflict_potential: "low"
+        cleanup_priority: "P2"
+
+  domain_boundaries:
+    notes_domain_scope: "Notes domain should include: Note entities (src/domain/entities/Note.ts), Note value objects (NoteId, NoteTitle, NoteBlocks), Note domain services (NoteCRUDService, NoteIndexingService), Note repository interfaces (NoteRepository), Note events (NoteCreated, NoteUpdated, NoteDeleted). Current reality: Note domain is spread across lib/notes/ (not domain/), No domain entities, only database entities (NoteRecord)."
+    shared_infrastructure: "Should be shared with IDE: File watching (FileWatcher class in sync/core), File sync service (FileSyncService interface), Event bus (eventBus in infrastructure/events), Storage adapters (FSA, Dexie). Currently: File watching is partially shared (FileWatcher exists), Notes has its own note-file-watcher.ts, File sync service has abstract interface (GOOD)."
+    overlapping_concerns:
+      - concern: "file watching"
+        notes_implementation: "note-file-watcher.ts (164 lines)"
+        ide_implementation: "Uses FileWatcher from sync/core"
+        duplication: "medium"
+        consolidation_opportunity: true
+        consolidation_strategy: "Notes should use FileWatcher from sync/core. Remove note-file-watcher.ts."
+
+      - concern: "file sync"
+        notes_implementation: "notes-file-sync-service.ts (303 lines)"
+        ide_implementation: "Uses FileSyncService interface"
+        duplication: "low"
+        consolidation_opportunity: false
+
+      - concern: "chat"
+        notes_implementation: "UnifiedChatPanel used in NotesPage.tsx (shared, GOOD)"
+        ide_implementation: "AgentChatPanel used in IDELayout (workspace-aware, GOOD)"
+        duplication: "medium"
+        consolidation_opportunity: true
+        consolidation_strategy: "UnifiedChatPanel is already unified (GOOD). Issue: AgentChatPanel imports useActiveNote from Notes domain. Fix: Pass note content as prop instead of importing Notes domain."
+
+  architectural_patterns:
+    interfaces: "FileSyncService interface exists (GOOD). NoteSyncStore interface exists (GOOD). Missing: NoteRepository interface, NoteDomainService interface, NoteEntity interface (currently using NoteRecord)."
+    adapters: "FSA adapter exists (infrastructure/filesystem/). Dexie adapter exists (infrastructure/persistence/). NotesFileSyncService implements FileSyncService (GOOD). Missing: NotesRepositoryAdapter pattern."
+    facades: "note-store.ts is a facade for note-store-refactored.ts (GOOD). store-facades.ts exists but marked as temporary. Note gateway pattern is partially implemented."
+    dependency_injection: "Zustand stores are singletons (no DI). Services are created with factory functions. Missing: DI container for domain services, Missing: Interface-based DI for testability."
+    pattern_compliance: "45%"
+    pattern_compliance_breakdown:
+      interface_abstraction: 50
+      adapter_pattern: 70
+      facade_pattern: 60
+      dependency_injection: 20
+      clean_architecture: 30
+
+  consolidation_opportunities:
+    overlapping_logic:
+      - feature: "file watching"
+        notes_file: "src/infrastructure/sync/workspace-services/notes/note-file-watcher.ts (164 lines)"
+        ide_file: "src/infrastructure/sync/core/file-watcher.ts"
+        consolidation_strategy: "Migrate Notes to use FileWatcher from sync/core. Remove note-file-watcher.ts. Add FileWatcher features needed by Notes to core FileWatcher."
+        effort_estimate: "4 hours"
+
+    duplicate_components:
+      - component: "chat panels"
+        notes_version: "UnifiedChatPanel in NotesPage.tsx (shared, GOOD)"
+        ide_version: "AgentChatPanel in IDELayout (workspace-aware, GOOD)"
+        consolidation_strategy: "Issue: AgentChatPanel imports useActiveNote from Notes domain. Fix: Pass note content as prop to AgentChatPanel. Remove cross-domain dependency."
+        effort_estimate: "2 hours"
+
+  recommendations:
+    immediate_actions:
+      - action: "Clean up layer violations in NotesPage"
+        priority: "P0"
+        effort: "8 hours"
+        description: "Create domain services to replace direct infrastructure imports"
+
+      - action: "Split AISlashCommand god component"
+        priority: "P0"
+        effort: "12 hours"
+        description: "Split into 4 focused components (UI, processor, definitions, executors)"
+
+      - action: "Split NoteEditor god component"
+        priority: "P0"
+        effort: "16 hours"
+        description: "Split into 6 focused components (core, sanitizer, autosave, scroll, AI, status)"
+
+    medium_term_actions:
+      - action: "Create proper domain entities"
+        priority: "P1"
+        effort: "16 hours"
+        description: "Create Note entity in src/domain/entities/, migrate from NoteRecord"
+
+      - action: "Implement repository pattern"
+        priority: "P1"
+        effort: "12 hours"
+        description: "Create NoteRepository interface with Dexie/FSA implementations"
+
+      - action: "Consolidate file watching"
+        priority: "P1"
+        effort: "4 hours"
+        description: "Migrate Notes to use FileWatcher from sync/core"
+
+  metrics:
+    total_notes_components: 65
+    god_components: 20
+    god_component_percentage: 30.8
+    layer_violations: 17
+    layer_violation_percentage: 26.2
+    architecture_health_score: 45
+    estimated_remediation_effort_hours: 120
+
+  scan_summary: "Notes architecture shows significant issues: 1) Layer Violations: 17 violations found, primarily in presentation layer importing infrastructure directly. 2) God Components: 20 components >300 lines (30.8% of Notes components). Critical: AISlashCommand (1674 lines), NoteEditor (1089 lines), NotesPage (974 lines). 3) Domain Boundaries: Notes domain is not properly separated from infrastructure. Uses database entities (NoteRecord) instead of domain entities. 4) Cross-Domain Coupling: AgentChatPanel (IDE) imports Notes domain directly. Creates circular dependency between workspaces. 5) Consolidation Opportunities: File watching partially duplicated. Block sanitization logic could be extracted. Estimated remediation effort: 120+ hours"

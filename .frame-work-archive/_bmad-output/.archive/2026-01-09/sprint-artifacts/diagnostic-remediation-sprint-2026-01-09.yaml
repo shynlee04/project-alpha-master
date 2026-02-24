@@ -1,0 +1,481 @@
+---
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT STATUS: Diagnostic Remediation (Course Correction)
+# Generated: 2026-01-09T18:30:00+07:00
+# Workflow: correct-course (BMAD V6)
+# Triggered By: Diagnostic Scan Validation Gap Analysis
+# ═══════════════════════════════════════════════════════════════════════════
+
+sprint:
+  id: diagnostic-remediation-2026-01-09
+  name: "Diagnostic Remediation: Complete Coverage Before Phase 2"
+  start_date: "2026-01-09T18:30:00+07:00"
+  target_end_date: "2026-01-10T12:00:00+07:00"
+  status: COMPLETE ✅
+  phase: DIAGNOSTIC_REMEDIATION
+  predecessor: codebase-diagnostic-2026-01-09
+  predecessor_status: "COMPLETE (100%)"
+  created_by: "BMAD Correct-Course Workflow"
+  urgency: "BLOCKING Phase 2 Agentic Verification"
+  completed_at: "2026-01-09T23:00:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT GOAL
+# ═══════════════════════════════════════════════════════════════════════════
+
+goal: |
+  Complete the diagnostic coverage gaps identified in validation:
+  - Vault → AI Chain NOT traced (blocking agentic verification)
+  - Study Workspace status UNKNOWN
+  - AI Slash Command flow NOT documented
+  - Cross-workspace events root cause NOT analyzed
+  - Phase 4/5 feature scans INCOMPLETE
+  
+  PHILOSOPHY: We cannot verify Phase 2 agentic capabilities without
+  understanding WHERE the API key → AI response chain breaks.
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GAP ANALYSIS SUMMARY
+# ═══════════════════════════════════════════════════════════════════════════
+
+gap_analysis:
+  validation_date: "2026-01-09T18:00:00+07:00"
+  source_document: "_bmad-output/project-planning-artifacts/sprint-change-proposal-2026-01-08.md"
+  
+  gaps_identified:
+    - id: "GAP-01"
+      title: "Vault → AI Chain Not Traced"
+      severity: "P0-CRITICAL"
+      sprint_proposal_reference: "Section 1.6, Lines 221-236"
+      missing: |
+        Complete trace from:
+        Settings Page → credential-vault.ts → provider-store → agent-config → AI service → API call
+      blocking: "Phase 2 stories P2-07, P2-08"
+      
+    - id: "GAP-02"
+      title: "Study Workspace Status Unknown"
+      severity: "P0-CRITICAL"
+      sprint_proposal_reference: "Section 1.7, Line 276"
+      missing: "journey-hub-to-study.md contains only 'NEEDS VERIFICATION' placeholder"
+      blocking: "Phase 2 cross-workspace context (P2-16, P2-17)"
+      
+    - id: "GAP-03"
+      title: "AI Slash Command Chain Not Traced"
+      severity: "P0-CRITICAL"
+      sprint_proposal_reference: "Section 1.5, Lines 196-216"
+      missing: |
+        /summarize → AISlashCommand.tsx → WHERE API key from? → WHERE model from? → HOW API called?
+      blocking: "Phase 2 story P2-08 (Notes AI Slash Commands)"
+      
+    - id: "GAP-04"
+      title: "Phase 4/5 Feature Scans Incomplete"
+      severity: "P1-HIGH"
+      sprint_proposal_reference: "N/A (diagnostic workflow incompleteness)"
+      missing: "Phase 4 shows 0/6 sub-agents completed in PROGRESS.md"
+      blocking: "Complete diagnostic picture"
+      
+    - id: "GAP-05"
+      title: "Vault Integration Investigation Tables Not Completed"
+      severity: "P0-CRITICAL"
+      sprint_proposal_reference: "Section 1.6, Lines 242-246"
+      missing: |
+        - How is key saved? (credential-vault.ts)
+        - How does store know key exists? (provider-models-store.ts)
+        - Where does agent config read key from? (agent-config-store.ts)
+        - How does AI service get agent config? (note-ai-service.ts)
+      blocking: "Phase 2 vault chain verification"
+      
+    - id: "GAP-06"
+      title: "Cross-Workspace Events Root Cause Unknown"
+      severity: "P1-HIGH"
+      sprint_proposal_reference: "Section 1.7, Lines 274-275"
+      missing: "WHY does useAllCrossWorkspaceEvents cause infinite loops?"
+      blocking: "Phase 2 re-attachment of cross-workspace events"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC: DIAGNOSTIC REMEDIATION
+# ═══════════════════════════════════════════════════════════════════════════
+
+epics:
+  EPIC-DIAG-1:
+    id: "EPIC-DIAG-1"
+    name: "Complete Diagnostic Coverage"
+    priority: "P0-CRITICAL"
+    status: "COMPLETE ✅"
+    total_stories: 6
+    total_effort_hours: 8.5
+    description: "Fill all gaps in diagnostic scan before Phase 2 can proceed"
+    output_location: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/"
+    completed_at: "2026-01-09T23:00:00+07:00"
+    
+    stories:
+      DIAG-01:
+        id: "DIAG-01"
+        name: "Complete Vault → AI Chain Trace"
+        priority: "P0-CRITICAL"
+        status: "DONE"
+        effort_hours: 2
+        assignee: "BMAD Investigator"
+        dependencies: []
+        blocking: ["P2-07", "P2-08"]
+        completed_at: "2026-01-09T19:30:00+07:00"
+        
+        description: |
+          Trace the COMPLETE chain from API key save to AI response.
+          This is the #1 blocking investigation for Phase 2.
+        
+        investigation_questions:
+          - "Settings Page: WHERE does API key go when user clicks Save?"
+          - "credential-vault.ts: HOW is key encrypted and stored?"
+          - "provider-store.ts: HOW does store know key exists?"
+          - "agent-config-store.ts: WHERE does agent read key from?"
+          - "note-ai-service.ts: HOW does service get agent config?"
+          - "API call: WHAT happens if key is missing?"
+          
+        files_to_trace:
+          - path: "src/routes/settings.tsx"
+            purpose: "API key input form"
+          - path: "src/lib/agent/providers/credential-vault.ts"
+            purpose: "Encrypted key storage"
+          - path: "src/infrastructure/persistence/stores/providers/"
+            purpose: "Provider state management"
+          - path: "src/lib/agent/providers/migrate-api-keys-to-vault.ts"
+            purpose: "Migration from old storage"
+          - path: "src/lib/notes/note-ai-service.ts"
+            purpose: "AI service consuming keys"
+          - path: "src/presentation/components/notes/ai/"
+            purpose: "AI slash command UI"
+            
+        acceptance_criteria:
+          - "Chain diagram created showing all handoffs"
+          - "Each step documented with file:line references"
+          - "Failure points identified with error messages"
+          - "Working vs broken scenarios distinguished"
+          
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/vault-ai-chain-trace.md"
+
+      DIAG-02:
+        id: "DIAG-02"
+        name: "Complete Study Workspace Investigation"
+        priority: "P0-CRITICAL"
+        status: "DONE"
+        effort_hours: 1
+        assignee: "BMAD Investigator"
+        dependencies: []
+        blocking: ["P2-16"]
+        completed_at: "2026-01-09T20:00:00+07:00"
+        
+        description: |
+          The current journey-hub-to-study.md is a 35-line placeholder.
+          We need actual analysis: Is Study functional? Broken? Placeholder?
+        
+        investigation_questions:
+          - "Does study.lazy.tsx exist and what's in it?"
+          - "Does Study use useWorkspaceAccess (broken) or bypass it?"
+          - "Is Study showing 'Coming in Phase 2' like Knowledge?"
+          - "What Dexie tables does Study require?"
+          - "What is Study's actual functional status?"
+          
+        files_to_trace:
+          - path: "src/routes/study.lazy.tsx"
+            purpose: "Study route entry point"
+          - path: "src/presentation/components/study/"
+            purpose: "Study workspace components"
+          - path: "src/infrastructure/persistence/stores/study/"
+            purpose: "Study-related stores"
+            
+        acceptance_criteria:
+          - "Study route fully analyzed (not 'NEEDS VERIFICATION')"
+          - "Functional status determined (Working/Broken/Placeholder)"
+          - "Dependencies documented"
+          - "Phase 2 compatibility assessed"
+          
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/phase-1/journey-hub-to-study.md"
+        note: "UPDATE existing file, replace placeholder content"
+
+      DIAG-03:
+        id: "DIAG-03"
+        name: "AI Slash Command Chain Trace"
+        priority: "P0-CRITICAL"
+        status: "DONE"
+        effort_hours: 1.5
+        assignee: "BMAD Investigator"
+        dependencies: ["DIAG-01"]
+        blocking: ["P2-08"]
+        completed_at: "2026-01-09T20:00:00+07:00"
+        
+        description: |
+          From Sprint Proposal Section 1.5: "User types /summarize - WHERE does it
+          get API key from? WHERE does it get model from? HOW does it call the API?"
+        
+        investigation_questions:
+          - "What triggers when user types /summarize?"
+          - "Which component handles the slash command?"
+          - "How does it resolve the current agent?"
+          - "How does it get API key from vault?"
+          - "How does it determine which model to use?"
+          - "What is the actual API call mechanism?"
+          
+        files_to_trace:
+          - path: "src/presentation/components/notes/ai/AISlashCommand.tsx"
+            purpose: "Slash command trigger"
+          - path: "src/presentation/components/notes/ai/AIPromptDialog.tsx"
+            purpose: "AI prompt UI"
+          - path: "src/lib/notes/note-ai-service.ts"
+            purpose: "AI service orchestration"
+          - path: "src/hooks/use-agent-chat.ts"
+            purpose: "Agent chat hook"
+          - path: "src/lib/agent/factory.ts"
+            purpose: "Agent creation"
+            
+        acceptance_criteria:
+          - "Complete trace from /summarize to API response"
+          - "API key resolution path documented"
+          - "Model selection logic documented"
+          - "Error scenarios identified"
+          
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/ai-slash-command-chain.md"
+
+      DIAG-04:
+        id: "DIAG-04"
+        name: "Cross-Workspace Events Root Cause Analysis"
+        priority: "P1-HIGH"
+        status: "DONE"
+        effort_hours: 1
+        assignee: "BMAD Investigator"
+        dependencies: []
+        blocking: ["Phase 2 re-attachment"]
+        completed_at: "2026-01-09T21:30:00+07:00"
+        
+        description: |
+          Sprint Proposal Line 274 says to detach useAllCrossWorkspaceEvents because
+          it "causes infinite loops". We need to understand WHY to fix it in Phase 2.
+        
+        investigation_questions:
+          - "What is useAllCrossWorkspaceEvents doing?"
+          - "Which stores does it subscribe to?"
+          - "Where is getState() called in render path?"
+          - "What's the re-render cascade?"
+          - "How can it be fixed (not just detached)?"
+          
+        files_to_trace:
+          - path: "src/lib/events/use-cross-workspace-events.ts"
+            purpose: "Event subscription hook"
+          - path: "src/lib/events/cross-workspace-event-bus.ts"
+            purpose: "Event bus implementation"
+          - path: "src/stores/agents-store.ts"
+            purpose: "Suspected getState() calls"
+            
+        acceptance_criteria:
+          - "Root cause identified with code evidence"
+          - "Re-render loop diagram created"
+          - "Fix proposal documented"
+          - "Phase 2 re-attachment plan created"
+          
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/cross-workspace-events-analysis.md"
+
+      DIAG-05:
+        id: "DIAG-05"
+        name: "Complete Phase 4 Feature Scans"
+        priority: "P1-HIGH"
+        status: "DONE"
+        effort_hours: 2
+        assignee: "BMAD Investigator"
+        dependencies: []
+        blocking: []
+        completed_at: "2026-01-09T22:30:00+07:00"
+        
+        description: |
+          PROGRESS.md shows Phase 4 as "IN_PROGRESS" with 0/6 sub-agents completed.
+          Need to complete feature scans for all workspaces.
+        
+        features_to_scan:
+          - feature: "Agents"
+            output: "phase-4/feature-agents.md"
+            scope: "Agent configuration, workspace bindings, tool permissions"
+          - feature: "Hub"
+            output: "phase-4/feature-hub.md"
+            scope: "Dashboard metrics, project creation, navigation"
+          - feature: "IDE"
+            output: "phase-4/feature-ide.md"
+            scope: "Monaco, file tree, terminal, preview, 18 panels"
+          - feature: "Notes"
+            output: "phase-4/feature-notes.md"
+            scope: "BlockNote, AI integration, sync"
+          - feature: "Study"
+            output: "phase-4/feature-study.md"
+            scope: "Flashcards, quizzes, spaced repetition"
+            
+        acceptance_criteria:
+          - "All 5 feature scan files created"
+          - "Entry points documented"
+          - "Component trees mapped"
+          - "State management audited"
+          - "PROGRESS.md updated to show Phase 4 complete"
+          
+        output_location: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/phase-4/"
+
+      DIAG-06:
+        id: "DIAG-06"
+        name: "Complete Phase 5 Knowledge Pipeline Trace"
+        priority: "P1-HIGH"
+        status: "DONE"
+        effort_hours: 1
+        assignee: "BMAD Investigator"
+        dependencies: []
+        blocking: []
+        completed_at: "2026-01-09T23:00:00+07:00"
+        
+        description: |
+          Phase 5 has only feature-knowledge.md created. Need full RAG pipeline trace
+          even though Knowledge is detached (for Phase 2 re-attachment planning).
+        
+        pipeline_stages_to_trace:
+          - stage: "Source Import"
+            files: ["SourceImportDialog.tsx", "source-service.ts"]
+          - stage: "Chunking"
+            files: ["document-chunker.ts", "chunk-strategies/"]
+          - stage: "Embedding"
+            files: ["embedding-service.ts", "transformers.ts"]
+          - stage: "Indexing"
+            files: ["orama-index.ts", "incremental-indexing.ts"]
+          - stage: "Search"
+            files: ["hybrid-search.ts", "search-service.ts"]
+          - stage: "Synthesis"
+            files: ["synthesis-service.ts", "synthesis-agent.ts"]
+            
+        acceptance_criteria:
+          - "Full RAG pipeline diagram created"
+          - "Each stage documented with files and purpose"
+          - "rag-store.ts god store structure documented"
+          - "Re-attachment blockers identified"
+          
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/phase-5/rag-pipeline-trace.md"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PRIORITY QUEUE (Execution Order)
+# ═══════════════════════════════════════════════════════════════════════════
+
+priority_queue:
+  # P0-CRITICAL - Must complete before Phase 2
+  - story_id: "DIAG-01"
+    reason: "Vault → AI chain is #1 blocker for Phase 2"
+    track: "A"
+    estimated_start: "IMMEDIATE"
+    
+  - story_id: "DIAG-02"
+    reason: "Study status unknown - blocking cross-workspace tests"
+    track: "B"
+    estimated_start: "IMMEDIATE"
+    
+  - story_id: "DIAG-03"
+    reason: "AI slash command chain needed for P2-08"
+    track: "A"
+    estimated_start: "After DIAG-01"
+    
+  # P1-HIGH - Complete diagnostic picture
+  - story_id: "DIAG-04"
+    reason: "Understand cross-workspace events for Phase 2 re-attachment"
+    track: "B"
+    estimated_start: "After DIAG-02"
+    
+  - story_id: "DIAG-05"
+    reason: "Complete Phase 4 feature scans"
+    track: "A"
+    estimated_start: "After DIAG-03"
+    
+  - story_id: "DIAG-06"
+    reason: "Complete Phase 5 RAG pipeline documentation"
+    track: "B"
+    estimated_start: "After DIAG-04"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GATE CRITERIA
+# ═══════════════════════════════════════════════════════════════════════════
+
+gate_criteria:
+  diag_gate:
+    description: "Diagnostic Remediation Gate"
+    gate_status: "PASSED ✅"
+    passed_at: "2026-01-09T23:00:00+07:00"
+    criteria:
+      - id: "DIAG-G1"
+        description: "vault-ai-chain-trace.md created with full trace"
+        status: "COMPLETE ✅"
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/vault-ai-chain-trace.md"
+      - id: "DIAG-G2"
+        description: "journey-hub-to-study.md updated with actual analysis"
+        status: "COMPLETE ✅"
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/phase-1/journey-hub-to-study.md"
+      - id: "DIAG-G3"
+        description: "ai-slash-command-chain.md created documenting API key flow"
+        status: "COMPLETE ✅"
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/ai-slash-command-chain.md"
+      - id: "DIAG-G4"
+        description: "cross-workspace-events-analysis.md created with root cause"
+        status: "COMPLETE ✅"
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/cross-workspace-events-analysis.md"
+      - id: "DIAG-G5"
+        description: "All Phase 4 feature files completed (5 files)"
+        status: "COMPLETE ✅"
+        output_location: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/phase-4/"
+      - id: "DIAG-G6"
+        description: "Phase 5 RAG pipeline fully documented"
+        status: "COMPLETE ✅"
+        output_file: "_bmad-output/diagnostics/codebase-diagnostic-2026-01-09/phase-5/rag-pipeline-trace.md"
+      - id: "DIAG-G7"
+        description: "PROGRESS.md updated to reflect true completion"
+        status: "COMPLETE ✅"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# METRICS
+# ═══════════════════════════════════════════════════════════════════════════
+
+metrics:
+  total_stories: 6
+  stories_not_started: 0
+  stories_in_progress: 0
+  stories_done: 6
+  stories_blocked: 0
+
+  total_effort_hours: 8.5
+  effort_completed: 8.5
+  effort_remaining: 0
+
+  completion_percentage: 100
+
+  diagnostic_coverage_before: 70
+  diagnostic_coverage_after: 100
+  diagnostic_coverage_target: 100
+
+  last_updated: "2026-01-09T23:00:00+07:00"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PHASE 2 DEPENDENCY
+# ═══════════════════════════════════════════════════════════════════════════
+
+phase_2_dependency:
+  status: "READY ✅ - All diagnostic gaps filled"
+  unblocked_stories:
+    - story: "P2-07 (Verify API Key → Store Chain)"
+      unblocked_by: "DIAG-01"
+      artifact: "vault-ai-chain-trace.md"
+      reason: "Chain now fully documented with failure points"
+    - story: "P2-08 (Verify Notes AI Slash Commands)"
+      unblocked_by: ["DIAG-01", "DIAG-03"]
+      artifacts: ["vault-ai-chain-trace.md", "ai-slash-command-chain.md"]
+      reason: "API key flow and slash command chain documented"
+    - story: "P2-16 (Verify Project Visibility)"
+      unblocked_by: "DIAG-02"
+      artifact: "journey-hub-to-study.md"
+      reason: "Study workspace status: 80% implemented, ready for Phase 2 re-attachment"
+  phase_2_readiness_assessment:
+    vault_ai_chain: "DOCUMENTED - All 5 stages traced with failure points"
+    study_workspace: "ANALYZED - More complete than Knowledge, 2-4h re-attachment effort"
+    ai_slash_commands: "DOCUMENTED - Full chain from /summarize to API response"
+    cross_workspace_events: "ROOT CAUSE FOUND - getState() calls are dead code, fix proposal ready"
+    phase_4_scans: "COMPLETE - All 5 workspace feature scans created"
+    phase_5_rag: "COMPLETE - Full 6-stage RAG pipeline documented"
+
+---
+# End of Sprint Status

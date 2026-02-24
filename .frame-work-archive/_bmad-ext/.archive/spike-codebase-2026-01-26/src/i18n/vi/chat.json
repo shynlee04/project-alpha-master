@@ -1,0 +1,86 @@
+{
+  "settings": {
+    "title": "Cài đặt Trò chuyện",
+    "description": "Cấu hình hành vi trò chuyện cho không gian làm việc này",
+    "workspaceLabel": "Cài đặt cho {{workspace}}",
+    "model": {
+      "label": "Mô hình",
+      "description": "Mô hình AI sử dụng cho phản hồi"
+    },
+    "temperature": {
+      "label": "Nhiệt độ",
+      "description": "Giá trị cao hơn làm phản hồi sáng tạo hơn"
+    },
+    "autoScroll": {
+      "label": "Tự động cuộn",
+      "description": "Tự động cuộn đến tin nhắn mới"
+    },
+    "systemPrompt": {
+      "label": "Hệ thống nhắc nhở",
+      "description": "Hướng dẫn tùy chỉnh cho AI"
+    },
+    "reset": {
+      "label": "Đặt về mặc định",
+      "description": "Đặt tất cả cài đặt về giá trị mặc định"
+    },
+    "saved": "Đã lưu cài đặt cho không gian {{workspace}}",
+    "resetConfirm": "Bạn có chắc muốn đặt tất cả cài đặt về mặc định?"
+  },
+  "state": {
+    "loading": "Đang tải cài đặt trò chuyện...",
+    "error": "Không thể tải cài đặt trò chuyện",
+    "saving": "Đang lưu cài đặt..."
+  },
+  "workspace": {
+    "ide": "IDE",
+    "notes": "Ghi chú",
+    "knowledge": "Kiến thức",
+    "study": "Học tập"
+  },
+  "attachment": {
+    "add": "Đính kèm tệp",
+    "remove": "Xóa tệp đính kèm",
+    "tooLarge": "Tệp quá lớn (tối đa 25MB)",
+    "unsupported": "Loại tệp không được hỗ trợ",
+    "image": "Hình ảnh",
+    "audio": "Âm thanh",
+    "pdf": "Tài liệu PDF",
+    "file": "Tệp"
+  },
+  "url": {
+    "add": "Thêm liên kết",
+    "pasteUrl": "Dán URL...",
+    "invalid": "URL không hợp lệ",
+    "fetching": "Đang lấy thông tin liên kết...",
+    "fetchError": "Không thể lấy thông tin liên kết",
+    "timeout": "Yêu cầu hết hạn thời gian",
+    "blocked": "Truy cập liên kết bị trình duyệt chặn",
+    "openLink": "Mở liên kết",
+    "preview": "Xem trước"
+  },
+  "image": {
+    "preview": "Xem trước",
+    "processing": "Đang xử lý...",
+    "compressing": "Đã nén {{percent}}%",
+    "originalSize": "Gốc: {{size}}",
+    "compressedSize": "Đã nén: {{size}}",
+    "altText": "Mô tả (tùy chọn)",
+    "altTextPlaceholder": "Mô tả hình ảnh này...",
+    "closePreview": "Đóng xem trước",
+    "unsupportedFormat": "Định dạng hình ảnh không được hỗ trợ",
+    "gifPreserved": "Đã giữ nguyên GIF động",
+    "processingError": "Không thể xử lý hình ảnh"
+  },
+  "multimodal": {
+    "processing": "Đang xử lý hình ảnh...",
+    "converting": "Đang chuyển đổi sang base64...",
+    "sending": "Đang gửi với {{count}} hình ảnh...",
+    "sendError": "Không thể gửi với hình ảnh",
+    "noProvider": "Nhà cung cấp hiện tại không hỗ trợ hình ảnh"
+  },
+  "placeholder": "Nhập tin nhắn...",
+  "send": "Gửi tin nhắn",
+  "attach": "Đính kèm tệp (sắp có)",
+  "startConversation": "Bắt đầu trò chuyện",
+  "toolsUsed": "công cụ đã dùng"
+}

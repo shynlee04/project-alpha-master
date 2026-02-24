@@ -1,0 +1,48 @@
+{
+    "output": {
+        "filePath": ".repomix-output.xml",
+        "style": "xml",
+        "topFilesLength": 15,
+        "showLineNumbers": true,
+        "copyToClipboard": false
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
+    "ignore": {
+        "useGitignore": true,
+        "useDefaultPatterns": true,
+        "customPatterns": [
+            "**/*.md",
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/*.txt",
+            "**/*.xml",
+            "**/cache/**",
+            "**/*.log",
+            "**/coverage/**",
+            "**/__tests__/**",
+            "**/*.test.*",
+            "**/*.spec.*",
+            "**/.claude/**",
+            "**/.opencode/**",
+            "**/_bmad/**",
+            "**/_bmad-output/**",
+            "**/.agent/**",
+            "**/knowledge_synthesis_research/**",
+            "**/*.json",
+            "**/*.yaml",
+            "**/*.yml",
+            "**/*.css",
+            "**/*.html",
+            "**/public/**",
+            "**/*.d.ts"
+        ]
+    },
+    "security": {
+        "enableSecurityCheck": true
+    }
+}

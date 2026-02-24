@@ -1,0 +1,200 @@
+# Research Trigger Conditions
+# When governance-core should auto-trigger internet research
+
+triggers:
+  # Technology Selection
+  tech_selection:
+    enabled: true
+    description: "Choosing between technology alternatives"
+    examples:
+      - "React vs Vue vs Svelte"
+      - "TanStack Router vs React Router"
+      - "Zustand vs Redux vs Jotai"
+      - "Dexie vs IndexedDB native"
+      - "FSA vs IndexedDB for storage"
+    min_confidence_required: 0.8
+    sources_required: 2
+
+  # Performance Trade-offs
+  performance_tradeoff:
+    enabled: true
+    description: "Optimizing one metric at expense of another"
+    examples:
+      - "Speed vs bundle size"
+      - "Memory vs CPU"
+      - "UX vs data freshness"
+      - "Caching vs consistency"
+    min_confidence_required: 0.7
+    sources_required: 2
+
+  # Anti-Pattern Detection
+  anti_pattern:
+    enabled: true
+    description: "Detecting approaches that will cause problems"
+    examples:
+      - "Prop drilling in React"
+      - "God store anti-pattern"
+      - "Tight coupling"
+      - "Missing error handling"
+      - "Race conditions in async"
+    min_confidence_required: 0.9
+    sources_required: 3
+
+  # Framework Comparison
+  framework_comparison:
+    enabled: true
+    description: "Comparing frameworks or libraries"
+    examples:
+      - "Choosing testing framework"
+      - "Selecting form library"
+      - "Picking state management"
+      - "CSS framework decision"
+    min_confidence_required: 0.75
+    sources_required: 2
+
+  # Breaking Changes
+  breaking_changes:
+    enabled: true
+    description: "API or contract changes affecting consumers"
+    examples:
+      - "Changing function signature"
+      - "Modifying store interface"
+      - "Altering component props API"
+      - "Database schema migration"
+    min_confidence_required: 0.85
+    sources_required: 2
+
+  # Security Implications
+  security:
+    enabled: true
+    description: "Security-related decisions"
+    examples:
+      - "Auth strategy selection"
+      - "Data handling approach"
+      - "XSS prevention"
+      - "Token storage"
+      - "Permission model"
+    min_confidence_required: 0.95
+    sources_required: 3
+    always_required: true
+
+# Research sources
+sources:
+  official_docs:
+    name: "Official Documentation"
+    tools: ["context7", "deepwiki"]
+    confidence_weight: 1.0
+    required_for: ["framework_comparison", "breaking_changes"]
+
+  community_practices:
+    name: "Community Practices"
+    tools: ["tavily"]
+    confidence_weight: 0.7
+    required_for: ["tech_selection", "performance_tradeoff"]
+
+  code_examples:
+    name: "Code Examples"
+    tools: ["deepwiki", "repomix"]
+    confidence_weight: 0.8
+    required_for: ["anti_pattern"]
+
+  security_advisories:
+    name: "Security Advisories"
+    tools: ["tavily"]
+    confidence_weight: 1.0
+    required_for: ["security"]
+
+# Research quality thresholds
+quality:
+  min_sources:
+    default: 2
+    security: 3
+    anti_pattern: 3
+    breaking_changes: 2
+
+  min_confidence:
+    default: 0.75
+    security: 0.95
+    anti_pattern: 0.9
+
+  recency_threshold:
+    default: "12 months"
+    security: "6 months"
+    framework_docs: "6 months"
+
+# Output requirements
+output:
+  required_fields:
+    - "summary"
+    - "confidence_score"
+    - "sources"
+    - "recommendations"
+    - "risks"
+    - "alternatives_considered"
+
+  confidence_levels:
+    high: 0.9
+    medium: 0.7
+    low: 0.5
+
+  risk_levels:
+    safe: "< 0.2 risk probability"
+    caution: "0.2-0.5 risk probability"
+    warning: "> 0.5 risk probability"
+    danger: "> 0.8 risk probability"
+
+# Auto-trigger behavior
+auto_trigger:
+  enabled: true
+
+  # Always require research for these triggers
+  always_research:
+    - "security"
+
+  # Never skip research for these
+  never_skip:
+    - "security"
+    - "breaking_changes"
+
+  # Allow research bypass for these conditions
+  bypass_allowed:
+    - "Human override with 'I am aware but...'"
+    - "Previous research exists and is fresh (< 7 days)"
+    - "Internal team has established pattern"
+
+# Research cache
+cache:
+  enabled: true
+  ttl_hours: 168  # 7 days
+  key_components:
+    - "trigger_type"
+    - "query_hash"
+    - "framework_versions"
+
+# Confidence scoring
+confidence_scoring:
+  official_source: +0.3
+  multiple_sources_agree: +0.2
+  recent_evidence: +0.1
+  community_consensus: +0.15
+  security_expert_source: +0.2
+  single_opinion: -0.2
+  outdated_source: -0.3
+  conflicting_sources: -0.1
+
+# Example research queries
+example_queries:
+  tech_selection:
+    - "Zustand vs Redux 2026 best practices"
+    - "TanStack Router vs React Router comparison"
+    - "Dexie.js vs IndexedDB native performance"
+
+  anti_pattern:
+    - "Zustand god store anti-pattern"
+    - "React prop drilling solutions"
+    - "State management circular dependency prevention"
+
+  security:
+    - "FSA API security best practices 2026"
+    - "Browser token storage security"
+    - "XSS prevention in React 2026"

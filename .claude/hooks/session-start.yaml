@@ -1,0 +1,102 @@
+# @HOOK: session-start
+# Initialize BMAD extension layer at session start
+# Version: 2.1.0
+# Updated: 2026-01-11 - Added bridge validation
+
+steps:
+  - name: load_bmad_config
+    description: Load BMAD core configuration
+    files:
+      - _bmad/core/config.yaml
+      - _bmad-ext/MANIFEST.yaml
+    extract:
+      - user_name
+      - communication_language
+      - output_folder
+
+  - name: init_loop_state
+    description: Initialize or load LOOP_STATE
+    file: _bmad-ext/state/LOOP_STATE.yaml
+    if_not_exists: create
+    template: loop_state_template_v2
+
+  - name: generate_session_id
+    description: Generate session UUID if needed
+    condition: session.id == null
+    action: generate_uuid
+    store_in: session.id
+
+  - name: load_artifact_registry
+    description: Load or create artifact registry
+    file: _bmad-ext/state/ARTIFACT_REGISTRY.yaml
+    if_not_exists: create
+    template: artifact_registry_template
+
+  - name: verify_anchor
+    description: Verify human intent anchor freshness
+    threshold_hours: 4
+    on_stale: prompt_user
+
+  - name: load_workflow_status
+    description: Load current workflow status
+    file: bmm-workflow-status.yaml
+    extract:
+      - current_workflow.story
+      - current_workflow.epic
+      - current_workflow.status
+
+  - name: detect_stale_artifacts
+    description: Run stale artifact detection
+    module: _bmad-ext/modules/governance/scanners/artifact-scanner.md
+
+  # ========================================
+  # BRIDGE VALIDATION (v2.1.0)
+  # ========================================
+  - name: validate_bridge_commands
+    description: Verify BMAD bridge commands are available
+    check:
+      - .claude/commands/bmad/governance.yaml exists
+      - .claude/commands/bmad/expert.yaml exists
+      - .claude/commands/bmad/research.yaml exists
+      - .claude/commands/bmad/remediate.yaml exists
+      - .claude/commands/bmad/scan.yaml exists
+    on_fail:
+      action: warn_only
+      message: "Some BMAD bridge commands not found. Check .claude/commands/bmad/"
+
+  - name: validate_bridge_skills
+    description: Verify BMAD bridge skills are registered
+    check:
+      - .claude/skills/bmad-bridge/governance-scan/SKILL.md exists
+      - .claude/skills/bmad-bridge/expert-analysis/SKILL.md exists
+      - .claude/skills/bmad-bridge/research-trigger/SKILL.md exists
+      - .claude/skills/bmad-bridge/remediation-router/SKILL.md exists
+    on_fail:
+      action: warn_only
+      message: "Some BMAD bridge skills not found. Check .claude/skills/bmad-bridge/"
+
+  - name: register_bridge_metadata
+    description: Register BMAD bridge metadata for session
+    metadata:
+      bridge_version: "1.0.0"
+      bridge_commands:
+        - /gov - Governance context-first workflow
+        - /expert - Expert analysis workflow
+        - /research - Research trigger workflow
+        - /fix - Remediation router
+        - /scan - Domain scanner
+      bridge_skills:
+        - governance-scan
+        - expert-analysis
+        - research-trigger
+        - remediation-router
+
+outputs:
+  session_id: session.id
+  loop_state_loaded: true
+  anchor_fresh: true
+  stale_artifacts_count: 0
+  bridge_validated: true
+  bridge_commands_count: 5
+  bridge_skills_count: 4
+  ready_for_work: true

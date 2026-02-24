@@ -1,0 +1,208 @@
+/**
+ * @fileoverview PanelResizer Styles - 8-bit Design System
+ * @module presentation/components/layout/PanelResizer.css
+ *
+ * EPIC-PLAT-09: Fix panel overlap/disappear issues
+ * 8-bit aesthetic: sharp corners, pixel shadows, solid colors
+ *
+ * @story PLAT-09
+ * @created 2026-02-01
+ */
+
+/* ============================================================================
+   Panel Resizer Base
+   ============================================================================ */
+
+.panel-resizer {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--border));
+  /* 8-bit: No border-radius */
+  border-radius: 0;
+  transition: background-color 150ms ease;
+}
+
+/* Vertical orientation (for horizontal panels) */
+.panel-resizer--vertical {
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+/* Horizontal orientation (for vertical stacking) */
+.panel-resizer--horizontal {
+  width: 100%;
+  height: 4px;
+  cursor: row-resize;
+}
+
+/* ============================================================================
+   Handle and Grip
+   ============================================================================ */
+
+.panel-resizer__handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.panel-resizer__grip {
+  display: flex;
+  gap: 2px;
+  opacity: 0.5;
+  transition: opacity 150ms ease;
+}
+
+/* Vertical grip dots */
+.panel-resizer--vertical .panel-resizer__grip {
+  flex-direction: column;
+}
+
+.panel-resizer--vertical .panel-resizer__grip span {
+  width: 2px;
+  height: 2px;
+  background: hsl(var(--foreground));
+  /* 8-bit: Sharp corners */
+  border-radius: 0;
+}
+
+/* Horizontal grip dots */
+.panel-resizer--horizontal .panel-resizer__grip {
+  flex-direction: row;
+}
+
+.panel-resizer--horizontal .panel-resizer__grip span {
+  width: 2px;
+  height: 2px;
+  background: hsl(var(--foreground));
+  border-radius: 0;
+}
+
+/* ============================================================================
+   Hover and Active States
+   ============================================================================ */
+
+.panel-resizer:hover {
+  background: hsl(var(--accent));
+}
+
+.panel-resizer:hover .panel-resizer__grip {
+  opacity: 1;
+}
+
+.panel-resizer:active {
+  background: hsl(var(--primary));
+}
+
+.panel-resizer:active .panel-resizer__grip span {
+  background: hsl(var(--primary-foreground));
+}
+
+/* ============================================================================
+   Focus States (Accessibility)
+   ============================================================================ */
+
+.panel-resizer:focus {
+  outline: none;
+}
+
+.panel-resizer:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  background: hsl(var(--accent));
+}
+
+.panel-resizer:focus-visible .panel-resizer__grip {
+  opacity: 1;
+}
+
+/* ============================================================================
+   Dragging State (Global)
+   ============================================================================ */
+
+/* Applied to body when dragging */
+body.panel-resizing {
+  cursor: col-resize !important;
+  user-select: none;
+}
+
+body.panel-resizing * {
+  cursor: col-resize !important;
+}
+
+/* Prevent text selection while dragging */
+body.panel-resizing .panel-resizer {
+  background: hsl(var(--primary));
+}
+
+body.panel-resizing .panel-resizer .panel-resizer__grip span {
+  background: hsl(var(--primary-foreground));
+}
+
+/* ============================================================================
+   Expand Hitbox for Touch Devices
+   ============================================================================ */
+
+@media (pointer: coarse) {
+  .panel-resizer--vertical {
+    width: 12px;
+    /* Extend touch area for easier grabbing */
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .panel-resizer--horizontal {
+    height: 12px;
+    margin-top: -4px;
+    margin-bottom: -4px;
+  }
+}
+
+/* ============================================================================
+   Reduced Motion
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-resizer {
+    transition: none;
+  }
+
+  .panel-resizer__grip {
+    transition: none;
+  }
+}
+
+/* ============================================================================
+   High Contrast Mode
+   ============================================================================ */
+
+@media (prefers-contrast: high) {
+  .panel-resizer {
+    background: hsl(var(--foreground));
+  }
+
+  .panel-resizer:hover,
+  .panel-resizer:focus-visible {
+    background: hsl(var(--primary));
+  }
+
+  .panel-resizer__grip span {
+    background: hsl(var(--background));
+  }
+}
+
+/* ============================================================================
+   Print - Hide Resizers
+   ============================================================================ */
+
+@media print {
+  .panel-resizer {
+    display: none !important;
+  }
+}

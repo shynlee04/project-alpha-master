@@ -1,0 +1,391 @@
+{
+  "migration": {
+    "name": "getAdapter to getGateway Migration",
+    "status": "incomplete",
+    "root_cause": "Commit 8aa38d0f updated useFileTreeState but not all consumers",
+    "created_at": "2026-01-19T10:00+07:00",
+    "story": "CC-IDE-02",
+    "epic": "EPIC-CC-IDE-FSA"
+  },
+  
+  "current_state": {
+    "useFileTreeState": {
+      "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeState.ts",
+      "returns": {
+        "gatewayRef": "Ref<StorageGateway>",
+        "getGateway": "() => StorageGateway"
+      },
+      "does_not_return": ["getAdapter"],
+      "changed_at": "commit 8aa38d0f",
+      "line_range": "46-50"
+    },
+    
+    "broken_consumers": [
+      {
+        "file": "src/presentation/components/ide/FileTree/FileTree.tsx",
+        "line": 141,
+        "current_code": "getAdapter,",
+        "problem": "getAdapter is undefined - useFileTreeState returns getGateway instead",
+        "impact": "Passes undefined to useFileTreeActions and useContextMenuActions"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+        "line": 21,
+        "type_definition": "getAdapter: () => LocalFSAdapter",
+        "problem": "Wrong type - should be getGateway: () => StorageGateway"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+        "line": 109,
+        "current_code": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);",
+        "problem": "StorageGateway has no setDirectoryHandle - directoryHandle passed in constructor"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+        "line": 179,
+        "current_code": "const adapter = getAdapter();\n                adapter.setDirectoryHandle(directoryHandle);",
+        "problem": "Same issue - setDirectoryHandle doesn't exist on StorageGateway"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+        "line": 263,
+        "current_code": "adapter.setDirectoryHandle(directoryHandle);",
+        "problem": "Same issue - setDirectoryHandle doesn't exist on StorageGateway"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+        "line": 3,
+        "imports": ["LocalFSAdapter", "UnifiedStorageAdapter"],
+        "problem": "These imports are no longer needed - should use StorageGateway"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts",
+        "line": 43,
+        "type_definition": "getAdapter: () => LocalFSAdapter",
+        "problem": "Wrong type - should be getGateway: () => StorageGateway"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts",
+        "line": 160,
+        "current_code": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);",
+        "problem": "StorageGateway has no setDirectoryHandle"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts",
+        "line": 204,
+        "current_code": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);",
+        "problem": "StorageGateway has no setDirectoryHandle"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts",
+        "line": 235,
+        "current_code": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);",
+        "problem": "StorageGateway has no setDirectoryHandle"
+      },
+      {
+        "file": "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts",
+        "line": 3,
+        "imports": ["LocalFSAdapter"],
+        "problem": "This import is no longer needed - should use StorageGateway"
+      }
+    ],
+    
+    "api_mismatch_details": {
+      "LocalFSAdapter_methods": [
+        "setDirectoryHandle(handle)",
+        "readFile(path)",
+        "writeFile(path, content)",
+        "deleteFile(path)",
+        "deleteDirectory(path)",
+        "listDirectory(path)",
+        "rename(oldPath, newPath)",
+        "createFile(path, content)",
+        "createDirectory(path)"
+      ],
+      "StorageGateway_methods": [
+        "read(path)",
+        "write(path, data)",
+        "delete(path)",
+        "list(path)",
+        "exists(path)",
+        "watch(callback)",
+        "rename(oldPath, newPath)",
+        "createDirectory(path)"
+      ],
+      "key_differences": [
+        "StorageGateway: NO setDirectoryHandle - directoryHandle passed in constructor",
+        "StorageGateway: list() instead of listDirectory()",
+        "StorageGateway: delete() handles both files and directories",
+        "StorageGateway: NO createFile() - use write() with empty content",
+        "StorageGateway: exists() method added"
+      ]
+    }
+  },
+  
+  "target_state": {
+    "all_consumers_use": {
+      "getGateway": "() => StorageGateway",
+      "gatewayRef": "Ref<StorageGateway>"
+    },
+    "removed": ["getAdapter", "LocalFSAdapter", "UnifiedStorageAdapter"],
+    "storage_gateway_usage": {
+      "constructor_param": "directoryHandle passed once to createIdeFileGateway()",
+      "method_calls": "gateway.read(), gateway.write(), gateway.list(), gateway.delete(), gateway.rename(), gateway.createDirectory()",
+      "no_setter": "setDirectoryHandle() is removed - gateway created with handle upfront"
+    }
+  },
+  
+  "migration_steps": [
+    {
+      "step": 1,
+      "file": "FileTree.tsx",
+      "line": 141,
+      "change": "Replace getAdapter with getGateway",
+      "before": "getAdapter,",
+      "after": "getGateway,",
+      "verify_ts": true
+    },
+    {
+      "step": 2,
+      "file": "FileTree.tsx",
+      "lines": 152-161,
+      "change": "Update useFileTreeActions options - rename getAdapter to getGateway",
+      "before": "getAdapter,",
+      "after": "getGateway,",
+      "verify_ts": true
+    },
+    {
+      "step": 3,
+      "file": "FileTree.tsx",
+      "line": 194,
+      "change": "Update useContextMenuActions options - rename getAdapter to getGateway",
+      "before": "getAdapter,",
+      "after": "getGateway,",
+      "verify_ts": true
+    },
+    {
+      "step": 4,
+      "file": "useFileTreeActions.ts",
+      "lines": 3-8,
+      "change": "Remove LocalFSAdapter and UnifiedStorageAdapter imports, add StorageGateway",
+      "before": "import { LocalFSAdapter, FileSystemError, PermissionDeniedError } from '@/lib/filesystem/local-fs-adapter';\nimport { UnifiedStorageAdapter } from '@/lib/filesystem/unified-storage-adapter';",
+      "after": "import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';"
+    },
+    {
+      "step": 5,
+      "file": "useFileTreeActions.ts",
+      "line": 21,
+      "change": "Change type from LocalFSAdapter to StorageGateway",
+      "before": "getAdapter: () => LocalFSAdapter;",
+      "after": "getGateway: () => StorageGateway;"
+    },
+    {
+      "step": 6,
+      "file": "useFileTreeActions.ts",
+      "line": 65,
+      "change": "Rename getAdapter to getGateway in destructuring",
+      "before": "getAdapter,",
+      "after": "getGateway,"
+    },
+    {
+      "step": 7,
+      "file": "useFileTreeActions.ts",
+      "lines": 108-112,
+      "change": "Remove setDirectoryHandle call - gateway already has handle",
+      "before": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);",
+      "after": "const gateway = getGateway();"
+    },
+    {
+      "step": 8,
+      "file": "useFileTreeActions.ts",
+      "line": 112,
+      "change": "Update method call from adapter.listDirectory to gateway.list",
+      "before": "const entries = await adapter.listDirectory('');",
+      "after": "const entries = await gateway.list('');"
+    },
+    {
+      "step": 9,
+      "file": "useFileTreeActions.ts",
+      "lines": 177-181,
+      "change": "Remove setDirectoryHandle call and update method call",
+      "before": "const adapter = getAdapter();\n                adapter.setDirectoryHandle(directoryHandle);\n\n                const entries = await adapter.listDirectory(node.path);",
+      "after": "const gateway = getGateway();\n\n                const entries = await gateway.list(node.path);"
+    },
+    {
+      "step": 10,
+      "file": "useFileTreeActions.ts",
+      "lines": 251-266,
+      "change": "Update handleRetryFile to use StorageGateway API",
+      "before": "const adapter = localAdapterRef.current;\n            const syncManager = syncManagerRef.current;\n            if (!adapter || !syncManager) return;\n\n            try {\n                const { setFileSyncPending } = await import('@/lib/workspace');\n\n                adapter.setDirectoryHandle(directoryHandle);\n                setFileSyncPending(path);\n                const fileResult = await adapter.readFile(path);\n                await syncManager.writeFile(path, fileResult.content);",
+      "after": "const gateway = getGateway();\n            const syncManager = syncManagerRef.current;\n            if (!gateway || !syncManager) return;\n\n            try {\n                const { setFileSyncPending } = await import('@/lib/workspace');\n\n                setFileSyncPending(path);\n                const content = await gateway.read(path);\n                await syncManager.writeFile(path, content);"
+    },
+    {
+      "step": 11,
+      "file": "useFileTreeActions.ts",
+      "line": 35,
+      "change": "Remove localAdapterRef and syncManagerRef from interface (not needed)",
+      "before": "localAdapterRef: React.RefObject<LocalFSAdapter | UnifiedStorageAdapter | null>;\n    syncManagerRef: React.RefObject<import('@/lib/filesystem').SyncManager | null>;",
+      "after": "syncManagerRef: React.RefObject<import('@/lib/filesystem').SyncManager | null>;"
+    },
+    {
+      "step": 12,
+      "file": "useContextMenuActions.ts",
+      "line": 3,
+      "change": "Remove LocalFSAdapter import",
+      "before": "import type { LocalFSAdapter } from '@/lib/filesystem/local-fs-adapter';",
+      "after": "import type { StorageGateway } from '@/domain/interfaces/storage-gateway.interface';"
+    },
+    {
+      "step": 13,
+      "file": "useContextMenuActions.ts",
+      "line": 43,
+      "change": "Change type from LocalFSAdapter to StorageGateway",
+      "before": "getAdapter: () => LocalFSAdapter;",
+      "after": "getGateway: () => StorageGateway;"
+    },
+    {
+      "step": 14,
+      "file": "useContextMenuActions.ts",
+      "line": 95,
+      "change": "Rename getAdapter to getGateway in destructuring",
+      "before": "getAdapter,",
+      "after": "getGateway,"
+    },
+    {
+      "step": 15,
+      "file": "useContextMenuActions.ts",
+      "lines": 159-161,
+      "change": "Remove setDirectoryHandle call and update method calls",
+      "before": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);\n\n            try {\n                const parentPath = targetNode.path.includes('/')\n                    ? targetNode.path.substring(0, targetNode.path.lastIndexOf('/'))\n                    : '';\n                const newPath = parentPath ? `${parentPath}/${newName}` : newName;\n\n                if (operationDialog.operation === 'rename') {\n                    await adapter.rename(targetNode.path, newPath);",
+      "after": "const gateway = getGateway();\n\n            try {\n                const parentPath = targetNode.path.includes('/')\n                    ? targetNode.path.substring(0, targetNode.path.lastIndexOf('/'))\n                    : '';\n                const newPath = parentPath ? `${parentPath}/${newName}` : newName;\n\n                if (operationDialog.operation === 'rename') {\n                    await gateway.rename(targetNode.path, newPath);"
+    },
+    {
+      "step": 16,
+      "file": "useContextMenuActions.ts",
+      "lines": 203-214,
+      "change": "Remove setDirectoryHandle and update delete methods",
+      "before": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);\n\n            try {\n                if (targetNode.type === 'directory') {\n                    await adapter.deleteDirectory(targetNode.path);\n                } else {\n                    await adapter.deleteFile(targetNode.path);",
+      "after": "const gateway = getGateway();\n\n            try {\n                if (targetNode.type === 'directory') {\n                    await gateway.delete(targetNode.path);\n                } else {\n                    await gateway.delete(targetNode.path);"
+    },
+    {
+      "step": 17,
+      "file": "useContextMenuActions.ts",
+      "lines": 234-247,
+      "change": "Remove setDirectoryHandle and update new file/folder methods",
+      "before": "const adapter = getAdapter();\n            adapter.setDirectoryHandle(directoryHandle);\n\n            try {\n                switch (action) {\n                    case 'new-file': {\n                        const name = prompt('Enter file name:');\n                        if (name) {\n                            const newPath =\n                                targetNode.type === 'directory'\n                                    ? `${targetNode.path}/${name}`\n                                    : name;\n                            await adapter.createFile(newPath, '');\n\n                            const parentPath = targetNode.type === 'directory'\n                                ? targetNode.path\n                                : undefined;\n                            if (parentPath) {\n                                setExpandedPaths((prev) => {\n                                    const next = new Set(prev);\n                                    next.add(parentPath);\n                                    getAncestorPaths(parentPath).forEach((p) => next.add(p));\n                                    return next;\n                                });\n                            }\n\n                            setFocusedPath(newPath);\n                            await loadRootDirectory();\n                            toast.success(`Created file \"${name}\"`);\n                        }\n                        break;\n                    }\n                    case 'new-folder': {\n                        const name = prompt('Enter folder name:');\n                        if (name) {\n                            const newPath =\n                                targetNode.type === 'directory'\n                                    ? `${targetNode.path}/${name}`\n                                    : name;\n                            await adapter.createDirectory(newPath);",
+      "after": "const gateway = getGateway();\n\n            try {\n                switch (action) {\n                    case 'new-file': {\n                        const name = prompt('Enter file name:');\n                        if (name) {\n                            const newPath =\n                                targetNode.type === 'directory'\n                                    ? `${targetNode.path}/${name}`\n                                    : name;\n                            await gateway.write(newPath, new TextEncoder().encode(''));\n\n                            const parentPath = targetNode.type === 'directory'\n                                ? targetNode.path\n                                : undefined;\n                            if (parentPath) {\n                                setExpandedPaths((prev) => {\n                                    const next = new Set(prev);\n                                    next.add(parentPath);\n                                    getAncestorPaths(parentPath).forEach((p) => next.add(p));\n                                    return next;\n                                });\n                            }\n\n                            setFocusedPath(newPath);\n                            await loadRootDirectory();\n                            toast.success(`Created file \"${name}\"`);\n                        }\n                        break;\n                    }\n                    case 'new-folder': {\n                        const name = prompt('Enter folder name:');\n                        if (name) {\n                            const newPath =\n                                targetNode.type === 'directory'\n                                    ? `${targetNode.path}/${name}`\n                                    : name;\n                            await gateway.createDirectory(newPath);"
+    },
+    {
+      "step": 18,
+      "file": "useContextMenuActions.ts",
+      "lines": 302-320,
+      "change": "Update duplicate operation - duplicateFile may need gateway update",
+      "before": "} else if (operationDialog.operation === 'duplicate') {\n                    await duplicateFile(directoryHandle, targetNode.path, newPath);",
+      "after": "} else if (operationDialog.operation === 'duplicate') {\n                    // TODO: Update duplicateFile to use gateway or implement gateway-based duplicate\n                    await duplicateFile(directoryHandle, targetNode.path, newPath);"
+    }
+  ],
+  
+  "api_reference": {
+    "StorageGateway": {
+      "file": "src/domain/interfaces/storage-gateway.interface.ts",
+      "methods": [
+        "read(path): Promise<Uint8Array>",
+        "write(path, data): Promise<void>",
+        "delete(path): Promise<void>",
+        "list(path): Promise<FileEntry[]>",
+        "exists(path): Promise<boolean>",
+        "watch(callback): WatchHandle",
+        "rename(oldPath, newPath): Promise<void>",
+        "createDirectory(path): Promise<void>"
+      ],
+      "note": "No setDirectoryHandle - directoryHandle passed in constructor"
+    },
+    "FSAGateway": {
+      "file": "src/infrastructure/filesystem/fsa-gateway.ts",
+      "constructor_param": "directoryHandle: FileSystemDirectoryHandle",
+      "methods": [
+        "read(path)",
+        "write(path, data)",
+        "delete(path)",
+        "list(path)",
+        "exists(path)",
+        "rename(oldPath, newPath)",
+        "createDirectory(path)",
+        "watch(callback)",
+        "getDirectoryHandle()"
+      ],
+      "note": "directoryHandle is passed in constructor, not a setter"
+    },
+    "createIdeFileGateway": {
+      "file": "src/infrastructure/filesystem/ide-file-gateway.ts",
+      "usage": "createIdeFileGateway({ projectId, fsaHandle })",
+      "note": "This is what useFileTreeState.getGateway() calls internally"
+    }
+  },
+  
+  "verification": {
+    "command": "pnpm dev",
+    "expected_result": "FileTree loads directory without 'getAdapter is not a function' error",
+    "test_flow": [
+      "1. Create FSA project from hub",
+      "2. Open IDE workspace",
+      "3. FileTree should show directory contents",
+      "4. Try expanding folders",
+      "5. Try creating new file/folder via context menu",
+      "6. Try renaming a file",
+      "7. Try deleting a file/folder"
+    ],
+    "error_markers": [
+      "getAdapter is not a function",
+      "Cannot read properties of undefined (reading 'setDirectoryHandle')",
+      "TypeScript error: Property 'getAdapter' does not exist"
+    ]
+  },
+  
+  "validation_commands": [
+    {
+      "command": "pnpm tsc --noEmit",
+      "expected": "0 errors",
+      "description": "Verify TypeScript compilation"
+    },
+    {
+      "command": "pnpm vitest run --reporter=verbose 2>&1 | head -100",
+      "expected": "All tests pass",
+      "description": "Run tests to verify no regressions"
+    }
+  ],
+  
+  "rollback_plan": {
+    "if": "Migration causes critical issues",
+    "steps": [
+      "1. Revert changes to FileTree.tsx",
+      "2. Revert changes to useFileTreeActions.ts",
+      "3. Revert changes to useContextMenuActions.ts",
+      "4. Re-add getAdapter to useFileTreeState.ts temporarily",
+      "5. Document the partial migration status"
+    ]
+  },
+  
+  "related_files": {
+    "read_only": [
+      "src/presentation/components/ide/FileTree/hooks/useFileTreeState.ts",
+      "src/domain/interfaces/storage-gateway.interface.ts",
+      "src/infrastructure/filesystem/ide-file-gateway.ts",
+      "src/infrastructure/filesystem/fsa-gateway.ts"
+    ],
+    "to_modify": [
+      "src/presentation/components/ide/FileTree/FileTree.tsx",
+      "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts",
+      "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts"
+    ]
+  },
+  
+  "notes": [
+    "The getGateway() function in useFileTreeState creates a new gateway via createIdeFileGateway()",
+    "createIdeFileGateway() is called with the fsaHandle parameter",
+    "This means the directoryHandle is passed once at creation time, not set repeatedly",
+    "FileTree.tsx passes directoryHandle to useFileTreeState, which passes it to createIdeFileGateway",
+    "All file operations should work without needing to set directoryHandle again",
+    "The duplicateFile function may need review as it uses directoryHandle directly"
+  ]
+}

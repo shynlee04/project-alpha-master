@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-17T00:00:00Z",
+    "track": "1.5",
+    "agent": "dev-ext",
+    "workspace": "ide"
+  },
+  "features": [
+    {
+      "name": "Open Project in IDE",
+      "description": "User opens project and sees file tree in Monaco editor",
+      "user_journey": "Project → IDE → File tree loads → Monaco editor ready",
+      "components": ["FileTree", "MonacoEditor", "IDELayout"],
+      "stores": ["useIDEStore", "useProjectStore"],
+      "services": ["FileTreeScanner", "StorageAdapterFactory"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/routes/ide.$projectId.tsx",
+        "src/presentation/components/ide/FileTree/FileTree.tsx",
+        "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      ]
+    },
+    {
+      "name": "File Tree Navigation",
+      "description": "Hierarchical file tree with expand/collapse and selection",
+      "user_journey": "IDE → Browse file tree → Click file → Opens in editor",
+      "components": ["FileTree", "FileTreeItem"],
+      "stores": ["useIDEStore"],
+      "services": ["FileTreeScanner"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/FileTree/FileTree.tsx",
+        "src/presentation/components/ide/FileTree/FileTreeItem.tsx",
+        "src/infrastructure/filesystem/file-tree-scanner.ts"
+      ]
+    },
+    {
+      "name": "File CRUD Operations",
+      "description": "Create, delete, rename, duplicate files and folders via context menu",
+      "user_journey": "IDE → Right-click file → Select action → File operation executes",
+      "components": ["FileTree", "ContextMenu", "FileOperationDialog"],
+      "stores": ["useIDEStore"],
+      "services": ["IDESyncService", "StorageAdapterFactory"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/FileTree/ContextMenu.tsx",
+        "src/presentation/components/ide/FileTree/FileOperationDialog.tsx",
+        "src/presentation/components/ide/FileTree/ConfirmDialog.tsx"
+      ]
+    },
+    {
+      "name": "Multi-File Tab Management",
+      "description": "Open multiple files in tabs, switch between files",
+      "user_journey": "IDE → Click file → New tab → Switch tabs",
+      "components": ["EditorTabBar"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/MonacoEditor/EditorTabBar.tsx"
+      ]
+    },
+    {
+      "name": "File Editing in Monaco",
+      "description": "Edit files with Monaco editor (syntax highlighting, IntelliSense)",
+      "user_journey": "IDE → Select file → Edit in Monaco",
+      "components": ["MonacoEditor"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      ]
+    },
+    {
+      "name": "Auto-Save Files",
+      "description": "File content auto-saves with 2000ms debounce",
+      "user_journey": "IDE → Edit file → Auto-saves after 2s",
+      "components": ["MonacoEditor"],
+      "stores": ["useIDEStore"],
+      "services": ["IDESyncService"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx"
+      ]
+    },
+    {
+      "name": "Diff Mode",
+      "description": "Compare file changes with unified/side-by-side/line-by-line diff views",
+      "user_journey": "IDE → Enable diff mode → View changes side-by-side",
+      "components": ["MonacoEditor", "DiffViewer"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/MonacoEditor/MonacoEditor.tsx",
+        "src/presentation/components/diff/DiffViewer.tsx"
+      ]
+    },
+    {
+      "name": "Terminal Integration",
+      "description": "Integrated terminal for running commands",
+      "user_journey": "IDE → Click terminal panel → Enter command → Execute",
+      "components": ["XTerminal"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/XTerminal.tsx"
+      ]
+    },
+    {
+      "name": "WebContainer Preview",
+      "description": "Live preview of project in WebContainer (if supported)",
+      "user_journey": "IDE → Click preview → WebContainer boots → Live preview",
+      "components": ["PreviewPanel"],
+      "stores": [],
+      "services": [],
+      "routes": ["/ide/$projectId", "/webcontainer/$projectId"],
+      "files": [
+        "src/presentation/components/ide/PreviewPanel/PreviewPanel.tsx",
+        "src/routes/webcontainer.$.tsx"
+      ]
+    },
+    {
+      "name": "Code Formatting",
+      "description": "Format code with Prettier/ESLint",
+      "user_journey": "IDE → Click format button → Code formatted",
+      "components": ["MonacoEditor", "FormatDialog"],
+      "stores": [],
+      "services": ["CodeFormatter"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/formatter/FormatDialog.tsx"
+      ]
+    },
+    {
+      "name": "Code Navigation (Go to Definition)",
+      "description": "Jump to symbol definitions from references",
+      "user_journey": "IDE → Right-click symbol → Go to Definition → Opens file/line",
+      "components": ["MonacoEditor", "DefinitionTooltip"],
+      "stores": [],
+      "services": ["CodeAnalysisBridge"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/editor/DefinitionTooltip.tsx",
+        "src/lib/ide/code-analysis-bridge.ts"
+      ]
+    },
+    {
+      "name": "Symbols Panel",
+      "description": "Display outline of file symbols (functions, classes, variables)",
+      "user_journey": "IDE → Open symbols panel → Browse outline → Click symbol",
+      "components": ["SymbolsPanel"],
+      "stores": [],
+      "services": ["CodeAnalysisBridge"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/editor/SymbolsPanel.tsx",
+        "src/lib/navigation/definition-provider.ts"
+      ]
+    },
+    {
+      "name": "Snippet Management",
+      "description": "Save and reuse code snippets",
+      "user_journey": "IDE → Click snippets → Save/insert snippet",
+      "components": ["SnippetManager"],
+      "stores": [],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/snippets/SnippetManager.tsx"
+      ]
+    },
+    {
+      "name": "Agent Chat Panel",
+      "description": "AI chat for code assistance with approval workflow",
+      "user_journey": "IDE → Type message → Agent responds → Review approvals",
+      "components": ["AgentChatPanel", "UnifiedChatPanel"],
+      "stores": ["useIDEStore", "useConversationStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/AgentChatPanel.tsx",
+        "src/presentation/components/chat/UnifiedChatPanel.tsx"
+      ]
+    },
+    {
+      "name": "Sync Status Display",
+      "description": "Show real-time sync status (syncing, synced, error)",
+      "user_journey": "IDE → View sync indicator → Monitor file sync",
+      "components": ["SyncStatusIndicator", "SyncStatusPanel"],
+      "stores": ["useFileSyncStatusStore"],
+      "services": ["IDESyncService"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/SyncStatusIndicator.tsx",
+        "src/presentation/components/ide/SyncStatusPanel.tsx"
+      ]
+    },
+    {
+      "name": "File Watching",
+      "description": "Watch for external file changes and notify user",
+      "user_journey": "IDE → External change detected → Show notification",
+      "components": ["SyncEditWarning", "FileChangeDialog"],
+      "stores": ["useFileWatcherStore"],
+      "services": ["IDESyncService"],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/SyncEditWarning.tsx",
+        "src/presentation/components/watcher/FileChangeDialog.tsx"
+      ]
+    },
+    {
+      "name": "Keyboard Navigation",
+      "description": "Navigate files with keyboard shortcuts",
+      "user_journey": "IDE → Use arrow keys → Navigate file tree",
+      "components": ["FileTree"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/FileTree/FileTree.tsx"
+      ]
+    },
+    {
+      "name": "Explorer Panel",
+      "description": "Resizable explorer panel with file tree",
+      "user_journey": "IDE → Resize explorer panel → Adjust layout",
+      "components": ["ExplorerPanel", "ResizablePanel"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/ExplorerPanel.tsx"
+      ]
+    },
+    {
+      "name": "Search Panel",
+      "description": "Search files by name/content",
+      "user_journey": "IDE → Type in search → Results appear",
+      "components": ["SearchPanel"],
+      "stores": [],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/SearchPanel.tsx"
+      ]
+    },
+    {
+      "name": "Quick Actions Menu",
+      "description": "Quick access to common IDE actions",
+      "user_journey": "IDE → Click quick actions → Select action",
+      "components": ["QuickActionsMenu"],
+      "stores": [],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/QuickActionsMenu.tsx"
+      ]
+    },
+    {
+      "name": "Status Bar",
+      "description": "Bottom status bar with file info, sync status, provider status",
+      "user_journey": "IDE → View status bar → See current state",
+      "components": ["StatusBar"],
+      "stores": ["useIDEStore"],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/StatusBar.tsx",
+        "src/presentation/components/ide/statusbar/*.tsx"
+      ]
+    },
+    {
+      "name": "Settings Panel",
+      "description": "IDE-specific settings configuration",
+      "user_journey": "IDE → Click settings → Adjust IDE options",
+      "components": ["SettingsPanel"],
+      "stores": [],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/SettingsPanel.tsx"
+      ]
+    },
+    {
+      "name": "Command Palette",
+      "description": "Quick command search (Ctrl+K)",
+      "user_journey": "IDE → Press Ctrl+K → Type command → Execute",
+      "components": ["CommandPalette"],
+      "stores": [],
+      "services": [],
+      "routes": ["/ide/$projectId"],
+      "files": [
+        "src/presentation/components/ide/CommandPalette.tsx"
+      ]
+    }
+  ],
+  "overlaps": [
+    {
+      "feature": "File System Operations",
+      "overlapping_features": ["File tree in Notes", "File tree in IDE"],
+      "shared_code": ["FileTreeScanner", "StorageAdapterFactory"],
+      "conflict_description": "Both workspaces display file trees but with different purposes. Notes shows .md files, IDE shows all project files. Should consolidate tree component logic."
+    },
+    {
+      "feature": "Auto-Save",
+      "overlapping_features": ["Auto-save in Notes (500ms)", "Auto-save in IDE (2000ms)"],
+      "shared_code": [],
+      "conflict_description": "Different debounce times across workspaces. Notes uses 500ms, IDE uses 2000ms. Should use unified auto-save hook."
+    },
+    {
+      "feature": "Sync Status",
+      "overlapping_features": ["Sync status in Notes", "Sync status in IDE"],
+      "shared_code": ["SyncStatusIndicator", "useFileSyncStatusStore"],
+      "conflict_description": "Same component and store used but with different sync services. Should use unified sync service pattern."
+    },
+    {
+      "feature": "AI Chat Integration",
+      "overlapping_features": ["AI Chat in Notes", "AI Chat in IDE"],
+      "shared_code": ["UnifiedChatPanel", "useConversationStore"],
+      "conflict_description": "Both use UnifiedChatPanel but Notes has AIPromptDialog while IDE has AgentChatPanel with approvals. Should unify AI interface."
+    },
+    {
+      "feature": "Storage Adapter Usage",
+      "overlapping_features": ["FSA in IDE", "IndexedDB in Notes"],
+      "shared_code": ["StorageAdapterFactory", "platform-detection.ts"],
+      "conflict_description": "Both use StorageAdapterFactory but IDE creates adapters directly while Notes uses via NotesFileSyncService wrapper. Consolidation opportunity."
+    }
+  ]
+}

@@ -1,0 +1,491 @@
+scan_metadata:
+  scan_date: "2026-01-20"
+  scanner: "deep-scan-persistence-scanner"
+  target: "project-notes-lifecycle-persistence"
+  level: "1-smelling"
+  duration_minutes: 15
+  files_analyzed: 15
+  lines_of_code: 4500
+
+storage_architecture:
+  gateway_interface:
+    file: "src/domain/interfaces/storage-gateway.interface.ts"
+    line_count: 246
+    methods:
+      - name: "read"
+        signature: "(path: string) => Promise<Uint8Array>"
+      - name: "write"
+        signature: "(path: string, data: Uint8Array) => Promise<void>"
+      - name: "delete"
+        signature: "(path: string) => Promise<void>"
+      - name: "list"
+        signature: "(path: string) => Promise<FileEntry[]>"
+      - name: "exists"
+        signature: "(path: string) => Promise<boolean>"
+      - name: "watch"
+        signature: "(callback: FileChangeCallback) => WatchHandle"
+      - name: "rename"
+        signature: "(oldPath: string, newPath: string) => Promise<void>"
+      - name: "createDirectory"
+        signature: "(path: string) => Promise<void>"
+
+  implementations:
+    - name: "fsa-storage-adapter"
+      file: "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+      line_count: 673
+      storage_type: "fsa"
+      platform: "desktop"
+      notes: "Implements StorageAdapter interface, polling-based watch, SHA-256 hashing"
+
+    - name: "idb-gateway"
+      file: "src/infrastructure/filesystem/idb-gateway.ts"
+      line_count: 543
+      storage_type: "indexeddb"
+      platform: "mobile/tablet"
+      notes: "Implements StorageGateway interface, polling-based watch, uses Dexie idbFiles table"
+
+    - name: "storage-gateway-factory"
+      file: "src/infrastructure/filesystem/storage-gateway-factory.ts"
+      line_count: 235
+      pattern: "factory"
+      notes: "Factory returns correct gateway based on platform/storageType"
+
+dexie_schema:
+  current_version: 20
+  migration_status: "active"
+  total_tables: 36
+  database_name: "via-gent-persistence"
+
+  tables:
+    - name: "projects"
+      primary_key: "id"
+      indexes: ["id", "workspaceId", "lastOpened", "name"]
+      estimated_records: "10-50 per user"
+      quota_impact: "low"
+      notes: "Project metadata, workspaceId for isolation"
+
+    - name: "notes"
+      primary_key: "id"
+      indexes: ["id", "projectId", "workspaceId", "parentId", "isFavorite", "order", "createdAt", "updatedAt", "[projectId+parentId]", "[projectId+isFavorite]", "[projectId+createdAt]"]
+      estimated_records: "100-1000 per project"
+      quota_impact: "medium"
+      notes: "Note content in Block[] format, full text search indexes"
+
+    - name: "idbFiles"
+      primary_key: "[projectId, path]"
+      indexes: ["projectId", "path"]
+      estimated_records: "1000-10000 per project"
+      quota_impact: "high"
+      notes: "ARC-B03: Mobile file storage as binary Uint8Array, no full-text search"
+
+    - name: "fileMetadata"
+      primary_key: "[projectId, workspaceId, path]"
+      indexes: ["[projectId+workspaceId+path]", "projectId", "workspaceId", "lastModified", "syncedAt"]
+      estimated_records: "500-5000 per project"
+      quota_impact: "medium"
+      notes: "File metadata for sync, change detection"
+
+    - name: "fileSnapshots"
+      primary_key: "auto-increment"
+      indexes: ["projectId", "workspaceId", "path", "[projectId+workspaceId+path]"]
+      estimated_records: "500-2000 per project"
+      quota_impact: "medium"
+      notes: "WB-2: Lightweight file tree cache for fast IDE loads"
+
+    - name: "fileContentCache"
+      primary_key: "[projectId, workspaceId, path]"
+      indexes: ["[projectId+workspaceId+path]"]
+      estimated_records: "100-500 per project"
+      quota_impact: "high"
+      notes: "WB-2: Lazy-loaded file content, full file text"
+
+    - name: "fsaHandles"
+      primary_key: "projectId"
+      indexes: ["projectId", "workspaceId", "lastAccessedAt"]
+      estimated_records: "10-50 per user"
+      quota_impact: "low"
+      notes: "StructuredClone of FileSystemDirectoryHandle (Chrome 129+)"
+
+    - name: "syncStatus"
+      primary_key: "id"
+      indexes: ["id", "workspaceId", "path", "syncStatus", "lastSyncedAt", "[path+syncStatus]"]
+      estimated_records: "100-1000 per project"
+      quota_impact: "low"
+      notes: "Sync status tracking per file"
+
+    - name: "ideState"
+      primary_key: "projectId"
+      indexes: ["projectId", "workspaceId", "updatedAt"]
+      estimated_records: "10-50 per user"
+      quota_impact: "low"
+      notes: "IDE panel layouts, open files, expanded paths"
+
+    - name: "conversations"
+      primary_key: "id"
+      indexes: ["id", "projectId", "workspaceId", "updatedAt"]
+      estimated_records: "50-500 per project"
+      quota_impact: "medium"
+      notes: "AI chat history, messages array"
+
+  migrations:
+    total: 20
+    latest_version: 20
+    latest_migration_name: "persist-s-002-workspace-isolation"
+    data_loss_risks:
+      - risk: "Primary key changes (v19 → v20)"
+        severity: "high"
+        mitigation: "Database recovery system implemented (CRITICAL-FIX-2026-01-07)"
+      - risk: "workspaceId migration"
+        severity: "medium"
+        mitigation: "All existing records updated to workspaceId='ide' in v20"
+
+path_a_data_flow:
+  project_creation:
+    storage_operations:
+      - operation: "write"
+        target: "dexie"
+        table: "projects"
+        data: "ProjectRecord with id, name, workspaceId, storageType, bindings, lastOpened, createdAt"
+        trigger: "User creates new project or selects directory"
+
+      - operation: "write"
+        target: "dexie"
+        table: "ideState"
+        data: "IDEStateRecord with projectId, workspaceId, openFiles=[], activeFile=null, expandedPaths=[]"
+        trigger: "After project creation"
+
+      - operation: "write"
+        target: "dexie"
+        table: "fsaHandles"
+        data: "FSAHandleRecord with projectId, handle=structuredClone(directoryHandle), permissionStatus='granted', lastAccessedAt"
+        trigger: "User grants FSA access (desktop only)"
+
+    storage_targets:
+      - type: "dexie"
+        tables: ["projects", "ideState", "fsaHandles"]
+
+  notes_entry:
+    storage_operations:
+      - operation: "read"
+        target: "dexie"
+        table: "notes"
+        data: "NoteRecord[] with id, title, blocks[], parentId, isFavorite, order, createdAt, updatedAt"
+        trigger: "User navigates to Notes workspace"
+
+      - operation: "read"
+        target: "fsa"
+        files: ["/notes/*.md"]
+        data: "Markdown file contents from FSA project folder"
+        trigger: "NotesFileSyncService mounts directory and imports files"
+        notes: "NotesFileSyncService calls NoteFolderBridge.importDirectory() on mount"
+
+      - operation: "write"
+        target: "dexie"
+        table: "notes"
+        data: "New NoteRecord created from each .md file"
+        trigger: "Import process completes"
+        notes: "Frontmatter preserved, body parsed to Block[] format"
+
+    storage_targets:
+      - type: "dexie"
+        tables: ["notes"]
+      - type: "fsa"
+        files: ["/notes/*.md"]
+
+  note_usage:
+    storage_operations:
+      - operation: "read"
+        target: "dexie"
+        table: "notes"
+        data: "Single NoteRecord with blocks[]"
+        trigger: "User opens specific note"
+
+      - operation: "write"
+        target: "dexie"
+        table: "notes"
+        data: "Updated NoteRecord with modified blocks[]"
+        trigger: "Auto-save (500ms debounce) or user explicitly saves"
+
+      - operation: "write"
+        target: "fsa"
+        files: ["/notes/{note-id}.md"]
+        data: "Markdown representation of NoteRecord (frontmatter + body)"
+        trigger: "NotesFileSyncService.sync() runs on timer (default 5000ms) or manual sync"
+        notes: "NoteFolderBridge.saveNoteToFile() handles conversion and persistence"
+
+    storage_targets:
+      - type: "dexie"
+        tables: ["notes"]
+      - type: "fsa"
+        files: ["/notes/*.md"]
+
+path_b_data_flow:
+  project_revisit:
+    data_loaded_from_cache:
+      - source: "dexie"
+        table: "projects"
+        data: "ProjectRecord with lastOpened timestamp"
+        notes: "Quickly list all projects sorted by lastOpened"
+
+      - source: "dexie"
+        table: "ideState"
+        data: "IDEStateRecord with openFiles, activeFile, expandedPaths"
+        notes: "Restore IDE layout from previous session"
+
+    data_reloaded:
+      - source: "dexie"
+        table: "projects"
+        data: "ProjectRecord with storageType"
+        notes: "Determine storage type (fsa vs indexeddb) to create correct gateway"
+
+    handle_restoration:
+      method: "structured-clone"
+      source: "dexie"
+      table: "fsaHandles"
+      complexity: "high"
+      chrome_version_required: "129+"
+      fallback: "If structuredClone fails, re-prompt user for directory access"
+      notes: "FSA handles stored in IndexedDB via structuredClone, Chrome 129+ supports this"
+
+  notes_loading:
+    data_loaded_from_cache:
+      - source: "dexie"
+        table: "notes"
+        data: "NoteRecord[] with blocks[]"
+        notes: "Load all notes from Dexie table, no FSA read required for initial render"
+
+    data_reloaded:
+      - source: "fsa"
+        files: ["/notes/*.md"]
+        trigger: "NotesFileSyncService.sync() or file watcher detects external change"
+        notes: "NotesFileWatcher polls every 2000ms, debounced 300ms"
+
+  note_rendering:
+    data_loaded_from_cache:
+      - source: "dexie"
+        table: "notes"
+        data: "Single NoteRecord with blocks[]"
+        notes: "BlockNote renders blocks[] directly"
+
+    data_reloaded:
+      - source: "fsa"
+        files: ["/notes/{note-id}.md"]
+        trigger: "FileWatcher detects external change (polling)"
+        notes: "Conflict resolution: merge dialog if local dirty + external change"
+
+fsa_storage:
+  handle_persistence:
+    method: "structured-clone-in-dexie"
+    chrome_version_required: "129+"
+    fallback: "metadata"
+    storage_location: "dexie.fsaHandles table"
+    record_type: "FSAHandleRecord"
+    permission_status: ["prompt", "granted", "denied", "unknown", "dismissed"]
+    notes: "Chrome 129+ allows structuredClone of FileSystemDirectoryHandle for persistence"
+
+  watch_implementation:
+    observer_used: "polling"
+    polling_fallback: true
+    native_observer: false
+    change_detection: "SHA-256 hash"
+    poll_interval_ms: 2000
+    debounce_ms: 300
+    implementation: "FSAStorageAdapter.watch() uses setInterval every 2s"
+    notes: "FileSystemObserver not used, polling with hash comparison"
+
+  conflict_resolution:
+    strategy: "merge-dialog"
+    triggers:
+      - "Local note dirty (blocks modified) + external file change detected"
+      - "Auto-save in progress + file watcher detects change"
+    notes: "User prompted to choose: Keep Local, Use External, or Merge"
+
+sync_strategy:
+  dexie_to_fsa:
+    triggers:
+      - "Auto-save timer (500ms debounce on note edit)"
+      - "Manual sync button"
+      - "Periodic sync timer (default 5000ms)"
+    conflicts: ["External file modified while local dirty"]
+    propagation: "debounced"
+    debounce_ms: 500
+    implementation: "NoteFolderBridge.saveNoteToFile() → LocalFSAdapter.writeFile()"
+    notes: "NotesFileSyncService.sync() writes all modified notes to FSA"
+
+  fsa_to_dexie:
+    triggers:
+      - "FileWatcher detects external change (polling every 2s)"
+      - "ImportDirectory() called manually"
+      - "Periodic sync timer detects hash mismatch"
+    conflicts: ["External file modified while local dirty"]
+    propagation: "debounced"
+    debounce_ms: 300
+    implementation: "NoteFolderBridge.importDirectory() → NotesFileWatcher → Note CRUD"
+    notes: "External changes detected via SHA-256 hash comparison, debounced 300ms"
+
+  data_flow_diagram: |
+    Path A (Create Project → Notes → Note):
+      1. User creates project → projects table write
+      2. User navigates to Notes → notes table read
+      3. NotesFileSyncService.mount() → importDirectory() from FSA
+      4. User edits note → notes table write (500ms debounce)
+      5. Auto-sync timer (5s) → notes table read + FSA write
+
+    Path B (Revisit Project):
+      1. Load projects from Dexie (sorted by lastOpened)
+      2. Load IDE state from Dexie
+      3. Restore FSA handle from Dexie via structuredClone
+      4. Load notes from Dexie (cache hit)
+      5. FileWatcher polls FSA every 2s for external changes
+
+quota_risks:
+  - table: "idbFiles"
+    current_estimated: "10-50MB per project"
+    limit: "2GB"
+    risk_level: "high"
+    mitigation:
+      - "Lazy loading: Only load file content when opened"
+      - "Binary storage: No full-text search overhead"
+      - "Project-based isolation: Files not shared across projects"
+    notes: "Mobile storage risk, but manageable with lazy loading"
+
+  - table: "notes"
+    current_estimated: "5-20MB per project"
+    limit: "2GB"
+    risk_level: "medium"
+    mitigation:
+      - "IndexedDB stores blocks[] format (structured, not plain text)"
+      - "Workspace isolation per ADR-033 D6"
+    notes: "Blocks[] format is larger than plain text, but reasonable"
+
+  - table: "fileContentCache"
+    current_estimated: "10-100MB per project"
+    limit: "2GB"
+    risk_level: "high"
+    mitigation:
+      - "Lazy loading: Only cache opened files"
+      - "Expires: cache TTL prevents unbounded growth"
+    notes: "Cache can grow large, but TTL should prevent runaway"
+
+  - table: "conversations"
+    current_estimated: "5-50MB per project"
+    limit: "2GB"
+    risk_level: "medium"
+    mitigation:
+      - "Messages stored as JSON, compact format"
+      - "User can delete old conversations"
+    notes: "AI chat history can accumulate, but user可控"
+
+  overall_quota_assessment: "LOW-TO-MEDIUM RISK"
+  reasoning:
+    - "Total estimated: 30-220MB per project (typical usage)"
+    - "2GB IndexedDB limit allows ~9-60 projects per user"
+    - "Lazy loading strategy reduces cache overhead"
+    - "Workspace isolation prevents cross-workspace data duplication"
+
+unclean_files:
+  - file: "src/infrastructure/filesystem/fsa-storage-adapter.ts"
+    issues:
+      - "watch() uses polling instead of FileSystemObserver (not critical, polling works)"
+      - "SHA-256 hash computed every poll cycle (inefficient, could cache)"
+
+  - file: "src/infrastructure/filesystem/idb-gateway.ts"
+    issues:
+      - "watch() uses polling instead of native IndexedDB change events (not critical, IDB has no native watching)"
+      - "list() iterates all files and filters in memory (inefficient for large projects)"
+
+  - file: "src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"
+    issues:
+      - "syncTimer runs every 5s regardless of changes (wastes battery, should be event-driven)"
+      - "setupFileWatcher() called unconditionally if enableFileWatching=true (no check if already watching)"
+
+  - file: "src/infrastructure/persistence/dexie-db.ts"
+    issues:
+      - "Legacy `db` export uses Proxy (confusing, should be removed)"
+      - "Multiple duplicate table types exported (e.g., flashcards and flashcardSets both use FlashcardsTable)"
+      - "No explicit schema version in class definition (version 20 only in migrations file)"
+
+recommendations:
+  priority_p0:
+    - item: "Implement event-driven sync instead of polling timer (battery life improvement)"
+      rationale: "5s polling wastes battery, should use file watcher callbacks"
+      effort: "2-4 hours"
+      files: ["src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"]
+
+    - item: "Add explicit schema version field to ViaGentDatabase class"
+      rationale: "Version 20 only visible in migrations, confusing for debugging"
+      effort: "1 hour"
+      files: ["src/infrastructure/persistence/dexie-db-class.ts"]
+
+    - item: "Fix duplicate table type exports (flashcards and flashcardSets)"
+      rationale: "Both use FlashcardsTable, likely a copy-paste error"
+      effort: "1 hour"
+      files: ["src/infrastructure/persistence/dexie-db-class.ts"]
+
+  priority_p1:
+    - item: "Cache SHA-256 hashes in FSAStorageAdapter to avoid recomputation"
+      rationale: "Hash computed on every poll cycle (every 2s), inefficient"
+      effort: "2 hours"
+      files: ["src/infrastructure/filesystem/fsa-storage-adapter.ts"]
+
+    - item: "Remove legacy `db` Proxy export"
+      rationale: "Proxy is confusing, getDb() is the recommended pattern"
+      effort: "30 minutes"
+      files: ["src/infrastructure/persistence/dexie-db.ts"]
+
+    - item: "Optimize IDBGateway.list() to use IndexedDB range queries"
+      rationale: "Current implementation loads all files then filters in memory, slow for large projects"
+      effort: "4 hours"
+      files: ["src/infrastructure/filesystem/idb-gateway.ts"]
+
+    - item: "Add file watching deduplication check in NotesFileSyncService"
+      rationale: "setupFileWatcher() called even if already watching, creates multiple intervals"
+      effort: "1 hour"
+      files: ["src/infrastructure/sync/workspace-services/notes/notes-file-sync-service.ts"]
+
+  priority_p2:
+    - item: "Consider using FileSystemObserver for FSA watching when available"
+      rationale: "Native observer more efficient than polling"
+      effort: "8-12 hours"
+      files: ["src/infrastructure/filesystem/fsa-storage-adapter.ts"]
+      notes: "Polling fallback still needed for older browsers"
+
+    - item: "Add quota monitoring and warnings for IndexedDB"
+      rationale: "Users should be warned when approaching 2GB limit"
+      effort: "4 hours"
+      files: ["src/infrastructure/persistence/dexie-db.ts"]
+      notes: "Use navigator.storage.estimate() API"
+
+    - item: "Implement conflict resolution UI for external changes"
+      rationale: "Current strategy is merge-dialog, but UI not documented"
+      effort: "8-12 hours"
+      files: ["src/infrastructure/sync/workspace-services/notes/"]
+      notes: "Needs UX design and implementation"
+
+summary:
+  architecture_health: "GOOD"
+  data_flow_clarity: "EXCELLENT"
+  persistence_layer_maturity: "MATURING"
+  quota_management: "ADEQUATE"
+  sync_strategy: "FUNCTIONAL but INEFFICIENT"
+
+  key_findings:
+    - "Storage abstraction layer (StorageGateway) well-designed and consistently used"
+    - "FSA and IndexedDB adapters properly implement StorageGateway interface"
+    - "Dexie schema v20 has workspaceId for cross-workspace isolation (ADR-033 D6)"
+    - "Handle persistence via structuredClone works in Chrome 129+"
+    - "File watching uses polling (not ideal, but functional)"
+    - "Sync strategy is bidirectional but uses polling timers (battery drain risk)"
+    - "Quota risks are manageable with lazy loading and workspace isolation"
+
+  critical_issues: 0
+  high_priority_issues: 3
+  medium_priority_issues: 4
+  low_priority_issues: 3
+
+  overall_risk: "MEDIUM"
+  risk_breakdown:
+    - item: "quota_risk: LOW-TO-MEDIUM"
+    - item: "performance_risk: MEDIUM  # Polling inefficient"
+    - item: "data_integrity_risk: LOW  # Conflict resolution exists"
+    - item: "architecture_risk: LOW  # Clean abstraction layer"

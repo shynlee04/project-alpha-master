@@ -1,0 +1,56 @@
+INFO  2026-01-14 01:26:14,980 serena.cli:health_check:695 - Starting health check for project: /Users/apple/Documents/coding-projects/project-alpha-master
+INFO  2026-01-14 01:26:14,981 serena.cli:health_check:699 - Creating SerenaAgent with disabled dashboard...
+INFO  2026-01-14 01:26:14,986 serena.agent:__init__:237 - Will record tool usage statistics with token count estimator: CHAR_COUNT.
+INFO  2026-01-14 01:26:15,361 serena.agent:__init__:241 - Starting Serena server (version=0.1.4-517a6d01-dirty, process id=41338, parent process id=41308; language backend=LSP)
+INFO  2026-01-14 01:26:15,362 serena.agent:__init__:245 - Configuration file: None
+INFO  2026-01-14 01:26:15,363 serena.agent:__init__:246 - Available projects: 
+INFO  2026-01-14 01:26:15,363 serena.agent:__init__:247 - Loaded tools (40): read_file, create_text_file, list_dir, find_file, replace_content, delete_lines, replace_lines, insert_at_line, search_for_pattern, restart_language_server, get_symbols_overview, find_symbol, find_referencing_symbols, replace_symbol_body, insert_after_symbol, insert_before_symbol, rename_symbol, write_memory, read_memory, list_memories, delete_memory, edit_memory, execute_shell_command, open_dashboard, activate_project, remove_project, switch_modes, get_current_config, check_onboarding_performed, onboarding, think_about_collected_information, think_about_task_adherence, think_about_whether_you_are_done, summarize_changes, prepare_for_new_conversation, initial_instructions, jet_brains_find_symbol, jet_brains_find_referencing_symbols, jet_brains_get_symbols_overview, jet_brains_type_hierarchy
+INFO  2026-01-14 01:26:15,364 serena.agent:apply:135 - SerenaAgentContext[name='desktop-app'] included 1 tools: switch_modes
+INFO  2026-01-14 01:26:15,369 serena.agent:__init__:274 - Number of exposed tools: 29
+INFO  2026-01-14 01:26:15,446 serena.agent:_update_active_tools:525 - Active tools (29): activate_project, check_onboarding_performed, create_text_file, delete_memory, edit_memory, execute_shell_command, find_file, find_referencing_symbols, find_symbol, get_current_config, get_symbols_overview, initial_instructions, insert_after_symbol, insert_before_symbol, list_dir, list_memories, onboarding, prepare_for_new_conversation, read_file, read_memory, rename_symbol, replace_content, replace_symbol_body, search_for_pattern, switch_modes, think_about_collected_information, think_about_task_adherence, think_about_whether_you_are_done, write_memory
+INFO  2026-01-14 01:26:15,465 serena.util.file_system:start:360 - Loading of .gitignore files starting ...
+INFO  2026-01-14 01:26:15,466 serena.util.file_system:_load_gitignore_files:152 - Processing .gitignore file: /Users/apple/Documents/coding-projects/project-alpha-master/.gitignore
+INFO  2026-01-14 01:26:15,475 serena.util.file_system:_load_gitignore_files:152 - Processing .gitignore file: /Users/apple/Documents/coding-projects/project-alpha-master/.serena/.gitignore
+INFO  2026-01-14 01:26:15,477 serena.util.file_system:_load_gitignore_files:152 - Processing .gitignore file: /Users/apple/Documents/coding-projects/project-alpha-master/.opencode/.gitignore
+INFO  2026-01-14 01:26:15,485 serena.util.file_system:_load_gitignore_files:152 - Processing .gitignore file: /Users/apple/Documents/coding-projects/project-alpha-master/_test-spike/.gitignore
+INFO  2026-01-14 01:26:16,053 serena.util.file_system:stop:367 - Loading of .gitignore files completed in 0.588 seconds
+INFO  2026-01-14 01:26:16,056 serena.agent:load_project_from_path_or_name:592 - Added new project project-alpha-master for path /Users/apple/Documents/coding-projects/project-alpha-master
+INFO  2026-01-14 01:26:16,056 serena.agent:_activate_project:562 - Activating project-alpha-master at /Users/apple/Documents/coding-projects/project-alpha-master
+INFO  2026-01-14 01:26:16,057 serena.agent:_update_active_tools:525 - Active tools (29): activate_project, check_onboarding_performed, create_text_file, delete_memory, edit_memory, execute_shell_command, find_file, find_referencing_symbols, find_symbol, get_current_config, get_symbols_overview, initial_instructions, insert_after_symbol, insert_before_symbol, list_dir, list_memories, onboarding, prepare_for_new_conversation, read_file, read_memory, rename_symbol, replace_content, replace_symbol_body, search_for_pattern, switch_modes, think_about_collected_information, think_about_task_adherence, think_about_whether_you_are_done, write_memory
+INFO  2026-01-14 01:26:16,057 serena.task_executor:issue_task:192 - Scheduling Task-1:init_language_server_manager
+INFO  2026-01-14 01:26:16,057 serena.cli:health_check:702 - SerenaAgent created successfully
+INFO  2026-01-14 01:26:16,058 serena.cli:health_check:705 - Searching for analyzable files...
+INFO  2026-01-14 01:26:16,074 serena.task_executor:_process_task_queue:123 - Starting execution of Task-1:init_language_server_manager
+INFO  2026-01-14 01:26:16,075 serena.task_executor:start:360 - Task-1:init_language_server_manager starting ...
+INFO  2026-01-14 01:26:16,075 serena.agent:start:360 - Language server initialization starting ...
+INFO  2026-01-14 01:26:16,076 serena.project:create_language_server_manager:384 - Creating language server manager for /Users/apple/Documents/coding-projects/project-alpha-master
+INFO  2026-01-14 01:26:16,077 sensai.util.logging:start:360 - Language server startup (language=typescript) starting ...
+INFO  2026-01-14 01:26:16,078 serena.ls_manager:create_language_server:41 - Creating language server instance for /Users/apple/Documents/coding-projects/project-alpha-master, language=typescript.
+INFO  2026-01-14 01:26:16,239 solidlsp.ls:_load_raw_document_symbols_cache:1800 - Loading document symbols cache from /Users/apple/Documents/coding-projects/project-alpha-master/.serena/cache/typescript/raw_document_symbols.pkl
+INFO  2026-01-14 01:26:17,297 solidlsp.ls:_load_raw_document_symbols_cache:1805 - Loaded 1818 entries from raw document symbols cache.
+INFO  2026-01-14 01:26:17,299 solidlsp.ls:_load_document_symbols_cache:1835 - Loading document symbols cache from /Users/apple/Documents/coding-projects/project-alpha-master/.serena/cache/typescript/document_symbols.pkl
+ERROR 2026-01-14 01:26:17,943 sensai.util.pickle:_load_with_error_log:50 - Error loading /Users/apple/Documents/coding-projects/project-alpha-master/.serena/cache/typescript/document_symbols.pkl
+WARNING 2026-01-14 01:26:17,944 solidlsp.ls:_load_document_symbols_cache:1843 - Failed to load document symbols cache from /Users/apple/Documents/coding-projects/project-alpha-master/.serena/cache/typescript/document_symbols.pkl (Ran out of input); Ignoring cache.
+INFO  2026-01-14 01:26:17,947 solidlsp.ls:start:1932 - Starting language server with language typescript for /Users/apple/Documents/coding-projects/project-alpha-master
+INFO  2026-01-14 01:26:17,948 solidlsp.language_servers.typescript_language_server:_start_server:275 - Starting TypeScript server process
+INFO  2026-01-14 01:26:17,949 solidlsp.ls_handler:start:194 - Starting language server process via command: ['/Users/apple/.serena/language_servers/static/TypeScriptLanguageServer/ts-lsp/node_modules/.bin/typescript-language-server', '--stdio']
+INFO  2026-01-14 01:26:17,968 solidlsp.language_servers.typescript_language_server:_start_server:279 - Sending initialize request from LSP client to LSP server and awaiting response
+INFO  2026-01-14 01:26:18,366 solidlsp.language_servers.typescript_language_server:window_log_message:258 - LSP: window/logMessage: {'type': 3, 'message': 'Using Typescript version (workspace) 5.9.3 from path "/Users/apple/Documents/coding-projects/project-alpha-master/node_modules/typescript/lib/tsserver.js"'}
+WARNING 2026-01-14 01:26:18,498 serena.project:gather_source_files:302 - File /Users/apple/Documents/coding-projects/project-alpha-master/.opencode/AGENT-STATE.yaml not found (possibly due it being a symlink), skipping it in request_parsed_files
+INFO  2026-01-14 01:26:19,370 solidlsp.language_servers.typescript_language_server:_start_server:296 - Timeout waiting for TypeScript server to become ready, proceeding anyway
+INFO  2026-01-14 01:26:19,371 sensai.util.logging:stop:367 - Language server startup (language=typescript) completed in 3.295 seconds
+INFO  2026-01-14 01:26:19,373 serena.agent:stop:367 - Language server initialization completed in 3.297 seconds
+INFO  2026-01-14 01:26:19,373 serena.task_executor:stop:367 - Task-1:init_language_server_manager completed in 3.298 seconds
+INFO  2026-01-14 01:26:21,254 serena.cli:health_check:714 - Found analyzable file: test-mode-orchestrator.ts
+INFO  2026-01-14 01:26:21,255 serena.cli:health_check:732 - Testing GetSymbolsOverviewTool on file: test-mode-orchestrator.ts
+INFO  2026-01-14 01:26:21,255 serena.task_executor:issue_task:192 - Scheduling Task-2:<lambda>
+INFO  2026-01-14 01:26:21,327 serena.task_executor:_process_task_queue:123 - Starting execution of Task-2:<lambda>
+INFO  2026-01-14 01:26:21,328 serena.task_executor:start:360 - Task-2:<lambda> starting ...
+INFO  2026-01-14 01:26:21,332 serena.task_executor:stop:367 - Task-2:<lambda> completed in 0.004 seconds
+INFO  2026-01-14 01:26:21,333 serena.cli:health_check:735 - GetSymbolsOverviewTool returned 2 symbols
+ERROR 2026-01-14 01:26:21,334 serena.cli:health_check:810 - Health check failed with exception: 'str' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/Users/apple/.cache/uv/archive-v0/I-I1efsG8RxUrT5bVIxPs/lib/python3.12/site-packages/serena/cli.py", line 749, in health_check
+    if symbol.get("kind") in preferred_kinds:
+       ^^^^^^^^^^
+AttributeError: 'str' object has no attribute 'get'

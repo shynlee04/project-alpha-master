@@ -1,0 +1,413 @@
+# Notes AI Enhancement Sprint
+# Created: 2026-01-13
+# Updated: 2026-01-13T10:00:00+07:00
+# Status: ACTIVE
+
+schema_version: "1.0.0"
+sprint_id: "notes-ai-sprint-2026-01-13"
+sprint_name: "Notes AI & Multimodal Enhancement"
+team: "Team B"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SPRINT OVERVIEW
+# ═══════════════════════════════════════════════════════════════════════════
+
+overview:
+  goal: |
+    Transform Notes workspace into a "Notion-killer" with advanced AI features:
+    - Context-aware block AI (above cursor, not all blocks)
+    - Smart content insertion (replace vs append)
+    - Prompt engineering hub for Vietnamese users
+    - Multimodal content generation (images, video, artifacts)
+  
+  epics:
+    - id: "EPIC-41"
+      name: "AI Provider Foundation"
+      status: "COMPLETED"
+      progress: 100
+      stories: 8
+      completed_at: "2026-01-13T03:38:00+07:00"
+      
+    - id: "EPIC-42"
+      name: "Context-Aware Block AI"
+      status: "IN_PROGRESS"
+      progress: 50
+      stories: 10
+      
+    - id: "EPIC-43"
+      name: "Prompt Engineering Hub"
+      status: "PENDING"
+      progress: 0
+      stories: 8
+      
+    - id: "EPIC-44"
+      name: "Multimodal Rich Content"
+      status: "PENDING"
+      progress: 0
+      stories: 12
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-41: AI PROVIDER FOUNDATION (COMPLETED)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_41:
+  id: "EPIC-41"
+  name: "AI Provider Foundation"
+  status: "COMPLETED"
+  priority: "P0-CRITICAL"
+  completed_at: "2026-01-13T03:38:00+07:00"
+  
+  stories:
+    - id: "41-01"
+      title: "Audit and fix Gemini API integration"
+      status: "DONE"
+      points: 5
+      
+    - id: "41-02"
+      title: "Create unified provider service layer"
+      status: "DONE"
+      points: 8
+      artifacts:
+        - "src/application/services/ProviderService.ts (1134 lines)"
+      
+    - id: "41-03"
+      title: "Add OpenAI-compatible endpoint support"
+      status: "DONE"
+      points: 5
+      notes: "7 presets: Ollama, Together, Groq, OpenRouter, Fireworks, Perplexity, Cerebras"
+      
+    - id: "41-04"
+      title: "Integrate TanStack AI Gemini adapters"
+      status: "DONE"
+      points: 5
+      notes: "Via 41-01/02 implementation"
+      
+    - id: "41-05"
+      title: "Add provider fallback chain"
+      status: "DONE"
+      points: 3
+      artifacts:
+        - "generateContentWithFallback()"
+        - "buildSmartFallbackChain()"
+      
+    - id: "41-06"
+      title: "Provider health check and auto-switch"
+      status: "DONE"
+      points: 3
+      artifacts:
+        - "runHealthChecks()"
+        - "autoSelectProvider()"
+        - "getProviderStatusSummary()"
+      
+    - id: "41-07"
+      title: "Add multimodal capability detection"
+      status: "DONE"
+      points: 5
+      artifacts:
+        - "getProviderCapabilities()"
+        - "detectMultimodalRequirements()"
+      
+    - id: "41-08"
+      title: "Write integration tests for all providers"
+      status: "DONE"
+      points: 5
+      artifacts:
+        - "src/application/services/__tests__/provider-service.integration.test.ts (40 tests)"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-42: CONTEXT-AWARE BLOCK AI (IN PROGRESS)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_42:
+  id: "EPIC-42"
+  name: "Context-Aware Block AI"
+  status: "COMPLETED"
+  priority: "P1-HIGH"
+  progress: 100
+  completed_at: "2026-01-13T10:30:00+07:00"
+
+  stories:
+    - id: "42-01"
+      title: "Block-above-cursor context extraction"
+      status: "DONE"
+      points: 5
+      notes: "getTextAboveCursor(), getBlocksAboveCursor() implemented"
+
+    - id: "42-02"
+      title: "Context toggle in AI prompt dialog"
+      status: "DONE"
+      points: 3
+      notes: "Full UI implementation with persist middleware for contextMode"
+      artifacts:
+        - "src/presentation/components/notes/AIPromptDialog.tsx (lines 249-343)"
+        - "src/lib/notes/ai-prompt-store.ts (persist middleware added)"
+
+    - id: "42-03"
+      title: "Block-specific loading animation"
+      status: "DONE"
+      points: 5
+      artifacts:
+        - "src/lib/notes/ai-loading-store.ts"
+        - "src/presentation/components/notes/BlockLoadingOverlay.tsx"
+
+    - id: "42-04"
+      title: "Smart content insertion (replace/append)"
+      status: "DONE"
+      points: 5
+      priority: "P1"
+      notes: "AIInsertionDialog integrated with AISlashCommand, supports replace/append/above modes"
+      artifacts:
+        - "src/lib/notes/ai-insertion-store.ts"
+        - "src/presentation/components/notes/AIInsertionDialog.tsx"
+        - "src/presentation/components/notes/AISlashCommand.tsx (setPendingContent integration)"
+
+    - id: "42-05"
+      title: "Multi-block selection for transform"
+      status: "DONE"
+      points: 5
+      priority: "P1"
+      notes: "Already exists in AITransformMenu.tsx (handles selection.blocks array)"
+      artifacts:
+        - "src/presentation/components/notes/AITransformMenu.tsx"
+
+    - id: "42-06"
+      title: "Selected text as context option"
+      status: "DONE"
+      points: 3
+      priority: "P1"
+      notes: "Already implements 'selection' context mode in AIPromptDialog.tsx and AISlashCommand.tsx"
+
+    - id: "42-07"
+      title: "AI commands in transform bar"
+      status: "DONE"
+      points: 5
+      notes: "Custom prompt in AITransformMenu.tsx"
+
+    - id: "42-08"
+      title: "Inline quick prompt input"
+      status: "DONE"
+      points: 5
+      notes: "Quick prompt dialog implemented"
+
+    - id: "42-09"
+      title: "Context preview before generation"
+      status: "DONE"
+      points: 5
+      priority: "P2"
+      notes: "Already exists in AIPromptDialog.tsx with stats (words, chars, estimated tokens, blocks)"
+      artifacts:
+        - "src/presentation/components/notes/AIPromptDialog.tsx (lines 117-149, 348-397)"
+
+    - id: "42-10"
+      title: "Streaming output to blocks"
+      status: "DONE"
+      points: 8
+      artifacts:
+        - "src/lib/notes/use-streaming-ai.ts"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-43: PROMPT ENGINEERING HUB (PENDING)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_43:
+  id: "EPIC-43"
+  name: "Prompt Engineering Hub"
+  status: "IN_PROGRESS"
+  priority: "P1-HIGH"
+  progress: 12.5
+
+  stories:
+    - id: "43-01"
+      title: "Command management entry point in Notes UI"
+      status: "DONE"
+      points: 3
+      priority: "P0"
+      notes: "Added SlashCommandsDialog and button in NoteSidebar (⚡ icon)"
+      artifacts:
+        - "src/presentation/components/notes/SlashCommandsDialog.tsx (new)"
+        - "src/presentation/components/notes/NoteSidebar.tsx (added Bolt icon + onSlashCommands callback)"
+        - "src/presentation/components/notes/NotesPage.tsx (dialog state + render)"
+      
+    - id: "43-02"
+      title: "Category and tag system for commands"
+      status: "DONE"
+      points: 5
+      priority: "P0"
+      notes: "Added COMMAND_CATEGORIES, category field, tag support to CustomSlashCommand"
+      artifacts:
+        - "src/lib/notes/slash-command-store.ts (COMMAND_CATEGORIES, category, tags, selectCategory, toggleTag)"
+        - "src/presentation/components/notes/SlashCommandManager.tsx (category selector, tag input, filter tabs)"
+      
+    - id: "43-03"
+      title: "2-step prompt refinement workflow"
+      status: "TODO"
+      points: 8
+      priority: "P0"
+      notes: "Key feature for Vietnamese prompt engineering users"
+      
+    - id: "43-04"
+      title: "AI prompt suggestion based on context"
+      status: "TODO"
+      points: 5
+      priority: "P1"
+      
+    - id: "43-05"
+      title: "Prompt template variables"
+      status: "TODO"
+      points: 5
+      priority: "P1"
+      
+    - id: "43-06"
+      title: "Command analytics (usage count, success rate)"
+      status: "TODO"
+      points: 3
+      priority: "P2"
+      
+    - id: "43-07"
+      title: "Community prompt gallery (import from URL)"
+      status: "TODO"
+      points: 5
+      priority: "P2"
+      
+    - id: "43-08"
+      title: "Prompt versioning and history"
+      status: "TODO"
+      points: 5
+      priority: "P2"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC-44: MULTIMODAL RICH CONTENT (PENDING)
+# ═══════════════════════════════════════════════════════════════════════════
+
+epic_44:
+  id: "EPIC-44"
+  name: "Multimodal Rich Content"
+  status: "PENDING"
+  priority: "P2-MEDIUM"
+  progress: 0
+  blocked_by: "EPIC-42"
+  
+  stories:
+    - id: "44-01"
+      title: "Image generation block type"
+      status: "TODO"
+      points: 8
+      priority: "P0"
+      
+    - id: "44-02"
+      title: "Image understanding (vision) in blocks"
+      status: "TODO"
+      points: 5
+      priority: "P0"
+      
+    - id: "44-03"
+      title: "Sequential multi-image storyboard"
+      status: "TODO"
+      points: 8
+      priority: "P1"
+      
+    - id: "44-04"
+      title: "Video input understanding"
+      status: "TODO"
+      points: 5
+      priority: "P1"
+      
+    - id: "44-05"
+      title: "Text-to-speech output block"
+      status: "TODO"
+      points: 5
+      priority: "P1"
+      
+    - id: "44-06"
+      title: "Interactive HTML artifact block"
+      status: "TODO"
+      points: 13
+      priority: "P1"
+      notes: "Like Claude's artifacts"
+      
+    - id: "44-07"
+      title: "Video generation block (experimental)"
+      status: "TODO"
+      points: 8
+      priority: "P2"
+      
+    - id: "44-08"
+      title: "PowerPoint/slides export"
+      status: "TODO"
+      points: 8
+      priority: "P2"
+      
+    - id: "44-09"
+      title: "Chart/diagram generation"
+      status: "TODO"
+      points: 5
+      priority: "P2"
+      
+    - id: "44-10"
+      title: "Sequential transformation pipeline"
+      status: "TODO"
+      points: 8
+      priority: "P2"
+      
+    - id: "44-11"
+      title: "Artifact gallery and management"
+      status: "TODO"
+      points: 5
+      priority: "P2"
+      
+    - id: "44-12"
+      title: "Multi-step generation with blur animation"
+      status: "TODO"
+      points: 5
+      priority: "P2"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# EPIC DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════
+
+dependencies:
+  graph: |
+    EPIC-41 (Provider Foundation) ✅ COMPLETE
+        │
+        ├──→ EPIC-42 (Block AI) - IN PROGRESS
+        │       │
+        │       └──→ EPIC-44 (Multimodal) - PENDING
+        │
+        └──→ EPIC-43 (Prompt Hub) - PENDING
+
+# ═══════════════════════════════════════════════════════════════════════════
+# KEY FILES
+# ═══════════════════════════════════════════════════════════════════════════
+
+key_files:
+  ai_slash_command: "src/presentation/components/notes/AISlashCommand.tsx"
+  ai_transform_menu: "src/presentation/components/notes/AITransformMenu.tsx"
+  ai_prompt_dialog: "src/presentation/components/notes/AIPromptDialog.tsx"
+  ai_insertion_dialog: "src/presentation/components/notes/AIInsertionDialog.tsx"
+  note_ai_service: "src/lib/notes/note-ai-service.ts"
+  ai_loading_store: "src/lib/notes/ai-loading-store.ts"
+  ai_insertion_store: "src/lib/notes/ai-insertion-store.ts"
+  streaming_ai_hook: "src/lib/notes/use-streaming-ai.ts"
+  slash_command_store: "src/lib/notes/slash-command-store.ts"
+  provider_service: "src/application/services/ProviderService.ts"
+  gemini_adapter: "src/lib/agent/providers/gemini-adapter.ts"
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NEXT ACTIONS
+# ═══════════════════════════════════════════════════════════════════════════
+
+next_actions:
+  immediate:
+    - story: "42-04"
+      action: "Integrate AIInsertionDialog with NoteEditor"
+      files:
+        - "src/presentation/components/notes/NoteEditor.tsx"
+        - "src/presentation/components/notes/AIInsertionDialog.tsx"
+    - story: "42-05"
+      action: "Add multi-block selection support in AITransformMenu"
+    - story: "42-06"
+      action: "Add selected text context toggle in AIPromptDialog"
+  
+  next_sprint:
+    - epic: "EPIC-43"
+      focus: "Start with 43-01 (Command management entry point)"

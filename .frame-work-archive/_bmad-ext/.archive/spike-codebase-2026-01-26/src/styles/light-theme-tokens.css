@@ -1,0 +1,128 @@
+/* =============================================================================
+   VIA-GENT Light Theme Tokens
+   - All color tokens defined in HSL format for CSS custom properties
+   - Foundation: light-theme-design-system-foundation-2026-01-03.md
+   - Total: 13 primary + 52 semantic + 13 neutral + 13 surface = 91 tokens
+   ============================================================================= */
+
+:root {
+  /* ===== Primary Colors (13 values) ===== */
+  --primary: 24.6 95% 53.1%; /* Brand primary #f97316 */
+  --primary-foreground: 0 0% 100%; /* White text on primary */
+  --primary-50: 24.6 100% 96.5%; /* #fff7ed - Lightest background tint */
+  --primary-100: 24.6 100% 91.8%; /* #ffedd5 - Subtle background */
+  --primary-200: 24.6 96.6% 83.1%; /* #fed7aa - Hover background */
+  --primary-300: 24.6 97.2% 72.4%; /* #fdba74 - Active state */
+  --primary-400: 24.6 96.3% 61.2%; /* #fb923c - Emphasis */
+  --primary-500: 24.6 95% 53.1%; /* #f97316 - Brand primary */
+  --primary-600: 24.6 90.4% 48%; /* #ea580c - Hover state */
+  --primary-700: 24.6 88.5% 40.4%; /* #c2410c - Pressed state */
+  --primary-800: 24.6 79% 32.7%; /* #9a3412 - Dark accent */
+  --primary-900: 24.6 74.5% 27.8%; /* #7c2d12 - Deepest accent */
+  --primary-950: 24.6 81.2% 14.5%; /* #431407 - Text on light backgrounds */
+
+  /* ===== Semantic Colors (52 values) ===== */
+  /* Success Colors (13 values) */
+  --success: 142 71% 45.3%; /* Base success #22c55e */
+  --success-foreground: 0 0% 100%; /* White on success */
+  --success-50: 142 76% 96.7%; /* #f0fdf4 */
+  --success-100: 142 71% 92.5%; /* #dcfce7 */
+  --success-200: 142 70% 85.1%; /* #bbf7d0 */
+  --success-300: 142 78% 73.1%; /* #86efac */
+  --success-400: 142 70% 58%; /* #4ade80 */
+  --success-500: 142 71% 45.3%; /* #22c55e */
+  --success-600: 142 76% 36.3%; /* #16a34a */
+  --success-700: 142 72% 29.2%; /* #15803d */
+  --success-800: 142 64% 24.1%; /* #166534 */
+  --success-900: 142 61% 20.2%; /* #14532d */
+  --success-950: 142 80% 10%; /* #052e16 */
+
+  /* Warning Colors (13 values) */
+  --warning: 38 92% 50.2%; /* Base warning #f59e0b */
+  --warning-foreground: 0 0% 0%; /* Black on warning */
+  --warning-50: 38 100% 96.3%; /* #fffbeb */
+  --warning-100: 38 96% 88.8%; /* #fef3c7 */
+  --warning-200: 38 97% 76.7%; /* #fde68a */
+  --warning-300: 38 96% 64.7%; /* #fcd34d */
+  --warning-400: 38 96% 56.3%; /* #fbbf24 */
+  --warning-500: 38 92% 50.2%; /* #f59e0b */
+  --warning-600: 38 95% 43.7%; /* #d97706 */
+  --warning-700: 38 91% 36.9%; /* #b45309 */
+  --warning-800: 38 83% 31.4%; /* #92400e */
+  --warning-900: 38 78% 26.5%; /* #78350f */
+  --warning-950: 38 92% 14.1%; /* #451a03 */
+
+  /* Destructive/Error Colors (13 values) */
+  --destructive: 0 84% 60.2%; /* Base error #ef4444 */
+  --destructive-foreground: 0 0% 100%; /* White on error */
+  --destructive-50: 0 100% 97.3%; /* #fef2f2 */
+  --destructive-100: 0 100% 94.1%; /* #fee2e2 */
+  --destructive-200: 0 100% 89.4%; /* #fecaca */
+  --destructive-300: 0 94% 81.8%; /* #fca5a5 */
+  --destructive-400: 0 91% 70.8%; /* #f87171 */
+  --destructive-500: 0 84% 60.2%; /* #ef4444 */
+  --destructive-600: 0 70% 50.6%; /* #dc2626 */
+  --destructive-700: 0 74% 41.8%; /* #b91c1c */
+  --destructive-800: 0 70% 35.3%; /* #991b1b */
+  --destructive-900: 0 63% 30.6%; /* #7f1d1d */
+  --destructive-950: 0 75% 15.5%; /* #450a0a */
+
+  /* Info Colors (13 values) */
+  --info: 217 91% 59.8%; /* Base info #3b82f6 */
+  --info-foreground: 0 0% 100%; /* White on info */
+  --info-50: 217 100% 96.9%; /* #eff6ff */
+  --info-100: 217 94% 92.7%; /* #dbeafe */
+  --info-200: 217 97% 87.3%; /* #bfdbfe */
+  --info-300: 217 96% 78.4%; /* #93c5fd */
+  --info-400: 217 94% 68%; /* #60a5fa */
+  --info-500: 217 91% 59.8%; /* #3b82f6 */
+  --info-600: 217 83% 53.3%; /* #2563eb */
+  --info-700: 217 76% 48%; /* #1d4ed8 */
+  --info-800: 217 71% 40.2%; /* #1e40af */
+  --info-900: 217 64% 32.9%; /* #1e3a8a */
+  --info-950: 217 57% 21%; /* #172554 */
+
+  /* ===== Neutral Colors (13 values) ===== */
+  --background: 0 0% 100%; /* Main background #ffffff */
+  --foreground: 240 6% 10%; /* Primary text #171717 */
+  --neutral-50: 0 0% 98%; /* #fafafa - Lightest background */
+  --neutral-100: 0 0% 96%; /* #f5f5f5 - Subtle background */
+  --neutral-200: 0 0% 90%; /* #e5e5e5 - Dividers */
+  --neutral-300: 0 0% 83%; /* #d4d4d4 - Borders */
+  --neutral-400: 0 0% 64%; /* #a3a3a3 - Disabled text */
+  --neutral-500: 0 0% 45%; /* #737373 - Secondary text */
+  --neutral-600: 0 0% 32%; /* #525252 - Primary text */
+  --neutral-700: 0 0% 25%; /* #404040 - Headings */
+  --neutral-800: 0 0% 15%; /* #262626 - Emphasis text */
+  --neutral-900: 0 0% 9%; /* #171717 - Deepest text */
+  --neutral-950: 0 0% 4%; /* #0a0a0a - Text on light backgrounds */
+
+  /* ===== Surface Colors (13 values) ===== */
+  --card: 0 0% 100%; /* Card/panel background #ffffff */
+  --card-foreground: 240 6% 6.7%; /* Card text #0f0f11 */
+  --popover: 0 0% 100%; /* Popover background #ffffff */
+  --popover-foreground: 240 6% 6.7%; /* Popover text #0f0f11 */
+  --secondary: 0 0% 96%; /* Secondary surfaces #f5f5f5 */
+  --secondary-foreground: 240 6% 6.7%; /* Secondary text #0f0f11 */
+  --muted: 0 0% 96%; /* Muted backgrounds #f5f5f5 */
+  --muted-foreground: 0 0% 45%; /* Muted text #737373 */
+  --accent: 0 0% 96%; /* Accent backgrounds #f5f5f5 */
+  --accent-foreground: 240 6% 6.7%; /* Accent text #0f0f11 */
+  --border: 0 0% 90%; /* Borders #e5e5e5 */
+  --input: 0 0% 90%; /* Input borders #e5e5e5 */
+  --ring: 24.6 95% 53.1%; /* Focus ring #f97316 - primary color */
+}
+
+/* Light theme class (inherits all values from :root) */
+.light {
+  /* Inherits all light theme color tokens from :root selector above.
+     Theme switching works by adding/removing 'light' class on <html> element.
+     No duplicate values needed - all colors cascade from :root. */
+}
+
+/* Data attribute theme selector for compatibility */
+[data-theme="light"] {
+  /* Inherits all light theme color tokens from :root selector above.
+     Theme switching works by setting data-theme="light" on <html> element.
+     No duplicate values needed - all colors cascade from :root. */
+}

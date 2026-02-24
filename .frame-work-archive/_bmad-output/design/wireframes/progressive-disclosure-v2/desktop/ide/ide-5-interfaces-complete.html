@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Via-Gent IDE - Maximum (5 Interfaces: Complete)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Geist+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --canvas: #09090b;
+      --surface: #18181b;
+      --surface-hover: #27272a;
+      --primary: #fafafa;
+      --action: #f97316;
+      --border: #3f3f46;
+      --border-light: #52525b;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --terminal-bg: #1e1e1e;
+      --chat-user-bg: #27272a;
+      --chat-ai-bg: #1e293b;
+    }
+
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--canvas);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .ide-container {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0;
+      font-size: 12px;
+      transition: all 0.1s;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+      border-color: var(--border-light);
+    }
+
+    .file-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+    }
+
+    .tree-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-left: 3px solid transparent;
+      transition: all 0.1s;
+    }
+
+    .tree-item:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+
+    .tree-item.active {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+      border-left-color: var(--action);
+    }
+
+    .tree-item-icon {
+      width: 18px;
+      margin-right: 10px;
+      opacity: 0.7;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--canvas);
+    }
+
+    .header {
+      height: 48px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 0;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s;
+      box-shadow: 0 0 0 0 #000;
+    }
+
+    .btn-primary {
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+    }
+
+    .btn-primary:hover {
+      background: var(--action-hover);
+      box-shadow: 2px 2px 0 0 #000;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      min-width: 120px;
+    }
+
+    .tab:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+
+    .tab.active {
+      background: var(--canvas);
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--action);
+    }
+
+    .workspace-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr 380px;
+      grid-template-rows: 1fr 220px;
+      gap: 0;
+      overflow: hidden;
+    }
+
+    .editor-panel {
+      grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview-panel {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--surface);
+    }
+
+    .chat-panel {
+      grid-column: 3 / 4;
+      grid-row: 1 / 3;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+    }
+
+    .terminal-panel {
+      grid-column: 1 / 3;
+      grid-row: 2 / 3;
+      background: var(--terminal-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 8px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .editor-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .line-numbers {
+      padding: 16px 12px;
+      text-align: right;
+      color: var(--text-muted);
+      user-select: none;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      width: 50px;
+    }
+
+    .code-content {
+      flex: 1;
+      padding: 16px;
+      white-space: pre;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      overflow-y: auto;
+    }
+
+    .keyword {
+      color: #c084fc;
+    }
+
+    .function {
+      color: #f97316;
+    }
+
+    .string {
+      color: #4ade80;
+    }
+
+    .comment {
+      color: var(--text-muted);
+    }
+
+    .preview-iframe {
+      flex: 1;
+      background: white;
+      border: none;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-message {
+      max-width: 85%;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-message.user {
+      align-self: flex-end;
+      background: var(--chat-user-bg);
+      border-radius: 8px 8px 0 8px;
+    }
+
+    .chat-message.ai {
+      align-self: flex-start;
+      background: var(--chat-ai-bg);
+      border-radius: 0 8px 8px 8px;
+    }
+
+    .chat-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 10px 12px;
+      background: var(--canvas);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--action);
+    }
+
+    .chat-send-btn {
+      padding: 10px 16px;
+      background: var(--action);
+      color: var(--canvas);
+      border: 1px solid var(--action);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .chat-send-btn:hover {
+      background: var(--action-hover);
+    }
+
+    .terminal-content {
+      flex: 1;
+      padding: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #4ade80;
+      overflow-y: auto;
+    }
+
+    .terminal-line {
+      margin-bottom: 2px;
+    }
+
+    .terminal-input {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.2);
+      border-top: 1px solid var(--border);
+    }
+
+    .terminal-input-field {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .status-bar {
+      height: 28px;
+      background: var(--action);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 11px;
+      color: var(--canvas);
+    }
+
+    .status-left {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-right {
+      display: flex;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+
+    .status-item:hover {
+      opacity: 0.8;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 220px;
+      }
+      .workspace-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .chat-panel {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar, .terminal-panel, .preview-panel, .chat-panel {
+        display: none;
+      }
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ide-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <span>📁</span>
+          <span>Project Files</span>
+        </div>
+        <div class="sidebar-actions">
+          <button class="icon-btn">+</button>
+          <button class="icon-btn">↻</button>
+        </div>
+      </div>
+      <div class="file-tree">
+        <div class="tree-item active">
+          <span class="tree-item-icon">📄</span>
+          <span>App.tsx</span>
+        </div>
+        <div class="tree-item">
+          <span class="tree-item-icon">📄</span>
+          <span>api.ts</span>
+        </div>
+        <div class="tree-item">
+          <span class="tree-item-icon">📁</span>
+          <span>components</span>
+        </div>
+        <div class="tree-item">
+          <span class="tree-item-icon">📄</span>
+          <span>tests.ts</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <nav class="breadcrumb">
+          <span>src</span>
+          <span style="color: var(--text-muted);"> / </span>
+          <span>App.tsx</span>
+        </nav>
+        <div class="header-actions">
+          <button class="btn btn-secondary">👁 Preview</button>
+          <button class="btn btn-secondary">⌨ Terminal</button>
+          <button class="btn btn-secondary">🤖 AI Chat</button>
+          <button class="btn btn-primary">▶ Run</button>
+        </div>
+      </header>
+
+      <div class="tabs">
+        <div class="tab active">
+          <span>📄</span>
+          <span>App.tsx</span>
+        </div>
+        <div class="tab">
+          <span>📄</span>
+          <span>api.ts</span>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <div class="editor-panel">
+          <div class="panel-header">
+            <span>📝 Editor</span>
+            <div class="panel-actions">
+              <button class="icon-btn">↻</button>
+            </div>
+          </div>
+          <div class="editor-container">
+            <div class="line-numbers">
+              1
+              2
+              3
+              4
+              5
+              6
+              7
+              8
+              9
+              10
+              11
+              12
+            </div>
+            <div class="code-content">
+<span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;
+
+<span class="keyword">export function</span> <span class="function">App</span>() {
+  <span class="keyword">return</span> (
+    <span class="keyword">&lt;</span>div className=<span class="string">"app"</span><span class="keyword">&gt;</span>
+      <span class="keyword">&lt;</span>h1<span class="keyword">&gt;</span>Via-Gent v2.0<span class="keyword">&lt;/</span>h1<span class="keyword">&gt;</span>
+      <span class="keyword">&lt;</span>p<span class="keyword">&gt;</span>Complete IDE experience<span class="keyword">&lt;/</span>p<span class="keyword">&gt;</span>
+      <span class="keyword">&lt;</span>button<span class="keyword">&gt;</span>Click me<span class="keyword">&lt;/</span>button<span class="keyword">&gt;</span>
+    <span class="keyword">&lt;/</span>div<span class="keyword">&gt;</span>
+  );
+}
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-panel">
+          <div class="panel-header">
+            <span>👁 Preview</span>
+            <div class="panel-actions">
+              <button class="icon-btn">🔗</button>
+              <button class="icon-btn">↻</button>
+            </div>
+          </div>
+          <iframe class="preview-iframe" title="Preview"></iframe>
+        </div>
+
+        <div class="chat-panel">
+          <div class="panel-header">
+            <span>🤖 AI Assistant</span>
+            <div class="panel-actions">
+              <button class="icon-btn">+</button>
+            </div>
+          </div>
+          <div class="chat-messages">
+            <div class="chat-message ai">
+              Hello! I can help you with code, debugging, and best practices. What would you like to work on?
+            </div>
+            <div class="chat-message user">
+              Help me make this component accessible.
+            </div>
+            <div class="chat-message ai">
+              Sure! I'll add ARIA labels, keyboard navigation, and focus management. Would you like me to implement these changes now?
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+              <input type="text" class="chat-input" placeholder="Ask AI...">
+              <button class="chat-send-btn">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-panel">
+          <div class="panel-header" style="background: var(--surface);">
+            <span>⌨ Terminal</span>
+            <div class="panel-actions">
+              <button class="icon-btn">+</button>
+              <button class="icon-btn">🗑</button>
+            </div>
+          </div>
+          <div class="terminal-content">
+            <div class="terminal-line">$ npm run dev</div>
+            <div class="terminal-line" style="color: #60a5fa;">VITE v5.0.0 ready</div>
+            <div class="terminal-line" style="color: #60a5fa;">➜ Local: http://localhost:5173/</div>
+            <div class="terminal-line" style="color: #4ade80;">✓ Build successful</div>
+          </div>
+          <div class="terminal-input">
+            <span style="color: #60a5fa; margin-right: 8px;">$</span>
+            <input type="text" class="terminal-input-field" placeholder="Enter command...">
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div class="status-left">
+          <div class="status-item">⟳ Auto-refresh</div>
+          <div class="status-item">📍 Ln 8, Col 12</div>
+        </div>
+        <div class="status-right">
+          <div class="status-item">TypeScript React</div>
+          <div class="status-item">UTF-8</div>
+          <div class="status-item">Ln 12</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tree-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelector('.preview-iframe').addEventListener('load', function() {
+      const doc = this.contentDocument || this.contentWindow.document;
+      doc.body.innerHTML = `
+        <style>
+          body { font-family: sans-serif; padding: 20px; background: white; color: #333; margin: 0; }
+          h1 { color: #f97316; margin-bottom: 16px; }
+          button { background: #f97316; color: white; border: none; padding: 12px 24px; cursor: pointer; font-weight: bold; }
+          button:hover { background: #ea580c; }
+        </style>
+        <h1>Via-Gent v2.0</h1>
+        <p>Complete IDE experience</p>
+        <button>Click me</button>
+      `;
+    });
+
+    document.querySelector('.preview-iframe').src = 'about:blank';
+  </script>
+</body>
+</html>

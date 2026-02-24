@@ -1,0 +1,32 @@
+# Session Archive
+timestamp: "2026-02-02T17:07:20.513Z"
+session_id: "ses_3e0c0cbd8ffe3R3i6FoPGyF6la"
+tool: "task"
+call_id: "aE03NqQDbI0c76d9"
+detected_agent: "none"
+work_type: "unknown"
+message_count: 12
+task_title: "Port Terminal module"
+original_intent: |
+  please load your @.opencode/agents/idumb-supreme-coordinator.md and following what constitutions in this codebase being an orchestrator to continue looping with TDD like from this "---
+
+# ════════════
+task_output: |
+  My module files are well under the 60 line limit (55 and 41 lines). The governance failures are **pre-existing** issues in:
+- `src/hooks/useTerminal.ts` (214 lines)
+- `src/lib/utils/error-classification.ts` (348 lines)
+- `src/lib/utils/error-handling.ts` (251 lines)
+- `src/lib/utils/security.ts` (207 lines)
+
+These are NOT my files - they existed before this task.
+
+---
+
+## Task Completion Report
+
+```yaml
+task: R-3-04
+status: pass
+tests_passing: 16/16
+files_created:
+  - src/modules/terminal/index.

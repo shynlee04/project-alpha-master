@@ -1,0 +1,102 @@
+---
+name: "bmad-ext-sprint-planning"
+shorthand: "/ext-sprint"
+description: "BMAD-ext sprint-planning wrapper - enhanced 7-step sprint planning with cohesion validation, dependency mapping, reality gates"
+category: "planning"
+version: "1.0.0"
+type: "bridge"
+
+# Hop-reading bridge to _bmad-ext
+bridge:
+  type: "skill"
+  source: ".claude/skills/bmad-ext-bridge/modules/sprint-planning-wrapper/SKILL.md"
+  load_strategy: "on_demand"
+  frontmatter_only: true
+
+# Metadata
+metadata:
+  module: "sprint-planning-wrapper"
+  phase: "2"
+  ttl_hours: 24
+  steps:
+    - "discover-epics"
+    - "generate-status"
+    - "cohesion-check"
+    - "dependency-map"
+    - "reality-validation"
+    - "gatekeeping"
+    - "handoff"
+---
+
+# BMAD-EXT Sprint-Planning Wrapper Bridge
+
+**Purpose**: Enhanced sprint planning with cohesion validation and auto gatekeeping
+
+## 7-Step Enhanced Workflow
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  SPRINT-PLANNING WRAPPER                   │
+├─────────────────────────────────────────────────────────────┤
+│  Step 1: Discover Epics                                    │
+│  Step 2: Generate Status (BMAD generator)                  │
+│  Step 3: Cohesion Check ← NEW (validate sprint flow)       │
+│  Step 4: Dependency Map ← NEW (find hidden deps)           │
+│  Step 5: Reality Validation ← NEW (Movie Script Test)      │
+│  Step 6: Gatekeeping (auto-validation & loop)              │
+│  Step 7: Handoff (prepare for story execution)             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Problem Statement
+
+Original `sprint-planning` lacks:
+- ❌ Cohesion validation (detects fragmented UX)
+- ❌ Dependency mapping (finds hidden dependencies)
+- ❌ Narrative validation ("Movie Script Test")
+- ❌ Auto gatekeeping (loop back on failures)
+
+## Scanners
+
+### Cohesion Scanner
+```bash
+/sprint-cohesion
+# Validate sprint UX cohesion
+```
+
+### Dependency Scanner
+```bash
+/sprint-dependency
+# Map cross-story dependencies
+```
+
+### Nonsense Detector
+```bash
+/sprint-reality
+# Reality validation (30-sec demo script)
+```
+
+## Quality Gates
+
+- **Cohesion Gate**: Sprint narrative must be coherent
+- **Dependency Gate**: No temporal conflicts
+- **Reality Gate**: 30-second demo script passes
+- **Auto-Gatekeeping**: Loop back on any failure
+
+## Usage
+
+```bash
+/ext-sprint           # Load sprint-planning wrapper
+/sprint-cohesion      # Run cohesion check
+/sprint-dependency    # Run dependency map
+/sprint-reality       # Run reality validation
+/sprint-gate          # Run gatekeeping
+/enhanced-sprint      # Full 7-step enhanced planning
+```
+
+## Output
+
+- Enhanced `sprint-status.yaml`
+- Cohesion report: `_bmad-output/sprint-artifacts/cohesion-report-{date}.md`
+- Dependency map: `_bmad-output/sprint-artifacts/dependency-map.yaml`
+- Demo script: `_bmad-output/sprint-artifacts/demo-script.md`

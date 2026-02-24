@@ -1,0 +1,471 @@
+# Bug Log - Progressive Debugging
+# Version: 1.0.0
+# Created: 2026-01-17
+
+bugs:
+  - id: "BUG-010"
+    discovered_at: "2026-01-19T14:00:00Z"
+    title: "CC-FSA/CC-IDE Migration Broke FileTree - REVERTED"
+    description: |
+      Commit 8aa38d0f introduced StorageGateway abstraction but only partially migrated:
+      - useFileTreeState.ts changed to return getGateway()
+      - FileTree.tsx, useFileTreeActions.ts, useContextMenuActions.ts NOT updated
+      - Result: "getAdapter is not a function" error, FileTree broken
+      
+      Decision: REVERT to commit ddf01d28 (2026-01-14) working baseline.
+      The LocalFSAdapter + getAdapter pattern was working. StorageGateway
+      infrastructure kept for future proper implementation.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "FIXED"
+    location:
+      files_reverted:
+        - "src/presentation/components/ide/FileTree/hooks/useFileTreeState.ts"
+        - "src/presentation/components/ide/FileTree/FileTree.tsx"
+        - "src/presentation/components/ide/FileTree/hooks/useFileTreeActions.ts"
+        - "src/presentation/components/ide/FileTree/hooks/useContextMenuActions.ts"
+      files_deleted:
+        - "src/presentation/components/ide/FileTree/hooks/useIdeFileGateway.ts"
+        - "src/presentation/components/ide/FileTree/__tests__/FileTree-fsa-integration.test.ts"
+    hypothesis: |
+      CC-FSA/CC-IDE stories introduced StorageGateway abstraction but only
+      half-migrated the codebase. The migration broke the working LocalFSAdapter
+      pattern without completing the new pattern.
+    resolution: |
+      REVERTED to working baseline (commit ddf01d28).
+      Restored getAdapter() + LocalFSAdapter pattern.
+      StorageGateway infrastructure preserved for future proper implementation.
+    related_bugs: []
+    metadata:
+      reporter: "coordinator"
+      session: "revert-2026-01-19"
+      working_baseline: "commit ddf01d28 (2026-01-14)"
+
+  - id: BUG-001
+    discovered_at: "2026-01-17T10:00:00Z"
+    title: "Spike Build Failure - Missing Import Dependencies"
+    description: |
+      Spike cannot compile due to 20+ missing block components and 8+ missing UI components.
+      Vite crashes with import resolution errors during build.
+    severity: "P0-Critical"
+    scope: "spike-only"
+    category: "Logic"
+    status: "fixed"
+    location:
+      file: "src/spike/components/notes/NoteEditor.tsx"
+      lines: "28-84"
+    symptoms:
+      - "Build error: Failed to resolve import \"./FolderOverlapWarningDialog\""
+      - "Build error: No such file or directory: src/spike/components/notes/blocks/"
+      - "Vite dev server crashes during import analysis"
+      - "Flashing components on page load"
+      - "Cannot create project - button does nothing"
+    attempts:
+      - attempt: 1
+        timestamp: "2026-01-17T10:00:00Z"
+        action: "Mapped spike structure without checking build status"
+        result: "FAILED - Missed critical import errors"
+      - attempt: 2
+        timestamp: "2026-01-17T00:50:00Z"
+        action: "Copied all missing dependencies from main codebase to spike"
+        result: "SUCCESS - All 28 missing files copied, build ready"
+    hypothesis: "Spike was created as incomplete partial copy - copied main components but not transitive dependencies"
+    resolution: "Copied 20 block components and 8 UI components from src/presentation/components/ to spike. All imports now resolve. Spike should compile."
+    related_bugs: []
+    metadata:
+      reporter: "user"
+      environment: "spike"
+      reproducibility: "always"
+
+  - id: "BUG-002"
+    discovered_at: "2026-01-17T11:00:00Z"
+    title: "TanStack Router Navigation Fails in ProjectPickerDialog"
+    description: |
+      User selects project from ProjectPickerDialog → URL becomes malformed
+      Expected: Navigate to /ide/$projectId with params
+      Actual: Redirect to /hub (project not found error)
+      
+      Root cause: TanStack Router navigate() cannot't properly route to workspace
+      URL shows: "ide:proj_1768518477159_qasvmoin7" (projectId stringified as object)
+      
+      Working solution: window.location.href (original code)
+      TanStack Router SPA navigation attempts all failed
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Logic"
+    status: "OPEN"
+    location:
+      file: "src/presentation/components/hub/ProjectPickerDialog.tsx"
+      lines: "159-190"
+    symptoms:
+      - "Click project in ProjectPickerDialog → Redirects to /hub"
+      - "URL shows: ide:proj_id (malformed parameter)"
+      - "Console shows: [IDERoute.loader] Project not found in Dexie"
+      - "IDE cannot load - no hot load, no Monaco, no file tree"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-17T10:00:00Z"
+        action: "Replaced window.location.href with navigate({ to: '/ide/$projectId', params: { projectId } })"
+        result: "FAILED - URL malformed, redirected to /hub"
+        pattern: "HubHomePage pattern"
+      - attempt: "2"
+        timestamp: "2026-01-17T10:30:00Z"
+        action: "Tried dynamic path with computed property: navigate({ to: routeDef.path, params: { [routeDef.paramName]: project.id } })"
+        result: "FAILED - Same issue, redirected to /hub"
+        pattern: "Dynamic route definitions"
+      - attempt: "3"
+        timestamp: "2026-01-17T11:00:00Z"
+        action: "Tried exact switch with direct params matching HubHomePage"
+        result: "FAILED - Same issue, redirected to /hub"
+        pattern: "HubHomePage switch statement"
+    hypothesis: |
+      TanStack Router navigate() fails when used in ProjectPickerDialog.
+      HubHomePage.tsx uses same pattern (navigate({ to: '/ide/$projectId', params: { projectId } })) and works.
+      Difference: HubHomePage passes projectId as variable, ProjectPickerDialog passes as project.id.
+      Both are strings. Pattern should be identical.
+      
+      Possible causes:
+      1. TanStack Router context mismatch (ProjectPickerDialog may have different router instance)
+      2. ProjectRecord.id type mismatch (not plain string as expected)
+      3. Route definition path differs between components
+    resolution: |
+      REVERTED to working solution: window.location.href.
+      
+      TanStack Router navigate() cannot be made to work in ProjectPickerDialog.
+      Root cause unknown - needs deeper investigation of route definitions and router context.
+      
+      For now: Keep window.location.href despite full page reload.
+      UX degradation better than broken navigation.
+    working_solution:
+      code: "window.location.href = `${routeMap[targetWorkspace]}/${project.id};`"
+      impact: "Full page reload (UX degraded, but works)"
+      location: "src/presentation/components/hub/ProjectPickerDialog.tsx:173 (reverted)"
+    related_bugs: []
+    metadata:
+      reporter: "user"
+      environment: "main-codebase"
+      reproducibility: "always"
+      session: "hub-flow-debug-2026-01-17"
+
+  - id: "BUG-003"
+    discovered_at: "2026-01-17T11:30:00Z"
+    title: "Project Creation Fails: ID Format Mismatch"
+    description: |
+      Project creation throws immediate error because generated ID format conflicts with validation rules.
+      Generator produces: "proj_{timestamp}_{random}"
+      Validator requires: "{workspace}:proj_..." (e.g., "ide:proj_...")
+      Result: Synchronous throw "Generated invalid ProjectId" during creation.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Logic"
+    status: "FIXED"
+    location:
+      file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+      lines: "47-54"
+    symptoms:
+      - "Project creation fails immediately with error"
+      - "Validation error in console"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-17T12:00:00Z"
+        action: "Updated generateProjectId to accept workspaceType and prefix the ID. Updated createProject to pass workspaceType."
+        result: "SUCCESS - ID generation now matches validation rules."
+    hypothesis: "Codebase drift between Domain Type definition and Infrastructure Implementation."
+    resolution: "Updated ID generation logic to include workspace prefix (e.g., ide:proj_...) matching domain validation."
+    related_bugs: ["BUG-002"]
+    metadata:
+      reporter: "agent-dev-ext"
+      session: "hub-flow-debug-2026-01-17"
+
+  - id: "BUG-004"
+    discovered_at: "2026-01-17T11:30:00Z"
+    title: "Desktop Forced to Mobile UI on Resize"
+    description: |
+      Platform detection uses window.innerWidth (responsive) instead of browser capability (platform-contract).
+      Result: Resizing desktop window <768px hides FSA options and blocks IDE access, treating it as mobile.
+    severity: "P1-High"
+    scope: "main-infected"
+    category: "Logic"
+    status: "FIXED"
+    location:
+      file: "src/presentation/components/project/steps/ProjectDetailsStep.tsx"
+      lines: "89-106"
+    symptoms:
+      - "Desktop user resizes window -> FSA option disappears"
+      - "Desktop user treated as mobile user"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-17T12:30:00Z"
+        action: "Replaced useDeviceType/window checks with getPlatformContract().canAccessFSA"
+        result: "SUCCESS - Options now depend on capability, not window size"
+    hypothesis: "UI component using responsive hook for logic decisions instead of platform contract."
+    resolution: "Replaced responsive checks with getPlatformContract() to ensure consistent behavior based on actual platform capabilities."
+    related_bugs: []
+    metadata:
+      reporter: "agent-dev-ext"
+      session: "hub-flow-debug-2026-01-17"
+
+  - id: "BUG-005"
+    discovered_at: "2026-01-17T11:35:00Z"
+    title: "Project Creation Race Condition (Navigation Failure)"
+    description: |
+      createProject() function triggers fire-and-forget DB write but returns ID immediately.
+      Router navigates to /ide/$id and loader tries to fetch project.
+      Race: Loader reads BEFORE DB write completes -> "Project not found" -> Redirect to Hub.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "DataConsistency"
+    status: "FIXED"
+    location:
+      file: "src/infrastructure/persistence/stores/project/project-crud-slice.ts"
+      lines: "151"
+    symptoms:
+      - "Create project -> Redirects back to Hub"
+      - "Project appears in list AFTER refresh (persistence works, timing fails)"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-17T12:00:00Z"
+        action: "Updated createProject to be async and await db.projects.put(). Updated interface return type to Promise<string>."
+        result: "SUCCESS - Navigation now happens after persistence is confirmed."
+    hypothesis: "Missing await on db.projects.put() before returning."
+    resolution: "Converted createProject to async/await pattern to ensure DB write completes before navigation."
+    related_bugs: ["BUG-002"]
+    metadata:
+      reporter: "agent-dev-ext"
+      session: "hub-flow-debug-2026-01-17"
+
+  - id: "BUG-006"
+    discovered_at: "2026-01-17T11:35:00Z"
+    title: "Hot Load Failure (VFS Watcher Timing)"
+    description: |
+      useVFSAutoWatch hook runs on mount BEFORE FSA handle is restored.
+      Factory returns dummy adapter (no watch support).
+      Hook only watches [projectId], so it never retries when handle becomes available.
+      Result: No file tree updates, no hot reload.
+    severity: "P1-High"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "FIXED"
+    location:
+      file: "src/infrastructure/persistence/stores/workspace/slices/use-vfs-sync-slice.ts"
+      lines: "380"
+    symptoms:
+      - "IDE loads but file tree is empty/static"
+      - "No reaction to external file changes"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-17T12:30:00Z"
+        action: "Updated useVFSAutoWatch to useProjectStore and depend on project.storageMetadata availability"
+        result: "SUCCESS - Watcher now waits for handle readiness"
+    hypothesis: "Dependency array missing storage handle availability check."
+    resolution: "Updated hook to subscribe to project store and wait for storageMetadata (indicating handle readiness) before starting watch."
+    related_bugs: []
+    metadata:
+      reporter: "agent-dev-ext"
+      session: "hub-flow-debug-2026-01-17"
+
+  - id: "BUG-007"
+    discovered_at: "2026-01-17T12:45:00Z"
+    title: "Parent Route Blocks Mobile Redirect"
+    description: |
+      Parent `/ide` route has a beforeLoad guard that redirects mobile/non-FSA users to `/hub`.
+      Child route `/ide/$projectId` has logic to redirect them to `/notes/$projectId`.
+      TanStack Router runs parent guard first -> User is kicked to Hub before Notes redirect can happen.
+    severity: "P1-High"
+    scope: "main-infected"
+    category: "Logic"
+    status: "FIXED"
+    location:
+      file: "src/routes/ide.tsx"
+      lines: "47-53"
+    symptoms:
+      - "Mobile/Tablet user tries to open IDE -> Redirected to Hub instead of Notes"
+      - "URL contains 'ide' but page is Hub"
+    attempts: []
+    hypothesis: "Parent route guard is too aggressive and unaware of child route handling."
+    resolution: "Relaxed parent route guard in ide.tsx to only block strict /ide root access. Allowed child routes to handle their own redirects."
+    related_bugs: []
+    metadata:
+      reporter: "agent-domain-scanner"
+      session: "turn-3-debug-2026-01-17"
+
+  - id: "BUG-008"
+    discovered_at: "2026-01-17T12:45:00Z"
+    title: "IDE Parent Route Missing Outlet"
+    description: |
+      `src/routes/ide.tsx` renders `IDELayout` directly instead of `<Outlet />`.
+      This completely BYPASSES the child route component in `src/routes/ide.$projectId.tsx`.
+      Result: `ProjectProvider`, `loader`, and `waitForHydration` in the child route are NEVER executed.
+      State remains uninitialized, causing 'bounce back' or empty state.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "FIXED"
+    location:
+      file: "src/routes/ide.tsx"
+      lines: "All"
+    symptoms:
+      - "Navigation to /ide/$projectId fails to load project context"
+      - "ProjectProvider not mounted"
+      - "URL changes but content broken"
+    attempts: []
+    hypothesis: "Incorrect layout implementation in parent route."
+    resolution: "Refactored src/routes/ide.tsx to render <Outlet /> when on a child route, allowing child route components to mount properly."
+    related_bugs: ["BUG-002", "BUG-005"]
+    metadata:
+      reporter: "agent-domain-scanner"
+      session: "turn-3-debug-2026-01-17"
+
+  - id: "BUG-009"
+    discovered_at: "2026-01-17T12:45:00Z"
+    title: "Notes Workspace Coupled to IDE Store"
+    description: |
+      `src/routes/notes.$projectId.lazy.tsx` imports and writes to `useIDEStore`.
+      This violates domain boundaries - Notes should use `useWorkspaceStore` or `useProjectStore`.
+    severity: "P2-Medium"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "FIXED"
+    location:
+      file: "src/routes/notes.$projectId.lazy.tsx"
+      lines: "Variable"
+    symptoms:
+      - "Tight coupling between workspaces"
+    attempts: []
+    hypothesis: "Legacy code usage."
+    resolution: "Removed useIDEStore dependency from Notes, IDE, Study, Knowledge, and Workspace routes. Moved loader to non-lazy route definition. Unified platform guards."
+    related_bugs: []
+    metadata:
+      reporter: "agent-domain-scanner"
+      session: "turn-3-debug-2026-01-17"
+
+  - id: "BUG-016"
+    discovered_at: "2026-01-19T16:00:00Z"
+    title: "FSA Folder Mounting Fails / Notes Import Spins Forever"
+    description: |
+      User sees "Importing Notes" spinner hanging indefinitely when entering Notes workspace.
+      
+      Root cause investigation:
+      1. Service never initializes for FSA (missing auto-init).
+      2. Infinite Loop in `autoImportFiles` effect:
+         - Effect depends on `isImportingFiles`.
+         - Effect sets `isImportingFiles(true)`.
+         - Operation completes -> `finally` sets `isImportingFiles(false)`.
+         - State change triggers Effect again.
+         - Loop continues forever.
+      
+      This logic error affects all storage types but is most visible when service actually initializes.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Logic"
+    status: "OPEN"
+    location:
+      file: "src/presentation/components/notes/NotesPage.tsx"
+      lines: "246-319"
+    symptoms:
+      - "Spinning 'Importing Notes' dialog never disappears"
+      - "Notes workspace unusable"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-19T17:00:00Z"
+        action: "Added auto-initialization for FSA projects in NotesPage useEffect"
+        result: "PARTIAL - Service initializes, but import operation loops indefinitely"
+      - attempt: "2"
+        timestamp: "2026-01-19T17:30:00Z"
+        action: "Attempted to fix infinite loop by removing dependency and adding ref."
+        result: "REVERTED - User request."
+      - attempt: "3"
+        timestamp: "2026-01-19T18:00:00Z"
+        action: "Re-applying loop fix: Remove `isImportingFiles` from dependency array and use ref to ensure single execution per project."
+        result: "PENDING VERIFICATION - Waiting for user confirmation."
+    hypothesis: "Infinite loop caused by `isImportingFiles` state being in dependency array of the effect that sets it."
+    resolution: "Pending user verification of loop fix."
+    related_bugs: ["BUG-013"]
+
+  - id: "BUG-021"
+    discovered_at: "2026-01-19T18:30:00Z"
+    title: "Notes Parent Route Redirect Loop"
+    description: |
+      Infinite remount loop in Notes workspace.
+      Sequence: NotesPage mounts -> NotesRedirect (parent) detects no match? -> Redirects -> NotesPage unmounts -> Redirect completes -> NotesPage mounts.
+      
+      Root cause: `useMatch` in `NotesRedirect` (parent route) likely returns false/null intermittently or incorrectly, causing the redirect logic to fire even when a child route is active. This forces a navigation which unmounts the child route (`<Outlet />` replaced by spinner), causing the loop.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "OPEN"
+    location:
+      file: "src/routes/notes.lazy.tsx"
+      lines: "56-154"
+    symptoms:
+      - "NotesPage constantly unmounting/remounting"
+      - "FSA handle repeatedly restored and cleared"
+      - "Auto-import loops because component state resets on remount"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-19T18:35:00Z"
+        action: "Replace `useMatch` with `useLocation` for stable child route detection."
+        result: "PENDING VERIFICATION - Code updated to use location.pathname check."
+    hypothesis: "useMatch is unreliable for conditional rendering in parent route. useLocation.pathname check is deterministic."
+    resolution: "Pending implementation verification."
+    related_bugs: ["BUG-019", "BUG-016"]
+
+statistics:
+  total_bugs: 13
+  by_severity:
+    P0-Critical: 8
+    P1-High: 4
+    P2-Medium: 1
+    P3-Low: 0
+    metadata:
+      reporter: "user"
+      session: "debug-2026-01-19"
+
+  - id: "BUG-019"
+    discovered_at: "2026-01-19T17:00:00Z"
+    title: "React Hook Error in NotesRedirect"
+    description: |
+      "Rendered fewer hooks than expected" error when navigating to Notes workspace.
+      Root cause: Early return in `NotesRedirect` component (based on `useMatch`)
+      causes subsequent hooks (`useMemo`, `useLiveQuery`, `useEffect`) to be skipped
+      when child route matches.
+    severity: "P0-Critical"
+    scope: "main-infected"
+    category: "Architecture"
+    status: "FIXED"
+    location:
+      file: "src/routes/notes.lazy.tsx"
+      lines: "56-154"
+    symptoms:
+      - "App crashes with React error when accessing /notes/$projectId"
+      - "White screen with error boundary stack trace"
+    attempts:
+      - attempt: "1"
+        timestamp: "2026-01-19T17:10:00Z"
+        action: "Moved all hooks to top level before conditional returns."
+        result: "SUCCESS - Hooks execution order is now consistent."
+    hypothesis: "Conditional early return violates Rules of Hooks."
+    resolution: "Move all hooks to top level before any return statement. Use conditional logic inside hooks or their callbacks."
+    related_bugs: ["BUG-015"]
+    metadata:
+      reporter: "user"
+      session: "debug-2026-01-19"
+
+statistics:
+  total_bugs: 12
+  by_severity:
+    P0-Critical: 7
+    P1-High: 4
+    P2-Medium: 1
+    P3-Low: 0
+  by_scope:
+    spike-only: 1
+    main-infected: 9
+    cross-domain: 0
+  by_category:
+    Logic: 5
+    Architecture: 5
+    UX: 0
+    Performance: 0
+    DataConsistency: 1

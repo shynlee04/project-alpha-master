@@ -1,0 +1,8 @@
+{
+  "plugin": [
+    "@nick-vi/opencode-type-inject",
+    "./.opencode/plugins/master-orchestrator.ts"
+  ],
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {}
+}
